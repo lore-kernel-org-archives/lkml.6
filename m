@@ -2,106 +2,92 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C233C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C320CC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D1A21A13
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:39:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F5vVVwdd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D1A21A13
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A29C21A13
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A29C21A13
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731296AbeHHXBH (ORCPT
+        id S1731372AbeHHXBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:01:07 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:36338 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeHHXBG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 19:01:06 -0400
-Received: by mail-ua0-f194.google.com with SMTP id c12-v6so3910137uan.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 13:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=quAE55nWvV7E8UXCtpxGbr7sG79MYJa6fnLPq1PkBbM=;
-        b=F5vVVwddbv3GmnvfoxoqbBe58bfHaTI8W60sO/8p3nYixyn5DwNP3bd24SiWnq3460
-         v3pCrWzWFJ9htqUngBmCKq8n+lHCN135tYle3EMNzViCZ+SdAgJImCel2VWrs4MIsIqx
-         UX+dz+ggMCKdTSroQQC3aJRPHmdfRFHANCKO0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=quAE55nWvV7E8UXCtpxGbr7sG79MYJa6fnLPq1PkBbM=;
-        b=fMr8RN3DjuGEPLAgH9AkWJgN9Z8pfHl+aXMRxVRaRqs51vcUE39EJsfGkDxuzEcdti
-         oEYycyCzxyKRqVx7rUu/ybJer7exQcx5jb/Ccez69Cd9GoVJjggjPqAoAMC1Ds5kVAss
-         5IVUFa619uzNogU0tnNVwfRfUVwi+u44CoA1GWhr0FreRPu90ISlk07aCzw+4WZ3KhZL
-         Omij4HjUMLL7/57zr4+8KN4hm2iFbrudeB4Jn0DUMeLCkOvp97cHtOoXrfO5zfi9l6FM
-         iTuqztWCgOybSwzjOUJ6fOEp7HBxkM2Ovxsnj7ToDJq/8NFUe+J1gBYH++FOsicLgWNK
-         6Spw==
-X-Gm-Message-State: AOUpUlG5fkATB0AirTKmpS4CStOoGl90Sxnelkm8Rx5kBc5FnYkL7imm
-        qRTxjY0Oy0DyZdi207Agff1mpmHXtvE=
-X-Google-Smtp-Source: AA+uWPwCQuI16Vowb2nZ12XQl5GOwD613MQZThjFVvcvEWwZ0wZsKa3Hpw6Mgdoqybvh3GfP4IF9YA==
-X-Received: by 2002:ab0:5068:: with SMTP id z37-v6mr3140416uaz.149.1533760785509;
-        Wed, 08 Aug 2018 13:39:45 -0700 (PDT)
-Received: from mail-ua0-f178.google.com (mail-ua0-f178.google.com. [209.85.217.178])
-        by smtp.gmail.com with ESMTPSA id c68-v6sm1452133vke.19.2018.08.08.13.39.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 13:39:44 -0700 (PDT)
-Received: by mail-ua0-f178.google.com with SMTP id k25-v6so3859051uao.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 13:39:44 -0700 (PDT)
-X-Received: by 2002:ab0:1163:: with SMTP id g35-v6mr3068024uac.135.1533760784008;
- Wed, 08 Aug 2018 13:39:44 -0700 (PDT)
+        Wed, 8 Aug 2018 19:01:40 -0400
+Received: from sauhun.de ([88.99.104.3]:38272 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727530AbeHHXBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 19:01:40 -0400
+Received: from localhost (p54B334CC.dip0.t-ipconnect.de [84.179.52.204])
+        by pokefinder.org (Postfix) with ESMTPSA id DEA856DC3F9;
+        Wed,  8 Aug 2018 22:40:17 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 22:40:17 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Jun Gao <jun.gao@mediatek.com>
+Cc:     srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] i2c: mediatek: Register i2c adapter driver earlier
+Message-ID: <20180808204017.yfne5q26lmeegyrr@ninjato>
+References: <1530955795-17714-1-git-send-email-jun.gao@mediatek.com>
+ <1530955795-17714-2-git-send-email-jun.gao@mediatek.com>
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 13:39:43 -0700 (PDT)
-In-Reply-To: <20180803222059.146666-1-mka@chromium.org>
-References: <20180803222059.146666-1-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 8 Aug 2018 13:39:43 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VwRp4ip_icn5bUWBbE0XatZrmu5m3pyfifm-s8cS0ShA@mail.gmail.com>
-Message-ID: <CAD=FV=VwRp4ip_icn5bUWBbE0XatZrmu5m3pyfifm-s8cS0ShA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add dispcc node
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="edtn3rcstugf43bt"
+Content-Disposition: inline
+In-Reply-To: <1530955795-17714-2-git-send-email-jun.gao@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Aug 3, 2018 at 3:20 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> This adds the display clock controller node to sdm845 based on the
-> examples in the bindings.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> The dispcc driver and DT bindings landed in the clk-qcom-dispcc-845
-> branch of the clk tree.
->
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+--edtn3rcstugf43bt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Peachy keen.
+On Sat, Jul 07, 2018 at 05:29:53PM +0800, Jun Gao wrote:
+> From: Jun Gao <jun.gao@mediatek.com>
+>=20
+> As i2c adapter, i2c slave devices will depend on it. In order not to
+> block the initializations of i2c slave devices, register i2c adapter
+> driver at appropriate time.
+>=20
+> Signed-off-by: Jun Gao <jun.gao@mediatek.com>
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+We don't do this anymore. Check these threads:
+
+http://patchwork.ozlabs.org/project/linux-i2c/list/?series=3D&submitter=3D&=
+state=3D*&q=3Dinitcall&archive=3D&delegate=3D
+
+(/me just realized that patchwork makes it super easy to point people to
+various discussions. Awesome!)
+
+
+--edtn3rcstugf43bt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltrVTEACgkQFA3kzBSg
+KbYICxAAo/n3OTlafeyeRr//nATBT9Z4QGjhugCIw5j1dZeXcVCbHuC6+m5jW2su
+Q+JcZSwx3AG3VbgqG6ugJ0QUi94NXv459IbBRuhQQ6FukpKLFV1AwZFasDh3Rmqb
+HfcxoTg5zCGEJLwc3nLSne/q7wiMzaImqREHanQUXY/iHIbWDF0g32yL4BSbx+6F
+XLIbhAvRE0Xx52QBBQkYpB8FB82H6kgKXu5Kq/PRFs4XAhKtMTb+nMxQExCB8SWQ
+yzFmb/6Img+vwY+180qSWlT4NjAYZ9kV5tNjA3qRCg7G1lOJiihjm5l30dZEkZOJ
+hCgBh4FN1UMIWn90pgWDZXRNv9ByCvzaUk/NoeRJA8imyjjC7w5+5WVTqIP1oy4u
+BRfEbQ3hjBpvm7kV699l78uv+Z6xayEvjHQrbMcTVh7sCODLerMk7Dfrp9GfgUG+
+Z1Irc5DcHWDnfD3SyKR5s4XlF3ldND+b+bQEuISXfCgCypF0VVQArT8KSx/V45ga
+lgwexvHIakklxVVnEWQhqnkYn5S79SlbHxfPW4hfPzs2EAf0e6PTN3iHMh/WLfKO
+wg2NI8z0HkA2G928NvBBkSPZgrvDT26SlAytDreNRGK5Gr0IkKD0ed744ziGKeiV
+msiRreTdwi0nKpoxbs1zsGRjsDwk1uaBH3OEpBHynKxSpnrUrU4=
+=0m2X
+-----END PGP SIGNATURE-----
+
+--edtn3rcstugf43bt--
