@@ -2,279 +2,108 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A986C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5264BC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D8221797
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D8221797
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id F138321797
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:15:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ot0zMOmf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F138321797
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731126AbeHHUaK (ORCPT
+        id S1729656AbeHHUfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbeHHU1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:27:51 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3293C21A32;
-        Wed,  8 Aug 2018 18:07:01 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fnSrM-0002Ln-8U; Wed, 08 Aug 2018 14:07:00 -0400
-Message-Id: <20180808180700.152609945@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 14:02:49 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>,
-        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH v2 04/24] tools/lib/traceevent, tools/perf: Rename pevent alloc / free APIs
-References: <20180808180245.352784763@goodmis.org>
+        Wed, 8 Aug 2018 16:35:51 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34441 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbeHHUfv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 16:35:51 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f8-v6so2471819ljk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 11:14:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MT79x9l+qk8s431aWejidU7i9OwBmIlJ9nJycvj5p5M=;
+        b=Ot0zMOmfjtiR4cLiATeHQ6aLLrb6jf8vAbmKXqSVFlgYdbyhHZVOMWOQJoGaNy3CWL
+         KK56LnCNOI25tb8DsSRHXTbA4oTvnyd/j0zMWRM1xqIqg+os3pxEkO6RUxx7PQWt9BHg
+         /07Gu8+2D/9I4vIMhSy6QsjnZ1fkT0fCir7as=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MT79x9l+qk8s431aWejidU7i9OwBmIlJ9nJycvj5p5M=;
+        b=Z9t9oNIcoxLOD23vG2WCMDDX/+lCc4yyqTBSC7kP56r2TIFQdBCH5V14cdhN3nXPkh
+         BYdf8/mHQ9Q8feJhG/ww2YEvrJH+0dtxIuDD3Kw5FKWKApADLJp26Wg1Jsfo1SSCBhvh
+         2qzjVk0tKNWwDOJCLhJwumfWUmKTed8dhCjz6ZL3DEmeTA5KU51rEkjjeautbDI+2bPA
+         +3sLpVzuJnEUJxzJIVV4eCuO5qwkSyytDwDFpxEPAS0e9pmnh/Bf3WfGIK/Q57b8GGRp
+         w9w6ORXrOLq6gxiRWCWjgeodkRv5sqZMGbvh2mFyVkcD/8Ah9SjLX7wFDqecTeMWAe0y
+         NN6g==
+X-Gm-Message-State: AOUpUlFZS/OPXMcXwg/9XdZuh10X8JGvylivPzYRtVuyCfF4TDHDORd+
+        ocEkhrq+VceIjy/Ow9ZHv2vJNEApbTQ=
+X-Google-Smtp-Source: AA+uWPyr+rSNu4Omvkbxw+GFgdNB6ZcOTVsfWhUC9DbvfMkQXpnxPXdxY/Z9MNYitSIshfx9YIQsUA==
+X-Received: by 2002:a2e:44c6:: with SMTP id b67-v6mr2712146ljf.102.1533752097355;
+        Wed, 08 Aug 2018 11:14:57 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id f28-v6sm787776lje.61.2018.08.08.11.14.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 11:14:55 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id l16-v6so2223525lfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 11:14:55 -0700 (PDT)
+X-Received: by 2002:a19:290c:: with SMTP id p12-v6mr2547332lfp.124.1533752095311;
+ Wed, 08 Aug 2018 11:14:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+References: <1532971432-16784-1-git-send-email-kramasub@codeaurora.org>
+ <1532971432-16784-2-git-send-email-kramasub@codeaurora.org> <20180731192004.acg5jnbj5wg55mpl@ninjato>
+In-Reply-To: <20180731192004.acg5jnbj5wg55mpl@ninjato>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 8 Aug 2018 11:14:19 -0700
+X-Gmail-Original-Message-ID: <CAE=gft46X7Pwufd0w2KCGmzviC1Gn2JLxUWTmSaYeLkYRi3ULw@mail.gmail.com>
+Message-ID: <CAE=gft46X7Pwufd0w2KCGmzviC1Gn2JLxUWTmSaYeLkYRi3ULw@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] i2c: i2c-qcom-geni: Add bus driver for the
+ Qualcomm GENI I2C controller
+To:     wsa@the-dreams.de
+Cc:     Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        acourbot@chromium.org, swboyd@chromium.org,
+        Doug Anderson <dianders@chromium.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Girish Mahadevan <girishm@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
+On Tue, Jul 31, 2018 at 12:20 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+> On Mon, Jul 30, 2018 at 11:23:51AM -0600, Karthikeyan Ramasubramanian wrote:
+> > This bus driver supports the GENI based i2c hardware controller in the
+> > Qualcomm SOCs. The Qualcomm Generic Interface (GENI) is a programmable
+> > module supporting a wide range of serial interfaces including I2C. The
+> > driver supports FIFO mode and DMA mode of transfer and switches modes
+> > dynamically depending on the size of the transfer.
+> >
+> > Signed-off-by: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+> > Signed-off-by: Sagar Dharia <sdharia@codeaurora.org>
+> > Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> > Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> > Tested-by: Stephen Boyd <swboyd@chromium.org>
+>
+> Applied to for-next, thanks!
+>
+> As discussed, I squashed the MAINTAINER addition and the RPM fix by Evan
+> into this commit. Please check later that I resolved the conflict
+> correctly (once I pushed out).
 
-In order to make libtraceevent into a proper library, variables, data
-structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_" and not "pevent_". This changes
-APIs: pevent_alloc, pevent_free, pevent_event_info and pevent_func_resolver_t
-
-Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- tools/lib/traceevent/event-parse.c  | 24 ++++++++++++------------
- tools/lib/traceevent/event-parse.h  | 12 ++++++------
- tools/perf/builtin-kmem.c           |  2 +-
- tools/perf/util/sort.c              |  2 +-
- tools/perf/util/trace-event-parse.c |  2 +-
- tools/perf/util/trace-event.c       |  6 +++---
- tools/perf/util/trace-event.h       |  2 +-
- 7 files changed, 25 insertions(+), 25 deletions(-)
-
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 57ed9348d1aa..040180f6ed74 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -438,9 +438,9 @@ __find_func(struct tep_handle *pevent, unsigned long long addr)
- }
- 
- struct func_resolver {
--	pevent_func_resolver_t *func;
--	void		       *priv;
--	struct func_map	       map;
-+	tep_func_resolver_t	*func;
-+	void			*priv;
-+	struct func_map		map;
- };
- 
- /**
-@@ -454,7 +454,7 @@ struct func_resolver {
-  * pevent->funclist.
-  */
- int pevent_set_function_resolver(struct tep_handle *pevent,
--				 pevent_func_resolver_t *func, void *priv)
-+				 tep_func_resolver_t *func, void *priv)
- {
- 	struct func_resolver *resolver = malloc(sizeof(*resolver));
- 
-@@ -5399,8 +5399,8 @@ int pevent_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline)
-  * This parses the raw @data using the given @event information and
-  * writes the print format into the trace_seq.
-  */
--void pevent_event_info(struct trace_seq *s, struct event_format *event,
--		       struct tep_record *record)
-+void tep_event_info(struct trace_seq *s, struct event_format *event,
-+		    struct tep_record *record)
- {
- 	int print_pretty = 1;
- 
-@@ -5556,7 +5556,7 @@ void pevent_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
- 	if (len < 20)
- 		trace_seq_printf(s, "%.*s", 20 - len, spaces);
- 
--	pevent_event_info(s, event, record);
-+	tep_event_info(s, event, record);
- }
- 
- void pevent_print_event(struct tep_handle *pevent, struct trace_seq *s,
-@@ -6754,9 +6754,9 @@ int pevent_unregister_event_handler(struct tep_handle *pevent, int id,
- }
- 
- /**
-- * pevent_alloc - create a pevent handle
-+ * tep_alloc - create a pevent handle
-  */
--struct tep_handle *pevent_alloc(void)
-+struct tep_handle *tep_alloc(void)
- {
- 	struct tep_handle *pevent = calloc(1, sizeof(*pevent));
- 
-@@ -6811,10 +6811,10 @@ void pevent_free_format(struct event_format *event)
- }
- 
- /**
-- * pevent_free - free a pevent handle
-+ * tep_free - free a pevent handle
-  * @pevent: the pevent handle to free
-  */
--void pevent_free(struct tep_handle *pevent)
-+void tep_free(struct tep_handle *pevent)
- {
- 	struct cmdline_list *cmdlist, *cmdnext;
- 	struct func_list *funclist, *funcnext;
-@@ -6901,5 +6901,5 @@ void pevent_free(struct tep_handle *pevent)
- 
- void pevent_unref(struct tep_handle *pevent)
- {
--	pevent_free(pevent);
-+	tep_free(pevent);
- }
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index b4b698c3833e..c229240666b7 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -454,8 +454,8 @@ struct func_list;
- struct event_handler;
- struct func_resolver;
- 
--typedef char *(pevent_func_resolver_t)(void *priv,
--				       unsigned long long *addrp, char **modp);
-+typedef char *(tep_func_resolver_t)(void *priv,
-+				    unsigned long long *addrp, char **modp);
- 
- struct tep_handle {
- 	int ref_count;
-@@ -616,7 +616,7 @@ enum trace_flag_type {
- };
- 
- int pevent_set_function_resolver(struct tep_handle *pevent,
--				 pevent_func_resolver_t *func, void *priv);
-+				 tep_func_resolver_t *func, void *priv);
- void pevent_reset_function_resolver(struct tep_handle *pevent);
- int pevent_register_comm(struct tep_handle *pevent, const char *comm, int pid);
- int pevent_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
-@@ -722,7 +722,7 @@ void pevent_print_field(struct trace_seq *s, void *data,
- 			struct format_field *field);
- void pevent_print_fields(struct trace_seq *s, void *data,
- 			 int size __maybe_unused, struct event_format *event);
--void pevent_event_info(struct trace_seq *s, struct event_format *event,
-+void tep_event_info(struct trace_seq *s, struct event_format *event,
- 		       struct tep_record *record);
- int pevent_strerror(struct tep_handle *pevent, enum pevent_errno errnum,
- 		    char *buf, size_t buflen);
-@@ -791,8 +791,8 @@ static inline void pevent_set_latency_format(struct tep_handle *pevent, int lat)
- 	pevent->latency_format = lat;
- }
- 
--struct tep_handle *pevent_alloc(void);
--void pevent_free(struct tep_handle *pevent);
-+struct tep_handle *tep_alloc(void);
-+void tep_free(struct tep_handle *pevent);
- void pevent_ref(struct tep_handle *pevent);
- void pevent_unref(struct tep_handle *pevent);
- 
-diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
-index b23e861fa6ae..73c073ade71c 100644
---- a/tools/perf/builtin-kmem.c
-+++ b/tools/perf/builtin-kmem.c
-@@ -747,7 +747,7 @@ static int parse_gfp_flags(struct perf_evsel *evsel, struct perf_sample *sample,
- 	}
- 
- 	trace_seq_init(&seq);
--	pevent_event_info(&seq, evsel->tp_format, &record);
-+	tep_event_info(&seq, evsel->tp_format, &record);
- 
- 	str = strtok_r(seq.buffer, " ", &pos);
- 	while (str) {
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 2c9924ab872d..08cdaf2be1af 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -613,7 +613,7 @@ static char *get_trace_output(struct hist_entry *he)
- 		pevent_print_fields(&seq, he->raw_data, he->raw_size,
- 				    evsel->tp_format);
- 	} else {
--		pevent_event_info(&seq, evsel->tp_format, &rec);
-+		tep_event_info(&seq, evsel->tp_format, &rec);
- 	}
- 	/*
- 	 * Trim the buffer, it starts at 4KB and we're not going to
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index 29af1fb0b888..630d0e81fe87 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -125,7 +125,7 @@ void event_format__fprintf(struct event_format *event,
- 	record.data = data;
- 
- 	trace_seq_init(&s);
--	pevent_event_info(&s, event, &record);
-+	tep_event_info(&s, event, &record);
- 	trace_seq_do_fprintf(&s, fp);
- 	trace_seq_destroy(&s);
- }
-diff --git a/tools/perf/util/trace-event.c b/tools/perf/util/trace-event.c
-index 7c0cd9a0f575..11066ed43ca4 100644
---- a/tools/perf/util/trace-event.c
-+++ b/tools/perf/util/trace-event.c
-@@ -28,7 +28,7 @@ static bool tevent_initialized;
- 
- int trace_event__init(struct trace_event *t)
- {
--	struct tep_handle *pevent = pevent_alloc();
-+	struct tep_handle *pevent = tep_alloc();
- 
- 	if (pevent) {
- 		t->plugin_list = traceevent_load_plugins(pevent);
-@@ -55,7 +55,7 @@ static int trace_event__init2(void)
- }
- 
- int trace_event__register_resolver(struct machine *machine,
--				   pevent_func_resolver_t *func)
-+				   tep_func_resolver_t *func)
- {
- 	if (!tevent_initialized && trace_event__init2())
- 		return -1;
-@@ -66,7 +66,7 @@ int trace_event__register_resolver(struct machine *machine,
- void trace_event__cleanup(struct trace_event *t)
- {
- 	traceevent_unload_plugins(t->plugin_list, t->pevent);
--	pevent_free(t->pevent);
-+	tep_free(t->pevent);
- }
- 
- /*
-diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
-index b8f2516e9a65..40204ec3a7a2 100644
---- a/tools/perf/util/trace-event.h
-+++ b/tools/perf/util/trace-event.h
-@@ -20,7 +20,7 @@ struct trace_event {
- int trace_event__init(struct trace_event *t);
- void trace_event__cleanup(struct trace_event *t);
- int trace_event__register_resolver(struct machine *machine,
--				   pevent_func_resolver_t *func);
-+				   tep_func_resolver_t *func);
- struct event_format*
- trace_event__tp_format(const char *sys, const char *name);
- 
--- 
-2.18.0
-
-
+The squashing in of my patch looks good!
