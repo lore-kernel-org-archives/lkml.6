@@ -2,209 +2,141 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B59C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A0DC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64BD221A8E
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0941921A8E
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:51:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="juo1Bnqi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64BD221A8E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NAP/VYVd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0941921A8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbeHIAJc (ORCPT
+        id S1730288AbeHIAMs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:09:32 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40805 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeHIAJc (ORCPT
+        Wed, 8 Aug 2018 20:12:48 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35938 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeHIAMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:09:32 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h15-v6so3290909wrs.7
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EYOhkqlMSqAMmDp3jViTrJi8ZBdYbjlxkmDTdzIuNbc=;
-        b=juo1Bnqi6hF8QaHB4B150SMqRpXeJcJpx+Ty3ITNza/+6b9+E/tQ2KZSWUYvOMznrr
-         ETXcF0Z3oorP1fqitumKeCoDKxFlbDzldClO/FxN0knFYEH8Sch3TzVGVDgX+3cePXJi
-         uXOdNoHf+RqUnL9y3XLTRfp+FjBO7tJvrWdgVusWgZeIiRYNcJEqLvDSDJ1VKjGLWKRo
-         MBg1ZmtlgEwxNkRLkEBWC/LHd4VQjZEheR2E4A/NqeMuEHxf89KyghCUp74dLEbhJGEb
-         kz8yQ18gH5zF8HiqGL92CPkke9T/YohRNQDtO7vn3LibOoApj2cErsxzdG/Q8iGK5EkU
-         /r8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EYOhkqlMSqAMmDp3jViTrJi8ZBdYbjlxkmDTdzIuNbc=;
-        b=azNbuhFQbSRYLWMQc5dYceYKb48gorQbr5O9hqlou+o1BjUWkleTpDs4ZJtz/zyPP1
-         RUbIqY6zvClX7J2cVaN8HyifKmQy+3sCoGXtV5P3eMjvGrKMWfb2ABV5bFU5FFkQ5vdM
-         VTd4jr2Pw3Ic4o1IhV7YtztjU8gtrYX8Ha5NsQ+eIM4dm5148Rm3cTCwseETqrWH4pfb
-         dQN/BfU56b5fFiPQPDk4TY3TDd+86XZUv/+Ypk0uBdMTcq9LZDqacACBf4oj66vu6eBD
-         TxOQLYphXbkQSlpl11RkxVJQvpBmDhFX/PdWmmtJwv2LbldjLsuh6ik1F7EHBzclPQsY
-         kJsw==
-X-Gm-Message-State: AOUpUlFNIO+j+fc1PNDcRbMLG2MfPghG5f+7Sm6IihedO1V5+DV9bkT6
-        4ZLJImYwxdmy48l5xoEAN+5JRY1xKU1nu9L80S6RxBZqwB4=
-X-Google-Smtp-Source: AA+uWPz45IsrMJFXt7GQW8Y9Cpxdc36n6xoDxrZo7awgMsdeRD0Ivz27P4hhFpxS+LqW4WtxVccLgoI6RruaakJwX60=
-X-Received: by 2002:adf:fdcd:: with SMTP id i13-v6mr2864838wrs.276.1533764875421;
- Wed, 08 Aug 2018 14:47:55 -0700 (PDT)
+        Wed, 8 Aug 2018 20:12:48 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w78Lp9eP017841;
+        Wed, 8 Aug 2018 16:51:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533765069;
+        bh=EYwR8nHFR8F6HB3k6DPuVVwgITgyTxG0Mr8+/jbK9BM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NAP/VYVdQlIsr65ozfbxQBrrsyUU1+HfB5wFtF2xgpg7pNzzLs408fmSNAa3f0PBJ
+         yJzEMNWqA2NADsMfT6LZ4ua3nct0Elc4Nge0WIFxN5gwoa8OsSZBQAq7mSVq0f0QCR
+         OrXFahKHAEL4UWH5K+kWedmXMIotTpidQVa+ZpE8=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w78Lp9HN002092;
+        Wed, 8 Aug 2018 16:51:09 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 8 Aug
+ 2018 16:51:09 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 8 Aug 2018 16:51:08 -0500
+Received: from [172.22.156.167] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w78Lp89r031205;
+        Wed, 8 Aug 2018 16:51:08 -0500
+Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
+ driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180807160442.8937-1-dmurphy@ti.com>
+ <20180808195903.GB20912@amd> <f6b3534b-2ee9-782e-35e5-e103c34528bc@ti.com>
+ <20180808210215.GA15831@amd> <f18a5616-bb25-da0d-aec8-585e042b4919@ti.com>
+ <20180808210926.GC15831@amd> <cdf671fa-674d-6e34-177e-c0e9cb4f6137@ti.com>
+ <20180808214527.GE15831@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <65e927b4-8bd2-1f34-3422-36ce21f674c3@ti.com>
+Date:   Wed, 8 Aug 2018 16:50:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1533605015-19514-1-git-send-email-eranian@google.com>
- <20180807072029.GA7716@krava> <CABPqkBSyf0WMKmZAFGSyBvX=jn1zifbMPztt_053hvvDh6UsHw@mail.gmail.com>
- <20180807085010.GC7716@krava> <CABPqkBTvXSgJNPW=4MxFqDR_oeYHteuDoeavdFHKuXe+8Y=2DQ@mail.gmail.com>
- <20180808082347.GB20320@krava>
-In-Reply-To: <20180808082347.GB20320@krava>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Wed, 8 Aug 2018 14:47:42 -0700
-Message-ID: <CABPqkBRwG_MzfJp1d7+4JKNemoD9cOWqJnXaBWQNR7buESKm2w@mail.gmail.com>
-Subject: Re: [PATCH] perf ordered_events: fix crash in free_dup_event()
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180808214527.GE15831@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Pavel
 
-Ok, I found the problem. It still exists upstream , just very tricky to trigger.
-Took me lots of time with gdb + watchpoints to track this down, where
-in fact it was just in front of me.
+On 08/08/2018 04:45 PM, Pavel Machek wrote:
+> On Wed 2018-08-08 16:41:16, Dan Murphy wrote:
+>> On 08/08/2018 04:09 PM, Pavel Machek wrote:
+>>> On Wed 2018-08-08 16:04:43, Dan Murphy wrote:
+>>>> On 08/08/2018 04:02 PM, Pavel Machek wrote:
+>>>>> Hi!
+>>>>>
+>>>>>>>> +	- #size-cells : 0
+>>>>>>>> +	- control-bank-cfg - : Indicates which sink is connected to which control bank
+>>>>>>>> +		0 - All HVLED outputs are controlled by bank A
+>>>>>>>> +		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
+>>>>>>>> +		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
+>>>>>>>> +		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
+>>>>>>>> +		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
+>>>>>>>> +		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
+>>>>>>>> +		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled by bank B
+>>>>>>>> +		7 - All HVLED outputs are controlled by bank B
+>>>>>>>
+>>>>>>> This is quite long way to describe a bitmask, no? Could we make
+>>>>>>> it so that control-bank-cfg is not needed?
+>>>>>>
+>>>>>> The problem we have here is there is a potential to control
+>>>>>> 3 different LED string but only 2 sinks.  So control bank A can control 2 LED strings and control
+>>>>>> bank b can control 1 LED string.  
+>>>>>>
+>>>>>
+>>>>> Can we forget about the LED strings, and just expose the sinks as
+>>>>> Linux LED devices?
+>>>>
+>>>> 2 sinks 3 LED strings.  How do you know which LED string is which and what bank it belongs
+>>>> to when setting the brightness.  Each Bank has a separate register for brightness control.
+>>>
+>>> Yes, and LED strings are statically assigned to banks, right?
+>>>
+>>> So why not simply forget about LED strings for sake of hw
+>>> abstractions, and work just with banks?
+>>
+>> How would you set the control bank register for the correct LED string configuration?
+> 
+> Have property at each LED saying which which HVLEDs it controls?
 
-From the crashdump:
-  Program received signal SIGSEGV, Segmentation fault.
-  free_dup_event (oe=0x26a39a0, event=0xffffffff00000000)
+Isn't that what I have already using the reg property?
 
-I was puzzled by the 0xffffffff00000000. I tracked down where this
-value was coming from using watchpoints.
-In my case the memory was used before by elfutils to back the struct
-Elf. The -1 in the upper bits came from:
+Then we would have to aggregate the configuration and make a determination in the driver.
 
-file_read_elf () at third_party/elfutils/libelf/elf_begin.c:451
-elf->state.elf64.scns.data[cnt].shndx_index = -1;
+But that does not follow the LED child node ideology.
+Each output of the LED driver should have a child node.
 
-And yet the next access to that memory location was in the crash. That
-meant the memory was released by
-elfutils and reused by ordered_events, yet without any initialization.
-But looking at alloc_event(), it was
-not obvious to figure out how a new_event->event could be uninitialized.
+In this case the outputs are the sinks(inputs) and there are only 2 sinks so having 3 LED child nodes would be confusing
+and there are required properties for each child like label.
 
-Well, it turns out there is this little hack where the code
-commandeers the first element in the oe->buffer to
-use as a list_head for the oe->to_free freelist. The problem is that
-this entry also gets freed, but its
-event->event field is NEVER initialized. So depending on how the
-memory was previously used, you
-could get a on NULL value and crash in free_dup_event(). This is what
-happened to me. I am glad
-I pursued this further because the bug is still in the upstream
-version. The patch is a one-liner fixing
-the initialization of the event->event = NULL. For the other elements
-in the list, the initialization is
-already done at the end of alloc_event().
+Each child node would then need to present 1 LED node to the user space to control the LED string.  Which would
+be technically incorrect because you would have 2 LED nodes controlling the same control bank sink.
 
-I will send the patch separately.
+> 
+> 									Pavel
+> 
 
 
-
-On Wed, Aug 8, 2018 at 1:23 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Tue, Aug 07, 2018 at 12:11:05PM -0700, Stephane Eranian wrote:
-> > Jiri,
-> > On Tue, Aug 7, 2018 at 1:50 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> > >
-> > > On Tue, Aug 07, 2018 at 01:16:22AM -0700, Stephane Eranian wrote:
-> > > > On Tue, Aug 7, 2018 at 12:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> > > > >
-> > > > > On Mon, Aug 06, 2018 at 06:23:35PM -0700, Stephane Eranian wrote:
-> > > > > > Depending on memory allocations, it was possible to get a SEGFAULT in
-> > > > > > free_dup_event() because the event pointer was bogus:
-> > > > > >
-> > > > > > perf[1354]: segfault at ffffffff00000006 ip 00000000004b7fc7
-> > > > >
-> > > > > is there any reproducer?
-> > > > >
-> > > > The cmdline is simple:
-> > > > $ perf record -e cycles:pp -o - -a sleep 1 | perf inject -b -i - >/dev/null
-> > > > I was using v4.13 for my tests and it may be sensitive to compiler.
-> > > > Was using LLVM.
-> > >
-> > > I can't make it fail even when I compile with clang 'make CC=clang'
-> > >
-> > I checked, my actual reproducer is:
-> > $ perf record -o - -e cycles date |  perf inject -b -i - >/dev/null
-> > Tue Aug  7 12:03:48 PDT 2018
-> > [ perf record: Woken up 1 times to write data ]
-> > [ perf record: Captured and wrote 0.000 MB - ]
-> > Segmentation fault (core dumped)
-> >
-> > the crash is in perf inject.
-> > So if I do:
-> > $ perf record -o - -e cycles date >tt
-> > $ gdb perf
-> > (gdb) r inject -b -i - < tt  >/dev/null
-> > Program received signal SIGSEGV, Segmentation fault.
-> > free_dup_event (oe=0x26a39a0, event=0xffffffff00000000) at
-> > util/ordered-events.c:85
-> > 85 in util/ordered-events.c
-> > (gdb) bt
-> > #0  free_dup_event (oe=0x26a39a0, event=0xffffffff00000000) at
-> > util/ordered-events.c:85
-> > #1  ordered_events__free (oe=0x26a39a0) at util/ordered-events.c:310
-> > #2  0x00000000004b5a56 in __perf_session__process_pipe_events
-> > (session=<optimized out>) at util/session.c:1753
-> > #3  perf_session__process_events (session=<optimized out>) at
-> > util/session.c:1932
-> > #4  0x000000000043a2eb in __cmd_inject (inject=<optimized out>) at
-> > builtin-inject.c:750
-> > #5  cmd_inject (argc=<optimized out>, argv=<optimized out>) at
-> > builtin-inject.c:924
-> > #6  0x000000000046b175 in run_builtin (p=0xabc640 <commands+576>,
-> > argc=4, argv=0x7fffffffe560) at perf.c:297
-> > #7  0x000000000046b062 in handle_internal_command (argc=4,
-> > argv=0x7fffffffe560) at perf.c:349
-> > #8  0x000000000046a5e8 in run_argv (argcp=<optimized out>,
-> > argv=<optimized out>) at perf.c:393
-> > #9  main (argc=4, argv=0x7fffffffe560) at perf.c:531
->
-> nice
->
-> >
-> > Again, this is with an older version of perf compiled with LLVM.
->
-> can you also reproduce it with latest code?
->
-> > Notice the value of event passed to free_dup_event(): 0xffffffff00000000
-> > And yes, I checked sizeof(union_perf_event) = 4168 which is the size of
-> > the mmap2_event which is the largest.
-> >
-> > I also checked that you are freeing what you have actually allocated.
-> > No double free.
-> > If I add the padding or modifies the call to memdup() as in the patch,
-> > then the problem
-> > goes away.
-> >
-> > If you don't want to copy 4Kb each time, then you could also make the
-> > event field
-> > by a void *event and case whenever needed.
->
-> not sure I understand this one.. could you please elaborate?
->
-> >
-> > I suspect the problem may come from a compiler optimization or assumption which
-> > clashes with what you are optimizing here.
->
-> I'll go throught the code and try to find somethign.. thanks a lot for the backtrace
->
-> jirka
->
+-- 
+------------------
+Dan Murphy
