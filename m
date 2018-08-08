@@ -2,219 +2,136 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D34C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5798AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F6521A12
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 087C521771
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:09:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mY4IzHSr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F6521A12
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WuKZh5+2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087C521771
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbeHHS3I (ORCPT
+        id S1728028AbeHHS3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:29:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727081AbeHHS3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:29:08 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0B5121771;
-        Wed,  8 Aug 2018 16:08:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533744527;
-        bh=Ux1VrLtclywdQnoTK6jDIv8XNjq1ycKrh9ieqgHeX18=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mY4IzHSrbnr8X0S8SYnylILGGcfuu9s9SPhS7aq3GLGtUno+k5oMf3j5WHySoVAiS
-         Pw39FNY0c7QdaRke9RXWYCpyOV9V1ndGoBsAgnUde0RqAj0hapHYbJbv566uNgemTV
-         x9h5sdoGwPW+VucoEBdLk+btnF8BMoLwcSj1T3h0=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id C2A29140A1C; Wed,  8 Aug 2018 13:08:43 -0300 (-03)
-Date:   Wed, 8 Aug 2018 13:08:43 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Thomas-Mich Richter <tmricht@linux.ibm.com>
-Cc:     mpe@ellerman.id.au, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, brueckner@linux.vnet.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-Subject: Re: [PATCH 2/3] perf report: Add raw report support for s390
- auxiliary trace
-Message-ID: <20180808160843.GC9543@kernel.org>
-References: <20180802074622.13641-1-tmricht@linux.ibm.com>
- <20180802074622.13641-3-tmricht@linux.ibm.com>
- <87r2j9bkax.fsf@concordia.ellerman.id.au>
- <eda2632e-7919-5ffd-5f68-821e77d216fa@linux.ibm.com>
- <20180808155328.GA9543@kernel.org>
- <20180808155921.GB9543@kernel.org>
+        Wed, 8 Aug 2018 14:29:53 -0400
+Received: from mail-eopbgr40068.outbound.protection.outlook.com ([40.107.4.68]:40736
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727081AbeHHS3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:29:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vGtuODPpmnUjJJ+boj7Gx3h4cqshjSe/YDdJ6kzzJj8=;
+ b=WuKZh5+27klUbnhlsZaN7KKCvaF/U6/HyJ8BMr5cKJGJ6s9nk4Ba+DAn8buFMzzoUUXu56nYv4JcjTPRSiPWZ6u1hdGanhxVF05BMfl9UVk014+FGlR2DUOrhlz9ii8ZO+rFabemVcNlmRJhugp53ZZATYzthqvYkEjsyKTe0ow=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+Received: from localhost.localdomain (95.76.156.53) by
+ VI1PR04MB4301.eurprd04.prod.outlook.com (2603:10a6:803:3f::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Wed, 8 Aug 2018 16:09:26 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stefan Agner <stefan@agner.ch>, Marek Vasut <marex@denx.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        dri-devel@lists.freedesktop.org,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
+Date:   Wed,  8 Aug 2018 19:08:57 +0300
+Message-Id: <cover.1533743954.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180808155921.GB9543@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [95.76.156.53]
+X-ClientProxiedBy: DB6PR02CA0004.eurprd02.prod.outlook.com
+ (2603:10a6:6:15::17) To VI1PR04MB4301.eurprd04.prod.outlook.com
+ (2603:10a6:803:3f::28)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2ce8921f-ac90-4693-3004-08d5fd495148
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4301;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;3:UF36lloBX5EYVj+BGZXrBphHMXqOJNanhvYdoyUlGMTDoeS0VGkXA0cm0+5vq4Q3d7TDDXAIcOqCsY+mJ2SB4XCbks4ALgiKaFIXDtI6e3MXB76Ck25hhQz6/QhyCNp7gdYrq3Kkncdh8QwLbF02j2TAvmfS2PNUHR4RONJNozBeZgg+zT3sKSjEDEOBA9h7Lkjhi5PQQlaylv8jsGPudvm+fgwiOs7hbuAJonExZIFPP2BGie9Ca3W2g4xJKaS4;25:v17ZS1f20BpJZPbt4qXhswlyxNSSXGuFEBW1IA4O/0j6X0n41GcO2vw/ouWI4LTYk3J4VLTmd2cgLlZ9n34BBCdKHCwGaT+HegPt79D39n8oeOtn+wjs/nd8Ji64d7nWAztlhZcZjpu93XnlZ1zfey2z80KRXw2SSAkALDmoVJ7Bpwz2/Cw/RSzO9Fm4GIz7E4ap+3yoyfIFW/zEasCil2vykhwosIfAMr+peLi2l1k1a8Q7YZ/Q7aQTBPwbFnrsHPvvbBwI65Oqen/uZRJHuUxfzVkkvDxA6ebKPR9QFIeiJ2M/OufpIKI9o4xZNGMALrDFrLRM7GgG4Kuqkx4vlQ==;31:ZJ76EXRBM+YUwnETLKURoUy8hx/5HzvTFdCoUDiyxGvtiyD2pbvr0NE3X/va/DZp7v6Fw6tSeKgCcZgh090iN84zNkkjSSjn9iAMgpRVfdnyeC6d0WBVClSrE9uRcOtIgSKcz+phMu9aagKPFgFsS5d57weLi5HDTV60djD1IeRvkXS0CzC9qHkUKcSScurnNhbI+jRvgLYECZC4QcEDSGj231Lckkfp2NllXL89AO8=
+X-MS-TrafficTypeDiagnostic: VI1PR04MB4301:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;20:w/0Xiv6a8r7aEj7j+eQbaoCl4RhEdY4bKjuyO5BJCOA+YrL+7t3UIauK/pbVExEt1ujIz5jSva6RrPJ2g/9us63+2zUpc9IeMmx3JbL07GwKRH00rgJjjgOtLv3+/Cg9RoKW0254DViYpoW+4jMrsnggRbTYGg/h6u3r8MkskU3LT+3lMFtg5vBdRy7Ci+VvqNHSSDf3no15EdXHOiMJPlJzXkRiC2pKV5DUajT1odILN03cZK7SiSfC/sLHDbHYaaDDbv0b+dnFPRlJCqqOt981C3xZB1s0Os2kyXwbuI9wSK137XGuaQUNxrCxUa9GT+IESFOPS3d6Bg4M/bn/4ebD5SIUuVO0/p1PKuSjUN3HXxqWkTAtC/sIB6Dl4NELHXqXVfr+uV5FfDfUR233Za2WCqA4ClQPoqVOSy6dhhQGlwq3EhVIT0Y2kOLSTgO/6pncg3j16JJVraBpD2IJNuN/254fabDUFN+gCpzRzKQR4bnwSN9A8icyceJE2IOF;4:BTfjz2g09lTYk1MrDKkuGky4xv8oEcg57QR0b2RahbfwhEizsYarHzgm3qQJ1NFPQRb18rhOK8fQ3whnownIEgcGba+Vq1xwhpVvkn2IVXVm1JjOkocG6eNEQm2Ok53OxkbFT52GNxIUnwli3bzdJUd5gvIWDTLHfZd6OFt3mYjHPokR2y47RzMu7/plFwCPthgDAZIhVcD+NaWdrg/vZZu+mJuHEhg12ej+k7dmOAR97n6m99UtonfGYYmqQvmpoKuvxm7RPJuTNbhu4TEHUA==
+X-Microsoft-Antispam-PRVS: <VI1PR04MB430148A71E01D67BCA2058BFEE260@VI1PR04MB4301.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB4301;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4301;
+X-Forefront-PRVS: 07584EDBCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39850400004)(376002)(396003)(346002)(366004)(136003)(199004)(189003)(66066001)(7736002)(47776003)(6512007)(81166006)(68736007)(81156014)(25786009)(8676002)(6666003)(110136005)(54906003)(36756003)(5024004)(305945005)(6306002)(106356001)(105586002)(53936002)(50466002)(6486002)(97736004)(48376002)(86362001)(4326008)(966005)(3846002)(5660300001)(26005)(486006)(16526019)(186003)(316002)(2906002)(16586007)(6116002)(6506007)(44832011)(478600001)(8936002)(956004)(2616005)(50226002)(386003)(476003)(51416003)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4301;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4301;23:hjxDHEsOpyYT7ZK3Wx0n3ntzhinmF9jHcUXFdJEs9?=
+ =?us-ascii?Q?4wvyQopULzSpbrjW/Ahd60JmABUUkTibSXbtXdQQXJCD7a/MQ14LEg2i3Uai?=
+ =?us-ascii?Q?yZGDDcoui+zuldrHel3/OXW/xO0NIAXAOEzC7qlU38CX6LhONvpVJDQwUVTk?=
+ =?us-ascii?Q?bpoTvO5jgIgLAiqRTCaa1VS/u/7Yc7JblqzE2YIpfw1XTo7RylR6fQMECCE1?=
+ =?us-ascii?Q?pQ6Zl1oKvF/B91dCGKaaCASIpr8VUh69ZBVftKOHoxJl468RiTcjBqoblX+j?=
+ =?us-ascii?Q?g2WqZNKx87ZzoatSgzNmVqddBl/ECccjspaieEhQ0fO4jCQEx/qOf1eN+TyE?=
+ =?us-ascii?Q?U0FcrLyJDnjmgROjnbA55GcNYeIt3TCbCmPACAf3Rq2hQfkphLLnE2Q8zGjl?=
+ =?us-ascii?Q?32sve99NpHK/DmxofgHvYmsanRdOmokioWgKV20TZ0PM8/zGH32vwKutLmKE?=
+ =?us-ascii?Q?sl3LoKx8OK3y7lztZ/53c1nyhPbkH9Xc9KtF5BBFlAKUaq67pnCDP33QSjfd?=
+ =?us-ascii?Q?/GOWrDC8oaMuUgrfUxCAKSRNrQjdsEJshrWSbg65VgKkwmPbZxWi+2+hqNOQ?=
+ =?us-ascii?Q?uTPghclEK8c9R5VLMeTyZpWLgM+Fc9tVZZPXfR6O6H+J/7aMne0Nxulc9fnB?=
+ =?us-ascii?Q?xCAifV3isnYxu4ApkKx/NxiyX372iOuBk+UqeWSnh6Tr2XC6Tv+92x8eKaCu?=
+ =?us-ascii?Q?qPf99zsBp5waFyR2/dNvVDZsEw1ds51IworMv1FdEQcYE55vKsoZYmWC+Jwq?=
+ =?us-ascii?Q?tGyA7Nj2JSYGnYM9nxInuwhxx7tiX0RNnwVGEKWOyvKA48Hk7Fsob2hRrKJy?=
+ =?us-ascii?Q?7g/Qj1cXnsRKf2JVMU/6SJ4VtBq3/dDoXbbegKudU+6UV74YHRtFr3Hd0EPr?=
+ =?us-ascii?Q?br5kmBeikzn1QALLHDklf/N/Chh/DXpzRWstgU9QxqTXoeRFj5y/AcYKJrnK?=
+ =?us-ascii?Q?hP4x4Y7reVAtHxe+OXenEpz0pspNpPvP9oOZvhq9WwwNNiAEsrkWyKqrac1G?=
+ =?us-ascii?Q?o33afFixYydmp1VndlnKPmu6ZCc7+bxF6ddBlCVWEIyF+jKLjDO49Qof/0C9?=
+ =?us-ascii?Q?63m3GUoXwPejcSsxqt9ryKNIhsH8oVk3artVZYiN4RvRiSTNhk4S2yClEvz2?=
+ =?us-ascii?Q?fObS9ueb28G6mwEvBkc7hJnWlFmirNji1naAHngBXDS/88L3BHsKriLeGLxW?=
+ =?us-ascii?Q?ZbxpjVMniB+svHPKkODa/VMGsu2mOaILxrItmYNWytOS/iS0WJ9FTZj7w=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: l3RvoweIbK71MVhSi8T3xXmi6OoU1cM131uiFIeTR+Wt9QzX5obALXWlLLVb7UpJnRdg/LjmoW44cYLPjfh67+62OdfDMsW43MOSL1jf3zrGL31qsWvQdel7iWEoBEl+cXGrDDeTOOLAmqM5LFRVPsQsLCIM+Y1+Pcin5ewDKfJnrkjfU2ZzjCzmFwPE5GxfHfhe63s4lqx2J8ahb+ttS/tpuFvN+9RbfJUi05D637f7PiEoBHVTH8peSwFFuBgtSLpTZuPIFD0i626j6URFLs0RWJu0pxdUZjc6oHUROZUxbjSantlkPsz5iSOCj4x3YSSeTKHAjmEZTGJWVFcjOXpRAYFbQ1Glh9rROc+7TWo=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;6:LW8ty9SbmQEsTG+LSfj5RYDUCLHcLTtoqI60KZfnVzhxse5uQZX5N2CiVOn51S2wJxX0a96BYnCw6MsI5wPCRDUKayPOj8AVD+oVZHxVUc9hF1javKiO83nab0RVv7tm8189d7L1LdlnAy5Cx6kfwovj2TegYHhF9B4zKS5i1DAs6aEcamCb8vhvfWsEIM7bfvyIsb3VU5gMip0K5AwGjwXpawLm46QOIryEGOJe4mdTe48BIxXbPEXJoc8WKKrQZXfDGtTP9OCUQo1y3D57qt4d1WzO7aGgoGEExLPGfIcAeUqJzkGsPckSccBnO+hz8EzuhUKVDeoFx2pLfQWtBmJgC+bbkagQpkXRAfCIoTXSQtzKJjenk2SSPUyMcg8x9EDM0+4mXK9RaP2MTdOf97wP9jdr5QpYoiGGlvLk38GRe0MzFLUDpZdPG27fYMnFbXF8U5rTTpgiX6HwZ3gSHA==;5:DLavz0ALdA0UVptIBJ9yjMMvUgdsj6x2MlVOAW9mdAS8JCK4ONSeVxHyS/z6uWhWdqzBtTd1KhOF8Yh+kvwZdtvaNEgH8jXHfZDivuHrfwtxp+EVu8i+ebB02NHAa0cQxWKbe1+cSuuK21tzAA+/YYRcKtSnX8TTLXI8MtBiJzU=;7:trJhKxuvOp/7io8xhsdYSA5QJSMSuckHeT/ieNZXOoTAo0iPhfNEVn0WOf0gkk3CjGYipM0seDFL+6+boh3ZrWDqeMdA/BHbdyaP11rmi9ltz4iGCHF+tHXFHTFZAfM2maiUoqB/ttiZh9LgZqab30mJ9gpkHR6fn4tT4/lnCfa0vsoeQo8SHiWl05aJu1Hg3w+hr6Sz8cQIFvkdDCI8B/a7H4P6o43bS4hbkwYWyNyY79ArbIWrgutxzQupk+Qp
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2018 16:09:26.7793
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ce8921f-ac90-4693-3004-08d5fd495148
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4301
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Aug 08, 2018 at 12:59:21PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Wed, Aug 08, 2018 at 12:53:28PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Wed, Aug 08, 2018 at 08:39:58AM +0200, Thomas-Mich Richter escreveu:
-> > > On 08/08/2018 05:37 AM, mpe@ellerman.id.au wrote:
-> > > > Thomas Richter <tmricht@linux.ibm.com> writes:
-> > > >> Add support for s390 auxiliary trace support.
-> > > >> Use 'perf record -e rbd000' to create the perf.data file.
-> > > >> The event also has the symbolic name SF_CYCLES_BASIC_DIAG,
-> > > >> using 'perf record -e SF_CYCLES_BASIC_DIAG' is equivalent.
-> > > > ...
-> > > >>
-> > > >> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> > > >> Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-> > > >> ---
-> > > >>  tools/perf/util/s390-cpumsf-kernel.h |  71 ++++++++
-> > > >>  tools/perf/util/s390-cpumsf.c        | 244 ++++++++++++++++++++++++++-
-> > > >>  2 files changed, 314 insertions(+), 1 deletion(-)
-> > > >>  create mode 100644 tools/perf/util/s390-cpumsf-kernel.h
-> > > > 
-> > > > 
-> > > > I'm seeing a build break on ppc64le which seems to be caused by this
-> > > > commit (I haven't bisected):
-> > > > 
-> > > >   util/s390-cpumsf.c: In function ‘trailer_timestamp’:
-> > > >   util/s390-cpumsf.c:222:2: error: dereferencing type-punned pointer will break strict-aliasing rules [-Werror=strict-aliasing]
-> > > >     return *((unsigned long long *) &te->timestamp[te->t]);
-> > > >     ^
-> > > > 
-> > > > 
-> > > > And on powerpc big endian:
-> > > >   In file included from util/cpumap.h:10:0,
-> > > >                    from util/s390-cpumsf.c:150:
-> > > >   util/s390-cpumsf.c: In function ‘s390_cpumsf_basic_show’:
-> > > >   util/s390-cpumsf.c:187:10: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘size_t {aka unsigned int}’ [-Werror=format=]
-> > > >      pr_err("Invalid AUX trace basic entry [%#08lx]\n", pos);
-> > > >             ^
-> > > > 
-> > > > cheers
-> > > > 
-> > > 
-> > > Can you please try this patch. Thanks a lot
-> > 
-> > Ok, this was making the build fail as well on some containers here:
-> 
-> Ok, failed in another container:
-> 
->   11 centos:6                      : gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
-> 
->   CC       /tmp/build/perf/tests/sample-parsing.o
-> cc1: warnings being treated as errors
-> In file included from util/s390-cpumsf.c:161:
-> util/s390-cpumsf-kernel.h:16: error: packed attribute is unnecessary for 'def'
-> util/s390-cpumsf-kernel.h:25: error: packed attribute is unnecessary for 'CL'
-> util/s390-cpumsf-kernel.h:28: error: packed attribute is unnecessary for 'ia'
-> util/s390-cpumsf-kernel.h:29: error: packed attribute is unnecessary for 'gpp'
-> util/s390-cpumsf-kernel.h:30: error: packed attribute is unnecessary for 'hpp'
-> util/s390-cpumsf-kernel.h:34: error: packed attribute is unnecessary for 'def'
-> mv: cannot stat `/tmp/build/perf/util/.s390-cpumsf.o.tmp': No such file or directory
-> make[4]: *** [/tmp/build/perf/util/s390-cpumsf.o] Error 1
+Adding lcdif nodes to a power domain currently does work, it results in
+black/corrupted screens or hangs. While the driver does enable runtime
+pm it does not deal correctly with the block being unpowered.
 
-So, this is how it shows using that __packed you have:
+Changes since v3:
+ * Don't set initial fb in mode_set_nofb, do it in crtc_enable
+ * Simplify AXI clk handling to allow setting fb in crtc_enable
+ * No functional changes
 
-[acme@seventh perf]$ pahole -C hws_basic_entry ~/bin/perf
-struct hws_basic_entry {
-	unsigned int               def:16;               /*     0:16  4 */
-	unsigned int               R:4;                  /*     0:12  4 */
-	unsigned int               U:4;                  /*     0: 8  4 */
-	unsigned int               z:2;                  /*     0: 6  4 */
-	unsigned int               T:1;                  /*     0: 5  4 */
-	unsigned int               W:1;                  /*     0: 4  4 */
-	unsigned int               P:1;                  /*     0: 3  4 */
-	unsigned int               AS:2;                 /*     0: 1  4 */
-	unsigned int               I:1;                  /*     0: 0  4 */
-	unsigned int               CL:2;                 /*     4:30  4 */
-	unsigned int               prim_asn:16;          /*     4: 0  4 */
+Last 3 patches are identical to v3 with review tags attached.
 
-	/* XXX 14 bits hole, try to pack */
+Link to v3: https://lkml.org/lkml/2018/8/6/728
 
-	long long unsigned int     ia;                   /*     8     8 */
-	long long unsigned int     gpp;                  /*    16     8 */
-	long long unsigned int     hpp;                  /*    24     8 */
+Leonard Crestez (5):
+  drm/mxsfb: Move axi clk enable/disable to crtc enable/disable
+  drm/mxsfb: Fix initial corrupt frame when activating display
+  drm/mxsfb: Add pm_runtime calls to pipe_enable/disable
+  drm/mxsfb: Add PM_SLEEP support
+  drm/mxsfb: Switch to drm_atomic_helper_commit_tail_rpm
 
-	/* size: 32, cachelines: 1, members: 14 */
-	/* bit holes: 1, sum bit holes: 14 bits */
-	/* last cacheline: 32 bytes */
-};
-[acme@seventh perf]$
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 53 +++++++++++++++++++-----------
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 40 ++++++++++++++++++++++
+ 2 files changed, 74 insertions(+), 19 deletions(-)
 
-And:
+-- 
+2.17.1
 
-[acme@seventh perf]$ pahole -C hws_diag_entry ~/bin/perf
-struct hws_diag_entry {
-	unsigned int               def:16;               /*     0:16  4 */
-	unsigned int               R:15;                 /*     0: 1  4 */
-	unsigned int               I:1;                  /*     0: 0  4 */
-	u8                         data[0];              /*     4     0 */
-
-	/* size: 4, cachelines: 1, members: 4 */
-	/* last cacheline: 4 bytes */
-};
-[acme@seventh perf]$ 
-
-Now, if we apply this patch:
-
-[acme@seventh perf]$ pahole -C hws_basic_entry ~/bin/perf
-struct hws_basic_entry {
-	unsigned int               def:16;               /*     0:16  4 */
-	unsigned int               R:4;                  /*     0:12  4 */
-	unsigned int               U:4;                  /*     0: 8  4 */
-	unsigned int               z:2;                  /*     0: 6  4 */
-	unsigned int               T:1;                  /*     0: 5  4 */
-	unsigned int               W:1;                  /*     0: 4  4 */
-	unsigned int               P:1;                  /*     0: 3  4 */
-	unsigned int               AS:2;                 /*     0: 1  4 */
-	unsigned int               I:1;                  /*     0: 0  4 */
-	unsigned int               CL:2;                 /*     4:30  4 */
-	unsigned int               prim_asn:16;          /*     4: 0  4 */
-
-	/* XXX 14 bits hole, try to pack */
-
-	long long unsigned int     ia;                   /*     8     8 */
-	long long unsigned int     gpp;                  /*    16     8 */
-	long long unsigned int     hpp;                  /*    24     8 */
-
-	/* size: 32, cachelines: 1, members: 14 */
-	/* bit holes: 1, sum bit holes: 14 bits */
-	/* last cacheline: 32 bytes */
-};
-[acme@seventh perf]$ 
-
-See, no need for packing, that old gcc version is right, and the other
-struct:
-
-[acme@seventh perf]$ pahole -C hws_diag_entry ~/bin/perf
-struct hws_diag_entry {
-	unsigned int               def:16;               /*     0:16  4 */
-	unsigned int               R:15;                 /*     0: 1  4 */
-	unsigned int               I:1;                  /*     0: 0  4 */
-	u8                         data[0];              /*     4     0 */
-
-	/* size: 4, cachelines: 1, members: 4 */
-	/* last cacheline: 4 bytes */
-};
-[acme@seventh perf]$
-
-No need for __packed.
-
-I'm removing that to avoid having this failling in compilers that have
-such a warning, since we default to Werror.
-
-Holler if there is something I'missing :-)
-
-- Arnaldo
