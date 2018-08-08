@@ -2,123 +2,91 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F782C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6DBC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139A221708
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:13:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139A221708
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 059C62156B
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:14:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059C62156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeHHNcf (ORCPT
+        id S1726999AbeHHNdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:32:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51816 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726772AbeHHNcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:32:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1E89640216E6;
-        Wed,  8 Aug 2018 11:13:21 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-132.ams2.redhat.com [10.36.116.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E78101007090;
-        Wed,  8 Aug 2018 11:13:18 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 3A11016E2B; Wed,  8 Aug 2018 13:13:18 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        QEMU'S CIRRUS DEVICE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] drm/cirrus: flip default from 24bpp to 16bpp
-Date:   Wed,  8 Aug 2018 13:13:11 +0200
-Message-Id: <20180808111311.30311-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 11:13:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 11:13:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+        Wed, 8 Aug 2018 09:33:49 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37260 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726733AbeHHNdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 09:33:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8280318A;
+        Wed,  8 Aug 2018 04:14:35 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3F083F2EA;
+        Wed,  8 Aug 2018 04:14:32 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 12:14:29 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
+Message-ID: <20180808111429.GC25150@e107981-ln.cambridge.arm.com>
+References: <cover.1532448745.git.leonard.crestez@nxp.com>
+ <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem with 24bpp is that it is a rather unusual depth these days,
-cirrus is pretty much the only relevant device still using that, and it
-is a endless source of issues.  Wayland doesn't support it at all.  Bugs
-in Xorg keep showing up.
+On Wed, Aug 08, 2018 at 10:53:52AM +0000, Leonard Crestez wrote:
+> On Tue, 2018-07-24 at 19:14 +0300, Leonard Crestez wrote:
+> > Changes since v2:
+> >  * Print with dev_info if link fails on resume (Lucas)
+> >  * Add a comment on imx7d pci irq mappings (Andrey)
+> >  * Make imx6_pcie_ltssm_disable print an error on IMX6Q (Lucas)
+> > 
+> > The ltssm_disable does not return an error because it can't be usefully
+> > handled, reversing partial suspend is a nightmare and unlikely to work.
+> > 
+> >  * Drop "reset: imx7: Fix always writing bits as 0 (accepted by Philipp)
+> > 
+> > Series is against linux-next tag next-20180724 where the reset patch was
+> > already accepted. The imx7d.dtsi patch is also useful standalone.
+> > 
+> > Link to v2: https://lkml.org/lkml/2018/7/20/472
+> 
+> This is a gentle reminder that this series was reviewed by Lucas two
+> weeks ago but not yet included.
 
-Typically either 32bpp or 16bpp are used.  Using 32bpp would limit the
-resolution to 800x600 due to hardware constrains.  So lets go with 16bpp.
+Does this series have a functional dependency on the reset fix ? If yes
+we can have a bisection proplem depending on which tree gets merged
+first.
 
-Also use the default depth for the framebuffer console and
-mode_info->preferred_depth.
+Please let me know.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/cirrus/cirrus_drv.c   | 4 ++--
- drivers/gpu/drm/cirrus/cirrus_fbdev.c | 3 +--
- drivers/gpu/drm/cirrus/cirrus_mode.c  | 2 +-
- 3 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/cirrus/cirrus_drv.c b/drivers/gpu/drm/cirrus/cirrus_drv.c
-index 69c4e352dd..b4f7be056c 100644
---- a/drivers/gpu/drm/cirrus/cirrus_drv.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_drv.c
-@@ -16,11 +16,11 @@
- #include "cirrus_drv.h"
- 
- int cirrus_modeset = -1;
--int cirrus_bpp = 24;
-+int cirrus_bpp = 16;
- 
- MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
- module_param_named(modeset, cirrus_modeset, int, 0400);
--MODULE_PARM_DESC(bpp, "Max bits-per-pixel (default:24)");
-+MODULE_PARM_DESC(bpp, "Max bits-per-pixel (default:16)");
- module_param_named(bpp, cirrus_bpp, int, 0400);
- 
- /*
-diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-index 32fbfba2c6..b329a54290 100644
---- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-@@ -271,7 +271,6 @@ int cirrus_fbdev_init(struct cirrus_device *cdev)
- {
- 	struct cirrus_fbdev *gfbdev;
- 	int ret;
--	int bpp_sel = 24;
- 
- 	/*bpp_sel = 8;*/
- 	gfbdev = kzalloc(sizeof(struct cirrus_fbdev), GFP_KERNEL);
-@@ -296,7 +295,7 @@ int cirrus_fbdev_init(struct cirrus_device *cdev)
- 	/* disable all the possible outputs/crtcs before entering KMS mode */
- 	drm_helper_disable_unused_functions(cdev->dev);
- 
--	return drm_fb_helper_initial_config(&gfbdev->helper, bpp_sel);
-+	return drm_fb_helper_initial_config(&gfbdev->helper, cirrus_bpp);
- }
- 
- void cirrus_fbdev_fini(struct cirrus_device *cdev)
-diff --git a/drivers/gpu/drm/cirrus/cirrus_mode.c b/drivers/gpu/drm/cirrus/cirrus_mode.c
-index c91b9b054e..91128b1d8d 100644
---- a/drivers/gpu/drm/cirrus/cirrus_mode.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_mode.c
-@@ -518,7 +518,7 @@ int cirrus_modeset_init(struct cirrus_device *cdev)
- 	cdev->dev->mode_config.max_height = CIRRUS_MAX_FB_HEIGHT;
- 
- 	cdev->dev->mode_config.fb_base = cdev->mc.vram_base;
--	cdev->dev->mode_config.preferred_depth = 24;
-+	cdev->dev->mode_config.preferred_depth = cirrus_bpp;
- 	/* don't prefer a shadow on virt GPU */
- 	cdev->dev->mode_config.prefer_shadow = 0;
- 
--- 
-2.9.3
-
+Thanks,
+Lorenzo
