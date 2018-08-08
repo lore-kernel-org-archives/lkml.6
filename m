@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EACC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095B6C46471
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B06020C01
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEADF21480
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="AcuLJY17"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B06020C01
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tGOhqhgB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEADF21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeHHRxt (ORCPT
+        id S1728160AbeHHRxu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:53:49 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33474 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeHHRxr (ORCPT
+        Wed, 8 Aug 2018 13:53:50 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44873 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728036AbeHHRxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:53:47 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r24-v6so956640wmh.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:36 -0700 (PDT)
+        Wed, 8 Aug 2018 13:53:49 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r16-v6so2382633wrt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DW0C9V3JvjZMYtKc8VK2o7U2J9FYgSOIQQygiNDbrgo=;
-        b=AcuLJY17W5Clw2yPL5HLD6Zj836DwoaBCJaGP+qN0/Y43HV50mrYYtYYqk2g0jc5dI
-         wd6kpW8QSnFeZCA+aTIDvicCoF/3c9f1s8FlRMEhisMjdBLYNAx95XuE0Os2yGdjIaI3
-         +SCJ70xWZUGUsGafHrxPQjv4OaFwaD2CElfJhalZ7uds3s8VdEfbm/Ppl8w0xUc9G/m9
-         tB0sdr/1VtZs+OShiP45q9K0juxDsN9SLMKZBOYHkYKCBt90SdbENcs2DIl+r+Iz2vg+
-         p4skoT8ny2aLmTgtM/kuyX8zj0UHZBvtyh/N+/pcdzAOu8GGShyguIP5OHLOwI3bblhH
-         NiKQ==
+        bh=yrklqQoVna1AmqNCU3D6TLUmDxCRyEqqCAbn0AY+9ek=;
+        b=tGOhqhgB+VQgpU+wvkZEyKTCEfpDSRa9otYxlA03cNtCasel7cpD3/KdUhww2wm4Pm
+         fjecI5ekdjsXq/qtOgD40K5558+7j9MiGovw1hv3MRtLpIZAn7heVXGUqXD+JfqmsnwQ
+         TXJRpYoLiDY6qtKE7TgSXcyICr489v0zRi6FJ1fUuu3+eticUHpF2b2AOogwbp9BmN/N
+         NGIEklrO1b7ixyrtRAQoTrGihAn1LjnzY3rew+cvC68zGxI58LDEa5CmJ7R3xwj8Risv
+         7GOXKvnUmzX7bbj5hXhy5QCUv3xKFAEv+/DkgzpyWsFci4GBN+q6Y+8dWoVmQTjRJM3W
+         q00g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DW0C9V3JvjZMYtKc8VK2o7U2J9FYgSOIQQygiNDbrgo=;
-        b=O9ChEZcciZq6iSCCMTcWvxyq9m9wf3dijKbnBd9nysdpC61f4J5xhDr4K5/5lWuW8A
-         +bfj9oLIVq8b70iqwxdJmDRIep/eGJje5WMRbUsm5eNwzEfrOr+tcvjPGUdJgbirN9Ps
-         BKJWVHu7fGjvMqWpIR4ichT+DNR0//vvgniluQdqOUoSuFga+oVtW9AUKWv9DcwbQSxP
-         LWzYwt1wkRTQX6rpYJdIzV0BLLgro7R4xneoDHclgJGW49X1JDeJoizXu/VmunoYWw98
-         kSqcoH7CGFc3343hrlRB4JezGyLa+ncvC2IZCLM6rKm5ODrggRDZXndX0/LgDC2qPbMJ
-         yqoQ==
-X-Gm-Message-State: AOUpUlHaDiUpYxzFmcZ0sy7d7Ewj5JxDxp4G5cJrOfADjf3mLOTWM+y2
-        pLROq/+gbSVdsjoYT0K+4OeQPw==
-X-Google-Smtp-Source: AA+uWPxd1LO/WvVi1GIoWBanTKcpOlXMsLtYBnwvackLfen0yF3M6D0EYdVb2dOx9LyK7QBoUTIHag==
-X-Received: by 2002:a1c:8587:: with SMTP id h129-v6mr2050951wmd.105.1533742416039;
-        Wed, 08 Aug 2018 08:33:36 -0700 (PDT)
+        bh=yrklqQoVna1AmqNCU3D6TLUmDxCRyEqqCAbn0AY+9ek=;
+        b=bWwESqLFBbRWy4267tm2sX0Sjbp0j/8NqGHJqSYPDBhueTWTmmDEN5k/vIy5GMrvhe
+         qjIlE2bwdogXCyRWNMI+YaThh/8KIQrjzpBY64nQUSSurqQmb10K9cT4300gqZ2E/VRh
+         dZxx1ygtT8zEdTRD4+Gh8CVa5Zr+CaomxsLHR4Y9OV/yW/A1fK9DL3gCMvTRZyzcIUEc
+         Ox9oKgDRzvjQC3PksJR9wC+4K3cthxcRubaJQy8nDiYNBDNuRSKhx0Eep7hEiD9fOw0I
+         /G0jJTwMlIoxgbqGRSa53YdH6XrphS2L51duRi0ndxb4hrS+pmwVfCwg7213HM7aPYII
+         7YGQ==
+X-Gm-Message-State: AOUpUlGQNfgxH9f8G1vlW6RhU+3grceO/mVXgxvDE4dFHH0pVg8BzK4G
+        jUpczVY7Nf3ZgQU+DRa5BJ9WZw==
+X-Google-Smtp-Source: AA+uWPwEASbCLgwuQsHEGaZm9m+7/XT8CXQ1Qp5WvwSSMK3JkUQrEpoFZ6K2BNuLsbgiE22k2QymAQ==
+X-Received: by 2002:adf:9a55:: with SMTP id z79-v6mr2083051wrb.153.1533742418005;
+        Wed, 08 Aug 2018 08:33:38 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.33
+        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:33:35 -0700 (PDT)
+        Wed, 08 Aug 2018 08:33:37 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -88,9 +88,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 05/28] nvmem: remove the name field from struct nvmem_device
-Date:   Wed,  8 Aug 2018 17:31:27 +0200
-Message-Id: <20180808153150.23444-6-brgl@bgdev.pl>
+Subject: [PATCH 06/28] mtd: Add support for reading MTD devices via the nvmem API
+Date:   Wed,  8 Aug 2018 17:31:28 +0200
+Message-Id: <20180808153150.23444-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180808153150.23444-1-brgl@bgdev.pl>
 References: <20180808153150.23444-1-brgl@bgdev.pl>
@@ -99,37 +99,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Alban Bedel <albeu@free.fr>
 
-This field is never set and is only used in a single error message.
-Remove the field and use nvmem_device_name() instead.
+Allow drivers that use the nvmem API to read data stored on MTD devices.
+For this the mtd devices are registered as read-only NVMEM providers.
+On OF systems only devices that have the 'nvmem-provider' property
+are registered, on non-OF system all MTD devices are registered.
 
+Signed-off-by: Alban Bedel <albeu@free.fr>
+[Bartosz:
+  - use the managed variant of nvmem_register(),
+  - set the nvmem name]
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mtd/Kconfig     |  1 +
+ drivers/mtd/mtdcore.c   | 50 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/mtd/mtd.h |  2 ++
+ 3 files changed, 53 insertions(+)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b040370292a7..6c825ce866b6 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -26,7 +26,6 @@
- #include <linux/slab.h>
+diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
+index 46ab7feec6b6..f5549482d0df 100644
+--- a/drivers/mtd/Kconfig
++++ b/drivers/mtd/Kconfig
+@@ -1,5 +1,6 @@
+ menuconfig MTD
+ 	tristate "Memory Technology Device (MTD) support"
++	imply NVMEM
+ 	help
+ 	  Memory Technology Devices are flash, RAM and similar chips, often
+ 	  used for solid state file systems on embedded devices. This option
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 42395df06be9..a57302eaceb5 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -488,6 +488,49 @@ int mtd_pairing_groups(struct mtd_info *mtd)
+ }
+ EXPORT_SYMBOL_GPL(mtd_pairing_groups);
  
- struct nvmem_device {
--	const char		*name;
- 	struct module		*owner;
- 	struct device		dev;
- 	int			stride;
-@@ -712,7 +711,7 @@ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
- 	if (!try_module_get(nvmem->owner)) {
- 		dev_err(&nvmem->dev,
- 			"could not increase module refcount for cell %s\n",
--			nvmem->name);
-+			nvmem_device_name(nvmem));
++static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
++			      void *val, size_t bytes)
++{
++	struct mtd_info *mtd = priv;
++	size_t retlen;
++	int err;
++
++	err = mtd_read(mtd, offset, bytes, &retlen, val);
++	if (err && err != -EUCLEAN)
++		return err;
++
++	return retlen == bytes ? 0 : -EIO;
++}
++
++static int mtd_nvmem_add(struct mtd_info *mtd)
++{
++	struct nvmem_config config = { };
++
++	config.dev = &mtd->dev;
++	config.owner = THIS_MODULE;
++	config.name = mtd->name;
++	config.reg_read = mtd_nvmem_reg_read;
++	config.size = mtd->size;
++	config.word_size = 1;
++	config.stride = 1;
++	config.read_only = true;
++	config.root_only = true;
++	config.priv = mtd;
++
++	mtd->nvmem = devm_nvmem_register(&mtd->dev, &config);
++	if (IS_ERR(mtd->nvmem)) {
++		/* Just ignore if there is no NVMEM support in the kernel */
++		if (PTR_ERR(mtd->nvmem) == -ENOSYS) {
++			mtd->nvmem = NULL;
++		} else {
++			dev_err(&mtd->dev, "Failed to register NVMEM device\n");
++			return PTR_ERR(mtd->nvmem);
++		}
++	}
++
++	return 0;
++}
++
+ static struct dentry *dfs_dir_mtd;
  
- 		mutex_lock(&nvmem_mutex);
- 		nvmem->users--;
+ /**
+@@ -570,6 +613,11 @@ int add_mtd_device(struct mtd_info *mtd)
+ 	if (error)
+ 		goto fail_added;
+ 
++	/* Add the nvmem provider */
++	error = mtd_nvmem_add(mtd);
++	if (error)
++		goto fail_nvmem_add;
++
+ 	if (!IS_ERR_OR_NULL(dfs_dir_mtd)) {
+ 		mtd->dbg.dfs_dir = debugfs_create_dir(dev_name(&mtd->dev), dfs_dir_mtd);
+ 		if (IS_ERR_OR_NULL(mtd->dbg.dfs_dir)) {
+@@ -595,6 +643,8 @@ int add_mtd_device(struct mtd_info *mtd)
+ 	__module_get(THIS_MODULE);
+ 	return 0;
+ 
++fail_nvmem_add:
++	device_unregister(&mtd->dev);
+ fail_added:
+ 	of_node_put(mtd_get_of_node(mtd));
+ 	idr_remove(&mtd_idr, i);
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index a86c4fa93115..8121c6582285 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -25,6 +25,7 @@
+ #include <linux/notifier.h>
+ #include <linux/device.h>
+ #include <linux/of.h>
++#include <linux/nvmem-provider.h>
+ 
+ #include <mtd/mtd-abi.h>
+ 
+@@ -339,6 +340,7 @@ struct mtd_info {
+ 	struct device dev;
+ 	int usecount;
+ 	struct mtd_debug_info dbg;
++	struct nvmem_device *nvmem;
+ };
+ 
+ int mtd_ooblayout_ecc(struct mtd_info *mtd, int section,
 -- 
 2.18.0
 
