@@ -2,427 +2,145 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD95CC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BDDC46471
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6664E21771
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6664E21771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 24BBD21723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmsc+L03"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BBD21723
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbeHHSeI (ORCPT
+        id S1729805AbeHHSeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:34:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728330AbeHHSdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:33:33 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19E5B21A52;
-        Wed,  8 Aug 2018 16:13:10 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fnR5B-0002Xu-49; Wed, 08 Aug 2018 12:13:09 -0400
-Message-Id: <20180808161309.026662755@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 11:56:02 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Yordan Karadzhov <y.karadz@gmail.com>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH 14/24] tools/lib/traceevent: Rename pevent_function* APIs
+        Wed, 8 Aug 2018 14:34:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45472 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729752AbeHHSeO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:34:14 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i26-v6so1361211pfo.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 09:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=kWbgqFWnf7rarNatQL16OW5agW56H2KnxyqqbjZLOvs=;
+        b=nmsc+L03OaBFKM8fm6mRFyebJM70CJYrRU3sykv2FYtNv2+C4SsxoXg/mUZCpYP+bd
+         iOrdWetR76b25cPsSlcAc3Drk3jYQtiTFBQ/DsmWlXfxmf4fiPjN8OoATyVUG0lVgO4A
+         Xef03ovDmLUvjSslJkZiMsqKjFRuPN6dLdFoFO0WgIB9tfEHzkRsjPe9bmupH0+WYDps
+         i/8Ub7TWTTZqEGRFG07wwU9ByXnIRbjS83i3UNoEcUPg18oq6Su/ssvaTLrqKjIOkcQZ
+         Td+9QO8xIExNzl+8frXynTKsXtNgHhoSCgmyOBfvbBKjnBEHCfqPX0ioMyr68u4eg2Yz
+         SgHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=kWbgqFWnf7rarNatQL16OW5agW56H2KnxyqqbjZLOvs=;
+        b=iGRv/rsTDmnwE6PY0tb5fS81/CfJasUIORgXZd9lUzRWCYJY9Fl0J9ARWxgkRQgZ+h
+         SCZ3xaxAwZmHTY3eEbVCsCshglsO1mJ9CUV9tSBQux6ydrFpzV+liJWMCEgX1XHCjH3R
+         tcPstmjG48Veaam9WJt00e6jeHjm3zFpd2juBy0wa8Ji8ly9tlVg/vZI3WvthzT6RWdj
+         3iqtKqMeFXVB4w7QWQTvxN5TxiSsOFh3tpJ8q1eB/h+VX+O8TdzJrg7ePS4Mo+eJh4Es
+         F1liAYDRM4mv6LEILpKpmqd2OkSYs0qJHRZdQj3j1++C/uhNc47Q8UIVf65tWPLDu1rs
+         0rKw==
+X-Gm-Message-State: AOUpUlFuQNexry7rRpZpvpI0+DDt6NLNtWCHP6Tq8c7eDlA8XxKSpdaa
+        m6IS/5q1kHZyQXWE8pEe4do=
+X-Google-Smtp-Source: AA+uWPxCYbGgJUrswKl5/yspqrX+FuVDek91z9RIZQ6fLCtYD9j2yRelC/q/a3LQ/BRUevNrH42VaA==
+X-Received: by 2002:a62:1647:: with SMTP id 68-v6mr3646958pfw.6.1533744832129;
+        Wed, 08 Aug 2018 09:13:52 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.217.252])
+        by smtp.gmail.com with ESMTPSA id t19-v6sm13144752pfk.182.2018.08.08.09.13.49
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 08 Aug 2018 09:13:50 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 21:46:41 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     jsarha@ti.com, tomi.valkeinen@ti.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        ajitn.linux@gmail.com
+Subject: [PATCH] drm/tilcdc: Convert drm_atomic_helper_suspend/resume()
+Message-ID: <20180808161641.GA20483@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
+convert drm_atomic_helper_suspend/resume() to use
+drm_mode_config_helper_suspend/resume().
 
-In order to make libtraceevent into a proper library, variables, data
-structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_" and not "pevent_". This changes
-APIs: pevent_function_handler, pevent_func_handler, pevent_func_arg_type,
-PEVENT_FUNC_ARG_VOID, PEVENT_FUNC_ARG_INT, PEVENT_FUNC_ARG_LONG,
-PEVENT_FUNC_ARG_STRING, PEVENT_FUNC_ARG_PTRS, PEVENT_FUNC_ARG_MAX_TYPES
+saved_state in tilcdc_drm_private will not be used
+anymore, so it can be removed.
 
-Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- tools/lib/traceevent/event-parse.c     | 62 +++++++++++++-------------
- tools/lib/traceevent/event-parse.h     | 30 ++++++-------
- tools/lib/traceevent/plugin_cfg80211.c |  6 +--
- tools/lib/traceevent/plugin_jbd2.c     | 12 ++---
- tools/lib/traceevent/plugin_kvm.c      |  6 +--
- tools/lib/traceevent/plugin_scsi.c     | 10 ++---
- tools/lib/traceevent/plugin_xen.c      |  6 +--
- 7 files changed, 66 insertions(+), 66 deletions(-)
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c | 14 ++++----------
+ drivers/gpu/drm/tilcdc/tilcdc_drv.h |  3 ---
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 01b5dbf2abdf..8d0ce0ea52dc 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -94,14 +94,14 @@ struct event_handler {
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+index 0fb300d..33e5332 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+@@ -554,29 +554,23 @@ static int tilcdc_debugfs_init(struct drm_minor *minor)
+ static int tilcdc_pm_suspend(struct device *dev)
+ {
+ 	struct drm_device *ddev = dev_get_drvdata(dev);
+-	struct tilcdc_drm_private *priv = ddev->dev_private;
++	int ret = 0;
  
- struct pevent_func_params {
- 	struct pevent_func_params	*next;
--	enum pevent_func_arg_type	type;
-+	enum tep_func_arg_type		type;
- };
+-	priv->saved_state = drm_atomic_helper_suspend(ddev);
++	ret = drm_mode_config_helper_suspend(ddev);
  
--struct pevent_function_handler {
--	struct pevent_function_handler	*next;
--	enum pevent_func_arg_type	ret_type;
-+struct tep_function_handler {
-+	struct tep_function_handler	*next;
-+	enum tep_func_arg_type		ret_type;
- 	char				*name;
--	pevent_func_handler		func;
-+	tep_func_handler		func;
- 	struct pevent_func_params	*params;
- 	int				nr_args;
- };
-@@ -110,7 +110,7 @@ static unsigned long long
- process_defined_func(struct trace_seq *s, void *data, int size,
- 		     struct event_format *event, struct print_arg *arg);
+ 	/* Select sleep pin state */
+ 	pinctrl_pm_select_sleep_state(dev);
  
--static void free_func_handle(struct pevent_function_handler *func);
-+static void free_func_handle(struct tep_function_handler *func);
- 
- /**
-  * pevent_buffer_init - init buffer for parsing
-@@ -2914,10 +2914,10 @@ process_bitmask(struct event_format *event __maybe_unused, struct print_arg *arg
- 	return EVENT_ERROR;
+-	return 0;
++	return ret;
  }
  
--static struct pevent_function_handler *
-+static struct tep_function_handler *
- find_func_handler(struct tep_handle *pevent, char *func_name)
+ static int tilcdc_pm_resume(struct device *dev)
  {
--	struct pevent_function_handler *func;
-+	struct tep_function_handler *func;
+ 	struct drm_device *ddev = dev_get_drvdata(dev);
+-	struct tilcdc_drm_private *priv = ddev->dev_private;
+-	int ret = 0;
  
- 	if (!pevent)
- 		return NULL;
-@@ -2932,8 +2932,8 @@ find_func_handler(struct tep_handle *pevent, char *func_name)
- 
- static void remove_func_handler(struct tep_handle *pevent, char *func_name)
- {
--	struct pevent_function_handler *func;
--	struct pevent_function_handler **next;
-+	struct tep_function_handler *func;
-+	struct tep_function_handler **next;
- 
- 	next = &pevent->func_handlers;
- 	while ((func = *next)) {
-@@ -2947,7 +2947,7 @@ static void remove_func_handler(struct tep_handle *pevent, char *func_name)
+ 	/* Select default pin state */
+ 	pinctrl_pm_select_default_state(dev);
+-
+-	if (priv->saved_state)
+-		ret = drm_atomic_helper_resume(ddev, priv->saved_state);
+-
+-	return ret;
++	return  drm_mode_config_helper_resume(ddev);
  }
+ #endif
  
- static enum event_type
--process_func_handler(struct event_format *event, struct pevent_function_handler *func,
-+process_func_handler(struct event_format *event, struct tep_function_handler *func,
- 		     struct print_arg *arg, char **tok)
- {
- 	struct print_arg **next_arg;
-@@ -3008,7 +3008,7 @@ static enum event_type
- process_function(struct event_format *event, struct print_arg *arg,
- 		 char *token, char **tok)
- {
--	struct pevent_function_handler *func;
-+	struct tep_function_handler *func;
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.h b/drivers/gpu/drm/tilcdc/tilcdc_drv.h
+index ead5122..62cea5f 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_drv.h
++++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.h
+@@ -70,9 +70,6 @@ struct tilcdc_drm_private {
+ 	const uint32_t *pixelformats;
+ 	uint32_t num_pixelformats;
  
- 	if (strcmp(token, "__print_flags") == 0) {
- 		free_token(token);
-@@ -4132,7 +4132,7 @@ static unsigned long long
- process_defined_func(struct trace_seq *s, void *data, int size,
- 		     struct event_format *event, struct print_arg *arg)
- {
--	struct pevent_function_handler *func_handle = arg->func.func;
-+	struct tep_function_handler *func_handle = arg->func.func;
- 	struct pevent_func_params *param;
- 	unsigned long long *args;
- 	unsigned long long ret;
-@@ -4159,12 +4159,12 @@ process_defined_func(struct trace_seq *s, void *data, int size,
- 
- 	for (i = 0; i < func_handle->nr_args; i++) {
- 		switch (param->type) {
--		case PEVENT_FUNC_ARG_INT:
--		case PEVENT_FUNC_ARG_LONG:
--		case PEVENT_FUNC_ARG_PTR:
-+		case TEP_FUNC_ARG_INT:
-+		case TEP_FUNC_ARG_LONG:
-+		case TEP_FUNC_ARG_PTR:
- 			args[i] = eval_num_arg(data, size, event, farg);
- 			break;
--		case PEVENT_FUNC_ARG_STRING:
-+		case TEP_FUNC_ARG_STRING:
- 			trace_seq_init(&str);
- 			print_str_arg(&str, data, size, event, "%s", -1, farg);
- 			trace_seq_terminate(&str);
-@@ -6461,7 +6461,7 @@ int tep_print_func_field(struct trace_seq *s, const char *fmt,
- 	return -1;
- }
- 
--static void free_func_handle(struct pevent_function_handler *func)
-+static void free_func_handle(struct tep_function_handler *func)
- {
- 	struct pevent_func_params *params;
- 
-@@ -6482,24 +6482,24 @@ static void free_func_handle(struct pevent_function_handler *func)
-  * @func: the function to process the helper function
-  * @ret_type: the return type of the helper function
-  * @name: the name of the helper function
-- * @parameters: A list of enum pevent_func_arg_type
-+ * @parameters: A list of enum tep_func_arg_type
-  *
-  * Some events may have helper functions in the print format arguments.
-  * This allows a plugin to dynamically create a way to process one
-  * of these functions.
-  *
-- * The @parameters is a variable list of pevent_func_arg_type enums that
-- * must end with PEVENT_FUNC_ARG_VOID.
-+ * The @parameters is a variable list of tep_func_arg_type enums that
-+ * must end with TEP_FUNC_ARG_VOID.
-  */
- int pevent_register_print_function(struct tep_handle *pevent,
--				   pevent_func_handler func,
--				   enum pevent_func_arg_type ret_type,
-+				   tep_func_handler func,
-+				   enum tep_func_arg_type ret_type,
- 				   char *name, ...)
- {
--	struct pevent_function_handler *func_handle;
-+	struct tep_function_handler *func_handle;
- 	struct pevent_func_params **next_param;
- 	struct pevent_func_params *param;
--	enum pevent_func_arg_type type;
-+	enum tep_func_arg_type type;
- 	va_list ap;
- 	int ret;
- 
-@@ -6532,11 +6532,11 @@ int pevent_register_print_function(struct tep_handle *pevent,
- 	next_param = &(func_handle->params);
- 	va_start(ap, name);
- 	for (;;) {
--		type = va_arg(ap, enum pevent_func_arg_type);
--		if (type == PEVENT_FUNC_ARG_VOID)
-+		type = va_arg(ap, enum tep_func_arg_type);
-+		if (type == TEP_FUNC_ARG_VOID)
- 			break;
- 
--		if (type >= PEVENT_FUNC_ARG_MAX_TYPES) {
-+		if (type >= TEP_FUNC_ARG_MAX_TYPES) {
- 			do_warning("Invalid argument type %d", type);
- 			ret = TEP_ERRNO__INVALID_ARG_TYPE;
- 			goto out_free;
-@@ -6579,9 +6579,9 @@ int pevent_register_print_function(struct tep_handle *pevent,
-  * Returns 0 if the handler was removed successully, -1 otherwise.
-  */
- int pevent_unregister_print_function(struct tep_handle *pevent,
--				     pevent_func_handler func, char *name)
-+				     tep_func_handler func, char *name)
- {
--	struct pevent_function_handler *func_handle;
-+	struct tep_function_handler *func_handle;
- 
- 	func_handle = find_func_handler(pevent, name);
- 	if (func_handle && func_handle->func == func) {
-@@ -6819,7 +6819,7 @@ void tep_free(struct tep_handle *pevent)
- 	struct cmdline_list *cmdlist, *cmdnext;
- 	struct func_list *funclist, *funcnext;
- 	struct printk_list *printklist, *printknext;
--	struct pevent_function_handler *func_handler;
-+	struct tep_function_handler *func_handler;
- 	struct event_handler *handle;
- 	int i;
- 
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 3067f524fef8..81f34132fc47 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -269,10 +269,10 @@ struct print_arg_op {
- 	struct print_arg	*right;
- };
- 
--struct pevent_function_handler;
-+struct tep_function_handler;
- 
- struct print_arg_func {
--	struct pevent_function_handler	*func;
-+	struct tep_function_handler	*func;
- 	struct print_arg		*args;
- };
- 
-@@ -361,16 +361,16 @@ enum event_type {
- 	EVENT_SQUOTE,
- };
- 
--typedef unsigned long long (*pevent_func_handler)(struct trace_seq *s,
--					     unsigned long long *args);
-+typedef unsigned long long (*tep_func_handler)(struct trace_seq *s,
-+					       unsigned long long *args);
- 
--enum pevent_func_arg_type {
--	PEVENT_FUNC_ARG_VOID,
--	PEVENT_FUNC_ARG_INT,
--	PEVENT_FUNC_ARG_LONG,
--	PEVENT_FUNC_ARG_STRING,
--	PEVENT_FUNC_ARG_PTR,
--	PEVENT_FUNC_ARG_MAX_TYPES
-+enum tep_func_arg_type {
-+	TEP_FUNC_ARG_VOID,
-+	TEP_FUNC_ARG_INT,
-+	TEP_FUNC_ARG_LONG,
-+	TEP_FUNC_ARG_STRING,
-+	TEP_FUNC_ARG_PTR,
-+	TEP_FUNC_ARG_MAX_TYPES
- };
- 
- enum tep_flag {
-@@ -524,7 +524,7 @@ struct tep_handle {
- 	struct format_field *bprint_buf_field;
- 
- 	struct event_handler *handlers;
--	struct pevent_function_handler *func_handlers;
-+	struct tep_function_handler *func_handlers;
- 
- 	/* cache */
- 	struct event_format *last_event;
-@@ -680,11 +680,11 @@ int pevent_unregister_event_handler(struct tep_handle *pevent, int id,
- 				    const char *sys_name, const char *event_name,
- 				    tep_event_handler_func func, void *context);
- int pevent_register_print_function(struct tep_handle *pevent,
--				   pevent_func_handler func,
--				   enum pevent_func_arg_type ret_type,
-+				   tep_func_handler func,
-+				   enum tep_func_arg_type ret_type,
- 				   char *name, ...);
- int pevent_unregister_print_function(struct tep_handle *pevent,
--				     pevent_func_handler func, char *name);
-+				     tep_func_handler func, char *name);
- 
- struct format_field *tep_find_common_field(struct event_format *event, const char *name);
- struct format_field *tep_find_field(struct event_format *event, const char *name);
-diff --git a/tools/lib/traceevent/plugin_cfg80211.c b/tools/lib/traceevent/plugin_cfg80211.c
-index c189bbc9fa18..e0421e31509f 100644
---- a/tools/lib/traceevent/plugin_cfg80211.c
-+++ b/tools/lib/traceevent/plugin_cfg80211.c
-@@ -29,10 +29,10 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- {
- 	pevent_register_print_function(pevent,
- 				       process___le16_to_cpup,
--				       PEVENT_FUNC_ARG_INT,
-+				       TEP_FUNC_ARG_INT,
- 				       "__le16_to_cpup",
--				       PEVENT_FUNC_ARG_PTR,
--				       PEVENT_FUNC_ARG_VOID);
-+				       TEP_FUNC_ARG_PTR,
-+				       TEP_FUNC_ARG_VOID);
- 	return 0;
- }
- 
-diff --git a/tools/lib/traceevent/plugin_jbd2.c b/tools/lib/traceevent/plugin_jbd2.c
-index 9b88aebb48a9..6da955ff037e 100644
---- a/tools/lib/traceevent/plugin_jbd2.c
-+++ b/tools/lib/traceevent/plugin_jbd2.c
-@@ -51,17 +51,17 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- {
- 	pevent_register_print_function(pevent,
- 				       process_jbd2_dev_to_name,
--				       PEVENT_FUNC_ARG_STRING,
-+				       TEP_FUNC_ARG_STRING,
- 				       "jbd2_dev_to_name",
--				       PEVENT_FUNC_ARG_INT,
--				       PEVENT_FUNC_ARG_VOID);
-+				       TEP_FUNC_ARG_INT,
-+				       TEP_FUNC_ARG_VOID);
- 
- 	pevent_register_print_function(pevent,
- 				       process_jiffies_to_msecs,
--				       PEVENT_FUNC_ARG_LONG,
-+				       TEP_FUNC_ARG_LONG,
- 				       "jiffies_to_msecs",
--				       PEVENT_FUNC_ARG_LONG,
--				       PEVENT_FUNC_ARG_VOID);
-+				       TEP_FUNC_ARG_LONG,
-+				       TEP_FUNC_ARG_VOID);
- 	return 0;
- }
- 
-diff --git a/tools/lib/traceevent/plugin_kvm.c b/tools/lib/traceevent/plugin_kvm.c
-index d71bc3fde75b..c20f743edf1f 100644
---- a/tools/lib/traceevent/plugin_kvm.c
-+++ b/tools/lib/traceevent/plugin_kvm.c
-@@ -479,10 +479,10 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- 
- 	pevent_register_print_function(pevent,
- 				       process_is_writable_pte,
--				       PEVENT_FUNC_ARG_INT,
-+				       TEP_FUNC_ARG_INT,
- 				       "is_writable_pte",
--				       PEVENT_FUNC_ARG_LONG,
--				       PEVENT_FUNC_ARG_VOID);
-+				       TEP_FUNC_ARG_LONG,
-+				       TEP_FUNC_ARG_VOID);
- 	return 0;
- }
- 
-diff --git a/tools/lib/traceevent/plugin_scsi.c b/tools/lib/traceevent/plugin_scsi.c
-index bb9aea6fb000..ce38df7ed4d8 100644
---- a/tools/lib/traceevent/plugin_scsi.c
-+++ b/tools/lib/traceevent/plugin_scsi.c
-@@ -417,12 +417,12 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- {
- 	pevent_register_print_function(pevent,
- 				       process_scsi_trace_parse_cdb,
--				       PEVENT_FUNC_ARG_STRING,
-+				       TEP_FUNC_ARG_STRING,
- 				       "scsi_trace_parse_cdb",
--				       PEVENT_FUNC_ARG_PTR,
--				       PEVENT_FUNC_ARG_PTR,
--				       PEVENT_FUNC_ARG_INT,
--				       PEVENT_FUNC_ARG_VOID);
-+				       TEP_FUNC_ARG_PTR,
-+				       TEP_FUNC_ARG_PTR,
-+				       TEP_FUNC_ARG_INT,
-+				       TEP_FUNC_ARG_VOID);
- 	return 0;
- }
- 
-diff --git a/tools/lib/traceevent/plugin_xen.c b/tools/lib/traceevent/plugin_xen.c
-index 1973dd8abbfd..2ffbd91d5bb7 100644
---- a/tools/lib/traceevent/plugin_xen.c
-+++ b/tools/lib/traceevent/plugin_xen.c
-@@ -123,10 +123,10 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- {
- 	pevent_register_print_function(pevent,
- 				       process_xen_hypercall_name,
--				       PEVENT_FUNC_ARG_STRING,
-+				       TEP_FUNC_ARG_STRING,
- 				       "xen_hypercall_name",
--				       PEVENT_FUNC_ARG_INT,
--				       PEVENT_FUNC_ARG_VOID);
-+				       TEP_FUNC_ARG_INT,
-+				       TEP_FUNC_ARG_VOID);
- 	return 0;
- }
- 
+-	/* The context for pm susped/resume cycle is stored here */
+-	struct drm_atomic_state *saved_state;
+-
+ #ifdef CONFIG_CPU_FREQ
+ 	struct notifier_block freq_transition;
+ #endif
 -- 
-2.18.0
-
+1.9.1
 
