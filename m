@@ -2,141 +2,178 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CD4C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A88C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9897421735
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:09:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9897421735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 39CBB21730
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CBB21730
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbeHHM2H (ORCPT
+        id S1727117AbeHHM21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:28:07 -0400
-Received: from gate.crashing.org ([63.228.1.57]:40878 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726893AbeHHM2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:28:07 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w78A7oGY023665;
-        Wed, 8 Aug 2018 05:07:51 -0500
-Message-ID: <4b596883892b5cb5560bef26fcd249e7107173ac.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Wed, 08 Aug 2018 20:07:49 +1000
-In-Reply-To: <20180808063158.GA2474@infradead.org>
-References: <20180804082120.GB4421@infradead.org>
-         <a3ec0a454928e880dabc3782ea906e318634abf9.camel@kernel.crashing.org>
-         <20180805072930.GB23288@infradead.org>
-         <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
-         <20180806094243.GA16032@infradead.org>
-         <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
-         <20180807062117.GD32709@infradead.org>
-         <aa59c7f8556bd4b332394a1dcf2d4a8faf3dc4a2.camel@kernel.crashing.org>
-         <20180807135505.GA29034@infradead.org>
-         <2103ecfe52d23cec03f185d08a87bfad9c9d82b5.camel@kernel.crashing.org>
-         <20180808063158.GA2474@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 8 Aug 2018 08:28:27 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51252 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbeHHM21 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:28:27 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <kurt.kanzenbach@linutronix.de>)
+        id 1fnLOw-00008v-2t; Wed, 08 Aug 2018 12:09:10 +0200
+Date:   Wed, 8 Aug 2018 12:09:09 +0200
+From:   Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Jane Wan <Jane.Wan@nokia.com>,
+        Jagdish Gediya <jagdish.gediya@nxp.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mtd: nand: fsl-ifc: fixup SRAM init for newer ctrl
+ versions
+Message-ID: <20180808100909.anfi3qlfjnzb74p2@linutronix.de>
+References: <20180806092137.9287-1-kurt@linutronix.de>
+ <20180806092137.9287-3-kurt@linutronix.de>
+ <20180808114832.61d31c29@xps13>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180808114832.61d31c29@xps13>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-07 at 23:31 -0700, Christoph Hellwig wrote:
-> 
-> You don't need to set them the time you go secure.  You just need to
-> set the flag from the beginning on any VM you might want to go secure.
-> Or for simplicity just any VM - if the DT/ACPI tables exposed by
-> qemu are good enough that will always exclude a iommu and not set a
-> DMA offset, so nothing will change on the qemu side of he processing,
-> and with the new direct calls for the direct dma ops performance in
-> the guest won't change either.
+Hi Miquel,
 
-So that's where I'm not sure things are "good enough" due to how
-pseries works. (remember it's paravirtualized).
+On Wed, Aug 08, 2018 at 11:48:32AM +0200, Miquel Raynal wrote:
+> Hi Kurt,
+>
+> Subject prefix should be "mtd: rawnand: fsl_ifc:".
 
-A pseries system starts with a default iommu on all devices, that uses
-translation using 4k entires with a "pinhole" window (usually 2G with
-qemu iirc). There's no "pass through" by default.
+okay, noted.
 
-Qemu virtio bypasses that iommu when the VIRTIO_F_IOMMU_PLATFORM flag
-is not set (default) but there's nothing in the device-tree to tell the
-guest about this since it's a violation of our pseries architecture, so
-we just rely on Linux virtio "knowing" that it happens. It's a bit
-yucky but that's now history...
+>
+> Kurt Kanzenbach <kurt@linutronix.de> wrote on Mon,  6 Aug 2018 11:21:37
+> +0200:
+>
+> > Newer versions of the IFC controller use a different method of initializing the
+> > internal SRAM: Instead of reading from flash, a bit in the NAND configuration
+> > register has to be set in order to trigger the self-initializing process.
+> >
+> > Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+> > ---
+> >  drivers/mtd/nand/raw/fsl_ifc_nand.c | 18 ++++++++++++++++++
+> >  include/linux/fsl_ifc.h             |  2 ++
+> >  2 files changed, 20 insertions(+)
+> >
+> > diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> > index e4f5792dc589..384d5e12b05c 100644
+> > --- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> > +++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> > @@ -30,6 +30,7 @@
+> >  #include <linux/mtd/partitions.h>
+> >  #include <linux/mtd/nand_ecc.h>
+> >  #include <linux/fsl_ifc.h>
+> > +#include <linux/iopoll.h>
+> >
+> >  #define ERR_BYTE		0xFF /* Value returned for read
+> >  					bytes when read failed	*/
+> > @@ -769,6 +770,23 @@ static int fsl_ifc_sram_init(struct fsl_ifc_mtd *priv)
+> >  	uint32_t csor = 0, csor_8k = 0, csor_ext = 0;
+> >  	uint32_t cs = priv->bank;
+> >
+> > +	if (ctrl->version > FSL_IFC_VERSION_1_1_0) {
+>
+> This is redundant and fsl_ifc_sram_init() is called only if
+> "ctrl->version > FSL_FC_VERSION_1_1_0".
 
-Essentially pseries "architecturally" does not have the concept of not
-having an iommu in the way and qemu violates that architecture today.
+No, it's not. It's called when ctrl->version >=
+FSL_IFC_VERSION_1_1_0. Therefore, this check is needed.
 
-(Remember it comes from pHyp, our priorietary HV, which we are somewhat
-mimmicing here).
+>
+> So this means this function has never worked?
 
-So if we always set VIRTIO_F_IOMMU_PLATFORM, it *will* force all virtio
-through that iommu and performance will suffer (esp vhost I suspect),
-especially since adding/removing translations in the iommu is a
-hypercall.
+It did work for e.g. IFC controller in version 1.1.0.
 
-Now, we do have HV APIs to create a second window that's "permanently
-mapped" to the guest memory, thus avoiding dynamic map/unmaps, and
-Linux can make use of this but I don't know if that works with qemu and
-the performance impact with vhost.
+However, it worked for the newer versions by accident, because U-Boot
+already initialized the SRAM correctly. If you boot without NAND
+initialization in U-Boot, then you'll hit the issue.
 
-So the situation isn't that great.... On the other hand, I think the
-other approach works for us:
+>
+> If this is the case, there should be at least a Fixes: tag.
+>
+> Maybe it would be cleaner to always call fsl_ifc_sram_init() from the
+> probe(), and just exit with a "return 0" here if the version is old?
+> (I'll let you choose the way you prefer).
 
-> > It's nicer if we have a way in the guest virtio driver to do something
-> > along the lines of
-> > 
-> > 	if ((flags & VIRTIO_F_IOMMU_PLATFORM) || arch_virtio_wants_dma_ops())
-> > 
-> > Which would have the same effect and means the issue is entirely
-> > contained in the guest.
-> 
-> It would not be the same effect.  The problem with that is that you must
-> now assumes that your qemu knows that for example you might be passing
-> a dma offset if the bus otherwise requires it. 
+Sounds like a good idea. Otherwise we have to check the version twice.
 
-I would assume that arch_virtio_wants_dma_ops() only returns true when
-no such offsets are involved, at least in our case that would be what
-happens.
+>
+> > +		u32 ncfgr, status;
+> > +		int ret;
+> > +
+> > +		/* Trigger auto initialization */
+> > +		ncfgr = ifc_in32(&ifc_runtime->ifc_nand.ncfgr);
+> > +		ifc_out32(ncfgr | IFC_NAND_NCFGR_SRAM_INIT_EN, &ifc_runtime->ifc_nand.ncfgr);
+> > +
+> > +		/* Wait until done */
+> > +		ret = readx_poll_timeout(ifc_in32, &ifc_runtime->ifc_nand.ncfgr,
+> > +					 status, !(status & IFC_NAND_NCFGR_SRAM_INIT_EN),
+> > +					 10, 1000);
+>
+> Nit: I always prefer when delays/timeouts are defined (and may be
+> reused).
 
->  Or in other words:
-> you potentially break the contract between qemu and the guest of always
-> passing down physical addresses.  If we explicitly change that contract
-> through using a flag that says you pass bus address everything is fine.
+Me too. I've missed that there is already a timeout constant
+IFC_TIMEOUT_MSECS (500). As it's huge, I'll add a second one.
 
-For us a "bus address" is behind the iommu so that's what
-VIRTIO_F_IOMMU_PLATFORM does already. We don't have the concept of a
-bus address that is different. I suppose it's an ARMism to have DMA
-offsets that are separate from iommus ? 
+>
+> > +		if (ret)
+> > +			dev_err(priv->dev, "Failed to initialize SRAM!\n");
+>
+> Space
 
-> Note that in practice your scheme will probably just work for your
-> initial prototype, but chances are it will get us in trouble later on.
+okay.
 
-Not on pseries, at least not in any way I can think of mind you... but
-maybe other architectures would abuse it... We could add a WARN_ON if
-that calls returns true on a bus with an offset I suppose.
+Thanks,
+Kurt
 
-Cheers,
-Ben.
-
-
+>
+> > +		return ret;
+> > +	}
+> > +
+> >  	/* Save CSOR and CSOR_ext */
+> >  	csor = ifc_in32(&ifc_global->csor_cs[cs].csor);
+> >  	csor_ext = ifc_in32(&ifc_global->csor_cs[cs].csor_ext);
+> > diff --git a/include/linux/fsl_ifc.h b/include/linux/fsl_ifc.h
+> > index 3fdfede2f0f3..5f343b796ad9 100644
+> > --- a/include/linux/fsl_ifc.h
+> > +++ b/include/linux/fsl_ifc.h
+> > @@ -274,6 +274,8 @@
+> >   */
+> >  /* Auto Boot Mode */
+> >  #define IFC_NAND_NCFGR_BOOT		0x80000000
+> > +/* SRAM Initialization */
+> > +#define IFC_NAND_NCFGR_SRAM_INIT_EN	0x20000000
+> >  /* Addressing Mode-ROW0+n/COL0 */
+> >  #define IFC_NAND_NCFGR_ADDR_MODE_RC0	0x00000000
+> >  /* Addressing Mode-ROW0+n/COL0+n */
+>
+>
+> Thanks,
+> Miquèl
