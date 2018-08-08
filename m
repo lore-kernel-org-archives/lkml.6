@@ -2,104 +2,115 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D863C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAE2C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F6621722
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1692C21722
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:32:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="JfIGemck"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F6621722
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BG4JKTmn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1692C21722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbeHHLut (ORCPT
+        id S1726996AbeHHLvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:50:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43106 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbeHHLus (ORCPT
+        Wed, 8 Aug 2018 07:51:23 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52322 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeHHLvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:50:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rD6Yec3SqKiNs6yIvO80+7/h9G272JnHrr1EKGDmeOA=; b=JfIGemckpjmKkn8Zqob9jt6q4
-        8wpAIkCdk03LILwnyJaL+QnU/goF0635UBsXdXgSyWROzDkOZ4BD6nDNtvZ7Pnl+RYdS2LONEtM55
-        p8FLPmspjShn0cD4XLldAsjgHh66+MGzwHjXRzw9k68efjADnepHxKRZ5ykYaL7tAbEdk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fnKom-0001cM-Kx; Wed, 08 Aug 2018 09:31:48 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0CD0D112433C; Wed,  8 Aug 2018 10:31:48 +0100 (BST)
-Date:   Wed, 8 Aug 2018 10:31:48 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        lanqing.liu@spreadtrum.com, linux-spi@vger.kernel.org,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] spi: sprd: Add SPI driver for Spreadtrum SC9860
-Message-ID: <20180808093148.GA9346@sirena.org.uk>
-References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
- <99befd2badc4dffb59662fca1e11d79f18b64755.1533638405.git.baolin.wang@linaro.org>
- <20180807142408.GB7958@sirena.org.uk>
- <CAMz4kuL2=7mNHLoTg7hjA4NjfGgNQ-mBJBSE8uMb0oqwnU1=Yg@mail.gmail.com>
+        Wed, 8 Aug 2018 07:51:23 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w789Nwfk136843;
+        Wed, 8 Aug 2018 09:32:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=vV/ygFLXVfQzGvrnxOa+Uvi98X6LzDzR5vwnqkvtdtA=;
+ b=BG4JKTmnp+P8AqFWPC1MlPp+Mm2QAvQvV+AGkY1N7UlFVzvmHsdgOXdTIASfxQ9Se3Bz
+ dmBbzWZ9umDjn7iQa1GJhGR6CRw0u/434cdTkv8PEI7/xc+6i8hl4cSu4ZnWfikL7gyk
+ 87/qxu578L3DIjuI6BrfcOzSfoBNRqe35Ou9YfAqBwTxae6FLvq5HBtPmeru3/9s95M5
+ ZCdqsccEledJSLeUkGR9LU38MHyR+8WlqeWWVocLsTzhugthC+0PPmucJQl1kZa38TPw
+ Nw2tqeUPK/o5nNHYu1VRrIdBXMaIcoZPHk2xonbbtqzyBUZ8upEnCGre/diWjkS15OYc zA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2kn43nw146-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Aug 2018 09:32:28 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w789WR8G031233
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Aug 2018 09:32:27 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w789WPRr031258;
+        Wed, 8 Aug 2018 09:32:27 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Aug 2018 02:32:24 -0700
+Subject: Re: [PATCH] blk-mq: count the hctx as active before allocate tag
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1533716548-1645-1-git-send-email-jianchao.w.wang@oracle.com>
+ <CACVXFVMKQRT5_gyikVAPMKY_KPmQ2_w+VnZhKKCK9Sm4WphqQw@mail.gmail.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <b1092ee3-3d59-b01f-b42b-5610918c1bb8@oracle.com>
+Date:   Wed, 8 Aug 2018 17:32:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuL2=7mNHLoTg7hjA4NjfGgNQ-mBJBSE8uMb0oqwnU1=Yg@mail.gmail.com>
-X-Cookie: Should I do my BOBBIE VINTON medley?
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CACVXFVMKQRT5_gyikVAPMKY_KPmQ2_w+VnZhKKCK9Sm4WphqQw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8978 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808080096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Aug 08, 2018 at 10:45:33AM +0800, Baolin Wang wrote:
-> On 7 August 2018 at 22:24, Mark Brown <broonie@kernel.org> wrote:
-> > On Tue, Aug 07, 2018 at 06:43:38PM +0800, Baolin Wang wrote:
+On 08/08/2018 05:24 PM, Ming Lei wrote:
+> On Wed, Aug 8, 2018 at 4:22 PM, Jianchao Wang
+> <jianchao.w.wang@oracle.com> wrote:
+>> Currently, we count the hctx as active after allocate tag
+>> successfully. The other shared-tags users could exhaust the tags
+>> and starve a non-active and waiting-tag hctx. Count the hctx as
+>> active before try to allocate tag to fix this.
+> 
+> This patch looks fine.
+> 
+>>
+>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+>> ---
+>>  block/blk-mq.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index ae44e85..acd40eb 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -369,6 +369,8 @@ static struct request *blk_mq_get_request(struct request_queue *q,
+>>                         e->type->ops.mq.limit_depth(op, data);
+>>         }
+>>
+>> +       blk_mq_tag_busy(data.hctx);
+>> +
+> 
+> blk_mq_tag_busy is only required for driver tag.
+> 
 
-> >> +     bits_per_word = bits_per_word > 16 ? round_up(bits_per_word, 16) :
-> >> +             round_up(bits_per_word, 8);
+Yes, I will change it and post the V2.
 
-> > Please
-
-> Sorry I did not get your points here, could you elaborate on?
-
-Sorry, missed the actual comment there - use normal if statements rather
-than the ternery operator, it's easier to read.
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltquIEACgkQJNaLcl1U
-h9D8Lwf+J5prKQ102tAnrwIbX+bnTbGLWbzHy/xe9I5LurjAiiD71625mnUJpUa6
-wySqLkDVivSopvk0Kep3i6i1M7CGRHHJucqFNe631u8ZahigQ9yE9CM8IVQxkqEY
-vfg6FCLyGxqGk5BCbjOHnqHDznkCsKVLYRPyp5QrPo8OxX1IvjZASba2Unksiyov
-ivsRL8LCBFHtzynR07kIvjMDYkulC6E0H2VsQE8fNAbrOfTd+WD4Ht8L2gj0PY+t
-GWBUX5H+wQmYNo+aSrwartUsw9SpHF8/O6yk1X9nIOlOEWC64FF3YGw87EcP4HOM
-XA7NKASPkS8NEYZR3pDoOR3OeyViqw==
-=rz+7
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+Thanks
+Jianchao
