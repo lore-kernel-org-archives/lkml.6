@@ -3,172 +3,177 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A133C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494B7C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6D121EEF
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD9EF21EB7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:46:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anrVX1ME"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6D121EEF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="CYI1FVIn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9EF21EB7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732568AbeHITJi (ORCPT
+        id S1732589AbeHITMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 15:09:38 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43550 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731198AbeHITJi (ORCPT
+        Thu, 9 Aug 2018 15:12:18 -0400
+Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:2710 "EHLO
+        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731198AbeHITMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 15:09:38 -0400
-Received: by mail-oi0-f67.google.com with SMTP id b15-v6so10886988oib.10;
-        Thu, 09 Aug 2018 09:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=kU5ozwKzgANnNqkpAe/BLJSrCzvoumCjE2YSctJCB4I=;
-        b=anrVX1MELTlixoB3w6SeQ4A5tVk0AtcvH2Y469yj3tBXOqmg0XWlllSN58GlOnQOPG
-         1HKKPNWNCYCAj3qNCddRnEVs2Hnx8Ol3RHym+ssDaxd6zaYSX8CPwWns294SutCRAo7V
-         0eg0tI6okojXO9mID7rK078QAttUhupz2vC3vxk2uULqEKeBI0xzvFT73lIY8ER3+3HG
-         qHP0Hpr3aMRcuDmkm16XYmcKQe4gi0TTlkHfZTgsnLBEtOKy71whI5oAlryKQLtw2ofG
-         ZC3D+JWTE+pVpy4f3cct7XphWDvcnPApTRBMsIxBOfvb1/3Avo8SatRyKUsMS2qjYYB9
-         lCoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=kU5ozwKzgANnNqkpAe/BLJSrCzvoumCjE2YSctJCB4I=;
-        b=kn98KoaemQCXgSDyGGbrb8fMgvP8e7b0k1C3hC65FAm64IJsN/nSTc+tUvLJoBkBiZ
-         3HOc5ZABJVQQZnkvNyhnlVljdks+6I7kJCW5A6Gjr9uLZaIp82CiJaEvIcCHb9ayycUC
-         uMZn8qKUuSFYJc/gMXa+0wg71Km4l0ED0wZle9RlwggzmjqrLOucYbgjqFlgNHlY2mKK
-         8DvbJ2pG2wP6T+oHSh0eb8WufpV9DBneOTH33pigEYpr+Acv/Uv3o/YGm7mncZ+eNnrc
-         b3uZCma1nL5FJ0iY4ojkYafNw6zDYUTNjO7L1YK4krBUAtpMRJSHWF/YothoeYGyX2d1
-         lqTw==
-X-Gm-Message-State: AOUpUlEmdVhfhn5Ddh8q/1JJz3XBMVDoKOAW7LI+pi+Nl6YfDeONi0zz
-        E5HtSC+JR2sBl7vVKqA5j+E7SZ4SlwcIdPmUNf0=
-X-Google-Smtp-Source: AA+uWPxHy6mWeCwuYcQPe01hgddx95K0+HMIg1MMhNJnks+pzue9JbBEI7qM54f7U/c/QOq3X/3Vn0QjzQIYz6B26to=
-X-Received: by 2002:aca:42:: with SMTP id 63-v6mr2628799oia.154.1533833035844;
- Thu, 09 Aug 2018 09:43:55 -0700 (PDT)
+        Thu, 9 Aug 2018 15:12:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1533833196; x=1565369196;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=eRDMJv292NkwdBBQ0q2sKKJl97FmH/BZJkpQhFMdQqA=;
+  b=CYI1FVInvsMaKyvttdWzaalOFFMoBtmrneKXofeKSvD466p1ODTXoSFR
+   XgeOfsj8LvWU7ja6cEFVb53x/yP7qye/ABdJlmFOcA+ytp0z2XOaTW/UW
+   h+kpnr+87bEdnYBYspSJ5dm1hy6ScZ6lg+LxKkpTw+Fk9ZVoBQpzaQZJh
+   4=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2H2AAABb2xbhyeV50NcGgEBAQEBAgE?=
+ =?us-ascii?q?BAQEIAQEBAYUwKAqMXotVgg2ISY00gXoLhGyDJCE2FgECAQECAQECAQECEAE?=
+ =?us-ascii?q?BAQoLCQgpIwyCNSKCYQEBAQMBEhUTPwULAgEIGB4QITYCBAESCBqCfoFpAw0?=
+ =?us-ascii?q?IoRKJVwEBAYFoM4cjDYMhiRSCF4ESgmQuglaCKIVWAoddkkMrCQWMPYMHjjq?=
+ =?us-ascii?q?LVIcDAgQCBAUCFIFIAoICcIM5gjOHV4ZJbwGNAIEbAQE?=
+X-IPAS-Result: =?us-ascii?q?A2H2AAABb2xbhyeV50NcGgEBAQEBAgEBAQEIAQEBAYUwK?=
+ =?us-ascii?q?AqMXotVgg2ISY00gXoLhGyDJCE2FgECAQECAQECAQECEAEBAQoLCQgpIwyCN?=
+ =?us-ascii?q?SKCYQEBAQMBEhUTPwULAgEIGB4QITYCBAESCBqCfoFpAw0IoRKJVwEBAYFoM?=
+ =?us-ascii?q?4cjDYMhiRSCF4ESgmQuglaCKIVWAoddkkMrCQWMPYMHjjqLVIcDAgQCBAUCF?=
+ =?us-ascii?q?IFIAoICcIM5gjOHV4ZJbwGNAIEbAQE?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa2.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Aug 2018 11:46:35 -0500
+Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79GcPIn116697;
+        Thu, 9 Aug 2018 12:46:35 -0400
+Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
+        by mx0b-00154901.pphosted.com with ESMTP id 2krje3jfd9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 09 Aug 2018 12:46:35 -0400
+Cc:     <bhelgaas@google.com>, <keith.busch@intel.com>,
+        <Austin.Bolen@dell.com>, <Shyam.Iyer@dell.com>,
+        <fred@fredlawl.com>, <poza@codeaurora.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Received: from ausxippc110.us.dell.com ([143.166.85.200])
+  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Aug 2018 22:46:34 +0600
+X-LoopCount0: from 10.166.134.88
+X-IronPort-AV: E=Sophos;i="5.53,215,1531803600"; 
+   d="scan'208";a="687914251"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] PCI/AER: Do not clear AER bits if we don't own AER
+Thread-Topic: [PATCH] PCI/AER: Do not clear AER bits if we don't own AER
+Thread-Index: AQHUHeNOLgc3siGTskGFqoeCfUtgww==
+Date:   Thu, 9 Aug 2018 16:46:32 +0000
+Message-ID: <2cae6a5ac8324be18b8dcf3d7dfcc288@ausx13mps321.AMER.DELL.COM>
+References: <20180717153135.25925-1-mr.nuke.me@gmail.com>
+ <20180809141551.GH49411@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.177.90.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 09:43:55 -0700 (PDT)
-In-Reply-To: <20180809162957.GD14362@leoy-ThinkPad-X240s>
-References: <1533793647-5628-1-git-send-email-leo.yan@linaro.org>
- <2704016.RYJlhC2yyo@aspire.rjw.lan> <CAJZ5v0goNUVR8UZPnBegVZjBshkt+G-D7UK_x5dOi+BCjAr5Yg@mail.gmail.com>
- <20180809162957.GD14362@leoy-ThinkPad-X240s>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 9 Aug 2018 18:43:55 +0200
-X-Google-Sender-Auth: oEVDhzqbYQXVg_gDe2-2LIewZ2M
-Message-ID: <CAJZ5v0it0XM29OGnNfanrRAH3E8uHkJjXVwgHBQRiT9aZ0747A@mail.gmail.com>
-Subject: Re: [PATCH] sched: idle: Reenable sched tick for cpuidle request
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=519 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 6:29 PM,  <leo.yan@linaro.org> wrote:
-> On Thu, Aug 09, 2018 at 05:42:30PM +0200, Rafael J. Wysocki wrote:
->
-> [...]
->
->> >> This issue can be easily reproduce with the case on Arm Hikey board: use
->> >> CPU0 to send IPI to CPU7, CPU7 receives the IPI and in the callback
->> >> function it start a hrtimer with 4ms, so the 4ms timer delta value can
->> >> let 'menu' governor to choose deepest state in the next entering idle
->> >> time.  From then on, CPU7 restarts hrtimer with 1ms interval for total
->> >> 10 times, so this can utilize the typical pattern in 'menu' governor to
->> >> have prediction for 1ms duration, finally idle governor is easily to
->> >> select a shallow state, on Hikey board it usually is to select CPU off
->> >> state.  From then on, CPU7 stays in this shallow state for long time
->> >> until there have other interrupts on it.
->> >
->> > And which means that the above-mentioned code misses this case.
->>
->> And I don't really understand how this happens. :-/
->>
->> If menu sees that the tick has been stopped, it sets
->> data->predicted_us to the minimum of TICK_USEC and
->> ktime_to_us(delta_next) and the latency requirements comes from PM QoS
->> (no interactivity boost).  Thus the only case when it will say "do not
->> stop the tick" is when delta_next is below the tick period length, but
->> that's OK, because it means that there is a timer pending that much
->> time away, so it doesn't make sense to select a deeper idle state
->> then.
->>
->> If there is a short-interval timer pending every time we go idle, it
->> doesn't matter that the tick is stopped really, because the other
->> timer will wake the CPU up anyway.
->>
->> Have I missed anything?
->
-> Yeah, you miss one case is if there haven't anymore timer event, for this
-> case the ktime_to_us(delta_next) is a quite large value and
-> data->predicted_us will be to set TICK_USEC; if HZ=1000 then TICK_USEC is
-> 1000us, on Hikey board if data->predicted_us is 1000us then it's easily
-> to set shallow state (C1) rather than C2.  Unfortunately, this is the
-> last time the CPU can predict idle state before it will stay in idle
-> for long period.
-
-Fair enough, but in that case the governor will want the tick to be
-stopped, because expected_interval is TICK_USEC then, so I'm not sure
-how the patch helps?
-
-> [...]
->
->> >> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
->> >> index 1a3e9bd..802286e 100644
->> >> --- a/kernel/sched/idle.c
->> >> +++ b/kernel/sched/idle.c
->> >> @@ -190,10 +190,18 @@ static void cpuidle_idle_call(void)
->> >>                */
->> >>               next_state = cpuidle_select(drv, dev, &stop_tick);
->> >>
->> >> -             if (stop_tick)
->> >> +             if (stop_tick) {
->> >>                       tick_nohz_idle_stop_tick();
->> >> -             else
->> >> +             } else {
->> >> +                     /*
->> >> +                      * The cpuidle framework says to not stop tick but
->> >> +                      * the tick has been stopped yet, so restart it.
->> >> +                      */
->> >> +                     if (tick_nohz_tick_stopped())
->> >> +                             tick_nohz_idle_restart_tick();
->> >
->> > You need an "else" here IMO as Peter said.
->
-> Yeah, I have replied to Peter, after we restart the tick, I found must to
-> call tick_retain() to clear 'ts->timer_expires_base' to 0, otherwise
-> tick_nohz_idle_exit() reports warning when exit from idle loop.
-
-I see now, thanks.
-
->> And I really would prefer to avoid restarting the tick here, because
->> it is overhead and quite likely unnecessary.
->
-> I understand the logic when read the code, actually I did some experiments
-> on the function menu_select(), in menu_select() function it discards the
-> consideration for typical pattern interval and it also tries to avoid to
-> enable tick and select more shallow state at the bottom of function.  So I
-> agree that in the middle of idles it's redundant to reenable tick and the
-> code is careful thought.
->
-> But this patch tries to rescue the case at the last time the CPU enter one
-> shallow idle state but without wake up event.
-
-It is better to avoid entering a shallow state IMO.  Let me think
-about that a bit.
+On 08/09/2018 09:16 AM, Bjorn Helgaas wrote:=0A=
+> On Tue, Jul 17, 2018 at 10:31:23AM -0500, Alexandru Gagniuc wrote:=0A=
+>> When we don't own AER, we shouldn't touch the AER error bits. This=0A=
+>> happens unconditionally on device probe(). Clearing AER bits=0A=
+>> willy-nilly might cause firmware to miss errors. Instead=0A=
+>> these bits should get cleared by FFS, or via ACPI _HPX method.=0A=
+>>=0A=
+>> This race is mostly of theoretical significance, as it is not easy to=0A=
+>> reasonably demonstrate it in testing.=0A=
+>>=0A=
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>=0A=
+>> ---=0A=
+>>   drivers/pci/pcie/aer.c | 3 +++=0A=
+>>   1 file changed, 3 insertions(+)=0A=
+>>=0A=
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c=0A=
+>> index a2e88386af28..18037a2a8231 100644=0A=
+>> --- a/drivers/pci/pcie/aer.c=0A=
+>> +++ b/drivers/pci/pcie/aer.c=0A=
+>> @@ -383,6 +383,9 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev=
+ *dev)=0A=
+>>   	if (!pci_is_pcie(dev))=0A=
+>>   		return -ENODEV;=0A=
+>>   =0A=
+>> +	if (pcie_aer_get_firmware_first(dev))=0A=
+>> +		return -EIO;=0A=
+> =0A=
+> I like this patch.=0A=
+> =0A=
+> Do we need the same thing in the following places that also clear AER=0A=
+> status bits or write AER control bits?=0A=
+=0A=
+In theory, every exported function would guard for this. I think the =0A=
+idea a long long time ago was that the check happens during =0A=
+initialization, and the others are not hit.=0A=
+=0A=
+>    enable_ecrc_checking()=0A=
+>    disable_ecrc_checking()=0A=
+=0A=
+I don't immediately see how this would affect FFS, but the bits are part =
+=0A=
+of the AER capability structure. According to the FFS model, those would =
+=0A=
+be owned by FW, and we'd have to avoid touching them.=0A=
+=0A=
+>    pci_cleanup_aer_uncorrect_error_status()=0A=
+=0A=
+This probably should be guarded. It's only called from a few specific =0A=
+drivers, so the impact is not as high as being called from the core.=0A=
+=0A=
+>    pci_aer_clear_fatal_status()=0A=
+=0A=
+This is only called when doing fatal_recovery, right?=0A=
+For practical considerations this is not an issue today. The ACPI error =0A=
+handling code currently crashes when it encounters any fatal error, so =0A=
+we wouldn't hit this in the FFS case.=0A=
+=0A=
+If the ACPI code pulls its thinking appendage out of the other end of =0A=
+the digestive tract, then we could be hitting this in the future. For =0A=
+correctness, guarding makes sense.=0A=
+=0A=
+The PCIe standards contact I usually talk to about these PCIe subtleties =
+=0A=
+is currently on vacation. The number one issue was a FFS corner case =0A=
+with OS clearing bits on probe. The other functions you mention are a =0A=
+corner case of a corner case. The big fish is =0A=
+pci_cleanup_aer_error_status_regs() on probe(), and it would be nice to =0A=
+have that resolved.=0A=
+=0A=
+I'll sync up with Austin when he gets back to see about the other =0A=
+functions though I suspect we'll end up fixing them as well.=0A=
+=0A=
+Alex=0A=
+=0A=
+>>   	pos =3D dev->aer_cap;=0A=
+>>   	if (!pos)=0A=
+>>   		return -EIO;=0A=
+>> -- =0A=
+>> 2.14.3=0A=
+>>=0A=
+> =0A=
+=0A=
+=0A=
