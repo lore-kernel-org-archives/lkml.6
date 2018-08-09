@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CF5C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F356C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B16821D6A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:15:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9CE021D6A
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Za0R1adg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B16821D6A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVBzUAzY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CE021D6A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731106AbeHIOjl (ORCPT
+        id S1730928AbeHIOnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:39:41 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43916 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730301AbeHIOjl (ORCPT
+        Thu, 9 Aug 2018 10:43:01 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40422 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730119AbeHIOnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:39:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b15-v6so4937730wrv.10;
-        Thu, 09 Aug 2018 05:15:03 -0700 (PDT)
+        Thu, 9 Aug 2018 10:43:01 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y9-v6so55156wma.5;
+        Thu, 09 Aug 2018 05:18:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=NddY8Heov1KYXozmGf1XBJ5CeoxLoEcdUZ4pHWfzu3Q=;
-        b=Za0R1adgf/Pqeb5bVgpEbDJMS1m4VCq1il6l0XwlK5CmD8CaTpr8b0Cz+XcPEEMAny
-         8odztmr2pFMyH/Kq3bjgZto7hyVUfP/I1Bg8sj0zYkKNzkKfQQ+x6xznApOyZrDIjVmp
-         vbsQUUq/lFWpgQRdwWHIZVVoTD9pgU9yfu7+8yyMy7e0R3BdoRraoWQlb/6am1W0UJvl
-         xK31jtl1v27INS32R+iDpFaEX5xS/PQqxpoKfsQCCpt8nLx9EiPfaxqJqaXqIPFdHL0g
-         k5JN3IxgMTjYBzsek4VOixbGiPWB3jvdvfgBWvK9q6C69YWSozo+7d6U6YgarxbXy2Ab
-         XOHA==
+        bh=vrl/E3lUGQp5F7FqCmeXNEB1K9J3BUiRK/p/GEXLJtY=;
+        b=MVBzUAzYQksYLh4gavrhVtp5ugpkYFmdJvmqsETgRyWnNOZFgL5IF8/mD13vzxnc8X
+         GcDs5buJAhbdkPiGFuPu4Rf2Nk/lY6ZBJgx6j2P+yFPHbdV392h0L+BX7cBSjmU+6zPH
+         66JTmYCxZG54eGCbqsIBj/504a41iYr67apx+gtHGoDQGkLmZg8L43d4imW/4IcfGP6u
+         CeoRTs34HIXl1zcSQOUcAVy+3eKojDb0UIcNpyML5oOfhgd9ms+XN0+QSS6J52xCyIKD
+         wF9niv9npe4/1NWpE2S+n2SqB/g3C3uB3t6t3d9YiQtluEziWvBTngHd8JhVqrmruN3A
+         b6pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NddY8Heov1KYXozmGf1XBJ5CeoxLoEcdUZ4pHWfzu3Q=;
-        b=HR1/VGiJIm7W9f7IM0YfaFvX075Jp2ODpKcj7UQ9SK0VRjcBrlIaXUm/gOS18753qV
-         gM3kAvSqnLtEv/Igg2XdEn67FWsg/3yt3KtK4gdR4FXSN/Ttz5Mh2qNqYIpdZB/ZarUg
-         4LyQmJLeJBbffXjK30Gn+lgv0Q0iw7S2tco7jy5mUB2+yHS1AfMtnljoAxgEsPgQIOPB
-         I1RXzEK3i4Bn+qrWgcWi094kpBS5inofzvZNd3u7IBpfVqYMjliuN9Fz3Z1qZIEunohF
-         Zm+dpYzb73y74VDlZXhhSoQuhLRU1O3j3njSf8Eptcxy17zHk/AHBQFyTQ8PAEE1a5FI
-         r+GA==
-X-Gm-Message-State: AOUpUlEx4dpisxr9Ty0RP7Fb0K37ZldQRYnGOPjC1URwoh0iopEmENjj
-        vV7vxIYd6Uy0+We6VZiSCok=
-X-Google-Smtp-Source: AA+uWPxSPTG+AOIglX+6MEV5XowfNyEoPH+z3vYTsL8EYLL6DEMAq7lAru0tt9XObD5+ssdKepm+aA==
-X-Received: by 2002:adf:eac8:: with SMTP id o8-v6mr1215954wrn.150.1533816902486;
-        Thu, 09 Aug 2018 05:15:02 -0700 (PDT)
+        bh=vrl/E3lUGQp5F7FqCmeXNEB1K9J3BUiRK/p/GEXLJtY=;
+        b=m6jAk9sRgkK70B6s98tbDkY/erg9+dJk6/kYTUuiqtQmPvxvxQQykcQ5Z6h/OiRFmU
+         kzB5hU5/a2e0tOtq6ttw+eUtd0KZNpOg2xswK9I2BHAIq1ycC3f7ubwvRxv5Ujv4Mw0v
+         Xl9KhjDrtA5ikfI0U7/SRRMPf7OnW9sJAUnEe36/pDjXhqoMsaY8FaTfb13KhJSQlSIh
+         Tmo3YFLx4t0K3tE35LnRd4e5pJX2d/SDJg6p7twi9esimDXbsHHBDKjWoFCWevm2xzIP
+         ZLLnVJAV7GqIA59OD4x8wZBFma6Fl69jVesM130fag8pEUEpr7IC4KehmZPC6Zf80kDb
+         NwOg==
+X-Gm-Message-State: AOUpUlHqxt+MS71zsaido9IUkLSBYiMDHRIZoBua2mlevdEkDw+e6yxI
+        +ay2/R/4tFRd1rT4enkGMCo=
+X-Google-Smtp-Source: AA+uWPzqnQBsHvhhUhhxEupAshi/787+jXTPWzIPygyO99bM03LLi4a2Lzf+JXbvo8Cs6q3LcdwL1g==
+X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr1551731wme.125.1533817100812;
+        Thu, 09 Aug 2018 05:18:20 -0700 (PDT)
 Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm11032927wmf.8.2018.08.09.05.15.01
+        by smtp.gmail.com with ESMTPSA id i23-v6sm10915850wmf.24.2018.08.09.05.18.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 05:15:01 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 14:15:00 +0200
+        Thu, 09 Aug 2018 05:18:19 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 14:18:18 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Aapo Vienamo <avienamo@nvidia.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -71,16 +71,16 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 02/40] dt-bindings: mmc: tegra: Add pad voltage control
- properties
-Message-ID: <20180809121500.GP21639@ulmo>
+Subject: Re: [PATCH 03/40] dt-bindings: Add Tegra SDHCI pad pdpu offset
+ bindings
+Message-ID: <20180809121818.GQ21639@ulmo>
 References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
- <1533141150-10511-3-git-send-email-avienamo@nvidia.com>
+ <1533141150-10511-4-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1LW0Rr0Uq98qh6Rv"
+        protocol="application/pgp-signature"; boundary="QVgWX4+QEldMe/r9"
 Content-Disposition: inline
-In-Reply-To: <1533141150-10511-3-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1533141150-10511-4-git-send-email-avienamo@nvidia.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,82 +88,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---1LW0Rr0Uq98qh6Rv
+--QVgWX4+QEldMe/r9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 01, 2018 at 07:31:52PM +0300, Aapo Vienamo wrote:
-> Document the pinctrl bindings used by the SDHCI driver to reconfigure
-> pad voltages on controllers supporting multiple voltage levels.
+On Wed, Aug 01, 2018 at 07:31:53PM +0300, Aapo Vienamo wrote:
+> Add bindings documentation for pad pull up and pull down offset values to=
+ be
+> programmed before executing automatic pad drive strength calibration.
 >=20
 > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 22 ++++++++++++++++=
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 36 ++++++++++++++++=
 ++++++
->  1 file changed, 22 insertions(+)
+>  1 file changed, 36 insertions(+)
 >=20
 > diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.t=
 xt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index 9bce578..90c214d 100644
+> index 90c214d..2e973b5 100644
 > --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
 > +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -38,3 +38,25 @@ sdhci@c8000200 {
->  	power-gpios =3D <&gpio 155 0>; /* gpio PT3 */
->  	bus-width =3D <8>;
->  };
-> +
+> @@ -24,6 +24,7 @@ Required properties:
+>  Optional properties:
+>  - power-gpios : Specify GPIOs for power control
+> =20
 > +Optional properties for Tegra210 and Tegra186:
-> +- pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
-> +  configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
-> +  for controllers supporting multiple voltage levels. The order of names
-> +  should correspond to the pin configuration states in pinctrl-0 and
-> +  pinctrl-1.
 
-Do we also want "sdmmc-off" to allow SDMMC pads to be powered down when
-the slot or card is not used?
+This looks like a stray addition.
+
+>  Example:
+> =20
+>  sdhci@c8000200 {
+> @@ -45,6 +46,37 @@ Optional properties for Tegra210 and Tegra186:
+>    for controllers supporting multiple voltage levels. The order of names
+>    should correspond to the pin configuration states in pinctrl-0 and
+>    pinctrl-1.
+> +- nvidia,only-1-8-v : The presence of this property indicates that the
+> +  controller operates at a 1.8 V fixed I/O voltage.
+> +- nvidia,pad-autocal-pull-up-offset-3v3,
+> +  nvidia,pad-autocal-pull-down-offset-3v3 : Specify drive strength
+> +  calibration offsets for 3.3 V signaling modes.
+> +- nvidia,pad-autocal-pull-up-offset-1v8,
+> +  nvidia,pad-autocal-pull-down-offset-1v8 : Specify drive strength
+> +  calibration offsets for 1.8 V signaling modes.
+> +- nvidia,pad-autocal-pull-up-offset-3v3-timeout,
+> +  nvidia,pad-autocal-pull-down-offset-3v3-timeout : Specify drive
+> +  strength used as a fallback in case the automatic calibration times
+> +  out on a 3.3 V signaling mode.
+> +- nvidia,pad-autocal-pull-up-offset-1v8-timeout,
+> +  nvidia,pad-autocal-pull-down-offset-1v8-timeout : Specify drive
+> +  strength used as a fallback in case the automatic calibration times
+> +  out on a 1.8 V signaling mode.
+> +- nvidia,pad-autocal-pull-up-offset-sdr104,
+> +  nvidia,pad-autocal-pull-down-offset-sdr104 : Specify drive strength
+> +  calibration offsets for SDR104 mode.
+> +- nvidia,pad-autocal-pull-up-offset-hs400,
+> +  nvidia,pad-autocal-pull-down-offset-hs400 : Specify drive strength
+> +  calibration offsets for HS400 mode.
+
+There's no mention here about how many values each of these properties
+needs. I guess given that the property names are singular it implies a
+single value.
 
 Thierry
 
-> +
-> +Example:
-> +sdhci@700b0000 {
-> +	compatible =3D "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-> +	reg =3D <0x0 0x700b0000 0x0 0x200>;
-> +	interrupts =3D <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks =3D <&tegra_car TEGRA210_CLK_SDMMC1>;
-> +	clock-names =3D "sdhci";
-> +	resets =3D <&tegra_car 14>;
-> +	reset-names =3D "sdhci";
-> +	pinctrl-names =3D "sdmmc-3v3", "sdmmc-1v8";
-> +	pinctrl-0 =3D <&sdmmc1_3v3>;
-> +	pinctrl-1 =3D <&sdmmc1_1v8>;
-> +	status =3D "disabled";
-> +};
-> --=20
-> 2.7.4
->=20
-
---1LW0Rr0Uq98qh6Rv
+--QVgWX4+QEldMe/r9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsMEQACgkQ3SOs138+
-s6EKVQ/9Hkhh22E0hhTKV3WiJWymoURwVYwRFr/2l3Hk/IqQYO+48fPgKaQ2yxyx
-W7CSmOP0uYd0kxaiFjQtnFDRwmT/nn+SGiYk6Vf+HEbGn4GeReVXRxSiiFvySNVU
-bF/9z1aMBaAeAnXrvp9pvMZsEy0fA3+qZGZUAvYEZjrcbWp1Ew0JHbLc8x2QlNVr
-l4/vm/OBsoliidFGCB/hyFoLTwb2+wUSUuUfLCkNADYJ12y78+njPgB0pJDBoG0p
-pQHb9csVIaeSdfHv4SxIBS2jS2VsLraWQ56gMILsst74RNz/6rXu36VPK3MuXvrD
-73RsBjb8E28TJS1WPKubtuRmSXWUzMCaYsY73K70dk1APhkz9gYWhdgtXeTLhxAZ
-k4sPQFJw5U1Vx3xhy4tKKrr6tnXV+8GTl3ufO5IabPTms+/GVfad06v5Ot/WX6fh
-gOe4ic/rWqxjHt30Qr9aq8NLjyXEWxZ64GJwf30UcpFDLq4jcANt/dnMdmrnZwlX
-+fgDLcizuUDxToWN3cwLxlS0GekZARu0Qkfaq5z80xgmTrTi5DuYskeHBNhfGN8c
-hLpfE0yxD9jrLJCqA8LDYTAZmFbBhoCEVTJ4BwEpBvBdyzGLstj/+wLcUTnKBGoq
-zK9gpP+oMV3toAQvguswH71LlYBfYcfHVfgT+Qb3Xc3v9uhnxLo=
-=LFLg
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsMQoACgkQ3SOs138+
+s6Fevg/+MNfOC0Z9TgoTTFq8en1xRYQOPng4O9aKl/54+TC2EtpsPQAcpGQGpqgd
+D0FgOxD+hdkdoQwWG0831rxAGW03ICVsVdqnsUOHBeBgDsKA55JVs1Ixl0Hl41cU
+RQHD6QYm3iLDjSPi6qintqSidND9fVAU2JHVLdgzQDo+LkFOJ00kcfAheqrl8Keb
+1yAm4rN69k1aNwMI6buxo1l8jFk3UJa12AVwseUoZNB9AtzkVf0Ei9EYvoIYiuQ2
+Y3aEBJxOmAME5V1Dpy2B0uAIfbrQk0fMbx7KdbycUvARThzj+C8JnVz3O7KgDY24
+XkyqDLwfi+VRZiDNPeWOWX45nkTDq+Fvw4WfIzqJB26dYPWm1mh4D+JhG3BgPtdW
+F4oohcSmNCpeiu18CUiccKVrn25TcIVJpS2PdryqRGLHTuhpALAwyOThdxA2WAhP
+Wfn1LQH8sV1Rmhs18hF7OB1j33LhjkfXiT3lEp0Ouy4Qejm9S6Qj39hzX58c/Et7
+Wu9QY/e6VOIok1sMCAEnegfZQjxPKzL0XRztqKaOQ5PjHcrjUlOkpH9Vv+C4We8G
+J2jJYeL1D0CANSKDpndk/PT6V50hBzqaXbavFZsPYU7syp7tCejSO21EHkzV8ok2
+bFNxgbE05xtuY3U53z0LLW4A1zhoeclPvIbz+cmAwKnFtEstSTI=
+=ZtE+
 -----END PGP SIGNATURE-----
 
---1LW0Rr0Uq98qh6Rv--
+--QVgWX4+QEldMe/r9--
