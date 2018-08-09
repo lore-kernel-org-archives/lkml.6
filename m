@@ -2,235 +2,195 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D78EC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E07C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11572154E
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:43:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11572154E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A102217C5
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T2MGZJt2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A102217C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbeHIMH1 (ORCPT
+        id S1730683AbeHIMIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:07:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:51100 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729567AbeHIMH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:07:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCD4915A2;
-        Thu,  9 Aug 2018 02:43:24 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.Emea.Arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85B4F3F5D4;
-        Thu,  9 Aug 2018 02:43:22 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 10:43:19 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     skannan@codeaurora.org
-Cc:     Rob Herring <robh@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] PM / devfreq: Generic CPU frequency to device
- frequency mapping governor
-Message-ID: <20180809094319.GB1324@e107155-lin>
-References: <1533171465-25508-1-git-send-email-skannan@codeaurora.org>
- <20180807164114.GA12587@rob-hp-laptop>
- <496ac47a3c78f37655b60841fba7494c@codeaurora.org>
- <20180808084754.GB25416@e107155-lin>
- <8c7ab63d4c646733b89962a1d2a0a4ae@codeaurora.org>
+        Thu, 9 Aug 2018 08:08:15 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58648 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729567AbeHIMIP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 08:08:15 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9AADFCD;
+        Thu,  9 Aug 2018 11:44:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533807850;
+        bh=Z6AQ+POHQxEtm0YlNUmxej3XSuN+PdoyeUqLUNopQ6M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=T2MGZJt2HIhOd4zhzwUXvVTmgby9tw1Xm/Z9FKt4iRomFp8Gt7vu2Vuy10CEyluDT
+         7YXQ9TcJ3K3KCFpM7q9Zvg6g0X3No+7GjhF7o+bd2PWMqHZKSjpwIL3HuMm08Tu/7y
+         O4e2hcjW+v97o2jIkwG8CQcA01WRgvzV+2/IrS+I=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: Re: [PATCH v2 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
+Date:   Thu, 09 Aug 2018 12:44:54 +0300
+Message-ID: <2106168.1BipQ1ylgj@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAJs94EYX13oPHiD=Ck5E9cG=z3JMZ9Szs5kRaKHn9F90+uxQ8Q@mail.gmail.com>
+References: <20180622120419.7675-1-matwey@sai.msu.ru> <2175835.YAv5WQJWxC@avalon> <CAJs94EYX13oPHiD=Ck5E9cG=z3JMZ9Szs5kRaKHn9F90+uxQ8Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c7ab63d4c646733b89962a1d2a0a4ae@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 02:18:18PM -0700, skannan@codeaurora.org wrote:
-> On 2018-08-08 01:47, Sudeep Holla wrote:
-> >On Tue, Aug 07, 2018 at 12:37:07PM -0700, skannan@codeaurora.org wrote:
-> >>On 2018-08-07 09:41, Rob Herring wrote:
-> >>>On Wed, Aug 01, 2018 at 05:57:41PM -0700, Saravana Kannan wrote:
-> >>>>Many CPU architectures have caches that can scale independent of the
-> >>>>CPUs.
-> >>>>Frequency scaling of the caches is necessary to make sure the cache is
-> >>>>not
-> >>>>a performance bottleneck that leads to poor performance and power. The
-> >>>>same
-> >>>>idea applies for RAM/DDR.
-> >>>>
-> >>>>To achieve this, this patch adds a generic devfreq governor that takes
-> >>>>the
-> >>>>current frequency of each CPU frequency domain and then adjusts the
-> >>>>frequency of the cache (or any devfreq device) based on the frequency of
-> >>>>the CPUs. It listens to CPU frequency transition notifiers to keep
-> >>>>itself
-> >>>>up to date on the current CPU frequency.
-> >>>>
-> >>>>To decide the frequency of the device, the governor does one of the
-> >>>>following:
-> >>>>
-> >>>>* Uses a CPU frequency to device frequency mapping table
-> >>>>  - Either one mapping table used for all CPU freq policies (typically
-> >>>>used
-> >>>>    for system with homogeneous cores/clusters that have the same OPPs).
-> >>>>  - One mapping table per CPU freq policy (typically used for ASMP
-> >>>>systems
-> >>>>    with heterogeneous CPUs with different OPPs)
-> >>>>
-> >>>>OR
-> >>>>
-> >>>>* Scales the device frequency in proportion to the CPU frequency. So, if
-> >>>>  the CPUs are running at their max frequency, the device runs at its
-> >>>>max
-> >>>>  frequency.  If the CPUs are running at their min frequency, the device
-> >>>>  runs at its min frequency. And interpolated for frequencies in
-> >>>>between.
-> >>>>
-> >>>>Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> >>>>---
-> >>>> .../bindings/devfreq/devfreq-cpufreq-map.txt       |  53 ++
-> >>>
-> >>>Bindings should be a separate patch.
-> >>>
-> >>>> drivers/devfreq/Kconfig                            |   8 +
-> >>>> drivers/devfreq/Makefile                           |   1 +
-> >>>> drivers/devfreq/governor_cpufreq_map.c             | 583
-> >>>>+++++++++++++++++++++
-> >>>> 4 files changed, 645 insertions(+)
-> >>>> create mode 100644
-> >>>>Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>>> create mode 100644 drivers/devfreq/governor_cpufreq_map.c
-> >>>>
-> >>>>diff --git
-> >>>>a/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>>>b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>>>new file mode 100644
-> >>>>index 0000000..982a30b
-> >>>>--- /dev/null
-> >>>>+++ b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>>>@@ -0,0 +1,53 @@
-> >>>>+Devfreq CPUfreq governor
-> >>>>+
-> >>>>+devfreq-cpufreq-map is a parent device that contains one or more child
-> >>>>devices.
-> >>>>+Each child device provides CPU frequency to device frequency mapping
-> >>>>for a
-> >>>>+specific device. Examples of devices that could use this are: DDR,
-> >>>>cache and
-> >>>>+CCI.
-> >>>>+
-> >>>>+Parent device name shall be "devfreq-cpufreq-map".
-> >>>>+
-> >>>>+Required child device properties:
-> >>>>+- cpu-to-dev-map, or cpu-to-dev-map-<X>:
-> >>>>+			A list of tuples where each tuple consists of a
-> >>>>+			CPU frequency (KHz) and the corresponding device
-> >>>>+			frequency. CPU frequencies not listed in the table
-> >>>>+			will use the device frequency that corresponds to the
-> >>>>+			next rounded up CPU frequency.
-> >>>>+			Use "cpu-to-dev-map" if all CPUs in the system should
-> >>>>+			share same mapping.
-> >>>>+			Use cpu-to-dev-map-<cpuid> to describe different
-> >>>>+			mappings for different CPUs. The property should be
-> >>>>+			listed only for the first CPU if multiple CPUs are
-> >>>>+			synchronous.
-> >>>>+- target-dev:		Phandle to device that this mapping applies to.
-> >>>>+
-> >>>>+Example:
-> >>>>+	devfreq-cpufreq-map {
-> >>>>+		cpubw-cpufreq {
-> >>>>+			target-dev = <&cpubw>;
-> >>>>+			cpu-to-dev-map =
-> >>>>+				<  300000  1144000 >,
-> >>>>+				<  422400  2288000 >,
-> >>>>+				<  652800  3051000 >,
-> >>>>+				<  883200  5996000 >,
-> >>>>+				< 1190400  8056000 >,
-> >>>>+				< 1497600 10101000 >,
-> >>>>+				< 1728000 12145000 >,
-> >>>>+				< 2649600 16250000 >;
-> >>>
-> >>>Now we have frequencies listed in multiple places, the OPP tables and
-> >>>here? Perhaps it is grouping OPPs that should be done.
-> >>
-> >>This doesn't list all OPPs (it can if necessary). This is listing the
-> >>minimum frequency needed to give good performance/power for a
-> >>device/product.
-> >>
-> >
-> >Shouldn't the "status" property be used to disable OPPs you don't need
-> >on a particular platform ?
+Hi Matwey,
+
+On Thursday, 9 August 2018 12:18:13 EEST Matwey V. Kornilov wrote:
+> 2018-08-09 1:46 GMT+03:00 Laurent Pinchart:
+> > On Friday, 22 June 2018 15:04:19 EEST Matwey V. Kornilov wrote:
+> >> DMA cocherency slows the transfer down on systems without hardware
+> >> coherent DMA.
+> >> 
+> >> Based on previous commit the following performance benchmarks have been
+> >> carried out. Average memcpy() data transfer rate (rate) and handler
+> >> completion time (time) have been measured when running video stream at
+> >> 640x480 resolution at 10fps.
+> >> 
+> >> x86_64 based system (Intel Core i5-3470). This platform has hardware
+> >> coherent DMA support and proposed change doesn't make big difference
+> >> here.
+> >> 
+> >>  * kmalloc:            rate = (4.4 +- 1.0) GBps
+> >>                        time = (2.4 +- 1.2) usec
+> >>  
+> >>  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
+> >>                        time = (2.5 +- 1.0) usec
+> >> 
+> >> We see that the measurements agree well within error ranges in this case.
+> >> So no performance downgrade is introduced.
+> >> 
+> >> armv7l based system (TI AM335x BeagleBone Black). This platform has no
+> >> hardware coherent DMA support. DMA coherence is implemented via disabled
+> >> page caching that slows down memcpy() due to memory controller behaviour.
+> >> 
+> >>  * kmalloc:            rate =  (190 +-  30) MBps
+> >>                        time =   (50 +-  10) usec
+> >>  
+> >>  * usb_alloc_coherent: rate =   (33 +-   4) MBps
+> >>                        time = (3000 +- 400) usec
+> >> 
+> >> Note, that quantative difference leads (this commit leads to 5 times
+> >> acceleration) to qualitative behavior change in this case. As it was
+> >> stated before, the video stream can not be successfully received at
+> >> AM335x platforms with MUSB based USB host controller due to performance
+> >> issues [1].
+> >> 
+> >> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+> >> 
+> >> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> >> ---
+> >> 
+> >>  drivers/media/usb/pwc/pwc-if.c | 12 +++---------
+> >>  1 file changed, 3 insertions(+), 9 deletions(-)
+> >> 
+> >> diff --git a/drivers/media/usb/pwc/pwc-if.c
+> >> b/drivers/media/usb/pwc/pwc-if.c index 72d2897a4b9f..339a285600d1 100644
+> >> --- a/drivers/media/usb/pwc/pwc-if.c
+> >> +++ b/drivers/media/usb/pwc/pwc-if.c
+> >> @@ -427,11 +427,8 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+> >>               urb->interval = 1; // devik
+> >>               urb->dev = udev;
+> >>               urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+> >> -             urb->transfer_flags = URB_ISO_ASAP |
+> >> URB_NO_TRANSFER_DMA_MAP;
+> >> -             urb->transfer_buffer = usb_alloc_coherent(udev,
+> >> -                                                       ISO_BUFFER_SIZE,
+> >> -                                                       GFP_KERNEL,
+> >> -                                                      
+> >> &urb->transfer_dma);
+> >> +             urb->transfer_flags = URB_ISO_ASAP;
+> >> +             urb->transfer_buffer = kmalloc(ISO_BUFFER_SIZE,
+> >> GFP_KERNEL);
+> > 
+> > ISO_BUFFER_SIZE is 970 bytes, well below a page size, so this should be
+> > fine. However, for other USB camera drivers, we might require larger
+> > buffers spanning multiple pages, and kmalloc() wouldn't be a very good
+> > choice there. I thus believe we should implement a helper function,
+> > possibly in the for of usb_alloc_noncoherent(), to allow picking the
+> > right allocation mechanism based on the buffer size (and possibly other
+> > parameters). Ideally the helper and the USB core should cooperate to
+> > avoid any overhead from DMA operations when DMA is coherent on the
+> > platform (on x86 and some ARM platforms).
 > 
-> But that's not the point here? We aren't trying to disable any OPPs here?
-> Not sure what you mean.
->
+> pwc/pwc.h:
+> 
+> #define ISO_FRAMES_PER_DESC     10
+> #define ISO_MAX_FRAME_SIZE      960
+> #define ISO_BUFFER_SIZE         (ISO_FRAMES_PER_DESC * ISO_MAX_FRAME_SIZE)
+> 
+> The buffer size is 9600 bytes, where did 970 come from?
 
-OK, I misunderstood, but my main concern was about duplication.
+From mistaking * for + at 2:00am :-/
 
-> >Duplicating values is highly prone to errors and should be avoided.
-> >
+That's three pages, so to reduce pressure on memory allocation it would be 
+best to use an allocator that can be backed by CMA. A helper function to 
+abstract this has just become more important.
 
-IIUC, opp entries are nodes themselves with v2 bindings, can't you use
-phandles to avoid duplication.
+> > That being said, I don't see a reason why this patch should be blocked
+> > until we get such a helper function, we can also implement it when needed
+> > for another USB webcam driver (likely uvcvideo given the recent
+> > discussions) and then use it in the pwc driver.
+> > 
+> > We have also determined that performances can be further improved by
+> > keeping mappings around and using the dma_sync_* operations at runtime.
+> > That's again not a reason to block this patch, as the performance
+> > improvement is already impressive, so
+> 
+> I've incorporated this changes in v3, I'll send it shortly.
+> 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > But I would still like to see the above two issues addressed. If you'd
+> > like to give them a go, with or without getting v2 of this series merged
+> > first, please do so, and I'll happily review patches.
+> > 
+> >>               if (urb->transfer_buffer == NULL) {
+> >>                       PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+> >>                       pwc_isoc_cleanup(pdev);
+> >> @@ -491,10 +488,7 @@ static void pwc_iso_free(struct pwc_device *pdev)
+> >>               if (pdev->urbs[i]) {
+> >>                       PWC_DEBUG_MEMORY("Freeing URB\n");
+> >>                       if (pdev->urbs[i]->transfer_buffer) {
+> >> -                             usb_free_coherent(pdev->udev,
+> >> -                                  pdev->urbs[i]->transfer_buffer_length,
+> >> -                                  pdev->urbs[i]->transfer_buffer,
+> >> -                                  pdev->urbs[i]->transfer_dma);
+> >> +                             kfree(pdev->urbs[i]->transfer_buffer);
+> >>                       }
+> >>                       usb_free_urb(pdev->urbs[i]);
+> >>                       pdev->urbs[i] = NULL;
 
-> >>AFAIK, OPP grouping isn't something that's supported in OPP framework or
-> >>in
-> >>DT. Is there something specific you had in mind? Also, I'd like for this
-> >>to
-> >>work even with devices that don't have OPPs listed in DT.
-> >>
-> >Also what's the solution you have for platforms with new *QCom FW Cpufreq*
-> >?
-> >IIUC the frequency is obtained from the firmware. TBH this should ideally
-> >be handled in firmware if cpufreq is also handled by the firmware. I guess
-> >this platform doesn't have that ?
->
-> All QC platforms would use this.
->
-
-How about the ones that get OPPs from firmware ? I thought that was the case
-with new *QCom FW Cpufreq*
-
-> As a personal (non-Qcom) opinion, I'd rather the kernel control this than
-> have some black magic FW manage this.
-
-Indeed every OS person having to find/debug the firmware bug may feel that.
-But that doesn't change the fact that the embedded space is evolving.
-Firmware is inevitable for good or bad, we need to accept that fact and
-move on TBH.
-
-> I've a really bitter taste in my mouth
-> for FW hiding this because of a broken ACPI implementation in one of my x86
-> motherboards prevented CPUfreq from working (this was well before I worked
-> on CPUfreq).
-
-Alternate way to look at this is that embedded developers(at least me) are
-new to this space and feel that.
-
-> Pushing stuff to FW seems to beat the ideal behind an opensource OS.
-
-Not always. Even the recent security fixes(spectre/meltdown) had some
-dependencies on f/w to deal with the issues. So finding the ways to
-co-exist is more helpful than dismissing it.
-
-> In a few cases it's elegant or more robust, so maybe in those
-> cases its okay to use a FW. But I'd rather not for simpler stuff like this.
-
-But there are instances where such simple stuffs also open up for security
-exploits(clkscrew)
-
---
+-- 
 Regards,
-Sudeep
+
+Laurent Pinchart
+
+
+
