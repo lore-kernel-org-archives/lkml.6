@@ -2,168 +2,115 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D03C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72921C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C5F121D68
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:32:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5F121D68
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 3086C21E5B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:34:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3086C21E5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732444AbeHIR6U (ORCPT
+        id S1732394AbeHIR77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:58:20 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:37802 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732127AbeHIR6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:58:20 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fnmvl-0008Qs-F3; Thu, 09 Aug 2018 09:32:53 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fnmvj-0003Of-0Q; Thu, 09 Aug 2018 09:32:53 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <87in4n9zg0.fsf@xmission.com>
-        <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk>
-        <27374.1533824694@warthog.procyon.org.uk>
-Date:   Thu, 09 Aug 2018 10:32:37 -0500
-In-Reply-To: <27374.1533824694@warthog.procyon.org.uk> (David Howells's
-        message of "Thu, 09 Aug 2018 15:24:54 +0100")
-Message-ID: <87in4jwo6i.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 9 Aug 2018 13:59:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55594 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731112AbeHIR77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 13:59:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D84D77A9;
+        Thu,  9 Aug 2018 08:34:33 -0700 (PDT)
+Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFF553F5B3;
+        Thu,  9 Aug 2018 08:34:27 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 16:34:23 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
+ for RT tasks
+Message-ID: <20180809153423.nsoepprhut3dv4u2@darkstar>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-7-patrick.bellasi@arm.com>
+ <20180807132630.GB3062@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fnmvj-0003Of-0Q;;;mid=<87in4jwo6i.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/dutu1jlcMvCIdX8EM75LvcUKGsoFEdZQ=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and managing a context [ver #11]
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807132630.GB3062@localhost.localdomain>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+On 07-Aug 15:26, Juri Lelli wrote:
+> Hi,
+> 
+> On 06/08/18 17:39, Patrick Bellasi wrote:
+> 
+> [...]
+> 
+> > @@ -223,13 +224,25 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+> >  	 * utilization (PELT windows are synchronized) we can directly add them
+> >  	 * to obtain the CPU's actual utilization.
+> >  	 *
+> > -	 * CFS utilization can be boosted or capped, depending on utilization
+> > -	 * clamp constraints configured for currently RUNNABLE tasks.
+> > +	 * CFS and RT utilizations can be boosted or capped, depending on
+> > +	 * utilization constraints enforce by currently RUNNABLE tasks.
+> > +	 * They are individually clamped to ensure fairness across classes,
+> > +	 * meaning that CFS always gets (if possible) the (minimum) required
+> > +	 * bandwidth on top of that required by higher priority classes.
+> 
+> Is this a stale comment written before UCLAMP_SCHED_CLASS was
+> introduced? It seems to apply to the below if branch only.
 
-> Eric W. Biederman <ebiederm@xmission.com> wrote:
->
->> First let me thank you for adding both FSCONFIG_CMD_CREATE and
->> FSCONFIG_CMD_RECONFIGURE.  Unfortunately the implementation is currently
->> broken.  So this patch gets my:
->> 
->> This is broken in two specific ways.
->> ...
->> 2) FSCONFIG_CMD_CREATE will succeed even if the superblock already
->>    exists and it can not use all of the superblock parameters.
->> 
->>    This happens because vfs_get_super will only call fill_super
->>    if the super block is created.  Which is reasonable on the face
->>    of it.  But it in practice this introduces security problems.
->> 
->>    a) Either through reconfiguring a shared super block you did not
->>       realize was shared (as we saw with devpts).
->> 
->>    b) Mounting a super block and not honoring it's mount options
->>       because something has already mounted it.  As we see today
->>       with proc.  Leaving userspace to think the filesystem will behave
->>       one way when in fact it behaves another.
->> 
->> I have already explained this several times, and apparently I have been
->> ignored.  This fundamental usability issue that leads to security
->> problems.
->
-> I've also explained why you're wrong or at least only partially right.  I *do*
-> *not* want to implement sget() in userspace with the ability for userspace to
-> lock out other mount requests - which is what it appears that you've been
-> asking for.
+Yes, you right... I'll update the comment.
 
-All I really care about is that when you ask for a set of paramaters
-that you get a filesystem with that set of parameters.  Not the same
-filsystem mounted a different way.
+> >  	 */
+> > -	util = cpu_util_cfs(rq);
+> > -	if (util)
+> > -		util = uclamp_util(cpu_of(rq), util);
+> > -	util += cpu_util_rt(rq);
+> > +	util_cfs = cpu_util_cfs(rq);
+> > +	util_rt  = cpu_util_rt(rq);
+> > +	if (sched_feat(UCLAMP_SCHED_CLASS)) {
+> > +		util = 0;
+> > +		if (util_cfs)
+> > +			util += uclamp_util(cpu_of(rq), util_cfs);
+> > +		if (util_rt)
+> > +			util += uclamp_util(cpu_of(rq), util_rt);
+> > +	} else {
+> > +		util  = cpu_util_cfs(rq);
+> > +		util += cpu_util_rt(rq);
+> > +		util  = uclamp_util(cpu_of(rq), util);
+> > +	}
 
-That has gone wrong twice badly.  There is no common case I know of that
-requires returning the same filesystem twice.  AKA the pain of the
-existing semantics seems much much worse than any benefit.  So I am
-asking that we not propagate the existing semantics into the new API.
-You are cleaning up dealing with mount options and this is one of the
-places where they need cleaning up.
+Regarding the two policies, do you have any comment?
 
-> However, as I have said, I *am* willing to add one of more flags to help with
-> this, but I can't make any "legacy" fs honour them as this requires the
-> fs_context to be passed down to sget_fc() and the filesystem - which is why I
-> was considering leaving it for later.
->
->  (1) An FSOPEN_EXCL flag to tell sget_fc() to fail if the superblock already
->      exists at all.
->
->  (2) An FSOPEN_FAIL_ON_MISMATCH flag to explicitly say that we *don't* want a
->      superblock with different parameters.
->
-> The implication of providing neither flag is that we are happy to accept a
-> superblock from the same source but with different parameters.
->
-> But it doesn't seem to be an absolute imperative to roll this out immediately,
-> since what I have exactly mirrors what the kernel currently does - and forcing
-> a change in that behaviour risks breaking userspace.  If it keeps you happy,
-> however, I can try and work one up.
+We had an internal discussion and we found pro/cons for both... but
+I'm not sure keeping the sched_feat is a good solution on the long
+run, i.e. mainline merge ;)
 
-What I am asking is that the default behavior for the new API when using
-FSCONFIG_CMD_CREATE is to call sget_fc with either FSOPEN_EXCL or
-FSOPEN_FAIL_ON_MISMATCH.  I know FSOPEN_EXCL is trivial to implement.  I
-don't know if there are any hidden gotcha's with
-FSOPEN_FAIL_ON_MISMATCH.
+-- 
+#include <best/regards.h>
 
-This change in default behavior for your patch needs to be implemented
-before this hits a released kernel.  Returning a filesystem with
-different than the requested parameters has resulted in at least two
-major issues, that are very hard to clean up after the fact.  A chroot
-system changing the parameters on /dev/pts resulting in some
-distributions keeping the suid pt_chown binary long past it's best buy
-date, and other distributions instead choosing to break userspace.  Then
-there is the current issue where in practice proc does not any of it's
-mount paramaters which breaks the android security model.
-
-The fact that these things happen silently and you have to be on your
-toes to catch them is fundamentally a bug in the API.  If the mount
-request had simply failed people would have noticed the issues much
-sooner and silently b0rkend configuration would not have propagated.  As
-such I do not believe we should propagate this misfeature from the old
-API into the new API.
-
-Conceptually I like FSOPEN_FAIL_ON_MISMATH as it looks like it is
-sufficient to the needs, and with a little luck we could even change
-the old API to those semantics.
-
-
-Ultimately I want to close a giant mental model mismatch.
-
-User:  I am creating the data structures to read filesystem X
-       with parameters Y.
-
-Kernel: He wants filesystem X.  If it is a slow day use parameters Y.
-
-Given that historically the reuse of a superblock did not exist, and
-that in practice it almost never happens.  It is quite reqsonable for
-users to not expect the kernel to completely ignore the mount parameters
-they pass to the kernel.
-
-So please let's fix that now when it is easy.
-
-Eric
+Patrick Bellasi
