@@ -2,130 +2,203 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DF2C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D419C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F31223A6
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0989720873
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:48:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DczlXIgN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F31223A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="psmA6d5I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0989720873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeHJCMJ (ORCPT
+        id S1727778AbeHJCPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 22:12:09 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41866 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbeHJCMJ (ORCPT
+        Thu, 9 Aug 2018 22:15:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35946 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeHJCPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 22:12:09 -0400
-Received: by mail-ua1-f67.google.com with SMTP id h1-v6so192108uao.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wcyHnTtVqv5XHgoxMZgtnKMHTJyDCKkOyg+9HZyQlBU=;
-        b=DczlXIgN0BikDzwcQN/3l6BU06tjCZBuSkefRiW+X/lmTdC47p6odFSYOQNS/BXGbO
-         cJZpdKzLWDsmzz0RvV7SMf/+b1dBVJ/SMCVgZnSwsqIW/9qIsNmK+uWgSZPDyqbJCjxx
-         XH1C9KUhSn/lnobbzV8ule56A1/XJNpONFU0U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wcyHnTtVqv5XHgoxMZgtnKMHTJyDCKkOyg+9HZyQlBU=;
-        b=e5jfKaLCpfB4H60X4b3mUXhXyX2clqwRJ01m8s0Yi69ByZkkbWKZH370NDenOLXj7C
-         V1BrXM/9H7EV9PmlKY9WgTL+s8a9DKOtHIcBg1XPy2Xli+hmsrcYMsdN6r7wlANh96tN
-         C/QVQIHCi9nJTjhdYqb1WlecNFxhu6wXb4WlH4r/j+23H9A+MpOza8lG9JOftm19hUEP
-         l7+CGhHdNlAEwN3i45sp3r04EGhz1wf57eXf7rJO1zKMn1+zfMcYKnRrXFiRvTDik9C2
-         +cgx53oKNqGKhf0sgaBmSEjW1GNAgQgxOC8+zflpoCF74z+rV+7UMwidAZknM2TzrYY+
-         twXQ==
-X-Gm-Message-State: AOUpUlFVPxtsz1LaIVvA42eFwnpU8aaEIQdp9JAmGmC6YHZjK5HLyPnb
-        O318t6QhOEi34sdC7pPtlhQZ+4c93OhmpWl1X1BG7g==
-X-Google-Smtp-Source: AA+uWPwzRqKLYhQPHlzg7S6TbwP+aJV1bOZrkws9+d/SYV4ta2Lm0WJQFLPUT2nkKou7bf1Mws8fHJW1ukBg7e6cvHY=
-X-Received: by 2002:ab0:458f:: with SMTP id u15-v6mr2940247uau.202.1533858296678;
- Thu, 09 Aug 2018 16:44:56 -0700 (PDT)
+        Thu, 9 Aug 2018 22:15:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LVUaWYcaApGxJChngQDSBJ2QAeg0uBEbOZnrUDNIV5c=; b=psmA6d5IpGA66ieHl59agLqP2
+        XM2yv454x4EEvbVlBTbNubuS3T76yZXkTJstxnRgJssKjQK4F4R5y1qUJLAp7dAyD2aMqCgDLZY3H
+        CajLfAghFnvZ1RKdhiE7Hm6SeKBlDeND7guZurvTHqoP8fLGkzjXK/Th29lxrIJBkiqLXD91LAvWU
+        bsEotbbFDg5r4X7sb2W9EiCQkH0c9Jy8GQfUYTeH867yb6fAoDal6KqRI6zBTDOhMSn122QOXJCc2
+        YFfReblygu3l3HkqocXM1IV1xNMg4F29bTdRJhBw11ynUlHlAUY2XPeSUyh/RvmMkrj4PGrwODJyk
+        Tql21riFA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fnufO-0008Qw-CE; Thu, 09 Aug 2018 23:48:30 +0000
+Date:   Thu, 9 Aug 2018 16:48:30 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Martin Mares <mj@ucw.cz>, Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: lspci: Display path to device
+Message-ID: <20180809234830.GA30835@bombadil.infradead.org>
+References: <20180717170204.30470-1-logang@deltatee.com>
+ <20180717203900.GA1771@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <20180809171722.144325-1-swboyd@chromium.org> <20180809171722.144325-8-swboyd@chromium.org>
- <CAODwPW8eg2WOh9-Raeb8Q65E-5D7RDheDU8e+H68FHGa0MS37A@mail.gmail.com>
- <153385579866.220756.16086660810932774163@swboyd.mtv.corp.google.com> <CAODwPW84FYK3k5=n4gQ4EPJExhQ59LCEi31ZYi2Bq2y9FH_E_A@mail.gmail.com>
-In-Reply-To: <CAODwPW84FYK3k5=n4gQ4EPJExhQ59LCEi31ZYi2Bq2y9FH_E_A@mail.gmail.com>
-From:   Julius Werner <jwerner@chromium.org>
-Date:   Thu, 9 Aug 2018 16:44:43 -0700
-Message-ID: <CAODwPW8+QSittJdNLWpWKU=JNJa5bssMHQ4ER4CfnUAWaL1JGA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] firmware: coreboot: Request table region for
- exclusive access
-To:     Julius Werner <jwerner@chromium.org>
-Cc:     swboyd@chromium.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Brian Norris <briannorris@chromium.org>, samuel@sholland.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717203900.GA1771@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Actually, looking at what IO_STRICT_DEVMEM really does, would it
-really prevent userspace accesses to these areas? Because it seems
-that it only prevents accesses to areas marked as IORESOURCE_BUSY, and
-while I can't fully follow how the kernel assigns that, comments
-suggest that this is only set when "Driver has marked this resource
-busy".
 
-So after you make the change to the other patch where we immediately
-unmap the coreboot table again at the end of the probe() function,
-shouldn't it become available to userspace again even with
-IO_STRICT_DEVMEM set?
-On Thu, Aug 9, 2018 at 4:37 PM Julius Werner <jwerner@chromium.org> wrote:
->
-> > Furthermore, I see that my system RAM excludes this coreboot table so it
-> > doesn't fall into the bucket that CONFIG_STRICT_DEVMEM would find.
->
-> Yes, that is intentional. We don't want the kernel to try to use that
-> memory for anything else (since we want those tables to survive), so
-> we mark them as reserved in the e820 map.
->
-> > > (I guess an alternative would be to rewrite 'cbmem' to use
-> > > /sys/bus/coreboot/devices if available to get its coreboot table
-> > > information. But we'd still need to maintain the old path for
-> > > backwards compatibility anyway, so that would really just make it more
-> > > complicated.)
-> >
-> > This sounds like a good idea. Userspace reaching into /dev/mem is not
-> > good from a kernel hardening perspective. That's why those strict devmem
-> > configs exist. Can cbmem be updated to query information from device
-> > drivers instead, so that we can enable CONFIG_IO_STRICT_DEVMEM as well?
->
-> Well... problem is that cbmem doesn't just access the coreboot tables,
-> it accesses more stuff. There is actually a larger memory region
-> called CBMEM (that's what the utility is named after) which contains
-> all sorts of random memory allocations that coreboot wanted to survive
-> for the lifetime of the system. The coreboot table is one section in
-> there, and it sort of serves as a directory for some of the others
-> (although there's also just a general CBMEM directory... there's some
-> redundancy there). But cbmem can also print some of the other CBMEM
-> sections which it finds by querying the coreboot table, such as the
-> firmware log or the boot timestamps.
->
-> So the question is how we can get to that content if /dev/mem isn't
-> available anymore. One option would be to just write separate kernel
-> drivers to completely replace the cbmem utility (we already have one
-> for the log, for example), but I think Linux generally doesn't want to
-> have too much logic and parsing and stuff in kernel drivers. Another
-> option is to add a driver that just exposes a sysfs file through which
-> you could read (we don't need to write) the CBMEM area... but then
-> we'd essentially want that to take absolute addresses because that's
-> what the coreboot table pointers contain, so we would've just built
-> /dev/mem by another name (for a restricted range).
->
-> The nicest thing, really, would be if there was a way for a kernel
-> driver to mark specific regions as "allowed" by /dev/mem. I don't
-> suppose we'd be willing to introduce a mechanism like that?
+Martin?  Bjorn's looking to merge this soon and it'd be nice to have
+the support in lspci too.
+
+On Tue, Jul 17, 2018 at 01:39:00PM -0700, Matthew Wilcox wrote:
+> On Tue, Jul 17, 2018 at 11:02:00AM -0600, Logan Gunthorpe wrote:
+> > The second patch expands the new helper to optionally take a path of
+> > PCI devfns. This is to address Alex's renumbering concern when using
+> > simple bus-devfns. The implementation is essentially how he described it and
+> > similar to the Intel VT-d spec (Section 8.3.1).
+> 
+> I don't like telling the user to grovel around lspci -t by hand.  It's
+> not many lines of code to add a new -P option to lspci to show the path
+> to each device instead of bus:dev.fn
+> 
+> Here's three examples, first without, then with -P.
+> 
+> (my laptop):
+> 6d:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961
+> 00:1d.0/00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961
+> 
+> (tests/PCI-X-bridges-and-domains):
+> 0002:42:00.0 Ethernet controller: Trident Microsystems 4DWave DX (rev 26)
+> 0002:00:02.4/01.0/00.0 Ethernet controller: Trident Microsystems 4DWave DX (rev 26)
+> 
+> (my Nehalem system):
+> 04:00.0 Serial Attached SCSI controller: LSI Logic / Symbios Logic SAS2008 PCI-Express Fusion-MPT SAS-2 [Falcon] (rev 02)
+> 00:03.0/00.0/00.0/00.0 Serial Attached SCSI controller: LSI Logic / Symbios Logic SAS2008 PCI-Express Fusion-MPT SAS-2 [Falcon] (rev 02)
+> 
+> The Nehalem system makes an interesting testcase because it exposes some
+> registers in fake PCIe devices that aren't behind the root ports.  eg:
+> 
+> ff:06.3 Host bridge: Intel Corporation Xeon 5500/Core i7 Integrated Memory Controller Channel 2 Thermal Control Registers (rev 04)
+> 
+> Martin, what do you think to this patch?  Also, I'm happy to send you
+> the lspci -xxxx from the Nehalem system to add to tests/
+> 
+> diff --git a/lspci.c b/lspci.c
+> index 3bf1925..ae0fdd2 100644
+> --- a/lspci.c
+> +++ b/lspci.c
+> @@ -19,6 +19,7 @@ int verbose;				/* Show detailed information */
+>  static int opt_hex;			/* Show contents of config space as hexadecimal numbers */
+>  struct pci_filter filter;		/* Device filter */
+>  static int opt_tree;			/* Show bus tree */
+> +static int opt_path;			/* Show bridge path */
+>  static int opt_machine;			/* Generate machine-readable output */
+>  static int opt_map_mode;		/* Bus mapping mode enabled */
+>  static int opt_domains;			/* Show domain numbers (0=disabled, 1=auto-detected, 2=requested) */
+> @@ -29,7 +30,7 @@ char *opt_pcimap;			/* Override path to Linux modules.pcimap */
+>  
+>  const char program_name[] = "lspci";
+>  
+> -static char options[] = "nvbxs:d:ti:mgp:qkMDQ" GENERIC_OPTIONS ;
+> +static char options[] = "nvbxs:d:tPi:mgp:qkMDQ" GENERIC_OPTIONS ;
+>  
+>  static char help_msg[] =
+>  "Usage: lspci [<switches>]\n"
+> @@ -247,6 +248,34 @@ sort_them(void)
+>  
+>  /*** Normal output ***/
+>  
+> +static void
+> +show_slot_path(struct pci_dev *p)
+> +{
+> +  struct pci_dev *d = NULL;
+> +
+> +  if (opt_path && p->bus)
+> +    {
+> +      for (d = p->access->devices; d; d = d->next) {
+> +	if (d->hdrtype == -1)
+> +	  d->hdrtype = pci_read_byte(d, PCI_HEADER_TYPE) & 0x7f;
+> +	if (d->hdrtype != PCI_HEADER_TYPE_BRIDGE &&
+> +	    d->hdrtype != PCI_HEADER_TYPE_CARDBUS)
+> +	  continue;
+> +	if (pci_read_byte(d, PCI_SECONDARY_BUS) > p->bus)
+> +	  continue;
+> +	if (pci_read_byte(d, PCI_SUBORDINATE_BUS) < p->bus)
+> +	  continue;
+> +	show_slot_path(d);
+> +	break;
+> +      }
+> +    }
+> +
+> +  if (d)
+> +    printf("/%02x.%d", p->dev, p->func);
+> +  else
+> +    printf("%02x:%02x.%d", p->bus, p->dev, p->func);
+> +}
+> +
+>  static void
+>  show_slot_name(struct device *d)
+>  {
+> @@ -254,7 +283,7 @@ show_slot_name(struct device *d)
+>  
+>    if (!opt_machine ? opt_domains : (p->domain || opt_domains >= 2))
+>      printf("%04x:", p->domain);
+> -  printf("%02x:%02x.%d", p->bus, p->dev, p->func);
+> +  show_slot_path(p);
+>  }
+>  
+>  void
+> @@ -989,6 +1018,9 @@ main(int argc, char **argv)
+>        case 'x':
+>  	opt_hex++;
+>  	break;
+> +      case 'P':
+> +	opt_path++;
+> +	break;
+>        case 't':
+>  	opt_tree++;
+>  	break;
+> diff --git a/lspci.man b/lspci.man
+> index 35b3620..565dd5b 100644
+> --- a/lspci.man
+> +++ b/lspci.man
+> @@ -95,6 +95,9 @@ PCI bus instead of as seen by the kernel.
+>  .B -D
+>  Always show PCI domain numbers. By default, lspci suppresses them on machines which
+>  have only domain 0.
+> +.TP
+> +.B -P
+> +Name PCI devices by path through each bridge, instead of by bus number.
+>  
+>  .SS Options to control resolving ID's to names
+>  .TP
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-doc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
