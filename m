@@ -2,212 +2,247 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE6CC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 444B8C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 410CB21B32
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:17:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410CB21B32
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C596421B32
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:20:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="evKlTM8x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C596421B32
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbeHIKlL (ORCPT
+        id S1728788AbeHIKnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:41:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33138 "EHLO mx1.redhat.com"
+        Thu, 9 Aug 2018 06:43:51 -0400
+Received: from mail-eopbgr70104.outbound.protection.outlook.com ([40.107.7.104]:19265
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727786AbeHIKlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:41:11 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7934A40241C3;
-        Thu,  9 Aug 2018 08:17:26 +0000 (UTC)
-Received: from [10.36.117.92] (ovpn-117-92.ams2.redhat.com [10.36.117.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A0CC42166BA2;
-        Thu,  9 Aug 2018 08:17:22 +0000 (UTC)
-Subject: Re: [PATCH v8 21/22] KVM: s390: CPU model support for AP
- virtualization
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-22-git-send-email-akrowiak@linux.vnet.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
-Date:   Thu, 9 Aug 2018 10:17:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727371AbeHIKnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 06:43:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7eysuHhm7NU/RDYqzaGe4KgJdI92HzEPh0GSlMFlIHg=;
+ b=evKlTM8xZ+XUvJIto8ORG7A+IFGKBKzRA9Iwvk8efN9/JXOKEXB8bAyUlrm6wAg73qjeRI30XRw4ds9c4BhD8O337m+CRHeHPnATEhDI9iE4RMjH3dL+MxLK/7a88KQ+JQvmYCuvC/jjhjRh1pRWAVSOXCVWBgnOR5We1BcZrAI=
+Received: from linux-e4ne.site (79.164.103.161) by
+ DB7PR08MB3115.eurprd08.prod.outlook.com (2603:10a6:5:1d::33) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.18; Thu, 9 Aug 2018 08:20:00 +0000
+Subject: Re: [PATCH 0/2] fs/lock: show locks info owned by dead/invisible
+ processes
+To:     Murphy Zhou <jencce.kernel@gmail.com>
+References: <20180608142712.32460-1-khorenko@virtuozzo.com>
+ <CADJHv_uWB=kS0=rFnaAUFk1X+xy3BWHH=6pOk+uJQNBQS04hcg@mail.gmail.com>
+Cc:     Kirill Gorkunov <kgorkunov@virtuozzo.com>,
+        Andrey Vagin <avagin@virtuozzo.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+From:   Konstantin Khorenko <khorenko@virtuozzo.com>
+Message-ID: <0f167223-fd55-7629-2eb0-48ec937668d3@virtuozzo.com>
+Date:   Thu, 9 Aug 2018 11:20:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.6.0
 MIME-Version: 1.0
-In-Reply-To: <1533739472-7172-22-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 09 Aug 2018 08:17:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 09 Aug 2018 08:17:27 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+In-Reply-To: <CADJHv_uWB=kS0=rFnaAUFk1X+xy3BWHH=6pOk+uJQNBQS04hcg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [79.164.103.161]
+X-ClientProxiedBy: VI1PR0202CA0003.eurprd02.prod.outlook.com
+ (2603:10a6:803:14::16) To DB7PR08MB3115.eurprd08.prod.outlook.com
+ (2603:10a6:5:1d::33)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 757fc614-3904-4ae0-4af8-08d5fdd0e76a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3115;
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3115;3:NCyOz6NBjmk9CblfVXFodCJ5qIbtLejdI/VLMheNhJpTOw7XqBDH2GHg2zxP4LIM808EBLYxG/NB0gS8PrLMiy14c0PUjJCPTOGiVupf1P3uuZHxLnTLkGieU3JWo00cusTsBMBDykRm714XLCNt+txbeMDzHIFw0vnqfRU/ySxRZ5O5NbSDEyUjj8ujZZjBB3umC4RoXmpF2/s5LOMYTO7e9dGMTdHov7KQfspKcR1vCH8U7hXI5j0fn4OjhD6c;25:Cr1OaFhJuyGycHIJ+llV1O5OsBRBgzKJsd7QGe8skj90c4AIYNC/0l0RhE2F5Ctp4V9G8uci5GkfBKAWpfWiOHVsDEy6c35IoaXyWojx6Lt1CgN0r9i4T6dxYe0DmVdQjKpV7stecgo4sxZ7o35QtAlIetk9tOmimp04dxWK9DXglPzjjUK6KRNGlCbsInJw8La6dg4sJAJp4DWN35xZ0iZ0rBRJef6kJwCzN71RTdxgME7djn4l2V6rvTMd05Jiv6lSOL023bRPJyJUIGFcHw7hmnEX19wZBvPDgTHLP4N4mOoKy58QmmBiTUr/lsMjI8oFHtltcWWzQhox1cAZyA==;31:gDkFaD/5C4vGOOt0VXqGJU7nI92JGFhkMsljbVDu5kBiFHu5DJZzVPxOVwZEyqRwuZsITBruhd7PACmXD8nC7l+AuRNcwvZGxZ5fE8+hMn5jrCca0ynaYOC6+88sJV496JXL5FK1Nke4XxxaGwQdgL1WNlvXPt7/3rzdDrTlwGQ9c9RNZMtkNm0Sciz43xyzyb5tESwc4iCuGYry8NNPm94AWfPf3vZ9SJ+mGSGwVsE=
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3115:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=khorenko@virtuozzo.com; 
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3115;20:Db5bpEeoVOBXvqHzSr8OzInoUYJEm1UKNiJAjsc8Tw9KQLNBaeckKqYqsuEci6bG0TMp94vOJ+nO+p3xsKkmc6SrGH/gtr9ZEethztZtUpG4RynQioSFgUh86Mn3PDdi24nBShRc6uc6JcrClPTbQzgKMcO8Oun5XGlXQtTtcjB+z5FMM0cXPwv9BYAY5a+2z210bpFr6hnJYGRnzRwk1pYzSL4trco6XjPP607DXScT5AI7JOnNBBhDC4no1N+k3xun+qcqRJWw6DqNEn+n0SoIXfYStemb61avJUxgcUEJ9F3HhVM9Fzm5NWkB0ywBP38bodEzPzIt2VFCaRCo0mQgEZC8sT1KJaBNLSWzi5yLZ7YiDnit8mlz54lMnIG2pZLBfIeKmV00OnMlhRn2prLloNFXJc7eD4l0UTPrCl3wXJrfcGIFt+JkfUEd0LcM1aXBAlxodId4M3pKIUD5qeK5PRiZ+RSdwXzkTIlmpuQ2UhcWXgQMmbnPQVDnAJ7f;4:lv2ljdS7eiyps7elv1Gi5VwPbtUu1NKDUuTPler6Ku5hFJnekiTvP38i9UTh0PTW+dTVusTI0UAkkvfO03IvPpJF5AKSkGOuZ2z958CpK612FvZsEPZaGFj6tHQLZbZwtSWWnMbpr4a776yHF9cDomi5HUcthw5RODQpmY0cukYgTOfN80HEY12Tj7CQJaa4CCy1QylQnErsm5BrrhUb/Lo9dKhx+i2jK0jD+H7wHjW2Tp+JoJTS0BjdSwqhpeIfMSLFh2s2VdmLADXFMacdVQ==
+X-Microsoft-Antispam-PRVS: <DB7PR08MB31159B264BBE41A83DB06B5EC8250@DB7PR08MB3115.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:DB7PR08MB3115;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3115;
+X-Forefront-PRVS: 0759F7A50A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(136003)(39840400004)(396003)(199004)(189003)(36756003)(6486002)(23676004)(58126008)(69596002)(54906003)(6512007)(65956001)(316002)(47776003)(25786009)(6246003)(52146003)(64126003)(39060400002)(81166006)(67846002)(65806001)(66066001)(5660300001)(50466002)(4326008)(81156014)(2906002)(14444005)(229853002)(2486003)(305945005)(76176011)(52116002)(7736002)(65826007)(8676002)(31686004)(8936002)(186003)(16526019)(26005)(31696002)(478600001)(106356001)(105586002)(68736007)(446003)(97736004)(11346002)(2616005)(956004)(86362001)(486006)(6116002)(476003)(3846002)(53546011)(386003)(6506007)(6916009)(53936002)(21086003)(230700001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3115;H:linux-e4ne.site;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjdQUjA4TUIzMTE1OzIzOnU1STd3VDM1QVJvVnBDOHpsQitQbTlWamF4?=
+ =?utf-8?B?ZnlsVHRlUWNaWDlGSDdKOHh1Q0dvVUZ6Vm1MN1h2ZnlpTCtvR2x3WjVJOHpE?=
+ =?utf-8?B?RWFWQzVrY0doVElmeFdIWVM5ZW9VN014Z2RGa3BNZFkxVHlVSFdGMHU2QzFU?=
+ =?utf-8?B?ZWhmQTNKQ3E3eUQ4N3BUblVmckZpWWthNDBpUGE3VEFKQ1AwTDRDNmxTcys0?=
+ =?utf-8?B?WFB1Mm1yb1dQbk02d2t6THNSMExxZXhCT25MaTBEQkZ1YklNRVRLbVE4NGtC?=
+ =?utf-8?B?WkZYQUxaN1FvR0FSSkRWejJ4WXk2NnRrRUVMSkRGMit2a3RsV29kKzMybHhI?=
+ =?utf-8?B?UG01Wi95ZXVaSENiSFVDSHZsTGVyc011RWg1MVdCTHRMWURBcllhbTR3Snlv?=
+ =?utf-8?B?VE8yVkx2OFVsVGlQaC9oYnI3UGZONlpkMWNUQmlPZVp0RCtDbUUzbWgvYXFF?=
+ =?utf-8?B?eEZidlBSWkppdjZOMEhlbXNWZCtEN2ZKcFZidGsvYUxYZERFcldkZU10ak5I?=
+ =?utf-8?B?QXk5RnE1K0RnRUZBQWNHa0pqL3Nna0o2ZW1QWitpdm9mLzZRNVBTcWpHM0Nn?=
+ =?utf-8?B?TGlOT2RTci9ta1JkTWlMTmp0NDlDR2MrQnRDZmU2b3BTSWZJYWVLN3cvdXNS?=
+ =?utf-8?B?aExBK0pKOG9ndzFvSE1QdW0vUzdTRXpFc0k2TXhwSzduT1dXbUZIcnNpOXVs?=
+ =?utf-8?B?dVpvdmlkVWh4N3ZENFBraTJyUmM0WmlwRUxLMnAzb29CeEV3UTJzZ2h6eDk3?=
+ =?utf-8?B?QlBJQ0RKdG1MNWF0L0VIc2lMVkFjelM3a04xL1h4Z05tcElQMXI0cndkM3BF?=
+ =?utf-8?B?M1IrTmwzK2FKVnBPQ1g1YWc0MUpGTzl0ZFVRYW9IRUlRL20wT2M2MVlPSEox?=
+ =?utf-8?B?ZUUyVzNGSUJNNGhFdGVILzFTMStXT1MxejNCSTZ2bzFnS0VxUlp2MTdjQzZ2?=
+ =?utf-8?B?OWRhOHlVMlhiT21ONThPRG12aVJNVVgxYVZ6cExJR1VWTVdEYmRNb016Ukta?=
+ =?utf-8?B?aERHbms2SHUwZ3ZqY09tQXI4emo5bnZKdmt2Z0xhbnFvVldCTXRNeGVEMEJh?=
+ =?utf-8?B?dUhhekU3am9Yd0pDeE8ySUNaenFqTWNSdmJreXkzUkRSLzVCMXB2SmVYOXZ6?=
+ =?utf-8?B?QXVKU1VCbDZPNGliMmw4RjVybE93UGloMW5GeWJiVVZrK2RBSWZSa091U052?=
+ =?utf-8?B?elcvSFRQOWMrQk9hV2tJNTR0WVJ6Y0loM1FXZkJac1pKVFJJcks3Tm03SzdG?=
+ =?utf-8?B?ckd5MXN6RmRJYUkxZnpjQkN3RVhwZFNza1lBZkQ1ZGdIVmMybmkxOHFKMGhk?=
+ =?utf-8?B?NG91ZHFuWVo1K3ppa3hYSm5Vdk1tODQ0VTFyMHNyNnNxUzJBbGJxTUx0KzdL?=
+ =?utf-8?B?Q3NFZzNad1hjUFJXRlFML0x1OWo1RHFLQ0ZQalRvK2IrUktsbktmRnJ2UFMz?=
+ =?utf-8?B?elgyVE5LM1pwWCsyandTVkFQZUVwQnU4ZEtZSU9LRUVlKyt1RXp0dnlSVml0?=
+ =?utf-8?B?d1IzcHMyZVBJSU1KcEZoc2M1VkVScEIxU0R6UGYrQVphdjg1dTFSWXhobmVi?=
+ =?utf-8?B?dlREOUNOUVVpMXpBdDc1R2FYZi9jUnpYOUwwSk1uN01CeDhmRWZtZFBjNUQx?=
+ =?utf-8?B?Ky9NbG5XNjAydUxpV1FPQXJpcUJ6V2VYTDdZZlAyMVJXUkk1eWFRYUFOUDBQ?=
+ =?utf-8?B?WENYZHJZU1Q1UnJ0WWswTlpEcCtUZFc2cXVRWkxGOGpLdmM2TzRvbDdkeHRH?=
+ =?utf-8?B?MnFCN1N3cmw5eDBQMncwR083Um1ESFhMNjZBbTIxS1o1d2Jja25sWXVUdmMy?=
+ =?utf-8?B?NldMdlpTb0wxUUJidUFrb3lGdVJpQWQzM1FUelpsQm5kbTk1a3VVbzZ1Uk1t?=
+ =?utf-8?B?RlBlc1drSHJyVExjV3N4TGFSc3VHZlM3b01lazFNM3AyRVo5cWN5L2xVVkVl?=
+ =?utf-8?B?M0hLYkFsRDAyZTRjWGpBYnlHVERJL1BOdC9aVENTcTNoMm1ZOTJzSzlqbmhX?=
+ =?utf-8?B?SUpQVTRmUkZ5WllLTkFPV0E2M0lGMGNHZ0NTZz09?=
+X-Microsoft-Antispam-Message-Info: 5zLKX9RDCZ5SRyoFjFFfnQtbwoQFkORRs6RUJIDjcfLtuU1bH9/k6S9KSM6+TLDRKrc+hVW5jaLeZpdJ3sICBSdX37rntqwW+AeFIHWVj3wleZq7/Tg3FjuTmpOhzW2j/wTtZQFXgngmGrlMjhTp9sImay6NJPGOtnNIxFchUpz0qxwaN8Er9KenLnHLkvMcXS1JVdlAzluiLLU95+FpQ2awssmtCfZLyRYOqwdnUf4/76/UIxOp8fb1o2zccWb2jKOEzaYQe1vKNtgc9ZhOKR2LXRP6FROuyStJiT9TdOc43RiARn8kjztUd4dQTqPF+rnlFsOOTo1SzjmlfQ3IpwTG7GIqpe2QsAw2L1bQhuo=
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3115;6:FZtzrTo3IZUAawm+uhTDWFnqzsx6JcZh9A2B+wkVRgvBp69vuP6xrRM2kabnpq3MZ3g1saRY66JHEu738ZAQLIUhsOCmxHcF1bPx0j73Xb1Ljl1+S+QeeObrDi4pJmGJDA8k2LR7pYIMv0gx73z55CntJonanUnH5wZo67q2TUy2gSK7DwIXErkYWiYHvz0GoMt5SQ/WXOV3GGX6IlX8Ea7SSPxbSsdWyB0PnGP4ZhbU1X/oXe93odVUoNE2IFVjwBQtQPMNPwfzYtqELhRMr9Y+JidE/S2jjJSDm3vJBQ9XfWo0ATJRjS5Gg5FgVnTs+BWF0CDoc5cRwVXPcQJn1jthKtFCS1iA/9BUbKraYA1SCUX697NQ3HAprJRYRAzWR5AmkKzZjCK6ZnFfutSGAwrTY2Gg9CD1ItJM9VRp3LECbbdA31imh7l6kxmnCyBvL2wjdslkb7a9/mkQpDRwFA==;5:1ChaBHfXCapmxOpdPq3il8OJ564Cyh0RxdxWr938Bs4vhbFmcG0cJe9nhAA/eaMa745kQlLEINiEcvTOT3FjHkigJ9Hj32fOoUklarzWf66RxOeHo0b9vS7sjFsDwYsEHmNBBCh0YJwI6U8lzwIa5BR8Ba2HrYTx8bh/+73gs24=;7:NKiLmgfJVtxxzc4kg3N7Iuz2pqYiXKguLQRwHEKEnascjsAiZMpy2uGrWtdj59wc9IsgMBUJfM0CzolRi3cqb5nAT56jLZAVHh8Om0WARoTXv1ZOsfZ3NN0RcNqMTzMUhUwc0SS6e96l8azLMZJcx4MpNz3GJdDyNgQGgH34hiuHQo48Yeh2RYM+kX+Q3mxejEP/BXKEd4dSrbTmRihEx9hS6iQRDGwpd/6mCfnCWwdLlgvd2X7czgtTMjhwf7OD
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3115;20:618MNzYdKMSymQLk/0rDrYx0KSRdVdSVS+v3RDTNYWS+TlwVopTgRetljBPhyDi+KirsZq4mmwGUPKgRORK2L6/DmDlF2yUqBmHPGUBhhFkoi5v92ArpfdsvQ5SsBLcvf3cmNWrLTbLXzc0rFh/GMyz9pMKDx1PtKStohwNJA14=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2018 08:20:00.8914 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 757fc614-3904-4ae0-4af8-08d5fdd0e76a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.2018 16:44, Tony Krowiak wrote:
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> 
-> Introduces a new CPU model feature and two CPU model
-> facilities to support AP virtualization for KVM guests.
-> 
-> CPU model feature:
-> 
-> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
-> AP instructions are available on the guest. This
-> feature will be enabled by the kernel only if the AP
-> instructions are installed on the linux host. This feature
-> must be specifically turned on for the KVM guest from
-> userspace to use the VFIO AP device driver for guest
-> access to AP devices.
-> 
-> CPU model facilities:
-> 
-> 1. AP Query Configuration Information (QCI) facility is installed.
-> 
->    This is indicated by setting facilities bit 12 for
->    the guest. The kernel will not enable this facility
->    for the guest if it is not set on the host. This facility
->    must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->    feature is not installed.
+On 08/09/2018 10:16 AM, Murphy Zhou wrote:
+> Hi,
+>
+> Looks like this missed v4.18 ?
 
-Could it happen on real HW (not frankenstein CPU models), that
+Hi Murphy,
 
-!AP, but STFL 12 or 15  are indicated?
+yes, Jeff planned to push those patches into 4.19 and they are in "linux-next" now,
+but not in 4.18 "master" currently.
 
-> 
->    If this facility is not set for the KVM guest, then only
->    APQNs with an APQI less than 16 will be used by a Linux
->    guest regardless of the matrix configuration for the virtual
->    machine. This is a limitation of the Linux AP bus.
-> 
-> 2. AP Facilities Test facility (APFT) is installed.
-> 
->    This is indicated by setting facilities bit 15 for
->    the guest. The kernel will not enable this facility for
->    the guest if it is not set on the host. This facility
->    must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->    feature is not installed.
-> 
->    If this facility is not set for the KVM guest, then no
->    AP devices will be available to the guest regardless of
->    the guest's matrix configuration for the virtual
->    machine. This is a limitation of the Linux AP bus.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  arch/s390/kvm/kvm-s390.c         |    7 +++++++
->  arch/s390/tools/gen_facilities.c |    2 ++
->  2 files changed, 9 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 9203f0b..7d4fe9b 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -367,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
->  
->  	if (MACHINE_HAS_ESOP)
->  		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
-> +
-> +	/*
-> +	 * Check if AP instructions installed on host
-> +	 */
+On 06/14/2018 01:41 PM, Jeff Layton wrote:
+ > These look fine to me. I'll plan to pick them up for v4.19 unless anyone
+ > has objections.
 
-Make this a one-line comment, please.
+linux-next:
+1cf8e5de4055 ("fs/lock: show locks taken by processes from another pidns")
+826d7bc9f013 ("fs/lock: skip lock owner pid translation in case we are in init_pid_ns")
 
-> +	if (ap_instructions_available() == 0)
-> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
-> +
->  	/*
->  	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->  	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
-> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
-> index 90a8c9e..a52290b 100644
-> --- a/arch/s390/tools/gen_facilities.c
-> +++ b/arch/s390/tools/gen_facilities.c
-> @@ -106,6 +106,8 @@ struct facility_def {
->  
->  		.name = "FACILITIES_KVM_CPUMODEL",
->  		.bits = (int[]){
-> +			12, /* AP Query Configuration Information */
-> +			15, /* AP Facilities Test */
->  			-1  /* END */
->  		}
->  	},
-> 
+--
+Best regards,
 
+Konstantin Khorenko,
+Virtuozzo Linux Kernel Team
 
--- 
-
-Thanks,
-
-David / dhildenb
+> On Fri, Jun 8, 2018 at 10:27 PM, Konstantin Khorenko
+> <khorenko@virtuozzo.com> wrote:
+>> The behavior has been changed after 9d5b86ac13c5 ("fs/locks: Remove fl_nspid
+>> and use fs-specific l_pid for remote locks")
+>> and now /proc/$PID/fdinfo/$FD does not show the info about the lock
+>> * if the flock owner process is dead and its pid has been already freed
+>> or
+>> * if the lock owner is not visible in current pidns.
+>>
+>> CRIU uses this interface to store locks info during dump and thus can break
+>> on v4.13 and newer.
+>>
+>> So let's show info about locks anyway in described cases (like it was before
+>> 9d5b86ac13c5), but show pid number saved in file_lock struct if we are in
+>> init_pid_ns (patch 1) or just zero otherwise (patch 2) like we do with SID.
+>>
+>> Reproducer:
+>> process A       process A1      process A2
+>> fork()--------->
+>> exit()          open()
+>>                 flock()
+>>                 fork()--------->
+>>                 exit()          sleep()
+>>
+>> Before the patch:
+>> ================
+>> (root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
+>> pos:    4
+>> flags:  02100002
+>> mnt_id: 257
+>> lock:   (root@vz7)/:
+>>
+>> After the patch:
+>> ===============
+>> (root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
+>> pos:    4
+>> flags:  02100002
+>> mnt_id: 295
+>> lock:   1: FLOCK  ADVISORY  WRITE ${PID_A1} b6:f8a61:529946 0 EOF
+>>
+>> ===============
+>> # cat flock1.c
+>>
+>> #include <stdio.h>
+>> #include <stdlib.h>
+>> #include <unistd.h>
+>> #include <sys/types.h>
+>> #include <sys/stat.h>
+>> #include <sys/file.h>
+>> #include <fcntl.h>
+>>
+>> int main(void)
+>> {
+>>         int fd;
+>>         int err;
+>>         pid_t child_pid;
+>>
+>>         child_pid = fork();
+>>         if (child_pid == -1)
+>>                 perror("fork failed");
+>>         if (child_pid) {
+>>                 exit(0);
+>>         }
+>>
+>>         fd = open("/tmp/a", O_CREAT | O_RDWR);
+>>         if (fd == -1)
+>>                 perror("Failed to open the file");
+>>
+>>         err = flock(fd, LOCK_EX);
+>>         if (err == -1)
+>>                 perror("flock failed");
+>>
+>>         child_pid = fork();
+>>         if (child_pid == -1)
+>>                 perror("fork failed");
+>>         if (child_pid)
+>>                 exit(0);
+>>
+>>         sleep(10000);
+>>
+>>         return 0;
+>> }
+>>
+>> Konstantin Khorenko (2):
+>>   fs/lock: skip lock owner pid translation in case we are in init_pid_ns
+>>   fs/lock: show locks taken by processes from another pidns
+>>
+>>  fs/locks.c | 15 ++++++++++-----
+>>  1 file changed, 10 insertions(+), 5 deletions(-)
+>>
+>> --
+>> 2.15.1
+>>
+> .
+>
