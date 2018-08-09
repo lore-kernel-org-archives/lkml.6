@@ -6,73 +6,105 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD34C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D1CC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1D821AA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1D821AA7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DD84721AA7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:12:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD84721AA7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbeHIKft (ORCPT
+        id S1729594AbeHIKf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:35:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727371AbeHIKft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:35:49 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCF314022905;
-        Thu,  9 Aug 2018 08:12:07 +0000 (UTC)
-Received: from krava (unknown [10.40.205.2])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 979D821568A3;
-        Thu,  9 Aug 2018 08:12:03 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 10:12:02 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Yordan Karadzhov <y.karadz@gmail.com>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Subject: Re: [RFC][PATCH 00/24] tools lib traceevent: Rename pevent to tep
- for preparation for library
-Message-ID: <20180809081202.GC19243@krava>
-References: <20180808155548.510187543@goodmis.org>
+        Thu, 9 Aug 2018 06:35:58 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:60369 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727371AbeHIKf6 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 9 Aug 2018 06:35:58 -0400
+Received: from linux-l9pv.suse (unknown.telstraglobal.net [134.159.103.118])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 09 Aug 2018 10:12:10 +0200
+Date:   Thu, 9 Aug 2018 16:12:05 +0800
+From:   joeyli <jlee@suse.com>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180809081205.GJ13767@linux-l9pv.suse>
+References: <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+ <20180806103958.GI27062@linux-l9pv.suse>
+ <20180808175845.GB16217@amd>
+ <20180809034320.GB21364@chenyu-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180808155548.510187543@goodmis.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 08:12:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 08:12:07 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <20180809034320.GB21364@chenyu-desktop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 11:55:48AM -0400, Steven Rostedt wrote:
-> Having libtraceevent turn into a proper library has long been asked for.
-> I never had time to do it before. Luckily, Tzvetomir was able to spend
-> the time to start the preparation. The first thing that needs to be done
-> is to handle namespace collisions. "pevent" was the prefix I chose, but
-> many people were displeased by it, as it didn't express what the functions
-> were used for. After discussing with many people at many conferences
-> I've come up with "tep", which means "Trace Event Parser". Please don't
-> question this. The bikeshed has been painted and I'm not changing the
-> color.
+On Thu, Aug 09, 2018 at 11:43:20AM +0800, Yu Chen wrote:
+> Hi,
+> On Wed, Aug 08, 2018 at 07:58:45PM +0200, Pavel Machek wrote:
+> > On Mon 2018-08-06 18:39:58, joeyli wrote:
+> > > On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
+> > > > Hi Pavel,
+> > > > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
+> > > > > Hi!
+> > > > > 
+> > > > > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > > > > variable that it can only be accessed by trusted EFI binary when
+> > > > > > > secure boot is enabled.
+> > > > > > >
+> > > > > > Okay, this apply to the 'suspend' phase, right?
+> > > > > > I'm still a little confused about the 'resume' phase.
+> > > > > > Taking encryption as example(not signature),
+> > > > > > the purpose of doing hibernation encryption is to prevent other users
+> > > > > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > > > 
+> > > > > No, I don't think that's purpose here.
+> > > > > 
+> > > > > Purpose here is to prevent user from reading/modifying kernel memory
+> > > > > content on machine he owns.
+> > > > >
+> > > > Say, A puts his laptop into hibernation and walks away,
+> > > > and B walks by, and opens A's laptop and wakes up the system and he
+> > > > can do what he wants. Although EFI key/TPM trusted key is enabled,
+> > > > currently there's no certification during resume, which sounds
+> > > > unsafe to me. Afterall, the original requirement is to probe
+> > > > user for password during resume, which sounds more natural.
+> > > 
+> > > OK, I saw your case. This is a physical accessing.
+> > > 
+> > > I have a question: The suspend to memory also has the same behavior
+> > > and more people are using suspend. Should we think a common solution
+> > > to cover S3 and S4? 
+> > 
+> > Well, we have similar problem during runtime, too ;-).
+> > 
+> > Anyway, I don't think we should encrypt memory during S3 in kernel.
+> > 
+> It seems that Joey was talking about certification(something like login)
+> rather than encryption?
+>
 
-nah... now when I see it 'te' actualy sounds better ;)))) just kidding,
-great we finaly got to this.. is there a branch somewhere with this?
+Actually I do not have good idea.
 
-thanks,
-jirka
+Joey Lee
