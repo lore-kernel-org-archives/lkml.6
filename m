@@ -2,181 +2,94 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F645C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658A8C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A857206B2
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:48:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A857206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B58D21E5D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:57:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P5xOExsP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B58D21E5D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeHIVOn (ORCPT
+        id S1727066AbeHIVXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 17:14:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34091 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbeHIVOm (ORCPT
+        Thu, 9 Aug 2018 17:23:48 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40698 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbeHIVXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 17:14:42 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w79IkULF2146770
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 9 Aug 2018 11:46:30 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w79IkSeQ2146765;
-        Thu, 9 Aug 2018 11:46:28 -0700
-Date:   Thu, 9 Aug 2018 11:46:28 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-a13c600e15de44ccf03df28d3311ef3cb754ed9b@git.kernel.org>
-Cc:     dhgutteridge@sympatico.ca, jkosina@suse.cz, luto@kernel.org,
-        mingo@kernel.org, will.deacon@arm.com, jpoimboe@redhat.com,
-        gregkh@linuxfoundation.org, llong@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        jroedel@suse.de, dave.hansen@intel.com, eduval@amazon.com,
-        tglx@linutronix.de, David.Laight@aculab.com,
-        torvalds@linux-foundation.org, pavel@ucw.cz,
-        boris.ostrovsky@oracle.com, dvlasenk@redhat.com, bp@alien8.de,
-        jgross@suse.com, aarcange@redhat.com, brgerst@gmail.com,
-        hpa@zytor.com
-Reply-To: gregkh@linuxfoundation.org, jpoimboe@redhat.com,
-          will.deacon@arm.com, mingo@kernel.org, jkosina@suse.cz,
-          luto@kernel.org, dhgutteridge@sympatico.ca,
-          dave.hansen@intel.com, jroedel@suse.de, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, llong@redhat.com, pavel@ucw.cz,
-          David.Laight@aculab.com, torvalds@linux-foundation.org,
-          tglx@linutronix.de, eduval@amazon.com, hpa@zytor.com,
-          aarcange@redhat.com, brgerst@gmail.com, jgross@suse.com,
-          bp@alien8.de, dvlasenk@redhat.com, boris.ostrovsky@oracle.com
-In-Reply-To: <1533727000-9172-1-git-send-email-joro@8bytes.org>
-References: <1533727000-9172-1-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/mm/pti: Move user W+X check into pti_finalize()
-Git-Commit-ID: a13c600e15de44ccf03df28d3311ef3cb754ed9b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 9 Aug 2018 17:23:48 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x5-v6so3161720pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u7qko/sdeAm+6MIIA1HuZcRZy8hHP1uv2MOXJBw056M=;
+        b=P5xOExsP0kEQkZAExcKQHIWDQFsWln8x8+J1y8o1kTdCCtrCO3VX3Y6/qNVQhrTtPy
+         qAxUDgGbKcyWbQTOdYRdxeqvFFDa3biIlX0B18v8dmEKIVIF76vYb+fozh1hmqgKm2lJ
+         zGVpJvM8foQChu6bWMhES1wjDj5J+mCGBZK0c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u7qko/sdeAm+6MIIA1HuZcRZy8hHP1uv2MOXJBw056M=;
+        b=U/4uouTTZ+SuRFC+7zzQWS+le1P5Av6a2ik4gXgrVwNlphRDg+RNRkChG4OznRcEKL
+         T+1PaUsy4eKHxbwZT4YPqn4jDM18zo1bkHxZr7319kM25VUEAAt3CXcMaXYYlIDLRx/v
+         ZOwhazAUWT5Y6v3epsfHTmMYYbb3OMv9eMmqAacmmH3ozB/UH/tb+WFaSBvBz7Ai4EKe
+         ilViYxxQenChRp2xh+Ox4Fc+GcLazarsbeGXso7piz0z7pcVV6lAat1BxJbVTqMAXtVI
+         PCBdDaN7t0FAwfSCT3V1MNP4cfdUX+ESG+wdL1a538cIVjfLmHoGMXddwlfeTlFqdSne
+         uJxg==
+X-Gm-Message-State: AOUpUlHtzaIdA4WzW+tcgEY/KsfIhK/k0LOB6ZTxp/ts7o2Xir3nBP2F
+        8tUiB6//zq6GEIoesVUQ7EJZpg==
+X-Google-Smtp-Source: AA+uWPwjkswg28hrNWjn1KNJPbAins4M9NsLVPsSu54+og1Uyp6J7Z9uHvZfFNBXGV3uCI9w/OLvRg==
+X-Received: by 2002:a63:e60c:: with SMTP id g12-v6mr3331218pgh.308.1533841058343;
+        Thu, 09 Aug 2018 11:57:38 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id x25-v6sm7268855pgv.63.2018.08.09.11.57.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 11:57:37 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 11:57:36 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] scsi: ufs: Check workqueue exists before destroying it
+Message-ID: <20180809185736.GH160295@google.com>
+References: <20180802001435.116963-1-mka@chromium.org>
+ <153370949062.220756.17724147096194635522@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <153370949062.220756.17724147096194635522@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a13c600e15de44ccf03df28d3311ef3cb754ed9b
-Gitweb:     https://git.kernel.org/tip/a13c600e15de44ccf03df28d3311ef3cb754ed9b
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 8 Aug 2018 13:16:40 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 9 Aug 2018 20:42:07 +0200
+On Tue, Aug 07, 2018 at 11:24:50PM -0700, Stephen Boyd wrote:
+> Quoting Matthias Kaehlcke (2018-08-01 17:14:35)
+> > In ufshcd_hba_exit() the clock gating workqueue is always destroyed
+> > when clock gating is supported. However the workqueue pointer is NULL
+> > when ufshcd_init() fails before the workqueue is created. Only destroy
+> > the workqueue if it exists.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> 
+> Any sort of Fixes: tag?
 
-x86/mm/pti: Move user W+X check into pti_finalize()
-
-The user page-table gets the updated kernel mappings in pti_finalize(),
-which runs after the RO+X permissions got applied to the kernel page-table
-in mark_readonly().
-
-But with CONFIG_DEBUG_WX enabled, the user page-table is already checked in
-mark_readonly() for insecure mappings.  This causes false-positive
-warnings, because the user page-table did not get the updated mappings yet.
-
-Move the W+X check for the user page-table into pti_finalize() after it
-updated all required mappings.
-
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1533727000-9172-1-git-send-email-joro@8bytes.org
-
----
- arch/x86/include/asm/pgtable.h | 7 +++++--
- arch/x86/mm/dump_pagetables.c  | 3 +--
- arch/x86/mm/pti.c              | 2 ++
- 3 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e39088cb59ab..a1cb3339da8d 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -30,11 +30,14 @@ int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
- void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
- void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user);
- void ptdump_walk_pgd_level_checkwx(void);
-+void ptdump_walk_user_pgd_level_checkwx(void);
- 
- #ifdef CONFIG_DEBUG_WX
--#define debug_checkwx() ptdump_walk_pgd_level_checkwx()
-+#define debug_checkwx()		ptdump_walk_pgd_level_checkwx()
-+#define debug_checkwx_user()	ptdump_walk_user_pgd_level_checkwx()
- #else
--#define debug_checkwx() do { } while (0)
-+#define debug_checkwx()		do { } while (0)
-+#define debug_checkwx_user()	do { } while (0)
- #endif
- 
- /*
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index ccd92c4da57c..b8ab9012ffd6 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -569,7 +569,7 @@ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user)
- }
- EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
- 
--static void ptdump_walk_user_pgd_level_checkwx(void)
-+void ptdump_walk_user_pgd_level_checkwx(void)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- 	pgd_t *pgd = INIT_PGD;
-@@ -586,7 +586,6 @@ static void ptdump_walk_user_pgd_level_checkwx(void)
- void ptdump_walk_pgd_level_checkwx(void)
- {
- 	ptdump_walk_pgd_level_core(NULL, NULL, true, false);
--	ptdump_walk_user_pgd_level_checkwx();
- }
- 
- static int __init pt_dump_init(void)
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 1dc5c683e7a5..d58b4aba9510 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -646,4 +646,6 @@ void pti_finalize(void)
- 	 */
- 	pti_clone_entry_text();
- 	pti_clone_kernel_text();
-+
-+	debug_checkwx_user();
- }
+I could add one, though it seems this patch is superseded by
+https://patchwork.kernel.org/patch/10559013/
