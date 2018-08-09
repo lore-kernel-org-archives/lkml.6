@@ -2,163 +2,176 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE208C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CD9C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA7F21EB7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA7F21EB7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BCBD21EC4
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:30:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="baNEGgl3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BCBD21EC4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbeHISxD (ORCPT
+        id S1732446AbeHISzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:53:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46288 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732411AbeHISxD (ORCPT
+        Thu, 9 Aug 2018 14:55:51 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42952 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730839AbeHISzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:53:03 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79GOcJJ073512
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 12:27:24 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2krs0j8bxy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:27:24 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 9 Aug 2018 17:27:22 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 17:27:19 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79GRHuZ40632454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 16:27:17 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9E2942049;
-        Thu,  9 Aug 2018 19:27:25 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E11784203F;
-        Thu,  9 Aug 2018 19:27:24 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 19:27:24 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v8 09/22] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-10-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180809130607.32781b72.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 9 Aug 2018 18:27:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 9 Aug 2018 14:55:51 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e7-v6so5652456wrs.9
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 09:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3SXkMP/LxgdXwBCipZqAe4VzUfA7f5QYHd/FqgU5T/8=;
+        b=baNEGgl38sPNlYI0IF7wzJxiAG8I9lK+k998a5WccXG3bAaRN+KD4+abwjSC/bTIRA
+         V9eaHB0/lxa+1CWdGKfnh3xleHQEDLbvMkE0elmosxL34EdRtTlCzcLKOJdPsiBCW8hR
+         M6eatNJfKG/IhHw7kJ+5ZDwIX7YwhUcAGurI8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3SXkMP/LxgdXwBCipZqAe4VzUfA7f5QYHd/FqgU5T/8=;
+        b=axgBzxq0DwnAcgB2FqnizpPimm2Gy+5bfMuhhhPmJH95p7Md8QjUdCOJjq6mpf4peA
+         z9AqXwsycy34VTqQ+iXvofl1mvBG3ot2eQ/Q5tT0N/8GV1D9TN4GWxld9XlJ7+AFT4Pg
+         xUxI877m+Kb0nK4J3xpldU949gaQOZwO8HxYJwjDk3fhA3NqlTaxR07nCj6BsmegX4jO
+         /6do+uBv3c4l2k+CFL83THMszpoUyqItR8G8eQuqgumhAHzcoR6CsYESekYbE5gmLpJp
+         Ao4GeNXqWb5zN+jhLJ6FYhX/rkz01Ooj+4F4ceNVHeDznB8D9nt8tkheY9s2IdNlHOvT
+         gHBA==
+X-Gm-Message-State: AOUpUlH/XSKs5/w6uMK3fV7MJEpo2sFSSF0u95DTtONMXeA1LKDZQ2kd
+        EULoHp5PSzqUzz1kKAdNDSOTSQ==
+X-Google-Smtp-Source: AA+uWPwzxmk6OgnHBsPgn4LsjLJCMJm9qHf8JT6Anbg84TM9bZWhhk8I2qWQ9P0ptWhB0gbrP8Gcqg==
+X-Received: by 2002:a5d:4410:: with SMTP id z16-v6mr1973844wrq.272.1533832210471;
+        Thu, 09 Aug 2018 09:30:10 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s ([45.76.138.171])
+        by smtp.gmail.com with ESMTPSA id p25-v6sm4602810wmc.29.2018.08.09.09.30.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 09:30:09 -0700 (PDT)
+Date:   Fri, 10 Aug 2018 00:29:57 +0800
+From:   leo.yan@linaro.org
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] sched: idle: Reenable sched tick for cpuidle request
+Message-ID: <20180809162957.GD14362@leoy-ThinkPad-X240s>
+References: <1533793647-5628-1-git-send-email-leo.yan@linaro.org>
+ <2704016.RYJlhC2yyo@aspire.rjw.lan>
+ <CAJZ5v0goNUVR8UZPnBegVZjBshkt+G-D7UK_x5dOi+BCjAr5Yg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180809130607.32781b72.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080916-0020-0000-0000-000002B47A4E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080916-0021-0000-0000-000021018F35
-Message-Id: <e52ee356-bb7b-f672-1c9c-5b1b84775a2d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090168
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0goNUVR8UZPnBegVZjBshkt+G-D7UK_x5dOi+BCjAr5Yg@mail.gmail.com>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2018 13:06, Cornelia Huck wrote:
-> On Wed,  8 Aug 2018 10:44:19 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
->> index d7e39ad..6a827f3 100644
->> --- a/drivers/s390/crypto/vfio_ap_drv.c
->> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->> @@ -12,6 +12,7 @@
->>   #include <linux/mod_devicetable.h>
->>   #include <linux/slab.h>
->>   #include <linux/string.h>
->> +#include <asm/zcrypt.h>
->>   #include "vfio_ap_private.h"
->>   
->>   #define VFIO_AP_ROOT_NAME "vfio_ap"
->> @@ -68,6 +69,18 @@ static int vfio_ap_matrix_dev_create(void)
->>   {
->>   	int ret;
->>   
->> +	mutex_init(&matrix_dev.lock);
->> +	INIT_LIST_HEAD(&matrix_dev.mdev_list);
->> +
->> +	/* Test if PQAP(QCI) instruction is available */
->> +	if (test_facility(12)) {
->> +		ret = ap_qci(&matrix_dev.info);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	atomic_set(&matrix_dev.available_instances, MAX_ZDEV_ENTRIES_EXT);
->> +
->>   	ret = misc_register(&matrix_dev.misc_dev);
-> OK, you are adding more stuff other than the miscdevice after all...
-> still, I don't think that this is a good idea.
->
-> I think I had already asked this for a previous version: Why has this
-> been turned into a miscdevice? (I think my reaction to the answer was
-> 'meh'... but I think more and more that we should not do that.)
+On Thu, Aug 09, 2018 at 05:42:30PM +0200, Rafael J. Wysocki wrote:
 
-Following our off-line conversation...
+[...]
 
-I understand your concern, about the misc device and dynamically
-updating the misc device structure.
+> >> This issue can be easily reproduce with the case on Arm Hikey board: use
+> >> CPU0 to send IPI to CPU7, CPU7 receives the IPI and in the callback
+> >> function it start a hrtimer with 4ms, so the 4ms timer delta value can
+> >> let 'menu' governor to choose deepest state in the next entering idle
+> >> time.  From then on, CPU7 restarts hrtimer with 1ms interval for total
+> >> 10 times, so this can utilize the typical pattern in 'menu' governor to
+> >> have prediction for 1ms duration, finally idle governor is easily to
+> >> select a shallow state, on Hikey board it usually is to select CPU off
+> >> state.  From then on, CPU7 stays in this shallow state for long time
+> >> until there have other interrupts on it.
+> >
+> > And which means that the above-mentioned code misses this case.
+> 
+> And I don't really understand how this happens. :-/
+> 
+> If menu sees that the tick has been stopped, it sets
+> data->predicted_us to the minimum of TICK_USEC and
+> ktime_to_us(delta_next) and the latency requirements comes from PM QoS
+> (no interactivity boost).  Thus the only case when it will say "do not
+> stop the tick" is when delta_next is below the tick period length, but
+> that's OK, because it means that there is a timer pending that much
+> time away, so it doesn't make sense to select a deeper idle state
+> then.
+> 
+> If there is a short-interval timer pending every time we go idle, it
+> doesn't matter that the tick is stopped really, because the other
+> timer will wake the CPU up anyway.
+> 
+> Have I missed anything?
 
-For it is your main point of contention and we do not currently have
-a use case for the misc device I propose we just let it go and
-rebase on the device design we had in V6 and did not seem to
-make any trouble to any one.
+Yeah, you miss one case is if there haven't anymore timer event, for this
+case the ktime_to_us(delta_next) is a quite large value and
+data->predicted_us will be to set TICK_USEC; if HZ=1000 then TICK_USEC is
+1000us, on Hikey board if data->predicted_us is 1000us then it's easily
+to set shallow state (C1) rather than C2.  Unfortunately, this is the
+last time the CPU can predict idle state before it will stay in idle
+for long period.
 
-We will propose a v9 with the integration of all comment done
-so far soon as possible.
+[...]
 
+> >> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+> >> index 1a3e9bd..802286e 100644
+> >> --- a/kernel/sched/idle.c
+> >> +++ b/kernel/sched/idle.c
+> >> @@ -190,10 +190,18 @@ static void cpuidle_idle_call(void)
+> >>                */
+> >>               next_state = cpuidle_select(drv, dev, &stop_tick);
+> >>
+> >> -             if (stop_tick)
+> >> +             if (stop_tick) {
+> >>                       tick_nohz_idle_stop_tick();
+> >> -             else
+> >> +             } else {
+> >> +                     /*
+> >> +                      * The cpuidle framework says to not stop tick but
+> >> +                      * the tick has been stopped yet, so restart it.
+> >> +                      */
+> >> +                     if (tick_nohz_tick_stopped())
+> >> +                             tick_nohz_idle_restart_tick();
+> >
+> > You need an "else" here IMO as Peter said.
 
-Best regards,
+Yeah, I have replied to Peter, after we restart the tick, I found must to
+call tick_retain() to clear 'ts->timer_expires_base' to 0, otherwise
+tick_nohz_idle_exit() reports warning when exit from idle loop.
 
-Pierre
+> And I really would prefer to avoid restarting the tick here, because
+> it is overhead and quite likely unnecessary.
 
+I understand the logic when read the code, actually I did some experiments
+on the function menu_select(), in menu_select() function it discards the
+consideration for typical pattern interval and it also tries to avoid to
+enable tick and select more shallow state at the bottom of function.  So I
+agree that in the middle of idles it's redundant to reenable tick and the
+code is careful thought.
 
->
->>   	if (ret)
->>   		return ret;
+But this patch tries to rescue the case at the last time the CPU enter one
+shallow idle state but without wake up event.
 
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+> >> +
+> >>                       tick_nohz_idle_retain_tick();
+> >> +             }
+> >>
+> >>               rcu_idle_enter();
+> >>
+> >>
+> >
+> > Please CC cpuidle patches to linux-pm@vger.kernel.org, that helps a lot.
+> 
+> Thanks,
+> Rafael
