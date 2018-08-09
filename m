@@ -2,142 +2,178 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE84FC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4D0C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7117021E97
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B0521EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wdlAtk+N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7117021E97
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jyFExdDf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B0521EFC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeHIX3q (ORCPT
+        id S1727327AbeHIXbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 19:29:46 -0400
-Received: from mail-io0-f182.google.com ([209.85.223.182]:33912 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbeHIX3p (ORCPT
+        Thu, 9 Aug 2018 19:31:49 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:32861 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbeHIXbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 19:29:45 -0400
-Received: by mail-io0-f182.google.com with SMTP id l7-v6so5968678ioj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 14:03:10 -0700 (PDT)
+        Thu, 9 Aug 2018 19:31:49 -0400
+Received: by mail-pl0-f68.google.com with SMTP id b90-v6so3067721plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 14:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9b3UMOrcodv3ULXMOKoy7HwZ2s8iZfliJjA3GeX66/s=;
-        b=wdlAtk+NjUWCKa2LPCZqbKc824DAdpVWkHrkRv9f1knqtaVFlqqgD+uTyJSHE0+fUr
-         MNSPAPl9Lw/+DqJ31obp3HVj+8Ig/1mrS84u7fpKNTV4MA3GeVgbK5dmi63ek7fSz06k
-         peCnHF2Wwy/3o8VdDWR1tS1IB1y/T0GyeAFYoVD1mIv39/6Zdj469iAB/OVXvW+p8hep
-         ol02wVK2QTfNfIQ8WPB1s2ZwLpfG2vsBRJjnBzkNPaMJvEgfl74KeUumgSuXd/xvkrB9
-         IhjVIhspaWEiE3kzfANFeZCqXQi0FWQfXPTfo+jHopVtaJgDlEojg8rMjUDrBa6kwUxl
-         0pjw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=23xEfH2+Vy6XMyTATpfgVL5qYWG+2hXTZ13Q5FEZdqk=;
+        b=jyFExdDfcTpeGk/zk1nqRNBpWfCgzp2QpWZflW8sc9Xg5uRjMnHZ8oDpGc9llSq2YL
+         sKh9rYyxB1m6OPNvUD1aDV6ypnD9pqmignp3EGv2CdDdrgUOlFjkSsRxgk+TnrmI/iux
+         UfOU+o+BRQRNAkUZfgwP/Q20fGi5NfV4ATHqg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9b3UMOrcodv3ULXMOKoy7HwZ2s8iZfliJjA3GeX66/s=;
-        b=E/GhaXi549/kWcaA75W8gGd/YqB1EBbL9vCCnhZoG1CzeQqDBUReR03YhsopCR3gQ9
-         5YugefuCvHdOTx3VXswkRxgfPiqJ/B+N1QYA7PU0L6sm939UmxkSI20Ecg3fPqSS3YhV
-         oubCMqgAIOooSePMhWGGX6Bw6kvUO75vQvQQdWW/XWaOQC720oDDE+f1LDD0Q81yMNmY
-         So6dOePXGhdLTQ4ATym/qQyxvlLNSSMXKELRMv0ZN+9fwf6jBGur7I1c1inIzsle1OR1
-         7Z+khXfvQo2a/xrsKicsQFmQ/w4nJMwhk3IeT4gWo4Y9exASHfnRsV7fdNPRKZdSAsUy
-         z0/g==
-X-Gm-Message-State: AOUpUlH7rELraoP32q/CiaPmo4LvDJKG1Biqt3hnlTtQdNPXF0lVPJhC
-        V2A6+zyhAqrHYxlrVVvOTk7o1A==
-X-Google-Smtp-Source: AA+uWPw8yNh6tE1QJRyCQN3jcDe886CHTJJ021dRGFIl3quXizA50PVubvHC95PbJemKQ2Minit49A==
-X-Received: by 2002:a6b:9651:: with SMTP id y78-v6mr3220809iod.283.1533848589623;
-        Thu, 09 Aug 2018 14:03:09 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id t187-v6sm99794ita.28.2018.08.09.14.03.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 14:03:08 -0700 (PDT)
-Subject: Re: Zoned block device support for fio
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "mb@lightnvm.io" <mb@lightnvm.io>,
-        "loberman@redhat.com" <loberman@redhat.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-References: <20180706173839.28355-1-mb@lightnvm.io>
- <1530899118.31977.1.camel@redhat.com>
- <296d2d14-0bf6-e0a2-84dc-7d6e819625c1@lightnvm.io>
- <4421a151-85d9-52e4-2233-03ed7f17528a@kernel.dk>
- <8d8ae6c620217db92b95b6561345d7bdf7c7cdfa.camel@wdc.com>
- <229911cb-7eb1-1729-46f1-35aba81d98d1@kernel.dk>
- <a183979f10fda180176f671702f69efe338f56e7.camel@wdc.com>
- <9225abd8-35de-641d-2d2b-7ed566fb9956@kernel.dk>
- <ba99bc66928277b73cdbeb8579d739db0cf58639.camel@wdc.com>
- <be88923a-b960-0786-bd21-a4107cccd834@kernel.dk>
- <8d1946fb8f46c66b572a7643d47f9762154d1e8b.camel@wdc.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b9e3dd53-4b0d-3d95-ee28-aa4c1dc9b8d7@kernel.dk>
-Date:   Thu, 9 Aug 2018 15:03:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=23xEfH2+Vy6XMyTATpfgVL5qYWG+2hXTZ13Q5FEZdqk=;
+        b=DeX8W0wa+C51aEBHohEMnxEw+Un0LGif7fZzLIZMZKKjgGiTZyBw2OrKd6J14D3eEa
+         huRyWFgbfe9WLHun6pigGx8U4KsAEA4Y8W9CbtNmWI/D8t0ioKPZntj/8p6ngXyQSEJW
+         yyxgdWWKjFH81xntI5jPeY8maRuhjhWlkMI0aKe1v1DZn5Tp07Wd2jCO6IrbEeorE9/r
+         Ggak5O/y0hKBkKyHLOlwwybuVQQZ4OMyj36ZaWXCFweVE2hiO5ZdwkP4ea22hZFjVLXr
+         YK8hBPh+OKg6q9tG3+oQ884/X5ORov03XH+6go0ADzR2KYvVnKCS8NIDT1hxGJaa7m2s
+         31Wg==
+X-Gm-Message-State: AOUpUlEP2CI8hh02fGcz3ARJPP10SyZLM4M3u409gTPdgcmkhppFCkoh
+        BpPuGyhS0LRJKYdQa5xLYbNLBA==
+X-Google-Smtp-Source: AA+uWPwI6uwRjDVPeskj+Yr55YXNijY6HJvc8IMGKnSm5QD/ZfbunobQBZoDND+3HmOTqc48HaeJag==
+X-Received: by 2002:a17:902:6b44:: with SMTP id g4-v6mr3448270plt.50.1533848712987;
+        Thu, 09 Aug 2018 14:05:12 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id n83-v6sm20661632pfk.19.2018.08.09.14.05.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 14:05:12 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 14:05:11 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        edubezval@gmail.com, smohanad@codeaurora.org,
+        andy.gross@linaro.org, dianders@chromium.org,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 09/10] arm64: dts: qcom: Add reg-names for all tsens
+ nodes
+Message-ID: <20180809210511.GQ160295@google.com>
+References: <cover.1533815718.git.amit.kucheria@linaro.org>
+ <188c07144d98bfbe2bbbb7d1f2941acdcf4e6682.1533815718.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <8d1946fb8f46c66b572a7643d47f9762154d1e8b.camel@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <188c07144d98bfbe2bbbb7d1f2941acdcf4e6682.1533815718.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/9/18 2:51 PM, Bart Van Assche wrote:
-> On Tue, 2018-07-10 at 12:51 -0600, Jens Axboe wrote:
->> On 7/10/18 12:49 PM, Bart Van Assche wrote:
->>> On Tue, 2018-07-10 at 12:45 -0600, Jens Axboe wrote:
->>>> The difference between the job file and the
->>>> workload run can be huge. Consider something really basic:
->>>>
->>>> [randwrites]
->>>> bs=4k
->>>> rw=randwrite
->>>>
->>>> which would be 100% random 4k writes. If I run this on a zoned device,
->>>> then that'd turn into 100% sequential writes.
->>>
->>> That's not correct. The ZBD code in the github pull request serializes writes
->>> per zone, not globally.
->>
->> That's a totally minor detail. If all my random writes fall within a single
->> zone, then they'd be 100% sequential. For N open zones, you'd be 100%
->> sequential within the zone. The point is that the workload as defined and
->> the workload as run are two totally different things, and THAT is the
->> problem.
+On Thu, Aug 09, 2018 at 06:02:41PM +0530, Amit Kucheria wrote:
+> Instead of showing up as thermal-sensor@<addr>, the nodes will show up as
+> tsens0_tm, tsen1_tm, tsens1_srot, etc. in /proc/iomem making it easier to
+> read.
 > 
-> Hello Jens,
+> IOW,
 > 
-> What you proposed in a previous e-mail, namely to use the existing fio zone
-> concept for zoned block devices sounds interesting to me. This is something I
-> will definitely look further into. This will help to make a given workload
-> that is suited for zoned block devices to behave (almost) identical when run
-> against a regular block device. Since fio users expect that no zones are
-> reset before e.g. a random write test is started, there will always be a small
-> difference in behavior between a workload run against a zoned block device and
-> a workload run against a regular device if some zones already contain data.
+> 0c222000-0c2221fe : thermal-sensor@c263000
+> 0c223000-0c2231fe : thermal-sensor@c265000
+> 0c263000-0c2631fe : thermal-sensor@c263000
+> 0c265000-0c2651fe : thermal-sensor@c265000
 > 
-> It's not clear to me how close you want the behavior of fio to be for zoned
-> and regular block devices. Do you e.g. want me to introduce a new I/O pattern
-> (--rw=...) that causes fio to write sequentially inside a zone and for which
-> zones are selected randomly? I don't see any other approach that allows to
-> make sure that the same workload definition behaves identically against zoned
-> and regular block devices.
+> becomes
+> 
+> 0c222000-0c2221fe : tsens0_srot
+> 0c223000-0c2231fe : tsens1_srot
+> 0c263000-0c2631fe : tsens0_tm
+> 0c265000-0c2651fe : tsens1_tm
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  arch/arm/boot/dts/qcom-msm8974.dtsi   | 1 +
+>  arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 ++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi  | 2 ++
+>  4 files changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+> index 3c4b81c29798..64c9f81ddd90 100644
+> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
+> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+> @@ -431,6 +431,7 @@
+>  			compatible = "qcom,msm8974-tsens";
+>  			reg = <0xfc4a9000 0x1000>, /* TM */
+>  			      <0xfc4a8000 0x1000>; /* SROT */
+> +			reg-names = "tsens_tm", "tsens_srot";
+>  			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+>  			nvmem-cell-names = "calib", "calib_backup";
+>  			#qcom,sensors = <11>;
+> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> index abf84df5a7bc..4e6a5e462a91 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> @@ -778,6 +778,7 @@
+>  			compatible = "qcom,msm8916-tsens";
+>  			reg = <0x4a9000 0x1000>, /* TM */
+>  			      <0x4a8000 0x1000>; /* SROT */
+> +			reg-names = "tsens_tm", "tsens_srot";
+>  			nvmem-cells = <&tsens_caldata>, <&tsens_calsel>;
+>  			nvmem-cell-names = "calib", "calib_sel";
+>  			#qcom,sensors = <5>;
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index c2dca3a30091..7e5982daa2ed 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -969,6 +969,7 @@
+>  			compatible = "qcom,msm8996-tsens";
+>  			reg = <0x4a9000 0x1000>, /* TM */
+>  			      <0x4a8000 0x1000>; /* SROT */
+> +			reg-names = "tsens0_tm", "tsens0_srot";
+>  			#qcom,sensors = <13>;
+>  			#thermal-sensor-cells = <1>;
+>  		};
+> @@ -977,6 +978,7 @@
+>  			compatible = "qcom,msm8996-tsens";
+>  			reg = <0x4ad000 0x1000>, /* TM */
+>  			      <0x4ac000 0x1000>; /* SROT */
+> +			reg-names = "tsens1_tm", "tsens1_srot";
+>  			#qcom,sensors = <8>;
+>  			#thermal-sensor-cells = <1>;
+>  		};
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index f722785df26b..efd5d7abd1cd 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -1531,6 +1531,7 @@
+>  			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+>  			reg = <0xc263000 0x1ff>, /* TM */
+>  			      <0xc222000 0x1ff>; /* SROT */
+> +			reg-names = "tsens0_tm", "tsens0_srot";
+>  			#qcom,sensors = <13>;
+>  			#thermal-sensor-cells = <1>;
+>  		};
+> @@ -1539,6 +1540,7 @@
+>  			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+>  			reg = <0xc265000 0x1ff>, /* TM */
+>  			      <0xc223000 0x1ff>; /* SROT */
+> +			reg-names = "tsens1_tm", "tsens1_srot";
+>  			#qcom,sensors = <8>;
+>  			#thermal-sensor-cells = <1>;
+>  		};
 
-Yes exactly. Basically come up with something that just maps fio zones on
-top of SMR zones. Then come up with something that allows you to have
-sequential writes IO within a zone, and something that allows you to decide
-how many zones to use, when to skip between zones, etc.
-
--- 
-Jens Axboe
-
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
