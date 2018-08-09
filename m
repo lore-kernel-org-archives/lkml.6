@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F78BC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD70C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4344921EA2
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9894C214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G99yTXnI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4344921EA2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7HyuywH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9894C214FF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbeHIRYK (ORCPT
+        id S1732609AbeHIRYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:24:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36004 "EHLO mail.kernel.org"
+        Thu, 9 Aug 2018 13:24:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732388AbeHIRYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:24:10 -0400
+        id S1732388AbeHIRYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 13:24:16 -0400
 Received: from jouet.infradead.org (179-240-153-38.3g.claro.net.br [179.240.153.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC30121DEC;
-        Thu,  9 Aug 2018 14:58:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F3582183D;
+        Thu,  9 Aug 2018 14:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533826733;
-        bh=bHI23HoagloeMGhTmGA1BzBzSW4RYbBb2dl6l7pSpzo=;
+        s=default; t=1533826739;
+        bh=/4ZHp0TYoRSawmM9F1dWWCDAjnWXMu8d8pkHHz2KU5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G99yTXnITueBIX1rzUpNSMolLX/2e9f/ks/0RQKmDBOgJBAS6bNzaAT06r2TiIc3B
-         8rlX3XJTLDKyNc4jIRiF5WsQks8k4YCO+ZeALmoWMT1u5nYl9PVS/NBgBRZLsCM/dz
-         pOROFFh8TlSPMyOAuQzlx9Esp8TciM3SDIYjZbdc=
+        b=W7HyuywHdPFfxfD5gp67lc3wauTdSatOu9YfbX19wFPVegisuwJpwBr/PCxck2WyM
+         A5lpP7neji0b01/6GimuOMgyacZLrRUYOp8J1+kL7jeZc+VYzPGDiTsC+LJ9ovojBD
+         GOwrBa2jMgygXeTO7GhnwCuI58IX8WoDit151P/o=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 02/44] perf trace: Use beautifiers on syscalls:sys_enter_ handlers
-Date:   Thu,  9 Aug 2018 11:57:40 -0300
-Message-Id: <20180809145822.21391-3-acme@kernel.org>
+Subject: [PATCH 03/44] perf trace: Rename some syscall_tp methods to raw_syscall
+Date:   Thu,  9 Aug 2018 11:57:41 -0300
+Message-Id: <20180809145822.21391-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180809145822.21391-1-acme@kernel.org>
 References: <20180809145822.21391-1-acme@kernel.org>
@@ -59,34 +59,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-We were using the beautifiers only when processing the
-raw_syscalls:sys_enter events, but we can as well use them for the
-syscalls:sys_enter_NAME events, as the layout is the same.
+Because raw_syscalls have the field for the syscall number as 'id' while
+the syscalls:sys_{enter,exit}_NAME have it as __syscall_nr...
 
-Some more tweaking is needed as we're processing them straight away,
-i.e. there is no buffering in the sys_enter_NAME event to wait for
-things like vfs_getname to provide pointer contents and then flushing
-at sys_exit_NAME, so we need to state in the syscall_arg that this
-is unbuffered, just print the pointer values, beautifying just
-non-pointer syscall args.
-
-This just shows an alternative way of processing tracepoints, that we
-will end up using when creating "tracepoint" payloads that already copy
-pointer contents (or chunks of it, i.e. not the whole filename, but just
-the end of it, not all the bf for a read/write, but just the start,
-etc), directly in the kernel using eBPF.
-
-E.g.:
-
-  # perf trace -e syscalls:*enter*sleep,*sleep sleep 1
-     0.303 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffc93d5ecc0
-     0.305 (1000.229 ms): sleep/8746 nanosleep(rqtp: 0x7ffc93d5ecc0) = 0
-  # perf trace -e syscalls:*_*sleep,*sleep sleep 1
-     0.288 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffecde87e40
-     0.289 (         ): sleep/8748 nanosleep(rqtp: 0x7ffecde87e40) ...
-  1000.479 (         ): syscalls:sys_exit_nanosleep:0x0
-     0.289 (1000.208 ms): sleep/8748  ... [continued]: nanosleep()) = 0
-  #
+Since we want to support both for being able to enable just a
+syscalls:sys_{enter,exit}_name instead of asking for
+raw_syscalls:sys_{enter,exit} plus filters, make the method names for
+each kind of tracepoint more explicit.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
@@ -94,77 +73,79 @@ Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-jehyd2zwhw00z3p7v7mg9632@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-4rixbfzco6tsry0w9ghx3ktb@git.kernel.org
+Signef-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 47 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 44 insertions(+), 3 deletions(-)
+ tools/perf/builtin-trace.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 2a85f5198da0..7336552c22cf 100644
+index 7336552c22cf..039f94467968 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -1666,6 +1666,44 @@ static int trace__sys_enter(struct trace *trace, struct perf_evsel *evsel,
- 	return err;
+@@ -239,7 +239,7 @@ static void perf_evsel__delete_priv(struct perf_evsel *evsel)
+ 	perf_evsel__delete(evsel);
  }
  
-+static int trace__fprintf_sys_enter(struct trace *trace, struct perf_evsel *evsel,
-+				    struct perf_sample *sample)
-+{
-+	struct format_field *field = perf_evsel__field(evsel, "__syscall_nr");
-+	struct thread_trace *ttrace;
-+	struct thread *thread;
-+	struct syscall *sc;
-+	char msg[1024];
-+	int id, err = -1;
-+	void *args;
-+
-+	if (field == NULL)
-+		return -1;
-+
-+	id = format_field__intval(field, sample, evsel->needs_swap);
-+	sc = trace__syscall_info(trace, evsel, id);
-+
-+	if (sc == NULL)
-+		return -1;
-+
-+	thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
-+	ttrace = thread__trace(thread, trace->output);
-+	/*
-+	 * We need to get ttrace just to make sure it is there when syscall__scnprintf_args()
-+	 * and the rest of the beautifiers accessing it via struct syscall_arg touches it.
-+	 */
-+	if (ttrace == NULL)
-+		goto out_put;
-+
-+	args = sample->raw_data + field->offset + sizeof(u64); /* skip __syscall_nr, there is where args are */
-+	syscall__scnprintf_args(sc, msg, sizeof(msg), args, trace, thread);
-+	fprintf(trace->output, "%s", msg);
-+	err = 0;
-+out_put:
-+	thread__put(thread);
-+	return err;
-+}
-+
- static int trace__resolve_callchain(struct trace *trace, struct perf_evsel *evsel,
- 				    struct perf_sample *sample,
- 				    struct callchain_cursor *cursor)
-@@ -1964,9 +2002,12 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
- 	if (perf_evsel__is_bpf_output(evsel)) {
- 		bpf_output__fprintf(trace, sample);
- 	} else if (evsel->tp_format) {
--		event_format__fprintf(evsel->tp_format, sample->cpu,
--				      sample->raw_data, sample->raw_size,
--				      trace->output);
-+		if (strncmp(evsel->tp_format->name, "sys_enter_", 10) ||
-+		    trace__fprintf_sys_enter(trace, evsel, sample)) {
-+			event_format__fprintf(evsel->tp_format, sample->cpu,
-+					      sample->raw_data, sample->raw_size,
-+					      trace->output);
-+		}
- 	}
+-static int perf_evsel__init_syscall_tp(struct perf_evsel *evsel, void *handler)
++static int perf_evsel__init_raw_syscall_tp(struct perf_evsel *evsel, void *handler)
+ {
+ 	evsel->priv = malloc(sizeof(struct syscall_tp));
+ 	if (evsel->priv != NULL) {
+@@ -257,7 +257,7 @@ static int perf_evsel__init_syscall_tp(struct perf_evsel *evsel, void *handler)
+ 	return -ENOENT;
+ }
  
- 	fprintf(trace->output, "\n");
+-static struct perf_evsel *perf_evsel__syscall_newtp(const char *direction, void *handler)
++static struct perf_evsel *perf_evsel__raw_syscall_newtp(const char *direction, void *handler)
+ {
+ 	struct perf_evsel *evsel = perf_evsel__newtp("raw_syscalls", direction);
+ 
+@@ -268,7 +268,7 @@ static struct perf_evsel *perf_evsel__syscall_newtp(const char *direction, void
+ 	if (IS_ERR(evsel))
+ 		return NULL;
+ 
+-	if (perf_evsel__init_syscall_tp(evsel, handler))
++	if (perf_evsel__init_raw_syscall_tp(evsel, handler))
+ 		goto out_delete;
+ 
+ 	return evsel;
+@@ -2288,14 +2288,14 @@ static int trace__add_syscall_newtp(struct trace *trace)
+ 	struct perf_evlist *evlist = trace->evlist;
+ 	struct perf_evsel *sys_enter, *sys_exit;
+ 
+-	sys_enter = perf_evsel__syscall_newtp("sys_enter", trace__sys_enter);
++	sys_enter = perf_evsel__raw_syscall_newtp("sys_enter", trace__sys_enter);
+ 	if (sys_enter == NULL)
+ 		goto out;
+ 
+ 	if (perf_evsel__init_sc_tp_ptr_field(sys_enter, args))
+ 		goto out_delete_sys_enter;
+ 
+-	sys_exit = perf_evsel__syscall_newtp("sys_exit", trace__sys_exit);
++	sys_exit = perf_evsel__raw_syscall_newtp("sys_exit", trace__sys_exit);
+ 	if (sys_exit == NULL)
+ 		goto out_delete_sys_enter;
+ 
+@@ -2717,7 +2717,7 @@ static int trace__replay(struct trace *trace)
+ 							     "syscalls:sys_enter");
+ 
+ 	if (evsel &&
+-	    (perf_evsel__init_syscall_tp(evsel, trace__sys_enter) < 0 ||
++	    (perf_evsel__init_raw_syscall_tp(evsel, trace__sys_enter) < 0 ||
+ 	    perf_evsel__init_sc_tp_ptr_field(evsel, args))) {
+ 		pr_err("Error during initialize raw_syscalls:sys_enter event\n");
+ 		goto out;
+@@ -2729,7 +2729,7 @@ static int trace__replay(struct trace *trace)
+ 		evsel = perf_evlist__find_tracepoint_by_name(session->evlist,
+ 							     "syscalls:sys_exit");
+ 	if (evsel &&
+-	    (perf_evsel__init_syscall_tp(evsel, trace__sys_exit) < 0 ||
++	    (perf_evsel__init_raw_syscall_tp(evsel, trace__sys_exit) < 0 ||
+ 	    perf_evsel__init_sc_tp_uint_field(evsel, ret))) {
+ 		pr_err("Error during initialize raw_syscalls:sys_exit event\n");
+ 		goto out;
 -- 
 2.14.4
 
