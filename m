@@ -2,109 +2,123 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A27C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2B0C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 213632168B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:33:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ss8H5pce"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213632168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 130DF208A5
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 130DF208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732350AbeHIO63 (ORCPT
+        id S1732361AbeHIO7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:58:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38485 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731189AbeHIO6X (ORCPT
+        Thu, 9 Aug 2018 10:59:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46702 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731130AbeHIO7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:58:23 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x17-v6so2793245pfh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 05:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=sAJYfB7jNZkf4AcG1guaAuxl2U8HLNfaRN6C5i+mEB0=;
-        b=Ss8H5pcerWFK5si4ToA9s7qHqAGD/RE97Mt1Wk4W+GvRcsNTKCUn0jdD0awEKgM8/+
-         ie9LhbJ4cCEF7KIEt1o98gfYTML2AUlOzYoXk6eBeTOQncND9MLgUBDIZK/vuhbZ3L8R
-         cB3ttsk9yKkUsoRL7+2BKIaNeTmqyWcMtIi38=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=sAJYfB7jNZkf4AcG1guaAuxl2U8HLNfaRN6C5i+mEB0=;
-        b=JZLFFmqhFnu/YLL8kbzRjY2ljM9YPtNYknnRTrCnKHfDpmTR8HIukSB50mj8gQUQGb
-         /dzfp939hGf66Jg/ZSE3sasptNv3IZwNY5awFdmsrBFPCJ0yfgaPVdVlBh8Ybz/X9lyf
-         jG/NNChl+1bO+ED7DrcMsOo3Io3MCd85imNXL0mMuSlJjq2powEYDXFCUWaoEptwRRj+
-         sqA+hRq15ZmVexkGbMmeVwLb4hNwi5/636C/QhisSltCv9HOXYtir++mYg5YLfPxbsqa
-         Tr++TJ6xmAw72dnLDiDRl91l9fUfvDSYceE6pZxFPASdcKd1yHWdKhS07glyvqdogpqj
-         ZRdA==
-X-Gm-Message-State: AOUpUlFkAICHl/Ngpd+Q10OdjygW3tNtzWUb6Ht55j9XzsBHgFfRlfqV
-        dJYgN2yuvoY1SfH3YAT2I6jQ45kDzKQ=
-X-Google-Smtp-Source: AA+uWPzOAktDB7iTvMGyLirkA0uZOj3hPQHRnAuskry1koC7iu2jqqZfoUZ2KLwduc3SycqUuX0MuQ==
-X-Received: by 2002:a62:21cc:: with SMTP id o73-v6mr2228004pfj.21.1533818021023;
-        Thu, 09 Aug 2018 05:33:41 -0700 (PDT)
-Received: from localhost ([45.113.251.134])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm12853108pfl.126.2018.08.09.05.33.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 05:33:40 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, andy.gross@linaro.org,
-        dianders@chromium.org, mka@chromium.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v1 10/10] MAINTAINERS: Add entry for Qualcomm TSENS thermal drivers
-Date:   Thu,  9 Aug 2018 18:02:42 +0530
-Message-Id: <106a459af3882745e78cb9b774dcfda08a96a6dd.1533815718.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1533815718.git.amit.kucheria@linaro.org>
-References: <cover.1533815718.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1533815718.git.amit.kucheria@linaro.org>
-References: <cover.1533815718.git.amit.kucheria@linaro.org>
+        Thu, 9 Aug 2018 10:59:34 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79CTdx4136457
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 08:34:52 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2krnme89th-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 08:34:51 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 9 Aug 2018 13:34:49 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 13:34:45 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79CYilk37748788
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 12:34:44 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DFDC42042;
+        Thu,  9 Aug 2018 15:34:52 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF9AE4203F;
+        Thu,  9 Aug 2018 15:34:51 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.123])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  9 Aug 2018 15:34:51 +0100 (BST)
+Date:   Thu, 9 Aug 2018 15:34:42 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     "Fancer's opinion" <fancer.lancer@gmail.com>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mips: switch to NO_BOOTMEM
+References: <1531727262-11520-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180726070355.GD8477@rapoport-lnx>
+ <20180726172005.pgjmkvwz2lpflpor@pburton-laptop>
+ <CAMPMW8p092oXk1w+SVjgx-ZH+46piAY8xgYPDfLUwLCkBm-TVw@mail.gmail.com>
+ <20180802115550.GA10232@rapoport-lnx>
+ <CAMPMW8qq-aEm-0dQrWh08SBBSRp3xAqR1PL5Oe-RvkJgUk6LjA@mail.gmail.com>
+ <20180808214215.bf6hyurv3nunfynd@pburton-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808214215.bf6hyurv3nunfynd@pburton-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18080912-0016-0000-0000-000001F4623B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080912-0017-0000-0000-0000324A75BA
+Message-Id: <20180809123441.GA3264@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=908 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090131
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create an entry for the TSENS drivers and mark them as maintained
+On Wed, Aug 08, 2018 at 02:42:15PM -0700, Paul Burton wrote:
+> Hi Sergey & Mike,
+> 
+> On Thu, Aug 09, 2018 at 12:30:03AM +0300, Fancer's opinion wrote:
+> > Hello Mike,
+> > I haven't read your patch text yet. I am waiting for the subsystem
+> > maintainers response at least
+> > about the necessity to have this type of changes being merged into the
+> > sources (I mean
+> > memblock/no-bootmem alteration). If they find it pointless (although I
+> > would strongly disagree), then
+> > nothing to discuss. Otherwise we can come up with a solution.
+> > 
+> > -Sergey
+> 
+> I'm all for dropping bootmem.
+> 
+> It's too late for something this invasive in 4.19, but I'd love to get
+> it into 4.20.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+I can resend my patch once merge window is closed. We can then apply
+additional changes Sergey has done in his set on top.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 68b4ff8ed205..ca6183d6d545 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11862,6 +11862,13 @@ L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	drivers/iommu/qcom_iommu.c
- 
-+QUALCOMM TSENS THERMAL DRIVER
-+M:	Amit Kucheria <amit.kucheria@linaro.org>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/thermal/qcom/
-+
- QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
- M:	Stanimir Varbanov <stanimir.varbanov@linaro.org>
- L:	linux-media@vger.kernel.org
+> Thanks,
+>     Paul
+> 
+
 -- 
-2.17.1
+Sincerely yours,
+Mike.
 
