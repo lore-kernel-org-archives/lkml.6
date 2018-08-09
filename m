@@ -2,152 +2,139 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44031C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0DEC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E893121D66
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:36:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8xAAhjf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E893121D66
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 36E7521D6B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E7521D6B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731108AbeHIOAk (ORCPT
+        id S1731117AbeHIOBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:00:40 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35603 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbeHIOAk (ORCPT
+        Thu, 9 Aug 2018 10:01:21 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54355 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeHIOBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:00:40 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g1-v6so4871865wru.2;
-        Thu, 09 Aug 2018 04:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j9bikNOBq54bkXwKYMMXRLaGs1bQhNG+bnxPz7oUDlA=;
-        b=f8xAAhjfU44P+e+zo3M27XR/UshJ89qTv8p1j0OqDmoVOF7AysKZhQfOUP/CxS+Cx+
-         cucZ1ccXf0wg2EAHjN5UMJf/2dnbvGWmk8BWkRQKdfjdxknfgs9s4/z5cmirGPAy6MLH
-         Yfg4fED0i7TOi/ci8G1rb5Y9Mb2pJFoPnZiomJJgU82lUCJnxb5kAvoAbhryyHVGkjwp
-         MZOgQ34iLmke4My56U6G8E8HXpWG592Ab8F8QUEilWExe4tiAX4rLjOYXQN1VPuCMAv1
-         +zrb9425NA6Xmf9+pveTmxP1xIPWKo1i82QVLj7klLmdRTqjVusHfqg7GZXsrh8Hwdrd
-         N0hg==
+        Thu, 9 Aug 2018 10:01:21 -0400
+Received: by mail-wm0-f68.google.com with SMTP id c14-v6so6024812wmb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 04:36:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j9bikNOBq54bkXwKYMMXRLaGs1bQhNG+bnxPz7oUDlA=;
-        b=Cko+n57Unikpc0xm/lxT7B15+6p00FamaJjYJpsvly/yoKkJplpWEiRAh8KKzVc82/
-         p09NDsAEagkd75Jqb5S8+RNyvUl1D30vfSPFkD14haFztCayCx9RkrcYVXRys9gdbp01
-         O8RzwCv+DV4XDper8mXtLVYVGgl4kMmQnKWT4DutkIJrJp4UfT/8G/iTRl7Wnf2ags2b
-         gSjBZXs7jer2/NpKxIRizyqyaoMc8eV+cOfnGULdEGdb4MG/QnE+SDEsswgE2PMqp02T
-         qNFIXSn06w8gLE9O9wT92qAOduNDtznloECOYMWvqk1ja7LrBMks/s0vUbnr0KCErpdx
-         51Lw==
-X-Gm-Message-State: AOUpUlGm6YBpwhriB1udR5aKGwAJ7K/KrfK7ndz2CDAPzvNkRbXTlKX+
-        57GN+hgmHbVBmd+SoQWhnL75wmCv
-X-Google-Smtp-Source: AA+uWPxew1HKngBeeqbTXf3ncR5NkqSZcY20e4KCPxCVWkihzDtc7UuFA/n1IDmfAXnjA7uq2HudbA==
-X-Received: by 2002:a5d:5691:: with SMTP id f17-v6mr1229957wrv.58.1533814570956;
-        Thu, 09 Aug 2018 04:36:10 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id g10-v6sm6999182wrv.90.2018.08.09.04.36.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 04:36:09 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 13:36:09 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
-Message-ID: <20180809113609.GI21639@ulmo>
-References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
- <1533650404-18125-2-git-send-email-avienamo@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5RXniGpM6rRl6O/Oi4tCIuIJgg3/y5iJIg4WKB7Ouv0=;
+        b=oG0ycmFBISVbPjER9ZyolAkb2C4/6FThRz1gOJrG+e5ZlrMnjJLCzQWuTMdWYyMRwr
+         IjkYGnDj34i62PXqJnWkIrSwHO/lt/J/E1KB9xXXtiYda0BYeZZsZRVnv5OKvMhvwUFq
+         CM2GbD4BEbIO3IWGDPzwg1ZFxq2lcJdc4CtXmxvA/nJGpb6tPdUnemWKjZWiwX40v6ki
+         qLPYf1sJ2kirCTJLLcGW7NPIyB3ckZu05Exo/R143aRiBdKVmMBxwdhrLAr6+jlJE9wO
+         epSuRpRxDHg1uxdQBot913zJfcK++1JBQk9Q/uGT7UGqbYrg1Sm4+wKus1Zo2ZAN5y5Y
+         PTkw==
+X-Gm-Message-State: AOUpUlFudWqYtS2MMq5kBW2feVdH90KrY2qk+3+f1u8fWiYAYSVG9IVZ
+        bp4txEsaK4EUbydJfL2AvydRLg==
+X-Google-Smtp-Source: AA+uWPxQOdqmckDqnnHYbEbHsa5Dr7KIC9ndoCCGP+QJx1K753punFNAyGcwdjfI1JSolYQkssZHuA==
+X-Received: by 2002:a1c:37cd:: with SMTP id e196-v6mr1329897wma.84.1533814612107;
+        Thu, 09 Aug 2018 04:36:52 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id m68-v6sm14900987wmb.10.2018.08.09.04.36.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 04:36:51 -0700 (PDT)
+Subject: Re: [PATCH v5 1/4] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>
+References: <20180809091558.4317-1-hdegoede@redhat.com>
+ <20180809091558.4317-2-hdegoede@redhat.com>
+ <CAJZ5v0jBxL8n8ce7=qgZmHtc4=zCA3u7ePbXaHfyibeNiNrw+w@mail.gmail.com>
+ <7d8c71b9-292e-e51e-d3d3-cb0bb00528b6@redhat.com>
+ <CAHp75VeiC35S=urEL_f-j+ZPVodPHqGJBRYxv2m5inBkuJ=1kQ@mail.gmail.com>
+ <f2f9289d-0adb-e165-a23e-696fe985fda4@redhat.com>
+ <CAJZ5v0hvfR=m5GXhSS4Q7DYFS9+BA+EAt9oHOYdxMU-J78dtwQ@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <9169f2a6-7835-0472-9b08-320106125716@redhat.com>
+Date:   Thu, 9 Aug 2018 13:36:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xQR6quUbZ63TTuTU"
-Content-Disposition: inline
-In-Reply-To: <1533650404-18125-2-git-send-email-avienamo@nvidia.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAJZ5v0hvfR=m5GXhSS4Q7DYFS9+BA+EAt9oHOYdxMU-J78dtwQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---xQR6quUbZ63TTuTU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09-08-18 11:59, Rafael J. Wysocki wrote:
+> On Thu, Aug 9, 2018 at 11:58 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+>> Hi,
+>>
+>> On 09-08-18 11:51, Andy Shevchenko wrote:
+>>>
+>>> On Thu, Aug 9, 2018 at 12:39 PM, Hans de Goede <hdegoede@redhat.com>
+>>> wrote:
+>>>>
+>>>> On 09-08-18 11:35, Rafael J. Wysocki wrote:
+>>>>>
+>>>>> On Thu, Aug 9, 2018 at 11:15 AM, Hans de Goede <hdegoede@redhat.com>
+>>>>> wrote:
+>>>
+>>>
+>>>>> I've applied the v4 of this patch and I don't think there are any
+>>>>> changes from it here.
+>>>>
+>>>>
+>>>>
+>>>> Correct, there were only changes to the 4th patch in the series.
+>>>>
+>>>>> As for the rest of the series I'll wait from comments from Wolfram and
+>>>>> the other reviewers.
+>>>>
+>>>>
+>>>>
+>>>> Ok, note if you've taken patch 1 you may also want to take patch 3 which
+>>>> is an ACPI code cleanup made possible by patch 1 and otherwise is
+>>>> unrelated.
+>>>
+>>>
+>>> I'm under impression Rafael is going to take entire series (at least
+>>> for patch 4 I'm expecting to give an Ack).
+>>
+>>
+>> As I mentioned in the coverletter, my idea was to have Rafael take
+>> patches 1-3 and then merge the 4th patch through the platform/x86
+>> tree. There are only runtime dependencies between the 2 parts and
+>> merging them independently should not cause any issues.
+> 
+> I can apply the 4th one too if it is ACKed by everyone with a vested interest.
 
-On Tue, Aug 07, 2018 at 04:59:57PM +0300, Aapo Vienamo wrote:
-> Document HS400 DQS trim value device tree property.
->=20
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.t=
-xt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index 3c7960a..7d294f3 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -72,6 +72,7 @@ Optional properties for Tegra210 and Tegra186:
->    trimmer value for non-tunable modes.
->  - nvidia,default-trim : Specify the default outbound clock trimmer
->    value.
-> +- nvidia,dqs-trim : Specify DQS trim value for HS400 timing
-> =20
->    Notes on the pad calibration pull up and pulldown offset values:
->      - The property values are drive codes which are programmed into the
-> @@ -88,6 +89,8 @@ Optional properties for Tegra210 and Tegra186:
->      - The values are programmed to the Vendor Clock Control Register.
->        Please refer to the reference manual of the SoC for correct
->        values.
-> +    - The DQS trim values are only used on controllers which support
-> +      HS400 timing.
+That works for me, note I'm about to send out a v6 (with only changes to
+the 4th patch), so hold of a bit with merging this please.
 
-One of these additions says "DQS trim values", the other says "DQS trim
-value". It is unclear from the above how many values there are. I think
-this should be more explicit. Also, I don't see why the note about which
-controllers the DQS trim value(s) applies to is in a separate paragraph.
-Couldn't it be moved to the property description?
+Andy does your ack for the 4th patch mean you're ok with Rafael merging
+this?
 
-Also, I think the bindings should specify which generations of Tegra do
-support HS400. Where else are people supposed to find that information?
+Regards,
 
-Thierry
+Hans
 
---xQR6quUbZ63TTuTU
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsJygACgkQ3SOs138+
-s6F+PQ//Sy+W2dQjwsIevUD60h4o/MYKtvLKHwJAfy7RZJ8Bj9HLJMSE66Sx7+Kn
-nZPNrn76YGF6tBXsjgkvMaF2yNOsny9ggCbx8ktdpXyZPAGx7Z5ZNJPai93h1+ea
-QXrj7aUxyl1ZgPA7aAA5VbYgwH4xUSD8qhuQBbrZFmlD7KJw0k5+K06S0E3CY8Je
-TDEuvIEWMX4WMUOvc/vNK756ieW8r0NrU++iuy6m/11DU+fn29gZ79ThYSFQyNPA
-zSCYNf00ec7jN4uCTqVPvUO6/dguNAG80xwJGzkuBiaJXaF1PiWdmXI9iS/JvYgw
-4Qs5D1BnM734ysrlwEisju+qgktPNMKl+yrVdkiG6KfWkcOtV4yYzfbnhUoP1UdV
-Y8PygMgDQtdfH7aHok4NUoIdetbvYIecdvrvGhqcEIsxWYifUnjbil9lQOzf8PPF
-P9Hkp0+MHI86wGJRR5+gIeUKmRN8/LODM6YOGBY0AnVVS3c0gMRGx324MU/gNwkA
-qurn0ML81uTrv1U0ANNt6rxRt38hoMHbCThPmvaID580tNgleKbcLRb1t86odlIK
-R5McG56coeNySKU6UL5O3nLZsbNeW4nioEYIRgwJ9+un5J+AVd8zpQJRatffgOkl
-pFuu4AZuYiHYXsymmBrPK24iqi6MVbYGUpG3AjtnagA3vhyc9KU=
-=CKUn
------END PGP SIGNATURE-----
-
---xQR6quUbZ63TTuTU--
