@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6D3C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE126C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9653E21F45
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8128B2238B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:06:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IrhVm3gP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9653E21F45
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUv1yRcr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8128B2238B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=elisp.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbeHIUcF (ORCPT
+        id S1727378AbeHIUcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:32:05 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45242 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeHIUcE (ORCPT
+        Thu, 9 Aug 2018 16:32:08 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36040 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbeHIUcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:32:04 -0400
-Received: by mail-pl0-f66.google.com with SMTP id j8-v6so2862832pll.12;
-        Thu, 09 Aug 2018 11:06:05 -0700 (PDT)
+        Thu, 9 Aug 2018 16:32:07 -0400
+Received: by mail-pl0-f65.google.com with SMTP id e11-v6so2877314plb.3;
+        Thu, 09 Aug 2018 11:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NrqZh18qx3DHoiPixKO4KdHKXt6/Ehm+nt6+jgONI1w=;
-        b=IrhVm3gPnOLyn0d4y9klzRiHMVOKLpQGD9mQx71AtZXKn4VHxeMyBrMdvXWlcCVZQ6
-         o4giP3iamqlC+znVvN6xiB5aKPb33OI4+p47PzJYIrwz6c3RudrLPHQWFur9B5ND3LRo
-         rVYhsTYQxoLlBDtQ7I1OpzeiIJTZnqZV6vZ3joTboMm/HfHuuAC34Po7/vcAuVkVBqbh
-         ygTR0kxNMfC7IRoCD+oJxqCSi05QYuXI0NkQ6AYhDuQHV8DjuGwMW1QvopxYOGFwWmy4
-         TtS+KyauBxrcBGshQtVMuG3Hr6l3e3A/hxkZKCTm3+ShCidFXxqivtOkxE/BKyGlWdNw
-         YbGQ==
+        bh=rARAqk1ykm9dLRLpQ087kt8xNkxGu2tjsN++jua7gEc=;
+        b=PUv1yRcr9a16xU8SRrYAwnyBY2Px5fil2rk56rw5TDgSz2H2wd4tiLBrcuixFy8/XM
+         F+gWTjAW8i3iBB2ECBVwWrRLmhWeyd0N4TwYqt1ozlR+fjHl+X33TkjWjZaW0UiylT3N
+         vU896YyPJMdHsTEaSqiBUwl/Z+Eo+dEXxqAG4b62CVfmSgb9X+dsNLwPLqznVvvscWTy
+         B/rCMSZexg/Mu7mZ+6Gq9//zdAQPz/gbumIInZlvXkfYct8ML3EwGpFgDs2X03fxXMoe
+         nvnYwGFvuFcCKC6Heg1Ec9CJQ45+EKQlYXmiHQB2cYKjjqk+1JHPa0BDtcy6urL1dGIp
+         y0kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=NrqZh18qx3DHoiPixKO4KdHKXt6/Ehm+nt6+jgONI1w=;
-        b=KzF3xTPLu1j0VSWuo7TPrSrpaM+fbaBf0BR5SiqQ/JdoOCvtD8/Zxpf5AHyx64fjq6
-         CKsvrHWbnkuFZX7+UhXDSn4CHR1vswhfVyAypOlrxl+7LjTX24OeX76fdhjP76y005I8
-         t7FvDE2yObN0lvlkmBHfpkMBwXxkN3pKiETW1+H5jkv7fGh8Wqav1GMgRTvr/c10/i1y
-         OHfoj8zE9YhINw2YmeWZ12IVkXo3cgrpDi3Z80JXJ7A9E68xXrj+X6bpK7LTUUFETVF4
-         Y2rwwwUQcvASpPhe+ZkEcCp71A0OIU89eLDOjESZb0r6y1Onb+KnJdfUlH/ynY4G4osi
-         dRRw==
-X-Gm-Message-State: AOUpUlEHKJtrX13m6YpHeoYOdeYuJYZYTLzmvhVXkFz60+wfJlQJQLKT
-        OZ/4tc2PJ6sF6fAqiumy5ZE=
-X-Google-Smtp-Source: AA+uWPwxMW68laEP+5a8wKJUo1+Q48DkBgjnnCAzpNMWKuS35nC7mRPNjJZnupBHNxYFLGINthTBLA==
-X-Received: by 2002:a17:902:925:: with SMTP id 34-v6mr2947097plm.307.1533837965120;
-        Thu, 09 Aug 2018 11:06:05 -0700 (PDT)
+        bh=rARAqk1ykm9dLRLpQ087kt8xNkxGu2tjsN++jua7gEc=;
+        b=AF+9pDn/7Y21V9zWpXc5++RHhoa6jxZ2uOjQthSEDs853Vf9U4mCsGcJ6pr2vzDgcx
+         ivWKfkjedKXF8HA7Is6AuR8GoYCWdCq/8xZkoNEkXBpNPGO4ahjY+OBeAHd5M0JKr7DK
+         ELRaDjU3j1HoPut/K5CZpwwbrlijckfh9tiH2qGAJI6hcEEpHsXiZKtOcFgJBQ/XYkst
+         Cjr6ah4McOpw2D0nG0epFCjxGXZ88G4uX82lB0oofJBPQbWivse73RSX9sem6YVAjgjI
+         kruZ3g+Y0/0d5Rt5Mw31a2uQpwgHUJxNxaRG5M334sJOMh2c5OV3+4iuXTNFZQDdm1zJ
+         wqJA==
+X-Gm-Message-State: AOUpUlGdjXl3tb3PauPzNjKsx6yOiaUKc/GWIRQZDBd7DDyp0P1WVfAC
+        /tuqDPXT9s7uGUutMKexUD4KXUaX3BM=
+X-Google-Smtp-Source: AA+uWPwStJ318ffx+52ZVy7y6Xisx5t0aOhKRgMNCl4MCYg2Nf6qqmJEFXAoNKcohRrUE11TA91ARw==
+X-Received: by 2002:a17:902:6b89:: with SMTP id p9-v6mr2983866plk.272.1533837968062;
+        Thu, 09 Aug 2018 11:06:08 -0700 (PDT)
 Received: from localhost (h101-111-148-072.catv02.itscom.jp. [101.111.148.72])
-        by smtp.gmail.com with ESMTPSA id 75-v6sm15976310pfr.115.2018.08.09.11.06.03
+        by smtp.gmail.com with ESMTPSA id s195-v6sm23604653pgs.76.2018.08.09.11.06.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 11:06:04 -0700 (PDT)
+        Thu, 09 Aug 2018 11:06:07 -0700 (PDT)
 From:   Naohiro Aota <naota@elisp.net>
 To:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
@@ -65,9 +65,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
         Bart Van Assche <bart.vanassche@wdc.com>,
         Matias Bjorling <mb@lightnvm.io>,
         Naohiro Aota <naota@elisp.net>
-Subject: [RFC PATCH 07/17] btrfs: disable device replace in HMZONED mode
-Date:   Fri, 10 Aug 2018 03:04:40 +0900
-Message-Id: <20180809180450.5091-8-naota@elisp.net>
+Subject: [RFC PATCH 08/17] btrfs: align extent allocation to zone boundary
+Date:   Fri, 10 Aug 2018 03:04:41 +0900
+Message-Id: <20180809180450.5091-9-naota@elisp.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180809180450.5091-1-naota@elisp.net>
 References: <20180809180450.5091-1-naota@elisp.net>
@@ -76,36 +76,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable device replacing feature in HMZONED mode, we should avoid write
-replicating from replace source device to replace target device so that we
-do not write to a location after the position of a zone's device write
-pointer. In addition, scrub process should be modified to dispatch the
-write I/Os sequentially and to fill holes between the extents. Finally,
-write pointers of the zones should be synchronized to match with RAID
-siblings in a RAID case.
-
-It needs more works to solve all these issues. So disable the device
-replace feature in HMZONED mode for now.
+In HMZONED mode, align the device extents to zone boundaries so that write
+I/Os can begin at the start of a zone, as mandated on host-managed zoned
+block devices. Also, check that a region allocation is always over empty
+zones.
 
 Signed-off-by: Naohiro Aota <naota@elisp.net>
 ---
- fs/btrfs/dev-replace.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/extent-tree.c |  3 ++
+ fs/btrfs/volumes.c     | 69 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 66 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index 839a35008fd8..cde61fb217db 100644
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -416,6 +416,9 @@ int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
- 	struct btrfs_device *tgt_device = NULL;
- 	struct btrfs_device *src_device = NULL;
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index f77226d8020a..fc3daf0e5b92 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9527,6 +9527,9 @@ int btrfs_can_relocate(struct btrfs_fs_info *fs_info, u64 bytenr)
+ 		min_free = div64_u64(min_free, dev_min);
+ 	}
  
-+	if (btrfs_fs_incompat(fs_info, HMZONED))
-+		return -EOPNOTSUPP;
++	/* We cannot allocate size less than zone_size anyway */
++	min_free = max_t(u64, min_free, fs_info->zone_size);
 +
- 	ret = btrfs_find_device_by_devspec(fs_info, srcdevid,
- 					    srcdev_name, &src_device);
- 	if (ret)
+ 	/* We need to do this so that we can look at pending chunks */
+ 	trans = btrfs_join_transaction(root);
+ 	if (IS_ERR(trans)) {
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index ba7ebb80de4d..ada13120c2cd 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -1521,6 +1521,31 @@ static int contains_pending_extent(struct btrfs_transaction *transaction,
+ 	return ret;
+ }
+ 
++static u64 dev_zone_align(struct btrfs_device *device, u64 pos)
++{
++	if (device->zone_size)
++		return ALIGN(pos, device->zone_size);
++	return pos;
++}
++
++static int is_empty_zone_region(struct btrfs_device *device,
++				u64 pos, u64 num_bytes)
++{
++	if (device->zone_size == 0)
++		return 1;
++
++	WARN_ON(!IS_ALIGNED(pos, device->zone_size));
++	WARN_ON(!IS_ALIGNED(num_bytes, device->zone_size));
++
++	while (num_bytes > 0) {
++		if (!btrfs_dev_is_empty_zone(device, pos))
++			return 0;
++		pos += device->zone_size;
++		num_bytes -= device->zone_size;
++	}
++
++	return 1;
++}
+ 
+ /*
+  * find_free_dev_extent_start - find free space in the specified device
+@@ -1564,9 +1589,14 @@ int find_free_dev_extent_start(struct btrfs_transaction *transaction,
+ 	/*
+ 	 * We don't want to overwrite the superblock on the drive nor any area
+ 	 * used by the boot loader (grub for example), so we make sure to start
+-	 * at an offset of at least 1MB.
++	 * at an offset of at least 1MB on a regular disk. For a zoned block
++	 * device, skip the first zone of the device entirely.
+ 	 */
+-	search_start = max_t(u64, search_start, SZ_1M);
++	if (device->zone_size)
++		search_start = max_t(u64, dev_zone_align(device, search_start),
++				     device->zone_size);
++	else
++		search_start = max_t(u64, search_start, SZ_1M);
+ 
+ 	path = btrfs_alloc_path();
+ 	if (!path)
+@@ -1632,6 +1662,8 @@ int find_free_dev_extent_start(struct btrfs_transaction *transaction,
+ 			if (contains_pending_extent(transaction, device,
+ 						    &search_start,
+ 						    hole_size)) {
++				search_start = dev_zone_align(device,
++							      search_start);
+ 				if (key.offset >= search_start) {
+ 					hole_size = key.offset - search_start;
+ 				} else {
+@@ -1640,6 +1672,14 @@ int find_free_dev_extent_start(struct btrfs_transaction *transaction,
+ 				}
+ 			}
+ 
++			if (!is_empty_zone_region(device, search_start,
++						  num_bytes)) {
++				search_start = dev_zone_align(device,
++							      search_start+1);
++				btrfs_release_path(path);
++				goto again;
++			}
++
+ 			if (hole_size > max_hole_size) {
+ 				max_hole_start = search_start;
+ 				max_hole_size = hole_size;
+@@ -1664,7 +1704,7 @@ int find_free_dev_extent_start(struct btrfs_transaction *transaction,
+ 		extent_end = key.offset + btrfs_dev_extent_length(l,
+ 								  dev_extent);
+ 		if (extent_end > search_start)
+-			search_start = extent_end;
++			search_start = dev_zone_align(device, extent_end);
+ next:
+ 		path->slots[0]++;
+ 		cond_resched();
+@@ -1680,6 +1720,14 @@ int find_free_dev_extent_start(struct btrfs_transaction *transaction,
+ 
+ 		if (contains_pending_extent(transaction, device, &search_start,
+ 					    hole_size)) {
++			search_start = dev_zone_align(device,
++						      search_start);
++			btrfs_release_path(path);
++			goto again;
++		}
++
++		if (!is_empty_zone_region(device, search_start, num_bytes)) {
++			search_start = dev_zone_align(device, search_start+1);
+ 			btrfs_release_path(path);
+ 			goto again;
+ 		}
+@@ -4832,6 +4880,7 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
+ 	int i;
+ 	int j;
+ 	int index;
++	int hmzoned = btrfs_fs_incompat(info, HMZONED);
+ 
+ 	BUG_ON(!alloc_profile_is_valid(type, 0));
+ 
+@@ -4851,13 +4900,18 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
+ 	ncopies = btrfs_raid_array[index].ncopies;
+ 
+ 	if (type & BTRFS_BLOCK_GROUP_DATA) {
+-		max_stripe_size = SZ_1G;
++		if (hmzoned)
++			max_stripe_size = info->zone_size;
++		else
++			max_stripe_size = SZ_1G;
+ 		max_chunk_size = BTRFS_MAX_DATA_CHUNK_SIZE;
+ 		if (!devs_max)
+ 			devs_max = BTRFS_MAX_DEVS(info);
+ 	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
+ 		/* for larger filesystems, use larger metadata chunks */
+-		if (fs_devices->total_rw_bytes > 50ULL * SZ_1G)
++		if (hmzoned)
++			max_stripe_size = info->zone_size;
++		else if (fs_devices->total_rw_bytes > 50ULL * SZ_1G)
+ 			max_stripe_size = SZ_1G;
+ 		else
+ 			max_stripe_size = SZ_256M;
+@@ -4865,7 +4919,10 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
+ 		if (!devs_max)
+ 			devs_max = BTRFS_MAX_DEVS(info);
+ 	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
+-		max_stripe_size = SZ_32M;
++		if (hmzoned)
++			max_stripe_size = info->zone_size;
++		else
++			max_stripe_size = SZ_32M;
+ 		max_chunk_size = 2 * max_stripe_size;
+ 		if (!devs_max)
+ 			devs_max = BTRFS_MAX_DEVS_SYS_CHUNK;
 -- 
 2.18.0
 
