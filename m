@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB2AC46464
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FDAC46460
 	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B78022399
+	by mail.kernel.org (Postfix) with ESMTP id 45A122239C
 	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:32:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B78022399
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A122239C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbeHIW7J (ORCPT
+        id S1727254AbeHIW7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:59:09 -0400
+        Thu, 9 Aug 2018 18:59:10 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:12122 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726890AbeHIW7J (ORCPT
+        by vger.kernel.org with ESMTP id S1726953AbeHIW7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:59:09 -0400
+        Thu, 9 Aug 2018 18:59:10 -0400
 X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Aug 2018 18:59:08 EDT
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Thu, 9 Aug 2018 13:17:21 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 95288406DA;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id A400A406E8;
         Thu,  9 Aug 2018 13:17:37 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -36,12 +36,10 @@ CC:     <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Beulich <JBeulich@suse.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v7 04/10] x86: refcount: prevent gcc distortions
-Date:   Thu, 9 Aug 2018 13:15:47 -0700
-Message-ID: <20180809201554.168804-5-namit@vmware.com>
+Subject: [PATCH v7 05/10] x86: alternatives: macrofy locks for better inlining
+Date:   Thu, 9 Aug 2018 13:15:48 -0700
+Message-ID: <20180809201554.168804-6-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180809201554.168804-1-namit@vmware.com>
 References: <20180809201554.168804-1-namit@vmware.com>
@@ -64,178 +62,95 @@ The solution is to set an assembly macro and call it from the inlined
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-This patch allows to inline functions such as __get_seccomp_filter().
-Interestingly, this allows more aggressive inlining while reducing the
-kernel size.
+This patch handles the LOCK prefix, allowing more aggresive inlining.
 
    text	   data	    bss	    dec	    hex	filename
-18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
-18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
+18140140 10225284 2957312 31322736 1ddf270 ./vmlinux before
+18146889 10225380 2957312 31329581 1de0d2d ./vmlinux after (+6845)
 
 Static text symbols:
-Before:	40302
-After:	40286	(-16)
-
-Functions such as kref_get(), free_user(), fuse_file_get() now get
-inlined.
+Before:	40286
+After:	40218	(-68)
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jan Beulich <JBeulich@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
- arch/x86/kernel/macros.S        |  1 +
- 2 files changed, 46 insertions(+), 29 deletions(-)
+ arch/x86/include/asm/alternative-asm.h | 20 ++++++++++++++------
+ arch/x86/include/asm/alternative.h     | 11 ++---------
+ arch/x86/kernel/macros.S               |  1 +
+ 3 files changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index 4cf11d88d3b3..6b2809a4d8e9 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -4,6 +4,41 @@
-  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
-  * PaX/grsecurity.
-  */
-+
-+#ifdef __ASSEMBLY__
-+
-+#include <asm/asm.h>
-+#include <asm/bug.h>
-+
-+.macro REFCOUNT_EXCEPTION counter:req
-+	.pushsection .text..refcount
-+111:	lea \counter, %_ASM_CX
-+112:	ud2
-+	ASM_UNREACHABLE
-+	.popsection
-+113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+diff --git a/arch/x86/include/asm/alternative-asm.h b/arch/x86/include/asm/alternative-asm.h
+index 31b627b43a8e..8e4ea39e55d0 100644
+--- a/arch/x86/include/asm/alternative-asm.h
++++ b/arch/x86/include/asm/alternative-asm.h
+@@ -7,16 +7,24 @@
+ #include <asm/asm.h>
+ 
+ #ifdef CONFIG_SMP
+-	.macro LOCK_PREFIX
+-672:	lock
++.macro LOCK_PREFIX_HERE
+ 	.pushsection .smp_locks,"a"
+ 	.balign 4
+-	.long 672b - .
++	.long 671f - .		# offset
+ 	.popsection
+-	.endm
++671:
 +.endm
 +
-+/* Trigger refcount exception if refcount result is negative. */
-+.macro REFCOUNT_CHECK_LT_ZERO counter:req
-+	js 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
++.macro LOCK_PREFIX insn:vararg
++	LOCK_PREFIX_HERE
++	lock \insn
++.endm
+ #else
+-	.macro LOCK_PREFIX
+-	.endm
++.macro LOCK_PREFIX_HERE
 +.endm
 +
-+/* Trigger refcount exception if refcount result is zero or negative. */
-+.macro REFCOUNT_CHECK_LE_ZERO counter:req
-+	jz 111f
-+	REFCOUNT_CHECK_LT_ZERO counter="\counter"
++.macro LOCK_PREFIX insn:vararg
 +.endm
-+
-+/* Trigger refcount exception unconditionally. */
-+.macro REFCOUNT_ERROR counter:req
-+	jmp 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+#else /* __ASSEMBLY__ */
-+
- #include <linux/refcount.h>
+ #endif
  
  /*
-@@ -14,34 +49,11 @@
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 4cd6a3b71824..d7faa16622d8 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -31,15 +31,8 @@
   */
--#define _REFCOUNT_EXCEPTION				\
--	".pushsection .text..refcount\n"		\
--	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
--	"112:\t" ASM_UD2 "\n"				\
--	ASM_UNREACHABLE					\
--	".popsection\n"					\
--	"113:\n"					\
--	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+ 
+ #ifdef CONFIG_SMP
+-#define LOCK_PREFIX_HERE \
+-		".pushsection .smp_locks,\"a\"\n"	\
+-		".balign 4\n"				\
+-		".long 671f - .\n" /* offset */		\
+-		".popsection\n"				\
+-		"671:"
 -
--/* Trigger refcount exception if refcount result is negative. */
--#define REFCOUNT_CHECK_LT_ZERO				\
--	"js 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
+-#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
 -
--/* Trigger refcount exception if refcount result is zero or negative. */
--#define REFCOUNT_CHECK_LE_ZERO				\
--	"jz 111f\n\t"					\
--	REFCOUNT_CHECK_LT_ZERO
--
--/* Trigger refcount exception unconditionally. */
--#define REFCOUNT_ERROR					\
--	"jmp 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
- 
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
-@@ -50,7 +62,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -58,7 +70,7 @@ static __always_inline void refcount_inc(refcount_t *r)
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		REFCOUNT_CHECK_LE_ZERO
-+		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -66,13 +78,15 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				  r->refs.counter, "er", i, "%0", e, "cx");
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				 r->refs.counter, "%0", e, "cx");
- }
- 
-@@ -90,7 +104,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
- 
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile(REFCOUNT_ERROR
-+			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
- 				     : : [counter] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
-@@ -106,4 +120,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
- 	return refcount_add_not_zero(1, r);
- }
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif
++#define LOCK_PREFIX_HERE "LOCK_PREFIX_HERE\n\t"
++#define LOCK_PREFIX "LOCK_PREFIX "
+ #else /* ! CONFIG_SMP */
+ #define LOCK_PREFIX_HERE ""
+ #define LOCK_PREFIX ""
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cee28c3246dc..f1fe1d570365 100644
+index f1fe1d570365..852487a9fc56 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -7,3 +7,4 @@
-  */
+@@ -8,3 +8,4 @@
  
  #include <linux/compiler.h>
-+#include <asm/refcount.h>
+ #include <asm/refcount.h>
++#include <asm/alternative-asm.h>
 -- 
 2.17.1
 
