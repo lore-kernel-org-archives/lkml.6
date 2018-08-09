@@ -2,244 +2,219 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6AFC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCAAC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10AD521C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10AD521C2B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E41521C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E41521C2B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728013AbeHIGgy (ORCPT
+        id S1728078AbeHIGmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 02:36:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbeHIGgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 02:36:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 684C54E4EE;
-        Thu,  9 Aug 2018 04:14:06 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 244C16269F;
-        Thu,  9 Aug 2018 04:14:06 +0000 (UTC)
-Received: from zmail22.collab.prod.int.phx2.redhat.com (zmail22.collab.prod.int.phx2.redhat.com [10.5.83.26])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id C0F634BB78;
-        Thu,  9 Aug 2018 04:14:05 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 00:14:05 -0400 (EDT)
-From:   Pingfan Liu <piliu@redhat.com>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        catalin marinas <catalin.marinas@arm.com>,
-        will deacon <will.deacon@arm.com>, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, bhe@redhat.com, arnd@arndb.de,
-        schwidefsky@de.ibm.com, heiko carstens <heiko.carstens@de.ibm.com>,
-        ard biesheuvel <ard.biesheuvel@linaro.org>,
-        james morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "piliu@redhat.com Thiago Jung Bauermann" 
-        <bauerman@linux.vnet.ibm.com>
-Message-ID: <1235507889.17337085.1533788045597.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180809033416.GA5069@dhcp-128-65.nay.redhat.com>
-References: <20180801075820.3753-1-takahiro.akashi@linaro.org> <20180801075820.3753-4-takahiro.akashi@linaro.org> <20180801102951.527cfc57@ThinkPad> <20180802000150.GN11258@linaro.org> <20180806055047.GC4246@dhcp-128-65.nay.redhat.com> <20180809033416.GA5069@dhcp-128-65.nay.redhat.com>
-Subject: Re: [PATCH v13 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.72.8.29, 10.4.195.7]
-Thread-Topic: s390, kexec_file: drop arch_kexec_mem_walk()
-Thread-Index: P/iiq4HDcSUV5izjWPfhp8xc3i6LfA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 09 Aug 2018 04:14:06 +0000 (UTC)
+        Thu, 9 Aug 2018 02:42:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59576 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727382AbeHIGmD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 02:42:03 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w794J5aE104431
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 00:19:14 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kr9wk8gm2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 00:19:13 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Thu, 9 Aug 2018 05:19:11 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 05:19:06 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w794J59L41222182
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 04:19:05 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8DABAA4040;
+        Thu,  9 Aug 2018 07:19:12 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52749A404D;
+        Thu,  9 Aug 2018 07:19:09 +0100 (BST)
+Received: from bangoria.in.ibm.com (unknown [9.124.35.190])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 07:19:09 +0100 (BST)
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To:     srikar@linux.vnet.ibm.com, oleg@redhat.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, liu.song.a23@gmail.com
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH v8 1/6] Uprobes: Simplify uprobe_register() body
+Date:   Thu,  9 Aug 2018 09:48:51 +0530
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
+References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18080904-4275-0000-0000-000002A7356E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080904-4276-0000-0000-000037B04172
+Message-Id: <20180809041856.1547-2-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090045
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Simplify uprobe_register() function body and let __uprobe_register()
+handle everything. Also move dependency functions around to fix build
+failures.
 
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+ kernel/events/uprobes.c | 69 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 36 insertions(+), 33 deletions(-)
 
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index ccc579a7d32e..471eac896635 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -840,13 +840,8 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+ 	return err;
+ }
+ 
+-static int __uprobe_register(struct uprobe *uprobe, struct uprobe_consumer *uc)
+-{
+-	consumer_add(uprobe, uc);
+-	return register_for_each_vma(uprobe, uc);
+-}
+-
+-static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
++static void
++__uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+ {
+ 	int err;
+ 
+@@ -860,24 +855,46 @@ static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *u
+ }
+ 
+ /*
+- * uprobe_register - register a probe
++ * uprobe_unregister - unregister a already registered probe.
++ * @inode: the file in which the probe has to be removed.
++ * @offset: offset from the start of the file.
++ * @uc: identify which probe if multiple probes are colocated.
++ */
++void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
++{
++	struct uprobe *uprobe;
++
++	uprobe = find_uprobe(inode, offset);
++	if (WARN_ON(!uprobe))
++		return;
++
++	down_write(&uprobe->register_rwsem);
++	__uprobe_unregister(uprobe, uc);
++	up_write(&uprobe->register_rwsem);
++	put_uprobe(uprobe);
++}
++EXPORT_SYMBOL_GPL(uprobe_unregister);
++
++/*
++ * __uprobe_register - register a probe
+  * @inode: the file in which the probe has to be placed.
+  * @offset: offset from the start of the file.
+  * @uc: information on howto handle the probe..
+  *
+- * Apart from the access refcount, uprobe_register() takes a creation
++ * Apart from the access refcount, __uprobe_register() takes a creation
+  * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
+  * inserted into the rbtree (i.e first consumer for a @inode:@offset
+  * tuple).  Creation refcount stops uprobe_unregister from freeing the
+  * @uprobe even before the register operation is complete. Creation
+  * refcount is released when the last @uc for the @uprobe
+- * unregisters. Caller of uprobe_register() is required to keep @inode
++ * unregisters. Caller of __uprobe_register() is required to keep @inode
+  * (and the containing mount) referenced.
+  *
+  * Return errno if it cannot successully install probes
+  * else return 0 (success)
+  */
+-int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
++static int __uprobe_register(struct inode *inode, loff_t offset,
++			     struct uprobe_consumer *uc)
+ {
+ 	struct uprobe *uprobe;
+ 	int ret;
+@@ -904,7 +921,8 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
+ 	down_write(&uprobe->register_rwsem);
+ 	ret = -EAGAIN;
+ 	if (likely(uprobe_is_active(uprobe))) {
+-		ret = __uprobe_register(uprobe, uc);
++		consumer_add(uprobe, uc);
++		ret = register_for_each_vma(uprobe, uc);
+ 		if (ret)
+ 			__uprobe_unregister(uprobe, uc);
+ 	}
+@@ -915,6 +933,12 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
+ 		goto retry;
+ 	return ret;
+ }
++
++int uprobe_register(struct inode *inode, loff_t offset,
++		    struct uprobe_consumer *uc)
++{
++	return __uprobe_register(inode, offset, uc);
++}
+ EXPORT_SYMBOL_GPL(uprobe_register);
+ 
+ /*
+@@ -946,27 +970,6 @@ int uprobe_apply(struct inode *inode, loff_t offset,
+ 	return ret;
+ }
+ 
+-/*
+- * uprobe_unregister - unregister a already registered probe.
+- * @inode: the file in which the probe has to be removed.
+- * @offset: offset from the start of the file.
+- * @uc: identify which probe if multiple probes are colocated.
+- */
+-void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
+-{
+-	struct uprobe *uprobe;
+-
+-	uprobe = find_uprobe(inode, offset);
+-	if (WARN_ON(!uprobe))
+-		return;
+-
+-	down_write(&uprobe->register_rwsem);
+-	__uprobe_unregister(uprobe, uc);
+-	up_write(&uprobe->register_rwsem);
+-	put_uprobe(uprobe);
+-}
+-EXPORT_SYMBOL_GPL(uprobe_unregister);
+-
+ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ {
+ 	struct vm_area_struct *vma;
+-- 
+2.14.4
 
-
------ Original Message -----
-> From: "Dave Young" <dyoung@redhat.com>
-> To: "AKASHI Takahiro" <takahiro.akashi@linaro.org>, "Philipp Rudo" <prudo@linux.ibm.com>, "catalin marinas"
-> <catalin.marinas@arm.com>, "will deacon" <will.deacon@arm.com>, dhowells@redhat.com, vgoyal@redhat.com,
-> herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com, arnd@arndb.de, schwidefsky@de.ibm.com, "heiko
-> carstens" <heiko.carstens@de.ibm.com>, "ard biesheuvel" <ard.biesheuvel@linaro.org>, "james morse"
-> <james.morse@arm.com>, bhsharma@redhat.com, kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-> linux-kernel@vger.kernel.org, "piliu@redhat.com Thiago Jung Bauermann" <bauerman@linux.vnet.ibm.com>
-> Sent: Thursday, August 9, 2018 11:34:16 AM
-> Subject: Re: [PATCH v13 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
-> 
-> Add more cc. Pingfan Liu confirmed ppc does not use 0 as valid address,
-> if so it should be safe.
-> 
-> Pingfan, can you add more words?
-> 
-
-ppc64 uses a few KB starting from 0 for exception handler.
-
-> On 08/06/18 at 01:50pm, Dave Young wrote:
-> > Add Thiago in cc so that he can review from powerpc point of view.
-> > 
-> > On 08/02/18 at 09:01am, AKASHI Takahiro wrote:
-> > > Hi,
-> > > 
-> > > On Wed, Aug 01, 2018 at 10:29:51AM +0200, Philipp Rudo wrote:
-> > > > Hey Akashi,
-> > > > 
-> > > > I kept thinking about this patch and remembered why I didn't made the
-> > > > change
-> > > > you are suggesting now.
-> > > 
-> > > Hmm.
-> > > 
-> > > > The problem is when you only check for kbuf->mem you are excluding
-> > > > address 0,
-> > > > which might be a valid address to load the kernel to. On s390 this is
-> > > > actually
-> > > > done when the kernel is not loaded via a boot loader. For kexec_file
-> > > > however,
-> > > > we cut off the first few kB of the image and jump directly to
-> > > > 'startup'. So
-> > > > checking for !0 does not cause a problem here.
-> > > 
-> > > Yeah, as Dave(RedHat) described, all the current kexec-capable
-> > > architectures,
-> > > except arm64, implicitly initialize kbuf.mem to zero with "kbuf = { ...
-> > > }"
-> > > initializer. So surely my change would not break anything on the existing
-> > > code.
-> > > On the other hand, I also see your concern here.
-> > > 
-> > > > Anyway, the long term safer solution would be something like
-> > > > 
-> > > > #define KEXEC_BUF_MEM_UNKNOWN (-1UL)
-> > > > 
-> > > > for architectures to tell common code to search a fitting mem hole.
-> > > 
-> > > This would require the existing code on every arch to be modified, which
-> > > I think should be avoided if possible. Instead,
-> > > we'd better define in linux/kexec.h:
-> > >   #ifndef KEXEC_BUF_MEM_UNKNOWN
-> > >   #define KEXEC_BUF_MEM_UNKNOWN 0
-> > >   #endif
-> > > and then check for kbuf in kexec_locate_mem_hole():
-> > >   if (kbuf->mem != KEXEC_BUF_MEM_UNKNOWN)
-> > >         return 0;
-> > >   ...
-> > > 
-> > > This way if some arch wants to treat *zero* as a valid address, it can
-> > > redefine this macro in arch/asm/kexec.h.
-> > 
-> > I think this way works if powerpc is safe for using zero as the unknown
-> > address in this case.  Thiago, can you provide some review?
-> > 
-> > Philipp, thanks for catching the problem!
-> > 
-> > > 
-> > > Thanks,
-> > > -Takahiro AKASHI
-> > > 
-> > > > 
-> > > > Back then I didn't do the change because I had the other workaround,
-> > > > which
-> > > > didn't require a common code change. But when you are touching the code
-> > > > now it
-> > > > is worth thinking about it.
-> > > > 
-> > > > Just wanted to let you know
-> > > > Philipp
-> > > > 
-> > > > 
-> > > > On Wed,  1 Aug 2018 16:58:07 +0900
-> > > > AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
-> > > > 
-> > > > > Since s390 already knows where to locate buffers, calling
-> > > > > arch_kexec_mem_walk() has no sense. So we can just drop it as
-> > > > > kbuf->mem
-> > > > > indicates this while all other architectures sets it to 0 initially.
-> > > > > 
-> > > > > This change is a preparatory work for the next patch, where all the
-> > > > > variant memory walks, either on system resource or memblock, will be
-> > > > > put in one common place so that it will satisfy all the
-> > > > > architectures'
-> > > > > need.
-> > > > > 
-> > > > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > > > > Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
-> > > > > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > > > > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> > > > > Cc: Dave Young <dyoung@redhat.com>
-> > > > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > > > Cc: Baoquan He <bhe@redhat.com>
-> > > > > ---
-> > > > >  arch/s390/kernel/machine_kexec_file.c | 10 ----------
-> > > > >  kernel/kexec_file.c                   |  4 ++++
-> > > > >  2 files changed, 4 insertions(+), 10 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/s390/kernel/machine_kexec_file.c
-> > > > > b/arch/s390/kernel/machine_kexec_file.c
-> > > > > index f413f57f8d20..32023b4f9dc0 100644
-> > > > > --- a/arch/s390/kernel/machine_kexec_file.c
-> > > > > +++ b/arch/s390/kernel/machine_kexec_file.c
-> > > > > @@ -134,16 +134,6 @@ int kexec_file_add_initrd(struct kimage *image,
-> > > > > struct s390_load_data *data,
-> > > > >  	return ret;
-> > > > >  }
-> > > > >  
-> > > > > -/*
-> > > > > - * The kernel is loaded to a fixed location. Turn off
-> > > > > kexec_locate_mem_hole
-> > > > > - * and provide kbuf->mem by hand.
-> > > > > - */
-> > > > > -int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-> > > > > -			int (*func)(struct resource *, void *))
-> > > > > -{
-> > > > > -	return 1;
-> > > > > -}
-> > > > > -
-> > > > >  int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
-> > > > >  				     Elf_Shdr *section,
-> > > > >  				     const Elf_Shdr *relsec,
-> > > > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > > > index 63c7ce1c0c3e..bf39df5e5bb9 100644
-> > > > > --- a/kernel/kexec_file.c
-> > > > > +++ b/kernel/kexec_file.c
-> > > > > @@ -534,6 +534,10 @@ int kexec_locate_mem_hole(struct kexec_buf
-> > > > > *kbuf)
-> > > > >  {
-> > > > >  	int ret;
-> > > > >  
-> > > > > +	/* Arch knows where to place */
-> > > > > +	if (kbuf->mem)
-> > > > > +		return 0;
-> > > > > +
-> > > > >  	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
-> > > > >  
-> > > > >  	return ret == 1 ? 0 : -EADDRNOTAVAIL;
-> > > > 
-> > > 
-> > > _______________________________________________
-> > > kexec mailing list
-> > > kexec@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/kexec
-> > 
-> > Thanks
-> > Dave
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-> 
