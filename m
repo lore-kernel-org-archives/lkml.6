@@ -2,201 +2,159 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D89EC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3924BC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 339B121E20
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:49:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339B121E20
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F05621E17
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:52:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlV4dkd5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F05621E17
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732249AbeHIQOd (ORCPT
+        id S1732223AbeHIQRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 12:14:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730090AbeHIQOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 12:14:33 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2741221837;
-        Thu,  9 Aug 2018 13:49:32 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 09:49:30 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, laurent.pinchart@ideasonboard.com,
-        stern@rowland.harvard.edu, ezequiel@collabora.com,
-        hdegoede@redhat.com, hverkuil@xs4all.nl, mchehab@kernel.org,
-        mingo@redhat.com, isely@pobox.com, bhumirks@gmail.com,
-        colin.king@canonical.com, kieran.bingham@ideasonboard.com,
-        keiichiw@chromium.org
-Subject: Re: [PATCH v3 1/2] media: usb: pwc: Introduce TRACE_EVENTs for
- pwc_isoc_handler()
-Message-ID: <20180809094930.707da2e0@gandalf.local.home>
-In-Reply-To: <20180809093307.6001-2-matwey@sai.msu.ru>
-References: <20180809093307.6001-1-matwey@sai.msu.ru>
-        <20180809093307.6001-2-matwey@sai.msu.ru>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 9 Aug 2018 12:17:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33605 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731432AbeHIQRU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 12:17:20 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g6-v6so5250596wrp.0;
+        Thu, 09 Aug 2018 06:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3RvNm6I+lSX7aMlkpUTovcElxYYvrXzxKlfVI1Yudfc=;
+        b=RlV4dkd54hVWTZGBqY2J0OXZoPD6Q2MdqRVPH2qkpH9ergIj0aLRcIDLVKeOW5ofpk
+         vS9nibnMThj/o6XLtbs7j5CSauaiv35q+TxpZ7RoYjekiZKK4ZiX6FzmpJL50kYYt1Dn
+         7PBdJHK2dZTG22jY8PZ/OoYWFqsnLumyxsDJFNOLy4TTpFFXeS1nlh2mp2LFzZB/cA8I
+         l5Rp7/nWvlUgnPG3kHHh5XeX/nEPVoCFYak54wKTfdpaIKNnIlQf7xUgl5BgYLR+wLqZ
+         E9Im4XgQ5GUTAVJ0wTuPyYX3bRmCHmv8ExDm6EdTEcTppmM46MXMipaPu8v+trmSeF7P
+         w7wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3RvNm6I+lSX7aMlkpUTovcElxYYvrXzxKlfVI1Yudfc=;
+        b=sYokMFnxZBxXcd5LFaEkfFEslOMjAStVGguAJf/2MJYIgty/CT8a9jxEiUmD0y0O9C
+         JixWC1mQfgMollAM1q+NlWcKgfY2DJ/p0da+P6JO16xFBE5AXJ0a9xXjvF1/XOXu5KGH
+         ZnU3zJsfJbNPsxawo1gcsqr9A4mDeMsIX/tmIuHGE9BryoX6clUpoEQJgddEDFbhzG7l
+         QvUpXDzPpgByrg2VUdlLGnwVuHc96nwKwf9yWrCHzV6nAsA6W51uul0PTv+eBQ+x3s+8
+         SicQAinRa7jTvWhnnFEiO8MAFIPWNAe7gRkCmMTeMRTAgsjKXGg+qz5+kj5Z3ZGz2XoR
+         uAlA==
+X-Gm-Message-State: AOUpUlEWivcVb03MA+1IvfLoM+7KwklCQYlhrfyIRPQJraDx2c7V5VUN
+        oU/NRi1ftCkYe8j2Aor6YmQ=
+X-Google-Smtp-Source: AA+uWPxGO2/NKTgqN0YpA2qABrM9bVkMCMhUa8jBaMgh6UjvAsPGZL667KflrM95G800ANgc38clAw==
+X-Received: by 2002:a5d:514d:: with SMTP id u13-v6mr1541148wrt.162.1533822738366;
+        Thu, 09 Aug 2018 06:52:18 -0700 (PDT)
+Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
+        by smtp.gmail.com with ESMTPSA id j9-v6sm7526973wrv.5.2018.08.09.06.52.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 06:52:17 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 15:52:16 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Aapo Vienamo <avienamo@nvidia.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] arm64: dts: tegra186: Add SDMMC4 DQS trim value
+Message-ID: <20180809135216.GF21639@ulmo>
+References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
+ <1533650404-18125-6-git-send-email-avienamo@nvidia.com>
+ <20180809114922.GN21639@ulmo>
+ <20180809150226.64657f56@dhcp-10-21-25-168>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="py13wRIzy9nU46ee"
+Content-Disposition: inline
+In-Reply-To: <20180809150226.64657f56@dhcp-10-21-25-168>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  9 Aug 2018 12:33:06 +0300
-"Matwey V. Kornilov" <matwey@sai.msu.ru> wrote:
 
-> There were reports that PWC-based webcams don't work at some
-> embedded ARM platforms. [1] Isochronous transfer handler seems to
-> work too long leading to the issues in MUSB USB host subsystem.
-> Also note, that urb->giveback() handlers are still called with
-> disabled interrupts. In order to be able to measure performance of
-> PWC driver, traces are introduced in URB handler section.
-> 
-> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> 
-> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> ---
->  drivers/media/usb/pwc/pwc-if.c |  7 +++++
->  include/trace/events/pwc.h     | 64 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 71 insertions(+)
->  create mode 100644 include/trace/events/pwc.h
-> 
-> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-> index 54b036d39c5b..72d2897a4b9f 100644
-> --- a/drivers/media/usb/pwc/pwc-if.c
-> +++ b/drivers/media/usb/pwc/pwc-if.c
-> @@ -76,6 +76,9 @@
->  #include "pwc-dec23.h"
->  #include "pwc-dec1.h"
->  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/pwc.h>
-> +
->  /* Function prototypes and driver templates */
->  
->  /* hotplug device table support */
-> @@ -260,6 +263,8 @@ static void pwc_isoc_handler(struct urb *urb)
->  	int i, fst, flen;
->  	unsigned char *iso_buf = NULL;
->  
-> +	trace_pwc_handler_enter(urb, pdev);
-> +
->  	if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
->  	    urb->status == -ESHUTDOWN) {
->  		PWC_DEBUG_OPEN("URB (%p) unlinked %ssynchronously.\n",
-> @@ -348,6 +353,8 @@ static void pwc_isoc_handler(struct urb *urb)
->  	}
->  
->  handler_end:
-> +	trace_pwc_handler_exit(urb, pdev);
-> +
->  	i = usb_submit_urb(urb, GFP_ATOMIC);
->  	if (i != 0)
->  		PWC_ERROR("Error (%d) re-submitting urb in pwc_isoc_handler.\n", i);
-> diff --git a/include/trace/events/pwc.h b/include/trace/events/pwc.h
-> new file mode 100644
-> index 000000000000..71ba98770537
-> --- /dev/null
-> +++ b/include/trace/events/pwc.h
-> @@ -0,0 +1,64 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#if !defined(_TRACE_PWC_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_PWC_H
-> +
-> +#include <linux/usb.h>
-> +#include <linux/tracepoint.h>
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM pwc
-> +
-> +TRACE_EVENT(pwc_handler_enter,
-> +	TP_PROTO(struct urb *urb, struct pwc_device *pdev),
-> +	TP_ARGS(urb, pdev),
-> +	TP_STRUCT__entry(
-> +		__field(struct urb*, urb)
-> +		__field(int, urb__status)
-> +		__field(u32, urb__actual_length)
-> +		__field(const char*, name)
+--py13wRIzy9nU46ee
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-name needs to be a __string. Never save pointers that you will
-dereference in the print_fmt, as you never know if those pointers will
-exist later. Not to mention, userspace tools like trace-cmd and perf
-have no idea how to display them.
+On Thu, Aug 09, 2018 at 03:02:26PM +0300, Aapo Vienamo wrote:
+> On Thu, 9 Aug 2018 13:49:22 +0200
+> Thierry Reding <thierry.reding@gmail.com> wrote:
+>=20
+> > On Tue, Aug 07, 2018 at 05:00:01PM +0300, Aapo Vienamo wrote:
+> > > Add the HS400 DQS trim value for Tegra186 SDMMC4.
+> > >=20
+> > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > > ---
+> > >  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/bo=
+ot/dts/nvidia/tegra186.dtsi
+> > > index 6e9ef26..9e07bc6 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> > > @@ -313,6 +313,7 @@
+> > >  		nvidia,pad-autocal-pull-down-offset-1v8-timeout =3D <0x0a>;
+> > >  		nvidia,default-tap =3D <0x5>;
+> > >  		nvidia,default-trim =3D <0x9>;
+> > > +		nvidia,dqs-trim =3D <63>;
+> > >  		status =3D "disabled";
+> > >  	};
+> > >   =20
+> >=20
+> > Isn't this technically dependent on the board layout and as such would
+> > belong in the board DTS file? Or does this value work on all existing
+> > Tegra186 platforms?
+>=20
+> This value is specified as part of the controller initialization
+> sequence in the TRM. I've understood that this (and other tap and trim)
+> value(s) are used for compensating the propagation delay differences
+> that are caused by the internal SoC layout.
 
-You want:
+Hmm... it would seem to me like the routing on a board would have a more
+significant impact than the SoC internal routing. But perhaps the board-
+specific routing is actually what the automatic calibration is used for?
 
-		__string( name, pdev->v4l2_dev.name ),
+Anyway, if it ever turns out that we need slightly different values on a
+given board, we can always override the value in the board DTS file.
 
+Thierry
 
-> +		__field(struct pwc_frame_buf*, fbuf)
-> +		__field(int, fbuf__filled)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->urb = urb;
-> +		__entry->urb__status = urb->status;
-> +		__entry->urb__actual_length = urb->actual_length;
-> +		__entry->name = pdev->v4l2_dev.name;
+--py13wRIzy9nU46ee
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And here you assign it with:
+-----BEGIN PGP SIGNATURE-----
 
-		__assign_str(name, pdev->v4l2_dev.name);
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsRxAACgkQ3SOs138+
+s6GlhxAAj/a6meiHIxY5TFAsnZb/aNtRSgkDmy2CGv4Bpdl4HUedX4+bflQcv66a
+IoNqAApjYRXVdBNZfkAH78MQV157U99U5hone+1RHzJFsybW7cXem+qSACQBXFLV
+378VghbCmtZspJ9afGAFxdkkkPKorK9uMmip3PUS0Wz8c2RKf5YL113FrkUoOJDE
+cbkjYrj3WYz0wL3o9n1/FyYKeNfFg12fN1zO7afmxHag+f6IeWzynb2kqEUwBniC
+Em1F1vVfNdI4gbREXFfQOESkJQzG42hWACYCm86EQ57IbtVrP4e3cyi4BDIeEG93
+bhy2TuhL+ETmp2HYhgq/0lXELb727jmrwfQ/E3vVTpHf0+sbPrxBaeKf2k9cmNM2
+BadcdjXAPrLwJ4oe7jib5iX61+aXz1DBfGJnATe9hg9YvdNgF8R/460Ql2W/g+T+
+Io3Vwke6nQc8OJQgpiruQ5IBYSpzp9iHMT7yw8K44jf4fLcno97dfg1kOrcayF9q
+5L93aawL3ZHuGT+Tml0v52u2OfOfsrloV4Tnqj6yWe6/6quVXmHrObf1xK8IYO6a
+U1l5uaQcZX221F+5Bia6hnEQfkoR4JfhOUaU5bjKNA6ReKt08bSxaFkQZ9ARy6h7
+X8dqmoU2EMO3uYDCdHlWC/b8YN0KLAyfps8banXV4mRzUDuBz5M=
+=q8pn
+-----END PGP SIGNATURE-----
 
-> +		__entry->fbuf = pdev->fill_buf;
-> +		__entry->fbuf__filled = (pdev->fill_buf ? pdev->fill_buf->filled : 0);
-> +	),
-> +	TP_printk("dev=%s (fbuf=%p filled=%d) urb=%p (status=%d actual_length=%u)",
-> +		__entry->name,
-
-And display it with:
-
-		__get_str(name),
-
-> +		__entry->fbuf,
-> +		__entry->fbuf__filled,
-> +		__entry->urb,
-> +		__entry->urb__status,
-> +		__entry->urb__actual_length)
-> +);
-> +
-> +TRACE_EVENT(pwc_handler_exit,
-> +	TP_PROTO(struct urb *urb, struct pwc_device* pdev),
-> +	TP_ARGS(urb, pdev),
-> +	TP_STRUCT__entry(
-> +		__field(struct urb*, urb)
-> +		__field(const char*, name)
-> +		__field(struct pwc_frame_buf*, fbuf)
-> +		__field(int, fbuf__filled)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->urb = urb;
-> +		__entry->name = pdev->v4l2_dev.name;
-> +		__entry->fbuf = pdev->fill_buf;
-> +		__entry->fbuf__filled = pdev->fill_buf->filled;
-> +	),
-> +	TP_printk(" dev=%s (fbuf=%p filled=%d) urb=%p",
-> +		__entry->name,
-
-Same thing here.
-
--- Steve
-
-> +		__entry->fbuf,
-> +		__entry->fbuf__filled,
-> +		__entry->urb)
-> +);
-> +
-> +#endif /* _TRACE_PWC_H */
-> +
-> +/* This part must be outside protection */
-> +#include <trace/define_trace.h>
-
+--py13wRIzy9nU46ee--
