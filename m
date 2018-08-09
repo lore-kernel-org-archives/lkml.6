@@ -2,147 +2,250 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF53C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3EAC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A812150C
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:43:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SoOcQ8WZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A812150C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id A0F952150C
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:44:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F952150C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeHIXKQ (ORCPT
+        id S1727321AbeHIXKm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 19:10:16 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46592 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeHIXKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 19:10:15 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f14-v6so3274973pgv.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 13:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=5s2EFOPI3Lw2TWRp42epal20VPIJgp5Jq9rU6QSAInk=;
-        b=SoOcQ8WZ8GOiNfDd+7yQWXl6a3sYz3CfvtevZBxBHatU5qnSRupt7RpKChYxOu5cJE
-         /99hp8atQP2vFGk7yjuT5YTKyrw5E5U+gMWJdlNqE6G+jpRu9DcqkhQhmoeqMnTxXS/d
-         4grwqxiynjVZdvW7SKIL8cHBdThM8YXI2jMGsLZAq9nO3RhGwdNNw/Bq58fr6Il4FSZv
-         ZTy9LRDWcGuUMLl3GBd3NATv/BaiVY5eWDDu8acGNb+in0/vINsmI3fNDafJ8UcmYWFF
-         fgzox5RX+DlM+EmsrjUxxoJiEEiA5Khwm4J7u1aTMunu5TM7mP5UYVJ/iDYSCsDlCf73
-         obzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :cc:from:to;
-        bh=5s2EFOPI3Lw2TWRp42epal20VPIJgp5Jq9rU6QSAInk=;
-        b=gKSd7Dy7c49xJ/2zOzR8DgDeJ2gqw297ORomYCWAe6hpXnfG/eL6xUhCgsD4LPp996
-         hbIb5Y6hKz88E/fSLxFgnfRq8DGdsLwaxw7nUwZoC3l1ydXIF7NkRgw3+E5P+EfmS+P3
-         Al9TC79rTUAsCZHW8n5PhFgeyMndl6/pklHUnAyTcMZiz2PeGc7BbG/oN7ejLSDIhaHA
-         lNT2niNhb4zQk+6YK/Gs8IYalLeFGH9HYO9WGNI3TnfmgoSgUeEqAUinRJb+WyMDewtx
-         YN2Ol2gWdqczqdLcmOVfkBDgwNSzZcGbyrgbVQBZrHih6RreTc+JaTWfVwvoFSXKsKiY
-         gVVg==
-X-Gm-Message-State: AOUpUlE25KBCTn79ppP14d5HDJShOHnFHj9ABpyq0UrXZ9yDP99Pzub6
-        0cqCsFppdOijdF+iMagRCYRucQ==
-X-Google-Smtp-Source: AA+uWPzJZsJcg80Lbb56G4AodsV1XAEPsQkcZlbgxi/BV8wjRIMw7W/thNcXDsEOEXtOddZNPQqo9g==
-X-Received: by 2002:a62:d8c:: with SMTP id 12-v6mr3950776pfn.202.1533847423095;
-        Thu, 09 Aug 2018 13:43:43 -0700 (PDT)
-Received: from localhost ([96.76.210.210])
-        by smtp.gmail.com with ESMTPSA id y27-v6sm19969250pff.181.2018.08.09.13.43.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 13:43:42 -0700 (PDT)
-Subject: [PATCH v2 2/2] RISC-V: Don't use a global include guard for uapi/asm/syscalls.h
-Date:   Thu,  9 Aug 2018 13:25:24 -0700
-Message-Id: <20180809202524.1702-3-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180809202524.1702-1-palmer@sifive.com>
-References: <20180809202524.1702-1-palmer@sifive.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        Arnd Bergmann <arnd@arndb.de>, tklauser@distanz.ch,
-        Andrew Waterman <andrew@sifive.com>, dan.carpenter@oracle.com,
-        linux@dominikbrodowski.net, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Marcus Comstedt <marcus@mc.pp.se>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Christoph Hellwig <hch@infradead.org>, linux@roeck-us.net
+        Thu, 9 Aug 2018 19:10:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58316 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726953AbeHIXKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 19:10:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FD9118A;
+        Thu,  9 Aug 2018 13:44:10 -0700 (PDT)
+Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B01F13F5B3;
+        Thu,  9 Aug 2018 13:44:07 -0700 (PDT)
+Subject: Re: [PATCH] iommu/iova: Optimise attempts to allocate iova from 32bit
+ address range
+To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
+        jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+References: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com>
+ <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com>
+ <CAKTKpr6HfLtkeertCyfA_vJt2rXi5qFOKKXohLfX1Z9QiK=Uvw@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <b7472748-8169-7628-11e5-471045cdf1de@arm.com>
+Date:   Thu, 9 Aug 2018 21:43:59 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAKTKpr6HfLtkeertCyfA_vJt2rXi5qFOKKXohLfX1Z9QiK=Uvw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This file is expected to be included multiple times in the same file in
-order to allow the __SYSCALL macro to generate system call tables.  With
-a global include guard we end up missing __NR_riscv_flush_icache in the
-syscall table, which results in icache flushes that escape the vDSO call
-to not actually do anything.
+On 2018-08-09 6:49 PM, Ganapatrao Kulkarni wrote:
+> Hi Robin,
+> 
+> On Thu, Aug 9, 2018 at 9:54 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>> On 07/08/18 09:54, Ganapatrao Kulkarni wrote:
+>>>
+>>> As an optimisation for PCI devices, there is always first attempt
+>>> been made to allocate iova from SAC address range. This will lead
+>>> to unnecessary attempts/function calls, when there are no free ranges
+>>> available.
+>>>
+>>> This patch optimises by adding flag to track previous failed attempts
+>>> and avoids further attempts until replenish happens.
+>>
+>>
+>> Agh, what I overlooked is that this still suffers from the original problem,
+>> wherein a large allocation which fails due to fragmentation then blocks all
+>> subsequent smaller allocations, even if they may have succeeded.
+>>
+>> For a minimal change, though, what I think we could do is instead of just
+>> having a flag, track the size of the last 32-bit allocation which failed. If
+>> we're happy to assume that nobody's likely to mix aligned and unaligned
+>> allocations within the same domain, then that should be sufficiently robust
+>> whilst being no more complicated than this version, i.e. (modulo thinking up
+>> a better name for it):
+> 
+> I agree, it would be better to track size and attempt to allocate for
+> smaller chunks, if not for bigger one.
+> 
+>>
+>>>
+>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>>> ---
+>>> This patch is based on comments from Robin Murphy <robin.murphy@arm.com>
+>>> for patch [1]
+>>>
+>>> [1] https://lkml.org/lkml/2018/4/19/780
+>>>
+>>>    drivers/iommu/iova.c | 11 ++++++++++-
+>>>    include/linux/iova.h |  1 +
+>>>    2 files changed, 11 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+>>> index 83fe262..d97bb5a 100644
+>>> --- a/drivers/iommu/iova.c
+>>> +++ b/drivers/iommu/iova.c
+>>> @@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned
+>>> long granule,
+>>>          iovad->granule = granule;
+>>>          iovad->start_pfn = start_pfn;
+>>>          iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
+>>> +       iovad->free_32bit_pfns = true;
+>>
+>>
+>>          iovad->max_32bit_free = iovad->dma_32bit_pfn;
+>>
+>>>          iovad->flush_cb = NULL;
+>>>          iovad->fq = NULL;
+>>>          iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
+>>> @@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain
+>>> *iovad, struct iova *free)
+>>>          cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
+>>>          if (free->pfn_hi < iovad->dma_32bit_pfn &&
+>>> -           free->pfn_lo >= cached_iova->pfn_lo)
+>>> +           free->pfn_lo >= cached_iova->pfn_lo) {
+>>>                  iovad->cached32_node = rb_next(&free->node);
+>>> +               iovad->free_32bit_pfns = true;
+>>
+>>
+>>                  iovad->max_32bit_free = iovad->dma_32bit_pfn;
+> 
+> i think, you intended to say,
+>    iovad->max_32bit_free += (free->pfn_hi - free->pfn_lo);
 
-The fix is to move to per-#define include guards, which allows the
-system call tables to actually be populated.  Thanks to Macrus Comstedt
-for finding and fixing the bug!
+Nope, that's why I said it needed a better name ;)
 
-I also went ahead and fixed the SPDX header to use a //-style comment,
-which I've been told is the canonical way to do it.
+(I nearly called it last_failed_32bit_alloc_size, but that's a bit much)
 
-Cc: Marcus Comstedt <marcus@mc.pp.se>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- arch/riscv/include/asm/unistd.h        |  5 +++++
- arch/riscv/include/uapi/asm/syscalls.h | 15 +++++++++------
- 2 files changed, 14 insertions(+), 6 deletions(-)
+The point of this value (whetever it's called) is that at any given time 
+it holds an upper bound on the size of the largest contiguous free area. 
+It doesn't have to be the *smallest* upper bound, which is why we can 
+keep things simple and avoid arithmetic - in realistic use-cases like 
+yours when the allocations are a pretty constant size, this should work 
+out directly equivalent to the boolean, only with values of "size" and 
+"dma_32bit_pfn" instead of 0 and 1, so we don't do any more work than 
+necessary. In the edge cases where allocations are all different sizes, 
+it does mean that we will probably end up performing more failing 
+allocations than if we actually tried to track all of the free space 
+exactly, but I think that's reasonable - just because I want to make 
+sure we handle such cases fairly gracefully, doesn't mean that we need 
+to do extra work on the typical fast path to try and actually optimise 
+for them (which is why I didn't really like the accounting 
+implementation I came up with).
 
-diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
-index 080fb28061de..0caea01d5cca 100644
---- a/arch/riscv/include/asm/unistd.h
-+++ b/arch/riscv/include/asm/unistd.h
-@@ -11,6 +11,11 @@
-  *   GNU General Public License for more details.
-  */
- 
-+/*
-+ * There is explicitly no include guard here because this file is expected to
-+ * be included multiple times.  See uapi/asm/syscalls.h for more info.
-+ */
+>>
+>>> +       }
+>>>          cached_iova = rb_entry(iovad->cached_node, struct iova, node);
+>>>          if (free->pfn_lo >= cached_iova->pfn_lo)
+>>> @@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned long
+>>> size,
+>>>          struct iova *new_iova;
+>>>          int ret;
+>>>    +     if (limit_pfn <= iovad->dma_32bit_pfn &&
+>>> +                       !iovad->free_32bit_pfns)
+>>
+>>
+>>                          size >= iovad->max_32bit_free)
+>>
+>>> +               return NULL;
+>>> +
+>>>          new_iova = alloc_iova_mem();
+>>>          if (!new_iova)
+>>>                  return NULL;
+>>> @@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned long
+>>> size,
+>>>          if (ret) {
+>>>                  free_iova_mem(new_iova);
+>>> +               if (limit_pfn <= iovad->dma_32bit_pfn)
+>>> +                       iovad->free_32bit_pfns = false;
+>>
+>>
+>>                          iovad->max_32bit_free = size;
+> 
+> same here, we should decrease available free range after successful allocation.
+> iovad->max_32bit_free -= size;
+
+Equivalently, the simple assignment is strictly decreasing the upper 
+bound already, since we can only get here if size < max_32bit_free in 
+the first place. One more thing I've realised is that this is all 
+potentially a bit racy as we're outside the lock here, so it might need 
+to be pulled into __alloc_and_insert_iova_range(), something like the 
+rough diff below (name changed again for the sake of it; it also occurs 
+to me that we don't really need to re-check limit_pfn in the failure 
+path either, because even a 64-bit allocation still has to walk down 
+through the 32-bit space in order to fail completely)
+
+>>
+>> What do you think?
+> 
+> most likely this should work, i will try this and confirm at the earliest,
+
+Thanks for sticking with this.
+
+Robin.
+
+----->8-----
+
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 83fe2621effe..7cbc58885877 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -190,6 +190,10 @@ static int __alloc_and_insert_iova_range(struct 
+iova_domain *iovad,
+
+         /* Walk the tree backwards */
+         spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
++       if (limit_pfn <= iovad->dma_32bit_pfn &&
++           size >= iovad->failed_alloc_size)
++               goto out_err;
 +
- #define __ARCH_WANT_SYS_CLONE
- #include <uapi/asm/unistd.h>
- #include <uapi/asm/syscalls.h>
-diff --git a/arch/riscv/include/uapi/asm/syscalls.h b/arch/riscv/include/uapi/asm/syscalls.h
-index 818655b0d535..690beb002d1d 100644
---- a/arch/riscv/include/uapi/asm/syscalls.h
-+++ b/arch/riscv/include/uapi/asm/syscalls.h
-@@ -1,10 +1,13 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (C) 2017 SiFive
-+ * Copyright (C) 2017-2018 SiFive
-  */
- 
--#ifndef _ASM__UAPI__SYSCALLS_H
--#define _ASM__UAPI__SYSCALLS_H
-+/*
-+ * There is explicitly no include guard here because this file is expected to
-+ * be included multiple times in order to define the syscall macros via
-+ * __SYSCALL.
-+ */
- 
- /*
-  * Allows the instruction cache to be flushed from userspace.  Despite RISC-V
-@@ -20,7 +23,7 @@
-  * caller.  We don't currently do anything with the address range, that's just
-  * in there for forwards compatibility.
-  */
-+#ifndef __NR_riscv_flush_icache
- #define __NR_riscv_flush_icache (__NR_arch_specific_syscall + 15)
--__SYSCALL(__NR_riscv_flush_icache, sys_riscv_flush_icache)
--
- #endif
-+__SYSCALL(__NR_riscv_flush_icache, sys_riscv_flush_icache)
--- 
-2.16.4
+         curr = __get_cached_rbnode(iovad, limit_pfn);
+         curr_iova = rb_entry(curr, struct iova, node);
+         do {
+@@ -200,10 +204,8 @@ static int __alloc_and_insert_iova_range(struct 
+iova_domain *iovad,
+                 curr_iova = rb_entry(curr, struct iova, node);
+         } while (curr && new_pfn <= curr_iova->pfn_hi);
 
+-       if (limit_pfn < size || new_pfn < iovad->start_pfn) {
+-               spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+-               return -ENOMEM;
+-       }
++       if (limit_pfn < size || new_pfn < iovad->start_pfn)
++               goto out_err;
+
+         /* pfn_lo will point to size aligned address if size_aligned is 
+set */
+         new->pfn_lo = new_pfn;
+@@ -214,9 +216,12 @@ static int __alloc_and_insert_iova_range(struct 
+iova_domain *iovad,
+         __cached_rbnode_insert_update(iovad, new);
+
+         spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+-
+-
+         return 0;
++
++out_err:
++       iovad->failed_alloc_size = size;
++       spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
++       return -ENOMEM;
+  }
+
+  static struct kmem_cache *iova_cache;
