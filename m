@@ -2,117 +2,185 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE6FC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9E9C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27F421E20
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:56:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27F421E20
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3727321E20
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:56:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3727321E20
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbeHISVe (ORCPT
+        id S1732565AbeHISVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:21:34 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55932 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732432AbeHISVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:21:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96F5D7A9;
-        Thu,  9 Aug 2018 08:56:01 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C95BF3F5B3;
-        Thu,  9 Aug 2018 08:55:58 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 16:55:53 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
- for RT tasks
-Message-ID: <20180809155551.bp46sixk4u3ilcnh@queper01-lin>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-7-patrick.bellasi@arm.com>
- <20180807135403.s7jktvxmhycujeht@queper01-lin>
- <20180809154156.gdsx2vacjmp6p6dp@darkstar>
+        Thu, 9 Aug 2018 14:21:53 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:46470 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731065AbeHISVx (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 9 Aug 2018 14:21:53 -0400
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 09 Aug 2018 17:56:00 +0200
+Date:   Thu, 9 Aug 2018 23:55:45 +0800
+From:   joeyli <jlee@suse.com>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180809155544.GK13767@linux-l9pv.suse>
+References: <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+ <20180808175036.GA16217@amd>
+ <20180809030135.GA21364@chenyu-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180809154156.gdsx2vacjmp6p6dp@darkstar>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180809030135.GA21364@chenyu-desktop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
-
-On Thursday 09 Aug 2018 at 16:41:56 (+0100), Patrick Bellasi wrote:
-> > IIUC, not far below this you should still have something like:
+On Thu, Aug 09, 2018 at 11:01:35AM +0800, Yu Chen wrote:
+> Hi Pavel, Joey, Oliver
+> Please let me describe the original requirement and my
+> understanding about hibernation encryption here, thus
+> help us sync on the same thread:
+> On Wed, Aug 08, 2018 at 07:50:36PM +0200, Pavel Machek wrote:
+> > Hi!
 > > 
-> > 	if (rt_rq_is_runnable(&rq->rt))
-> > 		return max;
+> > > > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > > > variable that it can only be accessed by trusted EFI binary when
+> > > > > > secure boot is enabled.
+> > > > > >
+> > > > > Okay, this apply to the 'suspend' phase, right?
+> > > > > I'm still a little confused about the 'resume' phase.
+> > > > > Taking encryption as example(not signature),
+> > > > > the purpose of doing hibernation encryption is to prevent other users
+> > > > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > > 
+> > > > No, I don't think that's purpose here.
+> > > > 
+> > > > Purpose here is to prevent user from reading/modifying kernel memory
+> > > > content on machine he owns.
+> > > >
+> > > Say, A puts his laptop into hibernation and walks away,
+> > > and B walks by, and opens A's laptop and wakes up the system and he
+> > > can do what he wants. Although EFI key/TPM trusted key is enabled,
+> > > currently there's no certification during resume, which sounds
+> > > unsafe to me. Afterall, the original requirement is to probe
+> > 
+> > Define unsafe.
+> > 
+> > If you want security against bad people resuming your machines, please
+> Yes, this is one of the requirements.
+> > take a look at existing uswsusp solutions. It defends against that.
+> >
+> > If you want security against bad people tampering with your machines
+> > physically, sorry, there's no way to defend against that.
+> No, this is not the requirement.
+> > 
+> > But I thought you were trying to do something for secure boot, and "bad
+> > person resumes your machine" is out of scope there.
+> > 
+> Not exactly, secure boot is one solution to meet the requirement.
+> > So please always explain security against _what kind of attack_ you
+> > are trying to improve; intelligent communication is not possible
+> > without that.
+> > 
+> User requirement:
+> A is the user, B is the attacker, user A launches a STD and
+> encrypts A's ram data, then writes these encrypted data onto
+> the disk,  so that: Even if user B has access to the disk,
+> B could not know the content of A. Which implies:
+> 1. If B unplugs the disk from A's machine, and plugs the disk onto
+>    another machine, B could not decode the content without A's
+>    'permission'.
+> 2. If B is using the same machine as A, even A has walked away leaving
+>    the system suspend, B could not resume to A's context without
+>    A's 'permission'.
 > 
-> Do you mean that when RT tasks are RUNNABLE we still want to got to
-> MAX? Not sure to understand... since this patch is actually to clamp
-> the RT class...
+> Previously, there are three proposal for this:
+> a. Enhance the uswsusp(Pavel)
+> b. Using user provided password to generate the key, for encryption(Yu)
 
-Argh, reading my message again it wasn't very clear indeed. Sorry about
-that ...
+Base on your A/B users case. Your requirement is a" resume password",
+it doesn't really neeed encryption.
 
-What I'm try to say is that your patch does _not_ remove the snippet of code
-above from sugov_get_util(). So I think that when a RT task is runnable,
-you will not reach the end of the function where the clamping is done.
-And this is not what you want AFAICT.
+Of course we can use the password to encrypt image, but it's not the
+key point for your requirement.
 
-Does that make any sense ?
+> c. Using security boot(TPM or EFI key) for encryption(Joey)
+>
 
-> 
-> > So you won't reach the actual clamping code at the end of the function
-> > when a RT task is runnable no?
-> 
-> ... mmm... no... this patch is to clamp RT tasks... Am I missing
-> something?
-> 
-> > Also, I always had the feeling that the default for RT should be
-> > util_min == 1024, and then users could decide to lower the bar if they
-> > want to.
-> 
-> Mmm... good point! This would keep the policy unaltered for RT tasks.
-> 
-> I want to keep sched class specific code in uclamp at minimum but
-> likely this should be achievable by just properly initializing the
-> task-specific util_min for RT tasks, if the original task has
-> UCLAM_NOT_VALID.
+No! The EFI key that relies on secure boot is failed. The only
+solution is TPM trusted key.
 
-+1, it'd be nice to keep the cross-class mess to a minimum IMO. But
-hopefully this RT thing isn't too ugly to implement ...
+I agreed with Ard's comment on my EFI secure key patches:
 
-> 
-> > For the specific case of RT, that feels more natural than
-> > applying a max util clamp IMO. What do you think ?
-> 
-> I'll look better into this for the next posting!
+https://lkml.org/lkml/2018/8/5/31
 
-Sounds good :-)
+"'Secure boot' is a misnomer, since it is too vague: it should be called
+'authenticated boot', and the catch is that authentication using
+public-key crypto does not involve secrets at all."
 
-Thanks,
-Quentin
+So the EFI key can not be accepted because the secure boot is not designed
+for confidentiality. So, please forget EFI key. The only solution to
+me (or secure boot) is TPM trusted key.
+
+My purpose for developing the hibernation encryption/authentication
+is to prevent that the snapshot image be malicious modified. This will
+cause that the kernel space is not safe for secure boot (or we call
+it authenticated boot). In kernel space, we want to use locked-down
+mode to keep kernel space safe. 
+
+That's also why I said that user space helper must be authenticated by
+kernel. It also prevents malicious key can be enroll to kernel space.
+ 
+> Since I was proposing solution b, I'll say a little more about it.
+> The original idea was that, the user provides a password, then this
+> password is used to generate the key, which means, if user B has provided
+> an incorrect password, the kernel will fail to decrypt the data and is
+> likely to fail the resume process. That is to say, no matter
+> which physical machine B is using, only if he has provided the
+> password, he would be able to resume. In the first version, the key
+> deviration was firstly done in kernel space, which satisfies the
+> requirement and both saftey. Unfortunately it was rejected and
+> people would like to see the key generated in user space instead.
+> However, using user provided key directly is not safe, according
+> to the discussion in the thread. I don't have good idea on
+> how to improve this, but only have some workarounds, say, ask the
+> kernel to use TPM key to protects the user provided 'key', etc.
+
+Do not need to combind two purposes to one solution. Your requirement
+is a "resume password", not snapshot encryption. So we can just
+encrypt snapshot by TPM encrypted key but still use your tool (or
+uswsusp) to provide "resume password" to user. It's not conflict.
+
+If we still want to use the "resume password" to encrypt snapashot
+image. That's fine, but hibernation function must be locked-down
+when kernel runs in lock-down mode. Because "resume password"
+doesn't help anything in lockdown mode. Unless we found a way to
+authenticate the user space helper by kernel.
+
+Regards
+Joey Lee 
