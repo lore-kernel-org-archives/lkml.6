@@ -2,202 +2,131 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFCAC46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EADDC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3429A21BC9
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:36:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3429A21BC9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C40A521C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:53:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mAmpkJZh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C40A521C2B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeHIG7F (ORCPT
+        id S1728143AbeHIHPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 02:59:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40662 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727724AbeHIG7F (ORCPT
+        Thu, 9 Aug 2018 03:15:35 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:33967 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727211AbeHIHPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 02:59:05 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w794ZQYV113017
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 00:36:12 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr99e22cv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 00:36:11 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Thu, 9 Aug 2018 05:36:02 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 05:36:00 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w794Zxf345416686
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 04:35:59 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1175011C04A;
-        Thu,  9 Aug 2018 07:36:06 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B7B3A11C04C;
-        Thu,  9 Aug 2018 07:36:05 +0100 (BST)
-Received: from oc3784624756.ibm.com (unknown [9.152.212.85])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 07:36:05 +0100 (BST)
-Subject: Re: [PATCH 2/3] perf report: Add raw report support for s390
- auxiliary trace
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     mpe@ellerman.id.au, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, brueckner@linux.vnet.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <20180802074622.13641-1-tmricht@linux.ibm.com>
- <20180802074622.13641-3-tmricht@linux.ibm.com>
- <87r2j9bkax.fsf@concordia.ellerman.id.au>
- <eda2632e-7919-5ffd-5f68-821e77d216fa@linux.ibm.com>
- <20180808155328.GA9543@kernel.org> <20180808155921.GB9543@kernel.org>
- <20180808160843.GC9543@kernel.org> <20180808161451.GD9543@kernel.org>
- <20180808164214.GE9543@kernel.org>
-From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM
-Date:   Thu, 9 Aug 2018 06:35:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180808164214.GE9543@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18080904-0012-0000-0000-000002973371
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080904-0013-0000-0000-000020CA40E0
-Message-Id: <252202b1-bc08-a035-8de1-91136016d021@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090047
+        Thu, 9 Aug 2018 03:15:35 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180809045237epoutp03cc4a05c84870abdc370fe05916a18689~JHjQ1fOki2712327123epoutp03H;
+        Thu,  9 Aug 2018 04:52:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180809045237epoutp03cc4a05c84870abdc370fe05916a18689~JHjQ1fOki2712327123epoutp03H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533790357;
+        bh=hk82B5zWgUG9/qiLCTpUaNunBfRCdekGQCSkSqYts44=;
+        h=Date:From:To:Subject:In-reply-to:References:From;
+        b=mAmpkJZheaI9hNVqQJdKw0SVANHbBqNBUTUXTIdzWyM13DQ5zaTBiCIdp8AQNJcsL
+         rP/WDIqxZXE9J+F6Kfgrc+DtY6NyXHN0Ok1acuw4gNfts8il3r+woptiHyywW2XEOl
+         7qCNYU47XXlvlexEazSxatCu8dhMmz+EzQ+8qIjY=
+Received: from epsmges2p3.samsung.com (unknown [182.195.40.157]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180809045235epcas1p1a7e2afb93132a937eeaf46f73dee5676~JHjO_8MvT1511715117epcas1p1m;
+        Thu,  9 Aug 2018 04:52:35 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0E.C0.04412.398CB6B5; Thu,  9 Aug 2018 13:52:35 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20180809045235epcas2p11884507a0eed7f850ffa35c29d33715c~JHjOl26Jf0915009150epcas2p1G;
+        Thu,  9 Aug 2018 04:52:35 +0000 (GMT)
+X-AuditID: b6c32a47-289ff7000000113c-99-5b6bc893b000
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        72.FB.03824.398CB6B5; Thu,  9 Aug 2018 13:52:35 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PD6006DSG7MVYC0@mmp1.samsung.com>; Thu, 09 Aug 2018 13:52:35 +0900 (KST)
+Message-id: <5B6BC892.5010804@samsung.com>
+Date:   Thu, 09 Aug 2018 13:52:34 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] extcon: maxim: Add SPDX license identifiers
+In-reply-to: <20180807162122.19614-1-krzk@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7bCmue7kE9nRBp1HNCw2zljPanH+/AZ2
+        i8u75rBZ3G5cwebA4rFpVSebR9+WVYwenzfJBTBHpdpkpCampBYppOYl56dk5qXbKnkHxzvH
+        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
+        RRsaGukZGpjrGRkBaeNYKyNToJKE1IzGo4fZC76zVKw6ZdHA2MfSxcjJISFgIvF+/logm4tD
+        SGAHo0RH00kmCOc7o8SRxe/ZYaqm/l3JDJHYzSix+xNIFScHr4CgxI/J94DaOTiYBeQljlzK
+        BgkzC2hKbN29nh2i/i6jxNuZXSwQ9VoSt6/NZgOxWQRUJZZd6WYGsdmA4vtf3ACL8wsoSlz9
+        8ZgRxBYViJDYOf8b2BEiAqsYJdpWS4DYwgIOEu0TnoLN5BQwlWhcPxvsOAmBOWwSp78cZIa4
+        2kXi6pkZUB8IS7w6vgXKlpZ4tmojI0RDO6PElxfNrBDOBEaJD6c2M0FUGUs8W9jFBPEPn0TH
+        4b/sIG9KCPBKdLQJQZR4SDSc/wMNlg5Gie4TMxgnMMrMQgqZWYiQmYUUMgsYmVcxiqUWFOem
+        pxYbFRjrFSfmFpfmpesl5+duYgQnJC33HYzbzvkcYhTgYFTi4b3Alx0txJpYVlyZe4hRgoNZ
+        SYR3szhQiDclsbIqtSg/vqg0J7X4EKMpMGAnMkuJJucDk2VeSbyhqZGxsbGFqbmlsYGlkjhv
+        lV9wtJBAemJJanZqakFqEUwfEwenVANjSmHs891fjZX1d++dJsIT9FzEKbTiunrkQznHCjO1
+        z5/6z5XIqrG9eB/1We3+Ma+/h2et7r8vutFBQFhbj9+1c8Uyr1MT9omKeE1UUpnLy7MiNWi1
+        b0a48LFcx0cP/LhXTSpfttSu5nzVQdU/ManxuffO/Q3fODe011pJ5mfiNPfg99mF4V1KLMUZ
+        iYZazEXFiQAtECcEXgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBLMWRmVeSWpSXmKPExsVy+t9jAd3JJ7KjDe6v57XYOGM9q8X58xvY
+        LS7vmsNmcbtxBZsDi8emVZ1sHn1bVjF6fN4kF8AcxWWTkpqTWZZapG+XwJXRePQwe8F3lopV
+        pywaGPtYuhg5OSQETCSm/l3J3MXIxSEksJNRYvKe74wgCV4BQYkfk+8BFXFwMAvISxy5lA0S
+        ZhZQl5g0bxEziC0kcJ9R4uRfLohyLYnb12azgdgsAqoSy650g9WwAcX3v7gBFucXUJS4+uMx
+        I8hIUYEIie4TlSBrRQRWMUrs/r8F7B5hAQeJ9glPWSDu6WKUeHn7A1iCU8BUonH9bOYJjPyz
+        kJw3C+G8WUjOW8DIvIpRMrWgODc9t9iowCgvtVyvODG3uDQvXS85P3cTIzA8tx3W6t/B+HhJ
+        /CFGAQ5GJR7eC3zZ0UKsiWXFlbmHGCU4mJVEeDeLA4V4UxIrq1KL8uOLSnNSiw8xSnOwKInz
+        8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUwGnPoW8ZosM2yVYrauiaFuSm8OnLNUckm8WzhIqVl
+        4R7xy+/tk+G/LFp40pHz9A37X7OjnJgPW6RzyGZoVfFt41uewdibu0li0pQFruK723u51y/b
+        vXWiwxQ5uQW5LQeW8UcEedwr158dGPP54WxfznlVjxj7t+SvlmBcmP5kBfffF/UL2SYrsRRn
+        JBpqMRcVJwIAHEo3tUsCAAA=
+X-CMS-MailID: 20180809045235epcas2p11884507a0eed7f850ffa35c29d33715c
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180807162203epcas4p3975e866242639590247fe922a4a54266
+References: <CGME20180807162203epcas4p3975e866242639590247fe922a4a54266@epcas4p3.samsung.com>
+        <20180807162122.19614-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/08/2018 06:42 PM, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Aug 08, 2018 at 01:14:51PM -0300, Arnaldo Carvalho de Melo escreveu:
->> Em Wed, Aug 08, 2018 at 01:08:43PM -0300, Arnaldo Carvalho de Melo escreveu:
->>> No need for __packed.
->>  
->>> I'm removing that to avoid having this failling in compilers that have
->>> such a warning, since we default to Werror.
->>  
->>> Holler if there is something I'missing :-)
->>
->> In file included from util/cpumap.h:10,
->>                  from util/s390-cpumsf.c:150:
->> util/s390-cpumsf.c: In function 's390_cpumsf_diag_show':
->> util/s390-cpumsf.c:208:10: error: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
->>    pr_err("Invalid AUX trace diagnostic entry [%#08lx]\n", pos);
->>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> /git/linux/tools/perf/util/debug.h:20:21: note: in definition of macro 'pr_fmt'
->>  #define pr_fmt(fmt) fmt
->>                      ^~~
->> util/s390-cpumsf.c:208:3: note: in expansion of macro 'pr_err'
->>    pr_err("Invalid AUX trace diagnostic entry [%#08lx]\n", pos);
->>    ^~~~~~
->> util/s390-cpumsf.c: In function 's390_cpumsf_trailer_show':
->> util/s390-cpumsf.c:233:10: error: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
->>    pr_err("Invalid AUX trace trailer entry [%#08lx]\n", pos);
+Hi Krzysztof,
+
+On 2018년 08월 08일 01:21, Krzysztof Kozlowski wrote:
+> Replace GPL v2.0+ license statements with SPDX license identifiers.
 > 
-> So for those I applied this, seems to pass the ones that were failing,
-> restarting tests...
-> 
-> diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-> index 2bcb160a08f0..d2c78ffd9fee 100644
-> --- a/tools/perf/util/s390-cpumsf.c
-> +++ b/tools/perf/util/s390-cpumsf.c
-> @@ -187,7 +187,7 @@ static bool s390_cpumsf_basic_show(const char *color, size_t pos,
->  		pr_err("Invalid AUX trace basic entry [%#08zx]\n", pos);
->  		return false;
->  	}
-> -	color_fprintf(stdout, color, "    [%#08x] Basic   Def:%04x Inst:%#04x"
-> +	color_fprintf(stdout, color, "    [%#08zx] Basic   Def:%04x Inst:%#04x"
->  		      " %c%c%c%c AS:%d ASN:%#04x IA:%#018llx\n"
->  		      "\t\tCL:%d HPP:%#018llx GPP:%#018llx\n",
->  		      pos, basic->def, basic->U,
-> @@ -205,10 +205,10 @@ static bool s390_cpumsf_diag_show(const char *color, size_t pos,
->  				  struct hws_diag_entry *diag)
->  {
->  	if (diag->def < S390_CPUMSF_DIAG_DEF_FIRST) {
-> -		pr_err("Invalid AUX trace diagnostic entry [%#08lx]\n", pos);
-> +		pr_err("Invalid AUX trace diagnostic entry [%#08zx]\n", pos);
->  		return false;
->  	}
-> -	color_fprintf(stdout, color, "    [%#08x] Diag    Def:%04x %c\n",
-> +	color_fprintf(stdout, color, "    [%#08zx] Diag    Def:%04x %c\n",
->  		      pos, diag->def, diag->I ? 'I' : ' ');
->  	return true;
->  }
-> @@ -230,10 +230,10 @@ static bool s390_cpumsf_trailer_show(const char *color, size_t pos,
->  				     struct hws_trailer_entry *te)
->  {
->  	if (te->bsdes != sizeof(struct hws_basic_entry)) {
-> -		pr_err("Invalid AUX trace trailer entry [%#08lx]\n", pos);
-> +		pr_err("Invalid AUX trace trailer entry [%#08zx]\n", pos);
->  		return false;
->  	}
-> -	color_fprintf(stdout, color, "    [%#08x] Trailer %c%c%c bsdes:%d"
-> +	color_fprintf(stdout, color, "    [%#08zx] Trailer %c%c%c bsdes:%d"
->  		      " dsdes:%d Overflow:%lld Time:%#llx\n"
->  		      "\t\tC:%d TOD:%#lx 1:%#llx 2:%#llx\n",
->  		      pos,
-> @@ -418,7 +418,7 @@ static bool s390_cpumsf_make_event(size_t pos,
->  	event.sample.header.misc = sample.cpumode;
->  	event.sample.header.size = sizeof(struct perf_event_header);
->  
-> -	pr_debug4("%s pos:%#zx ip:%#lx P:%d CL:%d pid:%d.%d cpumode:%d cpu:%d\n",
-> +	pr_debug4("%s pos:%#zx ip:%#" PRIx64 " P:%d CL:%d pid:%d.%d cpumode:%d cpu:%d\n",
->  		 __func__, pos, sample.ip, basic->P, basic->CL, sample.pid,
->  		 sample.tid, sample.cpumode, sample.cpu);
->  	if (perf_session__deliver_synth_event(sfq->sf->session, &event,
-> @@ -498,7 +498,7 @@ static int s390_cpumsf_samples(struct s390_cpumsf_queue *sfq, u64 *ts)
->  	 */
->  	aux_ts = get_trailer_time(buf);
->  	if (!aux_ts) {
-> -		pr_err("[%#08lx] Invalid AUX trailer entry TOD clock base\n",
-> +		pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
->  		       sfq->buffer->data_offset);
->  		aux_ts = ~0ULL;
->  		goto out;
-> @@ -607,7 +607,7 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
->  		buffer->use_size = buffer->size;
->  		buffer->use_data = buffer->data;
->  	}
-> -	pr_debug4("%s queue_nr:%d buffer:%ld offset:%#lx size:%#zx rest:%#zx\n",
-> +	pr_debug4("%s queue_nr:%d buffer:%" PRId64 " offset:%#" PRIx64 " size:%#zx rest:%#zx\n",
->  		  __func__, sfq->queue_nr, buffer->buffer_nr, buffer->offset,
->  		  buffer->size, buffer->use_size);
->  	err = s390_cpumsf_samples(sfq, ts);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-perf-users" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/extcon/extcon-max14577.c | 24 +++++++-----------------
+>  drivers/extcon/extcon-max77693.c | 22 ++++++----------------
+>  drivers/extcon/extcon-max77843.c | 19 +++++++------------
+>  drivers/extcon/extcon-max8997.c  | 22 ++++++----------------
+>  4 files changed, 26 insertions(+), 61 deletions(-)
 > 
 
-I just updated the perf/core branch, compiled it and all works fine.
+Thanks. Applied it for v4.20.
 
-Thanks for fixing these errors.
+(snip)
+
 -- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
