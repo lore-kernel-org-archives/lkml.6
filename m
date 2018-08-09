@@ -4,65 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FFBC46471
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F68BC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A033721C36
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5379721C66
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YUSYT6Ao"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A033721C36
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+zQ35wO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5379721C66
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbeHIHjB (ORCPT
+        id S1728562AbeHIHjE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 03:39:01 -0400
-Received: from mail-pf1-f175.google.com ([209.85.210.175]:45525 "EHLO
-        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbeHIHjA (ORCPT
+        Thu, 9 Aug 2018 03:39:04 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34756 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728062AbeHIHjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 03:39:00 -0400
-Received: by mail-pf1-f175.google.com with SMTP id i26-v6so2243042pfo.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:16:01 -0700 (PDT)
+        Thu, 9 Aug 2018 03:39:03 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k19-v6so2269215pfi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZTE6LOy/JOQ1cetKpZQJ0nqYV+b40OK/ubD7KZ7B3oE=;
-        b=YUSYT6Ao95EI4+K0DsF+n0YqyWDc+E3h39ioOSITrfN63ISQOOjL2rg4jfZ/QRdr6c
-         xyjPBq7FoPOxOsPMObTMTBWcdkiJ9skag8+3MH4GMX7ZzER3gNhRD6txo4KsxMpi5F9r
-         PWm5+LR5llTlD1F0QAck5gantiFAGsb2nM0yg=
+        bh=fPDepwFzDzSU/lSELaWxXQHkxTTfKwoPjvCIwM7BJiA=;
+        b=J+zQ35wO42xFZ+++ttHIN6qk6Cn25ALwjhPnQ9SrpqDuRJBWQJRd+rrEi2rs9TOmjJ
+         y/Dm/d+ChOtUfV1aYlfl/Rt6LbIuhv3ygO1Syp/RJKVfFh0fCOVh31A1jkqexde0XaEB
+         8nX2FVol+BQ2V1tnjbV/Iargj4smpCEwiLfHo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZTE6LOy/JOQ1cetKpZQJ0nqYV+b40OK/ubD7KZ7B3oE=;
-        b=iXKZJEd2Xq4HtFcqwPAp+HXBrWU8WtBYV9VG8Vtuv9bMi1MwnVrcPFa+opZFoFSKYz
-         H+rdZHk5KCdSotp7W3+Mg7wrFUMXH3ON4Zzq6apJvDDiEkTf+rXU2rPJDOr9a9Le+j1J
-         kBBot7zWL4PyceQgCJXT+kskR362WNQss4e7l/l38yRbWCXXeYt7Ib/D3MOE7vhcRkpb
-         Exg0UxvPy5Ifl6Anc5giKcw263l832oG/q9p50ElNGYuJTbvGWd02ojVRgGVX/A7SW19
-         cXKRmgInEWJlp5ZU/qhIOH1rtIv3VCQIO7BwLfSdGMVKc+zM0xyJSdBM6TATFYaiGvsZ
-         t38Q==
-X-Gm-Message-State: AOUpUlF/11T75i0F64taDn9yl3pWoMAF4XsbQi+ulA6khljyK1OqlasP
-        PqBH9aoHUIe9j4WU10vsPO+AdQ==
-X-Google-Smtp-Source: AA+uWPyS/leh1/Rlov1/oSvfS/+Rw+8bGywP8QqdnMQ1iGJafpt6laC1ZfSl7HpH2+XzB2jYyxDfPA==
-X-Received: by 2002:a63:2013:: with SMTP id g19-v6mr669406pgg.68.1533791760604;
-        Wed, 08 Aug 2018 22:16:00 -0700 (PDT)
+        bh=fPDepwFzDzSU/lSELaWxXQHkxTTfKwoPjvCIwM7BJiA=;
+        b=KxvSdfViuiuKp1CATFBVhBbk+0gr847BrIAeb6QPWZxvL2lTF+Y+zFCIqRJrNHqBAn
+         fvhlTXPE/nxrY8avx5KYpl32DDh8d2FwAQa1qiS3PyUNwvNMXdZTO3ySLhl+mYqVvtlf
+         H8i9A4ofB3a3hd+jV+wyVlU6TfbNBedM0eddvYRca5r3SbeCvVrtAgnKcKzJzGcUfnKr
+         o4VY/aCaDm3rI6LvX440NE+OD0XS7pS8nalLTZ2wOgjErlPm0l0MzdXfvb5NKWryj1Je
+         JSzUv69w1V+lLyW3BC/ofDoJYDpBkoXDVq7hs2kklp921TTkjam6dYp4MZdgmjVJKx9y
+         hfgA==
+X-Gm-Message-State: AOUpUlEye5yIrrtWpWhiu0V2xVc3nspMvwlD1WQhBYp84uZtXRutFRFb
+        HuLQU8mOv7bxgG/H3Ef173tgWw==
+X-Google-Smtp-Source: AA+uWPwUkIar7iNYuNgdyl81A+du04nbwDy3AGFX1JiIbtyyNG4UALOzdxzYyR0T/IgBj99WpKtt4Q==
+X-Received: by 2002:a62:9e5d:: with SMTP id s90-v6mr730176pfd.214.1533791764100;
+        Wed, 08 Aug 2018 22:16:04 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm12863977pfd.99.2018.08.08.22.15.57
+        by smtp.gmail.com with ESMTPSA id z20-v6sm12863977pfd.99.2018.08.08.22.16.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Aug 2018 22:16:00 -0700 (PDT)
+        Wed, 08 Aug 2018 22:16:03 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-m68k@lists.linux-m68k.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 1/4] m68k: Rename system call table file name
-Date:   Thu,  9 Aug 2018 10:45:20 +0530
-Message-Id: <1533791723-3882-2-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH 2/4] m68k: Replace NR_syscalls macro from asm/unistd.h
+Date:   Thu,  9 Aug 2018 10:45:21 +0530
+Message-Id: <1533791723-3882-3-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533791723-3882-1-git-send-email-firoz.khan@linaro.org>
 References: <1533791723-3882-1-git-send-email-firoz.khan@linaro.org>
@@ -71,855 +71,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The system call table entries are present in syscalltable.S. One of
-the patch in this patch series will auto-generate the system call
-table entries using the system call table generation script and
-which'll replace the existig table file.
+NR_syscalls macro holds the number of system call exist in m68k
+architecture. This macro is currently the part of asm/unistd.h file.
+We have to change the value of NR_syscalls, if we add or delete a
+system call.
 
-In order to come up with a common naming convention across all
-architecture, we need to change the file name to syscall_table.S.
-This change will unify the implementation across all architecture.
+One of patch in this patch series has a script which will generate
+a uapi header based on syscall.tbl file. The syscall.tbl file
+contains the number of system call information. So we have two
+option to update NR_syscalls value.
+
+1. Update NR_syscalls in asm/unistd.h manually by counting the
+   no.of system calls. No need to update NR_syscalls untill
+   we either add a new system call or delete an existing system
+   call.
+
+2. We can keep this feature it above mentioned script, that'll
+   count the number of syscalls and keep it in a generated file.
+   In this case we don't need to explicitly update NR_syscalls
+   in asm/unistd.h file.
+
+The 2nd option will be the recommended one. For that, I moved the
+NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. The macro
+name also changed form NR_syscalls to __NR_syscalls for making the
+name convention same across all architecture. While __NR_syscalls
+isn't strictly part of the uapi, having it as part of the generated
+header to simplifies the implementation.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/m68k/kernel/Makefile        |   2 +-
- arch/m68k/kernel/syscall_table.S | 403 +++++++++++++++++++++++++++++++++++++++
- arch/m68k/kernel/syscalltable.S  | 403 ---------------------------------------
- 3 files changed, 404 insertions(+), 404 deletions(-)
- create mode 100644 arch/m68k/kernel/syscall_table.S
- delete mode 100644 arch/m68k/kernel/syscalltable.S
+ arch/m68k/68000/entry.S             | 4 ++--
+ arch/m68k/coldfire/entry.S          | 2 +-
+ arch/m68k/include/asm/unistd.h      | 3 ---
+ arch/m68k/include/uapi/asm/unistd.h | 2 ++
+ arch/m68k/kernel/entry.S            | 4 ++--
+ 5 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
-index dbac7f8..5f40ce6 100644
---- a/arch/m68k/kernel/Makefile
-+++ b/arch/m68k/kernel/Makefile
-@@ -15,7 +15,7 @@ extra-$(CONFIG_SUN3)	:= sun3-head.o
- extra-y			+= vmlinux.lds
+diff --git a/arch/m68k/68000/entry.S b/arch/m68k/68000/entry.S
+index 259b366..91522e9 100644
+--- a/arch/m68k/68000/entry.S
++++ b/arch/m68k/68000/entry.S
+@@ -49,7 +49,7 @@ do_trace:
+ 	addql	#4,%sp
+ 	movel	%sp@(PT_OFF_ORIG_D0),%d1
+ 	movel	#-ENOSYS,%d0
+-	cmpl	#NR_syscalls,%d1
++	cmpl	#__NR_syscalls,%d1
+ 	jcc	1f
+ 	lsl	#2,%d1
+ 	lea	sys_call_table, %a0
+@@ -80,7 +80,7 @@ ENTRY(system_call)
+ 	movel	%d1,%a2
+ 	btst	#(TIF_SYSCALL_TRACE%8),%a2@(TINFO_FLAGS+(31-TIF_SYSCALL_TRACE)/8)
+ 	jne	do_trace
+-	cmpl	#NR_syscalls,%d0
++	cmpl	#__NR_syscalls,%d0
+ 	jcc	badsys
+ 	lsl	#2,%d0
+ 	lea	sys_call_table,%a0
+diff --git a/arch/m68k/coldfire/entry.S b/arch/m68k/coldfire/entry.S
+index 52d312d..efe777d 100644
+--- a/arch/m68k/coldfire/entry.S
++++ b/arch/m68k/coldfire/entry.S
+@@ -64,7 +64,7 @@ ENTRY(system_call)
+ 	move	#0x2000,%sr		/* enable intrs again */
+ 	GET_CURRENT(%d2)
  
- obj-y	:= entry.o irq.o module.o process.o ptrace.o
--obj-y	+= setup.o signal.o sys_m68k.o syscalltable.o time.o traps.o
-+obj-y	+= setup.o signal.o sys_m68k.o syscall_table.o time.o traps.o
+-	cmpl	#NR_syscalls,%d0
++	cmpl	#__NR_syscalls,%d0
+ 	jcc	enosys
+ 	lea	sys_call_table,%a0
+ 	lsll	#2,%d0			/* movel %a0@(%d0:l:4),%d3 */
+diff --git a/arch/m68k/include/asm/unistd.h b/arch/m68k/include/asm/unistd.h
+index 30d0d3f..52111fb 100644
+--- a/arch/m68k/include/asm/unistd.h
++++ b/arch/m68k/include/asm/unistd.h
+@@ -4,9 +4,6 @@
  
- obj-$(CONFIG_MMU_MOTOROLA) += ints.o vectors.o
- obj-$(CONFIG_MMU_SUN3) += ints.o vectors.o
-diff --git a/arch/m68k/kernel/syscall_table.S b/arch/m68k/kernel/syscall_table.S
-new file mode 100644
-index 0000000..2c8402e
---- /dev/null
-+++ b/arch/m68k/kernel/syscall_table.S
-@@ -0,0 +1,403 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *  Copyright (C) 2002, Greg Ungerer (gerg@snapgear.com)
-+ *
-+ *  Based on older entry.S files, the following copyrights apply:
-+ *
-+ *  Copyright (C) 1998  D. Jeff Dionne <jeff@lineo.ca>,
-+ *                      Kenneth Albanowski <kjahds@kjahds.com>,
-+ *  Copyright (C) 2000  Lineo Inc. (www.lineo.com) 
-+ *  Copyright (C) 1991, 1992  Linus Torvalds
-+ *
-+ *  Linux/m68k support by Hamish Macdonald
-+ */
-+
-+#include <linux/linkage.h>
-+
-+#ifndef CONFIG_MMU
-+#define sys_mmap2		sys_mmap_pgoff
-+#endif
-+
-+.section .rodata
-+ALIGN
-+ENTRY(sys_call_table)
-+	.long sys_restart_syscall	/* 0 - old "setup()" system call, used for restarting */
-+	.long sys_exit
-+	.long __sys_fork
-+	.long sys_read
-+	.long sys_write
-+	.long sys_open			/* 5 */
-+	.long sys_close
-+	.long sys_waitpid
-+	.long sys_creat
-+	.long sys_link
-+	.long sys_unlink		/* 10 */
-+	.long sys_execve
-+	.long sys_chdir
-+	.long sys_time
-+	.long sys_mknod
-+	.long sys_chmod			/* 15 */
-+	.long sys_chown16
-+	.long sys_ni_syscall		/* old break syscall holder */
-+	.long sys_stat
-+	.long sys_lseek
-+	.long sys_getpid		/* 20 */
-+	.long sys_mount
-+	.long sys_oldumount
-+	.long sys_setuid16
-+	.long sys_getuid16
-+	.long sys_stime			/* 25 */
-+	.long sys_ptrace
-+	.long sys_alarm
-+	.long sys_fstat
-+	.long sys_pause
-+	.long sys_utime			/* 30 */
-+	.long sys_ni_syscall		/* old stty syscall holder */
-+	.long sys_ni_syscall		/* old gtty syscall holder */
-+	.long sys_access
-+	.long sys_nice
-+	.long sys_ni_syscall		/* 35 - old ftime syscall holder */
-+	.long sys_sync
-+	.long sys_kill
-+	.long sys_rename
-+	.long sys_mkdir
-+	.long sys_rmdir			/* 40 */
-+	.long sys_dup
-+	.long sys_pipe
-+	.long sys_times
-+	.long sys_ni_syscall		/* old prof syscall holder */
-+	.long sys_brk			/* 45 */
-+	.long sys_setgid16
-+	.long sys_getgid16
-+	.long sys_signal
-+	.long sys_geteuid16
-+	.long sys_getegid16		/* 50 */
-+	.long sys_acct
-+	.long sys_umount		/* recycled never used phys() */
-+	.long sys_ni_syscall		/* old lock syscall holder */
-+	.long sys_ioctl
-+	.long sys_fcntl			/* 55 */
-+	.long sys_ni_syscall		/* old mpx syscall holder */
-+	.long sys_setpgid
-+	.long sys_ni_syscall		/* old ulimit syscall holder */
-+	.long sys_ni_syscall
-+	.long sys_umask			/* 60 */
-+	.long sys_chroot
-+	.long sys_ustat
-+	.long sys_dup2
-+	.long sys_getppid
-+	.long sys_getpgrp		/* 65 */
-+	.long sys_setsid
-+	.long sys_sigaction
-+	.long sys_sgetmask
-+	.long sys_ssetmask
-+	.long sys_setreuid16		/* 70 */
-+	.long sys_setregid16
-+	.long sys_sigsuspend
-+	.long sys_sigpending
-+	.long sys_sethostname
-+	.long sys_setrlimit		/* 75 */
-+	.long sys_old_getrlimit
-+	.long sys_getrusage
-+	.long sys_gettimeofday
-+	.long sys_settimeofday
-+	.long sys_getgroups16		/* 80 */
-+	.long sys_setgroups16
-+	.long sys_old_select
-+	.long sys_symlink
-+	.long sys_lstat
-+	.long sys_readlink		/* 85 */
-+	.long sys_uselib
-+	.long sys_swapon
-+	.long sys_reboot
-+	.long sys_old_readdir
-+	.long sys_old_mmap		/* 90 */
-+	.long sys_munmap
-+	.long sys_truncate
-+	.long sys_ftruncate
-+	.long sys_fchmod
-+	.long sys_fchown16		/* 95 */
-+	.long sys_getpriority
-+	.long sys_setpriority
-+	.long sys_ni_syscall		/* old profil syscall holder */
-+	.long sys_statfs
-+	.long sys_fstatfs		/* 100 */
-+	.long sys_ni_syscall		/* ioperm for i386 */
-+	.long sys_socketcall
-+	.long sys_syslog
-+	.long sys_setitimer
-+	.long sys_getitimer		/* 105 */
-+	.long sys_newstat
-+	.long sys_newlstat
-+	.long sys_newfstat
-+	.long sys_ni_syscall
-+	.long sys_ni_syscall		/* 110 - iopl for i386 */
-+	.long sys_vhangup
-+	.long sys_ni_syscall		/* obsolete idle() syscall */
-+	.long sys_ni_syscall		/* vm86old for i386 */
-+	.long sys_wait4
-+	.long sys_swapoff		/* 115 */
-+	.long sys_sysinfo
-+	.long sys_ipc
-+	.long sys_fsync
-+	.long sys_sigreturn
-+	.long __sys_clone		/* 120 */
-+	.long sys_setdomainname
-+	.long sys_newuname
-+	.long sys_cacheflush		/* modify_ldt for i386 */
-+	.long sys_adjtimex
-+	.long sys_mprotect		/* 125 */
-+	.long sys_sigprocmask
-+	.long sys_ni_syscall		/* old "create_module" */
-+	.long sys_init_module
-+	.long sys_delete_module
-+	.long sys_ni_syscall		/* 130 - old "get_kernel_syms" */
-+	.long sys_quotactl
-+	.long sys_getpgid
-+	.long sys_fchdir
-+	.long sys_bdflush
-+	.long sys_sysfs			/* 135 */
-+	.long sys_personality
-+	.long sys_ni_syscall		/* for afs_syscall */
-+	.long sys_setfsuid16
-+	.long sys_setfsgid16
-+	.long sys_llseek		/* 140 */
-+	.long sys_getdents
-+	.long sys_select
-+	.long sys_flock
-+	.long sys_msync
-+	.long sys_readv			/* 145 */
-+	.long sys_writev
-+	.long sys_getsid
-+	.long sys_fdatasync
-+	.long sys_sysctl
-+	.long sys_mlock			/* 150 */
-+	.long sys_munlock
-+	.long sys_mlockall
-+	.long sys_munlockall
-+	.long sys_sched_setparam
-+	.long sys_sched_getparam	/* 155 */
-+	.long sys_sched_setscheduler
-+	.long sys_sched_getscheduler
-+	.long sys_sched_yield
-+	.long sys_sched_get_priority_max
-+	.long sys_sched_get_priority_min  /* 160 */
-+	.long sys_sched_rr_get_interval
-+	.long sys_nanosleep
-+	.long sys_mremap
-+	.long sys_setresuid16
-+	.long sys_getresuid16		/* 165 */
-+	.long sys_getpagesize
-+	.long sys_ni_syscall		/* old "query_module" */
-+	.long sys_poll
-+	.long sys_ni_syscall		/* old nfsservctl */
-+	.long sys_setresgid16		/* 170 */
-+	.long sys_getresgid16
-+	.long sys_prctl
-+	.long sys_rt_sigreturn
-+	.long sys_rt_sigaction
-+	.long sys_rt_sigprocmask	/* 175 */
-+	.long sys_rt_sigpending
-+	.long sys_rt_sigtimedwait
-+	.long sys_rt_sigqueueinfo
-+	.long sys_rt_sigsuspend
-+	.long sys_pread64		/* 180 */
-+	.long sys_pwrite64
-+	.long sys_lchown16
-+	.long sys_getcwd
-+	.long sys_capget
-+	.long sys_capset		/* 185 */
-+	.long sys_sigaltstack
-+	.long sys_sendfile
-+	.long sys_ni_syscall		/* streams1 */
-+	.long sys_ni_syscall		/* streams2 */
-+	.long __sys_vfork		/* 190 */
-+	.long sys_getrlimit
-+	.long sys_mmap2
-+	.long sys_truncate64
-+	.long sys_ftruncate64
-+	.long sys_stat64		/* 195 */
-+	.long sys_lstat64
-+	.long sys_fstat64
-+	.long sys_chown
-+	.long sys_getuid
-+	.long sys_getgid		/* 200 */
-+	.long sys_geteuid
-+	.long sys_getegid
-+	.long sys_setreuid
-+	.long sys_setregid
-+	.long sys_getgroups		/* 205 */
-+	.long sys_setgroups
-+	.long sys_fchown
-+	.long sys_setresuid
-+	.long sys_getresuid
-+	.long sys_setresgid		/* 210 */
-+	.long sys_getresgid
-+	.long sys_lchown
-+	.long sys_setuid
-+	.long sys_setgid
-+	.long sys_setfsuid		/* 215 */
-+	.long sys_setfsgid
-+	.long sys_pivot_root
-+	.long sys_ni_syscall
-+	.long sys_ni_syscall
-+	.long sys_getdents64		/* 220 */
-+	.long sys_gettid
-+	.long sys_tkill
-+	.long sys_setxattr
-+	.long sys_lsetxattr
-+	.long sys_fsetxattr		/* 225 */
-+	.long sys_getxattr
-+	.long sys_lgetxattr
-+	.long sys_fgetxattr
-+	.long sys_listxattr
-+	.long sys_llistxattr		/* 230 */
-+	.long sys_flistxattr
-+	.long sys_removexattr
-+	.long sys_lremovexattr
-+	.long sys_fremovexattr
-+	.long sys_futex			/* 235 */
-+	.long sys_sendfile64
-+	.long sys_mincore
-+	.long sys_madvise
-+	.long sys_fcntl64
-+	.long sys_readahead		/* 240 */
-+	.long sys_io_setup
-+	.long sys_io_destroy
-+	.long sys_io_getevents
-+	.long sys_io_submit
-+	.long sys_io_cancel		/* 245 */
-+	.long sys_fadvise64
-+	.long sys_exit_group
-+	.long sys_lookup_dcookie
-+	.long sys_epoll_create
-+	.long sys_epoll_ctl		/* 250 */
-+	.long sys_epoll_wait
-+	.long sys_remap_file_pages
-+	.long sys_set_tid_address
-+	.long sys_timer_create
-+	.long sys_timer_settime		/* 255 */
-+	.long sys_timer_gettime
-+	.long sys_timer_getoverrun
-+	.long sys_timer_delete
-+	.long sys_clock_settime
-+	.long sys_clock_gettime		/* 260 */
-+	.long sys_clock_getres
-+	.long sys_clock_nanosleep
-+	.long sys_statfs64
-+	.long sys_fstatfs64
-+	.long sys_tgkill		/* 265 */
-+	.long sys_utimes
-+	.long sys_fadvise64_64
-+	.long sys_mbind
-+	.long sys_get_mempolicy
-+	.long sys_set_mempolicy		/* 270 */
-+	.long sys_mq_open
-+	.long sys_mq_unlink
-+	.long sys_mq_timedsend
-+	.long sys_mq_timedreceive
-+	.long sys_mq_notify		/* 275 */
-+	.long sys_mq_getsetattr
-+	.long sys_waitid
-+	.long sys_ni_syscall		/* for sys_vserver */
-+	.long sys_add_key
-+	.long sys_request_key		/* 280 */
-+	.long sys_keyctl
-+	.long sys_ioprio_set
-+	.long sys_ioprio_get
-+	.long sys_inotify_init
-+	.long sys_inotify_add_watch	/* 285 */
-+	.long sys_inotify_rm_watch
-+	.long sys_migrate_pages
-+	.long sys_openat
-+	.long sys_mkdirat
-+	.long sys_mknodat		/* 290 */
-+	.long sys_fchownat
-+	.long sys_futimesat
-+	.long sys_fstatat64
-+	.long sys_unlinkat
-+	.long sys_renameat		/* 295 */
-+	.long sys_linkat
-+	.long sys_symlinkat
-+	.long sys_readlinkat
-+	.long sys_fchmodat
-+	.long sys_faccessat		/* 300 */
-+	.long sys_pselect6
-+	.long sys_ppoll
-+	.long sys_unshare
-+	.long sys_set_robust_list
-+	.long sys_get_robust_list	/* 305 */
-+	.long sys_splice
-+	.long sys_sync_file_range
-+	.long sys_tee
-+	.long sys_vmsplice
-+	.long sys_move_pages		/* 310 */
-+	.long sys_sched_setaffinity
-+	.long sys_sched_getaffinity
-+	.long sys_kexec_load
-+	.long sys_getcpu
-+	.long sys_epoll_pwait		/* 315 */
-+	.long sys_utimensat
-+	.long sys_signalfd
-+	.long sys_timerfd_create
-+	.long sys_eventfd
-+	.long sys_fallocate		/* 320 */
-+	.long sys_timerfd_settime
-+	.long sys_timerfd_gettime
-+	.long sys_signalfd4
-+	.long sys_eventfd2
-+	.long sys_epoll_create1		/* 325 */
-+	.long sys_dup3
-+	.long sys_pipe2
-+	.long sys_inotify_init1
-+	.long sys_preadv
-+	.long sys_pwritev		/* 330 */
-+	.long sys_rt_tgsigqueueinfo
-+	.long sys_perf_event_open
-+	.long sys_get_thread_area
-+	.long sys_set_thread_area
-+	.long sys_atomic_cmpxchg_32	/* 335 */
-+	.long sys_atomic_barrier
-+	.long sys_fanotify_init
-+	.long sys_fanotify_mark
-+	.long sys_prlimit64
-+	.long sys_name_to_handle_at	/* 340 */
-+	.long sys_open_by_handle_at
-+	.long sys_clock_adjtime
-+	.long sys_syncfs
-+	.long sys_setns
-+	.long sys_process_vm_readv	/* 345 */
-+	.long sys_process_vm_writev
-+	.long sys_kcmp
-+	.long sys_finit_module
-+	.long sys_sched_setattr
-+	.long sys_sched_getattr		/* 350 */
-+	.long sys_renameat2
-+	.long sys_getrandom
-+	.long sys_memfd_create
-+	.long sys_bpf
-+	.long sys_execveat		/* 355 */
-+	.long sys_socket
-+	.long sys_socketpair
-+	.long sys_bind
-+	.long sys_connect
-+	.long sys_listen		/* 360 */
-+	.long sys_accept4
-+	.long sys_getsockopt
-+	.long sys_setsockopt
-+	.long sys_getsockname
-+	.long sys_getpeername		/* 365 */
-+	.long sys_sendto
-+	.long sys_sendmsg
-+	.long sys_recvfrom
-+	.long sys_recvmsg
-+	.long sys_shutdown		/* 370 */
-+	.long sys_recvmmsg
-+	.long sys_sendmmsg
-+	.long sys_userfaultfd
-+	.long sys_membarrier
-+	.long sys_mlock2		/* 375 */
-+	.long sys_copy_file_range
-+	.long sys_preadv2
-+	.long sys_pwritev2
-+	.long sys_statx
-diff --git a/arch/m68k/kernel/syscalltable.S b/arch/m68k/kernel/syscalltable.S
-deleted file mode 100644
-index 2c8402e..0000000
---- a/arch/m68k/kernel/syscalltable.S
-+++ /dev/null
-@@ -1,403 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- *  Copyright (C) 2002, Greg Ungerer (gerg@snapgear.com)
-- *
-- *  Based on older entry.S files, the following copyrights apply:
-- *
-- *  Copyright (C) 1998  D. Jeff Dionne <jeff@lineo.ca>,
-- *                      Kenneth Albanowski <kjahds@kjahds.com>,
-- *  Copyright (C) 2000  Lineo Inc. (www.lineo.com) 
-- *  Copyright (C) 1991, 1992  Linus Torvalds
-- *
-- *  Linux/m68k support by Hamish Macdonald
-- */
+ #include <uapi/asm/unistd.h>
+ 
 -
--#include <linux/linkage.h>
+-#define NR_syscalls		380
 -
--#ifndef CONFIG_MMU
--#define sys_mmap2		sys_mmap_pgoff
--#endif
--
--.section .rodata
--ALIGN
--ENTRY(sys_call_table)
--	.long sys_restart_syscall	/* 0 - old "setup()" system call, used for restarting */
--	.long sys_exit
--	.long __sys_fork
--	.long sys_read
--	.long sys_write
--	.long sys_open			/* 5 */
--	.long sys_close
--	.long sys_waitpid
--	.long sys_creat
--	.long sys_link
--	.long sys_unlink		/* 10 */
--	.long sys_execve
--	.long sys_chdir
--	.long sys_time
--	.long sys_mknod
--	.long sys_chmod			/* 15 */
--	.long sys_chown16
--	.long sys_ni_syscall		/* old break syscall holder */
--	.long sys_stat
--	.long sys_lseek
--	.long sys_getpid		/* 20 */
--	.long sys_mount
--	.long sys_oldumount
--	.long sys_setuid16
--	.long sys_getuid16
--	.long sys_stime			/* 25 */
--	.long sys_ptrace
--	.long sys_alarm
--	.long sys_fstat
--	.long sys_pause
--	.long sys_utime			/* 30 */
--	.long sys_ni_syscall		/* old stty syscall holder */
--	.long sys_ni_syscall		/* old gtty syscall holder */
--	.long sys_access
--	.long sys_nice
--	.long sys_ni_syscall		/* 35 - old ftime syscall holder */
--	.long sys_sync
--	.long sys_kill
--	.long sys_rename
--	.long sys_mkdir
--	.long sys_rmdir			/* 40 */
--	.long sys_dup
--	.long sys_pipe
--	.long sys_times
--	.long sys_ni_syscall		/* old prof syscall holder */
--	.long sys_brk			/* 45 */
--	.long sys_setgid16
--	.long sys_getgid16
--	.long sys_signal
--	.long sys_geteuid16
--	.long sys_getegid16		/* 50 */
--	.long sys_acct
--	.long sys_umount		/* recycled never used phys() */
--	.long sys_ni_syscall		/* old lock syscall holder */
--	.long sys_ioctl
--	.long sys_fcntl			/* 55 */
--	.long sys_ni_syscall		/* old mpx syscall holder */
--	.long sys_setpgid
--	.long sys_ni_syscall		/* old ulimit syscall holder */
--	.long sys_ni_syscall
--	.long sys_umask			/* 60 */
--	.long sys_chroot
--	.long sys_ustat
--	.long sys_dup2
--	.long sys_getppid
--	.long sys_getpgrp		/* 65 */
--	.long sys_setsid
--	.long sys_sigaction
--	.long sys_sgetmask
--	.long sys_ssetmask
--	.long sys_setreuid16		/* 70 */
--	.long sys_setregid16
--	.long sys_sigsuspend
--	.long sys_sigpending
--	.long sys_sethostname
--	.long sys_setrlimit		/* 75 */
--	.long sys_old_getrlimit
--	.long sys_getrusage
--	.long sys_gettimeofday
--	.long sys_settimeofday
--	.long sys_getgroups16		/* 80 */
--	.long sys_setgroups16
--	.long sys_old_select
--	.long sys_symlink
--	.long sys_lstat
--	.long sys_readlink		/* 85 */
--	.long sys_uselib
--	.long sys_swapon
--	.long sys_reboot
--	.long sys_old_readdir
--	.long sys_old_mmap		/* 90 */
--	.long sys_munmap
--	.long sys_truncate
--	.long sys_ftruncate
--	.long sys_fchmod
--	.long sys_fchown16		/* 95 */
--	.long sys_getpriority
--	.long sys_setpriority
--	.long sys_ni_syscall		/* old profil syscall holder */
--	.long sys_statfs
--	.long sys_fstatfs		/* 100 */
--	.long sys_ni_syscall		/* ioperm for i386 */
--	.long sys_socketcall
--	.long sys_syslog
--	.long sys_setitimer
--	.long sys_getitimer		/* 105 */
--	.long sys_newstat
--	.long sys_newlstat
--	.long sys_newfstat
--	.long sys_ni_syscall
--	.long sys_ni_syscall		/* 110 - iopl for i386 */
--	.long sys_vhangup
--	.long sys_ni_syscall		/* obsolete idle() syscall */
--	.long sys_ni_syscall		/* vm86old for i386 */
--	.long sys_wait4
--	.long sys_swapoff		/* 115 */
--	.long sys_sysinfo
--	.long sys_ipc
--	.long sys_fsync
--	.long sys_sigreturn
--	.long __sys_clone		/* 120 */
--	.long sys_setdomainname
--	.long sys_newuname
--	.long sys_cacheflush		/* modify_ldt for i386 */
--	.long sys_adjtimex
--	.long sys_mprotect		/* 125 */
--	.long sys_sigprocmask
--	.long sys_ni_syscall		/* old "create_module" */
--	.long sys_init_module
--	.long sys_delete_module
--	.long sys_ni_syscall		/* 130 - old "get_kernel_syms" */
--	.long sys_quotactl
--	.long sys_getpgid
--	.long sys_fchdir
--	.long sys_bdflush
--	.long sys_sysfs			/* 135 */
--	.long sys_personality
--	.long sys_ni_syscall		/* for afs_syscall */
--	.long sys_setfsuid16
--	.long sys_setfsgid16
--	.long sys_llseek		/* 140 */
--	.long sys_getdents
--	.long sys_select
--	.long sys_flock
--	.long sys_msync
--	.long sys_readv			/* 145 */
--	.long sys_writev
--	.long sys_getsid
--	.long sys_fdatasync
--	.long sys_sysctl
--	.long sys_mlock			/* 150 */
--	.long sys_munlock
--	.long sys_mlockall
--	.long sys_munlockall
--	.long sys_sched_setparam
--	.long sys_sched_getparam	/* 155 */
--	.long sys_sched_setscheduler
--	.long sys_sched_getscheduler
--	.long sys_sched_yield
--	.long sys_sched_get_priority_max
--	.long sys_sched_get_priority_min  /* 160 */
--	.long sys_sched_rr_get_interval
--	.long sys_nanosleep
--	.long sys_mremap
--	.long sys_setresuid16
--	.long sys_getresuid16		/* 165 */
--	.long sys_getpagesize
--	.long sys_ni_syscall		/* old "query_module" */
--	.long sys_poll
--	.long sys_ni_syscall		/* old nfsservctl */
--	.long sys_setresgid16		/* 170 */
--	.long sys_getresgid16
--	.long sys_prctl
--	.long sys_rt_sigreturn
--	.long sys_rt_sigaction
--	.long sys_rt_sigprocmask	/* 175 */
--	.long sys_rt_sigpending
--	.long sys_rt_sigtimedwait
--	.long sys_rt_sigqueueinfo
--	.long sys_rt_sigsuspend
--	.long sys_pread64		/* 180 */
--	.long sys_pwrite64
--	.long sys_lchown16
--	.long sys_getcwd
--	.long sys_capget
--	.long sys_capset		/* 185 */
--	.long sys_sigaltstack
--	.long sys_sendfile
--	.long sys_ni_syscall		/* streams1 */
--	.long sys_ni_syscall		/* streams2 */
--	.long __sys_vfork		/* 190 */
--	.long sys_getrlimit
--	.long sys_mmap2
--	.long sys_truncate64
--	.long sys_ftruncate64
--	.long sys_stat64		/* 195 */
--	.long sys_lstat64
--	.long sys_fstat64
--	.long sys_chown
--	.long sys_getuid
--	.long sys_getgid		/* 200 */
--	.long sys_geteuid
--	.long sys_getegid
--	.long sys_setreuid
--	.long sys_setregid
--	.long sys_getgroups		/* 205 */
--	.long sys_setgroups
--	.long sys_fchown
--	.long sys_setresuid
--	.long sys_getresuid
--	.long sys_setresgid		/* 210 */
--	.long sys_getresgid
--	.long sys_lchown
--	.long sys_setuid
--	.long sys_setgid
--	.long sys_setfsuid		/* 215 */
--	.long sys_setfsgid
--	.long sys_pivot_root
--	.long sys_ni_syscall
--	.long sys_ni_syscall
--	.long sys_getdents64		/* 220 */
--	.long sys_gettid
--	.long sys_tkill
--	.long sys_setxattr
--	.long sys_lsetxattr
--	.long sys_fsetxattr		/* 225 */
--	.long sys_getxattr
--	.long sys_lgetxattr
--	.long sys_fgetxattr
--	.long sys_listxattr
--	.long sys_llistxattr		/* 230 */
--	.long sys_flistxattr
--	.long sys_removexattr
--	.long sys_lremovexattr
--	.long sys_fremovexattr
--	.long sys_futex			/* 235 */
--	.long sys_sendfile64
--	.long sys_mincore
--	.long sys_madvise
--	.long sys_fcntl64
--	.long sys_readahead		/* 240 */
--	.long sys_io_setup
--	.long sys_io_destroy
--	.long sys_io_getevents
--	.long sys_io_submit
--	.long sys_io_cancel		/* 245 */
--	.long sys_fadvise64
--	.long sys_exit_group
--	.long sys_lookup_dcookie
--	.long sys_epoll_create
--	.long sys_epoll_ctl		/* 250 */
--	.long sys_epoll_wait
--	.long sys_remap_file_pages
--	.long sys_set_tid_address
--	.long sys_timer_create
--	.long sys_timer_settime		/* 255 */
--	.long sys_timer_gettime
--	.long sys_timer_getoverrun
--	.long sys_timer_delete
--	.long sys_clock_settime
--	.long sys_clock_gettime		/* 260 */
--	.long sys_clock_getres
--	.long sys_clock_nanosleep
--	.long sys_statfs64
--	.long sys_fstatfs64
--	.long sys_tgkill		/* 265 */
--	.long sys_utimes
--	.long sys_fadvise64_64
--	.long sys_mbind
--	.long sys_get_mempolicy
--	.long sys_set_mempolicy		/* 270 */
--	.long sys_mq_open
--	.long sys_mq_unlink
--	.long sys_mq_timedsend
--	.long sys_mq_timedreceive
--	.long sys_mq_notify		/* 275 */
--	.long sys_mq_getsetattr
--	.long sys_waitid
--	.long sys_ni_syscall		/* for sys_vserver */
--	.long sys_add_key
--	.long sys_request_key		/* 280 */
--	.long sys_keyctl
--	.long sys_ioprio_set
--	.long sys_ioprio_get
--	.long sys_inotify_init
--	.long sys_inotify_add_watch	/* 285 */
--	.long sys_inotify_rm_watch
--	.long sys_migrate_pages
--	.long sys_openat
--	.long sys_mkdirat
--	.long sys_mknodat		/* 290 */
--	.long sys_fchownat
--	.long sys_futimesat
--	.long sys_fstatat64
--	.long sys_unlinkat
--	.long sys_renameat		/* 295 */
--	.long sys_linkat
--	.long sys_symlinkat
--	.long sys_readlinkat
--	.long sys_fchmodat
--	.long sys_faccessat		/* 300 */
--	.long sys_pselect6
--	.long sys_ppoll
--	.long sys_unshare
--	.long sys_set_robust_list
--	.long sys_get_robust_list	/* 305 */
--	.long sys_splice
--	.long sys_sync_file_range
--	.long sys_tee
--	.long sys_vmsplice
--	.long sys_move_pages		/* 310 */
--	.long sys_sched_setaffinity
--	.long sys_sched_getaffinity
--	.long sys_kexec_load
--	.long sys_getcpu
--	.long sys_epoll_pwait		/* 315 */
--	.long sys_utimensat
--	.long sys_signalfd
--	.long sys_timerfd_create
--	.long sys_eventfd
--	.long sys_fallocate		/* 320 */
--	.long sys_timerfd_settime
--	.long sys_timerfd_gettime
--	.long sys_signalfd4
--	.long sys_eventfd2
--	.long sys_epoll_create1		/* 325 */
--	.long sys_dup3
--	.long sys_pipe2
--	.long sys_inotify_init1
--	.long sys_preadv
--	.long sys_pwritev		/* 330 */
--	.long sys_rt_tgsigqueueinfo
--	.long sys_perf_event_open
--	.long sys_get_thread_area
--	.long sys_set_thread_area
--	.long sys_atomic_cmpxchg_32	/* 335 */
--	.long sys_atomic_barrier
--	.long sys_fanotify_init
--	.long sys_fanotify_mark
--	.long sys_prlimit64
--	.long sys_name_to_handle_at	/* 340 */
--	.long sys_open_by_handle_at
--	.long sys_clock_adjtime
--	.long sys_syncfs
--	.long sys_setns
--	.long sys_process_vm_readv	/* 345 */
--	.long sys_process_vm_writev
--	.long sys_kcmp
--	.long sys_finit_module
--	.long sys_sched_setattr
--	.long sys_sched_getattr		/* 350 */
--	.long sys_renameat2
--	.long sys_getrandom
--	.long sys_memfd_create
--	.long sys_bpf
--	.long sys_execveat		/* 355 */
--	.long sys_socket
--	.long sys_socketpair
--	.long sys_bind
--	.long sys_connect
--	.long sys_listen		/* 360 */
--	.long sys_accept4
--	.long sys_getsockopt
--	.long sys_setsockopt
--	.long sys_getsockname
--	.long sys_getpeername		/* 365 */
--	.long sys_sendto
--	.long sys_sendmsg
--	.long sys_recvfrom
--	.long sys_recvmsg
--	.long sys_shutdown		/* 370 */
--	.long sys_recvmmsg
--	.long sys_sendmmsg
--	.long sys_userfaultfd
--	.long sys_membarrier
--	.long sys_mlock2		/* 375 */
--	.long sys_copy_file_range
--	.long sys_preadv2
--	.long sys_pwritev2
--	.long sys_statx
+ #define __ARCH_WANT_OLD_READDIR
+ #define __ARCH_WANT_OLD_STAT
+ #define __ARCH_WANT_STAT64
+diff --git a/arch/m68k/include/uapi/asm/unistd.h b/arch/m68k/include/uapi/asm/unistd.h
+index de3054f..b17ae53 100644
+--- a/arch/m68k/include/uapi/asm/unistd.h
++++ b/arch/m68k/include/uapi/asm/unistd.h
+@@ -387,4 +387,6 @@
+ #define __NR_pwritev2		378
+ #define __NR_statx		379
+ 
++#define __NR_syscalls		380
++
+ #endif /* _UAPI_ASM_M68K_UNISTD_H_ */
+diff --git a/arch/m68k/kernel/entry.S b/arch/m68k/kernel/entry.S
+index 97cd3ea..dab0cfd 100644
+--- a/arch/m68k/kernel/entry.S
++++ b/arch/m68k/kernel/entry.S
+@@ -161,7 +161,7 @@ do_trace_entry:
+ 	RESTORE_SWITCH_STACK
+ 	addql	#4,%sp
+ 	movel	%sp@(PT_OFF_ORIG_D0),%d0
+-	cmpl	#NR_syscalls,%d0
++	cmpl	#__NR_syscalls,%d0
+ 	jcs	syscall
+ badsys:
+ 	movel	#-ENOSYS,%sp@(PT_OFF_D0)
+@@ -206,7 +206,7 @@ ENTRY(system_call)
+ 	| syscall trace?
+ 	tstb	%a1@(TINFO_FLAGS+2)
+ 	jmi	do_trace_entry
+-	cmpl	#NR_syscalls,%d0
++	cmpl	#__NR_syscalls,%d0
+ 	jcc	badsys
+ syscall:
+ 	jbsr	@(sys_call_table,%d0:l:4)@(0)
 -- 
 1.9.1
 
