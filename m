@@ -4,179 +4,146 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7D6C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133D3C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDA12238D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:37:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7A2B21EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:40:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SOkAVRVK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDA12238D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WisFlvqD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A2B21EFC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbeHIWEO (ORCPT
+        id S1727133AbeHIWGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:04:14 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40093 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbeHIWEN (ORCPT
+        Thu, 9 Aug 2018 18:06:51 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45960 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeHIWGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:04:13 -0400
-Received: by mail-yw1-f67.google.com with SMTP id z143-v6so6166167ywa.7
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:37:56 -0700 (PDT)
+        Thu, 9 Aug 2018 18:06:50 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f1-v6so3201093pgq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Q/G66rTI3ibq9RNzQInnB3gQg9nv61I5r+XmWb/2OPY=;
-        b=SOkAVRVKKq53roeye3WQFiSZud2rzT/Yi+OZ4MYmCN1D7fYLaX7uzjek819ZeKWNe9
-         B9MOMaPn4R+iVwGpMo8CeFtPdOl2fWREihwptlmGm9/9gWM76Zdopmg7VCfD7vRQOgM7
-         w0eexRmQzx744HJLrXGrgYDsWn7jwkYIac/8w=
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=GhsNkLOvHOcBXrF6L6DK61XYSklSLF8ro3RgmvIo9no=;
+        b=WisFlvqDaj5KbfR2JovaMGqsjjgIvBT4ZfiX/sAruF3iiljv6lVjD0Cdb4zT9G1Pua
+         Lvv3CLOMXpkHn/L220lSbiEeo/kGJqxj3iF52/fz4AM7yjWA+rzVnxmgGgvC+QkVvJqd
+         QA8ROxA2puTiBgGFS1hHXYJIQ3WWRC6jnmHl8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Q/G66rTI3ibq9RNzQInnB3gQg9nv61I5r+XmWb/2OPY=;
-        b=fk5ZSGzCbePN6ZjLH2C2ze9MXuh4bS/96fnnVi25vDcHr35AwFcBaTS2U2DsssEFoy
-         RfxM9kZlEY5T6p3b3G+iO7Ka6nXdTyl7FG9L1AZbprHmPQeFrVBugFvpyI2iIkfJ+kLy
-         S95xOKDSjPsIgFSdlJoydhDdOxqTAuiaFURJZM9BoDv11gp+1IfR7p8bwObwVnPQm1UR
-         aNzOWyvhWO7c49wCmHd6+GN6xy+CkgiDQdGA6IgL1s9xL8WWPYoBADS+dpV/iKfUJwfk
-         n0tMSdq2apOIRmlg2D4Lm1mitktoue6coXVGI2WyKQ2isDbwV4fNpConcPHKKFjxkyB7
-         BYUg==
-X-Gm-Message-State: AOUpUlH/v1PcILzUKW/SbGPQlhGdiOdohp6sp5tUDtBJEwV8O07yokNw
-        qW3mOIjH1bAYQ71x+BLJjb/k2zYPAHc=
-X-Google-Smtp-Source: AA+uWPy8eAXbAelHLjZnsCjuueNi+Yvem4xxa/Lv7KDSh49drZGWAob/ySR4rlGkOPpsEdYhzEdj5g==
-X-Received: by 2002:a9f:2266:: with SMTP id 93-v6mr2376336uad.40.1533843475469;
-        Thu, 09 Aug 2018 12:37:55 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id u25-v6sm1071825uan.26.2018.08.09.12.37.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 12:37:54 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id h1-v6so34553uao.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:37:54 -0700 (PDT)
-X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr2351191uac.191.1533843473898;
- Thu, 09 Aug 2018 12:37:53 -0700 (PDT)
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=GhsNkLOvHOcBXrF6L6DK61XYSklSLF8ro3RgmvIo9no=;
+        b=L730mWhDtwVBUOiwpfFaRkEwZ2eQHhS5FTLET+1ZXW3KQ50MQZCqG0EcVoRC4e8s6/
+         sLJXtPXllCrogMZXqUiV7NN5JH9Ogeerar/sIGD+q/7j1vnenkj+SGTOcbe441UJ7HVR
+         WLjv3aREbR1m8tE8t9pHqY1xww+qFjbvJxizdfByZ0enGTq4a9OzqbhtUuEO1gyeOl/E
+         BC83ZCTBwfxg7Ihpg+t48p2H84oUKK2kAzBKhh+olYWlrQd67XKo8FajOYwRh+DOl3qR
+         5eN3IBIrcwWjG26yScESMCRV18+0XFUM9OZmUPwMVOVfUf2Iq5Qad5S3zKoUd/aOmnRC
+         Y9Uw==
+X-Gm-Message-State: AOUpUlGoseiFWSuMzjJawcJFXL1X5+7ySPZ7zhHuF0IPENTBUiVSM9HF
+        YECcxN2+LIo9G+1ZCqf6MW8NHA==
+X-Google-Smtp-Source: AA+uWPyyIZeTa6HNlhtWKG6bBbkwLYRiMWiHXTVo2YgljFLhddZLu32MlE2Und1sd1JMlQhyRQJWNw==
+X-Received: by 2002:a62:4fd9:: with SMTP id f86-v6mr3709754pfj.110.1533843632488;
+        Thu, 09 Aug 2018 12:40:32 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id c4-v6sm13343899pfb.71.2018.08.09.12.40.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 12:40:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 12:37:52 -0700 (PDT)
-In-Reply-To: <1533839042.2283.305.camel@impinj.com>
-References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
- <152607782792.34267.8023817955251139395@swboyd.mtv.corp.google.com>
- <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org> <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
- <20180522173000.GG24776@sirena.org.uk> <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
- <20180524162940.GA4828@sirena.org.uk> <28d8ab5fdeb34e52eba7ca771a17bc06@codeaurora.org>
- <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org> <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
- <1533839042.2283.305.camel@impinj.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 9 Aug 2018 12:37:52 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V4miw3i+8EPZPpgWGaVJhHbb2OBVTz6_iP-pMVhZoBOQ@mail.gmail.com>
-Message-ID: <CAD=FV=V4miw3i+8EPZPpgWGaVJhHbb2OBVTz6_iP-pMVhZoBOQ@mail.gmail.com>
-Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based QUP
-To:     Trent Piepho <tpiepho@impinj.com>
-Cc:     "dkota@codeaurora.org" <dkota@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "swboyd@chromium.org" <swboyd@chromium.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "sdharia@codeaurora.org" <sdharia@codeaurora.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "kramasub@codeaurora.org" <kramasub@codeaurora.org>,
-        "girishm@codeaurora.org" <girishm@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Brian Norris <briannorris@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180809174936.GC129285@ban.mtv.corp.google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Samuel Holland <samuel@sholland.org>
+References: <20180809171722.144325-1-swboyd@chromium.org>
+ <20180809171722.144325-3-swboyd@chromium.org>
+ <20180809174936.GC129285@ban.mtv.corp.google.com>
+Message-ID: <153384363124.220756.3747855789935101539@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 2/7] firmware: coreboot: Unmap ioregion on failure
+Date:   Thu, 09 Aug 2018 12:40:31 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Quoting Brian Norris (2018-08-09 10:49:38)
+> On Thu, Aug 09, 2018 at 10:17:17AM -0700, Stephen Boyd wrote:
+> > Both callers of coreboot_table_init() ioremap the pointer that comes in
+> > but they don't unmap the memory on failure. Both of them also fail probe
+> > immediately with the return value of coreboot_table_init(), leaking a
+> > mapping when it fails. Plug the leak so the mapping isn't left unused.
+> > =
 
-On Thu, Aug 9, 2018 at 11:24 AM, Trent Piepho <tpiepho@impinj.com> wrote:
-> On Thu, 2018-08-09 at 11:03 -0700, Doug Anderson wrote:
->> On Fri, Aug 3, 2018 at 5:18 AM,  <dkota@codeaurora.org> wrote:
->> > > > +       if (of_property_read_u32(pdev->dev.of_node, "spi-max-frequency",
->> > > > +                               &spi->max_speed_hz)) {
->> >
->> >
->> > > Why does this need to come from DT?
->> >
->> >
->> > This is required to set the SPI controller max frequency.
->> > As it is specific to the controller, so looks meaningful to specify it in
->> > dtsi.
->> > Also, spi core framework will set the transfer speed to controller max
->> > frequency
->> > if transfer frequency is greater than controller max frequency.
->> > Please mention if you have a other opinion.
->>
->> Here are my thoughts:
->>
->> 1. It sure seems like the clock framework could be enforcing the max
->> speed here.  SPI can just ask for the speed and the clock framework
->> will pick the highest speed it can if you ask for one too high.  Isn't
->> that the whole point of the "struct freq_tbl" in the clock driver?
->>
->>
->> 2. The device tree writer already provides a max clock speed for each
->> SPI slave in the device tree.  ...shouldn't the device tree writer
->> already be taking into account the max of the SPI port when setting
->> this value?
->
-> No, the way it works is the actual speed is the lesser of the master's
-> max and the slave device's max.
->
-> But usually the master's max is determined by:
->
-> 1. The input clock the SPI master device, as provided by the clock
-> framework.  Usually the max SPI clock will be this clock /2 or
-> something like that.
->
-> 2. The master has some maximum clock as part of its specifications, in
-> which case the driver basically hard codes it.  Maybe it is different
-> based on model and the driver has a table.
->
-> The device tree isn't really meant to be a way to remove all data from
-> the device driver just because it can be, or shift work from the driver
-> author to the device tree author.
->
-> So, one shouldn't specify the master max in the DT if the driver could
-> figure it out.
->
-> Sometimes you see a field in the DT and I think the thought process
-> that put it there was, "I don't understand how to set this register,
-> I'll just stick in the device tree and then it's Someone Else's Problem
-> to find the correct value."
->
-> The max speed that some board can talk to a SPI slave might be from the
-> specs of the slave device or maybe it's due to the traces on the board
-> itself that is the limiting factor.  In the latter case the convention
-> is to consider this part of the slave's max speed and put into the DT
-> in the slave's DT node max speed property.
->
-> So the same spi eeprom chip might have have a max in the DT of 20 MHz
-> on one board, copied out of the eeprom's datasheet.  But on another
-> board it has a max of 10 MHz because on that board's layout it only
-> works up to 10.
+> > Cc: Wei-Ning Huang <wnhuang@chromium.org>
+> > Cc: Julius Werner <jwerner@chromium.org>
+> > Cc: Brian Norris <briannorris@chromium.org>
+> > Cc: Samuel Holland <samuel@sholland.org>
+> > Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table as =
+a bus")
+> =
 
-I think we're in agreement but perhaps there's a miscommunication here?
+> I suppose this is fair, since that commit introduced error paths and
+> didn't clean them up. But one warning below:
+> =
 
-I'm saying that we _shouldn't_ put the max-speed of the master in the
-device tree.  The max speed for the IP block ought to be in code
-either in the clock driver or in the SPI driver based on the
-compatible string.
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > ---
+> >  drivers/firmware/google/coreboot_table.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > =
 
-...as one argument _against_ putting a max-speed for the master in the
-device tree I'm saying that we can already specify a max-speed of each
-slave in the device tree.  The max speed of the slave should take into
-account whatever factors are specific to this board including trace
-lengths, noise, etc.  If we somehow did need to get a max speed in the
-device tree it seems like we could just adjust the max speed for the
-slave to be something lower.  In other words if you know a board has
-an sdm845 on it and you know that the SPI clock on sdm845 can't go
-over 50 MHz then it would make no sense to suggest that we should run
-the SPI clock for a device at 100 MHz.
+> > diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmwar=
+e/google/coreboot_table.c
+> > index 19db5709ae28..0d3e140444ae 100644
+> > --- a/drivers/firmware/google/coreboot_table.c
+> > +++ b/drivers/firmware/google/coreboot_table.c
+> > @@ -138,6 +138,9 @@ int coreboot_table_init(struct device *dev, void __=
+iomem *ptr)
+> >               ptr_entry +=3D entry.size;
+> >       }
+> >  =
+
+> > +     if (ret)
+> > +             iounmap(ptr);
+> =
+
+> This works because no sub-driver is using this mapping any more (i.e.,
+> because we killed coreboot_table_find()). Otherwise, we'd need to
+> explicitly kill all the sub-devices first. IOW, if this gets backported
+> to older kernels, it would need to go along with this and its other
+> dependencies:
+
+The memory is copied out of the table. So do the devices actually use
+the memory that we remap here? I don't see how it's a problem if we
+unmap the table after we populate devices.
+
+> =
+
+> b616cf53aa7a firmware: coreboot: Remove unused coreboot_table_find
+> =
+
+> But I guess that's a question for -stable. Or, we remove the 'Fixes'
+> tag? Or add another tag, to list other dependencies? Or just ignore it.
+> =
+
+> But for this change as applied to mainline:
+> =
+
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> =
 
 
--Doug
+Thanks!
+
