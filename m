@@ -2,89 +2,119 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EF8C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B19C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F90421C17
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C736821BC9
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:20:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Om1qo28D";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KeBrPd/O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F90421C17
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="y8XYs7mF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C736821BC9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbeHIHjS (ORCPT
+        id S1728345AbeHIHnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 03:39:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48214 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728834AbeHIHjR (ORCPT
+        Thu, 9 Aug 2018 03:43:45 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:35798 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728056AbeHIHnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 03:39:17 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 107B060B7A; Thu,  9 Aug 2018 05:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533791777;
-        bh=oMvkwUoOO6u6u/Fb5pshNnBGM+UE53zkQDQW103xuOA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Om1qo28DGkQvCmBCMxVoD7bueHaA6PQKkuUCnzc3Yp2O79bsi+gMIEGEX+ZnmKWFd
-         zGtSGlJkWzi9ztoNLRQvNqRLFA4/mSv/28DNJhjoUsO0yKqr5IoaRLMJL7fyBKWSD6
-         yClLkCisA/D6omfBoB/qXTQShbqyKyx8Ts4eqdKM=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4937D60AD9;
-        Thu,  9 Aug 2018 05:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533791776;
-        bh=oMvkwUoOO6u6u/Fb5pshNnBGM+UE53zkQDQW103xuOA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=KeBrPd/OouoydpiaDTybrwrVDXQwPQr897Uz1yGjvFSmtYPjv8eLdbtqeb5x1vmxL
-         cjMKRR0PWpnO/AVl2fLXf1Azl0PmKKyWb43SGh5ZdFmBbZHRas1D8AZEt5StDz8Nva
-         AZ7AAHh47XKbPLrajnJ7etwu7SyaYsvWgy37hFeU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4937D60AD9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     valdis.kletnieks@vt.edu
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] fix build for MediaTek MT7610U USB wireless dongle
-References: <145751.1533759414@turing-police.cc.vt.edu>
-Date:   Thu, 09 Aug 2018 08:16:12 +0300
-In-Reply-To: <145751.1533759414@turing-police.cc.vt.edu> (valdis kletnieks's
-        message of "Wed, 08 Aug 2018 16:16:54 -0400")
-Message-ID: <87wot02k83.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 9 Aug 2018 03:43:45 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id w795JkSn011102;
+        Thu, 9 Aug 2018 14:19:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w795JkSn011102
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533791987;
+        bh=jKSf+jpdtHLcyCSwRX+grJ4F8y0gPvMGuOo1S5Bylcc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=y8XYs7mFlS5jBCHQZ6fYbnPWTmFMGUqDUZKXxT9v4Oz3GgPK/Fj2d1vqSyl28XoDS
+         wN6ySgzNJ0x65rhF4a1M14Fz9CZKx1qkS65fpbKK5xPV/vTOhym9BXiCwpt0wOKnZ5
+         TkbocQCF6ZPaH7ojZph6ZgzR8Y3DFtH+nVIj9JeezwZvPOF4Y+hxzF0Wqxe9m+P3RY
+         jQLOBi6R+6M+jpgsCO4+gaMxtSbRU1nLCx93Edh8o/jefSTzbEqWby3wxrA4whijfK
+         hRf1Ypgle07XWh1PFLCZkiRkttNutSH5zV5RlBOtzu3wm7EbeSTqEjNAl5xQAf2oiR
+         DqxdRZf8Cy5AA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-xtensa@linux-xtensa.org, Chris Zankel <chris@zankel.net>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH] kbuild: remove deprecated host-progs variable
+Date:   Thu,  9 Aug 2018 14:19:31 +0900
+Message-Id: <1533791971-27504-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-valdis.kletnieks@vt.edu writes:
+The host-progs has been supported as an alias of hostprogs-y at least
+since the beginning of Git era, with the clear prompt:
+  Usage of host-progs is deprecated. Please replace with hostprogs-y!
 
-> The mt76x0 driver requires the mt76 core driver to actually function.
-> So add a 'select' to avoid embarrassing 'symbol unknown' errors
-> when attempting to modprobe it in a module tree that doesn't
-> include mt76.ko
->
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Enough time for the migration has passed.
 
-I'll add "mt76:" prefix to the title and queue this for 4.19.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> Still need to figure out why it totally fails to see the 5gz band,
-> it works find on 2.4 but ends up locked at 72mbits/sec. Works
-> OK otherwise...
+ arch/xtensa/boot/Makefile | 3 +--
+ scripts/Makefile.build    | 7 -------
+ scripts/Makefile.clean    | 1 -
+ 3 files changed, 1 insertion(+), 10 deletions(-)
 
-Great, thanks for the feedback.
-
+diff --git a/arch/xtensa/boot/Makefile b/arch/xtensa/boot/Makefile
+index 53e4178..dc9e0ba 100644
+--- a/arch/xtensa/boot/Makefile
++++ b/arch/xtensa/boot/Makefile
+@@ -30,8 +30,7 @@ Image: boot-elf
+ zImage: boot-redboot
+ uImage: $(obj)/uImage
+ 
+-boot-elf boot-redboot: $(addprefix $(obj)/,$(subdir-y)) \
+-		       $(addprefix $(obj)/,$(host-progs))
++boot-elf boot-redboot: $(addprefix $(obj)/,$(subdir-y))
+ 	$(Q)$(MAKE) $(build)=$(obj)/$@ $(MAKECMDGOALS)
+ 
+ OBJCOPYFLAGS = --strip-all -R .comment -R .note.gnu.build-id -O binary
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index ba1c83b..b134b37 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -53,13 +53,6 @@ endif
+ 
+ include scripts/Makefile.lib
+ 
+-ifdef host-progs
+-ifneq ($(hostprogs-y),$(host-progs))
+-$(warning kbuild: $(obj)/Makefile - Usage of host-progs is deprecated. Please replace with hostprogs-y!)
+-hostprogs-y += $(host-progs)
+-endif
+-endif
+-
+ # Do not include host rules unless needed
+ ifneq ($(hostprogs-y)$(hostprogs-m)$(hostlibs-y)$(hostlibs-m)$(hostcxxlibs-y)$(hostcxxlibs-m),)
+ include scripts/Makefile.host
+diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
+index 17ef94c..0b80e320 100644
+--- a/scripts/Makefile.clean
++++ b/scripts/Makefile.clean
+@@ -38,7 +38,6 @@ subdir-ymn	:= $(addprefix $(obj)/,$(subdir-ymn))
+ 
+ __clean-files	:= $(extra-y) $(extra-m) $(extra-)       \
+ 		   $(always) $(targets) $(clean-files)   \
+-		   $(host-progs)                         \
+ 		   $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
+ 		   $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
+ 		   $(hostcxxlibs-y) $(hostcxxlibs-m)
 -- 
-Kalle Valo
+2.7.4
+
