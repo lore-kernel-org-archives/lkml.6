@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3427C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A92F1C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E65217C9
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8EC217C9
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:53:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AyddTb7I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E65217C9
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kbE/5NQN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8EC217C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbeHIMRv (ORCPT
+        id S1730454AbeHIMR4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:17:51 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:32511 "EHLO
+        Thu, 9 Aug 2018 08:17:56 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:32520 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbeHIMRv (ORCPT
+        with ESMTP id S1727786AbeHIMRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:17:51 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180809095344epoutp048857b604f2b67748479e1e9d5206af2d~JLqLBffsm2053720537epoutp04E
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Aug 2018 09:53:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180809095344epoutp048857b604f2b67748479e1e9d5206af2d~JLqLBffsm2053720537epoutp04E
+        Thu, 9 Aug 2018 08:17:55 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180809095345epoutp047b5593d7dbf274acc52f068bc50b7865~JLqLvosJX1991719917epoutp04u
+        for <linux-kernel@vger.kernel.org>; Thu,  9 Aug 2018 09:53:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180809095345epoutp047b5593d7dbf274acc52f068bc50b7865~JLqLvosJX1991719917epoutp04u
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533808424;
-        bh=N51gdx0muhWDFOIBdjidWrgUkhK6WCaG8gUwvaF6C1A=;
+        s=mail20170921; t=1533808425;
+        bh=o3WL1gptVDRg1HETt4tuI5K7r/K2vrJctsOSh+EFjTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AyddTb7IkzGpSMraPx7YSdCQOLppiPNkCVfo1dz4abdW/Lcf/Y1VaSNwV0G2wQpoy
-         dolYWw2gYEIV+wz7jAvevcaTu03yyYTQ+JqrKe8n98i8WR0ztsBPH1BQa9D+bMX8TN
-         EfjIxb8INNle21eEIewC7VdM+22wh+FuI3PhFZi0=
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180809095342epcas1p2248fb23cead3cc88b0f9fa8554659c98~JLqJcpGdj0579405794epcas1p2f;
+        b=kbE/5NQNyqyPvTOlysiW1WGYbkz7dh1vQV6UKLC+Hn0ejtONjY8Ay83fi6wDdUuMk
+         fTkRFxklIhIK1uyIGdtWxKFbSku2qlDNhu9bQ5mhsI9K6vogHXQOO2aaAKSUCFsqBT
+         uWmk1qvdcsTPWg9LLfWi6HanJA8RJvE0J7YiIYco=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.158]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180809095342epcas1p42de1d3bd7b37048629cab3edef53aa19~JLqJDnyK62207322073epcas1p43;
         Thu,  9 Aug 2018 09:53:42 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        90.42.04144.62F0C6B5; Thu,  9 Aug 2018 18:53:42 +0900 (KST)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        29.7B.04176.62F0C6B5; Thu,  9 Aug 2018 18:53:42 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20180809095342epcas1p425d6ada22d3863459e44c335b51801de~JLqInMQtE1558515585epcas1p4v;
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180809095342epcas1p21503f49bbf9e4814ea76c509c873a559~JLqIt06wB0657706577epcas1p2x;
         Thu,  9 Aug 2018 09:53:42 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180809095342epsmtrp26b1ddff80d2376537de37157ca02be85~JLqIkyFAO0832908329epsmtrp2r;
+        20180809095342epsmtrp2c9e20404fbfae6949b9039dbefdea4a7~JLqIqM3Pi0832908329epsmtrp2t;
         Thu,  9 Aug 2018 09:53:42 +0000 (GMT)
-X-AuditID: b6c32a39-b9dff70000001030-8b-5b6c0f26ed70
+X-AuditID: b6c32a37-6c5ff70000001050-77-5b6c0f260e1e
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        16.22.03759.52F0C6B5; Thu,  9 Aug 2018 18:53:41 +0900 (KST)
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        27.11.03889.62F0C6B5; Thu,  9 Aug 2018 18:53:42 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.113.63.222]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180809095341epsmtip1f16e8dba6cb625406e444f9aa7eac6be~JLqIbXnnQ1957119571epsmtip1q;
+        20180809095341epsmtip1a35fbc270fd2744046e85edf18efa5c4~JLqIhK2t22265222652epsmtip1a;
         Thu,  9 Aug 2018 09:53:41 +0000 (GMT)
 From:   Seung-Woo Kim <sw0312.kim@samsung.com>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
@@ -66,48 +66,48 @@ To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
 Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
         torvalds@linux-foundation.org, jslaby@suse.cz,
         sw0312.kim@samsung.com
-Subject: [PATCH 3.18.y 3/5] security_d_instantiate(): move to the point
- prior to attaching dentry to inode
-Date:   Thu,  9 Aug 2018 18:53:42 +0900
+Subject: [PATCH 3.18.y 4/5] switch xattr_handler->set() to passing dentry
+ and inode separately
+Date:   Thu,  9 Aug 2018 18:53:43 +0900
 X-Mailer: git-send-email 1.7.4.1
 In-Reply-To: <1533808424-20649-1-git-send-email-sw0312.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSa0hTYRjHed12drRWh1n5tLDWoQQjp2dzeTTtajVI0jAisrCTvm3iLrKz
-        SRak4S2kvHQhyxUz/bDS8pKpWWZZTT/YBYpABGUiQhelNA2SLmceo0/vj//zf573z8NDSpQj
-        MhWZZXVgu5Uz00SQtP15uCYibKk5LcpVHMu6mhoJtrCuiWCn57pk7LsuF8G6W0YRW33pI8GO
-        lk/I2Te/+mTbSEN/9ZzU0HOjUW4ob7uDDAPuF3LDdOtqQ+vYREAKcRjHmzCXie1qbM2wZWZZ
-        jQn03tT0nen6TVFMBBPLxtBqK2fBCXRiUkrE7iyzEIhW53JmpyClcDxPR26Jt9ucDqw22XhH
-        Ap3GMFoNExWj0WqFV3c0TqsXLMewqblllMgZDD05c80nL0CPoAwFkkBFw4+hAnkZCiKVVCeC
-        C7eKAvwFJTWF4MmzZLEwi2DEOyD919FWU4nEQjeCn9+G5WLHNIJ3dcf9TFAboad+TubnZdRB
-        aPBdIfwsofJh8M/veQ6mzPBqrFviZym1Hn78rJGJH6jBPTwx7wmk9kBnyfiC3khA5dkTflZQ
-        ufDmsStA1BOh9unthXDB8KmvTS6yCqYnuwmRSxE8u3bGHxqoywg+/JpaMOlgvLZMGEQK4cKh
-        qStSzLkEJmfOy/wyUAo4V6IU3evg4cuLhCir4Hpzqigb4JzPKxNX0o/gbv8HSSUKvf5/qBuh
-        O2gFzuEtRswzOXoNz1l4p9WoybBZWtH8cW2I7UTe10m9iCIRvVjxdkl2mlLG5fJ5ll4EpIRe
-        plj0R5AUmVzeKWy3pdudZsz3Ir2wvCqJanmGTThVqyOd0Wt1Oh0bzWzSMwwdotDuS01TUkbO
-        gbMxzsH2f30BZKCqAGXk1zxo8CRXGNUPv+wO2XvaY7LX1/lccQe+F61trorL2/f8q3ZlQ9a9
-        GzxBdSQ7wysiXdvLdoXtH04MKymtutjVc19yymsM6rjqcR5qyt1RUTLiSSQoy81Pnq3N7Wvq
-        3te/0thw4eUH5d7i0CM3y6Mubf485GHAN7sqKHymevwMLeVNHLNBYue5v25FdlxyAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsWy7bCSnK4af060wTkliznr17BZNC9ez2bx
-        +fcuVovLu+awWSzY+IjRYsbkl2wWj/resluc/3uc1YHD48SM3ywe++euYffo27KK0ePMgiPs
-        Hp83yXlsevKWKYAtissmJTUnsyy1SN8ugStjw8ZHbAU3ZSu+znzI3sC4W6KLkZNDQsBEYsvs
-        CYxdjFwcQgK7GSXuvnvNBJGQkpj7bTtQggPIFpY4fLgYouYjo8STh2tZQWrYBHQk9i/5DWaL
-        CERIHHg2mQ2kiFmglVHizJLDTCDNwgJZEjcOi4HUsAioSnz/NRusnlfATeLYkqVsELsUJBbc
-        ewtmcwq4S+xoewZWIyRQIjHz6B/2CYx8CxgZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn
-        525iBIehluYOxstL4g8xCnAwKvHwXuDLjhZiTSwrrsw9xCjBwawkwsv9HyjEm5JYWZValB9f
-        VJqTWnyIUZqDRUmc92nesUghgfTEktTs1NSC1CKYLBMHp1QDYx/T2uL3JzfZhG6Wn1J3UjlO
-        9bJ4sGMOS+TV+M5F7ZHTGzfcLp1ikPTJVkFwnULev06dj70P2s848nk1n7pVlbPmonj+QQ3u
-        9pNLT53/9EJsS94EBXeVmzv6wm75bg1/1CT14srzm64TarO7o/ob112RVHuvsl6E607/sz2V
-        S3Xv9Zh32m0TVmIpzkg01GIuKk4EAAMAqn8/AgAA
-Message-Id: <20180809095342epcas1p425d6ada22d3863459e44c335b51801de~JLqInMQtE1558515585epcas1p4v@epcas1p4.samsung.com>
-X-CMS-MailID: 20180809095342epcas1p425d6ada22d3863459e44c335b51801de
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSe0hTcRTmt8f1aq1uS+uwHqxLBUlO7+b0FrMHWQ2ykKyoJPSiPzZxD93d
+        pILSyF5m7wJXRgulYEU+qDDDLDMd4qMQjPUCzUwjpRwZMs2uu0Z//b7z/b5zvo/DIaXKfrmK
+        zLE5scPGWWgiQvb45aq4mJVzLelxXX2L2PKq+wR7vKKKYAPBejnbXV9OsJ6aPsSWXRki2L7z
+        w2Fs12SrfANp9JUFZcbGm/fDjOcfepGx3dMcZgzULjXW9g9LUon92GDGXDZ2qLEty56dYzMl
+        0dvSMjZl6BPimBhmDZtIq22cFSfRySmpMVtyLEIgWl3AWVwClcrxPB27zuCwu5xYbbbzziQ6
+        nWG0GiYuUaPVCq/uwFqtXpBkYvNQ2yN5Xu0EOtgyeAEVIXcHKkHhJFDx4D/mkZWgCFJJ1SE4
+        d+4FIRajCLzFD5BYjCGYHPsu/dfyceK3VPxoQDBeeWumCCDoGG0NqQhqNTRWBuXTOJLaA/d6
+        rxHTWEoVgn/qTwjPpzKhoncihGXUCph4XyERHdTg+TQc4sOprVB3ckA+bQBUNQE/zvhDyRVU
+        ATSM+WRiQzLccHfM4PnwrfVhmIhVEBhpIER8CsEL91Fx0FUEPZOjMyIdDNwuEZxJId0qqKqP
+        FYPOgZFfpfJpGigFnD6pFNXL4cmry4RIq+B6dZpIG6H9rHdmDz4EX8d90otoyfX/Qz0IedEC
+        nMdbTZhn8nQanrPyLptJk2W31qLQhUUn1qHqzpQmRJGInq14PSc3XSnnCvhD1iYEpJSOVMya
+        EihFNnfoMHbYMxwuC+abkF7Y3iWpKirLLtyrzZnB6LU6nY6NZxL0DEMvVGh3pKUrKRPnxLkY
+        52HHvz4JGa4qQrOb34x/6PDXJO/axozju23d7yzBop0DI1b/vLf5UTWXuvY9311+Z2Tu6Z86
+        zcb9+yq3x/olDfW5bFVvhEFZ2G16bi+1Xejkvh8x1GTu/dyyXhXtrS79deJsmSHg8vuGosw9
+        yyTPtrqLN0fc+dIWDqq7+Y1BNLgjxfN0g7t98a0pWsabOSZa6uC5vxsUOr53AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSnK4af060QftXFos569ewWTQvXs9m
+        8fn3LlaLy7vmsFks2PiI0WLG5JdsFo/63rJbnP97nNWBw+PEjN8sHvvnrmH36NuyitHjzIIj
+        7B6fN8l5bHrylimALYrLJiU1J7MstUjfLoEr4+WprawFm/4wVhx70c/YwDjzLGMXIyeHhICJ
+        xN0/35m7GLk4hAR2M0p8vnQUKiElMffbdiCbA8gWljh8uBii5iOjRPvRhawgNWwCOhL7l/wG
+        s0UEIiQOPJvMBlLELNDKKHFmyWEmkISwQJzE5g1dLCA2i4CqxJ/bi8HivAJuEosav7JBLFOQ
+        WHDvLZjNKeAusaPtGdhQIYESiZlH/7BPYORbwMiwilEytaA4Nz232LDAKC+1XK84Mbe4NC9d
+        Lzk/dxMjOBy1tHYwnjgRf4hRgINRiYf3Al92tBBrYllxZe4hRgkOZiURXu7/QCHelMTKqtSi
+        /Pii0pzU4kOM0hwsSuK88vnHIoUE0hNLUrNTUwtSi2CyTBycUg2MwR/T9v0VTVdPnvdBgMmk
+        YPPagKkHj2yQfruww5+7QWn/3Jyvh7WDPMxuvJzNEKShOOVYp+7nxs3Wc1+ed1j1Zpay/X1u
+        tmUfZlpUvvHd6KJoI35gy2T1cJ0pB188SBfXOVV68AG74JwJcxP3HCpIkYz2Zon0Pz796Bqe
+        wtX5vDbuG29M1+hQUGIpzkg01GIuKk4EAB5d6h1DAgAA
+Message-Id: <20180809095342epcas1p21503f49bbf9e4814ea76c509c873a559~JLqIt06wB0657706577epcas1p2x@epcas1p2.samsung.com>
+X-CMS-MailID: 20180809095342epcas1p21503f49bbf9e4814ea76c509c873a559
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180809095342epcas1p425d6ada22d3863459e44c335b51801de
+X-CMS-RootMailID: 20180809095342epcas1p21503f49bbf9e4814ea76c509c873a559
 References: <20180705005205.GC30522@ZenIV.linux.org.uk>
         <1533808424-20649-1-git-send-email-sw0312.kim@samsung.com>
-        <CGME20180809095342epcas1p425d6ada22d3863459e44c335b51801de@epcas1p4.samsung.com>
+        <CGME20180809095342epcas1p21503f49bbf9e4814ea76c509c873a559@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -115,129 +115,853 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit b96809173e94ea2fa8c19c2e40e8545a1821bf57 upstream.
+preparation for similar switch in ->setxattr() (see the next commit for
+rationale).
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-[sw0312.kim: backport to 3.18]
+[sw0312.kim: backport to 3.18 including ext3]
 Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 ---
- fs/dcache.c |   18 +++++++-----------
- 1 files changed, 7 insertions(+), 11 deletions(-)
+ fs/9p/acl.c                  |    7 +++----
+ fs/9p/xattr_security.c       |    5 +++--
+ fs/9p/xattr_trusted.c        |    5 +++--
+ fs/9p/xattr_user.c           |    5 +++--
+ fs/ext2/xattr_security.c     |    7 ++++---
+ fs/ext2/xattr_trusted.c      |    7 ++++---
+ fs/ext2/xattr_user.c         |    9 +++++----
+ fs/ext3/xattr_security.c     |    7 ++++---
+ fs/ext3/xattr_trusted.c      |    7 ++++---
+ fs/ext3/xattr_user.c         |    9 +++++----
+ fs/ext4/xattr_security.c     |    7 ++++---
+ fs/ext4/xattr_trusted.c      |    7 ++++---
+ fs/ext4/xattr_user.c         |    9 +++++----
+ fs/f2fs/xattr.c              |   17 ++++++++---------
+ fs/gfs2/xattr.c              |    7 ++++---
+ fs/hfsplus/xattr.c           |    7 ++++---
+ fs/hfsplus/xattr.h           |    4 ++--
+ fs/hfsplus/xattr_security.c  |    7 ++++---
+ fs/hfsplus/xattr_trusted.c   |    7 ++++---
+ fs/hfsplus/xattr_user.c      |    7 ++++---
+ fs/jffs2/security.c          |    7 ++++---
+ fs/jffs2/xattr_trusted.c     |    7 ++++---
+ fs/jffs2/xattr_user.c        |    7 ++++---
+ fs/nfs/nfs4proc.c            |   19 +++++++++----------
+ fs/ocfs2/xattr.c             |   23 +++++++++++++----------
+ fs/posix_acl.c               |    6 +++---
+ fs/reiserfs/xattr.c          |    6 ++++--
+ fs/reiserfs/xattr_security.c |    8 ++++----
+ fs/reiserfs/xattr_trusted.c  |    8 ++++----
+ fs/reiserfs/xattr_user.c     |    8 ++++----
+ fs/xattr.c                   |    5 +++--
+ fs/xfs/xfs_xattr.c           |    7 ++++---
+ include/linux/xattr.h        |    5 +++--
+ 33 files changed, 144 insertions(+), 119 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index a34d401..6a4290a 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1729,12 +1729,12 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
- void d_instantiate(struct dentry *entry, struct inode * inode)
- {
- 	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
-+	security_d_instantiate(entry, inode);
- 	if (inode)
- 		spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	if (inode)
- 		spin_unlock(&inode->i_lock);
--	security_d_instantiate(entry, inode);
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index 938e1a4..0928d74 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -279,14 +279,13 @@ static int v9fs_remote_set_acl(struct dentry *dentry, const char *name,
  }
- EXPORT_SYMBOL(d_instantiate);
  
-@@ -1795,16 +1795,15 @@ struct dentry *d_instantiate_unique(struct dentry *entry, struct inode *inode)
  
- 	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
- 
-+	security_d_instantiate(entry, inode);
- 	if (inode)
- 		spin_lock(&inode->i_lock);
- 	result = __d_instantiate_unique(entry, inode);
- 	if (inode)
- 		spin_unlock(&inode->i_lock);
- 
--	if (!result) {
--		security_d_instantiate(entry, inode);
-+	if (!result)
- 		return NULL;
--	}
- 
- 	BUG_ON(!d_unhashed(result));
- 	iput(inode);
-@@ -1826,6 +1825,7 @@ int d_instantiate_no_diralias(struct dentry *entry, struct inode *inode)
+-static int v9fs_xattr_set_acl(struct dentry *dentry, const char *name,
+-			      const void *value, size_t size,
+-			      int flags, int type)
++static int v9fs_xattr_set_acl(struct dentry *dentry, struct inode *inode,
++			      const char *name, const void *value,
++			      size_t size, int flags, int type)
  {
- 	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
+ 	int retval;
+ 	struct posix_acl *acl;
+ 	struct v9fs_session_info *v9ses;
+-	struct inode *inode = dentry->d_inode;
  
-+	security_d_instantiate(entry, inode);
- 	spin_lock(&inode->i_lock);
- 	if (S_ISDIR(inode->i_mode) && !hlist_empty(&inode->i_dentry)) {
- 		spin_unlock(&inode->i_lock);
-@@ -1834,7 +1834,6 @@ int d_instantiate_no_diralias(struct dentry *entry, struct inode *inode)
- 	}
- 	__d_instantiate(entry, inode);
- 	spin_unlock(&inode->i_lock);
--	security_d_instantiate(entry, inode);
- 
- 	return 0;
+ 	if (strcmp(name, "") != 0)
+ 		return -EINVAL;
+diff --git a/fs/9p/xattr_security.c b/fs/9p/xattr_security.c
+index df692f9..242c1f8 100644
+--- a/fs/9p/xattr_security.c
++++ b/fs/9p/xattr_security.c
+@@ -47,8 +47,9 @@ static int v9fs_xattr_security_get(struct dentry *dentry, struct inode *inode,
+ 	return retval;
  }
-@@ -1930,6 +1929,7 @@ static struct dentry *__d_obtain_alias(struct inode *inode, int disconnected)
- 		goto out_iput;
- 	}
  
-+	security_d_instantiate(tmp, inode);
- 	spin_lock(&inode->i_lock);
- 	res = __d_find_any_alias(inode);
- 	if (res) {
-@@ -1953,13 +1953,10 @@ static struct dentry *__d_obtain_alias(struct inode *inode, int disconnected)
- 	hlist_bl_unlock(&tmp->d_sb->s_anon);
- 	spin_unlock(&tmp->d_lock);
- 	spin_unlock(&inode->i_lock);
--	security_d_instantiate(tmp, inode);
+-static int v9fs_xattr_security_set(struct dentry *dentry, const char *name,
+-			const void *value, size_t size, int flags, int type)
++static int v9fs_xattr_security_set(struct dentry *dentry, struct inode *inode,
++				   const char *name, const void *value,
++				   size_t size, int flags, int type)
+ {
+ 	int retval;
+ 	char *full_name;
+diff --git a/fs/9p/xattr_trusted.c b/fs/9p/xattr_trusted.c
+index acfadcf..a1fe7d9 100644
+--- a/fs/9p/xattr_trusted.c
++++ b/fs/9p/xattr_trusted.c
+@@ -47,8 +47,9 @@ static int v9fs_xattr_trusted_get(struct dentry *dentry, struct inode *inode,
+ 	return retval;
+ }
  
- 	return tmp;
+-static int v9fs_xattr_trusted_set(struct dentry *dentry, const char *name,
+-			const void *value, size_t size, int flags, int type)
++static int v9fs_xattr_trusted_set(struct dentry *dentry, struct inode *inode,
++				  const char *name, const void *value,
++				  size_t size, int flags, int type)
+ {
+ 	int retval;
+ 	char *full_name;
+diff --git a/fs/9p/xattr_user.c b/fs/9p/xattr_user.c
+index 9b37675..7a34aca 100644
+--- a/fs/9p/xattr_user.c
++++ b/fs/9p/xattr_user.c
+@@ -47,8 +47,9 @@ static int v9fs_xattr_user_get(struct dentry *dentry, struct inode *inode,
+ 	return retval;
+ }
  
-  out_iput:
--	if (res && !IS_ERR(res))
--		security_d_instantiate(res, inode);
- 	iput(inode);
+-static int v9fs_xattr_user_set(struct dentry *dentry, const char *name,
+-			const void *value, size_t size, int flags, int type)
++static int v9fs_xattr_user_set(struct dentry *dentry, struct inode *inode,
++			       const char *name, const void *value,
++			       size_t size, int flags, int type)
+ {
+ 	int retval;
+ 	char *full_name;
+diff --git a/fs/ext2/xattr_security.c b/fs/ext2/xattr_security.c
+index 1d53da4..3ece525 100644
+--- a/fs/ext2/xattr_security.c
++++ b/fs/ext2/xattr_security.c
+@@ -33,12 +33,13 @@ ext2_xattr_security_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext2_xattr_security_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext2_xattr_security_set(struct dentry *unused, struct inode *inode,
++			const char *name, const void *value,
++			size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	return ext2_xattr_set(dentry->d_inode, EXT2_XATTR_INDEX_SECURITY, name,
++	return ext2_xattr_set(inode, EXT2_XATTR_INDEX_SECURITY, name,
+ 			      value, size, flags);
+ }
+ 
+diff --git a/fs/ext2/xattr_trusted.c b/fs/ext2/xattr_trusted.c
+index dd05f14..d88cbb1 100644
+--- a/fs/ext2/xattr_trusted.c
++++ b/fs/ext2/xattr_trusted.c
+@@ -37,12 +37,13 @@ ext2_xattr_trusted_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext2_xattr_trusted_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext2_xattr_trusted_set(struct dentry *unused, struct inode *inode,
++		       const char *name, const void *value,
++		       size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	return ext2_xattr_set(dentry->d_inode, EXT2_XATTR_INDEX_TRUSTED, name,
++	return ext2_xattr_set(inode, EXT2_XATTR_INDEX_TRUSTED, name,
+ 			      value, size, flags);
+ }
+ 
+diff --git a/fs/ext2/xattr_user.c b/fs/ext2/xattr_user.c
+index b3289d5..b96a8f8 100644
+--- a/fs/ext2/xattr_user.c
++++ b/fs/ext2/xattr_user.c
+@@ -41,15 +41,16 @@ ext2_xattr_user_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext2_xattr_user_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext2_xattr_user_set(struct dentry *unused, struct inode *inode,
++		    const char *name, const void *value,
++		    size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	if (!test_opt(dentry->d_sb, XATTR_USER))
++	if (!test_opt(inode->i_sb, XATTR_USER))
+ 		return -EOPNOTSUPP;
+ 
+-	return ext2_xattr_set(dentry->d_inode, EXT2_XATTR_INDEX_USER,
++	return ext2_xattr_set(inode, EXT2_XATTR_INDEX_USER,
+ 			      name, value, size, flags);
+ }
+ 
+diff --git a/fs/ext3/xattr_security.c b/fs/ext3/xattr_security.c
+index 3e60abc..815f8c4 100644
+--- a/fs/ext3/xattr_security.c
++++ b/fs/ext3/xattr_security.c
+@@ -34,12 +34,13 @@ ext3_xattr_security_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext3_xattr_security_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext3_xattr_security_set(struct dentry *unused, struct inode *inode,
++			const char *name, const void *value,
++			size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	return ext3_xattr_set(dentry->d_inode, EXT3_XATTR_INDEX_SECURITY,
++	return ext3_xattr_set(inode, EXT3_XATTR_INDEX_SECURITY,
+ 			      name, value, size, flags);
+ }
+ 
+diff --git a/fs/ext3/xattr_trusted.c b/fs/ext3/xattr_trusted.c
+index 9fe035b..f9e1769 100644
+--- a/fs/ext3/xattr_trusted.c
++++ b/fs/ext3/xattr_trusted.c
+@@ -37,12 +37,13 @@ ext3_xattr_trusted_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext3_xattr_trusted_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext3_xattr_trusted_set(struct dentry *unused, struct inode *inode,
++		       const char *name, const void *value,
++		       size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	return ext3_xattr_set(dentry->d_inode, EXT3_XATTR_INDEX_TRUSTED, name,
++	return ext3_xattr_set(inode, EXT3_XATTR_INDEX_TRUSTED, name,
+ 			      value, size, flags);
+ }
+ 
+diff --git a/fs/ext3/xattr_user.c b/fs/ext3/xattr_user.c
+index 8856f51..ce7b23d 100644
+--- a/fs/ext3/xattr_user.c
++++ b/fs/ext3/xattr_user.c
+@@ -39,14 +39,15 @@ ext3_xattr_user_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext3_xattr_user_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext3_xattr_user_set(struct dentry *unused, struct inode *inode,
++		    const char *name, const void *value,
++		    size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	if (!test_opt(dentry->d_sb, XATTR_USER))
++	if (!test_opt(inode->i_sb, XATTR_USER))
+ 		return -EOPNOTSUPP;
+-	return ext3_xattr_set(dentry->d_inode, EXT3_XATTR_INDEX_USER,
++	return ext3_xattr_set(inode, EXT3_XATTR_INDEX_USER,
+ 			      name, value, size, flags);
+ }
+ 
+diff --git a/fs/ext4/xattr_security.c b/fs/ext4/xattr_security.c
+index 7704e94..c0dc82d 100644
+--- a/fs/ext4/xattr_security.c
++++ b/fs/ext4/xattr_security.c
+@@ -38,12 +38,13 @@ ext4_xattr_security_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext4_xattr_security_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext4_xattr_security_set(struct dentry *unused, struct inode *inode,
++			const char *name, const void *value,
++			size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	return ext4_xattr_set(dentry->d_inode, EXT4_XATTR_INDEX_SECURITY,
++	return ext4_xattr_set(inode, EXT4_XATTR_INDEX_SECURITY,
+ 			      name, value, size, flags);
+ }
+ 
+diff --git a/fs/ext4/xattr_trusted.c b/fs/ext4/xattr_trusted.c
+index 7bf8df2..42d6db0 100644
+--- a/fs/ext4/xattr_trusted.c
++++ b/fs/ext4/xattr_trusted.c
+@@ -41,12 +41,13 @@ ext4_xattr_trusted_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext4_xattr_trusted_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++ext4_xattr_trusted_set(struct dentry *unused, struct inode *inode,
++		       const char *name, const void *value,
++		       size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	return ext4_xattr_set(dentry->d_inode, EXT4_XATTR_INDEX_TRUSTED,
++	return ext4_xattr_set(inode, EXT4_XATTR_INDEX_TRUSTED,
+ 			      name, value, size, flags);
+ }
+ 
+diff --git a/fs/ext4/xattr_user.c b/fs/ext4/xattr_user.c
+index afad2827..f37a4ff 100644
+--- a/fs/ext4/xattr_user.c
++++ b/fs/ext4/xattr_user.c
+@@ -42,14 +42,15 @@ ext4_xattr_user_get(struct dentry *unused, struct inode *inode,
+ }
+ 
+ static int
+-ext4_xattr_user_set(struct dentry *dentry, const char *name,
+-		    const void *value, size_t size, int flags, int type)
++ext4_xattr_user_set(struct dentry *unused, struct inode *inode,
++		    const char *name, const void *value,
++		    size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+-	if (!test_opt(dentry->d_sb, XATTR_USER))
++	if (!test_opt(inode->i_sb, XATTR_USER))
+ 		return -EOPNOTSUPP;
+-	return ext4_xattr_set(dentry->d_inode, EXT4_XATTR_INDEX_USER,
++	return ext4_xattr_set(inode, EXT4_XATTR_INDEX_USER,
+ 			      name, value, size, flags);
+ }
+ 
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index a6e15c5..3f4705f 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -87,10 +87,11 @@ static int f2fs_xattr_generic_get(struct dentry *unused, struct inode *inode,
+ 	return f2fs_getxattr(inode, type, name, buffer, size);
+ }
+ 
+-static int f2fs_xattr_generic_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++static int f2fs_xattr_generic_set(struct dentry *unused, struct inode *inode,
++				  const char *name, const void *value,
++				  size_t size, int flags, int type)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
++	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 
+ 	switch (type) {
+ 	case F2FS_XATTR_INDEX_USER:
+@@ -109,8 +110,7 @@ static int f2fs_xattr_generic_set(struct dentry *dentry, const char *name,
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+ 
+-	return f2fs_setxattr(dentry->d_inode, type, name,
+-					value, size, NULL, flags);
++	return f2fs_setxattr(inode, type, name,	value, size, NULL, flags);
+ }
+ 
+ static size_t f2fs_xattr_advise_list(struct dentry *dentry, char *list,
+@@ -138,11 +138,10 @@ static int f2fs_xattr_advise_get(struct dentry *unused, struct inode *inode,
+ 	return sizeof(char);
+ }
+ 
+-static int f2fs_xattr_advise_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++static int f2fs_xattr_advise_set(struct dentry *unused, struct inode *inode,
++				 const char *name, const void *value,
++				 size_t size, int flags, int type)
+ {
+-	struct inode *inode = dentry->d_inode;
+-
+ 	if (strcmp(name, "") != 0)
+ 		return -EINVAL;
+ 	if (!inode_owner_or_capable(inode))
+diff --git a/fs/gfs2/xattr.c b/fs/gfs2/xattr.c
+index 0c15e9f..96e47b0 100644
+--- a/fs/gfs2/xattr.c
++++ b/fs/gfs2/xattr.c
+@@ -1227,10 +1227,11 @@ int __gfs2_xattr_set(struct inode *inode, const char *name,
+ 	return error;
+ }
+ 
+-static int gfs2_xattr_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++static int gfs2_xattr_set(struct dentry *unused, struct inode *inode,
++			  const char *name, const void *value,
++			  size_t size, int flags, int type)
+ {
+-	return __gfs2_xattr_set(dentry->d_inode, name, value,
++	return __gfs2_xattr_set(inode, name, value,
+ 				size, flags, type);
+ }
+ 
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 1377437..1ac46a2 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -826,8 +826,9 @@ static int hfsplus_osx_getxattr(struct dentry *unused, struct inode *inode,
+ 	return hfsplus_getxattr(inode, name, buffer, size);
+ }
+ 
+-static int hfsplus_osx_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int hfsplus_osx_setxattr(struct dentry *unused, struct inode *inode,
++				const char *name, const void *buffer,
++				size_t size, int flags, int type)
+ {
+ 	if (!strcmp(name, ""))
+ 		return -EINVAL;
+@@ -845,7 +846,7 @@ static int hfsplus_osx_setxattr(struct dentry *dentry, const char *name,
+ 	 * creates), so we pass the name through unmodified (after
+ 	 * ensuring it doesn't conflict with another namespace).
+ 	 */
+-	return hfsplus_setxattr(dentry, name, buffer, size, flags);
++	return hfsplus_setxattr(inode, name, buffer, size, flags);
+ }
+ 
+ static size_t hfsplus_osx_listxattr(struct dentry *dentry, char *list,
+diff --git a/fs/hfsplus/xattr.h b/fs/hfsplus/xattr.h
+index ba9d80d7..28337f5 100644
+--- a/fs/hfsplus/xattr.h
++++ b/fs/hfsplus/xattr.h
+@@ -21,10 +21,10 @@ extern const struct xattr_handler *hfsplus_xattr_handlers[];
+ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 			const void *value, size_t size, int flags);
+ 
+-static inline int hfsplus_setxattr(struct dentry *dentry, const char *name,
++static inline int hfsplus_setxattr(struct inode *inode, const char *name,
+ 			const void *value, size_t size, int flags)
+ {
+-	return __hfsplus_setxattr(dentry->d_inode, name, value, size, flags);
++	return __hfsplus_setxattr(inode, name, value, size, flags);
+ }
+ 
+ ssize_t __hfsplus_getxattr(struct inode *inode, const char *name,
+diff --git a/fs/hfsplus/xattr_security.c b/fs/hfsplus/xattr_security.c
+index 77d7f29..ccbc7df 100644
+--- a/fs/hfsplus/xattr_security.c
++++ b/fs/hfsplus/xattr_security.c
+@@ -35,8 +35,9 @@ static int hfsplus_security_getxattr(struct dentry *unused, struct inode *inode,
  	return res;
  }
-@@ -2817,6 +2814,7 @@ struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
- 		return ERR_CAST(inode);
  
- 	if (inode && S_ISDIR(inode->i_mode)) {
-+		security_d_instantiate(dentry, inode);
- 		spin_lock(&inode->i_lock);
- 		new = __d_find_any_alias(inode);
- 		if (new) {
-@@ -2836,13 +2834,11 @@ struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
- 			__d_move(new, dentry, false);
- 			write_sequnlock(&rename_lock);
- 			spin_unlock(&inode->i_lock);
--			security_d_instantiate(new, inode);
- 			iput(inode);
- 		} else {
- 			/* already taking inode->i_lock, so d_add() by hand */
- 			__d_instantiate(dentry, inode);
- 			spin_unlock(&inode->i_lock);
--			security_d_instantiate(dentry, inode);
- 			d_rehash(dentry);
- 		}
- 	} else {
-@@ -2876,6 +2872,7 @@ struct dentry *d_materialise_unique(struct dentry *dentry, struct inode *inode)
- 		goto out_nolock;
- 	}
+-static int hfsplus_security_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int hfsplus_security_setxattr(struct dentry *unused, struct inode *inode,
++				     const char *name, const void *buffer,
++				     size_t size, int flags, int type)
+ {
+ 	char *xattr_name;
+ 	int res;
+@@ -51,7 +52,7 @@ static int hfsplus_security_setxattr(struct dentry *dentry, const char *name,
+ 	strcpy(xattr_name, XATTR_SECURITY_PREFIX);
+ 	strcpy(xattr_name + XATTR_SECURITY_PREFIX_LEN, name);
  
-+	security_d_instantiate(dentry, inode);
- 	spin_lock(&inode->i_lock);
+-	res = hfsplus_setxattr(dentry, xattr_name, buffer, size, flags);
++	res = hfsplus_setxattr(inode, xattr_name, buffer, size, flags);
+ 	kfree(xattr_name);
+ 	return res;
+ }
+diff --git a/fs/hfsplus/xattr_trusted.c b/fs/hfsplus/xattr_trusted.c
+index 5c9e7a0..5d54660 100644
+--- a/fs/hfsplus/xattr_trusted.c
++++ b/fs/hfsplus/xattr_trusted.c
+@@ -33,8 +33,9 @@ static int hfsplus_trusted_getxattr(struct dentry *unused, struct inode *inode,
+ 	return res;
+ }
  
- 	if (S_ISDIR(inode->i_mode)) {
-@@ -2927,7 +2924,6 @@ found:
- 	spin_unlock(&inode->i_lock);
- out_nolock:
- 	if (actual == dentry) {
--		security_d_instantiate(dentry, inode);
- 		return NULL;
- 	}
+-static int hfsplus_trusted_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int hfsplus_trusted_setxattr(struct dentry *unused, struct inode *inode,
++				    const char *name, const void *buffer,
++				    size_t size, int flags, int type)
+ {
+ 	char *xattr_name;
+ 	int res;
+@@ -49,7 +50,7 @@ static int hfsplus_trusted_setxattr(struct dentry *dentry, const char *name,
+ 	strcpy(xattr_name, XATTR_TRUSTED_PREFIX);
+ 	strcpy(xattr_name + XATTR_TRUSTED_PREFIX_LEN, name);
  
+-	res = hfsplus_setxattr(dentry, xattr_name, buffer, size, flags);
++	res = hfsplus_setxattr(inode, xattr_name, buffer, size, flags);
+ 	kfree(xattr_name);
+ 	return res;
+ }
+diff --git a/fs/hfsplus/xattr_user.c b/fs/hfsplus/xattr_user.c
+index c7c424c..931c054 100644
+--- a/fs/hfsplus/xattr_user.c
++++ b/fs/hfsplus/xattr_user.c
+@@ -33,8 +33,9 @@ static int hfsplus_user_getxattr(struct dentry *unused, struct inode *inode,
+ 	return res;
+ }
+ 
+-static int hfsplus_user_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int hfsplus_user_setxattr(struct dentry *unused, struct inode *inode,
++				 const char *name, const void *buffer,
++				 size_t size, int flags, int type)
+ {
+ 	char *xattr_name;
+ 	int res;
+@@ -49,7 +50,7 @@ static int hfsplus_user_setxattr(struct dentry *dentry, const char *name,
+ 	strcpy(xattr_name, XATTR_USER_PREFIX);
+ 	strcpy(xattr_name + XATTR_USER_PREFIX_LEN, name);
+ 
+-	res = hfsplus_setxattr(dentry, xattr_name, buffer, size, flags);
++	res = hfsplus_setxattr(inode, xattr_name, buffer, size, flags);
+ 	kfree(xattr_name);
+ 	return res;
+ }
+diff --git a/fs/jffs2/security.c b/fs/jffs2/security.c
+index 77a9db6..f8ee8a2 100644
+--- a/fs/jffs2/security.c
++++ b/fs/jffs2/security.c
+@@ -59,13 +59,14 @@ static int jffs2_security_getxattr(struct dentry *unused, struct inode *inode,
+ 				 name, buffer, size);
+ }
+ 
+-static int jffs2_security_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int jffs2_security_setxattr(struct dentry *unused, struct inode *inode,
++				   const char *name, const void *buffer,
++				   size_t size, int flags, int type)
+ {
+ 	if (!strcmp(name, ""))
+ 		return -EINVAL;
+ 
+-	return do_jffs2_setxattr(dentry->d_inode, JFFS2_XPREFIX_SECURITY,
++	return do_jffs2_setxattr(inode, JFFS2_XPREFIX_SECURITY,
+ 				 name, buffer, size, flags);
+ }
+ 
+diff --git a/fs/jffs2/xattr_trusted.c b/fs/jffs2/xattr_trusted.c
+index 7b2fe19..0f36f46 100644
+--- a/fs/jffs2/xattr_trusted.c
++++ b/fs/jffs2/xattr_trusted.c
+@@ -26,12 +26,13 @@ static int jffs2_trusted_getxattr(struct dentry *unused, struct inode *inode,
+ 				 name, buffer, size);
+ }
+ 
+-static int jffs2_trusted_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int jffs2_trusted_setxattr(struct dentry *unused, struct inode *inode,
++				  const char *name, const void *buffer,
++				  size_t size, int flags, int type)
+ {
+ 	if (!strcmp(name, ""))
+ 		return -EINVAL;
+-	return do_jffs2_setxattr(dentry->d_inode, JFFS2_XPREFIX_TRUSTED,
++	return do_jffs2_setxattr(inode, JFFS2_XPREFIX_TRUSTED,
+ 				 name, buffer, size, flags);
+ }
+ 
+diff --git a/fs/jffs2/xattr_user.c b/fs/jffs2/xattr_user.c
+index 0d8b125..62551b6 100644
+--- a/fs/jffs2/xattr_user.c
++++ b/fs/jffs2/xattr_user.c
+@@ -26,12 +26,13 @@ static int jffs2_user_getxattr(struct dentry *unused, struct inode *inode,
+ 				 name, buffer, size);
+ }
+ 
+-static int jffs2_user_setxattr(struct dentry *dentry, const char *name,
+-		const void *buffer, size_t size, int flags, int type)
++static int jffs2_user_setxattr(struct dentry *unused, struct inode *inode,
++			       const char *name, const void *buffer,
++			       size_t size, int flags, int type)
+ {
+ 	if (!strcmp(name, ""))
+ 		return -EINVAL;
+-	return do_jffs2_setxattr(dentry->d_inode, JFFS2_XPREFIX_USER,
++	return do_jffs2_setxattr(inode, JFFS2_XPREFIX_USER,
+ 				 name, buffer, size, flags);
+ }
+ 
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 3e0df4a1..7ccecfb 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -4781,12 +4781,11 @@ static int nfs4_do_set_security_label(struct inode *inode,
+ }
+ 
+ static int
+-nfs4_set_security_label(struct dentry *dentry, const void *buf, size_t buflen)
++nfs4_set_security_label(struct inode *inode, const void *buf, size_t buflen)
+ {
+ 	struct nfs4_label ilabel, *olabel = NULL;
+ 	struct nfs_fattr fattr;
+ 	struct rpc_cred *cred;
+-	struct inode *inode = dentry->d_inode;
+ 	int status;
+ 
+ 	if (!nfs_server_capable(inode, NFS_CAP_SECURITY_LABEL))
+@@ -6037,14 +6036,14 @@ nfs4_release_lockowner(struct nfs_server *server, struct nfs4_lock_state *lsp)
+ 
+ #define XATTR_NAME_NFSV4_ACL "system.nfs4_acl"
+ 
+-static int nfs4_xattr_set_nfs4_acl(struct dentry *dentry, const char *key,
+-				   const void *buf, size_t buflen,
+-				   int flags, int type)
++static int nfs4_xattr_set_nfs4_acl(struct dentry *unused, struct inode *inode,
++				   const char *key, const void *buf,
++				   size_t buflen, int flags, int type)
+ {
+ 	if (strcmp(key, "") != 0)
+ 		return -EINVAL;
+ 
+-	return nfs4_proc_set_acl(dentry->d_inode, buf, buflen);
++	return nfs4_proc_set_acl(inode, buf, buflen);
+ }
+ 
+ static int nfs4_xattr_get_nfs4_acl(struct dentry *unused, struct inode *inode,
+@@ -6077,12 +6076,12 @@ static inline int nfs4_server_supports_labels(struct nfs_server *server)
+ 	return server->caps & NFS_CAP_SECURITY_LABEL;
+ }
+ 
+-static int nfs4_xattr_set_nfs4_label(struct dentry *dentry, const char *key,
+-				   const void *buf, size_t buflen,
+-				   int flags, int type)
++static int nfs4_xattr_set_nfs4_label(struct dentry *unused, struct inode *inode,
++				     const char *key, const void *buf,
++				     size_t buflen, int flags, int type)
+ {
+ 	if (security_ismaclabel(key))
+-		return nfs4_set_security_label(dentry, buf, buflen);
++		return nfs4_set_security_label(inode, buf, buflen);
+ 
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index 8f42eaa..2d6aa1a 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -7262,13 +7262,14 @@ static int ocfs2_xattr_security_get(struct dentry *unused, struct inode *inode,
+ 			       name, buffer, size);
+ }
+ 
+-static int ocfs2_xattr_security_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++static int ocfs2_xattr_security_set(struct dentry *unused, struct inode *inode,
++				    const char *name, const void *value,
++				    size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+ 
+-	return ocfs2_xattr_set(dentry->d_inode, OCFS2_XATTR_INDEX_SECURITY,
++	return ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_SECURITY,
+ 			       name, value, size, flags);
+ }
+ 
+@@ -7353,13 +7354,14 @@ static int ocfs2_xattr_trusted_get(struct dentry *unused, struct inode *inode,
+ 			       name, buffer, size);
+ }
+ 
+-static int ocfs2_xattr_trusted_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++static int ocfs2_xattr_trusted_set(struct dentry *unused, struct inode *inode,
++				   const char *name, const void *value,
++				   size_t size, int flags, int type)
+ {
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+ 
+-	return ocfs2_xattr_set(dentry->d_inode, OCFS2_XATTR_INDEX_TRUSTED,
++	return ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_TRUSTED,
+ 			       name, value, size, flags);
+ }
+ 
+@@ -7406,17 +7408,18 @@ static int ocfs2_xattr_user_get(struct dentry *unused, struct inode *inode,
+ 			       buffer, size);
+ }
+ 
+-static int ocfs2_xattr_user_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++static int ocfs2_xattr_user_set(struct dentry *unused, struct inode *inode,
++				const char *name, const void *value,
++				size_t size, int flags, int type)
+ {
+-	struct ocfs2_super *osb = OCFS2_SB(dentry->d_sb);
++	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+ 
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+ 	if (osb->s_mount_opt & OCFS2_MOUNT_NOUSERXATTR)
+ 		return -EOPNOTSUPP;
+ 
+-	return ocfs2_xattr_set(dentry->d_inode, OCFS2_XATTR_INDEX_USER,
++	return ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_USER,
+ 			       name, value, size, flags);
+ }
+ 
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index a9d6c01..81b0008 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -841,10 +841,10 @@ set_posix_acl(struct inode *inode, int type, struct posix_acl *acl)
+ EXPORT_SYMBOL(set_posix_acl);
+ 
+ static int
+-posix_acl_xattr_set(struct dentry *dentry, const char *name,
+-		const void *value, size_t size, int flags, int type)
++posix_acl_xattr_set(struct dentry *dentry, struct inode *inode,
++		    const char *name, const void *value, size_t size,
++		    int flags, int type)
+ {
+-	struct inode *inode = dentry->d_inode;
+ 	struct posix_acl *acl = NULL;
+ 	int ret;
+ 
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 40d4fcc..b5d64cc 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -797,7 +797,8 @@ reiserfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+ 	if (!handler || get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
+ 		return -EOPNOTSUPP;
+ 
+-	return handler->set(dentry, name, value, size, flags, handler->flags);
++	return handler->set(dentry, dentry->d_inode, name, value, size,
++			    flags, handler->flags);
+ }
+ 
+ /*
+@@ -814,7 +815,8 @@ int reiserfs_removexattr(struct dentry *dentry, const char *name)
+ 	if (!handler || get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
+ 		return -EOPNOTSUPP;
+ 
+-	return handler->set(dentry, name, NULL, 0, XATTR_REPLACE, handler->flags);
++	return handler->set(dentry, dentry->d_inode, name, NULL, 0,
++			    XATTR_REPLACE, handler->flags);
+ }
+ 
+ struct listxattr_buf {
+diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+index dad61a9..d68b8da 100644
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -22,16 +22,16 @@ security_get(struct dentry *unused, struct inode *inode, const char *name,
+ }
+ 
+ static int
+-security_set(struct dentry *dentry, const char *name, const void *buffer,
+-	     size_t size, int flags, int handler_flags)
++security_set(struct dentry *unused, struct inode *inode, const char *name,
++	     const void *buffer, size_t size, int flags, int handler_flags)
+ {
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
+ 
+-	if (IS_PRIVATE(dentry->d_inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
+ 
+-	return reiserfs_xattr_set(dentry->d_inode, name, buffer, size, flags);
++	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+ }
+ 
+ static size_t security_list(struct dentry *dentry, char *list, size_t list_len,
+diff --git a/fs/reiserfs/xattr_trusted.c b/fs/reiserfs/xattr_trusted.c
+index 9e3cf4a..8202daa 100644
+--- a/fs/reiserfs/xattr_trusted.c
++++ b/fs/reiserfs/xattr_trusted.c
+@@ -21,16 +21,16 @@ trusted_get(struct dentry *unused, struct inode *inode, const char *name,
+ }
+ 
+ static int
+-trusted_set(struct dentry *dentry, const char *name, const void *buffer,
+-	    size_t size, int flags, int handler_flags)
++trusted_set(struct dentry *unused, struct inode *inode, const char *name,
++	    const void *buffer, size_t size, int flags, int handler_flags)
+ {
+ 	if (strlen(name) < sizeof(XATTR_TRUSTED_PREFIX))
+ 		return -EINVAL;
+ 
+-	if (!capable(CAP_SYS_ADMIN) || IS_PRIVATE(dentry->d_inode))
++	if (!capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode))
+ 		return -EPERM;
+ 
+-	return reiserfs_xattr_set(dentry->d_inode, name, buffer, size, flags);
++	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+ }
+ 
+ static size_t trusted_list(struct dentry *dentry, char *list, size_t list_size,
+diff --git a/fs/reiserfs/xattr_user.c b/fs/reiserfs/xattr_user.c
+index 8c0d2ef..5d0ec05 100644
+--- a/fs/reiserfs/xattr_user.c
++++ b/fs/reiserfs/xattr_user.c
+@@ -19,15 +19,15 @@ user_get(struct dentry *unused, struct inode *inode, const char *name,
+ }
+ 
+ static int
+-user_set(struct dentry *dentry, const char *name, const void *buffer,
+-	 size_t size, int flags, int handler_flags)
++user_set(struct dentry *unused, struct inode *inode, const char *name,
++	 const void *buffer, size_t size, int flags, int handler_flags)
+ {
+ 	if (strlen(name) < sizeof(XATTR_USER_PREFIX))
+ 		return -EINVAL;
+ 
+-	if (!reiserfs_xattrs_user(dentry->d_sb))
++	if (!reiserfs_xattrs_user(inode->i_sb))
+ 		return -EOPNOTSUPP;
+-	return reiserfs_xattr_set(dentry->d_inode, name, buffer, size, flags);
++	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+ }
+ 
+ static size_t user_list(struct dentry *dentry, char *list, size_t list_size,
+diff --git a/fs/xattr.c b/fs/xattr.c
+index b04fc6b..87bd926 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -773,7 +773,8 @@ generic_setxattr(struct dentry *dentry, const char *name, const void *value, siz
+ 	handler = xattr_resolve_name(dentry->d_sb->s_xattr, &name);
+ 	if (!handler)
+ 		return -EOPNOTSUPP;
+-	return handler->set(dentry, name, value, size, flags, handler->flags);
++	return handler->set(dentry, dentry->d_inode, name, value, size,
++			    flags, handler->flags);
+ }
+ 
+ /*
+@@ -788,7 +789,7 @@ generic_removexattr(struct dentry *dentry, const char *name)
+ 	handler = xattr_resolve_name(dentry->d_sb->s_xattr, &name);
+ 	if (!handler)
+ 		return -EOPNOTSUPP;
+-	return handler->set(dentry, name, NULL, 0,
++	return handler->set(dentry, dentry->d_inode, name, NULL, 0,
+ 			    XATTR_REPLACE, handler->flags);
+ }
+ 
+diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+index bd4a6ee..8e19527 100644
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@ -56,10 +56,11 @@ xfs_xattr_get(struct dentry *unused, struct inode *inode, const char *name,
+ }
+ 
+ static int
+-xfs_xattr_set(struct dentry *dentry, const char *name, const void *value,
+-		size_t size, int flags, int xflags)
++xfs_xattr_set(struct dentry *unused, struct inode *inode,
++	      const char *name, const void *value,
++	      size_t size, int flags, int xflags)
+ {
+-	struct xfs_inode *ip = XFS_I(dentry->d_inode);
++	struct xfs_inode *ip = XFS_I(inode);
+ 
+ 	if (strcmp(name, "") == 0)
+ 		return -EINVAL;
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index ad4c869..0027b04 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -26,8 +26,9 @@ struct xattr_handler {
+ 		       const char *name, size_t name_len, int handler_flags);
+ 	int (*get)(struct dentry *dentry, struct inode *inode, const char *name,
+ 		   void *buffer, size_t size, int handler_flags);
+-	int (*set)(struct dentry *dentry, const char *name, const void *buffer,
+-		   size_t size, int flags, int handler_flags);
++	int (*set)(struct dentry *dentry, struct inode *inode, const char *name,
++		   const void *buffer, size_t size, int flags,
++		   int handler_flags);
+ };
+ 
+ struct xattr {
 -- 
 1.7.4.1
 
