@@ -2,76 +2,91 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EFCC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CE8C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ECB32238F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ECB32238F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DBB082238F
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUQkKTn6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB082238F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeHJBAX (ORCPT
+        id S1727526AbeHJBAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:00:23 -0400
-Received: from mga17.intel.com ([192.55.52.151]:14661 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbeHJBAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:00:22 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 15:33:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,217,1531810800"; 
-   d="scan'208";a="82142749"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga002.jf.intel.com with ESMTP; 09 Aug 2018 15:33:21 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fntUR-000H2z-Ov; Fri, 10 Aug 2018 06:33:07 +0800
-Date:   Fri, 10 Aug 2018 06:33:17 +0800
-From:   kbuild test robot <fengguang.wu@intel.com>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
-        boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>
-Subject: [RFC PATCH] xen/blkback: xen_blkif_pgrant_timeout can be static
-Message-ID: <20180809223317.GA3009@lkp-ivb-ep02>
-References: <20180808142528.31029-2-jgross@suse.com>
+        Thu, 9 Aug 2018 21:00:47 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36955 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbeHJBAr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 21:00:47 -0400
+Received: by mail-qk0-f196.google.com with SMTP id t79-v6so5202949qke.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:33:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=HMq6Vfe/Nymr+KMcqzkv9JWl3X4GP+3PgZH3m3QM3ss=;
+        b=QUQkKTn6FYnftq0ZpnDfDeLqDmxKeGI6gMnlUndlSp0Ns2xHgptwifDxpajl6WLoW2
+         rScCKikPh6Sco6JNflfNaqRMlyDth7jVdrNDQQGFrTpWziLa9f3JKhUCjdGuUGT2RD/p
+         4h6RJ4cbJMfwzamT+TK41iQgJwk3UCfyj/onJxxR+J8GWcxoNzaomKoEOPvsw1mZB/uv
+         u82Q4rCxMYDQilOo+jPEPOHds93yQznrcMlP//SH19KtbNQGRD/aWkaBTJGR9cfhW+En
+         9+CC5mskVfSxHoxcrpkD612J9h9Ff9T7KlwnjG1YY+4W820YEgmVMTgP5ELrdz0/uqdB
+         vPHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=HMq6Vfe/Nymr+KMcqzkv9JWl3X4GP+3PgZH3m3QM3ss=;
+        b=eqDfqxRiuUH7rzs/my1CcAoaDz5afj7LxApshoEtPI8ohxkozkiQjpGsUj7aSYc5HL
+         5UJTZD06fhn2O6Kdwtc7cgDEnM76yq5CHXiPFiuZ+6ryx6yjYsMjf11Tyy3Y3LLVZ/Zn
+         Zw5VyIRJZgOiY/c7axRE9K7TcrEpHYckV2WK9zV47Pcs4GsCKcS6VFvKUB9MfA/VZzFM
+         jsg6lLVt6/IPvV6ZMM+i4+7dyJWwPJfB9OXhsdRIGtP3KyHQkrtAF4BAPYrEEv/8DY48
+         FmfSUf1yO1VpQQurJCh1vmOFEdHrNSsHg9oJv8EjQx5eiOGTuE2fSK1XE51YgTGKzuo6
+         Zphw==
+X-Gm-Message-State: AOUpUlEdx01X9T9aln/iHyCPP18VrWXGhBIN61gfwoXF7r/h5U6Tk9vR
+        f5/f8C/v4No30ME9ceFNUyY=
+X-Google-Smtp-Source: AA+uWPylkc4gVYqYU5jUlXq35Gd2V8y+NfcNQ8ztVxFPahJ0dXevvZSIcPs7Rwh9BXyFS5qJiPMSdg==
+X-Received: by 2002:a37:641:: with SMTP id 62-v6mr3646255qkg.227.1533854030933;
+        Thu, 09 Aug 2018 15:33:50 -0700 (PDT)
+Received: from WindFlash ([201.82.148.26])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm5929550qty.57.2018.08.09.15.33.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 15:33:50 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 19:33:43 -0300
+From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
+To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Style changes
+Message-ID: <cover.1533853354.git.leobras.c@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180808142528.31029-2-jgross@suse.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some style changes to help readability.
 
-Fixes: 5bed25379565 ("xen/blkback: don't keep persistent grants too long")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
- blkback.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Leonardo Brás (3):
+  staging: fbtft: Includes description to mutex and spinlock - Style
+  staging: fbtft: Replaces (1 << n) for macro BIT(n) - Style
+  staging: fbtft: Corrects long index line  - Style
 
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index f341ac8..9eae7b24 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -88,7 +88,7 @@ MODULE_PARM_DESC(max_persistent_grants,
-  * use. The time is in seconds, 0 means indefinitely long.
-  */
- 
--unsigned int xen_blkif_pgrant_timeout = 60;
-+static unsigned int xen_blkif_pgrant_timeout = 60;
- module_param_named(persistent_grant_unused_seconds, xen_blkif_pgrant_timeout,
- 		   uint, 0644);
- MODULE_PARM_DESC(persistent_grant_unused_seconds,
+ drivers/staging/fbtft/fbtft-sysfs.c |  5 ++-
+ drivers/staging/fbtft/fbtft.h       | 60 ++++++++++++++---------------
+ 2 files changed, 34 insertions(+), 31 deletions(-)
+
+-- 
+2.18.0
+
