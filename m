@@ -2,201 +2,86 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DC5C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5590C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23F12238F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:30:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OS7mooJP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YHcDE1EA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23F12238F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5600F2238F
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5600F2238F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeHJA5f (ORCPT
+        id S1727448AbeHJBAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 20:57:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41904 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeHJA5f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 20:57:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 00B8760B7F; Thu,  9 Aug 2018 22:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533853839;
-        bh=QE6RKQs2fS5EhRu3BgTzeBdXL0ME9mSqqSloh3lEAyE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OS7mooJPzoRxUVaz8WY8656vhXPQgK4pQSOmTvT1/51tGB72sE4jQ4YPpE2DG4U/+
-         1rvpi6v5OcAVlzL++c7I56/VHJeo9B+MMt1kW8SnkFJ8dxQRSYFq4esVqsXiyxcMfC
-         yDPhYsYHWIuir4NYKqax2/cYZhfsCyhXCnptj2Nk=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7D8FD60B1A;
-        Thu,  9 Aug 2018 22:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533853838;
-        bh=QE6RKQs2fS5EhRu3BgTzeBdXL0ME9mSqqSloh3lEAyE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YHcDE1EAow8u0gXxT1slMVfYCKkvhENZ/5O8hTtaLQRaSJPAPZzGpPPXlxSeex6NK
-         5EYAwmF6G4FrWk6qP3ed3OJHxb8RcIH+xszuB+r+iAobkhxjGTtNK156qg888+DEmx
-         AclEm0AXkj5yJ2GCdyVfuhzUoTOJg6W2TIdE/NuQ=
+        Thu, 9 Aug 2018 21:00:19 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28258 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726890AbeHJBAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 21:00:19 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 15:33:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,217,1531810800"; 
+   d="scan'208";a="61997246"
+Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Aug 2018 15:33:21 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1fntUR-000H2p-Na; Fri, 10 Aug 2018 06:33:07 +0800
+Date:   Fri, 10 Aug 2018 06:33:16 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
+        boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>
+Subject: Re: [PATCH v2 1/5] xen/blkback: don't keep persistent grants too long
+Message-ID: <201808100636.B2N6Mzlj%fengguang.wu@intel.com>
+References: <20180808142528.31029-2-jgross@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 09 Aug 2018 15:30:38 -0700
-From:   rishabhb@codeaurora.org
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Sodagudi Prasad <psodagud@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        tsoni@codeaurora.org, Vikram Mulukutla <markivx@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ckadabi@codeaurora.org, rjwysocki@gmail.com
-Subject: Re: [PATCH] dd: Invoke one probe retry cycle after every initcall
- level
-In-Reply-To: <CAJZ5v0h4=TqzXY3W-eVRyCh1FLzAWASoOdNEJyAmHHgJQEMWeg@mail.gmail.com>
-References: <1532035440-7860-1-git-send-email-rishabhb@codeaurora.org>
- <CAJZ5v0gWqx5Op-Bbg7bAYALCyBPsc=-+homAYj2Q1qd3WsqmDw@mail.gmail.com>
- <e4ca8572ed913ab65f63be8a351d4439@codeaurora.org>
- <CAJZ5v0ixuWo9RC21Z8zVhuHfkr1uV4vdqMh4s+qGMR7R8Wycag@mail.gmail.com>
- <68b90830d5024ce75a20b017aaf21c05@codeaurora.org>
- <CAJZ5v0jpm8tVjyWjA36Sp-bTEWUE+6cExjH7=CM=LUB-6xvePA@mail.gmail.com>
- <CA+tyz+6ZwtpKM=G5F2Do_sXWyo8r83ma19fWpn4HELiy0XT7=w@mail.gmail.com>
- <de9fc0924f73bc26e067cce6c18d2714@codeaurora.org>
- <CAJZ5v0h4=TqzXY3W-eVRyCh1FLzAWASoOdNEJyAmHHgJQEMWeg@mail.gmail.com>
-Message-ID: <2aecb7753a305aac081c9c9b981cedc1@codeaurora.org>
-X-Sender: rishabhb@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808142528.31029-2-jgross@suse.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-06 01:53, Rafael J. Wysocki wrote:
-> On Fri, Aug 3, 2018 at 12:20 AM, Sodagudi Prasad
-> <psodagud@codeaurora.org> wrote:
->>> From: RAFAEL J. WYSOCKI <rafael@kernel.org>
->>> Date: Wed, Aug 1, 2018 at 2:21 PM
->>> Subject: Re: [PATCH] dd: Invoke one probe retry cycle after every
->>> initcall level
->>> To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman
->>> <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
->>> <linux-kernel@vger.kernel.org>, ckadabi@codeaurora.org,
->>> tsoni@codeaurora.org, Vikram Mulukutla <markivx@codeaurora.org>
->>> 
->>> 
->>> On Wed, Aug 1, 2018 at 11:18 PM,  <rishabhb@codeaurora.org> wrote:
->>>> 
->>>> On 2018-07-24 01:24, Rafael J. Wysocki wrote:
->>>>> 
->>>>> 
->>>>> On Mon, Jul 23, 2018 at 10:22 PM,  <rishabhb@codeaurora.org> wrote:
->>>>>> 
->>>>>> 
->>>>>> On 2018-07-23 04:17, Rafael J. Wysocki wrote:
->>>>>>> 
->>>>>>> 
->>>>>>> 
->>>>>>> On Thu, Jul 19, 2018 at 11:24 PM, Rishabh Bhatnagar
->>>>>>> <rishabhb@codeaurora.org> wrote:
->>>>>>>> 
->>>>>>>> 
->>>>>>>> 
->>>>>>>> Drivers that are registered at an initcall level may have to
->>>>>>>> wait until late_init before the probe deferral mechanism can
->>>>>>>> retry their probe functions. It is possible that their
->>>>>>>> dependencies were resolved much earlier, in some cases even
->>>>>>>> before the next initcall level. Invoke one probe retry cycle
->>>>>>>> at every _sync initcall level, allowing these drivers to be
->>>>>>>> probed earlier.
->>>>>>> 
->>>>>>> 
->>>>>>> 
->>>>>>> 
->>>>>>> Can you please say something about the actual use case this is
->>>>>>> expected to address?
->>>>>> 
->>>>>> 
->>>>>> 
->>>>>> We have a display driver that depends 3 other devices to be
->>>>>> probed so that it can bring-up the display. Because of
->>> 
->>> dependencies
->>>>>> 
->>>>>> not being met the deferral mechanism defers the probes for a later
->>> 
->>> time,
->>>>>> 
->>>>>> even though the dependencies might be met earlier. With this
->>> 
->>> change
->>>>>> 
->>>>>> display can be brought up much earlier.
->>>>> 
->>>>> 
->>>>> 
->>>>> OK
->>>>> 
->>>>> What runlevel brings up the display after the change?
->>>>> 
->>>>> Thanks,
->>>>> Rafael
->>>> 
->>>> After the change the display can come up after device_initcall level
->>>> itself.
->>>> The above mentioned 3 devices are probed at 0.503253, 0.505210 and
->>> 
->>> 0.523264
->>>> 
->>>> secs.
->>>> Only the first device is probed successfully. With the current
->>>> deferral mechanism the devices get probed again after late_initcall
->>>> at 9.19 and 9.35 secs. So display can only come up after 9.35 secs.
->>>> With this change the devices are re-probed successfully at 0.60 and
->>>> 0.613 secs. Therefore display can come just after 0.613 secs.
->>> 
->>> 
->>> OK, so why do you touch the initcall levels earlier than device_?
->> 
->> 1)      re-probe probing devices in the active list on every level 
->> help to
->> avoid circular dependency pending list.
->> 2)      There are so many devices which gets deferred in earlier init 
->> call
->> levels, so we wanted to reprobe them at every successive init call 
->> level.
-> 
-> Do you have specific examples of devices for which that helps?
-> 
->>> 
->>>> This change helps in overall android bootup as well.
->>> 
->>> 
->>> How exactly?
->> 
->> We have seen less no of re-probes at late_init and most of the 
->> driver's
->> dependency met earlier than late_init call level. It helped display 
->> and
->> couple of other drivers by executing the re probe work at every init 
->> level.
-> 
-> So I can believe that walking the deferred list on device_initcall and
-> maybe on device_initcall_sync may help, but I'm not quite convinced
-> that it matters for the earlier initcall levels.
+Hi Juergen,
 
-Many of our drivers are dependent on the regulator and bus driver.
-Both the regulator and bus driver are probed in the subsys_initcall 
-level.
-Now the probe of bus driver requires regulator to be working. If the 
-probe of
-bus driver happens before regulator, then bus driver's probe will be
-deferred and all other device's probes which depend on bus driver will 
-also be deferred.
-The impact of this problem is reduced if we have this patch.
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on block/for-next]
+[also build test WARNING on v4.18-rc8 next-20180809]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Juergen-Gross/xen-blk-persistent-grant-rework/20180810-003229
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/block/xen-blkback/blkback.c:91:14: sparse: symbol 'xen_blkif_pgrant_timeout' was not declared. Should it be static?
+   drivers/block/xen-blkback/blkback.c:1368:41: sparse: expression using sizeof(void)
+   drivers/block/xen-blkback/blkback.c:409:29: sparse: expression using sizeof(void)
+   drivers/block/xen-blkback/blkback.c:409:29: sparse: expression using sizeof(void)
+   drivers/block/xen-blkback/blkback.c:791:38: sparse: expression using sizeof(void)
+   drivers/block/xen-blkback/common.h:434:21: sparse: expression using sizeof(void)
+   drivers/block/xen-blkback/common.h:482:21: sparse: expression using sizeof(void)
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
