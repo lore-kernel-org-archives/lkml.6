@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF24BC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D649DC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC2622395
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826E721EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:45:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="hPtZifc+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC2622395
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="b1yeYyZ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826E721EFC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeHJALj (ORCPT
+        id S1727518AbeHJALn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 20:11:39 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:56874 "EHLO
+        Thu, 9 Aug 2018 20:11:43 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:57458 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeHJALj (ORCPT
+        with ESMTP id S1727370AbeHJALl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 20:11:39 -0400
+        Thu, 9 Aug 2018 20:11:41 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -44,153 +44,240 @@ Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 03/24] doc: Add doc for the Ingenic TCU hardware
-Date:   Thu,  9 Aug 2018 23:43:53 +0200
-Message-Id: <20180809214414.20905-4-paul@crapouillou.net>
+Subject: [PATCH v6 04/24] dt-bindings: Add doc for the Ingenic TCU drivers
+Date:   Thu,  9 Aug 2018 23:43:54 +0200
+Message-Id: <20180809214414.20905-5-paul@crapouillou.net>
 In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
 References: <20180809214414.20905-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533851091; bh=qhaXBkXebPjJZP6SvrJlDJdnFjhvoEGCbsvmIG6D6LQ=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=hPtZifc+4PPVWfNJLxCuINBJKDhXPnn+tqefZKrIhbqJPRCmsVhr+znGf3UuxB3nQAC80K4a7VPxTz2W87Y8j7lQVRULZddsn7VW0BIDtTELDBK+4LNQdXH4/1JibztYqmlJ2XFbKD2qvNODZPMdsN1nEkLB4YuKSOYUDU/vInM=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533851093; bh=wRMmR2mIrvRlHDwuOHTcmN4PMVEE4PRzXmHLeK9i5RE=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=b1yeYyZ6srsG8VFmdU1i9fqIoi9yls7K4aEhfq58jYfux0/FH5M2qmius+ndrWO23LIrpZSQDoiJSCwraLQcoH3IR37E0+EeLPxw6betQrQBQ+wRd5hCiRhqDE3cDwqHchBvc2YpYHMELKqTCLQgceixGNSgH0mtLj64ZG6Z0PI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a documentation file about the Timer/Counter Unit (TCU) present in
-the Ingenic JZ47xx SoCs.
-
-The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
-hardware block. It features up to to eight channels, that can be used as
-counters, timers, or PWM.
-
-- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
-  have eight channels.
-
-- JZ4725B introduced a separate channel, called Operating System Timer
-  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
-  64-bit.
-
-- Each one of the TCU channels has its own clock, which can be reparented
-  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
-  their TCSR register.
-  * The watchdog and OST hardware blocks also feature a TCSR register with
-    the same format in their register space.
-  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
-    and OST clocks.
-
-- Each TCU channel works in one of two modes:
-  * mode TCU1: channels cannot work in sleep mode, but are easier to
-    operate.
-  * mode TCU2: channels can work in sleep mode, but the operation is a bit
-    more complicated than with TCU1 channels.
-
-- The mode of each TCU channel depends on the SoC used:
-  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
-    TCU1 mode.
-  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
-  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
-    others operate as TCU1.
-
-- Each channel can generate an interrupt. Some channels share an interrupt
-  line, some don't, and this changes between SoC versions:
-  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
-    own interrupt line; channels 2-7 share the last interrupt line.
-  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
-    interrupt line; the OST uses the last interrupt line.
-  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
-    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
-    the OST uses the last interrupt line.
+Add documentation about how to properly use the Ingenic TCU
+(Timer/Counter Unit) drivers from devicetree.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- Documentation/mips/00-INDEX        |  3 ++
- Documentation/mips/ingenic-tcu.txt | 60 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
- create mode 100644 Documentation/mips/ingenic-tcu.txt
+ .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
+ .../devicetree/bindings/timer/ingenic,tcu.txt      | 134 +++++++++++++++++++++
+ .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
+ 3 files changed, 134 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
 
- v4: New patch in this series
+ v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+     added content.
 
- v5: Added information about number of channels, and improved
-     documentation about channel modes
+ v5: - Edited PWM/watchdog DT bindings documentation to point to the new
+       document.
+     - Moved main document to
+       Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+     - Updated documentation to reflect the new devicetree bindings.
 
- v6: Add info about OST (can be 32-bit on older SoCs)
+ v6: - Removed PWM/watchdog documentation files as asked by upstream
+     - Removed doc about properties that should be implicit
+     - Removed doc about ingenic,timer-channel /
+       ingenic,clocksource-channel as they are gone
+     - Fix WDT clock name in the binding doc
+     - Fix lengths of register areas in watchdog/pwm nodes
 
-diff --git a/Documentation/mips/00-INDEX b/Documentation/mips/00-INDEX
-index 8ae9cffc2262..8ab8c3f83771 100644
---- a/Documentation/mips/00-INDEX
-+++ b/Documentation/mips/00-INDEX
-@@ -2,3 +2,6 @@
- 	- this file.
- AU1xxx_IDE.README
- 	- README for MIPS AU1XXX IDE driver.
-+ingenic-tcu.txt
-+	- Information file about the Timer/Counter Unit present
-+	  in Ingenic JZ47xx SoCs.
-diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
+diff --git a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+deleted file mode 100644
+index 7d9d3f90641b..000000000000
+--- a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-Ingenic JZ47xx PWM Controller
+-=============================
+-
+-Required properties:
+-- compatible: One of:
+-  * "ingenic,jz4740-pwm"
+-  * "ingenic,jz4770-pwm"
+-  * "ingenic,jz4780-pwm"
+-- #pwm-cells: Should be 3. See pwm.txt in this directory for a description
+-  of the cells format.
+-- clocks : phandle to the external clock.
+-- clock-names : Should be "ext".
+-
+-
+-Example:
+-
+-	pwm: pwm@10002000 {
+-		compatible = "ingenic,jz4740-pwm";
+-		reg = <0x10002000 0x1000>;
+-
+-		#pwm-cells = <3>;
+-
+-		clocks = <&ext>;
+-		clock-names = "ext";
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 new file mode 100644
-index 000000000000..0ea35b2a46da
+index 000000000000..838ce5065534
 --- /dev/null
-+++ b/Documentation/mips/ingenic-tcu.txt
-@@ -0,0 +1,60 @@
-+Ingenic JZ47xx SoCs Timer/Counter Unit hardware
-+-----------------------------------------------
++++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+@@ -0,0 +1,134 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
++==========================================================
 +
-+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
-+hardware block. It features up to to eight channels, that can be used as
-+counters, timers, or PWM.
++For a description of the TCU hardware and drivers, have a look at
++Documentation/mips/ingenic-tcu.txt.
 +
-+- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
-+  have eight channels.
++Required properties:
 +
-+- JZ4725B introduced a separate channel, called Operating System Timer
-+  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
-+  64-bit.
++- compatible: Must be one of:
++  * ingenic,jz4740-tcu
++  * ingenic,jz4725b-tcu
++  * ingenic,jz4770-tcu
++- reg: Should be the offset/length value corresponding to the TCU registers
++- clocks: List of phandle & clock specifiers for clocks external to the TCU.
++  The "pclk", "rtc", "ext" and "tcu" clocks should be provided.
++- clock-names: List of name strings for the external clocks.
++- #clock-cells: Should be <1>;
++  Clock consumers specify this argument to identify a clock. The valid values
++  may be found in <dt-bindings/clock/ingenic,tcu.h>.
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value should be 1.
++- interrupt-parent : phandle of the interrupt controller.
++- interrupts : Specifies the interrupt the controller is connected to.
 +
-+- Each one of the TCU channels has its own clock, which can be reparented
-+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
-+  their TCSR register.
-+  * The watchdog and OST hardware blocks also feature a TCSR register with
-+    the same format in their register space.
-+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
-+    and OST clocks.
 +
-+- Each TCU channel works in one of two modes:
-+  * mode TCU1: channels cannot work in sleep mode, but are easier to
-+    operate.
-+  * mode TCU2: channels can work in sleep mode, but the operation is a bit
-+    more complicated than with TCU1 channels.
++Children nodes
++==========================================================
 +
-+- The mode of each TCU channel depends on the SoC used:
-+  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
-+    TCU1 mode.
-+  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
-+  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
-+    others operate as TCU1.
 +
-+- Each channel can generate an interrupt. Some channels share an interrupt
-+  line, some don't, and this changes between SoC versions:
-+  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
-+    own interrupt line; channels 2-7 share the last interrupt line.
-+  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
-+    interrupt line; the OST uses the last interrupt line.
-+  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
-+    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
-+    the OST uses the last interrupt line.
++PWM node:
++---------
 +
-+Implementation
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-pwm
++  * ingenic,jz4725b-pwm
++- #pwm-cells: Should be 3. See ../pwm/pwm.txt for a description of the cell
++  format.
++- clocks: List of phandle & clock specifiers for the TCU clocks.
++- clock-names: List of name strings for the TCU clocks.
++
++
++Watchdog node:
 +--------------
 +
-+The functionalities of the TCU hardware are spread across multiple drivers:
-+- clocks/irq/timer: drivers/clocksource/ingenic-timer.c
-+- PWM:              drivers/pwm/pwm-jz4740.c
-+- watchdog:         drivers/watchdog/jz4740_wdt.c
-+- OST:              drivers/clocksource/ingenic-ost.c
++Required properties:
 +
-+Because various functionalities of the TCU that belong to different drivers
-+and frameworks can be controlled from the same registers, all of these
-+drivers access their registers through the same regmap.
++- compatible: Must be one of:
++  * ingenic,jz4740-watchdog
++  * ingenic,jz4780-watchdog
++- clocks: phandle to the WDT clock
++- clock-names: should be "wdt"
 +
-+For more information regarding the devicetree bindings of the TCU drivers,
-+have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
++
++OST node:
++---------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4725b-ost
++  * ingenic,jz4770-ost
++- clocks: phandle to the OST clock
++- clock-names: should be "ost"
++- interrupts : Specifies the interrupt the OST is connected to.
++
++
++Example
++==========================================================
++
++#include <dt-bindings/clock/jz4770-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
++
++/ {
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4770-tcu";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_RTC
++			  &cgu JZ4770_CLK_EXT
++			  &cgu JZ4770_CLK_PCLK
++			  &cgu JZ4770_CLK_EXT>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++
++		watchdog: watchdog@0 {
++			compatible = "ingenic,jz4740-watchdog";
++			reg = <0x0 0xc>;
++
++			clocks = <&tcu TCU_CLK_WDT>;
++			clock-names = "wdt";
++		};
++
++		pwm: pwm@10 {
++			compatible = "ingenic,jz4740-pwm";
++			reg = <0x10 0x40>;
++
++			#pwm-cells = <3>;
++
++			clocks = <&tcu TCU_CLK_TIMER0
++				  &tcu TCU_CLK_TIMER1
++				  &tcu TCU_CLK_TIMER2
++				  &tcu TCU_CLK_TIMER3
++				  &tcu TCU_CLK_TIMER4
++				  &tcu TCU_CLK_TIMER5
++				  &tcu TCU_CLK_TIMER6
++				  &tcu TCU_CLK_TIMER7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++				      "timer4", "timer5", "timer6", "timer7";
++		};
++
++		ost: timer@e0 {
++			compatible = "ingenic,jz4770-ost";
++			reg = <0xe0 0x20>;
++
++			clocks = <&tcu TCU_CLK_OST>;
++			clock-names = "ost";
++
++			interrupts = <15>;
++		};
++	};
++};
+diff --git a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt b/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+deleted file mode 100644
+index ce1cb72d5345..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Ingenic Watchdog Timer (WDT) Controller for JZ4740 & JZ4780
+-
+-Required properties:
+-compatible: "ingenic,jz4740-watchdog" or "ingenic,jz4780-watchdog"
+-reg: Register address and length for watchdog registers
+-clocks: phandle to the RTC clock
+-clock-names: should be "rtc"
+-
+-Example:
+-
+-watchdog: jz4740-watchdog@10002000 {
+-	compatible = "ingenic,jz4740-watchdog";
+-	reg = <0x10002000 0x10>;
+-
+-	clocks = <&cgu JZ4740_CLK_RTC>;
+-	clock-names = "rtc";
+-};
 -- 
 2.11.0
 
