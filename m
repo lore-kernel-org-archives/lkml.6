@@ -2,93 +2,106 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E89EC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE666C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3842A208DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cb4vgNW1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3842A208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 89CE021A13
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CE021A13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbeHIKyJ (ORCPT
+        id S1729943AbeHIKzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:54:09 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:45731 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbeHIKyJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:54:09 -0400
-Received: by mail-oi0-f49.google.com with SMTP id q11-v6so8411202oic.12
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 01:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/sl4SLdRyWoDU6c666JvurRqjZDVtvsMZJ1+tRfGL+o=;
-        b=cb4vgNW1XVmYzTYUq2e425AWNEpGTOZV9/QhNUw4te9u9ycYaHTBvQJz2ZfIvKHrzE
-         DGZ5Zi734cWrbUZqTsWf+FvpPOeqRd8WBql2vRYODTgIPLlBIXUzyNLzQCesdwIMm3MT
-         PQNSdnlRTLnFZvEbG5phtmFxW4JQx93+zMFcw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/sl4SLdRyWoDU6c666JvurRqjZDVtvsMZJ1+tRfGL+o=;
-        b=Ts8jW1pAgs5CDfoGue49YSKpgT/NQmq1NIbVHgGTj52xnRN1a5JOEkAWp3Q8b6C5ie
-         6ShjB+m6kC+32dL0hvf9znua1zppPAQmtvJUq6+upfZ8R8gl4MnHbg/6vFao8lCc+q7v
-         5PlyG7SwbGYTHTVBleure6yRsjDKIvn/cJCq7zZ2riAANLOws/9ZSiG7dacu5jG0N+KV
-         g0eIPfKIxXNchzh/xrVYnSPPWzaYnzV8qS+GQ1jQxqDI80TM/tQzLp3mvAWj1CFzoag3
-         s2AJ5Cjx4sXvwP7CkdChBiIclu8JSu17X5NPtzY6vbn8/7evW6kmg1Q3geBs/83HkmYJ
-         9aqQ==
-X-Gm-Message-State: AOUpUlF0+Ve8sz3atS8SZTGR7B0zOISwSb8u6fjBpH67KctyLMlh9aPl
-        ZiZq0VLdzWYY18LjrcfvtSPPj/+Rzg2XH4BHF6wEQO84D/4=
-X-Google-Smtp-Source: AA+uWPzmyGJaUSGM3NGDWg9lzHFPt+wEGZlY1HTN4HD0oaxmRd1+zE4k+kOnLV0wUHkyoK0Pea81dy6NYFNG1DnDMQQ=
-X-Received: by 2002:aca:e350:: with SMTP id a77-v6mr1273877oih.250.1533803423477;
- Thu, 09 Aug 2018 01:30:23 -0700 (PDT)
+        Thu, 9 Aug 2018 06:55:19 -0400
+Received: from mga14.intel.com ([192.55.52.115]:32423 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728170AbeHIKzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 06:55:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 01:31:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,214,1531810800"; 
+   d="scan'208";a="79848101"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Aug 2018 01:31:33 -0700
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 9 Aug 2018 01:31:33 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.226]) with mapi id 14.03.0319.002;
+ Thu, 9 Aug 2018 16:31:31 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Kenneth Lee <liguozhu@hisilicon.com>,
+        Jerome Glisse <jglisse@redhat.com>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "Philippe Ombredanne" <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: RE: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Thread-Topic: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Thread-Index: AQHUKYHSUTvc9I1u4EGviW0yiW9YHKSqmCAAgAElIaD//5XZgIAArFOAgADg0ICAALZGAIAD9xYAgADOyACAAjMwAIAA7XWAgAEY3wCAAIxngA==
+Date:   Thu, 9 Aug 2018 08:31:31 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
+References: <20180801165644.GA3820@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+ <20180802040557.GL160746@Turing-Arch-b> <20180802142243.GA3481@redhat.com>
+ <20180803034721.GC91035@Turing-Arch-b> <20180803143944.GA4079@redhat.com>
+ <20180806031252.GG91035@Turing-Arch-b> <20180806153257.GB6002@redhat.com>
+ <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
+ <20180808151835.GA3429@redhat.com> <20180809080352.GI91035@Turing-Arch-b>
+In-Reply-To: <20180809080352.GI91035@Turing-Arch-b>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODBjMWY4N2EtNDljNC00MGFhLTk5ZmYtOTY0OWU3ZDVkZDRmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSTNVSm9Mdmx6QnJVY2lBMW4xK3RtRjlNOU04VnV0VW0xaTdUMWVpN3hkdVB3eG9nUWxZU1lQRlVPWWM3dzllSCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 01:30:22 -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <EA52CBCF76D5E04D95BED55B83577BE7A67744@MBX50.360buyAD.local>
-References: <EA52CBCF76D5E04D95BED55B83577BE7A67744@MBX50.360buyAD.local>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 9 Aug 2018 10:30:22 +0200
-Message-ID: <CAJfpegscozvNV3R4h1NZCGLq_Te8AHXEAxymRJNj96OkmPFFJw@mail.gmail.com>
-Subject: Re: FUSE: write operations trigger balance_dirty_pages when using
- writeback cache
-To:     =?UTF-8?B?5YiY56GV54S2?= <liushuoran@jd.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 9:31 AM, =E5=88=98=E7=A1=95=E7=84=B6 <liushuoran@jd.=
-com> wrote:
-> Thank you for the prompt reply.
->
-> I tried this config, but still can get balance_dirty_pages triggered.
-
-I think it may be due to BDI_CAP_STRICTLIMIT used by fuse.  If you
-remove that setting from fuse in the kernel you should not be getting
-the balance_dirty_pages() as often.
-
-Not sure if that's the realproblem, though, that depends on how much
-time is spent in balance_dirty_pages().  You can try profiling the
-kernel to find that out.
-
-My guess is that the real cause of the slowdown is some other place.
-There's for example a known issue with selinux related getxattr
-thrashing.  Disabling getxattr on your filesystem may significantly
-improve performance.
-
-Thanks,
-Miklos
+PiBGcm9tOiBLZW5uZXRoIExlZSBbbWFpbHRvOmxpZ3Vvemh1QGhpc2lsaWNvbi5jb21dDQo+IFNl
+bnQ6IFRodXJzZGF5LCBBdWd1c3QgOSwgMjAxOCA0OjA0IFBNDQo+IA0KPiBCdXQgd2UgaGF2ZSBh
+bm90aGVyIHJlcXVpcmVtZW50IHdoaWNoIGlzIHRvIGNvbWJpbmUgc29tZSBkZXZpY2UNCj4gdG9n
+ZXRoZXIgdG8NCj4gc2hhcmUgdGhlIHNhbWUgYWRkcmVzcyBzcGFjZS4gVGhpcyBpcyBhIGxpdHRs
+ZSBsaWtlIHRoZXNlIGtpbmRzIG9mIHNvbHV0aW9uOg0KPiANCj4gaHR0cDovL3RjZS50ZWNobmlv
+bi5hYy5pbC93cC1jb250ZW50L3VwbG9hZHMvc2l0ZXMvOC8yMDE1LzA2L1NDLTcuMi1NLi0NCj4g
+U2lsYmVyc3RlaW4ucGRmDQo+IA0KPiBXaXRoIHRoYXQsIHRoZSBhcHBsaWNhdGlvbiBjYW4gZGly
+ZWN0bHkgcGFzcyB0aGUgTmlDIHBhY2tldCBwb2ludGVyIHRvIHRoZQ0KPiBkZWNyeXB0aW9uIGFj
+Y2VsZXJhdG9yLCBhbmQgZ2V0IHRoZSBiYXJlIGRhdGEgaW4gcGxhY2UuIFRoaXMgaXMgdGhlIGZl
+YXR1cmUNCj4gdGhhdA0KPiB0aGUgVkZJTyBjb250YWluZXIgY2FuIHByb3ZpZGUuDQoNCmFib3Zl
+IGlzIG5vdCBhIGdvb2QgYXJndW1lbnQsIGF0IGxlYXN0IGluIHRoZSBjb250ZXh0IG9mIHlvdXIg
+ZGlzY3Vzc2lvbi4NCklmIGVhY2ggZGV2aWNlIGhhcyB0aGVpciBvd24gaW50ZXJmYWNlIChzaW1p
+bGFyIHRvIEdQVSkgZm9yIHByb2Nlc3MgdG8gYmluZCANCndpdGgsIHRoZW4gaGF2aW5nIHRoZSBw
+cm9jZXNzIGJpbmRpbmcgdG8gbXVsdGlwbGUgZGV2aWNlcyBvbmUtYnktb25lIHRoZW4NCnlvdSBz
+dGlsbCBnZXQgc2FtZSBhZGRyZXNzIHNwYWNlIHNoYXJlZCBjcm9zcyB0aGVtLi4uDQoNClRoYW5r
+cw0KS2V2aW4NCg==
