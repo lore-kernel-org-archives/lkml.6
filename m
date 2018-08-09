@@ -2,113 +2,121 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19946C46460
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EDCC46464
 	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B7920C01
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072F921480
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cIMENDdA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B7920C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6QYx86c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072F921480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbeHJBaX (ORCPT
+        id S1727537AbeHJBah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:30:23 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40191 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbeHJBaW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:30:22 -0400
-Received: by mail-pl0-f68.google.com with SMTP id s17-v6so3165451plp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=7qHkOxVlVyaGLDdR6zs2X8MRVLljmE/NXWuhsozuKV4=;
-        b=cIMENDdAIES0knWIOW8JvUVYlVVfDbRL+WI+Jtxw3aOz4UsaU1K2U68jGtwfxsbg3u
-         viwEY4qRnxVQyfKQ4tTlSgJ/N2f3ComlqwoYbHjPuiRlZV91ROWWBlC8p9aMw0I5hzBC
-         9h8NJVPfgpRHRJUnsRWdaBsVGIw2Qz5IdbbL8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=7qHkOxVlVyaGLDdR6zs2X8MRVLljmE/NXWuhsozuKV4=;
-        b=nHxH7ExbO97HwMFvMkka0iZIvm9uxUHRswRiNgxP01uQNjWoeMwkaAlOw950rBSpWU
-         uVZPtyeX+jxxcQV7REBn9JF9oWW6f8TlIZFnFpWvwPtDKSJNiEnS6Kb4FZnmpZH2ZHtO
-         +js0jPHyCk8ka+9Hsl0qaSCScc+9cXpNAqBu19t5mI0vGewHT4HUqwDi22g5a2xtoXE6
-         dWyQlGEJBpW8F8zD5j9p01saGJN4eEEoHLU9UNEPZ8dG+sXH6yfRank6NyW9wf8OeKSV
-         dUeDHwMN6ijF6dGI7SqgxegSsNABARMZjvmkB2pBOY0lrFEcdstkA+o0/o+gF0ckBCxb
-         ym4Q==
-X-Gm-Message-State: AOUpUlEF+I82DMdQS5aC8jc0wwqi3bZ1181sCZQdE2xmdSLDetoNxg1A
-        ZtCHmvuYCPQRNT1OeV7LHNvv9Q==
-X-Google-Smtp-Source: AA+uWPyxdGnedLp2YeS53CAnmqzhpEhBFafh4hAuAWzPSPOXux8YYtseWOjmbMu3EEvd8u9TimC5Ng==
-X-Received: by 2002:a17:902:e85:: with SMTP id 5-v6mr3669498plx.73.1533855799965;
-        Thu, 09 Aug 2018 16:03:19 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm12422038pfp.6.2018.08.09.16.03.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 16:03:19 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 9 Aug 2018 21:30:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727515AbeHJBag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 21:30:36 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B98FB20657;
+        Thu,  9 Aug 2018 23:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533855814;
+        bh=zSfUb5d8bCceFxiGT1b3jFpD4Wy81XMkn5fT7/DCnA4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r6QYx86cB51720V6UkRlprwvTV5tG8Lswt+hwKPLnFMgjQQCn/nGn9ijngN6UZO0E
+         tiwlwJOcZmJQMN38v6dIe5zlF2wBMxAChpGadryCPWzw3ud96VGYq6rAgQzp0GKCHz
+         FddDgwEj0wiMdB77LuBleDU/GILcj5IfiJqcclms=
+Date:   Thu, 9 Aug 2018 18:03:32 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v8 0/4] Add parameter for disabling ACS redirection for
+ P2P
+Message-ID: <20180809230332.GH113140@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180730161840.13733-1-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Julius Werner <jwerner@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAODwPW8eg2WOh9-Raeb8Q65E-5D7RDheDU8e+H68FHGa0MS37A@mail.gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>, samuel@sholland.org
-References: <20180809171722.144325-1-swboyd@chromium.org>
- <20180809171722.144325-8-swboyd@chromium.org>
- <CAODwPW8eg2WOh9-Raeb8Q65E-5D7RDheDU8e+H68FHGa0MS37A@mail.gmail.com>
-Message-ID: <153385579866.220756.16086660810932774163@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 7/7] firmware: coreboot: Request table region for exclusive
- access
-Date:   Thu, 09 Aug 2018 16:03:18 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730161840.13733-1-logang@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Julius Werner (2018-08-09 14:07:31)
-> On Thu, Aug 9, 2018 at 10:17 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Call request_mem_region() on the entire coreboot table to make sure
-> > other devices don't attempt to map the coreboot table in their drivers.
-> > If drivers need that support, it would be better to provide bus APIs
-> > they can use to do that through the mapping created in this file.
-> >
-> =
+On Mon, Jul 30, 2018 at 10:18:36AM -0600, Logan Gunthorpe wrote:
+> Changes since v6:
+> * Fixed order of operations for device specific disable function as
+>   noticed by Alex
+> * Rebased onto v4.18-rc5 (no conflicts)
+> 
+> Changes since v5:
+> * Add a quirk to handle the Intel SPT PCH case (as pointed out by Alex)
+> * Warn in the case that we try to disable ACS redirect on a device
+>   that doesn't have the ACS capability (also suggested by Alex)
+> * Collect reviewed-by tag from Alex
+> * Rebased onto v4.18-rc4 (no conflicts)
+> 
+> Changes since v4:
+> * Fixed a couple documentation mistakes spotted by Randy
+> 
+> Changes since v3:
+> * Removed some of the cruft that was copied from the resource_alignment
+>   paramater (per Alex)
+> * A number of docuemntation fixes as noticed by Alex and Willy
+> 
+> Changes since v2:
+> * Rebased onto v4.18-rc1 (no conflicts)
+> * Minor tweaks to the documentation per Andy
+> * Removed the "path:" prefix and use the path parsing code
+>   for simple devices (as it works the same). Per a suggestion from Alex
+> 
+> Changes since v1:
+> * Reworked pci_dev_str_match_path using strrchr as suggested by Alex
+> * Collected Christian's Acks
+> 
+> 
+> Logan Gunthorpe (4):
+>   PCI: Make specifying PCI devices in kernel parameters reusable
+>   PCI: Allow specifying devices using a base bus and path of devfns
+>   PCI: Introduce disable_acs_redir quirk
+>   PCI: Introduce the disable_acs_redir parameter
+> 
+>  Documentation/admin-guide/kernel-parameters.txt |  41 +++-
+>  drivers/pci/pci.c                               | 310 +++++++++++++++++++-----
+>  drivers/pci/quirks.c                            |  78 +++++-
+>  include/linux/pci.h                             |   5 +
+>  4 files changed, 361 insertions(+), 73 deletions(-)
 
-> Does this prevent userspace from mapping this region via /dev/mem? If
-> so, let's please not do it to not break compatibility with existing
-> tools.
+I reorganized this a bit and split the quirk code into a couple
+patches an put the result on my pci/peer-to-peer branch for v4.19.
 
-No it doesn't break. I can still read the memory here with /dev/mem (and
-cbmem). But that seems to be because of a couple reasons. First, I have
-CONFIG_STRICT_DEVMEM=3Dy but CONFIG_IO_STRICT_DEVMEM=3Dn. This allows me to
-map memory that isn't system ram. If CONFIG_IO_STRICT_DEVMEM=3Dy then
-mapping this I/O region through /dev/mem here would be denied .
-Furthermore, I see that my system RAM excludes this coreboot table so it
-doesn't fall into the bucket that CONFIG_STRICT_DEVMEM would find.
+I think the result is equivalent, but let me know if I made a mistake.
 
-> (I guess an alternative would be to rewrite 'cbmem' to use
-> /sys/bus/coreboot/devices if available to get its coreboot table
-> information. But we'd still need to maintain the old path for
-> backwards compatibility anyway, so that would really just make it more
-> complicated.)
-
-This sounds like a good idea. Userspace reaching into /dev/mem is not
-good from a kernel hardening perspective. That's why those strict devmem
-configs exist. Can cbmem be updated to query information from device
-drivers instead, so that we can enable CONFIG_IO_STRICT_DEVMEM as well?
-
+Bjorn
