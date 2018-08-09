@@ -2,140 +2,163 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F5FC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE208C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8729121EB7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8729121EB7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6EA7F21EB7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA7F21EB7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732612AbeHISws (ORCPT
+        id S1732631AbeHISxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:52:48 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44113 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732499AbeHISws (ORCPT
+        Thu, 9 Aug 2018 14:53:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46288 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732411AbeHISxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:52:48 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fnnm6-0002Au-EU; Thu, 09 Aug 2018 18:26:58 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fnnm0-0006R3-H9; Thu, 09 Aug 2018 18:26:52 +0200
-Date:   Thu, 9 Aug 2018 18:26:52 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yuan Yao <yao.yuan@freescale.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Phil Reid <preid@electromag.com.au>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Peter Rosin <peda@axentia.se>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] i2c: imx: Simplify stopped state tracking
-Message-ID: <20180809162652.r34omvkctzxte422@pengutronix.de>
-References: <20180709094304.8814-1-esben.haabendal@gmail.com>
- <20180709094304.8814-4-esben.haabendal@gmail.com>
- <20180724075919.iyysd7dtbddvbavq@pengutronix.de>
- <87k1ozzquk.fsf@gmail.com>
+        Thu, 9 Aug 2018 14:53:03 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79GOcJJ073512
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 12:27:24 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2krs0j8bxy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:27:24 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 9 Aug 2018 17:27:22 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 17:27:19 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79GRHuZ40632454
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 16:27:17 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9E2942049;
+        Thu,  9 Aug 2018 19:27:25 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E11784203F;
+        Thu,  9 Aug 2018 19:27:24 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 19:27:24 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v8 09/22] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180809130607.32781b72.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 9 Aug 2018 18:27:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20180809130607.32781b72.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87k1ozzquk.fsf@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18080916-0020-0000-0000-000002B47A4E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080916-0021-0000-0000-000021018F35
+Message-Id: <e52ee356-bb7b-f672-1c9c-5b1b84775a2d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 02:06:43PM +0200, Esben Haabendal wrote:
-> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
-> 
-> > On Mon, Jul 09, 2018 at 11:43:03AM +0200, Esben Haabendal wrote:
-> >> From: Esben Haabendal <eha@deif.com>
-> >> 
-> >> Always update the stopped state when busy status have been checked.
-> >> This is identical to what was done before, with the exception of error
-> >> handling.
-> >> Without this change, some errors cause the stopped state to be left in
-> >> incorrect state in i2c_imx_stop(), i2c_imx_dma_read(), i2c_imx_read() and
-> >> i2c_imx_xfer().
-> >> 
-> >> Signed-off-by: Esben Haabendal <eha@deif.com>
-> >> ---
-> >>  drivers/i2c/busses/i2c-imx.c | 12 ++++++------
-> >>  1 file changed, 6 insertions(+), 6 deletions(-)
-> >> 
-> >> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> >> index d86f152176a4..1db8e6790afc 100644
-> >> --- a/drivers/i2c/busses/i2c-imx.c
-> >> +++ b/drivers/i2c/busses/i2c-imx.c
-> >> @@ -421,10 +421,14 @@ static int i2c_imx_bus_busy(struct imx_i2c_struct *i2c_imx, int for_busy)
-> >>  			return -EAGAIN;
-> >>  		}
-> >>  
-> >> -		if (for_busy && (temp & I2SR_IBB))
-> >> +		if (for_busy && (temp & I2SR_IBB)) {
-> >> +			i2c_imx->stopped = 0;
-> >>  			break;
-> >> -		if (!for_busy && !(temp & I2SR_IBB))
-> >> +		}
-> >> +		if (!for_busy && !(temp & I2SR_IBB)) {
-> >> +			i2c_imx->stopped = 1;
-> >>  			break;
-> >> +		}
-> >
-> > Would it make sense to assign to ->stopped independent of for_busy?
-> 
-> What do you mean?
-> 
-> Assigning to ->stopped on each check for I2SR_IBB in loop, independent
-> of the for_busy argument?  I don't think so.  The additional assignments
-> would be to the same value as it is set to already.
+On 09/08/2018 13:06, Cornelia Huck wrote:
+> On Wed,  8 Aug 2018 10:44:19 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+>> index d7e39ad..6a827f3 100644
+>> --- a/drivers/s390/crypto/vfio_ap_drv.c
+>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/mod_devicetable.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/string.h>
+>> +#include <asm/zcrypt.h>
+>>   #include "vfio_ap_private.h"
+>>   
+>>   #define VFIO_AP_ROOT_NAME "vfio_ap"
+>> @@ -68,6 +69,18 @@ static int vfio_ap_matrix_dev_create(void)
+>>   {
+>>   	int ret;
+>>   
+>> +	mutex_init(&matrix_dev.lock);
+>> +	INIT_LIST_HEAD(&matrix_dev.mdev_list);
+>> +
+>> +	/* Test if PQAP(QCI) instruction is available */
+>> +	if (test_facility(12)) {
+>> +		ret = ap_qci(&matrix_dev.info);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	atomic_set(&matrix_dev.available_instances, MAX_ZDEV_ENTRIES_EXT);
+>> +
+>>   	ret = misc_register(&matrix_dev.misc_dev);
+> OK, you are adding more stuff other than the miscdevice after all...
+> still, I don't think that this is a good idea.
+>
+> I think I had already asked this for a previous version: Why has this
+> been turned into a miscdevice? (I think my reaction to the answer was
+> 'meh'... but I think more and more that we should not do that.)
 
-Currently you have:
+Following our off-line conversation...
 
-	if (for_busy && (temp & I2SR_IBB)) {
-		i2c_imx->stopped = 0;
-		break;
-	}
+I understand your concern, about the misc device and dynamically
+updating the misc device structure.
 
-	if (!for_busy && !(temp & I2SR_IBB)) {
-		i2c_imx->stopped = 1;
-		break;
-	}
+For it is your main point of contention and we do not currently have
+a use case for the misc device I propose we just let it go and
+rebase on the device design we had in V6 and did not seem to
+make any trouble to any one.
 
-The semantic of this is the same (apart from always updating .stopped)
-but is imho easier:
+We will propose a v9 with the integration of all comment done
+so far soon as possible.
 
-	i2c_imx->stopped = !(temp & I2SR_IBB);
 
-	if (for_busy != i2c_imx->stopped)
-		break;
+Best regards,
 
-Best regards
-Uwe
+Pierre
+
+
+>
+>>   	if (ret)
+>>   		return ret;
+
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Pierre Morel
+Linux/KVM/QEMU in BÃ¶blingen - Germany
+
