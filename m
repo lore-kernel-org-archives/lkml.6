@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DDDC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C942C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E712238B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46AB72238B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jpkozzay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E712238B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJdf5T0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46AB72238B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=elisp.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeHIUhT (ORCPT
+        id S1727314AbeHIUhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:37:19 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32955 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbeHIUhT (ORCPT
+        Thu, 9 Aug 2018 16:37:22 -0400
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:34879 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726882AbeHIUhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:37:19 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d4-v6so3233190pfn.0;
-        Thu, 09 Aug 2018 11:11:18 -0700 (PDT)
+        Thu, 9 Aug 2018 16:37:22 -0400
+Received: by mail-pf1-f177.google.com with SMTP id p12-v6so3228298pfh.2;
+        Thu, 09 Aug 2018 11:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sSiVVi3rqDaN9cOwbVZla/jtHoG6CbWIGbpqxT3FMYw=;
-        b=JpkozzayIBkTZoq7nEMnOnb+AqMkjCfJTNzra59vHZtsFBReoyU6ZOKpEvzez8ttwq
-         DlzZ+Zxsn2Z3EUSRZLV5BFZRGa0zwHcoESo4lvNeDgMj7C7U1PJanAdrQN2tYvszhAV9
-         Pde0DpaU7pYgxAvaPow/IzmIrbUeYZf9sRycvOEy2xS9/KlM5MkGZdx3BS7UtFqMooDQ
-         GxUJc7/BC6Js6U5hFn022HWSDgSxCCGi7M3y095iwfSrXTh+3hmzQjMGCwtcoafP44qj
-         4254PSSGJ0/sv0g1IbTP7FCcKdZm2S0qYdrQdsZkITSd0MuxZbqiUG/ygdxGXhDiJNZ+
-         NvTQ==
+        bh=vEgVkYKjembb7998doR0VHcTdu4uilIeK4V2QI2Qgx4=;
+        b=tJdf5T0KC1vyfXTtLja5K0aym0G+xycjFXFhvpvA/UkLBLPJ1QsZe+vxXfCP5Z6RjW
+         Y2YWT+qbYJuQnX0buPciVnKIaXpQSi6sVXRLg6iOO84ebyYThkvR3wMNPkuN1Zom07s4
+         jl5ctIsiS++VKWh4y18ctDbQuBpDeppeG+uNMIyr+55ze6IfnvzBcrPq7rCvLnVclViG
+         4azPNF58ol1yvPyZikE8ttnIuFWSAmu6EtVaTOgWBBpKv7/XCXDNjjDhywfkZSCMjdys
+         thBSsw8U+y412/NgT5h6MiB0c6OeTsNy8gQxlUUiN+M31VOn8nlnCNdik0tJwaPpDsyl
+         3n3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=sSiVVi3rqDaN9cOwbVZla/jtHoG6CbWIGbpqxT3FMYw=;
-        b=jlSUv2p7yy8dLtgVr1Qw7xMG+ZzTc3Zq1DzqewLE3EQoybaSX4376p1+bYt/TbTP/q
-         YJ2JxN80J72VJ5PwGxfZfJKPdXOXU8K1vQ4cGHuzgC2LsjVY8E6jD3r7TogSJOKY3HMe
-         xpoe80bW9NeGjzgC+8tCUlyOfICYc6TGTAiBkgVZMUJVriRL/abnsJ6QSAs2eIpinYEL
-         spfFO5yOOewQo0Vs5jcny65unkW8cJGwdm7oHwCVjlLIkly0qMORr1GaKxrvlJO9/l4G
-         5KiWhGGY5r+oQHfTOsJLSY0NxWFOvRdZjeIOj32jgOpK03YUfeIgo593PiMVeyj2Sk2b
-         /I/w==
-X-Gm-Message-State: AOUpUlFu0L6zSfwvGAFWUQdaYwZY8uquMgID9TAkL2raeH+iMQw8Jz6Q
-        gsvuJgSEOLtTID6jseTq7VE=
-X-Google-Smtp-Source: AA+uWPzndkqIa8Of0ZBquZi6yK+iLdlTGgRwCvgpmBifMjQzp7+eswSn6xSVmXNWd5q75r+2KfJLuA==
-X-Received: by 2002:a63:2647:: with SMTP id m68-v6mr3173234pgm.60.1533838278334;
-        Thu, 09 Aug 2018 11:11:18 -0700 (PDT)
+        bh=vEgVkYKjembb7998doR0VHcTdu4uilIeK4V2QI2Qgx4=;
+        b=s9cDBqfsud2XrTsjPuxAi/jF262R72l6xmRlYqfXr0vSBFNm1IZF8oKY/S/ciTL1qG
+         LREvAmo7nAAPxyFTLmXPgWhu/UTpLF5gZzMn0GSe8k+XKWobAHg9Emjwu9xPRk40OCtt
+         VMIJQ68VXRmIVqYSe2wPIKlZPE+9VXboqqJNVWdOH9th+J0mBSZbr7M3nlJMMiblbrIT
+         iGcOhgQYtOo7Y3DcDcqpvz3fHDw/PxA7gtX/EugWiI+k8rpZ7ijx+HkdCb5W2C3Qb4Mi
+         bnwAbrlOK3y7sp1YgA+PHrjD6bD7huY8Q+pVSUOYgNM2SY+wr3S2RuG74d+EVZ1n7yRY
+         9bBg==
+X-Gm-Message-State: AOUpUlGJZMgcrLlmHUVfS4zWOvtJMiAQ/z7kf969vkp/0GMkpz1c/qUf
+        sA5YCtnmhvtKlZ5GsGn201fQ8APSDb4=
+X-Google-Smtp-Source: AA+uWPwYqci3E8ZLxZUMAa3To3x5DUp2vi3v19eKUaRwR3dkP1R9xE+wqL1HSwlhroLv9WtVITGVnw==
+X-Received: by 2002:a62:998:: with SMTP id 24-v6mr3386794pfj.99.1533838281287;
+        Thu, 09 Aug 2018 11:11:21 -0700 (PDT)
 Received: from localhost (h101-111-148-072.catv02.itscom.jp. [101.111.148.72])
-        by smtp.gmail.com with ESMTPSA id k64-v6sm16081815pfc.160.2018.08.09.11.11.17
+        by smtp.gmail.com with ESMTPSA id 87-v6sm15442992pfn.103.2018.08.09.11.11.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 11:11:17 -0700 (PDT)
+        Thu, 09 Aug 2018 11:11:20 -0700 (PDT)
 From:   Naohiro Aota <naota@elisp.net>
 To:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
@@ -65,9 +65,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
         Bart Van Assche <bart.vanassche@wdc.com>,
         Matias Bjorling <mb@lightnvm.io>,
         Naohiro Aota <naota@elisp.net>
-Subject: [RFC PATCH 04/12] btrfs-progs: Introduce zone block device helper functions
-Date:   Fri, 10 Aug 2018 03:10:57 +0900
-Message-Id: <20180809181105.12856-4-naota@elisp.net>
+Subject: [RFC PATCH 05/12] btrfs-progs: load and check zone information
+Date:   Fri, 10 Aug 2018 03:10:58 +0900
+Message-Id: <20180809181105.12856-5-naota@elisp.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180809181105.12856-1-naota@elisp.net>
 References: <20180809180450.5091-1-naota@elisp.net>
@@ -77,305 +77,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduce several zone related functions: btrfs_get_zones() to
-get zone information from the specified device and put the information in
-zinfo, and zone_is_random_write() to check if a zone accept random writes.
+This patch checks if a device added to btrfs is a zoned block device. If it
+is, load zones information and the zone size for the device.
+
+For a btrfs volume composed of multiple zoned block devices, all devices
+must have the same zone size.
 
 Signed-off-by: Naohiro Aota <naota@elisp.net>
 ---
- utils.c   | 194 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- utils.h   |  16 +++++
- volumes.h |  28 ++++++++
- 3 files changed, 238 insertions(+)
+ utils.c   | 10 ++++++++++
+ volumes.c | 18 ++++++++++++++++++
+ volumes.h |  3 +++
+ 3 files changed, 31 insertions(+)
 
 diff --git a/utils.c b/utils.c
-index 2212692c..71fc044a 100644
+index 71fc044a..a2172a82 100644
 --- a/utils.c
 +++ b/utils.c
-@@ -359,6 +359,200 @@ out:
- 	return ret;
+@@ -250,6 +250,16 @@ int btrfs_add_to_fsid(struct btrfs_trans_handle *trans,
+ 		goto out;
+ 	}
+ 
++	ret = btrfs_get_zone_info(fd, path, fs_info->fs_devices->hmzoned,
++				  &device->zinfo);
++	if (ret)
++		goto out;
++	if (device->zinfo.zone_size != fs_info->fs_devices->zone_size) {
++		error("Device zone size differ\n");
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	disk_super = (struct btrfs_super_block *)buf;
+ 	dev_item = &disk_super->dev_item;
+ 
+diff --git a/volumes.c b/volumes.c
+index d81b348e..2ec27cd7 100644
+--- a/volumes.c
++++ b/volumes.c
+@@ -160,6 +160,8 @@ static int device_list_add(const char *path,
+ 	struct btrfs_device *device;
+ 	struct btrfs_fs_devices *fs_devices;
+ 	u64 found_transid = btrfs_super_generation(disk_super);
++	int hmzoned = btrfs_super_incompat_flags(disk_super) &
++			BTRFS_FEATURE_INCOMPAT_HMZONED;
+ 
+ 	fs_devices = find_fsid(disk_super->fsid);
+ 	if (!fs_devices) {
+@@ -237,6 +239,8 @@ static int device_list_add(const char *path,
+ 	if (fs_devices->lowest_devid > devid) {
+ 		fs_devices->lowest_devid = devid;
+ 	}
++	if (hmzoned)
++		fs_devices->hmzoned = 1;
+ 	*fs_devices_ret = fs_devices;
+ 	return 0;
  }
+@@ -307,6 +311,8 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices, int flags)
+ 	struct btrfs_device *device;
+ 	int ret;
  
-+enum btrfs_zoned_model zoned_model(const char *file)
-+{
-+	char model[32];
-+	int ret;
++	fs_devices->zone_size = 0;
 +
-+	ret = queue_param(file, "zoned", model, sizeof(model));
-+	if (ret <= 0)
-+		return ZONED_NONE;
+ 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
+ 		if (!device->name) {
+ 			printk("no name for device %llu, skip it now\n", device->devid);
+@@ -330,6 +336,18 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices, int flags)
+ 		device->fd = fd;
+ 		if (flags & O_RDWR)
+ 			device->writeable = 1;
 +
-+	if (strncmp(model, "host-aware", 10) == 0)
-+		return ZONED_HOST_AWARE;
-+	if (strncmp(model, "host-managed", 12) == 0)
-+		return ZONED_HOST_MANAGED;
-+
-+	return ZONED_NONE;
-+}
-+
-+size_t zone_size(const char *file)
-+{
-+	char chunk[32];
-+	int ret;
-+
-+	ret = queue_param(file, "chunk_sectors", chunk, sizeof(chunk));
-+	if (ret <= 0)
-+		return 0;
-+
-+	return strtoul((const char *)chunk, NULL, 10) << 9;
-+}
-+
-+#ifdef BTRFS_ZONED
-+int zone_is_random_write(struct btrfs_zone_info *zinfo, u64 bytenr)
-+{
-+	unsigned int zno;
-+
-+	if (zinfo->model == ZONED_NONE)
-+		return 1;
-+
-+	zno = bytenr / zinfo->zone_size;
-+
-+	/*
-+	 * Only sequential write required zones on host-managed
-+	 * devices cannot be written randomly.
-+	 */
-+	return zinfo->zones[zno].type != BLK_ZONE_TYPE_SEQWRITE_REQ;
-+}
-+
-+#define BTRFS_REPORT_NR_ZONES	8192
-+
-+static int btrfs_get_zones(int fd, const char *file, u64 block_count,
-+			   struct btrfs_zone_info *zinfo)
-+{
-+	size_t zone_bytes = zone_size(file);
-+	size_t rep_size;
-+	u64 sector = 0;
-+	struct blk_zone_report *rep;
-+	struct blk_zone *zone;
-+	unsigned int i, n = 0;
-+	int ret;
-+
-+	/*
-+	 * Zones are guaranteed (by the kernel) to be a power of 2 number of
-+	 * sectors. Check this here and make sure that zones are not too
-+	 * small.
-+	 */
-+	if (!zone_bytes || (zone_bytes & (zone_bytes - 1))) {
-+		error("ERROR: Illegal zone size %zu (not a power of 2)\n",
-+		      zone_bytes);
-+		exit(1);
-+	}
-+	if (zone_bytes < BTRFS_MKFS_SYSTEM_GROUP_SIZE) {
-+		error("ERROR: Illegal zone size %zu (smaller than %d)\n",
-+		      zone_bytes,
-+		      BTRFS_MKFS_SYSTEM_GROUP_SIZE);
-+		exit(1);
-+	}
-+
-+	/* Allocate the zone information array */
-+	zinfo->zone_size = zone_bytes;
-+	zinfo->nr_zones = block_count / zone_bytes;
-+	if (block_count & (zone_bytes - 1))
-+		zinfo->nr_zones++;
-+	zinfo->zones = calloc(zinfo->nr_zones, sizeof(struct blk_zone));
-+	if (!zinfo->zones) {
-+		error("No memory for zone information\n");
-+		exit(1);
-+	}
-+
-+	/* Allocate a zone report */
-+	rep_size = sizeof(struct blk_zone_report) +
-+		sizeof(struct blk_zone) * BTRFS_REPORT_NR_ZONES;
-+	rep = malloc(rep_size);
-+	if (!rep) {
-+		error("No memory for zones report\n");
-+		exit(1);
-+	}
-+
-+	/* Get zone information */
-+	zone = (struct blk_zone *)(rep + 1);
-+	while (n < zinfo->nr_zones) {
-+
-+		memset(rep, 0, rep_size);
-+		rep->sector = sector;
-+		rep->nr_zones = BTRFS_REPORT_NR_ZONES;
-+
-+		ret = ioctl(fd, BLKREPORTZONE, rep);
-+		if (ret != 0) {
-+			error("ioctl BLKREPORTZONE failed (%s)\n",
-+			      strerror(errno));
-+			exit(1);
++		ret = btrfs_get_zone_info(fd, device->name, fs_devices->hmzoned,
++					  &device->zinfo);
++		if (ret != 0)
++			goto fail;
++		if (!fs_devices->zone_size) {
++			fs_devices->zone_size = device->zinfo.zone_size;
++		} else if (device->zinfo.zone_size != fs_devices->zone_size) {
++			fprintf(stderr, "Device zone size differ\n");
++			ret = -EINVAL;
++			goto fail;
 +		}
-+
-+		if (!rep->nr_zones)
-+			break;
-+
-+		for (i = 0; i < rep->nr_zones; i++) {
-+			if (n >= zinfo->nr_zones)
-+				break;
-+			memcpy(&zinfo->zones[n], &zone[i],
-+			       sizeof(struct blk_zone));
-+			sector = zone[i].start + zone[i].len;
-+			n++;
-+		}
-+
-+	}
-+
-+	/*
-+	 * We need at least one random write zone (a conventional zone or
-+	 * a sequential write preferred zone on a host-aware device).
-+	 */
-+	if (!zone_is_random_write(zinfo, 0)) {
-+		error("ERROR: No conventional zone at block 0\n");
-+		exit(1);
-+	}
-+
-+	zinfo->nr_zones = n;
-+
-+	free(rep);
-+
-+	return 0;
-+}
-+
-+#endif
-+
-+int btrfs_get_zone_info(int fd, const char *file, int hmzoned,
-+			struct btrfs_zone_info *zinfo)
-+{
-+	struct stat st;
-+	int ret;
-+
-+	memset(zinfo, 0, sizeof(struct btrfs_zone_info));
-+
-+	ret = fstat(fd, &st);
-+	if (ret < 0) {
-+		error("unable to stat %s\n", file);
-+		return 1;
-+	}
-+
-+	if (!S_ISBLK(st.st_mode))
-+		return 0;
-+
-+	/* Check zone model */
-+	zinfo->model = zoned_model(file);
-+	if (zinfo->model == ZONED_NONE)
-+		return 0;
-+
-+	if (zinfo->model == ZONED_HOST_MANAGED && !hmzoned) {
-+		error("%s: host-managed zoned block device (enable zone block device support with -O hmzoned)\n",
-+		      file);
-+		return -1;
-+	}
-+
-+	if (!hmzoned) {
-+		/* Treat host-aware devices as regular devices */
-+		zinfo->model = ZONED_NONE;
-+		return 0;
-+	}
-+
-+#ifdef BTRFS_ZONED
-+	/* Get zone information */
-+	ret = btrfs_get_zones(fd, file, btrfs_device_size(fd, &st), zinfo);
-+	if (ret != 0)
-+		return ret;
-+#else
-+	error("%s: Unsupported host-%s zoned block device\n",
-+	      file, zinfo->model == ZONED_HOST_MANAGED ? "managed" : "aware");
-+	if (zinfo->model == ZONED_HOST_MANAGED)
-+		return -1;
-+
-+	printf("%s: heandling host-aware block device as a regular disk\n",
-+	       file);
-+#endif
-+	return 0;
-+}
-+
- int btrfs_prepare_device(int fd, const char *file, u64 *block_count_ret,
- 		u64 max_block_count, unsigned opflags)
- {
-diff --git a/utils.h b/utils.h
-index ac333095..47f6b101 100644
---- a/utils.h
-+++ b/utils.h
-@@ -68,6 +68,7 @@ void units_set_base(unsigned *units, unsigned base);
- #define	PREP_DEVICE_ZERO_END	(1U << 0)
- #define	PREP_DEVICE_DISCARD	(1U << 1)
- #define	PREP_DEVICE_VERBOSE	(1U << 2)
-+#define	PREP_DEVICE_HMZONED	(1U << 3)
- 
- #define SEEN_FSID_HASH_SIZE 256
- struct seen_fsid {
-@@ -77,10 +78,25 @@ struct seen_fsid {
- 	int fd;
- };
- 
-+struct btrfs_zone_info;
-+
-+enum btrfs_zoned_model zoned_model(const char *file);
-+size_t zone_size(const char *file);
- int btrfs_make_root_dir(struct btrfs_trans_handle *trans,
- 			struct btrfs_root *root, u64 objectid);
- int btrfs_prepare_device(int fd, const char *file, u64 *block_count_ret,
- 		u64 max_block_count, unsigned opflags);
-+int btrfs_get_zone_info(int fd, const char *file, int hmzoned,
-+			struct btrfs_zone_info *zinfo);
-+#ifdef BTRFS_ZONED
-+int zone_is_random_write(struct btrfs_zone_info *zinfo, u64 bytenr);
-+#else
-+static inline int zone_is_random_write(struct btrfs_zone_info *zinfo,
-+				       u64 bytenr)
-+{
-+	return 1;
-+}
-+#endif
- int btrfs_add_to_fsid(struct btrfs_trans_handle *trans,
- 		      struct btrfs_root *root, int fd, const char *path,
- 		      u64 block_count, u32 io_width, u32 io_align,
+ 	}
+ 	return 0;
+ fail:
 diff --git a/volumes.h b/volumes.h
-index b4ea93f0..bad688e5 100644
+index bad688e5..36a6f44b 100644
 --- a/volumes.h
 +++ b/volumes.h
-@@ -22,12 +22,40 @@
- #include "kerncompat.h"
- #include "ctree.h"
+@@ -111,6 +111,9 @@ struct btrfs_fs_devices {
  
-+#ifdef BTRFS_ZONED
-+#include <linux/blkzoned.h>
-+#else
-+struct blk_zone {
-+	int dummy;
-+};
-+#endif
+ 	int seeding;
+ 	struct btrfs_fs_devices *seed;
 +
-+/*
-+ * Zoned block device models.
-+ */
-+enum btrfs_zoned_model {
-+	ZONED_NONE = 0,
-+	ZONED_HOST_AWARE,
-+	ZONED_HOST_MANAGED,
-+};
-+
-+/*
-+ * Zone information for a zoned block device.
-+ */
-+struct btrfs_zone_info {
-+	enum btrfs_zoned_model	model;
-+	size_t			zone_size;
-+	struct blk_zone		*zones;
-+	unsigned int		nr_zones;
-+};
-+
- #define BTRFS_STRIPE_LEN	SZ_64K
++	u64 zone_size;
++	unsigned int hmzoned:1;
+ };
  
- struct btrfs_device {
- 	struct list_head dev_list;
- 	struct btrfs_root *dev_root;
- 	struct btrfs_fs_devices *fs_devices;
-+	struct btrfs_zone_info zinfo;
- 
- 	u64 total_ios;
- 
+ struct btrfs_bio_stripe {
 -- 
 2.18.0
 
