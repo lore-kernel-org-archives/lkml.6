@@ -6,296 +6,97 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47DBC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0720C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF4B208A5
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:38:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF4B208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7FA92208A5
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:38:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA92208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732291AbeHIPCn (ORCPT
+        id S1732324AbeHIPCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 11:02:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49698 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730506AbeHIPCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 11:02:42 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8EFB1D0E;
-        Thu,  9 Aug 2018 12:37:58 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 14:37:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.4.147
-Message-ID: <20180809123755.GB8356@kroah.com>
-References: <20180809123749.GA8356@kroah.com>
+        Thu, 9 Aug 2018 11:02:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53410 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730506AbeHIPCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 11:02:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 159A480D;
+        Thu,  9 Aug 2018 05:38:08 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DACFB3F5D4;
+        Thu,  9 Aug 2018 05:38:07 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 98D941AE180A; Thu,  9 Aug 2018 13:38:12 +0100 (BST)
+Date:   Thu, 9 Aug 2018 13:38:12 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: Trap WFI executed in userspace
+Message-ID: <20180809123812.GB29785@arm.com>
+References: <20180807093326.5090-1-marc.zyngier@arm.com>
+ <20180807100437.GA9097@e103592.cambridge.arm.com>
+ <9af8bb9a-7c6c-2560-5965-118dfadf8141@arm.com>
+ <20180808123408.GC24736@iMac.local>
+ <20180809123457.GN9097@e103592.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180809123749.GA8356@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180809123457.GN9097@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 030f5af05f4e..ee92a12e3a4b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 4
--SUBLEVEL = 146
-+SUBLEVEL = 147
- EXTRAVERSION =
- NAME = Blurry Fish Butt
- 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index d4d853680ae4..a4abf7dc9576 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -382,6 +382,7 @@ static int i2c_imx_dma_xfer(struct imx_i2c_struct *i2c_imx,
- 		goto err_desc;
- 	}
- 
-+	reinit_completion(&dma->cmd_complete);
- 	txdesc->callback = i2c_imx_dma_callback;
- 	txdesc->callback_param = i2c_imx;
- 	if (dma_submit_error(dmaengine_submit(txdesc))) {
-@@ -631,7 +632,6 @@ static int i2c_imx_dma_write(struct imx_i2c_struct *i2c_imx,
- 	 * The first byte must be transmitted by the CPU.
- 	 */
- 	imx_i2c_write_reg(msgs->addr << 1, i2c_imx, IMX_I2C_I2DR);
--	reinit_completion(&i2c_imx->dma->cmd_complete);
- 	time_left = wait_for_completion_timeout(
- 				&i2c_imx->dma->cmd_complete,
- 				msecs_to_jiffies(DMA_TIMEOUT));
-@@ -690,7 +690,6 @@ static int i2c_imx_dma_read(struct imx_i2c_struct *i2c_imx,
- 	if (result)
- 		return result;
- 
--	reinit_completion(&i2c_imx->dma->cmd_complete);
- 	time_left = wait_for_completion_timeout(
- 				&i2c_imx->dma->cmd_complete,
- 				msecs_to_jiffies(DMA_TIMEOUT));
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index a32ba753e413..afaf13474796 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -543,7 +543,7 @@ void acpi_pci_add_bus(struct pci_bus *bus)
- 	union acpi_object *obj;
- 	struct pci_host_bridge *bridge;
- 
--	if (acpi_pci_disabled || !bus->bridge)
-+	if (acpi_pci_disabled || !bus->bridge || !ACPI_HANDLE(bus->bridge))
- 		return;
- 
- 	acpi_pci_slot_enumerate(bus);
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index a9eb3cd453be..41a646696bab 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -325,11 +325,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport, uint32_t flags, uint32_t lun,
- 
- 	wait_for_completion(&tm_iocb->u.tmf.comp);
- 
--	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
--	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
-+	rval = tm_iocb->u.tmf.data;
- 
--	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
--		ql_dbg(ql_dbg_taskm, vha, 0x8030,
-+	if (rval != QLA_SUCCESS) {
-+		ql_log(ql_log_warn, vha, 0x8030,
- 		    "TM IOCB failed (%x).\n", rval);
- 	}
- 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 5cbf20ab94aa..18b19744398a 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -4938,8 +4938,9 @@ qla2x00_do_dpc(void *data)
- 			}
- 		}
- 
--		if (test_and_clear_bit(ISP_ABORT_NEEDED,
--						&base_vha->dpc_flags)) {
-+		if (test_and_clear_bit
-+		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
-+		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
- 
- 			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
- 			    "ISP abort scheduled.\n");
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 49af3c50b263..3e4d8ac1974e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2102,7 +2102,7 @@ static int ext4_check_descriptors(struct super_block *sb,
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
- 	ext4_fsblk_t last_block;
--	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
-+	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
- 	ext4_fsblk_t block_bitmap;
- 	ext4_fsblk_t inode_bitmap;
- 	ext4_fsblk_t inode_table;
-@@ -3777,13 +3777,13 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 			goto failed_mount2;
- 		}
- 	}
-+	sbi->s_gdb_count = db_count;
- 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
- 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
- 		ret = -EFSCORRUPTED;
- 		goto failed_mount2;
- 	}
- 
--	sbi->s_gdb_count = db_count;
- 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
- 	spin_lock_init(&sbi->s_next_gen_lock);
- 
-diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
-index 48b15a6e5558..40a26a542341 100644
---- a/fs/jfs/xattr.c
-+++ b/fs/jfs/xattr.c
-@@ -493,15 +493,17 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
- 	if (size > PSIZE) {
- 		/*
- 		 * To keep the rest of the code simple.  Allocate a
--		 * contiguous buffer to work with
-+		 * contiguous buffer to work with. Make the buffer large
-+		 * enough to make use of the whole extent.
- 		 */
--		ea_buf->xattr = kmalloc(size, GFP_KERNEL);
-+		ea_buf->max_size = (size + sb->s_blocksize - 1) &
-+		    ~(sb->s_blocksize - 1);
-+
-+		ea_buf->xattr = kmalloc(ea_buf->max_size, GFP_KERNEL);
- 		if (ea_buf->xattr == NULL)
- 			return -ENOMEM;
- 
- 		ea_buf->flag = EA_MALLOC;
--		ea_buf->max_size = (size + sb->s_blocksize - 1) &
--		    ~(sb->s_blocksize - 1);
- 
- 		if (ea_size == 0)
- 			return 0;
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index 4acc552e9279..19d0778ec382 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -162,6 +162,7 @@ void ring_buffer_record_enable(struct ring_buffer *buffer);
- void ring_buffer_record_off(struct ring_buffer *buffer);
- void ring_buffer_record_on(struct ring_buffer *buffer);
- int ring_buffer_record_is_on(struct ring_buffer *buffer);
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer);
- void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu);
- void ring_buffer_record_enable_cpu(struct ring_buffer *buffer, int cpu);
- 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 5f55a8bf5264..0df2b44dac7c 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1012,6 +1012,13 @@ static int irq_setup_forced_threading(struct irqaction *new)
- 	if (new->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT))
- 		return 0;
- 
-+	/*
-+	 * No further action required for interrupts which are requested as
-+	 * threaded interrupts already
-+	 */
-+	if (new->handler == irq_default_primary_handler)
-+		return 0;
-+
- 	new->flags |= IRQF_ONESHOT;
- 
- 	/*
-@@ -1019,7 +1026,7 @@ static int irq_setup_forced_threading(struct irqaction *new)
- 	 * thread handler. We force thread them as well by creating a
- 	 * secondary action.
- 	 */
--	if (new->handler != irq_default_primary_handler && new->thread_fn) {
-+	if (new->handler && new->thread_fn) {
- 		/* Allocate the secondary action */
- 		new->secondary = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
- 		if (!new->secondary)
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index e5d228f7224c..5ad2e852e9f6 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -570,7 +570,7 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
- 
- static inline bool local_timer_softirq_pending(void)
- {
--	return local_softirq_pending() & TIMER_SOFTIRQ;
-+	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
- }
- 
- static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index d9cd6191760b..fdaa88f38aec 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -3141,6 +3141,22 @@ int ring_buffer_record_is_on(struct ring_buffer *buffer)
- 	return !atomic_read(&buffer->record_disabled);
- }
- 
-+/**
-+ * ring_buffer_record_is_set_on - return true if the ring buffer is set writable
-+ * @buffer: The ring buffer to see if write is set enabled
-+ *
-+ * Returns true if the ring buffer is set writable by ring_buffer_record_on().
-+ * Note that this does NOT mean it is in a writable state.
-+ *
-+ * It may return true when the ring buffer has been disabled by
-+ * ring_buffer_record_disable(), as that is a temporary disabling of
-+ * the ring buffer.
-+ */
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer)
-+{
-+	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
-+}
-+
- /**
-  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
-  * @buffer: The ring buffer to stop writes to.
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 8aef4e63ac57..1b980a8ef791 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1088,6 +1088,12 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 
- 	arch_spin_lock(&tr->max_lock);
- 
-+	/* Inherit the recordable setting from trace_buffer */
-+	if (ring_buffer_record_is_set_on(tr->trace_buffer.buffer))
-+		ring_buffer_record_on(tr->max_buffer.buffer);
-+	else
-+		ring_buffer_record_off(tr->max_buffer.buffer);
-+
- 	buf = tr->trace_buffer.buffer;
- 	tr->trace_buffer.buffer = tr->max_buffer.buffer;
- 	tr->max_buffer.buffer = buf;
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 9708fff318d5..bf292010760a 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -986,6 +986,11 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
- 			return err;
- 	}
- 
-+	if (nlk->ngroups == 0)
-+		groups = 0;
-+	else if (nlk->ngroups < 8*sizeof(groups))
-+		groups &= (1UL << nlk->ngroups) - 1;
-+
- 	bound = nlk->bound;
- 	if (bound) {
- 		/* Ensure nlk->portid is up-to-date. */
+On Thu, Aug 09, 2018 at 01:34:57PM +0100, Dave Martin wrote:
+> On Wed, Aug 08, 2018 at 01:34:09PM +0100, Catalin Marinas wrote:
+> > On Tue, Aug 07, 2018 at 11:24:34AM +0100, Marc Zyngier wrote:
+> > > On 07/08/18 11:05, Dave Martin wrote:
+> > > > On Tue, Aug 07, 2018 at 10:33:26AM +0100, Marc Zyngier wrote:
+> > > >> It recently came to light that userspace can execute WFI, and that
+> > > >> the arm64 kernel doesn trap this event. This sounds rather benign,
+> > 
+> > Nitpick: "doesn't".
+> > 
+> > > >> but the kernel should decide when it wants to wait for an interrupt,
+> > > >> and not userspace.
+> > > >>
+> > > >> Let's trap WFI and treat it as a way to yield the CPU to another
+> > > >> process.
+> > [...]
+> > > > I can't think of a legitimate reason for userspace to execute WFI
+> > > > however.  Userspace doesn't have interrupts under Linux, so it makes
+> > > > no sense to wait for one.
+> > > > 
+> > > > Have we seen anybody using WFI in userspace?  It may be cleaner to
+> > > > map this to SIGILL rather than be permissive and regret it later.
+> > > 
+> > > I couldn't find any user, and I'm happy to just send userspace to hell
+> > > in that case. But it could also been said that since it was never
+> > > prevented, it is a de-facto ABI.
+> > 
+> > I wouldn't really go as far as SIGILL on WFI. I think the patch is fine
+> > as it is. In case Will plans to merge it:
+> 
+> For practical purposes I agree, because we can't control the binary
+> blobs out there: I just wanted to bang the drum because we are creating
+> semantics here and there is not an obvious correct answer to what they
+> should be.
+> 
+> I'd still like to see rationale for why this should map to schedule()
+> (which userspace currently has no direct way to trigger) as opposed to
+> sched_yield() or something like that.
+
+A better idea might just be to do pc +=4 and return. If there's work
+pending, we'll hit it on the return path (just like any other ret_to_user
+call).
+
+I initially thought about sched_yield(), but it's not clear whether that
+creates a problem if, e.g. seccomp has been used to restrict that syscall.
+
+Will
