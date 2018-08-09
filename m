@@ -2,131 +2,303 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EADDC46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281F6C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40A521C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:53:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mAmpkJZh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C40A521C2B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id C737E21C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:57:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C737E21C2B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeHIHPf (ORCPT
+        id S1728192AbeHIHT5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 03:15:35 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:33967 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbeHIHPf (ORCPT
+        Thu, 9 Aug 2018 03:19:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50916 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727724AbeHIHT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 03:15:35 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180809045237epoutp03cc4a05c84870abdc370fe05916a18689~JHjQ1fOki2712327123epoutp03H;
-        Thu,  9 Aug 2018 04:52:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180809045237epoutp03cc4a05c84870abdc370fe05916a18689~JHjQ1fOki2712327123epoutp03H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533790357;
-        bh=hk82B5zWgUG9/qiLCTpUaNunBfRCdekGQCSkSqYts44=;
-        h=Date:From:To:Subject:In-reply-to:References:From;
-        b=mAmpkJZheaI9hNVqQJdKw0SVANHbBqNBUTUXTIdzWyM13DQ5zaTBiCIdp8AQNJcsL
-         rP/WDIqxZXE9J+F6Kfgrc+DtY6NyXHN0Ok1acuw4gNfts8il3r+woptiHyywW2XEOl
-         7qCNYU47XXlvlexEazSxatCu8dhMmz+EzQ+8qIjY=
-Received: from epsmges2p3.samsung.com (unknown [182.195.40.157]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180809045235epcas1p1a7e2afb93132a937eeaf46f73dee5676~JHjO_8MvT1511715117epcas1p1m;
-        Thu,  9 Aug 2018 04:52:35 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0E.C0.04412.398CB6B5; Thu,  9 Aug 2018 13:52:35 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20180809045235epcas2p11884507a0eed7f850ffa35c29d33715c~JHjOl26Jf0915009150epcas2p1G;
-        Thu,  9 Aug 2018 04:52:35 +0000 (GMT)
-X-AuditID: b6c32a47-289ff7000000113c-99-5b6bc893b000
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        72.FB.03824.398CB6B5; Thu,  9 Aug 2018 13:52:35 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PD6006DSG7MVYC0@mmp1.samsung.com>; Thu, 09 Aug 2018 13:52:35 +0900 (KST)
-Message-id: <5B6BC892.5010804@samsung.com>
-Date:   Thu, 09 Aug 2018 13:52:34 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] extcon: maxim: Add SPDX license identifiers
-In-reply-to: <20180807162122.19614-1-krzk@kernel.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7bCmue7kE9nRBp1HNCw2zljPanH+/AZ2
-        i8u75rBZ3G5cwebA4rFpVSebR9+WVYwenzfJBTBHpdpkpCampBYppOYl56dk5qXbKnkHxzvH
-        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
-        RRsaGukZGpjrGRkBaeNYKyNToJKE1IzGo4fZC76zVKw6ZdHA2MfSxcjJISFgIvF+/logm4tD
-        SGAHo0RH00kmCOc7o8SRxe/ZYaqm/l3JDJHYzSix+xNIFScHr4CgxI/J94DaOTiYBeQljlzK
-        BgkzC2hKbN29nh2i/i6jxNuZXSwQ9VoSt6/NZgOxWQRUJZZd6WYGsdmA4vtf3ACL8wsoSlz9
-        8ZgRxBYViJDYOf8b2BEiAqsYJdpWS4DYwgIOEu0TnoLN5BQwlWhcPxvsOAmBOWwSp78cZIa4
-        2kXi6pkZUB8IS7w6vgXKlpZ4tmojI0RDO6PElxfNrBDOBEaJD6c2M0FUGUs8W9jFBPEPn0TH
-        4b/sIG9KCPBKdLQJQZR4SDSc/wMNlg5Gie4TMxgnMMrMQgqZWYiQmYUUMgsYmVcxiqUWFOem
-        pxYbFRjrFSfmFpfmpesl5+duYgQnJC33HYzbzvkcYhTgYFTi4b3Alx0txJpYVlyZe4hRgoNZ
-        SYR3szhQiDclsbIqtSg/vqg0J7X4EKMpMGAnMkuJJucDk2VeSbyhqZGxsbGFqbmlsYGlkjhv
-        lV9wtJBAemJJanZqakFqEUwfEwenVANjSmHs891fjZX1d++dJsIT9FzEKbTiunrkQznHCjO1
-        z5/6z5XIqrG9eB/1We3+Ma+/h2et7r8vutFBQFhbj9+1c8Uyr1MT9omKeE1UUpnLy7MiNWi1
-        b0a48LFcx0cP/LhXTSpfttSu5nzVQdU/ManxuffO/Q3fODe011pJ5mfiNPfg99mF4V1KLMUZ
-        iYZazEXFiQAtECcEXgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBLMWRmVeSWpSXmKPExsVy+t9jAd3JJ7KjDe6v57XYOGM9q8X58xvY
-        LS7vmsNmcbtxBZsDi8emVZ1sHn1bVjF6fN4kF8AcxWWTkpqTWZZapG+XwJXRePQwe8F3lopV
-        pywaGPtYuhg5OSQETCSm/l3J3MXIxSEksJNRYvKe74wgCV4BQYkfk+8BFXFwMAvISxy5lA0S
-        ZhZQl5g0bxEziC0kcJ9R4uRfLohyLYnb12azgdgsAqoSy650g9WwAcX3v7gBFucXUJS4+uMx
-        I8hIUYEIie4TlSBrRQRWMUrs/r8F7B5hAQeJ9glPWSDu6WKUeHn7A1iCU8BUonH9bOYJjPyz
-        kJw3C+G8WUjOW8DIvIpRMrWgODc9t9iowCgvtVyvODG3uDQvXS85P3cTIzA8tx3W6t/B+HhJ
-        /CFGAQ5GJR7eC3zZ0UKsiWXFlbmHGCU4mJVEeDeLA4V4UxIrq1KL8uOLSnNSiw8xSnOwKInz
-        8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUwGnPoW8ZosM2yVYrauiaFuSm8OnLNUckm8WzhIqVl
-        4R7xy+/tk+G/LFp40pHz9A37X7OjnJgPW6RzyGZoVfFt41uewdibu0li0pQFruK723u51y/b
-        vXWiwxQ5uQW5LQeW8UcEedwr158dGPP54WxfznlVjxj7t+SvlmBcmP5kBfffF/UL2SYrsRRn
-        JBpqMRcVJwIAHEo3tUsCAAA=
-X-CMS-MailID: 20180809045235epcas2p11884507a0eed7f850ffa35c29d33715c
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180807162203epcas4p3975e866242639590247fe922a4a54266
-References: <CGME20180807162203epcas4p3975e866242639590247fe922a4a54266@epcas4p3.samsung.com>
-        <20180807162122.19614-1-krzk@kernel.org>
+        Thu, 9 Aug 2018 03:19:57 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w794rsKT017879
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 00:57:01 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2krc3b58d6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 00:57:00 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Thu, 9 Aug 2018 05:56:58 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 05:56:56 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w794utFN35717198
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 04:56:55 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8BB8BAE053;
+        Thu,  9 Aug 2018 07:56:47 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46FB9AE045;
+        Thu,  9 Aug 2018 07:56:47 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 07:56:47 +0100 (BST)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH v3] perf report: Create auxiliary trace data files for s390
+Date:   Thu,  9 Aug 2018 06:56:50 +0200
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 18080904-0016-0000-0000-000001F435F0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080904-0017-0000-0000-0000324A46C5
+Message-Id: <20180809045650.89197-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090051
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+Create auxiliary trace data log files when invoked with option
+ --itrace=d as in
 
-On 2018년 08월 08일 01:21, Krzysztof Kozlowski wrote:
-> Replace GPL v2.0+ license statements with SPDX license identifiers.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/extcon/extcon-max14577.c | 24 +++++++-----------------
->  drivers/extcon/extcon-max77693.c | 22 ++++++----------------
->  drivers/extcon/extcon-max77843.c | 19 +++++++------------
->  drivers/extcon/extcon-max8997.c  | 22 ++++++----------------
->  4 files changed, 26 insertions(+), 61 deletions(-)
-> 
+[root@s35lp76 perf] ./perf report -i perf.data.aux1 --stdio --itrace=d
 
-Thanks. Applied it for v4.20.
+perf report creates several data files in the current directory
+named aux.smp.## where ## is a 2 digit hex number with
+leading zeros representing the CPU number this trace data
+was recorded from. The file contents is binary and contains
+the CPU-Measurement Sampling Data Blocks (SDBs).
 
-(snip)
+The directory to save the auxiliary trace buffer can be
+changed using the perf config file and command. Specify
+section 'auxtrace' keyword 'dumpdir' and assign it a valid
+directory name. If the directory does not exist or has the
+wrong file type, the current directory is used.
 
+[root@p23lp27 perf]# ./perf config auxtrace.dumpdir=/tmp
+[root@p23lp27 perf]# ./perf config --user -l
+auxtrace.dumpdir=/tmp
+[root@p23lp27 perf]# ./perf report ...
+[root@p23lp27 perf]# ll /tmp/aux.smp.00
+-rw-r--r-- 1 root root 204800 Aug  2 13:48 /tmp/aux.smp.00
+[root@p23lp27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+---
+ tools/perf/util/s390-cpumsf.c | 94 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 91 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
+index d2c78ffd9fee..a2eeebbfb25f 100644
+--- a/tools/perf/util/s390-cpumsf.c
++++ b/tools/perf/util/s390-cpumsf.c
+@@ -147,6 +147,9 @@
+ #include <linux/bitops.h>
+ #include <linux/log2.h>
+ 
++#include <sys/stat.h>
++#include <sys/types.h>
++
+ #include "cpumap.h"
+ #include "color.h"
+ #include "evsel.h"
+@@ -159,6 +162,7 @@
+ #include "auxtrace.h"
+ #include "s390-cpumsf.h"
+ #include "s390-cpumsf-kernel.h"
++#include "config.h"
+ 
+ struct s390_cpumsf {
+ 	struct auxtrace		auxtrace;
+@@ -170,6 +174,8 @@ struct s390_cpumsf {
+ 	u32			pmu_type;
+ 	u16			machine_type;
+ 	bool			data_queued;
++	bool			use_logfile;
++	char			*logdir;
+ };
+ 
+ struct s390_cpumsf_queue {
+@@ -177,6 +183,7 @@ struct s390_cpumsf_queue {
+ 	unsigned int		queue_nr;
+ 	struct auxtrace_buffer	*buffer;
+ 	int			cpu;
++	FILE			*logfile;
+ };
+ 
+ /* Display s390 CPU measurement facility basic-sampling data entry */
+@@ -595,6 +602,12 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
+ 			buffer->use_size = buffer->size;
+ 			buffer->use_data = buffer->data;
+ 		}
++		if (sfq->logfile) {	/* Write into log file */
++			size_t rc = fwrite(buffer->data, buffer->size, 1,
++					   sfq->logfile);
++			if (rc != 1)
++				pr_err("Failed to write auxiliary data\n");
++		}
+ 	} else
+ 		buffer = sfq->buffer;
+ 
+@@ -606,6 +619,13 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
+ 			return -ENOMEM;
+ 		buffer->use_size = buffer->size;
+ 		buffer->use_data = buffer->data;
++
++		if (sfq->logfile) {	/* Write into log file */
++			size_t rc = fwrite(buffer->data, buffer->size, 1,
++					   sfq->logfile);
++			if (rc != 1)
++				pr_err("Failed to write auxiliary data\n");
++		}
+ 	}
+ 	pr_debug4("%s queue_nr:%d buffer:%" PRId64 " offset:%#" PRIx64 " size:%#zx rest:%#zx\n",
+ 		  __func__, sfq->queue_nr, buffer->buffer_nr, buffer->offset,
+@@ -640,6 +660,23 @@ s390_cpumsf_alloc_queue(struct s390_cpumsf *sf, unsigned int queue_nr)
+ 	sfq->sf = sf;
+ 	sfq->queue_nr = queue_nr;
+ 	sfq->cpu = -1;
++	if (sf->use_logfile) {
++		char *name;
++		int rc;
++
++		rc = (sf->logdir)
++			? asprintf(&name, "%s/aux.smp.%02x",
++				 sf->logdir, queue_nr)
++			: asprintf(&name, "aux.smp.%02x", queue_nr);
++		if (rc > 0)
++			sfq->logfile = fopen(name, "w");
++		if (sfq->logfile == NULL) {
++			pr_err("Failed to open auxiliary log file %s,"
++			       "continue...\n", name);
++			sf->use_logfile = false;
++		}
++		free(name);
++	}
+ 	return sfq;
+ }
+ 
+@@ -850,8 +887,16 @@ static void s390_cpumsf_free_queues(struct perf_session *session)
+ 	struct auxtrace_queues *queues = &sf->queues;
+ 	unsigned int i;
+ 
+-	for (i = 0; i < queues->nr_queues; i++)
++	for (i = 0; i < queues->nr_queues; i++) {
++		struct s390_cpumsf_queue *sfq = (struct s390_cpumsf_queue *)
++						queues->queue_array[i].priv;
++
++		if (sfq != NULL && sfq->logfile) {
++			fclose(sfq->logfile);
++			sfq->logfile = NULL;
++		}
+ 		zfree(&queues->queue_array[i].priv);
++	}
+ 	auxtrace_queues__free(queues);
+ }
+ 
+@@ -864,6 +909,7 @@ static void s390_cpumsf_free(struct perf_session *session)
+ 	auxtrace_heap__free(&sf->heap);
+ 	s390_cpumsf_free_queues(session);
+ 	session->auxtrace = NULL;
++	free(sf->logdir);
+ 	free(sf);
+ }
+ 
+@@ -877,17 +923,55 @@ static int s390_cpumsf_get_type(const char *cpuid)
+ 
+ /* Check itrace options set on perf report command.
+  * Return true, if none are set or all options specified can be
+- * handled on s390.
++ * handled on s390 (currently only option 'd' for logging.
+  * Return false otherwise.
+  */
+ static bool check_auxtrace_itrace(struct itrace_synth_opts *itops)
+ {
++	bool ison = false;
++
+ 	if (!itops || !itops->set)
+ 		return true;
+-	pr_err("No --itrace options supported\n");
++	ison = itops->inject || itops->instructions || itops->branches ||
++		itops->transactions || itops->ptwrites ||
++		itops->pwr_events || itops->errors ||
++		itops->dont_decode || itops->calls || itops->returns ||
++		itops->callchain || itops->thread_stack ||
++		itops->last_branch;
++	if (!ison)
++		return true;
++	pr_err("Unsupported --itrace options specified\n");
+ 	return false;
+ }
+ 
++/* Check for AUXTRACE dump directory if it is needed.
++ * On failure print an error message but continue.
++ * Return 0 on wrong keyword in config file and 1 otherwise.
++ */
++static int s390_cpumsf__config(const char *var, const char *value, void *cb)
++{
++	struct s390_cpumsf *sf = cb;
++	struct stat stbuf;
++	int rc;
++
++	if (strcmp(var, "auxtrace.dumpdir"))
++		return 0;
++	sf->logdir = strdup(value);
++	if (sf->logdir == NULL) {
++		pr_err("Failed to find auxtrace log directory %s,"
++		       " continue with current directory...\n", value);
++		return 1;
++	}
++	rc = stat(sf->logdir, &stbuf);
++	if (rc == -1 || !S_ISDIR(stbuf.st_mode)) {
++		pr_err("Missing auxtrace log directory %s,"
++		       " continue with current directory...\n", value);
++		free(sf->logdir);
++		sf->logdir = NULL;
++	}
++	return 1;
++}
++
+ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
+ 				      struct perf_session *session)
+ {
+@@ -906,6 +990,9 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
+ 		err = -EINVAL;
+ 		goto err_free;
+ 	}
++	sf->use_logfile = session->itrace_synth_opts->log;
++	if (sf->use_logfile)
++		perf_config(s390_cpumsf__config, sf);
+ 
+ 	err = auxtrace_queues__init(&sf->queues);
+ 	if (err)
+@@ -940,6 +1027,7 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
+ 	auxtrace_queues__free(&sf->queues);
+ 	session->auxtrace = NULL;
+ err_free:
++	free(sf->logdir);
+ 	free(sf);
+ 	return err;
+ }
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.3
+
