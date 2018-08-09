@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7F1C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC54C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DBD21EFC
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9740622394
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:45:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="aPUn+wcL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DBD21EFC
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="UZI1D0Wa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9740622394
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbeHJALy (ORCPT
+        id S1727750AbeHJAL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 20:11:54 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:32804 "EHLO
+        Thu, 9 Aug 2018 20:11:57 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:60464 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeHJALw (ORCPT
+        with ESMTP id S1727268AbeHJAL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 20:11:52 -0400
+        Thu, 9 Aug 2018 20:11:56 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -44,59 +44,47 @@ Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 10/24] watchdog: jz4740: Avoid starting watchdog in set_timeout
-Date:   Thu,  9 Aug 2018 23:44:00 +0200
-Message-Id: <20180809214414.20905-11-paul@crapouillou.net>
+Subject: [PATCH v6 11/24] watchdog: jz4740: Drop dependency on MACH_JZ47xx, use COMPILE_TEST
+Date:   Thu,  9 Aug 2018 23:44:01 +0200
+Message-Id: <20180809214414.20905-12-paul@crapouillou.net>
 In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
 References: <20180809214414.20905-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533851106; bh=XMJB0o3ARAXBmfldCEPDdZOf4qYA3M3nQzxvgnxrgmA=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=aPUn+wcL9d0+TCCTxw6HcKX+wuZmS4afX0Uy4H8pGu5VWzBr3lY2DL1rm8IT061OfEby14Y22tlPV4H2pAcL37kSnS2C2n6YCQzkGWUwlF3HySlL+W1t3xs2sSJkImKWoHuk+Voy0a52R6P1Jp5SI1/7yRxxMjmNVsx1yu8Fj/8=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533851108; bh=iFDMk8NRrg+UjAXxKvBSVPwSKTmu1mra79OK1xUtrKk=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=UZI1D0WaphjtuL0iDE2Qan9DJsShPaOSm3zgyrkA6Y3vwLJjoYTSb8cG6AajVNJ3JR61b0C9XQRhha2SZgJ8NJFr69b2gtqysqxyOIRhI2D0T5mewMx8xfFv7gdI6bZddXGQrxzISM5DykgrmX6bzoBI/vyClMT4b/jo4XlSmL4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously the jz4740_wdt_set_timeout() function was starting the timer
-unconditionally, even if it was stopped when that function was entered.
+Depending on MACH_JZ47xx prevent us from creating a generic kernel that
+works on more than one MIPS board. Instead, we just depend on MIPS being
+set.
 
-Now, the timer will be restarted only if it was already running before
-this function is called.
+On other architectures, this driver can still be built, thanks to
+COMPILE_TEST. This is used by automated tools to find bugs, for
+instance.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/watchdog/jz4740_wdt.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- v6: New patch
+ v5: New patch
 
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 0f54306aee25..45d9495170e5 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -64,13 +64,15 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
-+	u32 tcer;
+ v6: No change
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 834222abbbdb..13a46cfa69b0 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1475,7 +1475,7 @@ config INDYDOG
  
-+	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
- 	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 
- 	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
- 	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 
--	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
- 
- 	wdt_dev->timeout = new_timeout;
- 	return 0;
-@@ -86,6 +88,7 @@ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
- 		return ret;
- 
- 	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
- 
- 	return 0;
- }
+ config JZ4740_WDT
+ 	tristate "Ingenic jz4740 SoC hardware watchdog"
+-	depends on MACH_JZ4740 || MACH_JZ4780
++	depends on MIPS || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	select WATCHDOG_CORE
+ 	select INGENIC_TIMER
 -- 
 2.11.0
 
