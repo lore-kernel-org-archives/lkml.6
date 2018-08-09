@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85075C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EECC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346242238D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346242238D
+	by mail.kernel.org (Postfix) with ESMTP id 5E7D42238D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7D42238D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeHIWoM (ORCPT
+        id S1727311AbeHIWoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:44:12 -0400
+        Thu, 9 Aug 2018 18:44:08 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:15158 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726894AbeHIWoM (ORCPT
+        by vger.kernel.org with ESMTP id S1726744AbeHIWoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:44:12 -0400
+        Thu, 9 Aug 2018 18:44:07 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Thu, 9 Aug 2018 13:17:20 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id DB00D406E9;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id B2335406EC;
         Thu,  9 Aug 2018 13:17:37 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -35,12 +35,10 @@ CC:     <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: [PATCH v7 10/10] x86: jump-labels: use macros instead of inline assembly
-Date:   Thu, 9 Aug 2018 13:15:53 -0700
-Message-ID: <20180809201554.168804-11-namit@vmware.com>
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v7 06/10] x86: bug: prevent gcc distortions
+Date:   Thu, 9 Aug 2018 13:15:49 -0700
+Message-ID: <20180809201554.168804-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180809201554.168804-1-namit@vmware.com>
 References: <20180809201554.168804-1-namit@vmware.com>
@@ -53,178 +51,205 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use assembly macros for jump-labels and call them from inline assembly.
-This not only makes the code more readable, but also improves
-compilation decision, specifically inline decisions which GCC base on
-the number of new lines in inline assembly.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-As a result the code size is slightly increased.
+The solution is to set an assembly macro and call it from the inlinedv
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
+
+This patch increases the kernel size:
 
    text	   data	    bss	    dec	    hex	filename
-18163528 10226300 2957312 31347140 1de51c4 ./vmlinux before
-18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+1128)
+18146889 10225380 2957312 31329581 1de0d2d ./vmlinux before
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux after (+1755)
 
-And functions such as intel_pstate_adjust_policy_max(),
-kvm_cpu_accept_dm_intr(), kvm_register_readl() are inlined.
+But enables more aggressive inlining (and probably branch decisions).
+The number of static text symbols in vmlinux is lower.
+
+Static text symbols:
+Before:	40218
+After:	40053	(-165)
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/entry/calling.h          |  2 +-
- arch/x86/include/asm/jump_label.h | 77 +++++++++++--------------------
- arch/x86/kernel/macros.S          |  1 +
- 3 files changed, 30 insertions(+), 50 deletions(-)
+ arch/x86/include/asm/bug.h | 98 ++++++++++++++++++++++----------------
+ arch/x86/kernel/macros.S   |  1 +
+ include/asm-generic/bug.h  |  8 ++--
+ 3 files changed, 61 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 352e70cd33e8..708b46a54578 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -338,7 +338,7 @@ For 32-bit we have the following conventions - kernel is built with
- .macro CALL_enter_from_user_mode
- #ifdef CONFIG_CONTEXT_TRACKING
- #ifdef HAVE_JUMP_LABEL
--	STATIC_JUMP_IF_FALSE .Lafter_call_\@, context_tracking_enabled, def=0
-+	STATIC_BRANCH_JMP l_yes=.Lafter_call_\@, key=context_tracking_enabled, branch=1
- #endif
- 	call enter_from_user_mode
- .Lafter_call_\@:
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 8c0de4282659..4606a7101f97 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -2,19 +2,6 @@
- #ifndef _ASM_X86_JUMP_LABEL_H
- #define _ASM_X86_JUMP_LABEL_H
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 6804d6642767..5090035e6d16 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -4,6 +4,8 @@
  
--#ifndef HAVE_JUMP_LABEL
--/*
-- * For better or for worse, if jump labels (the gcc extension) are missing,
-- * then the entire static branch patching infrastructure is compiled out.
-- * If that happens, the code in here will malfunction.  Raise a compiler
-- * error instead.
-- *
-- * In theory, jump labels and the static branch patching infrastructure
-- * could be decoupled to fix this.
-- */
--#error asm/jump_label.h included on a non-jump-label kernel
+ #include <linux/stringify.h>
+ 
++#ifndef __ASSEMBLY__
++
+ /*
+  * Despite that some emulators terminate on UD2, we use it for WARN().
+  *
+@@ -20,53 +22,15 @@
+ 
+ #define LEN_UD2		2
+ 
+-#ifdef CONFIG_GENERIC_BUG
+-
+-#ifdef CONFIG_X86_32
+-# define __BUG_REL(val)	".long " __stringify(val)
+-#else
+-# define __BUG_REL(val)	".long " __stringify(val) " - 2b"
 -#endif
 -
- #define JUMP_LABEL_NOP_SIZE 5
+-#ifdef CONFIG_DEBUG_BUGVERBOSE
+-
+-#define _BUG_FLAGS(ins, flags)						\
+-do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+-		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+-		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c3\n"					\
+-		     ".popsection"					\
+-		     : : "i" (__FILE__), "i" (__LINE__),		\
+-			 "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
+-} while (0)
+-
+-#else /* !CONFIG_DEBUG_BUGVERBOSE */
+-
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c1\n"					\
+-		     ".popsection"					\
+-		     : : "i" (flags),					\
++	asm volatile("ASM_BUG ins=\"" ins "\" file=%c0 line=%c1 "	\
++		     "flags=%c2 size=%c3"				\
++		     : : "i" (__FILE__), "i" (__LINE__),                \
++			 "i" (flags),                                   \
+ 			 "i" (sizeof(struct bug_entry)));		\
+ } while (0)
  
- #ifdef CONFIG_X86_64
-@@ -28,18 +15,27 @@
+-#endif /* CONFIG_DEBUG_BUGVERBOSE */
+-
+-#else
+-
+-#define _BUG_FLAGS(ins, flags)  asm volatile(ins)
+-
+-#endif /* CONFIG_GENERIC_BUG */
+-
+ #define HAVE_ARCH_BUG
+ #define BUG()							\
+ do {								\
+@@ -82,4 +46,54 @@ do {								\
  
- #ifndef __ASSEMBLY__
+ #include <asm-generic/bug.h>
  
-+#ifndef HAVE_JUMP_LABEL
-+/*
-+ * For better or for worse, if jump labels (the gcc extension) are missing,
-+ * then the entire static branch patching infrastructure is compiled out.
-+ * If that happens, the code in here will malfunction.  Raise a compiler
-+ * error instead.
-+ *
-+ * In theory, jump labels and the static branch patching infrastructure
-+ * could be decoupled to fix this.
-+ */
-+#error asm/jump_label.h included on a non-jump-label kernel
++#else /* __ASSEMBLY__ */
++
++#ifdef CONFIG_GENERIC_BUG
++
++#ifdef CONFIG_X86_32
++.macro __BUG_REL val:req
++	.long \val
++.endm
++#else
++.macro __BUG_REL val:req
++	.long \val - 2b
++.endm
 +#endif
 +
- #include <linux/stringify.h>
- #include <linux/types.h>
- 
- static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("1:"
--		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
--		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
-+	asm_volatile_goto("STATIC_BRANCH_NOP l_yes=\"%l[l_yes]\" key=\"%c0\" "
-+			  "branch=\"%c1\""
-+			: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
- l_yes:
-@@ -48,13 +44,8 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
- 
- static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("1:"
--		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
--		"2:\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
--		".popsection \n\t"
-+	asm_volatile_goto("STATIC_BRANCH_JMP l_yes=\"%l[l_yes]\" key=\"%c0\" "
-+			  "branch=\"%c1\""
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
-@@ -76,35 +67,23 @@ struct jump_entry {
- 
- #else	/* __ASSEMBLY__ */
- 
--.macro STATIC_JUMP_IF_TRUE target, key, def
--.Lstatic_jump_\@:
--	.if \def
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - .Lstatic_jump_after_\@
--.Lstatic_jump_after_\@:
--	.else
--	.byte		STATIC_KEY_INIT_NOP
--	.endif
-+.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
-+1:
-+	.byte STATIC_KEY_INIT_NOP
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
--	_ASM_PTR	.Lstatic_jump_\@, \target, \key
-+	_ASM_PTR 1b, \l_yes, \key + \branch
- 	.popsection
- .endm
- 
--.macro STATIC_JUMP_IF_FALSE target, key, def
--.Lstatic_jump_\@:
--	.if \def
--	.byte		STATIC_KEY_INIT_NOP
--	.else
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - .Lstatic_jump_after_\@
--.Lstatic_jump_after_\@:
--	.endif
-+.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
-+1:
-+	.byte 0xe9
-+	.long \l_yes - 2f
-+2:
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
--	_ASM_PTR	.Lstatic_jump_\@, \target, \key + 1
-+	_ASM_PTR 1b, \l_yes, \key + \branch
- 	.popsection
- .endm
- 
++#ifdef CONFIG_DEBUG_BUGVERBOSE
++
++.macro ASM_BUG ins:req file:req line:req flags:req size:req
++1:	\ins
++	.pushsection __bug_table,"aw"
++2:	__BUG_REL val=1b	# bug_entry::bug_addr
++	__BUG_REL val=\file	# bug_entry::file
++	.word \line		# bug_entry::line
++	.word \flags		# bug_entry::flags
++	.org 2b+\size
++	.popsection
++.endm
++
++#else /* !CONFIG_DEBUG_BUGVERBOSE */
++
++.macro ASM_BUG ins:req file:req line:req flags:req size:req
++1:	\ins
++	.pushsection __bug_table,"aw"
++2:	__BUG_REL val=1b	# bug_entry::bug_addr
++	.word \flags		# bug_entry::flags
++	.org 2b+\size
++	.popsection
++.endm
++
++#endif /* CONFIG_DEBUG_BUGVERBOSE */
++
++#else /* CONFIG_GENERIC_BUG */
++
++.macro ASM_BUG ins:req file:req line:req flags:req size:req
++	\ins
++.endm
++
++#endif /* CONFIG_GENERIC_BUG */
++
++#endif /* __ASSEMBLY__ */
++
+ #endif /* _ASM_X86_BUG_H */
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index bf8b9c93e255..161c95059044 100644
+index 852487a9fc56..66ccb8e823b1 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -13,3 +13,4 @@
- #include <asm/paravirt.h>
- #include <asm/asm.h>
- #include <asm/cpufeature.h>
-+#include <asm/jump_label.h>
+@@ -9,3 +9,4 @@
+ #include <linux/compiler.h>
+ #include <asm/refcount.h>
+ #include <asm/alternative-asm.h>
++#include <asm/bug.h>
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index a7613e1b0c87..cf7f4ef4749e 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -17,10 +17,8 @@
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ 
+-#ifdef CONFIG_BUG
+-
+-#ifdef CONFIG_GENERIC_BUG
+ struct bug_entry {
++#ifdef CONFIG_GENERIC_BUG
+ #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
+ 	unsigned long	bug_addr;
+ #else
+@@ -35,8 +33,10 @@ struct bug_entry {
+ 	unsigned short	line;
+ #endif
+ 	unsigned short	flags;
+-};
+ #endif	/* CONFIG_GENERIC_BUG */
++};
++
++#ifdef CONFIG_BUG
+ 
+ /*
+  * Don't use BUG() or BUG_ON() unless there's really no way out; one
 -- 
 2.17.1
 
