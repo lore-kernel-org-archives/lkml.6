@@ -3,77 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE2DC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DEEC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 754C921EB7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 754C921EB7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E65B21EC4
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E65B21EC4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732499AbeHIS7C (ORCPT
+        id S1732548AbeHITCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:59:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57790 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730419AbeHIS7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:59:02 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 08C797A7EB;
-        Thu,  9 Aug 2018 16:33:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AFF2010F1BF9;
-        Thu,  9 Aug 2018 16:33:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegvWE9htLjqeR6=2BWBSuvJzJpWcjBC_EmX_k1RCGXTfbw@mail.gmail.com>
-References: <CAJfpegvWE9htLjqeR6=2BWBSuvJzJpWcjBC_EmX_k1RCGXTfbw@mail.gmail.com> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk> <87in4n9zg0.fsf@xmission.com> <27374.1533824694@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and managing a context [ver #11]
+        Thu, 9 Aug 2018 15:02:02 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:8166 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732364AbeHITCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 15:02:02 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b6c6d780000>; Thu, 09 Aug 2018 09:36:08 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 09 Aug 2018 09:36:22 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 09 Aug 2018 09:36:22 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Aug
+ 2018 16:36:18 +0000
+Date:   Thu, 9 Aug 2018 19:36:13 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "Mikko Perttunen" <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH 02/40] dt-bindings: mmc: tegra: Add pad voltage control
+ properties
+Message-ID: <20180809193613.5327fc95@dhcp-10-21-25-168>
+In-Reply-To: <20180809121500.GP21639@ulmo>
+References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+        <1533141150-10511-3-git-send-email-avienamo@nvidia.com>
+        <20180809121500.GP21639@ulmo>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <13159.1533832400.1@warthog.procyon.org.uk>
-Date:   Thu, 09 Aug 2018 17:33:20 +0100
-Message-ID: <13160.1533832400@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 16:33:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 16:33:22 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu, 9 Aug 2018 14:15:00 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-> > However, as I have said, I *am* willing to add one of more flags to help
-> > with this, but I can't make any "legacy" fs honour them as this requires
-> > the fs_context to be passed down to sget_fc() and the filesystem - which
-> > is why I was considering leaving it for later.
->
-> You can determine at fsopen() time whether the filesystem is able to
-> support the O_EXCL behavior?  If so, then it's trivial to enable this
-> conditionally.  I think that's what Eric is asking for, it's obviously
-> not fair to ask for a change in behavior of the legacy interface.
+> On Wed, Aug 01, 2018 at 07:31:52PM +0300, Aapo Vienamo wrote:
+> > Document the pinctrl bindings used by the SDHCI driver to reconfigure
+> > pad voltages on controllers supporting multiple voltage levels.
+> > 
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > index 9bce578..90c214d 100644
+> > --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > @@ -38,3 +38,25 @@ sdhci@c8000200 {
+> >  	power-gpios = <&gpio 155 0>; /* gpio PT3 */
+> >  	bus-width = <8>;
+> >  };
+> > +
+> > +Optional properties for Tegra210 and Tegra186:
+> > +- pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
+> > +  configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
+> > +  for controllers supporting multiple voltage levels. The order of names
+> > +  should correspond to the pin configuration states in pinctrl-0 and
+> > +  pinctrl-1.  
+> 
+> Do we also want "sdmmc-off" to allow SDMMC pads to be powered down when
+> the slot or card is not used?
 
-What do you mean by "enable it conditionally"?  It cannot be enabled for
-filesystems that don't pass fs_context down to sget().
+I don't see a real need for it, at least not in the context of this
+series which aims to implement support for HS200 and UHS signaling. I
+guess it could be added later if there's an actual case for it, where
+turning off the pad would result in measureable change in total power
+consumption.
 
-mount(2) mustn't enable it lest it break userspace.
+ -Aapo
 
-fsopen(2) can let userspace set a flag to enable it.
+> > +
+> > +Example:
+> > +sdhci@700b0000 {
+> > +	compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
+> > +	reg = <0x0 0x700b0000 0x0 0x200>;
+> > +	interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+> > +	clocks = <&tegra_car TEGRA210_CLK_SDMMC1>;
+> > +	clock-names = "sdhci";
+> > +	resets = <&tegra_car 14>;
+> > +	reset-names = "sdhci";
+> > +	pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> > +	pinctrl-0 = <&sdmmc1_3v3>;
+> > +	pinctrl-1 = <&sdmmc1_1v8>;
+> > +	status = "disabled";
+> > +};
+> > -- 
+> > 2.7.4
+> >   
 
-David
