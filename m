@@ -2,118 +2,108 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FACBC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB16C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A5621B32
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:40:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A5621B32
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DD9121B32
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:44:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD9121B32
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbeHILDq (ORCPT
+        id S1730018AbeHILI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:03:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50198 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727371AbeHILDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:03:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07CC018A;
-        Thu,  9 Aug 2018 01:39:59 -0700 (PDT)
-Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B7EE3F5D0;
-        Thu,  9 Aug 2018 01:39:54 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 09:39:47 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
- support utilization clamping
-Message-ID: <20180809083947.2ogkudkpg6d52roc@darkstar>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-2-patrick.bellasi@arm.com>
- <d8a3d533-84df-bfc7-96ae-790141be4926@infradead.org>
+        Thu, 9 Aug 2018 07:08:28 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45375 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727601AbeHILI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:08:28 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C1A03B64E5AE;
+        Thu,  9 Aug 2018 16:44:35 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Thu, 9 Aug 2018
+ 16:44:33 +0800
+Subject: Re: [PATCH net-next] ieee802154: Use kmemdup instead of duplicating
+ it in ca8210_test_int_driver_write
+To:     Stefan Schmidt <stefan@datenfreihafen.org>, <davem@davemloft.net>,
+        <h.morris@cascoda.com>, <alex.aring@gmail.com>
+References: <20180809064429.13348-1-yuehaibing@huawei.com>
+ <488f54b7-cfe2-f64b-168e-11f79d4d4e96@datenfreihafen.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wpan@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <aaf879dd-c630-a201-b8ae-66c39a359a99@huawei.com>
+Date:   Thu, 9 Aug 2018 16:44:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d8a3d533-84df-bfc7-96ae-790141be4926@infradead.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <488f54b7-cfe2-f64b-168e-11f79d4d4e96@datenfreihafen.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Aug 09:50, Randy Dunlap wrote:
-> Hi,
-
-Hi Randy,
-
-> On 08/06/2018 09:39 AM, Patrick Bellasi wrote:
-> > diff --git a/init/Kconfig b/init/Kconfig
-> > index 041f3a022122..1d45a6877d6f 100644
-> > --- a/init/Kconfig
-> > +++ b/init/Kconfig
-> > @@ -583,6 +583,25 @@ config HAVE_UNSTABLE_SCHED_CLOCK
-> >  config GENERIC_SCHED_CLOCK
-> >  	bool
-> >  
-> > +menu "Scheduler features"
-> > +
-> > +config UCLAMP_TASK
-> > +	bool "Enable utilization clamping for RT/FAIR tasks"
-> > +	depends on CPU_FREQ_GOV_SCHEDUTIL
-> > +	default false
+On 2018/8/9 16:13, Stefan Schmidt wrote:
+> Hello.
 > 
-> 	default n
-> but just omit the line completely since "n" is already the default.
-
-
-Right, will update for next posting!
-Is there a strict rule to omit this line when it's already the
-default?
+> On 08/09/2018 08:44 AM, YueHaibing wrote:
+>> Replace calls to kmalloc followed by a memcpy with a direct call to
+>> kmemdup.
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > 
-> > +	help
-> > +	  This feature enables the scheduler to track the clamped utilization
-> > +	  of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
-> > +
-> > +	  When this option is enabled, the user can specify a min and max CPU
-> > +          bandwidth which is allowed for a task.
-> > +	  The max bandwidth allows to clamp the maximum frequency a task can
-> > +	  use, while the min bandwidth allows to define a minimum frequency a
-> > +          task will always use.
+> Is Yue your forname and Haibing your surname? In that case having it
+> written as
 > 
-> Please clean up the indentation above to use one tab + 2 spaces on all lines.
+> Yue Haibing <yuehaibing@huawei.com>
 
-Sure, my bad I did not notice it... although I'm quite sure the patch
-passed a checkpatch... will check better next time.
+Well, It should be this, but it's been a long time to use the former
 
-> > +
-> > +	  If in doubt, say N.
-> > +
-> > +endmenu
+> 
+> in the from line as well as in the SOB would be better.
+> 
+>> ---
+>>  drivers/net/ieee802154/ca8210.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+>> index 58299fb..e21279d 100644
+>> --- a/drivers/net/ieee802154/ca8210.c
+>> +++ b/drivers/net/ieee802154/ca8210.c
+>> @@ -634,10 +634,9 @@ static int ca8210_test_int_driver_write(
+>>  	for (i = 0; i < len; i++)
+>>  		dev_dbg(&priv->spi->dev, "%#03x\n", buf[i]);
+>>  
+>> -	fifo_buffer = kmalloc(len, GFP_KERNEL);
+>> +	fifo_buffer = kmemdup(buf, len, GFP_KERNEL);
+>>  	if (!fifo_buffer)
+>>  		return -ENOMEM;
+>> -	memcpy(fifo_buffer, buf, len);
+>>  	kfifo_in(&test->up_fifo, &fifo_buffer, 4);
+>>  	wake_up_interruptible(&priv->test.readq);
+> 
+> Is this some kernel tree wide change you are submitting patches for or
+> only for the ca8210 driver? Is there any specific problem you see with
+> the kmalloc and memcpy code here? To me it looks fine.
+> 
+> The reason I ask is to understand if this is bug fix or a cleanup.
 
-Cheers Patrick
+It just a code cleanup only for ca8210.
 
--- 
-#include <best/regards.h>
+> 
+> Harry, if you are ok with this one let me know with an Acked-By
+> 
+> regards
+> Stefan Schmidt
+> 
+> .
+> 
 
-Patrick Bellasi
