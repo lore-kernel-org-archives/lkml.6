@@ -2,195 +2,194 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3FCC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C824C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08DB421A8F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:33:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qu2J0SsV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08DB421A8F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id AF5C521B31
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:34:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5C521B31
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbeHIK5N (ORCPT
+        id S1729994AbeHIK6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:57:13 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54692 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728376AbeHIK5M (ORCPT
+        Thu, 9 Aug 2018 06:58:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728170AbeHIK6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:57:12 -0400
-Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 32AA6CD;
-        Thu,  9 Aug 2018 10:33:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533803604;
-        bh=6voK1AcRnbWv4HG/nTA8HMkNRJ/kLjfB2vVelgIX9so=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=qu2J0SsVED0LwpX0x4KcqVayJ+PcCx7MteQSo5AdRmUPrORK7/LjoTf51xSmU7oGg
-         QlOBu3G9Nq3QiaaZA2I3tn2r+FinpKUwhTvoXUeM1EGMFNC8Fu7vuDjJF1UFh2sghQ
-         oRnhnPny/JlG1SNnmtf+bf9GRqW34mZQVYonLxV4=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2] dt-bindings: media: adv748x: Document re-mappable
- addresses
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20180808232941.10582-1-kieran.bingham@ideasonboard.com>
- <3968377.CNlSUayrWh@avalon>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <22e60e95-be35-76c4-af4e-7595025128d1@ideasonboard.com>
-Date:   Thu, 9 Aug 2018 09:33:21 +0100
+        Thu, 9 Aug 2018 06:58:36 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w798TG0G009630
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 04:34:48 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2krg1kmy4c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 04:34:48 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Thu, 9 Aug 2018 09:34:34 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 09:34:29 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w798YSns34209968
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 08:34:28 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0576942052;
+        Thu,  9 Aug 2018 11:34:36 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43E1042045;
+        Thu,  9 Aug 2018 11:34:33 +0100 (BST)
+Received: from [10.0.2.15] (unknown [9.152.224.40])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 11:34:33 +0100 (BST)
+Subject: Re: [PATCH v8 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Thu, 9 Aug 2018 10:34:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <3968377.CNlSUayrWh@avalon>
+In-Reply-To: <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18080908-0016-0000-0000-000001F4495B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080908-0017-0000-0000-0000324A5B8B
+Message-Id: <2fbfa34f-0a82-9fd2-3b52-60479d9eca1a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
-
-On 09/08/18 09:22, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> Thank you for the patch.
-> 
-> On Thursday, 9 August 2018 02:29:41 EEST Kieran Bingham wrote:
->> The ADV748x supports configurable slave addresses for its I2C pages.
->> Document the page names, and provide an example for setting each of the
->> pages explicitly.
+On 09.08.2018 10:17, David Hildenbrand wrote:
+> On 08.08.2018 16:44, Tony Krowiak wrote:
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
 >>
->> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> Introduces a new CPU model feature and two CPU model
+>> facilities to support AP virtualization for KVM guests.
+>>
+>> CPU model feature:
+>>
+>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>> AP instructions are available on the guest. This
+>> feature will be enabled by the kernel only if the AP
+>> instructions are installed on the linux host. This feature
+>> must be specifically turned on for the KVM guest from
+>> userspace to use the VFIO AP device driver for guest
+>> access to AP devices.
+>>
+>> CPU model facilities:
+>>
+>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>
+>>    This is indicated by setting facilities bit 12 for
+>>    the guest. The kernel will not enable this facility
+>>    for the guest if it is not set on the host. This facility
+>>    must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>>    feature is not installed.
+> Could it happen on real HW (not frankenstein CPU models), that
+>
+> !AP, but STFL 12 or 15  are indicated?
+What is your expectation here ? There are no AP instructions
+available but if there would be AP instructions available then
+there would be the QCI and or the T bit facility within
+the PQAP AP instruction valid ?
+>>    If this facility is not set for the KVM guest, then only
+>>    APQNs with an APQI less than 16 will be used by a Linux
+>>    guest regardless of the matrix configuration for the virtual
+>>    machine. This is a limitation of the Linux AP bus.
+>>
+>> 2. AP Facilities Test facility (APFT) is installed.
+>>
+>>    This is indicated by setting facilities bit 15 for
+>>    the guest. The kernel will not enable this facility for
+>>    the guest if it is not set on the host. This facility
+>>    must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>>    feature is not installed.
+>>
+>>    If this facility is not set for the KVM guest, then no
+>>    AP devices will be available to the guest regardless of
+>>    the guest's matrix configuration for the virtual
+>>    machine. This is a limitation of the Linux AP bus.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 >> ---
->> v2:
->>  - Fix commit message
->>  - Extend documentation for the "required property" reg:
+>>  arch/s390/kvm/kvm-s390.c         |    7 +++++++
+>>  arch/s390/tools/gen_facilities.c |    2 ++
+>>  2 files changed, 9 insertions(+), 0 deletions(-)
 >>
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 9203f0b..7d4fe9b 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -367,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
+>>  
+>>  	if (MACHINE_HAS_ESOP)
+>>  		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>> +
+>> +	/*
+>> +	 * Check if AP instructions installed on host
+>> +	 */
+> Make this a one-line comment, please.
+>
+>> +	if (ap_instructions_available() == 0)
+>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>> +
+>>  	/*
+>>  	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>  	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>> index 90a8c9e..a52290b 100644
+>> --- a/arch/s390/tools/gen_facilities.c
+>> +++ b/arch/s390/tools/gen_facilities.c
+>> @@ -106,6 +106,8 @@ struct facility_def {
+>>  
+>>  		.name = "FACILITIES_KVM_CPUMODEL",
+>>  		.bits = (int[]){
+>> +			12, /* AP Query Configuration Information */
+>> +			15, /* AP Facilities Test */
+>>  			-1  /* END */
+>>  		}
+>>  	},
 >>
->>  .../devicetree/bindings/media/i2c/adv748x.txt    | 16 ++++++++++++++--
->>  1 file changed, 14 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
->> b/Documentation/devicetree/bindings/media/i2c/adv748x.txt index
->> 21ffb5ed8183..f7fbe221c15e 100644
->> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
->> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
->> @@ -10,7 +10,11 @@ Required Properties:
->>      - "adi,adv7481" for the ADV7481
->>      - "adi,adv7482" for the ADV7482
->>
->> -  - reg: I2C slave address
->> +  - reg: I2C slave addresses
->> +    The ADV748x has up to twelve 256-byte maps that can be accessed via the
->> +    main I2C ports. Each map has it own I2C address and acts as a standard
->> +    slave device on the I2C bus. The main address is mandatory, others are
->> +    optional and revert to defaults if not specified.
-> 
-> Maybe "revert" has a meaning I'm not aware of, but don't you mean "default" > instead ? "default to defaults" probably needs to be rephrased though.
+>
 
-"Revert to defaults" makes perfect sense in my head :D ... but perhaps
-   "remains at default values"
-would be better?
-
-> 
->>  Optional Properties:
->>
->> @@ -18,6 +22,11 @@ Optional Properties:
->>  		     "intrq3". All interrupts are optional. The "intrq3" interrupt
->>  		     is only available on the adv7481
->>    - interrupts: Specify the interrupt lines for the ADV748x
->> +  - reg-names : Names of maps with programmable addresses.
->> +		It can contain any map needed a non-default address.
-> 
-> I think you missed my comment to v1:
-> 
-> s/can contain any map needed/shall contain all maps needing/
-
-Ugh ... yes I did.
-
-/me shouldn't try to do easy patches at 12.30am.
-
-
->> +		Possible map names are:
->> +		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
->> +		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
->>
->>  The device node must contain one 'port' child node per device input and
->> output port, in accordance with the video interface bindings defined in
->> @@ -47,7 +56,10 @@ Example:
->>
->>  	video-receiver@70 {
->>  		compatible = "adi,adv7482";
->> -		reg = <0x70>;
->> +		reg = <0x70 0x71 0x72 0x73 0x74 0x75
->> +		       0x60 0x61 0x62 0x63 0x64 0x65>;
->> +		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
->> +			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
->>
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
-> 
-
--- 
-Regards
---
-Kieran
