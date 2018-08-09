@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34445C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14963C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C440D21F45
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:05:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C62EF21F45
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:06:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkWBxTnq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C440D21F45
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tlikYUqn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C62EF21F45
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=elisp.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeHIUbz (ORCPT
+        id S1727249AbeHIUb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:31:55 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35931 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeHIUby (ORCPT
+        Thu, 9 Aug 2018 16:31:58 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44915 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbeHIUb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:31:54 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h12-v6so3115271pgs.3;
-        Thu, 09 Aug 2018 11:05:55 -0700 (PDT)
+        Thu, 9 Aug 2018 16:31:57 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k21-v6so3198410pff.11;
+        Thu, 09 Aug 2018 11:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xcCotWz9K0Ns7M/AxzovGJojVJo03cr+h2Au5S0VhgI=;
-        b=ZkWBxTnqvU24gvn3otMvu5/sl5jEIVDefT1K27v0LDJPIS5LvikHp+UTzoaQB4e/id
-         ojAym84JeXtt43kXOL3BdVaimlxiL7AaliNhWhIWjZ//s2lhqJiM1mrB56hGgkpRuyPt
-         tE4W+AN0eq8pkdP9kya2KfMFFhUK4QW6FL++DPwabf9UX/4PmkmNyuWO0JQlqwQu6R8c
-         XI7pPBNPSnE6L6/sMHV4aJeAgYsG1X90JMbgUMA1KJowTII8GhTZ26BkqJKcXks3ahzl
-         aqoT6DMtc+ZyMN5vU3yP+41Ije8dS1sFs0hpozfeg5pSzOIr9qJ2zFAP8Hr+sRIFaJWl
-         rIZA==
+        bh=Vragor325c5+mkfaiNN9c9VU2fiaVIcgfu01gZ3wtGE=;
+        b=tlikYUqnqLXIS0Lu1xCQBWPm6kMPZpvmTEwdsavB5f4HIPzW8ojZw3kHq0+w7RkWJA
+         hO2fAfdnBrdBgqfYOfjhqq4k4LL4Xou+JK5rUGklaC6hsoGIyg5pqg4698tgZrm/zgB0
+         FMjZ0pRsfpNxd0QAhyf6IkUUtRLouYU1w9NYqBIy9uQyNzqGXdmzz0evhTNOeBnbbY5Q
+         tLBYrBwM+uDnP8B/Ba4M7NmOztR5Qc1ShcybQPy+Gm2B8O+STacQkAplpBDppeuJhnEd
+         TVHrOXjzWbwXDxDqtRO6DijH2Ri9bEocpusuhzK7iga3Zo7Mb5DZgOGr5Zduei85Wkvg
+         wStA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=xcCotWz9K0Ns7M/AxzovGJojVJo03cr+h2Au5S0VhgI=;
-        b=tsfI/l8ZJxPmpMm72jIH8QiDBqQDCd+wTyh4FdR1snHXlUNI956uoAKzeHd+ks+S6f
-         Iailf9xveAhM6mfA1FWsdv+vz0jRq0mV/IBZ0DOHOa9ri9WXgv3NbfsBssDzUe0wZHEJ
-         fd7J7Xd+Sr5gq52yO39ajp0q3IVS1xXwguMJ/GViV6EEPpn2R6XN7K/wAbYr7KCKvWOB
-         VD5Oqlqq6Kn00wajzZ8j1T0lIhnKBwUVI8xPuwPzbWB3kbpqQqopGpJqFfvhd/Cb6oql
-         TSV3TZEj0tTsm2sXZsLqYmYqTFneFvh3NPDgpY8eDijpRSz4r3ucUf89z9LuyLq0Z3om
-         KHbg==
-X-Gm-Message-State: AOUpUlHELHGXPTs50tYtH79qKN2/2ZRvrndsIc46+clxjWryzo1GrS23
-        Ydkj1yEHZbc/EZ651CI6hPg=
-X-Google-Smtp-Source: AA+uWPzAG1TJj+GrnFULopInQjAVBxamXTbTCokfFMDd0/lmhyQIobG91muKLzCBl8pPz5gBtVukVw==
-X-Received: by 2002:a63:614d:: with SMTP id v74-v6mr3118505pgb.328.1533837955541;
-        Thu, 09 Aug 2018 11:05:55 -0700 (PDT)
+        bh=Vragor325c5+mkfaiNN9c9VU2fiaVIcgfu01gZ3wtGE=;
+        b=JXzqdK3qywX+IF6Rpc5BH7IaXArtW1BYPiLZURkxxbcgGiaT3CI8xfgkcMDttstdpq
+         3Z1LBURY7yzmhP12rpGMICivS0hrCPkO/L5Ug9qqDYmkwIFVhxJVXOduBrIU9Z9l7I78
+         jXg0jgntyA+dgJnwWgMtWm6r2emZ31ONSoGfxc1QVpctD6UfwCYMPBxkEOHF8mPTNSZY
+         aGaJrNQL48SbZ0PWgyb6W+f0sbG9SDWjbWYdpfgN80hOr54d4DAUF5YdV+AznxM8ehbt
+         i7CLh6B/DQsBtpkMF3VwFjmo1AeIsd5MD2T8vI40gtfzLFTEbdrcUfgFbO/ghDpsZ/pK
+         Izuw==
+X-Gm-Message-State: AOUpUlFxkPOb9Y1K0j7+04LbZcIPmtaq7KB5RzvUg5nJIGHj56Gq3Gzs
+        04n3sJzFX1GyF229jEWw740=
+X-Google-Smtp-Source: AA+uWPzYZKRdXMUMuxDSXKi7uGDHmxq/C1675FqLvAgjwpq1e/Jj3mnK2RIgNPKd07Io1rA/Vshbnw==
+X-Received: by 2002:a62:5b85:: with SMTP id p127-v6mr3478638pfb.33.1533837957898;
+        Thu, 09 Aug 2018 11:05:57 -0700 (PDT)
 Received: from localhost (h101-111-148-072.catv02.itscom.jp. [101.111.148.72])
-        by smtp.gmail.com with ESMTPSA id l185-v6sm7788706pga.65.2018.08.09.11.05.54
+        by smtp.gmail.com with ESMTPSA id 143-v6sm12128663pfy.156.2018.08.09.11.05.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 11:05:54 -0700 (PDT)
+        Thu, 09 Aug 2018 11:05:57 -0700 (PDT)
 From:   Naohiro Aota <naota@elisp.net>
 To:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
@@ -65,9 +65,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
         Bart Van Assche <bart.vanassche@wdc.com>,
         Matias Bjorling <mb@lightnvm.io>,
         Naohiro Aota <naota@elisp.net>
-Subject: [RFC PATCH 03/17] btrfs: Check and enable HMZONED mode
-Date:   Fri, 10 Aug 2018 03:04:36 +0900
-Message-Id: <20180809180450.5091-4-naota@elisp.net>
+Subject: [RFC PATCH 04/17] btrfs: limit super block locations in HMZONED mode
+Date:   Fri, 10 Aug 2018 03:04:37 +0900
+Message-Id: <20180809180450.5091-5-naota@elisp.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180809180450.5091-1-naota@elisp.net>
 References: <20180809180450.5091-1-naota@elisp.net>
@@ -76,227 +76,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HMZONED mode cannot be used together with the RAID5/6 profile. Introduce
-the function btrfs_check_hmzoned_mode() to check this. This function will
-also check if HMZONED flag is enabled on the file system and if the file
-system consists of zoned devices with equal zone size.
-
-Additionally, as updates to the space cache are in-place, the space cache
-cannot be located over sequential zones and there is no guarantees that the
-device will have enough conventional zones to store this cache. Resolve
-this problem by disabling completely the space cache.  This does not
-introduces any problems with sequential block groups: all the free space is
-located after the allocation pointer and no free space before the pointer.
-There is no need to have such cache.
+When in HMZONED mode, make sure that device super blocks are located in
+randomly writable zones of zoned block devices. That is, do not write super
+blocks in sequential write required zones of host-managed zoned block
+devices as update would not be possible.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Naohiro Aota <naota@elisp.net>
 ---
- fs/btrfs/ctree.h       |  3 ++
- fs/btrfs/dev-replace.c |  7 ++++
- fs/btrfs/disk-io.c     |  7 ++++
- fs/btrfs/super.c       | 12 +++---
- fs/btrfs/volumes.c     | 87 ++++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/volumes.h     |  1 +
- 6 files changed, 112 insertions(+), 5 deletions(-)
+ fs/btrfs/disk-io.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 66f1d3895bca..14f880126532 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -763,6 +763,9 @@ struct btrfs_fs_info {
- 	struct btrfs_root *uuid_root;
- 	struct btrfs_root *free_space_root;
- 
-+	/* Zone size when in HMZONED mode */
-+	u64 zone_size;
-+
- 	/* the log root tree is a directory of all the other log roots */
- 	struct btrfs_root *log_root_tree;
- 
-diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index dec01970d8c5..839a35008fd8 100644
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -202,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
- 		return PTR_ERR(bdev);
- 	}
- 
-+	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
-+	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
-+	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
- 	filemap_write_and_wait(bdev->bd_inode->i_mapping);
- 
- 	devices = &fs_info->fs_devices->devices;
 diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 5124c15705ce..14f284382ba7 100644
+index 14f284382ba7..6a014632ca1e 100644
 --- a/fs/btrfs/disk-io.c
 +++ b/fs/btrfs/disk-io.c
-@@ -3057,6 +3057,13 @@ int open_ctree(struct super_block *sb,
- 
- 	btrfs_free_extra_devids(fs_devices, 1);
- 
-+	ret = btrfs_check_hmzoned_mode(fs_info);
-+	if (ret) {
-+		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
-+				ret);
-+		goto fail_block_groups;
-+	}
-+
- 	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
- 	if (ret) {
- 		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 5fdd95e3de05..cc812e459197 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -435,11 +435,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
- 	bool saved_compress_force;
- 	int no_compress = 0;
- 
--	cache_gen = btrfs_super_cache_generation(info->super_copy);
--	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
--		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
--	else if (cache_gen)
--		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
-+	if (!btrfs_fs_incompat(info, HMZONED)) {
-+		cache_gen = btrfs_super_cache_generation(info->super_copy);
-+		if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
-+			btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
-+		else if (cache_gen)
-+			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
-+	}
- 
- 	/*
- 	 * Even the options are empty, we still need to do extra check
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 35b3a2187653..ba7ebb80de4d 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -1293,6 +1293,80 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
- 	return ret;
+@@ -3435,6 +3435,13 @@ struct buffer_head *btrfs_read_dev_super(struct block_device *bdev)
+ 	return latest;
  }
  
-+int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
++static int check_super_location(struct btrfs_device *device, u64 pos)
 +{
-+	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-+	struct btrfs_device *device;
-+	u64 hmzoned_devices = 0;
-+	u64 nr_devices = 0;
-+	u64 zone_size = 0;
-+	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
-+	int ret = 0;
-+
-+	/* Count zoned devices */
-+	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-+		if (!device->bdev)
-+			continue;
-+		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
-+		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
-+		     incompat_hmzoned)) {
-+			hmzoned_devices++;
-+			if (!zone_size) {
-+				zone_size = device->zone_size;
-+			} else if (device->zone_size != zone_size) {
-+				btrfs_err(fs_info,
-+					  "Zoned block devices must have equal zone sizes");
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+		}
-+		nr_devices++;
-+	}
-+
-+	if (!hmzoned_devices && incompat_hmzoned) {
-+		/* No zoned block device, disable HMZONED */
-+		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	fs_info->zone_size = zone_size;
-+
-+	if (hmzoned_devices != nr_devices) {
-+		btrfs_err(fs_info,
-+			  "zoned devices mixed with regular devices");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* RAID56 is not allowed */
-+	if (btrfs_fs_incompat(fs_info, RAID56)) {
-+		btrfs_err(fs_info, "HMZONED mode does not support RAID56");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * SPACE CACHE writing is not cowed. Disable that to avoid
-+	 * write errors in sequential zones.
-+	 */
-+	if (btrfs_test_opt(fs_info, SPACE_CACHE)) {
-+		btrfs_info(fs_info,
-+			   "disabling disk space caching with HMZONED mode");
-+		btrfs_clear_opt(fs_info->mount_opt, SPACE_CACHE);
-+	}
-+
-+	btrfs_set_and_info(fs_info, NOTREELOG,
-+			   "disabling tree log with HMZONED  mode");
-+
-+	btrfs_info(fs_info, "HMZONED mode enabled, zone size %llu B",
-+		   fs_info->zone_size);
-+
-+out:
-+
-+	return ret;
++	/* any address is good on a regular (zone_size == 0) device */
++	/* non-SEQUENTIAL WRITE REQUIRED zones are capable on a zoned device */
++	return device->zone_size == 0 || !btrfs_dev_is_sequential(device, pos);
 +}
 +
- static void btrfs_release_disk_super(struct page *page)
- {
- 	kunmap(page);
-@@ -2471,6 +2545,13 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
- 	if (IS_ERR(bdev))
- 		return PTR_ERR(bdev);
+ /*
+  * Write superblock @sb to the @device. Do not wait for completion, all the
+  * buffer heads we write are pinned.
+@@ -3464,6 +3471,8 @@ static int write_dev_supers(struct btrfs_device *device,
+ 		if (bytenr + BTRFS_SUPER_INFO_SIZE >=
+ 		    device->commit_total_bytes)
+ 			break;
++		if (!check_super_location(device, bytenr))
++			continue;
  
-+	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
-+	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
-+	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
- 	if (fs_devices->seeding) {
- 		seeding_dev = 1;
- 		down_write(&sb->s_umount);
-@@ -2584,6 +2665,12 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
- 		}
- 	}
+ 		btrfs_set_super_bytenr(sb, bytenr);
  
-+	ret = btrfs_check_hmzoned_mode(fs_info);
-+	if (ret) {
-+		btrfs_abort_transaction(trans, ret);
-+		goto error_sysfs;
-+	}
-+
- 	if (seeding_dev) {
- 		mutex_lock(&fs_info->chunk_mutex);
- 		ret = init_first_rw_device(trans, fs_info);
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index 13d59bff204f..58053d2e24aa 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -416,6 +416,7 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
- 		       fmode_t flags, void *holder);
- int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
- 		       struct blk_zone *zone, gfp_t gfp_mask);
-+int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info);
- struct btrfs_device *btrfs_scan_one_device(const char *path,
- 					   fmode_t flags, void *holder);
- int btrfs_close_devices(struct btrfs_fs_devices *fs_devices);
 -- 
 2.18.0
 
