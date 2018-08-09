@@ -2,127 +2,93 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1407C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA29DC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D406217C0
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:24:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D406217C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 75D952098B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D952098B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbeHIKsC (ORCPT
+        id S1729945AbeHIKsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:48:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57464 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728549AbeHIKsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:48:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 936DEACA8;
-        Thu,  9 Aug 2018 08:24:16 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 10:24:15 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     osalvador@techadventures.net, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
-        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180809082415.GB24884@dhcp22.suse.cz>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <20180807145900.GH10003@dhcp22.suse.cz>
- <20180807151810.GB3301@redhat.com>
- <20180808064758.GB27972@dhcp22.suse.cz>
- <20180808165814.GB3429@redhat.com>
+        Thu, 9 Aug 2018 06:48:47 -0400
+Received: from www62.your-server.de ([213.133.104.62]:33224 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbeHIKsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 06:48:47 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fngFb-0007sU-9H; Thu, 09 Aug 2018 10:24:55 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fngFb-0003Tm-4F; Thu, 09 Aug 2018 10:24:55 +0200
+Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
+To:     "Tobin C. Harding" <me@tobin.cc>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180809052328.27942-1-me@tobin.cc>
+ <20180809060734.rtqqu4sexbwzuqmm@ast-mbp> <20180809072753.GF32374@eros>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <80bdc251-9f57-602f-6536-b34651684bb7@iogearbox.net>
+Date:   Thu, 9 Aug 2018 10:24:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180808165814.GB3429@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180809072753.GF32374@eros>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24825/Thu Aug  9 02:43:16 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 08-08-18 12:58:15, Jerome Glisse wrote:
-> On Wed, Aug 08, 2018 at 08:47:58AM +0200, Michal Hocko wrote:
-> > On Tue 07-08-18 11:18:10, Jerome Glisse wrote:
-> > > On Tue, Aug 07, 2018 at 04:59:00PM +0200, Michal Hocko wrote:
-> > > > On Tue 07-08-18 09:52:21, Jerome Glisse wrote:
-> > > > > On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
-> > > > > > From: Oscar Salvador <osalvador@suse.de>
-> > > > > 
-> > > > > [...]
-> > > > > 
-> > > > > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > > > > > index 9bd629944c91..e33555651e46 100644
-> > > > > > --- a/mm/memory_hotplug.c
-> > > > > > +++ b/mm/memory_hotplug.c
-> > > > > 
-> > > > > [...]
-> > > > > 
-> > > > > >  /**
-> > > > > >   * __remove_pages() - remove sections of pages from a zone
-> > > > > > - * @zone: zone from which pages need to be removed
-> > > > > > + * @nid: node which pages belong to
-> > > > > >   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
-> > > > > >   * @nr_pages: number of pages to remove (must be multiple of section size)
-> > > > > >   * @altmap: alternative device page map or %NULL if default memmap is used
-> > > > > > @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
-> > > > > >   * sure that pages are marked reserved and zones are adjust properly by
-> > > > > >   * calling offline_pages().
-> > > > > >   */
-> > > > > > -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> > > > > > +int __remove_pages(int nid, unsigned long phys_start_pfn,
-> > > > > >  		 unsigned long nr_pages, struct vmem_altmap *altmap)
-> > > > > >  {
-> > > > > >  	unsigned long i;
-> > > > > > @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> > > > > >  	int sections_to_remove, ret = 0;
-> > > > > >  
-> > > > > >  	/* In the ZONE_DEVICE case device driver owns the memory region */
-> > > > > > -	if (is_dev_zone(zone)) {
-> > > > > > -		if (altmap)
-> > > > > > -			map_offset = vmem_altmap_offset(altmap);
-> > > > > > -	} else {
-> > > > > > +	if (altmap)
-> > > > > > +		map_offset = vmem_altmap_offset(altmap);
-> > > > > > +	else {
-> > > > > 
-> > > > > This will break ZONE_DEVICE at least for HMM. While i think that
-> > > > > altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
-> > > > > is not true ie ZONE_DEVICE does not necessarily imply altmap. So
-> > > > > with the above changes you change the expected behavior.
-> > > > 
-> > > > Could you be more specific what is the expected behavior here?
-> > > > Is this about calling release_mem_region_adjustable? Why does is it not
-> > > > suitable for zone device ranges?
-> > > 
-> > > Correct, you should not call release_mem_region_adjustable() the device
-> > > region is not part of regular iomem resource as it might not necessarily
-> > > be enumerated through known ways to the kernel (ie only the device driver
-> > > can discover the region and core kernel do not know about it).
-> > 
-> > If there is no region registered with the range then the call should be
-> > mere nop, no? So why do we have to special case?
+On 08/09/2018 09:27 AM, Tobin C. Harding wrote:
+> On Wed, Aug 08, 2018 at 11:07:35PM -0700, Alexei Starovoitov wrote:
+>> On Thu, Aug 09, 2018 at 03:23:24PM +1000, Tobin C. Harding wrote:
+>>>
+>>> Daniel and Alexei, can I please have permission to add GPLv2+ to the BPF
+>>> docs?
+>>
+>> kernel licensing is GPLv2 without +
 > 
-> IIRC this is because you can not release the resource ie the resource
-> is still own by the device driver even if you hotremove the memory.
-> The device driver might still be using the resource without struct page.
+> According to process/license-rules.rst
+> 
+> 	    GPL-2.0+  :  GNU General Public License v2.0 or later
 
-But then it seems to be a property of a device rather than zone_device,
-no? If there are devices which want to preserve the resource then they
-should tell that. Doing that unconditionally for all zone_device users
-seems just wrong.
--- 
-Michal Hocko
-SUSE Labs
+Not really, please see the first three paragraphs of process/license-rules.rst.
+The COPYING file of the kernel says that it's 'v2' and not 'v2 or later',
+unless otherwise _explicitly_ noted. Given that and given there is no other
+specific note in filter.txt, it would mean it's v2-only due to that rule.
+
+>> every file (including docs) can potentially have a different
+>> compatible license, but since they were developed
+>> implicitly under v2 only you would need to get a buy-in from
+>> all contributors before making such change.
+> 
+> So if a file does not _explicitly_ state that it is under another
+> licence it is ok to add GPLv2?
+> 
+> 
+> thanks,
+> Tobin.
+> 
+
