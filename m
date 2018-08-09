@@ -2,337 +2,435 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B3DC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306EAC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1622238C
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1622238C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C59CB22391
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:59:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wmv2diPY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C59CB22391
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbeHIWYG (ORCPT
+        id S1727190AbeHIWZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:24:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726971AbeHIWYG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:24:06 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79Jvd4g016949
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 15:57:43 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krsfrphqs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:57:41 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Thu, 9 Aug 2018 15:54:33 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 15:54:29 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79JsRxY57999496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 19:54:27 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 964B2AC062;
-        Thu,  9 Aug 2018 15:54:55 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E958AC059;
-        Thu,  9 Aug 2018 15:54:54 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 15:54:54 -0400 (EDT)
-Subject: Re: [PATCH v8 07/22] KVM: s390: refactor crypto initialization
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-8-git-send-email-akrowiak@linux.vnet.ibm.com>
- <63a28213-5926-55e5-6d6c-de71a221521b@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Thu, 9 Aug 2018 15:54:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 9 Aug 2018 18:25:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726931AbeHIWZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 18:25:41 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AA8E2238C;
+        Thu,  9 Aug 2018 19:59:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533844758;
+        bh=bZfKCEPnJqxQamfBFAxjjvQwgTBlLhwKJtr4R/86KuU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wmv2diPYnN/zSJEZ3EBolA+smgxLnoaPQfeUS13d4tFCSFzI5/i06IsLZDUc3RP4B
+         kIpukR7EEB/BkweL3p3PUweGKguF0Ya8XBPAz2Le3JmcV2sjoZ+WT5fZ2ZPvxLOCwu
+         /hndSeJ02tEDuKST0IOGDneyj46Wajx3iDjLZnrM=
+Date:   Thu, 9 Aug 2018 12:59:17 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
+ f2fs_gc
+Message-ID: <20180809195917.GA27087@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180730013242.15647-1-jaegeuk@kernel.org>
+ <20180804222954.GB35077@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180805163450.GB55836@jaegeuk-macbookpro.roam.corp.google.com>
+ <16d7f719-268f-99f4-c5b2-fc893b557f11@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <63a28213-5926-55e5-6d6c-de71a221521b@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080919-2213-0000-0000-000002D84EF1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009515; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01071397; UDB=6.00551712; IPR=6.00851092;
- MB=3.00022619; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-09 19:54:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080919-2214-0000-0000-00005B25194F
-Message-Id: <6ee73b88-a6ad-1dc2-3f46-eb3278e9d921@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090199
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16d7f719-268f-99f4-c5b2-fc893b557f11@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/09/2018 04:25 AM, David Hildenbrand wrote:
-> On 08.08.2018 16:44, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> This patch refactors the code that initializes and sets up the
->> crypto configuration for a guest. The following changes are
->> implemented via this patch:
->>
->> 1. Prior to the introduction of AP device virtualization, it
->>     was not necessary to provide guest access to the CRYCB
->>     unless the MSA extension 3 (MSAX3) facility was installed
->>     on the host system. With the introduction of AP device
->>     virtualization, the CRYCB must be made accessible to the
->>     guest if the AP instructions are installed on the host
->>     and are to be provided to the guest.
->>
->> 2. Introduces a flag indicating AP instructions executed on
->>     the guest shall be interpreted by the firmware. It is
->>     initialized to indicate AP instructions are to be
->>     to be interpreted and is used to set the SIE bit for
->>     each vcpu during vcpu setup.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm_host.h |    3 +
->>   arch/s390/include/uapi/asm/kvm.h |    1 +
->>   arch/s390/kvm/kvm-s390.c         |   86 ++++++++++++++++++++------------------
->>   3 files changed, 49 insertions(+), 41 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->> index af39561..0c13f61 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -187,6 +187,7 @@ struct kvm_s390_sie_block {
->>   #define ECA_AIV		0x00200000
->>   #define ECA_VX		0x00020000
->>   #define ECA_PROTEXCI	0x00002000
->> +#define ECA_APIE	0x00000008
->>   #define ECA_SII		0x00000001
->>   	__u32	eca;			/* 0x004c */
->>   #define ICPT_INST	0x04
->> @@ -256,6 +257,7 @@ struct kvm_s390_sie_block {
->>   	__u8	reservede4[4];		/* 0x00e4 */
->>   	__u64	tecmc;			/* 0x00e8 */
->>   	__u8	reservedf0[12];		/* 0x00f0 */
->> +#define CRYCB_FORMAT_MASK 0x00000003
->>   #define CRYCB_FORMAT1 0x00000001
->>   #define CRYCB_FORMAT2 0x00000003
->>   	__u32	crycbd;			/* 0x00fc */
->> @@ -714,6 +716,7 @@ struct kvm_s390_crypto {
->>   	__u32 crycbd;
->>   	__u8 aes_kw;
->>   	__u8 dea_kw;
->> +	__u8 apie;
->
-> This flag is essentially always 1 as far as I can see, so please drop it
-> for now. (can be introduced when really needed)
+On 08/09, Chao Yu wrote:
+> On 2018/8/6 0:34, Jaegeuk Kim wrote:
+> > The f2fs_gc() called by f2fs_balance_fs() requires to be called outside of
+> > fi->i_gc_rwsem[WRITE], since f2fs_gc() can try to grab it in a loop.
+> > 
+> > If it hits the miximum retrials in GC, let's give a chance to release
+> > gc_mutex for a short time in order not to go into live lock in the worst
+> > case.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  v3
+> >   - don't revoke atomic_writes all the time due to gc_rwsem
+> >   - keep lock order in f2fs_commit_inmem_pages
+> > 
+> >  fs/f2fs/f2fs.h    |  1 +
+> >  fs/f2fs/file.c    | 76 ++++++++++++++++++++++++-----------------------
+> >  fs/f2fs/gc.c      | 24 +++++++++++----
+> >  fs/f2fs/segment.c |  6 +++-
+> >  fs/f2fs/segment.h |  2 +-
+> >  5 files changed, 64 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 1647a13be7f9..0c65c3146ead 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1234,6 +1234,7 @@ struct f2fs_sb_info {
+> >  	unsigned int gc_mode;			/* current GC state */
+> >  	/* for skip statistic */
+> >  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
+> > +	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
+> >  
+> >  	/* threshold for gc trials on pinned files */
+> >  	u64 gc_pin_file_threshold;
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 67c9c2d4e2d9..4e2e3938f474 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1180,25 +1180,31 @@ static int __exchange_data_block(struct inode *src_inode,
+> >  	return ret;
+> >  }
+> >  
+> > -static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
+> > +static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+> >  {
+> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	pgoff_t nrpages = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
+> > +	pgoff_t start = offset >> PAGE_SHIFT;
+> > +	pgoff_t end = (offset + len) >> PAGE_SHIFT;
+> >  	int ret;
+> >  
+> >  	f2fs_balance_fs(sbi, true);
+> > -	f2fs_lock_op(sbi);
+> >  
+> > -	f2fs_drop_extent_tree(inode);
+> > +	/* avoid gc operation during block exchange */
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> > +	f2fs_lock_op(sbi);
+> > +	f2fs_drop_extent_tree(inode);
+> > +	truncate_pagecache(inode, offset);
+> >  	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
+> >  	f2fs_unlock_op(sbi);
+> > +
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	return ret;
+> >  }
+> >  
+> >  static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+> >  {
+> > -	pgoff_t pg_start, pg_end;
+> >  	loff_t new_size;
+> >  	int ret;
+> >  
+> > @@ -1213,21 +1219,13 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	pg_start = offset >> PAGE_SHIFT;
+> > -	pg_end = (offset + len) >> PAGE_SHIFT;
+> > -
+> > -	/* avoid gc operation during block exchange */
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > -
+> >  	down_write(&F2FS_I(inode)->i_mmap_sem);
+> >  	/* write out all dirty pages from offset */
+> >  	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+> >  	if (ret)
+> >  		goto out_unlock;
+> >  
+> > -	truncate_pagecache(inode, offset);
+> > -
+> > -	ret = f2fs_do_collapse(inode, pg_start, pg_end);
+> > +	ret = f2fs_do_collapse(inode, offset, len);
+> >  	if (ret)
+> >  		goto out_unlock;
+> >  
+> > @@ -1243,7 +1241,6 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+> >  		f2fs_i_size_write(inode, new_size);
+> >  out_unlock:
+> >  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -1418,9 +1415,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  
+> >  	f2fs_balance_fs(sbi, true);
+> >  
+> > -	/* avoid gc operation during block exchange */
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > -
+> >  	down_write(&F2FS_I(inode)->i_mmap_sem);
+> >  	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
+> >  	if (ret)
+> > @@ -1431,13 +1425,15 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > -	truncate_pagecache(inode, offset);
+> > -
+> >  	pg_start = offset >> PAGE_SHIFT;
+> >  	pg_end = (offset + len) >> PAGE_SHIFT;
+> >  	delta = pg_end - pg_start;
+> >  	idx = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
+> >  
+> > +	/* avoid gc operation during block exchange */
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > +	truncate_pagecache(inode, offset);
+> > +
+> >  	while (!ret && idx > pg_start) {
+> >  		nr = idx - pg_start;
+> >  		if (nr > delta)
+> > @@ -1451,6 +1447,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  					idx + delta, nr, false);
+> >  		f2fs_unlock_op(sbi);
+> >  	}
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> >  	/* write out all moved pages, if possible */
+> >  	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+> > @@ -1460,7 +1457,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  		f2fs_i_size_write(inode, new_size);
+> >  out:
+> >  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -1707,8 +1703,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  
+> >  	inode_lock(inode);
+> >  
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > -
+> >  	if (f2fs_is_atomic_file(inode)) {
+> >  		if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST))
+> >  			ret = -EINVAL;
+> > @@ -1719,6 +1713,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > +
+> >  	if (!get_dirty_pages(inode))
+> >  		goto skip_flush;
+> >  
+> > @@ -1726,18 +1722,20 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  		"Unexpected flush for atomic writes: ino=%lu, npages=%u",
+> >  					inode->i_ino, get_dirty_pages(inode));
+> >  	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+> > -	if (ret)
+> > +	if (ret) {
+> > +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  		goto out;
+> > +	}
+> >  skip_flush:
+> >  	set_inode_flag(inode, FI_ATOMIC_FILE);
+> >  	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > -	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> > +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >  	F2FS_I(inode)->inmem_task = current;
+> >  	stat_inc_atomic_write(inode);
+> >  	stat_update_max_atomic_write(inode);
+> >  out:
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	inode_unlock(inode);
+> >  	mnt_drop_write_file(filp);
+> >  	return ret;
+> > @@ -1755,9 +1753,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	inode_lock(inode);
+> > +	f2fs_balance_fs(F2FS_I_SB(inode), true);
+> >  
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > +	inode_lock(inode);
+> >  
+> >  	if (f2fs_is_volatile_file(inode)) {
+> >  		ret = -EINVAL;
+> > @@ -1783,7 +1781,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >  		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >  		ret = -EINVAL;
+> >  	}
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	inode_unlock(inode);
+> >  	mnt_drop_write_file(filp);
+> >  	return ret;
+> > @@ -2379,15 +2376,10 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+> >  	}
+> >  
+> >  	inode_lock(src);
+> > -	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> >  	if (src != dst) {
+> >  		ret = -EBUSY;
+> >  		if (!inode_trylock(dst))
+> >  			goto out;
+> > -		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE])) {
+> > -			inode_unlock(dst);
+> > -			goto out;
+> > -		}
+> >  	}
+> >  
+> >  	ret = -EINVAL;
+> > @@ -2432,6 +2424,14 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+> >  		goto out_unlock;
+> >  
+> >  	f2fs_balance_fs(sbi, true);
+> > +
+> > +	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> > +	if (src != dst) {
+> > +		ret = -EBUSY;
+> > +		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE]))
+> > +			goto out_src;
+> > +	}
+> > +
+> >  	f2fs_lock_op(sbi);
+> >  	ret = __exchange_data_block(src, dst, pos_in >> F2FS_BLKSIZE_BITS,
+> >  				pos_out >> F2FS_BLKSIZE_BITS,
+> > @@ -2444,13 +2444,15 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+> >  			f2fs_i_size_write(dst, dst_osize);
+> >  	}
+> >  	f2fs_unlock_op(sbi);
+> > -out_unlock:
+> > -	if (src != dst) {
+> > +
+> > +	if (src != dst)
+> >  		up_write(&F2FS_I(dst)->i_gc_rwsem[WRITE]);
+> > +out_src:
+> > +	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> > +out_unlock:
+> > +	if (src != dst)
+> >  		inode_unlock(dst);
+> > -	}
+> >  out:
+> > -	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> >  	inode_unlock(src);
+> >  	return ret;
+> >  }
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index e352fbd33848..d816c328f02b 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -884,6 +884,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >  			if (!down_write_trylock(
+> >  				&F2FS_I(inode)->i_gc_rwsem[WRITE])) {
+> >  				iput(inode);
+> > +				sbi->skipped_gc_rwsem++;
+> >  				continue;
+> >  			}
+> >  
+> > @@ -913,6 +914,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >  					continue;
+> >  				if (!down_write_trylock(
+> >  						&fi->i_gc_rwsem[WRITE])) {
+> > +					sbi->skipped_gc_rwsem++;
+> >  					up_write(&fi->i_gc_rwsem[READ]);
+> >  					continue;
+> >  				}
+> > @@ -1062,6 +1064,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  				prefree_segments(sbi));
+> >  
+> >  	cpc.reason = __get_cp_reason(sbi);
+> > +	sbi->skipped_gc_rwsem = 0;
+> >  gc_more:
+> >  	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
+> >  		ret = -EINVAL;
+> > @@ -1103,7 +1106,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  	total_freed += seg_freed;
+> >  
+> >  	if (gc_type == FG_GC) {
+> > -		if (sbi->skipped_atomic_files[FG_GC] > last_skipped)
+> > +		if (sbi->skipped_atomic_files[FG_GC] > last_skipped ||
+> > +						sbi->skipped_gc_rwsem)
+> >  			skipped_round++;
+> >  		last_skipped = sbi->skipped_atomic_files[FG_GC];
+> >  		round++;
+> > @@ -1112,15 +1116,23 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  	if (gc_type == FG_GC)
+> >  		sbi->cur_victim_sec = NULL_SEGNO;
+> >  
+> > -	if (!sync) {
+> > -		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> > -			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> > -				skipped_round * 2 >= round)
+> > -				f2fs_drop_inmem_pages_all(sbi, true);
+> > +	if (sync)
+> > +		goto stop;
+> > +
+> > +	if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> > +		if (skipped_round <= MAX_SKIP_GC_COUNT ||
+> > +					skipped_round * 2 < round) {
+> >  			segno = NULL_SEGNO;
+> >  			goto gc_more;
+> >  		}
+> >  
+> > +		if (sbi->skipped_atomic_files[FG_GC] == last_skipped &&
+> 
+> For fggc, sbi->skipped_atomic_files[FG_GC] should always be last_skipped, since
+> we assigned above.
+> 
+> > +				sbi->skipped_atomic_files[FG_GC] >
+> > +						sbi->skipped_gc_rwsem) {
+> > +			f2fs_drop_inmem_pages_all(sbi, true);
+> > +			segno = NULL_SEGNO;
+> > +			goto gc_more;
+> 
+> I guess what you mean is:
+> 
+> atomic_skipped = sbi->skipped_atomic_files[FG_GC] - last_skipped;
+> 
+> if (atomic_skipped && atomic_skipped > sbi->skipped_gc_rwsem)
+> 	f2fs_drop_inmem_pages_all();
+> 
+> Is that right?
 
-That would appear to be true, so it probably makes sense to drop it.
+Yup, how about this?
 
->
->>   };
->>   
->>   #define APCB0_MASK_SIZE 1
->> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
->> index 4cdaa55..a580dec 100644
->> --- a/arch/s390/include/uapi/asm/kvm.h
->> +++ b/arch/s390/include/uapi/asm/kvm.h
->> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
->>   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->>   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->>   #define KVM_S390_VM_CPU_FEAT_KSS	13
->> +#define KVM_S390_VM_CPU_FEAT_AP		14
->>   struct kvm_s390_vm_cpu_feat {
->>   	__u64 feat[16];
->>   };
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 19f4f44..f96a443 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -40,6 +40,7 @@
->>   #include <asm/sclp.h>
->>   #include <asm/cpacf.h>
->>   #include <asm/timex.h>
->> +#include <asm/ap.h>
->>   #include "kvm-s390.h"
->>   #include "gaccess.h"
->>   
->> @@ -1881,49 +1882,37 @@ long kvm_arch_vm_ioctl(struct file *filp,
->>   	return r;
->>   }
->>   
->> -static int kvm_s390_query_ap_config(u8 *config)
->> -{
->> -	u32 fcn_code = 0x04000000UL;
->> -	u32 cc = 0;
->> -
->> -	memset(config, 0, 128);
->> -	asm volatile(
->> -		"lgr 0,%1\n"
->> -		"lgr 2,%2\n"
->> -		".long 0xb2af0000\n"		/* PQAP(QCI) */
->> -		"0: ipm %0\n"
->> -		"srl %0,28\n"
->> -		"1:\n"
->> -		EX_TABLE(0b, 1b)
->> -		: "+r" (cc)
->> -		: "r" (fcn_code), "r" (config)
->> -		: "cc", "0", "2", "memory"
->> -	);
->> -
->> -	return cc;
->> -}
->> -
->>   static int kvm_s390_apxa_installed(void)
->>   {
->> -	u8 config[128];
->> -	int cc;
->> +	struct ap_config_info info;
->>   
->> -	if (test_facility(12)) {
->> -		cc = kvm_s390_query_ap_config(config);
->> -
->> -		if (cc)
->> -			pr_err("PQAP(QCI) failed with cc=%d", cc);
->> -		else
->> -			return config[0] & 0x40;
->> +	if (ap_instructions_available() == 0) {
->> +		if (ap_qci(&info) == 0)
->> +			return info.apxa;
->>   	}
->>   
->>   	return 0;
->>   }
->>   
->> +/*
->> + * The format of the crypto control block (CRYCB) is specified in the 3 low
->> + * order bits of the CRYCB designation (CRYCBD) field as follows:
->> + * Format 0: Neither the message security assist extension 3 (MSAX3) nor the
->> + *	     AP extended addressing (APXA) facility are installed.
->> + * Format 1: The APXA facility is not installed but the MSAX3 facility is.
->> + * Format 2: Both the APXA and MSAX3 facilities are installed
->> + */
->>   static void kvm_s390_set_crycb_format(struct kvm *kvm)
->>   {
->>   	kvm->arch.crypto.crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
->>   
->> +	/* Clear the CRYCB format bits - i.e., set format 0 by default */
->> +	kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
->> +
->> +	/* Check whether MSAX3 is installed */
->> +	if (!test_kvm_facility(kvm, 76))
->> +		return;
->> +
->>   	if (kvm_s390_apxa_installed())
->>   		kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
->>   	else
->> @@ -1941,11 +1930,13 @@ static u64 kvm_s390_get_initial_cpuid(void)
->>   
->>   static void kvm_s390_crypto_init(struct kvm *kvm)
->>   {
->> -	if (!test_kvm_facility(kvm, 76))
->> -		return;
->> -
->>   	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->>   	kvm_s390_set_crycb_format(kvm);
->> +	/* Default setting indicating SIE shall interpret AP instructions */
->> +	kvm->arch.crypto.apie = 1;
->> +
->> +	if (!test_kvm_facility(kvm, 76))
->> +		return;
->>   
->>   	/* Enable AES/DEA protected key functions by default */
->>   	kvm->arch.crypto.aes_kw = 1;
->> @@ -2474,17 +2465,30 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->>   
->>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->>   {
->> -	if (!test_kvm_facility(vcpu->kvm, 76))
->> +	/*
->> +	 * If neither the AP instructions nor the MSAX3 facility are installed
->> +	 * on the host, then there is no need for a CRYCB in SIE because the
->> +	 * they will not be installed on the guest either.
->> +	 */
->> +	if (ap_instructions_available() && !test_facility(76))
-> Why not turn this into
->
-> if (!test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP) &&
->      !test_kvm_facility(vcpu->kvm, 76))
->
-> These properties should no longer change at this point. And we simulate
-> exactly what the guest will see. No crycb needed. And even no comment
-> needed.
-
-That sounds reasonable, I will make the change.
-
->
->
->>   		return;
->>   
->> -	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
->> +	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->> +
->> +	vcpu->arch.sie_block->eca &= ~ECA_APIE;
->> +	if (vcpu->kvm->arch.crypto.apie &&
->> +	    test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
->> +		vcpu->arch.sie_block->eca |= ECA_APIE;
->>   
->> -	if (vcpu->kvm->arch.crypto.aes_kw)
->> -		vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->> -	if (vcpu->kvm->arch.crypto.dea_kw)
->> -		vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
->> +	/* If MSAX3 is installed on the guest, set up protected key support */
->> +	if (test_kvm_facility(vcpu->kvm, 76)) {
->> +		vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
-> Why not keep the original unconditional clearing?
-
-No good reason that I can think of ... I'll restore that.
-
->
->>   
->> -	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->> +		if (vcpu->kvm->arch.crypto.aes_kw)
->> +			vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->> +		if (vcpu->kvm->arch.crypto.dea_kw)
->> +			vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
->> +	}
->>   }
->>   
->>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
->>
->
-
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index d816c328f02b..cb510fb36523 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1052,6 +1052,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+ 	};
+ 	unsigned long long last_skipped = sbi->skipped_atomic_files[FG_GC];
++	unsigned long long first_skipped;
+ 	unsigned int skipped_round = 0, round = 0;
+ 
+ 	trace_f2fs_gc_begin(sbi->sb, sync, background,
+@@ -1064,8 +1065,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 				prefree_segments(sbi));
+ 
+ 	cpc.reason = __get_cp_reason(sbi);
+-	sbi->skipped_gc_rwsem = 0;
+ gc_more:
++	sbi->skipped_gc_rwsem = 0;
++	first_skipped = last_skipped;
++
+ 	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
+ 		ret = -EINVAL;
+ 		goto stop;
+@@ -1126,8 +1129,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 			goto gc_more;
+ 		}
+ 
+-		if (sbi->skipped_atomic_files[FG_GC] == last_skipped &&
+-				sbi->skipped_atomic_files[FG_GC] >
++		if (first_skipped < last_skipped &&
++				(last_skipped - first_skipped) >
+ 						sbi->skipped_gc_rwsem) {
+ 			f2fs_drop_inmem_pages_all(sbi, true);
+ 			segno = NULL_SEGNO;
