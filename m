@@ -2,175 +2,217 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F356C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA74C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9CE021D6A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE80221D6B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:18:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVBzUAzY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CE021D6A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="oePMeU5v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE80221D6B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730928AbeHIOnB (ORCPT
+        id S1731053AbeHIOnc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:43:01 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40422 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbeHIOnB (ORCPT
+        Thu, 9 Aug 2018 10:43:32 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:39538 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730119AbeHIOnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:43:01 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y9-v6so55156wma.5;
-        Thu, 09 Aug 2018 05:18:21 -0700 (PDT)
+        Thu, 9 Aug 2018 10:43:31 -0400
+Received: by mail-yw1-f66.google.com with SMTP id r184-v6so4039095ywg.6
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 05:18:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vrl/E3lUGQp5F7FqCmeXNEB1K9J3BUiRK/p/GEXLJtY=;
-        b=MVBzUAzYQksYLh4gavrhVtp5ugpkYFmdJvmqsETgRyWnNOZFgL5IF8/mD13vzxnc8X
-         GcDs5buJAhbdkPiGFuPu4Rf2Nk/lY6ZBJgx6j2P+yFPHbdV392h0L+BX7cBSjmU+6zPH
-         66JTmYCxZG54eGCbqsIBj/504a41iYr67apx+gtHGoDQGkLmZg8L43d4imW/4IcfGP6u
-         CeoRTs34HIXl1zcSQOUcAVy+3eKojDb0UIcNpyML5oOfhgd9ms+XN0+QSS6J52xCyIKD
-         wF9niv9npe4/1NWpE2S+n2SqB/g3C3uB3t6t3d9YiQtluEziWvBTngHd8JhVqrmruN3A
-         b6pw==
+        d=joelfernandes.org; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=235R2Z2HUAMhiwaerFVujHvTdKPz36U06xTW02EYo9Q=;
+        b=oePMeU5vcFyHYLLmicKUiwaZoBOW1ev+V4RszNVQK7ECyxF8mmjWDVcrddGpMUu5rG
+         gwDwmrx7B3jqV7mVcNCvCWMN+QIALZpu+Z7F3OyY+tzFXCpPs7XnlY+NSk7IHy+aii3+
+         ryyuoVAdbyKf5t62NCrBhkOX8dgjOOcctgCmQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vrl/E3lUGQp5F7FqCmeXNEB1K9J3BUiRK/p/GEXLJtY=;
-        b=m6jAk9sRgkK70B6s98tbDkY/erg9+dJk6/kYTUuiqtQmPvxvxQQykcQ5Z6h/OiRFmU
-         kzB5hU5/a2e0tOtq6ttw+eUtd0KZNpOg2xswK9I2BHAIq1ycC3f7ubwvRxv5Ujv4Mw0v
-         Xl9KhjDrtA5ikfI0U7/SRRMPf7OnW9sJAUnEe36/pDjXhqoMsaY8FaTfb13KhJSQlSIh
-         Tmo3YFLx4t0K3tE35LnRd4e5pJX2d/SDJg6p7twi9esimDXbsHHBDKjWoFCWevm2xzIP
-         ZLLnVJAV7GqIA59OD4x8wZBFma6Fl69jVesM130fag8pEUEpr7IC4KehmZPC6Zf80kDb
-         NwOg==
-X-Gm-Message-State: AOUpUlHqxt+MS71zsaido9IUkLSBYiMDHRIZoBua2mlevdEkDw+e6yxI
-        +ay2/R/4tFRd1rT4enkGMCo=
-X-Google-Smtp-Source: AA+uWPzqnQBsHvhhUhhxEupAshi/787+jXTPWzIPygyO99bM03LLi4a2Lzf+JXbvo8Cs6q3LcdwL1g==
-X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr1551731wme.125.1533817100812;
-        Thu, 09 Aug 2018 05:18:20 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id i23-v6sm10915850wmf.24.2018.08.09.05.18.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 05:18:19 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 14:18:18 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 03/40] dt-bindings: Add Tegra SDHCI pad pdpu offset
- bindings
-Message-ID: <20180809121818.GQ21639@ulmo>
-References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
- <1533141150-10511-4-git-send-email-avienamo@nvidia.com>
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=235R2Z2HUAMhiwaerFVujHvTdKPz36U06xTW02EYo9Q=;
+        b=EfsJqgWKRxA0jycn7gMhvHznF0MUxC/mniszX6xhWMpWpGxyEie9WznjVnrHAm4eHP
+         HTQrQzB66neJGh76ojISKh629BSrMeVMyvE60U8gm3N1dajncPsoedkvjrHvLDhS/Hab
+         /qQ6ifG8Jw3znPZAwPG7QO4fKSiAavg5bjaTAxa/wf3gXmC911LQYxxF+CQJu9/xDIHu
+         Mg8wC/uAhSZHGbRyJ94aKH3BIs2lvzRA0s4St11tMGQHFk9Q/lr9khHpokxNd+jINRi1
+         SUqnzNRaordV95vJwHhagNI61K0HFDtWG6PGAHn9l4RCVA5m3d9Ey1M1lDkDepdwhn7C
+         CLog==
+X-Gm-Message-State: AOUpUlH2jjcdJ7mODRNAgUMaTn+FCWi2EaBoI7CIJGfDOOLqg4XH/5PK
+        DLAHUzEBAqJSAUPgVDFdkQevGQ==
+X-Google-Smtp-Source: AA+uWPy3gKGztuqPYvSDSRiy1mlvy1vkJI8Q3ryvJEDuBXlslUSpHjGKxzTbHln6SYnU8gPt+VcYLA==
+X-Received: by 2002:a25:a123:: with SMTP id z32-v6mr867172ybh.132.1533817133153;
+        Thu, 09 Aug 2018 05:18:53 -0700 (PDT)
+Received: from ?IPv6:2601:5c2:201:936:c82:33c8:d637:7bc8? ([2601:5c2:201:936:c82:33c8:d637:7bc8])
+        by smtp.gmail.com with ESMTPSA id o204-v6sm3144730ywd.16.2018.08.09.05.18.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 05:18:52 -0700 (PDT)
+Date:   Thu, 09 Aug 2018 08:18:50 -0400
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180808224716.GE24813@linux.vnet.ibm.com>
+References: <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com> <20180807222856.3ede96e7@vmware.local.home> <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com> <CAJWu+oqPUuF4rFOQ8=G3+ZxXJxiiNRBYE8C=zZ93A8qA+muHEg@mail.gmail.com> <20180808130041.GI24813@linux.vnet.ibm.com> <CAJWu+oopkDMe9AtuiRqAubuPk_H=NSifTDpWLdgCTEvR6zZiMw@mail.gmail.com> <20180808144922.GN24813@linux.vnet.ibm.com> <CAJWu+orf_LipWwo30OX+gZwHS1v5QWub4BHgrA6zQ7d4K+i6ew@mail.gmail.com> <20180808201852.GZ24813@linux.vnet.ibm.com> <CAJWu+op0H9vry70YXx6x3e37Sxsgb45go7B9MmE-y2O5wdLOYg@mail.gmail.com> <20180808224716.GE24813@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QVgWX4+QEldMe/r9"
-Content-Disposition: inline
-In-Reply-To: <1533141150-10511-4-git-send-email-avienamo@nvidia.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and unify their usage
+To:     paulmck@linux.vnet.ibm.com,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Joel Fernandes <joelaf@google.com>
+CC:     Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+From:   joel@joelfernandes.org
+Message-ID: <15F36BF3-DB5D-46F6-B4F2-E8A2525FC406@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---QVgWX4+QEldMe/r9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 01, 2018 at 07:31:53PM +0300, Aapo Vienamo wrote:
-> Add bindings documentation for pad pull up and pull down offset values to=
- be
-> programmed before executing automatic pad drive strength calibration.
->=20
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 36 ++++++++++++++++=
-++++++
->  1 file changed, 36 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.t=
-xt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index 90c214d..2e973b5 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -24,6 +24,7 @@ Required properties:
->  Optional properties:
->  - power-gpios : Specify GPIOs for power control
-> =20
-> +Optional properties for Tegra210 and Tegra186:
+On August 8, 2018 6:47:16 PM EDT, "Paul E=2E McKenney" <paulmck@linux=2Evn=
+et=2Eibm=2Ecom> wrote:
+>On Wed, Aug 08, 2018 at 03:15:31PM -0700, Joel Fernandes wrote:
+>> On Wed, Aug 8, 2018 at 1:18 PM, Paul E=2E McKenney
+>> <paulmck@linux=2Evnet=2Eibm=2Ecom> wrote:
+>> [=2E=2E=2E]
+>> >> >> >> It does start to seem like a show stopper :-(
+>> >> >> >
+>> >> >> > I suppose that an srcu_read_lock_nmi() and
+>srcu_read_unlock_nmi() could
+>> >> >> > be added, which would do atomic ops on
+>sp->sda->srcu_lock_count=2E  Not sure
+>> >> >> > whether this would be fast enough to be useful, but easy to
+>provide:
+>> >> >> >
+>> >> >> > int __srcu_read_lock_nmi(struct srcu_struct *sp)  /*
+>UNTESTED=2E */
+>> >> >> > {
+>> >> >> >         int idx;
+>> >> >> >
+>> >> >> >         idx =3D READ_ONCE(sp->srcu_idx) & 0x1;
+>> >> >> >         atomic_inc(&sp->sda->srcu_lock_count[idx]);
+>> >> >> >         smp_mb__after_atomic(); /* B */  /* Avoid leaking
+>critical section=2E */
+>> >> >> >         return idx;
+>> >> >> > }
+>> >> >> >
+>> >> >> > void __srcu_read_unlock_nmi(struct srcu_struct *sp, int idx)
+>> >> >> > {
+>> >> >> >         smp_mb__before_atomic(); /* C */  /* Avoid leaking
+>critical section=2E */
+>> >> >> >         atomic_inc(&sp->sda->srcu_unlock_count[idx]);
+>> >> >> > }
+>> >> >> >
+>> >> >> > With appropriate adjustments to also allow Tiny RCU to also
+>work=2E
+>> >> >> >
+>> >> >> > Note that you have to use _nmi() everywhere, not just in NMI
+>handlers=2E
+>> >> >> > In fact, the NMI handlers are the one place you -don't- need
+>to use
+>> >> >> > _nmi(), strangely enough=2E
+>> >> >> >
+>> >> >> > Might be worth a try -- smp_mb__{before,after}_atomic() is a
+>no-op on
+>> >> >> > some architectures, for example=2E
+>> >> >>
+>> >> >> Continuing Steve's question on regular interrupts, do we need
+>to use
+>> >> >> this atomic_inc API for regular interrupts as well? So I guess
+>> >> >
+>> >> > If NMIs use one srcu_struct and non-NMI uses another, the
+>current
+>> >> > srcu_read_lock() and srcu_read_unlock() will work just fine=2E  If
+>any given
+>> >> > srcu_struct needs both NMI and non-NMI readers, then we really
+>do need
+>> >> > __srcu_read_lock_nmi() and __srcu_read_unlock_nmi() for that
+>srcu_struct=2E
+>> >>
+>> >> Yes, I believe as long as in_nmi() works reliably, we can use the
+>> >> right srcu_struct (NMI vs non-NMI) and it would be fine=2E
+>> >>
+>> >> Going through this thread, it sounds though that this_cpu_inc may
+>not
+>> >> be reliable on all architectures even for non-NMI interrupts and
+>> >> local_inc may be the way to go=2E
+>> >
+>> > My understanding is that this_cpu_inc() is defined to handle
+>interrupts,
+>> > so any architecture on which it is unreliable needs to fix its bug=2E
+> ;-)
+>>=20
+>> Yes that's my understanding as well=2E
+>>=20
+>> Then may be I'm missing something about yours/Steve's conversations
+>in
+>> the morning, about why we need bother with the local_inc then=2E So the
+>> current SRCU code with the separate NMI handle should work fine (for
+>> future merge windows) as long as we're using a separate srcu_struct
+>> for NMI=2E :-)
+>
+>I do believe that to be true=2E  But only as long as that separate
+>srcu_struct is -only- used for NMI=2E
+>
+>If this is what you have been pushing for all along, please accept my
+>apologies for my being slow!
+>
 
-This looks like a stray addition.
+That's ok, sorry I initially didn't describe it well which may have caused=
+ confusion, but yes that's what I was pushing for=2E
 
->  Example:
-> =20
->  sdhci@c8000200 {
-> @@ -45,6 +46,37 @@ Optional properties for Tegra210 and Tegra186:
->    for controllers supporting multiple voltage levels. The order of names
->    should correspond to the pin configuration states in pinctrl-0 and
->    pinctrl-1.
-> +- nvidia,only-1-8-v : The presence of this property indicates that the
-> +  controller operates at a 1.8 V fixed I/O voltage.
-> +- nvidia,pad-autocal-pull-up-offset-3v3,
-> +  nvidia,pad-autocal-pull-down-offset-3v3 : Specify drive strength
-> +  calibration offsets for 3.3 V signaling modes.
-> +- nvidia,pad-autocal-pull-up-offset-1v8,
-> +  nvidia,pad-autocal-pull-down-offset-1v8 : Specify drive strength
-> +  calibration offsets for 1.8 V signaling modes.
-> +- nvidia,pad-autocal-pull-up-offset-3v3-timeout,
-> +  nvidia,pad-autocal-pull-down-offset-3v3-timeout : Specify drive
-> +  strength used as a fallback in case the automatic calibration times
-> +  out on a 3.3 V signaling mode.
-> +- nvidia,pad-autocal-pull-up-offset-1v8-timeout,
-> +  nvidia,pad-autocal-pull-down-offset-1v8-timeout : Specify drive
-> +  strength used as a fallback in case the automatic calibration times
-> +  out on a 1.8 V signaling mode.
-> +- nvidia,pad-autocal-pull-up-offset-sdr104,
-> +  nvidia,pad-autocal-pull-down-offset-sdr104 : Specify drive strength
-> +  calibration offsets for SDR104 mode.
-> +- nvidia,pad-autocal-pull-up-offset-hs400,
-> +  nvidia,pad-autocal-pull-down-offset-hs400 : Specify drive strength
-> +  calibration offsets for HS400 mode.
+>That said, your approach does require you to have a perfect way to
+>distinguish between NMI and not-NMI=2E  If the distinguishing is even
+>in the slightest imperfect, then some sort of NMI-safe SRCU reader
+>approach is of course required=2E
+>
 
-There's no mention here about how many values each of these properties
-needs. I guess given that the property names are singular it implies a
-single value.
+Thanks Paul, agreed with everything and we are on the same page=2E
 
-Thierry
+- Joel
 
---QVgWX4+QEldMe/r9
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsMQoACgkQ3SOs138+
-s6Fevg/+MNfOC0Z9TgoTTFq8en1xRYQOPng4O9aKl/54+TC2EtpsPQAcpGQGpqgd
-D0FgOxD+hdkdoQwWG0831rxAGW03ICVsVdqnsUOHBeBgDsKA55JVs1Ixl0Hl41cU
-RQHD6QYm3iLDjSPi6qintqSidND9fVAU2JHVLdgzQDo+LkFOJ00kcfAheqrl8Keb
-1yAm4rN69k1aNwMI6buxo1l8jFk3UJa12AVwseUoZNB9AtzkVf0Ei9EYvoIYiuQ2
-Y3aEBJxOmAME5V1Dpy2B0uAIfbrQk0fMbx7KdbycUvARThzj+C8JnVz3O7KgDY24
-XkyqDLwfi+VRZiDNPeWOWX45nkTDq+Fvw4WfIzqJB26dYPWm1mh4D+JhG3BgPtdW
-F4oohcSmNCpeiu18CUiccKVrn25TcIVJpS2PdryqRGLHTuhpALAwyOThdxA2WAhP
-Wfn1LQH8sV1Rmhs18hF7OB1j33LhjkfXiT3lEp0Ouy4Qejm9S6Qj39hzX58c/Et7
-Wu9QY/e6VOIok1sMCAEnegfZQjxPKzL0XRztqKaOQ5PjHcrjUlOkpH9Vv+C4We8G
-J2jJYeL1D0CANSKDpndk/PT6V50hBzqaXbavFZsPYU7syp7tCejSO21EHkzV8ok2
-bFNxgbE05xtuY3U53z0LLW4A1zhoeclPvIbz+cmAwKnFtEstSTI=
-=ZtE+
------END PGP SIGNATURE-----
+>							Thanx, Paul
+>
+>> >> For next merge window (not this one), lets do that then? Paul, if
+>you
+>> >> could provide me an SRCU API that uses local_inc, then I believe
+>that
+>> >> coupled with this patch should be all that's needed:
+>> >> https://lore=2Ekernel=2Eorg/patchwork/patch/972657/
+>> >>
+>> >> Steve did express concern though if in_nmi() works reliably (i=2Ee=
+=2E
+>> >> tracepoint doesn't fire from "thunk" code before in_nmi() is
+>> >> available)=2E Any thoughts on that Steve?
+>> >
+>> > Agreed, not the upcoming merge window=2E  But we do need to work out
+>> > exactly what is the right way to do this=2E
+>>=20
+>> Agreed, thanks!
+>>=20
+>>  - Joel
+>>=20
 
---QVgWX4+QEldMe/r9--
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
