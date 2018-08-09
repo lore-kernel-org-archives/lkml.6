@@ -2,83 +2,123 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F60BC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF22C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB142238B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B726C2238B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:11:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kNulHAq4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EB142238B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCmVuOg/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B726C2238B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=elisp.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbeHIUg5 (ORCPT
+        id S1727155AbeHIUhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:36:57 -0400
-Received: from mail-yw1-f48.google.com ([209.85.161.48]:39023 "EHLO
-        mail-yw1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeHIUg4 (ORCPT
+        Thu, 9 Aug 2018 16:37:11 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45171 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeHIUhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:36:56 -0400
-Received: by mail-yw1-f48.google.com with SMTP id r184-v6so5706183ywg.6
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:10:56 -0700 (PDT)
+        Thu, 9 Aug 2018 16:37:10 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i26-v6so3204767pfo.12;
+        Thu, 09 Aug 2018 11:11:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A4RrEydDCEio7MWq5+k5opw+Fr0sIad9fGcg/JLTUoA=;
-        b=kNulHAq4KNeY1H1lA9l9Pkn9wy60o+D7bPFnqON5aAyGiPmp3wjb1YseK05G220hQs
-         ZiXejc03ujVhfXcFJNiS9U0TVPOsgMb6xLpBjFjf2Sr1bX6XnLy4vx2blG3UJ5Ph3BqU
-         NZDMEtbrfEwO8DHrPqneTIiTk9CepwO0n4+XI=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=As0lKa5+Tv1HOY4/e5U6uHnlYo/L2iz6KBMvgOghx1Y=;
+        b=ZCmVuOg/8mUD/pHRWoLO2xWqalxH6ZPuvTCZH7XOdigAWIVj/2e/lmiF4WzUOOT+1f
+         MKNLo9fyl0HMqJcX+spvYlpVsOj4L4A3+fnSvq/cIs2BmSS3y2ndxF5hjmntkcYBhdl1
+         S4oPoU8FnHU4otOsvZtGZWzqX2OR7pdSx6/zZ7ecTjZ/thsfkkZ8Q2p9sG8UhPMR/9gI
+         cRHMVReU2bA4/TddrH/JBeEBn0SRRh9pEf5i6mK22etQObTQumQJnPbucz5ewp4JMlYV
+         2SQyVV3BX/5vAybol4xNgl9gTy5w+0ZxwbK+xtH1jTTZ7wKv5VefIyxzGwwcAVuwuMMJ
+         KlwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A4RrEydDCEio7MWq5+k5opw+Fr0sIad9fGcg/JLTUoA=;
-        b=l+SuMRJdOXgRoKBrGtaIcCLLbEryyh10Ul/PWUfUS7TNfEjtx9HJNoPydhAAvVDO/Z
-         nOBu+lw+IxL3bxBUsTT73GIzGKrSvO8kGQhQkiOBwu3c02FGwC6XKPuI/OOd9UxAVQEj
-         iYWb2/n4+pdIg8bEWKKIKZsqB3l2EaZhbKhNyQt1lMTK9RNRdOHVUHGyMOgAaWrL+WS+
-         /3UMxSuBWVWB5QoSZpGRoxXf9wfa/AcJ4OxKV1Kh5QJbbykc6LbzEBNZYSGrOP96NvIc
-         dt3aLUElKbuqrRBDaaYFESJlq73gF4k1+PDob4C6WBEny4VyS6g1qzE5+s9k38YlwIqz
-         DAPA==
-X-Gm-Message-State: AOUpUlE6BFPM6yDXZKbGpV3jgL1iM6HhdLciPQVtN/hjjbbzcovAzWw2
-        uoUnqO79CGtoa2BhFtRqAuOgX3QfJDz7uPxExHbTW7Eu
-X-Google-Smtp-Source: AA+uWPz2b6+IKIitUpiJFPALz8mJykZJMgJdBXecvoObdT+DRE+XC/CZnv2x1coEjIkw2sGm01hqAiwytAE60f+t/uM=
-X-Received: by 2002:a1f:6681:: with SMTP id a123-v6mr1953632vkc.2.1533838255816;
- Thu, 09 Aug 2018 11:10:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180809171722.144325-1-swboyd@chromium.org> <20180809171722.144325-4-swboyd@chromium.org>
-In-Reply-To: <20180809171722.144325-4-swboyd@chromium.org>
-From:   Julius Werner <jwerner@chromium.org>
-Date:   Thu, 9 Aug 2018 11:10:42 -0700
-Message-ID: <CAODwPW_ZiRMqUehq969UxiyrkNOfaevrE-G03M2z_C+6dNAxyQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/7] firmware: coreboot: Make bus registration symmetric
-To:     swboyd@chromium.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>, samuel@sholland.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=As0lKa5+Tv1HOY4/e5U6uHnlYo/L2iz6KBMvgOghx1Y=;
+        b=VuHONOtvh616urvewvb8mDLwDEKPBFseJOMeDCfCpnikTjcUSToB6zuc9j1gh/v/ar
+         R55NmhcLvaY55EQJq8jQfC7Y3+ztKt2tOAG64iB20UI8aQDweZhwL/iD6y+0cDy14FkW
+         iGQVDIYtpi0gheJbN3JVAB5x8FApJ4q3XgTOMVE70eVQw6tUAfM3UzM+6jm6uzxQ1pVA
+         Ebusp915//PbzHTXvCxk5ViEVZb2SyvwIT0KzUakQNGF/bUwLyIUxM64l9uTOJNd/+NP
+         SKW9+GWrkckGt05m2V6e6AjKuQXK4ddDhL7Z0AJAky6HTsz9PHtmL5oOodnDEju/sGgv
+         BqLw==
+X-Gm-Message-State: AOUpUlG8LcHrruVpXMrHEWsUFxdXQ36HY0Y2LAMmFzkbiIbVEw+4OTzF
+        V98jtk1eXgoeS0onNQF1A5o=
+X-Google-Smtp-Source: AA+uWPyIbjyaTx1S5zcMuNHJC26GI+Pj9ruSSvDqGqrOYJuqqKUDHKFWzYLSHJ1NaI9pf8NDc6cbfA==
+X-Received: by 2002:a62:1f8c:: with SMTP id l12-v6mr3482696pfj.143.1533838270075;
+        Thu, 09 Aug 2018 11:11:10 -0700 (PDT)
+Received: from localhost (h101-111-148-072.catv02.itscom.jp. [101.111.148.72])
+        by smtp.gmail.com with ESMTPSA id i125-v6sm7017445pgc.16.2018.08.09.11.11.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 11:11:09 -0700 (PDT)
+From:   Naohiro Aota <naota@elisp.net>
+To:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Naohiro Aota <naota@elisp.net>
+Subject: [RFC PATCH 01/12] btrfs-progs: build: Check zoned block device support
+Date:   Fri, 10 Aug 2018 03:10:54 +0900
+Message-Id: <20180809181105.12856-1-naota@elisp.net>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180809180450.5091-1-naota@elisp.net>
+References: <20180809180450.5091-1-naota@elisp.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -138,8 +136,10 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
->                 ptr_entry += entry.size;
->         }
->
-> -       if (ret)
-> +       if (ret) {
-> +               bus_unregister(&coreboot_bus_type);
->                 iounmap(ptr);
-> +       }
+If the kernel supports zoned block devices, the file
+/usr/include/linux/blkzoned.h will be present. Check this and define
+BTRFS_ZONED if the file is present.
 
-nit: maybe cleaner to just do if (ret) coreboot_table_exit(); here?
-You're essentially writing the same code again.
+If it present, enables HMZONED feature, if not disable it.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Naohiro Aota <naota@elisp.net>
+---
+ configure.ac | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index df02f206..616d62a1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -207,6 +207,18 @@ else
+ AC_DEFINE([HAVE_OWN_FIEMAP_EXTENT_SHARED_DEFINE], [0], [We did not define FIEMAP_EXTENT_SHARED])
+ fi
+ 
++AC_CHECK_HEADER(linux/blkzoned.h, [blkzoned_found=yes], [blkzoned_found=no])
++AC_ARG_ENABLE([zoned],
++  AS_HELP_STRING([--disable-zoned], [disable zoned block device support]),
++  [], [enable_zoned=$blkzoned_found]
++)
++
++AS_IF([test "x$enable_zoned" = xyes], [
++	AC_CHECK_HEADER(linux/blkzoned.h, [],
++		[AC_MSG_ERROR([Couldn't find linux/blkzoned.h])])
++	AC_DEFINE([BTRFS_ZONED], [1], [enable zoned block device support])
++])
++
+ dnl Define <NAME>_LIBS= and <NAME>_CFLAGS= by pkg-config
+ dnl
+ dnl The default PKG_CHECK_MODULES() action-if-not-found is end the
+@@ -308,6 +320,7 @@ AC_MSG_RESULT([
+ 	btrfs-restore zstd: ${enable_zstd}
+ 	Python bindings:    ${enable_python}
+ 	Python interpreter: ${PYTHON}
++	zoned device:       ${enable_zoned}
+ 
+ 	Type 'make' to compile.
+ ])
+-- 
+2.18.0
+
