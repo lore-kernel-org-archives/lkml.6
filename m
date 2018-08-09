@@ -1,146 +1,89 @@
-Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C99C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 23:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE79C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 00:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67EAD21BC7
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 23:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67CE21BC9
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 00:08:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aQCAFTZr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67EAD21BC7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k6zhje77"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C67CE21BC9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731469AbeHICE3 (ORCPT
+        id S1731531AbeHICaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 22:04:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43578 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729884AbeHICE3 (ORCPT
+        Wed, 8 Aug 2018 22:30:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39820 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeHICaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 22:04:29 -0400
-Received: by mail-pg1-f194.google.com with SMTP id a14-v6so1805568pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 16:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=eLmQcjIvTXsjHLXqUOUF2WfoHuZw4r7CxLWZDyJjpkI=;
-        b=aQCAFTZr6UT1RVRldreQnn+Rkxhe/4ztfkNgHNni6oYDL9xpRSAHl3Aw5XpGQHgCYH
-         L4DMc0E3vtHV3yzAW56uaBZXx78a2kbzXXbfzpJAcoeMJoZ0tXnXDS/6TqkRHV8kNIZJ
-         w91/Js2Qzp2wDLBRoOGhmrTXwygeLMgjUUg0s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=eLmQcjIvTXsjHLXqUOUF2WfoHuZw4r7CxLWZDyJjpkI=;
-        b=p4L7n7zCBjXu4NYLBwao87IbgH0iw/UP4XQlchn332oKlfBCEVTImKiwuW0aYXOrLz
-         ehFoUcpOW0APEc5Hy5R3iHO83Gb7UEPokt36JFblyL/sF4zMiqXVG3Qg/EkiCyNnFWqS
-         IXc8V+DtT4Gz+iEunf+PjI1kK7p0B8MgV+5/9zkVYHDAKCGU3VwX5HU90R/zmFsR8oTI
-         gOVhMSMgAHaCb5A7M91gmllXPPQK9//5llGTu7+j7DNSC9z+DMMrvMLJg99ygzeCfLqe
-         xGvLtyql30W16Yqb0xmzlNplXUByCAk7Ts6yLc7pj2VFxavYoQb6oPqlnUzVWGWDWlUv
-         HytA==
-X-Gm-Message-State: AOUpUlGFJsfcw9mwumxNFiwNp+SKvqWwD+/IZgpHKYL47u77fzCYhdHY
-        B7dLTw0WdVX8x2McDxjh8wNnJA==
-X-Google-Smtp-Source: AA+uWPwfEvPywsB39hILcR7EL3Qb9ti64ELnaRH0XxfHXM0BOpc52XDG0B7OXxdSVrr2QTX9rPMA0Q==
-X-Received: by 2002:a62:64d0:: with SMTP id y199-v6mr5027274pfb.255.1533771751039;
-        Wed, 08 Aug 2018 16:42:31 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id a81-v6sm10112038pfa.152.2018.08.08.16.42.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Aug 2018 16:42:30 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 8 Aug 2018 22:30:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=D15PlVrM6McY8FCCYPL2KQvSLeLTkgNeJ3IDyovko88=; b=k6zhje77W6Z49t8q6mvfqOt41
+        1OKRsyJJU6EV0aj5e1S9v93+yAJML0RzBeiQYFEkfVU7dQSOPK6eFRiMd2nCxvB2zfoA3xz+tUijm
+        joiqGh1zeD4RPicbF1UyYTP5G+r1ncuv/1nbUDPg26JKAN2HJfCywd6f3Bb47vBmk58UjcyD6Trrd
+        rEztib/OOjUSiwosqse40vvDJsMLw3Pnh4KHTGSWGh/aGxXBTZxQXMcKVqDCDEyirPVa3cqnf8rFt
+        lHDGryZBkuL0BPFS91cD1nxUUS1mGyi/pcLCG4rFXn39/5P0zRrDwJ5vQleaaxm9yZfdZQnu/KJkb
+        t+szYeGhg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fnYTs-0002lh-Vh; Thu, 09 Aug 2018 00:07:08 +0000
+Date:   Wed, 8 Aug 2018 17:07:08 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, darrick.wong@oracle.com,
+        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, hughd@google.com, shuah@kernel.org,
+        robh@kernel.org, ulf.hansson@linaro.org, aspriel@gmail.com,
+        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
+        heikki.krogerus@linux.intel.com, sfr@canb.auug.org.au,
+        vdavydov.dev@gmail.com, chris@chris-wilson.co.uk,
+        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
+        ying.huang@intel.com, shakeelb@google.com, jbacik@fb.com,
+        mingo@kernel.org, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
+Message-ID: <20180809000708.GA5566@bombadil.infradead.org>
+References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
+ <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
+ <20180808072040.GC27972@dhcp22.suse.cz>
+ <d17e65bb-c114-55de-fb4e-e2f538779b92@virtuozzo.com>
+ <20180808102734.GH27972@dhcp22.suse.cz>
+ <20180808213125.GM2234@dastard>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Julius Werner <jwerner@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAODwPW_sP2=w-qRmVTAm+HCgomxj7C1Z_tLtLzUy-eSp8QrZeA@mail.gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>, samuel@sholland.org,
-        Sudeep.Holla@arm.com
-References: <20180808172414.29983-1-swboyd@chromium.org>
- <20180808172414.29983-3-swboyd@chromium.org>
- <CAODwPW_sP2=w-qRmVTAm+HCgomxj7C1Z_tLtLzUy-eSp8QrZeA@mail.gmail.com>
-Message-ID: <153377174946.220756.11492509142148153962@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 2/2] firmware: coreboot: Collapse platform drivers into bus
- core
-Date:   Wed, 08 Aug 2018 16:42:29 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808213125.GM2234@dastard>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Julius Werner (2018-08-08 12:07:30)
-> > +config GOOGLE_COREBOOT_TABLE_ACPI
-> > +       tristate
-> > +       default GOOGLE_COREBOOT_TABLE
-> =
+On Thu, Aug 09, 2018 at 07:31:25AM +1000, Dave Chinner wrote:
+> IMO, we've had enough recent bugs to deal with from shrinkers being
+> called before the filesystem is set up and from trying to handle
+> allocation errors during setup. Do we really want to make shrinker
+> shutdown just as prone to mismanagement and subtle, hard to hit
+> bugs? I don't think we do - unmount is simply not a critical
+> performance path.
 
-> I don't think this helps in upgrading (as your commit message says)
-> unless you also keep the 'select GOOGLE_COREBOOT_TABLE' here, right?
-
-Oh yes should be select, not default.
-
-> =
-
-> > -int coreboot_table_init(struct device *dev, void __iomem *ptr)
-> > +static int coreboot_table_init(struct device *dev, void __iomem *ptr)
-> =
-
-> nit: There's little reason to keep coreboot_table_init() a separate
-> function now. Could maybe compact the code a little more if you merge
-> it into probe()? (Also could then do the signature sanity check before
-> trusting the length values to map the whole thing, which is probably a
-> good idea.)
-
-Sure. I can make another patch for squashing that all together.
-
-> =
-
-> >         if (ptr_header) {
-> >                 bus_unregister(&coreboot_bus_type);
-> >                 iounmap(ptr_header);
-> =
-
-> Could ptr_header be handled by devm now, somehow?
-
-Yes. It hasn't been devmified yet because that would be more things in
-one big patch. This is quickly blowing up!
-
-> Also, don't you have
-> two bus_unregister() now (here and in coreboot_exit())? Or is that
-> intentional?
-
-That's nice. I didn't notice that module_init() was registering the bus
-and then platform drivers could remove the bus later with the driver
-unbind. I'll move them both into the driver bind/unbind path, in another
-patch.
-
-> =
-
-> > +static struct platform_driver coreboot_table_driver =3D {
-> > +       .probe =3D coreboot_table_probe,
-> > +       .remove =3D coreboot_table_remove,
-> > +       .driver =3D {
-> > +               .name =3D "coreboot_table",
-> > +               .acpi_match_table =3D ACPI_PTR(cros_coreboot_acpi_match=
-),
-> > +               .of_match_table =3D of_match_ptr(coreboot_of_match),
-> =
-
-> Who takes precedence if they both exist? Will we have two
-> coreboot_table busses? (That would probably not be so good...)
-
-I'm not aware of a system that has both ACPI and devicetree, so this
-isn't a problem.
-
+It's never been performance critical for me, but I'm not so sure that
+there aren't container workloads which unmount filesystems multiple
+times per second.
