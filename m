@@ -2,106 +2,166 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E10DC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C208BC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0B2217D2
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0B2217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kwaak.net
+	by mail.kernel.org (Postfix) with ESMTP id 5029421834
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5029421834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730210AbeHIMZr (ORCPT
+        id S1730007AbeHIM3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:25:47 -0400
-Received: from gw-fsck-sorbs.kwaak.net ([84.245.27.153]:43309 "EHLO
-        mail.kwaak.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727371AbeHIMZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:25:47 -0400
-Received: from [192.168.0.44] (port=54946 helo=shell3.kwaak.net)
-        by mail.kwaak.net with esmtp (Exim 4.50)
-        id 1fnhl5-0002Ap-Fx; Thu, 09 Aug 2018 12:01:32 +0200
-Received: from ard by shell3.kwaak.net with local (Exim 4.80)
-        (envelope-from <ard@kwaak.net>)
-        id 1fnhl5-0002Ak-09; Thu, 09 Aug 2018 12:01:31 +0200
-Date:   Thu, 9 Aug 2018 12:01:30 +0200
-From:   ard <ard@kwaak.net>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH 0/3] scsi: fcoe: memleak fixes
-Message-ID: <20180809100130.GF23827@kwaak.net>
-References: <20180731134603.20089-1-jthumshirn@suse.de>
- <20180806092503.6ed56kukj2i236qt@linux-x5ow.site>
- <20180806132234.GA23827@kwaak.net>
- <20180806132725.ihbi5rxvkuuppajr@linux-x5ow.site>
- <20180806142414.GB23827@kwaak.net>
- <20180807065400.nxpndw4kf6jdd55i@linux-x5ow.site>
- <20180807092619.GC23827@kwaak.net>
- <20180807160452.GE23827@kwaak.net>
+        Thu, 9 Aug 2018 08:29:40 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10647 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727371AbeHIM3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 08:29:40 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1F891772BA2CE;
+        Thu,  9 Aug 2018 18:05:28 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Thu, 9 Aug 2018
+ 18:05:20 +0800
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+To:     Will Deacon <will.deacon@arm.com>
+References: <1533558689-3000-1-git-send-email-thunder.leizhen@huawei.com>
+ <20180808101215.GB28557@arm.com> <5B6B994B.10208@huawei.com>
+ <20180809084901.GA28801@arm.com>
+CC:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Libin <huawei.libin@huawei.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B6C11E0.9030908@huawei.com>
+Date:   Thu, 9 Aug 2018 18:05:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807160452.GE23827@kwaak.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Host-Lookup-Failed: Reverse DNS lookup failed for 192.168.0.44 (failed)
-X-Kwaak-Spam-Score: -2.6
-X-kwaak-MailScanner: Found to be clean
-X-kwaak-MailScanner-SpamCheck: not spam, SpamAssassin (score=-2.304,
-        required 5, autolearn=not spam, BAYES_00 -2.60,
-        DNS_FROM_AHBL_RHSBL 0.29)
-X-MailScanner-From: ard@kwaak.net
+In-Reply-To: <20180809084901.GA28801@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guys,
 
-On Tue, Aug 07, 2018 at 06:04:52PM +0200, ard wrote:
-> PC+steam machine with 4.14 (patched) and 4.16 (upstream,
-> nodebug): no kmemleaks
-> Every device sees every device.
 
-New day, new conflicting results.
-Yay \0/.
+On 2018/8/9 16:49, Will Deacon wrote:
+> On Thu, Aug 09, 2018 at 09:30:51AM +0800, Leizhen (ThunderTown) wrote:
+>> On 2018/8/8 18:12, Will Deacon wrote:
+>>> On Mon, Aug 06, 2018 at 08:31:29PM +0800, Zhen Lei wrote:
+>>>> The condition "(int)(VAL - sync_idx) >= 0" to break loop in function
+>>>> __arm_smmu_sync_poll_msi requires that sync_idx must be increased
+>>>> monotonously according to the sequence of the CMDs in the cmdq.
+>>>>
+>>>> But ".msidata = atomic_inc_return_relaxed(&smmu->sync_nr)" is not protected
+>>>> by spinlock, so the following scenarios may appear:
+>>>> cpu0			cpu1
+>>>> msidata=0
+>>>> 			msidata=1
+>>>> 			insert cmd1
+>>>> insert cmd0
+>>>> 			smmu execute cmd1
+>>>> smmu execute cmd0
+>>>> 			poll timeout, because msidata=1 is overridden by
+>>>> 			cmd0, that means VAL=0, sync_idx=1.
+>>>
+>>> Oh yuck, you're right! We probably want a CC stable on this. Did you see
+>>> this go wrong in practice?
+>> Just misreported and make the caller wait for a long time until TIMEOUT. It's
+>> rare to happen, because any other CMD_SYNC during the waiting period will break
+>> it.
+> 
+> Thanks. Please mention that in the commit message, because I think it's
+> useful to know.
 
-As I did not trust the results, I redid the tests, and the same
-tests gave some different results.
-Before giving the results I've changed my stance on the bug:
-The bug is not a regression in memory leak. As far as I can tell
-now, the memory leaks were already there.
-It's a regression in vn2vn enodes being able to PLOGI.
-Since I've seen the steam machine and the PC setup an rport,
-there must be some racy thing going on how the accept or reject
-the PLOGI.
-Now once it rejects, it will never succeed to accept, and the
-relogin happens ad infinitum.
-In this mode there are about 47 kmemleaks per 10 minutes.
-I also notice that the kmemleaks takes a while to be detected or
-to die out. So there are state timers involved that hold on to
-the memory and after time out do not free it.
-And another thing I noticed: When the pc and the steam machine
-had a working rport, after a while the steam machine (4.16
-unpatched) fc_timedout the rports to all nodes (so all nodes with
-kernel < 4.14 too), and all with different timeouts, except the
-one it has an fc_transport with.
-So it's sole remaining rport was the "designated" target.
-Currently I am compiling 4.9 with kmemleak to determine if that
-exhibits the same leaks when disconnecting and reconnecting the
-FCoE vlan.
-This to determine if we have a single regression in just the
-login handling or both.
-I will add the dmesg's of a working rport, and a failing rport
-later.
+OK.
 
-Regards,
-Ard
+> 
+>>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>>> ---
+>>>>  drivers/iommu/arm-smmu-v3.c | 7 +++----
+>>>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>>>> index 1d64710..4810f61 100644
+>>>> --- a/drivers/iommu/arm-smmu-v3.c
+>>>> +++ b/drivers/iommu/arm-smmu-v3.c
+>>>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
+>>>>
+>>>>  	int				gerr_irq;
+>>>>  	int				combined_irq;
+>>>> -	atomic_t			sync_nr;
+>>>> +	u32				sync_nr;
+>>>>
+>>>>  	unsigned long			ias; /* IPA */
+>>>>  	unsigned long			oas; /* PA */
+>>>> @@ -836,7 +836,6 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+>>>>  			cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
+>>>>  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
+>>>>  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+>>>> -		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent->sync.msidata);
+>>>>  		cmd[1] |= ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
+>>>>  		break;
+>>>>  	default:
+>>>> @@ -947,7 +946,6 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+>>>>  	struct arm_smmu_cmdq_ent ent = {
+>>>>  		.opcode = CMDQ_OP_CMD_SYNC,
+>>>>  		.sync	= {
+>>>> -			.msidata = atomic_inc_return_relaxed(&smmu->sync_nr),
+>>>>  			.msiaddr = virt_to_phys(&smmu->sync_count),
+>>>>  		},
+>>>>  	};
+>>>> @@ -955,6 +953,8 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+>>>>  	arm_smmu_cmdq_build_cmd(cmd, &ent);
+>>>>
+>>>>  	spin_lock_irqsave(&smmu->cmdq.lock, flags);
+>>>> +	ent.sync.msidata = ++smmu->sync_nr;
+>>>> +	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent.sync.msidata);
+>>>
+>>> I really don't like splitting this out from building the rest of the
+>>> command. Can you just move the call to arm_smmu_cmdq_build_cmd into the
+>>> critical section, please?
+>> OK. I have considered that before, just worry it will increase the
+>> compition of spinlock.
+> 
+> If you can provide numbers showing that it's a problem, then we could add
+> a helper function e.g. arm_smmu_cmdq_sync_set_msidata(arm_smmu_cmdq_ent *cmd)
+
+The performance data from my current test envirnoment is not stable now, I'm
+trying to find anothor one. So I want to leave this problem for the time being.
+If it'a problem, I will send a new patch.
+
+> 
+>> In addition, I will append a optimization patch: the adjacent CMD_SYNCs,
+>> we only need one.
+> 
+> Ok, but please keep them separate, since I don't want to fix up fixes and
+> optimisations.
+
+OK
+
+> 
+> Thanks,
+> 
+> Will
+> 
+> .
+> 
 
 -- 
-.signature not found
+Thanks!
+BestRegards
+
