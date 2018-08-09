@@ -2,287 +2,295 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371DDC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 509CAC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D696821C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:04:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FtSiWHt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D696821C2B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D326F21C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:05:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D326F21C2B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbeHIK2D (ORCPT
+        id S1729317AbeHIK3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:28:03 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43012 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbeHIK2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:28:02 -0400
-Received: by mail-lf1-f65.google.com with SMTP id f135-v6so3446237lfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 01:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7WTclrGEYFttiKU/tkRSk3eitrGKcacl4PA+OwnByLo=;
-        b=FtSiWHt9pKnQc6MKiwOG/MmoV3b9qhrGiv23QOfAqABoV/BvuM3qPf7gVxanMsc9DO
-         +JwNk/lndB6aCtaOoM6kEN9Fx8hVVSj3+BKhhF2fLQnDvTnk7k/7t60v5AFrWMxLYRWI
-         kv4Q4yfVVfOAWzRI2UgOFRa74RU2M2QFnw3Xw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7WTclrGEYFttiKU/tkRSk3eitrGKcacl4PA+OwnByLo=;
-        b=YxfoYC3OwyV/0e5wHjLHg+IJXO+dsr2uSwzFqtuH3q/T3s1hgqlrrY1p6qRNp4y+s4
-         kLeXr/SgYvdYOYii5TOuvYegbGywtzokU+DqUZMZMv/VyAm3VZ1uH/nIBMWpYHx/8tNl
-         VmdraGVHP2pu5MeSSKrXHe6XxzkQZZ8r/+ezzKHW5AbdsVw6Q7NuHpMYsCuRLxRYdQ55
-         vlDddDO9/esVWmbxVtC/0Z2xVt35LPumFnkM4pYAD5A5nJi9ito7x2D5TiRis0FD61v7
-         1bub9YVb45+UZy9xFSSrAQskJ3A0emwaFOPbwwBewB8/L9SD1TK2qGip6jQQxq24M67S
-         +TxA==
-X-Gm-Message-State: AOUpUlGG11TFuO+itEZx45Zbmn7VjSLTtTT2iqDCnqAgo5EDzIf2OOwr
-        L0HT1J4ROnKOoCopFcrs4kQq9Q==
-X-Google-Smtp-Source: AA+uWPyQZEVVg9NGAnrgTCR7og/YMbyZwTT6/CziGPQd7gMFrY4RIFQttQsoGxnJ3nAAfFyqXQazbg==
-X-Received: by 2002:a19:12df:: with SMTP id 92-v6mr808879lfs.80.1533801859999;
-        Thu, 09 Aug 2018 01:04:19 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id r63-v6sm1030606lja.18.2018.08.09.01.04.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 01:04:19 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        shuah@kernel.org, bamv2005@gmail.com, brgl@bgdev.pl,
-        pbonzini@redhat.com, akpm@linux-foundation.org,
-        rppt@linux.vnet.ibm.com, aarcange@redhat.com
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v5] selftests: add headers_install to lib.mk
-Date:   Thu,  9 Aug 2018 10:04:02 +0200
-Message-Id: <20180809080402.24469-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <3f332e65-0b33-9952-6aba-f9c8953a1f26@kernel.org>
-References: <3f332e65-0b33-9952-6aba-f9c8953a1f26@kernel.org>
+        Thu, 9 Aug 2018 06:29:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60735 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727237AbeHIK3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 06:29:09 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C3286D303E7AB;
+        Thu,  9 Aug 2018 16:05:24 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 9 Aug 2018
+ 16:05:16 +0800
+Date:   Thu, 9 Aug 2018 16:03:52 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "Philippe Ombredanne" <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180809080352.GI91035@Turing-Arch-b>
+References: <20180801165644.GA3820@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+ <20180802040557.GL160746@Turing-Arch-b>
+ <20180802142243.GA3481@redhat.com>
+ <20180803034721.GC91035@Turing-Arch-b>
+ <20180803143944.GA4079@redhat.com>
+ <20180806031252.GG91035@Turing-Arch-b>
+ <20180806153257.GB6002@redhat.com>
+ <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
+ <20180808151835.GA3429@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180808151835.GA3429@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the kernel headers aren't installed we can't build all the tests.
-Add a new make target rule 'khdr' in the file lib.mk to generate the
-kernel headers and that gets include for every test-dir Makefile that
-includes lib.mk If the testdir in turn have its own sub-dirs the
-top_srcdir needs to be set to the linux-rootdir to be able to generate
-the kernel headers.
+On Wed, Aug 08, 2018 at 11:18:35AM -0400, Jerome Glisse wrote:
+> Date: Wed, 8 Aug 2018 11:18:35 -0400
+> From: Jerome Glisse <jglisse@redhat.com>
+> To: Kenneth Lee <nek.in.cn@gmail.com>
+> CC: Kenneth Lee <liguozhu@hisilicon.com>, "Tian, Kevin"
+>  <kevin.tian@intel.com>, Alex Williamson <alex.williamson@redhat.com>,
+>  Herbert Xu <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
+>  <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
+>  Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo Xu <xuzaibo@huawei.com>,
+>  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Kumar, Sanjay K"
+>  <sanjay.k.kumar@intel.com>, Hao Fang <fanghao11@huawei.com>,
+>  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+>  "linuxarm@huawei.com" <linuxarm@huawei.com>,
+>  "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+>  "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
+>  Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
+>  "David S . Miller" <davem@davemloft.net>,
+>  "linux-accelerators@lists.ozlabs.org"
+>  <linux-accelerators@lists.ozlabs.org>
+> Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+> User-Agent: Mutt/1.10.0 (2018-05-17)
+> Message-ID: <20180808151835.GA3429@redhat.com>
+> 
+> On Wed, Aug 08, 2018 at 09:08:42AM +0800, Kenneth Lee wrote:
+> > 
+> > 
+> > 在 2018年08月06日 星期一 11:32 下午, Jerome Glisse 写道:
+> > > On Mon, Aug 06, 2018 at 11:12:52AM +0800, Kenneth Lee wrote:
+> > > > On Fri, Aug 03, 2018 at 10:39:44AM -0400, Jerome Glisse wrote:
+> > > > > On Fri, Aug 03, 2018 at 11:47:21AM +0800, Kenneth Lee wrote:
+> > > > > > On Thu, Aug 02, 2018 at 10:22:43AM -0400, Jerome Glisse wrote:
+> > > > > > > On Thu, Aug 02, 2018 at 12:05:57PM +0800, Kenneth Lee wrote:
+> > > > > > > > On Thu, Aug 02, 2018 at 02:33:12AM +0000, Tian, Kevin wrote:
+> > > > > > > > > > On Wed, Aug 01, 2018 at 06:22:14PM +0800, Kenneth Lee wrote:
+> 
+> [...]
+> 
+> > > > > > > > > > My more general question is do we want to grow VFIO to become
+> > > > > > > > > > a more generic device driver API. This patchset adds a command
+> > > > > > > > > > queue concept to it (i don't think it exist today but i have
+> > > > > > > > > > not follow VFIO closely).
+> > > > > > > > > > 
+> > > > > > > > The thing is, VFIO is the only place to support DMA from user land. If we don't
+> > > > > > > > put it here, we have to create another similar facility to support the same.
+> > > > > > > No it is not, network device, GPU, block device, ... they all do
+> > > > > > > support DMA. The point i am trying to make here is that even in
+> > > > > > Sorry, wait a minute, are we talking the same thing? I meant "DMA from user
+> > > > > > land", not "DMA from kernel driver". To do that we have to manipulate the
+> > > > > > IOMMU(Unit). I think it can only be done by default_domain or vfio domain. Or
+> > > > > > the user space have to directly access the IOMMU.
+> > > > > GPU do DMA in the sense that you pass to the kernel a valid
+> > > > > virtual address (kernel driver do all the proper check) and
+> > > > > then you can use the GPU to copy from or to that range of
+> > > > > virtual address. Exactly how you want to use this compression
+> > > > > engine. It does not rely on SVM but SVM going forward would
+> > > > > still be the prefered option.
+> > > > > 
+> > > > No, SVM is not the reason why we rely on Jean's SVM(SVA) series. We rely on
+> > > > Jean's series because of multi-process (PASID or substream ID) support.
+> > > > 
+> > > > But of couse, WarpDrive can still benefit from the SVM feature.
+> > > We are getting side tracked here. PASID/ID do not require VFIO.
+> > > 
+> > Yes, PASID itself do not require VFIO. But what if:
+> > 
+> > 1. Support DMA from user space.
+> > 2. The hardware makes use of standard IOMMU/SMMU for IO address translation.
+> > 3. The IOMMU facility is shared by both kernel and user drivers.
+> > 4. Support PASID with the current IOMMU facility
+> 
+> I do not see how any of this means it has to be in VFIO.
+> Other devices do just that. GPUs driver for instance share
+> DMA engine (that copy data around) between kernel and user
+> space. Sometime kernel use it to move things around. Evict
+> some memory to make room for a new process is the common
+> example. Same DMA engines is often use by userspace itself
+> during rendering or compute (program moving things on there
+> own). So they are already kernel driver that do all 4 of
+> the above and are not in VFIO.
+> 
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
----
+I think our divergence is on "it is common that some device drivers use IOMMU
+for user land DMA operation". Let us dive into this in the AMD case.
 
-Rebased onto next-20180808
+> 
+> > > > > > > your mechanisms the userspace must have a specific userspace
+> > > > > > > drivers for each hardware and thus there are virtually no
+> > > > > > > differences between having this userspace driver open a device
+> > > > > > > file in vfio or somewhere else in the device filesystem. This is
+> > > > > > > just a different path.
+> > > > > > > 
+> > > > > > The basic problem WarpDrive want to solve it to avoid syscall. This is important
+> > > > > > to accelerators. We have some data here:
+> > > > > > https://www.slideshare.net/linaroorg/progress-and-demonstration-of-wrapdrive-a-accelerator-framework-sfo17317
+> > > > > > 
+> > > > > > (see page 3)
+> > > > > > 
+> > > > > > The performance is different on using kernel and user drivers.
+> > > > > Yes and example i point to is exactly that. You have a one time setup
+> > > > > cost (creating command buffer binding PASID with command buffer and
+> > > > > couple other setup steps). Then userspace no longer have to do any
+> > > > > ioctl to schedule work on the GPU. It is all down from userspace and
+> > > > > it use a doorbell to notify hardware when it should go look at command
+> > > > > buffer for new thing to execute.
+> > > > > 
+> > > > > My point stands on that. You have existing driver already doing so
+> > > > > with no new framework and in your scheme you need a userspace driver.
+> > > > > So i do not see the value add, using one path or the other in the
+> > > > > userspace driver is litteraly one line to change.
+> > > > > 
+> > > > Sorry, I'd got confuse here. I partially agree that the user driver is
+> > > > redundance of kernel driver. (But for WarpDrive, the kernel driver is a full
+> > > > driver include all preparation and setup stuff for the hardware, the user driver
+> > > > is simply to send request and receive answer). Yes, it is just a choice of path.
+> > > > But the user path is faster if the request come from use space. And to do that,
+> > > > we need user land DMA support. Then why is it invaluable to let VFIO involved?
+> > > Some drivers in the kernel already do exactly what you said. The user
+> > > space emit commands without ever going into kernel by directly scheduling
+> > > commands and ringing a doorbell. They do not need VFIO either and they
+> > > can map userspace address into the DMA address space of the device and
+> > > again they do not need VFIO for that.
+> > Could you please directly point out which driver you refer to here? Thank
+> > you.
+> 
+> drivers/gpu/drm/amd/
+> 
+> Sub-directory of interest is amdkfd
+> 
+> Because it is a big driver here is a highlevel overview of how it works
+> (this is a simplification):
+>   - Process can allocate GPUs buffer (through ioclt) and map them into
+>     its address space (through mmap of device file at buffer object
+>     specific offset).
+>   - Process can map any valid range of virtual address space into device
+>     address space (IOMMU mapping). This must be regular memory ie not an
+>     mmap of a device file or any special file (this is the non PASID
+>     path)
+>   - Process can create a command queue and bind its process to it aka
+>     PASID, this is done through an ioctl.
+>   - Process can schedule commands onto queues it created from userspace
+>     without ioctl. For that it just write command into a ring buffer
+>     that it mapped during the command queue creation process and it
+>     rings a doorbell when commands are ready to be consume by the
+>     hardware.
+>   - Commands can reference (access) all 3 types of object above ie
+>     either full GPUs buffer, process regular memory maped as object
+>     (non PASID) and PASID memory all at the same time ie you can
+>     mix all of the above in same commands queue.
+>   - Kernel can evict, unbind any process command queues, unbind commands
+>     queue are still valid from process point of view but commands
+>     process schedules on them will not be executed until kernel re-bind
+>     the queue.
+>   - Kernel can schedule commands itself onto its dedicated command
+>     queues (kernel driver create its own command queues).
+>   - Kernel can control priorities between all the queues ie it can
+>     decides which queues should the hardware executed first next.
+> 
 
-Cheers,
-Anders
+Thank you. Now I think I understand the point. Indeed, I can see some drivers,
+such GPU and IB, attach their own iommu_domain to their iommu_group and do their
+own iommu_map().
 
- Makefile                                           | 14 +-------------
- scripts/subarch.include                            | 13 +++++++++++++
- tools/testing/selftests/android/Makefile           |  2 +-
- tools/testing/selftests/android/ion/Makefile       |  2 ++
- tools/testing/selftests/futex/functional/Makefile  |  1 +
- tools/testing/selftests/gpio/Makefile              |  7 ++-----
- tools/testing/selftests/kvm/Makefile               |  7 ++-----
- tools/testing/selftests/lib.mk                     | 12 ++++++++++++
- tools/testing/selftests/net/Makefile               |  1 +
- .../selftests/networking/timestamping/Makefile     |  1 +
- tools/testing/selftests/vm/Makefile                |  4 ----
- 11 files changed, 36 insertions(+), 28 deletions(-)
- create mode 100644 scripts/subarch.include
+But we have another requirement which is to combine some device together to
+share the same address space. This is a little like these kinds of solution:
 
-diff --git a/Makefile b/Makefile
-index c88d56de7fda..49dc0c6e1f23 100644
---- a/Makefile
-+++ b/Makefile
-@@ -299,19 +299,7 @@ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
- KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
- export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
- 
--# SUBARCH tells the usermode build what the underlying arch is.  That is set
--# first, and if a usermode build is happening, the "ARCH=um" on the command
--# line overrides the setting of ARCH below.  If a native build is happening,
--# then ARCH is assigned, getting whatever value it gets normally, and
--# SUBARCH is subsequently ignored.
--
--SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
--				  -e s/sun4u/sparc64/ \
--				  -e s/arm.*/arm/ -e s/sa110/arm/ \
--				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
--				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
--				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
--				  -e s/riscv.*/riscv/)
-+include scripts/subarch.include
- 
- # Cross compiling and selecting different set of gcc/bin-utils
- # ---------------------------------------------------------------------------
-diff --git a/scripts/subarch.include b/scripts/subarch.include
-new file mode 100644
-index 000000000000..650682821126
---- /dev/null
-+++ b/scripts/subarch.include
-@@ -0,0 +1,13 @@
-+# SUBARCH tells the usermode build what the underlying arch is.  That is set
-+# first, and if a usermode build is happening, the "ARCH=um" on the command
-+# line overrides the setting of ARCH below.  If a native build is happening,
-+# then ARCH is assigned, getting whatever value it gets normally, and
-+# SUBARCH is subsequently ignored.
-+
-+SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-+				  -e s/sun4u/sparc64/ \
-+				  -e s/arm.*/arm/ -e s/sa110/arm/ \
-+				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-+				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-+				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
-+				  -e s/riscv.*/riscv/)
-diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/selftests/android/Makefile
-index 72c25a3cb658..d9a725478375 100644
---- a/tools/testing/selftests/android/Makefile
-+++ b/tools/testing/selftests/android/Makefile
-@@ -6,7 +6,7 @@ TEST_PROGS := run.sh
- 
- include ../lib.mk
- 
--all:
-+all: khdr
- 	@for DIR in $(SUBDIRS); do		\
- 		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
- 		mkdir $$BUILD_TARGET  -p;	\
-diff --git a/tools/testing/selftests/android/ion/Makefile b/tools/testing/selftests/android/ion/Makefile
-index e03695287f76..88cfe88e466f 100644
---- a/tools/testing/selftests/android/ion/Makefile
-+++ b/tools/testing/selftests/android/ion/Makefile
-@@ -10,6 +10,8 @@ $(TEST_GEN_FILES): ipcsocket.c ionutils.c
- 
- TEST_PROGS := ion_test.sh
- 
-+KSFT_KHDR_INSTALL := 1
-+top_srcdir = ../../../../..
- include ../../lib.mk
- 
- $(OUTPUT)/ionapp_export: ionapp_export.c ipcsocket.c ionutils.c
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index ff8feca49746..ad1eeb14fda7 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -18,6 +18,7 @@ TEST_GEN_FILES := \
- 
- TEST_PROGS := run.sh
- 
-+top_srcdir = ../../../../..
- include ../../lib.mk
- 
- $(TEST_GEN_FILES): $(HEADERS)
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 1bbb47565c55..4665cdbf1a8d 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -21,11 +21,8 @@ endef
- CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
- LDLIBS += -lmount -I/usr/include/libmount
- 
--$(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
-+$(BINARIES):| khdr
-+$(BINARIES): ../../../gpio/gpio-utils.o
- 
- ../../../gpio/gpio-utils.o:
- 	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
--
--../../../../usr/include/linux/gpio.h:
--	make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
--
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index dd0e5163f01f..34d492b77a7c 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -34,9 +34,6 @@ $(LIBKVM_OBJ): $(OUTPUT)/%.o: %.c
- $(OUTPUT)/libkvm.a: $(LIBKVM_OBJ)
- 	$(AR) crs $@ $^
- 
--$(LINUX_HDR_PATH):
--	make -C $(top_srcdir) headers_install
--
--all: $(STATIC_LIBS) $(LINUX_HDR_PATH)
-+all: $(STATIC_LIBS)
- $(TEST_GEN_PROGS): $(STATIC_LIBS)
--$(TEST_GEN_PROGS) $(LIBKVM_OBJ): | $(LINUX_HDR_PATH)
-+$(STATIC_LIBS):| khdr
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 17ab36605a8e..0a8e75886224 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -16,8 +16,20 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
- TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
- TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
- 
-+top_srcdir ?= ../../../..
-+include $(top_srcdir)/scripts/subarch.include
-+ARCH		?= $(SUBARCH)
-+
- all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
- 
-+.PHONY: khdr
-+khdr:
-+	make ARCH=$(ARCH) -C $(top_srcdir) headers_install
-+
-+ifdef KSFT_KHDR_INSTALL
-+$(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES):| khdr
-+endif
-+
- .ONESHELL:
- define RUN_TEST_PRINT_RESULT
- 	TEST_HDR_MSG="selftests: "`basename $$PWD`:" $$BASENAME_TEST";	\
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 9cca68e440a0..919aa2ac00af 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -15,6 +15,7 @@ TEST_GEN_FILES += udpgso udpgso_bench_tx udpgso_bench_rx
- TEST_GEN_PROGS = reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
- TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict tls
- 
-+KSFT_KHDR_INSTALL := 1
- include ../lib.mk
- 
- $(OUTPUT)/reuseport_bpf_numa: LDFLAGS += -lnuma
-diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
-index a728040edbe1..14cfcf006936 100644
---- a/tools/testing/selftests/networking/timestamping/Makefile
-+++ b/tools/testing/selftests/networking/timestamping/Makefile
-@@ -5,6 +5,7 @@ TEST_PROGS := hwtstamp_config rxtimestamp timestamping txtimestamp
- 
- all: $(TEST_PROGS)
- 
-+top_srcdir = ../../../../..
- include ../../lib.mk
- 
- clean:
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index 9881876d2aa0..e94b7b14bcb2 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -26,10 +26,6 @@ TEST_PROGS := run_vmtests
- 
- include ../lib.mk
- 
--$(OUTPUT)/userfaultfd: ../../../../usr/include/linux/kernel.h
- $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
- 
- $(OUTPUT)/mlock-random-test: LDLIBS += -lcap
--
--../../../../usr/include/linux/kernel.h:
--	make -C ../../../.. headers_install
+http://tce.technion.ac.il/wp-content/uploads/sites/8/2015/06/SC-7.2-M.-Silberstein.pdf
+
+With that, the application can directly pass the NiC packet pointer to the
+decryption accelerator, and get the bare data in place. This is the feature that
+the VFIO container can provide.
+
+> I believe all of the above are the aspects that matters to you. The main
+> reason i don't like creating a new driver infrastructure is that a lot
+> of existing drivers will want to use some of the new features that are
+> coming (memory topology, where to place process memory, pipeline devices,
+> ...) and thus existing drivers are big (GPU drivers are the biggest of
+> all the kernel drivers).
+> 
+
+I think it is not necessarily to rewrite the GPU driver if they don't need to
+share their space with others. But if they do, no matter how, they have to create
+some facility similar to VFIO container. Then why not just create them in VFIO?
+
+Actually, some GPUs have already used mdev to manage the resource by different
+users, it is already part of VFIO.
+
+> So rewritting those existing drivers into VFIO or into any new infra-
+> structure so that they can leverage new features is a no go from my
+> point of view.
+> 
+> I would rather see a set of helpers so that each features can be use
+> either by new drivers or existing drivers. For instance a new way to
+> expose memory topology. A new way to expose how you can pipe devices
+> from one to another ...
+> 
+> 
+> Hence i do not see any value in a whole new infra-structure in which
+> drivers must be part of to leverage new features.
+> 
+> Cheers,
+> Jérôme
+
 -- 
-2.18.0
+			-Kenneth(Hisilicon)
+
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
 
