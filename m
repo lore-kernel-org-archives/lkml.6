@@ -2,93 +2,103 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A3AC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BCDC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0085F21D68
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:40:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0085F21D68
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id D954521EA0
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D954521EA0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732416AbeHISF3 (ORCPT
+        id S1732477AbeHISFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:05:29 -0400
-Received: from sauhun.de ([88.99.104.3]:46830 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732063AbeHISF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:05:28 -0400
-Received: from localhost (p54B3374D.dip0.t-ipconnect.de [84.179.55.77])
-        by pokefinder.org (Postfix) with ESMTPSA id EC57172062F;
-        Thu,  9 Aug 2018 17:39:59 +0200 (CEST)
-Date:   Thu, 9 Aug 2018 17:39:59 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     George Cherian <george.cherian@cavium.com>
-Cc:     linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        jglauber@cavium.com
-Subject: Re: [PATCH v2] i2c: xlp9xx: Fix case where SSIF read transaction
- completes early
-Message-ID: <20180809153959.y6su5kxnwilkdhlz@ninjato>
-References: <1533796608-26349-1-git-send-email-george.cherian@cavium.com>
+        Thu, 9 Aug 2018 14:05:46 -0400
+Received: from gateway36.websitewelcome.com ([192.185.185.36]:40457 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732330AbeHISFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 14:05:46 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 6A59A400C5AC4
+        for <linux-kernel@vger.kernel.org>; Thu,  9 Aug 2018 09:43:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id nn2QfUvMNPvAdnn2jfVwmP; Thu, 09 Aug 2018 10:40:17 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.54.46] (port=50842 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fnn2Q-0026FC-2t; Thu, 09 Aug 2018 10:39:46 -0500
+Date:   Thu, 9 Aug 2018 10:39:44 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
+        linux-wimax@intel.com, "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] wimax: usb-fw: mark expected switch fall-through
+Message-ID: <20180809153944.GA16703@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="442bub4pf5phc3fj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533796608-26349-1-git-send-email-george.cherian@cavium.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.54.46
+X-Source-L: No
+X-Exim-ID: 1fnn2Q-0026FC-2t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.54.46]:50842
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
---442bub4pf5phc3fj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Notice that in this particular case, I placed the "fall through"
+annotation at the bottom of the case, which is what GCC is expecting
+to find.
 
-On Wed, Aug 08, 2018 at 11:36:48PM -0700, George Cherian wrote:
-> During ipmi stress tests we see occasional failure of transactions
-> at the boot time. This happens in the case of a I2C_M_RECV_LEN
-> transactions, when the read transfer completes (with the initial
-> read length of 34) before the driver gets a chance to handle interrupts.
->=20
-> The current driver code expects at least 2 interrupts for I2C_M_RECV_LEN
-> transactions. The length is updated during the first interrupt, and  the
-> buffer contents are only copied during subsequent interrupts. In case of
-> just one interrupt, we will complete the transaction without copying
-> out the bytes from RX fifo.
->=20
-> Update the code to drain the RX fifo after the length update,
-> so that the transaction completes correctly in all cases.
->=20
-> Signed-off-by: George Cherian <george.cherian@cavium.com>
+Addresses-Coverity-ID: 1369529 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wimax/i2400m/usb-fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to for-current, thanks!
+diff --git a/drivers/net/wimax/i2400m/usb-fw.c b/drivers/net/wimax/i2400m/usb-fw.c
+index 502c346..529ebca 100644
+--- a/drivers/net/wimax/i2400m/usb-fw.c
++++ b/drivers/net/wimax/i2400m/usb-fw.c
+@@ -130,12 +130,12 @@ ssize_t i2400mu_tx_bulk_out(struct i2400mu *i2400mu, void *buf, size_t buf_size)
+ 			dev_err(dev, "BM-CMD: too many stalls in "
+ 				"URB; resetting device\n");
+ 			usb_queue_reset_device(i2400mu->usb_iface);
+-			/* fallthrough */
+ 		} else {
+ 			usb_clear_halt(i2400mu->usb_dev, pipe);
+ 			msleep(10);	/* give the device some time */
+ 			goto retry;
+ 		}
++		/* fall through */
+ 	case -EINVAL:			/* while removing driver */
+ 	case -ENODEV:			/* dev disconnect ... */
+ 	case -ENOENT:			/* just ignore it */
+-- 
+2.7.4
 
-
---442bub4pf5phc3fj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltsYEsACgkQFA3kzBSg
-KbanCA/+Jam9ZhdgVQYLYpQ8vsiumEOKeHVyXTvURWBjU75HtBAJmlakVIc+B/O0
-/xuqSor2PuB0qO1cfrxj7zHAF5aIUqpdoRpuUIPzEWSi6UGpJFsBB4rnenr/Mn3s
-K55739eLgK5qDMt2uR4aiHUavoMnEzH25oYSax2oEbyoYL2hb7y9dQN5fsC+f8j0
-HR59rPfzhyO7+k8BitGiPfJinXTdALW/utSWpgTwQtZbmBvDp52hk/hOekAfWLbT
-o6h0nNXzB3EXTxyaY7/HP6PRGq0IWrBLXQkji91MFGwqnEpY6rYojHkkW09mItRJ
-F5+ibOya78zc70V6j4hsBbC5ji0P4MmU9wpP7hE60iKTPyc+clXKfr+4Y+1LP4lC
-RD2fAjBlTcsql0uOADKkxcuRapUP6/sCVWxt+XeYa3HO6awtxgRIrrkhGwAzOyC9
-jTgr1BKz/dIVzpTMbp36Izodh2uEhskqmhU4fBD07phg+Tc6OMuOr3nZLwuK7sAM
-C8sTYLlw7XKJSaB9Wy5JPneaFEdTp5jtDp8RdKMLrE+JB7O6pZ1jYEygOdMab2cC
-omPJ+6CRy03hDUpcfAlCON2v06xz1ZaLEROn6BNFg9t6DTlzuU0kq7ws8uPiyg9+
-P51YM4olAoEnVt4WtB0heWLRWTdRn3sDtcSp/SxF929pBgYTmhk=
-=2E0D
------END PGP SIGNATURE-----
-
---442bub4pf5phc3fj--
