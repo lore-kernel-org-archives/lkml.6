@@ -2,163 +2,147 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186A9C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C0AC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA6AD21C16
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA6AD21C16
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B99721C16
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:30:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="fTmm+udA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B99721C16
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeHIEvX (ORCPT
+        id S1727530AbeHIExG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:51:23 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.175]:44485 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727166AbeHIEvX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:51:23 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 438DC400D1605
-        for <linux-kernel@vger.kernel.org>; Wed,  8 Aug 2018 21:28:55 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id nah5fu3C3BcCXnah5fTlcu; Wed, 08 Aug 2018 21:28:55 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.54.46] (port=55840 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fnah4-003XtC-TY; Wed, 08 Aug 2018 21:28:55 -0500
-To:     zhong jiang <zhongjiang@huawei.com>, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533778753-38089-1-git-send-email-zhongjiang@huawei.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] drivers/net/usb/r8152: remove the unneeded variable "ret"
- in rtl8152_system_suspend
-Message-ID: <7544eca5-bbca-06eb-462e-fca036fe1beb@embeddedor.com>
-Date:   Wed, 8 Aug 2018 21:28:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 9 Aug 2018 00:53:06 -0400
+Received: from mail-eopbgr690051.outbound.protection.outlook.com ([40.107.69.51]:36420
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725878AbeHIExG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 00:53:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Skpc6a+ZBvHSTVFtrzB4Mbf3KftALJPhSRmd5YnY8bQ=;
+ b=fTmm+udAMZI8LDgYLKSPij0sG7TWEsSQinW9huttcVnjuQrT6DPEutvzr2WMC3u+m3FV+5AczlvyEN7QjN/tbBoqdzOIntYfIHPjuKNgPZ562neCYMscN3IeXCdXHosb8IV0RcENcDaYxQ/pqUHQJVloa7XosVQ42cnv7SSj0H4=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ BLUPR0301MB1571.namprd03.prod.outlook.com (2a01:111:e400:52a9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.22; Thu, 9 Aug
+ 2018 02:30:33 +0000
+Date:   Thu, 9 Aug 2018 10:27:59 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH mmc-next v3 0/3] solve SDHCI DWC MSHC 128MB DMA boundary
+ limitation
+Message-ID: <20180809102759.191d211e@xhacker.debian>
+In-Reply-To: <20180730104228.28b58bd0@xhacker.debian>
+References: <20180730104228.28b58bd0@xhacker.debian>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1533778753-38089-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.54.46
-X-Source-L: No
-X-Exim-ID: 1fnah4-003XtC-TY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.54.46]:55840
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: TYAPR01CA0119.jpnprd01.prod.outlook.com
+ (2603:1096:404:2a::35) To BLUPR0301MB1571.namprd03.prod.outlook.com
+ (2a01:111:e400:52a9::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 620b0aed-1034-4a84-ff1b-08d5fda0160c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR0301MB1571;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;3:1j0vnUDXRtW9ZrgSxFuBgPalkBKBa8vO+ZMX9s9y49F97CtOxyte6f8sDa5QLLfAYx2ZcpQLwN+byM5nSA+id82Ch6l4V+TnGEdYhFDRwZDFCH7mxwBmPwJkx9ArHgdffFkknfL/uUHNkzes4qUwxbMoZ3P3tbeqfVCvnPfrgO/5ATKWh0GNOzLmUMQ/xUdvLNgjBTGt3+Y/+Qs4N3Yn+LNDNDvE5BfStyYzhiukbKep1IZgIstoskHFikhK48Jg;25:SCbS/4m7ajUOqr1G6T+4y5l+EKpWgAajAQuZhIKson/Dsu0pw04k6jzbyuBYMmwiidvsO60Aig3lj20SJ084j5RxtPB+o1/UfJGfef3QosC+YLvTexSRmPqJb78P1M2rQ9038Nw4Ak6eoztKsAN1D+MMFikCjQyx52Mnt3Mg+gbSMT2/egVTwUGdxhA26KfJZqODTOdKNjMwgbb++4pMwJlk2aompODD0DQYSORNi7NGkeFI3gIayDn6jDWqN126vuhzosrA3pM3ujpm5PLzYWxB03UCz309CQ0GOdiettglr44dIygxnm3UEgLer9LPn3iyawDfQCx3YTcq9IjBDw==;31:zD+vWWmlur9wvGAFjU7T/9U8PfeAMGkiSIfufYl/SVKTASNNFb3dTqMJVy2XSb+EQxFXO4Y6LWmiZDwXrGOXYIh0BXPqUqJ4HKF4OWFjwuOHU6GOqaR1etYOxkhya9E4Wn1nfApvQyYDZKKvbKIClmH0Xk4O/U15bUmyyoHdZfFQ7xWxO3gb1WsTrHHBIOxnsTX/BOqCOCW5itp2SB+ZQ+/2hbZy12PwHoDoT8zVPqE=
+X-MS-TrafficTypeDiagnostic: BLUPR0301MB1571:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;20:UY0UTImHVdRMEHNRUmGnbmWKQcMbPMW750q2BN4sNRXZ85+jbASG4cn2s/oQIpwQKTGfdp6AQKlKcsAbVlkiMDFMMl7l1St5lyYj5AUCN3c9FHwMAgTG2j96rAh4nreG0vT+LuhYbBwQJh3xZsbkwzvt9f1PO6yQ/hKQPVtbl2Ysy57QhVFgWi/PQvwGXnuocfsl/N4J3d/qePsdjlrlJKl7BcVdbsan9f8SgKtczFHvEQdZQyp24jFSQJnnmX/CLRwmVDXCYLInb6C9bgxjgjyt5ta1GhVmp3BQg0xpQjt0j5Ee+OYSgRyqhxneqGOenVZ5vf9fa21dHK88EsyeRozDvSWQjQOyUSWq73yDsqFfIFhCmyurtIaX4fFzag1NgJovjd+X7jvFMnK19PT8UpyF1+eehNHUX8O68tbFnJjllCvqU6zElTzkhWxCK3rlHTXQKYNzNOZg/TstgVQRK7A/CSuLOSWN+pyLTMoXJjHIWBFaLM7hB7+/N2YhmGbi;4:E6eolSY4f6NiRJ9JB5X+JqU+DORk6IrpU32C6WyNEOXm7HcaeF1IZXUEcWTngnK5ux3KorwtL1rQwAQC0h/g5TfKTANyFLATrTrRbldxaKFhN/56XoqYR0Y64d+rKECj69L4BFYwhiWBp/HeP1nocVsskZv3ijt3jtyv0v9daqSqGyksNP+sfxJYpzJJZJ+SKrE2wa1rxG8UEl+kuDVbW5Is8q6V4U0SBe7DhfVrj+PEtq4wLoByr+HLeDopKCpoSGrXVFhmBFj0091jW4/waA==
+X-Microsoft-Antispam-PRVS: <BLUPR0301MB1571691BA954D3C5DB21B1C7ED250@BLUPR0301MB1571.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BLUPR0301MB1571;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0301MB1571;
+X-Forefront-PRVS: 0759F7A50A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(136003)(346002)(376002)(189003)(199004)(51874003)(76176011)(5660300001)(7696005)(52116002)(33896004)(14444005)(50466002)(6666003)(47776003)(53936002)(68736007)(50226002)(476003)(446003)(11346002)(26005)(55016002)(386003)(72206003)(6506007)(66066001)(8936002)(217873002)(110136005)(316002)(486006)(9686003)(956004)(478600001)(8676002)(23726003)(229853002)(4326008)(97736004)(25786009)(81166006)(230700001)(81156014)(106356001)(305945005)(7736002)(105586002)(186003)(16526019)(3846002)(1076002)(6116002)(6246003)(2906002)(86362001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0301MB1571;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR0301MB1571;23:MrNJ3c2YjxmlnUu6389PQsKDS/nfEzREc3ajpwi?=
+ =?us-ascii?Q?o9bHRs0Q96LVPe6kmZfjc4ySfZ6IE/ikBDKgIu3agFiRRkj7DvwY2vCKp7pg?=
+ =?us-ascii?Q?ezSVFDTbP6AmZiOKKesgMaWKwYRJgkBjnMeV341oUAeiSkBAtuxwHt9ETC+y?=
+ =?us-ascii?Q?FA9IjWm8HETiXlQ6JKbTL5vxwgwrcj1ZRp5ZoEXzHgDBvjvqzNjhxaAD5UmU?=
+ =?us-ascii?Q?8FjGayar7aLqQpxnvWmfOkcaVL+HQ6RrOREoOHmfiOsOPKwYb33/7Ui+2per?=
+ =?us-ascii?Q?3/lT6/+7DBzdkj/AIiEdarITtEoGpW8ufj8mueR0gnoUi6elBiqzv5sJ+3qy?=
+ =?us-ascii?Q?8lNAKCseQr6Zm49q6e4+S08m6u4Ru6OY9OC03ez0a5ux8lqqfiLnctJsmbrq?=
+ =?us-ascii?Q?qx4Dq8K6pMhzbGhSNwMr0i3ikj9FOH3nM0wua/Mmxkfhfil0RIu9KdP4Cfl/?=
+ =?us-ascii?Q?tBVHS7NvEYyzJrEvYKuFuvWI1NQq7eq691YfHQW0q0OHvicGzSTWschIEXU5?=
+ =?us-ascii?Q?DwSJlzQvxSZSekCxS63ClI9nfCBza8jrBR8w8pjPL9DVQUaDPsYrxoWaoCA9?=
+ =?us-ascii?Q?Shc1U+cfiBOP1ZtFrgiF5Mak/Ptt1wQnUazDGUSNVLWlgx377jMxAuemZLFi?=
+ =?us-ascii?Q?EM1eqkk+8mldNTcptdlXdZJtSi9Squ1x/4DjP9mrVVS3kljxCqPKjPrToLxk?=
+ =?us-ascii?Q?RTujQpZL17+lJ3D1AxTLrkDIbbf20ukaBUuAKtKorR+rONBGlpRNE5kp0OnY?=
+ =?us-ascii?Q?+yqj92b00OggtfyoBw0HmTOLLd/6kUGkDHAwZlzlcciHBJKY1HBv8S7aDM/x?=
+ =?us-ascii?Q?CT/wW7s3UkYmQ8U5Y4g0RXy5Ec4aDmrX/Gp1hretK5geOYl+urRGhywQev5a?=
+ =?us-ascii?Q?92jtHEd4Unk6b9VELZLRAQaZXCASuRc7lsBwcQfhkz7KICp/ADlttcP/WSYy?=
+ =?us-ascii?Q?ijErHtvXg+HaqpM9CcfBYfwVuRQkrpNez6pJ8+eBZUf68d/6ZoBLg2HZ6EDf?=
+ =?us-ascii?Q?r689sXkHeCVKwPFRtyZf9tPJQD0AOY/wUC/M2f3WAdk/uehKN+PFBuSqPB6j?=
+ =?us-ascii?Q?tsqAbPLTujKNCVwwByXWNAdS/0Kb97WJeHGsuIzZnRomAYLQDqln3OuZgWlV?=
+ =?us-ascii?Q?GilZ9BrwkN9rzcgJVzG9W1k0orwV0SbSVceyFEnn1W6wVraoJmCjEAbdjGrO?=
+ =?us-ascii?Q?Tu8Rzwx+oUb2nqg15k1EH4pYqJsGQYq2FweWnRkof1KIBekOs2dcXxZPeYl3?=
+ =?us-ascii?Q?6K4vC57kq/bl/6eY+6qGfb14Cm29oFoe26bQI7S2Zf1qS78XHuKF9TFQxDfn?=
+ =?us-ascii?Q?8WixM0Cldzw/B47tpaGv71Bo=3D?=
+X-Microsoft-Antispam-Message-Info: i6jzyIQRiQ/CfClUn2RRQDNJvvPrfGfs2nlE6NoJEVqB8DWfSsR8BcoAVa3Ih1/VVvfgWHTytXmeeJnny7/rYTAQe5H73mL1gzE1VYXZLGMYp6kl9sFXuKUM6vJVoq+gwjPmV/ytkOexb4QBP0SocIf1LYveM1aICSXxtX4qrB2Ar4brAPmTHZqdX9a7nI9fwiMi9XmHrh5/UR49IWtaWvtWmfyC3CLzWfyWFHHv6laLeUHzu1ScOXO5zLRjkZtidbqJaR0CxSjFT3J3qwcUNDA/58TARxkD7sxJCDaWNHetzCQ5BZCRB31cqjP8+Nmb33IRmtHG23Rt6aBo4SYVkT5byeTowyHSvjUGcjFcjww=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;6:2SywXOceI2lje/5ROuGnKs0hK9jz8Lwt1pj1tqrWyFeEk53RlceO4fyIpMqO1+r8a/XY1P37BwrTTyIqKoHQlm72mcdnC2Qvr4geop4QI1xoOw3fuyxXxaW/V7VwZ9oHSmDktxZ9ITLvMTJpcHFAO0KR37UyavdjqXeTuEl3+cbpQ7agaUtoPo4mvZ/RG5rbYbYAsU6YB9wKJ8VKFYmVHSWyW6YGG5hLWAHNDIXHLDayHQyXrTxz4EMoU2KZe0hv62z9zYC0qEXX0UH36W5EBRhwQ/4DLr+ZtsoE5p84WoPiUasglRACsNRt3Ur9HKV9/Mojk05AvFCi6lEQtCTFEEUNqsydWudu4oMwgfhdLN8RgYyRAKf+bRs1RluHsUcN7Vqn4FuKzPzikhC6O1LUKYG1c/TLbIVSPJFgP2IkAtDJjAibc8DtpJqk3Ji37gV+5e1Zuvy0uS2qfbFPQD1Nkg==;5:MjvOqXM7HLQCrNpFh1N0iVPjQmL5sGDKouPTPW5MEvfp+mMj8xKcNkQw+N9olZn/u+lN1TCjN73C2CktEixwEMM6o576qyADK7dY+Rri81Un6/rieXEAcprIh2v2m/daOJxqNv+z5wo2tKmdEXfEcyuiGf9Nh4No0mCKSR/ORkc=;7:5CE2pXX1zXgrxyQS46idqs7uy2V7OVnDPt3TNq6/JJDW/ML3THQQCQg5poci1CcQpfO0v3mRLJjsOG+os0nxLCJUnf2aHg7o1JHiOW0TVb6ncmF8Zi4YwypkYPw8uxcwQgItZ/hKgDpr+HRGFf8TDF/m8rzRKqXglrDWxRI625/prJX0MqndY8QzE6pYyHwbSf21mGQJz8ZVMfayR1BtbkSTJ4BMawUwI/Zo1YzBsfDTPbQpsQvYWIKHTR5LlWBF
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2018 02:30:33.3243 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 620b0aed-1034-4a84-ff1b-08d5fda0160c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0301MB1571
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhong,
+Hi Adrian, Ulf,
 
-On 8/8/18 8:39 PM, zhong jiang wrote:
-> rtl8152_system_suspend defines the variable "ret", but it is not modified
-> after initialization. So just remove it.
+could you please review these patches? Any comments are welcome.
+
+Thanks in advance,
+Jisheng
+
+On Mon, 30 Jul 2018 10:42:28 +0800 Jisheng Zhang wrote:
+
+> When using DMA, if the DMA addr spans 128MB boundary, we have to split
+> the DMA transfer into two so that each one doesn't exceed the boundary.
+> 
+> patch1 adds adma_table_num to struct sdhci_host so that driver can
+> control the ADMA table number.
+> patch2 introduces adma_write_desc() hook to struct sdhci_ops so that
+> driver can override it.
+> patch3 finally solves the 128MB boundary limitation.
+> 
+> since v2:
+>   - make use of "likely" to check (!len || BOUNDARY_OK(addr, len))
+>   - explictly include <linux/sizes.h> for SZ_128M
+> 
+> since v1:
+>   - fix BOUNDARY_OK macro if addr+len is aligned to 128MB
+>   - use DIV_ROUND_UP to cal extra desc num
+>   - fix !len for dwcmshc_adma_write_desc()
+> 
+> Jisheng Zhang (3):
+>   mmc: sdhci: add adma_table_num member to struct sdhci_host
+>   mmc: sdhci: introduce adma_write_desc() hook to struct sdhci_ops
+>   mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary limitation
+> 
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 43 ++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.c            | 48 +++++++++++++++++++----------
+>  drivers/mmc/host/sdhci.h            |  8 +++++
+>  3 files changed, 83 insertions(+), 16 deletions(-)
 > 
 
-Thanks for working on this.
-
-I wonder if you are using any tool like Coccinelle to spot these sort
-of issues. If so, it'd be nice to mention that in the changelog.
-
-The above is important for two reasons, one is to give credit to the people
-behind such tools, and the second one is to add support for metrics collection.
-
-Thanks
---
-Gustavo
-
-
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/net/usb/r8152.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-> index 124211a..9774270 100644
-> --- a/drivers/net/usb/r8152.c
-> +++ b/drivers/net/usb/r8152.c
-> @@ -4415,7 +4415,6 @@ static int rtl8152_runtime_suspend(struct r8152 *tp)
->  static int rtl8152_system_suspend(struct r8152 *tp)
->  {
->  	struct net_device *netdev = tp->netdev;
-> -	int ret = 0;
->  
->  	netif_device_detach(netdev);
->  
-> @@ -4430,7 +4429,7 @@ static int rtl8152_system_suspend(struct r8152 *tp)
->  		napi_enable(napi);
->  	}
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int rtl8152_suspend(struct usb_interface *intf, pm_message_t message)
-> 
