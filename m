@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B82FBC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D766AC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D46322393
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D46322393
+	by mail.kernel.org (Postfix) with ESMTP id 921672238D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921672238D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeHIWoG (ORCPT
+        id S1727338AbeHIWoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:44:06 -0400
+        Thu, 9 Aug 2018 18:44:09 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:15158 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726894AbeHIWoF (ORCPT
+        by vger.kernel.org with ESMTP id S1726894AbeHIWoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:44:05 -0400
+        Thu, 9 Aug 2018 18:44:08 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Thu, 9 Aug 2018 13:17:20 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 7FD61406F1;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id C0D9E406E7;
         Thu,  9 Aug 2018 13:17:37 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
 CC:     <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, <linux-kbuild@vger.kernel.org>
-Subject: [PATCH v7 02/10] Makefile: Prepare for using macros for inline asm
-Date:   Thu, 9 Aug 2018 13:15:45 -0700
-Message-ID: <20180809201554.168804-3-namit@vmware.com>
+        Alok Kataria <akataria@vmware.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH v7 07/10] x86: prevent inline distortion by paravirt ops
+Date:   Thu, 9 Aug 2018 13:15:50 -0700
+Message-ID: <20180809201554.168804-8-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180809201554.168804-1-namit@vmware.com>
 References: <20180809201554.168804-1-namit@vmware.com>
@@ -53,134 +52,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using macros for inline assembly improves both readability and
-compilation decisions that are distorted by big assembly blocks that use
-alternative sections. Compile macros.S and use it to assemble all C
-files. Currently, only x86 will use it.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
+
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
+
+   text	   data	    bss	    dec	    hex	filename
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
+
+Static text symbols:
+Before:	40053
+After:	39942	(-111)
+
+Cc: Alok Kataria <akataria@vmware.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: linux-kbuild@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- Makefile                 |  9 +++++++--
- arch/x86/Makefile        | 11 +++++++++--
- arch/x86/kernel/macros.S |  7 +++++++
- scripts/Kbuild.include   |  4 +++-
- scripts/mod/Makefile     |  2 ++
- 5 files changed, 28 insertions(+), 5 deletions(-)
- create mode 100644 arch/x86/kernel/macros.S
+ arch/x86/include/asm/paravirt_types.h | 56 +++++++++++++--------------
+ arch/x86/kernel/macros.S              |  1 +
+ 2 files changed, 28 insertions(+), 29 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 7a3c4548162b..39d790e74e0d 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1051,7 +1051,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
- # version.h and scripts_basic is processed / created.
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..dd55d3d1c32a 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -343,23 +343,11 @@ extern struct pv_lock_ops pv_lock_ops;
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
  
- # Listed in dependency order
--PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
-+PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+-/*
+- * Generate some code, and mark it as patchable by the
+- * apply_paravirt() alternate instruction patcher.
+- */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
+-	".popsection\n"
+-
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_call							\
++	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
++	" clobber=\"%c[paravirt_clobber]\""				\
++	" pv_opptr=\"%c[paravirt_opptr]\";"
  
- # prepare3 is used to check if we are building in a separate output directory,
- # and if so do:
-@@ -1075,7 +1075,9 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
-                    include/config/auto.conf
- 	$(cmd_crmodverdir)
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +375,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
  
--archprepare: archheaders archscripts prepare1 scripts_basic
-+macroprepare: prepare1 archmacros
-+
-+archprepare: archheaders archscripts macroprepare scripts_basic
+ int paravirt_disable_iospace(void);
  
- prepare0: archprepare gcc-plugins
- 	$(Q)$(MAKE) $(build)=.
-@@ -1143,6 +1145,9 @@ archheaders:
- PHONY += archscripts
- archscripts:
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +512,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_call			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +522,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_call			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +549,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_call				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
+@@ -691,6 +669,26 @@ struct paravirt_patch_site {
+ extern struct paravirt_patch_site __parainstructions[],
+ 	__parainstructions_end[];
  
-+PHONY += archmacros
-+archmacros:
-+
- PHONY += __headers
- __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
- 	$(Q)$(MAKE) $(build)=scripts build_unifdef
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index a08e82856563..a4b90ac1629b 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -235,8 +235,8 @@ ifdef CONFIG_X86_64
- LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
- endif
- 
--# Speed up the build
--KBUILD_CFLAGS += -pipe
-+# We cannot use -pipe flag since we give an additional .s file to the compiler
-+#KBUILD_CFLAGS += -pipe
- # Workaround for a gcc prelease that unfortunately was shipped in a suse release
- KBUILD_CFLAGS += -Wno-sign-compare
- #
-@@ -258,6 +258,13 @@ archscripts: scripts_basic
- archheaders:
- 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
- 
-+archmacros:
-+	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
-+
-+ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
-+export ASM_MACRO_FLAGS
-+KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
-+
- ###
- # Kernel objects
- 
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-new file mode 100644
-index 000000000000..cfc1c7d1a6eb
---- /dev/null
-+++ b/arch/x86/kernel/macros.S
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++#else	/* __ASSEMBLY__ */
 +
 +/*
-+ * This file includes headers whose assembly part includes macros which are
-+ * commonly used. The macros are precompiled into assmebly file which is later
-+ * assembled together with each compiled file.
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
 + */
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 86321f06461e..d7b7aadb6cd8 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -115,7 +115,9 @@ __cc-option = $(call try-run,\
- 
- # Do not attempt to build with gcc plugins during cc-option tests.
- # (And this uses delayed resolution so the flags will be up to date.)
--CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
-+# In addition, do not include the asm macros which are built later.
-+CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
-+CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
- 
- # cc-option
- # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
-diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
-index 42c5d50f2bcc..a5b4af47987a 100644
---- a/scripts/mod/Makefile
-+++ b/scripts/mod/Makefile
-@@ -4,6 +4,8 @@ OBJECT_FILES_NON_STANDARD := y
- hostprogs-y	:= modpost mk_elfconfig
- always		:= $(hostprogs-y) empty.o
- 
-+CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
++.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
++771:	ANNOTATE_RETPOLINE_SAFE
++	call *\pv_opptr
++772:	.pushsection .parainstructions,"a"
++	_ASM_ALIGN
++	_ASM_PTR 771b
++	.byte \type
++	.byte 772b-771b
++	.short \clobber
++	.popsection
++.endm
 +
- modpost-objs	:= modpost.o file2alias.o sumversion.o
+ #endif	/* __ASSEMBLY__ */
  
- devicetable-offsets-file := devicetable-offsets.h
+ #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 66ccb8e823b1..71d8b716b111 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -10,3 +10,4 @@
+ #include <asm/refcount.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
++#include <asm/paravirt.h>
 -- 
 2.17.1
 
