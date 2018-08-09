@@ -2,151 +2,149 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05209C46471
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80BCC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86A221C36
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86A221C36
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 5E9EB21C17
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:16:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGxJAycA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9EB21C17
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbeHIH3w (ORCPT
+        id S1728287AbeHIHi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 03:29:52 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:49854 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeHIH3w (ORCPT
+        Thu, 9 Aug 2018 03:38:56 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39286 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeHIHi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 03:29:52 -0400
-Received: from localhost (unknown [172.58.40.33])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6F5A51410605F;
-        Wed,  8 Aug 2018 22:06:54 -0700 (PDT)
-Date:   Wed, 08 Aug 2018 22:06:51 -0700 (PDT)
-Message-Id: <20180808.220651.779695096932870433.davem@davemloft.net>
-To:     torvalds@linux-foundation.org
-CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 08 Aug 2018 22:06:54 -0700 (PDT)
+        Thu, 9 Aug 2018 03:38:56 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w14-v6so2036333plp.6
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:15:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=0iNeMDk3duuDjyKFQSXniCp5LAF4gZdgzymtBoWAum4=;
+        b=fGxJAycAPN5EjDTuO3eLizcwSbb1fJHUvk9pZJRHZDBvDoAmBvo9k5Sau7a7FZAdtq
+         wkfZF4XC30HFXLv4w1SNvHJLpYiR4WF/m7ZBkBqWknjq1jci5mUjuOb+TvUgbDUK4fhi
+         /bFkxMVlSH0p5r9yWJMx6sprL3rhPlOcw54Ls=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0iNeMDk3duuDjyKFQSXniCp5LAF4gZdgzymtBoWAum4=;
+        b=aSlS89ABU4qXc5mCp85NGRZHDRaC3lsryW6xcvLIKiLcfRMwMBQoI6V7j7HskX9jlK
+         SjVlgDZDaOT/y+MdWT6VXqsRtESil94XDO89cCgTc8yOQQx2qSzW3l8E6YR0yBw3WDFO
+         TaQOfQ5dPKS3mh4XLs3Ef2eCokj68vTq1IRdsGDegcGIigJJeo0rRwiPKJmvLqY0SX8h
+         XrNYHORGzLc+C85LDQMqmmliMk0mtOfyIJ/RbIf4Fevv+Q44bR17CP58DH02GRwP+0Rs
+         4PPeX2neUlI5N36hvSKxQJiFxIx3vti5BAeYPrRPPoFiy96B4qGX2qvCDJ7uVa8ijA/P
+         iqdg==
+X-Gm-Message-State: AOUpUlFMWzESCFxiT+MJOrOaIj6SmTwvAPmUU6v+CaXqWIR7Q8HcghuV
+        CIwCo3tCKszJEK1E9Ms9l97iOQ==
+X-Google-Smtp-Source: AA+uWPzSixkmpmHKMFj8scRngICQyNNCyqHYDICkJ6T2j/RgOPch7ZKEMsYLZ19xqypiaoFGcH2PVw==
+X-Received: by 2002:a17:902:8a97:: with SMTP id p23-v6mr636638plo.21.1533791757045;
+        Wed, 08 Aug 2018 22:15:57 -0700 (PDT)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id z20-v6sm12863977pfd.99.2018.08.08.22.15.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 08 Aug 2018 22:15:56 -0700 (PDT)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     linux-m68k@lists.linux-m68k.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH 0/4] System call table generation support
+Date:   Thu,  9 Aug 2018 10:45:19 +0530
+Message-Id: <1533791723-3882-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The purpose of this patch series is:
+1. We can easily add/modify/delete system call by changing entry 
+in syscall.tbl file. No need to manually edit many files.
 
-1) The real fix for the ipv6 route metric leak Sabrina was seeing,
-   from Cong Wang.
+2. It is easy to unify the system call implementation across all 
+the architectures. 
 
-2) Fix syzbot triggers AF_PACKET v3 ring buffer insufficient room
-   conditions, from Willem de Bruijn.
+The system call tables are in different format in all architecture 
+and it will be difficult to manually add or modify the system calls
+manually in the respective files. To make it easy by keeping a script 
+and which'll generate the header file and syscall table file so this 
+change will unify the implementation across all architectures.
 
-3) vsock can reinitialize active work struct, fix from Cong Wang.
+syscall.tbl contains the list of available system calls along with 
+system call number and corresponding entry point. Add a new system 
+call in this architecture will be possible by adding new entry in 
+the syscall.tbl file.
 
-4) RXRPC keepalive generator can wedge a cpu, fix from David Howells.
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
 
-5) Fix locking in AF_SMC ioctl, from Ursula Braun.
+ARM, s390 and x86 architecuture does exist the similar support. I 
+leverage their implementation to come up with a generic solution.
 
-Please pull, thanks a lot!
+I have done the same support for work for alpha, microblaze, ia64, 
+mips, parisc, powerpc, sh, sparc, and xtensa. But I started sending 
+the patch for one architecuture for review. Below mentioned git
+repository contains more details.
+Git repo:- https://github.com/frzkhn/system_call_table_generator/
 
-The following changes since commit 1ffaddd029c867d134a1dde39f540dcc8c52e274:
+Finally, this is the ground work for solving the Y2038 issue. We 
+need to add/change two dozen of system calls to solve Y2038 issue. 
+So this patch series will help to easily modify from existing 
+system call to Y2038 compatible system calls.
 
-  Linux 4.18-rc8 (2018-08-05 12:37:41 -0700)
+I started working system call table generation on 4.17-rc1. I used 
+marcin's script - https://github.com/hrw/syscalls-table to generate 
+the syscall.tbl file. And this will be the input to the system call 
+table generation script. But there are couple system call got add 
+in the latest rc release. If run Marcin's script on latest release,
+it will generate a different syscall.tbl. But I still use the old 
+file - syscall.tbl and once all review got over I'll update 
+syscall.tbl alone w.r.to the tip of the kernel. The impact of this
+is, few of the system call won't work.
 
-are available in the Git repository at:
+Firoz Khan (4):
+  m68k: Rename system call table file name
+  m68k: Replace NR_syscalls macro from asm/unistd.h
+  m68k: Added system call table generation support
+  m68k: uapi header and system call table file generation
 
-  gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/net.git 
+ arch/m68k/68000/entry.S                 |   4 +-
+ arch/m68k/Makefile                      |   3 +
+ arch/m68k/coldfire/entry.S              |   2 +-
+ arch/m68k/include/asm/Kbuild            |   2 +
+ arch/m68k/include/asm/unistd.h          |   3 -
+ arch/m68k/include/uapi/asm/Kbuild       |   2 +
+ arch/m68k/include/uapi/asm/unistd.h     | 385 +-----------------------------
+ arch/m68k/kernel/Makefile               |   2 +-
+ arch/m68k/kernel/entry.S                |   4 +-
+ arch/m68k/kernel/syscall_table.S        |  14 ++
+ arch/m68k/kernel/syscalls/Makefile      |  37 +++
+ arch/m68k/kernel/syscalls/syscall.tbl   | 386 ++++++++++++++++++++++++++++++
+ arch/m68k/kernel/syscalls/syscallhdr.sh |  33 +++
+ arch/m68k/kernel/syscalls/syscalltbl.sh |  28 +++
+ arch/m68k/kernel/syscalltable.S         | 403 --------------------------------
+ 15 files changed, 512 insertions(+), 796 deletions(-)
+ create mode 100644 arch/m68k/kernel/syscall_table.S
+ create mode 100644 arch/m68k/kernel/syscalls/Makefile
+ create mode 100644 arch/m68k/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/m68k/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/m68k/kernel/syscalls/syscalltbl.sh
+ delete mode 100644 arch/m68k/kernel/syscalltable.S
 
-for you to fetch changes up to 1be52e97ed3e524f82e25d6e53f48df3c6e85282:
+-- 
+1.9.1
 
-  dsa: slave: eee: Allow ports to use phylink (2018-08-08 19:19:03 -0700)
-
-----------------------------------------------------------------
-Al Viro (1):
-      cxgb4: mk_act_open_req() buggers ->{local, peer}_ip on big-endian hosts
-
-Alexey Kodanev (1):
-      dccp: fix undefined behavior with 'cwnd' shift in ccid2_cwnd_restart()
-
-Andrew Lunn (1):
-      dsa: slave: eee: Allow ports to use phylink
-
-Colin Ian King (1):
-      net: thunderx: check for failed allocation lmac->dmacs
-
-Cong Wang (3):
-      ipv6: fix double refcount of fib6_metrics
-      vsock: split dwork to avoid reinitializations
-      llc: use refcount_inc_not_zero() for llc_sap_find()
-
-David Howells (1):
-      rxrpc: Fix the keepalive generator [ver #2]
-
-David S. Miller (2):
-      Merge branch 'mlx5-fixes'
-      Merge branch 'smc-fixes'
-
-Dmitry Bogdanov (1):
-      net: aquantia: Fix IFF_ALLMULTI flag functionality
-
-Huy Nguyen (1):
-      net/mlx5e: Cleanup of dcbnl related fields
-
-Jason Wang (1):
-      vhost: reset metadata cache when initializing new IOTLB
-
-Or Gerlitz (1):
-      net/mlx5e: Properly check if hairpin is possible between two functions
-
-Ursula Braun (3):
-      net/smc: no shutdown in state SMC_LISTEN
-      net/smc: allow sysctl rmem and wmem defaults for servers
-      net/smc: move sock lock in smc_ioctl()
-
-Willem de Bruijn (1):
-      packet: refine ring v3 block size test to hold one frame
-
-Xin Long (1):
-      ip6_tunnel: use the right value for ipv4 min mtu check in ip6_tnl_xmit
-
-Ying Xue (1):
-      tipc: fix an interrupt unsafe locking scenario
-
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c |   2 +-
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c         |   2 +
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c         |   6 +--
- drivers/net/ethernet/mellanox/mlx5/core/en.h              |   2 -
- drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c        |  30 +++++---------
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c           |   8 ++--
- drivers/vhost/vhost.c                                     |   9 ++--
- include/net/af_vsock.h                                    |   4 +-
- include/net/llc.h                                         |   5 +++
- net/dccp/ccids/ccid2.c                                    |   6 ++-
- net/dsa/slave.c                                           |   4 +-
- net/ipv6/ip6_tunnel.c                                     |   8 +---
- net/ipv6/route.c                                          |   4 --
- net/llc/llc_core.c                                        |   4 +-
- net/packet/af_packet.c                                    |  10 +++--
- net/rxrpc/ar-internal.h                                   |   8 ++--
- net/rxrpc/conn_event.c                                    |   4 +-
- net/rxrpc/net_ns.c                                        |   6 +--
- net/rxrpc/output.c                                        |  12 +++---
- net/rxrpc/peer_event.c                                    | 156 +++++++++++++++++++++++++++++++++++++++-------------------------------
- net/rxrpc/peer_object.c                                   |   8 ++--
- net/rxrpc/rxkad.c                                         |   4 +-
- net/smc/af_smc.c                                          |  15 ++++---
- net/tipc/net.c                                            |   4 +-
- net/vmw_vsock/af_vsock.c                                  |  15 +++----
- net/vmw_vsock/vmci_transport.c                            |   3 +-
- 26 files changed, 178 insertions(+), 161 deletions(-)
