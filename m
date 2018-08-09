@@ -3,109 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D83FC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E023C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68E7217C6
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042C6217C6
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:52:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="utGZlsN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68E7217C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fyi7GqlI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042C6217C6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbeHIMPq (ORCPT
+        id S1730081AbeHIMQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:15:46 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:34243 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbeHIMPq (ORCPT
+        Thu, 9 Aug 2018 08:16:31 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54006 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727563AbeHIMQa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:15:46 -0400
-Received: by mail-ua0-f194.google.com with SMTP id r15-v6so5639477uao.1;
-        Thu, 09 Aug 2018 02:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KaPBWvyNWqLv5PDiEA3pwQJ5Ud2dsAmBliw+zgUc1Rk=;
-        b=utGZlsN106VojLnutwtjd1xP7DQ+WrxOgrckqOnmcWXe63p12uOZlYTYZWmcj3yqTi
-         bGK+eS1+O22HcXJVpsC55PxAd/YtEkjqOECAZvoI2sYMHPzleMIu5MRRhJR7r6gR6hxH
-         2LRnQv+2clYoMNHebPKUh3AosRKunFWYmnmWHllkPAmMa2qvoSlrerTiWsW4Xlm8Sjd/
-         RGrJ6HEO+IacXyhHvpZaxDikxt+gozPKUTgwbp/tCTMrVue/k/avLdwnvIG6mg5k8n5a
-         TL2Bg034E8SQJnj1fpugLyEAOsOZCZ3PHSNLgmYnV08WkkE4lrU4TF5PJrIi07XWnCV9
-         G4/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KaPBWvyNWqLv5PDiEA3pwQJ5Ud2dsAmBliw+zgUc1Rk=;
-        b=ozzVUt8yqUrc/F4ajcVAFxz3lfzAe4iFJazOa8IVANxt/+5xoaZoWiEO5a4WOfpWfq
-         mkdiuaDhWB02zANPi5PqG20ONmPqlQJYDBQ56QTRwDrDSNRanodOfI9mQtXgCpAy/tLf
-         oRspi3+zLghqPAYFOkeUVKud0t28UnSLYGrBBN75ktt0N+ok+8snmMlyzd62fqXxNtfx
-         rhsTJVr9vW4gTuxYLoAe4+e6Ya6GB1pGMdxpMCZpDx7dVK6Ro0FkeIJ+qcD88QAhGxiK
-         RRLBlANZjfL3rfnwjbhzZ3Ad18q5WJ3C5w9q9GbrqOq3BcJFzaC85BNV1077+tM3neG4
-         4VAQ==
-X-Gm-Message-State: AOUpUlH8MEfZogwGJ2Z9tGO8kAD7fYn5+nEGv5BrkJllrrUYvw2yrTZr
-        DkshnPsV6S9kCJSVi13XG23BRBlcmj4D67Yx1Lg=
-X-Google-Smtp-Source: AA+uWPzUBq1TO+dk41PDlbNjoFWvoCz5eWsehNUMElLi1S3v49KsFsALVIWqAzml4vir2MEZLwQFmNU3T/Q7ooz0RDI=
-X-Received: by 2002:a9f:2187:: with SMTP id 7-v6mr904377uac.49.1533808300903;
- Thu, 09 Aug 2018 02:51:40 -0700 (PDT)
+        Thu, 9 Aug 2018 08:16:30 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w799mxKO065860;
+        Thu, 9 Aug 2018 09:52:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=X3QL61q0dJhTvxjQWiL2gCOld1mHn6eQs8PD9fWg4EQ=;
+ b=fyi7GqlIldvFUbAPKDcCX+n/VqMSxBHtvICD8h269nIhbCuNcUvo4j2H0JHrdZBKlSaw
+ IsUZzMRlB4u3NdhLJbuvw5mJL6VL8z1jSP67rDGVYQbo+C4I5oJWQx2BQ3v+QS68lWTt
+ uWklud7J1ksHsBEt5ANnBdcDqQxscj5D3Bdl/GvQoYgkZXDd1z0vAgXvqUk+d01LoBiI
+ AnZjWr5GsbqRDWIkDM8uSyDVJYWWH9fyJ5vIyhJcleJUWQJ+sYebCtGT2CS4qn7S57FU
+ Iz+KCIlDg4j8cjBeCmh6a+SR7Prg5us4D/acZGI+O5DtMIo8F4LyBPvFM9ZhQHTqbc1B gg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2kn3jtaj41-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Aug 2018 09:52:17 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w799qHqg016229
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Aug 2018 09:52:17 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w799qFeo031305;
+        Thu, 9 Aug 2018 09:52:16 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 09 Aug 2018 02:52:15 -0700
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        ard <ard@kwaak.net>
+Subject: Re: [PATCH 0/3] scsi: fcoe: memleak fixes
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180731134603.20089-1-jthumshirn@suse.de>
+        <20180806092503.6ed56kukj2i236qt@linux-x5ow.site>
+        <20180809080543.xvjoya74j66sadvg@linux-x5ow.site>
+Date:   Thu, 09 Aug 2018 05:52:13 -0400
+In-Reply-To: <20180809080543.xvjoya74j66sadvg@linux-x5ow.site> (Johannes
+        Thumshirn's message of "Thu, 9 Aug 2018 10:05:43 +0200")
+Message-ID: <yq11sb7rho2.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 02:51:40 -0700 (PDT)
-In-Reply-To: <7d8c71b9-292e-e51e-d3d3-cb0bb00528b6@redhat.com>
-References: <20180809091558.4317-1-hdegoede@redhat.com> <20180809091558.4317-2-hdegoede@redhat.com>
- <CAJZ5v0jBxL8n8ce7=qgZmHtc4=zCA3u7ePbXaHfyibeNiNrw+w@mail.gmail.com> <7d8c71b9-292e-e51e-d3d3-cb0bb00528b6@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 9 Aug 2018 12:51:40 +0300
-Message-ID: <CAHp75VeiC35S=urEL_f-j+ZPVodPHqGJBRYxv2m5inBkuJ=1kQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8979 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=674
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808090102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 12:39 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> On 09-08-18 11:35, Rafael J. Wysocki wrote:
->> On Thu, Aug 9, 2018 at 11:15 AM, Hans de Goede <hdegoede@redhat.com>
->> wrote:
 
->> I've applied the v4 of this patch and I don't think there are any
->> changes from it here.
->
->
-> Correct, there were only changes to the 4th patch in the series.
->
->> As for the rest of the series I'll wait from comments from Wolfram and
->> the other reviewers.
->
->
-> Ok, note if you've taken patch 1 you may also want to take patch 3 which
-> is an ACPI code cleanup made possible by patch 1 and otherwise is
-> unrelated.
+Johannes,
 
-I'm under impression Rafael is going to take entire series (at least
-for patch 4 I'm expecting to give an Ack).
+> Martin,
+>
+> though it looks like these patches aren't fixing all of the errors Ard
+> has, they fix all I could reproduce up to now and Ard already stated
+> they're not regressing.
+>
+> So can we please stage them for 4.19?
+
+I merged them last week.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Martin K. Petersen	Oracle Linux Engineering
