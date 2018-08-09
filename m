@@ -7,86 +7,109 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CE8C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42722C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB082238F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7AA022399
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUQkKTn6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB082238F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKdDcI/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AA022399
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeHJBAr (ORCPT
+        id S1727541AbeHJBBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:00:47 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36955 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbeHJBAr (ORCPT
+        Thu, 9 Aug 2018 21:01:00 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44825 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbeHJBA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:00:47 -0400
-Received: by mail-qk0-f196.google.com with SMTP id t79-v6so5202949qke.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:33:51 -0700 (PDT)
+        Thu, 9 Aug 2018 21:00:59 -0400
+Received: by mail-qk0-f193.google.com with SMTP id v17-v6so5162436qkb.11
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=HMq6Vfe/Nymr+KMcqzkv9JWl3X4GP+3PgZH3m3QM3ss=;
-        b=QUQkKTn6FYnftq0ZpnDfDeLqDmxKeGI6gMnlUndlSp0Ns2xHgptwifDxpajl6WLoW2
-         rScCKikPh6Sco6JNflfNaqRMlyDth7jVdrNDQQGFrTpWziLa9f3JKhUCjdGuUGT2RD/p
-         4h6RJ4cbJMfwzamT+TK41iQgJwk3UCfyj/onJxxR+J8GWcxoNzaomKoEOPvsw1mZB/uv
-         u82Q4rCxMYDQilOo+jPEPOHds93yQznrcMlP//SH19KtbNQGRD/aWkaBTJGR9cfhW+En
-         9+CC5mskVfSxHoxcrpkD612J9h9Ff9T7KlwnjG1YY+4W820YEgmVMTgP5ELrdz0/uqdB
-         vPHQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=N/iammyicdprfiPqCgfqp2zyNq4laDzS+eXwNg+nDLA=;
+        b=EKdDcI/8zTTVlHHLByycGopGSZAkJv2Wzdu6MQgXBYokJa4gaDyRWL8Az9X/kAe8S2
+         UALo3W5yCntESS7nVnL/rmTeHpwdDNLsAR5h4+pDtGKWQR7oENbFz1KMi2KPcypF9b0y
+         WjhjQXeBRnxmuQxKKubg4PKgbn5Hg1EVx9429I5p8HX+7rSqNDnaTcGCHHURsANDEedO
+         r8IczRclBMDvK8mBhvWcn29TOFkCZw82TG/pLRWStKgeZUZiG0PzMVRisBfKvBmR/4WY
+         7FtwepjjGtmbGsnomLvnPtIj6zV3v1lVqtUXwuStP7pKV9iOU2PvWDEw0ivz19dXK2lN
+         +FBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=HMq6Vfe/Nymr+KMcqzkv9JWl3X4GP+3PgZH3m3QM3ss=;
-        b=eqDfqxRiuUH7rzs/my1CcAoaDz5afj7LxApshoEtPI8ohxkozkiQjpGsUj7aSYc5HL
-         5UJTZD06fhn2O6Kdwtc7cgDEnM76yq5CHXiPFiuZ+6ryx6yjYsMjf11Tyy3Y3LLVZ/Zn
-         Zw5VyIRJZgOiY/c7axRE9K7TcrEpHYckV2WK9zV47Pcs4GsCKcS6VFvKUB9MfA/VZzFM
-         jsg6lLVt6/IPvV6ZMM+i4+7dyJWwPJfB9OXhsdRIGtP3KyHQkrtAF4BAPYrEEv/8DY48
-         FmfSUf1yO1VpQQurJCh1vmOFEdHrNSsHg9oJv8EjQx5eiOGTuE2fSK1XE51YgTGKzuo6
-         Zphw==
-X-Gm-Message-State: AOUpUlEdx01X9T9aln/iHyCPP18VrWXGhBIN61gfwoXF7r/h5U6Tk9vR
-        f5/f8C/v4No30ME9ceFNUyY=
-X-Google-Smtp-Source: AA+uWPylkc4gVYqYU5jUlXq35Gd2V8y+NfcNQ8ztVxFPahJ0dXevvZSIcPs7Rwh9BXyFS5qJiPMSdg==
-X-Received: by 2002:a37:641:: with SMTP id 62-v6mr3646255qkg.227.1533854030933;
-        Thu, 09 Aug 2018 15:33:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=N/iammyicdprfiPqCgfqp2zyNq4laDzS+eXwNg+nDLA=;
+        b=slIph1GWJ02ztSVEPizzQpP1XB+eEjtjo40rFUlR5coo368K/lJtHGEmoNtqWWFWJ2
+         gm/EqF29v/caEpF+uKjM/EXjOVlUD1jPvEHNdx12uBnsGALfamCgv9005Lj/0V92r9fd
+         nyKvrOzFwtFWZqo/bgkAYP9nq+MqrnGXGlevUWspTNGhBfDWqMA8d0WrQFKYSdalG51n
+         pGrVQ/MS00a3s5f5yAnTDzgdN1IWi1F5XzVrt+NrNY4tzEqgMIJYBpZUY6uT3C4W0i5N
+         LMW3bi8FgIr4YFUd0gHxlIVqqqrr4E0KnsAP0adXlRidWcUNJiNRjxrY5oKhw2zfsLcV
+         vkVg==
+X-Gm-Message-State: AOUpUlFB4EC+gjXDBWgJwppKPd57iM76YBHmYpm38m2zMwnroWhdnVzh
+        zFOv+6NgNynuL0BJvgV23to=
+X-Google-Smtp-Source: AA+uWPyRJgPnPQ3bOS37ZaHBGgpFepOIsLz0hncTegoVLNd+cjGze1YEvH9aBlicYLlgOPg1aIgUOw==
+X-Received: by 2002:a37:c946:: with SMTP id q67-v6mr3839018qki.148.1533854042945;
+        Thu, 09 Aug 2018 15:34:02 -0700 (PDT)
 Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm5929550qty.57.2018.08.09.15.33.48
+        by smtp.gmail.com with ESMTPSA id o80-v6sm5377507qki.19.2018.08.09.15.34.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 15:33:50 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 19:33:43 -0300
+        Thu, 09 Aug 2018 15:34:02 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 19:33:56 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] Style changes
-Message-ID: <cover.1533853354.git.leobras.c@gmail.com>
+Subject: [PATCH v3 1/3] staging: fbtft: Includes description to mutex and
+ spinlock - Style
+Message-ID: <63297a43a9683cb6d925da67242c9e2c92fa9316.1533853354.git.leobras.c@gmail.com>
+References: <cover.1533853354.git.leobras.c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1533853354.git.leobras.c@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some style changes to help readability.
+Adds comments explaining what are the spinlock and mutex used for.
 
-Leonardo Brás (3):
-  staging: fbtft: Includes description to mutex and spinlock - Style
-  staging: fbtft: Replaces (1 << n) for macro BIT(n) - Style
-  staging: fbtft: Corrects long index line  - Style
+Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+---
+ drivers/staging/fbtft/fbtft.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/staging/fbtft/fbtft-sysfs.c |  5 ++-
- drivers/staging/fbtft/fbtft.h       | 60 ++++++++++++++---------------
- 2 files changed, 34 insertions(+), 31 deletions(-)
-
+diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
+index 798a8fe98e95..958835da433c 100644
+--- a/drivers/staging/fbtft/fbtft.h
++++ b/drivers/staging/fbtft/fbtft.h
+@@ -203,7 +203,7 @@ struct fbtft_par {
+ 	u8 *buf;
+ 	u8 startbyte;
+ 	struct fbtft_ops fbtftops;
+-	spinlock_t dirty_lock;
++	spinlock_t dirty_lock; /* Protects dirty_lines_{start,end} */
+ 	unsigned int dirty_lines_start;
+ 	unsigned int dirty_lines_end;
+ 	struct {
+@@ -219,7 +219,7 @@ struct fbtft_par {
+ 	} gpio;
+ 	const s16 *init_sequence;
+ 	struct {
+-		struct mutex lock;
++		struct mutex lock; /* Mutex for Gamma curve locking */
+ 		u32 *curves;
+ 		int num_values;
+ 		int num_curves;
 -- 
 2.18.0
 
