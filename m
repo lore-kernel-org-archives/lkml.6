@@ -2,99 +2,60 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8670C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B819C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8579821C1A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:14:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8579821C1A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D11BD21C1A
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:14:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11BD21C1A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbeHIEhD (ORCPT
+        id S1727837AbeHIEhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:37:03 -0400
-Received: from mga09.intel.com ([134.134.136.24]:59918 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725757AbeHIEhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:37:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 19:14:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
-   d="scan'208";a="74999559"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Aug 2018 19:14:38 -0700
-Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.78])
-        by linux.intel.com (Postfix) with ESMTP id E129B5801BD;
-        Wed,  8 Aug 2018 19:14:35 -0700 (PDT)
-From:   Zhang Yi <yi.z.zhang@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan.j.williams@intel.com, jack@suse.cz, hch@lst.de,
-        yu.c.zhang@intel.com
-Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, yi.z.zhang@intel.com,
-        Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V3 3/4] mm: add a function to differentiate the pages is from DAX device memory
-Date:   Thu,  9 Aug 2018 18:53:21 +0800
-Message-Id: <2b7856596e519130946c834d5d61b00b7f592770.1533811181.git.yi.z.zhang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1533811181.git.yi.z.zhang@linux.intel.com>
-References: <cover.1533811181.git.yi.z.zhang@linux.intel.com>
+        Thu, 9 Aug 2018 00:37:18 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:47966 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeHIEhS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 00:37:18 -0400
+Received: from localhost (75-164-152-201.ptld.qwest.net [75.164.152.201])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 17394141DAED2;
+        Wed,  8 Aug 2018 19:14:54 -0700 (PDT)
+Date:   Wed, 08 Aug 2018 19:14:53 -0700 (PDT)
+Message-Id: <20180808.191453.882749744399950889.davem@davemloft.net>
+To:     ubraun@linux.ibm.com
+Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/3] net/smc: fixes 2018-08-08
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180808121321.516-1-ubraun@linux.ibm.com>
+References: <20180808121321.516-1-ubraun@linux.ibm.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 08 Aug 2018 19:14:54 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DAX driver hotplug the device memory and move it to memory zone, these
-pages will be marked reserved flag, however, some other kernel componet
-will misconceive these pages are reserved mmio (ex: we map these dev_dax
-or fs_dax pages to kvm for DIMM/NVDIMM backend). Together with the type
-MEMORY_DEVICE_FS_DAX, we can use is_dax_page() to differentiate the pages
-is DAX device memory or not.
+From: Ursula Braun <ubraun@linux.ibm.com>
+Date: Wed,  8 Aug 2018 14:13:18 +0200
 
-Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
----
- include/linux/mm.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> here are small fixes for SMC: The first patch makes sure, shutdown code
+> is not executed for sockets in state SMC_LISTEN. The second patch resets
+> send and receive buffer values for accepted sockets, since TCP buffer size
+> optimizations for the internal CLC socket should not be forwarded to the
+> outer SMC socket. The third patch solves a race between connect and ioctl
+> reported by syzbot.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 68a5121..de5cbc3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -889,6 +889,13 @@ static inline bool is_device_public_page(const struct page *page)
- 		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
- }
- 
-+static inline bool is_dax_page(const struct page *page)
-+{
-+	return is_zone_device_page(page) &&
-+		(page->pgmap->type == MEMORY_DEVICE_FS_DAX ||
-+		page->pgmap->type == MEMORY_DEVICE_DEV_DAX);
-+}
-+
- #else /* CONFIG_DEV_PAGEMAP_OPS */
- static inline void dev_pagemap_get_ops(void)
- {
-@@ -912,6 +919,11 @@ static inline bool is_device_public_page(const struct page *page)
- {
- 	return false;
- }
-+
-+static inline bool is_dax_page(const struct page *page)
-+{
-+	return false;
-+}
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
- 
- static inline void get_page(struct page *page)
--- 
-2.7.4
-
+Series applied, thank you.
