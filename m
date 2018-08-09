@@ -2,95 +2,208 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E710C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26484C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E4D208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:25:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSTfmTrh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E4D208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C5BE6208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:27:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5BE6208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbeHIWwU (ORCPT
+        id S1727225AbeHIWyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:52:20 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:35657 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbeHIWwU (ORCPT
+        Thu, 9 Aug 2018 18:54:15 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726953AbeHIWyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:52:20 -0400
-Received: by mail-yw1-f65.google.com with SMTP id s68-v6so6421325ywg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 13:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Cw+dhAfJJfgfs9i1nvHZEtgRosdRSztWhtve09NFE9U=;
-        b=lSTfmTrhoMButeCCWT5kPXrVjyDpWnaiUTQcaf/T8FlzkVBALu1Be20w/qApXRYOt/
-         6HyPqLiDcFys3h6fZH57WoDZSfs8yz6Tt+x1CuG96w4Na9cZjlY7VxRfj+hP78j2E6NN
-         KBAWD1SmjFFNVhR/bMkzckxzaPc2h80ZHyWOkR8dy20ddfEx7Ys952xg3+AUCUMlZEFK
-         40F18OBDynrpJY/Hf9CY5Jb/o/z+9HQzt9ax1OHHsB96BV3QxfHRndQ97tJgAKsQ6BOB
-         hSBaPVD3ISKH/AfXRo2w0OAm+x8qUjoV9gBy4x0hzFE5o5i/nxUpCi+zPDqRKd1U8BUf
-         DiXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Cw+dhAfJJfgfs9i1nvHZEtgRosdRSztWhtve09NFE9U=;
-        b=qXshJJcrnabDexv2N89g1CLrFF8wVWlgh8bATl5bsdwshjt/gVYuhK/ZxtKpKCjizn
-         7bqZr/UbUeX5ISZqfLmSzsgRKY1m5Nhn9lTw6CtDeYxp3zTYMtV2+/abADviBQPzZZUC
-         iDyh/YpkPF2W403hSgBib+hTlmqlKEqAdLjgL8VD/1BWpA+UxH68QxaAaw0ybHPaqaWm
-         AjPH9JYdFrIrW0et4Z6rUO7ShzcYjByfHFSEM2DOgO1bCNQ89bDG3/cqIEW6oPCELJ4x
-         tcV00St/zNI1KHLs9sM9NBWnlqdxhBehSdJZ2IKNKJtMakDk8pshwnPYG06vB/hb1CSb
-         8gpA==
-X-Gm-Message-State: AOUpUlFueaxKQS+WHjUxClwzQkc/81x/d5J/7jSrl/Fc9BspMKWWo1Uv
-        26GgIV/gcIWZ/2hPOZEU3hfX8C0aPHKZC+jh+IU=
-X-Google-Smtp-Source: AA+uWPyVM8hVhQt0fPY0X4EhslDJcQEepVhqVgeyW8Pd79u4yv0JMUI4uL+utKBLjtHJtvr3/G0mflN3ZkO6jkUWYxU=
-X-Received: by 2002:a81:8742:: with SMTP id x63-v6mr2002638ywf.129.1533846352218;
- Thu, 09 Aug 2018 13:25:52 -0700 (PDT)
+        Thu, 9 Aug 2018 18:54:15 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79KP31w102204
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 16:27:46 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2krt2p5yuv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:27:46 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 9 Aug 2018 16:27:44 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 16:27:41 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79KRdEN9699940
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 20:27:39 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C98C0AC059;
+        Thu,  9 Aug 2018 16:28:07 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF17FAC05E;
+        Thu,  9 Aug 2018 16:28:06 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 16:28:06 -0400 (EDT)
+Subject: Re: [PATCH v8 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 9 Aug 2018 16:27:38 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:a25:d44:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 13:25:51 -0700 (PDT)
-In-Reply-To: <20180809201554.168804-2-namit@vmware.com>
-References: <20180809201554.168804-1-namit@vmware.com> <20180809201554.168804-2-namit@vmware.com>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Thu, 9 Aug 2018 13:25:51 -0700
-Message-ID: <CAMo8BfJzh20K_1RZCDX+ygFVdZx2T_VeB8AQAB87EFKbq9sr+w@mail.gmail.com>
-Subject: Re: [PATCH v7 01/10] xtensa: defining LINKER_SCRIPT for the linker script
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "maintainer:X86 ARCHITECTURE..." <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18080920-2213-0000-0000-000002D85321
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009515; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01071406; UDB=6.00551719; IPR=6.00851103;
+ MB=3.00022619; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-09 20:27:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080920-2214-0000-0000-00005B252B72
+Message-Id: <b1094c57-18dd-f4fd-b528-f1682b8fc078@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 1:15 PM, Nadav Amit <namit@vmware.com> wrote:
-> Defining the LINKER_SCRIPT when building the linker script as being done
-> in other architectures. This is required for the next Makefile changes
-> would otherwise break things.
+On 08/09/2018 04:17 AM, David Hildenbrand wrote:
+> On 08.08.2018 16:44, Tony Krowiak wrote:
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Introduces a new CPU model feature and two CPU model
+>> facilities to support AP virtualization for KVM guests.
+>>
+>> CPU model feature:
+>>
+>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>> AP instructions are available on the guest. This
+>> feature will be enabled by the kernel only if the AP
+>> instructions are installed on the linux host. This feature
+>> must be specifically turned on for the KVM guest from
+>> userspace to use the VFIO AP device driver for guest
+>> access to AP devices.
+>>
+>> CPU model facilities:
+>>
+>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>
+>>     This is indicated by setting facilities bit 12 for
+>>     the guest. The kernel will not enable this facility
+>>     for the guest if it is not set on the host. This facility
+>>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>>     feature is not installed.
+> Could it happen on real HW (not frankenstein CPU models), that
 >
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: linux-xtensa@linux-xtensa.org
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  arch/xtensa/kernel/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> !AP, but STFL 12 or 15  are indicated?
 
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+I suspect that if AP instructions are not installed, then neither
+STFLE.12 nor STFLE.15 would be set in the real hardware. This
+comment, however, is talking about an administrator setting the
+facility for a guest, not real hardware. Having said that and after
+thinking about it a little more, I am going to remove that last sentence
+because the CPU model configuration (e.g., as specified on the qemu
+command line) will fail if the QCI or APFT facility is enabled when the
+CPU model feature KVM_S390_VM_CPU_FEAT_AP is not.
 
--- 
-Thanks.
--- Max
+>
+>>     If this facility is not set for the KVM guest, then only
+>>     APQNs with an APQI less than 16 will be used by a Linux
+>>     guest regardless of the matrix configuration for the virtual
+>>     machine. This is a limitation of the Linux AP bus.
+>>
+>> 2. AP Facilities Test facility (APFT) is installed.
+>>
+>>     This is indicated by setting facilities bit 15 for
+>>     the guest. The kernel will not enable this facility for
+>>     the guest if it is not set on the host. This facility
+>>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>>     feature is not installed.
+>>
+>>     If this facility is not set for the KVM guest, then no
+>>     AP devices will be available to the guest regardless of
+>>     the guest's matrix configuration for the virtual
+>>     machine. This is a limitation of the Linux AP bus.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   arch/s390/kvm/kvm-s390.c         |    7 +++++++
+>>   arch/s390/tools/gen_facilities.c |    2 ++
+>>   2 files changed, 9 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 9203f0b..7d4fe9b 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -367,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
+>>   
+>>   	if (MACHINE_HAS_ESOP)
+>>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>> +
+>> +	/*
+>> +	 * Check if AP instructions installed on host
+>> +	 */
+> Make this a one-line comment, please.
+
+Will do
+
+>
+>> +	if (ap_instructions_available() == 0)
+>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>> +
+>>   	/*
+>>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>> index 90a8c9e..a52290b 100644
+>> --- a/arch/s390/tools/gen_facilities.c
+>> +++ b/arch/s390/tools/gen_facilities.c
+>> @@ -106,6 +106,8 @@ struct facility_def {
+>>   
+>>   		.name = "FACILITIES_KVM_CPUMODEL",
+>>   		.bits = (int[]){
+>> +			12, /* AP Query Configuration Information */
+>> +			15, /* AP Facilities Test */
+>>   			-1  /* END */
+>>   		}
+>>   	},
+>>
+>
+
