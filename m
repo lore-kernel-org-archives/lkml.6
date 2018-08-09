@@ -2,91 +2,78 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4D8C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9475C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B0821CCE
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:41:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B0821CCE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DF6C21CF7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:44:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF6C21CF7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbeHINGB (ORCPT
+        id S1730353AbeHINIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 09:06:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44554 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727768AbeHINGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 09:06:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A676D72620;
-        Thu,  9 Aug 2018 10:41:44 +0000 (UTC)
-Received: from localhost (unknown [10.43.2.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 45F9D23149;
-        Thu,  9 Aug 2018 10:41:44 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 12:41:38 +0200
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH wireless-drivers] mt76x0: Remove VLA usage
-Message-ID: <20180809104137.GA1955@redhat.com>
-References: <20180807225040.GA2164@beast>
- <20180808092450.GA25772@redhat.com>
- <871sb942cx.fsf@kamboji.qca.qualcomm.com>
- <CAGXu5jKqeAHDWdNg++QJko5AM4g160kEQ54jLAojpRq6FszqgA@mail.gmail.com>
+        Thu, 9 Aug 2018 09:08:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49588 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeHINIw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 09:08:52 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fniQi-00073i-Py; Thu, 09 Aug 2018 10:44:32 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: gasket: apex: remove unused array cm_mappable_regions
+Date:   Thu,  9 Aug 2018 11:44:32 +0100
+Message-Id: <20180809104432.26947-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jKqeAHDWdNg++QJko5AM4g160kEQ54jLAojpRq6FszqgA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 10:41:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 10:41:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgruszka@redhat.com' RCPT:''
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 08:41:28AM -0700, Kees Cook wrote:
-> >> I thought SPDX line is needed only if file has no license and eeprom.c
-> >> file and other mt76x0 files have specified the license. Is SPDX still
-> >> needed in that case ?
-> 
-> I thought all source files needed SPDX: https://lwn.net/Articles/739183/
+From: Colin Ian King <colin.king@canonical.com>
 
-Ok, goal is to have all kernel source files with SPDX header.
+Array cm_mappable_regions is defined but is never used hence it is
+redundant and can be removed.
 
-> >>> +#define MT_MAP_READS        DIV_ROUND_UP(MT_EFUSE_USAGE_MAP_SIZE, 16)
-> >>>  static int
-> >>>  mt76x0_efuse_physical_size_check(struct mt76x0_dev *dev)
-> >>>  {
-> >>> -    const int map_reads = DIV_ROUND_UP(MT_EFUSE_USAGE_MAP_SIZE, 16);
-> >>> -    u8 data[map_reads * 16];
-> >>
-> >> Why this is variable length array? DIV_ROUND_UP can not be calculated
-> >> at compile time? But if so, macro do not change the situation either.
-> >
-> > The commit log mentioned:
-> >
-> >   "Even with "const" variables, the compiler will generate warnings about
-> >    VLA usage."
-> >
-> > So I guess the compiler (gcc?) is just not smart enough in this case?
-> 
-> Correct. This is technically a false positive, but with the goal of
-> adding -Wvla to the build globally, we have to get rid of these as
-> well. It's a little frustrating, I agree, but with all others fixed
-> now, these stand out. :)
+Cleans up clang warning:
+warning: 'cm_mappable_regions' defined but not used [-Wunused-const-variable=]
 
-Then:
-Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/gasket/apex_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index c747e9ca4518..6dca3b177863 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -138,9 +138,6 @@ static const struct gasket_mappable_region mappable_regions[NUM_REGIONS] = {
+ 	{ 0x48000, 0x1000 },
+ };
+ 
+-static const struct gasket_mappable_region cm_mappable_regions[1] = { { 0x0,
+-	APEX_CH_MEM_BYTES } };
+-
+ /* Gasket device interrupts enums must be dense (i.e., no empty slots). */
+ enum apex_interrupt {
+ 	APEX_INTERRUPT_INSTR_QUEUE = 0,
+-- 
+2.17.1
+
