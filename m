@@ -5,107 +5,149 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A635C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD22C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E061E21C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:57:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E061E21C2B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C52F21C39
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:57:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C52F21C39
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbeHILVK (ORCPT
+        id S1729911AbeHILVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:21:10 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:46544 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727371AbeHILVJ (ORCPT
+        Thu, 9 Aug 2018 07:21:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36662 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729798AbeHILVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:21:09 -0400
-Received: from [IPv6:2003:e9:d709:f021:3252:cbff:fe54:190f] (p200300E9D709F0213252CBFFFE54190F.dip0.t-ipconnect.de [IPv6:2003:e9:d709:f021:3252:cbff:fe54:190f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id A71A0C859F;
-        Thu,  9 Aug 2018 10:57:16 +0200 (CEST)
-Subject: Re: [PATCH net-next] ieee802154: Use kmemdup instead of duplicating
- it in ca8210_test_int_driver_write
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        h.morris@cascoda.com, alex.aring@gmail.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wpan@vger.kernel.org
-References: <20180809064429.13348-1-yuehaibing@huawei.com>
- <488f54b7-cfe2-f64b-168e-11f79d4d4e96@datenfreihafen.org>
- <aaf879dd-c630-a201-b8ae-66c39a359a99@huawei.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <e2f699bf-a8c6-f1c0-a268-9b18518ae595@datenfreihafen.org>
-Date:   Thu, 9 Aug 2018 10:57:16 +0200
+        Thu, 9 Aug 2018 07:21:22 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w798sjVu133060
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 04:57:30 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2krfwrwwsc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 04:57:30 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 9 Aug 2018 09:57:27 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 09:57:23 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w798vMmg41418884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 08:57:22 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4DBB42041;
+        Thu,  9 Aug 2018 11:57:29 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 167BD4203F;
+        Thu,  9 Aug 2018 11:57:29 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 11:57:29 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v8 19/22] KVM: s390: Clear Crypto Control Block when using
+ vSIE
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-20-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <9a7353fa-143f-9048-936a-59f446411e0a@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 9 Aug 2018 10:57:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <aaf879dd-c630-a201-b8ae-66c39a359a99@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <9a7353fa-143f-9048-936a-59f446411e0a@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080908-4275-0000-0000-000002A74D35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080908-4276-0000-0000-000037B05A5C
+Message-Id: <ddb86d5e-35ef-daf2-c6b2-ad0869692c9a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=985 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yue.
+On 09/08/2018 10:10, David Hildenbrand wrote:
+> On 08.08.2018 16:44, Tony Krowiak wrote:
+>> From: Pierre Morel <pmorel@linux.ibm.com>
+>>
+>> When we clear the Crypto Control Block (CRYCB) used by a guest
+>> level 2, the vSIE shadow CRYCB for guest level 3 must be updated
+>> before the guest uses it.
+>>
+>> We achieve this by using the KVM_REQ_VSIE_RESTART synchronous
+>> request for each vCPU belonging to the guest to force the reload
+>> of the shadow CRYCB before rerunning the guest level 3.
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> ---
+>>   arch/s390/kvm/kvm-s390.c |    7 +++++++
+>>   1 files changed, 7 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 0d03249..9203f0b 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -1921,6 +1921,9 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>>   
+>>   void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>>   {
+>> +	int i;
+>> +	struct kvm_vcpu *vcpu;
+>> +
+>>   	mutex_lock(&kvm->lock);
+>>   	kvm_s390_vcpu_block_all(kvm);
+>>   
+>> @@ -1929,6 +1932,10 @@ void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>>   	memset(&kvm->arch.crypto.crycb->apcb1, 0,
+>>   	       sizeof(kvm->arch.crypto.crycb->apcb1));
+>>   
+>> +	/* recreate the shadow crycb for each vcpu */
+>> +	kvm_for_each_vcpu(i, vcpu, kvm)
+>> +		kvm_s390_sync_request(KVM_REQ_VSIE_RESTART, vcpu);
+> We have kvm_s390_sync_request_broadcast(), which should boil down to a
+> one-liner
 
-On 08/09/2018 10:44 AM, YueHaibing wrote:
-> On 2018/8/9 16:13, Stefan Schmidt wrote:
->> Hello.
->>
->> On 08/09/2018 08:44 AM, YueHaibing wrote:
->>> Replace calls to kmalloc followed by a memcpy with a direct call to
->>> kmemdup.
->>>
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>
->> Is Yue your forname and Haibing your surname? In that case having it
->> written as
->>
->> Yue Haibing <yuehaibing@huawei.com>
-> 
-> Well, It should be this, but it's been a long time to use the former
+do you think I should squash this patch with the next one?
 
-Never to late to fix something I guess. :-)
-Not blocking this patch base on this though.
-
->> in the from line as well as in the SOB would be better.
+>
+>> +
+>>   	kvm_s390_vcpu_unblock_all(kvm);
+>>   	mutex_unlock(&kvm->lock);
+>>   }
 >>
->>> ---
->>>  drivers/net/ieee802154/ca8210.c | 3 +--
->>>  1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
->>> index 58299fb..e21279d 100644
->>> --- a/drivers/net/ieee802154/ca8210.c
->>> +++ b/drivers/net/ieee802154/ca8210.c
->>> @@ -634,10 +634,9 @@ static int ca8210_test_int_driver_write(
->>>  	for (i = 0; i < len; i++)
->>>  		dev_dbg(&priv->spi->dev, "%#03x\n", buf[i]);
->>>  
->>> -	fifo_buffer = kmalloc(len, GFP_KERNEL);
->>> +	fifo_buffer = kmemdup(buf, len, GFP_KERNEL);
->>>  	if (!fifo_buffer)
->>>  		return -ENOMEM;
->>> -	memcpy(fifo_buffer, buf, len);
->>>  	kfifo_in(&test->up_fifo, &fifo_buffer, 4);
->>>  	wake_up_interruptible(&priv->test.readq);
->>
->> Is this some kernel tree wide change you are submitting patches for or
->> only for the ca8210 driver? Is there any specific problem you see with
->> the kmalloc and memcpy code here? To me it looks fine.
->>
->> The reason I ask is to understand if this is bug fix or a cleanup.
-> 
-> It just a code cleanup only for ca8210.
+>
 
-Thanks for the info. I will wait for Harry's ack and apply it to
-wpan-next afterwards.
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
-regards
-Stefan Schmidt
