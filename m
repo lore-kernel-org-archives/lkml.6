@@ -2,163 +2,146 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA8BC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEC2C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0973A214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:02:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReW4k5t+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0973A214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 80FA5214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:03:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80FA5214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbeHIR12 (ORCPT
+        id S1732813AbeHIR23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:27:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39762 "EHLO mail.kernel.org"
+        Thu, 9 Aug 2018 13:28:29 -0400
+Received: from mout02.posteo.de ([185.67.36.142]:36049 "EHLO mout02.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730634AbeHIR12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:27:28 -0400
-Received: from jouet.infradead.org (179-240-153-38.3g.claro.net.br [179.240.153.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58B6021DEC;
-        Thu,  9 Aug 2018 15:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533826929;
-        bh=ijjPwZsqYi2N6S1aMgMM27zXm+K+xS8Mk73lDsQT+l8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ReW4k5t+7z3bCW50dF4ViCSkhtbVxLERFiwbvqpA37FaU2o/ccCsMer2j9vgBUpgf
-         UL4G9qb0dhmqDLSWTVNghaCa5HEUBWv8yaByh1un0EQZOx6ABmrOaDt4f5Pqgj0XCj
-         iHc2Qo4aPlchY0DziQFANXYHxhCts0miJMphFzYU=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 44/44] perf map: Optimize maps__fixup_overlappings()
-Date:   Thu,  9 Aug 2018 11:58:22 -0300
-Message-Id: <20180809145822.21391-45-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180809145822.21391-1-acme@kernel.org>
-References: <20180809145822.21391-1-acme@kernel.org>
+        id S1732603AbeHIR22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 13:28:28 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 1130120FAE
+        for <linux-kernel@vger.kernel.org>; Thu,  9 Aug 2018 17:03:08 +0200 (CEST)
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 41mWhn2tLFz9rxL;
+        Thu,  9 Aug 2018 17:03:05 +0200 (CEST)
+Subject: Re: [PATCH RESEND 2/2] gpio: mvebu: Allow to use non-default PWM
+ counter
+To:     Andrew Lunn <andrew@lunn.ch>, Aditya Prayoga <aditya@kobol.io>
+Cc:     linux-gpio@vger.kernel.org,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Gauthier Provost <gauthier@kobol.io>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Gilmore <dennis@ausil.us>,
+        Ralph Sennhauser <ralph.sennhauser@gmail.com>
+References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
+ <1533522556-55055-3-git-send-email-aditya@kobol.io>
+ <20180806135257.GB6584@lunn.ch>
+From:   Richard Genoud <richard.genoud@gmail.com>
+Message-ID: <9d12abba-0be8-bce7-45d5-99659cbe0915@sorico.fr>
+Date:   Thu, 9 Aug 2018 17:03:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180806135257.GB6584@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Hi,
 
-This function splits and removes overlapping areas.
+On 06/08/2018 15:52, Andrew Lunn wrote:
+> On Mon, Aug 06, 2018 at 10:29:16AM +0800, Aditya Prayoga wrote:
+>> On multiple PWM lines, if the other PWM counter is unused, allocate it
+>> to next PWM request. The priority would be:
+>> 1. Default counter assigned to the bank
+>> 2. Unused counter that is assigned to other bank
+>> 3. Fallback to default counter
+>>
+>> For example on second bank there are three PWM request, first one would
+>> use default counter (counter B), second one would try to use counter A,
+>> and the third one would use counter B.
+> 
+> Hi Aditya
+> 
+> There are only two PWM counters for all the GPIO lines. So you cannot
+> support 3 PWM requests. You have to enforce a maximum of two PWMs.
+> 
+> When i implemented this PWM code, i only needed one PWM. So it took
+> the easy option. GPIO bank 0 uses counter A, GPIO bank1 uses counter
+> B. For the hardware you have, this is not sufficient, so you need to
+> generalise this. Any PWM can use any counter, whatever is available
+> when the PWM is requested.
+> 
+> Rather than have a linked list of PWM, i think it would be better to
+> have a static array of two mvebu_pwm structures. Index 0 uses counter
+> A, index 1 uses counter B. You can then keep with the concept of
+> pwm->pgiod != NULL means the counter is in use. The request() call can
+> then find an unused PWM, set pwm->gpiod, and point mvchip->mvpwm to
+> one of the two static instances.
+> 
+>     Andrew
+> 
+I'm not sure that the logic:
+1. Default counter assigned to the bank
+2. Unused counter that is assigned to other bank
+3. Fallback to default counter
+is the best one.
 
-Maps in tree are ordered by start address thus we could find first
-overlap and stop if next map does not overlap.
+I gave the code a try, and I've been a little confused.
+I declared:
+- fan1 as gpio1 22 
+- fan2 as gpio1 11
+- fan3 as gpio0 22
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/153365189407.435244.7234821822450484712.stgit@buzz
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/map.c | 44 ++++++++++++++++++++++++++------------------
- tools/perf/util/map.h |  1 -
- 2 files changed, 26 insertions(+), 19 deletions(-)
+and I did:
+echo 10 > hwmon1/pwm1  # ok
+echo 100 > hwmon2/pwm1 # still ok
+echo 200 > hwmon3/pwm1 # hey !! my fan2 is now at 200 (I can see it with the scope)
+# but
+cat hwmon2/pwm1
+100
+# okay, I want my fan2 back, So I turn off fan3:
+echo 0 > hwmon3/pwm1 # fan2 and fan3 are stopped
+echo 100 > hwmon2/pwm1 # not working.. fan2 is still at 0 on the scope
+but:
+cat hwmon2/pwm1
+100
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 89ac5b5dc218..36d0763311ef 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -381,20 +381,6 @@ struct map *map__clone(struct map *from)
- 	return map;
- }
- 
--int map__overlap(struct map *l, struct map *r)
--{
--	if (l->start > r->start) {
--		struct map *t = l;
--		l = r;
--		r = t;
--	}
--
--	if (l->end > r->start)
--		return 1;
--
--	return 0;
--}
--
- size_t map__fprintf(struct map *map, FILE *fp)
- {
- 	return fprintf(fp, " %" PRIx64 "-%" PRIx64 " %" PRIx64 " %s\n",
-@@ -675,20 +661,42 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
- static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp)
- {
- 	struct rb_root *root;
--	struct rb_node *next;
-+	struct rb_node *next, *first;
- 	int err = 0;
- 
- 	down_write(&maps->lock);
- 
- 	root = &maps->entries;
--	next = rb_first(root);
- 
-+	/*
-+	 * Find first map where end > map->start.
-+	 * Same as find_vma() in kernel.
-+	 */
-+	next = root->rb_node;
-+	first = NULL;
-+	while (next) {
-+		struct map *pos = rb_entry(next, struct map, rb_node);
-+
-+		if (pos->end > map->start) {
-+			first = next;
-+			if (pos->start <= map->start)
-+				break;
-+			next = next->rb_left;
-+		} else
-+			next = next->rb_right;
-+	}
-+
-+	next = first;
- 	while (next) {
- 		struct map *pos = rb_entry(next, struct map, rb_node);
- 		next = rb_next(&pos->rb_node);
- 
--		if (!map__overlap(pos, map))
--			continue;
-+		/*
-+		 * Stop if current map starts after map->end.
-+		 * Maps are ordered by start: next will not overlap for sure.
-+		 */
-+		if (pos->start >= map->end)
-+			break;
- 
- 		if (verbose >= 2) {
- 
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 4cb90f242bed..e0f327b51e66 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -166,7 +166,6 @@ static inline void __map__zput(struct map **map)
- 
- #define map__zput(map) __map__zput(&map)
- 
--int map__overlap(struct map *l, struct map *r);
- size_t map__fprintf(struct map *map, FILE *fp);
- size_t map__fprintf_dsoname(struct map *map, FILE *fp);
- char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
--- 
-2.14.4
+IMHO, I would either:
+- allow only 2 pwm and no more (but that's a pity)
+- allow lots of fans, but once 2 different speeds are set, return EINVAL for another different speed (even if it's on another bank)
+That way, we'll be able to switch on/off 1, 2, 3 or more fans, as long as they have the same speed.
+I'll give an example :
 
+echo 10 > hwmon1/pwm1 # ok
+echo 100 > hwmon2/pwm1 # still ok
+echo 200 > hwmon3/pwm1 # returns EINVAL
+echo 10 > hwmon3/pwm1 # ok
+
+The headache will come when we want to change the speed...
+echo 50 > hwmon3/pwm1 # should this change the hwmon1 as well or return EINVAL ?
+I'd say that it changes hwmon1 as well, as if hwmon1 and hwmon3 were tied.
+But, If I then do :
+echo 100 > hwmon3/pwm1 # fan2 was already at 100
+What should happen ? Do fan1, fan2 and fan3 be set to 100 ?
+Or fan1 stay at 10 and fan3 at 100 ? (in this case, fan3 won't be tied to fan1 anymore, but to fan2)
+
+Hum...
+I don't know if anyone followed me on this...
+Anyway, I think I convinced myself that only allowing 2 pwm is less confusing than anything else :)
+
+
+
+Richard.
