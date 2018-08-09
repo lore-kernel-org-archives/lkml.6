@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B3AC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C93DC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A660521524
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:16:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A660521524
+	by mail.kernel.org (Postfix) with ESMTP id C49D121524
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C49D121524
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730404AbeHILj6 (ORCPT
+        id S1730657AbeHILkE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:39:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34646 "EHLO mx1.redhat.com"
+        Thu, 9 Aug 2018 07:40:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34416 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727786AbeHILj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:39:58 -0400
+        id S1728322AbeHILkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:40:04 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8494D40241C3;
-        Thu,  9 Aug 2018 09:16:01 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5EC0C8011462;
+        Thu,  9 Aug 2018 09:16:07 +0000 (UTC)
 Received: from shalem.localdomain.com (unknown [10.36.118.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6504B2166BA2;
-        Thu,  9 Aug 2018 09:15:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F17F2166BA2;
+        Thu,  9 Aug 2018 09:16:05 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
@@ -42,61 +42,65 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         linux-i2c@vger.kernel.org
-Subject: [PATCH v5 0/4] i2c-multi-instantiate pseudo driver
-Date:   Thu,  9 Aug 2018 11:15:54 +0200
-Message-Id: <20180809091558.4317-1-hdegoede@redhat.com>
+Subject: [PATCH v5 3/4] ACPI / x86-utils: Remove status workaround from acpi_device_always_present()
+Date:   Thu,  9 Aug 2018 11:15:57 +0200
+Message-Id: <20180809091558.4317-4-hdegoede@redhat.com>
+In-Reply-To: <20180809091558.4317-1-hdegoede@redhat.com>
+References: <20180809091558.4317-1-hdegoede@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 09 Aug 2018 09:16:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 09 Aug 2018 09:16:01 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 09:16:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 09:16:07 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Now that we init the status field to ACPI_STA_DEFAULT rather then to 0,
+the workaround for acpi_match_device_ids() always returning -ENOENT when
+status is 0 is no longer needed.
 
-Here is v5 of my patch-series for dealing with multiple independent i2c
-devices being described in a single ACPI fwnode.
-
-Changes in v5:
--s/no_clients/num_clients/
--Change patch 4 Subject prefix to platform/x86
-
-Changes in v4:
--Rewrite commit message of first patch as this is NOT a bug fix for
- acpi_is_indirect_io_slave() as I thought at first, it is still necessary
- as a preperation patch for the rest of the series
--MAINTAINER and Kconfig entry fixes
--Some minor coding style fixes
-
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
 Changes in v3:
--Drop the patch adding the I2C_CLIENT_IGNORE_BUSY flag/hack
--Add patches to make ACPI fwnode-s with affected acpi_ids get enumerated as
- platform device instead of i2c-client
--Change the i2c-multi-instantiate driver to a platform driver
+-New patch in v3 of this patch-set
+---
+ drivers/acpi/x86/utils.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-Changes in v2:
--Rebase on 4.18-rc2
-
-Changes in v1:
--Second attempt at dealing with this using a new design where a separate
- driver (which can be build as a module) is used to instantiate the
- i2c-clients instead of modifying the i2c core
--Add an I2C_CLIENT_IGNORE_BUSY flag to make it possible for this driver to bind
- to the client instantiated for the first i2c resource and still create a new
- client using the i2c_client_id for the actual driver for the first resource,
- resulting in 2 clients at the same address (of which one is inactive)
-
-About merging this series, the platform-driver and ACPI patches can be
-merged independently of each other, they platform driver relies on the ACPI
-changes to gets its platform device instantiated, but if those changes are
-not in place yet, nothing bad happens.
-
-So if everyone is happy with this series I suggest that each part gets
-merged separately through the relevant trees.
-
-Regards,
-
-Hans
-
+diff --git a/drivers/acpi/x86/utils.c b/drivers/acpi/x86/utils.c
+index ec5b0f190231..a4fb97d64b3b 100644
+--- a/drivers/acpi/x86/utils.c
++++ b/drivers/acpi/x86/utils.c
+@@ -103,13 +103,9 @@ static const struct always_present_id always_present_ids[] = {
+ 
+ bool acpi_device_always_present(struct acpi_device *adev)
+ {
+-	u32 *status = (u32 *)&adev->status;
+-	u32 old_status = *status;
+ 	bool ret = false;
+ 	unsigned int i;
+ 
+-	/* acpi_match_device_ids checks status, so set it to default */
+-	*status = ACPI_STA_DEFAULT;
+ 	for (i = 0; i < ARRAY_SIZE(always_present_ids); i++) {
+ 		if (acpi_match_device_ids(adev, always_present_ids[i].hid))
+ 			continue;
+@@ -125,15 +121,9 @@ bool acpi_device_always_present(struct acpi_device *adev)
+ 		    !dmi_check_system(always_present_ids[i].dmi_ids))
+ 			continue;
+ 
+-		if (old_status != ACPI_STA_DEFAULT) /* Log only once */
+-			dev_info(&adev->dev,
+-				 "Device [%s] is in always present list\n",
+-				 adev->pnp.bus_id);
+-
+ 		ret = true;
+ 		break;
+ 	}
+-	*status = old_status;
+ 
+ 	return ret;
+ }
+-- 
+2.18.0
 
