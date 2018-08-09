@@ -6,184 +6,285 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6415C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D29C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7187F21B32
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E5721B32
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="EQm3pTx4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7187F21B32
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S+j/vm9t";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C4Ohh0Au"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E5721B32
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbeHILNX (ORCPT
+        id S1729893AbeHILOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:13:23 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:52201 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727601AbeHILNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:13:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SRuVrdpwxT3oI12KDLL4JztXEkubOahLp+YZFWkRy/Y=; b=EQm3pTx4M8/xBvpWLi8IBpczRm
-        oXwBdczjh/FkqwcTzkWwh7cbFWlIhZ7vfRnhSL+Tj5H3HUcj3HOYMLvdNZQSWt1QLuJoS5JwSi5IR
-        I812gU53XW7SM8rSSGGwGTMIL14ycZogtSnO1ZvTCe8vOKGoNd8/JAzBvoCGAoNbrZRd1dd6CvnfP
-        N5hIQ77a3gin/1oeHoRbR5vWZ/tXizctHFEAAJPws0p8/VXrFlv5liD5e/yRuqLJtgLFzrA369kPA
-        +QVG+S4NGqrbc5boLoQgzbXTQ+1qcrs4a3wNC3D4PWy9PqDqcAROXxwt1mIZ8cishEK4Kb9zZMCfH
-        KWUpKu1g==;
-Received: from [193.209.96.43] (helo=[10.21.26.144])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1fngdE-0007PI-1J; Thu, 09 Aug 2018 11:49:20 +0300
-Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ", linux-arm-kernel"@lists.infradead.org,
-        srv_heupstream <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
- <20180702114033.15654-4-mperttunen@nvidia.com>
- <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
- <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi>
- <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
- <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
- <b5a91f9e-c3ff-371c-d355-4a5e8a147796@kapsi.fi>
- <CABb+yY3Ng+rbKRYXTncfHKv6HXBW5hHjMKDpepz31MxpE9bwRQ@mail.gmail.com>
- <a57fccaa-fcfe-6611-45a5-8c224f4ee2b6@kapsi.fi>
-Message-ID: <b3045f85-eacb-a5ec-1690-b9c63d0f3373@kapsi.fi>
-Date:   Thu, 9 Aug 2018 11:49:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 9 Aug 2018 07:14:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37900 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbeHILOX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:14:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 99B6760B77; Thu,  9 Aug 2018 08:50:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533804632;
+        bh=bmTsXFgWnM32PaUKbXlD+i/H5+ixoWxvafxcJ7mubus=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=S+j/vm9tyP6D5BhYIVH2UjWM4kFHSGSze9GPmlkzJdCWyd/ZmiS04s4hdcmcRtzWN
+         Kohqi2uuDsT64QmoNji/d18UwRitPSpBkyUXwaGKcct/QCT82206p+zcXJfbWZ9dWL
+         X61X6t7/X5r6xmi7bBbZEb7XEm4VICmJYbVIuQko=
+Received: from [10.206.24.124] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B330B606FA;
+        Thu,  9 Aug 2018 08:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533804631;
+        bh=bmTsXFgWnM32PaUKbXlD+i/H5+ixoWxvafxcJ7mubus=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=C4Ohh0AulA/O/U8pGf0XdFpeMrB6p6IvS7xq7l0wnAPy3XpUbYeL9uksnEtR6gqy5
+         JPMHYBy83idE5vVqwQUz5BEBQSXaTnJKEN0eE6daaOVwavDMTHqhPZBa5qSUUdLumY
+         nYKA8FDBtN82YNWtN3C6BHvX2j6OC7Kxo6ItiZAU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B330B606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+Subject: Re: [PATCH V7 1/2] scsi: ufs: set the device reference clock setting
+To:     Evan Green <evgreen@chromium.org>
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1533113338-31750-1-git-send-email-sayalil@codeaurora.org>
+ <1533113338-31750-2-git-send-email-sayalil@codeaurora.org>
+ <CAE=gft6H2iYx59fXc2SHP+Rr9M07Vjk99-Rgk1Kx-GnVJT86DQ@mail.gmail.com>
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+Message-ID: <fa0578ee-57ac-923c-8c20-8b2b5fa13829@codeaurora.org>
+Date:   Thu, 9 Aug 2018 14:20:25 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <a57fccaa-fcfe-6611-45a5-8c224f4ee2b6@kapsi.fi>
+In-Reply-To: <CAE=gft6H2iYx59fXc2SHP+Rr9M07Vjk99-Rgk1Kx-GnVJT86DQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 193.209.96.43
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's my current code:
+Hi Evan,
 
-https://github.com/cyndis/linux/commits/wip/t194-tcu-4
-
-"fixup! mailbox: tegra-hsp: Add support for shared mailboxes" splits up 
-the controller into two. "tegra-hsp: use polling" changes it to use polling.
-
-There are two lines in the top patch with comments:
-
-- at the end of tegra_hsp_mailbox_send_data, I left a "while 
-(!tegra_hsp_mailbox_last_tx_done(chan));". Without it I wasn't able to 
-see even a few garbled characters in the output.
-
-- as mentioned, if I enable tx_block on the client side, I get a BUG: 
-scheduling while atomic. I assume this gets printed through the earlycon 
-as it's printing out correctly.
-
-Thanks,
-Mikko
-
-On 08.08.2018 17:46, Mikko Perttunen wrote:
-> On 08/08/2018 05:39 PM, Jassi Brar wrote:
->> On Wed, Aug 8, 2018 at 8:04 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->>>
->>>
->>> On 08/08/2018 05:10 PM, Jassi Brar wrote:
->>>>
->>>> On Wed, Aug 8, 2018 at 5:08 PM, Mikko Perttunen <cyndis@kapsi.fi> 
->>>> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 04.08.2018 13:45, Mikko Perttunen wrote:
->>>>>>
->>>>>>
->>>>>> On 08/03/2018 03:54 PM, Jassi Brar wrote:
->>>>>>>
->>>>>>>
->>>>>>> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen 
->>>>>>> <mperttunen@nvidia.com>
->>>>>>> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
->>>>>>>> send_data function of the mailbox driver is expected to block until
->>>>>>>> the message has been sent. The new option is used with the Tegra
->>>>>>>> Combined UART driver to minimize unnecessary overhead when
->>>>>>>> transmitting
->>>>>>>> data.
->>>>>>>>
->>>>>>> 1) TXDONE_BY_BLOCK flag :-
->>>>>>>            Have you tried setting the flag
->>>>>>> mbox_chan->mbox_client->tx_block
->>>>>>> ?
->>>>>>
->>>>>>
->>>>>>
->>>>>> No - I suppose I should have done that. I'm a bit concerned about
->>>>>> overhead
->>>>>> as send_data may be called thousands of times per second, so I 
->>>>>> tried to
->>>>>> make
->>>>>> it as close as possible to the downstream driver that just pokes the
->>>>>> mailbox
->>>>>> register directly.
->>>>>
->>>>>
->>>>>
->>>>> I tried using polling in the mailbox framework. Some printing is done
->>>>> from
->>>>> atomic context so it seems tx_block cannot be used -
->>>>> wait_for_completion_timeout understandably does not work in atomic
->>>>> context.
->>>>> I also tried without tx_block, in which case I got some horribly 
->>>>> garbled
->>>>> output, but "Try increasing MBOX_TX_QUEUE_LEN" was readable there.
->>>>>
->>>>> Any opinions?
->>>>>
->>>> The problems arise because your hardware (SM) supports TXDONE_BY_POLL,
->>>> but your client drives it by TXDONE_BY_ACK because the older DB
->>>> channels are so.
->>>>
->>>> Please populate SM channels as a separate controller than DB.
->>>> The DB controller, as is, run by ACK method.
->>>> The SM controller should be run by polling, i.e, set txdone_poll =
->>>> true and the poll period small enough. The virtual tty client driver
->>>> should be able to safely set tx_block from appropriate context.
->>>>
->>>
->>> Sorry, I should have clarified that I already split up the 
->>> controllers. The
->>> SM controller has txdone_poll = true. I didn't adjust txpoll_period so I
->>> guess it's zero.
->>>
->> Can you please share your code (controller and client) ? Maybe offline
->> if you wish.
+On 8/6/2018 10:56 PM, Evan Green wrote:
+> Hi Sayali,
+>
+> On Wed, Aug 1, 2018 at 1:49 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>> From: Subhash Jadavani <subhashj@codeaurora.org>
 >>
-> 
-> I'll upload a git branch tomorrow -- I'm not at the machine with the 
-> code now.
-> 
-> Mikko
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> UFS host supplies the reference clock to UFS device and UFS device
+>> specification allows host to provide one of the 4 frequencies (19.2 MHz,
+>> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+>> device reference clock frequency setting in the device based on what
+>> frequency it is supplying to UFS device.
+>>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+>> ---
+>>   drivers/scsi/ufs/ufs.h           |  8 ++++
+>>   drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
+>>   drivers/scsi/ufs/ufshcd.c        | 84 ++++++++++++++++++++++++++++++++++++++++
+>>   drivers/scsi/ufs/ufshcd.h        |  2 +
+>>   4 files changed, 96 insertions(+)
+>>
+>> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+>> index 14e5bf7..89e0a33 100644
+>> --- a/drivers/scsi/ufs/ufs.h
+>> +++ b/drivers/scsi/ufs/ufs.h
+>> @@ -378,6 +378,14 @@ enum query_opcode {
+>>          UPIU_QUERY_OPCODE_TOGGLE_FLAG   = 0x8,
+>>   };
+>>
+>> +/* bRefClkFreq attribute values */
+>> +enum ref_clk_freq {
+>> +       REF_CLK_FREQ_19_2_MHZ   = 19200000,
+>> +       REF_CLK_FREQ_26_MHZ     = 26000000,
+>> +       REF_CLK_FREQ_38_4_MHZ   = 38400000,
+>> +       REF_CLK_FREQ_52_MHZ     = 52000000,
+>> +};
+>> +
+>>   /* Query response result code */
+>>   enum {
+>>          QUERY_RESULT_SUCCESS                    = 0x00,
+>> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> index e82bde0..0953563 100644
+>> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> @@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>>          pm_runtime_set_active(&pdev->dev);
+>>          pm_runtime_enable(&pdev->dev);
+>>
+>> +       ufshcd_parse_dev_ref_clk_freq(hba);
+>> +
+>>          ufshcd_init_lanes_per_dir(hba);
+>>
+>>          err = ufshcd_init(hba, mmio_base, irq);
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index c5b1bf1..619313b 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -6296,6 +6296,84 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+>>          hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+>>   }
+>>
+>> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
+>> +{
+>> +       struct device *dev = hba->dev;
+>> +       struct device_node *np = dev->of_node;
+>> +       struct clk *refclk = NULL;
+>> +
+>> +       if (!np)
+>> +               return;
+>> +
+>> +       refclk = of_clk_get_by_name(np, "ref_clk");
+>> +       if (refclk)
+>> +               hba->dev_ref_clk_freq  = clk_get_rate(refclk);
+>> +       else if (!refclk ||
+>> +               (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
+> What is this logic? The !refclk condition will always be true since
+> you're in the else case of if (refclk). Also, even if the second part
+> were executed somehow, you haven't assigned dev_ref_clk_freq yet, so
+> how can its value be anything other than 0? Maybe that whole
+> conditional was just not supposed to be an "else" at all, but a
+> standalone if?
+Agree. Will update.
+>> +               dev_err(hba->dev,
+>> +               "%s: invalid ref_clk setting = %u\n",
+>> +               __func__, hba->dev_ref_clk_freq);
+> There's probably no need to complain if the clock simply couldn't be
+> found, only if an unexpected value was found.
+Agree. Will update.
+>> +               hba->dev_ref_clk_freq = 0;
+>> +       }
+>> +}
+>> +
+>> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
+>> +{
+>> +       int err = 0;
+>> +       int ref_clk = -1;
+>> +       static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
+>> +                                                    "38.4 MHz", "52 MHz"};
+>> +
+>> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+>> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+>> +
+>> +       if (err) {
+>> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+>> +                        __func__, err);
+>> +               goto out;
+>> +       }
+>> +
+>> +       switch (hba->dev_ref_clk_freq) {
+>> +       case REF_CLK_FREQ_19_2_MHZ:
+>> +               hba->dev_ref_clk_freq = 0x0;
+>> +               break;
+>> +       case REF_CLK_FREQ_26_MHZ:
+>> +               hba->dev_ref_clk_freq = 0x1;
+>> +               break;
+>> +       case REF_CLK_FREQ_38_4_MHZ:
+>> +               hba->dev_ref_clk_freq = 0x2;
+>> +               break;
+>> +       case REF_CLK_FREQ_52_MHZ:
+>> +               hba->dev_ref_clk_freq = 0x3;
+>> +               break;
+>> +       default:
+>> +               dev_err(hba->dev,
+>> +               "%s: invalid ref_clk setting = %u\n",
+>> +               __func__, hba->dev_ref_clk_freq);
+>> +               goto out;
+>> +       }
+> Please don't assign two different things (frequency in Hertz and
+> bref_clk value) into the same structure member.
+>
+> I think rather than having this switch statement you should iterate
+> through a table that contains elements of {freq_hz, bref_clk, string}.
+> I think you should do this up in ufshcd_parse_dev_ref_clk_freq so that
+> you don't have to redo that calculation on every rescan. Then store
+> the final bRefClkFreq value (or -1 if no definitive answer could be
+> reached) in your new structure member. Then all this function does is
+> 1) Nothing if dev_ref_clk_freq is -1, or 2) read and maybe write the
+> attribute.
+Agree. Will update.
+>> +
+>> +       if (ref_clk == hba->dev_ref_clk_freq)
+>> +               goto out; /* nothing to update */
+>> +
+>> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+>> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
+>> +                       &hba->dev_ref_clk_freq);
+>> +
+>> +       if (err)
+>> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
+>> +                       __func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+>> +       /*
+>> +        * It is good to print this out here to debug any later failures
+>> +        * related to gear switch.
+>> +        */
+>> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
+>> +                       __func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+>> +
+>> +out:
+>> +       return err;
+>> +}
+>> +
+>>   /**
+>>    * ufshcd_probe_hba - probe hba to detect device and initialize
+>>    * @hba: per-adapter instance
+>> @@ -6361,6 +6439,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>>                          "%s: Failed getting max supported power mode\n",
+>>                          __func__);
+>>          } else {
+>> +               /*
+>> +                * Set the right value to bRefClkFreq before attempting to
+>> +                * switch to HS gears.
+>> +                */
+>> +               if (hba->dev_ref_clk_freq)
+>> +                       ufshcd_set_dev_ref_clk(hba);
+>>                  ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+>>                  if (ret) {
+>>                          dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+>> index 8110dcd..101a75c 100644
+>> --- a/drivers/scsi/ufs/ufshcd.h
+>> +++ b/drivers/scsi/ufs/ufshcd.h
+>> @@ -548,6 +548,7 @@ struct ufs_hba {
+>>          void *priv;
+>>          unsigned int irq;
+>>          bool is_irq_enabled;
+>> +       u32 dev_ref_clk_freq;
+> If you followed my suggestion of this storing _only_ the bRefClkFreq
+> value or -1 if unset, then this would need to be signed, and
+> initialized somewhere so that 0 wasn't accidentally taken to be a
+> parsed value.
+Will check and update (if necessary).
+>>          /* Interrupt aggregation support is broken */
+>>          #define UFSHCD_QUIRK_BROKEN_INTR_AGGR                   0x1
+>> @@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+>>   int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+>>                                  u32 val, unsigned long interval_us,
+>>                                  unsigned long timeout_ms, bool can_sleep);
+>> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+>>
+>>   static inline void check_upiu_size(void)
+>>   {
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+
