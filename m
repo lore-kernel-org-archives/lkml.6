@@ -2,352 +2,186 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4D0C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD898C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF97321E1D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:52:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF97321E1D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B47921BC9
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:53:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0dtwzQ8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B47921BC9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732055AbeHIPRh (ORCPT
+        id S1732120AbeHIPRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 11:17:37 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16717 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727786AbeHIPRg (ORCPT
+        Thu, 9 Aug 2018 11:17:53 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33687 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeHIPRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 11:17:36 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b6c39110000>; Thu, 09 Aug 2018 05:52:34 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 09 Aug 2018 05:52:43 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 09 Aug 2018 05:52:43 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Aug
- 2018 12:52:44 +0000
-Date:   Thu, 9 Aug 2018 15:52:39 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
+        Thu, 9 Aug 2018 11:17:53 -0400
+Received: by mail-ed1-f65.google.com with SMTP id x5-v6so2842371edr.0;
+        Thu, 09 Aug 2018 05:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=MxH6c6JJKZrd0iG2UqFIBuHn0Ii0F/la4VWA2YMICNU=;
+        b=A0dtwzQ8qpkVEVePPT+RXqY8ZgJ7o6uBwvJXvGkm/DHHFO7IZExDosCb7qB5tI3aZr
+         xuaIEWrssKJA9IpRqWl9jCaQ8kDhP2iQuytwKtjY2lHmMuj78j2fpJgxNSLYmX09uS6k
+         pIu2k7hEiCNNGQMXyo/PntHxCgGi6fyWJkSxqsZSCJZE2qy0NSmXdx+MBq12IC9k9hih
+         2lNfcdzQPap8traVSyjRVr/T2c2iNcbMbItMQw9WsKpd2HXTDAxZ84BOefPRtNEKB5d1
+         FnqqfyTW9OO3G4W1BTE6UtgJbumlESbQBWmT6l0wcyBeV8qJ93mXo7CC+ERGyXF3xg+w
+         8lPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=MxH6c6JJKZrd0iG2UqFIBuHn0Ii0F/la4VWA2YMICNU=;
+        b=n6YiZLU93p2HVkTw6/AC+xEBAUVZYFVJuAP6CyoeDhlQ50sQ/q03376i0snd7rOG4Q
+         7bZXkV+vHBGpnE+8CpVspW+hqvnO4D6CKAcWzaH4VRN5pjTNVrM0NxfPRVnydKlWxna0
+         jCHS4DrcQeAHS0Uc9s7+DTKbO81W3UpifxZIbiDThda+bvKyuhaKE/Lpc48dLVAIJqZU
+         lJOsUYAbrXwBlbKCfa1W0n+M8o85+ZwzZ/vBYzzyNto+kosSa0WA4hyRY+PLdUF6JrS0
+         vjRxB0RmcN01WquyzORNRxDQ/uphqzSPxAWlHFCsMctsu08l3qf0oj0yABenIVcgU8Bf
+         54jw==
+X-Gm-Message-State: AOUpUlH/rMSGeaxYFD/6OSHdcR4OGGzWK92hOcaJ3sj/L48dRLyFo3XZ
+        iMwdAxtj8cIXOG87388+kNQ=
+X-Google-Smtp-Source: AA+uWPxWkETBL7oPEmS6CkHHsCY2h90faCtUtvcSnjLgnqChqkWlfxiodBryCpqpkoaA+0BEH3I0lQ==
+X-Received: by 2002:a50:97fc:: with SMTP id f57-v6mr3024170edb.21.1533819185276;
+        Thu, 09 Aug 2018 05:53:05 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id a8-v6sm7874890eda.27.2018.08.09.05.53.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 05:53:04 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 12/40] mmc: tegra: Reconfigure pad voltages during
- voltage switching
-Message-ID: <20180809155239.00265efd@dhcp-10-21-25-168>
-In-Reply-To: <20180809124346.GU21639@ulmo>
-References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
-        <1533141150-10511-13-git-send-email-avienamo@nvidia.com>
-        <20180809124346.GU21639@ulmo>
-X-NVConfidentiality: public
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>, Kyle Evans <kvans32@gmail.com>,
+        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] gpu: host1x: Ignore clients initialization failure
+Date:   Thu, 09 Aug 2018 15:53:03 +0300
+Message-ID: <1672653.y032a1rHIh@dimapc>
+In-Reply-To: <20180809104541.GC21639@ulmo>
+References: <20180801150807.15926-1-digetx@gmail.com> <4457259.6qKMIOUXSS@dimapc> <20180809104541.GC21639@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 Aug 2018 14:43:46 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
-
-> On Wed, Aug 01, 2018 at 07:32:02PM +0300, Aapo Vienamo wrote:
-> > Parse the pinctrl state and nvidia,only-1-8-v properties from the device
-> > tree. Validate the pinctrl and regulator configuration before unmasking
-> > UHS modes. Implement pad voltage state reconfiguration in the mmc
-> > start_signal_voltage_switch() callback. Add NVQUIRK_NEEDS_PAD_CONTROL
-> > and add set it for Tegra210 and Tegra186.
+On Thursday, 9 August 2018 13:45:41 MSK Thierry Reding wrote:
+> On Fri, Aug 03, 2018 at 02:30:47PM +0300, Dmitry Osipenko wrote:
+> > On Friday, 3 August 2018 13:50:55 MSK Thierry Reding wrote:
+> > > On Wed, Aug 01, 2018 at 06:08:07PM +0300, Dmitry Osipenko wrote:
+> > > > From time to time new bugs are popping up, causing some host1x client
+> > > > to
+> > > > fail its initialization. Currently a single clients initialization
+> > > > failure
+> > > > causes whole host1x device registration to fail, as a result a single
+> > > > DRM
+> > > > sub-device initialization failure makes whole DRM initialization to
+> > > > fail.
+> > > > Let's ignore clients initialization failure, as a result display panel
+> > > > lights up even if some DRM clients (say GR2D or VIC) fail to
+> > > > initialize.
+> > > > 
+> > > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > > ---
+> > > > 
+> > > >  drivers/gpu/host1x/bus.c | 18 +++++++-----------
+> > > >  1 file changed, 7 insertions(+), 11 deletions(-)
+> > > 
+> > > This is actually done on purpose. I can't think of a case where we would
+> > > actively like to keep a half-broken DRM device operational. The errors
+> > > that you're talking about should only happen during development,
 > > 
-> > The pad configuration is done in the mmc callback because the order of
-> > pad reconfiguration and sdhci voltage switch depend on the voltage to
-> > which the transition occurs.
+> > [only in a perfect world]
+> 
+> gr2d and VIC are fairly deterministic. What are the errors you are
+> seeing that cause initialization failure?
+
+Right now there are no specific errors. There is only a known trouble with the 
+ARM_DMA_USE_IOMMU, but that causes to fail all of the clients.
+
+> Note that it is possible for
+> these devices to malfunction even if initialization succeeds. A failure
+> to initialize can only happen if there's something wrong in the device
+> tree, firmware is missing (in case of VIC) or a regression was
+> introduced in some subsystem that causes a failure (maybe deferred probe
+> or something similar).
+
+A missing firmware is an actual good example. Though can't VIC driver be 
+changed to load firmware at the time of a its first use by userspace? It 
+should be very annoying that kernel driver forces you to churn with initramfs.
+
+> > > and the
+> > > device not showing up is a pretty good indicator that something is wrong
+> > > as opposed to everything booting normally and then getting some cryptic
+> > > error at runtime because one of the clients didn't initialize.
 > > 
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > ---
-> >  drivers/mmc/host/sdhci-tegra.c | 138 ++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 131 insertions(+), 7 deletions(-)
+> > If machine doesn't have a serial port and it doesn't have ssh server
+> > running or network doesn't come up, you'll end up with a completely
+> > dysfunctional piece of hardware. Hence there is no chance for you to even
+> > check what is wrong. The argument about a cryptic error doesn't make much
+> > sense, you have to improve your runtime as well (and you'll get a error
+> > message in the kernels log).
+> 
+> You make a good point here. I'm not aware of any devices we support in
+> the kernel that don't have a serial console, but that doesn't mean the
+> kernel could be used on an "unsupported" device  that doesn't have one.
+
+AFAIK, enabling serial on AC100 require soldering iron.
+
+> > > From my perspective, all clients should always be operational in
+> > > whatever baseline version you use. If it isn't that's a bug that should
+> > > be fixed. Ideally those bugs should get fixed before making it into a
+> > > baseline version (mainline, linux-next, ...), so that this never impacts
+> > > even developers, unless they break it themselves, in which case refusing
+> > > to register the DRM device is a pretty good incentive to fix it.
 > > 
-> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> > index ddf00166..7d98455 100644
-> > --- a/drivers/mmc/host/sdhci-tegra.c
-> > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > @@ -21,6 +21,8 @@
-> >  #include <linux/io.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/pinctrl/consumer.h>
-> > +#include <linux/regulator/consumer.h>
-> >  #include <linux/reset.h>
-> >  #include <linux/mmc/card.h>
-> >  #include <linux/mmc/host.h>
-> > @@ -55,6 +57,7 @@
-> >  #define NVQUIRK_ENABLE_SDR104		BIT(4)
-> >  #define NVQUIRK_ENABLE_DDR50		BIT(5)
-> >  #define NVQUIRK_HAS_PADCALIB		BIT(6)
-> > +#define NVQUIRK_NEEDS_PAD_CONTROL	BIT(7)
-> >  
-> >  struct sdhci_tegra_soc_data {
-> >  	const struct sdhci_pltfm_data *pdata;
-> > @@ -66,8 +69,12 @@ struct sdhci_tegra {
-> >  	struct gpio_desc *power_gpio;
-> >  	bool ddr_signaling;
-> >  	bool pad_calib_required;
-> > +	bool pad_control_available;
-> >  
-> >  	struct reset_control *rst;
-> > +	struct pinctrl *pinctrl_sdmmc;
-> > +	struct pinctrl_state *pinctrl_state_3v3;
-> > +	struct pinctrl_state *pinctrl_state_1v8;
-> >  };
-> >  
-> >  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> > @@ -138,12 +145,46 @@ static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
-> >  	return mmc_gpio_get_ro(host->mmc);
-> >  }
-> >  
-> > +static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
-> > +{
-> > +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> > +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> > +	int has_1v8, has_3v3;  
+> > Sounds like you're assuming that only kernel developers are supposed to
+> > use
+> > Tegra, though at least (for now) for upstream it is kinda true. Of course
+> > that could be changed ;-)
 > 
-> Can these be boolean?
+> That's not at all what I'm saying. What I am saying is that we should
+> make it difficult for developers to break the kernel in a way that would
+> put users into a position that is difficult to get themselves out of. If
+> we refuse to register the complete DRM device in case some subdevice
+> fails to initialize we increase the chances of developers noticing and
+> fixing it.
+> 
+> If all we do on failure is output an error message, it's very likely to
+> go unnoticed. Developers are likely to check specifically the
+> functionality that they're working on and ignore failures that they may
+> have caused in other parts of the code as a side-effect of their current
+> work.
 
-In some cases regulator_is_supported_voltage() can return a negative
-error code. 
+I can try to help with improving of your automated testing suite, if you'll 
+make it accessible to the public.
 
-> > +
-> > +	/*
-> > +	 * The SoCs which have NVQUIRK_NEEDS_PAD_CONTROL require software pad
-> > +	 * voltage configuration in order to perform voltage switching. This
-> > +	 * means that valid pinctrl info is required on SDHCI instances capable
-> > +	 * of performing voltage switching. Whether or not an SDHCI instance is
-> > +	 * capable of voltage switching is determined based on the regulator.
-> > +	 */
-> > +
-> > +	if (!(tegra_host->soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL))
-> > +		return true;
-> > +
-> > +	if (IS_ERR(host->mmc->supply.vqmmc))
-> > +		return false;
-> > +
-> > +	has_1v8 = regulator_is_supported_voltage(host->mmc->supply.vqmmc,
-> > +						 1700000, 1950000);
-> > +
-> > +	has_3v3 = regulator_is_supported_voltage(host->mmc->supply.vqmmc,
-> > +						 2700000, 3600000);
-> > +
-> > +	if (has_1v8 == 1 && has_3v3 == 1)
-> > +		return tegra_host->pad_control_available;
-> > +
-> > +	/* Fixed voltage, no pad control required. */
-> > +	return true;
-> > +}
-> > +
-> >  static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
-> >  {
-> >  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >  	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> >  	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> >  	u32 misc_ctrl, clk_ctrl;
-> > +	bool pad_and_regulators_valid;  
-> 
-> This seems to be used only once. Why not simply use the function call in
-> the if condition directly?
-> 
-> >  
-> >  	sdhci_reset(host, mask);
-> >  
-> > @@ -160,13 +201,8 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
-> >  
-> >  	clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
-> >  
-> > -	/*
-> > -	 * If the board does not define a regulator for the SDHCI
-> > -	 * IO voltage, then don't advertise support for UHS modes
-> > -	 * even if the device supports it because the IO voltage
-> > -	 * cannot be configured.
-> > -	 */
-> > -	if (!IS_ERR(host->mmc->supply.vqmmc)) {
-> > +	pad_and_regulators_valid = tegra_sdhci_is_pad_and_regulator_valid(host);
-> > +	if (pad_and_regulators_valid) {
-> >  		/* Erratum: Enable SDHCI spec v3.00 support */
-> >  		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
-> >  			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
-> > @@ -286,6 +322,84 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
-> >  	return mmc_send_tuning(host->mmc, opcode, NULL);
-> >  }
-> >  
-> > +static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
-> > +{
-> > +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> > +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> > +	int ret;
-> > +
-> > +	if (!tegra_host->pad_control_available)
-> > +		return 0;  
-> 
-> This seems unnecessary. ->pad_control_available is set at the end of
-> tegra_sdhci_init_pinctrl_info() after we have successfully obtained
-> the various pinctrl states. At the same time, we only set up the
-> ->start_signal_voltage_switch() callback when we have pinctrl states  
-> available, so this is in fact a duplicate check, right? If we don't
-> pad control, then the callback will be NULL and we never and up
-> calling tegra_sdhci_set_padctrl().
+> Perhaps a good middle ground would be to turn initialization failures
+> into WARN_ON() to increase the chances of them getting notified and then
+> continue on a best effort basis in the hopes of having enough
+> initialized to get a message to users.
 
-True, this seems to be a remnant of previous itrations of the series.
+Good to me, I'll make v2.
 
-> > +
-> > +	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
-> > +		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-> > +					   tegra_host->pinctrl_state_1v8);
-> > +		if (ret < 0)
-> > +			dev_err(mmc_dev(host->mmc),
-> > +				"setting 1.8V failed, ret: %d\n", ret);
-> > +	} else {
-> > +		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-> > +					   tegra_host->pinctrl_state_3v3);
-> > +		if (ret < 0)
-> > +			dev_err(mmc_dev(host->mmc),
-> > +				"setting 3.3V failed, ret: %d\n", ret);
-> > +	}  
-> 
-> Can we remove the ", ret" from these error messages. The user doesn't
-> understand what ret means in the context of this message. Just a:
-> 
-> 	"... failed: %d\n"
-> 
-> is good enough.
-> 
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
-> > +						   struct mmc_ios *ios)
-> > +{
-> > +	struct sdhci_host *host = mmc_priv(mmc);
-> > +	int ret = 0;
-> > +
-> > +	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
-> > +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +		ret = sdhci_start_signal_voltage_switch(mmc, ios);
-> > +	} else if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-> > +		ret = sdhci_start_signal_voltage_switch(mmc, ios);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int tegra_sdhci_init_pinctrl_info(struct device *dev,
-> > +					 struct sdhci_tegra *tegra_host)
-> > +{
-> > +	tegra_host->pinctrl_sdmmc = devm_pinctrl_get(dev);
-> > +	if (IS_ERR(tegra_host->pinctrl_sdmmc)) {
-> > +		dev_dbg(dev, "No pinctrl info, err: %ld\n",
-> > +			PTR_ERR(tegra_host->pinctrl_sdmmc));
-> > +		return -1;
-> > +	}
-> > +
-> > +	tegra_host->pinctrl_state_3v3 =
-> > +		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
-> > +	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
-> > +		dev_warn(dev, "Missing 3.3V pad state, err: %ld\n",
-> > +			 PTR_ERR(tegra_host->pinctrl_state_3v3));
-> > +		return -1;
-> > +	}
-> > +
-> > +	tegra_host->pinctrl_state_1v8 =
-> > +		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
-> > +	if (IS_ERR(tegra_host->pinctrl_state_1v8)) {
-> > +		dev_warn(dev, "Missing 1.8V pad state, err: %ld\n",
-> > +			 PTR_ERR(tegra_host->pinctrl_state_3v3));
-> > +		return -1;
-> > +	}  
-> 
-> Why not propagate the error message? I know we really only care about
-> success vs. failure in the caller, but it will be confusing to anyone
-> that may eventually end up looking at the error code to see -EPERM.
+> Another alternative would be to
+> mark essential subdevices (such as the display controller) so that only
+> they will cause failure to register the whole DRM device.
 
-Fair point.
+I don't think that making some subdevice more valuable than the others is a 
+feasible approach, how you are going to differentiate what of the two display 
+controllers is more important than the other.
 
-> If we really don't care about the return error, why not just make the
-> function return a boolean (false for failure, true for success)?
-> 
-> Also, same as earlier, can we remove ", err" from the messages? That's
-> code specific context and doesn't belong in an error message.
-> 
-> > +
-> > +	tegra_host->pad_control_available = true;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
-> >  {
-> >  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> > @@ -419,6 +533,7 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
-> >  
-> >  static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
-> >  	.pdata = &sdhci_tegra210_pdata,
-> > +	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL,
-> >  };
-> >  
-> >  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> > @@ -442,6 +557,7 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> >  
-> >  static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
-> >  	.pdata = &sdhci_tegra186_pdata,
-> > +	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL,
-> >  };
-> >  
-> >  static const struct of_device_id sdhci_tegra_dt_match[] = {
-> > @@ -478,8 +594,16 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
-> >  	tegra_host = sdhci_pltfm_priv(pltfm_host);
-> >  	tegra_host->ddr_signaling = false;
-> >  	tegra_host->pad_calib_required = false;
-> > +	tegra_host->pad_control_available = false;
-> >  	tegra_host->soc_data = soc_data;
-> >  
-> > +	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {  
-> 
-> Nit: I think all of these quirks could eventually just move into boolean
-> flags to make tests like this easier to read. Nothing to worry about for
-> now, though.
-> 
-> Thierry
-> 
-> > +		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
-> > +		if (rc == 0)
-> > +			host->mmc_host_ops.start_signal_voltage_switch =
-> > +				sdhci_tegra_start_signal_voltage_switch;
-> > +	}
-> > +
-> >  	rc = mmc_of_parse(host->mmc);
-> >  	if (rc)
-> >  		goto err_parse_dt;
-> > -- 
-> > 2.7.4
-> >   
+
 
