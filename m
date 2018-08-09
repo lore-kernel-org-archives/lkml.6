@@ -2,105 +2,97 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927D8C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A86EC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F80223A1
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBA69223A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tmbY3HyU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F80223A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jaRHfAuS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA69223A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeHJB4t (ORCPT
+        id S1727654AbeHJB6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:56:49 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34385 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727425AbeHJB4t (ORCPT
+        Thu, 9 Aug 2018 21:58:07 -0400
+Received: from mail-pf1-f173.google.com ([209.85.210.173]:43327 "EHLO
+        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727425AbeHJB6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:56:49 -0400
-Received: by mail-qt0-f196.google.com with SMTP id m13-v6so8536450qth.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:29:41 -0700 (PDT)
+        Thu, 9 Aug 2018 21:58:07 -0400
+Received: by mail-pf1-f173.google.com with SMTP id j26-v6so3566495pfi.10
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NVG1NaQ0l2l/gM+JknJiJuT9vpehtbMs4ssX+amsrr8=;
-        b=tmbY3HyUfBT6XVGmmrogj35ixqurvq7C9/exTkMkqJCXNPXr+LdqFFjOve87MVLgyY
-         bkK35ynyBh5iK6H2woWlTSdCNochqVHu2kXvsumG34cEio1EX+QAjbFdR70xyPvcj9vM
-         SnCn4POKU7ViPRX3CIt24dg/BcdVVWKaf6RaIig4yyATOxFZU3/U76lGlSW4LxjRKwq3
-         HOG4KXzyAli486iTltLAKLHXzcRnWARqg3KaKciQhHlDBcvNh3K8+k+XzYypwtxaDFGn
-         mZSaca9cWsBOmIW9tM/elcYafP1kgI1hMN3OR7xxqmubFcqyivJzyhsML9JmOv0CM0cW
-         3zyw==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=2tcYp2nOhpAnnXMn3epCXDmtDxSozWvWBFV8l+R4iZU=;
+        b=jaRHfAuStiLoSOWTQ+0B2TDa10XBEyCuktfqvHhGpHyiEn54RDj9dIeov/FgKS1I+e
+         pMA76JD2HMqa0zVn49suYvtsJP7TT+D9hpRZ+QO34SQ9+a3i7mDvHZGUE2ThPDju4N2+
+         KfVhUdxVIrEFbaimS2EcfocBPCJkR6qsAlLGA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NVG1NaQ0l2l/gM+JknJiJuT9vpehtbMs4ssX+amsrr8=;
-        b=uM5OFgOy6NVi/TnayvpZ2tjvNg4mjFo58wmaYaj8H2QbQzkQTi1wdap9y8h+otZWHO
-         BVlf5YUwg775s7UtiId1X9B8ptFZM76v/BMXbL6J5u1rCqbdz58KXZRjoZbiqdUGQobN
-         1/FCjFU4xdaj8Qzmp6ekSWjOJyw/BGJ5DVDw1yeFWhrD7wMvNH6N8BjquW7XH3yGgiKP
-         JaUmRz9I/Sk5DZMvAGKcMXo2KXipWovOimduAhhHt2Ol+p0xA7YNpyPOKSLaqMpU5iEo
-         4udz+CccX0b6XDyBw6wTqCtMvHsCF9f7fHNLjoR1DdwNXTJ6pqAjks3Z0f3Fu2te86rD
-         dysQ==
-X-Gm-Message-State: AOUpUlFfA0bWuikRQrpSIiodOAdVVRqjMTdYn4Ej6C72cFomaGCHsf+u
-        l0WLZZr6dJEfKDMRtm+HWLTJxuzH
-X-Google-Smtp-Source: AA+uWPxbwvUPWUa4mCpNQqZipkTFtG8Dr5fPIdjCdNqUWbznAeSSa5inqih1bSavNV2meVFv3FwpBw==
-X-Received: by 2002:a0c:ab43:: with SMTP id i3-v6mr3801443qvb.87.1533857381527;
-        Thu, 09 Aug 2018 16:29:41 -0700 (PDT)
-Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id r27-v6sm5938001qkr.17.2018.08.09.16.29.38
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=2tcYp2nOhpAnnXMn3epCXDmtDxSozWvWBFV8l+R4iZU=;
+        b=CfLsjo6HKB4h3rGLx5rCTpXvE70CML/8Ik1LDCijw9k7dwEpgaTP6KcdsKOtJWX5HV
+         F6C94ZQ1cq0Jdv0rxBgmjR6xHEJ10X5AXzkgIkgryhgl2Hcy2fpkh3QAqgwFXJMqGHz6
+         MevKIovqYvOmbvMvRANi0Z/A/vbINt+eN+ILKixZaf8Qz9Rmoumt1CI/5HC9zWQGBQPD
+         uWqp+uMihTzEC99lIeoC8GfQ+EjUgfaNtL/nFuCVKJH//aOR6C1YxrT+t5vRyORS1Pjp
+         F0OZ8JKG5kpv2dhWWXyJmjN0784gI5W1pAi2Ir1I68FHLIHMv5ICPTcBvFb9swwE6TSK
+         Ppdw==
+X-Gm-Message-State: AOUpUlEsKF4u5i6Srxhq5ug25yEwSVSbfMraZLiKAmbaGeGvkZqn7cXZ
+        eLawi4sq/Yk4A2Crd7xLEgE6mg==
+X-Google-Smtp-Source: AA+uWPxhBXMhrItQ5Qa2FhgzCILuR5E5OVTE8Q1FT0Hxn51KmROabUqVNoxvVkYTHhY2spu4s33+Mg==
+X-Received: by 2002:a65:5c4b:: with SMTP id v11-v6mr3987505pgr.445.1533857459283;
+        Thu, 09 Aug 2018 16:30:59 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id e82-v6sm13769957pfk.87.2018.08.09.16.30.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 16:29:41 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 20:29:34 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] staging: fbtft: Adds space around "/"
-Message-ID: <fff917319d33d69e1005fa054567303631192cf1.1533857298.git.leobras.c@gmail.com>
-References: <cover.1533857298.git.leobras.c@gmail.com>
+        Thu, 09 Aug 2018 16:30:58 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1533857298.git.leobras.c@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Julius Werner <jwerner@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAODwPW_ZiRMqUehq969UxiyrkNOfaevrE-G03M2z_C+6dNAxyQ@mail.gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Brian Norris <briannorris@chromium.org>, samuel@sholland.org
+References: <20180809171722.144325-1-swboyd@chromium.org>
+ <20180809171722.144325-4-swboyd@chromium.org>
+ <CAODwPW_ZiRMqUehq969UxiyrkNOfaevrE-G03M2z_C+6dNAxyQ@mail.gmail.com>
+Message-ID: <153385745791.37448.8166542614146241338@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 3/7] firmware: coreboot: Make bus registration symmetric
+Date:   Thu, 09 Aug 2018 16:30:57 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel coding style recommends a space char around "/".
+Quoting Julius Werner (2018-08-09 11:10:42)
+> > @@ -138,8 +136,10 @@ int coreboot_table_init(struct device *dev, void _=
+_iomem *ptr)
+> >                 ptr_entry +=3D entry.size;
+> >         }
+> >
+> > -       if (ret)
+> > +       if (ret) {
+> > +               bus_unregister(&coreboot_bus_type);
+> >                 iounmap(ptr);
+> > +       }
+> =
 
-Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
----
- drivers/staging/fbtft/fbtft.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> nit: maybe cleaner to just do if (ret) coreboot_table_exit(); here?
+> You're essentially writing the same code again.
 
-diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
-index 798a8fe98e95..25302ffc4000 100644
---- a/drivers/staging/fbtft/fbtft.h
-+++ b/drivers/staging/fbtft/fbtft.h
-@@ -232,7 +232,7 @@ struct fbtft_par {
- 	bool polarity;
- };
- 
--#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
-+#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__}) / sizeof(int))
- 
- #define write_reg(par, ...)                                            \
- 	((par)->fbtftops.write_register(par, NUMARGS(__VA_ARGS__), __VA_ARGS__))
--- 
-2.18.0
+Ok.
 
