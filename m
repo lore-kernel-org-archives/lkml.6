@@ -2,885 +2,179 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FE5C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102DAC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0531B21C16
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A128D21C16
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:31:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m0Yz4Ze0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0531B21C16
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="s+sbAuZI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A128D21C16
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbeHIMzo (ORCPT
+        id S1730437AbeHIMzn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:55:44 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44534 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbeHIMzF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:55:05 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w79AUNf0056693;
-        Thu, 9 Aug 2018 05:30:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533810623;
-        bh=gVWmpOKSULWsm0n2m7CVnzZ1wJkO3C2k8XTIqSkBQqw=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=m0Yz4Ze0zq3SENtcIt40epy9ztPyhPS2u66+PpAUK1N0O2ibUnmHbmKBOPZoUMAZk
-         0VUtWisN6XYq9ceHkocRgWrpJ/bFV59/XoxDDRBlaDRlIG8jaoLwq7MetxRyJmDvH7
-         yq1aT0R2ohSrIunSHYUysbjn4K/yrNUWANPDxFZ4=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w79AUNB1009431;
-        Thu, 9 Aug 2018 05:30:23 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 9 Aug
- 2018 05:30:23 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 9 Aug 2018 05:30:23 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w79AUKU0020083;
-        Thu, 9 Aug 2018 05:30:20 -0500
-Subject: Re: [PATCH v2 2/4] phy: socionext: add USB3 PHY driver for UniPhier
- SoC
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <1533290045-18969-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1533290045-18969-3-git-send-email-hayashi.kunihiko@socionext.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <312d10ae-7909-bede-ea0a-5d92a497f639@ti.com>
-Date:   Thu, 9 Aug 2018 16:00:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Thu, 9 Aug 2018 08:55:43 -0400
+Received: from mail-co1nam03on0053.outbound.protection.outlook.com ([104.47.40.53]:2496
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730121AbeHIMzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 08:55:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7IoiS58Fdk3pMb9dDbCtv1Xpj07wJU1imdeqa8zOVhw=;
+ b=s+sbAuZIfK5k96f1L9eb3PTmJVRcxXDRPd7WVYk89ct2uaTkkF7YnTZw3lP6L/ER7SnS6aZ9FzA1Wy5sfoEdY849AizES7biiyIQ+oiBkVTQGosMpFAS3lWsGuubCaXGYNetrhVJYQ67XnA4YcAhzo3H8OdBfz/NbXK3LohyJgI=
+Received: from BYAPR07CA0033.namprd07.prod.outlook.com (2603:10b6:a02:bc::46)
+ by BL2PR07MB2289.namprd07.prod.outlook.com (2a01:111:e400:c752::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.23; Thu, 9 Aug
+ 2018 10:31:13 +0000
+Received: from DM3NAM05FT061.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::205) by BYAPR07CA0033.outlook.office365.com
+ (2603:10b6:a02:bc::46) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1038.23 via Frontend
+ Transport; Thu, 9 Aug 2018 10:31:12 +0000
+Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
+ smtp.mailfrom=cadence.com; ti.com; dkim=none (message not signed)
+ header.d=none;ti.com; dmarc=fail action=none header.from=cadence.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ DM3NAM05FT061.mail.protection.outlook.com (10.152.98.179) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.20.1059.4 via Frontend Transport; Thu, 9 Aug 2018 10:31:10 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w79AV6VH029442
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 03:31:09 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Thu, 9 Aug 2018 12:31:08 +0200
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Thu, 9 Aug 2018 12:31:08 +0200
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w79AUsEG025565;
+        Thu, 9 Aug 2018 11:30:54 +0100
+Received: (from stelford@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w79AUs9s025562;
+        Thu, 9 Aug 2018 11:30:54 +0100
+From:   Scott Telford <stelford@cadence.com>
+To:     <dkos@cadence.com>, <adouglas@cadence.com>, <kishon@ti.com>,
+        <jbergsagel@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Scott Telford <stelford@cadence.com>
+Subject: [PATCH v4 1/2] dt-bindings: phy: Document Cadence MHDP DisplayPort PHY bindings
+Date:   Thu, 9 Aug 2018 11:30:29 +0100
+Message-ID: <1533810630-17673-2-git-send-email-stelford@cadence.com>
+X-Mailer: git-send-email 2.2.2
+In-Reply-To: <1533810630-17673-1-git-send-email-stelford@cadence.com>
+References: <1533810630-17673-1-git-send-email-stelford@cadence.com>
 MIME-Version: 1.0
-In-Reply-To: <1533290045-18969-3-git-send-email-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(376002)(396003)(2980300002)(199004)(189003)(36092001)(186003)(36756003)(476003)(316002)(106466001)(6666003)(446003)(26005)(42186006)(2616005)(105596002)(356003)(47776003)(11346002)(107886003)(486006)(48376002)(50226002)(5660300001)(126002)(50466002)(110136005)(8936002)(575784001)(26826003)(86362001)(2906002)(87636003)(426003)(336012)(478600001)(7636002)(305945005)(2201001)(8676002)(16586007)(76176011)(4326008)(51416003)(246002)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR07MB2289;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT061;1:cDT9sYwvc7REEibF3aoNTDHCvHTfVJEUr3w6RdtR+qYZPGoXTYp2dKmtIml5SfF/QM74SdcQTBGqjVAhlkyaf6GhIleQ3yYun/kLixmaby5LmvJZKE5LZwYRs49E+qls
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 98c63010-0f57-4aed-8d64-08d5fde33a54
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060);SRVR:BL2PR07MB2289;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2289;3:7wZKOLza/hlZPMPLUq7syYDND45wO8CnQf35M1fCRAm3uNNP6JH/2DFtkPu2kX8pCedeLV79eN6t7J/gwQLnuZH85NEcMukjHnMAB0FKHznHVYBaaYhH83XzqzTstWCIWFsudYXxdp81b5Yrv93pOWk5Oc2v1KW08cyrKBMZQqDbTMLSymHb8iIgS5nJB2/33rnCjZsyhwHX+kcOnEC45yHeWvTHe+RhJJolRgfjFI6HaSEWwB9M833MU97vhAJuG4BCyU5RzRUoNtaMZrpKfRMsl5jnAvHkD5lDuQD8328tezxg7Hqs+AuLcLYnZ3z4dMw6dCALQh1ijhFhj3CYeiCk3obNvcouMjPDVzj7790=;25:tAR1A8g/fiamLojr0D/y1Lct7BoP1dZYnGbA/9QEAsDiWcF2hW8vfObNb2qTeQ98FHzqr8zxDBumDpd9igl9ubwVJbaB4G+9sRYoAsbzz00Q/pC0kS126rWuNrH7Edkbcm/ei/GoHogGJv+mteAjEmhe7vxxLgUyT5yYwn5GwhWDscAHK4zyJLDzmQDag4iwNy3JO3VtO7T5v5Ab+vKUoGvv8uaBv9YNiaPp/eG9VHH/vnwbHp1veRne0xdmwZOoO8YVz3t77a4wD/C5B4ei6ly+TIlat65WSjsingXb7VRfjgK3QdQihXJTW7kax9rFhU1Ir6fMIP6jZHkgpqGvEQ==
+X-MS-TrafficTypeDiagnostic: BL2PR07MB2289:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2289;31:uGlLFriKwVMQ7zsAzpQpCK88XRXX1kCKORv+qxxo8wGA2ANwmNbzvr5Q3U9LpeSAdqmDgHaJoMe+Z3kQJLdBN1cHGqu3trNCpywPJ6fm7z9+4TJAXmmZW33FkuL2jcjG+iUFw8T/DpgaVqTBR41yvj4aUARSDoGwUQYf1KAFO7vDN1G6xgWB2QvrHLxP+H/M6H6y1a6Gv9tCLbgM7BZWFMo9+qmM+3fz8ti6dM+rCq8=;20:mTxnmS75OAS2bpnQqJNwXlpEa8RnYqD6UPHpsxo+LT2lhOPShyfMMQ/hTs6mh6dnxpVqd+9UwHQsoyM2oeMBJ9LLt2xIydj3KVqXoKsjvsd7DNWifWncfLxdE/t/CTl0fTUg/ceG3BSpsPpT16BgZplCzzcApl3dnHM0xpVGVlV+ZaK/H93vsWiJpbloC+1/9KE8lNeEV8VQGm+R85tRzxy1FbKL1hBNWWYb+5cQztDPjTqz/m6U14qsRXbrp7HkGuT7NRRsnjbMQGiDQTzpbEUhwAzFQezT8gTXBLEj/W6PLmOn5BR4nHoP5O7Yt0Kz8Ck+FWgABehNwRpHKkRWF/wclas/RkMMEPdfeaKmFD0dZbC6H9B84gp2nXewvMyVE/2uGeHuk5IpP8pHVwupM00ehaDQt5hwguertUCN9NMkAq/EVhsB6xQFs+30TQmFr6MZXDPGpGR2y7Bw6rArdFshtOGKhBihh60t4sjlMVj7gEZ6zrw+Ku2obxVnhiQ6
+X-Microsoft-Antispam-PRVS: <BL2PR07MB2289DB92CB1FAB967CBD393ACF250@BL2PR07MB2289.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:BL2PR07MB2289;BCL:0;PCL:0;RULEID:;SRVR:BL2PR07MB2289;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2289;4:uxMOI5GhGYo9TTILmOWLR/3nw0666Q2o+EPknsABaORKcz39XOwA2JkdlVyhTNGz6Z/NQQSQWTQbxgzD4Qip/iFRN3tKi0APQ2CpHhUQBvVjA8wwvBN+ahXsIinjYV9y1vcIVm7P/+VabC4kcwT6OQzCKJQrtoQ5M6ueY2Ikd7zQEPlbQjRumxfvC/Qx6DVNqFnU+YiIoWAQwxHJu5D1OOi7U21QzpoI2a+/O+GXT/TLaHIRisfNqjO25kcqxzT/ki4ACxEaUs57++tcHnJ7kdR+7mGpoGvpmJn1kT9XeCVGPW0QmXNpfLKTbPpXe8XX
+X-Forefront-PRVS: 0759F7A50A
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR07MB2289;23:+U1qAdHheHMz1zeK3JhsH8Rv0vF+QHD8FUbRu3YrC?=
+ =?us-ascii?Q?iyM24oJ063Kdye0pIA0pxCX3fAzFhl7+gHfd5dpC9IMo6jiaa2QEbrDR8iLO?=
+ =?us-ascii?Q?h6QACMPOorJrllA6jZTGHqDyY9uRo/MjCUttMN9cMewgK8eHPmwNWsLZhYpN?=
+ =?us-ascii?Q?NEl6OFOzqdHxWsB1fGidx5Fxdl04PNszRo+/4JPFnDr1wU6pUzoPni7uJHm1?=
+ =?us-ascii?Q?j09R+rf1bRcCfU9nkgXN0AegGgPrpwnG/NgThsVQXuOQmbm46dUAqga8hel9?=
+ =?us-ascii?Q?rozF5KT26548E1azcvdCexNuA84wL9cxXI9n3L4DHCeMOZOvQ+UEacPyZlcM?=
+ =?us-ascii?Q?Ol+Pnoovm+xcZfAhLH9nynoWV39kpF68LcLjK6+73C4cDgLehe7Hz3Jn+dfr?=
+ =?us-ascii?Q?vn/cjKN1G6FUVjBU8M2r8KAUOZoGCCoV3nVLWOB044Smv5Kcz9JzORIliaQf?=
+ =?us-ascii?Q?6kyjqYe04Knn6cvS3/lKNBzEffd9I/yJleBCW5UKO7hdZebESCVGbaqmGd1P?=
+ =?us-ascii?Q?gJFbgTsMyhG7+CA6wT6QvfQSE/gEstxDLN0gehr1WoFV7B/y8fPfARSjukBz?=
+ =?us-ascii?Q?7eWGBShN44e94mlWYQn96g2p501FjzUe6p/Jo9mML6nxvD/tut7LlTBbrthy?=
+ =?us-ascii?Q?AoJq1Lgeftndlyjiy2a/MgIPHioPvQXRr0KTWDmbicIQRpXeqHXQJwIqnJmU?=
+ =?us-ascii?Q?nFjcoEkGGT7S4lIcdGPydaIvKpyBIseHNnILm35NKRnlTUkZZRd0+MZ0cIjF?=
+ =?us-ascii?Q?k3PcPRjjK1mQe/B/CFAlAjaSag3EWayRi/PCyLsV6QqSMV6gMzpwIkXKuqWN?=
+ =?us-ascii?Q?1peKKQclSwbfKjCgc1Y1odNkFnckuyBq9/3SKhBNykS0fHc1zBEkY5Z6LDDi?=
+ =?us-ascii?Q?TVX76Cr9FAwddz+6nLgC0iT0ECozcQ0qsBrx7GLthZkRUwgJV+2+nVPMcgH5?=
+ =?us-ascii?Q?9BUVvIcJJDVinrlU5ZV4Scm3c/9BKsGA0xrk4QFeOiRlOnhqvldhF22I8dJc?=
+ =?us-ascii?Q?ewk+ZUnHr4ItcHIcYaa3Y73C8ld7Vaq3LNCr+lnvzgLqJRZ2slQZjpnNUV1+?=
+ =?us-ascii?Q?lZi9f9CN46CFdS2J9oG2jGcWXUmT2qYF5HiOrlBby4lxFKwx5MBpFKMJgsgl?=
+ =?us-ascii?Q?1X1YzgyyZY=3D?=
+X-Microsoft-Antispam-Message-Info: 4QjBbMKtpPiqDHpyrwEkLNqbjRn1gqPjDmKK2BAJMulVUWgVAJqeh8fpLkPfjzKsUdr7eTJlNm95joREtLG8rP5ebysRSjnrE78j2uAyXZPJhQVfB4jtrefPhmEnkVN0vub3aRmG5tXMkyLbEp4ZpKbE3tAxSGbVZGFyw6g5QWRKhqbrrg9SiK3yxaSf9IFh3WSL5lF/JWc6b9W18S8CJvZAxz6lONrZihEzKNvvqElXVUSO/Mn0dMGX8E406nlQG76pmPmEvdAd0deUDkEmtPVH6ft/pKPCAlqfY+QjWCZ2VdrUIzz8x5xhO7SzErwUCqHiEiBvYPdePYbuf4PMUVZCnxqLIgK0LjQUBoO+ZrAA9qu6gWGsdfI8qe3nW4dnF+mMrthk6xcVOaZTPNaLcw==
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2289;6:ZaqF8MarwPWQLn7EpubsWLL7ZLrtQEu5JJqU98J4EvgcpnHVaIOafUi7rWnTqBRFv404Khzbz76GLZOi5kTMn9dRa/6wDD0Wu1rDqkHJ68RTH53+JCDd27XTtXksnxBqTqDU+ZiU/3q4KXUb3Gb/eAi3X6K+ClEnxbN/kfM0lm9OhRj39nAZdWB4wrJitstOcQkM70L6GFP7UwL+1X6ryOJI0rxNkCqLBh8nTrBrUr0Wy/C44OA0Jmj53oEDn4WJK1ylxl3YL/ymNWdve7b9oycSIJWCwKF7UHonFDOyoYoGidNPCpjF1w+7ElWQTwRwsacm+yzrdPRgCYR+yuwWaY80XBmhw0AIsFFB7c+IALqAhgv+aqJgRpmtmiUONpbfSr19FVhD+vZaZQ3Vkr/2RhzksggQOtepMQMgxVm78QEYTRBF4fbAlIeb701LntaV6SFHB272QwFe99vCa7Zbdg==;5:PYLWAbu/i8izfDNNkXV//6j3ydAe29HcJc0hUSTsvYXyNwvAjZZc3YGSVmCVJxQHdIrcXa9WO6WFaiJpPQG1VeQk8otIYHbIVFErkL8ugnBSb3NTRKaqvuK+cnaQLjyxKSWH5U2MB6ZpnNhnd7dDleIAHAb1rZ3eHdkM4DdgxMQ=;7:RCFdx6MCy+eRtw3A1prgQbrMZw9U6jZFlC/eOYVH68aUPbmlY4enBHOKb/ulHNEVqPYBP9mSPb1l3hGoR3L+QFnKPvl9Ao1L7qyTWCMVSrouG7uHxlqw4fgUVi3MlZIDiA3aHM7iP0Ia/luiVgWeEwzXdqb4BxrnH9Z4vjAFNPNK9KP/84+ZVfCA6lIluLJyhHHbiFZnDIDFXzisQ4o7Zifr7NyvBeYNNeL8wyU4WYQc4yh0/5XnJy1yFZl8W4Uv
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2289;20:0N5eObRfKdYnDvcPWHjfOdXmGBvMFDd9jYuFMRFoJQVCTG9d13l/OxRDJ69ehBiLHOL8L7Vy4B3WGeXQQy6jnD/k8qgTiTYBdbZALaiLs99wumvx0Ez6ZMBPcg2gSdKgtih4O7cpHdTwWSkHluMEp4rvZNMH0PGHdK3rXTk+S7ErSa7yLHVK7v2+Hsp8w1hGkZrws1eG+TYoknpRV6D6T3c08LdZzAaM0NxiFMdqZZyuPp2AT0pR9YHDt+TH/1WC
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2018 10:31:10.5034
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98c63010-0f57-4aed-8d64-08d5fde33a54
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR07MB2289
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Signed-off-by: Scott Telford <stelford@cadence.com>
+---
+ .../devicetree/bindings/phy/phy-cadence-dp.txt     | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
 
-On Friday 03 August 2018 03:24 PM, Kunihiko Hayashi wrote:
-> Add a driver for PHY interface built into USB3 controller
-> implemented in UniPhier SoCs.
-> This driver supports High-Speed PHY and Super-Speed PHY.
-> 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> ---
->  drivers/phy/Kconfig                         |   1 +
->  drivers/phy/Makefile                        |   1 +
->  drivers/phy/socionext/Kconfig               |  12 +
->  drivers/phy/socionext/Makefile              |   6 +
->  drivers/phy/socionext/phy-uniphier-usb3hs.c | 423 ++++++++++++++++++++++++++++
->  drivers/phy/socionext/phy-uniphier-usb3ss.c | 350 +++++++++++++++++++++++
->  6 files changed, 793 insertions(+)
->  create mode 100644 drivers/phy/socionext/Kconfig
->  create mode 100644 drivers/phy/socionext/Makefile
->  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
->  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
-> 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 5c8d452..b752589 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -53,6 +53,7 @@ source "drivers/phy/ralink/Kconfig"
->  source "drivers/phy/renesas/Kconfig"
->  source "drivers/phy/rockchip/Kconfig"
->  source "drivers/phy/samsung/Kconfig"
-> +source "drivers/phy/socionext/Kconfig"
->  source "drivers/phy/st/Kconfig"
->  source "drivers/phy/tegra/Kconfig"
->  source "drivers/phy/ti/Kconfig"
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index 84e3bd9..5539cde 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -21,5 +21,6 @@ obj-y					+= broadcom/	\
->  					   qualcomm/	\
->  					   ralink/	\
->  					   samsung/	\
-> +					   socionext/	\
->  					   st/		\
->  					   ti/
-> diff --git a/drivers/phy/socionext/Kconfig b/drivers/phy/socionext/Kconfig
-> new file mode 100644
-> index 0000000..4a172fc
-> --- /dev/null
-> +++ b/drivers/phy/socionext/Kconfig
-> @@ -0,0 +1,12 @@
-> +#
-> +# PHY drivers for Socionext platforms.
-> +#
-> +
-> +config PHY_UNIPHIER_USB3
-> +	tristate "UniPhier USB3 PHY driver"
-> +	depends on ARCH_UNIPHIER || COMPILE_TEST
-> +	depends on OF && HAS_IOMEM
-> +	select GENERIC_PHY
-> +	help
-> +	  Enable this to support USB PHY implemented in USB3 controller
-> +	  on UniPhier SoCs. This controller supports USB3.0 and lower speed.
-> diff --git a/drivers/phy/socionext/Makefile b/drivers/phy/socionext/Makefile
-> new file mode 100644
-> index 0000000..e230fa31
-> --- /dev/null
-> +++ b/drivers/phy/socionext/Makefile
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Makefile for the phy drivers.
-> +#
-> +
-> +obj-$(CONFIG_PHY_UNIPHIER_USB3)	+= phy-uniphier-usb3hs.o phy-uniphier-usb3ss.o
-> diff --git a/drivers/phy/socionext/phy-uniphier-usb3hs.c b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-> new file mode 100644
-> index 0000000..d5f5d895
-> --- /dev/null
-> +++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-> @@ -0,0 +1,423 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
-> +// Copyright 2015-2018 Socionext Inc.
-> +// Author:
-> +//      Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> +// Contributors:
-> +//      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> +//      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> +
+diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+new file mode 100644
+index 0000000..7f49fd54e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+@@ -0,0 +1,30 @@
++Cadence MHDP DisplayPort SD0801 PHY binding
++===========================================
++
++This binding describes the Cadence SD0801 PHY hardware included with
++the Cadence MHDP DisplayPort controller.
++
++-------------------------------------------------------------------------------
++Required properties (controller (parent) node):
++- compatible	: Should be "cdns,dp-phy"
++- reg		: Defines the following sets of registers in the parent
++		  mhdp device:
++			- Offset of the DPTX PHY configuration registers
++			- Offset of the SD0801 PHY configuration registers
++- #phy-cells	: from the generic PHY bindings, must be 0.
++
++Optional properties:
++- num_lanes	: Number of DisplayPort lanes to use (1, 2 or 4)
++- max_bit_rate	: Maximum DisplayPort link bit rate to use, in Mbps (2160,
++		  2430, 2700, 3240, 4320, 5400 or 8100)
++-------------------------------------------------------------------------------
++
++Example:
++	dp_phy: phy@f0fb030a00 {
++		compatible = "cdns,dp-phy";
++		reg = <0xf0 0xfb030a00 0x0 0x00000040>,
++		      <0xf0 0xfb500000 0x0 0x00100000>;
++		num_lanes = <4>;
++		max_bit_rate = <8100>;
++		#phy-cells = <0>;
++	};
+-- 
+2.2.2
 
-I'm not sure if there is a standard format for adding SPDX identifiers. But
-other PHY drivers seems to have used single line comment style only for the
-first line. (see drivers/phy/amlogic/phy-meson-gxl-usb3.c)
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/nvmem-consumer.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +#define HSPHY_CFG0		0x0
-> +#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
-> +#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
-> +#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
-> +#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
-> +#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
-> +#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
-> +				 | HSPHY_CFG0_SEL_T_MASK \
-> +				 | HSPHY_CFG0_RTERM_MASK)
-> +
-> +#define HSPHY_CFG1		0x4
-> +#define HSPHY_CFG1_DAT_EN	BIT(29)
-> +#define HSPHY_CFG1_ADR_EN	BIT(28)
-> +#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
-> +#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
-> +
-> +#define PHY_F(regno, msb, lsb) { (regno), (msb), (lsb) }
-> +
-> +#define LS_SLEW		PHY_F(10, 6, 6)	/* LS mode slew rate */
-> +#define FS_LS_DRV	PHY_F(10, 5, 5)	/* FS/LS slew rate */
-> +
-> +#define MAX_PHY_PARAMS	2
-> +
-> +struct uniphier_u3hsphy_param {
-> +	struct {
-> +		int reg_no;
-> +		int msb;
-> +		int lsb;
-> +	} field;
-> +	u8 value;
-> +};
-> +
-> +struct uniphier_u3hsphy_trim_param {
-> +	unsigned int rterm;
-> +	unsigned int sel_t;
-> +	unsigned int hs_i;
-> +};
-> +
-> +#define trim_param_is_valid(p)	((p)->rterm || (p)->sel_t || (p)->hs_i)
-> +
-> +struct uniphier_u3hsphy_priv {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct clk *clk, *clk_parent, *clk_ext;
-> +	struct reset_control *rst, *rst_parent;
-> +	struct regulator *vbus;
-> +	const struct uniphier_u3hsphy_soc_data *data;
-> +};
-> +
-> +struct uniphier_u3hsphy_soc_data {
-> +	int nparams;
-> +	const struct uniphier_u3hsphy_param param[MAX_PHY_PARAMS];
-> +	u32 config0;
-> +	u32 config1;
-> +	void (*trim_func)(struct uniphier_u3hsphy_priv *priv, u32 *pconfig,
-> +			  struct uniphier_u3hsphy_trim_param *pt);
-> +};
-> +
-> +static void uniphier_u3hsphy_trim_ld20(struct uniphier_u3hsphy_priv *priv,
-> +				       u32 *pconfig,
-> +				       struct uniphier_u3hsphy_trim_param *pt)
-> +{
-> +	*pconfig &= ~HSPHY_CFG0_RTERM_MASK;
-> +	*pconfig |= FIELD_PREP(HSPHY_CFG0_RTERM_MASK, pt->rterm);
-> +
-> +	*pconfig &= ~HSPHY_CFG0_SEL_T_MASK;
-> +	*pconfig |= FIELD_PREP(HSPHY_CFG0_SEL_T_MASK, pt->sel_t);
-> +
-> +	*pconfig &= ~HSPHY_CFG0_HS_I_MASK;
-> +	*pconfig |= FIELD_PREP(HSPHY_CFG0_HS_I_MASK,  pt->hs_i);
-> +}
-> +
-> +static int uniphier_u3hsphy_get_nvparam(struct uniphier_u3hsphy_priv *priv,
-> +					const char *name, unsigned int *val)
-> +{
-> +	struct nvmem_cell *cell;
-> +	u8 *buf;
-> +
-> +	cell = devm_nvmem_cell_get(priv->dev, name);
-> +	if (IS_ERR(cell))
-> +		return PTR_ERR(cell);
-> +
-> +	buf = nvmem_cell_read(cell, NULL);
-> +	if (IS_ERR(buf))
-> +		return PTR_ERR(buf);
-> +
-> +	*val = *buf;
-> +
-> +	kfree(buf);
-> +
-> +	return 0;
-> +}
-> +
-> +static int uniphier_u3hsphy_get_nvparams(struct uniphier_u3hsphy_priv *priv,
-> +					 struct uniphier_u3hsphy_trim_param *pt)
-> +{
-> +	int ret;
-> +
-> +	ret = uniphier_u3hsphy_get_nvparam(priv, "rterm", &pt->rterm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = uniphier_u3hsphy_get_nvparam(priv, "sel_t", &pt->sel_t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = uniphier_u3hsphy_get_nvparam(priv, "hs_i", &pt->hs_i);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int uniphier_u3hsphy_update_config(struct uniphier_u3hsphy_priv *priv,
-> +					  u32 *pconfig)
-> +{
-> +	struct uniphier_u3hsphy_trim_param trim;
-> +	int ret, trimmed = 0;
-> +
-> +	if (priv->data->trim_func) {
-> +		ret = uniphier_u3hsphy_get_nvparams(priv, &trim);
-> +		if (ret == -EPROBE_DEFER)
-> +			return ret;
-> +
-> +		/*
-> +		 * call trim_func only when trimming parameters that aren't
-> +		 * all-zero can be acquired. All-zero parameters mean nothing
-> +		 * has been written to nvmem.
-> +		 */
-> +		if (!ret && trim_param_is_valid(&trim)) {
-> +			priv->data->trim_func(priv, pconfig, &trim);
-> +			trimmed = 1;
-> +		} else {
-> +			dev_dbg(priv->dev, "can't get parameter from nvmem\n");
-> +		}
-> +	}
-> +
-> +	/* use default parameters without trimming values */
-> +	if (!trimmed) {
-> +		*pconfig &= ~HSPHY_CFG0_HSDISC_MASK;
-> +		*pconfig |= FIELD_PREP(HSPHY_CFG0_HSDISC_MASK, 3);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void uniphier_u3hsphy_set_param(struct uniphier_u3hsphy_priv *priv,
-> +				       const struct uniphier_u3hsphy_param *p)
-> +{
-> +	u32 val;
-> +	u32 field_mask = GENMASK(p->field.msb, p->field.lsb);
-> +	u8 data;
-> +
-> +	val = readl(priv->base + HSPHY_CFG1);
-> +	val &= ~HSPHY_CFG1_ADR_MASK;
-> +	val |= FIELD_PREP(HSPHY_CFG1_ADR_MASK, p->field.reg_no)
-> +		| HSPHY_CFG1_ADR_EN;
-> +	writel(val, priv->base + HSPHY_CFG1);
-> +
-> +	val = readl(priv->base + HSPHY_CFG1);
-> +	val &= ~HSPHY_CFG1_ADR_EN;
-> +	writel(val, priv->base + HSPHY_CFG1);
-> +
-> +	val = readl(priv->base + HSPHY_CFG1);
-> +	val &= ~FIELD_PREP(HSPHY_CFG1_DAT_MASK, field_mask);
-> +	data = field_mask & (p->value << p->field.lsb);
-> +	val |=  FIELD_PREP(HSPHY_CFG1_DAT_MASK, data) | HSPHY_CFG1_DAT_EN;
-> +	writel(val, priv->base + HSPHY_CFG1);
-> +
-> +	val = readl(priv->base + HSPHY_CFG1);
-> +	val &= ~HSPHY_CFG1_DAT_EN;
-> +	writel(val, priv->base + HSPHY_CFG1);
-> +}
-> +
-> +static int uniphier_u3hsphy_power_on(struct phy *phy)
-> +{
-> +	struct uniphier_u3hsphy_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk_ext);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk);
-> +	if (ret)
-> +		goto out_clk_ext_disable;
-> +
-> +	ret = reset_control_deassert(priv->rst);
-> +	if (ret)
-> +		goto out_clk_disable;
-> +
-> +	if (priv->vbus) {
-> +		ret = regulator_enable(priv->vbus);
-> +		if (ret)
-> +			goto out_rst_assert;
-> +	}
-> +
-> +	return 0;
-> +
-> +out_rst_assert:
-> +	reset_control_assert(priv->rst);
-> +out_clk_disable:
-> +	clk_disable_unprepare(priv->clk);
-> +out_clk_ext_disable:
-> +	clk_disable_unprepare(priv->clk_ext);
-> +
-> +	return ret;
-> +}
-> +
-> +static int uniphier_u3hsphy_power_off(struct phy *phy)
-> +{
-> +	struct uniphier_u3hsphy_priv *priv = phy_get_drvdata(phy);
-> +
-> +	if (priv->vbus)
-> +		regulator_disable(priv->vbus);
-> +
-> +	reset_control_assert(priv->rst);
-> +	clk_disable_unprepare(priv->clk);
-> +	clk_disable_unprepare(priv->clk_ext);
-> +
-> +	return 0;
-> +}
-> +
-> +static int uniphier_u3hsphy_init(struct phy *phy)
-> +{
-> +	struct uniphier_u3hsphy_priv *priv = phy_get_drvdata(phy);
-> +	u32 config0, config1;
-> +	int i, ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk_parent);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = reset_control_deassert(priv->rst_parent);
-> +	if (ret)
-> +		goto out_clk_disable;
-> +
-> +	if (!priv->data->config0 && !priv->data->config1)
-> +		return 0;
-> +
-> +	config0 = priv->data->config0;
-> +	config1 = priv->data->config1;
-> +
-> +	ret = uniphier_u3hsphy_update_config(priv, &config0);
-> +	if (ret)
-> +		goto out_rst_assert;
-> +
-> +	writel(config0, priv->base + HSPHY_CFG0);
-> +	writel(config1, priv->base + HSPHY_CFG1);
-> +
-> +	for (i = 0; i < priv->data->nparams; i++)
-> +		uniphier_u3hsphy_set_param(priv, &priv->data->param[i]);
-> +
-> +	return 0;
-> +
-> +out_rst_assert:
-> +	reset_control_assert(priv->rst_parent);
-> +out_clk_disable:
-> +	clk_disable_unprepare(priv->clk_parent);
-> +
-> +	return ret;
-> +}
-> +
-> +static int uniphier_u3hsphy_exit(struct phy *phy)
-> +{
-> +	struct uniphier_u3hsphy_priv *priv = phy_get_drvdata(phy);
-> +
-> +	reset_control_assert(priv->rst_parent);
-> +	clk_disable_unprepare(priv->clk_parent);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops uniphier_u3hsphy_ops = {
-> +	.init           = uniphier_u3hsphy_init,
-> +	.exit           = uniphier_u3hsphy_exit,
-> +	.power_on       = uniphier_u3hsphy_power_on,
-> +	.power_off      = uniphier_u3hsphy_power_off,
-> +	.owner          = THIS_MODULE,
-> +};
-> +
-> +static int uniphier_u3hsphy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct uniphier_u3hsphy_priv *priv;
-> +	struct phy_provider *phy_provider;
-> +	struct resource *res;
-> +	struct phy *phy;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev = dev;
-> +	priv->data = of_device_get_match_data(dev);
-> +	if (WARN_ON(!priv->data ||
-> +		    priv->data->nparams > MAX_PHY_PARAMS))
-> +		return -EINVAL;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	priv->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->clk = devm_clk_get(dev, "phy");
-> +	if (IS_ERR(priv->clk))
-> +		return PTR_ERR(priv->clk);
-> +
-> +	priv->clk_parent = devm_clk_get(dev, "link");
-> +	if (IS_ERR(priv->clk_parent))
-> +		return PTR_ERR(priv->clk_parent);
-> +
-> +	priv->clk_ext = devm_clk_get(dev, "phy-ext");
-> +	if (IS_ERR(priv->clk_ext)) {
-> +		if (PTR_ERR(priv->clk_ext) == -ENOENT)
-> +			priv->clk_ext = NULL;
-> +		else
-> +			return PTR_ERR(priv->clk_ext);
-> +	}
-> +
-> +	priv->rst = devm_reset_control_get_shared(dev, "phy");
-> +	if (IS_ERR(priv->rst))
-> +		return PTR_ERR(priv->rst);
-> +
-> +	priv->rst_parent = devm_reset_control_get_shared(dev, "link");
-> +	if (IS_ERR(priv->rst_parent))
-> +		return PTR_ERR(priv->rst_parent);
-> +
-> +	priv->vbus = devm_regulator_get_optional(dev, "vbus");
-> +	if (IS_ERR(priv->vbus)) {
-> +		if (PTR_ERR(priv->vbus) == -EPROBE_DEFER)
-> +			return PTR_ERR(priv->vbus);
-> +		priv->vbus = NULL;
-> +	}
-> +
-> +	phy = devm_phy_create(dev, dev->of_node, &uniphier_u3hsphy_ops);
-> +	if (IS_ERR(phy))
-> +		return PTR_ERR(phy);
-> +
-> +	phy_set_drvdata(phy, priv);
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +	if (IS_ERR(phy_provider))
-> +		return PTR_ERR(phy_provider);
-
-return PTR_ERR_OR_ZERO()?
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct uniphier_u3hsphy_soc_data uniphier_pxs2_data = {
-> +	.nparams = 0,
-> +};
-> +
-> +static const struct uniphier_u3hsphy_soc_data uniphier_ld20_data = {
-> +	.nparams = 2,
-> +	.param = {
-> +		{ LS_SLEW, 1 },
-> +		{ FS_LS_DRV, 1 },
-> +	},
-> +	.trim_func = uniphier_u3hsphy_trim_ld20,
-> +	.config0 = 0x92316680,
-> +	.config1 = 0x00000106,
-> +};
-> +
-> +static const struct uniphier_u3hsphy_soc_data uniphier_pxs3_data = {
-> +	.nparams = 0,
-> +	.trim_func = uniphier_u3hsphy_trim_ld20,
-> +	.config0 = 0x92316680,
-> +	.config1 = 0x00000106,
-> +};
-> +
-> +static const struct of_device_id uniphier_u3hsphy_match[] = {
-> +	{
-> +		.compatible = "socionext,uniphier-pxs2-usb3-hsphy",
-> +		.data = &uniphier_pxs2_data,
-> +	},
-> +	{
-> +		.compatible = "socionext,uniphier-ld20-usb3-hsphy",
-> +		.data = &uniphier_ld20_data,
-> +	},
-> +	{
-> +		.compatible = "socionext,uniphier-pxs3-usb3-hsphy",
-> +		.data = &uniphier_pxs3_data,
-> +	},
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, uniphier_u3hsphy_match);
-> +
-> +static struct platform_driver uniphier_u3hsphy_driver = {
-> +	.probe = uniphier_u3hsphy_probe,
-> +	.driver	= {
-> +		.name = "uniphier-usb3-hsphy",
-> +		.of_match_table	= uniphier_u3hsphy_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(uniphier_u3hsphy_driver);
-> +
-> +MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-> +MODULE_DESCRIPTION("UniPhier HS-PHY driver for USB3 controller");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/phy/socionext/phy-uniphier-usb3ss.c b/drivers/phy/socionext/phy-uniphier-usb3ss.c
-> new file mode 100644
-> index 0000000..9456653
-> --- /dev/null
-> +++ b/drivers/phy/socionext/phy-uniphier-usb3ss.c
-> @@ -0,0 +1,350 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// phy-uniphier-usb3ss.c - SS-PHY driver for Socionext UniPhier USB3 controller
-> +// Copyright 2015-2018 Socionext Inc.
-> +// Author:
-> +//      Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> +// Contributors:
-> +//      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> +//      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> +
-
-Same here..
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
-> +
-> +#define SSPHY_TESTI		0x0
-> +#define SSPHY_TESTO		0x4
-> +#define TESTI_DAT_MASK		GENMASK(13, 6)
-> +#define TESTI_ADR_MASK		GENMASK(5, 1)
-> +#define TESTI_WR_EN		BIT(0)
-> +
-> +#define PHY_F(regno, msb, lsb) { (regno), (msb), (lsb) }
-> +
-> +#define CDR_CPD_TRIM	PHY_F(7, 3, 0)	/* RxPLL charge pump current */
-> +#define CDR_CPF_TRIM	PHY_F(8, 3, 0)	/* RxPLL charge pump current 2 */
-> +#define TX_PLL_TRIM	PHY_F(9, 3, 0)	/* TxPLL charge pump current */
-> +#define BGAP_TRIM	PHY_F(11, 3, 0)	/* Bandgap voltage */
-> +#define CDR_TRIM	PHY_F(13, 6, 5)	/* Clock Data Recovery setting */
-> +#define VCO_CTRL	PHY_F(26, 7, 4)	/* VCO control */
-> +#define VCOPLL_CTRL	PHY_F(27, 2, 0)	/* TxPLL VCO tuning */
-> +#define VCOPLL_CM	PHY_F(28, 1, 0)	/* TxPLL voltage */
-> +
-> +#define MAX_PHY_PARAMS	7
-> +
-> +struct uniphier_u3ssphy_param {
-> +	struct {
-> +		int reg_no;
-> +		int msb;
-> +		int lsb;
-> +	} field;
-> +	u8 value;
-> +};
-> +
-> +struct uniphier_u3ssphy_priv {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct clk *clk, *clk_ext, *clk_parent, *clk_parent_gio;
-> +	struct reset_control *rst, *rst_parent, *rst_parent_gio;
-> +	struct regulator *vbus;
-> +	const struct uniphier_u3ssphy_soc_data *data;
-> +};
-> +
-> +struct uniphier_u3ssphy_soc_data {
-> +	bool is_legacy;
-> +	int nparams;
-> +	const struct uniphier_u3ssphy_param param[MAX_PHY_PARAMS];
-> +};
-> +
-> +static void uniphier_u3ssphy_testio_write(struct uniphier_u3ssphy_priv *priv,
-> +					  u32 data)
-> +{
-> +	/* need to read TESTO twice after accessing TESTI */
-> +	writel(data, priv->base + SSPHY_TESTI);
-> +	readl(priv->base + SSPHY_TESTI);
-> +	readl(priv->base + SSPHY_TESTI);
-> +}
-> +
-> +static void uniphier_u3ssphy_set_param(struct uniphier_u3ssphy_priv *priv,
-> +				       const struct uniphier_u3ssphy_param *p)
-> +{
-> +	u32 val;
-> +	u8 field_mask = GENMASK(p->field.msb, p->field.lsb);
-> +	u8 data;
-> +
-> +	/* read previous data */
-> +	val  = FIELD_PREP(TESTI_DAT_MASK, 1);
-> +	val |= FIELD_PREP(TESTI_ADR_MASK, p->field.reg_no);
-> +	uniphier_u3ssphy_testio_write(priv, val);
-> +	val = readl(priv->base + SSPHY_TESTO);
-> +
-> +	/* update value */
-> +	val &= ~FIELD_PREP(TESTI_DAT_MASK, field_mask);
-> +	data = field_mask & (p->value << p->field.lsb);
-> +	val  = FIELD_PREP(TESTI_DAT_MASK, data);
-> +	val |= FIELD_PREP(TESTI_ADR_MASK, p->field.reg_no);
-> +	uniphier_u3ssphy_testio_write(priv, val);
-> +	uniphier_u3ssphy_testio_write(priv, val | TESTI_WR_EN);
-> +	uniphier_u3ssphy_testio_write(priv, val);
-> +
-> +	/* read current data as dummy */
-> +	val  = FIELD_PREP(TESTI_DAT_MASK, 1);
-> +	val |= FIELD_PREP(TESTI_ADR_MASK, p->field.reg_no);
-> +	uniphier_u3ssphy_testio_write(priv, val);
-> +	readl(priv->base + SSPHY_TESTO);
-> +}
-> +
-> +static int uniphier_u3ssphy_power_on(struct phy *phy)
-> +{
-> +	struct uniphier_u3ssphy_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk_ext);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk);
-> +	if (ret)
-> +		goto out_clk_ext_disable;
-> +
-> +	ret = reset_control_deassert(priv->rst);
-> +	if (ret)
-> +		goto out_clk_disable;
-> +
-> +	if (priv->vbus) {
-> +		ret = regulator_enable(priv->vbus);
-> +		if (ret)
-> +			goto out_rst_assert;
-> +	}
-> +
-> +	return 0;
-> +
-> +out_rst_assert:
-> +	reset_control_assert(priv->rst);
-> +out_clk_disable:
-> +	clk_disable_unprepare(priv->clk);
-> +out_clk_ext_disable:
-> +	clk_disable_unprepare(priv->clk_ext);
-> +
-> +	return ret;
-> +}
-> +
-> +static int uniphier_u3ssphy_power_off(struct phy *phy)
-> +{
-> +	struct uniphier_u3ssphy_priv *priv = phy_get_drvdata(phy);
-> +
-> +	if (priv->vbus)
-> +		regulator_disable(priv->vbus);
-> +
-> +	reset_control_assert(priv->rst);
-> +	clk_disable_unprepare(priv->clk);
-> +	clk_disable_unprepare(priv->clk_ext);
-> +
-> +	return 0;
-> +}
-> +
-> +static int uniphier_u3ssphy_init(struct phy *phy)
-> +{
-> +	struct uniphier_u3ssphy_priv *priv = phy_get_drvdata(phy);
-> +	int i, ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk_parent);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk_parent_gio);
-> +	if (ret)
-> +		goto out_clk_disable;
-> +
-> +	ret = reset_control_deassert(priv->rst_parent);
-> +	if (ret)
-> +		goto out_clk_gio_disable;
-> +
-> +	ret = reset_control_deassert(priv->rst_parent_gio);
-> +	if (ret)
-> +		goto out_rst_assert;
-> +
-> +	if (priv->data->is_legacy)
-> +		return 0;
-> +
-> +	for (i = 0; i < priv->data->nparams; i++)
-> +		uniphier_u3ssphy_set_param(priv, &priv->data->param[i]);
-> +
-> +	return 0;
-> +
-> +out_rst_assert:
-> +	reset_control_assert(priv->rst_parent);
-> +out_clk_gio_disable:
-> +	clk_disable_unprepare(priv->clk_parent_gio);
-> +out_clk_disable:
-> +	clk_disable_unprepare(priv->clk_parent);
-> +
-> +	return ret;
-> +}
-> +
-> +static int uniphier_u3ssphy_exit(struct phy *phy)
-> +{
-> +	struct uniphier_u3ssphy_priv *priv = phy_get_drvdata(phy);
-> +
-> +	reset_control_assert(priv->rst_parent_gio);
-> +	reset_control_assert(priv->rst_parent);
-> +	clk_disable_unprepare(priv->clk_parent_gio);
-> +	clk_disable_unprepare(priv->clk_parent);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops uniphier_u3ssphy_ops = {
-> +	.init           = uniphier_u3ssphy_init,
-> +	.exit           = uniphier_u3ssphy_exit,
-> +	.power_on       = uniphier_u3ssphy_power_on,
-> +	.power_off      = uniphier_u3ssphy_power_off,
-> +	.owner          = THIS_MODULE,
-> +};
-> +
-> +static int uniphier_u3ssphy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct uniphier_u3ssphy_priv *priv;
-> +	struct phy_provider *phy_provider;
-> +	struct resource *res;
-> +	struct phy *phy;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev = dev;
-> +	priv->data = of_device_get_match_data(dev);
-> +	if (WARN_ON(!priv->data ||
-> +		    priv->data->nparams > MAX_PHY_PARAMS))
-> +		return -EINVAL;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	priv->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	if (!priv->data->is_legacy) {
-> +		priv->clk = devm_clk_get(dev, "phy");
-> +		if (IS_ERR(priv->clk))
-> +			return PTR_ERR(priv->clk);
-> +
-> +		priv->clk_ext = devm_clk_get(dev, "phy-ext");
-> +		if (IS_ERR(priv->clk_ext)) {
-> +			if (PTR_ERR(priv->clk_ext) == -ENOENT)
-> +				priv->clk_ext = NULL;
-> +			else
-> +				return PTR_ERR(priv->clk_ext);
-> +		}
-> +
-> +		priv->rst = devm_reset_control_get_shared(dev, "phy");
-> +		if (IS_ERR(priv->rst))
-> +			return PTR_ERR(priv->rst);
-> +	} else {
-> +		priv->clk_parent_gio = devm_clk_get(dev, "gio");
-> +		if (IS_ERR(priv->clk_parent_gio))
-> +			return PTR_ERR(priv->clk_parent_gio);
-> +
-> +		priv->rst_parent_gio =
-> +			devm_reset_control_get_shared(dev, "gio");
-> +		if (IS_ERR(priv->rst_parent_gio))
-> +			return PTR_ERR(priv->rst_parent_gio);
-> +	}
-> +
-> +	priv->clk_parent = devm_clk_get(dev, "link");
-> +	if (IS_ERR(priv->clk_parent))
-> +		return PTR_ERR(priv->clk_parent);
-> +
-> +	priv->rst_parent = devm_reset_control_get_shared(dev, "link");
-> +	if (IS_ERR(priv->rst_parent))
-> +		return PTR_ERR(priv->rst_parent);
-> +
-> +	priv->vbus = devm_regulator_get_optional(dev, "vbus");
-> +	if (IS_ERR(priv->vbus)) {
-> +		if (PTR_ERR(priv->vbus) == -EPROBE_DEFER)
-> +			return PTR_ERR(priv->vbus);
-> +		priv->vbus = NULL;
-> +	}
-> +
-> +	phy = devm_phy_create(dev, dev->of_node, &uniphier_u3ssphy_ops);
-> +	if (IS_ERR(phy))
-> +		return PTR_ERR(phy);
-> +
-> +	phy_set_drvdata(phy, priv);
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +	if (IS_ERR(phy_provider))
-> +		return PTR_ERR(phy_provider);
-
-here too return PTR_ERR_OR_ZERO()
-
-Thanks
-Kishon
