@@ -2,166 +2,213 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9F7C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66571C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3E321524
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:17:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3E321524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DEC120883
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:18:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIh9T53w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEC120883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbeHILld (ORCPT
+        id S1730309AbeHILmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:41:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729848AbeHILlc (ORCPT
+        Thu, 9 Aug 2018 07:42:31 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34045 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729833AbeHILmb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:41:32 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w799DtBE042152
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 05:17:35 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krfwrxpk1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 05:17:35 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Thu, 9 Aug 2018 10:17:32 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 10:17:29 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w799HRi634996256
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 09:17:28 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB4D842045;
-        Thu,  9 Aug 2018 12:17:35 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 520134204D;
-        Thu,  9 Aug 2018 12:17:33 +0100 (BST)
-Received: from [10.0.2.15] (unknown [9.152.224.40])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 12:17:33 +0100 (BST)
-Subject: Re: [PATCH v8 04/22] s390/zcrypt: Integrate ap_asm.h into
- include/asm/ap.h.
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180809110645.33b20c1f.cohuck@redhat.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Thu, 9 Aug 2018 11:17:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 9 Aug 2018 07:42:31 -0400
+Received: by mail-oi0-f65.google.com with SMTP id 13-v6so8704328ois.1;
+        Thu, 09 Aug 2018 02:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=3+yh/LCE+gFQAaCYosmmo2U52vbDcAfQ3dAwUostApE=;
+        b=eIh9T53w3Kg/RqaF44mQAMvEg5rz/cm/Vnw8C7w0EukAxXUvoehoKDp9dyeJT581c5
+         SKn+MpELWNd/MwWv45CokjgU7nJSeLwGoIwn0box5Vm02rYfHgMZ0JoUdS81P7K6d0GF
+         LlT5MZaHkhOjrWx+S4fwrlSjf6eBwecxbkBEkZnnmv7LoFDkibPFixgrkgHZzmjiSq9F
+         3mmiHXG4AV0ze3i5NNDUWZRBuq87UMBGliDgVTp8X5TmaA7hQcbzqoda519cwS4/osQW
+         YGELZkCgkzVk23bxnprpVUaUafnuorzofCVLulmd+KMznh3LG3pafUtrxMClC1LaSIcB
+         XxZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=3+yh/LCE+gFQAaCYosmmo2U52vbDcAfQ3dAwUostApE=;
+        b=hXtQdaEBIN5EgdPq2Ln0t3G+LEpinYRlUs2P5MNIEn1sF0FwqNwnFa+3GPnCPTqVFW
+         LgpxRZPDwXkpUynHx8MdvctzLPZ0FcNBjKR6c2dWVAjdEfeNTEOj9IcpB7hN9+v6YcpB
+         7DqqcK8qrTedoDdSGRc/RTtz/O0HjapZG/afBAleJRVkuvp69Wi/dtCSOKrYwoKkjGu+
+         1OAEJ2WOpVKD6BHlxOLJPr8M2+/s9gQSlgbAOa03g6XXX/u5MblGjtqZPKUVUAj/bKS6
+         2vP9q6FX9r1N9A3Bg4HHKJg7NsBDFj/L03Bhs5ToLSiCzfIYGSSsJx2lYM1A6nCD5Ss+
+         vpsg==
+X-Gm-Message-State: AOUpUlH3hAdZB4iNGA99SzLusBQnpUhHNcaduYDFJ+7AlOPBbJj7jTf7
+        trpfTw4wP+Tqpq2YsJ8L7CSfPtt4zkOTvX2x0Uw4koy0
+X-Google-Smtp-Source: AA+uWPxQ9ldQuXZbM3QrRkSgskYG2z8EkIhFmqJUdY4URZiNs1DhHbimXuIv0cc9urXcSEQQcvkbKuQEBSecMWAm6ts=
+X-Received: by 2002:aca:4455:: with SMTP id r82-v6mr1412175oia.260.1533806313496;
+ Thu, 09 Aug 2018 02:18:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180809110645.33b20c1f.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080909-0016-0000-0000-000001F44D64
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080909-0017-0000-0000-0000324A5FF0
-Message-Id: <aec0af21-270f-c4c5-3aea-f6854ca2fb07@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090096
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 02:18:13 -0700 (PDT)
+In-Reply-To: <2175835.YAv5WQJWxC@avalon>
+References: <20180622120419.7675-1-matwey@sai.msu.ru> <20180622120419.7675-3-matwey@sai.msu.ru>
+ <2175835.YAv5WQJWxC@avalon>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Thu, 9 Aug 2018 12:18:13 +0300
+X-Google-Sender-Auth: JsndqUvGWe803MDGWHjSo4jZpaQ
+Message-ID: <CAJs94EYX13oPHiD=Ck5E9cG=z3JMZ9Szs5kRaKHn9F90+uxQ8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.08.2018 11:06, Cornelia Huck wrote:
-> On Wed,  8 Aug 2018 10:44:14 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+2018-08-09 1:46 GMT+03:00 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+> Hi Matwey,
 >
->> From: Harald Freudenberger <freude@de.ibm.com>
->>
->> Move all the inline functions from the ap bus header
->> file ap_asm.h into the in-kernel api header file
->> arch/s390/include/asm/ap.h so that KVM can make use
->> of all the low level AP functions.
->>
->> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> You should add your own s-o-b if you are sending on patches written by
-> others (even if it does not matter in the end, when they are merged
-> through a different path anyway.)
+> Thank you for the patch.
 >
+> On Friday, 22 June 2018 15:04:19 EEST Matwey V. Kornilov wrote:
+>> DMA cocherency slows the transfer down on systems without hardware
+>> coherent DMA.
+>>
+>> Based on previous commit the following performance benchmarks have been
+>> carried out. Average memcpy() data transfer rate (rate) and handler
+>> completion time (time) have been measured when running video stream at
+>> 640x480 resolution at 10fps.
+>>
+>> x86_64 based system (Intel Core i5-3470). This platform has hardware
+>> coherent DMA support and proposed change doesn't make big difference here.
+>>
+>>  * kmalloc:            rate = (4.4 +- 1.0) GBps
+>>                        time = (2.4 +- 1.2) usec
+>>  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
+>>                        time = (2.5 +- 1.0) usec
+>>
+>> We see that the measurements agree well within error ranges in this case.
+>> So no performance downgrade is introduced.
+>>
+>> armv7l based system (TI AM335x BeagleBone Black). This platform has no
+>> hardware coherent DMA support. DMA coherence is implemented via disabled
+>> page caching that slows down memcpy() due to memory controller behaviour.
+>>
+>>  * kmalloc:            rate =  (190 +-  30) MBps
+>>                        time =   (50 +-  10) usec
+>>  * usb_alloc_coherent: rate =   (33 +-   4) MBps
+>>                        time = (3000 +- 400) usec
+>>
+>> Note, that quantative difference leads (this commit leads to 5 times
+>> acceleration) to qualitative behavior change in this case. As it was
+>> stated before, the video stream can not be successfully received at AM335x
+>> platforms with MUSB based USB host controller due to performance issues
+>> [1].
+>>
+>> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+>>
+>> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
 >> ---
->>  arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
->>  drivers/s390/crypto/ap_asm.h   |  261 ------------------------------------
->>  drivers/s390/crypto/ap_bus.c   |   21 +---
->>  drivers/s390/crypto/ap_bus.h   |    1 +
->>  drivers/s390/crypto/ap_card.c  |    1 -
->>  drivers/s390/crypto/ap_queue.c |    1 -
->>  6 files changed, 259 insertions(+), 310 deletions(-)
->>  delete mode 100644 drivers/s390/crypto/ap_asm.h
+>>  drivers/media/usb/pwc/pwc-if.c | 12 +++---------
+>>  1 file changed, 3 insertions(+), 9 deletions(-)
 >>
->> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
->> index c1bedb4..046e044 100644
->> --- a/arch/s390/include/asm/ap.h
->> +++ b/arch/s390/include/asm/ap.h
->> @@ -47,6 +47,50 @@ struct ap_queue_status {
->>  };
->>  
->>  /**
->> + * ap_intructions_available() - Test if AP instructions are available.
->> + *
->> + * Returns 0 if the AP instructions are installed.
-> Stumbled over this when I was looking at the usage in patch 7: if I see
-> a function called '_available' return 0, I'd assume that whatever the
-> function tests for is *not* available.
+>> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+>> index 72d2897a4b9f..339a285600d1 100644
+>> --- a/drivers/media/usb/pwc/pwc-if.c
+>> +++ b/drivers/media/usb/pwc/pwc-if.c
+>> @@ -427,11 +427,8 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+>>               urb->interval = 1; // devik
+>>               urb->dev = udev;
+>>               urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+>> -             urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+>> -             urb->transfer_buffer = usb_alloc_coherent(udev,
+>> -                                                       ISO_BUFFER_SIZE,
+>> -                                                       GFP_KERNEL,
+>> -                                                       &urb->transfer_dma);
+>> +             urb->transfer_flags = URB_ISO_ASAP;
+>> +             urb->transfer_buffer = kmalloc(ISO_BUFFER_SIZE, GFP_KERNEL);
 >
-> Rather call this function ap_instructions_check_availability() (and
-> keep the return code convention), or switch this to return 0 if not
-> available and !0 if available?
-Good catch, Cony you are right. I'll fix this to return 1 if AP instructions
-are available and 0 if not. However, this patch will come via Martin's pipe
-to the Linus Torwald kernel sources.
+> ISO_BUFFER_SIZE is 970 bytes, well below a page size, so this should be fine.
+> However, for other USB camera drivers, we might require larger buffers
+> spanning multiple pages, and kmalloc() wouldn't be a very good choice there. I
+> thus believe we should implement a helper function, possibly in the for of
+> usb_alloc_noncoherent(), to allow picking the right allocation mechanism based
+> on the buffer size (and possibly other parameters). Ideally the helper and the
+> USB core should cooperate to avoid any overhead from DMA operations when DMA
+> is coherent on the platform (on x86 and some ARM platforms).
+
+pwc/pwc.h:
+
+#define ISO_FRAMES_PER_DESC     10
+#define ISO_MAX_FRAME_SIZE      960
+#define ISO_BUFFER_SIZE         (ISO_FRAMES_PER_DESC * ISO_MAX_FRAME_SIZE)
+
+The buffer size is 9600 bytes, where did 970 come from?
+
 >
->> + */
->> +static inline int ap_instructions_available(void)
->> +{
->> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
->> +	register unsigned long reg1 asm ("1") = -ENODEV;
->> +	register unsigned long reg2 asm ("2");
->> +
->> +	asm volatile(
->> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
->> +		"0: la    %0,0\n"
->> +		"1:\n"
->> +		EX_TABLE(0b, 1b)
->> +		: "+d" (reg1), "=d" (reg2)
->> +		: "d" (reg0)
->> +		: "cc");
->> +	return reg1;
->> +}
+> That being said, I don't see a reason why this patch should be blocked until
+> we get such a helper function, we can also implement it when needed for
+> another USB webcam driver (likely uvcvideo given the recent discussions) and
+> then use it in the pwc driver.
+>
+> We have also determined that performances can be further improved by keeping
+> mappings around and using the dma_sync_* operations at runtime. That's again
+> not a reason to block this patch, as the performance improvement is already
+> impressive, so
+
+I've incorporated this changes in v3, I'll send it shortly.
+
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> But I would still like to see the above two issues addressed. If you'd like to
+> give them a go, with or without getting v2 of this series merged first, please
+> do so, and I'll happily review patches.
+>
+>>               if (urb->transfer_buffer == NULL) {
+>>                       PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+>>                       pwc_isoc_cleanup(pdev);
+>> @@ -491,10 +488,7 @@ static void pwc_iso_free(struct pwc_device *pdev)
+>>               if (pdev->urbs[i]) {
+>>                       PWC_DEBUG_MEMORY("Freeing URB\n");
+>>                       if (pdev->urbs[i]->transfer_buffer) {
+>> -                             usb_free_coherent(pdev->udev,
+>> -                                     pdev->urbs[i]->transfer_buffer_length,
+>> -                                     pdev->urbs[i]->transfer_buffer,
+>> -                                     pdev->urbs[i]->transfer_dma);
+>> +                             kfree(pdev->urbs[i]->transfer_buffer);
+>>                       }
+>>                       usb_free_urb(pdev->urbs[i]);
+>>                       pdev->urbs[i] = NULL;
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Regards,
+>
+> Laurent Pinchart
+>
+>
 >
 
+
+
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
