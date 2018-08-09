@@ -2,129 +2,95 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB2FC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B67C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0988621BC7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:04:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0988621BC7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 096AC21A6D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:07:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXDe88YI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 096AC21A6D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeHII1Y (ORCPT
+        id S1728193AbeHIIax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 04:27:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727417AbeHII1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 04:27:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B197BF2B41;
-        Thu,  9 Aug 2018 06:04:09 +0000 (UTC)
-Received: from dhcp-2-242.nay.redhat.com (dhcp-2-242.nay.redhat.com [10.66.2.242])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A4CB423146;
-        Thu,  9 Aug 2018 06:04:06 +0000 (UTC)
-From:   Xiao Liang <xiliang@redhat.com>
-To:     netdev@vger.kernel.org, xen-devel@lists.xenproject.org,
-        davem@davemloft.net, jgross@suse.com, boris.ostrovsky@oracle.com
-Cc:     linux-kernel@vger.kernel.org, Xiao Liang <xiliang@redhat.com>
-Subject: [PATCH net-next] xen-netfront: fix warn message as irq device name has '/'
-Date:   Thu,  9 Aug 2018 14:03:55 +0800
-Message-Id: <20180809060355.6525-1-xiliang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 06:04:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 06:04:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiliang@redhat.com' RCPT:''
+        Thu, 9 Aug 2018 04:30:53 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37738 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbeHIIaw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 04:30:52 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n7-v6so2233769pgq.4;
+        Wed, 08 Aug 2018 23:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nAkJPNY6eBG7OZfGOUxGF+wkMFzGan/A7giKP5d7e14=;
+        b=YXDe88YIiSUpmcTjbyR09m7tvCb+03c+8X6OLCFOoII9f8MpIJQwxPYWeRs0cXaoOY
+         w0SxpSduTkp1mAGvQA7ZD/ltT+a+D0BEhKsF19xqG7zTfZQ5UgIgRwmws27CA548CXAd
+         eSb134fZT0wWIGlp6mUrxwtEMHxteijIwvYuRSa6JKSdPz+kiWh0+g0ag9KxXfyK2hhB
+         tVgKPoUS2OIYxlywnl2rIbiXb6hC5f6fxSqfwgl582VN72m2lV8We8Yts3ZnBnAHnmeX
+         nhtllbbCVv+WG2Gi1pkJBCLGQ4x2b0rF1g02E0+00Gl1lL/lKXv6eaHYd/0d5DeVeQjd
+         jeKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nAkJPNY6eBG7OZfGOUxGF+wkMFzGan/A7giKP5d7e14=;
+        b=VPYqctRFicPwAvmoK0nqnf33y7luImrxXrPJLT0XvaEEDb1YB5y0Fv7T4kXyMlEW3q
+         TlU6t37OM5eT7RFtCMK1dT/rMF4BsfO50TptmT5Guy9/04UTJypPkvCjI2iYAajSP8w7
+         8z3/UY+fGppyVDTFyMDA1enWIqjk+FVyeYQIDDSD2ZbtYJs3mex4Gv8euDhaWxzmiDDy
+         op2bsXkT2LrH/oeg2ZjcjuoErhtn6c8abvPS4qVhRVLlEmY1Ve1T4W2vWYCSlI8pxELy
+         3L5WjMcXdqrKdeOQ90PxNLlz58RV5f4YoWLqxKYJ1gA5vlhZzGvLxnlD8pOtXvEd0esL
+         Y+TQ==
+X-Gm-Message-State: AOUpUlGMYiuK6DJcZ3Wm7RGuFkp9PteCa9UFfseWR5GoJDk8fS22Hl0R
+        PA5ZkptFanwigbgi06qBYL4=
+X-Google-Smtp-Source: AA+uWPzaGK7i+lozLp1miOIuOYTyW7fp1ODcWKoJDVcSs18sc57WJo4HHHV0slZTZrL26s4ZQagWhw==
+X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr871606pfb.29.1533794858745;
+        Wed, 08 Aug 2018 23:07:38 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:180::1:ea8d])
+        by smtp.gmail.com with ESMTPSA id f65-v6sm18537854pfj.46.2018.08.08.23.07.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 23:07:37 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 23:07:35 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Tobin C. Harding" <me@tobin.cc>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
+Message-ID: <20180809060734.rtqqu4sexbwzuqmm@ast-mbp>
+References: <20180809052328.27942-1-me@tobin.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180809052328.27942-1-me@tobin.cc>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a call trace generated after commit 2d408c0d4574b01b9ed45e02516888bf925e11a9(
-xen-netfront: fix queue name setting). There is no 'device/vif/xx-q0-tx' file found
-under /proc/irq/xx/.
+On Thu, Aug 09, 2018 at 03:23:24PM +1000, Tobin C. Harding wrote:
+> 
+> Daniel and Alexei, can I please have permission to add GPLv2+ to the BPF
+> docs?
 
-This patch only picks up device type and id as its name.
-
-With the patch, now /proc/interrupts looks like and the warning message gone:
- 70:         21          0          0          0   xen-dyn    -event     vif0-q0-tx
- 71:         15          0          0          0   xen-dyn    -event     vif0-q0-rx
- 72:         14          0          0          0   xen-dyn    -event     vif0-q1-tx
- 73:         33          0          0          0   xen-dyn    -event     vif0-q1-rx
- 74:         12          0          0          0   xen-dyn    -event     vif0-q2-tx
- 75:         24          0          0          0   xen-dyn    -event     vif0-q2-rx
- 76:         19          0          0          0   xen-dyn    -event     vif0-q3-tx
- 77:         21          0          0          0   xen-dyn    -event     vif0-q3-rx
-
-Below is call trace information without this patch:
-
-name 'device/vif/0-q0-tx'
-WARNING: CPU: 2 PID: 37 at fs/proc/generic.c:174 __xlate_proc_name+0x85/0xa0
-RIP: 0010:__xlate_proc_name+0x85/0xa0
-RSP: 0018:ffffb85c40473c18 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000000006
-RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff984c7f516930
-RBP: ffffb85c40473cb8 R08: 000000000000002c R09: 0000000000000229
-R10: 0000000000000000 R11: 0000000000000001 R12: ffffb85c40473c98
-R13: ffffb85c40473cb8 R14: ffffb85c40473c50 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff984c7f500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f69b6899038 CR3: 000000001c20a006 CR4: 00000000001606e0
-Call Trace:
-__proc_create+0x45/0x230
-? snprintf+0x49/0x60
-proc_mkdir_data+0x35/0x90
-register_handler_proc+0xef/0x110
-? proc_register+0xfc/0x110
-? proc_create_data+0x70/0xb0
-__setup_irq+0x39b/0x660
-? request_threaded_irq+0xad/0x160
-request_threaded_irq+0xf5/0x160
-? xennet_tx_buf_gc+0x1d0/0x1d0 [xen_netfront]
-bind_evtchn_to_irqhandler+0x3d/0x70
-? xenbus_alloc_evtchn+0x41/0xa0
-netback_changed+0xa46/0xcda [xen_netfront]
-? find_watch+0x40/0x40
-xenwatch_thread+0xc5/0x160
-? finish_wait+0x80/0x80
-kthread+0x112/0x130
-? kthread_create_worker_on_cpu+0x70/0x70
-ret_from_fork+0x35/0x40
-Code: 81 5c 00 48 85 c0 75 cc 5b 49 89 2e 31 c0 5d 4d 89 3c 24 41 5c 41 5d 41 5e 41 5f c3 4c 89 ee 48 c7 c7 40 4f 0e b4 e8 65 ea d8 ff <0f> 0b b8 fe ff ff ff 5b 5d 41 5c 41 5d 41 5e 41 5f c3 66 0f 1f
----[ end trace 650e5561b0caab3a ]---
-
-Signed-off-by: Xiao Liang <xiliang@redhat.com>
----
- drivers/net/xen-netfront.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 799cba4624a5..6f40df4a452e 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1604,14 +1604,16 @@ static int xennet_init_queue(struct netfront_queue *queue)
- {
- 	unsigned short i;
- 	int err = 0;
-+	int devid = 0;
- 
- 	spin_lock_init(&queue->tx_lock);
- 	spin_lock_init(&queue->rx_lock);
- 
- 	timer_setup(&queue->rx_refill_timer, rx_refill_timeout, 0);
- 
--	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
--		 queue->info->xbdev->nodename, queue->id);
-+	kstrtoint(strrchr(queue->info->xbdev->nodename,'/')+1, 10, &devid);
-+	snprintf(queue->name, sizeof(queue->name), "vif%d-q%u",
-+		 devid, queue->id);
- 
- 	/* Initialise tx_skbs as a free chain containing every entry. */
- 	queue->tx_skb_freelist = 0;
--- 
-2.17.1
+kernel licensing is GPLv2 without +
+every file (including docs) can potentially have a different
+compatible license, but since they were developed
+implicitly under v2 only you would need to get a buy-in from
+all contributors before making such change.
 
