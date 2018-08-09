@@ -2,303 +2,157 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281F6C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3B0C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C737E21C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:57:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C737E21C2B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8297521C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:59:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="V7vZvFkw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8297521C2B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbeHIHT5 (ORCPT
+        id S1728220AbeHIHW3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 03:19:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50916 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727724AbeHIHT5 (ORCPT
+        Thu, 9 Aug 2018 03:22:29 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:28926 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727724AbeHIHW3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 03:19:57 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w794rsKT017879
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 00:57:01 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krc3b58d6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 00:57:00 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Thu, 9 Aug 2018 05:56:58 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 05:56:56 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w794utFN35717198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 04:56:55 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BB8BAE053;
-        Thu,  9 Aug 2018 07:56:47 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46FB9AE045;
-        Thu,  9 Aug 2018 07:56:47 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 07:56:47 +0100 (BST)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH v3] perf report: Create auxiliary trace data files for s390
-Date:   Thu,  9 Aug 2018 06:56:50 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18080904-0016-0000-0000-000001F435F0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080904-0017-0000-0000-0000324A46C5
-Message-Id: <20180809045650.89197-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090051
+        Thu, 9 Aug 2018 03:22:29 -0400
+Received: from mail-ua0-f172.google.com (mail-ua0-f172.google.com [209.85.217.172]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w794xLh1029064;
+        Thu, 9 Aug 2018 13:59:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w794xLh1029064
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533790762;
+        bh=owH3HWjesSxYMSqoSGCl6iBo93VGPyPraRGtvmxSaU0=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=V7vZvFkwUYjAoqXUJzue69w7iWEYWOgnbe1r61MhHmNLKGb4qCi+Raxq2hP2fawMO
+         uc8GDEoVWoybaiRL5tNSCpLoJgerEA9PSMmzK0hTdKu8x5/881eZr5raQhJtSlGPy+
+         ecoCSfZzI4/+XHP/Lps0OQRfSaFCgxOroIR+KuV90Qw6NpVwJq30gDnezs/KYVq/e8
+         pM2QGsItTA5D1OSn057gM0Slp1fQVeQFWevxusADp5ohKs+ldD4SyM5sEzU933Vh/e
+         R4QeRu0gYE7hodCv98zzM8j97Ced1w4eIUnsm29HVVdTgsXz2yfUKcdDwmH1xkwNx6
+         8fK42c5zFArag==
+X-Nifty-SrcIP: [209.85.217.172]
+Received: by mail-ua0-f172.google.com with SMTP id i4-v6so4956410uak.0;
+        Wed, 08 Aug 2018 21:59:22 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHYCvV+OhbYNrMvLOjUyRhfD/gXskIM0l40Gci3BRi3QemI5bF/
+        MrJo+7YlfrtDhMjeJIUS0L/bfxF5H6zEfH5IJpg=
+X-Google-Smtp-Source: AA+uWPxHpHUzfeBrredRvMfRYdO3FQbgEMMu+ujeOzTt70R4sbmClJ1dLQ0BvC/jU4/+jlWz0WmJmHJzv6OvzPJL7qU=
+X-Received: by 2002:a1f:5f44:: with SMTP id t65-v6mr328785vkb.135.1533790761341;
+ Wed, 08 Aug 2018 21:59:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 21:58:40 -0700 (PDT)
+In-Reply-To: <patch.git-39444503b4d3.your-ad-here.call-01533562662-ext-6094@work.hours>
+References: <patch.git-39444503b4d3.your-ad-here.call-01533562662-ext-6094@work.hours>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 9 Aug 2018 13:58:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARivbQ57+raPUkek2=bsnYDhXS+hSK3kwf+0K7Hvxj31g@mail.gmail.com>
+Message-ID: <CAK7LNARivbQ57+raPUkek2=bsnYDhXS+hSK3kwf+0K7Hvxj31g@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add Map option to save vmlinux linker map file(s)
+To:     Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create auxiliary trace data log files when invoked with option
- --itrace=d as in
+2018-08-06 22:38 GMT+09:00 Vasily Gorbik <gor@linux.ibm.com>:
+> Add "Map" kbuild option, so that "make Map=1" would save vmlinux linker
+> map into vmlinux.map, which is quite useful during making kernel changes
+> related to how the kernel is composed.
+>
+> KBUILD_SAVE_LINK_MAP flag is exported and architectures
+> supporting compressed kernel images might respect it and produce
+> arch/*/boot/compressed/vmlinux.map for the decompressor code as well.
+>
+> Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+> ---
 
-[root@s35lp76 perf] ./perf report -i perf.data.aux1 --stdio --itrace=d
 
-perf report creates several data files in the current directory
-named aux.smp.## where ## is a 2 digit hex number with
-leading zeros representing the CPU number this trace data
-was recorded from. The file contents is binary and contains
-the CPU-Measurement Sampling Data Blocks (SDBs).
+If the map file is quite useful, should it be generated all the time?
+Or, how about CONFIG option if you want this conditionally generated?
 
-The directory to save the auxiliary trace buffer can be
-changed using the perf config file and command. Specify
-section 'auxtrace' keyword 'dumpdir' and assign it a valid
-directory name. If the directory does not exist or has the
-wrong file type, the current directory is used.
+I do not want to increase fine-grained command-line switches
+except _really_ useful ones.
 
-[root@p23lp27 perf]# ./perf config auxtrace.dumpdir=/tmp
-[root@p23lp27 perf]# ./perf config --user -l
-auxtrace.dumpdir=/tmp
-[root@p23lp27 perf]# ./perf report ...
-[root@p23lp27 perf]# ll /tmp/aux.smp.00
--rw-r--r-- 1 root root 204800 Aug  2 13:48 /tmp/aux.smp.00
-[root@p23lp27 perf]#
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
----
- tools/perf/util/s390-cpumsf.c | 94 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 91 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index d2c78ffd9fee..a2eeebbfb25f 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -147,6 +147,9 @@
- #include <linux/bitops.h>
- #include <linux/log2.h>
- 
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+
- #include "cpumap.h"
- #include "color.h"
- #include "evsel.h"
-@@ -159,6 +162,7 @@
- #include "auxtrace.h"
- #include "s390-cpumsf.h"
- #include "s390-cpumsf-kernel.h"
-+#include "config.h"
- 
- struct s390_cpumsf {
- 	struct auxtrace		auxtrace;
-@@ -170,6 +174,8 @@ struct s390_cpumsf {
- 	u32			pmu_type;
- 	u16			machine_type;
- 	bool			data_queued;
-+	bool			use_logfile;
-+	char			*logdir;
- };
- 
- struct s390_cpumsf_queue {
-@@ -177,6 +183,7 @@ struct s390_cpumsf_queue {
- 	unsigned int		queue_nr;
- 	struct auxtrace_buffer	*buffer;
- 	int			cpu;
-+	FILE			*logfile;
- };
- 
- /* Display s390 CPU measurement facility basic-sampling data entry */
-@@ -595,6 +602,12 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
- 			buffer->use_size = buffer->size;
- 			buffer->use_data = buffer->data;
- 		}
-+		if (sfq->logfile) {	/* Write into log file */
-+			size_t rc = fwrite(buffer->data, buffer->size, 1,
-+					   sfq->logfile);
-+			if (rc != 1)
-+				pr_err("Failed to write auxiliary data\n");
-+		}
- 	} else
- 		buffer = sfq->buffer;
- 
-@@ -606,6 +619,13 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
- 			return -ENOMEM;
- 		buffer->use_size = buffer->size;
- 		buffer->use_data = buffer->data;
-+
-+		if (sfq->logfile) {	/* Write into log file */
-+			size_t rc = fwrite(buffer->data, buffer->size, 1,
-+					   sfq->logfile);
-+			if (rc != 1)
-+				pr_err("Failed to write auxiliary data\n");
-+		}
- 	}
- 	pr_debug4("%s queue_nr:%d buffer:%" PRId64 " offset:%#" PRIx64 " size:%#zx rest:%#zx\n",
- 		  __func__, sfq->queue_nr, buffer->buffer_nr, buffer->offset,
-@@ -640,6 +660,23 @@ s390_cpumsf_alloc_queue(struct s390_cpumsf *sf, unsigned int queue_nr)
- 	sfq->sf = sf;
- 	sfq->queue_nr = queue_nr;
- 	sfq->cpu = -1;
-+	if (sf->use_logfile) {
-+		char *name;
-+		int rc;
-+
-+		rc = (sf->logdir)
-+			? asprintf(&name, "%s/aux.smp.%02x",
-+				 sf->logdir, queue_nr)
-+			: asprintf(&name, "aux.smp.%02x", queue_nr);
-+		if (rc > 0)
-+			sfq->logfile = fopen(name, "w");
-+		if (sfq->logfile == NULL) {
-+			pr_err("Failed to open auxiliary log file %s,"
-+			       "continue...\n", name);
-+			sf->use_logfile = false;
-+		}
-+		free(name);
-+	}
- 	return sfq;
- }
- 
-@@ -850,8 +887,16 @@ static void s390_cpumsf_free_queues(struct perf_session *session)
- 	struct auxtrace_queues *queues = &sf->queues;
- 	unsigned int i;
- 
--	for (i = 0; i < queues->nr_queues; i++)
-+	for (i = 0; i < queues->nr_queues; i++) {
-+		struct s390_cpumsf_queue *sfq = (struct s390_cpumsf_queue *)
-+						queues->queue_array[i].priv;
-+
-+		if (sfq != NULL && sfq->logfile) {
-+			fclose(sfq->logfile);
-+			sfq->logfile = NULL;
-+		}
- 		zfree(&queues->queue_array[i].priv);
-+	}
- 	auxtrace_queues__free(queues);
- }
- 
-@@ -864,6 +909,7 @@ static void s390_cpumsf_free(struct perf_session *session)
- 	auxtrace_heap__free(&sf->heap);
- 	s390_cpumsf_free_queues(session);
- 	session->auxtrace = NULL;
-+	free(sf->logdir);
- 	free(sf);
- }
- 
-@@ -877,17 +923,55 @@ static int s390_cpumsf_get_type(const char *cpuid)
- 
- /* Check itrace options set on perf report command.
-  * Return true, if none are set or all options specified can be
-- * handled on s390.
-+ * handled on s390 (currently only option 'd' for logging.
-  * Return false otherwise.
-  */
- static bool check_auxtrace_itrace(struct itrace_synth_opts *itops)
- {
-+	bool ison = false;
-+
- 	if (!itops || !itops->set)
- 		return true;
--	pr_err("No --itrace options supported\n");
-+	ison = itops->inject || itops->instructions || itops->branches ||
-+		itops->transactions || itops->ptwrites ||
-+		itops->pwr_events || itops->errors ||
-+		itops->dont_decode || itops->calls || itops->returns ||
-+		itops->callchain || itops->thread_stack ||
-+		itops->last_branch;
-+	if (!ison)
-+		return true;
-+	pr_err("Unsupported --itrace options specified\n");
- 	return false;
- }
- 
-+/* Check for AUXTRACE dump directory if it is needed.
-+ * On failure print an error message but continue.
-+ * Return 0 on wrong keyword in config file and 1 otherwise.
-+ */
-+static int s390_cpumsf__config(const char *var, const char *value, void *cb)
-+{
-+	struct s390_cpumsf *sf = cb;
-+	struct stat stbuf;
-+	int rc;
-+
-+	if (strcmp(var, "auxtrace.dumpdir"))
-+		return 0;
-+	sf->logdir = strdup(value);
-+	if (sf->logdir == NULL) {
-+		pr_err("Failed to find auxtrace log directory %s,"
-+		       " continue with current directory...\n", value);
-+		return 1;
-+	}
-+	rc = stat(sf->logdir, &stbuf);
-+	if (rc == -1 || !S_ISDIR(stbuf.st_mode)) {
-+		pr_err("Missing auxtrace log directory %s,"
-+		       " continue with current directory...\n", value);
-+		free(sf->logdir);
-+		sf->logdir = NULL;
-+	}
-+	return 1;
-+}
-+
- int s390_cpumsf_process_auxtrace_info(union perf_event *event,
- 				      struct perf_session *session)
- {
-@@ -906,6 +990,9 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
- 		err = -EINVAL;
- 		goto err_free;
- 	}
-+	sf->use_logfile = session->itrace_synth_opts->log;
-+	if (sf->use_logfile)
-+		perf_config(s390_cpumsf__config, sf);
- 
- 	err = auxtrace_queues__init(&sf->queues);
- 	if (err)
-@@ -940,6 +1027,7 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
- 	auxtrace_queues__free(&sf->queues);
- 	session->auxtrace = NULL;
- err_free:
-+	free(sf->logdir);
- 	free(sf);
- 	return err;
- }
+
+>  .gitignore |  1 +
+>  Makefile   | 14 ++++++++++++++
+>  2 files changed, 15 insertions(+)
+>
+> diff --git a/.gitignore b/.gitignore
+> index 97ba6b79834c..1d2308e597ad 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -44,6 +44,7 @@
+>  *.xz
+>  Module.symvers
+>  modules.builtin
+> +vmlinux.map
+>
+>  #
+>  # Top-level generic files
+> diff --git a/Makefile b/Makefile
+> index 7a3c4548162b..f1790deae03b 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -176,6 +176,14 @@ ifndef KBUILD_CHECKSRC
+>    KBUILD_CHECKSRC = 0
+>  endif
+>
+> +# Use 'make Map=1' to enable saving linker map file(s):
+> +# vmlinux.map for vmlinux,
+> +# (arch/*/boot/compressed/vmlinux.map for arch/*/boot/compressed/vmlinux)
+> +
+> +ifeq ("$(origin Map)", "command line")
+> +       export KBUILD_SAVE_LINK_MAP := $(Map)
+> +endif
+> +
+>  # Use make M=dir to specify directory of external module to build
+>  # Old syntax make ... SUBDIRS=$PWD is still supported
+>  # Setting the environment variable KBUILD_EXTMOD take precedence
+> @@ -838,6 +846,11 @@ ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
+>  LDFLAGS_vmlinux        += $(call ld-option, -X,)
+>  endif
+>
+> +ifdef KBUILD_SAVE_LINK_MAP
+> +LDFLAGS_vmlinux        += -Map=vmlinux.map
+> +CLEAN_FILES    += vmlinux.map
+> +endif
+> +
+>  # insure the checker run with the right endianness
+>  CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig-endian,-mlittle-endian)
+>
+> @@ -1434,6 +1447,7 @@ help:
+>         @echo  '                2: warnings which occur quite often but may still be relevant'
+>         @echo  '                3: more obscure warnings, can most likely be ignored'
+>         @echo  '                Multiple levels can be combined with W=12 or W=123'
+> +       @echo  '  make Map=1 [targets] Save vmlinux linker map file(s)'
+>         @echo  ''
+>         @echo  'Execute "make" or "make all" to build all targets marked with [*] '
+>         @echo  'For further info see the ./README file'
+> --
+> 2.18.0.13.gd42ae10
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-2.14.3
-
+Best Regards
+Masahiro Yamada
