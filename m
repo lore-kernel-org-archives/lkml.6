@@ -2,115 +2,102 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B974BC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F755C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75E7A217C9
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:58:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E7A217C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C86C5217D2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86C5217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbeHIMWO (ORCPT
+        id S1730156AbeHIMXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:22:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:47010 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727786AbeHIMWO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:22:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h14-v6so4582234wrw.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 02:58:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VA3NRhBL5LZliuWxd8x5mZzvXCSXzAEXzBBujjRgt1s=;
-        b=jsypKrD7zlAREaxiXejDmcTGVYXeN2SYzhlGMhXRAg9bnKcSelSHuux0mNOrbjx8PK
-         1GptPJ+UN79t4eUEV2e7rmqcaFC9dufpguGcXCRA5gqr1yruYLTQ/NqLRu2o8hx0+y/I
-         GYreVEm0AcyXHS9nP8GqeUENdb8y+1OlqmEhc8wVAtqCeP3cf5eq7pC6ZgwUxt6Y+0db
-         XuDpqST6x6npdIzCp+UhLgiiNscVGLv+jpcAFZ0N2Tlpxq3EBFwZjd6hRj5JZ0daBGDR
-         h/XvqeCevCO25zbOVX0qcx/gtLNSf/Ap9Buo8wMmSUBk5jzfpDCGpdtHibu8kCIxLdhD
-         va6g==
-X-Gm-Message-State: AOUpUlGzi5BAIhRwWUjLUhs8VYk695Dp4FQTV7dujzYy/r8C541XRx3b
-        iFs4k7YYzZL3Wtymb5xdcJKNqhZGxu8=
-X-Google-Smtp-Source: AA+uWPyky10pzw+r0QQZtEL78RBybVUEB3Y4oZYsnzDgTWvJecu05mkTnags6uUZiaLcGMf3iyPAHg==
-X-Received: by 2002:adf:97cf:: with SMTP id t15-v6mr1048500wrb.283.1533808687198;
-        Thu, 09 Aug 2018 02:58:07 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id k12-v6sm6178409wru.38.2018.08.09.02.58.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 02:58:06 -0700 (PDT)
-Subject: Re: [PATCH v5 1/4] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Thu, 9 Aug 2018 08:23:01 -0400
+Received: from foss.arm.com ([217.140.101.70]:51240 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728130AbeHIMXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 08:23:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D52718A;
+        Thu,  9 Aug 2018 02:58:55 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.Emea.Arm.com [10.4.12.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C95643F5D4;
+        Thu,  9 Aug 2018 02:58:51 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 10:58:44 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-References: <20180809091558.4317-1-hdegoede@redhat.com>
- <20180809091558.4317-2-hdegoede@redhat.com>
- <CAJZ5v0jBxL8n8ce7=qgZmHtc4=zCA3u7ePbXaHfyibeNiNrw+w@mail.gmail.com>
- <7d8c71b9-292e-e51e-d3d3-cb0bb00528b6@redhat.com>
- <CAHp75VeiC35S=urEL_f-j+ZPVodPHqGJBRYxv2m5inBkuJ=1kQ@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <f2f9289d-0adb-e165-a23e-696fe985fda4@redhat.com>
-Date:   Thu, 9 Aug 2018 11:58:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle
+ path for CPUs
+Message-ID: <20180809095844.GA3444@e107155-lin>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org>
+ <2056372.NMt4aPaF4h@aspire.rjw.lan>
+ <2205807.cU2puvubpP@aspire.rjw.lan>
+ <1726374.375PCQfjLZ@aspire.rjw.lan>
+ <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
+ <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
+ <20180808105619.GB25150@e107981-ln.cambridge.arm.com>
+ <20180808180248.GC27850@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeiC35S=urEL_f-j+ZPVodPHqGJBRYxv2m5inBkuJ=1kQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808180248.GC27850@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Aug 08, 2018 at 12:02:48PM -0600, Lina Iyer wrote:
 
-On 09-08-18 11:51, Andy Shevchenko wrote:
-> On Thu, Aug 9, 2018 at 12:39 PM, Hans de Goede <hdegoede@redhat.com> wrote:
->> On 09-08-18 11:35, Rafael J. Wysocki wrote:
->>> On Thu, Aug 9, 2018 at 11:15 AM, Hans de Goede <hdegoede@redhat.com>
->>> wrote:
-> 
->>> I've applied the v4 of this patch and I don't think there are any
->>> changes from it here.
->>
->>
->> Correct, there were only changes to the 4th patch in the series.
->>
->>> As for the rest of the series I'll wait from comments from Wolfram and
->>> the other reviewers.
->>
->>
->> Ok, note if you've taken patch 1 you may also want to take patch 3 which
->> is an ACPI code cleanup made possible by patch 1 and otherwise is
->> unrelated.
-> 
-> I'm under impression Rafael is going to take entire series (at least
-> for patch 4 I'm expecting to give an Ack).
+[...]
 
-As I mentioned in the coverletter, my idea was to have Rafael take
-patches 1-3 and then merge the 4th patch through the platform/x86
-tree. There are only runtime dependencies between the 2 parts and
-merging them independently should not cause any issues.
+> I will not speak to any comparison of benchmarks between OSI and PC.
+> AFAIK, there are no platforms supporting both.
+>
 
+That's the fundamental issue here. So we have never ever done a proper
+comparison.
+
+> But, the OSI feature is critical for QCOM mobile platforms. The
+> last man activities during cpuidle save quite a lot of power. Powering
+> off the clocks, busses, regulators and even the oscillator is very
+> important to have a reasonable battery life when using the phone.
+> Platform coordinated approach falls quite short of the needs of a
+> powerful processor with a desired battery efficiency.
+>
+
+As mentioned above, without the actual comparison it's hard to justify
+that. While there are corner cases where OSI is able to make better
+judgement, may be we can add ways to deal with that in the firmware
+with PC mode, have we explored that before adding complexity to the OSPM ?
+Since the firmware complexity with OSI remains same as PC mode, isn't it
+worth checking if the corner case we are talking here can be handled in
+the firmware.
+
+--
 Regards,
-
-Hans
-
+Sudeep
