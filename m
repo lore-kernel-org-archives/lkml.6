@@ -2,154 +2,96 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBB2C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418B3C4646D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 313F421BC7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:08:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3GXFrF9L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313F421BC7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id E436E21C2C
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E436E21C2C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeHIEaw (ORCPT
+        id S1727270AbeHIEga (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:30:52 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37240 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725757AbeHIEav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:30:51 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w79257tT032869;
-        Thu, 9 Aug 2018 02:08:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=0AQIJHlhYnPQF/Ro1u5tZroeNx25UA4ETL0XUSNbgrU=;
- b=3GXFrF9L2N09f32V9uEvK4x1i6SIzaWoc17u+JCgW1AEP3A8enEcWDE1ims0qg0zsKN2
- 9e2cDkQMuE7q0zRPEIxkSBk3mVb7AZk41tG3um7HJAy+857WnMsACbHk0hTVRjjtGMiT
- ciZs1PssR302YvPhkaz3VAE8X8F1omjn4QsYJHzsEHnabLNLt/gMHoDZ8e2KECZhdhfD
- h13nOLgpACDk0+RY5VeIq9HCsGP03F6h8NR8QFQR/i9RcAyC2HDLscrzveJajjonHYR8
- tqilkSDtmhWCXHYlvRX/Vzo4a2IHqIui/MCBZzzokMYwNGvmx5U+AUQnZM6zUEZRJXa/ gg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2kn4sq02ta-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 Aug 2018 02:08:25 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7928PaV003225
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Aug 2018 02:08:25 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7928OWm003842;
-        Thu, 9 Aug 2018 02:08:24 GMT
-Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 08 Aug 2018 19:08:24 -0700
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     tom.leiming@gmail.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3] blk-mq: count the hctx as active before allocate tag
-Date:   Thu,  9 Aug 2018 10:09:58 +0800
-Message-Id: <1533780598-23972-1-git-send-email-jianchao.w.wang@oracle.com>
+        Thu, 9 Aug 2018 00:36:30 -0400
+Received: from mga01.intel.com ([192.55.52.88]:32156 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725757AbeHIEg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 00:36:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 19:14:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
+   d="scan'208";a="74999464"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Aug 2018 19:14:05 -0700
+Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.78])
+        by linux.intel.com (Postfix) with ESMTP id 84DCF5801BD;
+        Wed,  8 Aug 2018 19:14:03 -0700 (PDT)
+From:   Zhang Yi <yi.z.zhang@linux.intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
+        dan.j.williams@intel.com, jack@suse.cz, hch@lst.de,
+        yu.c.zhang@intel.com
+Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, yi.z.zhang@intel.com,
+        Zhang Yi <yi.z.zhang@linux.intel.com>
+Subject: [PATCH V3 0/4] Fix kvm misconceives NVDIMM pages as reserved mmio
+Date:   Thu,  9 Aug 2018 18:52:48 +0800
+Message-Id: <cover.1533811181.git.yi.z.zhang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8979 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=821
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808090021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, we count the hctx as active after allocate driver tag
-successfully. If a previously inactive hctx try to get tag first
-time, it may fails and need to wait. However, due to the stale tag
-->active_queues, the other shared-tags users are still able to
-occupy all driver tags while there is someone waiting for tag.
-Consequently, even if the previously inactive hctx is waked up, it
-still may not be able to get a tag and could be starved.
+For device specific memory space, when we move these area of pfn to
+memory zone, we will set the page reserved flag at that time, some of
+these reserved for device mmio, and some of these are not, such as
+NVDIMM pmem.
 
-To fix it, we count the hctx as active before try to allocate driver
-tag, then when it is waiting the tag, the other shared-tag users
-will reserve budget for it.
+Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
+backend, since these pages are reserved. the check of
+kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
+introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
+to indentify these pages are from NVDIMM pmem. and let kvm treat these
+as normal pages.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
+Without this patch, Many operations will be missed due to this
+mistreatment to pmem pages. For example, a page may not have chance to
+be unpinned for KVM guest(in kvm_release_pfn_clean); not able to be
+marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
 
-V3:
-  add more detailed comment
+V1:
+https://lkml.org/lkml/2018/7/4/91
 
 V2:
-  only invoke blk_mq_tag_busy w/o io scheduler in blk_mq_get_request
+https://lkml.org/lkml/2018/7/10/135
 
- block/blk-mq-tag.c | 3 +++
- block/blk-mq.c     | 8 ++++++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+V3:
+[PATCH V3 1/4] Needs Comments.
+[PATCH V3 2/4] Update the description of MEMORY_DEVICE_DEV_DAX: Jan
+[PATCH V3 3/4] Acked-by: Jan in V2
+[PATCH V3 4/4] Needs Comments.
 
-diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-index 09b2ee6..a8ebcbd 100644
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -23,6 +23,9 @@ bool blk_mq_has_free_tags(struct blk_mq_tags *tags)
- 
- /*
-  * If a previously inactive queue goes active, bump the active user count.
-+ * We need to do this before try to allocate driver tag, then even if fail
-+ * to get tag when first time, the other shared-tag users could reserve
-+ * budget for it.
-  */
- bool __blk_mq_tag_busy(struct blk_mq_hw_ctx *hctx)
- {
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ae44e85..75ac3fbd 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -285,7 +285,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
- 		rq->tag = -1;
- 		rq->internal_tag = tag;
- 	} else {
--		if (blk_mq_tag_busy(data->hctx)) {
-+		if (data->hctx->flags & BLK_MQ_F_TAG_SHARED) {
- 			rq_flags = RQF_MQ_INFLIGHT;
- 			atomic_inc(&data->hctx->nr_active);
- 		}
-@@ -367,6 +367,8 @@ static struct request *blk_mq_get_request(struct request_queue *q,
- 		if (!op_is_flush(op) && e->type->ops.mq.limit_depth &&
- 		    !(data->flags & BLK_MQ_REQ_RESERVED))
- 			e->type->ops.mq.limit_depth(op, data);
-+	} else {
-+		blk_mq_tag_busy(data->hctx);
- 	}
- 
- 	tag = blk_mq_get_tag(data);
-@@ -972,6 +974,7 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
- 		.hctx = blk_mq_map_queue(rq->q, rq->mq_ctx->cpu),
- 		.flags = wait ? 0 : BLK_MQ_REQ_NOWAIT,
- 	};
-+	bool shared;
- 
- 	might_sleep_if(wait);
- 
-@@ -981,9 +984,10 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
- 	if (blk_mq_tag_is_reserved(data.hctx->sched_tags, rq->internal_tag))
- 		data.flags |= BLK_MQ_REQ_RESERVED;
- 
-+	shared = blk_mq_tag_busy(data.hctx);
- 	rq->tag = blk_mq_get_tag(&data);
- 	if (rq->tag >= 0) {
--		if (blk_mq_tag_busy(data.hctx)) {
-+		if (shared) {
- 			rq->rq_flags |= RQF_MQ_INFLIGHT;
- 			atomic_inc(&data.hctx->nr_active);
- 		}
+Zhang Yi (4):
+  kvm: remove redundant reserved page check
+  mm: introduce memory type MEMORY_DEVICE_DEV_DAX
+  mm: add a function to differentiate the pages is from DAX device
+    memory
+  kvm: add a check if pfn is from NVDIMM pmem.
+
+ drivers/dax/pmem.c       |  1 +
+ include/linux/memremap.h |  8 ++++++++
+ include/linux/mm.h       | 12 ++++++++++++
+ virt/kvm/kvm_main.c      | 16 ++++++++--------
+ 4 files changed, 29 insertions(+), 8 deletions(-)
+
 -- 
 2.7.4
 
