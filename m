@@ -4,62 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E309C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52827C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC4021D6B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08EB921D6A
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:22:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrUIZSkN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC4021D6B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPCxbtod"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08EB921D6A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbeHIOp2 (ORCPT
+        id S1731061AbeHIOrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:45:28 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45595 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730090AbeHIOp1 (ORCPT
+        Thu, 9 Aug 2018 10:47:08 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45691 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730090AbeHIOrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:45:27 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s16-v6so2754149edq.12;
-        Thu, 09 Aug 2018 05:20:48 -0700 (PDT)
+        Thu, 9 Aug 2018 10:47:08 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s16-v6so2756352edq.12;
+        Thu, 09 Aug 2018 05:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=z1IU1lVrSq+lWl9KIGA9uCBI/ahPc+7pGzb56LPuxgM=;
-        b=GrUIZSkN/1MF/RK27jpQeQ/mcJ0Wl9kBQ8bciwSHHbnJqJk7Ivjxq5bTl2X9PzAjfc
-         YHxZdumSBmi4oa1jcwXePNeCk1C4UxlwUpbOivzFkykyVGZ6tFc0UXY9NrnVvJwqlRG0
-         DBgM7Ytt58OH0BKMN4tKiCGdD8KMG96rzIjnSz/SG+oTzCd9rwHmLcbTAVupniVmRx7p
-         +FlGQYL42HbgBnEXkWiC4kSrz13NxGWlvOJ1PuWRgBftAuFowoeSS8QDfoJf3TVYG2Xk
-         1tM0rar9CdP+4RPQ/lfcmrNHpxKbwywoD+oLY/KFGQdWb+0exU4LrspZ57KrU+PIG6Lv
-         kPwg==
+        bh=xjZBlwGwTHjpCCQGKVbtdGA4UAlyUj0sd83TZhldMaQ=;
+        b=NPCxbtodpKeuft6hJThN8fu4/9jONzC4Ft6XnvYJ8WI/2KIchRwt34q8JBR5Opi7PK
+         +jo8WbjVKLNrzaUww8veBHBH46lvsIwaH0FS2JoDtzbe/vZblxCwRM8p70oVUyuvJpZq
+         kaBqOfiCapfEl1zfHuxyBPVDhJfyLdbxRiv+kdl+lHyeqC+WsPoLcg1e/5esFP1p7B1a
+         jJktGrGl2R8N41pTpiXpgKko3BrZpiCSNf8ilgJlDYgIagaPIuwxqm2QVsKBgGrgGka6
+         ILmBRq3FjX5LnfHEBKSjEFCvxRriIMbRavTrBVYpYDTFmDbds5sx59lrhkL89xtFAtLp
+         gbRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z1IU1lVrSq+lWl9KIGA9uCBI/ahPc+7pGzb56LPuxgM=;
-        b=IFoEEfuQndktRfFN84aEprSz57woo7TnPFEDHMuGbBcorHPuIXpkrr6HQMP/pUsmGg
-         otx0Fla3ZoRxiy5QEpTIVsl+m/QWgx0qUDZdiVFtfyHoCjWALFm3m+TKy4LnLYUWVD2b
-         1O+xtkKKZ1EHiHjZMwCawhbExdGyPkX0iioVK7H3Yvey4RjEEQlhuNRl7Ny8oxHpJLak
-         Gd1J3tmAkndDfNd0SRtADDyxfIULZ8buvY7L5qcsKRc0GWtfA2up7y4y0rJPfIkbksW1
-         9WBsHL6yF3W4+0woxdlzF61GTC569C/BDHYhBuJ5LApgAxNXIF608RKaWYtx9c22oF/Q
-         oclA==
-X-Gm-Message-State: AOUpUlGzpNnZaj0W8+W/suy1SLKvg3YWbCmTEyHGiy0RNALd4ORegm8x
-        /o8paowqs6fsyv8TxhaJ5jo=
-X-Google-Smtp-Source: AA+uWPzC9PH5SZYT6568n2YHOptwMsml1PdWBDaMrpfkh9Z6wuTsz4ur+ULhGmiV3M8peafolabLcQ==
-X-Received: by 2002:a50:91da:: with SMTP id h26-v6mr2893138eda.87.1533817247576;
-        Thu, 09 Aug 2018 05:20:47 -0700 (PDT)
+        bh=xjZBlwGwTHjpCCQGKVbtdGA4UAlyUj0sd83TZhldMaQ=;
+        b=C8DfqRtWuRzyn5fwlhNdeU9HsaGK3CeqDo3fj6Z15K2ffeEJCcieWAFbNtYcG3SwXj
+         oUsDG23GExxEWOqERJPf5wpxQPJ8IKaizLhAjaY+j0KftazulPYrpKbi3DkHczeDKGe5
+         kz4VVceruh/KsqzerSrAp1kQuBDH0XZvk9WnvHwPAbVNuGDKVQv9PrFqjksA3SLWsLi8
+         ZQCtD2UKzjLSCYjcJnusTw7N2ZBlBYKHZf6kuhZ+IHswLrzAu7HHfgG1p+6PzixM1v2c
+         Im9u3r0GHwev1rY0AS7cxcVmJlkY41v8aoIBXBsm3Z/T0qZTWQ85jZcjn9A0M2F89WOO
+         2wGQ==
+X-Gm-Message-State: AOUpUlGgwL2viZtK8bmUfA/UZaOkg33kJaovzMP1inrP04WG/Hw25oMT
+        rnl27I004ABOo2VX03e9YJA=
+X-Google-Smtp-Source: AA+uWPx2/mfJZxh6RXl2C5hki4S7mOHepTK1ZufGSgyVDKxZY7pANtGmu/GEtww4JJEwXw8o3Rkpww==
+X-Received: by 2002:a50:bec2:: with SMTP id e2-v6mr2938170edk.283.1533817348095;
+        Thu, 09 Aug 2018 05:22:28 -0700 (PDT)
 Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id x33-v6sm5406364eda.81.2018.08.09.05.20.46
+        by smtp.gmail.com with ESMTPSA id w1-v6sm10613296eda.63.2018.08.09.05.22.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 05:20:46 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 14:20:45 +0200
+        Thu, 09 Aug 2018 05:22:27 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 14:22:26 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Aapo Vienamo <avienamo@nvidia.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -71,16 +71,15 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 05/40] soc/tegra: pmc: Fix pad voltage configuration for
- Tegra186
-Message-ID: <20180809122045.GR21639@ulmo>
+Subject: Re: [PATCH 07/40] soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+Message-ID: <20180809122226.GS21639@ulmo>
 References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
- <1533141150-10511-6-git-send-email-avienamo@nvidia.com>
+ <1533141150-10511-8-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OiITrshLgfui8fEl"
+        protocol="application/pgp-signature"; boundary="WVXkb2QE2eH0aWe4"
 Content-Disposition: inline
-In-Reply-To: <1533141150-10511-6-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1533141150-10511-8-git-send-email-avienamo@nvidia.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,84 +87,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---OiITrshLgfui8fEl
+--WVXkb2QE2eH0aWe4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 01, 2018 at 07:31:55PM +0300, Aapo Vienamo wrote:
-> Implement support for the PMC_IMPL_E_33V_PWR register which replaces
-> PMC_PWR_DET register interface of the SoC generations preceding
-> Tegra186. Also add the voltage bit offsets to the tegra186_io_pads[]
-> table and the AO_HV pad.
+On Wed, Aug 01, 2018 at 07:31:57PM +0300, Aapo Vienamo wrote:
+> Implement a function to query whether a pad is in deep power down mode.
+> This will is needed by the pinctrl callbacks.
+
+"This is needed..."
+
 >=20
 > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 > Acked-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 55 ++++++++++++++++++++++++++++++++++---------=
-------
->  include/soc/tegra/pmc.h |  1 +
->  2 files changed, 39 insertions(+), 17 deletions(-)
+>  drivers/soc/tegra/pmc.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >=20
 > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 2d6f3fc..f926332 100644
+> index 393ca72..784c182 100644
 > --- a/drivers/soc/tegra/pmc.c
 > +++ b/drivers/soc/tegra/pmc.c
-> @@ -65,6 +65,8 @@
+> @@ -1075,6 +1075,22 @@ int tegra_io_pad_power_disable(enum tegra_io_pad i=
+d)
+>  }
+>  EXPORT_SYMBOL(tegra_io_pad_power_disable);
 > =20
->  #define PWRGATE_STATUS			0x38
-> =20
-> +#define PMC_IMPL_E_33V_PWR		0x40
-> +
->  #define PMC_PWR_DET			0x48
-> =20
->  #define PMC_SCRATCH0_MODE_RECOVERY	BIT(31)
-> @@ -154,6 +156,7 @@ struct tegra_pmc_soc {
->  	bool has_tsense_reset;
->  	bool has_gpu_clamps;
->  	bool needs_mbist_war;
-> +	bool has_impl_33v_pwr;
-> =20
->  	const struct tegra_io_pad_soc *io_pads;
->  	unsigned int num_io_pads;
-> @@ -1073,20 +1076,29 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
-> =20
->  	mutex_lock(&pmc->powergates_lock);
-> =20
-> -	/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
-> -	value =3D tegra_pmc_readl(PMC_PWR_DET);
-> -	value |=3D BIT(pad->voltage);
-> -	tegra_pmc_writel(value, PMC_PWR_DET);
-> +	if (pmc->soc->has_impl_33v_pwr) {
-> +		value =3D tegra_pmc_readl(PMC_IMPL_E_33V_PWR);
-> +		if (voltage =3D=3D TEGRA_IO_PAD_1800000UV)
-> +			value &=3D ~BIT(pad->voltage);
-> +		else
-> +			value |=3D BIT(pad->voltage);
+> +static int tegra_io_pad_is_powered(enum tegra_io_pad id)
+> +{
+> +	unsigned long request, status;
+> +	u32 mask;
+> +	u32 value;
 
-Nit: blank lines surrounding the if ... else ... block might improve
-readability of this a little.
+These can go on a single line.
 
 Thierry
 
---OiITrshLgfui8fEl
+--WVXkb2QE2eH0aWe4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsMZ0ACgkQ3SOs138+
-s6FWNw/+OAM3l/QWbf2RLvaGYH+1pFSK3IB/yN1mQPefXKHM6vQtEsXTBqO07MMx
-2XKoA7oZ7EfSb6HJLR3Ns7LtaH7uP7+5qWRsuMzU4Ep2xKnY3s+gxb4Ngm14tzi9
-8pS/FNrhLqvaNtSmUtYdedGElifLRvbonzdSmSKbyX6asjibFiJA7T40nWBokgxH
-qIow1tkIdNbocj/ifspmz8rKPxPAwUKsE8su/nvZ5+WJPA+BDhe8i+/ADSH55XOo
-Oc0yTHNMAT7DbCqqrHxwbgmljTeN8ESbwHhFfLWTabwpw2X25Fav5p4KHy89ICnM
-zzRtJ+XiHCPZ4ue8GEDgJ97LOSxCrtqyzDXIQ+AcMp1hLcMP4NNST8drd9dSu0Bx
-COTlEmtweN4Y22AeNRHxQaTOFwWxdw4IqGK8isDAq66c45EZIAqigYmmXEj7E7fb
-nD/3fuJAUjXSoAKusqiEL5WDl6WBhkTRPYGzfVQdLTkjRJvE07Opqscq0L7xJRh2
-TPoagtVIAdK4wx/OrJ/Hw6w5ve9hQVpqYdJQUUQqZFAm1xIaJ6KUzVLxTmXuMIrS
-FaVsnxCbO1nTRGVL4r3uGwjcNt3N+tFMLDHmsJcQ9EKGIZ1Vr7ctz8DvsktoK31P
-WkxJWpl6kAhjgAyHj4zfoBpR3AzTeNVefcOOIBpH1AxDkuYJsG0=
-=NXuf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsMgIACgkQ3SOs138+
+s6HcZxAAqCg/j/84XaWdFZuexhsITHhgWr2RXdBAqYHGBTA8sLTPH8pyJW/S3mD6
+ke/0fdpETpE8jtqJdWaWytiaycw4aLmwcWz/QMozEJ6SY4IBUKBBiPYKrNzhWTHO
+Av/l1sBGyQ0zN2SeoJjHttsykzRis1k/9ATv0whkJdUytTuPkpf4X2o142rGYsuV
+NpUkVoDYIHzI7YrHTfppWCpqiEFv4zEm/qCGJxkCNAlDU7xI48+WbGQjIaTmyoxD
+XVEVpaEi8GEU1vkgyQtY8l3PS2ywJ7OaH1naRTUs8BtkobxnYqpjRpJFNs8TQp+A
+ZHf/xKZXPAu0j/RkbFnu576Mujde0r+W0zVWRHXRA4dEmQnZJeGxon97S1qNo5LG
+N7ibgxCoPhumQvCkqyhEPW82CpfUpTI/yDbLd0aXXr1AQV/AvMH/KkxIST44JnyH
+DtQBt2OVeG8cYzonDXdXV5ZUGQyNPhPLwoxAgrQSSF45GUC/caxN1sy0ZchgZ+J2
+gO2S5qQCBCNTojn7lK9oY7geKG3/ZX4Ci1HY50qi03pxO8xRDBfTN+B4x4Snw+zR
+excumyHUyrvVKR/CsUDMmG7wVCfGS9ruh5+g8lXLxH4iwEwZ1nE0bXttm6+8Yeoa
+1sB+B/adpqEUdp/YeR/Qns3DJGXMw1jnychvgfu2Y8GlFW2Wu7s=
+=WfhN
 -----END PGP SIGNATURE-----
 
---OiITrshLgfui8fEl--
+--WVXkb2QE2eH0aWe4--
