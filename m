@@ -2,140 +2,135 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F360C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738BEC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C6D21F45
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:01:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HB+xDaGM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C6D21F45
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 357BA21EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:02:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357BA21EFC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeHIU1P (ORCPT
+        id S1726976AbeHIU2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:27:15 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34553 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbeHIU1P (ORCPT
+        Thu, 9 Aug 2018 16:28:44 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:52428 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbeHIU2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:27:15 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f8-v6so5192519ljk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KBRePFpH+4fbpwPfUjYWaEb9JltpG94wdW7GpUjFunw=;
-        b=HB+xDaGMmXm9S6ESbIta0U68N/z1+YUs5uYr3Bo65FIIWEJZkfm9lC9MyDyBNxitJn
-         QqYgpnEDUdyURIYq5xktKaK6Q1/DV4k1Q6hM/PsgadU6N7/aMLJO31ehIQn5SPFxdsAZ
-         MqRPJD7JHG/zC9LG5pquXLca3ofcBDui1fgeM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KBRePFpH+4fbpwPfUjYWaEb9JltpG94wdW7GpUjFunw=;
-        b=aa0kQyC0Bqi7OHZ9QbAe9ZeaQndNVOfSqegSRAWytjzQijOozwW770I9CRQ508MUni
-         5GKi3Wzi42ng+VimuwzUZLOkvETChEv+Yz5PLjKzUTF0VryBKlgEaoveeSieN3vNnLQF
-         /NAQMEZFtbcC1qFmvQhZt+7NfX5eQMLlrqnNno6kR4MdtN+s8V0JtecTix21BDBrnhQ7
-         7W2emDderbWpofqnJMrcv1FtzBnCAvnE7+LNMcITvpvVCecg9AiIfx7vRUVqK13swZxq
-         KnQBQedvJJd+IWtC37RgTg8FXscTsvZCBMj1uliRxVTeKEXU0AoikKIk1p+EqG5xkdDg
-         /Iww==
-X-Gm-Message-State: AOUpUlFp3M+smVZZn549MipAnQg3L3THgylpTGLPc1vWkcX0ydiCUJBj
-        xEZKA7z0K24dXTlEGPbOkWon+rXMZME=
-X-Google-Smtp-Source: AA+uWPyBCAH45N12zoAzY5TKXaxtI+kSFObqZMP1v99G7BMytYvVwp02WGnjBRyeIeA/8yGhAdMT+g==
-X-Received: by 2002:a2e:9b04:: with SMTP id u4-v6mr2333202lji.78.1533837676189;
-        Thu, 09 Aug 2018 11:01:16 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id u10-v6sm1223017ljk.83.2018.08.09.11.01.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 11:01:15 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id v9-v6so5175316ljk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:01:14 -0700 (PDT)
-X-Received: by 2002:a2e:540d:: with SMTP id i13-v6mr2280866ljb.51.1533837673545;
- Thu, 09 Aug 2018 11:01:13 -0700 (PDT)
+        Thu, 9 Aug 2018 16:28:44 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fnpGm-0004WO-Nv; Thu, 09 Aug 2018 12:02:44 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fnpGX-0005zh-4h; Thu, 09 Aug 2018 12:02:44 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <wen.yang99@zte.com.cn>
+Cc:     <oleg@redhat.com>, <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <ma.jiang@zte.com.cn>,
+        <torvalds@linux-foundation.org>, <cheng.shengyu@zte.com.cn>,
+        <zhong.weidong@zte.com.cn>
+References: <201808091624383651898@zte.com.cn>
+Date:   Thu, 09 Aug 2018 13:02:14 -0500
+In-Reply-To: <201808091624383651898@zte.com.cn> (wen's message of "Thu, 9 Aug
+        2018 16:24:38 +0800 (CST)")
+Message-ID: <87lg9fv2op.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20180731100914.19856-1-cang@codeaurora.org> <20180731100914.19856-5-cang@codeaurora.org>
-In-Reply-To: <20180731100914.19856-5-cang@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 9 Aug 2018 11:00:37 -0700
-X-Gmail-Original-Message-ID: <CAE=gft4xCk2MD-oOAuCRwWz6J9mMvZGFR2J+E7vcu06+3xBZRQ@mail.gmail.com>
-Message-ID: <CAE=gft4xCk2MD-oOAuCRwWz6J9mMvZGFR2J+E7vcu06+3xBZRQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] scsi: ufs: Power on phy after it is initialized
-To:     cang@codeaurora.org
-Cc:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>,
-        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1fnpGX-0005zh-4h;;;mid=<87lg9fv2op.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+eS/74+6UjTrdhO3eu+Ie1fMxqSTOt9kQ=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v5 3/6] signal: Add calculate_sigpending()
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 3:09 AM Can Guo <cang@codeaurora.org> wrote:
->
-> Before UFS PHY is initialized, powering on it has no effect but increases
-> the PHY's power on count. Then when power on PHY to enable it after phy
-> initialization where it is really needed, as PHY's power on count is not
-> zero, again it would do nothing but directly return and leaves the PHY
-> disabled. This change adds condition checks to phy power on calls which
-> happen before phy initialization.
->
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufs-qcom.c | 4 +++-
->  drivers/scsi/ufs/ufs-qcom.h | 1 +
->  2 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-> index 2b38db2..4e9d526 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.c
-> +++ b/drivers/scsi/ufs/ufs-qcom.c
-> @@ -288,6 +288,7 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->                         __func__, ret);
->                 goto out;
->         }
-> +       host->is_phy_init = true;
->
->         /* De-assert PHY reset and start serdes */
->         ufs_qcom_deassert_reset(hba);
-> @@ -1147,7 +1148,8 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->                 return 0;
->
->         if (on && (status == POST_CHANGE)) {
-> -               phy_power_on(host->generic_phy);
-> +               if (host->is_phy_init)
-> +                       phy_power_on(host->generic_phy);
->
->                 /* enable the device ref clock for HS mode*/
->                 if (ufshcd_is_hs_mode(&hba->pwr_info))
-> diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
-> index 295f4be..5747aa3 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.h
-> +++ b/drivers/scsi/ufs/ufs-qcom.h
-> @@ -242,6 +242,7 @@ struct ufs_qcom_host {
->         /* Bitmask for enabling debug prints */
->         u32 dbg_print_en;
->         struct ufs_qcom_testbus testbus;
-> +       bool is_phy_init;
->  };
->
->  static inline u32
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+<wen.yang99@zte.com.cn> writes:
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+> EricW.Biederman <ebiederm@xmission.com> wrote:
+>> Add a function calculate_sigpending to test to see if any signals are
+>> pending for a new task immediately following fork. Signals have to
+>> happen either before or after fork. Today our practice is to push
+>> all of the signals to before the fork, but that has the downside that
+>> frequent or periodic signals can make fork take much much longer than
+>> normal or prevent fork from completing entirely.
+>> 
+>
+>> + calculate_sigpending();
+>> }
+>> /*
+>> diff --git a/kernel/signal.c b/kernel/signal.c
+>> index dddbea558455..1e06f1eba363 100644
+>> --- a/kernel/signal.c
+>> +++ b/kernel/signal.c
+>> @@ -172,6 +172,17 @@ void recalc_sigpending(void)
+>> }
+>> +void calculate_sigpending(void)
+>> +{
+>> + /* Have any signals or users of TIF_SIGPENDING been delayed
+>> + * until after fork?
+>> + */
+>> + spin_lock_irq(&current->sighand->siglock);
+>> + set_tsk_thread_flag(current, TIF_SIGPENDING);
+>> + recalc_sigpending();
+>> + spin_unlock_irq(&current->sighand->siglock);
+>> +}
+>> +
+>
+> The new function calculate_sigpending is similar to  recalc_sigpending,
+> but recalc_sigpending has no spin_lock_irq(&current->sighand->siglock) in it.
+> This gives recalc_sigpending more flexibility, 
+> we may use spin_lock_irq or spin_lock_irqsave before recalc_sigpending .
+> eg: 
+>
+> static int autofs4_write(struct autofs_sb_info *sbi,
+>              struct file *file, const void *addr, int bytes)
+> {
+>   ...
+>         spin_lock_irqsave(&current->sighand->siglock, flags);
+>         sigdelset(&current->pending.signal, SIGPIPE);
+>         recalc_sigpending();
+>         spin_unlock_irqrestore(&current->sighand->siglock, flags);
+>   ... 
+> }
+>
+> or:
+> void kernel_sigaction(int sig, __sighandler_t action)
+> {
+>     spin_lock_irq(&current->sighand->siglock);
+> ...
+>         recalc_sigpending();
+> ...   
+>     spin_unlock_irq(&current->sighand->siglock);
+> }
+>
+>
+> But calculate_sigpending is currently hardwired to call spin_lock_irq.
+
+calculate_sigpending really only exists to keep the code comprehensible.
+
+It is only ever expected to be called in exactly one place so the lack
+of flexibility should not be a problem.  Further the use of irqsave
+is discouraged unless it is necessary.
+
+The irqsave in autofs_write actually looks like a misfeature.  We take
+a mutex a few lines earlier, so we know that irqs are enabled.  Saving
+and restoring them is uncessary work.  Further unless I am missing
+something that code path should be calling kernel_dequeue_signal, to
+ensure that any siginfo associated with that SIGPIPE gets dequeued.
+
+Eric
+
