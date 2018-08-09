@@ -3,91 +3,137 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5E6C4646D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9317C4646D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54DDB21C2E
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DDB21C2E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 9530B21C36
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:40:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9530B21C36
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeHIFAR (ORCPT
+        id S1727557AbeHIFCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 01:00:17 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63646 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725878AbeHIFAR (ORCPT
+        Thu, 9 Aug 2018 01:02:50 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:29840 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbeHIFCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 01:00:17 -0400
-X-UUID: 89a2c5caf06d4fe98f55765c344c2fc9-20180809
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 569884198; Thu, 09 Aug 2018 10:37:44 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 9 Aug 2018 10:37:42 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 9 Aug 2018 10:37:42 +0800
-Message-ID: <1533782262.29986.1.camel@mtksdaap41>
-Subject: Re: [PATCH v4 07/14] drm/mediatek: add the comment about color
- format setting for OVL
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
+        Thu, 9 Aug 2018 01:02:50 -0400
+Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 9 Aug 2018
+ 10:40:21 +0800
+CC:     <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Thu, 9 Aug 2018 10:37:42 +0800
-In-Reply-To: <1533780949-30141-8-git-send-email-stu.hsieh@mediatek.com>
-References: <1533780949-30141-1-git-send-email-stu.hsieh@mediatek.com>
-         <1533780949-30141-8-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Jian Hu <jian.hu@amlogic.com>
+Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+ <20180712211244.11428-3-yixun.lan@amlogic.com>
+ <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
+ <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+ <153270970080.48062.18399022907046343950@swboyd.mtv.corp.google.com>
+ <153270995155.48062.4302847978258086624@swboyd.mtv.corp.google.com>
+ <e89f28253070abae5dc755800feee500cc3396ce.camel@baylibre.com>
+From:   Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <1e5f7ba3-59c1-27c8-89b7-cce87659462e@amlogic.com>
+Date:   Thu, 9 Aug 2018 10:39:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
+In-Reply-To: <e89f28253070abae5dc755800feee500cc3396ce.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Hi Jerome
 
-On Thu, 2018-08-09 at 10:15 +0800, Stu Hsieh wrote:
-> This patch add the comment about color format setting for OVL
+On 07/30/18 16:57, Jerome Brunet wrote:
+> On Fri, 2018-07-27 at 09:45 -0700, Stephen Boyd wrote:
+>> Quoting Stephen Boyd (2018-07-27 09:41:40)
+>>> Quoting Yixun Lan (2018-07-27 07:52:23)
+>>>> HI Stephen:
+>>>>
+>>>> On 07/26/2018 11:20 PM, Stephen Boyd wrote:
+>>>>> Quoting Yixun Lan (2018-07-12 14:12:44)
+>>>>>> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..36c4c7cd69a6
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/clk/meson/mmc-clkc.c
+>>>>>> @@ -0,0 +1,367 @@
+>>>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>>>> +/*
+>>>>>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>>>>>> + *
+>>>>>> + * Copyright (c) 2017 Baylibre SAS.
+>>>>>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>>>>>> + *
+>>>>>> + * Copyright (c) 2018 Amlogic, inc.
+>>>>>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>>>>>> + */
+>>>>>> +
+>>>>>> +#include <linux/clk.h>
+>>>>>
+>>>>> Is this include used?
+>>>>>
+>>>>
+>>>> this is needed by clk_get_rate()
+>>>> see drivers/clk/meson/mmc-clkc.c:204
+>>>
+>>> Hmm ok. That's unfortunate.
+>>
+>> You should be able to read the hardware to figure out the clk frequency?
+>> This may be a sign that the phase clk_ops are bad and should be passing
+>> in the frequency of the parent clk to the op so that phase can be
+>> calculated. Jerome?
+>>
 > 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> It could be a away to do it but:
+> a) if we modify the API, we would need to update every clock driver using it.
+>    There is not that many users of the phase API but still, it is annoying
+> b) This particular driver need the parent rate, other might need something else
+> I guess. (parent phase ??, duty cycle ??) 
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> index 978782a77629..0facd823c552 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -157,6 +157,11 @@ static void mtk_ovl_layer_off(struct mtk_ddp_comp *comp, unsigned int idx)
->  
->  static unsigned int ovl_fmt_convert(struct mtk_disp_ovl *ovl, unsigned int fmt)
->  {
-> +	/* The return value in switch "MEM_MODE_INPUT_FORMAT_XXX"
-> +	 * is defined in mediatek HW data sheet.
-> +	 * The alphabet order in XXX is no relation to data
-> +	 * arrangement in memory.
-> +	 */
->  	switch (fmt) {
->  	default:
->  	case DRM_FORMAT_RGB565:
+> I think the real problem here it that you are using the consumer API. You should
+> be using the provider API like clk_hw_get_rate. Look at the clk-divider.c which
+> use clk_hw_round_rate() on the parent clock. 
+I will replace it with clk_hw_get_rate()
 
+> 
+> Clock drivers should deal with 'struct clk_hw', not 'struct clk'. I think it was
+> mentioned in the past that the 'clk' within 'struct clk_hw' might be removed
+> someday.
+> 
+> Yixun, please don't put your clock driver within the controller driver. Please
+> implement your 'phase-delay' clock in its own file and export the ops, like
+> every other clock in the amlogic directory. Also, please review your list of
+> '#define', some of them are unnecessary copy/paste from the MMC driver.
+> 
+will implement a clk-phase-delay.c
 
+I can move the extra CC list
+
+Yixun
