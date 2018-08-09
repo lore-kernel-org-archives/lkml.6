@@ -3,56 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0504CC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBC7C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A402121A8F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42C1221A8F
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:15:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="CKgJBXPk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A402121A8F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="HmZ94Xh/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42C1221A8F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbeHIMjq (ORCPT
+        id S1730546AbeHIMjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:39:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48496 "EHLO
+        Thu, 9 Aug 2018 08:39:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48644 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727371AbeHIMjq (ORCPT
+        with ESMTP id S1730415AbeHIMjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:39:46 -0400
+        Thu, 9 Aug 2018 08:39:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=sf65d/bGqb0PQqQhtSR3PhamSwaozrQE8kltgDLe73Y=; b=CKgJBXPkASmu
-        5swkdHUDsrXsK3eI26FIwnMH2pF2t42nBbqJiBBxMBcpwU3H2mqGeMyEFMrX8WFVfwr6U9lTO7tH6
-        0ViYbJlskOPpidUFbjYzanFfl7oNRwaNw6heg++41AB64GEd8xR3wsqIFzOAuop8pPcGQWBjM6CeP
-        t/gbU=;
+        List-Archive; bh=tf+HxZDqWgjsOH86zt+AawMxUH3u+m6MkwI4ICD5q8A=; b=HmZ94Xh/AqC+
+        hilHpnS9vmJu1wlfhf/v1gWyBXbo3YYBfAyiLoL8bBkMUOnyTxM9mQc63eMnepuz9E/mT3nWvvlDU
+        p+Z6ZrLlDdvyIp+kMfTXAmulfEHC39g9DFXD+ASi8N8pyot7FfyoVh6OaE6rvAjQBFzF1aQHkjmd8
+        fJP6M=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fnhyZ-0003Cl-LR; Thu, 09 Aug 2018 10:15:27 +0000
+        id 1fnhyg-0003Cu-3d; Thu, 09 Aug 2018 10:15:34 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6168A1124347; Thu,  9 Aug 2018 11:15:27 +0100 (BST)
+        id CAF5E1124347; Thu,  9 Aug 2018 11:15:33 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        Support Opensource <support.opensource@diasemi.com>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: da7219: Add delays to capture path to remove DC offset noise" to the asoc tree
-In-Reply-To:  <20180809094850.F1B623FB9D@swsrvapps-01.diasemi.com>
-Message-Id: <20180809101527.6168A1124347@debutante.sirena.org.uk>
-Date:   Thu,  9 Aug 2018 11:15:27 +0100 (BST)
+To:     Crestez Dan Leonard <leonard.crestez@intel.com>
+Cc:     Stefan Popa <stefan.popa@analog.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: Add regmap_noinc_read API" to the regmap tree
+In-Reply-To: 
+Message-Id: <20180809101533.CAF5E1124347@debutante.sirena.org.uk>
+Date:   Thu,  9 Aug 2018 11:15:33 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,11 +56,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: da7219: Add delays to capture path to remove DC offset noise
+   regmap: Add regmap_noinc_read API
 
-has been applied to the asoc tree at
+has been applied to the regmap tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,156 +81,241 @@ to this mail.
 Thanks,
 Mark
 
-From 17c81d2f5a59929c73a2a19fd49fe0b068fda76f Mon Sep 17 00:00:00 2001
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Thu, 9 Aug 2018 10:48:50 +0100
-Subject: [PATCH] ASoC: da7219: Add delays to capture path to remove DC offset
- noise
+From 74fe7b551f3385fa585d92616c85b3a575b2b2cb Mon Sep 17 00:00:00 2001
+From: Crestez Dan Leonard <leonard.crestez@intel.com>
+Date: Tue, 7 Aug 2018 17:52:17 +0300
+Subject: [PATCH] regmap: Add regmap_noinc_read API
 
-On some platforms it has been noted that a pop noise can be
-witnessed when capturing audio, mainly for first time after a
-headset jack has been inserted. This is due to a DC offset in the
-Mic PGA and so to avoid this delays are required when powering
-up the capture path.
+The regmap API usually assumes that bulk read operations will read a
+range of registers but some I2C/SPI devices have certain registers for
+which a such a read operation will return data from an internal FIFO
+instead. Add an explicit API to support bulk read without range semantics.
 
-This commit rectifies the problem by adding delays post Mic PGA and
-post Mixin PGA. The post Mic PGA delay is determined based on
-Mic Bias voltage, and is only applied the first time after a
-headset jack is inserted.
+Some linux drivers use regmap_bulk_read or regmap_raw_read for such
+registers, for example mpu6050 or bmi150 from IIO. This only happens to
+work because when caching is disabled a single regmap read op will map
+to a single bus read op (as desired). This breaks if caching is enabled and
+reg+1 happens to be a cacheable register.
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Without regmap support refactoring a driver to enable regmap caching
+requires separate I2C and SPI paths. This is exactly what regmap is
+supposed to help avoid.
+
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Crestez Dan Leonard <leonard.crestez@intel.com>
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/da7219-aad.c |  5 ++++
- sound/soc/codecs/da7219.c     | 44 ++++++++++++++++++++++++++++++-----
- sound/soc/codecs/da7219.h     |  8 +++++--
- 3 files changed, 49 insertions(+), 8 deletions(-)
+ drivers/base/regmap/internal.h |  3 ++
+ drivers/base/regmap/regmap.c   | 79 +++++++++++++++++++++++++++++++++-
+ include/linux/regmap.h         | 19 ++++++++
+ 3 files changed, 100 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/da7219-aad.c b/sound/soc/codecs/da7219-aad.c
-index a49ab751a036..2c7d5088e6f2 100644
---- a/sound/soc/codecs/da7219-aad.c
-+++ b/sound/soc/codecs/da7219-aad.c
-@@ -59,6 +59,7 @@ static void da7219_aad_btn_det_work(struct work_struct *work)
- 		container_of(work, struct da7219_aad_priv, btn_det_work);
- 	struct snd_soc_component *component = da7219_aad->component;
- 	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
-+	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
- 	u8 statusa, micbias_ctrl;
- 	bool micbias_up = false;
- 	int retries = 0;
-@@ -86,6 +87,8 @@ static void da7219_aad_btn_det_work(struct work_struct *work)
- 	if (retries >= DA7219_AAD_MICBIAS_CHK_RETRIES)
- 		dev_warn(component->dev, "Mic bias status check timed out");
+diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
+index 53785e0e297a..a6bf34d6394e 100644
+--- a/drivers/base/regmap/internal.h
++++ b/drivers/base/regmap/internal.h
+@@ -94,10 +94,12 @@ struct regmap {
+ 	bool (*readable_reg)(struct device *dev, unsigned int reg);
+ 	bool (*volatile_reg)(struct device *dev, unsigned int reg);
+ 	bool (*precious_reg)(struct device *dev, unsigned int reg);
++	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
+ 	const struct regmap_access_table *wr_table;
+ 	const struct regmap_access_table *rd_table;
+ 	const struct regmap_access_table *volatile_table;
+ 	const struct regmap_access_table *precious_table;
++	const struct regmap_access_table *rd_noinc_table;
  
-+	da7219->micbias_on_event = true;
-+
- 	/*
- 	 * Mic bias pulse required to enable mic, must be done before enabling
- 	 * button detection to prevent erroneous button readings.
-@@ -439,6 +442,8 @@ static irqreturn_t da7219_aad_irq_thread(int irq, void *data)
- 			snd_soc_component_update_bits(component, DA7219_ACCDET_CONFIG_1,
- 					    DA7219_BUTTON_CONFIG_MASK, 0);
+ 	int (*reg_read)(void *context, unsigned int reg, unsigned int *val);
+ 	int (*reg_write)(void *context, unsigned int reg, unsigned int val);
+@@ -181,6 +183,7 @@ bool regmap_writeable(struct regmap *map, unsigned int reg);
+ bool regmap_readable(struct regmap *map, unsigned int reg);
+ bool regmap_volatile(struct regmap *map, unsigned int reg);
+ bool regmap_precious(struct regmap *map, unsigned int reg);
++bool regmap_readable_noinc(struct regmap *map, unsigned int reg);
  
-+			da7219->micbias_on_event = false;
-+
- 			/* Disable mic bias */
- 			snd_soc_dapm_disable_pin(dapm, "Mic Bias");
- 			snd_soc_dapm_sync(dapm);
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index c0144f2f8174..e46e9f4bc994 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -768,6 +768,30 @@ static const struct snd_kcontrol_new da7219_st_out_filtr_mix_controls[] = {
-  * DAPM Events
-  */
+ int _regmap_write(struct regmap *map, unsigned int reg,
+ 		  unsigned int val);
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 3bc84885eb91..0360a90ad6b6 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -168,6 +168,17 @@ bool regmap_precious(struct regmap *map, unsigned int reg)
+ 	return false;
+ }
  
-+static int da7219_mic_pga_event(struct snd_soc_dapm_widget *w,
-+				struct snd_kcontrol *kcontrol, int event)
++bool regmap_readable_noinc(struct regmap *map, unsigned int reg)
 +{
-+	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-+	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
++	if (map->readable_noinc_reg)
++		return map->readable_noinc_reg(map->dev, reg);
 +
-+	switch (event) {
-+	case SND_SOC_DAPM_POST_PMU:
-+		if (da7219->micbias_on_event) {
-+			/*
-+			 * Delay only for first capture after bias enabled to
-+			 * avoid possible DC offset related noise.
-+			 */
-+			da7219->micbias_on_event = false;
-+			msleep(da7219->mic_pga_delay);
-+		}
-+		break;
-+	default:
-+		break;
-+	}
++	if (map->rd_noinc_table)
++		return regmap_check_range_table(map, reg, map->rd_noinc_table);
 +
-+	return 0;
++	return true;
 +}
 +
- static int da7219_dai_event(struct snd_soc_dapm_widget *w,
- 			    struct snd_kcontrol *kcontrol, int event)
+ static bool regmap_volatile_range(struct regmap *map, unsigned int reg,
+ 	size_t num)
  {
-@@ -937,12 +961,12 @@ static const struct snd_soc_dapm_widget da7219_dapm_widgets[] = {
- 	SND_SOC_DAPM_INPUT("MIC"),
+@@ -766,10 +777,12 @@ struct regmap *__regmap_init(struct device *dev,
+ 	map->rd_table = config->rd_table;
+ 	map->volatile_table = config->volatile_table;
+ 	map->precious_table = config->precious_table;
++	map->rd_noinc_table = config->rd_noinc_table;
+ 	map->writeable_reg = config->writeable_reg;
+ 	map->readable_reg = config->readable_reg;
+ 	map->volatile_reg = config->volatile_reg;
+ 	map->precious_reg = config->precious_reg;
++	map->readable_noinc_reg = config->readable_noinc_reg;
+ 	map->cache_type = config->cache_type;
  
- 	/* Input PGAs */
--	SND_SOC_DAPM_PGA("Mic PGA", DA7219_MIC_1_CTRL,
--			 DA7219_MIC_1_AMP_EN_SHIFT, DA7219_NO_INVERT,
--			 NULL, 0),
--	SND_SOC_DAPM_PGA("Mixin PGA", DA7219_MIXIN_L_CTRL,
--			 DA7219_MIXIN_L_AMP_EN_SHIFT, DA7219_NO_INVERT,
--			 NULL, 0),
-+	SND_SOC_DAPM_PGA_E("Mic PGA", DA7219_MIC_1_CTRL,
-+			   DA7219_MIC_1_AMP_EN_SHIFT, DA7219_NO_INVERT,
-+			   NULL, 0, da7219_mic_pga_event, SND_SOC_DAPM_POST_PMU),
-+	SND_SOC_DAPM_PGA_E("Mixin PGA", DA7219_MIXIN_L_CTRL,
-+			   DA7219_MIXIN_L_AMP_EN_SHIFT, DA7219_NO_INVERT,
-+			   NULL, 0, da7219_settling_event, SND_SOC_DAPM_POST_PMU),
+ 	spin_lock_init(&map->async_lock);
+@@ -1285,6 +1298,7 @@ int regmap_reinit_cache(struct regmap *map, const struct regmap_config *config)
+ 	map->readable_reg = config->readable_reg;
+ 	map->volatile_reg = config->volatile_reg;
+ 	map->precious_reg = config->precious_reg;
++	map->readable_noinc_reg = config->readable_noinc_reg;
+ 	map->cache_type = config->cache_type;
  
- 	/* Input Filters */
- 	SND_SOC_DAPM_ADC("ADC", NULL, DA7219_ADC_L_CTRL, DA7219_ADC_L_EN_SHIFT,
-@@ -1847,6 +1871,14 @@ static void da7219_handle_pdata(struct snd_soc_component *component)
+ 	regmap_debugfs_init(map, config->name);
+@@ -2564,7 +2578,70 @@ int regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
+ EXPORT_SYMBOL_GPL(regmap_raw_read);
  
- 		snd_soc_component_write(component, DA7219_MICBIAS_CTRL, micbias_lvl);
- 
-+		/*
-+		 * Calculate delay required to compensate for DC offset in
-+		 * Mic PGA, based on Mic Bias voltage.
-+		 */
-+		da7219->mic_pga_delay =  DA7219_MIC_PGA_BASE_DELAY +
-+					(pdata->micbias_lvl *
-+					 DA7219_MIC_PGA_OFFSET_DELAY);
+ /**
+- * regmap_field_read() - Read a value to a single register field
++ * regmap_noinc_read(): Read data from a register without incrementing the
++ *			register number
++ *
++ * @map: Register map to read from
++ * @reg: Register to read from
++ * @val: Pointer to data buffer
++ * @val_len: Length of output buffer in bytes.
++ *
++ * The regmap API usually assumes that bulk bus read operations will read a
++ * range of registers. Some devices have certain registers for which a read
++ * operation read will read from an internal FIFO.
++ *
++ * The target register must be volatile but registers after it can be
++ * completely unrelated cacheable registers.
++ *
++ * This will attempt multiple reads as required to read val_len bytes.
++ *
++ * A value of zero will be returned on success, a negative errno will be
++ * returned in error cases.
++ */
++int regmap_noinc_read(struct regmap *map, unsigned int reg,
++		      void *val, size_t val_len)
++{
++	size_t read_len;
++	int ret;
 +
- 		/* Mic */
- 		switch (pdata->mic_amp_in_sel) {
- 		case DA7219_MIC_AMP_IN_SEL_DIFF:
-diff --git a/sound/soc/codecs/da7219.h b/sound/soc/codecs/da7219.h
-index 1b00023e33cd..3a006862f0e7 100644
---- a/sound/soc/codecs/da7219.h
-+++ b/sound/soc/codecs/da7219.h
-@@ -781,8 +781,10 @@
- #define DA7219_SYS_STAT_CHECK_DELAY	50
++	if (!map->bus)
++		return -EINVAL;
++	if (!map->bus->read)
++		return -ENOTSUPP;
++	if (val_len % map->format.val_bytes)
++		return -EINVAL;
++	if (!IS_ALIGNED(reg, map->reg_stride))
++		return -EINVAL;
++	if (val_len == 0)
++		return -EINVAL;
++
++	map->lock(map->lock_arg);
++
++	if (!regmap_volatile(map, reg) || !regmap_readable_noinc(map, reg)) {
++		ret = -EINVAL;
++		goto out_unlock;
++	}
++
++	while (val_len) {
++		if (map->max_raw_read && map->max_raw_read < val_len)
++			read_len = map->max_raw_read;
++		else
++			read_len = val_len;
++		ret = _regmap_raw_read(map, reg, val, read_len);
++		if (ret)
++			goto out_unlock;
++		val = ((u8 *)val) + read_len;
++		val_len -= read_len;
++	}
++
++out_unlock:
++	map->unlock(map->lock_arg);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(regmap_noinc_read);
++
++/**
++ * regmap_field_read(): Read a value to a single register field
+  *
+  * @field: Register field to read from
+  * @val: Pointer to store read value
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 4f38068ffb71..19df946499d2 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -268,6 +268,13 @@ typedef void (*regmap_unlock)(void *);
+  *                field is NULL but precious_table (see below) is not, the
+  *                check is performed on such table (a register is precious if
+  *                it belongs to one of the ranges specified by precious_table).
++ * @readable_noinc_reg: Optional callback returning true if the register
++ *			supports multiple read operations without incrementing
++ *			the register number. If this field is NULL but
++ *			rd_noinc_table (see below) is not, the check is
++ *			performed on such table (a register is no increment
++ *			readable if it belongs to one of the ranges specified
++ *			by rd_noinc_table).
+  * @disable_locking: This regmap is either protected by external means or
+  *                   is guaranteed not be be accessed from multiple threads.
+  *                   Don't use any locking mechanisms.
+@@ -295,6 +302,7 @@ typedef void (*regmap_unlock)(void *);
+  * @rd_table:     As above, for read access.
+  * @volatile_table: As above, for volatile registers.
+  * @precious_table: As above, for precious registers.
++ * @rd_noinc_table: As above, for no increment readable registers.
+  * @reg_defaults: Power on reset values for registers (for use with
+  *                register cache support).
+  * @num_reg_defaults: Number of elements in reg_defaults.
+@@ -344,6 +352,7 @@ struct regmap_config {
+ 	bool (*readable_reg)(struct device *dev, unsigned int reg);
+ 	bool (*volatile_reg)(struct device *dev, unsigned int reg);
+ 	bool (*precious_reg)(struct device *dev, unsigned int reg);
++	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
  
- /* Power up/down Delays */
--#define DA7219_SETTLING_DELAY	40
--#define DA7219_MIN_GAIN_DELAY	30
-+#define DA7219_SETTLING_DELAY		40
-+#define DA7219_MIN_GAIN_DELAY		30
-+#define DA7219_MIC_PGA_BASE_DELAY	100
-+#define DA7219_MIC_PGA_OFFSET_DELAY	40
+ 	bool disable_locking;
+ 	regmap_lock lock;
+@@ -360,6 +369,7 @@ struct regmap_config {
+ 	const struct regmap_access_table *rd_table;
+ 	const struct regmap_access_table *volatile_table;
+ 	const struct regmap_access_table *precious_table;
++	const struct regmap_access_table *rd_noinc_table;
+ 	const struct reg_default *reg_defaults;
+ 	unsigned int num_reg_defaults;
+ 	enum regcache_type cache_type;
+@@ -946,6 +956,8 @@ int regmap_raw_write_async(struct regmap *map, unsigned int reg,
+ int regmap_read(struct regmap *map, unsigned int reg, unsigned int *val);
+ int regmap_raw_read(struct regmap *map, unsigned int reg,
+ 		    void *val, size_t val_len);
++int regmap_noinc_read(struct regmap *map, unsigned int reg,
++		      void *val, size_t val_len);
+ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
+ 		     size_t val_count);
+ int regmap_update_bits_base(struct regmap *map, unsigned int reg,
+@@ -1196,6 +1208,13 @@ static inline int regmap_raw_read(struct regmap *map, unsigned int reg,
+ 	return -EINVAL;
+ }
  
- enum da7219_clk_src {
- 	DA7219_CLKSRC_MCLK = 0,
-@@ -828,6 +830,8 @@ struct da7219_priv {
- 
- 	bool master;
- 	bool alc_en;
-+	bool micbias_on_event;
-+	unsigned int mic_pga_delay;
- 	u8 gain_ramp_ctrl;
- };
- 
++static inline int regmap_noinc_read(struct regmap *map, unsigned int reg,
++				    void *val, size_t val_len)
++{
++	WARN_ONCE(1, "regmap API is disabled");
++	return -EINVAL;
++}
++
+ static inline int regmap_bulk_read(struct regmap *map, unsigned int reg,
+ 				   void *val, size_t val_count)
+ {
 -- 
 2.18.0
 
