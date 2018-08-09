@@ -5,77 +5,87 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C77C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573B8C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFE722393
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:34:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFE722393
+	by mail.kernel.org (Postfix) with ESMTP id 0ADEF22393
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADEF22393
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeHJABU (ORCPT
+        id S1727321AbeHJAEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 20:01:20 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45845 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbeHJABU (ORCPT
+        Thu, 9 Aug 2018 20:04:40 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55369 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbeHJAEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 20:01:20 -0400
-Received: by mail-io0-f193.google.com with SMTP id k16-v6so5971484iom.12;
-        Thu, 09 Aug 2018 14:34:37 -0700 (PDT)
+        Thu, 9 Aug 2018 20:04:40 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so26166itj.5;
+        Thu, 09 Aug 2018 14:37:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QLzAXiGpFjfJXTr9EEd13hdk3DSA2shlwg/DNTFK2q4=;
-        b=ulR9Py4NLnrpFvv4BSz2TTYjUPVqqsbLIjjbEjx8kqLMp7MXBs6cvlq8EIZJeFQq/p
-         DbI6Y8lhHRNZQVBTkhiLu4q1Wb29QeG1vUcWzCYvid0Q/LujtOWM/N8yLwdKzyJ0Allk
-         mUlsh6oQR4udLLzY4G2wX1Z7/84WxoZB1Fp8sI87Qkf/znpK8BzJKQ+Uu1wqUkBf6LWW
-         /yHFLw9qxFkFf+pX9RPbuVIFSjM1veTzoTGR//1axkOpf8JLQxMuafCsBxQ+SZlJzQoH
-         FDt1W2VFMoA6fVMgA+HPvcKDnlvjN7jNSUR+GcJNma4zi9NOONQm8xaUY9KNSyjDWZ4E
-         HltQ==
-X-Gm-Message-State: AOUpUlFnrCvkChc924ORu5xR/K5uNTq+DiGVAIgD4VsDUgcHb0dhE1bc
-        DVGOfiRzhI4cXDZJFzKRAA==
-X-Google-Smtp-Source: AA+uWPwe1oCLmiSJLMdhpOhgM7YjC/EtcuxUPXcMpwHwCp5YaocXnESpWvpGszo35JSTXiSuq8d6Aw==
-X-Received: by 2002:a6b:bd06:: with SMTP id n6-v6mr3151201iof.86.1533850476836;
-        Thu, 09 Aug 2018 14:34:36 -0700 (PDT)
+        bh=FMKA46lZAxxSR4T4yD7qmkmd2737H+PzOJCS74Hen/A=;
+        b=SqZzh4+23UJvg8yueZiEUDyWBMnRQ9UV/rGlcuCQEWctNvKenYc66wJ5fAAHgdlSXv
+         cac/1NWIH3Y4pp6WXo5jHi/q8wD7gfWmJXWB+S9EeHtg4+3WmlL+0QFlLjWxCWpI8roG
+         ve2lVrRY6tEmRLHwUCTMpSQrop2BBUKrRPDJvwPs2h/9+j1WNxzLd7rEgbzlBGj+6jer
+         BNfDUvnQmTESEXOqy5vHpt+sODARdBLn65K/UzjZWqHBc6sHhGtihHiLosy9h3kDUIF9
+         VCGs0fmnCNcLmT4jjdyl+WZuogtGJBsnhanXS+VeDKB3mgIh4Trwiz7hDbwlyTfUuUm7
+         ARnA==
+X-Gm-Message-State: AOUpUlG2fRtX6FQnkmMTUtcxObVir5EJ8DB4288J+NJQX/GzmUo2UwQ/
+        5CH2AvpzFBGdpIITjjnJPQ==
+X-Google-Smtp-Source: AA+uWPzaO4SrbUgqKoLllnHxouY+YG4+yo8xTCIBZjb2vkiSa+DFhM2djwJSvbd6dkxAmEr2C/3WPA==
+X-Received: by 2002:a24:9686:: with SMTP id z128-v6mr42450itd.58.1533850676573;
+        Thu, 09 Aug 2018 14:37:56 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm385559ita.6.2018.08.09.14.34.35
+        by smtp.gmail.com with ESMTPSA id k62-v6sm149524itc.21.2018.08.09.14.37.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 14:34:36 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 15:34:35 -0600
+        Thu, 09 Aug 2018 14:37:55 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 15:37:55 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     jic23@kernel.org, broonie@kernel.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
-        mark.rutland@arm.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/6] dt-bindings: iio: accel: Add docs for ADXL372
-Message-ID: <20180809213435.GA20267@rob-hp-laptop>
-References: <1533653540-24796-1-git-send-email-stefan.popa@analog.com>
- <1533653540-24796-3-git-send-email-stefan.popa@analog.com>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: add binding for i.MX8MQ CCM
+Message-ID: <20180809213755.GA23245@rob-hp-laptop>
+References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
+ <1533825941-17224-2-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533653540-24796-3-git-send-email-stefan.popa@analog.com>
+In-Reply-To: <1533825941-17224-2-git-send-email-abel.vesa@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 05:52:16PM +0300, Stefan Popa wrote:
-> Add the device tree binding documentation for the ADXL372 3-axis digital
-> accelerometer.
+On Thu, Aug 09, 2018 at 05:45:38PM +0300, Abel Vesa wrote:
+> From: Lucas Stach <l.stach@pengutronix.de>
 > 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> This adds the binding for the i.MX8MQ Clock Controller Module.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->  .../devicetree/bindings/iio/accel/adxl372.txt      | 22 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/accel/adxl372.txt
+>  .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
+>  include/dt-bindings/clock/imx8mq-clock.h           | 629 +++++++++++++++++++++
+>  2 files changed, 649 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+>  create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
 
-Please add acks/reviewed-by's when posting new versions.
+Please add acks/reviewed-bys when posting new versions even if it was 
+back in January.
+
+Rob
