@@ -4,57 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953A0C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 654F9C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4557A21EFB
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:17:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1807921EFA
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:17:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m4qMIigN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4557A21EFB
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tp5r8tRA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1807921EFA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732772AbeHITnb (ORCPT
+        id S1732662AbeHITnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 15:43:31 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35395 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732368AbeHITnQ (ORCPT
+        Thu, 9 Aug 2018 15:43:14 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45179 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732368AbeHITnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 15:43:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p12-v6so3162469pfh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 10:17:28 -0700 (PDT)
+        Thu, 9 Aug 2018 15:43:13 -0400
+Received: by mail-pl0-f66.google.com with SMTP id j8-v6so2811129pll.12
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 10:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Fw3qw/9bKXDLnVqbm5YWc6nstTMLCbO4NRVEsh0ZO18=;
-        b=m4qMIigNISxGBHLUP7CpDrPhU7vrq2HsYoGWN2hxRojs4go1eToWHyoGlI23jjwQ47
-         YRSZfNDAxjkirOQJZACTRhD+eHLmXEeCa9FB64RX8/Xl1xUkNfwmbvMhpwQD5pSzh2wc
-         R+/URd3MkOvrhMWLv/DjvbxFYg/YlOchTuZkw=
+        bh=uiThRTKbWGcq1ih4QLhyY+amPXZ5A4gzmw70r/DuB34=;
+        b=Tp5r8tRAChu7H1tjdI6WgmnLSbn1UqGG8fgro/0z4rZGLSOJsZpzpH3WBofANLrcTv
+         aqy+6zkWdARycirXd2A4LwNsDWSRWEXhLWi1tZPRitGdw55ELlDZyesjQt1qaxB4TQpC
+         GmNRSzQg/h4/r1b4u+hSnOpxlL4b8zxUUB0js=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Fw3qw/9bKXDLnVqbm5YWc6nstTMLCbO4NRVEsh0ZO18=;
-        b=BoLoV4ZN4HMj/8JUeywK8IyJ2nHIu7TxERYTDmet7jaxhPVRuWTQ40DfDB0pWl4oT2
-         IK8pCszoJc/rvReZrTYwe3AVzc8DR42iNbF1ybH8xg7PXJ43iCzHybGc3oSAay6dfdXS
-         ZheqdqVCZQzB3jvPIDbw2MIUjAGGDqFEfxlSJO99NkJT15m7QAvQfwhGUNu8Hx2vJ2Na
-         EVOc9d9LuiVo3ZA25KUHpDYAcQ1L1mFNQNSrG4/9FApziyv5wbFxgBxTSrh7xi8+E+4V
-         G78b+NLXSt3C3wK5GzpYcW6m59O4BdR367zPVJBJnj30ULv+v/CPn0MF+sEJvYmmQ6Fz
-         +iYQ==
-X-Gm-Message-State: AOUpUlF1qpVfivUZbsUvxR6eOC/lt6IeWsjgnmwOSEnyrXrKg9AYnwgU
-        1f8EOuiOXBAvIp1Rg0pyQSrIgg==
-X-Google-Smtp-Source: AA+uWPysj3P2NbwY1lrQV3LaQrzWOczzKDpCONoibLLph6Yj1tO9st3zVWfCVYcQ8cEeXq3PrLhAvQ==
-X-Received: by 2002:a63:4a07:: with SMTP id x7-v6mr3049168pga.34.1533835047726;
-        Thu, 09 Aug 2018 10:17:27 -0700 (PDT)
+        bh=uiThRTKbWGcq1ih4QLhyY+amPXZ5A4gzmw70r/DuB34=;
+        b=Ak7XoTDo3AZENixdHi4J4NBp/J55TOQlrR4JqHHbknQp2PGhW4HLcoDaU/ejk3ZmNY
+         /db9ccq1zasAVYqnkNFBRBxw2siIxPtJE5Es8Mqz2shhzyQheEAiPea4LzAQkFpzW53z
+         yI/KdfnPXkLvNhrqqJFRf38BXQnSCUYCylnUZkTAQJCnfCsms8/d2eNm2Bm3xRIbxm2s
+         L/ZY6XSRRWkfs4N7aCnwELS4EHLm83pmtlJ+098sZg8dJaMemt8a1s5eyJObOf/TtlOQ
+         zN2bz4yEktU3sZfPHSb7kM+W16GN3lVFSTV6xo97vJ9IB2CipUOc9wRmNHatrhDQcJ4F
+         DCfA==
+X-Gm-Message-State: AOUpUlEkDxV51Fwuys2qLpcEcwImpMA5SobL2ANx5rfGlEpJ2QOr7KXU
+        gzYuDac7//69KJMDpjQ+7bDz8aDB/kJI9A==
+X-Google-Smtp-Source: AA+uWPz6+LuuIbPqBju3HcR38e//9qCbqYBOOZ/TSEmtfJOUcA+6XhZD4lq5AVb1etfZCdpgsHFUcQ==
+X-Received: by 2002:a17:902:4401:: with SMTP id k1-v6mr2799784pld.97.1533835044700;
+        Thu, 09 Aug 2018 10:17:24 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id d75-v6sm12866009pfd.49.2018.08.09.10.17.27
+        by smtp.gmail.com with ESMTPSA id d75-v6sm12866009pfd.49.2018.08.09.10.17.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 10:17:27 -0700 (PDT)
+        Thu, 09 Aug 2018 10:17:24 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -62,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Julius Werner <jwerner@chromium.org>,
         Brian Norris <briannorris@chromium.org>,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 5/7] firmware: coreboot: Remap RAM with memremap() instead of ioremap()
-Date:   Thu,  9 Aug 2018 10:17:20 -0700
-Message-Id: <20180809171722.144325-6-swboyd@chromium.org>
+Subject: [PATCH v3 1/7] firmware: coreboot: Let OF core populate platform device
+Date:   Thu,  9 Aug 2018 10:17:16 -0700
+Message-Id: <20180809171722.144325-2-swboyd@chromium.org>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180809171722.144325-1-swboyd@chromium.org>
 References: <20180809171722.144325-1-swboyd@chromium.org>
@@ -75,142 +76,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is all system memory, so we shouldn't be mapping this all with
-ioremap() as these aren't I/O regions. Instead, they're memory regions
-so we should use memremap(). Pick MEMREMAP_WB so we can map memory from
-RAM directly if that's possible, otherwise it falls back to
-ioremap_cache() like is being done here already. This also nicely
-silences the sparse warnings in this code and reduces the need to copy
-anything around anymore.
+Now that the /firmware/coreboot node in DT is populated by the core DT
+platform code with commit 3aa0582fdb82 ("of: platform: populate
+/firmware/ node from of_platform_default_populate_init()") we should and
+can remove the platform device creation here. Otherwise, the
+of_platform_device_create() call will fail, the coreboot of driver won't
+be registered, and this driver will never bind. At the same time, we
+should move this driver to use MODULE_DEVICE_TABLE so that module
+auto-load works properly when the coreboot device is auto-populated and
+we should drop the of_node handling that was presumably placed here to
+hold a reference to the DT node created during module init that no
+longer happens.
 
 Cc: Wei-Ning Huang <wnhuang@chromium.org>
 Cc: Julius Werner <jwerner@chromium.org>
 Cc: Brian Norris <briannorris@chromium.org>
 Cc: Samuel Holland <samuel@sholland.org>
+Reviewed-by: Sudeep Holla <Sudeep.Holla@arm.com>
+Fixes: 3aa0582fdb82 ("of: platform: populate /firmware/ node from of_platform_default_populate_init()")
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/firmware/google/coreboot_table.c | 42 +++++++++++-------------
- 1 file changed, 20 insertions(+), 22 deletions(-)
+ drivers/firmware/google/coreboot_table-of.c | 28 +++------------------
+ 1 file changed, 3 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index feb31502f64b..f343dbe86448 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -32,7 +32,7 @@
- #define CB_DEV(d) container_of(d, struct coreboot_device, dev)
- #define CB_DRV(d) container_of(d, struct coreboot_driver, drv)
+diff --git a/drivers/firmware/google/coreboot_table-of.c b/drivers/firmware/google/coreboot_table-of.c
+index f15bf404c579..9b90c0fa4a0b 100644
+--- a/drivers/firmware/google/coreboot_table-of.c
++++ b/drivers/firmware/google/coreboot_table-of.c
+@@ -19,7 +19,6 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+-#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
  
--static struct coreboot_table_header __iomem *ptr_header;
-+static struct coreboot_table_header *ptr_header;
+ #include "coreboot_table.h"
+@@ -30,7 +29,6 @@ static int coreboot_table_of_probe(struct platform_device *pdev)
+ 	void __iomem *ptr;
  
- static int coreboot_bus_match(struct device *dev, struct device_driver *drv)
- {
-@@ -94,18 +94,18 @@ void coreboot_driver_unregister(struct coreboot_driver *driver)
- }
- EXPORT_SYMBOL(coreboot_driver_unregister);
- 
--static int coreboot_table_init(struct device *dev, void __iomem *ptr)
-+static int coreboot_table_init(struct device *dev, void *ptr)
- {
- 	int i, ret;
- 	void *ptr_entry;
- 	struct coreboot_device *device;
--	struct coreboot_table_entry entry;
--	struct coreboot_table_header header;
-+	struct coreboot_table_entry *entry;
-+	struct coreboot_table_header *header;
- 
- 	ptr_header = ptr;
--	memcpy_fromio(&header, ptr_header, sizeof(header));
-+	header = ptr;
- 
--	if (strncmp(header.signature, "LBIO", sizeof(header.signature))) {
-+	if (strncmp(header->signature, "LBIO", sizeof(header->signature))) {
- 		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
- 		return -ENODEV;
- 	}
-@@ -114,11 +114,11 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 	if (ret)
- 		return ret;
- 
--	ptr_entry = (void *)ptr_header + header.header_bytes;
--	for (i = 0; i < header.table_entries; i++) {
--		memcpy_fromio(&entry, ptr_entry, sizeof(entry));
-+	ptr_entry = ptr_header + header->header_bytes;
-+	for (i = 0; i < header->table_entries; i++) {
-+		entry = ptr_entry;
- 
--		device = kzalloc(sizeof(struct device) + entry.size, GFP_KERNEL);
-+		device = kzalloc(sizeof(struct device) + entry->size, GFP_KERNEL);
- 		if (!device) {
- 			ret = -ENOMEM;
- 			break;
-@@ -128,7 +128,7 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 		device->dev.parent = dev;
- 		device->dev.bus = &coreboot_bus_type;
- 		device->dev.release = coreboot_device_release;
--		memcpy_fromio(&device->entry, ptr_entry, entry.size);
-+		memcpy(&device->entry, ptr_entry, entry->size);
- 
- 		ret = device_register(&device->dev);
- 		if (ret) {
-@@ -136,12 +136,12 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 			break;
- 		}
- 
--		ptr_entry += entry.size;
-+		ptr_entry += entry->size;
- 	}
- 
- 	if (ret) {
- 		bus_unregister(&coreboot_bus_type);
--		iounmap(ptr);
-+		memunmap(ptr);
- 	}
- 
- 	return ret;
-@@ -149,11 +149,10 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 
- static int coreboot_table_probe(struct platform_device *pdev)
- {
--	phys_addr_t phyaddr;
- 	resource_size_t len;
--	struct coreboot_table_header __iomem *header = NULL;
-+	struct coreboot_table_header *header;
- 	struct resource *res;
--	void __iomem *ptr = NULL;
-+	void *ptr;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
-@@ -163,14 +162,13 @@ static int coreboot_table_probe(struct platform_device *pdev)
- 	if (!res->start || !len)
- 		return -EINVAL;
- 
--	phyaddr = res->start;
--	header = ioremap_cache(phyaddr, sizeof(*header));
-+	header = memremap(res->start, sizeof(*header), MEMREMAP_WB);
- 	if (header == NULL)
- 		return -ENOMEM;
- 
--	ptr = ioremap_cache(phyaddr,
--			    header->header_bytes + header->table_bytes);
--	iounmap(header);
-+	ptr = memremap(res->start, header->header_bytes + header->table_bytes,
-+		       MEMREMAP_WB);
-+	memunmap(header);
+ 	ptr = of_iomap(fw_dn, 0);
+-	of_node_put(fw_dn);
  	if (!ptr)
  		return -ENOMEM;
  
-@@ -181,7 +179,7 @@ static int coreboot_table_remove(struct platform_device *pdev)
- {
- 	if (ptr_header) {
- 		bus_unregister(&coreboot_bus_type);
--		iounmap(ptr_header);
-+		memunmap(ptr_header);
- 		ptr_header = NULL;
- 	}
+@@ -44,8 +42,9 @@ static int coreboot_table_of_remove(struct platform_device *pdev)
  
+ static const struct of_device_id coreboot_of_match[] = {
+ 	{ .compatible = "coreboot" },
+-	{},
++	{}
+ };
++MODULE_DEVICE_TABLE(of, coreboot_of_match);
+ 
+ static struct platform_driver coreboot_table_of_driver = {
+ 	.probe = coreboot_table_of_probe,
+@@ -55,28 +54,7 @@ static struct platform_driver coreboot_table_of_driver = {
+ 		.of_match_table = coreboot_of_match,
+ 	},
+ };
+-
+-static int __init platform_coreboot_table_of_init(void)
+-{
+-	struct platform_device *pdev;
+-	struct device_node *of_node;
+-
+-	/* Limit device creation to the presence of /firmware/coreboot node */
+-	of_node = of_find_node_by_path("/firmware/coreboot");
+-	if (!of_node)
+-		return -ENODEV;
+-
+-	if (!of_match_node(coreboot_of_match, of_node))
+-		return -ENODEV;
+-
+-	pdev = of_platform_device_create(of_node, "coreboot_table_of", NULL);
+-	if (!pdev)
+-		return -ENODEV;
+-
+-	return platform_driver_register(&coreboot_table_of_driver);
+-}
+-
+-module_init(platform_coreboot_table_of_init);
++module_platform_driver(coreboot_table_of_driver);
+ 
+ MODULE_AUTHOR("Google, Inc.");
+ MODULE_LICENSE("GPL");
 -- 
 Sent by a computer through tubes
 
