@@ -2,121 +2,144 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EDCC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4069FC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072F921480
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D84F821E17
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:12:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6QYx86c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072F921480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLvyrI2w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84F821E17
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeHJBah (ORCPT
+        id S1727485AbeHJBjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:30:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727515AbeHJBag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:30:36 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B98FB20657;
-        Thu,  9 Aug 2018 23:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533855814;
-        bh=zSfUb5d8bCceFxiGT1b3jFpD4Wy81XMkn5fT7/DCnA4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r6QYx86cB51720V6UkRlprwvTV5tG8Lswt+hwKPLnFMgjQQCn/nGn9ijngN6UZO0E
-         tiwlwJOcZmJQMN38v6dIe5zlF2wBMxAChpGadryCPWzw3ud96VGYq6rAgQzp0GKCHz
-         FddDgwEj0wiMdB77LuBleDU/GILcj5IfiJqcclms=
-Date:   Thu, 9 Aug 2018 18:03:32 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v8 0/4] Add parameter for disabling ACS redirection for
- P2P
-Message-ID: <20180809230332.GH113140@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180730161840.13733-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730161840.13733-1-logang@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 9 Aug 2018 21:39:39 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43804 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbeHJBjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 21:39:39 -0400
+Received: by mail-lf1-f66.google.com with SMTP id f135-v6so5272667lfg.10;
+        Thu, 09 Aug 2018 16:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PRu/WH3UfsbVfxNrOd5qm0di6r14wGa6ruxSLvmGvrA=;
+        b=BLvyrI2w71Bbt8HCYBPwIZE+IHVn8FTbE7EPg687uqxrXfU1PxjkwHDnEeespaf0x5
+         9z56DbKQExi5ouSMAcpK52otXKNoIr3nrAT40g08f+NQKQKH4c7+x+Jdzd05BsosXmuY
+         epEFMdA2iDcys91RWeg9BPaJ6PtKuHWGAe3LzUos0tA91Qkh4pu0mD7x1I60r5KnsbkT
+         r8B6kwObiGA3I4wtwLuRJl5Su2a4T8KMhEEGF1Kc2mRKMxtrQJv1xaq4d4C3kQBWeN8Z
+         PEQbLzxf7lo/2pkd3tGuILq9+LsVTGKpYa93pu7fmiC7kQsaQybI7vyurzs3B8umMzv+
+         P5Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PRu/WH3UfsbVfxNrOd5qm0di6r14wGa6ruxSLvmGvrA=;
+        b=dQ9QuKNcc/bsq2s7/J3yIRZPR7AGgASbAFzIXPGHDq1+N3CubkL659yh0G+nmiJlYm
+         lovO0p91BGWjY20NxataBsm6UZi1vtVw8o1LGSAug0ayCD/1oLFjBXGwswPiOcQ+x0W+
+         JKaEoY/7Rz1Gd+nSoulyxhVmBkw2Rh35IXCmVUW02/9Glxw46NZIOh0H1IjVBfTN2ewz
+         wnuQ1pUDXse7Un1hXut+E38Ih3QuN6nLjMvMYhQvcuQCqUEFmJJdU3oTzyRNvNiaxP7a
+         U9uqUKw4jos3yPb/kNxJMPOKn2/YdFHA0npocworZMUXhDLGHOyzeSYzincltV+WWpM5
+         tPyg==
+X-Gm-Message-State: AOUpUlEjcBho324AhL4AS5eihXhv4RgtfBNwbJghFSIvuh8dUWlkkXfn
+        oF/o+8jUbaGvzawhlZQIumY=
+X-Google-Smtp-Source: AA+uWPww8D9HzZlQqeLui4IpnjGTu2HxJdRXdUvEzUv6LN7qkNXTWKz5BTNUJUsXSklN8YcmFxHDIw==
+X-Received: by 2002:a19:93d2:: with SMTP id w79-v6mr2968971lfk.20.1533856352982;
+        Thu, 09 Aug 2018 16:12:32 -0700 (PDT)
+Received: from localhost.localdomain ([109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id v9-v6sm1352177lje.20.2018.08.09.16.12.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 16:12:32 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] gpu: host1x: Ignore clients initialization failure
+Date:   Fri, 10 Aug 2018 02:12:11 +0300
+Message-Id: <20180809231211.26182-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 10:18:36AM -0600, Logan Gunthorpe wrote:
-> Changes since v6:
-> * Fixed order of operations for device specific disable function as
->   noticed by Alex
-> * Rebased onto v4.18-rc5 (no conflicts)
-> 
-> Changes since v5:
-> * Add a quirk to handle the Intel SPT PCH case (as pointed out by Alex)
-> * Warn in the case that we try to disable ACS redirect on a device
->   that doesn't have the ACS capability (also suggested by Alex)
-> * Collect reviewed-by tag from Alex
-> * Rebased onto v4.18-rc4 (no conflicts)
-> 
-> Changes since v4:
-> * Fixed a couple documentation mistakes spotted by Randy
-> 
-> Changes since v3:
-> * Removed some of the cruft that was copied from the resource_alignment
->   paramater (per Alex)
-> * A number of docuemntation fixes as noticed by Alex and Willy
-> 
-> Changes since v2:
-> * Rebased onto v4.18-rc1 (no conflicts)
-> * Minor tweaks to the documentation per Andy
-> * Removed the "path:" prefix and use the path parsing code
->   for simple devices (as it works the same). Per a suggestion from Alex
-> 
-> Changes since v1:
-> * Reworked pci_dev_str_match_path using strrchr as suggested by Alex
-> * Collected Christian's Acks
-> 
-> 
-> Logan Gunthorpe (4):
->   PCI: Make specifying PCI devices in kernel parameters reusable
->   PCI: Allow specifying devices using a base bus and path of devfns
->   PCI: Introduce disable_acs_redir quirk
->   PCI: Introduce the disable_acs_redir parameter
-> 
->  Documentation/admin-guide/kernel-parameters.txt |  41 +++-
->  drivers/pci/pci.c                               | 310 +++++++++++++++++++-----
->  drivers/pci/quirks.c                            |  78 +++++-
->  include/linux/pci.h                             |   5 +
->  4 files changed, 361 insertions(+), 73 deletions(-)
+From time to time new bugs are popping up, causing some host1x client to
+fail its initialization. Currently a single clients initialization failure
+causes whole host1x device registration to fail, as a result a single DRM
+sub-device initialization failure makes whole DRM initialization to fail.
+Let's ignore clients initialization failure, as a result display panel
+lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
+Actually VIC fails if initramfs misses the firmware file, so with this
+change a serial console isn't needed anymore to figure out why display
+isn't working.
 
-I reorganized this a bit and split the quirk code into a couple
-patches an put the result on my pci/peer-to-peer branch for v4.19.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-I think the result is equivalent, but let me know if I made a mistake.
+Changelog:
 
-Bjorn
+v2: Added WARN_ON() that should get more attention than just a error message.
+    Made clients_lock to lock around the lists modification, that is in line
+    with the rest of the code.
+
+ drivers/gpu/host1x/bus.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 815bdb42e3f0..07bb6b6c1260 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -199,19 +199,23 @@ static void host1x_subdev_unregister(struct host1x_device *device,
+  */
+ int host1x_device_init(struct host1x_device *device)
+ {
+-	struct host1x_client *client;
++	struct host1x_client *client, *cl;
+ 	int err;
+ 
+ 	mutex_lock(&device->clients_lock);
+ 
+-	list_for_each_entry(client, &device->clients, list) {
++	list_for_each_entry_safe(client, cl, &device->clients, list) {
+ 		if (client->ops && client->ops->init) {
+ 			err = client->ops->init(client);
+-			if (err < 0) {
++			if (WARN_ON(err < 0)) {
+ 				dev_err(&device->dev,
+ 					"failed to initialize %s: %d\n",
+ 					dev_name(client->dev), err);
+-				goto teardown;
++
++				/* add the client to the list of idle clients */
++				mutex_lock(&clients_lock);
++				list_add_tail(&client->list, &clients);
++				mutex_unlock(&clients_lock);
+ 			}
+ 		}
+ 	}
+@@ -219,14 +223,6 @@ int host1x_device_init(struct host1x_device *device)
+ 	mutex_unlock(&device->clients_lock);
+ 
+ 	return 0;
+-
+-teardown:
+-	list_for_each_entry_continue_reverse(client, &device->clients, list)
+-		if (client->ops->exit)
+-			client->ops->exit(client);
+-
+-	mutex_unlock(&device->clients_lock);
+-	return err;
+ }
+ EXPORT_SYMBOL(host1x_device_init);
+ 
+-- 
+2.18.0
+
