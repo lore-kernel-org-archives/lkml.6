@@ -2,94 +2,148 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B3FC46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBB5C4646D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 448EB21BC7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:24:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wRZU2Ix5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 448EB21BC7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id E27EB21BC7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:31:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E27EB21BC7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731932AbeHIDqn (ORCPT
+        id S1731986AbeHIDxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 23:46:43 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47782 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730262AbeHIDqn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 23:46:43 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w791OQ2l034236;
-        Thu, 9 Aug 2018 01:24:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ZZg4GrRXVCQFdPGxkd94HUqx6lv7QFogJn6j/7xWplI=;
- b=wRZU2Ix51PNqmUAdBbB2RqjtD4aV0VIElo1tYgz+cmWA3tcDirSS0oT2V7WMvVJnO/V6
- /DhHMuF7CjuZT/jRe+M08btRSd+nvtBnwjcDFMsIz5cKAK4x49MGJseaHVilAXuA/CDw
- LC22Oc0aE1Y1KQapLYWhHQ1niq0kh40I3foGEZ38GB6f1K4qwPIWCRHC4NStGJ8nlgi1
- T/He3B2MUnEiGkQbDOMhd8yiX7pxOGg232M0vdDAK4RxlH6JQ+3SxiDhmcV6u+RlUIGH
- h9p93Z8rpt6FgTLZtmrC6flaDupfMDNAgfkB/5ecl2TN4gPVeuy0VhhiUNPB4QJ9X82L bA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2kn1nd86w1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 Aug 2018 01:24:26 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w791OPNb009542
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Aug 2018 01:24:26 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w791OPj5012386;
-        Thu, 9 Aug 2018 01:24:25 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 08 Aug 2018 18:24:25 -0700
-Subject: Re: [PATCH V2] blk-mq: count the hctx as active before allocate tag
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     tom.leiming@gmail.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1533722212-20327-1-git-send-email-jianchao.w.wang@oracle.com>
- <faf3e267-b6e6-7a44-2c14-91fd9bf63371@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <b0da11e4-d542-a4d0-545b-177ffedaabaa@oracle.com>
-Date:   Thu, 9 Aug 2018 09:24:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 23:53:16 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40003 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731063AbeHIDxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 23:53:15 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 110726F388A99;
+        Thu,  9 Aug 2018 09:30:58 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Thu, 9 Aug 2018
+ 09:30:52 +0800
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+To:     Will Deacon <will.deacon@arm.com>
+References: <1533558689-3000-1-git-send-email-thunder.leizhen@huawei.com>
+ <20180808101215.GB28557@arm.com>
+CC:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Libin <huawei.libin@huawei.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B6B994B.10208@huawei.com>
+Date:   Thu, 9 Aug 2018 09:30:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <faf3e267-b6e6-7a44-2c14-91fd9bf63371@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180808101215.GB28557@arm.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8979 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=719
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808090014
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens
 
-On 08/08/2018 10:40 PM, Jens Axboe wrote:
-> On 8/8/18 3:56 AM, Jianchao Wang wrote:
->> Currently, we count the hctx as active after allocate driver tag
->> successfully. The other shared-tags users could exhaust the driver
->> tags and starve a non-active and waiting-tag hctx. Count the hctx as
->> active before try to allocate driver tag to fix this.
+
+On 2018/8/8 18:12, Will Deacon wrote:
+> Hi Thunder,
 > 
-> Patch looks good, but please add some comments along the way.
+> On Mon, Aug 06, 2018 at 08:31:29PM +0800, Zhen Lei wrote:
+>> The condition "(int)(VAL - sync_idx) >= 0" to break loop in function
+>> __arm_smmu_sync_poll_msi requires that sync_idx must be increased
+>> monotonously according to the sequence of the CMDs in the cmdq.
+>>
+>> But ".msidata = atomic_inc_return_relaxed(&smmu->sync_nr)" is not protected
+>> by spinlock, so the following scenarios may appear:
+>> cpu0			cpu1
+>> msidata=0
+>> 			msidata=1
+>> 			insert cmd1
+>> insert cmd0
+>> 			smmu execute cmd1
+>> smmu execute cmd0
+>> 			poll timeout, because msidata=1 is overridden by
+>> 			cmd0, that means VAL=0, sync_idx=1.
+> 
+> Oh yuck, you're right! We probably want a CC stable on this. Did you see
+> this go wrong in practice?
+Just misreported and make the caller wait for a long time until TIMEOUT. It's
+rare to happen, because any other CMD_SYNC during the waiting period will break
+it.
+
+> 
+> One comment on your patch...
+> 
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>  drivers/iommu/arm-smmu-v3.c | 7 +++----
+>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>> index 1d64710..4810f61 100644
+>> --- a/drivers/iommu/arm-smmu-v3.c
+>> +++ b/drivers/iommu/arm-smmu-v3.c
+>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
+>>
+>>  	int				gerr_irq;
+>>  	int				combined_irq;
+>> -	atomic_t			sync_nr;
+>> +	u32				sync_nr;
+>>
+>>  	unsigned long			ias; /* IPA */
+>>  	unsigned long			oas; /* PA */
+>> @@ -836,7 +836,6 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+>>  			cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
+>>  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
+>>  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+>> -		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent->sync.msidata);
+>>  		cmd[1] |= ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
+>>  		break;
+>>  	default:
+>> @@ -947,7 +946,6 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+>>  	struct arm_smmu_cmdq_ent ent = {
+>>  		.opcode = CMDQ_OP_CMD_SYNC,
+>>  		.sync	= {
+>> -			.msidata = atomic_inc_return_relaxed(&smmu->sync_nr),
+>>  			.msiaddr = virt_to_phys(&smmu->sync_count),
+>>  		},
+>>  	};
+>> @@ -955,6 +953,8 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+>>  	arm_smmu_cmdq_build_cmd(cmd, &ent);
+>>
+>>  	spin_lock_irqsave(&smmu->cmdq.lock, flags);
+>> +	ent.sync.msidata = ++smmu->sync_nr;
+>> +	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent.sync.msidata);
+> 
+> I really don't like splitting this out from building the rest of the
+> command. Can you just move the call to arm_smmu_cmdq_build_cmd into the
+> critical section, please?
+OK. I have considered that before, just worry it will increase the compition of spinlock.
+
+In addition, I will append a optimization patch: the adjacent CMD_SYNCs, we only need one.
+
+> 
+> Thanks,
+> 
+> Will
+> 
+> .
 > 
 
-Yes, I will do that and post the V3.
+-- 
+Thanks!
+BestRegards
 
-Thanks
-Jianchao
