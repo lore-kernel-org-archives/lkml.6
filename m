@@ -2,84 +2,130 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D48C4646D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4238C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD6321BF3
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD6321BF3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id B44B721B34
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:11:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B44B721B34
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731942AbeHIDcc convert rfc822-to-8bit (ORCPT
+        id S1731999AbeHIDd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 23:32:32 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:60168 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731063AbeHIDcc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 23:32:32 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w791AJXI026580
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 21:10:19 -0400
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w791AE2S001966
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 21:10:19 -0400
-Received: by mail-pg1-f199.google.com with SMTP id m25-v6so1823629pgv.22
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 18:10:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=R5H1Fx3OoclB21wkN7PlwQ3/4Bcu29B6sqrY7mPcU+A=;
-        b=ZXOTr9IhLu5XvBUJUkyvKvxkX5NQY7eZrwEDqQ/UutOYOVzwRY/p5/+99Bqvbk/m8w
-         kvpOvYrQGZDMTkkLijgaumDWYfp9l5SEJ46bEJysA2OVd5S2Yy5NXaOUCK5isixj9Ifm
-         tSeS36RmwJT5+6m8Gwysc/608LrKBN4oNDRjdmaQXMJx2pPNtstvcj/GGmL0ai8wMpvO
-         3SeNisNtn3WJZJrjWx0tislHCoR8SfpV1IUyxvOBt1psSXcxEjPmbJWFI35YH+2TqxxO
-         LdIn7UIHS4beEOxW7LerkSelmq6AcR2bQ215Z/NpTO588yxJ6DSBrLu7qZlqzdv7Ev3H
-         O+Xw==
-X-Gm-Message-State: AOUpUlGtHibIfAipjMhUQM+tRk75CvT2XjwGDr3nz4tfGgAMqH5GhD0m
-        ji40YRKstPvya7k9aLYu48TxYnHOdiyzUufBN1HEx7D4FQex01jARANHVydvANOSHBLz1xfKUSQ
-        owCha1KIzC0S/WVk86cl52/ekbHD6VnZ8830=
-X-Received: by 2002:a65:4c87:: with SMTP id m7-v6mr57645pgt.98.1533777014556;
-        Wed, 08 Aug 2018 18:10:14 -0700 (PDT)
-X-Google-Smtp-Source: AA+uWPymgWB07ZSW0mDXb2r0wbtvdduZr96WStYX/agH2gqjXDIovWwK0f/ZZf7PXqdK/KFfz6YI6A==
-X-Received: by 2002:a65:4c87:: with SMTP id m7-v6mr57628pgt.98.1533777014399;
-        Wed, 08 Aug 2018 18:10:14 -0700 (PDT)
-Received: from ?IPv6:2607:2c00:4000:2:385f:4702:864e:3179? ([2607:2c00:4000:2:385f:4702:864e:3179])
-        by smtp.gmail.com with ESMTPSA id j5-v6sm6444980pff.139.2018.08.08.18.10.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 18:10:13 -0700 (PDT)
-From:   TongZhang <ztong@vt.edu>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Question about inode_permission() check in unix_find_other()
-Message-Id: <91367B74-6AC5-4E14-AE13-30FF6A7A6592@vt.edu>
-Date:   Wed, 8 Aug 2018 18:09:57 -0700
-Cc:     wenbo.s@samsung.com, ahmedmoneeb@gmail.com
-To:     davem@davemloft.net, garsilva@embeddedor.com,
-        matthew@mjdsystems.ca, willemb@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-X-Mailer: Apple Mail (2.3445.9.1)
+        Wed, 8 Aug 2018 23:33:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10646 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730262AbeHIDd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 23:33:28 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 03EFDD5A49D14;
+        Thu,  9 Aug 2018 09:11:11 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 9 Aug 2018
+ 09:11:02 +0800
+Date:   Thu, 9 Aug 2018 09:09:38 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Joerg Roedel <joro@8bytes.org>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
+Subject: Re: [RFC PATCH 2/7] iommu: Add share domain interface in iommu for
+ spimdev
+Message-ID: <20180809010938.GH91035@Turing-Arch-b>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+ <20180801102221.5308-3-nek.in.cn@gmail.com>
+ <20180808091354.ppqgineql3pufwwr@8bytes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180808091354.ppqgineql3pufwwr@8bytes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Networking Subsystem Maintainers,
+On Wed, Aug 08, 2018 at 11:13:54AM +0200, Joerg Roedel wrote:
+> Date: Wed, 8 Aug 2018 11:13:54 +0200
+> From: Joerg Roedel <joro@8bytes.org>
+> To: Kenneth Lee <nek.in.cn@gmail.com>
+> CC: Jonathan Corbet <corbet@lwn.net>, Herbert Xu
+>  <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
+>  Alex Williamson <alex.williamson@redhat.com>, Kenneth Lee
+>  <liguozhu@hisilicon.com>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
+>  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
+>  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
+>  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
+>  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+>  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+>  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
+>  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
+>  linuxarm@huawei.com
+> Subject: Re: [RFC PATCH 2/7] iommu: Add share domain interface in iommu for
+>  spimdev
+> User-Agent: NeoMutt/20170421 (1.8.2)
+> Message-ID: <20180808091354.ppqgineql3pufwwr@8bytes.org>
+> 
+> On Wed, Aug 01, 2018 at 06:22:16PM +0800, Kenneth Lee wrote:
+> > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > 
+> > This patch add sharing interface for a iommu_group. The new interface:
+> > 
+> > 	iommu_group_share_domain()
+> > 	iommu_group_unshare_domain()
+> > 
+> > can be used by some virtual iommu_group (such as iommu_group for spimdev)
+> > to share their parent's iommu_group.
+> > 
+> > When the domain of the group is shared, it cannot be changed before
+> > unshared.  In the future, notification can be added if update is required.
+> 
+> >From the description or the patch I don't really get why this is needed.
+> Please update the description and make a case for this API addition.
+> 
 
-I have a quick question about inode_permission() check in unix_find_other(),
+Yes, I will add more description in next version.
 
-I was doing a code review on net/unix/af_unix.c and found out that the inode_permission() check is confusing here.
+The idea here is:
 
-Since the unix socket is presented as a file, and will be permission checked by VFS when user open it,
-why do we still need the inode_permission() check in unix_find_other() anyway?
+1. iommu_domain is the setting of the IOMMU(the unit) of an iommu_group.
 
-Thank you,
-- Tong
+2. The iommu_group originally uses a default domain or a created one (e.g. by vfio)
+   as its effective domain. There is only one user for a domain. If a device is
+   bound to vfio driver, it uses the new created domain. And if it is unbound from
+   vfio driver, it is switched back to the default domain.
 
+3. But for spimdev, we create an mdev which share it parent device's IOMMU. That
+   means, the parent device (along with its iommu group) will continue use its
+   iommu_domain, and the mdev will use the same at the same time.
+
+4. This API, is to tell the iommu_group that the domain is shared by the
+   spimdev. And it should be changed before it is unshared.
+
+Cheers
+
+> 
+> 	Joerg
+
+-- 
+			-Kenneth(Hisilicon)
