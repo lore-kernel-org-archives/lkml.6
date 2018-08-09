@@ -2,135 +2,131 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738BEC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF3AC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 357BA21EFC
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357BA21EFC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BE8821EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:03:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nRWgMUpE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE8821EFC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeHIU2o (ORCPT
+        id S1727087AbeHIU3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:28:44 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:52428 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbeHIU2o (ORCPT
+        Thu, 9 Aug 2018 16:29:20 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40187 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbeHIU3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:28:44 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fnpGm-0004WO-Nv; Thu, 09 Aug 2018 12:02:44 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fnpGX-0005zh-4h; Thu, 09 Aug 2018 12:02:44 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <wen.yang99@zte.com.cn>
-Cc:     <oleg@redhat.com>, <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <ma.jiang@zte.com.cn>,
-        <torvalds@linux-foundation.org>, <cheng.shengyu@zte.com.cn>,
-        <zhong.weidong@zte.com.cn>
-References: <201808091624383651898@zte.com.cn>
-Date:   Thu, 09 Aug 2018 13:02:14 -0500
-In-Reply-To: <201808091624383651898@zte.com.cn> (wen's message of "Thu, 9 Aug
-        2018 16:24:38 +0800 (CST)")
-Message-ID: <87lg9fv2op.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 9 Aug 2018 16:29:20 -0400
+Received: by mail-pl0-f66.google.com with SMTP id s17-v6so2864208plp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p7TgL/KAG1qFE9MX3gZuvrj66i0U0xsP6r6rx2+8gwM=;
+        b=nRWgMUpENGyJVIFbYxTR3wQ8/jyfuN905ZFIMNn7UA7jNOQgJ7Tihzcvrmkbnh9Xiw
+         FHOnvPc0vystnYQJHKXM0losPvCRIDtsKSsOvcfku+FtZVylvQDWJ9wqTuoeR4xP2AsW
+         qZocNM8YT7OxYkG7C/4yzYvcwmaES9eZAB6/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p7TgL/KAG1qFE9MX3gZuvrj66i0U0xsP6r6rx2+8gwM=;
+        b=KGnYeT/3NKAz0DBF6vJr54W99PB2Wjn+UFlUf/5wq1wkfhymyqJ8tV5fc8C96l5jDW
+         1a/cBlNvM77iN03PXa2tqvO90/JLic1XBy3mRDvJoh5eyMYBO9WkkoYnqALTUKBffIm5
+         TJUrsogY2DQZUYgfONpNTcBUFQxVAhMVXPDcZICo+g3inDB/2I8Kdhgkfq4NcwzXoKoU
+         VLUOQqLssis4ePn1eIWWJW5f0lk1xgvcDSmrntPi5r2wxd6b8em8q7ANmjn3JpSWj6A1
+         dwXuaNh3c6bbGsBgzOXdqgbnZJXWMjCBUVxwhozIbjoJoUHc1wbPXOM4l3CL8HRVPFXP
+         OjIQ==
+X-Gm-Message-State: AOUpUlFExRnD8tj6oooCe2xDgG+8Oorg+kh/0I+N7xISIGcr3nVnaZno
+        lROoERyZOv68frtloL9uppWFmQ==
+X-Google-Smtp-Source: AA+uWPyFPwudKaSYAFFAUHG7C2NEGYeB6pKy4S4FnTCNy/tdJLMPdW7XiFhR9zBslPm/DNuIlu11ow==
+X-Received: by 2002:a17:902:4d45:: with SMTP id o5-v6mr2941822plh.78.1533837801870;
+        Thu, 09 Aug 2018 11:03:21 -0700 (PDT)
+Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id h29-v6sm19526349pgh.37.2018.08.09.11.03.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 11:03:20 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 11:03:18 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v3 0/7] firmware: coreboot: Fix probe and simplify code
+Message-ID: <20180809180316.GD129285@ban.mtv.corp.google.com>
+References: <20180809171722.144325-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fnpGX-0005zh-4h;;;mid=<87lg9fv2op.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+eS/74+6UjTrdhO3eu+Ie1fMxqSTOt9kQ=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v5 3/6] signal: Add calculate_sigpending()
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180809171722.144325-1-swboyd@chromium.org>
+User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<wen.yang99@zte.com.cn> writes:
+Hi Stepehen,
 
-> EricW.Biederman <ebiederm@xmission.com> wrote:
->> Add a function calculate_sigpending to test to see if any signals are
->> pending for a new task immediately following fork. Signals have to
->> happen either before or after fork. Today our practice is to push
->> all of the signals to before the fork, but that has the downside that
->> frequent or periodic signals can make fork take much much longer than
->> normal or prevent fork from completing entirely.
->> 
->
->> + calculate_sigpending();
->> }
->> /*
->> diff --git a/kernel/signal.c b/kernel/signal.c
->> index dddbea558455..1e06f1eba363 100644
->> --- a/kernel/signal.c
->> +++ b/kernel/signal.c
->> @@ -172,6 +172,17 @@ void recalc_sigpending(void)
->> }
->> +void calculate_sigpending(void)
->> +{
->> + /* Have any signals or users of TIF_SIGPENDING been delayed
->> + * until after fork?
->> + */
->> + spin_lock_irq(&current->sighand->siglock);
->> + set_tsk_thread_flag(current, TIF_SIGPENDING);
->> + recalc_sigpending();
->> + spin_unlock_irq(&current->sighand->siglock);
->> +}
->> +
->
-> The new function calculate_sigpending is similar to  recalc_sigpending,
-> but recalc_sigpending has no spin_lock_irq(&current->sighand->siglock) in it.
-> This gives recalc_sigpending more flexibility, 
-> we may use spin_lock_irq or spin_lock_irqsave before recalc_sigpending .
-> eg: 
->
-> static int autofs4_write(struct autofs_sb_info *sbi,
->              struct file *file, const void *addr, int bytes)
-> {
->   ...
->         spin_lock_irqsave(&current->sighand->siglock, flags);
->         sigdelset(&current->pending.signal, SIGPIPE);
->         recalc_sigpending();
->         spin_unlock_irqrestore(&current->sighand->siglock, flags);
->   ... 
-> }
->
-> or:
-> void kernel_sigaction(int sig, __sighandler_t action)
-> {
->     spin_lock_irq(&current->sighand->siglock);
-> ...
->         recalc_sigpending();
-> ...   
->     spin_unlock_irq(&current->sighand->siglock);
-> }
->
->
-> But calculate_sigpending is currently hardwired to call spin_lock_irq.
+On Thu, Aug 09, 2018 at 10:17:15AM -0700, Stephen Boyd wrote:
+> This series reworks the coreboot firmware driver a bit to fix some bugs
+> and then simplify the code by changing the design to get rid of the
+> different platform drivers, remap memory with memremap(), and use devm
+> to simplify error paths. There's some risk in changing to memremap() but
+> I think that should work out alright. It will either return memory
+> directly, or fallback to ioremap_cache() as has been done before.
+> 
+> Changes from v2:
+>  * A bunch more patches
+>  * Fix iounmap missing on error path
+>  * Fix bus getting unregistered on driver unbind and never registered
+>    again
+>  * Request exclusive access to table region
+>  * Pull out table signature check to driver probe
+> 
+> Changes from v1:
+>  * Split out fixlet for DT based driver from platform driver change
+> 
+> Cc: Wei-Ning Huang <wnhuang@chromium.org>
+> Cc: Julius Werner <jwerner@chromium.org>
+> Cc: Brian Norris <briannorris@chromium.org>
+> Cc: Samuel Holland <samuel@sholland.org>
+> 
+> Stephen Boyd (7):
+>   firmware: coreboot: Let OF core populate platform device
+>   firmware: coreboot: Unmap ioregion on failure
+>   firmware: coreboot: Make bus registration symmetric
+>   firmware: coreboot: Collapse platform drivers into bus core
+>   firmware: coreboot: Remap RAM with memremap() instead of ioremap()
+>   firmware: coreboot: Only populate devices in coreboot_table_init()
+>   firmware: coreboot: Request table region for exclusive access
 
-calculate_sigpending really only exists to keep the code comprehensible.
+I gave patches 1 and 2 closer review (and individual replies); the
+remaining patches look good to me too, so for the whole series:
 
-It is only ever expected to be called in exactly one place so the lack
-of flexibility should not be a problem.  Further the use of irqsave
-is discouraged unless it is necessary.
+Reviewed-by: Brian Norris <briannorris@chromium.org>
 
-The irqsave in autofs_write actually looks like a misfeature.  We take
-a mutex a few lines earlier, so we know that irqs are enabled.  Saving
-and restoring them is uncessary work.  Further unless I am missing
-something that code path should be calling kernel_dequeue_signal, to
-ensure that any siginfo associated with that SIGPIPE gets dequeued.
-
-Eric
-
+>  drivers/firmware/google/Kconfig               |  26 ++--
+>  drivers/firmware/google/Makefile              |   2 -
+>  drivers/firmware/google/coreboot_table-acpi.c |  88 ------------
+>  drivers/firmware/google/coreboot_table-of.c   |  82 -----------
+>  drivers/firmware/google/coreboot_table.c      | 135 +++++++++++++-----
+>  drivers/firmware/google/coreboot_table.h      |   6 -
+>  6 files changed, 107 insertions(+), 232 deletions(-)
+>  delete mode 100644 drivers/firmware/google/coreboot_table-acpi.c
+>  delete mode 100644 drivers/firmware/google/coreboot_table-of.c
+> 
+> -- 
+> Sent by a computer through tubes
+> 
