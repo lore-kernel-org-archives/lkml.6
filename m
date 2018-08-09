@@ -2,95 +2,164 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B67C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED38C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096AC21A6D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:07:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXDe88YI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 096AC21A6D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B531721C16
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B531721C16
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbeHIIax (ORCPT
+        id S1728164AbeHIIjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 04:30:53 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37738 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbeHIIaw (ORCPT
+        Thu, 9 Aug 2018 04:39:45 -0400
+Received: from baldur.buserror.net ([165.227.176.147]:60764 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbeHIIjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 04:30:52 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n7-v6so2233769pgq.4;
-        Wed, 08 Aug 2018 23:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nAkJPNY6eBG7OZfGOUxGF+wkMFzGan/A7giKP5d7e14=;
-        b=YXDe88YIiSUpmcTjbyR09m7tvCb+03c+8X6OLCFOoII9f8MpIJQwxPYWeRs0cXaoOY
-         w0SxpSduTkp1mAGvQA7ZD/ltT+a+D0BEhKsF19xqG7zTfZQ5UgIgRwmws27CA548CXAd
-         eSb134fZT0wWIGlp6mUrxwtEMHxteijIwvYuRSa6JKSdPz+kiWh0+g0ag9KxXfyK2hhB
-         tVgKPoUS2OIYxlywnl2rIbiXb6hC5f6fxSqfwgl582VN72m2lV8We8Yts3ZnBnAHnmeX
-         nhtllbbCVv+WG2Gi1pkJBCLGQ4x2b0rF1g02E0+00Gl1lL/lKXv6eaHYd/0d5DeVeQjd
-         jeKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nAkJPNY6eBG7OZfGOUxGF+wkMFzGan/A7giKP5d7e14=;
-        b=VPYqctRFicPwAvmoK0nqnf33y7luImrxXrPJLT0XvaEEDb1YB5y0Fv7T4kXyMlEW3q
-         TlU6t37OM5eT7RFtCMK1dT/rMF4BsfO50TptmT5Guy9/04UTJypPkvCjI2iYAajSP8w7
-         8z3/UY+fGppyVDTFyMDA1enWIqjk+FVyeYQIDDSD2ZbtYJs3mex4Gv8euDhaWxzmiDDy
-         op2bsXkT2LrH/oeg2ZjcjuoErhtn6c8abvPS4qVhRVLlEmY1Ve1T4W2vWYCSlI8pxELy
-         3L5WjMcXdqrKdeOQ90PxNLlz58RV5f4YoWLqxKYJ1gA5vlhZzGvLxnlD8pOtXvEd0esL
-         Y+TQ==
-X-Gm-Message-State: AOUpUlGMYiuK6DJcZ3Wm7RGuFkp9PteCa9UFfseWR5GoJDk8fS22Hl0R
-        PA5ZkptFanwigbgi06qBYL4=
-X-Google-Smtp-Source: AA+uWPzaGK7i+lozLp1miOIuOYTyW7fp1ODcWKoJDVcSs18sc57WJo4HHHV0slZTZrL26s4ZQagWhw==
-X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr871606pfb.29.1533794858745;
-        Wed, 08 Aug 2018 23:07:38 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:180::1:ea8d])
-        by smtp.gmail.com with ESMTPSA id f65-v6sm18537854pfj.46.2018.08.08.23.07.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 23:07:37 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 23:07:35 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Tobin C. Harding" <me@tobin.cc>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
-Message-ID: <20180809060734.rtqqu4sexbwzuqmm@ast-mbp>
-References: <20180809052328.27942-1-me@tobin.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809052328.27942-1-me@tobin.cc>
-User-Agent: NeoMutt/20180223
+        Thu, 9 Aug 2018 04:39:44 -0400
+Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1fneAu-0003g2-QF; Thu, 09 Aug 2018 01:11:57 -0500
+Message-ID: <5c1bcbd2c753f4224764c1932e5a9a99b4a604f5.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Bharat Bhushan <bharat.bhushan@nxp.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "galak@kernel.crashing.org" <galak@kernel.crashing.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "robh@kernel.org" <robh@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "tyreld@linux.vnet.ibm.com" <tyreld@linux.vnet.ibm.com>,
+        "joe@perches.com" <joe@perches.com>
+Date:   Thu, 09 Aug 2018 01:11:55 -0500
+In-Reply-To: <AM5PR0401MB25458654D6CEFBF2F05FC7709A250@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+References: <1532684881-19310-1-git-send-email-Bharat.Bhushan@nxp.com>
+         <1532684881-19310-6-git-send-email-Bharat.Bhushan@nxp.com>
+         <ab2a113620123cb71364b6ae89328ae2fca49821.camel@buserror.net>
+         <AM5PR0401MB254592DC0E917FD292B323BA9A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+         <aeff83355ee5235cfd6107dba06a5f7957b45c92.camel@buserror.net>
+         <AM5PR0401MB2545041D99EEDC3136B201719A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+         <bef421feea16da2fdab333e63a6828741bd59055.camel@buserror.net>
+         <AM5PR0401MB25458654D6CEFBF2F05FC7709A250@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: bharat.bhushan@nxp.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, galak@kernel.crashing.org, mark.rutland@arm.com, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, robh@kernel.org, keescook@chromium.org, tyreld@linux.vnet.ibm.com, joe@perches.com
+X-SA-Exim-Mail-From: oss@buserror.net
+Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 03:23:24PM +1000, Tobin C. Harding wrote:
+On Thu, 2018-08-09 at 03:28 +0000, Bharat Bhushan wrote:
+> > -----Original Message-----
+> > From: Scott Wood [mailto:oss@buserror.net]
+> > Sent: Wednesday, August 8, 2018 11:27 PM
+> > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
+> > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
+> > galak@kernel.crashing.org; mark.rutland@arm.com;
+> > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
+> > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: robh@kernel.org; keescook@chromium.org; tyreld@linux.vnet.ibm.com;
+> > joe@perches.com
+> > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
+> > 
+> > On Wed, 2018-08-08 at 06:28 +0000, Bharat Bhushan wrote:
+> > > > -----Original Message-----
+> > > > From: Scott Wood [mailto:oss@buserror.net]
+> > > > Sent: Wednesday, August 8, 2018 11:26 AM
+> > > > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
+> > > > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
+> > > > galak@kernel.crashing.org; mark.rutland@arm.com;
+> > > > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
+> > > > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
+> > > > kernel@vger.kernel.org
+> > > > Cc: robh@kernel.org; keescook@chromium.org;
+> > > > tyreld@linux.vnet.ibm.com; joe@perches.com
+> > > > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for
+> > > > P2020
+> > > > 
+> > > > On Wed, 2018-08-08 at 03:44 +0000, Bharat Bhushan wrote:
+> > > > > > -----Original Message-----
+> > > > > > From: Scott Wood [mailto:oss@buserror.net]
+> > > > > > Sent: Wednesday, August 8, 2018 2:44 AM
+> > > > > > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
+> > > > > > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
+> > > > > > galak@kernel.crashing.org; mark.rutland@arm.com;
+> > > > > > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
+> > > > > > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org;
+> > > > > > linux- kernel@vger.kernel.org
+> > > > > > Cc: robh@kernel.org; keescook@chromium.org;
+> > > > > > tyreld@linux.vnet.ibm.com; joe@perches.com
+> > > > > > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for
+> > > > > > P2020
+> > > > > > 
+> > > > > > On Fri, 2018-07-27 at 15:18 +0530, Bharat Bhushan wrote:
+> > > > > > > MPIC on NXP (Freescale) P2020 supports following irq
+> > > > > > > ranges:
+> > > > > > >   > 0 - 11      (External interrupt)
+> > > > > > >   > 16 - 79     (Internal interrupt)
+> > > > > > >   > 176 - 183   (Messaging interrupt)
+> > > > > > >   > 224 - 231   (Shared message signaled interrupt)
+> > > > > > 
+> > > > > > Why don't you convert to the 4-cell interrupt specifiers that
+> > > > > > make dealing with these ranges less error-prone?
+> > > > > 
+> > > > > Ok , will do if we agree to have this series as per comment on
+> > > > > other patch.
+> > > > 
+> > > > If you're concerned with errors, this would be a good things to do
+> > > > regardless.
+> > > >  Actually, it seems that p2020si-post.dtsi already uses 4-cell
+> > > > interrupts.
+> > > > 
+> > > > What is motivating this patchset?  Is there something wrong in the
+> > > > existing dts files?
+> > > 
+> > > There is no error in device tree. Main motivation is to improve code
+> > > for following reasons:
+> > >   - While code study it was found that if a reserved irq-number used
+> > > then there are no check in driver. irq will be configured as correct
+> > > and interrupt will never fire.
+> > 
+> > Again, a wrong interrupt number won't fire, whether an interrupt by that
+> > number exists or not.  I wouldn't mind a sanity check in the driver if the
+> > programming model made it properly discoverable, but I don't think it's
+> > worth messing with device trees just for this (and even less so given that
+> > there don't seem to be new chips coming out that this would be relevant
+> > for).
 > 
-> Daniel and Alexei, can I please have permission to add GPLv2+ to the BPF
-> docs?
+> Fair enough, we can use MPIC version to define supported interrupts ranges.
+> Will that be acceptable.
 
-kernel licensing is GPLv2 without +
-every file (including docs) can potentially have a different
-compatible license, but since they were developed
-implicitly under v2 only you would need to get a buy-in from
-all contributors before making such change.
+It's better than device tree changes but I'm not convinced it's worthwhile
+just to suppress some simulator warnings.  If the warnings really bother you,
+you can use pic-no-reset in the device tree (assuming this isn't some new chip
+that you want to make sure doesn't fall over when the usual mpic init happens)
+and/or convince the hardware people to make the interface properly
+discoverable including discontiguous regions (if there *is* some new chip I
+haven't heard about).
+
+-Scott
 
