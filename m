@@ -3,87 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F88C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D58C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00CE21990
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6742221C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R/zNHccA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mz13XSLP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00CE21990
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZnfgwV+9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vtoktq5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6742221C2B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732495AbeHIRib (ORCPT
+        id S1732532AbeHIRjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:38:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45458 "EHLO
+        Thu, 9 Aug 2018 13:39:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45984 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731227AbeHIRib (ORCPT
+        with ESMTP id S1731227AbeHIRjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:38:31 -0400
+        Thu, 9 Aug 2018 13:39:25 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 980EC60BEA; Thu,  9 Aug 2018 15:13:09 +0000 (UTC)
+        id BF64160B23; Thu,  9 Aug 2018 15:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533827589;
-        bh=+5YmBGoxBzglvOJam5bqloGLtr/uxMrtpuEjA3zsWVM=;
+        s=default; t=1533827643;
+        bh=vbdJ0y/kR4dHOcIYET20envyzz+on5XjLwOme136ids=;
         h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=R/zNHccAaXLaRl/COIBK1Bgasbp945GEtplOoXWD9Lc175Ozanjqd7b4bUlqqUrBw
-         qXylz6hNKw3KEkG0lmhtHy8KCmE2N9ZBsEWeKPllN/IXUHjULvBGJtGAGxvDUT8dBY
-         fC1tirn+pd/2Ba9Gw/THVfP91Jf69TcJibm6kgrQ=
+        b=ZnfgwV+98gA/nniGXc3YIiQFkPkSHdqPxD0xwiyvv3mp2QL2rraVfv8WSWSYysZZt
+         OgKnxf457tkIWts/mKAAts9reriwp1OZE/kfB7EYvYsSW1ILoK3REZp14C2jhlyE/i
+         jauN4/L971zO7RqCLIDjrsevD/cVrultLiPFZU/w=
 Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7C2F560C60;
-        Thu,  9 Aug 2018 15:13:07 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7E1D60807;
+        Thu,  9 Aug 2018 15:14:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533827588;
-        bh=+5YmBGoxBzglvOJam5bqloGLtr/uxMrtpuEjA3zsWVM=;
+        s=default; t=1533827643;
+        bh=vbdJ0y/kR4dHOcIYET20envyzz+on5XjLwOme136ids=;
         h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=Mz13XSLPPa8t/QD2DeRut9mm+jL4d4EPjG7B2AZzciTcs7L+afDrMkWdLqwzmPMj0
-         jK9lb9pfS2Q7bd3GQG6yJ9OgyMIy6ybUbJDD89U7nGCJZ32wu5eEot7Ju5qs5TX5Sh
-         cOJufhLubVcCOAHwVRb+t0ylH3CkCt8sbjiEan/s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C2F560C60
+        b=Vtoktq5hNHAiTGm1VgROe6V0Ay4lFZlCSER0hpLOQVMr2CEcaMpocm9kZK26AeQA7
+         YSw8oPjXjpw6iOWoFZzifSVUO6nxVRqTOL7LajFkQjVwsYE+fIVH5pTplj5KkYn8ha
+         D+N/tu+xHtpswAFst42IKSBMcWYU43sAP9afRDQY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7E1D60807
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] mt76: fix build for MediaTek MT7610U USB wireless dongle
+Subject: Re: [PATCH] rsi: remove redundant variables bss,
+ wh and temp_flash_content
 From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <145751.1533759414@turing-police.cc.vt.edu>
-References: <145751.1533759414@turing-police.cc.vt.edu>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+In-Reply-To: <20180803074636.20479-1-colin.king@canonical.com>
+References: <20180803074636.20479-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180809151309.980EC60BEA@smtp.codeaurora.org>
-Date:   Thu,  9 Aug 2018 15:13:09 +0000 (UTC)
+Message-Id: <20180809151403.BF64160B23@smtp.codeaurora.org>
+Date:   Thu,  9 Aug 2018 15:14:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Valdis Kletnieks <valdis.kletnieks@vt.edu> wrote:
+Colin King <colin.king@canonical.com> wrote:
 
-> The mt76x0 driver requires the mt76 core driver to actually function.
-> So add a 'select' to avoid embarrassing 'symbol unknown' errors
-> when attempting to modprobe it in a module tree that doesn't
-> include mt76.ko
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Variables bss, wh and temp_flash_content are being assigned but are
+> never used hence they are redundant and can be removed.
+> 
+> Cleans up clang warnings:
+> warning: variable 'bss' set but not used [-Wunused-but-set-variable]
+> warning: variable 'wh' set but not used [-Wunused-but-set-variable]
+> warning: variable 'temp_flash_content' set but not used
+>  [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
 Patch applied to wireless-drivers-next.git, thanks.
 
-1ec49a236565 mt76: fix build for MediaTek MT7610U USB wireless dongle
+35204d0aa83f rsi: remove redundant variables bss, wh and temp_flash_content
 
 -- 
-https://patchwork.kernel.org/patch/10560477/
+https://patchwork.kernel.org/patch/10554759/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
