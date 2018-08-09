@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD76C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAE9C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656D321D68
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:40:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656D321D68
+	by mail.kernel.org (Postfix) with ESMTP id C2F8321D69
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:40:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F8321D69
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731934AbeHIOFY (ORCPT
+        id S1732033AbeHIOF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:05:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38476 "EHLO mx1.redhat.com"
+        Thu, 9 Aug 2018 10:05:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33492 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731223AbeHIOFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:05:23 -0400
+        id S1731223AbeHIOFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 10:05:25 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5F2D180D2F6B;
-        Thu,  9 Aug 2018 11:40:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5E0CD40216E8;
+        Thu,  9 Aug 2018 11:40:56 +0000 (UTC)
 Received: from shalem.localdomain.com (unknown [10.36.118.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FEC8100725C;
-        Thu,  9 Aug 2018 11:40:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 92CDA10073A7;
+        Thu,  9 Aug 2018 11:40:53 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
@@ -42,81 +42,66 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         linux-i2c@vger.kernel.org
-Subject: [PATCH v6 2/4] ACPI / scan: Create platform device for fwnodes with multiple i2c devices
-Date:   Thu,  9 Aug 2018 13:40:44 +0200
-Message-Id: <20180809114046.21366-3-hdegoede@redhat.com>
+Subject: [PATCH v6 3/4] ACPI / x86-utils: Remove status workaround from acpi_device_always_present()
+Date:   Thu,  9 Aug 2018 13:40:45 +0200
+Message-Id: <20180809114046.21366-4-hdegoede@redhat.com>
 In-Reply-To: <20180809114046.21366-1-hdegoede@redhat.com>
 References: <20180809114046.21366-1-hdegoede@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 11:40:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 11:40:53 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 09 Aug 2018 11:40:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 09 Aug 2018 11:40:56 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some devices have multiple I2cSerialBus resources and for things to work
-an i2c-client must be instantiated for each, each with its own
-i2c_device_id.
-
-Normally we only instantiate an i2c-client for the first resource, using
-the ACPI HID as id.
-
-This commit adds a list of HIDs of devices, which need multiple i2c-clients
-instantiated from a single fwnode, to acpi_device_enumeration_by_parent and
-makes acpi_device_enumeration_by_parent return false for these devices so
-that a platform device will be instantiated.
-
-This allows the drivers/platform/x86/i2c-multi-instantiate.c driver, which
-knows which i2c_device_id to use for each resource, to bind to the fwnode
-and initiate an i2c-client for each resource.
+Now that we init the status field to ACPI_STA_DEFAULT rather then to 0,
+the workaround for acpi_match_device_ids() always returning -ENOENT when
+status is 0 is no longer needed.
 
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
 Changes in v3:
 -New patch in v3 of this patch-set
-
-Changes in v4:
--Some small code-style fixes
 ---
- drivers/acpi/scan.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/acpi/x86/utils.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 6799d00dd790..b51913372e21 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1540,6 +1540,18 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+diff --git a/drivers/acpi/x86/utils.c b/drivers/acpi/x86/utils.c
+index ec5b0f190231..a4fb97d64b3b 100644
+--- a/drivers/acpi/x86/utils.c
++++ b/drivers/acpi/x86/utils.c
+@@ -103,13 +103,9 @@ static const struct always_present_id always_present_ids[] = {
+ 
+ bool acpi_device_always_present(struct acpi_device *adev)
  {
- 	struct list_head resource_list;
- 	bool is_serial_bus_slave = false;
-+	/*
-+	 * These devices have multiple I2cSerialBus resources and an i2c-client
-+	 * must be instantiated for each, each with its own i2c_device_id.
-+	 * Normally we only instantiate an i2c-client for the first resource,
-+	 * using the ACPI HID as id. These special cases are handled by the
-+	 * drivers/platform/x86/i2c-multi-instantiate.c driver, which knows
-+	 * which i2c_device_id to use for each resource.
-+	 */
-+	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
-+		{"BSG1160", },
-+		{}
-+	};
+-	u32 *status = (u32 *)&adev->status;
+-	u32 old_status = *status;
+ 	bool ret = false;
+ 	unsigned int i;
  
- 	if (acpi_is_indirect_io_slave(device))
- 		return true;
-@@ -1551,6 +1563,10 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
- 	     fwnode_property_present(&device->fwnode, "baud")))
- 		return true;
+-	/* acpi_match_device_ids checks status, so set it to default */
+-	*status = ACPI_STA_DEFAULT;
+ 	for (i = 0; i < ARRAY_SIZE(always_present_ids); i++) {
+ 		if (acpi_match_device_ids(adev, always_present_ids[i].hid))
+ 			continue;
+@@ -125,15 +121,9 @@ bool acpi_device_always_present(struct acpi_device *adev)
+ 		    !dmi_check_system(always_present_ids[i].dmi_ids))
+ 			continue;
  
-+	/* Instantiate a pdev for the i2c-multi-instantiate drv to bind to */
-+	if (!acpi_match_device_ids(device, i2c_multi_instantiate_ids))
-+		return false;
-+
- 	INIT_LIST_HEAD(&resource_list);
- 	acpi_dev_get_resources(device, &resource_list,
- 			       acpi_check_serial_bus_slave,
+-		if (old_status != ACPI_STA_DEFAULT) /* Log only once */
+-			dev_info(&adev->dev,
+-				 "Device [%s] is in always present list\n",
+-				 adev->pnp.bus_id);
+-
+ 		ret = true;
+ 		break;
+ 	}
+-	*status = old_status;
+ 
+ 	return ret;
+ }
 -- 
 2.18.0
 
