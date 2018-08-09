@@ -3,199 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A75FC46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 03:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A7BC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 03:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEEA821C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 03:34:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEEA821C2B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C993721C2B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 03:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C993721C2B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeHIF5P (ORCPT
+        id S1727943AbeHIF7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 01:57:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54420 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727211AbeHIF5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 01:57:14 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 224AE8197023;
-        Thu,  9 Aug 2018 03:34:33 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-20.pek2.redhat.com [10.72.12.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9AF02026DE8;
-        Thu,  9 Aug 2018 03:34:20 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 11:34:16 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Philipp Rudo <prudo@linux.ibm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com,
-        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        ard.biesheuvel@linaro.org, james.morse@arm.com,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "piliu@redhat.com Thiago Jung Bauermann" 
-        <bauerman@linux.vnet.ibm.com>
-Subject: Re: [PATCH v13 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
-Message-ID: <20180809033416.GA5069@dhcp-128-65.nay.redhat.com>
-References: <20180801075820.3753-1-takahiro.akashi@linaro.org>
- <20180801075820.3753-4-takahiro.akashi@linaro.org>
- <20180801102951.527cfc57@ThinkPad>
- <20180802000150.GN11258@linaro.org>
- <20180806055047.GC4246@dhcp-128-65.nay.redhat.com>
+        Thu, 9 Aug 2018 01:59:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:19916 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727138AbeHIF7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 01:59:48 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 20:37:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
+   d="scan'208";a="78764957"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
+  by fmsmga004.fm.intel.com with ESMTP; 08 Aug 2018 20:37:04 -0700
+Date:   Thu, 9 Aug 2018 11:43:20 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     joeyli <jlee@suse.com>, Ryan Chen <yu.chen.surf@gmail.com>,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180809034320.GB21364@chenyu-desktop>
+References: <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+ <20180806103958.GI27062@linux-l9pv.suse>
+ <20180808175845.GB16217@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806055047.GC4246@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 03:34:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 03:34:33 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+In-Reply-To: <20180808175845.GB16217@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add more cc. Pingfan Liu confirmed ppc does not use 0 as valid address,
-if so it should be safe.
+Hi,
+On Wed, Aug 08, 2018 at 07:58:45PM +0200, Pavel Machek wrote:
+> On Mon 2018-08-06 18:39:58, joeyli wrote:
+> > On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
+> > > Hi Pavel,
+> > > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
+> > > > Hi!
+> > > > 
+> > > > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > > > variable that it can only be accessed by trusted EFI binary when
+> > > > > > secure boot is enabled.
+> > > > > >
+> > > > > Okay, this apply to the 'suspend' phase, right?
+> > > > > I'm still a little confused about the 'resume' phase.
+> > > > > Taking encryption as example(not signature),
+> > > > > the purpose of doing hibernation encryption is to prevent other users
+> > > > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > > 
+> > > > No, I don't think that's purpose here.
+> > > > 
+> > > > Purpose here is to prevent user from reading/modifying kernel memory
+> > > > content on machine he owns.
+> > > >
+> > > Say, A puts his laptop into hibernation and walks away,
+> > > and B walks by, and opens A's laptop and wakes up the system and he
+> > > can do what he wants. Although EFI key/TPM trusted key is enabled,
+> > > currently there's no certification during resume, which sounds
+> > > unsafe to me. Afterall, the original requirement is to probe
+> > > user for password during resume, which sounds more natural.
+> > 
+> > OK, I saw your case. This is a physical accessing.
+> > 
+> > I have a question: The suspend to memory also has the same behavior
+> > and more people are using suspend. Should we think a common solution
+> > to cover S3 and S4? 
+> 
+> Well, we have similar problem during runtime, too ;-).
+> 
+> Anyway, I don't think we should encrypt memory during S3 in kernel.
+> 
+It seems that Joey was talking about certification(something like login)
+rather than encryption?
 
-Pingfan, can you add more words?
+Best,
+Yu
+> If you wanted to do that, you could use uswsusp to take snapshot,
+> store it in ram, encrypt, erase originals (new API might be
+> needed... hmm. does not exactly sound easy... kexec?), trigger S3, decrypt,
+> resume from snapshot...
+> 
+> Sounds like a bit of work...
+> 
+> Best regards,
+> 
+> 									Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 
-On 08/06/18 at 01:50pm, Dave Young wrote:
-> Add Thiago in cc so that he can review from powerpc point of view. 
-> 
-> On 08/02/18 at 09:01am, AKASHI Takahiro wrote:
-> > Hi,
-> > 
-> > On Wed, Aug 01, 2018 at 10:29:51AM +0200, Philipp Rudo wrote:
-> > > Hey Akashi,
-> > > 
-> > > I kept thinking about this patch and remembered why I didn't made the change
-> > > you are suggesting now.
-> > 
-> > Hmm.
-> > 
-> > > The problem is when you only check for kbuf->mem you are excluding address 0,
-> > > which might be a valid address to load the kernel to. On s390 this is actually
-> > > done when the kernel is not loaded via a boot loader. For kexec_file however,
-> > > we cut off the first few kB of the image and jump directly to 'startup'. So
-> > > checking for !0 does not cause a problem here.
-> > 
-> > Yeah, as Dave(RedHat) described, all the current kexec-capable architectures,
-> > except arm64, implicitly initialize kbuf.mem to zero with "kbuf = { ... }"
-> > initializer. So surely my change would not break anything on the existing code.
-> > On the other hand, I also see your concern here.
-> > 
-> > > Anyway, the long term safer solution would be something like
-> > > 
-> > > #define KEXEC_BUF_MEM_UNKNOWN (-1UL)
-> > > 
-> > > for architectures to tell common code to search a fitting mem hole.
-> > 
-> > This would require the existing code on every arch to be modified, which
-> > I think should be avoided if possible. Instead,
-> > we'd better define in linux/kexec.h:
-> >   #ifndef KEXEC_BUF_MEM_UNKNOWN
-> >   #define KEXEC_BUF_MEM_UNKNOWN 0
-> >   #endif
-> > and then check for kbuf in kexec_locate_mem_hole():
-> >   if (kbuf->mem != KEXEC_BUF_MEM_UNKNOWN)
-> >         return 0;
-> >   ...
-> > 
-> > This way if some arch wants to treat *zero* as a valid address, it can
-> > redefine this macro in arch/asm/kexec.h.
-> 
-> I think this way works if powerpc is safe for using zero as the unknown
-> address in this case.  Thiago, can you provide some review?
-> 
-> Philipp, thanks for catching the problem!
-> 
-> > 
-> > Thanks,
-> > -Takahiro AKASHI
-> > 
-> > > 
-> > > Back then I didn't do the change because I had the other workaround, which
-> > > didn't require a common code change. But when you are touching the code now it
-> > > is worth thinking about it.
-> > > 
-> > > Just wanted to let you know
-> > > Philipp
-> > > 
-> > > 
-> > > On Wed,  1 Aug 2018 16:58:07 +0900
-> > > AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
-> > > 
-> > > > Since s390 already knows where to locate buffers, calling
-> > > > arch_kexec_mem_walk() has no sense. So we can just drop it as kbuf->mem
-> > > > indicates this while all other architectures sets it to 0 initially.
-> > > > 
-> > > > This change is a preparatory work for the next patch, where all the
-> > > > variant memory walks, either on system resource or memblock, will be
-> > > > put in one common place so that it will satisfy all the architectures'
-> > > > need.
-> > > > 
-> > > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > > > Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
-> > > > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > > > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> > > > Cc: Dave Young <dyoung@redhat.com>
-> > > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > > Cc: Baoquan He <bhe@redhat.com>
-> > > > ---
-> > > >  arch/s390/kernel/machine_kexec_file.c | 10 ----------
-> > > >  kernel/kexec_file.c                   |  4 ++++
-> > > >  2 files changed, 4 insertions(+), 10 deletions(-)
-> > > > 
-> > > > diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-> > > > index f413f57f8d20..32023b4f9dc0 100644
-> > > > --- a/arch/s390/kernel/machine_kexec_file.c
-> > > > +++ b/arch/s390/kernel/machine_kexec_file.c
-> > > > @@ -134,16 +134,6 @@ int kexec_file_add_initrd(struct kimage *image, struct s390_load_data *data,
-> > > >  	return ret;
-> > > >  }
-> > > >  
-> > > > -/*
-> > > > - * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
-> > > > - * and provide kbuf->mem by hand.
-> > > > - */
-> > > > -int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-> > > > -			int (*func)(struct resource *, void *))
-> > > > -{
-> > > > -	return 1;
-> > > > -}
-> > > > -
-> > > >  int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
-> > > >  				     Elf_Shdr *section,
-> > > >  				     const Elf_Shdr *relsec,
-> > > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > > index 63c7ce1c0c3e..bf39df5e5bb9 100644
-> > > > --- a/kernel/kexec_file.c
-> > > > +++ b/kernel/kexec_file.c
-> > > > @@ -534,6 +534,10 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
-> > > >  {
-> > > >  	int ret;
-> > > >  
-> > > > +	/* Arch knows where to place */
-> > > > +	if (kbuf->mem)
-> > > > +		return 0;
-> > > > +
-> > > >  	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
-> > > >  
-> > > >  	return ret == 1 ? 0 : -EADDRNOTAVAIL;
-> > > 
-> > 
-> > _______________________________________________
-> > kexec mailing list
-> > kexec@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/kexec
-> 
-> Thanks
-> Dave
+
