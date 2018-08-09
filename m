@@ -2,160 +2,348 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C668C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1E8C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB1FD21AA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C88B21AA7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:48:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZsUsFz+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB1FD21AA7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gGfdwLxs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C88B21AA7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbeHIIKz (ORCPT
+        id S1729866AbeHIILX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 04:10:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34979 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728209AbeHIIKz (ORCPT
+        Thu, 9 Aug 2018 04:11:23 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37339 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728209AbeHIILW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 04:10:55 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o18-v6so5140563wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:47:46 -0700 (PDT)
+        Thu, 9 Aug 2018 04:11:22 -0400
+Received: by mail-oi0-f67.google.com with SMTP id j205-v6so7877274oib.4
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=WIsl0h13VvWgunA2GMo3QFAUpzp4UHDQ6cgFDpgCvp0=;
-        b=XZsUsFz+y5KjQMs7nefOqEpkS2w5fl6+py9zFfsugJt09pw4K84SMWg6fo4vEF/4Re
-         IPVI6S4mRZwWaGkoSjR+DVWyP5enGtWDqTaM9q/UlKk6Eem5QUa6PRzl7Rm4w/wACw2u
-         ItYzzCJoGZ1Dt4AKleveQdcchrd8g9YLXHkEg=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EevTvPF19qzwlNuNUyZ5gPW2LsfqpCUiQ/C63nlsGhA=;
+        b=gGfdwLxsY87d25hWwUw/UUBS/OiIkhGEqLNCRJxL/X3wTkEx7JGNZwGtKiv3lJMcqZ
+         m4vl8+CuOjpyEsa2IeqzxWA3RMd4Kjrl9DeKZco1I5fj8lnrA2Qi4c6GWGLfIT0TXdnG
+         P1mu3F4lmM15DQcnuNFnYCcsGVf7x+eFAnrtU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WIsl0h13VvWgunA2GMo3QFAUpzp4UHDQ6cgFDpgCvp0=;
-        b=LT/RCcbl+mfonBLolpnFeHci4V8b9tSXDoJTfl8ed94ZYx3VLVG2NDxQnJxJmvgG4y
-         90WfQv/Vw3gJrVF69XYKANucfB2GHPzeedHilwLdZKVmKHCv56v50MWs2u6ig/OhYHjS
-         37p/0LfIF3O7q5qeMCpSIkejixLguwPAw93YKoeqfOouDY/v3jlANksMFuOjSFLrlgd9
-         9g0rjIVYgGMFn4V/5DA6JxhpmR/4d/R4/tyPijN+2wQjbaHq54a///CC0hjxImrerrg7
-         I0ULuHD+Mbffy4f0sGS827fZKfJRx+ZRozCD2/le+HlJT62/4uG6Raeb1fGEn8t27vlP
-         HEHQ==
-X-Gm-Message-State: AOUpUlExJvII0TrXHASmAT9Cs6G7d/tpJerC+eW+WO/x79S3rYmU8slK
-        ldx8CJ6wl0iXRcZCDFU6RxSFOQ==
-X-Google-Smtp-Source: AA+uWPwEVJ1SVZNUNbIw7ioZ6dttrzvFitQRgP5i5v4UMcqYlgr0eGF1vw/OUMi/wcJTpScWxtV7fQ==
-X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr623357wme.125.1533793665484;
-        Wed, 08 Aug 2018 22:47:45 -0700 (PDT)
-Received: from localhost.localdomain ([45.76.138.171])
-        by smtp.gmail.com with ESMTPSA id x62-v6sm1437612wmg.1.2018.08.08.22.47.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Aug 2018 22:47:44 -0700 (PDT)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH] sched: idle: Reenable sched tick for cpuidle request
-Date:   Thu,  9 Aug 2018 13:47:27 +0800
-Message-Id: <1533793647-5628-1-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EevTvPF19qzwlNuNUyZ5gPW2LsfqpCUiQ/C63nlsGhA=;
+        b=GVRs3CV9CNwM3krPzHN0Z1lsD5l+roOQyUmVnlHaVsUIEFjh2l+sWg7clgcFl2JQev
+         ua1P7QEnJ5c+yT/l89b++HuNXB4qUu7+75DUlzEGALktLZ0TEuRHC0s0Lq+93MTir67t
+         PVW15wl9lD9MAo8t128+ej3s/Z5OGTYqj54njJs3l7r1d+NHDytl0uX2KZtNv21uP+uZ
+         FA7vO6RDZHdtjD3pmq4WhCPR8fUaCEAn/ipKz+7CI51Sm1yMpD4q1L0+IvABzYb859Hf
+         YouJ5puASa2jzfgRbbTaXf9IfdOocA+WbF8YO0j3DaVOJj18qmqNfaDnVACNVP8Azx4D
+         pTUQ==
+X-Gm-Message-State: AOUpUlFvRf6O2ADGBzhySs8+yeh5uMKmo6lwyDA9pYPlh5pYYAzUIGpF
+        m82um7taL3BOw6kOIZjAu/GaFfJt+KDxs2EAZF/hkA==
+X-Google-Smtp-Source: AA+uWPxxOXic0n2rDtqBSuUC39HtqhDxkMqMbQB0d5RH7PWTti2b8hKyeg0VdYqfSsgEdmdiaVukjABRw68/vVjmNRs=
+X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr743171oih.31.1533793693643;
+ Wed, 08 Aug 2018 22:48:13 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 22:48:12 -0700 (PDT)
+In-Reply-To: <5d594e9b-9889-adc2-cc59-f4f45eea7ddb@gmail.com>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <CAMz4kuL8ufCqbqgegozJt3P7JON0AzA9KrbvcvOB15McA5S=zA@mail.gmail.com>
+ <5d594e9b-9889-adc2-cc59-f4f45eea7ddb@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 9 Aug 2018 13:48:12 +0800
+Message-ID: <CAMz4kuJBT2m8YpsAFufiGQFOYCgBbyf9Rrhce+396pRoW802aw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The idle loop stops tick by respecting the decision from cpuidle
-framework, if the condition 'need_resched()' is false without any task
-scheduling, the CPU keeps running in the loop in do_idle() and it has no
-chance call tick_nohz_idle_exit() to enable the tick.  This results in
-the idle loop cannot reenable sched tick afterwards, if the idle
-governor selects a shallow state, thus the powernightmares issue can
-occur again.
+Hi Jacek,
 
-This issue can be easily reproduce with the case on Arm Hikey board: use
-CPU0 to send IPI to CPU7, CPU7 receives the IPI and in the callback
-function it start a hrtimer with 4ms, so the 4ms timer delta value can
-let 'menu' governor to choose deepest state in the next entering idle
-time.  From then on, CPU7 restarts hrtimer with 1ms interval for total
-10 times, so this can utilize the typical pattern in 'menu' governor to
-have prediction for 1ms duration, finally idle governor is easily to
-select a shallow state, on Hikey board it usually is to select CPU off
-state.  From then on, CPU7 stays in this shallow state for long time
-until there have other interrupts on it.
+On 9 August 2018 at 05:28, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> On 08/08/2018 08:01 AM, Baolin Wang wrote:
+>> Hi Jacek,
+>>
+>> On 8 August 2018 at 05:54, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>> Hi Baolin,
+>>>
+>>> Thank you for addressing the review remarks.
+>>> Since the patch set is targeted for 4.19, then we have three weeks
+>>> before it will be merged to the for-next anyway. That said, I propose
+>>> one more modification, please take a look below.
+>>
+>> Sure.
+>>
+>>>
+>>> On 08/06/2018 02:05 PM, Baolin Wang wrote:
+>>>> Some LED controllers have support for autonomously controlling
+>>>> brightness over time, according to some preprogrammed pattern or
+>>>> function.
+>>>>
+>>>> This patch adds pattern trigger that LED device can configure the
+>>>> pattern and trigger it.
+>>>>
+>>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>>> ---
+>>>> Changes from v4:
+>>>>  - Change the repeat file to return the originally written number.
+>>>>  - Improve comments.
+>>>>  - Fix some build warnings.
+>>>>
+>>>> Changes from v3:
+>>>>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>>>>  - Support one pattern.
+>>>>
+>>>> Changes from v2:
+>>>>  - Remove hardware_pattern boolen.
+>>>>  - Chnage the pattern string format.
+>>>>
+>>>> Changes from v1:
+>>>>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>>>>  - Introduce hardware_pattern flag to determine if software pattern
+>>>>  or hardware pattern.
+>>>>  - Re-implement pattern_trig_store_pattern() function.
+>>>>  - Remove pattern_get() interface.
+>>>>  - Improve comments.
+>>>>  - Other small optimization.
+>>>> ---
+>>>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   24 ++
+>>>>  drivers/leds/trigger/Kconfig                       |    7 +
+>>>>  drivers/leds/trigger/Makefile                      |    1 +
+>>>>  drivers/leds/trigger/ledtrig-pattern.c             |  266 ++++++++++++++++++++
+>>>>  include/linux/leds.h                               |   16 ++
+>>>>  5 files changed, 314 insertions(+)
+>>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+>>>>
+>>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>> new file mode 100644
+>>>> index 0000000..bc7475f
+>>>> --- /dev/null
+>>>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>> @@ -0,0 +1,24 @@
+>>>> +What:                /sys/class/leds/<led>/pattern
+>>>> +Date:                August 2018
+>>>> +KernelVersion:       4.19
+>>>> +Description:
+>>>> +             Specify a pattern for the LED, for LED hardware that support
+>>>> +             altering the brightness as a function of time.
+>>>> +
+>>>> +             The pattern is given by a series of tuples, of brightness and
+>>>> +             duration (ms). The LED is expected to traverse the series and
+>>>> +             each brightness value for the specified duration. Duration of
+>>>> +             0 means brightness should immediately change to new value.
+>>>> +
+>>>> +             The format of the pattern values should be:
+>>>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>>>> +             duration_3 ...".
+>>>> +
+>>>> +What:                /sys/class/leds/<led>/repeat
+>>>> +Date:                August 2018
+>>>> +KernelVersion:       4.19
+>>>> +Description:
+>>>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
+>>>> +
+>>>> +             This file will always return the originally written repeat
+>>>> +             number.
+>>>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+>>>> index 4018af7..b76fc3c 100644
+>>>> --- a/drivers/leds/trigger/Kconfig
+>>>> +++ b/drivers/leds/trigger/Kconfig
+>>>> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+>>>>         This allows LEDs to be controlled by network device activity.
+>>>>         If unsure, say Y.
+>>>>
+>>>> +config LEDS_TRIGGER_PATTERN
+>>>> +     tristate "LED Pattern Trigger"
+>>>> +     help
+>>>> +       This allows LEDs to be controlled by a software or hardware pattern
+>>>> +       which is a series of tuples, of brightness and duration (ms).
+>>>> +       If unsure, say N
+>>>> +
+>>>>  endif # LEDS_TRIGGERS
+>>>> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+>>>> index f3cfe19..9bcb64e 100644
+>>>> --- a/drivers/leds/trigger/Makefile
+>>>> +++ b/drivers/leds/trigger/Makefile
+>>>> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
+>>>>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
+>>>>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
+>>>>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
+>>>> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)   += ledtrig-pattern.o
+>>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+>>>> new file mode 100644
+>>>> index 0000000..63b94a2
+>>>> --- /dev/null
+>>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>>>> @@ -0,0 +1,266 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +
+>>>> +/*
+>>>> + * LED pattern trigger
+>>>> + *
+>>>> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+>>>> + * the first version, Baolin Wang simplified and improved the approach.
+>>>> + */
+>>>> +
+>>>> +#include <linux/kernel.h>
+>>>> +#include <linux/leds.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/mutex.h>
+>>>> +#include <linux/slab.h>
+>>>> +#include <linux/timer.h>
+>>>> +
+>>>> +#define MAX_PATTERNS         1024
+>>>> +
+>>>> +struct pattern_trig_data {
+>>>> +     struct led_classdev *led_cdev;
+>>>> +     struct led_pattern patterns[MAX_PATTERNS];
+>>>> +     struct led_pattern *curr;
+>>>> +     struct led_pattern *next;
+>>>> +     struct mutex lock;
+>>>> +     u32 npatterns;
+>>>> +     u32 repeat;
+>>>> +     u32 last_repeat;
+>>>> +     bool is_indefinite;
+>>>> +     struct timer_list timer;
+>>>> +};
+>>>> +
+>>>> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+>>>> +{
+>>>> +     data->curr = data->next;
+>>>> +     if (!data->is_indefinite && data->curr == data->patterns)
+>>>> +             data->repeat--;
+>>>> +
+>>>> +     if (data->next == data->patterns + data->npatterns - 1)
+>>>> +             data->next = data->patterns;
+>>>> +     else
+>>>> +             data->next++;
+>>>> +}
+>>>> +
+>>>> +static void pattern_trig_timer_function(struct timer_list *t)
+>>>> +{
+>>>> +     struct pattern_trig_data *data = from_timer(data, t, timer);
+>>>> +
+>>>> +     mutex_lock(&data->lock);
+>>>> +
+>>>> +     if (!data->is_indefinite && !data->repeat) {
+>>>> +             mutex_unlock(&data->lock);
+>>>> +             return;
+>>>> +     }
+>>>> +
+>>>> +     led_set_brightness(data->led_cdev, data->curr->brightness);
+>>>> +     mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
+>>>> +     pattern_trig_update_patterns(data);
+>>>> +
+>>>> +     mutex_unlock(&data->lock);
+>>>> +}
+>>>> +
+>>>> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+>>>> +                                   struct led_classdev *led_cdev)
+>>>> +{
+>>>> +     if (!data->npatterns)
+>>>> +             return 0;
+>>>> +
+>>>> +     if (led_cdev->pattern_set) {
+>>>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
+>>>> +                                          data->npatterns, data->repeat);
+>>>
+>>> I think that it would be more flexible if software pattern fallback
+>>> was applied in case of pattern_set failure. Otherwise, it would
+>>> lead to the situation where LED class devices that support hardware
+>>> blinking couldn't be applied the same set of patterns as LED class
+>>> devices that don't implement pattern_set. The latter will always have to
+>>> resort to using software pattern engine which will accept far greater
+>>> amount of pattern combinations.
+>>
+>> Hmmm, I am not sure this is useful for hardware pattern, since the LED
+>> hardware can be diverse which is hard to be compatible with software
+>> pattern.
+>>
+>> For example, for our SC27XX LED, it only supports 4 hardware patterns
+>> setting (low time, rising time, high time and falling time) to make it
+>> work at breathing mode. If user provides 3 or 5 patterns values, it
+>> will failed to issue pattern_set(). But at this time, we don't want to
+>> use software pattern instead since it will be not the breathing mode
+>> expected by user. I don't know if there are other special LED
+>> hardware.
+>
+> Good point. So this is the issue we should dwell on, since the
+> requested pattern effect should look similar on all devices.
+> Of course in case of software pattern it will be often impossible
+> to achieve the same fluency. Similarly as in case of rendering graphics
+> with and without acceleration.
+>
+> In case of your device, I'd say that we'd need more complex description
+> of breathing mode pattern. More complex than just four intervals.
+> It should reflect all the intervals the hardware engine needs to perform
+> to achieve the breathing effect. Can this information be inferred from
+> the docs?
 
-C2: cluster off; C1: CPU off
+From our docs, it only provides registers to set the low time, rising
+time, high time and falling time (value unit is 0.125s and max value
+is 63 = 7.875s) to enable breathing mode. So each interval value can
+be 1 ~ 63. But that is still hard for software pattern to simulate the
+breathing mode performed by hardware pattern.
 
-Idle state:           C2    C2    C2    C2    C2    C2    C2    C1
-            --------------------------------------------------------->
-Interrupt:   ^        ^     ^     ^     ^     ^     ^     ^     ^
-            IPI      Timer Timer Timer Timer Timer Timer Timer Timer
-	             4ms   1ms   1ms   1ms   1ms   1ms   1ms   1ms
+>
+>> So I think we should let LED driver to handle this case, if failed to
+>> issue pattern_set(), the LED driver can set one group default hardware
+>> patterns, or turn off the LED hardware pattern or other error handling
+>> method supplied by LED driver. That will not combine software pattern
+>> and hardware pattern together to make things complicated.
+>>
+>> So what do you think?
+>>
+>>> In this case we need to discuss on what basis the decision will be
+>>> made on whether hardware or software engine will be used.
+>>>
+>>> Possible options coming to mind:
+>>> - an interface will be provided to determine max difference between
+>>>   the settings supported by the hardware and the settings requested by
+>>>   the user, that will result in aligning user's setting to the hardware
+>>>   capabilities
+>>> - the above alignment rate will be predefined instead
+>>> - hardware engine will be used only if user requests supported settings
+>>>   on the whole span of the requested pattern
+>>> - in each of the above cases it would be worth to think of the
+>>>   interface to show the scope of the settings supported by hardware
+>>>
+>>> The same issue applies to the already available timer trigger.
+>>> So far the policy implemented by the drivers implementing blink_set
+>>> op varies.
+>>>
+>>> --
+>>> Best regards,
+>>> Jacek Anaszewski
+>>
+>>
+>>
+>
+> --
+> Best regards,
+> Jacek Anaszewski
 
-To fix this issue, the idle loop needs to support reenabling sched tick.
-This patch checks the conditions 'stop_tick' is false when the tick is
-stopped, this condition indicates the cpuidle governor asks to reenable
-the tick and we can use tick_nohz_idle_restart_tick() for this purpose.
 
-A synthetic case is used to to verify this patch, we use CPU0 to send
-IPI to wake up CPU7 with 50ms interval, CPU7 generate a series hrtimer
-events (the first interval is 4ms, then the sequential 10 timer events
-are 1ms interval, same as described above).  We do statistics for idle
-states duration, the unit is second (s), the testing result shows the
-C2 state (deepest state) staying time can be improved significantly for
-CPU7 (+7.942s for 10s execution time on CPU7) and all CPUs wide
-(+13.360s for ~80s of all CPUs execution time).
 
-       Without patches         With patches         Difference
-     --------------------  --------------------  -----------------------
-CPU    C0     C1      C2     C0     C1      C2      C0      C1       C2
-0    0.000  0.027   9.941  0.055  0.038   9.700  +0.055  +0.010   -0.240
-1    0.045  0.000   9.964  0.019  0.000   9.943  -0.026  +0.000   -0.020
-2    0.002  0.003  10.007  0.035  0.053   9.916  +0.033  +0.049   -0.090
-3    0.000  0.023   9.994  0.024  0.246   9.732  +0.024  +0.222   -0.261
-4    0.032  0.000   9.985  0.015  0.007   9.993  -0.016  +0.007   +0.008
-5    0.001  0.000   9.226  0.039  0.000   9.971  +0.038  +0.000   +0.744
-6    0.000  0.000   0.000  0.036  0.000   5.278  +0.036  +0.000   +5.278
-7    1.894  8.013   0.059  1.509  0.026   8.002  -0.384  -7.987   +7.942
-All  1.976  8.068  59.179  1.737  0.372  72.539  -0.239  -7.695  +13.360
-
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- kernel/sched/idle.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 1a3e9bd..802286e 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -190,10 +190,18 @@ static void cpuidle_idle_call(void)
- 		 */
- 		next_state = cpuidle_select(drv, dev, &stop_tick);
- 
--		if (stop_tick)
-+		if (stop_tick) {
- 			tick_nohz_idle_stop_tick();
--		else
-+		} else {
-+			/*
-+			 * The cpuidle framework says to not stop tick but
-+			 * the tick has been stopped yet, so restart it.
-+			 */
-+			if (tick_nohz_tick_stopped())
-+				tick_nohz_idle_restart_tick();
-+
- 			tick_nohz_idle_retain_tick();
-+		}
- 
- 		rcu_idle_enter();
- 
 -- 
-2.7.4
-
+Baolin Wang
+Best Regards
