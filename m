@@ -2,214 +2,116 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94799C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339B4C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE22223A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE22223A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id C25A9223A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:37:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O2q0SimQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25A9223A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbeHJCEM (ORCPT
+        id S1727772AbeHJCEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 22:04:12 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:58092 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727645AbeHJCD4 (ORCPT
+        Thu, 9 Aug 2018 22:04:44 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:39137 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeHJCEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 22:03:56 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T6MWc.W_1533857777;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6MWc.W_1533857777)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 10 Aug 2018 07:36:26 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC v7 PATCH 1/4] mm: refactor do_munmap() to extract the common part
-Date:   Fri, 10 Aug 2018 07:36:00 +0800
-Message-Id: <1533857763-43527-2-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
+        Thu, 9 Aug 2018 22:04:44 -0400
+Received: by mail-ua1-f65.google.com with SMTP id g18-v6so185933uam.6
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X1hC3589ieDdOVwFecZnz7CZquloTCqkLCsVOYNAHUI=;
+        b=O2q0SimQDrUfJgCNKwyZ0WjgY64j9Q7BYtGVQojHJhByWcKpe6Zedgcf6oHSl5qcB3
+         D6m1oeEkYg9YGOxSF8u/ffLUOMrOF28D2LedMU/fF3ScT6jLiIFhGH4s9inAXxagE5yW
+         iF3i0KoabxPuEVmVzovHjtmYBEmPPXaxl+6ig=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X1hC3589ieDdOVwFecZnz7CZquloTCqkLCsVOYNAHUI=;
+        b=RJT9OOgSJSSWKQNUdUSx/+fjvAUaKm22SmR0oPOnv014c6U2JUOptvO+0KGxLd40u/
+         n3tDxF3HrthtLShWz7rGmAMVHBz9Q2pNmmB057MlPQreEzqdjX6e5qL7Vy2ooK+nC9he
+         HeyaCZYWI5IBNKvCDV1UHewa/lmZquB8i6oDJY6aidCVPC1ILjofroVzC9juHtH3a95X
+         544+3QIsW/MABCDcF1bsmNoRlIPMg/miQqvzFTGDl1Bz+iE4Wy76UEkfkKTaQqk+d4yh
+         cQRtk/+aQDm7AalmhcQukOVF0KDnR5cF9PUY4XQmEqGr+DggzFWypf8Bh5M7cYeqjiCQ
+         C6XQ==
+X-Gm-Message-State: AOUpUlFSpW2LBE5fm9fGd+RcvpOqIT2Pn+zrgBI10sLU6Rgs3Cn82Szt
+        nn+/oI85qRMrf2vBVp7uISeq1OLO0tksgP9P5B5LUQ==
+X-Google-Smtp-Source: AA+uWPyJLse65XJuYTeT5cBPztoJ2uuaVFFSY8XMJFv+M6U66bn/ZsG7A5WBEmuCSMNjlknYnaEIKN0nn+H4WoxNjeI=
+X-Received: by 2002:ab0:4987:: with SMTP id e7-v6mr2874472uad.198.1533857854026;
+ Thu, 09 Aug 2018 16:37:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180809171722.144325-1-swboyd@chromium.org> <20180809171722.144325-8-swboyd@chromium.org>
+ <CAODwPW8eg2WOh9-Raeb8Q65E-5D7RDheDU8e+H68FHGa0MS37A@mail.gmail.com> <153385579866.220756.16086660810932774163@swboyd.mtv.corp.google.com>
+In-Reply-To: <153385579866.220756.16086660810932774163@swboyd.mtv.corp.google.com>
+From:   Julius Werner <jwerner@chromium.org>
+Date:   Thu, 9 Aug 2018 16:37:20 -0700
+Message-ID: <CAODwPW84FYK3k5=n4gQ4EPJExhQ59LCEi31ZYi2Bq2y9FH_E_A@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] firmware: coreboot: Request table region for
+ exclusive access
+To:     swboyd@chromium.org
+Cc:     Julius Werner <jwerner@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Brian Norris <briannorris@chromium.org>, samuel@sholland.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduces three new helper functions:
-  * addr_ok()
-  * munmap_lookup_vma()
-  * munlock_vmas()
+> Furthermore, I see that my system RAM excludes this coreboot table so it
+> doesn't fall into the bucket that CONFIG_STRICT_DEVMEM would find.
 
-They will be used by do_munmap() and the new do_munmap with zapping
-large mapping early in the later patch.
+Yes, that is intentional. We don't want the kernel to try to use that
+memory for anything else (since we want those tables to survive), so
+we mark them as reserved in the e820 map.
 
-There is no functional change, just code refactor.
+> > (I guess an alternative would be to rewrite 'cbmem' to use
+> > /sys/bus/coreboot/devices if available to get its coreboot table
+> > information. But we'd still need to maintain the old path for
+> > backwards compatibility anyway, so that would really just make it more
+> > complicated.)
+>
+> This sounds like a good idea. Userspace reaching into /dev/mem is not
+> good from a kernel hardening perspective. That's why those strict devmem
+> configs exist. Can cbmem be updated to query information from device
+> drivers instead, so that we can enable CONFIG_IO_STRICT_DEVMEM as well?
 
-Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- mm/mmap.c | 100 ++++++++++++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 71 insertions(+), 29 deletions(-)
+Well... problem is that cbmem doesn't just access the coreboot tables,
+it accesses more stuff. There is actually a larger memory region
+called CBMEM (that's what the utility is named after) which contains
+all sorts of random memory allocations that coreboot wanted to survive
+for the lifetime of the system. The coreboot table is one section in
+there, and it sort of serves as a directory for some of the others
+(although there's also just a general CBMEM directory... there's some
+redundancy there). But cbmem can also print some of the other CBMEM
+sections which it finds by querying the coreboot table, such as the
+firmware log or the boot timestamps.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 17bbf4d..2a6898b 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2681,35 +2681,40 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
- 	return __split_vma(mm, vma, addr, new_below);
- }
- 
--/* Munmap is split into 2 main parts -- this part which finds
-- * what needs doing, and the areas themselves, which do the
-- * work.  This now handles partial unmappings.
-- * Jeremy Fitzhardinge <jeremy@goop.org>
-- */
--int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
--	      struct list_head *uf)
-+static inline bool addr_ok(unsigned long start, size_t len)
- {
--	unsigned long end;
--	struct vm_area_struct *vma, *prev, *last;
--
- 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
--		return -EINVAL;
-+		return false;
- 
--	len = PAGE_ALIGN(len);
--	if (len == 0)
--		return -EINVAL;
-+	if (PAGE_ALIGN(len) == 0)
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
-+ * @mm: mm_struct
-+ * @start: start address
-+ * @end: end address
-+ *
-+ * returns the pointer to vma, NULL or err ptr when spilt_vma returns error.
-+ */
-+static struct vm_area_struct *munmap_lookup_vma(struct mm_struct *mm,
-+			unsigned long start, unsigned long end)
-+{
-+	struct vm_area_struct *vma, *prev, *last;
- 
- 	/* Find the first overlapping VMA */
- 	vma = find_vma(mm, start);
- 	if (!vma)
--		return 0;
--	prev = vma->vm_prev;
--	/* we have  start < vma->vm_end  */
-+		return NULL;
- 
-+	/* we have  start < vma->vm_end  */
- 	/* if it doesn't overlap, we have nothing.. */
--	end = start + len;
- 	if (vma->vm_start >= end)
--		return 0;
-+		return NULL;
-+	prev = vma->vm_prev;
- 
- 	/*
- 	 * If we need to split any vma, do it now to save pain later.
-@@ -2727,11 +2732,11 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 		 * its limit temporarily, to help free resources as expected.
- 		 */
- 		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
--			return -ENOMEM;
-+			return ERR_PTR(-ENOMEM);
- 
- 		error = __split_vma(mm, vma, start, 0);
- 		if (error)
--			return error;
-+			return ERR_PTR(error);
- 		prev = vma;
- 	}
- 
-@@ -2740,10 +2745,53 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	if (last && end > last->vm_start) {
- 		int error = __split_vma(mm, last, end, 1);
- 		if (error)
--			return error;
-+			return ERR_PTR(error);
- 	}
- 	vma = prev ? prev->vm_next : mm->mmap;
- 
-+	return vma;
-+}
-+
-+static inline void munlock_vmas(struct vm_area_struct *vma,
-+				unsigned long end)
-+{
-+	struct mm_struct *mm = vma->vm_mm;
-+
-+	while (vma && vma->vm_start < end) {
-+		if (vma->vm_flags & VM_LOCKED) {
-+			mm->locked_vm -= vma_pages(vma);
-+			munlock_vma_pages_all(vma);
-+		}
-+		vma = vma->vm_next;
-+	}
-+}
-+
-+/* Munmap is split into 2 main parts -- this part which finds
-+ * what needs doing, and the areas themselves, which do the
-+ * work.  This now handles partial unmappings.
-+ * Jeremy Fitzhardinge <jeremy@goop.org>
-+ */
-+int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
-+	      struct list_head *uf)
-+{
-+	unsigned long end;
-+	struct vm_area_struct *vma, *prev;
-+
-+	if (!addr_ok(start, len))
-+		return -EINVAL;
-+
-+	len = PAGE_ALIGN(len);
-+
-+	end = start + len;
-+
-+	vma = munmap_lookup_vma(mm, start, end);
-+	if (!vma)
-+		return 0;
-+	if (IS_ERR(vma))
-+		return PTR_ERR(vma);
-+
-+	prev = vma->vm_prev;
-+
- 	if (unlikely(uf)) {
- 		/*
- 		 * If userfaultfd_unmap_prep returns an error the vmas
-@@ -2764,13 +2812,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	 */
- 	if (mm->locked_vm) {
- 		struct vm_area_struct *tmp = vma;
--		while (tmp && tmp->vm_start < end) {
--			if (tmp->vm_flags & VM_LOCKED) {
--				mm->locked_vm -= vma_pages(tmp);
--				munlock_vma_pages_all(tmp);
--			}
--			tmp = tmp->vm_next;
--		}
-+		munlock_vmas(tmp, end);
- 	}
- 
- 	/*
--- 
-1.8.3.1
+So the question is how we can get to that content if /dev/mem isn't
+available anymore. One option would be to just write separate kernel
+drivers to completely replace the cbmem utility (we already have one
+for the log, for example), but I think Linux generally doesn't want to
+have too much logic and parsing and stuff in kernel drivers. Another
+option is to add a driver that just exposes a sysfs file through which
+you could read (we don't need to write) the CBMEM area... but then
+we'd essentially want that to take absolute addresses because that's
+what the coreboot table pointers contain, so we would've just built
+/dev/mem by another name (for a restricted range).
 
+The nicest thing, really, would be if there was a way for a kernel
+driver to mark specific regions as "allowed" by /dev/mem. I don't
+suppose we'd be willing to introduce a mechanism like that?
