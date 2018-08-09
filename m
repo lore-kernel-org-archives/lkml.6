@@ -5,146 +5,136 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AC5C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC22C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F4021A8F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:08:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F4021A8F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 0584C21ADF
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:08:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0584C21ADF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbeHIOce (ORCPT
+        id S1731074AbeHIOdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:32:34 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63366 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbeHIOce (ORCPT
+        Thu, 9 Aug 2018 10:33:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42524 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730090AbeHIOdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:32:34 -0400
-Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 28c079896bfd9a45; Thu, 9 Aug 2018 14:07:56 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] sched: idle: Reenable sched tick for cpuidle request
-Date:   Thu, 09 Aug 2018 14:05:52 +0200
-Message-ID: <2704016.RYJlhC2yyo@aspire.rjw.lan>
-In-Reply-To: <1533793647-5628-1-git-send-email-leo.yan@linaro.org>
-References: <1533793647-5628-1-git-send-email-leo.yan@linaro.org>
+        Thu, 9 Aug 2018 10:33:20 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e7-v6so4918965wrs.9
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 05:08:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aYZVAqRMtliA25gb9X5hwv0wY/5yw3jHNo29o4uPWms=;
+        b=ZyaBs9ICqw1OhTujs3KUQSd4J1XOhecVtt/TF4SIVMC3wDMxHMHqGS15YYvrDYl+h6
+         hG48rkdVklGwBW2YwmMju4l+wB2PAq/vDPYCUEpTGUnNQirLZAXabgzLHshsGFucdsOt
+         h1gAq89OfsAo7VN04hOfTIdFZnOWoqdtbTA5juUJkyhnpwJrr1PznsYawd+6WWdtETki
+         4z2ya81LmLkMS2doYCLPzqf7GJcZWgDviNrgxcdHNJtIRgTwdMSPN8fnIN0lgH7aRRx9
+         eg1v8/mCulDa/zOZMM+fOyP0HldAT7/ZkDI79FCEgKqr9FXvcQJdEvw06d/RlJ1fEH6l
+         QiRw==
+X-Gm-Message-State: AOUpUlFZKNZma03eNMOBU49uvClO2I0Ydim555qIBS12+SGU/eldtw/R
+        zyVeFODbhEmxGtc05w7VQ1ty1A==
+X-Google-Smtp-Source: AA+uWPxB5JZiqvm4a+G0Dokn49EdtdyDh5NzGJvC4r1TKrjvljs6VzuOZzUhAvp9xZg/PeoV/CDP+A==
+X-Received: by 2002:a5d:514d:: with SMTP id u13-v6mr1294643wrt.162.1533816523245;
+        Thu, 09 Aug 2018 05:08:43 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 66-v6sm14592798wmw.34.2018.08.09.05.08.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 05:08:42 -0700 (PDT)
+Subject: Re: [PATCH v6 4/4] platform/x86: Add ACPI i2c-multi-instantiate
+ pseudo driver
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>
+References: <20180809114046.21366-1-hdegoede@redhat.com>
+ <20180809114046.21366-5-hdegoede@redhat.com>
+ <CAJZ5v0jbNTGEXWJ+CtPOKSM=AyB5-3hV-tMCYehj5w87i_2znA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <9805a950-dfd3-df13-15e8-d60703ce0498@redhat.com>
+Date:   Thu, 9 Aug 2018 14:08:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAJZ5v0jbNTGEXWJ+CtPOKSM=AyB5-3hV-tMCYehj5w87i_2znA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, August 9, 2018 7:47:27 AM CEST Leo Yan wrote:
-> The idle loop stops tick by respecting the decision from cpuidle
-> framework, if the condition 'need_resched()' is false without any task
-> scheduling, the CPU keeps running in the loop in do_idle() and it has no
-> chance call tick_nohz_idle_exit() to enable the tick.  This results in
-> the idle loop cannot reenable sched tick afterwards, if the idle
-> governor selects a shallow state, thus the powernightmares issue can
-> occur again.
+Hi,
 
-Well, there is code in the menu governor to avoid that.
+On 09-08-18 13:55, Rafael J. Wysocki wrote:
+> On Thu, Aug 9, 2018 at 1:40 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+>> On systems with ACPI instantiated i2c-clients, normally there is 1 fw_node
+>> per i2c-device and that fw-node contains 1 I2cSerialBus resource for that 1
+>> i2c-device.
+>>
+>> But in some rare cases the manufacturer has decided to describe multiple
+>> i2c-devices in a single ACPI fwnode with multiple I2cSerialBus resources.
+>>
+>> An earlier attempt to fix this in the i2c-core resulted in a lot of extra
+>> code to support this corner-case.
+>>
+>> This commit introduces a new i2c-multi-instantiate driver which fixes this
+>> in a different way. This new driver can be built as a module which will
+>> only loaded on affected systems.
+>>
+>> This driver will instantiate a new i2c-client per I2cSerialBus resource,
+>> using the driver_data from the acpi_device_id it is binding to to tell it
+>> which chip-type (and optional irq-resource) to use when instantiating.
+>>
+>> Note this driver depends on a platform device being instantiated for the
+>> ACPI fwnode, see the i2c_multi_instantiate_ids list of ACPI device-ids in
+>> drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
+>>
+>> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>> Changes in v2:
+>> -Rebase on top of 4.18-rc2
+>>
+>> Changes in v3:
+>> -Change from an i2c-driver using a hack to allow having multiple i2c clients
+>>   at the same address to a platform-driver
+>>
+>> Changes in v4:
+>> -Tweak MAINTAINERS entry a bit
+>>
+>> Changes in v5:
+>> -s/no_clients/num_clients/
+>> -Change patch Subject prefix to platform/x86
+>>
+>> Changes in v6:
+>> -s/irq_idx/gpio_irq_idx/
+> 
+> And this is the only patch that has changed in v6, right?
 
-> This issue can be easily reproduce with the case on Arm Hikey board: use
-> CPU0 to send IPI to CPU7, CPU7 receives the IPI and in the callback
-> function it start a hrtimer with 4ms, so the 4ms timer delta value can
-> let 'menu' governor to choose deepest state in the next entering idle
-> time.  From then on, CPU7 restarts hrtimer with 1ms interval for total
-> 10 times, so this can utilize the typical pattern in 'menu' governor to
-> have prediction for 1ms duration, finally idle governor is easily to
-> select a shallow state, on Hikey board it usually is to select CPU off
-> state.  From then on, CPU7 stays in this shallow state for long time
-> until there have other interrupts on it.
+Correct.
 
-And which means that the above-mentioned code misses this case.
+> Anyway, if you have further updates on top of this series, please send
+> them as incremental patches.
 
-> 
-> C2: cluster off; C1: CPU off
-> 
-> Idle state:           C2    C2    C2    C2    C2    C2    C2    C1
->             --------------------------------------------------------->
-> Interrupt:   ^        ^     ^     ^     ^     ^     ^     ^     ^
->             IPI      Timer Timer Timer Timer Timer Timer Timer Timer
-> 	             4ms   1ms   1ms   1ms   1ms   1ms   1ms   1ms
-> 
-> To fix this issue, the idle loop needs to support reenabling sched tick.
-> This patch checks the conditions 'stop_tick' is false when the tick is
-> stopped, this condition indicates the cpuidle governor asks to reenable
-> the tick and we can use tick_nohz_idle_restart_tick() for this purpose.
-> 
-> A synthetic case is used to to verify this patch, we use CPU0 to send
-> IPI to wake up CPU7 with 50ms interval, CPU7 generate a series hrtimer
-> events (the first interval is 4ms, then the sequential 10 timer events
-> are 1ms interval, same as described above).  We do statistics for idle
-> states duration, the unit is second (s), the testing result shows the
-> C2 state (deepest state) staying time can be improved significantly for
-> CPU7 (+7.942s for 10s execution time on CPU7) and all CPUs wide
-> (+13.360s for ~80s of all CPUs execution time).
-> 
->        Without patches         With patches         Difference
->      --------------------  --------------------  -----------------------
-> CPU    C0     C1      C2     C0     C1      C2      C0      C1       C2
-> 0    0.000  0.027   9.941  0.055  0.038   9.700  +0.055  +0.010   -0.240
-> 1    0.045  0.000   9.964  0.019  0.000   9.943  -0.026  +0.000   -0.020
-> 2    0.002  0.003  10.007  0.035  0.053   9.916  +0.033  +0.049   -0.090
-> 3    0.000  0.023   9.994  0.024  0.246   9.732  +0.024  +0.222   -0.261
-> 4    0.032  0.000   9.985  0.015  0.007   9.993  -0.016  +0.007   +0.008
-> 5    0.001  0.000   9.226  0.039  0.000   9.971  +0.038  +0.000   +0.744
-> 6    0.000  0.000   0.000  0.036  0.000   5.278  +0.036  +0.000   +5.278
-> 7    1.894  8.013   0.059  1.509  0.026   8.002  -0.384  -7.987   +7.942
-> All  1.976  8.068  59.179  1.737  0.372  72.539  -0.239  -7.695  +13.360
-> 
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  kernel/sched/idle.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-> index 1a3e9bd..802286e 100644
-> --- a/kernel/sched/idle.c
-> +++ b/kernel/sched/idle.c
-> @@ -190,10 +190,18 @@ static void cpuidle_idle_call(void)
->  		 */
->  		next_state = cpuidle_select(drv, dev, &stop_tick);
->  
-> -		if (stop_tick)
-> +		if (stop_tick) {
->  			tick_nohz_idle_stop_tick();
-> -		else
-> +		} else {
-> +			/*
-> +			 * The cpuidle framework says to not stop tick but
-> +			 * the tick has been stopped yet, so restart it.
-> +			 */
-> +			if (tick_nohz_tick_stopped())
-> +				tick_nohz_idle_restart_tick();
+Ok, will do.
 
-You need an "else" here IMO as Peter said.
+Thanks & Regards,
 
-> +
->  			tick_nohz_idle_retain_tick();
-> +		}
->  
->  		rcu_idle_enter();
->  
-> 
-
-Please CC cpuidle patches to linux-pm@vger.kernel.org, that helps a lot.
-
-Thanks,
-Rafael
+Hans
 
