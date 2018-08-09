@@ -1,151 +1,170 @@
 Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HK_LOTTO,LOTS_OF_MONEY,
-	MAILING_LIST_MULTI,MONEY_FORM,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889DAC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5E1C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB8521E26
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA2D21EFB
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:25:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=managebuilding.com header.i=@managebuilding.com header.b="iM/IOPJ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB8521E26
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=managebuilding.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e5LE6OWC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA2D21EFB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbeHJBtn (ORCPT
+        id S1727560AbeHJBwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:49:43 -0400
-Received: from o3.em1.managebuilding.com ([167.89.82.209]:28957 "EHLO
-        o3.em1.managebuilding.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeHJBtm (ORCPT
+        Thu, 9 Aug 2018 21:52:11 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45218 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeHJBwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:49:42 -0400
-X-Greylist: delayed 456 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Aug 2018 21:49:41 EDT
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; 
-        d=managebuilding.com; 
-        h=content-type:from:mime-version:reply-to:to:subject; s=s1; 
-        bh=9kRhhqJEAYRuhgHJbCzerEAZFLw=; b=iM/IOPJ7jHyFRsh8VyhXPxjxUka7l
-        La8Wt9wsQ/2xXQGiy9v5kNnoNPvNB3mxqt4xRCfsC/guPfjGpqouZKZFv44v05+3
-        8Zs74t+OSRJOloJNucHr2NQ2AERrb/W9k8qqAm8cWSluS2B57fJUVrOKcObaFuHg
-        OjcQDLJGyyAKgU=
-Received: by filter0590p1iad2.sendgrid.net with SMTP id filter0590p1iad2-13728-5B6CCA93-4
-        2018-08-09 23:13:23.174857985 +0000 UTC m=+175115.625617810
-Received: from MzI4OTc5MA (ec2-34-224-158-88.compute-1.amazonaws.com [34.224.158.88])
-        by ismtpd0040p1mdw1.sendgrid.net (SG) with HTTP id -y2WnCSmTVy8vLIRtTKrSQ
-        Thu, 09 Aug 2018 23:13:23.167 +0000 (UTC)
-Content-Type: multipart/mixed; boundary=1921f9c59a0d56d47b201559912e75f0a3a6c8a377cd1c60722290f5d212
-Date:   Thu, 09 Aug 2018 23:13:23 +0000 (UTC)
-From:   "BMC&QCONS" <mail@managebuilding.com>
-Mime-Version: 1.0
-Reply-To: sdlvin@yandex.com
-To:     linux-kernel@vger.kernel.org
-Message-ID: <-y2WnCSmTVy8vLIRtTKrSQ@ismtpd0040p1mdw1.sendgrid.net>
-Subject: Bank transactions report
-X-SG-EID: UsLXQ589HNP4HLBydmD9pgHURQozLYm9XliudupI8YvzcqzQ4TrgC2c7YXJBX/m6DLw542c2lIlwnY
- uCnDuy/RmSj9bL6SlMh0D0/IxGf+p0XvIsPmdZNzY7s9uwv7os05x0motSYHOvqdb7bGf7c8ip7/zE
- 5/ZskBCxuJobgMv9OEXNqj8FgN6yqeH4dg9BYnZiTciJRVxwe/mrn6/mi35lTAYl4Ac/18DeQrRXC4
- k=
+        Thu, 9 Aug 2018 21:52:11 -0400
+Received: by mail-pl0-f68.google.com with SMTP id j8-v6so3182709pll.12
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:25:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=RzEpSjNEphKu5jUBSU+4/lM0f/hwMx5E9QsKt1wvNV8=;
+        b=e5LE6OWCZYRgxqH3dGy35yjCOsvKTD+2ZvsKBMKShZ0g9C903NSN9QW6SmEaB7Ioo5
+         Y48QrkPRAsRLkeCYiGOLStJl1R+ur1eEF7stcIK5THAol0n0zJ627iDHss+ptKbH14wf
+         3e0343ythgBMg6ebnl5uZAtWNwUrUiROnzjDE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=RzEpSjNEphKu5jUBSU+4/lM0f/hwMx5E9QsKt1wvNV8=;
+        b=XRFYRSrRTrybRV9yWXrO1c7lMFnbMoSMH3We1L0uoJKRaKSbcyqAX+9S1f3aChAdg/
+         YtUcllLOr5klQq0hkLQV9Fk3SzKdbRLIVHc37Ief2gh2FYFdLv09IjJtKJEDkx/ZsvkB
+         lqpEZM5oVi0boA+jcU+/Fvar9JPbc+N8XXa+ziOGDJp0v0DDpBq5BtxF5+9j8Gpsticv
+         4fuh+hDqkMpC+GhdBsw4m/5mIFc1rmBFg07ZeW+1ROEj0CqXnIV0W/3JugpZSvcyAS6d
+         HExb0Bg59ZPxBqJPkswNrkSnrehf71+jH8/VFZkeLrHMt04SEQwbBoFUJxaLTfuDLhyg
+         D3eQ==
+X-Gm-Message-State: AOUpUlEhXeeq/SgR/9pJVlAt/D+ncaY1XhTamn8/YDK14nRxtOM/ojY4
+        Y8JaEWdl+tW/qJBYsleImv3vGQ==
+X-Google-Smtp-Source: AA+uWPx2MOxNiTIqTNGFKOye+qi6k/+8hkTMpaDnrbSc0RPrFmLYZ21Y5uH4ooV6Qrk5KKlkPbmiFA==
+X-Received: by 2002:a17:902:7106:: with SMTP id a6-v6mr3861892pll.28.1533857103854;
+        Thu, 09 Aug 2018 16:25:03 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id g20-v6sm9759319pfo.94.2018.08.09.16.25.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 16:25:03 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Brian Norris <briannorris@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180809195211.GA137192@ban.mtv.corp.google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Samuel Holland <samuel@sholland.org>
+References: <20180809171722.144325-1-swboyd@chromium.org>
+ <20180809171722.144325-3-swboyd@chromium.org>
+ <20180809174936.GC129285@ban.mtv.corp.google.com>
+ <153384363124.220756.3747855789935101539@swboyd.mtv.corp.google.com>
+ <20180809195211.GA137192@ban.mtv.corp.google.com>
+Message-ID: <153385710251.220756.6283092223394491763@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 2/7] firmware: coreboot: Unmap ioregion on failure
+Date:   Thu, 09 Aug 2018 16:25:02 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---1921f9c59a0d56d47b201559912e75f0a3a6c8a377cd1c60722290f5d212
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Mime-Version: 1.0
+Quoting Brian Norris (2018-08-09 12:52:13)
+> Hi,
+> =
 
-CONGRATULATIONS 2018 BMC Q-DRAFT CONSULT AWARDEES
+> On Thu, Aug 09, 2018 at 12:40:31PM -0700, Stephen Boyd wrote:
+> > Quoting Brian Norris (2018-08-09 10:49:38)
+> > > On Thu, Aug 09, 2018 at 10:17:17AM -0700, Stephen Boyd wrote:
+> > > > Both callers of coreboot_table_init() ioremap the pointer that come=
+s in
+> > > > but they don't unmap the memory on failure. Both of them also fail =
+probe
+> > > > immediately with the return value of coreboot_table_init(), leaking=
+ a
+> > > > mapping when it fails. Plug the leak so the mapping isn't left unus=
+ed.
+> > > > =
 
-THE NASSCOM SERVICE BMC Q-DRAFT CONSULT PROGRAM RECOGNIZES THE TOP INDIVIDU=
-AL CONTRIBUTORS IN  SURVEY SERVICE ONLINE COMMUNITY. THE NASSCOM BMC Q-DRAF=
-T CONSULT ARE WELL KNOWN BY THE WORLDS COLLECTIVE COMMUNITY FOR THEIR PRODU=
-CT EXPERTISE AND CONSISTENT CONTRIBUTIONS. SERVICENOW BMC Q-DRAFT CONSULT D=
-EMONSTRATE A COMMITMENT TO ENGAGE, GUIDE, AND SHARE EXPERTISE WITH THE WORL=
-D. THEY ARE INDEPENDENT OF SERVICENOW AND REPRESENT THE VOICE OF THE WORLD =
-COMMUNITY. THE SERVICENOW BMC Q-DRAFT CONSULT AWARD IS OUR APPRECIATION FOR=
- THE THE SIZABLE INFLUENCE AND TECHNICAL CREDIBILITY ONLINE MEMBERS DEMONST=
-RATED IN 2016 AND 2017.
-THE BMC Q-DRAFT CONSULT PROGRAM IS OUR BI-YEARLY RECOGNITION OF TOP RANKED =
-WINNERS CONTRIBUTORS.
-WE HAPPILY ANNOUNCE TO YOU THE DRAW OF #WINNING NUMBERS#: 1,5,24,34,41 BONU=
-S 10. WINNING RESULT: (#10313155) MALAYSIA/INDIA/UK BMC Q-DRAFT CONSULT PRO=
-GRAM ONLINE SWEEPSTAKES INTERNATIONAL PROGRAM HELD FOR MIDDLE OF THE YEAR 2=
-018. YOU HAVE WON $900.860.00 (NINE HUNDRED THOUSAND, EIGHT SIXTY UNITED ST=
-ATES US DOLLARS ONLY) FROM SERVICENOW'S BMC Q-DRAFT CONSULT DRAW 2018.
-IN ORDER TO PROCESS YOUR WINNING FOR E-WALLET ELECTRONIC TRANSFER, YOU ARE =
-ADVISED TO CONTACT YOUR FIDUCIARY AGENT WITH THE DETAILS BELOW FOR YOUR PAY=
-MENT.=20
-CLAIMS FACILITATOR`S NAME: MR. KELLY ARMSTRONG
-EMAIL: cordinator.qlik@yahoo.com
-YOU ARE ADVISED TO SEND THE FOLLOWING INFORMATION LISTED BELOW TO YOUR CLAI=
-M`S AGENT TO FACILITATE THE RELEASE OF YOUR FUND TO YOU.
-=20
-1.FULL NAMES:
-2.COUNTRY OF ORIGIN:
-3.ADDRESS:
-4.TELEPHONE NUMBER:
-5.OCCUPATION:
-6.ID:
-=20
-YOURS SINCERELY,
-SIR. KELLY ARMSTRONG
-SERVICENOW'S BMC  Q-DRAFT CONSULT
-CONGRATULATIONS 2018 BMC Q-DRAFT CONSULT` AWARDEES=
+> > > > Cc: Wei-Ning Huang <wnhuang@chromium.org>
+> > > > Cc: Julius Werner <jwerner@chromium.org>
+> > > > Cc: Brian Norris <briannorris@chromium.org>
+> > > > Cc: Samuel Holland <samuel@sholland.org>
+> > > > Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table=
+ as a bus")
+> > > =
 
---1921f9c59a0d56d47b201559912e75f0a3a6c8a377cd1c60722290f5d212
-Content-Disposition: attachment; filename="BankTransactions_August 09, 2018 19:13 PM.csv"
-Content-Transfer-Encoding: base64
-Content-Type: text/csv; charset=utf-8; name="BankTransactions_August 09, 2018 19:13 PM.csv"
+> > > I suppose this is fair, since that commit introduced error paths and
+> > > didn't clean them up. But one warning below:
+> > > =
 
-Z2xBY2NvdW50SWQsaWQsam91cm5hbEdyb3VwSWQsU29ydERhdGUsYnVpbGRpbmdJZCxidWlsZGlu
-Z05hbWUsYnVpbGRpbmdTdGF0dXNJZCxqb3VybmFsQ29kZUlkLHBheWVlTmFtZSxjaGVja051bWJl
-cixKb3VybmFsTWVtbyxwb3N0aW5nTWVtbyxyZWZlcmVuY2VOdW1iZXIsYW1vdW50LGlzUmV0YWls
-Q2FzaFJlY29uY2lsZWQsYWxsSm91cm5hbElkcyxhY2NvdW50aW5nQm9va0lkLGJhbmtBY2NvdW50
-TmFtZSxydW5uaW5nQmFsYW5jZSx0b3RhbEJlZ2lubmluZ0JhbGFuY2UsdG90YWxFbmRpbmdCYWxh
-bmNlDQosLCwiMS8xLzIwMTggMTI6MDA6MDAgQU0iLCxzZGx2aW4yLm1hbmFnZWJ1aWxkaW5nLmNv
-bSwsLCwsQmVnaW5uaW5nIGJhbGFuY2UsLCwsLCwxMTEwNCwsMCwwLDE0NTcwLjM1DQo1NTU3ODks
-NDg5MTA4NSw0ODkxMDg1LCI4LzEvMjAxOCAxMjowMDowMCBBTSIsLHNkbHZpbjIubWFuYWdlYnVp
-bGRpbmcuY29tLCw5LCAsLCwsLDkwMC44NiwsNDg5MTA4NSwxMTEwNCxDb21wYW55IGNoZWNraW5n
-LDkwMC44NiwsDQo1NTU3ODksNDg5MTA3NSw0ODkxMDc1LCI4LzUvMjAxOCAxMjowMDowMCBBTSIs
-LHNkbHZpbjIubWFuYWdlYnVpbGRpbmcuY29tLCw5LCAsLE9wZW5pbmcgYmFsYW5jZXMgZW50cnks
-T3BlbmluZyBiYWxhbmNlcyBlbnRyeSwsMzQ0MC42MiwsNDg5MTA3NSwxMTEwNCxDb21wYW55IGNo
-ZWNraW5nLDQzNDEuNDgsLA0KNTU1Nzg5LDQ4OTEwNzMsNDg5MTA3MywiOC82LzIwMTggMTI6MDA6
-MDAgQU0iLCxzZGx2aW4yLm1hbmFnZWJ1aWxkaW5nLmNvbSwsMixIYW5rIHRoZSBIYW5keW1hbixQ
-UklOVCwsLEhILTQ0NSwtMzUuNDUsLDQ4OTEwNzMsMTExMDQsQ29tcGFueSBjaGVja2luZyw0MzA2
-LjAzLCwNCjU1NTc4OSw0ODkxMDc5LDQ4OTEwNzksIjgvNi8yMDE4IDEyOjAwOjAwIEFNIiwsc2Rs
-dmluMi5tYW5hZ2VidWlsZGluZy5jb20sLDksICwsLCwsMTIwMDAuMDAsLDQ4OTEwNzksMTExMDQs
-Q29tcGFueSBjaGVja2luZywxNjMwNi4wMywsDQo1NTU3ODksNDg5MTA2Niw0ODkxMDY2LCI4Lzcv
-MjAxOCAxMjowMDowMCBBTSIsLHNkbHZpbjIubWFuYWdlYnVpbGRpbmcuY29tLCwyLCJNb3JyaXMg
-JiBIYXllcywgTExDIixQUklOVCxMZWdhbCBmZWVzLCwiTW9ycmlzICYgSGF5ZXMsIExMQyIsLTEw
-MC4wMCwsNDg5MTA2NiwxMTEwNCxDb21wYW55IGNoZWNraW5nLDE2MjA2LjAzLCwNCjU1NTc4OSw0
-ODkxMDY3LDQ4OTEwNjcsIjgvNy8yMDE4IDEyOjAwOjAwIEFNIiwsc2RsdmluMi5tYW5hZ2VidWls
-ZGluZy5jb20sLDIsTXVuaWNpcGFsIFRlbGVjb20sUFJJTlQsLCxNVC00NDQsLTM0NS45OCwsNDg5
-MTA2NywxMTEwNCxDb21wYW55IGNoZWNraW5nLDE1ODYwLjA1LCwNCjU1NTc4OSw0ODkxMDY4LDQ4
-OTEwNjgsIjgvNy8yMDE4IDEyOjAwOjAwIEFNIiwsc2RsdmluMi5tYW5hZ2VidWlsZGluZy5jb20s
-LDIsUCAmIFAgUGFpbnRpbmcgQ29udHJhY3RvcnMsUFJJTlQsQ2xlYW5pbmcsLEExMjMsLTUwMC4w
-MCwsNDg5MTA2OCwxMTEwNCxDb21wYW55IGNoZWNraW5nLDE1MzYwLjA1LCwNCjU1NTc4OSw0ODkx
-MDY5LDQ4OTEwNjksIjgvNy8yMDE4IDEyOjAwOjAwIEFNIiwsc2RsdmluMi5tYW5hZ2VidWlsZGlu
-Zy5jb20sLDIsIkpvbiBCZW5zb24sIFJFQUxUT1IiLFBSSU5ULCwsLC0xODc0LjMzLCw0ODkxMDY5
-LDExMTA0LENvbXBhbnkgY2hlY2tpbmcsMTM0ODUuNzIsLA0KNTU1Nzg5LDQ4OTEwODAsNDg5MTA4
-MCwiOC83LzIwMTggMTI6MDA6MDAgQU0iLCxzZGx2aW4yLm1hbmFnZWJ1aWxkaW5nLmNvbSwsOSwg
-LCwsLCw3NDYuMDAsLDQ4OTEwODAsMTExMDQsQ29tcGFueSBjaGVja2luZywxNDIzMS43MiwsDQo1
-NTU3ODksNDg5MTA4MSw0ODkxMDgxLCI4LzgvMjAxOCAxMjowMDowMCBBTSIsLHNkbHZpbjIubWFu
-YWdlYnVpbGRpbmcuY29tLCw5LCAsLCwsLDI2My4wMCwsNDg5MTA4MSwxMTEwNCxDb21wYW55IGNo
-ZWNraW5nLDE0NDk0LjcyLCwNCjU1NTc4OSw0ODkxMDgyLDQ4OTEwODIsIjgvOS8yMDE4IDEyOjAw
-OjAwIEFNIiwsc2RsdmluMi5tYW5hZ2VidWlsZGluZy5jb20sLDksICwsLCwsMzE0Ljc0LCw0ODkx
-MDgyLDExMTA0LENvbXBhbnkgY2hlY2tpbmcsMTQ4MDkuNDYsLA0KNTU1Nzg5LDQ4OTEwNzAsNDg5
-MTA3MCwiOC8xMC8yMDE4IDEyOjAwOjAwIEFNIiwsc2RsdmluMi5tYW5hZ2VidWlsZGluZy5jb20s
-LDIsUmljYXJkbydzIFJvb2ZpbmcgU3VwcGx5LFBSSU5ULCwsWlgtNzgxLC0zNTUuOTksLDQ4OTEw
-NzAsMTExMDQsQ29tcGFueSBjaGVja2luZywxNDQ1My40NywsDQo1NTU3ODksNDg5MTA4Myw0ODkx
-MDgzLCI4LzEwLzIwMTggMTI6MDA6MDAgQU0iLCxzZGx2aW4yLm1hbmFnZWJ1aWxkaW5nLmNvbSws
-OSwgLCwsLCwxMTYuODgsLDQ4OTEwODMsMTExMDQsQ29tcGFueSBjaGVja2luZywxNDU3MC4zNSws
-DQo=
+> > > > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > > > ---
+> > > >  drivers/firmware/google/coreboot_table.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > > =
 
---1921f9c59a0d56d47b201559912e75f0a3a6c8a377cd1c60722290f5d212--
+> > > > diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/fir=
+mware/google/coreboot_table.c
+> > > > index 19db5709ae28..0d3e140444ae 100644
+> > > > --- a/drivers/firmware/google/coreboot_table.c
+> > > > +++ b/drivers/firmware/google/coreboot_table.c
+> > > > @@ -138,6 +138,9 @@ int coreboot_table_init(struct device *dev, voi=
+d __iomem *ptr)
+> > > >               ptr_entry +=3D entry.size;
+> > > >       }
+> > > >  =
+
+> > > > +     if (ret)
+> > > > +             iounmap(ptr);
+> > > =
+
+> > > This works because no sub-driver is using this mapping any more (i.e.,
+> > > because we killed coreboot_table_find()). Otherwise, we'd need to
+> > > explicitly kill all the sub-devices first. IOW, if this gets backport=
+ed
+> > > to older kernels, it would need to go along with this and its other
+> > > dependencies:
+> > =
+
+> > The memory is copied out of the table. So do the devices actually use
+> > the memory that we remap here? I don't see how it's a problem if we
+> > unmap the table after we populate devices.
+> =
+
+> No, the memory is (or was) copied each time. See:
+> =
+
+> int coreboot_table_find(int tag, void *data, size_t data_size)
+> {
+> ...
+>         memcpy_fromio(&header, ptr_header, sizeof(header));
+> ...
+> =
+
+> (where ptr_header is an alias for 'ptr')
+> =
+
+> So before commit b616cf53aa7a and friends, this patch is a bad idea.
+> =
+
+> Just to reiterate/clarify: none of this is a criticism of this patch as
+> applied to mainline. It's just a criticism of what might happen with the
+> 'Fixes' tag if we aren't careful.
+> =
+
+
+Ok. I misread your email. Either way, both of these commits we're
+talking about here are only in v4.18-rc series, so backporting for
+stable will be fine either way.
