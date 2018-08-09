@@ -2,97 +2,82 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881EBC4646D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AA3C4646D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485EC21C67
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:15:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485EC21C67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 71D2521C1A
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D2521C1A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbeHIEh0 (ORCPT
+        id S1728058AbeHIEib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:37:26 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45513 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727853AbeHIEh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:37:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 19:15:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
-   d="scan'208";a="81868743"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 08 Aug 2018 19:14:47 -0700
-Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.78])
-        by linux.intel.com (Postfix) with ESMTP id 876E95801BD;
-        Wed,  8 Aug 2018 19:14:45 -0700 (PDT)
-From:   Zhang Yi <yi.z.zhang@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan.j.williams@intel.com, jack@suse.cz, hch@lst.de,
-        yu.c.zhang@intel.com
-Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, yi.z.zhang@intel.com,
-        Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V3 4/4] kvm: add a check if pfn is from NVDIMM pmem.
-Date:   Thu,  9 Aug 2018 18:53:30 +0800
-Message-Id: <0cc6cba7020f80168695fba731b8fd72fd649dc8.1533811181.git.yi.z.zhang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1533811181.git.yi.z.zhang@linux.intel.com>
-References: <cover.1533811181.git.yi.z.zhang@linux.intel.com>
+        Thu, 9 Aug 2018 00:38:31 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:43386 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726731AbeHIEia (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 00:38:30 -0400
+X-UUID: 0a3248a697cd47059bad4c125a017135-20180809
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 885883587; Thu, 09 Aug 2018 10:15:54 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 9 Aug 2018 10:15:52 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 9 Aug 2018 10:15:52 +0800
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH v4 14/14] drm/mediatek: fix connection from RDMA2 to DSI1
+Date:   Thu, 9 Aug 2018 10:15:49 +0800
+Message-ID: <1533780949-30141-15-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1533780949-30141-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1533780949-30141-1-git-send-email-stu.hsieh@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For device specific memory space, when we move these area of pfn to
-memory zone, we will set the page reserved flag at that time, some of
-these reserved for device mmio, and some of these are not, such as
-NVDIMM pmem.
+This patch fix connection from RDMA2 to DSI1
 
-Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
-backend, since these pages are reserved. the check of
-kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
-introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
-to indentify these pages are from NVDIMM pmem. and let kvm treat these
-as normal pages.
-
-Without this patch, Many operations will be missed due to this
-mistreatment to pmem pages. For example, a page may not have chance to
-be unpinned for KVM guest(in kvm_release_pfn_clean); not able to be
-marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc
-
-Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- virt/kvm/kvm_main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index c44c406..969b6ca 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -147,8 +147,12 @@ __weak void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
- 
- bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
- {
--	if (pfn_valid(pfn))
--		return PageReserved(pfn_to_page(pfn));
-+	struct page *page;
-+
-+	if (pfn_valid(pfn)) {
-+		page = pfn_to_page(pfn);
-+		return PageReserved(page) && !is_dax_page(page);
-+	}
- 
- 	return true;
- }
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 3239f22785fd..546b3e3b300b 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -314,7 +314,7 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+ 		value = DSI0_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+-		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
++		*addr = DISP_REG_CONFIG_DSIO_SEL_IN;
+ 		value = DSI1_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
+ 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
 -- 
-2.7.4
+2.12.5.2.gbdf23ab
 
