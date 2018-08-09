@@ -2,178 +2,111 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4D0C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7073EC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B0521EFC
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:05:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jyFExdDf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B0521EFC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7EA3021EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:05:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA3021EFC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbeHIXbt (ORCPT
+        id S1727361AbeHIXcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 19:31:49 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:32861 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727124AbeHIXbt (ORCPT
+        Thu, 9 Aug 2018 19:32:04 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:43790 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727336AbeHIXcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 19:31:49 -0400
-Received: by mail-pl0-f68.google.com with SMTP id b90-v6so3067721plb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 14:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=23xEfH2+Vy6XMyTATpfgVL5qYWG+2hXTZ13Q5FEZdqk=;
-        b=jyFExdDfcTpeGk/zk1nqRNBpWfCgzp2QpWZflW8sc9Xg5uRjMnHZ8oDpGc9llSq2YL
-         sKh9rYyxB1m6OPNvUD1aDV6ypnD9pqmignp3EGv2CdDdrgUOlFjkSsRxgk+TnrmI/iux
-         UfOU+o+BRQRNAkUZfgwP/Q20fGi5NfV4ATHqg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=23xEfH2+Vy6XMyTATpfgVL5qYWG+2hXTZ13Q5FEZdqk=;
-        b=DeX8W0wa+C51aEBHohEMnxEw+Un0LGif7fZzLIZMZKKjgGiTZyBw2OrKd6J14D3eEa
-         huRyWFgbfe9WLHun6pigGx8U4KsAEA4Y8W9CbtNmWI/D8t0ioKPZntj/8p6ngXyQSEJW
-         yyxgdWWKjFH81xntI5jPeY8maRuhjhWlkMI0aKe1v1DZn5Tp07Wd2jCO6IrbEeorE9/r
-         Ggak5O/y0hKBkKyHLOlwwybuVQQZ4OMyj36ZaWXCFweVE2hiO5ZdwkP4ea22hZFjVLXr
-         YK8hBPh+OKg6q9tG3+oQ884/X5ORov03XH+6go0ADzR2KYvVnKCS8NIDT1hxGJaa7m2s
-         31Wg==
-X-Gm-Message-State: AOUpUlEP2CI8hh02fGcz3ARJPP10SyZLM4M3u409gTPdgcmkhppFCkoh
-        BpPuGyhS0LRJKYdQa5xLYbNLBA==
-X-Google-Smtp-Source: AA+uWPwI6uwRjDVPeskj+Yr55YXNijY6HJvc8IMGKnSm5QD/ZfbunobQBZoDND+3HmOTqc48HaeJag==
-X-Received: by 2002:a17:902:6b44:: with SMTP id g4-v6mr3448270plt.50.1533848712987;
-        Thu, 09 Aug 2018 14:05:12 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id n83-v6sm20661632pfk.19.2018.08.09.14.05.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 14:05:12 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 14:05:11 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, smohanad@codeaurora.org,
-        andy.gross@linaro.org, dianders@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 09/10] arm64: dts: qcom: Add reg-names for all tsens
- nodes
-Message-ID: <20180809210511.GQ160295@google.com>
-References: <cover.1533815718.git.amit.kucheria@linaro.org>
- <188c07144d98bfbe2bbbb7d1f2941acdcf4e6682.1533815718.git.amit.kucheria@linaro.org>
+        Thu, 9 Aug 2018 19:32:04 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w79L5PsO037944;
+        Fri, 10 Aug 2018 06:05:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Fri, 10 Aug 2018 06:05:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w79L5I0G037934
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 10 Aug 2018 06:05:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: WARNING in try_charge
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <0000000000005e979605729c1564@google.com>
+ <e2869136-9f59-9ce8-8b9f-f75b157ee31d@I-love.SAKURA.ne.jp>
+ <20180809150735.GA15611@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <56c95100-d7f9-b715-bdec-e8bb112e2630@i-love.sakura.ne.jp>
+Date:   Fri, 10 Aug 2018 06:05:19 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180809150735.GA15611@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <188c07144d98bfbe2bbbb7d1f2941acdcf4e6682.1533815718.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 06:02:41PM +0530, Amit Kucheria wrote:
-> Instead of showing up as thermal-sensor@<addr>, the nodes will show up as
-> tsens0_tm, tsen1_tm, tsens1_srot, etc. in /proc/iomem making it easier to
-> read.
+On 2018/08/10 0:07, Michal Hocko wrote:
+> On Thu 09-08-18 22:57:43, Tetsuo Handa wrote:
+>> >From b1f38168f14397c7af9c122cd8207663d96e02ec Mon Sep 17 00:00:00 2001
+>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Date: Thu, 9 Aug 2018 22:49:40 +0900
+>> Subject: [PATCH] mm, oom: task_will_free_mem(current) should retry until
+>>  memory reserve fails
+>>
+>> Commit 696453e66630ad45 ("mm, oom: task_will_free_mem should skip
+>> oom_reaped tasks") changed to select next OOM victim as soon as
+>> MMF_OOM_SKIP is set. But we don't need to select next OOM victim as
+>> long as ALLOC_OOM allocation can succeed. And syzbot is hitting WARN(1)
+>> caused by this race window [1].
 > 
-> IOW,
-> 
-> 0c222000-0c2221fe : thermal-sensor@c263000
-> 0c223000-0c2231fe : thermal-sensor@c265000
-> 0c263000-0c2631fe : thermal-sensor@c263000
-> 0c265000-0c2651fe : thermal-sensor@c265000
-> 
-> becomes
-> 
-> 0c222000-0c2221fe : tsens0_srot
-> 0c223000-0c2231fe : tsens1_srot
-> 0c263000-0c2631fe : tsens0_tm
-> 0c265000-0c2651fe : tsens1_tm
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm/boot/dts/qcom-msm8974.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 ++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi  | 2 ++
->  4 files changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> index 3c4b81c29798..64c9f81ddd90 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> @@ -431,6 +431,7 @@
->  			compatible = "qcom,msm8974-tsens";
->  			reg = <0xfc4a9000 0x1000>, /* TM */
->  			      <0xfc4a8000 0x1000>; /* SROT */
-> +			reg-names = "tsens_tm", "tsens_srot";
->  			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
->  			nvmem-cell-names = "calib", "calib_backup";
->  			#qcom,sensors = <11>;
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> index abf84df5a7bc..4e6a5e462a91 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> @@ -778,6 +778,7 @@
->  			compatible = "qcom,msm8916-tsens";
->  			reg = <0x4a9000 0x1000>, /* TM */
->  			      <0x4a8000 0x1000>; /* SROT */
-> +			reg-names = "tsens_tm", "tsens_srot";
->  			nvmem-cells = <&tsens_caldata>, <&tsens_calsel>;
->  			nvmem-cell-names = "calib", "calib_sel";
->  			#qcom,sensors = <5>;
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index c2dca3a30091..7e5982daa2ed 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -969,6 +969,7 @@
->  			compatible = "qcom,msm8996-tsens";
->  			reg = <0x4a9000 0x1000>, /* TM */
->  			      <0x4a8000 0x1000>; /* SROT */
-> +			reg-names = "tsens0_tm", "tsens0_srot";
->  			#qcom,sensors = <13>;
->  			#thermal-sensor-cells = <1>;
->  		};
-> @@ -977,6 +978,7 @@
->  			compatible = "qcom,msm8996-tsens";
->  			reg = <0x4ad000 0x1000>, /* TM */
->  			      <0x4ac000 0x1000>; /* SROT */
-> +			reg-names = "tsens1_tm", "tsens1_srot";
->  			#qcom,sensors = <8>;
->  			#thermal-sensor-cells = <1>;
->  		};
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index f722785df26b..efd5d7abd1cd 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1531,6 +1531,7 @@
->  			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
->  			reg = <0xc263000 0x1ff>, /* TM */
->  			      <0xc222000 0x1ff>; /* SROT */
-> +			reg-names = "tsens0_tm", "tsens0_srot";
->  			#qcom,sensors = <13>;
->  			#thermal-sensor-cells = <1>;
->  		};
-> @@ -1539,6 +1540,7 @@
->  			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
->  			reg = <0xc265000 0x1ff>, /* TM */
->  			      <0xc223000 0x1ff>; /* SROT */
-> +			reg-names = "tsens1_tm", "tsens1_srot";
->  			#qcom,sensors = <8>;
->  			#thermal-sensor-cells = <1>;
->  		};
+> It is not because the syzbot was exercising a completely different code
+> path (memcg charge rather than the page allocator).
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+I know syzbot is hitting memcg charge path.
+
+> 
+>> Since memcg OOM case uses forced charge if current thread is killed,
+>> out_of_memory() can return true without selecting next OOM victim.
+>> Therefore, this patch changes task_will_free_mem(current) to ignore
+>> MMF_OOM_SKIP unless ALLOC_OOM allocation failed.
+> 
+> And the patch is simply wrong for memcg.
+> 
+
+Why? I think I should have done
+
+-+	page = __alloc_pages_may_oom(gfp_mask, order, alloc_flags == ALLOC_OOM
+-+				     || (gfp_mask & __GFP_NOMEMALLOC), ac,
+-+				     &did_some_progress);
+++	page = __alloc_pages_may_oom(gfp_mask, order, alloc_flags == ALLOC_OOM,
+++				     ac, &did_some_progress);
+
+because nobody will use __GFP_NOMEMALLOC | __GFP_NOFAIL. But for memcg charge
+path, task_will_free_mem(current, false) == true and out_of_memory() will return
+true, which avoids unnecessary OOM killing.
+
+Of course, this patch cannot avoid unnecessary OOM killing if out_of_memory()
+is called by not yet killed process. But to mitigate it, what can we do other
+than defer setting MMF_OOM_SKIP using a timeout based mechanism? Making
+the OOM reaper unconditionally reclaim all memory is not a valid answer.
+
