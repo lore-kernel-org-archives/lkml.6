@@ -6,72 +6,71 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCB7C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F360C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3169D21F45
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06C6D21F45
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:01:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="llNnlCsf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3169D21F45
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HB+xDaGM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C6D21F45
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeHIU0V (ORCPT
+        id S1727026AbeHIU1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:26:21 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40430 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeHIU0U (ORCPT
+        Thu, 9 Aug 2018 16:27:15 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34553 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeHIU1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:26:20 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y200-v6so4733594lfd.7
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:00:21 -0700 (PDT)
+        Thu, 9 Aug 2018 16:27:15 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f8-v6so5192519ljk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:01:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SGDOQR0HuHQd+TGE/hMSAAnB3N/WHLB2yfh1lRyhf9Y=;
-        b=llNnlCsfIWxhkuDXEaDH9JZ+rTXAYiYHSfMvdyzNIt1ruGTnnriGV/JgUka4BSEc2k
-         7T13yWk2gslL4JnG82Ue1ZRNaJ3g7184RgDCTe8bGIumgs5Aefn2bwCiiLiXj+4PIjA/
-         nluuvxFzxqconwY2o/54E1jZ/GmxrLeHLG6D0=
+        bh=KBRePFpH+4fbpwPfUjYWaEb9JltpG94wdW7GpUjFunw=;
+        b=HB+xDaGMmXm9S6ESbIta0U68N/z1+YUs5uYr3Bo65FIIWEJZkfm9lC9MyDyBNxitJn
+         QqYgpnEDUdyURIYq5xktKaK6Q1/DV4k1Q6hM/PsgadU6N7/aMLJO31ehIQn5SPFxdsAZ
+         MqRPJD7JHG/zC9LG5pquXLca3ofcBDui1fgeM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SGDOQR0HuHQd+TGE/hMSAAnB3N/WHLB2yfh1lRyhf9Y=;
-        b=riqN1f3zHIaFa1pRw6AxHT5sfgicITFMbh6aITdR7/PaPBNvCEB/yQjteUF0RvLY4d
-         D88d9G6xa4HB+CopbbegPlhlcOlKdKrw/ZygV8iCMHHKpVi+/eOflbF0qb3nHbMhai8l
-         y8CwfecG3qi03vU6vMy0blaAe82139pOhc2sCpUUJU9brIte2RfeDswGGGipW6XWYF9W
-         b6hgQp1MRK+lvd2toQ1al1OJYnvGrMw/ztu8g7IXDkJZIYcbcNMKmpGQ5P3/bPz40xhi
-         LgFiKJ1foM7JG8gfk9VRb89daqe49CVX1arbt65N0VGGTfetvvkfja6/7PAJGcIZuoXH
-         TDiQ==
-X-Gm-Message-State: AOUpUlF4z4KKQHZ5aQOHerJU0Ky7eksWfj7sn6VmPQo6M4o1HxFJZLaU
-        8ZCR9UUGzoOOeLDB9fiC4kDRhR2BK84=
-X-Google-Smtp-Source: AA+uWPyRS/6Q6Egd0wDTRmSBU24HnDVohhqzEHSF2nURuSuJ8tG+0Td6kXGmsLcI5L53Hj6HL6i6og==
-X-Received: by 2002:ac2:4117:: with SMTP id b23-v6mr2353912lfi.84.1533837620713;
-        Thu, 09 Aug 2018 11:00:20 -0700 (PDT)
+        bh=KBRePFpH+4fbpwPfUjYWaEb9JltpG94wdW7GpUjFunw=;
+        b=aa0kQyC0Bqi7OHZ9QbAe9ZeaQndNVOfSqegSRAWytjzQijOozwW770I9CRQ508MUni
+         5GKi3Wzi42ng+VimuwzUZLOkvETChEv+Yz5PLjKzUTF0VryBKlgEaoveeSieN3vNnLQF
+         /NAQMEZFtbcC1qFmvQhZt+7NfX5eQMLlrqnNno6kR4MdtN+s8V0JtecTix21BDBrnhQ7
+         7W2emDderbWpofqnJMrcv1FtzBnCAvnE7+LNMcITvpvVCecg9AiIfx7vRUVqK13swZxq
+         KnQBQedvJJd+IWtC37RgTg8FXscTsvZCBMj1uliRxVTeKEXU0AoikKIk1p+EqG5xkdDg
+         /Iww==
+X-Gm-Message-State: AOUpUlFp3M+smVZZn549MipAnQg3L3THgylpTGLPc1vWkcX0ydiCUJBj
+        xEZKA7z0K24dXTlEGPbOkWon+rXMZME=
+X-Google-Smtp-Source: AA+uWPyBCAH45N12zoAzY5TKXaxtI+kSFObqZMP1v99G7BMytYvVwp02WGnjBRyeIeA/8yGhAdMT+g==
+X-Received: by 2002:a2e:9b04:: with SMTP id u4-v6mr2333202lji.78.1533837676189;
+        Thu, 09 Aug 2018 11:01:16 -0700 (PDT)
 Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id g12-v6sm1256507ljf.5.2018.08.09.11.00.19
+        by smtp.gmail.com with ESMTPSA id u10-v6sm1223017ljk.83.2018.08.09.11.01.14
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 11:00:19 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id v9-v6so5173089ljk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:00:19 -0700 (PDT)
-X-Received: by 2002:a2e:1207:: with SMTP id t7-v6mr2312348lje.129.1533837619020;
- Thu, 09 Aug 2018 11:00:19 -0700 (PDT)
+        Thu, 09 Aug 2018 11:01:15 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id v9-v6so5175316ljk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:01:14 -0700 (PDT)
+X-Received: by 2002:a2e:540d:: with SMTP id i13-v6mr2280866ljb.51.1533837673545;
+ Thu, 09 Aug 2018 11:01:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180731100914.19856-1-cang@codeaurora.org> <20180731100914.19856-4-cang@codeaurora.org>
- <CAE=gft6cdE+oMYf779VGrQHfYQ5Xb1v+Qr6cAznTtAovehCOxw@mail.gmail.com> <c5ccbdac-8816-2a64-eb29-23e506b5cf7c@codeaurora.org>
-In-Reply-To: <c5ccbdac-8816-2a64-eb29-23e506b5cf7c@codeaurora.org>
+References: <20180731100914.19856-1-cang@codeaurora.org> <20180731100914.19856-5-cang@codeaurora.org>
+In-Reply-To: <20180731100914.19856-5-cang@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 9 Aug 2018 10:59:42 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6pFN91Y317-9S-3+DMgt6rMeGU_8ynrziGN=WaNVu5_Q@mail.gmail.com>
-Message-ID: <CAE=gft6pFN91Y317-9S-3+DMgt6rMeGU_8ynrziGN=WaNVu5_Q@mail.gmail.com>
-Subject: Re: [PATCH v8 3/5] phy: Add QMP phy based UFS phy support for sdm845
-To:     vivek.gautam@codeaurora.org
-Cc:     cang@codeaurora.org, subhashj@codeaurora.org,
-        asutoshd@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>,
+Date:   Thu, 9 Aug 2018 11:00:37 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4xCk2MD-oOAuCRwWz6J9mMvZGFR2J+E7vcu06+3xBZRQ@mail.gmail.com>
+Message-ID: <CAE=gft4xCk2MD-oOAuCRwWz6J9mMvZGFR2J+E7vcu06+3xBZRQ@mail.gmail.com>
+Subject: Re: [PATCH v8 4/5] scsi: ufs: Power on phy after it is initialized
+To:     cang@codeaurora.org
+Cc:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>,
         kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
@@ -81,83 +80,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 10:26 AM Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
+On Tue, Jul 31, 2018 at 3:09 AM Can Guo <cang@codeaurora.org> wrote:
 >
-> Hi Evan,
+> Before UFS PHY is initialized, powering on it has no effect but increases
+> the PHY's power on count. Then when power on PHY to enable it after phy
+> initialization where it is really needed, as PHY's power on count is not
+> zero, again it would do nothing but directly return and leaves the PHY
+> disabled. This change adds condition checks to phy power on calls which
+> happen before phy initialization.
 >
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufs-qcom.c | 4 +++-
+>  drivers/scsi/ufs/ufs-qcom.h | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 >
-> On 8/9/2018 3:25 AM, Evan Green wrote:
-> > On Tue, Jul 31, 2018 at 3:09 AM Can Guo <cang@codeaurora.org> wrote:
-> >> Add UFS PHY support to make SDM845 UFS work with common PHY framework.
-> >>
-> >> Signed-off-by: Can Guo <cang@codeaurora.org>
-> >> ---
-> >>   drivers/phy/qualcomm/phy-qcom-qmp.c | 172 +++++++++++++++++++++++++++++++++++-
-> >>   drivers/phy/qualcomm/phy-qcom-qmp.h |  15 ++++
-> >>   2 files changed, 186 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> >> index 9be9754..de7ff18 100644
-> >> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> >> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> > ...
-> >>   static void qcom_qmp_phy_configure(void __iomem *base,
-> >>                                     const unsigned int *regs,
-> >>                                     const struct qmp_phy_init_tbl tbl[],
-> >> @@ -1131,6 +1249,14 @@ static int qcom_qmp_phy_init(struct phy *phy)
-> >>          qcom_qmp_phy_configure(pcs, cfg->regs, cfg->pcs_tbl, cfg->pcs_tbl_num);
-> >>
-> >>          /*
-> >> +        * UFS PHY requires the deassert of software reset before serdes start.
-> >> +        * For UFS PHYs that do not have software reset control bits, defer
-> >> +        * starting serdes until the power on callback.
-> >> +        */
-> > I'm relatively thick when it comes to PHYs, but I'm a little confused.
-> > The sequence of code right below this (not shown) looks like it is
-> > deasserting reset before starting serdes, seemingly doing what the
-> > comment wants. I guess the problem is the lack of SW reset? So then
-> > you defer serdes start until UFS does... something. Can you explain
-> > how deferring to after UFS HC init actually helps? Is it the UFS HC
-> > that releases reset on the PHY?
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index 2b38db2..4e9d526 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -288,6 +288,7 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+>                         __func__, ret);
+>                 goto out;
+>         }
+> +       host->is_phy_init = true;
 >
-> As you can see in [1], the ufs first asserts the sw_reset, then phy
-> initialization is done.
-> This phy_init() is just programming the phy registers. Now as per the H/W
-> programming doc, we can't start the phy until we de-assert the sw_reset.
-> So the sequence as per the programming doc should be:
+>         /* De-assert PHY reset and start serdes */
+>         ufs_qcom_deassert_reset(hba);
+> @@ -1147,7 +1148,8 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>                 return 0;
 >
-> assert SW_reset --> program phy serdes/tx/rx/pcs registers --> deassert
-> SW_reset --> start serdes --> test PCS status
+>         if (on && (status == POST_CHANGE)) {
+> -               phy_power_on(host->generic_phy);
+> +               if (host->is_phy_init)
+> +                       phy_power_on(host->generic_phy);
 >
-> That's the reason that serdes_start has been moved to phy_power_on(), as
-> that seemed
-> a more cleaner way of handling the above sequence.
-> UFS HC init doesn't help more than this in terms of phy initialization.
-
-Ok that makes sense. Thank you for the explanation.
-
+>                 /* enable the device ref clock for HS mode*/
+>                 if (ufshcd_is_hs_mode(&hba->pwr_info))
+> diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
+> index 295f4be..5747aa3 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.h
+> +++ b/drivers/scsi/ufs/ufs-qcom.h
+> @@ -242,6 +242,7 @@ struct ufs_qcom_host {
+>         /* Bitmask for enabling debug prints */
+>         u32 dbg_print_en;
+>         struct ufs_qcom_testbus testbus;
+> +       bool is_phy_init;
+>  };
 >
-> >
-> > I was hoping the next patch would help, but I'm still confused. It
-> > looks like you've added a call to phy_power_on in
-> > ufs_qcom_setup_clocks, but there's also one still in
-> > ufs_qcom_power_up_sequence. What does the original phy_power_on in
-> > ufs_qcom_power_up_sequence do now? It seems like that one would do the
-> > power on too early, and then your new added call in
-> > ufs_qcom_setup_clocks would do nothing.
+>  static inline u32
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 >
-> I think [patch 4/5] of this series handles this. We skip the
-> phy_power_on until
-> we do phy_init.
-> phy_power_on/off() in setup_clocks() is also used for suspend/resume case
-> and that's the reason you see couple of phy_power_on(). Patch 4/5 should
-> handle
-> this now.
-
-Ok got it. I was confused about the ordering. setup_clocks is actually
-called first (via __ufshcd_setup_clocks > ufshcd_hba_init >
-ufshcd_init), which is why you need the boolean to defer this power on
-until later.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 Reviewed-by: Evan Green <evgreen@chromium.org>
