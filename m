@@ -2,348 +2,310 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1E8C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A8DC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C88B21AA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:48:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gGfdwLxs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C88B21AA7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0617521BC7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:58:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0617521BC7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbeHIILX (ORCPT
+        id S1727853AbeHIIVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 04:11:23 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37339 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728209AbeHIILW (ORCPT
+        Thu, 9 Aug 2018 04:21:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36318 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727417AbeHIIVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 04:11:22 -0400
-Received: by mail-oi0-f67.google.com with SMTP id j205-v6so7877274oib.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EevTvPF19qzwlNuNUyZ5gPW2LsfqpCUiQ/C63nlsGhA=;
-        b=gGfdwLxsY87d25hWwUw/UUBS/OiIkhGEqLNCRJxL/X3wTkEx7JGNZwGtKiv3lJMcqZ
-         m4vl8+CuOjpyEsa2IeqzxWA3RMd4Kjrl9DeKZco1I5fj8lnrA2Qi4c6GWGLfIT0TXdnG
-         P1mu3F4lmM15DQcnuNFnYCcsGVf7x+eFAnrtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EevTvPF19qzwlNuNUyZ5gPW2LsfqpCUiQ/C63nlsGhA=;
-        b=GVRs3CV9CNwM3krPzHN0Z1lsD5l+roOQyUmVnlHaVsUIEFjh2l+sWg7clgcFl2JQev
-         ua1P7QEnJ5c+yT/l89b++HuNXB4qUu7+75DUlzEGALktLZ0TEuRHC0s0Lq+93MTir67t
-         PVW15wl9lD9MAo8t128+ej3s/Z5OGTYqj54njJs3l7r1d+NHDytl0uX2KZtNv21uP+uZ
-         FA7vO6RDZHdtjD3pmq4WhCPR8fUaCEAn/ipKz+7CI51Sm1yMpD4q1L0+IvABzYb859Hf
-         YouJ5puASa2jzfgRbbTaXf9IfdOocA+WbF8YO0j3DaVOJj18qmqNfaDnVACNVP8Azx4D
-         pTUQ==
-X-Gm-Message-State: AOUpUlFvRf6O2ADGBzhySs8+yeh5uMKmo6lwyDA9pYPlh5pYYAzUIGpF
-        m82um7taL3BOw6kOIZjAu/GaFfJt+KDxs2EAZF/hkA==
-X-Google-Smtp-Source: AA+uWPxxOXic0n2rDtqBSuUC39HtqhDxkMqMbQB0d5RH7PWTti2b8hKyeg0VdYqfSsgEdmdiaVukjABRw68/vVjmNRs=
-X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr743171oih.31.1533793693643;
- Wed, 08 Aug 2018 22:48:13 -0700 (PDT)
+        Thu, 9 Aug 2018 04:21:37 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w795nQGv123684
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 01:58:23 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2krf8ys2md-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 01:58:23 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <frankja@linux.ibm.com>;
+        Thu, 9 Aug 2018 06:58:21 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 06:58:17 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w795wFHw42401864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 05:58:15 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CB96AE055;
+        Thu,  9 Aug 2018 08:58:08 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7AE3AE053;
+        Thu,  9 Aug 2018 08:58:06 +0100 (BST)
+Received: from [9.145.17.67] (unknown [9.145.17.67])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 08:58:06 +0100 (BST)
+Subject: Re: [PATCH v8 07/22] KVM: s390: refactor crypto initialization
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   Janosch Frank <frankja@linux.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=frankja@linux.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ lFM6NIuMAY1Y
+Date:   Thu, 9 Aug 2018 07:58:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 22:48:12 -0700 (PDT)
-In-Reply-To: <5d594e9b-9889-adc2-cc59-f4f45eea7ddb@gmail.com>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <CAMz4kuL8ufCqbqgegozJt3P7JON0AzA9KrbvcvOB15McA5S=zA@mail.gmail.com>
- <5d594e9b-9889-adc2-cc59-f4f45eea7ddb@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 9 Aug 2018 13:48:12 +0800
-Message-ID: <CAMz4kuJBT2m8YpsAFufiGQFOYCgBbyf9Rrhce+396pRoW802aw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1533739472-7172-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="aA7KH5SKfwKCjCWTE2SNS5CNdTZqETw6Z"
+X-TM-AS-GCONF: 00
+x-cbid: 18080905-0008-0000-0000-0000025F3A30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080905-0009-0000-0000-000021C7482B
+Message-Id: <169d2a44-34ae-3785-bdac-77018dc2ad13@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--aA7KH5SKfwKCjCWTE2SNS5CNdTZqETw6Z
+Content-Type: multipart/mixed; boundary="qEDmeonOndwJ9PknMSp0f5Fn5g8xo9EIb";
+ protected-headers="v1"
+From: Janosch Frank <frankja@linux.ibm.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+ borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+ bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+ alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+ alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+ jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+ berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+ Tony Krowiak <akrowiak@linux.ibm.com>
+Message-ID: <169d2a44-34ae-3785-bdac-77018dc2ad13@linux.ibm.com>
+Subject: Re: [PATCH v8 07/22] KVM: s390: refactor crypto initialization
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+In-Reply-To: <1533739472-7172-8-git-send-email-akrowiak@linux.vnet.ibm.com>
 
-On 9 August 2018 at 05:28, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
->
-> On 08/08/2018 08:01 AM, Baolin Wang wrote:
->> Hi Jacek,
->>
->> On 8 August 2018 at 05:54, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->>> Hi Baolin,
->>>
->>> Thank you for addressing the review remarks.
->>> Since the patch set is targeted for 4.19, then we have three weeks
->>> before it will be merged to the for-next anyway. That said, I propose
->>> one more modification, please take a look below.
->>
->> Sure.
->>
->>>
->>> On 08/06/2018 02:05 PM, Baolin Wang wrote:
->>>> Some LED controllers have support for autonomously controlling
->>>> brightness over time, according to some preprogrammed pattern or
->>>> function.
->>>>
->>>> This patch adds pattern trigger that LED device can configure the
->>>> pattern and trigger it.
->>>>
->>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>>> ---
->>>> Changes from v4:
->>>>  - Change the repeat file to return the originally written number.
->>>>  - Improve comments.
->>>>  - Fix some build warnings.
->>>>
->>>> Changes from v3:
->>>>  - Reset pattern number to 0 if user provides incorrect pattern string.
->>>>  - Support one pattern.
->>>>
->>>> Changes from v2:
->>>>  - Remove hardware_pattern boolen.
->>>>  - Chnage the pattern string format.
->>>>
->>>> Changes from v1:
->>>>  - Use ATTRIBUTE_GROUPS() to define attributes.
->>>>  - Introduce hardware_pattern flag to determine if software pattern
->>>>  or hardware pattern.
->>>>  - Re-implement pattern_trig_store_pattern() function.
->>>>  - Remove pattern_get() interface.
->>>>  - Improve comments.
->>>>  - Other small optimization.
->>>> ---
->>>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   24 ++
->>>>  drivers/leds/trigger/Kconfig                       |    7 +
->>>>  drivers/leds/trigger/Makefile                      |    1 +
->>>>  drivers/leds/trigger/ledtrig-pattern.c             |  266 ++++++++++++++++++++
->>>>  include/linux/leds.h                               |   16 ++
->>>>  5 files changed, 314 insertions(+)
->>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
->>>>
->>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>>> new file mode 100644
->>>> index 0000000..bc7475f
->>>> --- /dev/null
->>>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>>> @@ -0,0 +1,24 @@
->>>> +What:                /sys/class/leds/<led>/pattern
->>>> +Date:                August 2018
->>>> +KernelVersion:       4.19
->>>> +Description:
->>>> +             Specify a pattern for the LED, for LED hardware that support
->>>> +             altering the brightness as a function of time.
->>>> +
->>>> +             The pattern is given by a series of tuples, of brightness and
->>>> +             duration (ms). The LED is expected to traverse the series and
->>>> +             each brightness value for the specified duration. Duration of
->>>> +             0 means brightness should immediately change to new value.
->>>> +
->>>> +             The format of the pattern values should be:
->>>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
->>>> +             duration_3 ...".
->>>> +
->>>> +What:                /sys/class/leds/<led>/repeat
->>>> +Date:                August 2018
->>>> +KernelVersion:       4.19
->>>> +Description:
->>>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
->>>> +
->>>> +             This file will always return the originally written repeat
->>>> +             number.
->>>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
->>>> index 4018af7..b76fc3c 100644
->>>> --- a/drivers/leds/trigger/Kconfig
->>>> +++ b/drivers/leds/trigger/Kconfig
->>>> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
->>>>         This allows LEDs to be controlled by network device activity.
->>>>         If unsure, say Y.
->>>>
->>>> +config LEDS_TRIGGER_PATTERN
->>>> +     tristate "LED Pattern Trigger"
->>>> +     help
->>>> +       This allows LEDs to be controlled by a software or hardware pattern
->>>> +       which is a series of tuples, of brightness and duration (ms).
->>>> +       If unsure, say N
->>>> +
->>>>  endif # LEDS_TRIGGERS
->>>> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
->>>> index f3cfe19..9bcb64e 100644
->>>> --- a/drivers/leds/trigger/Makefile
->>>> +++ b/drivers/leds/trigger/Makefile
->>>> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
->>>>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
->>>>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
->>>>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
->>>> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)   += ledtrig-pattern.o
->>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
->>>> new file mode 100644
->>>> index 0000000..63b94a2
->>>> --- /dev/null
->>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
->>>> @@ -0,0 +1,266 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +/*
->>>> + * LED pattern trigger
->>>> + *
->>>> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
->>>> + * the first version, Baolin Wang simplified and improved the approach.
->>>> + */
->>>> +
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/leds.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/mutex.h>
->>>> +#include <linux/slab.h>
->>>> +#include <linux/timer.h>
->>>> +
->>>> +#define MAX_PATTERNS         1024
->>>> +
->>>> +struct pattern_trig_data {
->>>> +     struct led_classdev *led_cdev;
->>>> +     struct led_pattern patterns[MAX_PATTERNS];
->>>> +     struct led_pattern *curr;
->>>> +     struct led_pattern *next;
->>>> +     struct mutex lock;
->>>> +     u32 npatterns;
->>>> +     u32 repeat;
->>>> +     u32 last_repeat;
->>>> +     bool is_indefinite;
->>>> +     struct timer_list timer;
->>>> +};
->>>> +
->>>> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
->>>> +{
->>>> +     data->curr = data->next;
->>>> +     if (!data->is_indefinite && data->curr == data->patterns)
->>>> +             data->repeat--;
->>>> +
->>>> +     if (data->next == data->patterns + data->npatterns - 1)
->>>> +             data->next = data->patterns;
->>>> +     else
->>>> +             data->next++;
->>>> +}
->>>> +
->>>> +static void pattern_trig_timer_function(struct timer_list *t)
->>>> +{
->>>> +     struct pattern_trig_data *data = from_timer(data, t, timer);
->>>> +
->>>> +     mutex_lock(&data->lock);
->>>> +
->>>> +     if (!data->is_indefinite && !data->repeat) {
->>>> +             mutex_unlock(&data->lock);
->>>> +             return;
->>>> +     }
->>>> +
->>>> +     led_set_brightness(data->led_cdev, data->curr->brightness);
->>>> +     mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
->>>> +     pattern_trig_update_patterns(data);
->>>> +
->>>> +     mutex_unlock(&data->lock);
->>>> +}
->>>> +
->>>> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
->>>> +                                   struct led_classdev *led_cdev)
->>>> +{
->>>> +     if (!data->npatterns)
->>>> +             return 0;
->>>> +
->>>> +     if (led_cdev->pattern_set) {
->>>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
->>>> +                                          data->npatterns, data->repeat);
->>>
->>> I think that it would be more flexible if software pattern fallback
->>> was applied in case of pattern_set failure. Otherwise, it would
->>> lead to the situation where LED class devices that support hardware
->>> blinking couldn't be applied the same set of patterns as LED class
->>> devices that don't implement pattern_set. The latter will always have to
->>> resort to using software pattern engine which will accept far greater
->>> amount of pattern combinations.
->>
->> Hmmm, I am not sure this is useful for hardware pattern, since the LED
->> hardware can be diverse which is hard to be compatible with software
->> pattern.
->>
->> For example, for our SC27XX LED, it only supports 4 hardware patterns
->> setting (low time, rising time, high time and falling time) to make it
->> work at breathing mode. If user provides 3 or 5 patterns values, it
->> will failed to issue pattern_set(). But at this time, we don't want to
->> use software pattern instead since it will be not the breathing mode
->> expected by user. I don't know if there are other special LED
->> hardware.
->
-> Good point. So this is the issue we should dwell on, since the
-> requested pattern effect should look similar on all devices.
-> Of course in case of software pattern it will be often impossible
-> to achieve the same fluency. Similarly as in case of rendering graphics
-> with and without acceleration.
->
-> In case of your device, I'd say that we'd need more complex description
-> of breathing mode pattern. More complex than just four intervals.
-> It should reflect all the intervals the hardware engine needs to perform
-> to achieve the breathing effect. Can this information be inferred from
-> the docs?
+--qEDmeonOndwJ9PknMSp0f5Fn5g8xo9EIb
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-From our docs, it only provides registers to set the low time, rising
-time, high time and falling time (value unit is 0.125s and max value
-is 63 = 7.875s) to enable breathing mode. So each interval value can
-be 1 ~ 63. But that is still hard for software pattern to simulate the
-breathing mode performed by hardware pattern.
+On 08.08.2018 16:44, Tony Krowiak wrote:
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>=20
+> This patch refactors the code that initializes and sets up the
+> crypto configuration for a guest. The following changes are
+> implemented via this patch:
+>=20
+> 1. Prior to the introduction of AP device virtualization, it
+>    was not necessary to provide guest access to the CRYCB
+>    unless the MSA extension 3 (MSAX3) facility was installed
+>    on the host system. With the introduction of AP device
+>    virtualization, the CRYCB must be made accessible to the
+>    guest if the AP instructions are installed on the host
+>    and are to be provided to the guest.
+>=20
+> 2. Introduces a flag indicating AP instructions executed on
+>    the guest shall be interpreted by the firmware. It is
+>    initialized to indicate AP instructions are to be
+>    to be interpreted and is used to set the SIE bit for
+>    each vcpu during vcpu setup.
+>=20
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 
->
->> So I think we should let LED driver to handle this case, if failed to
->> issue pattern_set(), the LED driver can set one group default hardware
->> patterns, or turn off the LED hardware pattern or other error handling
->> method supplied by LED driver. That will not combine software pattern
->> and hardware pattern together to make things complicated.
->>
->> So what do you think?
->>
->>> In this case we need to discuss on what basis the decision will be
->>> made on whether hardware or software engine will be used.
->>>
->>> Possible options coming to mind:
->>> - an interface will be provided to determine max difference between
->>>   the settings supported by the hardware and the settings requested by
->>>   the user, that will result in aligning user's setting to the hardware
->>>   capabilities
->>> - the above alignment rate will be predefined instead
->>> - hardware engine will be used only if user requests supported settings
->>>   on the whole span of the requested pattern
->>> - in each of the above cases it would be worth to think of the
->>>   interface to show the scope of the settings supported by hardware
->>>
->>> The same issue applies to the already available timer trigger.
->>> So far the policy implemented by the drivers implementing blink_set
->>> op varies.
->>>
->>> --
->>> Best regards,
->>> Jacek Anaszewski
->>
->>
->>
->
-> --
-> Best regards,
-> Jacek Anaszewski
+Acked-by: Janosch Frank <frankja@linux.ibm.com>
+
+> ---
+>  arch/s390/include/asm/kvm_host.h |    3 +
+>  arch/s390/include/uapi/asm/kvm.h |    1 +
+>  arch/s390/kvm/kvm-s390.c         |   86 ++++++++++++++++++++----------=
+--------
+>  3 files changed, 49 insertions(+), 41 deletions(-)
+>=20
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/k=
+vm_host.h
+> index af39561..0c13f61 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -187,6 +187,7 @@ struct kvm_s390_sie_block {
+>  #define ECA_AIV		0x00200000
+>  #define ECA_VX		0x00020000
+>  #define ECA_PROTEXCI	0x00002000
+> +#define ECA_APIE	0x00000008
+>  #define ECA_SII		0x00000001
+>  	__u32	eca;			/* 0x004c */
+>  #define ICPT_INST	0x04
+> @@ -256,6 +257,7 @@ struct kvm_s390_sie_block {
+>  	__u8	reservede4[4];		/* 0x00e4 */
+>  	__u64	tecmc;			/* 0x00e8 */
+>  	__u8	reservedf0[12];		/* 0x00f0 */
+> +#define CRYCB_FORMAT_MASK 0x00000003
+>  #define CRYCB_FORMAT1 0x00000001
+>  #define CRYCB_FORMAT2 0x00000003
+>  	__u32	crycbd;			/* 0x00fc */
+> @@ -714,6 +716,7 @@ struct kvm_s390_crypto {
+>  	__u32 crycbd;
+>  	__u8 aes_kw;
+>  	__u8 dea_kw;
+> +	__u8 apie;
+
+In the last review I wanted a comment here to know what they do.
+
+>  static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
+>  {
+> -	if (!test_kvm_facility(vcpu->kvm, 76))
+> +	/*
+> +	 * If neither the AP instructions nor the MSAX3 facility are installe=
+d
+> +	 * on the host, then there is no need for a CRYCB in SIE because the
+> +	 * they will not be installed on the guest either.
+
+the they
+
+> +	 */
+> +	if (ap_instructions_available() && !test_facility(76))
+>  		return;
+
+I know you're not responsible for that one :) but 0 being the wanted
+value here is a bit counter-intuitive.
+
+> =20
+> -	vcpu->arch.sie_block->ecb3 &=3D ~(ECB3_AES | ECB3_DEA);
+> +	vcpu->arch.sie_block->crycbd =3D vcpu->kvm->arch.crypto.crycbd;
+> +
+> +	vcpu->arch.sie_block->eca &=3D ~ECA_APIE;
+
+The scb is zero allocated, are the ECA and the ECB3s set somewhere
+in-between, or is that your way of making sure the controls are
+definitely gone for good?
+
+> +	if (vcpu->kvm->arch.crypto.apie &&
+> +	    test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
+> +		vcpu->arch.sie_block->eca |=3D ECA_APIE;
+> =20
+> -	if (vcpu->kvm->arch.crypto.aes_kw)
+> -		vcpu->arch.sie_block->ecb3 |=3D ECB3_AES;
+> -	if (vcpu->kvm->arch.crypto.dea_kw)
+> -		vcpu->arch.sie_block->ecb3 |=3D ECB3_DEA;
+> +	/* If MSAX3 is installed on the guest, set up protected key support *=
+/
+> +	if (test_kvm_facility(vcpu->kvm, 76)) {
+> +		vcpu->arch.sie_block->ecb3 &=3D ~(ECB3_AES | ECB3_DEA);
+> =20
+> -	vcpu->arch.sie_block->crycbd =3D vcpu->kvm->arch.crypto.crycbd;
+> +		if (vcpu->kvm->arch.crypto.aes_kw)
+> +			vcpu->arch.sie_block->ecb3 |=3D ECB3_AES;
+> +		if (vcpu->kvm->arch.crypto.dea_kw)
+> +			vcpu->arch.sie_block->ecb3 |=3D ECB3_DEA;
+> +	}
+>  }
+> =20
+>  void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+>=20
 
 
 
--- 
-Baolin Wang
-Best Regards
+--qEDmeonOndwJ9PknMSp0f5Fn5g8xo9EIb--
+
+--aA7KH5SKfwKCjCWTE2SNS5CNdTZqETw6Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJba9f1AAoJEBcO/8Q8ZEV5okMP/2LGSAqduKIyTLeynwB91p+C
+F+Ev84sNUlY2WoQEhH3yeFpRQK8IGTdWHTUGNaxnMA79g97TarK8ceDqy4nRRIy0
+uj9thAwt1QiAVcflrNnSELG1Z9TMlQhLvh+nrkKHFOF+jkoocBiFGW/3Aie1xUIW
+Yo2Jb5cZCZxZl7b5AnJperH0IDj9cPm8IgTVuovcj+wlYTV5BLbTU6thyJXHCgUv
+VFwO+gMraqH2/8wWlr8NJysgFf6v112+5XI3cM24NMhgnAV+S+5f3UIPVd7iv+5w
+S4HMawP6pR9vVA0xXexL9hkeGyuCy4vRHjObydYzmFzJLkgp4gxFELasdUhXM6JN
++VpN0GbA9izALUzKC2bRRoXhde9+pxVyRYYCreZtL+0lDk2PFh3P5pXdrMzoHVY6
+CsXGlGl3wOICIo355xuUYHfAr7N+PKCubk/mQfKeB1o3v0/NJsEwOXpwWbVHZgqT
+SicDTXKUpahMpp/yIPncTc708L7YhjzZBqceBe7OmebQu8AmMhidJWElzaLR2Yx1
+XhK+vIWy5YjdI5gUgzcfXgWsi1ZD41qvPKsg3VTOhnRMVQX+RckWBZBPdW1yFzy9
++7XwOUR52D4XXgPjLwBkUgHXTjr4s7aOJsRerHRgP5ymS/8hl7F6B+VQZJ0z9Tc+
+j1k2aQiCphGwOIhICQXn
+=zeW0
+-----END PGP SIGNATURE-----
+
+--aA7KH5SKfwKCjCWTE2SNS5CNdTZqETw6Z--
+
