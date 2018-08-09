@@ -2,214 +2,140 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CB9C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F5FC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3B821EFA
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3B821EFA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8729121EB7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8729121EB7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732581AbeHISwM convert rfc822-to-8bit (ORCPT
+        id S1732612AbeHISws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:52:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730634AbeHISwM (ORCPT
+        Thu, 9 Aug 2018 14:52:48 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44113 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732499AbeHISws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:52:12 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79GOcMH091893
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 12:26:33 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2krqq8v3bd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:26:33 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Thu, 9 Aug 2018 17:26:31 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 17:26:28 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79GQRmW37879980
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 16:26:27 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C9830AE04D;
-        Thu,  9 Aug 2018 19:26:18 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 612EBAE053;
-        Thu,  9 Aug 2018 19:26:18 +0100 (BST)
-Received: from localhost (unknown [9.79.184.1])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 19:26:18 +0100 (BST)
-Date:   Thu, 09 Aug 2018 21:56:24 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH] perf probe powerpc: Fix trace event post-processing
-To:     acme@kernel.org, Sandipan Das <sandipan@linux.ibm.com>
-Cc:     aneesh.kumar@linux.vnet.ibm.com, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com
-References: <20180809161929.35058-1-sandipan@linux.ibm.com>
-In-Reply-To: <20180809161929.35058-1-sandipan@linux.ibm.com>
-User-Agent: astroid/0.12.0 (https://github.com/astroidmail/astroid)
+        Thu, 9 Aug 2018 14:52:48 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fnnm6-0002Au-EU; Thu, 09 Aug 2018 18:26:58 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fnnm0-0006R3-H9; Thu, 09 Aug 2018 18:26:52 +0200
+Date:   Thu, 9 Aug 2018 18:26:52 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Esben Haabendal <esben.haabendal@gmail.com>
+Cc:     linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yuan Yao <yao.yuan@freescale.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Phil Reid <preid@electromag.com.au>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Peter Rosin <peda@axentia.se>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] i2c: imx: Simplify stopped state tracking
+Message-ID: <20180809162652.r34omvkctzxte422@pengutronix.de>
+References: <20180709094304.8814-1-esben.haabendal@gmail.com>
+ <20180709094304.8814-4-esben.haabendal@gmail.com>
+ <20180724075919.iyysd7dtbddvbavq@pengutronix.de>
+ <87k1ozzquk.fsf@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18080916-0008-0000-0000-0000025F7CA8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080916-0009-0000-0000-000021C78D6E
-Message-Id: <1533831952.2wznw8gaoa.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090168
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87k1ozzquk.fsf@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sandipan Das wrote:
-> In some cases, a symbol may have multiple aliases. Attempting to add
-> an entry probe for such symbols results in a probe being added at an
-> incorrect location while it fails altogether for return probes. This
-> is only applicable for binaries with debug information.
+On Thu, Aug 09, 2018 at 02:06:43PM +0200, Esben Haabendal wrote:
+> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
 > 
-> During the arch-dependent post-processing, the offset from the start
-> of the symbol at which the probe is to be attached is determined and
-> added to the start address of the symbol to get the probe's location.
-> In case there are multiple aliases, this offset gets added multiple
-> times for each alias of the symbol and we end up with an incorrect
-> probe location.
+> > On Mon, Jul 09, 2018 at 11:43:03AM +0200, Esben Haabendal wrote:
+> >> From: Esben Haabendal <eha@deif.com>
+> >> 
+> >> Always update the stopped state when busy status have been checked.
+> >> This is identical to what was done before, with the exception of error
+> >> handling.
+> >> Without this change, some errors cause the stopped state to be left in
+> >> incorrect state in i2c_imx_stop(), i2c_imx_dma_read(), i2c_imx_read() and
+> >> i2c_imx_xfer().
+> >> 
+> >> Signed-off-by: Esben Haabendal <eha@deif.com>
+> >> ---
+> >>  drivers/i2c/busses/i2c-imx.c | 12 ++++++------
+> >>  1 file changed, 6 insertions(+), 6 deletions(-)
+> >> 
+> >> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> >> index d86f152176a4..1db8e6790afc 100644
+> >> --- a/drivers/i2c/busses/i2c-imx.c
+> >> +++ b/drivers/i2c/busses/i2c-imx.c
+> >> @@ -421,10 +421,14 @@ static int i2c_imx_bus_busy(struct imx_i2c_struct *i2c_imx, int for_busy)
+> >>  			return -EAGAIN;
+> >>  		}
+> >>  
+> >> -		if (for_busy && (temp & I2SR_IBB))
+> >> +		if (for_busy && (temp & I2SR_IBB)) {
+> >> +			i2c_imx->stopped = 0;
+> >>  			break;
+> >> -		if (!for_busy && !(temp & I2SR_IBB))
+> >> +		}
+> >> +		if (!for_busy && !(temp & I2SR_IBB)) {
+> >> +			i2c_imx->stopped = 1;
+> >>  			break;
+> >> +		}
+> >
+> > Would it make sense to assign to ->stopped independent of for_busy?
 > 
-> This can be verified on a powerpc64le system as shown below.
+> What do you mean?
 > 
->   $ nm /lib/modules/$(uname -r)/build/vmlinux | grep "sys_open$"
->   ...
->   c000000000414290 T __se_sys_open
->   c000000000414290 T sys_open
-> 
->   $ objdump -d /lib/modules/$(uname -r)/build/vmlinux | grep -A 10 "<__se_sys_open>:"
-> 
->   c000000000414290 <__se_sys_open>:
->   c000000000414290:       19 01 4c 3c     addis   r2,r12,281
->   c000000000414294:       70 c4 42 38     addi    r2,r2,-15248
->   c000000000414298:       a6 02 08 7c     mflr    r0
->   c00000000041429c:       e8 ff a1 fb     std     r29,-24(r1)
->   c0000000004142a0:       f0 ff c1 fb     std     r30,-16(r1)
->   c0000000004142a4:       f8 ff e1 fb     std     r31,-8(r1)
->   c0000000004142a8:       10 00 01 f8     std     r0,16(r1)
->   c0000000004142ac:       c1 ff 21 f8     stdu    r1,-64(r1)
->   c0000000004142b0:       78 23 9f 7c     mr      r31,r4
->   c0000000004142b4:       78 1b 7e 7c     mr      r30,r3
-> 
->   For both the entry probe and the return probe, the probe location
->   should be _text+4276888 (0xc000000000414298). Since another alias
->   exists for 'sys_open', the post-processing code will end up adding
->   the offset (8 for powerpc64le) twice and perf will attempt to add
->   the probe at _text+4276896 (0xc0000000004142a0) instead.
-> 
-> Before:
-> 
->   # perf probe -v -a sys_open
-> 
->   probe-definition(0): sys_open
->   symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
->   0 arguments
->   Looking at the vmlinux_path (8 entries long)
->   Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
->   Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
->   Try to find probe point from debuginfo.
->   Symbol sys_open address found : c000000000414290
->   Matched function: __se_sys_open [2ad03a0]
->   Probe point found: __se_sys_open+0
->   Found 1 probe_trace_events.
->   Opening /sys/kernel/debug/tracing/kprobe_events write=1
->   Writing event: p:probe/sys_open _text+4276896
->   Added new event:
->     probe:sys_open       (on sys_open)
->   ...
-> 
->   # perf probe -v -a sys_open%return $retval
-> 
->   probe-definition(0): sys_open%return
->   symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
->   0 arguments
->   Looking at the vmlinux_path (8 entries long)
->   Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
->   Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
->   Try to find probe point from debuginfo.
->   Symbol sys_open address found : c000000000414290
->   Matched function: __se_sys_open [2ad03a0]
->   Probe point found: __se_sys_open+0
->   Found 1 probe_trace_events.
->   Opening /sys/kernel/debug/tracing/README write=0
->   Opening /sys/kernel/debug/tracing/kprobe_events write=1
->   Parsing probe_events: p:probe/sys_open _text+4276896
->   Group:probe Event:sys_open probe:p
->   Writing event: r:probe/sys_open__return _text+4276896
->   Failed to write event: Invalid argument
->     Error: Failed to add events. Reason: Invalid argument (Code: -22)
-> 
-> After:
-> 
->   # perf probe -v -a sys_open
-> 
->   probe-definition(0): sys_open
->   symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
->   0 arguments
->   Looking at the vmlinux_path (8 entries long)
->   Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
->   Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
->   Try to find probe point from debuginfo.
->   Symbol sys_open address found : c000000000414290
->   Matched function: __se_sys_open [2ad03a0]
->   Probe point found: __se_sys_open+0
->   Found 1 probe_trace_events.
->   Opening /sys/kernel/debug/tracing/kprobe_events write=1
->   Writing event: p:probe/sys_open _text+4276888
->   Added new event:
->     probe:sys_open       (on sys_open)
->   ...
-> 
->   # perf probe -v -a sys_open%return $retval
-> 
->   probe-definition(0): sys_open%return
->   symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
->   0 arguments
->   Looking at the vmlinux_path (8 entries long)
->   Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
->   Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
->   Try to find probe point from debuginfo.
->   Symbol sys_open address found : c000000000414290
->   Matched function: __se_sys_open [2ad03a0]
->   Probe point found: __se_sys_open+0
->   Found 1 probe_trace_events.
->   Opening /sys/kernel/debug/tracing/README write=0
->   Opening /sys/kernel/debug/tracing/kprobe_events write=1
->   Parsing probe_events: p:probe/sys_open _text+4276888
->   Group:probe Event:sys_open probe:p
->   Writing event: r:probe/sys_open__return _text+4276888
->   Added new event:
->     probe:sys_open__return (on sys_open%return)
->   ...
-> 
-> Fixes: 99e608b5954c ("perf probe ppc64le: Fix probe location when using DWARF")
-> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-> Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+> Assigning to ->stopped on each check for I2SR_IBB in loop, independent
+> of the for_busy argument?  I don't think so.  The additional assignments
+> would be to the same value as it is set to already.
 
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Currently you have:
 
-- Naveen
+	if (for_busy && (temp & I2SR_IBB)) {
+		i2c_imx->stopped = 0;
+		break;
+	}
 
+	if (!for_busy && !(temp & I2SR_IBB)) {
+		i2c_imx->stopped = 1;
+		break;
+	}
 
+The semantic of this is the same (apart from always updating .stopped)
+but is imho easier:
+
+	i2c_imx->stopped = !(temp & I2SR_IBB);
+
+	if (for_busy != i2c_imx->stopped)
+		break;
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
