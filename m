@@ -2,197 +2,123 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7244DC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A2FC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1899621E5E
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:30:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="azIVVG7l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1899621E5E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 3823521E25
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3823521E25
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732222AbeHIQzd (ORCPT
+        id S1732329AbeHIQ4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 12:55:33 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:44398 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731432AbeHIQzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 12:55:33 -0400
-Received: by mail-yw1-f66.google.com with SMTP id l9-v6so4343927ywc.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 07:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vRw+42Q9dgTz80oSmMRx435xPB9+1RjJdXwyT8g1epM=;
-        b=azIVVG7lj7cNOClgd/lvvD3JoKyM4XWPYW7Mwp0WMonCZn0ejtU/TrjcuZ7i4lvXID
-         OpKpaEfI6YN0kifIGGlR7GbxCGTnGjZBVeQRVzAvi+sFv55xxwyt9m+cG355X5l5uj0A
-         Wv2aVCji/9szWGwspjbp/Nf515tnFNMGa6iKY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vRw+42Q9dgTz80oSmMRx435xPB9+1RjJdXwyT8g1epM=;
-        b=N9VSbA2djew2C1VB6j5IoogPGbFoV4qk2XKucusXwK/7POgJWqi4I61cjnC91dxEaJ
-         tGsm2hbaho00regxFcQdeYJFQ0nSLzfjvBKWO1PkjXLHPElR6HkgG5q+uuh+IWToHIo4
-         6BNogkO9+fOefucjrsHH9N5M2Xpf7i/UJW+xTCTWI4bmeSrUolRkC8g4P1jVk3hbeTZ9
-         EWlRG2tBICt9XFjRDhUHnd/VYoqAnlSSk7/bxiiNvwqLeVHBzOOd8jnFELAWGsXMd/O2
-         2P2NxsvB39+Wl9zCme2eTDTLpoJPBdASwExEqfUcNBnp2cuk8Gm3LcDa/Se/cS3zspPH
-         j5kA==
-X-Gm-Message-State: AOUpUlEK9hCUbnZRaDXn5k4fKPt8HhWmO/nn6/GSjDfNGxOhKIuMPR2C
-        6qEFDtr321MmW4U5jt1oKLsW1XXnxGg=
-X-Google-Smtp-Source: AA+uWPx35vbqDfNMpu3m3oaVO1dOadmFRsNCa9oKY1/LdxyeRR/0zJgx68gHO9OPsDkkgqi29s4z7g==
-X-Received: by 2002:a0d:e501:: with SMTP id o1-v6mr1176096ywe.409.1533825023075;
-        Thu, 09 Aug 2018 07:30:23 -0700 (PDT)
-Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
-        by smtp.gmail.com with ESMTPSA id x7-v6sm3649934ywd.43.2018.08.09.07.30.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 07:30:21 -0700 (PDT)
-Received: by mail-yw1-f49.google.com with SMTP id 139-v6so4338813ywg.12
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 07:30:21 -0700 (PDT)
-X-Received: by 2002:a25:2084:: with SMTP id g126-v6mr1109971ybg.405.1533825021148;
- Thu, 09 Aug 2018 07:30:21 -0700 (PDT)
+        Thu, 9 Aug 2018 12:56:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43610 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731751AbeHIQ4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 12:56:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC2DEAF76;
+        Thu,  9 Aug 2018 14:30:52 +0000 (UTC)
+Subject: Re: [PATCH v3] resource: Merge resources on a node when hot-adding
+ memory
+To:     Rashmica Gupta <rashmica.g@gmail.com>, toshi.kani@hpe.com,
+        tglx@linutronix.de, akpm@linux-foundation.org, bp@suse.de,
+        brijesh.singh@amd.com, thomas.lendacky@amd.com, jglisse@redhat.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        dan.j.williams@intel.com, mhocko@suse.com, iamjoonsoo.kim@lge.com,
+        malat@debian.org, bhelgaas@google.com,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rppt@linux.vnet.ibm.com
+References: <20180809025409.31552-1-rashmica.g@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <8fe4bac8-9ee3-de95-095d-2e915d9f366a@suse.cz>
+Date:   Thu, 9 Aug 2018 16:30:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180622120419.7675-1-matwey@sai.msu.ru> <2175835.YAv5WQJWxC@avalon>
- <CAJs94EYX13oPHiD=Ck5E9cG=z3JMZ9Szs5kRaKHn9F90+uxQ8Q@mail.gmail.com> <2106168.1BipQ1ylgj@avalon>
-In-Reply-To: <2106168.1BipQ1ylgj@avalon>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 9 Aug 2018 23:30:09 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B6nsyu5fpjonUdOsstvhTrNhpVev7MmUckQWb0kasJKQ@mail.gmail.com>
-Message-ID: <CAAFQd5B6nsyu5fpjonUdOsstvhTrNhpVev7MmUckQWb0kasJKQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180809025409.31552-1-rashmica.g@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 6:44 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Matwey,
->
-> On Thursday, 9 August 2018 12:18:13 EEST Matwey V. Kornilov wrote:
-> > 2018-08-09 1:46 GMT+03:00 Laurent Pinchart:
-> > > On Friday, 22 June 2018 15:04:19 EEST Matwey V. Kornilov wrote:
-> > >> DMA cocherency slows the transfer down on systems without hardware
-> > >> coherent DMA.
-> > >>
-> > >> Based on previous commit the following performance benchmarks have been
-> > >> carried out. Average memcpy() data transfer rate (rate) and handler
-> > >> completion time (time) have been measured when running video stream at
-> > >> 640x480 resolution at 10fps.
-> > >>
-> > >> x86_64 based system (Intel Core i5-3470). This platform has hardware
-> > >> coherent DMA support and proposed change doesn't make big difference
-> > >> here.
-> > >>
-> > >>  * kmalloc:            rate = (4.4 +- 1.0) GBps
-> > >>                        time = (2.4 +- 1.2) usec
-> > >>
-> > >>  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
-> > >>                        time = (2.5 +- 1.0) usec
-> > >>
-> > >> We see that the measurements agree well within error ranges in this case.
-> > >> So no performance downgrade is introduced.
-> > >>
-> > >> armv7l based system (TI AM335x BeagleBone Black). This platform has no
-> > >> hardware coherent DMA support. DMA coherence is implemented via disabled
-> > >> page caching that slows down memcpy() due to memory controller behaviour.
-> > >>
-> > >>  * kmalloc:            rate =  (190 +-  30) MBps
-> > >>                        time =   (50 +-  10) usec
-> > >>
-> > >>  * usb_alloc_coherent: rate =   (33 +-   4) MBps
-> > >>                        time = (3000 +- 400) usec
-> > >>
-> > >> Note, that quantative difference leads (this commit leads to 5 times
-> > >> acceleration) to qualitative behavior change in this case. As it was
-> > >> stated before, the video stream can not be successfully received at
-> > >> AM335x platforms with MUSB based USB host controller due to performance
-> > >> issues [1].
-> > >>
-> > >> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> > >>
-> > >> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> > >> ---
-> > >>
-> > >>  drivers/media/usb/pwc/pwc-if.c | 12 +++---------
-> > >>  1 file changed, 3 insertions(+), 9 deletions(-)
-> > >>
-> > >> diff --git a/drivers/media/usb/pwc/pwc-if.c
-> > >> b/drivers/media/usb/pwc/pwc-if.c index 72d2897a4b9f..339a285600d1 100644
-> > >> --- a/drivers/media/usb/pwc/pwc-if.c
-> > >> +++ b/drivers/media/usb/pwc/pwc-if.c
-> > >> @@ -427,11 +427,8 @@ static int pwc_isoc_init(struct pwc_device *pdev)
-> > >>               urb->interval = 1; // devik
-> > >>               urb->dev = udev;
-> > >>               urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
-> > >> -             urb->transfer_flags = URB_ISO_ASAP |
-> > >> URB_NO_TRANSFER_DMA_MAP;
-> > >> -             urb->transfer_buffer = usb_alloc_coherent(udev,
-> > >> -                                                       ISO_BUFFER_SIZE,
-> > >> -                                                       GFP_KERNEL,
-> > >> -
-> > >> &urb->transfer_dma);
-> > >> +             urb->transfer_flags = URB_ISO_ASAP;
-> > >> +             urb->transfer_buffer = kmalloc(ISO_BUFFER_SIZE,
-> > >> GFP_KERNEL);
-> > >
-> > > ISO_BUFFER_SIZE is 970 bytes, well below a page size, so this should be
-> > > fine. However, for other USB camera drivers, we might require larger
-> > > buffers spanning multiple pages, and kmalloc() wouldn't be a very good
-> > > choice there. I thus believe we should implement a helper function,
-> > > possibly in the for of usb_alloc_noncoherent(), to allow picking the
-> > > right allocation mechanism based on the buffer size (and possibly other
-> > > parameters). Ideally the helper and the USB core should cooperate to
-> > > avoid any overhead from DMA operations when DMA is coherent on the
-> > > platform (on x86 and some ARM platforms).
-> >
-> > pwc/pwc.h:
-> >
-> > #define ISO_FRAMES_PER_DESC     10
-> > #define ISO_MAX_FRAME_SIZE      960
-> > #define ISO_BUFFER_SIZE         (ISO_FRAMES_PER_DESC * ISO_MAX_FRAME_SIZE)
-> >
-> > The buffer size is 9600 bytes, where did 970 come from?
->
-> From mistaking * for + at 2:00am :-/
->
-> That's three pages, so to reduce pressure on memory allocation it would be
-> best to use an allocator that can be backed by CMA. A helper function to
-> abstract this has just become more important.
+On 08/09/2018 04:54 AM, Rashmica Gupta wrote:
+> When hot-removing memory release_mem_region_adjustable() splits
+> iomem resources if they are not the exact size of the memory being
+> hot-deleted. Adding this memory back to the kernel adds a new
+> resource.
+> 
+> Eg a node has memory 0x0 - 0xfffffffff. Offlining and hot-removing
+> 1GB from 0xf40000000 results in the single resource 0x0-0xfffffffff being
+> split into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
+> 
+> When we hot-add the memory back we now have three resources:
+> 0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
+> 
+> Now if we try to remove some memory that overlaps these resources,
+> like 2GB from 0xf40000000, release_mem_region_adjustable() fails as it
+> expects the chunk of memory to be within the boundaries of a single
+> resource.
+> 
+> This patch adds a function request_resource_and_merge(). This is called
+> instead of request_resource_conflict() when registering a resource in
+> add_memory(). It calls request_resource_conflict() and if hot-removing is
+> enabled (if it isn't we won't get resource fragmentation) we attempt to
+> merge contiguous resources on the node.
+> 
+> Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
 
-Yes, that's a very valid point (which I raised earlier wrt possible
-problems with replacing current usb_alloc_coherent() with kmalloc().
-Not only it wouldn't be able to deal efficiently with contiguous
-allocations, it would actually enforce contiguous allocations, even
-for devices, which don't really need it, e.g. equipped with IOMMU.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Sounds like dma_alloc_noncoherent() (or dma_alloc_streaming())? In
-theory, there is already DMA_ATTR_NON_CONSISTENT flag for
-dma_alloc_attrs(), but almost no archs implement it (for sure ARM
-doesn't and neither do the generic dma-mapping helpers).
 
-Best regards,
-Tomasz
