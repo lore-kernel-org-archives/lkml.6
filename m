@@ -2,227 +2,303 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFD4C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F0C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 250B321EB5
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:19:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250B321EB5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B90F21EC4
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:24:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B90F21EC4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732551AbeHISpO (ORCPT
+        id S1732475AbeHISuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:45:14 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56470 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732007AbeHISpO (ORCPT
+        Thu, 9 Aug 2018 14:50:15 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7484 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730419AbeHISuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:45:14 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79GIZPS097981
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 12:19:37 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krny4s0m0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:19:36 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sandipan@linux.ibm.com>;
-        Thu, 9 Aug 2018 17:19:34 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 17:19:32 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79GJVpl28704962
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 16:19:32 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BDDD5AE045;
-        Thu,  9 Aug 2018 19:19:23 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CBBCAE055;
-        Thu,  9 Aug 2018 19:19:22 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.195.22.129])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 19:19:22 +0100 (BST)
-From:   Sandipan Das <sandipan@linux.ibm.com>
-To:     acme@kernel.org
-Cc:     linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        ravi.bangoria@linux.ibm.com, naveen.n.rao@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com
-Subject: [PATCH] perf probe powerpc: Fix trace event post-processing
-Date:   Thu,  9 Aug 2018 21:49:29 +0530
-X-Mailer: git-send-email 2.14.4
-X-TM-AS-GCONF: 00
-x-cbid: 18080916-0008-0000-0000-0000025F7C1D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080916-0009-0000-0000-000021C78CE0
-Message-Id: <20180809161929.35058-1-sandipan@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090167
+        Thu, 9 Aug 2018 14:50:15 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b6c6ab60000>; Thu, 09 Aug 2018 09:24:22 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 09 Aug 2018 09:24:35 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 09 Aug 2018 09:24:35 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Aug
+ 2018 16:24:32 +0000
+Date:   Thu, 9 Aug 2018 19:24:26 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "Mikko Perttunen" <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH 01/40] dt-bindings: Add Tegra PMC pad configuration
+ bindings
+Message-ID: <20180809192426.3f3b7c16@dhcp-10-21-25-168>
+In-Reply-To: <20180809121350.GO21639@ulmo>
+References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+        <1533141150-10511-2-git-send-email-avienamo@nvidia.com>
+        <20180809121350.GO21639@ulmo>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some cases, a symbol may have multiple aliases. Attempting to add
-an entry probe for such symbols results in a probe being added at an
-incorrect location while it fails altogether for return probes. This
-is only applicable for binaries with debug information.
+On Thu, 9 Aug 2018 14:13:50 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-During the arch-dependent post-processing, the offset from the start
-of the symbol at which the probe is to be attached is determined and
-added to the start address of the symbol to get the probe's location.
-In case there are multiple aliases, this offset gets added multiple
-times for each alias of the symbol and we end up with an incorrect
-probe location.
+> On Wed, Aug 01, 2018 at 07:31:51PM +0300, Aapo Vienamo wrote:
+> > Document the PMC pinctrl bindings for pad power state and signaling
+> > voltage configuration. Both nvidia,tegra186-pmc.txt and
+> > nvidia,tegra20-pmc.txt are modified as they both cover SoC generations
+> > for which these bindings apply.
+> > 
+> > Add a header defining Tegra PMC pad voltage configurations.
+> > 
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++++++++++++++++
+> >  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++++++++++++++++++
+> >  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 ++++
+> >  3 files changed, 213 insertions(+)
+> >  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > index 5a3bf7c..d7fed4d 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > @@ -34,3 +34,95 @@ Board DTS:
+> >  	pmc@c360000 {
+> >  		nvidia,invert-interrupt;
+> >  	};
+> > +
+> > +== Pad Control ==
+> > +
+> > +On Tegra SoCs a pad is a set of pins which are configured as a group.
+> > +The pin grouping is a fixed attribute of the hardware. The PMC can be
+> > +used to set pad power state and signaling voltage. A pad can be either
+> > +in active or power down mode. The support for power state and signaling
+> > +voltage configuration varies depending on the pad in question. 3.3 V and
+> > +1.8 V signaling voltages are supported on pins where software
+> > +controllable signaling voltage switching is available.
+> > +
+> > +Pad configurations are described is with pin configuration nodes which  
+> 
+> The "is" in the middle there seems to be left-over from a previous
+> formulation of the sentence.
+> 
+> > +are placed under the pmc node and they are referred to by the pinctrl
+> > +client properties. For more information see
+> > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > +
+> > +Following pads are present on Tegra186:  
+> 
+> "The following pads..."
+> 
+> > +csia		csib		dsi		mipi-bias
+> > +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
+> > +usb0		usb1		usb2		usb-bias
+> > +uart		audio		hsic		dbg
+> > +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
+> > +sdmmc4		cam		dsib		dsic
+> > +dsid		csic		csid		csie
+> > +dsif		spi		ufs		dmic-hv
+> > +edp		sdmmc1-hv	sdmmc3-hv	conn
+> > +audio-hv	ao-hv
+> > +
+> > +Required pin configuration properties:
+> > +  - pins: Must contain name of the pad(s) to be configured.  
+> 
+> "the name". Also, I'm assuming that this can take a list of names, so
+> perhaps this should read:
+> 
+> 	- pins: A list of strings, each of which contains the name of a pad
+> 	    to be configured.
+> 
+> > +
+> > +Optional pin configuration properties:
+> > +  - low-power-enable: Configure the pad into power down mode
+> > +  - low-power-disable: Configure the pad into active mode  
+> 
+> Do we need both of these? low-power could be a boolean property to mean
+> that the pad(s) should be configured in power down mode. If absent it
+> would mean that the pad(s) should be configured in normal mode. The only
+> reason why I can think of them to have to be separate is if we want to
+> define a configuration where the power mode is not touched. But is that
+> really something we need or want?
 
-This can be verified on a powerpc64le system as shown below.
+These are standard pinctrl properties. While not relevant to the OS and
+driver agnostic bindings documentation, the way Linux pinctrl works
+would make omitting either of those properties tricky to implement in a
+pinctrl provider driver. As far as I can tell, the power state should
+be stated explicitly if it's modified in any of the pin configurations.
 
-  $ nm /lib/modules/$(uname -r)/build/vmlinux | grep "sys_open$"
-  ...
-  c000000000414290 T __se_sys_open
-  c000000000414290 T sys_open
+> > +  - power-source: Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
+> > +    TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
+> > +    The values are defined in
+> > +    include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.  
+> 
+> Why is this called "power-source"? This defines the signaling voltage of
+> the pad, so why not something like "power-level", or "voltage", or
+> "output-voltage"?
+> 
+> Or is this because it is a mux that will internally select either a
+> 1.8 V or a 3.3 V source? In which case I guess this is okay. Perhaps
+> give some explanation of the mechanics of the underlying hardware to
+> make this more obvious.
 
-  $ objdump -d /lib/modules/$(uname -r)/build/vmlinux | grep -A 10 "<__se_sys_open>:"
+At least in the case of SDMMC, the pad is powered from an external
+adjustable regulator, however the pad must be configured to a voltage
+matching the voltage that is supplied to the pad from the regulator. The
+TRM does not go into much detail on the actual mechanisms behind this.
+I wanted to avoid introcuding new vendor specific properties and just
+stick with the standard pinctrl ones.
 
-  c000000000414290 <__se_sys_open>:
-  c000000000414290:       19 01 4c 3c     addis   r2,r12,281
-  c000000000414294:       70 c4 42 38     addi    r2,r2,-15248
-  c000000000414298:       a6 02 08 7c     mflr    r0
-  c00000000041429c:       e8 ff a1 fb     std     r29,-24(r1)
-  c0000000004142a0:       f0 ff c1 fb     std     r30,-16(r1)
-  c0000000004142a4:       f8 ff e1 fb     std     r31,-8(r1)
-  c0000000004142a8:       10 00 01 f8     std     r0,16(r1)
-  c0000000004142ac:       c1 ff 21 f8     stdu    r1,-64(r1)
-  c0000000004142b0:       78 23 9f 7c     mr      r31,r4
-  c0000000004142b4:       78 1b 7e 7c     mr      r30,r3
+> > +
+> > +Note: The power state can be configured on all of the above pads except
+> > +      for ao-hv. Following pads have software configurable signaling
+> > +      voltages: sdmmc2-hv, dmic-hv, sdmmc1-hv, sdmmc3-hv, audio-hv,
+> > +      ao-hv.
+> > +
+> > +Pad configuration state example:
+> > +	pmc: pmc@7000e400 {
+> > +		compatible = "nvidia,tegra186-pmc";
+> > +		reg = <0 0x0c360000 0 0x10000>,
+> > +		      <0 0x0c370000 0 0x10000>,
+> > +		      <0 0x0c380000 0 0x10000>,
+> > +		      <0 0x0c390000 0 0x10000>;
+> > +		reg-names = "pmc", "wake", "aotag", "scratch";
+> > +
+> > +		...
+> > +
+> > +		sdmmc1_3v3: sdmmc1-3v3 {
+> > +			pins = "sdmmc1-hv";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> > +		};
+> > +
+> > +		sdmmc1_1v8: sdmmc1-1v8 {
+> > +			pins = "sdmmc1-hv";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> > +		};  
+> 
+> Wouldn't these be implicitly low-power-disable? What if these are off by
+> default? Selecting these states would change the power source but keep
+> them in power down, no? Don't we want something like the below instead?
 
-  For both the entry probe and the return probe, the probe location
-  should be _text+4276888 (0xc000000000414298). Since another alias
-  exists for 'sys_open', the post-processing code will end up adding
-  the offset (8 for powerpc64le) twice and perf will attempt to add
-  the probe at _text+4276896 (0xc0000000004142a0) instead.
+The power state isn't modified. By default the pads are powered.
 
-Before:
+> 		sdmmc1_3v3: sdmmc1-3v3 {
+> 			pins = "sdmmc1-hv";
+> 			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> 			/* low-power-disable implied here */
+> 		};
+> 
+> 		sdmmc1_1v8: sdmmc1-1v8 {
+> 			pins = "sdmmc1-hv";
+> 			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> 			/* low-power-disable implied here */
+> 		};
+> 
+> 		sdmmc1_off: sdmmc1-off {
+> 			pins = "sdmmc1-hv";
+> 			low-power;
+> 		};
+> 
+> That would allow the SDHCI driver to select between the two signaling
+> modes and a separate state for powering down the pad.
+> 
+> > +
+> > +		hdmi_off: hdmi-off {
+> > +			pins = "hdmi";
+> > +			low-power-enable;
+> > +		}
+> > +
+> > +		hdmi_on: hdmi-on {
+> > +			pins = "hdmi";
+> > +			low-power-disable;
+> > +		}  
+> 
+> These would similarily become:
+> 
+> 		hdmi_off: hdmi-off {
+> 			pins = "hdmi";
+> 			low-power;
+> 		};
+> 
+> 		hdmi_on: hdmi-on {
+> 			pins = "hdmi";
+> 		};
+> 
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > index a74b37b..5363b90 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > @@ -195,3 +195,106 @@ Example:
+> >  		power-domains = <&pd_audio>;
+> >  		...
+> >  	};
+> > +
+> > +== Pad Control ==
+> > +
+> > +On Tegra SoCs a pad is a set of pins which are configured as a group.
+> > +The pin grouping is a fixed attribute of the hardware. The PMC can be
+> > +used to set pad power state and signaling voltage. A pad can be either
+> > +in active or power down mode. The support for power state and signaling
+> > +voltage configuration varies depending on the pad in question. 3.3 V and
+> > +1.8 V signaling voltages are supported on pins where software
+> > +controllable signaling voltage switching is available.
+> > +
+> > +The pad configuration state nodes are placed under the pmc node and they
+> > +are referred to by the pinctrl client properties. For more information
+> > +see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > +The pad name should be used as the value of the pins property in pin
+> > +configuration nodes.
+> > +
+> > +Following pads are present on Tegra124 and Tegra132:
+> > +audio		bb		cam		comp
+> > +csia		csb		cse		dsi
+> > +dsib		dsic		dsid		hdmi
+> > +hsic		hv		lvds		mipi-bias
+> > +nand		pex-bias	pex-clk1	pex-clk2
+> > +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
+> > +sys_ddc		uart		usb0		usb1
+> > +usb2		usb_bias
+> > +
+> > +Following pads are present on Tegra210:
+> > +audio		audio-hv	cam		csia
+> > +csib		csic		csid		csie
+> > +csif		dbg		debug-nonao	dmic
+> > +dp		dsi		dsib		dsic
+> > +dsid		emmc		emmc2		gpio
+> > +hdmi		hsic		lvds		mipi-bias
+> > +pex-bias	pex-clk1	pex-clk2	pex-cntrl
+> > +sdmmc1		sdmmc3		spi		spi-hv
+> > +uart		usb0		usb1		usb2
+> > +usb3		usb-bias  
+> 
+> What about chips prior to Tegra124?
 
-  # perf probe -v -a sys_open
+PMC pad configuration of this sort was introduced in Tegra124.
 
-  probe-definition(0): sys_open
-  symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Writing event: p:probe/sys_open _text+4276896
-  Added new event:
-    probe:sys_open       (on sys_open)
-  ...
-
-  # perf probe -v -a sys_open%return $retval
-
-  probe-definition(0): sys_open%return
-  symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/README write=0
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Parsing probe_events: p:probe/sys_open _text+4276896
-  Group:probe Event:sys_open probe:p
-  Writing event: r:probe/sys_open__return _text+4276896
-  Failed to write event: Invalid argument
-    Error: Failed to add events. Reason: Invalid argument (Code: -22)
-
-After:
-
-  # perf probe -v -a sys_open
-
-  probe-definition(0): sys_open
-  symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Writing event: p:probe/sys_open _text+4276888
-  Added new event:
-    probe:sys_open       (on sys_open)
-  ...
-
-  # perf probe -v -a sys_open%return $retval
-
-  probe-definition(0): sys_open%return
-  symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/README write=0
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Parsing probe_events: p:probe/sys_open _text+4276888
-  Group:probe Event:sys_open probe:p
-  Writing event: r:probe/sys_open__return _text+4276888
-  Added new event:
-    probe:sys_open__return (on sys_open%return)
-  ...
-
-Fixes: 99e608b5954c ("perf probe ppc64le: Fix probe location when using DWARF")
-Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
----
- tools/perf/arch/powerpc/util/sym-handling.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/powerpc/util/sym-handling.c
-index 53d83d7e6a09..20e7d74d86cd 100644
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -141,8 +141,10 @@ void arch__post_process_probe_trace_events(struct perf_probe_event *pev,
- 	for (i = 0; i < ntevs; i++) {
- 		tev = &pev->tevs[i];
- 		map__for_each_symbol(map, sym, tmp) {
--			if (map->unmap_ip(map, sym->start) == tev->point.address)
-+			if (map->unmap_ip(map, sym->start) == tev->point.address) {
- 				arch__fix_tev_from_maps(pev, tev, map, sym);
-+				break;
-+			}
- 		}
- 	}
- }
--- 
-2.14.4
-
+ -Aapo
