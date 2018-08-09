@@ -2,103 +2,119 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BCDC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD6BC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D954521EA0
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:40:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D954521EA0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id E054D21D68
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:42:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E054D21D68
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732477AbeHISFq (ORCPT
+        id S1732376AbeHISHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:05:46 -0400
-Received: from gateway36.websitewelcome.com ([192.185.185.36]:40457 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732330AbeHISFq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:05:46 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 6A59A400C5AC4
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Aug 2018 09:43:15 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id nn2QfUvMNPvAdnn2jfVwmP; Thu, 09 Aug 2018 10:40:17 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.54.46] (port=50842 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fnn2Q-0026FC-2t; Thu, 09 Aug 2018 10:39:46 -0500
-Date:   Thu, 9 Aug 2018 10:39:44 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        linux-wimax@intel.com, "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] wimax: usb-fw: mark expected switch fall-through
-Message-ID: <20180809153944.GA16703@embeddedor.com>
+        Thu, 9 Aug 2018 14:07:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55744 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730419AbeHISHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 14:07:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F83C7A9;
+        Thu,  9 Aug 2018 08:42:07 -0700 (PDT)
+Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B5353F5B3;
+        Thu,  9 Aug 2018 08:42:00 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 16:41:56 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
+ for RT tasks
+Message-ID: <20180809154156.gdsx2vacjmp6p6dp@darkstar>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-7-patrick.bellasi@arm.com>
+ <20180807135403.s7jktvxmhycujeht@queper01-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.54.46
-X-Source-L: No
-X-Exim-ID: 1fnn2Q-0026FC-2t
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.54.46]:50842
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180807135403.s7jktvxmhycujeht@queper01-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On 07-Aug 14:54, Quentin Perret wrote:
+> Hi Patrick,
 
-Notice that in this particular case, I placed the "fall through"
-annotation at the bottom of the case, which is what GCC is expecting
-to find.
+Hi Quentin!
 
-Addresses-Coverity-ID: 1369529 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wimax/i2400m/usb-fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Monday 06 Aug 2018 at 17:39:38 (+0100), Patrick Bellasi wrote:
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index a7affc729c25..bb25ef66c2d3 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -200,6 +200,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+> >  static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+> >  {
+> >  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> > +	unsigned long util_cfs, util_rt;
+> >  	unsigned long util, irq, max;
+> >  
+> >  	sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+> 
+> IIUC, not far below this you should still have something like:
+> 
+> 	if (rt_rq_is_runnable(&rq->rt))
+> 		return max;
 
-diff --git a/drivers/net/wimax/i2400m/usb-fw.c b/drivers/net/wimax/i2400m/usb-fw.c
-index 502c346..529ebca 100644
---- a/drivers/net/wimax/i2400m/usb-fw.c
-+++ b/drivers/net/wimax/i2400m/usb-fw.c
-@@ -130,12 +130,12 @@ ssize_t i2400mu_tx_bulk_out(struct i2400mu *i2400mu, void *buf, size_t buf_size)
- 			dev_err(dev, "BM-CMD: too many stalls in "
- 				"URB; resetting device\n");
- 			usb_queue_reset_device(i2400mu->usb_iface);
--			/* fallthrough */
- 		} else {
- 			usb_clear_halt(i2400mu->usb_dev, pipe);
- 			msleep(10);	/* give the device some time */
- 			goto retry;
- 		}
-+		/* fall through */
- 	case -EINVAL:			/* while removing driver */
- 	case -ENODEV:			/* dev disconnect ... */
- 	case -ENOENT:			/* just ignore it */
+Do you mean that when RT tasks are RUNNABLE we still want to got to
+MAX? Not sure to understand... since this patch is actually to clamp
+the RT class...
+
+> So you won't reach the actual clamping code at the end of the function
+> when a RT task is runnable no?
+
+... mmm... no... this patch is to clamp RT tasks... Am I missing
+something?
+
+> Also, I always had the feeling that the default for RT should be
+> util_min == 1024, and then users could decide to lower the bar if they
+> want to.
+
+Mmm... good point! This would keep the policy unaltered for RT tasks.
+
+I want to keep sched class specific code in uclamp at minimum, but
+likely this should be achievable by just properly initializing the
+task-specific util_min for RT tasks, if the original task has
+UCLAM_NOT_VALID.
+
+> For the specific case of RT, that feels more natural than
+> applying a max util clamp IMO. What do you think ?
+
+I'll look better into this for the next posting!
+
+Cheers Patrick
+
 -- 
-2.7.4
+#include <best/regards.h>
 
+Patrick Bellasi
