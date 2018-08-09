@@ -2,139 +2,203 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0DEC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C281C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E7521D6B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E7521D6B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 47E9921D19
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:39:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEKPqFtX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E9921D19
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbeHIOBV (ORCPT
+        id S1731060AbeHIODg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:01:21 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54355 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbeHIOBV (ORCPT
+        Thu, 9 Aug 2018 10:03:36 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35494 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730828AbeHIODg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:01:21 -0400
-Received: by mail-wm0-f68.google.com with SMTP id c14-v6so6024812wmb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 04:36:52 -0700 (PDT)
+        Thu, 9 Aug 2018 10:03:36 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e6-v6so2730491edr.2;
+        Thu, 09 Aug 2018 04:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kE9cIDf0r+tmOCymHL+t2y5BWuLkyVrlD/KgpnZ9bNI=;
+        b=nEKPqFtXOBLPne+YwI7hbmpcZ9iCeHtTmjoH5O3aWBhwXhVzDcnegbZ3Z9jV1WjVtl
+         hXW9U1BcTgWS0KMkajwDuNXBk3sS+8Xbchv8EMrRj6bRhObqct3JVPAgxrYhTaeTbXY4
+         lsdzloG4p30JuQ93liIg0teS2ufh/nyebrNH3t4mlDtDo8OlhJhitNaFiWHgy/U7Fgli
+         8HtRsNJYi0UoHLYYr2hweFFUClwedJNLz5rXX6ZZ2JO1TfCy6Y/fP48/br4Wrl92EuMN
+         lIDkMNznyYezQeMnyDzuAEsWwMH9Ajb4ONE4xS80vY+9PBfTe8mLSmgRvFCnOmUGm2T7
+         5jMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5RXniGpM6rRl6O/Oi4tCIuIJgg3/y5iJIg4WKB7Ouv0=;
-        b=oG0ycmFBISVbPjER9ZyolAkb2C4/6FThRz1gOJrG+e5ZlrMnjJLCzQWuTMdWYyMRwr
-         IjkYGnDj34i62PXqJnWkIrSwHO/lt/J/E1KB9xXXtiYda0BYeZZsZRVnv5OKvMhvwUFq
-         CM2GbD4BEbIO3IWGDPzwg1ZFxq2lcJdc4CtXmxvA/nJGpb6tPdUnemWKjZWiwX40v6ki
-         qLPYf1sJ2kirCTJLLcGW7NPIyB3ckZu05Exo/R143aRiBdKVmMBxwdhrLAr6+jlJE9wO
-         epSuRpRxDHg1uxdQBot913zJfcK++1JBQk9Q/uGT7UGqbYrg1Sm4+wKus1Zo2ZAN5y5Y
-         PTkw==
-X-Gm-Message-State: AOUpUlFudWqYtS2MMq5kBW2feVdH90KrY2qk+3+f1u8fWiYAYSVG9IVZ
-        bp4txEsaK4EUbydJfL2AvydRLg==
-X-Google-Smtp-Source: AA+uWPxQOdqmckDqnnHYbEbHsa5Dr7KIC9ndoCCGP+QJx1K753punFNAyGcwdjfI1JSolYQkssZHuA==
-X-Received: by 2002:a1c:37cd:: with SMTP id e196-v6mr1329897wma.84.1533814612107;
-        Thu, 09 Aug 2018 04:36:52 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm14900987wmb.10.2018.08.09.04.36.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kE9cIDf0r+tmOCymHL+t2y5BWuLkyVrlD/KgpnZ9bNI=;
+        b=PMG/5GELKeGwIRgiwAwv6u9SPMKM4TSx7FfTe3q6gcqDL2924FfxUpVJcpXkP5n+/F
+         7Xfxa08sFTxJnAGG2bCqNk4Hs4g2lnoMwQaS+A+CAu9qnHg3iGcPuYNxu3M03PoR1s8/
+         kzkTqLPOa6EnVxo2S+DyM9Xxwl7k7qSkhWFasTwyH4vtElaCc85qVEXO80RTNTlHPeTL
+         Mho/SCgbsS0OslOPFsecmwwWb3RolAb9yLwB2hjWQGRLFioerH0/swWgJYk5WVGiBn/p
+         UwBR3TL/Mi/8MbP5u8bn1VFYwL7P+U1JQr2rFBJwMpZw/0qAVEsD924F1VjY1DoPYuz+
+         IlaQ==
+X-Gm-Message-State: AOUpUlGoUxgCje0Vi80a/Z++zVWrbzVVrSujqmUZmNWf9Nyq/n17DzlZ
+        oJxH9PlmoGxWFUY18ex29Hs=
+X-Google-Smtp-Source: AA+uWPySY+/A9SbjyKXzrhG2cp8uHQ3tOittcuF48aNadb3AKCPw78rizlaOVHmDn81n8jHXuqPrag==
+X-Received: by 2002:aa7:d786:: with SMTP id s6-v6mr2736789edq.228.1533814746003;
+        Thu, 09 Aug 2018 04:39:06 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id g28-v6sm8487459edg.67.2018.08.09.04.39.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 04:36:51 -0700 (PDT)
-Subject: Re: [PATCH v5 1/4] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-References: <20180809091558.4317-1-hdegoede@redhat.com>
- <20180809091558.4317-2-hdegoede@redhat.com>
- <CAJZ5v0jBxL8n8ce7=qgZmHtc4=zCA3u7ePbXaHfyibeNiNrw+w@mail.gmail.com>
- <7d8c71b9-292e-e51e-d3d3-cb0bb00528b6@redhat.com>
- <CAHp75VeiC35S=urEL_f-j+ZPVodPHqGJBRYxv2m5inBkuJ=1kQ@mail.gmail.com>
- <f2f9289d-0adb-e165-a23e-696fe985fda4@redhat.com>
- <CAJZ5v0hvfR=m5GXhSS4Q7DYFS9+BA+EAt9oHOYdxMU-J78dtwQ@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <9169f2a6-7835-0472-9b08-320106125716@redhat.com>
-Date:   Thu, 9 Aug 2018 13:36:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 09 Aug 2018 04:39:05 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] iommu/tegra: gart: Provide access to Memory Controller driver
+Date:   Thu, 09 Aug 2018 14:39:03 +0300
+Message-ID: <16855111.9YhuyP46zb@dimapc>
+In-Reply-To: <20180809111746.GG21639@ulmo>
+References: <20180804143003.15817-1-digetx@gmail.com> <20180804143003.15817-3-digetx@gmail.com> <20180809111746.GG21639@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hvfR=m5GXhSS4Q7DYFS9+BA+EAt9oHOYdxMU-J78dtwQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 09-08-18 11:59, Rafael J. Wysocki wrote:
-> On Thu, Aug 9, 2018 at 11:58 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->> Hi,
->>
->> On 09-08-18 11:51, Andy Shevchenko wrote:
->>>
->>> On Thu, Aug 9, 2018 at 12:39 PM, Hans de Goede <hdegoede@redhat.com>
->>> wrote:
->>>>
->>>> On 09-08-18 11:35, Rafael J. Wysocki wrote:
->>>>>
->>>>> On Thu, Aug 9, 2018 at 11:15 AM, Hans de Goede <hdegoede@redhat.com>
->>>>> wrote:
->>>
->>>
->>>>> I've applied the v4 of this patch and I don't think there are any
->>>>> changes from it here.
->>>>
->>>>
->>>>
->>>> Correct, there were only changes to the 4th patch in the series.
->>>>
->>>>> As for the rest of the series I'll wait from comments from Wolfram and
->>>>> the other reviewers.
->>>>
->>>>
->>>>
->>>> Ok, note if you've taken patch 1 you may also want to take patch 3 which
->>>> is an ACPI code cleanup made possible by patch 1 and otherwise is
->>>> unrelated.
->>>
->>>
->>> I'm under impression Rafael is going to take entire series (at least
->>> for patch 4 I'm expecting to give an Ack).
->>
->>
->> As I mentioned in the coverletter, my idea was to have Rafael take
->> patches 1-3 and then merge the 4th patch through the platform/x86
->> tree. There are only runtime dependencies between the 2 parts and
->> merging them independently should not cause any issues.
+On Thursday, 9 August 2018 14:17:46 MSK Thierry Reding wrote:
+> On Sat, Aug 04, 2018 at 05:29:57PM +0300, Dmitry Osipenko wrote:
+> > GART contain registers needed by the Memory Controller driver, provide
+> > access to the MC driver by utilizing its GART-integration facility.
+> > 
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> > 
+> >  drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+> > index a004f6da35f2..f8b653e25914 100644
+> > --- a/drivers/iommu/tegra-gart.c
+> > +++ b/drivers/iommu/tegra-gart.c
+> > @@ -31,6 +31,8 @@
+> > 
+> >  #include <linux/iommu.h>
+> >  #include <linux/of.h>
+> > 
+> > +#include <soc/tegra/mc.h>
+> > +
+> > 
+> >  #include <asm/cacheflush.h>
+> >  
+> >  /* bitmap of the page sizes currently supported */
+> > 
+> > @@ -41,6 +43,8 @@
+> > 
+> >  #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
+> >  #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
+> >  #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
+> > 
+> > +#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
+> > +#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
+> > 
+> >  #define GART_PAGE_SHIFT		12
+> >  #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
+> > 
+> > @@ -63,6 +67,8 @@ struct gart_device {
+> > 
+> >  	struct device		*dev;
+> >  	
+> >  	struct iommu_device	iommu;		/* IOMMU Core handle */
+> > 
+> > +
+> > +	struct tegra_mc_gart_handle mc_gart_handle;
+> > 
+> >  };
+> >  
+> >  struct gart_domain {
+> > 
+> > @@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device *dev)
+> > 
+> >  	return 0;
+> >  
+> >  }
+> > 
+> > +static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle *handle)
+> > +{
+> > +	struct gart_device *gart = container_of(handle, struct gart_device,
+> > +						mc_gart_handle);
+> > +	return readl_relaxed(gart->regs + GART_ERROR_ADDR);
+> > +}
+> > +
+> > +static u32 tegra_gart_error_req(struct tegra_mc_gart_handle *handle)
+> > +{
+> > +	struct gart_device *gart = container_of(handle, struct gart_device,
+> > +						mc_gart_handle);
+> > +	return readl_relaxed(gart->regs + GART_ERROR_REQ);
+> > +}
+> > +
+> > 
+> >  static int tegra_gart_probe(struct platform_device *pdev)
+> >  {
+> >  
+> >  	struct gart_device *gart;
+> > 
+> > @@ -464,6 +484,8 @@ static int tegra_gart_probe(struct platform_device
+> > *pdev)> 
+> >  	gart->regs = gart_regs;
+> >  	gart->iovmm_base = (dma_addr_t)res_remap->start;
+> >  	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
+> > 
+> > +	gart->mc_gart_handle.error_addr = tegra_gart_error_addr;
+> > +	gart->mc_gart_handle.error_req = tegra_gart_error_req;
+> > 
+> >  	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
+> >  	if (!gart->savedata) {
+> > 
+> > @@ -475,6 +497,7 @@ static int tegra_gart_probe(struct platform_device
+> > *pdev)> 
+> >  	do_gart_setup(gart, NULL);
+> >  	
+> >  	gart_handle = gart;
+> > 
+> > +	tegra_mc_register_gart(&gart->mc_gart_handle);
+> > 
+> >  	return 0;
+> >  
+> >  }
 > 
-> I can apply the 4th one too if it is ACKed by everyone with a vested interest.
+> I see now why you've did it this way. We have separate devices unlike
+> with SMMU where it is properly modeled as part of the memory controller.
+> I think we should consider breaking ABI at this point and properly merge
+> both the memory controller and GART nodes. There's really no reason why
+> they should be separate and we're jumping through multiple hoops to do
+> what we need to do just because a few years back we made a mistake.
+> 
+> I know we're technically not supposed to break the DT ABI, but I think
+> in this particular case we can make a good case for it. The current DT
+> bindings are plainly broken, and obviously so. Also, we don't currently
+> use the GART upstream for anything, so we can't break any existing
+> systems either.
 
-That works for me, note I'm about to send out a v6 (with only changes to
-the 4th patch), so hold of a bit with merging this please.
+IIUC, that will require to break the stable DT ABI of the tegra20-mc, which is 
+working fine and does its job. I'm personally not seeing the slight lameness 
+of the current DT as a good excuse to break the ABI. Let's then break DT ABI 
+on all Tegra's and convert them all to genpd and other goodies like assigned 
+clock parents and clock rate.
 
-Andy does your ack for the 4th patch mean you're ok with Rafael merging
-this?
-
-Regards,
-
-Hans
 
 
