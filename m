@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24A0C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEEB4C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FC3221C16
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:52:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FC3221C16
+	by mail.kernel.org (Postfix) with ESMTP id 9EC7121C16
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:52:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC7121C16
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeHIJPt (ORCPT
+        id S1728431AbeHIJQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 05:15:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40070 "EHLO mx1.suse.de"
+        Thu, 9 Aug 2018 05:16:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40162 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727371AbeHIJPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 05:15:48 -0400
+        id S1727371AbeHIJQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 05:16:14 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CA89AAF6F;
-        Thu,  9 Aug 2018 06:52:23 +0000 (UTC)
-Date:   Thu, 09 Aug 2018 08:52:23 +0200
-Message-ID: <s5h600kf2vs.wl-tiwai@suse.de>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5D006AF70;
+        Thu,  9 Aug 2018 06:52:50 +0000 (UTC)
+Date:   Thu, 09 Aug 2018 08:52:50 +0200
+Message-ID: <s5h4lg4f2v1.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     " Gustavo A. R. Silva " <gustavo@embeddedor.com>
 Cc:     "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: mixart_core: Mark expected switch fall-through
-In-Reply-To: <20180808221148.GA1864@embeddedor.com>
-References: <20180808221148.GA1864@embeddedor.com>
+Subject: Re: [PATCH] ALSA: usb-audio: Mark expected switch fall-through
+In-Reply-To: <20180808222344.GA3140@embeddedor.com>
+References: <20180808222344.GA3140@embeddedor.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -45,17 +44,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 09 Aug 2018 00:11:48 +0200,
+On Thu, 09 Aug 2018 00:23:44 +0200,
  Gustavo A. R. Silva  wrote:
 > 
 > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 > where we are expecting to fall through.
 > 
-> Notice that in this particular case, I replaced the code comment with
-> a proper "fall through" annotation, which is what GCC is expecting
-> to find.
-> 
-> Addresses-Coverity-ID: 114889 ("Missing break in switch")
+> Addresses-Coverity-ID: 1357413 ("Missing break in switch")
+> Addresses-Coverity-ID: 114917 ("Missing break in switch")
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
 Applied, thanks.
