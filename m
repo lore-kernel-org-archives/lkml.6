@@ -2,217 +2,199 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA024C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC114C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D6E21D69
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:27:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D6E21D69
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 91C0B21D69
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:30:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XyjFIQbr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C0B21D69
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732106AbeHIPwt (ORCPT
+        id S1732049AbeHIPzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 11:52:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33634 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730090AbeHIPwt (ORCPT
+        Thu, 9 Aug 2018 11:55:39 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58062 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730090AbeHIPzj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 11:52:49 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79DOCLi042369
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 09:27:53 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krnmjag6j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 09:27:53 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Thu, 9 Aug 2018 14:27:51 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 14:27:47 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79DRklg41746624
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 13:27:46 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BE7611C050;
-        Thu,  9 Aug 2018 16:27:52 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8990511C04C;
-        Thu,  9 Aug 2018 16:27:50 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Thu,  9 Aug 2018 16:27:50 +0100 (BST)
-Date:   Thu, 9 Aug 2018 06:27:43 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] powerpc: Detect the presence of big-cores via
- "ibm,thread-groups"
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1533792728-6304-1-git-send-email-ego@linux.vnet.ibm.com>
- <1533792728-6304-2-git-send-email-ego@linux.vnet.ibm.com>
+        Thu, 9 Aug 2018 11:55:39 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w79DUcOM092817;
+        Thu, 9 Aug 2018 08:30:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533821438;
+        bh=WDJmLj5gHewxdBT5JJbFJtWx8A/+k3TIJK2DLQ1wejc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=XyjFIQbrSaWiSQIyoktdsiJE6z6Has5SWLSgim4jfxoaM5tVmp1dnP6vXBFuvzxf9
+         OP1riPI9BABOlFObpPUzbLcppM4sd7AOJ4A8UjKB2RfTRCubN6VfZmRl2XtAItBl/0
+         cz2f5L6GaPlvxlsPJ3hoXix9jUb1hvrqwdiffzUQ=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w79DUcsJ002291;
+        Thu, 9 Aug 2018 08:30:38 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 9 Aug
+ 2018 08:30:38 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 9 Aug 2018 08:30:38 -0500
+Received: from [172.22.163.232] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w79DUcB1032305;
+        Thu, 9 Aug 2018 08:30:38 -0500
+Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
+ driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20180807160442.8937-1-dmurphy@ti.com>
+ <20180808195903.GB20912@amd> <f6b3534b-2ee9-782e-35e5-e103c34528bc@ti.com>
+ <20180808210215.GA15831@amd> <f18a5616-bb25-da0d-aec8-585e042b4919@ti.com>
+ <53691469-4554-42a8-c182-762c1a3939b7@gmail.com>
+ <01bbf05a-8e5e-d3ce-857a-ac5c6efb779c@ti.com>
+ <683f9e60-9ad8-93d8-e4ed-dbfdae78c307@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <c028fb73-8df5-9402-d96e-c907199356ed@ti.com>
+Date:   Thu, 9 Aug 2018 08:30:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <1533792728-6304-2-git-send-email-ego@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18080913-0012-0000-0000-000002976700
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080913-0013-0000-0000-000020CA76C4
-Message-Id: <20180809132743.GB42474@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090140
+In-Reply-To: <683f9e60-9ad8-93d8-e4ed-dbfdae78c307@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Gautham R. Shenoy <ego@linux.vnet.ibm.com> [2018-08-09 11:02:07]:
+Jacek and Pavel
 
+On 08/09/2018 07:09 AM, Jacek Anaszewski wrote:
+> Dan,
 > 
->  int threads_per_core, threads_per_subcore, threads_shift;
-> +bool has_big_cores;
->  cpumask_t threads_core_mask;
->  EXPORT_SYMBOL_GPL(threads_per_core);
->  EXPORT_SYMBOL_GPL(threads_per_subcore);
->  EXPORT_SYMBOL_GPL(threads_shift);
-> +EXPORT_SYMBOL_GPL(has_big_cores);
-
-Why do we need EXPORT_SYMBOL_GPL?
-
->  EXPORT_SYMBOL_GPL(threads_core_mask);
+> On 08/08/2018 11:45 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 08/08/2018 04:09 PM, Jacek Anaszewski wrote:
+>>> Hi Dan,
+>>>
+>>> On 08/08/2018 11:04 PM, Dan Murphy wrote:
+>>>> On 08/08/2018 04:02 PM, Pavel Machek wrote:
+>>>>> Hi!
+>>>>>
+>>>>>>>> +	- #size-cells : 0
+>>>>>>>> +	- control-bank-cfg - : Indicates which sink is connected to which control bank
+>>>>>>>> +		0 - All HVLED outputs are controlled by bank A
+>>>>>>>> +		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
+>>>>>>>> +		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
+>>>>>>>> +		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
+>>>>>>>> +		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
+>>>>>>>> +		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
+>>>>>>>> +		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled by bank B
+>>>>>>>> +		7 - All HVLED outputs are controlled by bank B
+>>>>>>>
+>>>>>>> This is quite long way to describe a bitmask, no? Could we make
+>>>>>>> it so that control-bank-cfg is not needed?
+>>>>>>
+>>>>>> The problem we have here is there is a potential to control
+>>>>>> 3 different LED string but only 2 sinks.  So control bank A can control 2 LED strings and control
+>>>>>> bank b can control 1 LED string.  
+>>>>>>
+>>>>>
+>>>>> Can we forget about the LED strings, and just expose the sinks as
+>>>>> Linux LED devices?
+>>>>
+>>>> 2 sinks 3 LED strings.  How do you know which LED string is which and what bank it belongs
+>>>> to when setting the brightness.  Each Bank has a separate register for brightness control.
+>>>
+>>> Just a blind shot, without going into details - could you please check
+>>> if led-sources property documented in the common LED bindings couldn't
+>>> help here?
+>>>
+>>
+>> I could change the name to led-sources.  But this part does not really follow the 1 output to a
+>> 1 LED string topology.
 > 
-> + *
-> + * Returns 0 on success, -EINVAL if the property does not exist,
-> + * -ENODATA if property does not have a value, and -EOVERFLOW if the
-> + * property data isn't large enough.
-> + */
-> +int parse_thread_groups(struct device_node *dn,
-> +			struct thread_groups *tg)
-> +{
-> +	unsigned int nr_groups, threads_per_group, property;
-> +	int i;
-> +	u32 thread_group_array[3 + MAX_THREAD_LIST_SIZE];
-> +	u32 *thread_list;
-> +	size_t total_threads;
-> +	int ret;
-> +
-> +	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
-> +					 thread_group_array, 3);
-> +
-> +	if (ret)
-> +		goto out_err;
-> +
-> +	property = thread_group_array[0];
-> +	nr_groups = thread_group_array[1];
-> +	threads_per_group = thread_group_array[2];
-> +	total_threads = nr_groups * threads_per_group;
-> +
-
-Shouldnt we check for property and nr_groups
-If the property is not 1 and nr_groups < 1, we should error out
-No point in calling a of_property read if property is not right.
-
-
-Nit: 
-Cant we directly assign to tg->property, and hence avoid local
-variables, property, nr_groups and threads_per_group?
-
-> +	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
-> +					 thread_group_array,
-> +					 3 + total_threads);
-> +
-> +static inline bool dt_has_big_core(struct device_node *dn,
-> +				   struct thread_groups *tg)
-> +{
-> +	if (parse_thread_groups(dn, tg))
-> +		return false;
-> +
-> +	if (tg->property != 1)
-> +		return false;
-> +
-> +	if (tg->nr_groups < 1)
-> +		return false;
-
-Can avoid these check if we can check in parse_thread_groups.
-
->  /**
->   * setup_cpu_maps - initialize the following cpu maps:
->   *                  cpu_possible_mask
-> @@ -457,6 +605,7 @@ void __init smp_setup_cpu_maps(void)
->  	int cpu = 0;
->  	int nthreads = 1;
+> led-sources was designed for describing the topology where one LED can
+> be connected to more then one output, see bindings of
+> max77693-led (in Documentation/devicetree/bindings/mfd/max77693.txt).
 > 
-> diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-> index 755dc98..f5717de 100644
-> --- a/arch/powerpc/kernel/sysfs.c
-> +++ b/arch/powerpc/kernel/sysfs.c
-> @@ -18,6 +18,7 @@
->  #include <asm/smp.h>
->  #include <asm/pmc.h>
->  #include <asm/firmware.h>
-> +#include <asm/cputhreads.h>
+> Here the topology is a bit different - more than one LED (string) can be
+> connected to a single bank, but this is accomplished inside the chip.
+> Logically LEDs configured that way can be treated as a single LED
+> (string) connected to two outputs, and what follows they should be
+> described by a single DT child node.
 > 
->  #include "cacheinfo.h"
->  #include "setup.h"
-> @@ -1025,6 +1026,33 @@ static ssize_t show_physical_id(struct device *dev,
->  }
->  static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
+> led-sources will fit very well for this purpose. You could do
+> the following mapping:
 > 
-> +static ssize_t show_small_core_siblings(struct device *dev,
-> +					struct device_attribute *attr,
-> +					char *buf)
-> +{
-> +	struct cpu *cpu = container_of(dev, struct cpu, dev);
-> +	struct device_node *dn = of_get_cpu_node(cpu->dev.id, NULL);
-> +	struct thread_groups tg;
-> +	int i, j;
-> +	ssize_t ret = 0;
-> +
+> 0 - HVLED1
+> 1 - HVLED2
+> 2 - HVLED3
+> 
+> Then, in the child DT nodes you would use these identifiers to describe
+> the topology:
+> 
+> Following node would describe strings connected to the outputs
+> HVLED1 and HVLED2 controlled by bank A.
+> 
+> led@0 {
+> 	reg = <0>;
+> 	led-sources = <0>. <1>;
+> 	label = "white:first_backlight_cluster";
+> 	linux,default-trigger = "backlight";
+> };
+> 
+> 
+> IOW I agree with Pavel, but I propose to use already documented common
+> DT LED property.
+> 
 
-Here we need to check for validity of dn and error out accordingly.
+I agree to use the led-sources but I still believe this approach may be confusing to other sw devs
+and will lead to configuration issues by users.
+
+This implementation requires the sw dev to know which strings are controlled by which bank.
+And this method may produce a misconfiguration like something below where HVLED2 is declared in
+both bank A and bank B
+
+led@0 {
+	reg = <0>;
+	led-sources = <0>. <1>;
+	label = "white:first_backlight_cluster";
+	linux,default-trigger = "backlight";
+};
+
+led@1 {
+	reg = <1>;
+	led-sources = <1>. <2>;
+	label = "white:keypad_cluster";
+	linux,default-trigger = "backlight";
+};
+
+The driver will need to be intelligent and declare a miss configuration on the above.
+Not saying this cannot be done but I am not sure why we want to add all of these extra LoC and intelligence
+in the kernel driver.
+The driver cannot make assumptions on the intention.  And the device tree documentation will need to
+pretty much need a lengthy explanation on how to configure the child nodes.
+
+The implementation I suggested removes that ambiguity.  It is a simple integer that is written to the device
+as part of the device configuration, which the config is a setting for the device.
+
+The child nodes denote which bank the exposed LED node will control.  Removing any need
+for the sw developers new or old to know the specific device configurations.
 
 
-> +	if (parse_thread_groups(dn, &tg))
-> +		return -ENODATA;
-
-Did we miss a of_node_put(dn)?
-
-> +
-> +	i = get_cpu_thread_group_start(cpu->dev.id, &tg);
-> +
-> +	if (i == -1)
-> +		return -ENODATA;
-> +
-> +	for (j = 0; j < tg.threads_per_group - 1; j++)
-> +		ret += sprintf(buf + ret, "%d,", tg.thread_list[i + j]);
-
-Here, we are making the assumption that group_start will always be the
-first thread in the thread_group. However we didnt make the same
-assumption in get_cpu_thread_group_start.
-
+Dan
+-- 
+------------------
+Dan Murphy
