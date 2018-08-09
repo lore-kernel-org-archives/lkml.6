@@ -2,822 +2,150 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2442C46471
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9D0C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D90121C17
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B9121C17
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eWKMRkVD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D90121C17
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GOAKDwf1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B9121C17
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbeHIH3F (ORCPT
+        id S1729300AbeHIH3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 03:29:05 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45859 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728832AbeHIH3E (ORCPT
+        Thu, 9 Aug 2018 03:29:50 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:33255 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeHIH3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 03:29:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f1-v6so2143867pgq.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 22:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bPo4tluKCKrBOV52XTH1OM0yfOeIx9s8+gMSDWNe8IE=;
-        b=eWKMRkVD6uz44SrsyVtDhyp+minnUAIOO9dq5aUId/tsBAkv+voR7aqZ2dY9UYITks
-         mdnkvMUx41+9bBOIpynJtOdCoNCdA4ip0qDNLHEpHdk7jSRwWhhwtfZcGVBaXjzAuURQ
-         lHanorsZ6/2KuR/43BZy/D2kGMVhbLiJ8YFFQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bPo4tluKCKrBOV52XTH1OM0yfOeIx9s8+gMSDWNe8IE=;
-        b=H2DY7TSJj7d2cV5m4LIHH8p+A3ukmuZUXT6vda49Ydq5uIj5SZHyNXSd2pOc0OTfW2
-         I/mE7QhoCtKQYcdQ9apx4YujV8exLWdnUR+2N3DzJvpAizuBanATdSSlbt7aKbNGR7oG
-         UBB0M1NEfvDw8k9dUsuutu3wJNi7aPf/1L3QYihqCfjWrWdXw9YmbZoFP7jsfs9GJ8L0
-         uKsaMEWl5ATQXm5IuHzngZzyIxjs7aluAgs4WKC3sdjSXudX5+O8Lyt8xCOAIV2BZb5X
-         cNZHw/smCJE+LXp2AsH40/iNvUi346eEJBnwnO4l8Dca0g5I+GgmJeThWRVcrDzvVJCN
-         aAEQ==
-X-Gm-Message-State: AOUpUlFt2XAvKOV4eQd7ncvZ0v6Z/shkl6aEASy5zUqzV/q57i576dAF
-        38n/09esg7rl9jxTUVp9ztYu4Q==
-X-Google-Smtp-Source: AA+uWPyPxvW1wS01/NrsKCFZFX1EV4baji479ERiGOleFsnGHGSozy5AKrw9IERfszxuYI2moOftSA==
-X-Received: by 2002:a63:e056:: with SMTP id n22-v6mr611777pgj.205.1533791166171;
-        Wed, 08 Aug 2018 22:06:06 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm6919419pfi.142.2018.08.08.22.06.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Aug 2018 22:06:05 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     linux-ia64@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 5/5] ia64: uapi header and system call table file generation
-Date:   Thu,  9 Aug 2018 10:35:15 +0530
-Message-Id: <1533791115-3681-6-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533791115-3681-1-git-send-email-firoz.khan@linaro.org>
-References: <1533791115-3681-1-git-send-email-firoz.khan@linaro.org>
+        Thu, 9 Aug 2018 03:29:50 -0400
+Received: from mail-ua0-f179.google.com (mail-ua0-f179.google.com [209.85.217.179]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w7956ivq000810;
+        Thu, 9 Aug 2018 14:06:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w7956ivq000810
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533791205;
+        bh=Op8ngJJXgu2A2yiwX462/rZyVMZb/2ftkGBiTEgeiHc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=GOAKDwf1iLVZ3Bvrmoc8ZGmJxw+1XEJFWnJoDabjqJ/QrBUXL8XhcWcuUHpnLsri3
+         C1gVUrZvcDqf9TzZUGHhK6iRe+QxlCFYSy/rLD8fUx4EFhoTLhM741etspNSwKRDOD
+         6gAqtdq/j4phYyOuPNGB/AnY5j1CiiD4IYbQR2GF1bxJvjpchAlcUgME7+UYS5rIu5
+         WRonsZNoVt8z1WJsj1xnBIi22VgVrKXe19DwEdF6nIyFtMZlhf4pTZac+dioxDv209
+         Fsv/QHMNrKxb7dEOd/TyPQsepXvF53aitxD+jFTsKggtRRMrPu6qRc0gJ2fwqnJhSs
+         RrBjKsEY9jBpg==
+X-Nifty-SrcIP: [209.85.217.179]
+Received: by mail-ua0-f179.google.com with SMTP id h1-v6so4936826uao.8;
+        Wed, 08 Aug 2018 22:06:44 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGyXi4XlJyzKf/E9AOW+TtEA77KwoxkTmgKEZ7v/wdUSXN6PFAA
+        HcrJzgtBbOwg5JQpjDmTL+Q0lZcq9Ng4kmXmp8o=
+X-Google-Smtp-Source: AA+uWPwFuzr8cTjTtpmFcdOHOJmVNMDP3b3n5e026gqGDutjd1JgPyS83HqL72r+hgWKMcEk6YWBI+k1ztCx2Ag4ET8=
+X-Received: by 2002:a1f:4049:: with SMTP id n70-v6mr359171vka.140.1533791203993;
+ Wed, 08 Aug 2018 22:06:43 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 22:06:03 -0700 (PDT)
+In-Reply-To: <patch-1.thread-dc1802.git-dc180286abb1.your-ad-here.call-01533563120-ext-8550@work.hours>
+References: <cover.thread-dc1802.your-ad-here.call-01533563120-ext-8550@work.hours>
+ <patch-1.thread-dc1802.git-dc180286abb1.your-ad-here.call-01533563120-ext-8550@work.hours>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 9 Aug 2018 14:06:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ3O+5C2+sPVey_vX1OtmRQJi-RxUrXh+oxev3720tWxw@mail.gmail.com>
+Message-ID: <CAK7LNAQ3O+5C2+sPVey_vX1OtmRQJi-RxUrXh+oxev3720tWxw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] kbuild: allow alternate src for target's implicit prerequisite
+To:     Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System call table generation script must be run to generate
-unistd_64.h and syscall_table.h files. This patch will have
-changes which will invokes the script.
+2018-08-06 23:37 GMT+09:00 Vasily Gorbik <gor@linux.ibm.com>:
+> With kbuild there is no easy way to re-compile source files from another
+> directory, which is required for the decompressor on some platforms
+> (files like lib/ctype.c, lib/cmdline.c, etc). Writing custom build
+> rules for those files is not feasible since original rules are complex
+> and kbuild functions and variables are not exposed.
+>
+> The simplest solution is to reverse include source files either into
+> existing files or separate files. That eliminates the need to tackle
+> with the kbuild rules, but is ugly.
+>
+> Here is another solution to that problem, utilizing secondary expansion.
+> Build rules are in a form:
+> $(obj)/%.o: $(src)/%.c ...
+> $(obj)/%.o: $(src)/%.S ...
+>
+> "src" variable could be changed to cover the need of specifying alternate
+> source file directory.
+> src := $(if $(SRCDIR_$(@F)),$(SRCDIR_$(@F)),$(src))
+>
+> So, if there is SRCDIR_<target> set, it will be used, original "src" is
+> used otherwise. But that wouldn't work as it is. To be able to utilize
+> automatic variables in implicit prerequisite secondary expansion has to
+> be used and src value has to be additionally escaped.
+>
+> Alternate src dir then could be specified in Makefile as:
+> obj-y := file1.o file2.o
+> SRCDIR_file1.o := file1/src/dir
+> SRCDIR_file2.o := file2/src/dir
+>
+> Which is enough to build $(obj)/file1.o from file1/src/dir/file1.(c|S),
+> and $(obj)/file2.o from file2/src/dir/file2.(c|S)
 
-This patch will generate unistd_64.h and syscall_table.h
-files by the syscall table generation script invoked by
-arch/ia64/Makefile and the generated files against the
-removed files will be identical.
 
-The generated uapi header file will be included in
-uapi/asm/unistd.h and generated system call table support
-file will be included by ia64/kernel/syscall_table.S file.
+Is this a simple solution compared with existing ones?
+Kind of.
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- arch/ia64/Makefile                  |   3 +
- arch/ia64/include/asm/Kbuild        |   2 +
- arch/ia64/include/uapi/asm/Kbuild   |   2 +
- arch/ia64/include/uapi/asm/unistd.h | 330 +----------------------------------
- arch/ia64/kernel/syscall.S          | 339 +-----------------------------------
- 5 files changed, 17 insertions(+), 659 deletions(-)
+However, it is just moving the complexity around
+from Makefiles to the core build scripts, after all.
 
-diff --git a/arch/ia64/Makefile b/arch/ia64/Makefile
-index 45f5980..320d86f 100644
---- a/arch/ia64/Makefile
-+++ b/arch/ia64/Makefile
-@@ -80,6 +80,9 @@ unwcheck: vmlinux
- archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
- 
-+archheaders:
-+	$(Q)$(MAKE) $(build)=arch/ia64/kernel/syscalls all
-+
- CLEAN_FILES += vmlinux.gz bootloader
- 
- boot:	lib/lib.a vmlinux
-diff --git a/arch/ia64/include/asm/Kbuild b/arch/ia64/include/asm/Kbuild
-index 557bbc8..6e11673 100644
---- a/arch/ia64/include/asm/Kbuild
-+++ b/arch/ia64/include/asm/Kbuild
-@@ -7,3 +7,5 @@ generic-y += preempt.h
- generic-y += trace_clock.h
- generic-y += vtime.h
- generic-y += word-at-a-time.h
-+
-+generated-y += syscall_table.h
-\ No newline at end of file
-diff --git a/arch/ia64/include/uapi/asm/Kbuild b/arch/ia64/include/uapi/asm/Kbuild
-index 3982e67..ce14b40 100644
---- a/arch/ia64/include/uapi/asm/Kbuild
-+++ b/arch/ia64/include/uapi/asm/Kbuild
-@@ -8,3 +8,5 @@ generic-y += msgbuf.h
- generic-y += poll.h
- generic-y += sembuf.h
- generic-y += shmbuf.h
-+
-+generated-y += unistd_64.h
-\ No newline at end of file
-diff --git a/arch/ia64/include/uapi/asm/unistd.h b/arch/ia64/include/uapi/asm/unistd.h
-index b96ca91..c6f33bc 100644
---- a/arch/ia64/include/uapi/asm/unistd.h
-+++ b/arch/ia64/include/uapi/asm/unistd.h
-@@ -14,334 +14,6 @@
- #define __BREAK_SYSCALL	__IA64_BREAK_SYSCALL
- 
- #define __NR_Linux      1024
--#define __NR_ni_syscall	(__NR_Linux + 0)
--#define __NR_exit	(__NR_Linux + 1)
--#define __NR_read	(__NR_Linux + 2)
--#define __NR_write	(__NR_Linux + 3)
--#define __NR_open	(__NR_Linux + 4)
--#define __NR_close	(__NR_Linux + 5)
--#define __NR_creat	(__NR_Linux + 6)
--#define __NR_link	(__NR_Linux + 7)
--#define __NR_unlink	(__NR_Linux + 8)
--#define __NR_execve	(__NR_Linux + 9)
--#define __NR_chdir	(__NR_Linux + 10)
--#define __NR_fchdir	(__NR_Linux + 11)
--#define __NR_utimes	(__NR_Linux + 12)
--#define __NR_mknod	(__NR_Linux + 13)
--#define __NR_chmod	(__NR_Linux + 14)
--#define __NR_chown	(__NR_Linux + 15)
--#define __NR_lseek	(__NR_Linux + 16)
--#define __NR_getpid	(__NR_Linux + 17)
--#define __NR_getppid	(__NR_Linux + 18)
--#define __NR_mount	(__NR_Linux + 19)
--#define __NR_umount	(__NR_Linux + 20)
--#define __NR_setuid	(__NR_Linux + 21)
--#define __NR_getuid	(__NR_Linux + 22)
--#define __NR_geteuid	(__NR_Linux + 23)
--#define __NR_ptrace	(__NR_Linux + 24)
--#define __NR_access	(__NR_Linux + 25)
--#define __NR_sync	(__NR_Linux + 26)
--#define __NR_fsync	(__NR_Linux + 27)
--#define __NR_fdatasync	(__NR_Linux + 28)
--#define __NR_kill	(__NR_Linux + 29)
--#define __NR_rename	(__NR_Linux + 30)
--#define __NR_mkdir	(__NR_Linux + 31)
--#define __NR_rmdir	(__NR_Linux + 32)
--#define __NR_dup	(__NR_Linux + 33)
--#define __NR_pipe	(__NR_Linux + 34)
--#define __NR_times	(__NR_Linux + 35)
--#define __NR_brk	(__NR_Linux + 36)
--#define __NR_setgid	(__NR_Linux + 37)
--#define __NR_getgid	(__NR_Linux + 38)
--#define __NR_getegid	(__NR_Linux + 39)
--#define __NR_acct	(__NR_Linux + 40)
--#define __NR_ioctl	(__NR_Linux + 41)
--#define __NR_fcntl	(__NR_Linux + 42)
--#define __NR_umask	(__NR_Linux + 43)
--#define __NR_chroot	(__NR_Linux + 44)
--#define __NR_ustat	(__NR_Linux + 45)
--#define __NR_dup2	(__NR_Linux + 46)
--#define __NR_setreuid	(__NR_Linux + 47)
--#define __NR_setregid	(__NR_Linux + 48)
--#define __NR_getresuid	(__NR_Linux + 49)
--#define __NR_setresuid	(__NR_Linux + 50)
--#define __NR_getresgid	(__NR_Linux + 51)
--#define __NR_setresgid	(__NR_Linux + 52)
--#define __NR_getgroups	(__NR_Linux + 53)
--#define __NR_setgroups	(__NR_Linux + 54)
--#define __NR_getpgid	(__NR_Linux + 55)
--#define __NR_setpgid	(__NR_Linux + 56)
--#define __NR_setsid	(__NR_Linux + 57)
--#define __NR_getsid	(__NR_Linux + 58)
--#define __NR_sethostname	(__NR_Linux + 59)
--#define __NR_setrlimit	(__NR_Linux + 60)
--#define __NR_getrlimit	(__NR_Linux + 61)
--#define __NR_getrusage	(__NR_Linux + 62)
--#define __NR_gettimeofday	(__NR_Linux + 63)
--#define __NR_settimeofday	(__NR_Linux + 64)
--#define __NR_select	(__NR_Linux + 65)
--#define __NR_poll	(__NR_Linux + 66)
--#define __NR_symlink	(__NR_Linux + 67)
--#define __NR_readlink	(__NR_Linux + 68)
--#define __NR_uselib	(__NR_Linux + 69)
--#define __NR_swapon	(__NR_Linux + 70)
--#define __NR_swapoff	(__NR_Linux + 71)
--#define __NR_reboot	(__NR_Linux + 72)
--#define __NR_truncate	(__NR_Linux + 73)
--#define __NR_ftruncate	(__NR_Linux + 74)
--#define __NR_fchmod	(__NR_Linux + 75)
--#define __NR_fchown	(__NR_Linux + 76)
--#define __NR_getpriority	(__NR_Linux + 77)
--#define __NR_setpriority	(__NR_Linux + 78)
--#define __NR_statfs	(__NR_Linux + 79)
--#define __NR_fstatfs	(__NR_Linux + 80)
--#define __NR_gettid	(__NR_Linux + 81)
--#define __NR_semget	(__NR_Linux + 82)
--#define __NR_semop	(__NR_Linux + 83)
--#define __NR_semctl	(__NR_Linux + 84)
--#define __NR_msgget	(__NR_Linux + 85)
--#define __NR_msgsnd	(__NR_Linux + 86)
--#define __NR_msgrcv	(__NR_Linux + 87)
--#define __NR_msgctl	(__NR_Linux + 88)
--#define __NR_shmget	(__NR_Linux + 89)
--#define __NR_shmat	(__NR_Linux + 90)
--#define __NR_shmdt	(__NR_Linux + 91)
--#define __NR_shmctl	(__NR_Linux + 92)
--/* also known as klogctl() in GNU libc: */
--#define __NR_syslog	(__NR_Linux + 93)
--#define __NR_setitimer	(__NR_Linux + 94)
--#define __NR_getitimer	(__NR_Linux + 95)
--/* 1120 was __NR_old_stat */
--/* 1121 was __NR_old_lstat */
--/* 1122 was __NR_old_fstat */
--#define __NR_vhangup	(__NR_Linux + 99)
--#define __NR_lchown	(__NR_Linux + 100)
--#define __NR_remap_file_pages	(__NR_Linux + 101)
--#define __NR_wait4	(__NR_Linux + 102)
--#define __NR_sysinfo	(__NR_Linux + 103)
--#define __NR_clone	(__NR_Linux + 104)
--#define __NR_setdomainname	(__NR_Linux + 105)
--#define __NR_uname	(__NR_Linux + 106)
--#define __NR_adjtimex	(__NR_Linux + 107)
--/* 1132 was __NR_create_module */
--#define __NR_init_module	(__NR_Linux + 109)
--#define __NR_delete_module	(__NR_Linux + 110)
--/* 1135 was __NR_get_kernel_syms */
--/* 1136 was __NR_query_module */
--#define __NR_quotactl	(__NR_Linux + 113)
--#define __NR_bdflush	(__NR_Linux + 114)
--#define __NR_sysfs	(__NR_Linux + 115)
--#define __NR_personality	(__NR_Linux + 116)
--#define __NR_afs_syscall	(__NR_Linux + 117)
--#define __NR_setfsuid	(__NR_Linux + 118)
--#define __NR_setfsgid	(__NR_Linux + 119)
--#define __NR_getdents	(__NR_Linux + 120)
--#define __NR_flock	(__NR_Linux + 121)
--#define __NR_readv	(__NR_Linux + 122)
--#define __NR_writev	(__NR_Linux + 123)
--#define __NR_pread64	(__NR_Linux + 124)
--#define __NR_pwrite64	(__NR_Linux + 125)
--#define __NR__sysctl	(__NR_Linux + 126)
--#define __NR_mmap	(__NR_Linux + 127)
--#define __NR_munmap	(__NR_Linux + 128)
--#define __NR_mlock	(__NR_Linux + 129)
--#define __NR_mlockall	(__NR_Linux + 130)
--#define __NR_mprotect	(__NR_Linux + 131)
--#define __NR_mremap	(__NR_Linux + 132)
--#define __NR_msync	(__NR_Linux + 133)
--#define __NR_munlock	(__NR_Linux + 134)
--#define __NR_munlockall	(__NR_Linux + 135)
--#define __NR_sched_getparam	(__NR_Linux + 136)
--#define __NR_sched_setparam	(__NR_Linux + 137)
--#define __NR_sched_getscheduler	(__NR_Linux + 138)
--#define __NR_sched_setscheduler	(__NR_Linux + 139)
--#define __NR_sched_yield	(__NR_Linux + 140)
--#define __NR_sched_get_priority_max	(__NR_Linux + 141)
--#define __NR_sched_get_priority_min	(__NR_Linux + 142)
--#define __NR_sched_rr_get_interval	(__NR_Linux + 143)
--#define __NR_nanosleep	(__NR_Linux + 144)
--#define __NR_nfsservctl	(__NR_Linux + 145)
--#define __NR_prctl	(__NR_Linux + 146)
--/* 1171 is reserved for backwards compatibility with old __NR_getpagesize */
--#define __NR_mmap2	(__NR_Linux + 148)
--#define __NR_pciconfig_read	(__NR_Linux + 149)
--#define __NR_pciconfig_write	(__NR_Linux + 150)
--#define __NR_perfmonctl	(__NR_Linux + 151)
--#define __NR_sigaltstack	(__NR_Linux + 152)
--#define __NR_rt_sigaction	(__NR_Linux + 153)
--#define __NR_rt_sigpending	(__NR_Linux + 154)
--#define __NR_rt_sigprocmask	(__NR_Linux + 155)
--#define __NR_rt_sigqueueinfo	(__NR_Linux + 156)
--#define __NR_rt_sigreturn	(__NR_Linux + 157)
--#define __NR_rt_sigsuspend	(__NR_Linux + 158)
--#define __NR_rt_sigtimedwait	(__NR_Linux + 159)
--#define __NR_getcwd	(__NR_Linux + 160)
--#define __NR_capget	(__NR_Linux + 161)
--#define __NR_capset	(__NR_Linux + 162)
--#define __NR_sendfile	(__NR_Linux + 163)
--#define __NR_getpmsg	(__NR_Linux + 164)
--#define __NR_putpmsg	(__NR_Linux + 165)
--#define __NR_socket	(__NR_Linux + 166)
--#define __NR_bind	(__NR_Linux + 167)
--#define __NR_connect	(__NR_Linux + 168)
--#define __NR_listen	(__NR_Linux + 169)
--#define __NR_accept	(__NR_Linux + 170)
--#define __NR_getsockname	(__NR_Linux + 171)
--#define __NR_getpeername	(__NR_Linux + 172)
--#define __NR_socketpair	(__NR_Linux + 173)
--#define __NR_send	(__NR_Linux + 174)
--#define __NR_sendto	(__NR_Linux + 175)
--#define __NR_recv	(__NR_Linux + 176)
--#define __NR_recvfrom	(__NR_Linux + 177)
--#define __NR_shutdown	(__NR_Linux + 178)
--#define __NR_setsockopt	(__NR_Linux + 179)
--#define __NR_getsockopt	(__NR_Linux + 180)
--#define __NR_sendmsg	(__NR_Linux + 181)
--#define __NR_recvmsg	(__NR_Linux + 182)
--#define __NR_pivot_root	(__NR_Linux + 183)
--#define __NR_mincore	(__NR_Linux + 184)
--#define __NR_madvise	(__NR_Linux + 185)
--#define __NR_stat	(__NR_Linux + 186)
--#define __NR_lstat	(__NR_Linux + 187)
--#define __NR_fstat	(__NR_Linux + 188)
--#define __NR_clone2	(__NR_Linux + 189)
--#define __NR_getdents64	(__NR_Linux + 190)
--#define __NR_getunwind	(__NR_Linux + 191)
--#define __NR_readahead	(__NR_Linux + 192)
--#define __NR_setxattr	(__NR_Linux + 193)
--#define __NR_lsetxattr	(__NR_Linux + 194)
--#define __NR_fsetxattr	(__NR_Linux + 195)
--#define __NR_getxattr	(__NR_Linux + 196)
--#define __NR_lgetxattr	(__NR_Linux + 197)
--#define __NR_fgetxattr	(__NR_Linux + 198)
--#define __NR_listxattr	(__NR_Linux + 199)
--#define __NR_llistxattr	(__NR_Linux + 200)
--#define __NR_flistxattr	(__NR_Linux + 201)
--#define __NR_removexattr	(__NR_Linux + 202)
--#define __NR_lremovexattr	(__NR_Linux + 203)
--#define __NR_fremovexattr	(__NR_Linux + 204)
--#define __NR_tkill	(__NR_Linux + 205)
--#define __NR_futex	(__NR_Linux + 206)
--#define __NR_sched_setaffinity	(__NR_Linux + 207)
--#define __NR_sched_getaffinity	(__NR_Linux + 208)
--#define __NR_set_tid_address	(__NR_Linux + 209)
--#define __NR_fadvise64	(__NR_Linux + 210)
--#define __NR_tgkill	(__NR_Linux + 211)
--#define __NR_exit_group	(__NR_Linux + 212)
--#define __NR_lookup_dcookie	(__NR_Linux + 213)
--#define __NR_io_setup	(__NR_Linux + 214)
--#define __NR_io_destroy	(__NR_Linux + 215)
--#define __NR_io_getevents	(__NR_Linux + 216)
--#define __NR_io_submit	(__NR_Linux + 217)
--#define __NR_io_cancel	(__NR_Linux + 218)
--#define __NR_epoll_create	(__NR_Linux + 219)
--#define __NR_epoll_ctl	(__NR_Linux + 220)
--#define __NR_epoll_wait	(__NR_Linux + 221)
--#define __NR_restart_syscall	(__NR_Linux + 222)
--#define __NR_semtimedop	(__NR_Linux + 223)
--#define __NR_timer_create	(__NR_Linux + 224)
--#define __NR_timer_settime	(__NR_Linux + 225)
--#define __NR_timer_gettime	(__NR_Linux + 226)
--#define __NR_timer_getoverrun	(__NR_Linux + 227)
--#define __NR_timer_delete	(__NR_Linux + 228)
--#define __NR_clock_settime	(__NR_Linux + 229)
--#define __NR_clock_gettime	(__NR_Linux + 230)
--#define __NR_clock_getres	(__NR_Linux + 231)
--#define __NR_clock_nanosleep	(__NR_Linux + 232)
--#define __NR_fstatfs64	(__NR_Linux + 233)
--#define __NR_statfs64	(__NR_Linux + 234)
--#define __NR_mbind	(__NR_Linux + 235)
--#define __NR_get_mempolicy	(__NR_Linux + 236)
--#define __NR_set_mempolicy	(__NR_Linux + 237)
--#define __NR_mq_open	(__NR_Linux + 238)
--#define __NR_mq_unlink	(__NR_Linux + 239)
--#define __NR_mq_timedsend	(__NR_Linux + 240)
--#define __NR_mq_timedreceive	(__NR_Linux + 241)
--#define __NR_mq_notify	(__NR_Linux + 242)
--#define __NR_mq_getsetattr	(__NR_Linux + 243)
--#define __NR_kexec_load	(__NR_Linux + 244)
--#define __NR_vserver	(__NR_Linux + 245)
--#define __NR_waitid	(__NR_Linux + 246)
--#define __NR_add_key	(__NR_Linux + 247)
--#define __NR_request_key	(__NR_Linux + 248)
--#define __NR_keyctl	(__NR_Linux + 249)
--#define __NR_ioprio_set	(__NR_Linux + 250)
--#define __NR_ioprio_get	(__NR_Linux + 251)
--#define __NR_move_pages	(__NR_Linux + 252)
--#define __NR_inotify_init	(__NR_Linux + 253)
--#define __NR_inotify_add_watch	(__NR_Linux + 254)
--#define __NR_inotify_rm_watch	(__NR_Linux + 255)
--#define __NR_migrate_pages	(__NR_Linux + 256)
--#define __NR_openat	(__NR_Linux + 257)
--#define __NR_mkdirat	(__NR_Linux + 258)
--#define __NR_mknodat	(__NR_Linux + 259)
--#define __NR_fchownat	(__NR_Linux + 260)
--#define __NR_futimesat	(__NR_Linux + 261)
--#define __NR_newfstatat	(__NR_Linux + 262)
--#define __NR_unlinkat	(__NR_Linux + 263)
--#define __NR_renameat	(__NR_Linux + 264)
--#define __NR_linkat	(__NR_Linux + 265)
--#define __NR_symlinkat	(__NR_Linux + 266)
--#define __NR_readlinkat	(__NR_Linux + 267)
--#define __NR_fchmodat	(__NR_Linux + 268)
--#define __NR_faccessat	(__NR_Linux + 269)
--#define __NR_pselect6	(__NR_Linux + 270)
--#define __NR_ppoll	(__NR_Linux + 271)
--#define __NR_unshare	(__NR_Linux + 272)
--#define __NR_splice	(__NR_Linux + 273)
--#define __NR_set_robust_list	(__NR_Linux + 274)
--#define __NR_get_robust_list	(__NR_Linux + 275)
--#define __NR_sync_file_range	(__NR_Linux + 276)
--#define __NR_tee	(__NR_Linux + 277)
--#define __NR_vmsplice	(__NR_Linux + 278)
--#define __NR_fallocate	(__NR_Linux + 279)
--#define __NR_getcpu	(__NR_Linux + 280)
--#define __NR_epoll_pwait	(__NR_Linux + 281)
--#define __NR_utimensat	(__NR_Linux + 282)
--#define __NR_signalfd	(__NR_Linux + 283)
--#define __NR_timerfd	(__NR_Linux + 284)
--#define __NR_eventfd	(__NR_Linux + 285)
--#define __NR_timerfd_create	(__NR_Linux + 286)
--#define __NR_timerfd_settime	(__NR_Linux + 287)
--#define __NR_timerfd_gettime	(__NR_Linux + 288)
--#define __NR_signalfd4	(__NR_Linux + 289)
--#define __NR_eventfd2	(__NR_Linux + 290)
--#define __NR_epoll_create1	(__NR_Linux + 291)
--#define __NR_dup3	(__NR_Linux + 292)
--#define __NR_pipe2	(__NR_Linux + 293)
--#define __NR_inotify_init1	(__NR_Linux + 294)
--#define __NR_preadv	(__NR_Linux + 295)
--#define __NR_pwritev	(__NR_Linux + 296)
--#define __NR_rt_tgsigqueueinfo	(__NR_Linux + 297)
--#define __NR_recvmmsg	(__NR_Linux + 298)
--#define __NR_fanotify_init	(__NR_Linux + 299)
--#define __NR_fanotify_mark	(__NR_Linux + 300)
--#define __NR_prlimit64	(__NR_Linux + 301)
--#define __NR_name_to_handle_at	(__NR_Linux + 302)
--#define __NR_open_by_handle_at	(__NR_Linux + 303)
--#define __NR_clock_adjtime	(__NR_Linux + 304)
--#define __NR_syncfs	(__NR_Linux + 305)
--#define __NR_setns	(__NR_Linux + 306)
--#define __NR_sendmmsg	(__NR_Linux + 307)
--#define __NR_process_vm_readv	(__NR_Linux + 308)
--#define __NR_process_vm_writev	(__NR_Linux + 309)
--#define __NR_accept4	(__NR_Linux + 310)
--#define __NR_finit_module	(__NR_Linux + 311)
--#define __NR_sched_setattr	(__NR_Linux + 312)
--#define __NR_sched_getattr	(__NR_Linux + 313)
--#define __NR_renameat2	(__NR_Linux + 314)
--#define __NR_getrandom	(__NR_Linux + 315)
--#define __NR_memfd_create	(__NR_Linux + 316)
--#define __NR_bpf	(__NR_Linux + 317)
--#define __NR_execveat	(__NR_Linux + 318)
--#define __NR_userfaultfd	(__NR_Linux + 319)
--#define __NR_membarrier	(__NR_Linux + 320)
--#define __NR_kcmp	(__NR_Linux + 321)
--#define __NR_mlock2	(__NR_Linux + 322)
--#define __NR_copy_file_range	(__NR_Linux + 323)
--#define __NR_preadv2	(__NR_Linux + 324)
--#define __NR_pwritev2	(__NR_Linux + 325)
--
--#define __NR_syscalls	326 /* length of syscall table */
-+#include <asm/unistd_64.h>
- 
- #endif /* _UAPI_ASM_IA64_UNISTD_H */
-diff --git a/arch/ia64/kernel/syscall.S b/arch/ia64/kernel/syscall.S
-index 970e0e6..06bfa9a 100644
---- a/arch/ia64/kernel/syscall.S
-+++ b/arch/ia64/kernel/syscall.S
-@@ -1,334 +1,13 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- 
--	.rodata
--	.align 8
--	.globl sys_call_table
-+.rodata
-+.align 8
-+.globl sys_call_table
-+#include <asm/unistd.h>
-+
-+#define __SYSCALL(nr, entry, nargs) data8 entry
-+
- sys_call_table:
--	data8 sys_ni_syscall		//  This must be sys_ni_syscall!  See ivt.S.
--	data8 sys_exit				// 1025
--	data8 sys_read
--	data8 sys_write
--	data8 sys_open
--	data8 sys_close
--	data8 sys_creat				// 1030
--	data8 sys_link
--	data8 sys_unlink
--	data8 ia64_execve
--	data8 sys_chdir
--	data8 sys_fchdir			// 1035
--	data8 sys_utimes
--	data8 sys_mknod
--	data8 sys_chmod
--	data8 sys_chown
--	data8 sys_lseek				// 1040
--	data8 sys_getpid
--	data8 sys_getppid
--	data8 sys_mount
--	data8 sys_umount
--	data8 sys_setuid			// 1045
--	data8 sys_getuid
--	data8 sys_geteuid
--	data8 sys_ptrace
--	data8 sys_access
--	data8 sys_sync				// 1050
--	data8 sys_fsync
--	data8 sys_fdatasync
--	data8 sys_kill
--	data8 sys_rename
--	data8 sys_mkdir				// 1055
--	data8 sys_rmdir
--	data8 sys_dup
--	data8 sys_ia64_pipe
--	data8 sys_times
--	data8 ia64_brk				// 1060
--	data8 sys_setgid
--	data8 sys_getgid
--	data8 sys_getegid
--	data8 sys_acct
--	data8 sys_ioctl				// 1065
--	data8 sys_fcntl
--	data8 sys_umask
--	data8 sys_chroot
--	data8 sys_ustat
--	data8 sys_dup2				// 1070
--	data8 sys_setreuid
--	data8 sys_setregid
--	data8 sys_getresuid
--	data8 sys_setresuid
--	data8 sys_getresgid			// 1075
--	data8 sys_setresgid
--	data8 sys_getgroups
--	data8 sys_setgroups
--	data8 sys_getpgid
--	data8 sys_setpgid			// 1080
--	data8 sys_setsid
--	data8 sys_getsid
--	data8 sys_sethostname
--	data8 sys_setrlimit
--	data8 sys_getrlimit			// 1085
--	data8 sys_getrusage
--	data8 sys_gettimeofday
--	data8 sys_settimeofday
--	data8 sys_select
--	data8 sys_poll				// 1090
--	data8 sys_symlink
--	data8 sys_readlink
--	data8 sys_uselib
--	data8 sys_swapon
--	data8 sys_swapoff			// 1095
--	data8 sys_reboot
--	data8 sys_truncate
--	data8 sys_ftruncate
--	data8 sys_fchmod
--	data8 sys_fchown			// 1100
--	data8 ia64_getpriority
--	data8 sys_setpriority
--	data8 sys_statfs
--	data8 sys_fstatfs
--	data8 sys_gettid			// 1105
--	data8 sys_semget
--	data8 sys_semop
--	data8 sys_semctl
--	data8 sys_msgget
--	data8 sys_msgsnd			// 1110
--	data8 sys_msgrcv
--	data8 sys_msgctl
--	data8 sys_shmget
--	data8 sys_shmat
--	data8 sys_shmdt				// 1115
--	data8 sys_shmctl
--	data8 sys_syslog
--	data8 sys_setitimer
--	data8 sys_getitimer
--	data8 sys_ni_syscall			// 1120		/* was: ia64_oldstat */
--	data8 sys_ni_syscall					/* was: ia64_oldlstat */
--	data8 sys_ni_syscall					/* was: ia64_oldfstat */
--	data8 sys_vhangup
--	data8 sys_lchown
--	data8 sys_remap_file_pages		// 1125
--	data8 sys_wait4
--	data8 sys_sysinfo
--	data8 sys_clone
--	data8 sys_setdomainname
--	data8 sys_newuname			// 1130
--	data8 sys_adjtimex
--	data8 sys_ni_syscall					/* was: ia64_create_module */
--	data8 sys_init_module
--	data8 sys_delete_module
--	data8 sys_ni_syscall			// 1135		/* was: sys_get_kernel_syms */
--	data8 sys_ni_syscall					/* was: sys_query_module */
--	data8 sys_quotactl
--	data8 sys_bdflush
--	data8 sys_sysfs
--	data8 sys_personality			// 1140
--	data8 sys_ni_syscall		// sys_afs_syscall
--	data8 sys_setfsuid
--	data8 sys_setfsgid
--	data8 sys_getdents
--	data8 sys_flock				// 1145
--	data8 sys_readv
--	data8 sys_writev
--	data8 sys_pread64
--	data8 sys_pwrite64
--	data8 sys_sysctl			// 1150
--	data8 sys_mmap
--	data8 sys_munmap
--	data8 sys_mlock
--	data8 sys_mlockall
--	data8 sys_mprotect			// 1155
--	data8 ia64_mremap
--	data8 sys_msync
--	data8 sys_munlock
--	data8 sys_munlockall
--	data8 sys_sched_getparam		// 1160
--	data8 sys_sched_setparam
--	data8 sys_sched_getscheduler
--	data8 sys_sched_setscheduler
--	data8 sys_sched_yield
--	data8 sys_sched_get_priority_max	// 1165
--	data8 sys_sched_get_priority_min
--	data8 sys_sched_rr_get_interval
--	data8 sys_nanosleep
--	data8 sys_ni_syscall			// old nfsservctl
--	data8 sys_prctl				// 1170
--	data8 sys_getpagesize
--	data8 sys_mmap2
--	data8 sys_pciconfig_read
--	data8 sys_pciconfig_write
--	data8 sys_perfmonctl			// 1175
--	data8 sys_sigaltstack
--	data8 sys_rt_sigaction
--	data8 sys_rt_sigpending
--	data8 sys_rt_sigprocmask
--	data8 sys_rt_sigqueueinfo		// 1180
--	data8 sys_rt_sigreturn
--	data8 sys_rt_sigsuspend
--	data8 sys_rt_sigtimedwait
--	data8 sys_getcwd
--	data8 sys_capget			// 1185
--	data8 sys_capset
--	data8 sys_sendfile64
--	data8 sys_ni_syscall		// sys_getpmsg (STREAMS)
--	data8 sys_ni_syscall		// sys_putpmsg (STREAMS)
--	data8 sys_socket			// 1190
--	data8 sys_bind
--	data8 sys_connect
--	data8 sys_listen
--	data8 sys_accept
--	data8 sys_getsockname			// 1195
--	data8 sys_getpeername
--	data8 sys_socketpair
--	data8 sys_send
--	data8 sys_sendto
--	data8 sys_recv				// 1200
--	data8 sys_recvfrom
--	data8 sys_shutdown
--	data8 sys_setsockopt
--	data8 sys_getsockopt
--	data8 sys_sendmsg			// 1205
--	data8 sys_recvmsg
--	data8 sys_pivot_root
--	data8 sys_mincore
--	data8 sys_madvise
--	data8 sys_newstat			// 1210
--	data8 sys_newlstat
--	data8 sys_newfstat
--	data8 sys_clone2
--	data8 sys_getdents64
--	data8 sys_getunwind			// 1215
--	data8 sys_readahead
--	data8 sys_setxattr
--	data8 sys_lsetxattr
--	data8 sys_fsetxattr
--	data8 sys_getxattr			// 1220
--	data8 sys_lgetxattr
--	data8 sys_fgetxattr
--	data8 sys_listxattr
--	data8 sys_llistxattr
--	data8 sys_flistxattr			// 1225
--	data8 sys_removexattr
--	data8 sys_lremovexattr
--	data8 sys_fremovexattr
--	data8 sys_tkill
--	data8 sys_futex				// 1230
--	data8 sys_sched_setaffinity
--	data8 sys_sched_getaffinity
--	data8 sys_set_tid_address
--	data8 sys_fadvise64_64
--	data8 sys_tgkill 			// 1235
--	data8 sys_exit_group
--	data8 sys_lookup_dcookie
--	data8 sys_io_setup
--	data8 sys_io_destroy
--	data8 sys_io_getevents			// 1240
--	data8 sys_io_submit
--	data8 sys_io_cancel
--	data8 sys_epoll_create
--	data8 sys_epoll_ctl
--	data8 sys_epoll_wait			// 1245
--	data8 sys_restart_syscall
--	data8 sys_semtimedop
--	data8 sys_timer_create
--	data8 sys_timer_settime
--	data8 sys_timer_gettime			// 1250
--	data8 sys_timer_getoverrun
--	data8 sys_timer_delete
--	data8 sys_clock_settime
--	data8 sys_clock_gettime
--	data8 sys_clock_getres			// 1255
--	data8 sys_clock_nanosleep
--	data8 sys_fstatfs64
--	data8 sys_statfs64
--	data8 sys_mbind
--	data8 sys_get_mempolicy			// 1260
--	data8 sys_set_mempolicy
--	data8 sys_mq_open
--	data8 sys_mq_unlink
--	data8 sys_mq_timedsend
--	data8 sys_mq_timedreceive		// 1265
--	data8 sys_mq_notify
--	data8 sys_mq_getsetattr
--	data8 sys_kexec_load
--	data8 sys_ni_syscall			// reserved for vserver
--	data8 sys_waitid			// 1270
--	data8 sys_add_key
--	data8 sys_request_key
--	data8 sys_keyctl
--	data8 sys_ioprio_set
--	data8 sys_ioprio_get			// 1275
--	data8 sys_move_pages
--	data8 sys_inotify_init
--	data8 sys_inotify_add_watch
--	data8 sys_inotify_rm_watch
--	data8 sys_migrate_pages			// 1280
--	data8 sys_openat
--	data8 sys_mkdirat
--	data8 sys_mknodat
--	data8 sys_fchownat
--	data8 sys_futimesat			// 1285
--	data8 sys_newfstatat
--	data8 sys_unlinkat
--	data8 sys_renameat
--	data8 sys_linkat
--	data8 sys_symlinkat			// 1290
--	data8 sys_readlinkat
--	data8 sys_fchmodat
--	data8 sys_faccessat
--	data8 sys_pselect6
--	data8 sys_ppoll				// 1295
--	data8 sys_unshare
--	data8 sys_splice
--	data8 sys_set_robust_list
--	data8 sys_get_robust_list
--	data8 sys_sync_file_range		// 1300
--	data8 sys_tee
--	data8 sys_vmsplice
--	data8 sys_fallocate
--	data8 sys_getcpu
--	data8 sys_epoll_pwait			// 1305
--	data8 sys_utimensat
--	data8 sys_signalfd
--	data8 sys_ni_syscall
--	data8 sys_eventfd
--	data8 sys_timerfd_create		// 1310
--	data8 sys_timerfd_settime
--	data8 sys_timerfd_gettime
--	data8 sys_signalfd4
--	data8 sys_eventfd2
--	data8 sys_epoll_create1			// 1315
--	data8 sys_dup3
--	data8 sys_pipe2
--	data8 sys_inotify_init1
--	data8 sys_preadv
--	data8 sys_pwritev			// 1320
--	data8 sys_rt_tgsigqueueinfo
--	data8 sys_recvmmsg
--	data8 sys_fanotify_init
--	data8 sys_fanotify_mark
--	data8 sys_prlimit64			// 1325
--	data8 sys_name_to_handle_at
--	data8 sys_open_by_handle_at
--	data8 sys_clock_adjtime
--	data8 sys_syncfs
--	data8 sys_setns				// 1330
--	data8 sys_sendmmsg
--	data8 sys_process_vm_readv
--	data8 sys_process_vm_writev
--	data8 sys_accept4
--	data8 sys_finit_module			// 1335
--	data8 sys_sched_setattr
--	data8 sys_sched_getattr
--	data8 sys_renameat2
--	data8 sys_getrandom
--	data8 sys_memfd_create			// 1340
--	data8 sys_bpf
--	data8 sys_execveat
--	data8 sys_userfaultfd
--	data8 sys_membarrier
--	data8 sys_kcmp				// 1345
--	data8 sys_mlock2
--	data8 sys_copy_file_range
--	data8 sys_preadv2
--	data8 sys_pwritev2
-+#include <asm/syscall_table.h>
- 
--	.org sys_call_table + 8*__NR_syscalls	// guard against failures to increase NR_syscalls
-+.org sys_call_table + 8*__NR_syscalls
+
+I guess the increase of build time is not too big,
+( 1 % or so for the incremental build of allmodconfig)
+but I do not like performing the second expansion for every directory
+to save some a few Makefiles.
+
+
+
+> Secondary expansion has been introduced with make 3.81, which is
+> minimal supported version by kbuild itself.
+>
+> Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+> ---
+>  scripts/Makefile.build | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
+>
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 514ed63ff571..97c6ece96cfb 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -70,6 +70,10 @@ $(warning kbuild: Makefile.build is included improperly)
+>  endif
+>
+>  # ===========================================================================
+> +# Allow to specify alternate source directory of target's implicit prerequisite
+> +# e.g. 'SRCDIR_cmdline.o := lib'
+
+
+This does not work for single targets.
+
+'make foo/bar/cmdline.o' works,
+but 'make foo/bar/cmdline.i' does not.
+
+
+> +.SECONDEXPANSION:
+> +srcdir := $$(if $$(SRCDIR_$$(@F)),$$(SRCDIR_$$(@F)),$(src))
+>
+
+
 -- 
-1.9.1
-
+Best Regards
+Masahiro Yamada
