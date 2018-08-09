@@ -2,130 +2,160 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB9EC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5932C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C6921509
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C6921509
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F798215FA
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:58:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F798215FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732636AbeHITVA (ORCPT
+        id S1732611AbeHITYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 15:21:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41014 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732435AbeHITVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 15:21:00 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79GsJ4x103404
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 12:55:16 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krq18f991-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:55:15 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Thu, 9 Aug 2018 12:55:14 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 12:55:10 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79Gt8sj11469188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 16:55:08 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87517AC059;
-        Thu,  9 Aug 2018 12:55:36 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F002DAC05B;
-        Thu,  9 Aug 2018 12:55:35 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 12:55:35 -0400 (EDT)
-Subject: Re: [PATCH v8 04/22] s390/zcrypt: Integrate ap_asm.h into
- include/asm/ap.h.
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180809110645.33b20c1f.cohuck@redhat.com>
- <10a23890-5ad4-38bd-aece-def5940fec89@linux.ibm.com>
- <20180809154336.GB4302@osiris>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Thu, 9 Aug 2018 12:55:07 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 9 Aug 2018 15:24:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732471AbeHITYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 15:24:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9571D40241C7;
+        Thu,  9 Aug 2018 16:58:23 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B89C321568A1;
+        Thu,  9 Aug 2018 16:58:22 +0000 (UTC)
+Date:   Thu, 9 Aug 2018 12:58:21 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     osalvador@techadventures.net, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
+ move it to offline_pages
+Message-ID: <20180809165821.GC3386@redhat.com>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <20180807133757.18352-3-osalvador@techadventures.net>
+ <20180807135221.GA3301@redhat.com>
+ <20180807145900.GH10003@dhcp22.suse.cz>
+ <20180807151810.GB3301@redhat.com>
+ <20180808064758.GB27972@dhcp22.suse.cz>
+ <20180808165814.GB3429@redhat.com>
+ <20180809082415.GB24884@dhcp22.suse.cz>
+ <20180809142709.GA3386@redhat.com>
+ <20180809150950.GB15611@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180809154336.GB4302@osiris>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080916-0068-0000-0000-000003264008
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009514; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01071355; UDB=6.00551676; IPR=6.00851032;
- MB=3.00022615; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-09 16:55:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080916-0069-0000-0000-00004555BBC1
-Message-Id: <74375e1e-b5c2-705c-e618-9b89889f61cf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=893 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090172
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180809150950.GB15611@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 09 Aug 2018 16:58:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 09 Aug 2018 16:58:23 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/09/2018 11:43 AM, Heiko Carstens wrote:
-> On Thu, Aug 09, 2018 at 11:18:05AM -0400, Tony Krowiak wrote:
->> On 08/09/2018 05:06 AM, Cornelia Huck wrote:
->>> On Wed,  8 Aug 2018 10:44:14 -0400
->>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->>>
->>>> From: Harald Freudenberger <freude@de.ibm.com>
->>>>
->>>> Move all the inline functions from the ap bus header
->>>> file ap_asm.h into the in-kernel api header file
->>>> arch/s390/include/asm/ap.h so that KVM can make use
->>>> of all the low level AP functions.
->>>>
->>>> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
->>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>> You should add your own s-o-b if you are sending on patches written by
->>> others (even if it does not matter in the end, when they are merged
->>> through a different path anyway.)
->> That's rather ironic given I was told in an internal review that I should
->> not sign off on patches I did not write.
-> Please point the one who said that to
-> Documentation/process/submitting-patches.rst / Developer's Certificate of Origin
->
-> You really should sign off patches you forward, even if you did not write
-> them on your own.
+On Thu, Aug 09, 2018 at 05:09:50PM +0200, Michal Hocko wrote:
+> On Thu 09-08-18 10:27:09, Jerome Glisse wrote:
+> > On Thu, Aug 09, 2018 at 10:24:15AM +0200, Michal Hocko wrote:
+> > > On Wed 08-08-18 12:58:15, Jerome Glisse wrote:
+> > > > On Wed, Aug 08, 2018 at 08:47:58AM +0200, Michal Hocko wrote:
+> > > > > On Tue 07-08-18 11:18:10, Jerome Glisse wrote:
+> > > > > > On Tue, Aug 07, 2018 at 04:59:00PM +0200, Michal Hocko wrote:
+> > > > > > > On Tue 07-08-18 09:52:21, Jerome Glisse wrote:
+> > > > > > > > On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
+> > > > > > > > > From: Oscar Salvador <osalvador@suse.de>
+> > > > > > > > 
+> > > > > > > > [...]
+> > > > > > > > 
+> > > > > > > > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > > > > > > > > index 9bd629944c91..e33555651e46 100644
+> > > > > > > > > --- a/mm/memory_hotplug.c
+> > > > > > > > > +++ b/mm/memory_hotplug.c
+> > > > > > > > 
+> > > > > > > > [...]
+> > > > > > > > 
+> > > > > > > > >  /**
+> > > > > > > > >   * __remove_pages() - remove sections of pages from a zone
+> > > > > > > > > - * @zone: zone from which pages need to be removed
+> > > > > > > > > + * @nid: node which pages belong to
+> > > > > > > > >   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
+> > > > > > > > >   * @nr_pages: number of pages to remove (must be multiple of section size)
+> > > > > > > > >   * @altmap: alternative device page map or %NULL if default memmap is used
+> > > > > > > > > @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
+> > > > > > > > >   * sure that pages are marked reserved and zones are adjust properly by
+> > > > > > > > >   * calling offline_pages().
+> > > > > > > > >   */
+> > > > > > > > > -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> > > > > > > > > +int __remove_pages(int nid, unsigned long phys_start_pfn,
+> > > > > > > > >  		 unsigned long nr_pages, struct vmem_altmap *altmap)
+> > > > > > > > >  {
+> > > > > > > > >  	unsigned long i;
+> > > > > > > > > @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> > > > > > > > >  	int sections_to_remove, ret = 0;
+> > > > > > > > >  
+> > > > > > > > >  	/* In the ZONE_DEVICE case device driver owns the memory region */
+> > > > > > > > > -	if (is_dev_zone(zone)) {
+> > > > > > > > > -		if (altmap)
+> > > > > > > > > -			map_offset = vmem_altmap_offset(altmap);
+> > > > > > > > > -	} else {
+> > > > > > > > > +	if (altmap)
+> > > > > > > > > +		map_offset = vmem_altmap_offset(altmap);
+> > > > > > > > > +	else {
+> > > > > > > > 
+> > > > > > > > This will break ZONE_DEVICE at least for HMM. While i think that
+> > > > > > > > altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
+> > > > > > > > is not true ie ZONE_DEVICE does not necessarily imply altmap. So
+> > > > > > > > with the above changes you change the expected behavior.
+> > > > > > > 
+> > > > > > > Could you be more specific what is the expected behavior here?
+> > > > > > > Is this about calling release_mem_region_adjustable? Why does is it not
+> > > > > > > suitable for zone device ranges?
+> > > > > > 
+> > > > > > Correct, you should not call release_mem_region_adjustable() the device
+> > > > > > region is not part of regular iomem resource as it might not necessarily
+> > > > > > be enumerated through known ways to the kernel (ie only the device driver
+> > > > > > can discover the region and core kernel do not know about it).
+> > > > > 
+> > > > > If there is no region registered with the range then the call should be
+> > > > > mere nop, no? So why do we have to special case?
+> > > > 
+> > > > IIRC this is because you can not release the resource ie the resource
+> > > > is still own by the device driver even if you hotremove the memory.
+> > > > The device driver might still be using the resource without struct page.
+> > > 
+> > > But then it seems to be a property of a device rather than zone_device,
+> > > no? If there are devices which want to preserve the resource then they
+> > > should tell that. Doing that unconditionally for all zone_device users
+> > > seems just wrong.
+> > 
+> > I am fine with changing that, i did not do that and at the time i did
+> > not have any feeling on that matter.
+> 
+> I would really prefer to be explicit about these requirements rather
+> than having subtle side effects quite deep in the memory hotplug code
+> and checks for zone device sprinkled at places for special handling.
 
-Duly noted and I will do so on future posts. Thanks for the reference.
+I agree, i never thought about that before. Looking at existing resource
+management i think the simplest solution would be to use a refcount on the
+resources instead of the IORESOURCE_BUSY flags.
 
+So when you release resource as part of hotremove you would only dec the
+refcount and a resource is not busy only when refcount is zero.
 
+Just the idea i had in mind. Right now i am working on other thing, Oscar
+is this something you would like to work on ? Feel free to come up with
+something better than my first idea :)
+
+Cheers,
+Jérôme
