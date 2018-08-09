@@ -5,52 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70375C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 899EBC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 209AB208FC
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:38:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209AB208FC
+	by mail.kernel.org (Postfix) with ESMTP id 3A1652151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 05:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A1652151B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbeHIIBn (ORCPT
+        id S1729555AbeHIICa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 04:01:43 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55218 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728152AbeHIIBm (ORCPT
+        Thu, 9 Aug 2018 04:02:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37752 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728267AbeHIICa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 04:01:42 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w795cWUW045168
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 01:38:37 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2krddpvb7q-1
+        Thu, 9 Aug 2018 04:02:30 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w795cYJF036880
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 01:39:25 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr9j8u8c3-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 01:38:37 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 01:39:25 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <frankja@linux.ibm.com>;
-        Thu, 9 Aug 2018 06:38:35 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 9 Aug 2018 06:39:22 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 06:38:34 +0100
+        Thu, 9 Aug 2018 06:39:19 +0100
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w795cWC038797356
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w795dI6W42401852
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 05:38:32 GMT
+        Thu, 9 Aug 2018 05:39:18 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15CFCAE053;
-        Thu,  9 Aug 2018 08:38:25 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 88765AE04D;
+        Thu,  9 Aug 2018 08:39:10 +0100 (BST)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9D87DAE051;
-        Thu,  9 Aug 2018 08:38:24 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 1AD88AE045;
+        Thu,  9 Aug 2018 08:39:10 +0100 (BST)
 Received: from [9.145.17.67] (unknown [9.145.17.67])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 08:38:24 +0100 (BST)
-Subject: Re: [PATCH RFC 1/2] KVM: s390: vsie: simulate VCPU SIE entry/exit
+        Thu,  9 Aug 2018 08:39:10 +0100 (BST)
+Subject: Re: [PATCH RFC 2/2] KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
 To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
 Cc:     linux-s390@vger.kernel.org,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
@@ -59,7 +59,7 @@ Cc:     linux-s390@vger.kernel.org,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Pierre Morel <pmorel@linux.ibm.com>
 References: <20180807125131.3606-1-david@redhat.com>
- <20180807125131.3606-2-david@redhat.com>
+ <20180807125131.3606-3-david@redhat.com>
 From:   Janosch Frank <frankja@linux.ibm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=frankja@linux.ibm.com; prefer-encrypt=mutual; keydata=
@@ -105,25 +105,25 @@ Autocrypt: addr=frankja@linux.ibm.com; prefer-encrypt=mutual; keydata=
  Pe50r3yPfdgbWIWzeWuLimNVTlbIZAi1Y0VIdCDbDQpXl2DDTB9zZw2yz0kRKxasMCAEsvlA
  CT0NLoyQplUjM1ir5e6QTwy9+v3niCCesupe7owsFfrg/YZsE9jCy8vWgdPjSnRJkwQqV2Fw
  lFM6NIuMAY1Y
-Date:   Thu, 9 Aug 2018 07:38:09 +0200
+Date:   Thu, 9 Aug 2018 07:39:17 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180807125131.3606-2-david@redhat.com>
+In-Reply-To: <20180807125131.3606-3-david@redhat.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="Kcz2sLgfm4jIbtJq1XcrqZtzPQdGv4GvC"
+ boundary="LI2TuzwusZUfbWhWtfdlLoJD2Q4qAdZ4v"
 X-TM-AS-GCONF: 00
-x-cbid: 18080905-0016-0000-0000-000001F4395A
+x-cbid: 18080905-4275-0000-0000-000002A73B03
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080905-0017-0000-0000-0000324A4A55
-Message-Id: <baab41cb-46fe-9335-9481-5fdb35b6f7e3@linux.ibm.com>
+x-cbparentid: 18080905-4276-0000-0000-000037B04746
+Message-Id: <c45051e1-7079-d401-25c7-5abe018b3473@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=641 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808090059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -131,8 +131,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Kcz2sLgfm4jIbtJq1XcrqZtzPQdGv4GvC
-Content-Type: multipart/mixed; boundary="EQ9E38gnVc3AMZClXlVXFj4VlAsXZ7lnv";
+--LI2TuzwusZUfbWhWtfdlLoJD2Q4qAdZ4v
+Content-Type: multipart/mixed; boundary="UcYEAsPsCSOLKUeJ8YlGsRIxrVibcp0Mu";
  protected-headers="v1"
 From: Janosch Frank <frankja@linux.ibm.com>
 To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
@@ -141,50 +141,42 @@ Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
  Cornelia Huck <cohuck@redhat.com>,
  Christian Borntraeger <borntraeger@de.ibm.com>,
  Pierre Morel <pmorel@linux.ibm.com>
-Message-ID: <baab41cb-46fe-9335-9481-5fdb35b6f7e3@linux.ibm.com>
-Subject: Re: [PATCH RFC 1/2] KVM: s390: vsie: simulate VCPU SIE entry/exit
+Message-ID: <c45051e1-7079-d401-25c7-5abe018b3473@linux.ibm.com>
+Subject: Re: [PATCH RFC 2/2] KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
 References: <20180807125131.3606-1-david@redhat.com>
- <20180807125131.3606-2-david@redhat.com>
-In-Reply-To: <20180807125131.3606-2-david@redhat.com>
+ <20180807125131.3606-3-david@redhat.com>
+In-Reply-To: <20180807125131.3606-3-david@redhat.com>
 
---EQ9E38gnVc3AMZClXlVXFj4VlAsXZ7lnv
+--UcYEAsPsCSOLKUeJ8YlGsRIxrVibcp0Mu
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
 On 07.08.2018 14:51, David Hildenbrand wrote:
-> VCPU requests and VCPU blocking right now don't take care of the vSIE
-> (as it was not necessary until now). But we want to have VCPU requests
-> that will also be handled before running the vSIE again.
->=20
-> So let's simulate a SIE entry when entering the vSIE loop and check
-> for PROG_ flags. The existing infrastructure (e.g. exit_sie()) will the=
-n
-> detect that the SIE (in form of the vSIE execution loop) is running and=
+> When we change the crycb (or execution controls), we also have to make =
+sure
+> that the vSIE shadow datastructures properly consider the changed
+> values before rerunning the vSIE. We can achieve that by simply using a=
 
-> properly kick the vSIE CPU, resulting in it leaving the vSIE loop and
-> therefore the vSIE interception handler, allowing it to handle VCPU
-> requests.
+> VCPU request now.
 >=20
-> E.g. if we want to modify the crycb of the VCPU and make sure that any
-> masks also get applied to the VSIE crycb shadow (which uses masks from =
-the
-> VCPU crycb), we will need a way to hinder the vSIE from running and mak=
+> This has to be a synchronous request (=3D=3D handled before entering th=
 e
-> sure to process the updated crycb before reentering the vSIE again.
+> (v)SIE again).
+>=20
+> The request will make sure that the vSIE handler is left, and that the
+> request will be processed (NOP), therefore forcing a reload of all
+> vSIE data (including rebuilding the crycb) when re-entering the vSIE
+> interception handler the next time.
 >=20
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Finally found some time:
 Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
-As the first user will be AP, I guess the patches will be queued with
-them. Thanks for helping out :)
 
+--UcYEAsPsCSOLKUeJ8YlGsRIxrVibcp0Mu--
 
---EQ9E38gnVc3AMZClXlVXFj4VlAsXZ7lnv--
-
---Kcz2sLgfm4jIbtJq1XcrqZtzPQdGv4GvC
+--LI2TuzwusZUfbWhWtfdlLoJD2Q4qAdZ4v
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -192,20 +184,20 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJba9NXAAoJEBcO/8Q8ZEV5I2gP/AhhzDUWI/0AXCS3GQUH24q5
-Vr2UDGO30f++Of4ZGbCNzyJ5mAKRGRf3QVJsGbC8oqHjyi2D7k3DpoKjI9l8wUIY
-X7p0+wWJhOEAOP0pPBpCbNqUkWQegmHSsYucbVt/rNnMzMkGxlT17CY7xtL9pKC1
-YPLqwNiEtqcMbSq6/qvMo4EAGUVIdnhsx+8XtYXQzYtvnHKy8ue5V3H04gn7YaRW
-zMfBVg51S5khCfQdxsae81r1QYVxlWwwtN+ujfnSS9YtEfY9P+zP1zieOB1LAgc6
-qYqYtnbF3gEqdIt80ojMtCPvCYcgIy9fflHlvqf23IsPMjADcjzxfGJeqc7IVUaF
-/FTv0JZ7PIWPy0eSjLY5IokWwSPeWlv1Gkjl0Ram+kRgJ3XHJ6xXwMg9YlO5C9IH
-d+AN2u/L8/7a4keF49jwa/0L8kK2/I8hk7pIsgNav9Ebsv/xV40CVejTywH1Hqsl
-Zcvi0oEOVd/IpfEbD9VqGyRO8HIWE2NPmEcoCi8hNX3VT3t2QihbYnQBq5cAkIN1
-UKj5z4HRhWUgFdBfVWlAT4DIYkSQezwnJye3ELrOIRvvRHUwOIKllvMg8upHiEFB
-ykP4usICgHFBZRnxpjzVmgGqwrhX/cAUwZbrs/bjKe9rGxcAUgJVKC+11tUK4KGq
-MCVU0DzVSaOSi8X/w256
-=C6OM
+iQIcBAEBCAAGBQJba9OFAAoJEBcO/8Q8ZEV5r64QAKbsDqYeCxoubtvgqJt0xjfJ
+vDzBt3E7/8+P3UoLFQnerBwWpWuWT6XsIr9ET4cR6Lrc5kfhsPAt5izSJvX86UB8
+XX1vKOHfToChMmsFzDtX70N1UEEGTwqMsOJK/X2dIg0dca8VL3hcM3/KIGTHSUbb
++wnc+Xu+YP88gfox/YYIH6mam/frqvv7nlQ+iLSzPDrs4gnOep2K2hrIou9klufW
++NSszVGnXO1IN/g33LtL39Q1YdrxRamUnEXn9d5vAOYYbkttpkPMjQVSpWe8KxGe
++NNoPACCuIw72TvDfmY/0LaD9CeGuoJXC21jUmWwm5pT4K0YvKQWspiN5gcXhW3T
+ZGqYQPGz+rFrTALpAldUSD6SCQ8fD0Etn5Zx84hZJtPfy7PezpCOYRojIiDsE7Jh
+nt3PNxJFascSBiKUxSdq2xOVxQ736fQcfSAltNFHLjZUXeM7OrHLsS60le/OOesq
++u65cR43aSH0498S7nbyfy6z4ZXNoDxHUMrUmN4kMxOMrNWM8B+aRi4XqMWD1Obb
+L7Y52S8Lvw6QJ6clPB3/nwJzcv7tADST30rjiK0gwxrN0Y+CkjRazVfJr/SwCGpq
+BXv1JG2r3FbwpZ7pxEc/1oFSdMnbzszftijPHX9Qk1FtgVv2wHRmRkD85HsloA7/
+OyyoBBogqlMiP+XXvLX7
+=vxzf
 -----END PGP SIGNATURE-----
 
---Kcz2sLgfm4jIbtJq1XcrqZtzPQdGv4GvC--
+--LI2TuzwusZUfbWhWtfdlLoJD2Q4qAdZ4v--
 
