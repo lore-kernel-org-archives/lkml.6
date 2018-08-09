@@ -2,242 +2,125 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577A5C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71630C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA3B921CD0
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:06:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3B921CD0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3253621CD0
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:06:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3253621CD0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729940AbeHIL3H (ORCPT
+        id S1730678AbeHILap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:29:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58902 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727371AbeHIL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:29:07 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 782E6209A2; Thu,  9 Aug 2018 11:05:10 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F3C2920618;
-        Thu,  9 Aug 2018 11:04:59 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v7 0/8] Cedrus driver for the Allwinner Video Engine, using media requests
-Date:   Thu,  9 Aug 2018 11:04:27 +0200
-Message-Id: <20180809090435.17248-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 9 Aug 2018 07:30:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727966AbeHILap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:30:45 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 923EF402333A;
+        Thu,  9 Aug 2018 09:06:50 +0000 (UTC)
+Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF5052026D68;
+        Thu,  9 Aug 2018 09:06:47 +0000 (UTC)
+Date:   Thu, 9 Aug 2018 11:06:45 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v8 04/22] s390/zcrypt: Integrate ap_asm.h into
+ include/asm/ap.h.
+Message-ID: <20180809110645.33b20c1f.cohuck@redhat.com>
+In-Reply-To: <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 09:06:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 09:06:50 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the seventh iteration of the updated Cedrus driver,
-that supports the Video Engine found on most Allwinner SoCs, starting
-with the A10. It was tested on the A13, A20, A33 and H3.
+On Wed,  8 Aug 2018 10:44:14 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-The initial version of this driver[0] was originally written and
-submitted by Florent Revest using a previous version of the request API
-that is necessary to provide coherency between controls and the buffers
-they apply to.
+> From: Harald Freudenberger <freude@de.ibm.com>
+> 
+> Move all the inline functions from the ap bus header
+> file ap_asm.h into the in-kernel api header file
+> arch/s390/include/asm/ap.h so that KVM can make use
+> of all the low level AP functions.
+> 
+> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 
-The driver was adapted to use the latest version of the media request
-API[1], as submitted by Hans Verkuil. Media request API support is a
-hard requirement for the Cedrus driver.
+You should add your own s-o-b if you are sending on patches written by
+others (even if it does not matter in the end, when they are merged
+through a different path anyway.)
 
-The driver itself currently only supports MPEG2 and more codecs will be
-added eventually. The default output frame format provided by the Video
-Engine is a multi-planar tiled YUV format (based on NV12). A specific
-format is introduced in the V4L2 API to describe it. Starting with the
-A33, the Video Engine can also output untiled YUV formats.
+> ---
+>  arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
+>  drivers/s390/crypto/ap_asm.h   |  261 ------------------------------------
+>  drivers/s390/crypto/ap_bus.c   |   21 +---
+>  drivers/s390/crypto/ap_bus.h   |    1 +
+>  drivers/s390/crypto/ap_card.c  |    1 -
+>  drivers/s390/crypto/ap_queue.c |    1 -
+>  6 files changed, 259 insertions(+), 310 deletions(-)
+>  delete mode 100644 drivers/s390/crypto/ap_asm.h
+> 
+> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+> index c1bedb4..046e044 100644
+> --- a/arch/s390/include/asm/ap.h
+> +++ b/arch/s390/include/asm/ap.h
+> @@ -47,6 +47,50 @@ struct ap_queue_status {
+>  };
+>  
+>  /**
+> + * ap_intructions_available() - Test if AP instructions are available.
+> + *
+> + * Returns 0 if the AP instructions are installed.
 
-This implementation is based on the significant work that was conducted
-by various members of the linux-sunxi community for understanding and
-documenting the Video Engine's innards.
+Stumbled over this when I was looking at the usage in patch 7: if I see
+a function called '_available' return 0, I'd assume that whatever the
+function tests for is *not* available.
 
-In addition to the media requests API, the following series are required
-for Cedrus:
-* vicodec: the Virtual Codec driver
-* allwinner: a64: add SRAM controller / system control
-* SRAM patches from the Cedrus VPU driver series version 5
+Rather call this function ap_instructions_check_availability() (and
+keep the return code convention), or switch this to return 0 if not
+available and !0 if available?
 
-Changes since v6:
-* Reworked MPEG2 controls to stick closer to the bitstream;
-* Updated controls documentation accordingly and added requested fixes;
-* Renamed tiled format to V4L2_PIX_FMT_SUNXI_TILED_NV12;
-* Added various minor driver fixes based on Hans' feedback;
-* Fixed dst frame alignment based on Jernej's feedback and tests;
-* Removed set bits for the disabled secondary output.
-
-Changes since v5:
-* Added MPEG2 quantization matrices definitions and support;
-* Cleaned up registers definitions;
-* Moved the driver to staging as requested;
-* Removed label and newline in device-tree sources;
-* Made it possible to build the driver for COMPILE_TEST;
-* Fixed various strict checkpatch warnings;
-* Used v4l2_m2m_register_media_controller and MEDIA_ENT_F_PROC_VIDEO_DECODER;
-* Moved capabilities to compatible-specific variants;
-* Removed overkill buffer checks in device_run;
-* Renamed from Sunxi-Cedrus to Cedrus.
-
-Changes since v4:
-* updated to version 16 of the media requests API;
-* added support for VPU-based untiling (starting with the A33);
-* added support for the H3, with SRAM support;
-* reworked SRAM support and associated compatibles;
-* improved failure paths;
-* added some MPEG2 input data validation;
-* reworked video/format functions to handle multiple formats;
-* removed in-driver buffer queues;
-* used a threaded irq instead of a workqueue;
-* merged various improvements and cleanups from Maxime;
-* renamed MPEG2_SLICE_HEADER to MPEG2_SLICE_PARAMS;
-* added prefixes to MPEG2 picture coding types;
-* used single-buffer allocations to ensure contiguous planes
-
-Changes since v3:
-* updated to version 15 of the media request API;
-* got rid of untested MPEG1 support;
-* added definitons for picture coding types;
-* added documentation about MPEG2 slice header fields;
-* added documentation about MPEG2 slice format;
-* added documentation about the MB32 NV12 format;
-* added MPEG2 slice header validation;
-* removed the assigned-clocks property;
-* reworked and fixed error paths;
-* harmonized debug prints, with v4l2 helpers when applicable;
-* checked the series through checkpatch;
-* switched to SPDX license headers;
-* renamed MPEG2 frame header to slice header for consistency and clarity;
-* removed A20 SRAM compatible from the driver's list.
-
-Changes since v2:
-* updated to version 13 of the media request API;
-* integrated various changes from Maxime Ripard;
-* reworked memory reservation to use CMA, dynamic allocation and allow
-  DMABUF;
-* removed reserved memory binding since the CMA pool is the default one
-  (and allow ENODEV in the driver, for that use case);
-* added SRAM controller support for the SRAM region used by the VE;
-* updated the device-tree bindings the for SRAM region;
-* added per-platform bindings;
-* added A13 support;
-* renamed VE node name and label;
-* fixed Florent's authorship for the MPEG2 headers;
-* added a MAINTAINERS entry.
-
-Changes since v1:
-* use the latest version of the request API for Hans Verkuil;
-* added media controller support and dependency
-* renamed v4l2 format to the more explicit V4L2_PIX_FMT_MB32_NV12;
-* reworked bindings documentation;
-* moved driver to drivers/media/platforms/sunxi/cedrus to pair with
-  incoming CSI support ;
-* added a workqueue and lists to schedule buffer completion, since it
-  cannot be done in interrupt context;
-* split mpeg2 support into a setup and a trigger function to avoid race
-  condition;
-* split video-related ops to a dedicated sunxi_cedrus_video file;
-* cleaned up the included headers for each file;
-* used device PFN offset instead of subtracting PHYS_BASE;
-* used reset_control_reset instead of assert+deassert;
-* put the device in reset when removing driver;
-* changed dt bindings to use the last 96 Mib of the first 256 MiB of
-  DRAM;
-* made it clear in the mpeg frame header structure that forward and
-  backward indexes are used as reference frames for motion vectors;
-* lots of small cosmetic and consistency changes, including naming
-  harmonization and headers text rework.
-
-Cheers!
-
-[0]: https://patchwork.kernel.org/patch/9299073/
-[1]: https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=reqv17
-
-Paul Kocialkowski (8):
-  media: v4l: Add definitions for MPEG2 slice format and metadata
-  media: v4l: Add definition for the Sunxi tiled NV12 format
-  dt-bindings: media: Document bindings for the Cedrus VPU driver
-  media: platform: Add Cedrus VPU decoder driver
-  ARM: dts: sun5i: Add Video Engine and reserved memory nodes
-  ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
-  ARM: dts: sun8i-a33: Add Video Engine and reserved memory nodes
-  ARM: dts: sun8i-h3: Add Video Engine and reserved memory nodes
-
- .../devicetree/bindings/media/cedrus.txt      |  54 ++
- .../media/uapi/v4l/extended-controls.rst      | 177 ++++++
- .../media/uapi/v4l/pixfmt-compressed.rst      |  14 +
- .../media/uapi/v4l/pixfmt-reserved.rst        |  15 +-
- .../media/uapi/v4l/vidioc-queryctrl.rst       |  14 +-
- .../media/videodev2.h.rst.exceptions          |   2 +
- MAINTAINERS                                   |   7 +
- arch/arm/boot/dts/sun5i.dtsi                  |  26 +
- arch/arm/boot/dts/sun7i-a20.dtsi              |  26 +
- arch/arm/boot/dts/sun8i-a33.dtsi              |  26 +
- arch/arm/boot/dts/sun8i-h3.dtsi               |  25 +
- drivers/media/v4l2-core/v4l2-ctrls.c          |  63 ++
- drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
- drivers/staging/media/Kconfig                 |   2 +
- drivers/staging/media/Makefile                |   1 +
- drivers/staging/media/sunxi/Kconfig           |  15 +
- drivers/staging/media/sunxi/Makefile          |   1 +
- drivers/staging/media/sunxi/cedrus/Kconfig    |  14 +
- drivers/staging/media/sunxi/cedrus/Makefile   |   3 +
- drivers/staging/media/sunxi/cedrus/cedrus.c   | 419 +++++++++++++
- drivers/staging/media/sunxi/cedrus/cedrus.h   | 166 +++++
- .../staging/media/sunxi/cedrus/cedrus_dec.c   | 115 ++++
- .../staging/media/sunxi/cedrus/cedrus_dec.h   |  27 +
- .../staging/media/sunxi/cedrus/cedrus_hw.c    | 317 ++++++++++
- .../staging/media/sunxi/cedrus/cedrus_hw.h    |  29 +
- .../staging/media/sunxi/cedrus/cedrus_mpeg2.c | 241 ++++++++
- .../staging/media/sunxi/cedrus/cedrus_regs.h  | 235 +++++++
- .../staging/media/sunxi/cedrus/cedrus_video.c | 572 ++++++++++++++++++
- .../staging/media/sunxi/cedrus/cedrus_video.h |  31 +
- include/media/v4l2-ctrls.h                    |  18 +-
- include/uapi/linux/v4l2-controls.h            |  65 ++
- include/uapi/linux/videodev2.h                |   6 +
- 32 files changed, 2718 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/cedrus.txt
- create mode 100644 drivers/staging/media/sunxi/Kconfig
- create mode 100644 drivers/staging/media/sunxi/Makefile
- create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
- create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
-
--- 
-2.18.0
-
+> + */
+> +static inline int ap_instructions_available(void)
+> +{
+> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
+> +	register unsigned long reg1 asm ("1") = -ENODEV;
+> +	register unsigned long reg2 asm ("2");
+> +
+> +	asm volatile(
+> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
+> +		"0: la    %0,0\n"
+> +		"1:\n"
+> +		EX_TABLE(0b, 1b)
+> +		: "+d" (reg1), "=d" (reg2)
+> +		: "d" (reg0)
+> +		: "cc");
+> +	return reg1;
+> +}
