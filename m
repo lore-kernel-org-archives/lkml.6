@@ -2,208 +2,240 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26484C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB2AC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5BE6208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:27:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5BE6208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B78022399
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B78022399
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeHIWyP (ORCPT
+        id S1727202AbeHIW7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:54:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726953AbeHIWyP (ORCPT
+        Thu, 9 Aug 2018 18:59:09 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:12122 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726890AbeHIW7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:54:15 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79KP31w102204
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 16:27:46 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krt2p5yuv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 16:27:46 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Thu, 9 Aug 2018 16:27:44 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 16:27:41 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79KRdEN9699940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 20:27:39 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C98C0AC059;
-        Thu,  9 Aug 2018 16:28:07 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF17FAC05E;
-        Thu,  9 Aug 2018 16:28:06 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 16:28:06 -0400 (EDT)
-Subject: Re: [PATCH v8 21/22] KVM: s390: CPU model support for AP
- virtualization
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-22-git-send-email-akrowiak@linux.vnet.ibm.com>
- <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Thu, 9 Aug 2018 16:27:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 9 Aug 2018 18:59:09 -0400
+X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Aug 2018 18:59:08 EDT
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 9 Aug 2018 13:17:21 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 95288406DA;
+        Thu,  9 Aug 2018 13:17:37 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v7 04/10] x86: refcount: prevent gcc distortions
+Date:   Thu, 9 Aug 2018 13:15:47 -0700
+Message-ID: <20180809201554.168804-5-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180809201554.168804-1-namit@vmware.com>
+References: <20180809201554.168804-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <58eed530-31b3-49fe-cbd7-4d101b94daa0@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080920-2213-0000-0000-000002D85321
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009515; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01071406; UDB=6.00551719; IPR=6.00851103;
- MB=3.00022619; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-09 20:27:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080920-2214-0000-0000-00005B252B72
-Message-Id: <b1094c57-18dd-f4fd-b528-f1682b8fc078@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090203
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/09/2018 04:17 AM, David Hildenbrand wrote:
-> On 08.08.2018 16:44, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces a new CPU model feature and two CPU model
->> facilities to support AP virtualization for KVM guests.
->>
->> CPU model feature:
->>
->> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
->> AP instructions are available on the guest. This
->> feature will be enabled by the kernel only if the AP
->> instructions are installed on the linux host. This feature
->> must be specifically turned on for the KVM guest from
->> userspace to use the VFIO AP device driver for guest
->> access to AP devices.
->>
->> CPU model facilities:
->>
->> 1. AP Query Configuration Information (QCI) facility is installed.
->>
->>     This is indicated by setting facilities bit 12 for
->>     the guest. The kernel will not enable this facility
->>     for the guest if it is not set on the host. This facility
->>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->>     feature is not installed.
-> Could it happen on real HW (not frankenstein CPU models), that
->
-> !AP, but STFL 12 or 15  are indicated?
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-I suspect that if AP instructions are not installed, then neither
-STFLE.12 nor STFLE.15 would be set in the real hardware. This
-comment, however, is talking about an administrator setting the
-facility for a guest, not real hardware. Having said that and after
-thinking about it a little more, I am going to remove that last sentence
-because the CPU model configuration (e.g., as specified on the qemu
-command line) will fail if the QCI or APFT facility is enabled when the
-CPU model feature KVM_S390_VM_CPU_FEAT_AP is not.
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
->
->>     If this facility is not set for the KVM guest, then only
->>     APQNs with an APQI less than 16 will be used by a Linux
->>     guest regardless of the matrix configuration for the virtual
->>     machine. This is a limitation of the Linux AP bus.
->>
->> 2. AP Facilities Test facility (APFT) is installed.
->>
->>     This is indicated by setting facilities bit 15 for
->>     the guest. The kernel will not enable this facility for
->>     the guest if it is not set on the host. This facility
->>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->>     feature is not installed.
->>
->>     If this facility is not set for the KVM guest, then no
->>     AP devices will be available to the guest regardless of
->>     the guest's matrix configuration for the virtual
->>     machine. This is a limitation of the Linux AP bus.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/kvm/kvm-s390.c         |    7 +++++++
->>   arch/s390/tools/gen_facilities.c |    2 ++
->>   2 files changed, 9 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 9203f0b..7d4fe9b 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -367,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
->>   
->>   	if (MACHINE_HAS_ESOP)
->>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
->> +
->> +	/*
->> +	 * Check if AP instructions installed on host
->> +	 */
-> Make this a one-line comment, please.
+This patch allows to inline functions such as __get_seccomp_filter().
+Interestingly, this allows more aggressive inlining while reducing the
+kernel size.
 
-Will do
+   text	   data	    bss	    dec	    hex	filename
+18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
+18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
 
->
->> +	if (ap_instructions_available() == 0)
->> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
->> +
->>   	/*
->>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
->> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
->> index 90a8c9e..a52290b 100644
->> --- a/arch/s390/tools/gen_facilities.c
->> +++ b/arch/s390/tools/gen_facilities.c
->> @@ -106,6 +106,8 @@ struct facility_def {
->>   
->>   		.name = "FACILITIES_KVM_CPUMODEL",
->>   		.bits = (int[]){
->> +			12, /* AP Query Configuration Information */
->> +			15, /* AP Facilities Test */
->>   			-1  /* END */
->>   		}
->>   	},
->>
->
+Static text symbols:
+Before:	40302
+After:	40286	(-16)
+
+Functions such as kref_get(), free_user(), fuse_file_get() now get
+inlined.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
+ arch/x86/kernel/macros.S        |  1 +
+ 2 files changed, 46 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index 4cf11d88d3b3..6b2809a4d8e9 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -4,6 +4,41 @@
+  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+  * PaX/grsecurity.
+  */
++
++#ifdef __ASSEMBLY__
++
++#include <asm/asm.h>
++#include <asm/bug.h>
++
++.macro REFCOUNT_EXCEPTION counter:req
++	.pushsection .text..refcount
++111:	lea \counter, %_ASM_CX
++112:	ud2
++	ASM_UNREACHABLE
++	.popsection
++113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
++.endm
++
++/* Trigger refcount exception if refcount result is negative. */
++.macro REFCOUNT_CHECK_LT_ZERO counter:req
++	js 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++/* Trigger refcount exception if refcount result is zero or negative. */
++.macro REFCOUNT_CHECK_LE_ZERO counter:req
++	jz 111f
++	REFCOUNT_CHECK_LT_ZERO counter="\counter"
++.endm
++
++/* Trigger refcount exception unconditionally. */
++.macro REFCOUNT_ERROR counter:req
++	jmp 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++#else /* __ASSEMBLY__ */
++
+ #include <linux/refcount.h>
+ 
+ /*
+@@ -14,34 +49,11 @@
+  * central refcount exception. The fixup address for the exception points
+  * back to the regular execution flow in .text.
+  */
+-#define _REFCOUNT_EXCEPTION				\
+-	".pushsection .text..refcount\n"		\
+-	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+-	"112:\t" ASM_UD2 "\n"				\
+-	ASM_UNREACHABLE					\
+-	".popsection\n"					\
+-	"113:\n"					\
+-	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+-
+-/* Trigger refcount exception if refcount result is negative. */
+-#define REFCOUNT_CHECK_LT_ZERO				\
+-	"js 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+-
+-/* Trigger refcount exception if refcount result is zero or negative. */
+-#define REFCOUNT_CHECK_LE_ZERO				\
+-	"jz 111f\n\t"					\
+-	REFCOUNT_CHECK_LT_ZERO
+-
+-/* Trigger refcount exception unconditionally. */
+-#define REFCOUNT_ERROR					\
+-	"jmp 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+ 
+ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: "ir" (i)
+ 		: "cc", "cx");
+@@ -50,7 +62,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ static __always_inline void refcount_inc(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -58,7 +70,7 @@ static __always_inline void refcount_inc(refcount_t *r)
+ static __always_inline void refcount_dec(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0\n\t"
+-		REFCOUNT_CHECK_LE_ZERO
++		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -66,13 +78,15 @@ static __always_inline void refcount_dec(refcount_t *r)
+ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+-	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
++				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				  r->refs.counter, "er", i, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+-	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
++				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				 r->refs.counter, "%0", e, "cx");
+ }
+ 
+@@ -90,7 +104,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 		/* Did we try to increment from/to an undesirable state? */
+ 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+-			asm volatile(REFCOUNT_ERROR
++			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+ 				     : : [counter] "m" (r->refs.counter)
+ 				     : "cc", "cx");
+ 			break;
+@@ -106,4 +120,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+ 	return refcount_add_not_zero(1, r);
+ }
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index cee28c3246dc..f1fe1d570365 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -7,3 +7,4 @@
+  */
+ 
+ #include <linux/compiler.h>
++#include <asm/refcount.h>
+-- 
+2.17.1
 
