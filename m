@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4BCC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CF5C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E55521D6A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B16821D6A
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:15:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAHNiB+s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E55521D6A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Za0R1adg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B16821D6A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731097AbeHIOic (ORCPT
+        id S1731106AbeHIOjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:38:32 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33277 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730928AbeHIOic (ORCPT
+        Thu, 9 Aug 2018 10:39:41 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43916 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730301AbeHIOjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:38:32 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g6-v6so4976130wrp.0;
-        Thu, 09 Aug 2018 05:13:53 -0700 (PDT)
+        Thu, 9 Aug 2018 10:39:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b15-v6so4937730wrv.10;
+        Thu, 09 Aug 2018 05:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=aHPeKTpJ8sUw5eh278M89YR1p9oOqDkpboZtrpX6UuQ=;
-        b=MAHNiB+shFmOHTIs1TEr2iE8Jl6TgTSvPOwsZ7bZisGq8lidg0F6Cu8p4TwaRxLFHP
-         wYB6q6T3drLrF+uZY1Krm+/zvDtWTIAQrKZjmTpsF5BqfQw9OzYc1wCxT0fuB9Nf5p09
-         mKp941dt6M2G038WQl7Rifd6eJQaeYvT8Sz2UVe3sZ3V6Snha3gXOjU/6Rv5Sll8EQrv
-         wfmGk+8icdF1XFmxIu11nXzegIlCfStazgEDC50rjv2a9pUhYEyVstjvm2bYJRYQQ1uQ
-         LbC+uLuoTsMs33SZAHcvVfzJBy4jZ9lGBumA6C4MAa9QjD/4WW21CENho5Vo3P9EGP/P
-         1V1Q==
+        bh=NddY8Heov1KYXozmGf1XBJ5CeoxLoEcdUZ4pHWfzu3Q=;
+        b=Za0R1adgf/Pqeb5bVgpEbDJMS1m4VCq1il6l0XwlK5CmD8CaTpr8b0Cz+XcPEEMAny
+         8odztmr2pFMyH/Kq3bjgZto7hyVUfP/I1Bg8sj0zYkKNzkKfQQ+x6xznApOyZrDIjVmp
+         vbsQUUq/lFWpgQRdwWHIZVVoTD9pgU9yfu7+8yyMy7e0R3BdoRraoWQlb/6am1W0UJvl
+         xK31jtl1v27INS32R+iDpFaEX5xS/PQqxpoKfsQCCpt8nLx9EiPfaxqJqaXqIPFdHL0g
+         k5JN3IxgMTjYBzsek4VOixbGiPWB3jvdvfgBWvK9q6C69YWSozo+7d6U6YgarxbXy2Ab
+         XOHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aHPeKTpJ8sUw5eh278M89YR1p9oOqDkpboZtrpX6UuQ=;
-        b=baj6zo1aDr6pqHC7+WysM17GP/xPqfV3qnruV2Xv3ObpaT/O5K3ppzNPnOz+sPYT8x
-         bGz3YjHoAs9wS4tbEr6sLQmutHiNnELRH7CRZT19eM0gf1XlB3aKKhZ7phSVAAjWhieu
-         yTvs34tjAyWNKH9pTC/tICY3aeZiid+HoZb4LDOGBa7u+l9MbPDdNPXvwlZuOWdozRtr
-         lflgU0mKq0zLIvxoht3F6UZDN/MGoy77oj7jmDmht1ScmxTc9Rl5IkRvFmpGKTK7gAwI
-         7iFINrWb9KIPyrgwoG0tGNGWFwTIohXfva1Pi5Y6o5B1ofIxRR/PoR+xJvdz+8YHzZQi
-         vkfw==
-X-Gm-Message-State: AOUpUlFYivF/6bKFQmuzKSZZr5jPw0IieRckPykbRIQOa0vSSa/jaUYG
-        k6qU18wDw/M4XX/f20HPkRo=
-X-Google-Smtp-Source: AA+uWPzH5SBdg/YsQ/OVk193eGme6CddrpGGpENkQAhcJidifAlnk/amWXOoXni51Qe7DhXPqT2M1Q==
-X-Received: by 2002:adf:db41:: with SMTP id f1-v6mr1415620wrj.212.1533816832798;
-        Thu, 09 Aug 2018 05:13:52 -0700 (PDT)
+        bh=NddY8Heov1KYXozmGf1XBJ5CeoxLoEcdUZ4pHWfzu3Q=;
+        b=HR1/VGiJIm7W9f7IM0YfaFvX075Jp2ODpKcj7UQ9SK0VRjcBrlIaXUm/gOS18753qV
+         gM3kAvSqnLtEv/Igg2XdEn67FWsg/3yt3KtK4gdR4FXSN/Ttz5Mh2qNqYIpdZB/ZarUg
+         4LyQmJLeJBbffXjK30Gn+lgv0Q0iw7S2tco7jy5mUB2+yHS1AfMtnljoAxgEsPgQIOPB
+         I1RXzEK3i4Bn+qrWgcWi094kpBS5inofzvZNd3u7IBpfVqYMjliuN9Fz3Z1qZIEunohF
+         Zm+dpYzb73y74VDlZXhhSoQuhLRU1O3j3njSf8Eptcxy17zHk/AHBQFyTQ8PAEE1a5FI
+         r+GA==
+X-Gm-Message-State: AOUpUlEx4dpisxr9Ty0RP7Fb0K37ZldQRYnGOPjC1URwoh0iopEmENjj
+        vV7vxIYd6Uy0+We6VZiSCok=
+X-Google-Smtp-Source: AA+uWPxSPTG+AOIglX+6MEV5XowfNyEoPH+z3vYTsL8EYLL6DEMAq7lAru0tt9XObD5+ssdKepm+aA==
+X-Received: by 2002:adf:eac8:: with SMTP id o8-v6mr1215954wrn.150.1533816902486;
+        Thu, 09 Aug 2018 05:15:02 -0700 (PDT)
 Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id p14-v6sm10968799wru.0.2018.08.09.05.13.51
+        by smtp.gmail.com with ESMTPSA id t6-v6sm11032927wmf.8.2018.08.09.05.15.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 05:13:51 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 14:13:50 +0200
+        Thu, 09 Aug 2018 05:15:01 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 14:15:00 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Aapo Vienamo <avienamo@nvidia.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -71,16 +71,16 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 01/40] dt-bindings: Add Tegra PMC pad configuration
- bindings
-Message-ID: <20180809121350.GO21639@ulmo>
+Subject: Re: [PATCH 02/40] dt-bindings: mmc: tegra: Add pad voltage control
+ properties
+Message-ID: <20180809121500.GP21639@ulmo>
 References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
- <1533141150-10511-2-git-send-email-avienamo@nvidia.com>
+ <1533141150-10511-3-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2/+Vq7w28QOSGzSM"
+        protocol="application/pgp-signature"; boundary="1LW0Rr0Uq98qh6Rv"
 Content-Disposition: inline
-In-Reply-To: <1533141150-10511-2-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1533141150-10511-3-git-send-email-avienamo@nvidia.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,254 +88,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---2/+Vq7w28QOSGzSM
+--1LW0Rr0Uq98qh6Rv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 01, 2018 at 07:31:51PM +0300, Aapo Vienamo wrote:
-> Document the PMC pinctrl bindings for pad power state and signaling
-> voltage configuration. Both nvidia,tegra186-pmc.txt and
-> nvidia,tegra20-pmc.txt are modified as they both cover SoC generations
-> for which these bindings apply.
->=20
-> Add a header defining Tegra PMC pad voltage configurations.
+On Wed, Aug 01, 2018 at 07:31:52PM +0300, Aapo Vienamo wrote:
+> Document the pinctrl bindings used by the SDHCI driver to reconfigure
+> pad voltages on controllers supporting multiple voltage levels.
 >=20
 > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 > Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 +++++++++++++++=
-+++
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++++++++++++=
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 22 ++++++++++++++++=
 ++++++
->  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 ++++
->  3 files changed, 213 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+>  1 file changed, 22 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-=
-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.t=
-xt
-> index 5a3bf7c..d7fed4d 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> @@ -34,3 +34,95 @@ Board DTS:
->  	pmc@c360000 {
->  		nvidia,invert-interrupt;
->  	};
+> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.t=
+xt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> index 9bce578..90c214d 100644
+> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> @@ -38,3 +38,25 @@ sdhci@c8000200 {
+>  	power-gpios =3D <&gpio 155 0>; /* gpio PT3 */
+>  	bus-width =3D <8>;
+>  };
 > +
-> +=3D=3D Pad Control =3D=3D
-> +
-> +On Tegra SoCs a pad is a set of pins which are configured as a group.
-> +The pin grouping is a fixed attribute of the hardware. The PMC can be
-> +used to set pad power state and signaling voltage. A pad can be either
-> +in active or power down mode. The support for power state and signaling
-> +voltage configuration varies depending on the pad in question. 3.3 V and
-> +1.8 V signaling voltages are supported on pins where software
-> +controllable signaling voltage switching is available.
-> +
-> +Pad configurations are described is with pin configuration nodes which
+> +Optional properties for Tegra210 and Tegra186:
+> +- pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
+> +  configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
+> +  for controllers supporting multiple voltage levels. The order of names
+> +  should correspond to the pin configuration states in pinctrl-0 and
+> +  pinctrl-1.
 
-The "is" in the middle there seems to be left-over from a previous
-formulation of the sentence.
-
-> +are placed under the pmc node and they are referred to by the pinctrl
-> +client properties. For more information see
-> +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-> +
-> +Following pads are present on Tegra186:
-
-"The following pads..."
-
-> +csia		csib		dsi		mipi-bias
-> +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
-> +usb0		usb1		usb2		usb-bias
-> +uart		audio		hsic		dbg
-> +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
-> +sdmmc4		cam		dsib		dsic
-> +dsid		csic		csid		csie
-> +dsif		spi		ufs		dmic-hv
-> +edp		sdmmc1-hv	sdmmc3-hv	conn
-> +audio-hv	ao-hv
-> +
-> +Required pin configuration properties:
-> +  - pins: Must contain name of the pad(s) to be configured.
-
-"the name". Also, I'm assuming that this can take a list of names, so
-perhaps this should read:
-
-	- pins: A list of strings, each of which contains the name of a pad
-	    to be configured.
-
-> +
-> +Optional pin configuration properties:
-> +  - low-power-enable: Configure the pad into power down mode
-> +  - low-power-disable: Configure the pad into active mode
-
-Do we need both of these? low-power could be a boolean property to mean
-that the pad(s) should be configured in power down mode. If absent it
-would mean that the pad(s) should be configured in normal mode. The only
-reason why I can think of them to have to be separate is if we want to
-define a configuration where the power mode is not touched. But is that
-really something we need or want?
-
-> +  - power-source: Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> +    TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
-> +    The values are defined in
-> +    include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-
-Why is this called "power-source"? This defines the signaling voltage of
-the pad, so why not something like "power-level", or "voltage", or
-"output-voltage"?
-
-Or is this because it is a mux that will internally select either a
-1.8 V or a 3.3 V source? In which case I guess this is okay. Perhaps
-give some explanation of the mechanics of the underlying hardware to
-make this more obvious.
-
-> +
-> +Note: The power state can be configured on all of the above pads except
-> +      for ao-hv. Following pads have software configurable signaling
-> +      voltages: sdmmc2-hv, dmic-hv, sdmmc1-hv, sdmmc3-hv, audio-hv,
-> +      ao-hv.
-> +
-> +Pad configuration state example:
-> +	pmc: pmc@7000e400 {
-> +		compatible =3D "nvidia,tegra186-pmc";
-> +		reg =3D <0 0x0c360000 0 0x10000>,
-> +		      <0 0x0c370000 0 0x10000>,
-> +		      <0 0x0c380000 0 0x10000>,
-> +		      <0 0x0c390000 0 0x10000>;
-> +		reg-names =3D "pmc", "wake", "aotag", "scratch";
-> +
-> +		...
-> +
-> +		sdmmc1_3v3: sdmmc1-3v3 {
-> +			pins =3D "sdmmc1-hv";
-> +			power-source =3D <TEGRA_IO_PAD_VOLTAGE_3V3>;
-> +		};
-> +
-> +		sdmmc1_1v8: sdmmc1-1v8 {
-> +			pins =3D "sdmmc1-hv";
-> +			power-source =3D <TEGRA_IO_PAD_VOLTAGE_1V8>;
-> +		};
-
-Wouldn't these be implicitly low-power-disable? What if these are off by
-default? Selecting these states would change the power source but keep
-them in power down, no? Don't we want something like the below instead?
-
-		sdmmc1_3v3: sdmmc1-3v3 {
-			pins =3D "sdmmc1-hv";
-			power-source =3D <TEGRA_IO_PAD_VOLTAGE_3V3>;
-			/* low-power-disable implied here */
-		};
-
-		sdmmc1_1v8: sdmmc1-1v8 {
-			pins =3D "sdmmc1-hv";
-			power-source =3D <TEGRA_IO_PAD_VOLTAGE_1V8>;
-			/* low-power-disable implied here */
-		};
-
-		sdmmc1_off: sdmmc1-off {
-			pins =3D "sdmmc1-hv";
-			low-power;
-		};
-
-That would allow the SDHCI driver to select between the two signaling
-modes and a separate state for powering down the pad.
-
-> +
-> +		hdmi_off: hdmi-off {
-> +			pins =3D "hdmi";
-> +			low-power-enable;
-> +		}
-> +
-> +		hdmi_on: hdmi-on {
-> +			pins =3D "hdmi";
-> +			low-power-disable;
-> +		}
-
-These would similarily become:
-
-		hdmi_off: hdmi-off {
-			pins =3D "hdmi";
-			low-power;
-		};
-
-		hdmi_on: hdmi-on {
-			pins =3D "hdmi";
-		};
-
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-p=
-mc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> index a74b37b..5363b90 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> @@ -195,3 +195,106 @@ Example:
->  		power-domains =3D <&pd_audio>;
->  		...
->  	};
-> +
-> +=3D=3D Pad Control =3D=3D
-> +
-> +On Tegra SoCs a pad is a set of pins which are configured as a group.
-> +The pin grouping is a fixed attribute of the hardware. The PMC can be
-> +used to set pad power state and signaling voltage. A pad can be either
-> +in active or power down mode. The support for power state and signaling
-> +voltage configuration varies depending on the pad in question. 3.3 V and
-> +1.8 V signaling voltages are supported on pins where software
-> +controllable signaling voltage switching is available.
-> +
-> +The pad configuration state nodes are placed under the pmc node and they
-> +are referred to by the pinctrl client properties. For more information
-> +see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-> +The pad name should be used as the value of the pins property in pin
-> +configuration nodes.
-> +
-> +Following pads are present on Tegra124 and Tegra132:
-> +audio		bb		cam		comp
-> +csia		csb		cse		dsi
-> +dsib		dsic		dsid		hdmi
-> +hsic		hv		lvds		mipi-bias
-> +nand		pex-bias	pex-clk1	pex-clk2
-> +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
-> +sys_ddc		uart		usb0		usb1
-> +usb2		usb_bias
-> +
-> +Following pads are present on Tegra210:
-> +audio		audio-hv	cam		csia
-> +csib		csic		csid		csie
-> +csif		dbg		debug-nonao	dmic
-> +dp		dsi		dsib		dsic
-> +dsid		emmc		emmc2		gpio
-> +hdmi		hsic		lvds		mipi-bias
-> +pex-bias	pex-clk1	pex-clk2	pex-cntrl
-> +sdmmc1		sdmmc3		spi		spi-hv
-> +uart		usb0		usb1		usb2
-> +usb3		usb-bias
-
-What about chips prior to Tegra124?
+Do we also want "sdmmc-off" to allow SDMMC pads to be powered down when
+the slot or card is not used?
 
 Thierry
 
---2/+Vq7w28QOSGzSM
+> +
+> +Example:
+> +sdhci@700b0000 {
+> +	compatible =3D "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
+> +	reg =3D <0x0 0x700b0000 0x0 0x200>;
+> +	interrupts =3D <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks =3D <&tegra_car TEGRA210_CLK_SDMMC1>;
+> +	clock-names =3D "sdhci";
+> +	resets =3D <&tegra_car 14>;
+> +	reset-names =3D "sdhci";
+> +	pinctrl-names =3D "sdmmc-3v3", "sdmmc-1v8";
+> +	pinctrl-0 =3D <&sdmmc1_3v3>;
+> +	pinctrl-1 =3D <&sdmmc1_1v8>;
+> +	status =3D "disabled";
+> +};
+> --=20
+> 2.7.4
+>=20
+
+--1LW0Rr0Uq98qh6Rv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsL/wACgkQ3SOs138+
-s6FEgQ/+MtQ0fxIXDUNK2HsXkdHw2vRGHMBEuqJFZyTbAYLOhT4Oi0u91UIHkba5
-m6yztZJQPLCtc3OU5HuXDqtCNYRD+HUoKpRgDqmjVlY0oKgzlnzVFmfmAwOAfH30
-ktGPJC6o7aUB+5D2ed/uk4zLAywBvPFgP8KmcfYzRR1cRLG+mpzPbkcDKOd+XYX+
-3nvG36eiEhfuNRE9PkpmiGHoXq8ktnZOikMFv0f1308uXJ4ynXrRck4EhTTX2gRd
-KE3Z54UeV1o49ao41VSumr1Bu0gc53fpKl3nRgp/KoxO6c5wH90HCGebvXboNnf+
-z6GYQxsZi7LfxMrgMUQ6mwDC81YY5Wb+zgb/yLy5pZy577FLe6F1sz2yZ5LMzcCT
-wavSxlUGqi3TWDTFEQaaC7jdHBhc3YcHoNxue6Rto+15HZE3U6IXoHVmJVTjK6Oq
-XnmKCVstIZvjt36Bbi8j4gTZm5o7Nbu3zXyuqQ4QN9gIiKCKOJefyxBhkmf2oPRQ
-wA6RZS/x7zvvH62d67EsryLnHMS/DRYDJbUAVr4XCTIezK1obQ67yYlcnUj9zu3A
-NZ7jPWaE5m22YXeWlfi3CGGbWXo1h5M8ME2WyEBNtZ0QR1xHmdpiAmnZ84HAe5NM
-VXjgZBBmSbYYUfe3uDfsa7Mn++V2X0yZjJZKrQwSeP+6zWRYfks=
-=OVwz
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsMEQACgkQ3SOs138+
+s6EKVQ/9Hkhh22E0hhTKV3WiJWymoURwVYwRFr/2l3Hk/IqQYO+48fPgKaQ2yxyx
+W7CSmOP0uYd0kxaiFjQtnFDRwmT/nn+SGiYk6Vf+HEbGn4GeReVXRxSiiFvySNVU
+bF/9z1aMBaAeAnXrvp9pvMZsEy0fA3+qZGZUAvYEZjrcbWp1Ew0JHbLc8x2QlNVr
+l4/vm/OBsoliidFGCB/hyFoLTwb2+wUSUuUfLCkNADYJ12y78+njPgB0pJDBoG0p
+pQHb9csVIaeSdfHv4SxIBS2jS2VsLraWQ56gMILsst74RNz/6rXu36VPK3MuXvrD
+73RsBjb8E28TJS1WPKubtuRmSXWUzMCaYsY73K70dk1APhkz9gYWhdgtXeTLhxAZ
+k4sPQFJw5U1Vx3xhy4tKKrr6tnXV+8GTl3ufO5IabPTms+/GVfad06v5Ot/WX6fh
+gOe4ic/rWqxjHt30Qr9aq8NLjyXEWxZ64GJwf30UcpFDLq4jcANt/dnMdmrnZwlX
++fgDLcizuUDxToWN3cwLxlS0GekZARu0Qkfaq5z80xgmTrTi5DuYskeHBNhfGN8c
+hLpfE0yxD9jrLJCqA8LDYTAZmFbBhoCEVTJ4BwEpBvBdyzGLstj/+wLcUTnKBGoq
+zK9gpP+oMV3toAQvguswH71LlYBfYcfHVfgT+Qb3Xc3v9uhnxLo=
+=LFLg
 -----END PGP SIGNATURE-----
 
---2/+Vq7w28QOSGzSM--
+--1LW0Rr0Uq98qh6Rv--
