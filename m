@@ -2,381 +2,296 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9559C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20538C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740F2216FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740F2216FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BFA21216FB
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:04:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjQJhh+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA21216FB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732925AbeHIR3O (ORCPT
+        id S1732844AbeHIR34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:29:14 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35134 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732597AbeHIR3O (ORCPT
+        Thu, 9 Aug 2018 13:29:56 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41105 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732368AbeHIR3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:29:14 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w79F1euu026344
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 11:03:52 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krq18au5b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 11:03:51 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Thu, 9 Aug 2018 16:03:47 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 16:03:41 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w79F3eBo42139726
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 15:03:40 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16C5311C064;
-        Thu,  9 Aug 2018 18:03:47 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A677211C06C;
-        Thu,  9 Aug 2018 18:03:45 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.123])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  9 Aug 2018 18:03:45 +0100 (BST)
-Date:   Thu, 9 Aug 2018 18:03:37 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Rashmica Gupta <rashmica.g@gmail.com>
-Cc:     toshi.kani@hpe.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        bp@suse.de, brijesh.singh@amd.com, thomas.lendacky@amd.com,
-        jglisse@redhat.com, gregkh@linuxfoundation.org,
-        baiyaowei@cmss.chinamobile.com, dan.j.williams@intel.com,
-        mhocko@suse.com, iamjoonsoo.kim@lge.com, vbabka@suse.cz,
-        malat@debian.org, bhelgaas@google.com,
-        osalvador@techadventures.net, yasu.isimatu@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3] resource: Merge resources on a node when hot-adding
- memory
-References: <20180809025409.31552-1-rashmica.g@gmail.com>
+        Thu, 9 Aug 2018 13:29:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v22-v6so4327641lfe.8;
+        Thu, 09 Aug 2018 08:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wUGzhzuQiE/oUF05+NQsFYD+F94G5IUzES3fd4luKx4=;
+        b=EjQJhh+u0Kc6SiTCruUZLaGQTVyr+dXWejC7//68V6laQvdTgx1fSFJAPaueWo2k4K
+         qH5X8ojYMNXW1mw70RFavt6QGyLAB8tV/PpG6pQsrRUk/vgDZRINPbIcZ4TdvqcSf3aC
+         6kkM51azof/3tg4qRdrrD+UBHLjaWs1Jnv+yz6YbDC7Tc/eoSP219ob+V2t24ERjwINv
+         apK+IazYPgl/dN+6zuIZP1l1BKXtqeNQSyQ6k5PRd7IvVn8b+qXPp5tmFEgSVqgGCfmV
+         vPuS+pd8fpGmIYok0bNTAIfcgnwSPHiGVLZ2Kao4kxNJd3/cThXU3qoxF6ouO9vc8ZnU
+         yK0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wUGzhzuQiE/oUF05+NQsFYD+F94G5IUzES3fd4luKx4=;
+        b=YCfkw2L71Jt3WuODeKahqEowtrforKoegpzlZN5KP0vq4vhRRTtoDS9ipB1gH/okOJ
+         lLtfIXv/8NXZWpEVspX3QmTy9lGkRE3uLgurGOCosHS3aswzxTQhobqO/O/adNqAGo+L
+         65YTpaTi0tut3AQl6e2kodhNcJ2seY8x1H7i2I1SmGm9rGF0jyobpCk7DHN4ny4oOy96
+         /cd/KGFJk3gqALtXMLXOl4atG8273agCrOlnKFlp5cSiKCw//iWcGaytCkfMzFBar+iy
+         REsdCLSTG61mEsOOI2S9AF56L8yYJVAXLhMsXkKXPNeQ9R+AO1+CFwxN4isFxJ1EDtAv
+         laKQ==
+X-Gm-Message-State: AOUpUlEDlLG0Ide7XMtAtnjtYs40MN5vg2YwGu+eEmnJM6ojMZqmZmqs
+        Hv6JBBA+1j7nu98a4K60eMY=
+X-Google-Smtp-Source: AA+uWPyqhLtC9g+yHz1piMji4ktjX5HLlRraMZPJIpwG/dOdiCc75VsZARpxsdfCadokSuvPeB2Idg==
+X-Received: by 2002:a19:be54:: with SMTP id o81-v6mr1837910lff.31.1533827074490;
+        Thu, 09 Aug 2018 08:04:34 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id l1-v6sm1176418lji.41.2018.08.09.08.04.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 08:04:33 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] iommu/tegra: gart: Provide access to Memory Controller driver
+Date:   Thu, 09 Aug 2018 18:04:32 +0300
+Message-ID: <3558767.SGILOZqXFq@dimapc>
+In-Reply-To: <20180809145206.GA26588@ulmo>
+References: <20180804143003.15817-1-digetx@gmail.com> <40363808.PZSQB5qk50@dimapc> <20180809145206.GA26588@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809025409.31552-1-rashmica.g@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18080915-0012-0000-0000-0000029770F7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080915-0013-0000-0000-000020CA8150
-Message-Id: <20180809150336.GB3264@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090155
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 12:54:09PM +1000, Rashmica Gupta wrote:
-> When hot-removing memory release_mem_region_adjustable() splits
-> iomem resources if they are not the exact size of the memory being
-> hot-deleted. Adding this memory back to the kernel adds a new
-> resource.
+On Thursday, 9 August 2018 17:52:06 MSK Thierry Reding wrote:
+> On Thu, Aug 09, 2018 at 05:22:59PM +0300, Dmitry Osipenko wrote:
+> > On Thursday, 9 August 2018 16:59:24 MSK Thierry Reding wrote:
+> > > On Thu, Aug 09, 2018 at 02:39:03PM +0300, Dmitry Osipenko wrote:
+> > > > On Thursday, 9 August 2018 14:17:46 MSK Thierry Reding wrote:
+> > > > > On Sat, Aug 04, 2018 at 05:29:57PM +0300, Dmitry Osipenko wrote:
+> > > > > > GART contain registers needed by the Memory Controller driver,
+> > > > > > provide
+> > > > > > access to the MC driver by utilizing its GART-integration
+> > > > > > facility.
+> > > > > > 
+> > > > > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > > > > ---
+> > > > > > 
+> > > > > >  drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
+> > > > > >  1 file changed, 23 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/drivers/iommu/tegra-gart.c
+> > > > > > b/drivers/iommu/tegra-gart.c
+> > > > > > index a004f6da35f2..f8b653e25914 100644
+> > > > > > --- a/drivers/iommu/tegra-gart.c
+> > > > > > +++ b/drivers/iommu/tegra-gart.c
+> > > > > > @@ -31,6 +31,8 @@
+> > > > > > 
+> > > > > >  #include <linux/iommu.h>
+> > > > > >  #include <linux/of.h>
+> > > > > > 
+> > > > > > +#include <soc/tegra/mc.h>
+> > > > > > +
+> > > > > > 
+> > > > > >  #include <asm/cacheflush.h>
+> > > > > >  
+> > > > > >  /* bitmap of the page sizes currently supported */
+> > > > > > 
+> > > > > > @@ -41,6 +43,8 @@
+> > > > > > 
+> > > > > >  #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
+> > > > > >  #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
+> > > > > >  #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
+> > > > > > 
+> > > > > > +#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
+> > > > > > +#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
+> > > > > > 
+> > > > > >  #define GART_PAGE_SHIFT		12
+> > > > > >  #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
+> > > > > > 
+> > > > > > @@ -63,6 +67,8 @@ struct gart_device {
+> > > > > > 
+> > > > > >  	struct device		*dev;
+> > > > > >  	
+> > > > > >  	struct iommu_device	iommu;		/* IOMMU Core handle */
+> > > > > > 
+> > > > > > +
+> > > > > > +	struct tegra_mc_gart_handle mc_gart_handle;
+> > > > > > 
+> > > > > >  };
+> > > > > >  
+> > > > > >  struct gart_domain {
+> > > > > > 
+> > > > > > @@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device
+> > > > > > *dev)
+> > > > > > 
+> > > > > >  	return 0;
+> > > > > >  
+> > > > > >  }
+> > > > > > 
+> > > > > > +static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle
+> > > > > > *handle)
+> > > > > > +{
+> > > > > > +	struct gart_device *gart = container_of(handle, struct
+> > 
+> > gart_device,
+> > 
+> > > > > > +						mc_gart_handle);
+> > > > > > +	return readl_relaxed(gart->regs + GART_ERROR_ADDR);
+> > > > > > +}
+> > > > > > +
+> > > > > > +static u32 tegra_gart_error_req(struct tegra_mc_gart_handle
+> > > > > > *handle)
+> > > > > > +{
+> > > > > > +	struct gart_device *gart = container_of(handle, struct
+> > 
+> > gart_device,
+> > 
+> > > > > > +						mc_gart_handle);
+> > > > > > +	return readl_relaxed(gart->regs + GART_ERROR_REQ);
+> > > > > > +}
+> > > > > > +
+> > > > > > 
+> > > > > >  static int tegra_gart_probe(struct platform_device *pdev)
+> > > > > >  {
+> > > > > >  
+> > > > > >  	struct gart_device *gart;
+> > > > > > 
+> > > > > > @@ -464,6 +484,8 @@ static int tegra_gart_probe(struct
+> > > > > > platform_device
+> > > > > > *pdev)>
+> > > > > > 
+> > > > > >  	gart->regs = gart_regs;
+> > > > > >  	gart->iovmm_base = (dma_addr_t)res_remap->start;
+> > > > > >  	gart->page_count = (resource_size(res_remap) >>
+> > > > > >  	GART_PAGE_SHIFT);
+> > > > > > 
+> > > > > > +	gart->mc_gart_handle.error_addr = tegra_gart_error_addr;
+> > > > > > +	gart->mc_gart_handle.error_req = tegra_gart_error_req;
+> > > > > > 
+> > > > > >  	gart->savedata = vmalloc(array_size(sizeof(u32),
+> > > > > >  	gart->page_count));
+> > > > > >  	if (!gart->savedata) {
+> > > > > > 
+> > > > > > @@ -475,6 +497,7 @@ static int tegra_gart_probe(struct
+> > > > > > platform_device
+> > > > > > *pdev)>
+> > > > > > 
+> > > > > >  	do_gart_setup(gart, NULL);
+> > > > > >  	
+> > > > > >  	gart_handle = gart;
+> > > > > > 
+> > > > > > +	tegra_mc_register_gart(&gart->mc_gart_handle);
+> > > > > > 
+> > > > > >  	return 0;
+> > > > > >  
+> > > > > >  }
+> > > > > 
+> > > > > I see now why you've did it this way. We have separate devices
+> > > > > unlike
+> > > > > with SMMU where it is properly modeled as part of the memory
+> > > > > controller.
+> > > > > I think we should consider breaking ABI at this point and properly
+> > > > > merge
+> > > > > both the memory controller and GART nodes. There's really no reason
+> > > > > why
+> > > > > they should be separate and we're jumping through multiple hoops to
+> > > > > do
+> > > > > what we need to do just because a few years back we made a mistake.
+> > > > > 
+> > > > > I know we're technically not supposed to break the DT ABI, but I
+> > > > > think
+> > > > > in this particular case we can make a good case for it. The current
+> > > > > DT
+> > > > > bindings are plainly broken, and obviously so. Also, we don't
+> > > > > currently
+> > > > > use the GART upstream for anything, so we can't break any existing
+> > > > > systems either.
+> > > > 
+> > > > IIUC, that will require to break the stable DT ABI of the tegra20-mc,
+> > > > which is working fine and does its job. I'm personally not seeing the
+> > > > slight lameness of the current DT as a good excuse to break the ABI.
+> > > > Let's then break DT ABI on all Tegra's and convert them all to genpd
+> > > > and
+> > > > other goodies like assigned clock parents and clock rate.
+> > > 
+> > > genpd and assigned clocks are complementary, they can be switched to
+> > > without breaking ABI.
+> > > 
+> > > And that's also different from the memory controller on Tegra20 where we
+> > > just made the mistake of describing what is effectively one device as
+> > > two separate devices. From what I can tell, the only reason this was
+> > > done was because it mapped better to the Linux driver model where there
+> > > is a framework to represent an IOMMU and a misunderstanding of how to
+> > > work with the driver model and device tree.
+> > > 
+> > > As such, I would describe it as more of a bug in the DT that should be
+> > > fixed rather than breaking the ABI.
+> > > 
+> > > And, like I said, we are in the somewhat fortunate situation that we
+> > > don't actively use the GART, at least in upstream, yet. So even if we
+> > > break ABI, nobody will notice anyway. Those are about as good pre-
+> > > conditions as you're going to get for fixing ABI.
+> > 
+> > Please tell exactly what you're suggesting.
+> > 
+> > Current DT:
+> > 	mc: memory-controller@7000f000 {
+> > 	
+> > 		compatible = "nvidia,tegra20-mc";
+> > 		reg = <0x7000f000 0x024
+> > 		
+> > 		       0x7000f03c 0x3c4>;
+> > 		
+> > 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+> > 		#reset-cells = <1>;
+> > 	
+> > 	};
+> > 	
+> > 	gart: iommu@7000f024 {
+> > 	
+> > 		compatible = "nvidia,tegra20-gart";
+> > 		reg = <0x7000f024 0x00000018	/* controller registers */
+> > 		
+> > 		       0x58000000 0x02000000>;	/* GART aperture */
+> > 		
+> > 		#iommu-cells = <0>;
+> > 	
+> > 	};
+> > 
+> > Variant 1 (break MC ABI):
+> > 	mc: memory-controller@7000f000 {
+> > 	
+> > 		compatible = "nvidia,tegra20-mc";
+> > 		reg = <0x7000f000 0x400	/* controller registers */
+> > 		
+> > 		       0x58000000 0x02000000>;	/* GART aperture */
+> > 		
+> > 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+> > 		#reset-cells = <1>;
+> > 		#iommu-cells = <0>;
+> > 	
+> > 	};
 > 
-> Eg a node has memory 0x0 - 0xfffffffff. Offlining and hot-removing
-> 1GB from 0xf40000000 results in the single resource 0x0-0xfffffffff being
-> split into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
-> 
-> When we hot-add the memory back we now have three resources:
-> 0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
-> 
-> Now if we try to remove some memory that overlaps these resources,
-> like 2GB from 0xf40000000, release_mem_region_adjustable() fails as it
-> expects the chunk of memory to be within the boundaries of a single
-> resource.
-> 
-> This patch adds a function request_resource_and_merge(). This is called
-> instead of request_resource_conflict() when registering a resource in
-> add_memory(). It calls request_resource_conflict() and if hot-removing is
-> enabled (if it isn't we won't get resource fragmentation) we attempt to
-> merge contiguous resources on the node.
-> 
-> Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
+> This is the variant that I would prefer.
 
-Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Okay, I'll prepare the patches.
 
-> ---
-> v2->v3: Update Xen balloon, make the commit msg and a comment clearer,
-> and changed '>' to '>=' when comparing the end of a resource and the
-> end of a node.
-> 
-> v1->v2: Only attempt to merge resources if hot-remove is enabled.
-> 
->  drivers/xen/balloon.c          |   3 +-
->  include/linux/ioport.h         |   2 +
->  include/linux/memory_hotplug.h |   2 +-
->  kernel/resource.c              | 120 +++++++++++++++++++++++++++++++++++++++++
->  mm/memory_hotplug.c            |  22 ++++----
->  5 files changed, 136 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-> index 065f0b607373..9b972b37b0da 100644
-> --- a/drivers/xen/balloon.c
-> +++ b/drivers/xen/balloon.c
-> @@ -401,7 +401,8 @@ static enum bp_state reserve_additional_memory(void)
->  	 * callers drop the mutex before trying again.
->  	 */
->  	mutex_unlock(&balloon_mutex);
-> -	rc = add_memory_resource(nid, resource, memhp_auto_online);
-> +	rc = add_memory_resource(nid, resource->start, resource_size(resource),
-> +				 memhp_auto_online);
->  	mutex_lock(&balloon_mutex);
-> 
->  	if (rc) {
-> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-> index da0ebaec25f0..f5b93a711e86 100644
-> --- a/include/linux/ioport.h
-> +++ b/include/linux/ioport.h
-> @@ -189,6 +189,8 @@ extern int allocate_resource(struct resource *root, struct resource *new,
->  						       resource_size_t,
->  						       resource_size_t),
->  			     void *alignf_data);
-> +extern struct resource *request_resource_and_merge(struct resource *parent,
-> +						   struct resource *new, int nid);
->  struct resource *lookup_resource(struct resource *root, resource_size_t start);
->  int adjust_resource(struct resource *res, resource_size_t start,
->  		    resource_size_t size);
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index 4e9828cda7a2..9c00f97c8cc6 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -322,7 +322,7 @@ static inline void remove_memory(int nid, u64 start, u64 size) {}
->  extern int walk_memory_range(unsigned long start_pfn, unsigned long end_pfn,
->  		void *arg, int (*func)(struct memory_block *, void *));
->  extern int add_memory(int nid, u64 start, u64 size);
-> -extern int add_memory_resource(int nid, struct resource *resource, bool online);
-> +extern int add_memory_resource(int nid, u64 start, u64 size, bool online);
->  extern int arch_add_memory(int nid, u64 start, u64 size,
->  		struct vmem_altmap *altmap, bool want_memblock);
->  extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index 30e1bc68503b..a31d3f5bccb7 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -1621,3 +1621,123 @@ static int __init strict_iomem(char *str)
->  }
-> 
->  __setup("iomem=", strict_iomem);
-> +
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +#ifdef CONFIG_MEMORY_HOTREMOVE
-> +/*
-> + * Attempt to merge resource and it's sibling
-> + */
-> +static int merge_resources(struct resource *res)
-> +{
-> +	struct resource *next;
-> +	struct resource *tmp;
-> +	uint64_t size;
-> +	int ret = -EINVAL;
-> +
-> +	next = res->sibling;
-> +
-> +	/*
-> +	 * Not sure how to handle two different children. So only attempt
-> +	 * to merge two resources if neither have children, only one has a
-> +	 * child or if both have the same child.
-> +	 */
-> +	if ((res->child && next->child) && (res->child != next->child))
-> +		return ret;
-> +
-> +	if (res->end + 1 != next->start)
-> +		return ret;
-> +
-> +	if (res->flags != next->flags)
-> +		return ret;
-> +
-> +	/* Update sibling and child of resource */
-> +	res->sibling = next->sibling;
-> +	tmp = res->child;
-> +	if (!res->child)
-> +		res->child = next->child;
-> +
-> +	size = next->end - res->start + 1;
-> +	ret = __adjust_resource(res, res->start, size);
-> +	if (ret) {
-> +		/* Failed so restore resource to original state */
-> +		res->sibling = next;
-> +		res->child = tmp;
-> +		return ret;
-> +	}
-> +
-> +	free_resource(next);
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Attempt to merge resources on the node
-> + */
-> +static void merge_node_resources(int nid, struct resource *parent)
-> +{
-> +	struct resource *res;
-> +	uint64_t start_addr;
-> +	uint64_t end_addr;
-> +	int ret;
-> +
-> +	start_addr = node_start_pfn(nid) << PAGE_SHIFT;
-> +	end_addr = node_end_pfn(nid) << PAGE_SHIFT;
-> +
-> +	write_lock(&resource_lock);
-> +
-> +	/* Get the first resource */
-> +	res = parent->child;
-> +
-> +	while (res) {
-> +		/* Check that the resource is within the node */
-> +		if (res->start < start_addr) {
-> +			res = res->sibling;
-> +			continue;
-> +		}
-> +		/* Exit if sibling resource is past end of node */
-> +		if (res->sibling->end >= end_addr)
-> +			break;
-> +
-> +		ret = merge_resources(res);
-> +		if (!ret)
-> +			continue;
-> +		res = res->sibling;
-> +	}
-> +	write_unlock(&resource_lock);
-> +}
-> +#endif /* CONFIG_MEMORY_HOTREMOVE */
-> +
-> +/**
-> + * request_resource_and_merge() - request an I/O or memory resource for hot-add
-> + * @parent: parent resource descriptor
-> + * @new: resource descriptor desired by caller
-> + * @nid: node id of the node we want the resource on
-> + *
-> + * If no conflict resource then attempt to merge resources on the node.
-> + *
-> + * This is intended to cleanup the fragmentation of resources that occurs when
-> + * hot-removing memory (see release_mem_region_adjustable). If hot-removing is
-> + * not enabled then there is no point trying to merge resources.
-> + *
-> + * Note that the inability to merge resources is not an error.
-> + *
-> + * Return: NULL for successful request of resource and conflict resource if
-> + * there was a conflict.
-> + */
-> +struct resource *request_resource_and_merge(struct resource *parent,
-> +					    struct resource *new, int nid)
-> +{
-> +	struct resource *conflict;
-> +
-> +	conflict = request_resource_conflict(parent, new);
-> +
-> +	if (conflict)
-> +		return conflict;
-> +
-> +#ifdef CONFIG_MEMORY_HOTREMOVE
-> +	merge_node_resources(nid, parent);
-> +#endif /* CONFIG_MEMORY_HOTREMOVE */
-> +
-> +	return NULL;
-> +}
-> +#endif /* CONFIG_MEMORY_HOTPLUG */
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 7deb49f69e27..2e342f5ce322 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -97,7 +97,7 @@ void mem_hotplug_done(void)
->  }
-> 
->  /* add this memory to iomem resource */
-> -static struct resource *register_memory_resource(u64 start, u64 size)
-> +static struct resource *register_memory_resource(int nid, u64 start, u64 size)
->  {
->  	struct resource *res, *conflict;
->  	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-> @@ -108,7 +108,7 @@ static struct resource *register_memory_resource(u64 start, u64 size)
->  	res->start = start;
->  	res->end = start + size - 1;
->  	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-> -	conflict =  request_resource_conflict(&iomem_resource, res);
-> +	conflict =  request_resource_and_merge(&iomem_resource, res, nid);
->  	if (conflict) {
->  		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
->  			pr_debug("Device unaddressable memory block "
-> @@ -122,11 +122,15 @@ static struct resource *register_memory_resource(u64 start, u64 size)
->  	return res;
->  }
-> 
-> -static void release_memory_resource(struct resource *res)
-> +static void release_memory_resource(struct resource *res, u64 start, u64 size)
->  {
->  	if (!res)
->  		return;
-> +#ifdef CONFIG_MEMORY_HOTREMOVE
-> +	release_mem_region_adjustable(&iomem_resource, start, size);
-> +#else
->  	release_resource(res);
-> +#endif
->  	kfree(res);
->  	return;
->  }
-> @@ -1096,17 +1100,13 @@ static int online_memory_block(struct memory_block *mem, void *arg)
->  }
-> 
->  /* we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG */
-> -int __ref add_memory_resource(int nid, struct resource *res, bool online)
-> +int __ref add_memory_resource(int nid, u64 start, u64 size, bool online)
->  {
-> -	u64 start, size;
->  	pg_data_t *pgdat = NULL;
->  	bool new_pgdat;
->  	bool new_node;
->  	int ret;
-> 
-> -	start = res->start;
-> -	size = resource_size(res);
-> -
->  	ret = check_hotplug_memory_range(start, size);
->  	if (ret)
->  		return ret;
-> @@ -1195,13 +1195,13 @@ int __ref add_memory(int nid, u64 start, u64 size)
->  	struct resource *res;
->  	int ret;
-> 
-> -	res = register_memory_resource(start, size);
-> +	res = register_memory_resource(nid, start, size);
->  	if (IS_ERR(res))
->  		return PTR_ERR(res);
-> 
-> -	ret = add_memory_resource(nid, res, memhp_auto_online);
-> +	ret = add_memory_resource(nid, start, size, memhp_auto_online);
->  	if (ret < 0)
-> -		release_memory_resource(res);
-> +		release_memory_resource(res, start, size);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(add_memory);
-> -- 
-> 2.14.4
-> 
 
--- 
-Sincerely yours,
-Mike.
 
