@@ -2,289 +2,150 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D29C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6907CC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E5721B32
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S+j/vm9t";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C4Ohh0Au"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E5721B32
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2568B21B32
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:50:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2568B21B32
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729893AbeHILOX (ORCPT
+        id S1729996AbeHILOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:14:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37900 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeHILOX (ORCPT
+        Thu, 9 Aug 2018 07:14:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51564 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729911AbeHILOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:14:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 99B6760B77; Thu,  9 Aug 2018 08:50:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533804632;
-        bh=bmTsXFgWnM32PaUKbXlD+i/H5+ixoWxvafxcJ7mubus=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=S+j/vm9tyP6D5BhYIVH2UjWM4kFHSGSze9GPmlkzJdCWyd/ZmiS04s4hdcmcRtzWN
-         Kohqi2uuDsT64QmoNji/d18UwRitPSpBkyUXwaGKcct/QCT82206p+zcXJfbWZ9dWL
-         X61X6t7/X5r6xmi7bBbZEb7XEm4VICmJYbVIuQko=
-Received: from [10.206.24.124] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B330B606FA;
-        Thu,  9 Aug 2018 08:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533804631;
-        bh=bmTsXFgWnM32PaUKbXlD+i/H5+ixoWxvafxcJ7mubus=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=C4Ohh0AulA/O/U8pGf0XdFpeMrB6p6IvS7xq7l0wnAPy3XpUbYeL9uksnEtR6gqy5
-         JPMHYBy83idE5vVqwQUz5BEBQSXaTnJKEN0eE6daaOVwavDMTHqhPZBa5qSUUdLumY
-         nYKA8FDBtN82YNWtN3C6BHvX2j6OC7Kxo6ItiZAU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B330B606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-Subject: Re: [PATCH V7 1/2] scsi: ufs: set the device reference clock setting
-To:     Evan Green <evgreen@chromium.org>
-Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1533113338-31750-1-git-send-email-sayalil@codeaurora.org>
- <1533113338-31750-2-git-send-email-sayalil@codeaurora.org>
- <CAE=gft6H2iYx59fXc2SHP+Rr9M07Vjk99-Rgk1Kx-GnVJT86DQ@mail.gmail.com>
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-Message-ID: <fa0578ee-57ac-923c-8c20-8b2b5fa13829@codeaurora.org>
-Date:   Thu, 9 Aug 2018 14:20:25 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thu, 9 Aug 2018 07:14:34 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w798i5aF058817
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 04:50:44 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2krhj5j5k9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 04:50:44 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 9 Aug 2018 09:50:41 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 09:50:37 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w798oaec23658726
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 08:50:36 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2750C42042;
+        Thu,  9 Aug 2018 11:50:44 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4C8334204C;
+        Thu,  9 Aug 2018 11:50:43 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 11:50:43 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v8 19/22] KVM: s390: Clear Crypto Control Block when using
+ vSIE
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-20-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <9a7353fa-143f-9048-936a-59f446411e0a@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 9 Aug 2018 10:50:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft6H2iYx59fXc2SHP+Rr9M07Vjk99-Rgk1Kx-GnVJT86DQ@mail.gmail.com>
+In-Reply-To: <9a7353fa-143f-9048-936a-59f446411e0a@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18080908-0008-0000-0000-0000025F4AA8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080908-0009-0000-0000-000021C7597D
+Message-Id: <8696bba1-af93-07a6-060b-e722165416b8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
-
-On 8/6/2018 10:56 PM, Evan Green wrote:
-> Hi Sayali,
->
-> On Wed, Aug 1, 2018 at 1:49 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
->> From: Subhash Jadavani <subhashj@codeaurora.org>
+On 09/08/2018 10:10, David Hildenbrand wrote:
+> On 08.08.2018 16:44, Tony Krowiak wrote:
+>> From: Pierre Morel <pmorel@linux.ibm.com>
 >>
->> UFS host supplies the reference clock to UFS device and UFS device
->> specification allows host to provide one of the 4 frequencies (19.2 MHz,
->> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
->> device reference clock frequency setting in the device based on what
->> frequency it is supplying to UFS device.
+>> When we clear the Crypto Control Block (CRYCB) used by a guest
+>> level 2, the vSIE shadow CRYCB for guest level 3 must be updated
+>> before the guest uses it.
 >>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+>> We achieve this by using the KVM_REQ_VSIE_RESTART synchronous
+>> request for each vCPU belonging to the guest to force the reload
+>> of the shadow CRYCB before rerunning the guest level 3.
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
 >> ---
->>   drivers/scsi/ufs/ufs.h           |  8 ++++
->>   drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
->>   drivers/scsi/ufs/ufshcd.c        | 84 ++++++++++++++++++++++++++++++++++++++++
->>   drivers/scsi/ufs/ufshcd.h        |  2 +
->>   4 files changed, 96 insertions(+)
+>>   arch/s390/kvm/kvm-s390.c |    7 +++++++
+>>   1 files changed, 7 insertions(+), 0 deletions(-)
 >>
->> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
->> index 14e5bf7..89e0a33 100644
->> --- a/drivers/scsi/ufs/ufs.h
->> +++ b/drivers/scsi/ufs/ufs.h
->> @@ -378,6 +378,14 @@ enum query_opcode {
->>          UPIU_QUERY_OPCODE_TOGGLE_FLAG   = 0x8,
->>   };
->>
->> +/* bRefClkFreq attribute values */
->> +enum ref_clk_freq {
->> +       REF_CLK_FREQ_19_2_MHZ   = 19200000,
->> +       REF_CLK_FREQ_26_MHZ     = 26000000,
->> +       REF_CLK_FREQ_38_4_MHZ   = 38400000,
->> +       REF_CLK_FREQ_52_MHZ     = 52000000,
->> +};
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 0d03249..9203f0b 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -1921,6 +1921,9 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>>   
+>>   void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>>   {
+>> +	int i;
+>> +	struct kvm_vcpu *vcpu;
 >> +
->>   /* Query response result code */
->>   enum {
->>          QUERY_RESULT_SUCCESS                    = 0x00,
->> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
->> index e82bde0..0953563 100644
->> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
->> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
->> @@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
->>          pm_runtime_set_active(&pdev->dev);
->>          pm_runtime_enable(&pdev->dev);
->>
->> +       ufshcd_parse_dev_ref_clk_freq(hba);
+>>   	mutex_lock(&kvm->lock);
+>>   	kvm_s390_vcpu_block_all(kvm);
+>>   
+>> @@ -1929,6 +1932,10 @@ void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>>   	memset(&kvm->arch.crypto.crycb->apcb1, 0,
+>>   	       sizeof(kvm->arch.crypto.crycb->apcb1));
+>>   
+>> +	/* recreate the shadow crycb for each vcpu */
+>> +	kvm_for_each_vcpu(i, vcpu, kvm)
+>> +		kvm_s390_sync_request(KVM_REQ_VSIE_RESTART, vcpu);
+> We have kvm_s390_sync_request_broadcast(), which should boil down to a
+> one-liner
+right, thanks
+
 >> +
->>          ufshcd_init_lanes_per_dir(hba);
->>
->>          err = ufshcd_init(hba, mmio_base, irq);
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index c5b1bf1..619313b 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -6296,6 +6296,84 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
->>          hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+>>   	kvm_s390_vcpu_unblock_all(kvm);
+>>   	mutex_unlock(&kvm->lock);
 >>   }
 >>
->> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
->> +{
->> +       struct device *dev = hba->dev;
->> +       struct device_node *np = dev->of_node;
->> +       struct clk *refclk = NULL;
->> +
->> +       if (!np)
->> +               return;
->> +
->> +       refclk = of_clk_get_by_name(np, "ref_clk");
->> +       if (refclk)
->> +               hba->dev_ref_clk_freq  = clk_get_rate(refclk);
->> +       else if (!refclk ||
->> +               (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
-> What is this logic? The !refclk condition will always be true since
-> you're in the else case of if (refclk). Also, even if the second part
-> were executed somehow, you haven't assigned dev_ref_clk_freq yet, so
-> how can its value be anything other than 0? Maybe that whole
-> conditional was just not supposed to be an "else" at all, but a
-> standalone if?
-Agree. Will update.
->> +               dev_err(hba->dev,
->> +               "%s: invalid ref_clk setting = %u\n",
->> +               __func__, hba->dev_ref_clk_freq);
-> There's probably no need to complain if the clock simply couldn't be
-> found, only if an unexpected value was found.
-Agree. Will update.
->> +               hba->dev_ref_clk_freq = 0;
->> +       }
->> +}
->> +
->> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
->> +{
->> +       int err = 0;
->> +       int ref_clk = -1;
->> +       static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
->> +                                                    "38.4 MHz", "52 MHz"};
->> +
->> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
->> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
->> +
->> +       if (err) {
->> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
->> +                        __func__, err);
->> +               goto out;
->> +       }
->> +
->> +       switch (hba->dev_ref_clk_freq) {
->> +       case REF_CLK_FREQ_19_2_MHZ:
->> +               hba->dev_ref_clk_freq = 0x0;
->> +               break;
->> +       case REF_CLK_FREQ_26_MHZ:
->> +               hba->dev_ref_clk_freq = 0x1;
->> +               break;
->> +       case REF_CLK_FREQ_38_4_MHZ:
->> +               hba->dev_ref_clk_freq = 0x2;
->> +               break;
->> +       case REF_CLK_FREQ_52_MHZ:
->> +               hba->dev_ref_clk_freq = 0x3;
->> +               break;
->> +       default:
->> +               dev_err(hba->dev,
->> +               "%s: invalid ref_clk setting = %u\n",
->> +               __func__, hba->dev_ref_clk_freq);
->> +               goto out;
->> +       }
-> Please don't assign two different things (frequency in Hertz and
-> bref_clk value) into the same structure member.
 >
-> I think rather than having this switch statement you should iterate
-> through a table that contains elements of {freq_hz, bref_clk, string}.
-> I think you should do this up in ufshcd_parse_dev_ref_clk_freq so that
-> you don't have to redo that calculation on every rescan. Then store
-> the final bRefClkFreq value (or -1 if no definitive answer could be
-> reached) in your new structure member. Then all this function does is
-> 1) Nothing if dev_ref_clk_freq is -1, or 2) read and maybe write the
-> attribute.
-Agree. Will update.
->> +
->> +       if (ref_clk == hba->dev_ref_clk_freq)
->> +               goto out; /* nothing to update */
->> +
->> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
->> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
->> +                       &hba->dev_ref_clk_freq);
->> +
->> +       if (err)
->> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
->> +                       __func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
->> +       /*
->> +        * It is good to print this out here to debug any later failures
->> +        * related to gear switch.
->> +        */
->> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
->> +                       __func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
->> +
->> +out:
->> +       return err;
->> +}
->> +
->>   /**
->>    * ufshcd_probe_hba - probe hba to detect device and initialize
->>    * @hba: per-adapter instance
->> @@ -6361,6 +6439,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->>                          "%s: Failed getting max supported power mode\n",
->>                          __func__);
->>          } else {
->> +               /*
->> +                * Set the right value to bRefClkFreq before attempting to
->> +                * switch to HS gears.
->> +                */
->> +               if (hba->dev_ref_clk_freq)
->> +                       ufshcd_set_dev_ref_clk(hba);
->>                  ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
->>                  if (ret) {
->>                          dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->> index 8110dcd..101a75c 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -548,6 +548,7 @@ struct ufs_hba {
->>          void *priv;
->>          unsigned int irq;
->>          bool is_irq_enabled;
->> +       u32 dev_ref_clk_freq;
-> If you followed my suggestion of this storing _only_ the bRefClkFreq
-> value or -1 if unset, then this would need to be signed, and
-> initialized somewhere so that 0 wasn't accidentally taken to be a
-> parsed value.
-Will check and update (if necessary).
->>          /* Interrupt aggregation support is broken */
->>          #define UFSHCD_QUIRK_BROKEN_INTR_AGGR                   0x1
->> @@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
->>   int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
->>                                  u32 val, unsigned long interval_us,
->>                                  unsigned long timeout_ms, bool can_sleep);
->> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
->>
->>   static inline void check_upiu_size(void)
->>   {
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
