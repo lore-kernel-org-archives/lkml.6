@@ -5,100 +5,100 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62ACEC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E6EC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18ED521D19
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:06:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18ED521D19
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A37021D5B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:06:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A37021D5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbeHINae (ORCPT
+        id S1730760AbeHINax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 09:30:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727768AbeHINae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 09:30:34 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8995040216E8;
-        Thu,  9 Aug 2018 11:06:12 +0000 (UTC)
-Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BF4D215670D;
-        Thu,  9 Aug 2018 11:06:09 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 13:06:07 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v8 09/22] s390: vfio-ap: register matrix device with
- VFIO mdev framework
-Message-ID: <20180809130607.32781b72.cohuck@redhat.com>
-In-Reply-To: <1533739472-7172-10-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1533739472-7172-10-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        Thu, 9 Aug 2018 09:30:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52204 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727768AbeHINax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 09:30:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA13D18A;
+        Thu,  9 Aug 2018 04:06:32 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D6513F5D4;
+        Thu,  9 Aug 2018 04:06:31 -0700 (PDT)
+Subject: Re: [PATCH v4 4/5] iommu/arm-smmu-v3: add support for non-strict mode
+To:     Zhen Lei <thunder.leizhen@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     LinuxArm <linuxarm@huawei.com>, Hanjun Guo <guohanjun@huawei.com>,
+        Libin <huawei.libin@huawei.com>
+References: <1533558424-16748-1-git-send-email-thunder.leizhen@huawei.com>
+ <1533558424-16748-5-git-send-email-thunder.leizhen@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <94c88d9e-818e-f893-9ee2-7a0cf425bd9a@arm.com>
+Date:   Thu, 9 Aug 2018 12:06:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1533558424-16748-5-git-send-email-thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 09 Aug 2018 11:06:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 09 Aug 2018 11:06:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  8 Aug 2018 10:44:19 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> index d7e39ad..6a827f3 100644
-> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mod_devicetable.h>
->  #include <linux/slab.h>
->  #include <linux/string.h>
-> +#include <asm/zcrypt.h>
->  #include "vfio_ap_private.h"
->  
->  #define VFIO_AP_ROOT_NAME "vfio_ap"
-> @@ -68,6 +69,18 @@ static int vfio_ap_matrix_dev_create(void)
->  {
->  	int ret;
->  
-> +	mutex_init(&matrix_dev.lock);
-> +	INIT_LIST_HEAD(&matrix_dev.mdev_list);
-> +
-> +	/* Test if PQAP(QCI) instruction is available */
-> +	if (test_facility(12)) {
-> +		ret = ap_qci(&matrix_dev.info);
-> +		if (ret)
-> +			return ret;
+On 06/08/18 13:27, Zhen Lei wrote:
+> Dynamically choose strict or non-strict mode for page table config based
+> on the iommu domain type.
+> 
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>   drivers/iommu/arm-smmu-v3.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 2f1304b..904bc1e 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -1622,6 +1622,11 @@ static int arm_smmu_domain_finalise(struct iommu_domain *domain)
+>   	if (smmu->features & ARM_SMMU_FEAT_COHERENCY)
+>   		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
+> 
+> +	if (domain->type == IOMMU_DOMAIN_DMA) {
+> +		domain->non_strict = 1;
+> +		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
 > +	}
 > +
-> +	atomic_set(&matrix_dev.available_instances, MAX_ZDEV_ENTRIES_EXT);
-> +
->  	ret = misc_register(&matrix_dev.misc_dev);
+>   	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
+>   	if (!pgtbl_ops)
+>   		return -ENOMEM;
+> @@ -1782,7 +1787,7 @@ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+>   {
+>   	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
+> 
+> -	if (smmu)
+> +	if (smmu && !domain->non_strict)
 
-OK, you are adding more stuff other than the miscdevice after all...
-still, I don't think that this is a good idea.
+That doesn't smell right - even in non-strict domains we still need 
+stuff like walk cache invalidations for non-leaf unmaps to be 
+synchronous, so we can't just ignore all sync operations at the driver 
+level. I think the right thing to do to elide the "normal" sync on unmap 
+is to first convert __iommu_dma_unmap to use 
+iommu_unmap_fast()/iommu_tlb_sync(), then make it not issue that sync at 
+all for non-strict domains.
 
-I think I had already asked this for a previous version: Why has this
-been turned into a miscdevice? (I think my reaction to the answer was
-'meh'... but I think more and more that we should not do that.)
+Robin.
 
->  	if (ret)
->  		return ret;
+>   		__arm_smmu_tlb_sync(smmu);
+>   }
+> 
+> --
+> 1.8.3
+> 
+> 
