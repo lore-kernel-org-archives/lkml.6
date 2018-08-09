@@ -3,131 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BA7C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BCCC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FFB21CDB
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:11:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FFB21CDB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E94F21CF7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E94F21CF7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbeHILfK (ORCPT
+        id S1729872AbeHILh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:35:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38504 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727371AbeHILfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:35:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63959AF3F;
-        Thu,  9 Aug 2018 09:11:13 +0000 (UTC)
-Message-ID: <1533805400.17217.16.camel@suse.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Yu Chen <yu.c.chen@intel.com>, Pavel Machek <pavel@ucw.cz>
-Cc:     Ryan Chen <yu.chen.surf@gmail.com>, jlee@suse.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Date:   Thu, 09 Aug 2018 11:03:20 +0200
-In-Reply-To: <20180809030135.GA21364@chenyu-desktop>
-References: <20180723162302.GA4503@sandybridge-desktop>
-         <1532590246.7411.3.camel@suse.com> <20180726081404.GG4244@linux-l9pv.suse>
-         <20180730170415.GQ4244@linux-l9pv.suse>
-         <20180803033702.GB416@sandybridge-desktop>
-         <20180803053445.GC4244@linux-l9pv.suse>
-         <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
-         <20180805100200.GB22948@amd> <20180806084534.GB12124@chenyu-desktop>
-         <20180808175036.GA16217@amd> <20180809030135.GA21364@chenyu-desktop>
+        Thu, 9 Aug 2018 07:37:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:43178 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727371AbeHILh2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:37:28 -0400
+X-UUID: cf8ff1d5ed8242559352abdb832aaf96-20180809
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <yingjoe.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1545081374; Thu, 09 Aug 2018 17:13:28 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 9 Aug 2018 17:13:20 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 9 Aug 2018 17:13:20 +0800
+Message-ID: <1533806000.3347.6.camel@mtksdaap41>
+Subject: Re: [PATCH v2 2/3] i2c: Add helper to ease DMA handling
+From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     Jun Gao <jun.gao@mediatek.com>, <devicetree@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 9 Aug 2018 17:13:20 +0800
+In-Reply-To: <20180808205752.llowh4bvu2wkuhga@ninjato>
+References: <1530955795-17714-1-git-send-email-jun.gao@mediatek.com>
+         <1530955795-17714-3-git-send-email-jun.gao@mediatek.com>
+         <20180808205752.llowh4bvu2wkuhga@ninjato>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Do, 2018-08-09 at 11:01 +0800, Yu Chen wrote:
-
-Hi,
-
-> User requirement:
-> A is the user, B is the attacker, user A launches a STD and
-> encrypts A's ram data, then writes these encrypted data onto
-> the disk,  so that: Even if user B has access to the disk,
-> B could not know the content of A. Which implies:
-> 1. If B unplugs the disk from A's machine, and plugs the disk onto
->    another machine, B could not decode the content without A's
->    'permission'.
-
-That is what encrypted STD does.
-
-> 2. If B is using the same machine as A, even A has walked away leaving
->    the system suspend, B could not resume to A's context without
->    A's 'permission'.
-
-No, that is out of scope for Secure Boot
-
-> Previously, there are three proposal for this:
-> a. Enhance the uswsusp(Pavel)
-> b. Using user provided password to generate the key, for encryption(Yu)
-> c. Using security boot(TPM or EFI key) for encryption(Joey)
+On Wed, 2018-08-08 at 22:57 +0200, Wolfram Sang wrote:
+> On Sat, Jul 07, 2018 at 05:29:54PM +0800, Jun Gao wrote:
+> > From: Jun Gao <jun.gao@mediatek.com>
+> > 
+> > This function is needed by i2c_get_dma_safe_msg_buf() potentially.
+> > It is used to free DMA safe buffer when DMA operation fails.
+> > 
+> > Signed-off-by: Jun Gao <jun.gao@mediatek.com>
 > 
-> Since I was proposing solution b, I'll say a little more about it.
-> The original idea was that, the user provides a password, then this
-> password is used to generate the key, which means, if user B has provided
-> an incorrect password, the kernel will fail to decrypt the data and is
-> likely to fail the resume process. That is to say, no matter
-> which physical machine B is using, only if he has provided the
-> password, he would be able to resume. In the first version, the key
-> deviration was firstly done in kernel space, which satisfies the
-> requirement and both saftey. Unfortunately it was rejected and
-> people would like to see the key generated in user space instead.
-> However, using user provided key directly is not safe, according
-> to the discussion in the thread. I don't have good idea on
-> how to improve this, but only have some workarounds, say, ask the
-> kernel to use TPM key to protects the user provided 'key', etc.
-
-Well, this has no relation to Secure Boot.
-Secure Boot will not prevent you from booting the machine.
-It restricts the OS you can boot to a cryptographically signed subset.
-
-If you want to demand a password to resume a machine, you can
-do so. But it has no relation to encrypted STD, other than that
-you need encrypted STD for this to make sense.
-
-> Then let's talk a little more about secure boot. According
-> to my understanding, the situation secure boot tries to deal
-> with is a little different from the user case we raised above -
-> It is an enhancement for case 1, because it refuses to resume
-> once the machine is changed. And it does not cover case 2. But
-> if it is a requirement from the user, that's ok.
+> Right, we need something like this. This leaks in the sh_mobile driver,
+> too :(
 > 
-> uswsusp is to do all the staff in user space, and other two
-> aim to do all the staff in kernel space. I'm not arguing
-> which one is better, but I'm not sure how often user is using
-> it, as we don't get uswsusp related bug report on kernel
-> bugzilla (both internally)recent years. Another point is,
-> why the compression is in kernel rather than in uswsusp,
-> it looks like the same case as encryption here.
+> I am still thinking if there is a nice way to put this functionality
+> into i2c_release_dma_safe_msg_buf() itself somehow...
 
-Secure Boot has no concept of users. Code is trusted, not users.
-For Secure Boot to work, you need a key generated and RAM encrypted
-in kernel space.
+Wolfram,
 
-If you want a requirement to restrict booting or resuming, you need
-to encrypt the key. These are different things.
+I have second thought on these API now. Recently, we have saw similar
+issue for spi device driver.
 
-	Regards
-		Oliver
+I believe the reason for these api is because some arch changed to can
+not do DMA on stack recently. Maybe we should have dma_mapping to bounce
+buffer like it bounce un-dma-able address for those arch? or we should
+have a common driver API for this, not just for i2c?
+
+Joe.C
+
 
