@@ -2,444 +2,93 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87851C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A498C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B7621B34
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B086321B34
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 01:58:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="XTWXV7Jq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B7621B34
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UCNlNuOR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B086321B34
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbeHIESp (ORCPT
+        id S1727380AbeHIEUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:18:45 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37588 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725757AbeHIESp (ORCPT
+        Thu, 9 Aug 2018 00:20:20 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54552 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725757AbeHIEUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:18:45 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j8-v6so2966000lfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 18:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T5Y2NiLlVTnAqVlItfAwBzFlo2LkcRKwvO+WSSHJrAM=;
-        b=XTWXV7Jq61uJx5OLmErCoTgCHs5bmVm2QcaWuvnBeNQ8G/pqaPENBMIBlxNt9Q6gXs
-         ZwhSQbnzaxIxlAeNyQr5c8nqncQKhPtJXA4Mcsc+Vt57qLjwtdlw6lFhfqQZnnERphgo
-         RVJMLYCfhLkhV4S4SQfnk7Hc55N7BegPgJXyekslR6PXgzrKQp4nmPIbbJfEett1igwZ
-         IxtApA3EaKzLZeSMcQKt+ZwqtJWfosbgsYxmuHGnBs3wi7IohO8/BP3yIdu5PWLGdyLv
-         U5/4xrDAk5TCgzAlf3Sq/QEWv13chnx5FYc4jPQuKfRjYLqL7Z0VRXrDcYk0tRNgKPum
-         bLVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T5Y2NiLlVTnAqVlItfAwBzFlo2LkcRKwvO+WSSHJrAM=;
-        b=dq9JHLRTYtnk8sbWIEg3D2N+KlUr6u/9U+rYPKAfJlzNJsx7sMmnyYhIq9GMjq6un+
-         pzpRjuE0EbSg5a8e6wwtaxgv/Ww1+BF4GHOtZoNpfXMl6V5uYubUTHPZmM8c6gtEu1x/
-         f19cxteWA1nYVWUVVmUtOwFESCwUYPblK7VZdKrLvMIAzO8fN9/wWhI53eAkSyUDCgsX
-         LTLVNWAxo0rrkbrgsOOlkW5HGYKNOsDUnIN1Ajf7Cv0qMm72767ViO8qFfop+AyijwW3
-         AH/SIscjXcyAma6IqS1fHIELVVgi1sZtur/M7xTJxl6+X0D86sOvv5r1A8sbYwkHpucb
-         6J1A==
-X-Gm-Message-State: AOUpUlFP0VFL+/82jXsg+moc25qR0/NuNcXLYl/TbQb95WHMlfWKtUJW
-        yz3VGJKwv2o19rXfgpc68awNZblsxU8kpw8Lq4G4
-X-Google-Smtp-Source: AA+uWPzG1nTk+fXXUIPc9QZ7jr7cdqg9U6ZnzFtrmHKwsb0VwfcUmy2Kqa7kFhZphE5E7GaUaDvOSc5Ko/3KKr3Phcw=
-X-Received: by 2002:a19:c403:: with SMTP id u3-v6mr66685lff.87.1533779781738;
- Wed, 08 Aug 2018 18:56:21 -0700 (PDT)
+        Thu, 9 Aug 2018 00:20:20 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w791sGlB065066;
+        Thu, 9 Aug 2018 01:57:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=8h1RychiPBPNWdg+SX17irx0v15BTnmpqfF05gJZDCY=;
+ b=UCNlNuOR16lsGaOJtB5JsHOB/4gLpz7EWlNgqLR7lbO+MaIG4japCV/xAiddk8/EQSbf
+ 6jLNJTzMoYU/dDayG573Dg2Gp3djd9nDpzkX75FFFl7gnGEh2mZVQy15rSwPM4g0T9A0
+ ODTLkSnGrTpOBt4M1DvByceACWwk2Gk+KEzZvs1CYcLdLgMZgRRxEEfkIYBB74Xqkog5
+ Myx/qyqVO3lENsG2tcNbgOvkVTgB0qpqIZFedVmfoAmStvuWGnT6goygUjX97pbaA07/
+ apsLXvFvoPaTxWX0OrwTcYVlQsgwlpy3KmxgX4ByPkztYIWjW01yUvVP8rQdOqUZXnBw 8w== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2kn43p047m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Aug 2018 01:57:56 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w791vu2Y018297
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Aug 2018 01:57:56 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w791vtkL031120;
+        Thu, 9 Aug 2018 01:57:55 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Aug 2018 18:57:55 -0700
+To:     Ohad Sharabi <ohad.sharabi@wdc.com>
+Cc:     stanislav.nijnikov@wdc.com, avri.altman@wdc.com,
+        alex.lemberg@wdc.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, gregkh@linuxfoundation.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: ufs: remove unnecessary query(DM) UPIU trace
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1533475583-16939-1-git-send-email-ohad.sharabi@wdc.com>
+Date:   Wed, 08 Aug 2018 21:57:52 -0400
+In-Reply-To: <1533475583-16939-1-git-send-email-ohad.sharabi@wdc.com> (Ohad
+        Sharabi's message of "Sun, 5 Aug 2018 16:26:23 +0300")
+Message-ID: <yq1bmacqp27.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-References: <20180806211932.198488-1-jannh@google.com>
-In-Reply-To: <20180806211932.198488-1-jannh@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 8 Aug 2018 21:56:10 -0400
-Message-ID: <CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
-Subject: Re: [PATCH] selinux: refactor mls_context_to_sid() and make it stricter
-To:     jannh@google.com
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        James Morris <jmorris@namei.org>, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8979 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=751
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808090020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
->
-> The intended behavior change for this patch is to reject any MLS strings
-> that contain (trailing) garbage if p->mls_enabled is true.
->
-> As suggested by Paul Moore, change mls_context_to_sid() so that the two
-> parts of the range are extracted before the rest of the parsing. Because
-> now we don't have to scan for two different separators simultaneously
-> everywhere, we can actually switch to strchr() everywhere instead of the
-> open-coded loops that scan for two separators at once.
->
-> mls_context_to_sid() used to signal how much of the input string was parsed
-> by updating `*scontext`. However, there is actually no case in which
-> mls_context_to_sid() only parses a subset of the input and still returns
-> a success (other than the buggy case with a second '-' in which it
-> incorrectly claims to have consumed the entire string). Turn `scontext`
-> into a simple pointer argument and stop redundantly checking whether the
-> entire input was consumed in string_to_context_struct(). This also lets us
-> remove the `scontext_len` argument from `string_to_context_struct()`.
->
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> Refactored version of
-> "[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
-> Paul's comments. WDYT?
-> I've thrown some inputs at it, and it seems to work.
->
->  security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
->  security/selinux/ss/mls.h      |   2 +-
->  security/selinux/ss/services.c |  12 +--
->  3 files changed, 82 insertions(+), 110 deletions(-)
 
-Thanks for the rework, this looks much better than what we currently
-have.  I have some comments/questions below ...
+Ohad,
 
-> diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-> index 39475fb455bc..2fe459df3c85 100644
-> --- a/security/selinux/ss/mls.c
-> +++ b/security/selinux/ss/mls.c
-> @@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
->  /*
->   * Set the MLS fields in the security context structure
->   * `context' based on the string representation in
-> - * the string `*scontext'.  Update `*scontext' to
-> - * point to the end of the string representation of
-> - * the MLS fields.
-> + * the string `scontext'.
->   *
->   * This function modifies the string in place, inserting
->   * NULL characters to terminate the MLS fields.
-> @@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
->   */
->  int mls_context_to_sid(struct policydb *pol,
->                        char oldc,
-> -                      char **scontext,
-> +                      char *scontext,
->                        struct context *context,
->                        struct sidtab *s,
->                        u32 def_sid)
->  {
-> -
-> -       char delim;
-> -       char *scontextp, *p, *rngptr;
-> +       char *sensitivity, *cur_cat, *next_cat, *rngptr;
->         struct level_datum *levdatum;
->         struct cat_datum *catdatum, *rngdatum;
-> -       int l, rc = -EINVAL;
-> +       int l, rc, i;
-> +       char *rangep[2];
->
->         if (!pol->mls_enabled) {
-> -               if (def_sid != SECSID_NULL && oldc)
-> -                       *scontext += strlen(*scontext) + 1;
-> -               return 0;
-> +               if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
-> +                       return 0;
-> +               return -EINVAL;
+> This patch removes redundant trace that occurs when sending Device
+> Management(DM) request (fix behavior in patch
+> https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git/commit/?id=6667e6d91c88a788d5ab1b1e999d245473e84a9)
+> Since the function send_command is called also for DM request, UPIU trace
+> for DM request is called twice- one identified as query_* the other as
+> send/complete.
 
-Why are we simply not always return 0 in the case where MLS is not
-enabled in the policy?  The mls_context_to_sid() is pretty much a
-no-op in this case (even more so with your pat regardless of input and
-I worry that returning EINVAL here is a deviation from current
-behavior which could cause problems.
+Applied to 4.19/scsi-queue, thanks!
 
->         }
->
->         /*
-> @@ -261,113 +258,94 @@ int mls_context_to_sid(struct policydb *pol,
->                 struct context *defcon;
->
->                 if (def_sid == SECSID_NULL)
-> -                       goto out;
-> +                       return -EINVAL;
->
->                 defcon = sidtab_search(s, def_sid);
->                 if (!defcon)
-> -                       goto out;
-> +                       return -EINVAL;
->
-> -               rc = mls_context_cpy(context, defcon);
-> -               goto out;
-> +               return mls_context_cpy(context, defcon);
->         }
->
-> -       /* Extract low sensitivity. */
-> -       scontextp = p = *scontext;
-> -       while (*p && *p != ':' && *p != '-')
-> -               p++;
-> -
-> -       delim = *p;
-> -       if (delim != '\0')
-> -               *p++ = '\0';
-> +       /*
-> +        * If we're dealing with a range, figure out where the two parts
-> +        * of the range begin.
-> +        */
-> +       rangep[0] = scontext;
-> +       rangep[1] = strchr(scontext, '-');
-> +       if (rangep[1]) {
-> +               rangep[1][0] = '\0';
-> +               rangep[1]++;
-> +       }
->
-> +       /* For each part of the range: */
->         for (l = 0; l < 2; l++) {
-> -               levdatum = hashtab_search(pol->p_levels.table, scontextp);
-> -               if (!levdatum) {
-> -                       rc = -EINVAL;
-> -                       goto out;
-> -               }
-> +               /* Split sensitivity and category set. */
-> +               sensitivity = rangep[l];
-> +               if (sensitivity == NULL)
-> +                       break;
-> +               next_cat = strchr(sensitivity, ':');
-> +               if (next_cat)
-> +                       *(next_cat++) = '\0';
->
-> +               /* Parse sensitivity. */
-> +               levdatum = hashtab_search(pol->p_levels.table, sensitivity);
-> +               if (!levdatum)
-> +                       return -EINVAL;
->                 context->range.level[l].sens = levdatum->level->sens;
->
-> -               if (delim == ':') {
-> -                       /* Extract category set. */
-> -                       while (1) {
-> -                               scontextp = p;
-> -                               while (*p && *p != ',' && *p != '-')
-> -                                       p++;
-> -                               delim = *p;
-> -                               if (delim != '\0')
-> -                                       *p++ = '\0';
-> -
-> -                               /* Separate into range if exists */
-> -                               rngptr = strchr(scontextp, '.');
-> -                               if (rngptr != NULL) {
-> -                                       /* Remove '.' */
-> -                                       *rngptr++ = '\0';
-> -                               }
-> +               /* Extract category set. */
-> +               while (next_cat != NULL) {
-> +                       cur_cat = next_cat;
-> +                       next_cat = strchr(next_cat, ',');
-> +                       if (next_cat != NULL)
-> +                               *(next_cat++) = '\0';
-> +
-> +                       /* Separate into range if exists */
-> +                       rngptr = strchr(cur_cat, '.');
-> +                       if (rngptr != NULL) {
-> +                               /* Remove '.' */
-
-On the chance you need to respin this patch, you can probably get rid
-of the above comment and the if-body braces; we don't have "Remove X"
-comments in other similar places in this function.
-
-> +                               *rngptr++ = '\0';
-> +                       }
->
-> -                               catdatum = hashtab_search(pol->p_cats.table,
-> -                                                         scontextp);
-> -                               if (!catdatum) {
-> -                                       rc = -EINVAL;
-> -                                       goto out;
-> -                               }
-> +                       catdatum = hashtab_search(pol->p_cats.table, cur_cat);
-> +                       if (!catdatum)
-> +                               return -EINVAL;
->
-> -                               rc = ebitmap_set_bit(&context->range.level[l].cat,
-> -                                                    catdatum->value - 1, 1);
-> -                               if (rc)
-> -                                       goto out;
-> -
-> -                               /* If range, set all categories in range */
-> -                               if (rngptr) {
-> -                                       int i;
-> -
-> -                                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-> -                                       if (!rngdatum) {
-> -                                               rc = -EINVAL;
-> -                                               goto out;
-> -                                       }
-> -
-> -                                       if (catdatum->value >= rngdatum->value) {
-> -                                               rc = -EINVAL;
-> -                                               goto out;
-> -                                       }
-> -
-> -                                       for (i = catdatum->value; i < rngdatum->value; i++) {
-> -                                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-> -                                               if (rc)
-> -                                                       goto out;
-> -                                       }
-> -                               }
-> +                       rc = ebitmap_set_bit(&context->range.level[l].cat,
-> +                                            catdatum->value - 1, 1);
-> +                       if (rc)
-> +                               return rc;
-> +
-> +                       /* If range, set all categories in range */
-> +                       if (rngptr == NULL)
-> +                               continue;
-> +
-> +                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-> +                       if (!rngdatum)
-> +                               return -EINVAL;
-> +
-> +                       if (catdatum->value >= rngdatum->value)
-> +                               return -EINVAL;
->
-> -                               if (delim != ',')
-> -                                       break;
-> +                       for (i = catdatum->value; i < rngdatum->value; i++) {
-> +                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-> +                               if (rc)
-> +                                       return rc;
->                         }
->                 }
-> -               if (delim == '-') {
-> -                       /* Extract high sensitivity. */
-> -                       scontextp = p;
-> -                       while (*p && *p != ':')
-> -                               p++;
-> -
-> -                       delim = *p;
-> -                       if (delim != '\0')
-> -                               *p++ = '\0';
-> -               } else
-> -                       break;
->         }
->
-> -       if (l == 0) {
-> +       /* If we didn't see a '-', the range start is also the range end. */
-> +       if (rangep[1] == NULL) {
->                 context->range.level[1].sens = context->range.level[0].sens;
->                 rc = ebitmap_cpy(&context->range.level[1].cat,
->                                  &context->range.level[0].cat);
->                 if (rc)
-> -                       goto out;
-> +                       return rc;
->         }
-> -       *scontext = ++p;
-> -       rc = 0;
-> -out:
-> -       return rc;
-> +
-> +       return 0;
-
-In the case where we have a MLS policy loaded (pol->mls_enabled != 0)
-and scontext is empty (scontext[0] = '\0'), we could end up returning
-0 couldn't we?  It seems like we might want a quick check for this
-before we parse the low/high portions of the field into the rangep
-array.
-
->  }
->
->  /*
-> @@ -379,21 +357,19 @@ int mls_context_to_sid(struct policydb *pol,
->  int mls_from_string(struct policydb *p, char *str, struct context *context,
->                     gfp_t gfp_mask)
->  {
-> -       char *tmpstr, *freestr;
-> +       char *tmpstr;
->         int rc;
->
->         if (!p->mls_enabled)
->                 return -EINVAL;
->
-> -       /* we need freestr because mls_context_to_sid will change
-> -          the value of tmpstr */
-> -       tmpstr = freestr = kstrdup(str, gfp_mask);
-> +       tmpstr = kstrdup(str, gfp_mask);
->         if (!tmpstr) {
->                 rc = -ENOMEM;
->         } else {
-> -               rc = mls_context_to_sid(p, ':', &tmpstr, context,
-> +               rc = mls_context_to_sid(p, ':', tmpstr, context,
->                                         NULL, SECSID_NULL);
-> -               kfree(freestr);
-> +               kfree(tmpstr);
->         }
->
->         return rc;
-> diff --git a/security/selinux/ss/mls.h b/security/selinux/ss/mls.h
-> index 9a3ff7af70ad..67093647576d 100644
-> --- a/security/selinux/ss/mls.h
-> +++ b/security/selinux/ss/mls.h
-> @@ -34,7 +34,7 @@ int mls_level_isvalid(struct policydb *p, struct mls_level *l);
->
->  int mls_context_to_sid(struct policydb *p,
->                        char oldc,
-> -                      char **scontext,
-> +                      char *scontext,
->                        struct context *context,
->                        struct sidtab *s,
->                        u32 def_sid);
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-> index dd2ceec06fef..9212d4dd817a 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -1367,7 +1367,6 @@ int security_sid_to_context_force(struct selinux_state *state, u32 sid,
->  static int string_to_context_struct(struct policydb *pol,
->                                     struct sidtab *sidtabp,
->                                     char *scontext,
-> -                                   u32 scontext_len,
->                                     struct context *ctx,
->                                     u32 def_sid)
->  {
-> @@ -1428,15 +1427,12 @@ static int string_to_context_struct(struct policydb *pol,
->
->         ctx->type = typdatum->value;
->
-> -       rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
-> +       rc = mls_context_to_sid(pol, oldc, p, ctx, sidtabp, def_sid);
->         if (rc)
->                 goto out;
->
-> -       rc = -EINVAL;
-> -       if ((p - scontext) < scontext_len)
-> -               goto out;
-> -
->         /* Check the validity of the new context. */
-> +       rc = -EINVAL;
->         if (!policydb_context_isvalid(pol, ctx))
->                 goto out;
->         rc = 0;
-> @@ -1491,7 +1487,7 @@ static int security_context_to_sid_core(struct selinux_state *state,
->         policydb = &state->ss->policydb;
->         sidtab = &state->ss->sidtab;
->         rc = string_to_context_struct(policydb, sidtab, scontext2,
-> -                                     scontext_len, &context, def_sid);
-> +                                     &context, def_sid);
->         if (rc == -EINVAL && force) {
->                 context.str = str;
->                 context.len = strlen(str) + 1;
-> @@ -1959,7 +1955,7 @@ static int convert_context(u32 key,
->                         goto out;
->
->                 rc = string_to_context_struct(args->newp, NULL, s,
-> -                                             c->len, &ctx, SECSID_NULL);
-> +                                             &ctx, SECSID_NULL);
->                 kfree(s);
->                 if (!rc) {
->                         printk(KERN_INFO "SELinux:  Context %s became valid (mapped).\n",
-> --
-> 2.18.0.597.ga71716f1ad-goog
-
---
-paul moore
-www.paul-moore.com
+-- 
+Martin K. Petersen	Oracle Linux Engineering
