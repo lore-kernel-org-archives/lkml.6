@@ -2,362 +2,167 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5B9C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A07C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99F221C1A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:54:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qU7CS+0f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A99F221C1A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4291D21C36
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:55:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4291D21C36
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeHIFRI (ORCPT
+        id S1727839AbeHIFRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 01:17:08 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39773 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeHIFRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 01:17:08 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j8-v6so2101466pff.6
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 19:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=tFwl8V00znn4BRd+60VMf7GTR2h8kaA8lcYmqGSB/Rw=;
-        b=qU7CS+0fAa1sGX3ya47y9enOICbUYETce6ITJO+RX+Cp8QYa4h3+YX6ahK751u2xte
-         8CXCOrxApwKdVKia3JGvuIJfGjxUDv3+wvL3+4fHjBF6WDbqTFkzajnBYsO588yp0fJd
-         dd72Osgzr7TXdedniMWMMG4krjNiXAwlJz3GUt1zjF8iccRh/XjEi31Tn6Ctk6nXx3aD
-         xs9L7J+1V32O39a45Sqi3dYaOg4Z0ZwK4qXU75y15tyW0y8XBiIOM35AiFQVYlC6gVzI
-         CKHpsyKX/xjU1wZhqN7GhLvKaFXIcQ9iV8D41CRxFFCKwxWhR/FPkUO7BqSqAah6iCqn
-         /rSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tFwl8V00znn4BRd+60VMf7GTR2h8kaA8lcYmqGSB/Rw=;
-        b=F7bDDVW9iaEgdcyDC70HS6BeqQLhckg23VOHJ36WZ7ZkX13luISy6qp5isbvX//8JY
-         gKDoyN2St/3RiLU8zuRLgiDaKKj28VOvM8k9mQ6Zzundh2m5fDBXrwUD5x0/rQQqxbfl
-         oD0lTcMQJFXyyLdc5tRO/WsTBy3ivyHAPdInps/ujZ+sdyFXqsYKH86CSV2PbXebO2TE
-         PXpKHLzby5uait19X6lsGLLzBb1urKMiiWtPMx8nrchAeE+WpkDz2jQcy3Z5lM3LdBmv
-         cBLNjca2YCySJsfgI+Rma1TX5v74PRReFFpxih92nQLwrgjnrwii9cGC665ofSlBDUsy
-         Ne7g==
-X-Gm-Message-State: AOUpUlE2hbP6vpyAQrmJP9mnUIgY2ThbhTueDVMnk2lPwz0H+CLWROmh
-        gp+n8/pwK821uULklVsAMTk=
-X-Google-Smtp-Source: AA+uWPwgEXWKSnTIwAe+GM/lG6p4rPNk1Nqt57jrbLI68G++3mE2natSennJjzIvdhjNkR/Akw7HKA==
-X-Received: by 2002:a62:ce05:: with SMTP id y5-v6mr320390pfg.95.1533783274295;
-        Wed, 08 Aug 2018 19:54:34 -0700 (PDT)
-Received: from rashmica.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id o10-v6sm9796705pfk.76.2018.08.08.19.54.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Aug 2018 19:54:33 -0700 (PDT)
-From:   Rashmica Gupta <rashmica.g@gmail.com>
-To:     toshi.kani@hpe.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        bp@suse.de, brijesh.singh@amd.com, thomas.lendacky@amd.com,
-        jglisse@redhat.com, gregkh@linuxfoundation.org,
-        baiyaowei@cmss.chinamobile.com, dan.j.williams@intel.com,
-        mhocko@suse.com, iamjoonsoo.kim@lge.com, vbabka@suse.cz,
-        malat@debian.org, bhelgaas@google.com,
-        osalvador@techadventures.net, yasu.isimatu@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        rppt@linux.vnet.ibm.com
-Cc:     Rashmica Gupta <rashmica.g@gmail.com>
-Subject: [PATCH v3] resource: Merge resources on a node when hot-adding memory
-Date:   Thu,  9 Aug 2018 12:54:09 +1000
-Message-Id: <20180809025409.31552-1-rashmica.g@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        Thu, 9 Aug 2018 01:17:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8564 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726926AbeHIFRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 01:17:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 19:55:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
+   d="scan'208";a="78757597"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
+  by fmsmga004.fm.intel.com with ESMTP; 08 Aug 2018 19:55:19 -0700
+Date:   Thu, 9 Aug 2018 11:01:35 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Ryan Chen <yu.chen.surf@gmail.com>, jlee@suse.com,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180809030135.GA21364@chenyu-desktop>
+References: <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+ <20180808175036.GA16217@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808175036.GA16217@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When hot-removing memory release_mem_region_adjustable() splits
-iomem resources if they are not the exact size of the memory being
-hot-deleted. Adding this memory back to the kernel adds a new
-resource.
+Hi Pavel, Joey, Oliver
+Please let me describe the original requirement and my
+understanding about hibernation encryption here, thus
+help us sync on the same thread:
+On Wed, Aug 08, 2018 at 07:50:36PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > > variable that it can only be accessed by trusted EFI binary when
+> > > > > secure boot is enabled.
+> > > > >
+> > > > Okay, this apply to the 'suspend' phase, right?
+> > > > I'm still a little confused about the 'resume' phase.
+> > > > Taking encryption as example(not signature),
+> > > > the purpose of doing hibernation encryption is to prevent other users
+> > > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > 
+> > > No, I don't think that's purpose here.
+> > > 
+> > > Purpose here is to prevent user from reading/modifying kernel memory
+> > > content on machine he owns.
+> > >
+> > Say, A puts his laptop into hibernation and walks away,
+> > and B walks by, and opens A's laptop and wakes up the system and he
+> > can do what he wants. Although EFI key/TPM trusted key is enabled,
+> > currently there's no certification during resume, which sounds
+> > unsafe to me. Afterall, the original requirement is to probe
+> 
+> Define unsafe.
+> 
+> If you want security against bad people resuming your machines, please
+Yes, this is one of the requirements.
+> take a look at existing uswsusp solutions. It defends against that.
+>
+> If you want security against bad people tampering with your machines
+> physically, sorry, there's no way to defend against that.
+No, this is not the requirement.
+> 
+> But I thought you were trying to do something for secure boot, and "bad
+> person resumes your machine" is out of scope there.
+> 
+Not exactly, secure boot is one solution to meet the requirement.
+> So please always explain security against _what kind of attack_ you
+> are trying to improve; intelligent communication is not possible
+> without that.
+> 
+User requirement:
+A is the user, B is the attacker, user A launches a STD and
+encrypts A's ram data, then writes these encrypted data onto
+the disk,  so that: Even if user B has access to the disk,
+B could not know the content of A. Which implies:
+1. If B unplugs the disk from A's machine, and plugs the disk onto
+   another machine, B could not decode the content without A's
+   'permission'.
+2. If B is using the same machine as A, even A has walked away leaving
+   the system suspend, B could not resume to A's context without
+   A's 'permission'.
 
-Eg a node has memory 0x0 - 0xfffffffff. Offlining and hot-removing
-1GB from 0xf40000000 results in the single resource 0x0-0xfffffffff being
-split into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
+Previously, there are three proposal for this:
+a. Enhance the uswsusp(Pavel)
+b. Using user provided password to generate the key, for encryption(Yu)
+c. Using security boot(TPM or EFI key) for encryption(Joey)
 
-When we hot-add the memory back we now have three resources:
-0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
+Since I was proposing solution b, I'll say a little more about it.
+The original idea was that, the user provides a password, then this
+password is used to generate the key, which means, if user B has provided
+an incorrect password, the kernel will fail to decrypt the data and is
+likely to fail the resume process. That is to say, no matter
+which physical machine B is using, only if he has provided the
+password, he would be able to resume. In the first version, the key
+deviration was firstly done in kernel space, which satisfies the
+requirement and both saftey. Unfortunately it was rejected and
+people would like to see the key generated in user space instead.
+However, using user provided key directly is not safe, according
+to the discussion in the thread. I don't have good idea on
+how to improve this, but only have some workarounds, say, ask the
+kernel to use TPM key to protects the user provided 'key', etc.
 
-Now if we try to remove some memory that overlaps these resources,
-like 2GB from 0xf40000000, release_mem_region_adjustable() fails as it
-expects the chunk of memory to be within the boundaries of a single
-resource.
 
-This patch adds a function request_resource_and_merge(). This is called
-instead of request_resource_conflict() when registering a resource in
-add_memory(). It calls request_resource_conflict() and if hot-removing is
-enabled (if it isn't we won't get resource fragmentation) we attempt to
-merge contiguous resources on the node.
+Then let's talk a little more about secure boot. According
+to my understanding, the situation secure boot tries to deal
+with is a little different from the user case we raised above -
+It is an enhancement for case 1, because it refuses to resume
+once the machine is changed. And it does not cover case 2. But
+if it is a requirement from the user, that's ok.
 
-Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
----
-v2->v3: Update Xen balloon, make the commit msg and a comment clearer,
-and changed '>' to '>=' when comparing the end of a resource and the
-end of a node.
+uswsusp is to do all the staff in user space, and other two
+aim to do all the staff in kernel space. I'm not arguing
+which one is better, but I'm not sure how often user is using
+it, as we don't get uswsusp related bug report on kernel
+bugzilla (both internally)recent years. Another point is,
+why the compression is in kernel rather than in uswsusp,
+it looks like the same case as encryption here.
 
-v1->v2: Only attempt to merge resources if hot-remove is enabled.
 
- drivers/xen/balloon.c          |   3 +-
- include/linux/ioport.h         |   2 +
- include/linux/memory_hotplug.h |   2 +-
- kernel/resource.c              | 120 +++++++++++++++++++++++++++++++++++++++++
- mm/memory_hotplug.c            |  22 ++++----
- 5 files changed, 136 insertions(+), 13 deletions(-)
+Best,
+Yu
 
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index 065f0b607373..9b972b37b0da 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -401,7 +401,8 @@ static enum bp_state reserve_additional_memory(void)
- 	 * callers drop the mutex before trying again.
- 	 */
- 	mutex_unlock(&balloon_mutex);
--	rc = add_memory_resource(nid, resource, memhp_auto_online);
-+	rc = add_memory_resource(nid, resource->start, resource_size(resource),
-+				 memhp_auto_online);
- 	mutex_lock(&balloon_mutex);
- 
- 	if (rc) {
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index da0ebaec25f0..f5b93a711e86 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -189,6 +189,8 @@ extern int allocate_resource(struct resource *root, struct resource *new,
- 						       resource_size_t,
- 						       resource_size_t),
- 			     void *alignf_data);
-+extern struct resource *request_resource_and_merge(struct resource *parent,
-+						   struct resource *new, int nid);
- struct resource *lookup_resource(struct resource *root, resource_size_t start);
- int adjust_resource(struct resource *res, resource_size_t start,
- 		    resource_size_t size);
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 4e9828cda7a2..9c00f97c8cc6 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -322,7 +322,7 @@ static inline void remove_memory(int nid, u64 start, u64 size) {}
- extern int walk_memory_range(unsigned long start_pfn, unsigned long end_pfn,
- 		void *arg, int (*func)(struct memory_block *, void *));
- extern int add_memory(int nid, u64 start, u64 size);
--extern int add_memory_resource(int nid, struct resource *resource, bool online);
-+extern int add_memory_resource(int nid, u64 start, u64 size, bool online);
- extern int arch_add_memory(int nid, u64 start, u64 size,
- 		struct vmem_altmap *altmap, bool want_memblock);
- extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 30e1bc68503b..a31d3f5bccb7 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -1621,3 +1621,123 @@ static int __init strict_iomem(char *str)
- }
- 
- __setup("iomem=", strict_iomem);
-+
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+/*
-+ * Attempt to merge resource and it's sibling
-+ */
-+static int merge_resources(struct resource *res)
-+{
-+	struct resource *next;
-+	struct resource *tmp;
-+	uint64_t size;
-+	int ret = -EINVAL;
-+
-+	next = res->sibling;
-+
-+	/*
-+	 * Not sure how to handle two different children. So only attempt
-+	 * to merge two resources if neither have children, only one has a
-+	 * child or if both have the same child.
-+	 */
-+	if ((res->child && next->child) && (res->child != next->child))
-+		return ret;
-+
-+	if (res->end + 1 != next->start)
-+		return ret;
-+
-+	if (res->flags != next->flags)
-+		return ret;
-+
-+	/* Update sibling and child of resource */
-+	res->sibling = next->sibling;
-+	tmp = res->child;
-+	if (!res->child)
-+		res->child = next->child;
-+
-+	size = next->end - res->start + 1;
-+	ret = __adjust_resource(res, res->start, size);
-+	if (ret) {
-+		/* Failed so restore resource to original state */
-+		res->sibling = next;
-+		res->child = tmp;
-+		return ret;
-+	}
-+
-+	free_resource(next);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Attempt to merge resources on the node
-+ */
-+static void merge_node_resources(int nid, struct resource *parent)
-+{
-+	struct resource *res;
-+	uint64_t start_addr;
-+	uint64_t end_addr;
-+	int ret;
-+
-+	start_addr = node_start_pfn(nid) << PAGE_SHIFT;
-+	end_addr = node_end_pfn(nid) << PAGE_SHIFT;
-+
-+	write_lock(&resource_lock);
-+
-+	/* Get the first resource */
-+	res = parent->child;
-+
-+	while (res) {
-+		/* Check that the resource is within the node */
-+		if (res->start < start_addr) {
-+			res = res->sibling;
-+			continue;
-+		}
-+		/* Exit if sibling resource is past end of node */
-+		if (res->sibling->end >= end_addr)
-+			break;
-+
-+		ret = merge_resources(res);
-+		if (!ret)
-+			continue;
-+		res = res->sibling;
-+	}
-+	write_unlock(&resource_lock);
-+}
-+#endif /* CONFIG_MEMORY_HOTREMOVE */
-+
-+/**
-+ * request_resource_and_merge() - request an I/O or memory resource for hot-add
-+ * @parent: parent resource descriptor
-+ * @new: resource descriptor desired by caller
-+ * @nid: node id of the node we want the resource on
-+ *
-+ * If no conflict resource then attempt to merge resources on the node.
-+ *
-+ * This is intended to cleanup the fragmentation of resources that occurs when
-+ * hot-removing memory (see release_mem_region_adjustable). If hot-removing is
-+ * not enabled then there is no point trying to merge resources.
-+ *
-+ * Note that the inability to merge resources is not an error.
-+ *
-+ * Return: NULL for successful request of resource and conflict resource if
-+ * there was a conflict.
-+ */
-+struct resource *request_resource_and_merge(struct resource *parent,
-+					    struct resource *new, int nid)
-+{
-+	struct resource *conflict;
-+
-+	conflict = request_resource_conflict(parent, new);
-+
-+	if (conflict)
-+		return conflict;
-+
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+	merge_node_resources(nid, parent);
-+#endif /* CONFIG_MEMORY_HOTREMOVE */
-+
-+	return NULL;
-+}
-+#endif /* CONFIG_MEMORY_HOTPLUG */
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 7deb49f69e27..2e342f5ce322 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -97,7 +97,7 @@ void mem_hotplug_done(void)
- }
- 
- /* add this memory to iomem resource */
--static struct resource *register_memory_resource(u64 start, u64 size)
-+static struct resource *register_memory_resource(int nid, u64 start, u64 size)
- {
- 	struct resource *res, *conflict;
- 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-@@ -108,7 +108,7 @@ static struct resource *register_memory_resource(u64 start, u64 size)
- 	res->start = start;
- 	res->end = start + size - 1;
- 	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
--	conflict =  request_resource_conflict(&iomem_resource, res);
-+	conflict =  request_resource_and_merge(&iomem_resource, res, nid);
- 	if (conflict) {
- 		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
- 			pr_debug("Device unaddressable memory block "
-@@ -122,11 +122,15 @@ static struct resource *register_memory_resource(u64 start, u64 size)
- 	return res;
- }
- 
--static void release_memory_resource(struct resource *res)
-+static void release_memory_resource(struct resource *res, u64 start, u64 size)
- {
- 	if (!res)
- 		return;
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+	release_mem_region_adjustable(&iomem_resource, start, size);
-+#else
- 	release_resource(res);
-+#endif
- 	kfree(res);
- 	return;
- }
-@@ -1096,17 +1100,13 @@ static int online_memory_block(struct memory_block *mem, void *arg)
- }
- 
- /* we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG */
--int __ref add_memory_resource(int nid, struct resource *res, bool online)
-+int __ref add_memory_resource(int nid, u64 start, u64 size, bool online)
- {
--	u64 start, size;
- 	pg_data_t *pgdat = NULL;
- 	bool new_pgdat;
- 	bool new_node;
- 	int ret;
- 
--	start = res->start;
--	size = resource_size(res);
--
- 	ret = check_hotplug_memory_range(start, size);
- 	if (ret)
- 		return ret;
-@@ -1195,13 +1195,13 @@ int __ref add_memory(int nid, u64 start, u64 size)
- 	struct resource *res;
- 	int ret;
- 
--	res = register_memory_resource(start, size);
-+	res = register_memory_resource(nid, start, size);
- 	if (IS_ERR(res))
- 		return PTR_ERR(res);
- 
--	ret = add_memory_resource(nid, res, memhp_auto_online);
-+	ret = add_memory_resource(nid, start, size, memhp_auto_online);
- 	if (ret < 0)
--		release_memory_resource(res);
-+		release_memory_resource(res, start, size);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(add_memory);
--- 
-2.14.4
 
