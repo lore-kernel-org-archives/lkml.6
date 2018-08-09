@@ -3,83 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720A1C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFCBC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29CE721C16
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CE721C16
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id A6B0621C16
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 06:19:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B0621C16
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbeHIIlX (ORCPT
+        id S1727806AbeHIIm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 04:41:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:50753 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbeHIIlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 04:41:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41mJ3112kXz9ryt;
-        Thu,  9 Aug 2018 16:18:05 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     rashmica <rashmicy@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thu, 9 Aug 2018 04:42:57 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:40495 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbeHIIm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 04:42:57 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fneIO-0005hM-39; Thu, 09 Aug 2018 00:19:40 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fneIN-0008UK-6t; Thu, 09 Aug 2018 00:19:39 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/test_hexdump: fix failure on big endian cpu
-In-Reply-To: <7857c69a-a209-541b-b2e1-9fe2e288ca65@gmail.com>
-References: <f3112437f62c2f48300535510918e8be1dceacfb.1533610877.git.christophe.leroy@c-s.fr> <87mutxb9qy.fsf@concordia.ellerman.id.au> <7857c69a-a209-541b-b2e1-9fe2e288ca65@gmail.com>
-Date:   Thu, 09 Aug 2018 16:18:04 +1000
-Message-ID: <87ftzo9i77.fsf@concordia.ellerman.id.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+References: <874lgo5xdg.fsf@xmission.com>
+        <CA+55aFw_CTTRTZfUf1e9yg04X_djG3q7HrCG-XqnyQorpKjaTQ@mail.gmail.com>
+        <87fu084cxj.fsf@xmission.com>
+        <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
+        <87a7qg4bb3.fsf_-_@xmission.com>
+        <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
+        <87pnzc2upf.fsf@xmission.com> <87k1pk2cj9.fsf_-_@xmission.com>
+        <20180726134143.GB32718@redhat.com> <87pnza6ou2.fsf@xmission.com>
+        <20180726155546.GA467@redhat.com>
+Date:   Thu, 09 Aug 2018 01:19:26 -0500
+In-Reply-To: <20180726155546.GA467@redhat.com> (Oleg Nesterov's message of
+        "Thu, 26 Jul 2018 17:55:47 +0200")
+Message-ID: <87600k2hap.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
+X-XM-SPF: eid=1fneIN-0008UK-6t;;;mid=<87600k2hap.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/h1tWUbOE6SVji+GXUt0yL/3ui2649jWI=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v3 20/20] signal: Don't restart fork when signals come in.
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rashmica <rashmicy@gmail.com> writes:
-> On 08/08/18 17:25, Michael Ellerman wrote:
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
->>> index 3f415d8101f3..626f580b4ff7 100644
->>> --- a/lib/test_hexdump.c
->>> +++ b/lib/test_hexdump.c
->>> @@ -32,16 +32,33 @@ static const char * const test_data_2_le[] __initconst = {
->>>  	"d14c", "9919", "b143", "0caf",
->>>  };
->>>  
->>> +static const char * const test_data_2_be[] __initconst = {
->>> +	"be32", "db7b", "0a18", "93b2",
->>> +	"70ba", "c424", "7d83", "349b",
->>> +	"a69c", "31ad", "9c0f", "ace9",
->>> +	"4cd1", "1999", "43b1", "af0c",
->>> +};
->>> +
->>>  static const char * const test_data_4_le[] __initconst = {
->>>  	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
->>>  	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
->>>  };
->>>  
->>> +static const char * const test_data_4_be[] __initconst = {
->>> +	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
->>> +	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
->>> +};
->>> +
->> Is there a reason we can't do it all at compile time?
+Oleg Nesterov <oleg@redhat.com> writes:
+
+> On 07/26, Eric W. Biederman wrote:
+>>
+>> Are the earlier patches looking ok to you?
 >
-> mpe I sent a patch doing that awhile ago and you obviously didn't like
-> it because you never merged it :P
+> I obviously like 1-15.
+>
+> "[PATCH 16/20] fork: Move and describe why the code examines PIDNS_ADDING"
+> is "interesting". I mean it is fine, but at the end of this series it doesn't
+> matter what we check first, PIDNS_ADDING or fatal_signal_pending() - restart
+> is not possible in both cases.
+>
+>
+> As for 17-20... Yes I am biased. But I still think the simple approach I tried
+> to propose from the very beginning is better. At least simpler, in that you do
+> not need to worry about all these special cases/reasons for signal_pending().
 
-Sorry, I wasn't sure who should merge it, and never followed up.
+I think worrying about them all now results in a future where we don't
+have to worry about reasons why we can't let fork continue.  Giving a
+better progress guarantee.  Which ultimately should be more maintainable
+going forward.
 
-cheers
+> And you can not imagine how much I hate "[PATCH 19/20] fork: Have new threads
+> join on-going signal group stops" ;) Because I spent HOURS looking at this trivial
+> patch and I am still not sure...
+>
+> To clarify, the CLONE_THREAD with JOBCTL_STOP_PENDING case is simple, I am mostly
+> worried about JOBCTL_TRAP_STOP/etc with or without CLONE_THREAD, this adds some
+> subtle changes but unfortunately I failed to find something wrong so I
+> can't argue
+
+I can understand taking a hard look at JOBCTL_TRAP_STOP especially as it
+gets mixed in with the multi-task (whole process) stop handling when at
+least one of the tasks of a process are being ptraced.  To make certain
+I understood your concern I took a second look at it myself.
+
+The ptrace actions are defined to only affect a single task, and except
+for multi-task stop handling all of the jobctl bits are used for ptrace
+actions.  So I don't see how there is anything we could possibly miss
+in the jobctl bits.
+
+Eric
+
+
