@@ -2,128 +2,78 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C635DC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE2DC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8848521EB7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8848521EB7
+	by mail.kernel.org (Postfix) with ESMTP id 754C921EB7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:33:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 754C921EB7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbeHIS4A (ORCPT
+        id S1732499AbeHIS7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:56:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57614 "EHLO mx1.redhat.com"
+        Thu, 9 Aug 2018 14:59:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57790 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730419AbeHISz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:55:59 -0400
+        id S1730419AbeHIS7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 14:59:02 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 17C417A7EB;
-        Thu,  9 Aug 2018 16:30:20 +0000 (UTC)
-Received: from krava (ovpn-204-81.brq.redhat.com [10.40.204.81])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7BBCA10FFE71;
-        Thu,  9 Aug 2018 16:30:15 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 18:30:15 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH 4/5] perf/hw_breakpoint: Set breakpoint as disabled in
- modify_user_hw_breakpoint error path
-Message-ID: <20180809163015.GA23170@krava>
-References: <20180809120305.20693-1-jolsa@kernel.org>
- <20180809120305.20693-5-jolsa@kernel.org>
- <20180809141713.GB22636@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 08C797A7EB;
+        Thu,  9 Aug 2018 16:33:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AFF2010F1BF9;
+        Thu,  9 Aug 2018 16:33:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegvWE9htLjqeR6=2BWBSuvJzJpWcjBC_EmX_k1RCGXTfbw@mail.gmail.com>
+References: <CAJfpegvWE9htLjqeR6=2BWBSuvJzJpWcjBC_EmX_k1RCGXTfbw@mail.gmail.com> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk> <87in4n9zg0.fsf@xmission.com> <27374.1533824694@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and managing a context [ver #11]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809141713.GB22636@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <13159.1533832400.1@warthog.procyon.org.uk>
+Date:   Thu, 09 Aug 2018 17:33:20 +0100
+Message-ID: <13160.1533832400@warthog.procyon.org.uk>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 16:30:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 16:30:20 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 16:33:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 09 Aug 2018 16:33:22 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 04:17:13PM +0200, Oleg Nesterov wrote:
-> On 08/09, Jiri Olsa wrote:
-> >
-> > @@ -523,8 +523,10 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
-> >  		perf_event_disable(bp);
-> >
-> >  	err = modify_user_hw_breakpoint_check(bp, attr, false);
-> > -	if (err)
-> > +	if (err) {
-> > +		bp->attr.disabled = 1;
-> >  		return err;
-> 
-> Yes, but on the second thought... Can't we simply do
-> 
-> 	int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
-> 	{
-> 		int err;
-> 
-> 		/*
-> 		 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
-> 		 * will not be possible to raise IPIs that invoke __perf_event_disable.
-> 		 * So call the function directly after making sure we are targeting the
-> 		 * current task.
-> 		 */
-> 		if (irqs_disabled() && bp->ctx && bp->ctx->task == current)
-> 			perf_event_disable_local(bp);
-> 		else
-> 			perf_event_disable(bp);
-> 
-> 		err = modify_user_hw_breakpoint_check(bp, attr, false);
-> 
-> 		if (!bp.attr->disabled)
-> 			perf_event_enable(bp);
-> 
-> 		return err;
-> 	}
-> 
-> instead of this and the next patch?
-> 
-> We can do this because (as you pointed out) validate_hw_breakpoint() has already
-> gone in -tip tree, and (afaics) modify_user_hw_breakpoint_check() never changes
-> perf_event's state on failure, so we can safely "restart" this bp if it was enabled
-> before.
-> 
-> 1. This is what we had before the recent f67b15037a7a50c57f72e69a6d59941ad90a0f0f
->    "perf/hwbp: Simplify the perf-hwbp code, fix documentation".
-> 
->    Note that this commit was actually the bug fix which introduced another problem
->    fixed by your 2/5.
-> 
->    But see above, perf_event_enable() is no longer unsafe after
->    modify_user_hw_breakpoint_check(), we can restore the previous semantics.
-> 
-> 2. This matches perf_event_modify_breakpoint(). Which btw can be simplified a bit,
->    it too can simply do
-> 
-> 		if (!bp->attr.disabled)
-> 			_perf_event_enable(bp);
-> 
-> 		return err;
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-yep, seems good.. will send new version
+> > However, as I have said, I *am* willing to add one of more flags to help
+> > with this, but I can't make any "legacy" fs honour them as this requires
+> > the fs_context to be passed down to sget_fc() and the filesystem - which
+> > is why I was considering leaving it for later.
+>
+> You can determine at fsopen() time whether the filesystem is able to
+> support the O_EXCL behavior?  If so, then it's trivial to enable this
+> conditionally.  I think that's what Eric is asking for, it's obviously
+> not fair to ask for a change in behavior of the legacy interface.
 
-thanks,
-jirka
+What do you mean by "enable it conditionally"?  It cannot be enabled for
+filesystems that don't pass fs_context down to sget().
+
+mount(2) mustn't enable it lest it break userspace.
+
+fsopen(2) can let userspace set a flag to enable it.
+
+David
