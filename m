@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D3FC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C118C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F8721E97
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 002C621EA2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:46:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="x6qtUfn2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F8721E97
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cEvOJGq3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002C621EA2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732479AbeHIRL1 (ORCPT
+        id S1732502AbeHIRLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:11:27 -0400
+        Thu, 9 Aug 2018 13:11:30 -0400
 Received: from mail-eopbgr60044.outbound.protection.outlook.com ([40.107.6.44]:32576
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732423AbeHIRL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:11:26 -0400
+        id S1732072AbeHIRL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 13:11:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7UoHKzRUM4Rc1K65M2cWPvUaeNiIh/eVzAHvLglLFMc=;
- b=x6qtUfn2GtN0ANbqutfAciuMMz/CMbmzYicA8+/r2DW4Cck5yadSqxIOjlywAoux6cZrc90/d2rcnVDtoCf1dGKgx3b2hAtV8GMa5x3YD6x5GxrIJXFvwtgTVPX1mFbo1pr7v4QGZuwjqV6J7IB7xmgwcZHu8BIQ2tdS280fSvM=
+ bh=lXf7qO38vaYskqGDfbVulsm2QujivvVj2Ne8jKVWVAk=;
+ b=cEvOJGq3ZFt2rjSi0ghRP0JSUTT6CBXngfy6dd0EjS8IomMgzvhfOTtizp1BjlGpbyWFYbbResRl+KwP686ccW0s+2ABYIptCEKwdbqbULs8KMWvNv/RF3wGxEjPeElnG1CM2d95Q5UNS4zZ4w1P+tIGUejSs0arXtDKl7G6SbQ=
 Received: from fsr-ub1664-175.ea.freescale.net (95.76.156.53) by
  HE1PR04MB1611.eurprd04.prod.outlook.com (2a01:111:e400:59a9::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.18; Thu, 9 Aug
- 2018 14:46:00 +0000
+ 2018 14:46:01 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Lucas Stach <l.stach@pengutronix.de>,
         Dong Aisheng <aisheng.dong@nxp.com>,
@@ -46,9 +46,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v3 2/4] clk: imx: add fractional PLL output clock
-Date:   Thu,  9 Aug 2018 17:45:39 +0300
-Message-Id: <1533825941-17224-3-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v3 3/4] clk: imx: add SCCG PLL type
+Date:   Thu,  9 Aug 2018 17:45:40 +0300
+Message-Id: <1533825941-17224-4-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
 References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
@@ -58,51 +58,51 @@ X-Originating-IP: [95.76.156.53]
 X-ClientProxiedBy: AM3PR04CA0141.eurprd04.prod.outlook.com (2603:10a6:207::25)
  To HE1PR04MB1611.eurprd04.prod.outlook.com (2a01:111:e400:59a9::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1569b7f0-75e8-4074-6d0f-08d5fe06d36b
+X-MS-Office365-Filtering-Correlation-Id: bb55c6a6-3b13-47b7-4dd0-08d5fe06d46a
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1611;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;3:FkkmknK4Cya3rkT3ji8t0jAocdH+VlpC3S2yCT3D1J+XZ74tvRZENkwOUzQf3Ck6FQMjLeUN7vF+7JsNK4IrfGW9ZtEbB3snFW6da40fg36LoGypwIR1LOv6/R6+pC9uH9ErbNCuDeNIXWBDmhAe3muD/TA6iPlTEjgQgnwMt2EFBPoP9JEHNDlGGJXs/GBE/O2gqq56//3+h1zP+vcSZbSgelA3U5P4usbmQb/BCrLd9gwqu0UHDwBf9OD7++Is;25:R0BXg7kTiwOSaeve1t1h2mKp0e2JIyh7o22fPngBQJ61MZSKJNAYf1yLdy6WkNAYfCVjMuhNY7yV3hYrwi33dYUGwFLCXbd1c6Hhj4NtiFpcQWvXlLImvEnf+utt0F/bkJbxxr9vtWvMFR03wQ9uOB6J0cpU40ewvcfrKjstUGRTaKs+GiDP/yZBVzNiLWfNQ+Fm4Xv+Pe+X60aX9AIkI7qFCYU0Gp1l/tYR/GYtr6mOuXjiy0Ey5bEC5MVOWClisNmxRFPGRSt18Mqi1IsKZ7dlVUTX3Rte1J/pZ4l7nKiKWzvwmP0ESbGYGT4qdo7qpq7T47sCYwhWGfG5qJvalw==;31:B9LkDKGKi4woarukbtbHhh5SYlOAoNOylZGLlibfkRC5ceb/nE9FBbfTMtp+7X0qiqTStTWoTCixsEglafK60+8ey3wX/ld4n6yQ8175tA1ium6gpmqcXvRDwvEi9PJ7j9zWIakqPTIqwhLCgksN0KFB5V8Eg7tlsrU/h7RrJiqZLx3NdVv7SKiEK1iX9cKpTnBDYKy/Kq3El6DyjdiFt0KLoh84jdnFJXMpkIgr+xE=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;3:WkchbzzIIed0PkVC73Em8kPMhv686tsBSCQX7skkUiyBDbo5BcjJGeIkX6h7Gz2VBEeWp2waaCX9fTazcf5ISb431Yj7K4OICwypalzxtV13y65dSrASE41X22pNIqPgPZCLF+rUNOernUai7wyBXbU+Zzd9CfVz3TpkJpNeS+XWn43CaSk33cAuPd8P6oz7AYnsVkUQZsMDsH8LtAyx6Zf8Pq1+VVOc64BtLTeXWui/Y/BTo/r1WYp9HM+JtLXc;25:QXOP2B5ne0YF6RFphn+j5umjCdaUQommT/baA8iAa4r7vI7crNNNOLx7hDK0BdejGSwkzhj+ZhbOeC88K/1jlvJl4yv7abb1Fw1e+23RwW7CX0O4yaIk0g+q90hSx/Enc0TW636EXW6MTzOowrj1D6VmdUMXBTW9AqiXy1yxCNgzWNt+Dtq3ADXreLgF+fVgWyFFGWP01lCXINl1dkJZBfhbobSILrZ7AgifMjM2d9L1OyeRBDIXnyU6xobTYTqmUsDVjSpDlGuudl5kxAqYSYDni9QMJhT3sDBbWAypSR26XmtJd/BnlVFAamvtr7+mNrBL5jWnkagrTXckaUtBNA==;31:6fZt3ijtB6bX0BgiQYkmdkgiDN5H7wN+fNRlWtzrHe25oz5ICQ1+Wwbxn2/hlGp9l7k9P/tWDbL/01TCEWcTbUS+qyhfjKvzRea4wQs9JFcFNSiTKcAqYsrj18oS2MztEXGA5ggwtn2kiNv3i1ekRK9Jw4iB4Qt6CWg8w6Z1PNzL3cVmRfrjTS/mdjAWtWkJ1MtQJ5F2oTZlEKv7jxAVeUCcclGc50N5Oq3Hwv2eMJw=
 X-MS-TrafficTypeDiagnostic: HE1PR04MB1611:
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;20:SdDqRFcOrok6CiACsRRQt9JkLfolDfQCZaWZtz9kLIzoqjnkfinS0TaWzTsJpwSvFizjVIh0hiDIz6qUYSFxeSZiL57cicactsTLMIAtJa6P9NmVwHGEFmugbpBUd/Qq+ecKSmctUZGNNvzwY1gz9UjSLaD3ILTZOxPZRrafRLhY/64N+7lZ8knIdJi0O6Mw5h77k7/YcjgAy5On5wav/vymwfXiRkT4I1OXT5JXwccbtt0lHM30FjV4QTsVXfwfbCI9sLo7HS6SLVaUCjA4QxrdRfZXn1ZxitWjUMOqtKHBD6uwJ96TFAcA9QFCUlnpLBbTU2mC0g/dVrTs9ACGt1L0vALAv/eFZ2Xz6q1ToLlUqv9uiEQ8TLZI5AmXr2hm3Q5k5P57nZCKrsS+8gie3357yKTCwi8KrVcyPih5DH/vsq/UlSOjJYreMukh20q3Q0Y9/hSMvKBCHW2NIpIobEHwM6XUtPYVNcoqbxCJFsjneBZ5efGvHhtFCf3wRqJW;4:8ftXwBzIcXfgQk9AIb/k3MHH7CaQDNuq51RGnDBuqIOxow4hRJmrKXCehwWwhgUnDdwVPV3h1+MX7tLA4MiJpaxVCtQPcE1CI4VSmVxXyWhAMmz32sBo/1aUYOg20Dlw+4xfGcJhs/K1TRX+NNlRBeCx7GuZaLNd2JYLjfHDAKqhmYXfPF9eVRqLpHAxN+MjxhCg13OaE/DMg7nOyTbWuYYiw3/XnKYDQon5zadhuDXJhcTCKFCckPAAaYGxWZWq6EjcQRAQDzOkiSQmKuSMuc3e7pObOh7rQgrC4wh/ANUU62P5nIwfL07Er5co9Im0
-X-Microsoft-Antispam-PRVS: <HE1PR04MB16111C3ABB87A6393902D756F6250@HE1PR04MB1611.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;20:sGAJyCnuoC9GtafBYDFmtnfLbu4v0ceeCY+SWW1ij/9NlJloyT135CbFFhIX485ciCvEeVrjptcv78YHYvALSM0I4NsCy9dDWWAdupMlr4Suppi1UQle6eUTaQJTxC6vbBefOZJWjw5K2gadwUVeaPTtr96gYzetpj9wZXCmX3hUy33uXD9PTObOckbFCC+5xhczn2MKFvobq2tg136ITWpKly7I4KG1Aai+60QchSu2Nrl1hMWNiniuk8tPUvi5OBBGO4SutdCzD5EX+zXg6oZxo9aZGl53K8TcpeyU1eRi1clK3PlAMijfRwHRXzUYP3KW7kW6CsVFK8+9TavNtyrYYXi5tNDNYgy/wDMNkoW8AgqS++6jGcxhztCoNDgRGmD1AV5zclUCk5jOU6oo2lqKeNgtLaT7m19fUspZQJe1U1Uy03AxUKbb0BoIjTjVbAOtvZSpNxE5M+qScedOicad1NrXTULUng8FxPgjMUizAdFGLaJ4FYrtEbY0Xwkv;4:/qWsHsRwUCE99y9dC7oop+LjdIvfd/bqs3NvaJ2cjGG7AAgRPleE+iA9gxFv23/DfvI3Z+Y+yMNiUdR8wzgn52rzU2V3rT7StbISRSHpoSXflQNAJRZXmJe8H3d3kSY5C4mP0MX80igT7KJwhf1gV/l0RfS2SmcXrBDeMICWw3syV1yQ/HTfUHvP0v2XLCf9fMoZLfl8vAEmAqaJG3tZPrIwdmVBdgvrWOUgK1D3GzFM5ofxhA4+xSgXhRy54natEso6ZArF6ed1aNa9QWBwW7G0Gr4G8PgvVsmG9OeYwxBGZ6KQlTQpdHvvKES3n0BO
+X-Microsoft-Antispam-PRVS: <HE1PR04MB16118E1ED78A91A012ABB899F6250@HE1PR04MB1611.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1611;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1611;
 X-Forefront-PRVS: 0759F7A50A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(366004)(346002)(136003)(189003)(199004)(8936002)(47776003)(50226002)(53936002)(6116002)(81156014)(54906003)(110136005)(81166006)(8676002)(16586007)(5660300001)(68736007)(316002)(7736002)(305945005)(14444005)(6666003)(7416002)(51416003)(66066001)(52116002)(76176011)(36756003)(3846002)(25786009)(105586002)(97736004)(6506007)(386003)(106356001)(48376002)(6512007)(186003)(2906002)(16526019)(26005)(4326008)(50466002)(478600001)(476003)(446003)(44832011)(2616005)(6486002)(11346002)(956004)(86362001)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1611;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(366004)(346002)(136003)(189003)(199004)(8936002)(47776003)(50226002)(53936002)(6116002)(81156014)(54906003)(110136005)(81166006)(217873002)(8676002)(16586007)(5660300001)(68736007)(316002)(7736002)(305945005)(14444005)(6666003)(7416002)(51416003)(66066001)(52116002)(76176011)(36756003)(3846002)(25786009)(105586002)(97736004)(6506007)(386003)(106356001)(48376002)(6512007)(186003)(2906002)(16526019)(26005)(4326008)(50466002)(478600001)(476003)(446003)(44832011)(2616005)(6486002)(11346002)(956004)(86362001)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1611;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1611;23:wycS8/8tdqAjPSU98Hqp4eDJbHTjShs0dQu3g7WpA?=
- =?us-ascii?Q?fghCb6IB8kRXtODHNEz96lGcuADUirt3/U/e5Ux6aiKKITeIxbxR08BiyxVM?=
- =?us-ascii?Q?7dhtpG1jAiTwzKgFq/S/Vi0vBZbyDlTHd66uf57UQKapBdE76oMh1r49MJHf?=
- =?us-ascii?Q?gMLLiDp/CxKwVEDiePQ13Ah14ZpapUgh/blfYYtAE8DUhoCAjPLYj/g2+6YR?=
- =?us-ascii?Q?6niuKqZgvF8xoXvFmGKGxa4w/lKZko666IJE/C28FSPc3d9jJHKtDrnFcoba?=
- =?us-ascii?Q?6KAEqslaOLdqDyjEf9Npd9ZjM8vKNSQtw0ss9MCtz2Aqv90ST1d4QHqFb5sb?=
- =?us-ascii?Q?VpfL2PVvhBuUGcpYz9S61sjfNOmqLREuLaaNerQK6pyKBM2rp/ApdlP2+jjd?=
- =?us-ascii?Q?QEuNp1mhj/aXA1oBUyhVWIs3pCqtVSE3n6u9YbF8/f0V5dg/QBgLJ4gw4bd2?=
- =?us-ascii?Q?GSRv/M0YqPA7qDjtS/N94DKtLkwq21WRoJDY3xYNQd40rZpCJ0xlrD2QHS9v?=
- =?us-ascii?Q?jgpBNCiXiJsgs6R93yGnkiUDLnYffcl1pj2FslzWWjlA3vxl7kheF6w9CmNl?=
- =?us-ascii?Q?qjtQ8R+HBtU/vUGdeUWqAviH0FdJseQ8VuoWDlO8omPStbQXQXdiNKCr1res?=
- =?us-ascii?Q?VQ2hq0AMwa65EVpb+Y762Daa+W1VgJp9kLwwOfBrMjo4uO55l5qyp2ULmI9j?=
- =?us-ascii?Q?G8+JaJV5CFM9WtemeiNxCTJarAakI4Ysjl6CMggmRwmRffilJae1GJM1e325?=
- =?us-ascii?Q?8T4HZmhYAH/to/Xop80MAkt+gXJRz9SivpQBLWM4ptjy7rYc17y3swBxf9au?=
- =?us-ascii?Q?N02YiUScb9IN9MzrlQXTySmJRz2LxxQ0is/7DDe/PX8g4iy7q8vBlDd9lamt?=
- =?us-ascii?Q?fg+XIZURqLoBK5F3PrBqzAwY7UQP+IptEci2t6hFbQWK4InhO3Eub+tKdEBM?=
- =?us-ascii?Q?CyxqO1sM0qLIz1mMnvRZ3dF/M+7YGqBmpAunqSqf0Na3fkYE/YzF9Qcq7r51?=
- =?us-ascii?Q?6SJD7G3p3bUM1wTxwaKd/s5fgn49dRKZyDjmH8UNCPfcJEK1vPHuSP6fNVH0?=
- =?us-ascii?Q?g3QbFYwPAxytEtpnxjkJH3fZxdI5uP3poqq9qUAQvqVMI/74PO4Q+wcuFycC?=
- =?us-ascii?Q?6LpkalfTLV36b142UZG0XYsPxN8SWBZaTutV21JVnm9yXrqbhxyoEHr/hzBd?=
- =?us-ascii?Q?XbqpN1WY98hzhwxRttXxWa85GWdDE2B50y0mm6apPY/4P4Gtu55FDeRWwvyu?=
- =?us-ascii?Q?hwvyG6gB6Jmj2i1NII=3D?=
-X-Microsoft-Antispam-Message-Info: z7hNm5cljwcrmoQ5/8uILxZcbFTwu8aUpnNFBtHbiN3hwqnOrGtvGbhxyCoRBqzajnL4AwP06D01nFHPAbwm3D8dlpjkgawW8nHe7iALT/yposO4I0wklRG8dPc7tpvs9p3x02Vv20A32CQexy3n1qL2C4r6sgDB/z9V0Re8MF5FyoPY4B6OJclWFco05MYTRxMu9euqYYGxSMmA60hNvaKpM0BnmPIDiSITW0urXFneCJzkHvdW9K4rKUoIvl+ped8Gw5O62dyIqHGzK5PuBkv//nfR6MoQQvD31JvonSI72V525h3S9LB66Tzd1u+KFwS/sdyQGjWDajB1a2Inf5TB0RMT1oY2hs4ljACT8k4=
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;6:XhxPu8KyHWfsmYnfj+IGO3diYGSCLY3+GYUW8ge/adCdF9WTnHcdMtLb7STEK2aj6MAGEvFpqxFnkDbuZLT0sdgNg2AdPBBRdzVJQ94L0UxARt2jbLV4PQQHiPqmrWIHlkiQbKmZqX9tUbpvDt61zezV8eVF3KzDckjByTyw3LVfuUTZiTaTFiIabcDbrLIPs6fjrYl4F7QWN/7tNskktcNDxmjz4jhZWYLFa6ffbQXWGBH8OGVrR/60fE5Ln9uqTIqIB7MUHjZKqkPuxttCxKl+vd8p1ZOXcZwgGSuPSR8dEvosQMMMLHWKSVQ5rIccbKUJUs/Xiho1H0WiDOYulWHXCw8cNGRPYf/kQYPgOjyez+bpGZhaUweI2Ei1HPmyxWvMLZ58lEnZkJHB2OERGmrkWFUl4we9UCRNAekOrc4dIv3QeAS7HxPJNl3P3sAnuNbHd1gwMO3putj61hkxFQ==;5:VRg61xo3YKomvu3m4HeFreQdcuJOBfsThbdeLQMByJPyXq9hVmXjLm1U0V3yNeVHMkoGALVRmYJw3cRF2PPf0ggqtCoRccWQdoJf+dPA6B3JBhw9vfCZTOMVs+pPN9/dQkOVzJpqkWa7GzUxi4o7wQY7v41tnoigUPSDPgkn6T0=;7:HcRh9pYgFDyIDVIFn7yCDwciVUgDSCeQkN6BxlryVMUSHhu35SKSsdhg8njfyDOif37FF6o0qzPU/NtymnmVdKuATfxyyw2PHuwKd9z/mXds4eLmFbLVpyS/vLmKEz4y345lJb4dVNt76xCB5QREM2TX8sT2mT07asJeCd+Vs3TnRFJTrpxXVtbB5vBzVCjeNIHzJuNmH168AQ41iLhLHfNj1GX4wuEzj1Av9GeXXXq5O1f72/RlWRuMPuimHJn2
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1611;23:XW9g43fYOLiIanDABS4qJZ5hxMJAQzF2mPFIy7Qyu?=
+ =?us-ascii?Q?OYbfGpu/Veq8oXhjhJ8t0am9fbEI65k8wvEMTzHgQLIbC8NyuVi57JyVOew/?=
+ =?us-ascii?Q?DjcytXGdbnaPDbqTZMu7xxh7X46KrnEfy1yAGjMUAdU/TBtTNn1ci29JJEi+?=
+ =?us-ascii?Q?bLd8ZWT8rFMdzGNbPK64SV0auhy0l0nfh1t8/qylrWNvws60OmIr920hp01N?=
+ =?us-ascii?Q?fHi3ltM3gNpQAy3AY+YIiy0ItQqfh0Z+Jb3BasijZYjS2ROQMeDGvIsnti6W?=
+ =?us-ascii?Q?ICciw0HmHixgDNnadtiqXF5KR84gunIGvEUuv9Do6aUC5jViD4+WedB9/8lk?=
+ =?us-ascii?Q?a3USMue99+zSlia5d3zxgczYOw/vjoz5pssrVfzsdObEukkqy/eCH9IkZToL?=
+ =?us-ascii?Q?tB1hqcuy1ifXqf8ozVO2d9yruBBDCIrIx6og1o+dWnlDwrlVYymm7p9+KTXR?=
+ =?us-ascii?Q?lXBITlgYQrl0XZFqbrfw8kRJ7690Py4NSftUmZ+tqxkrC10qNlQp8TBEkypL?=
+ =?us-ascii?Q?sD6k8fmCrutbfzNq89h23GbJrNgMcKLfN1+ETdmV2ZuL/JyCj2frOdXCbSyb?=
+ =?us-ascii?Q?iogMvkZslTAzV3kSaBbQBpHT0+u7uOFJ+c88HVQpDAyA+AZ+OuwMQ8SRHKc3?=
+ =?us-ascii?Q?KyfRQcJUw8I/w5zDRDrn8oYyq1Xu0M/DeLZ2H1Y+tvxZEYtrBtDnbCZ5WyMJ?=
+ =?us-ascii?Q?GyAE6CTGO4+3/+PsS+X8SsfoM8rcg5llvvGpmLz8EbC4MVpBYIGHDhfRAajj?=
+ =?us-ascii?Q?buBB27GetgJmdJPABwGwWXhnJELq01ZK7KRdPhgPa1SCQkeK61DNl2fMb1ym?=
+ =?us-ascii?Q?jcxleiVQIQsx2iT1V+UFsPtKJzzp5yVMlaYxVLCdWRLZcrxkG2iJ7vgqkXXF?=
+ =?us-ascii?Q?1aeMQf14DyOVOCi0YH/Rppy/NqBK5EHOezKrhcdX7TVIOYI3Hz7fvi62fhoB?=
+ =?us-ascii?Q?fl9LKWATGMXalcoFB5wcPH4IVMljlGeJV5FfoVddzsh59GN0eMC7ohceVxWb?=
+ =?us-ascii?Q?XB7y6eQDcFkA7HPiYYPiO1itI2P1RLiJv0gVj2DfmaTnC7OJaPaDN70luzjk?=
+ =?us-ascii?Q?GBxCyT2zIxKElI1tZvYzatajEFIRPDzOczc2EfTiun+Vh7rCMHEm0xeXwwD/?=
+ =?us-ascii?Q?BH4JloA1QSLO8lBCBXO434W3EgC+Tni8t2hIh4XuKKB1adLDR+86php3+LCq?=
+ =?us-ascii?Q?XYj1D/9tK6m+0sld3Q+/KMdJZwXZaltzm4oHpozZSa77SXnFnGW81oE7teob?=
+ =?us-ascii?Q?9mR5XwR/9qdkTfrh3GOQaNqrCef6UgDZk2bFo74?=
+X-Microsoft-Antispam-Message-Info: drqPZHNv1rJayTks1sXrGF10dWB13GAfJTFQy1B6Md85afgmwrYhntOU1PNUME/27EL64pr/4z++kLkexsnOfm6iKU1WgdeUNo3PSKuatKl5dHEasHov/91c4aL+F5SijbuIXJpstwet5El/9yoDZ4I79iM1RvDpY/NWJEBYq23fJACR7W/gmX/ifasAn7hkP4XEFOLFNJInm5miPqvAx3CHGK8GR4JJpBy1uUN2V3hFoBUffmPkPtG6ug7Da0YVdzX09cJIJEMiJWFUVXWsEfwbWO3ghjtFMZL/lKaagUvFbX1liAxe27CTVjcPnOJYuhkFwYlV1TukhEG6REIaC0LULe0QhgcP/N6uoOo4ijw=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;6:Wv9f3gtiA7WP7rLLhfAxlub+6w3K2FpmLA5qAw62Y1oMx+fuXUskjYYF1GbqnCCPnF4mYNFeeRKhdKzXRmm0fxRHHZNZPk46hitUzafrjIwzplmApkN5Is7qq5r1nu18N6yULH9wfZX3zNRngiggpUhb3WHthzg0AJj7Nsfr8nhOB1XxcRYJrPq84qzMFBmWdtw4ZdYY4v+A7wKuFbiP73B285JYu3edTTUdqLclDUGNMvV4Lhv0ToWEYsRR3OyT2TcKTayg7xGKdDPBY3ExtM8OXrWdr2CwT+aJfJRzOyyuCN6WUfswK3HlGFFOyJhvfIHVlhRHc4GjmmWvEfs7TTBpU5WVPwrm6IlfGungPfzLDR3MK4jTB65HsSumo4pGu/A2U5+Jbgejfnl4nVQP70BlsR8WQpPmzL+HTBYKDvS8ANwXbb3N8WCcRPmiA1DEtjIWMtWewFuA3B1n/bmlMw==;5:cK5AxmskKUTKW3rQnEWFxGaDzGTMrXBiu1PmIsgBqwxjjO8GNESaYdasuzvbS9YfQcixwa+Gf2ZYon7Ei/7AaKN7dH3svEzfdzeRu92RLl+h2djmQTYuOSTosTOUVe9UhokcKMgdW1V1eZjqZRxKEJPgmh92fQyKv+JBzgxJBUA=;7:4W17GIo/GvkcL8831kU9V1Fr+HMcSLBnpjXjEb7eBW0fodajIXtnTTmD9T2sEyQY5mDz6g+hXeTyiM0PQZu1/Mi1yWTkrqWs/k91JARTs/1o+898tkLxzetqvytJppCGuqbLTITaZJOIgXoKItWwPMtaM8NDthBj8NYrqAImNEb0HGtrNUPzkbHmAFOtCs+5Vy/EoQ2AcJONsOJcNfKggHNqcvjdd6qGtsQX2QeCQg+c3/AikhSkAEqd+xIk26A2
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2018 14:46:00.0584 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1569b7f0-75e8-4074-6d0f-08d5fe06d36b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2018 14:46:01.7308 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb55c6a6-3b13-47b7-4dd0-08d5fe06d46a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1611
@@ -113,245 +113,243 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lucas Stach <l.stach@pengutronix.de>
 
-This is a new clock type introduced on i.MX8.
+The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+The driver currently misses the PLL lock check, as the preliminary
+documentation mentions lock configurations, but is quiet about where
+to find the actual lock status signal.
 
 Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/Makefile       |   1 +
- drivers/clk/imx/clk-frac-pll.c | 230 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   3 +
- 3 files changed, 234 insertions(+)
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ drivers/clk/imx/Makefile       |   3 +-
+ drivers/clk/imx/clk-sccg-pll.c | 231 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h          |   9 ++
+ 3 files changed, 242 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
 
 diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..4893c1f 100644
+index 4893c1f..b87513c 100644
 --- a/drivers/clk/imx/Makefile
 +++ b/drivers/clk/imx/Makefile
-@@ -6,6 +6,7 @@ obj-y += \
- 	clk-cpu.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
-+	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
+@@ -12,7 +12,8 @@ obj-y += \
  	clk-pllv1.o \
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-sccg-pll.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
 new file mode 100644
-index 0000000..c80c6ed
+index 0000000..886ae03
 --- /dev/null
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -0,0 +1,230 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/clk/imx/clk-sccg-pll.c
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright 2018 NXP.
 + */
 +
-+#include <linux/clk-provider.h>
++#include <linux/clk.h>
 +#include <linux/err.h>
 +#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/jiffies.h>
 +#include <linux/slab.h>
 +
 +#include "clk.h"
 +
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
++/* PLL CFGs */
++#define PLL_CFG0	0x0
++#define PLL_CFG1	0x4
++#define PLL_CFG2	0x8
 +
-+#define PLL_LOCK_STATUS		BIT(31)
-+#define PLL_PD			19
-+#define PLL_PD_MASK		BIT(PLL_PD)
-+#define PLL_BYPASS		14
-+#define PLL_BYPASS_MASK		BIT(PLL_BYPASS)
-+#define PLL_NEWDIV_VAL		BIT(12)
-+#define PLL_NEWDIV_ACK		BIT(11)
-+#define PLL_FRAC_DIV_MASK	0xffffff
-+#define PLL_INT_DIV_MASK	0x7f
-+#define PLL_OUTPUT_DIV_MASK	0x1f
-+#define PLL_FRAC_DENOM		0x1000000
++#define PLL_DIVF1_SHIFT	13
++#define PLL_DIVF2_SHIFT	7
++#define PLL_DIVF_MASK	0x3f
 +
-+struct clk_frac_pll {
++#define PLL_DIVR1_SHIFT	25
++#define PLL_DIVR2_SHIFT	19
++#define PLL_DIVR1_MASK	0x3
++#define PLL_DIVR2_MASK	0x3f
++#define PLL_REF_SHIFT	0
++#define PLL_REF_MASK	0x3
++
++#define PLL_LOCK	31
++#define PLL_PD		7
++
++#define OSC_25M		25000000
++#define OSC_27M		27000000
++
++struct clk_sccg_pll {
 +	struct clk_hw	hw;
 +	void __iomem	*base;
 +};
 +
-+#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
++#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
 +
-+static int clk_wait_lock(struct clk_frac_pll *pll)
++static int clk_pll1_is_prepared(struct clk_hw *hw)
 +{
-+	unsigned long timeout = jiffies + msecs_to_jiffies(10);
-+	u32 val;
-+
-+	/* Wait for PLL to lock */
-+	do {
-+		if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
-+			break;
-+		if (time_after(jiffies, timeout))
-+			break;
-+	} while (1);
-+
-+	return readl_poll_timeout(pll->base, val,
-+					val & PLL_LOCK_STATUS, 0, 1000);
-+}
-+
-+static int clk_wait_ack(struct clk_frac_pll *pll)
-+{
-+	unsigned long timeout = jiffies + msecs_to_jiffies(50);
-+	u32 val;
-+
-+	/* return directly if the pll is in powerdown or in bypass */
-+	if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-+		return 0;
-+
-+	/* Wait for the pll's divfi and divff to be reloaded */
-+	do {
-+		if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
-+			break;
-+		if (time_after(jiffies, timeout))
-+			break;
-+	} while (1);
-+
-+	return readl_poll_timeout(pll->base, val,
-+					val & PLL_NEWDIV_ACK, 0, 1000);
-+}
-+
-+static int clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
 +	u32 val;
 +
 +	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_wait_lock(pll);
++	return (val & (1 << PLL_PD)) ? 0 : 1;
 +}
 +
-+static void clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+}
-+
-+static int clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
++static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
 +					 unsigned long parent_rate)
 +{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divff, divfi, divq;
-+	u64 temp64;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, divf;
 +
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	divq = ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	divff = (val >> 7) & PLL_FRAC_DIV_MASK;
-+	divfi = (val & PLL_INT_DIV_MASK);
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divf = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
 +
-+	temp64 = (u64)parent_rate * 8;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+	temp64 /= divq;
-+
-+	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
++	return parent_rate * 2 * (divf + 1);
 +}
 +
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
 +			       unsigned long *prate)
 +{
 +	unsigned long parent_rate = *prate;
-+	u32 divff, divfi;
-+	u64 temp64;
++	u32 div;
 +
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64)(rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
++	div = rate / (parent_rate * 2);
 +
-+	temp64 = (u64)parent_rate;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+
-+	return (parent_rate * divfi + (unsigned long)temp64) / 2;
++	return parent_rate * div * 2;
 +}
 +
-+/*
-+ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
-+ * (means the PLL output will be divided by 2). So the PLL output can use
-+ * the below formula:
-+ * pllout = parent_rate * 8 / 2 * DIVF_VAL;
-+ * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
-+ */
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
 +			    unsigned long parent_rate)
 +{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divfi, divff;
-+	u64 temp64;
-+	int ret;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++	u32 divf;
 +
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64) (rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
++	divf = rate / (parent_rate * 2);
 +
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	val &= ~((PLL_FRAC_DIV_MASK << 7) | (PLL_INT_DIV_MASK));
-+	val |= ((divff << 7) | (divfi - 1));
-+	writel_relaxed(val, pll->base + PLL_CFG1);
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
++	val |= (divf - 1) << PLL_DIVF1_SHIFT;
++	writel_relaxed(val, pll->base + PLL_CFG2);
 +
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~0x1f;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
++	/* FIXME: PLL lock check */
 +
-+	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	ret = clk_wait_ack(pll);
-+
-+	/* clear the NEV_DIV_VAL */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return ret;
++	return 0;
 +}
 +
-+static const struct clk_ops clk_frac_pll_ops = {
-+	.prepare	= clk_pll_prepare,
-+	.unprepare	= clk_pll_unprepare,
-+	.is_prepared	= clk_pll_is_prepared,
-+	.recalc_rate	= clk_pll_recalc_rate,
-+	.round_rate	= clk_pll_round_rate,
-+	.set_rate	= clk_pll_set_rate,
++static int clk_pll1_prepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base);
++	val &= ~(1 << PLL_PD);
++	writel_relaxed(val, pll->base);
++
++	/* FIXME: PLL lock check */
++
++	return 0;
++}
++
++static void clk_pll1_unprepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base);
++	val |= (1 << PLL_PD);
++	writel_relaxed(val, pll->base);
++}
++
++static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, ref, divr1, divf1, divr2, divf2;
++	u64 temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	switch ((val >> PLL_REF_SHIFT) & PLL_REF_MASK) {
++	case 0:
++		ref = OSC_25M;
++		break;
++	case 1:
++		ref = OSC_27M;
++		break;
++	default:
++		ref = OSC_25M;
++		break;
++	}
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divr1 = (val >> PLL_DIVR1_SHIFT) & PLL_DIVR1_MASK;
++	divr2 = (val >> PLL_DIVR2_SHIFT) & PLL_DIVR2_MASK;
++	divf1 = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
++	divf2 = (val >> PLL_DIVF2_SHIFT) & PLL_DIVF_MASK;
++
++	temp64 = ref * 2;
++	temp64 *= (divf1 + 1) * (divf2 + 1);
++
++	do_div(temp64, (divr1 + 1) * (divr2 + 1));
++
++	return (unsigned long)temp64;
++}
++
++static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 div;
++	unsigned long parent_rate = *prate;
++
++	div = rate / (parent_rate);
++
++	return parent_rate * div;
++}
++
++static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	u32 val;
++	u32 divf;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++
++	divf = rate / (parent_rate);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~(PLL_DIVF_MASK << PLL_DIVF2_SHIFT);
++	val |= (divf - 1) << PLL_DIVF2_SHIFT;
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	/* FIXME: PLL lock check */
++
++	return 0;
++}
++
++static const struct clk_ops clk_sccg_pll1_ops = {
++	.is_prepared	= clk_pll1_is_prepared,
++	.recalc_rate	= clk_pll1_recalc_rate,
++	.round_rate	= clk_pll1_round_rate,
++	.set_rate	= clk_pll1_set_rate,
 +};
 +
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base)
++static const struct clk_ops clk_sccg_pll2_ops = {
++	.prepare	= clk_pll1_prepare,
++	.unprepare	= clk_pll1_unprepare,
++	.recalc_rate	= clk_pll2_recalc_rate,
++	.round_rate	= clk_pll2_round_rate,
++	.set_rate	= clk_pll2_set_rate,
++};
++
++struct clk *imx_clk_sccg_pll(const char *name,
++				const char *parent_name,
++				void __iomem *base,
++				enum imx_sccg_pll_type pll_type)
 +{
-+	struct clk_init_data init;
-+	struct clk_frac_pll *pll;
++	struct clk_sccg_pll *pll;
 +	struct clk *clk;
++	struct clk_init_data init;
 +
 +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
 +	if (!pll)
@@ -359,7 +357,15 @@ index 0000000..c80c6ed
 +
 +	pll->base = base;
 +	init.name = name;
-+	init.ops = &clk_frac_pll_ops;
++	switch (pll_type) {
++	case SCCG_PLL1:
++		init.ops = &clk_sccg_pll1_ops;
++		break;
++	case SCCG_PLL2:
++		init.ops = &clk_sccg_pll2_ops;
++		break;
++	}
++
 +	init.flags = 0;
 +	init.parent_names = &parent_name;
 +	init.num_parents = 1;
@@ -373,15 +379,28 @@ index 0000000..c80c6ed
 +	return clk;
 +}
 diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec0..13daf1c 100644
+index 13daf1c..12b3fd6 100644
 --- a/drivers/clk/imx/clk.h
 +++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
- 		void __iomem *base);
+@@ -21,6 +21,11 @@ enum imx_pllv1_type {
+ 	IMX_PLLV1_IMX35,
+ };
  
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base);
++enum imx_sccg_pll_type {
++	SCCG_PLL1,
++	SCCG_PLL2,
++};
++
+ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ 		const char *parent, void __iomem *base);
+ 
+@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+ 
++struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
++			     void __iomem *base,
++			     enum imx_sccg_pll_type pll_type);
 +
  enum imx_pllv3_type {
  	IMX_PLLV3_GENERIC,
