@@ -5,300 +5,155 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F0C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD16C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B90F21EC4
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:24:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B90F21EC4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id BD3A921EC3
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:24:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD3A921EC3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbeHISuP (ORCPT
+        id S1732540AbeHISu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 14:50:15 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7484 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730419AbeHISuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 14:50:15 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b6c6ab60000>; Thu, 09 Aug 2018 09:24:22 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 09 Aug 2018 09:24:35 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 09 Aug 2018 09:24:35 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Aug
- 2018 16:24:32 +0000
-Date:   Thu, 9 Aug 2018 19:24:26 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 01/40] dt-bindings: Add Tegra PMC pad configuration
- bindings
-Message-ID: <20180809192426.3f3b7c16@dhcp-10-21-25-168>
-In-Reply-To: <20180809121350.GO21639@ulmo>
-References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
-        <1533141150-10511-2-git-send-email-avienamo@nvidia.com>
-        <20180809121350.GO21639@ulmo>
-X-NVConfidentiality: public
+        Thu, 9 Aug 2018 14:50:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:56144 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730419AbeHISu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 14:50:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05D087A9;
+        Thu,  9 Aug 2018 09:24:51 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 512B83F5B3;
+        Thu,  9 Aug 2018 09:24:49 -0700 (PDT)
+Subject: Re: [PATCH] iommu/iova: Optimise attempts to allocate iova from 32bit
+ address range
+To:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     tomasz.nowicki@cavium.com, jnair@caviumnetworks.com,
+        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com, gklkml16@gmail.com
+References: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com>
+Date:   Thu, 9 Aug 2018 17:24:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
- (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 Aug 2018 14:13:50 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
+On 07/08/18 09:54, Ganapatrao Kulkarni wrote:
+> As an optimisation for PCI devices, there is always first attempt
+> been made to allocate iova from SAC address range. This will lead
+> to unnecessary attempts/function calls, when there are no free ranges
+> available.
+> 
+> This patch optimises by adding flag to track previous failed attempts
+> and avoids further attempts until replenish happens.
 
-> On Wed, Aug 01, 2018 at 07:31:51PM +0300, Aapo Vienamo wrote:
-> > Document the PMC pinctrl bindings for pad power state and signaling
-> > voltage configuration. Both nvidia,tegra186-pmc.txt and
-> > nvidia,tegra20-pmc.txt are modified as they both cover SoC generations
-> > for which these bindings apply.
-> > 
-> > Add a header defining Tegra PMC pad voltage configurations.
-> > 
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++++++++++++++++
-> >  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++++++++++++++++++
-> >  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 ++++
-> >  3 files changed, 213 insertions(+)
-> >  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> > index 5a3bf7c..d7fed4d 100644
-> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> > @@ -34,3 +34,95 @@ Board DTS:
-> >  	pmc@c360000 {
-> >  		nvidia,invert-interrupt;
-> >  	};
-> > +
-> > +== Pad Control ==
-> > +
-> > +On Tegra SoCs a pad is a set of pins which are configured as a group.
-> > +The pin grouping is a fixed attribute of the hardware. The PMC can be
-> > +used to set pad power state and signaling voltage. A pad can be either
-> > +in active or power down mode. The support for power state and signaling
-> > +voltage configuration varies depending on the pad in question. 3.3 V and
-> > +1.8 V signaling voltages are supported on pins where software
-> > +controllable signaling voltage switching is available.
-> > +
-> > +Pad configurations are described is with pin configuration nodes which  
-> 
-> The "is" in the middle there seems to be left-over from a previous
-> formulation of the sentence.
-> 
-> > +are placed under the pmc node and they are referred to by the pinctrl
-> > +client properties. For more information see
-> > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-> > +
-> > +Following pads are present on Tegra186:  
-> 
-> "The following pads..."
-> 
-> > +csia		csib		dsi		mipi-bias
-> > +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
-> > +usb0		usb1		usb2		usb-bias
-> > +uart		audio		hsic		dbg
-> > +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
-> > +sdmmc4		cam		dsib		dsic
-> > +dsid		csic		csid		csie
-> > +dsif		spi		ufs		dmic-hv
-> > +edp		sdmmc1-hv	sdmmc3-hv	conn
-> > +audio-hv	ao-hv
-> > +
-> > +Required pin configuration properties:
-> > +  - pins: Must contain name of the pad(s) to be configured.  
-> 
-> "the name". Also, I'm assuming that this can take a list of names, so
-> perhaps this should read:
-> 
-> 	- pins: A list of strings, each of which contains the name of a pad
-> 	    to be configured.
-> 
-> > +
-> > +Optional pin configuration properties:
-> > +  - low-power-enable: Configure the pad into power down mode
-> > +  - low-power-disable: Configure the pad into active mode  
-> 
-> Do we need both of these? low-power could be a boolean property to mean
-> that the pad(s) should be configured in power down mode. If absent it
-> would mean that the pad(s) should be configured in normal mode. The only
-> reason why I can think of them to have to be separate is if we want to
-> define a configuration where the power mode is not touched. But is that
-> really something we need or want?
+Agh, what I overlooked is that this still suffers from the original 
+problem, wherein a large allocation which fails due to fragmentation 
+then blocks all subsequent smaller allocations, even if they may have 
+succeeded.
 
-These are standard pinctrl properties. While not relevant to the OS and
-driver agnostic bindings documentation, the way Linux pinctrl works
-would make omitting either of those properties tricky to implement in a
-pinctrl provider driver. As far as I can tell, the power state should
-be stated explicitly if it's modified in any of the pin configurations.
+For a minimal change, though, what I think we could do is instead of 
+just having a flag, track the size of the last 32-bit allocation which 
+failed. If we're happy to assume that nobody's likely to mix aligned and 
+unaligned allocations within the same domain, then that should be 
+sufficiently robust whilst being no more complicated than this version, 
+i.e. (modulo thinking up a better name for it):
 
-> > +  - power-source: Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> > +    TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
-> > +    The values are defined in
-> > +    include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.  
 > 
-> Why is this called "power-source"? This defines the signaling voltage of
-> the pad, so why not something like "power-level", or "voltage", or
-> "output-voltage"?
+> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+> ---
+> This patch is based on comments from Robin Murphy <robin.murphy@arm.com>
+> for patch [1]
 > 
-> Or is this because it is a mux that will internally select either a
-> 1.8 V or a 3.3 V source? In which case I guess this is okay. Perhaps
-> give some explanation of the mechanics of the underlying hardware to
-> make this more obvious.
+> [1] https://lkml.org/lkml/2018/4/19/780
+> 
+>   drivers/iommu/iova.c | 11 ++++++++++-
+>   include/linux/iova.h |  1 +
+>   2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index 83fe262..d97bb5a 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned long granule,
+>   	iovad->granule = granule;
+>   	iovad->start_pfn = start_pfn;
+>   	iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
+> +	iovad->free_32bit_pfns = true;
 
-At least in the case of SDMMC, the pad is powered from an external
-adjustable regulator, however the pad must be configured to a voltage
-matching the voltage that is supplied to the pad from the regulator. The
-TRM does not go into much detail on the actual mechanisms behind this.
-I wanted to avoid introcuding new vendor specific properties and just
-stick with the standard pinctrl ones.
+	iovad->max_32bit_free = iovad->dma_32bit_pfn;
 
-> > +
-> > +Note: The power state can be configured on all of the above pads except
-> > +      for ao-hv. Following pads have software configurable signaling
-> > +      voltages: sdmmc2-hv, dmic-hv, sdmmc1-hv, sdmmc3-hv, audio-hv,
-> > +      ao-hv.
-> > +
-> > +Pad configuration state example:
-> > +	pmc: pmc@7000e400 {
-> > +		compatible = "nvidia,tegra186-pmc";
-> > +		reg = <0 0x0c360000 0 0x10000>,
-> > +		      <0 0x0c370000 0 0x10000>,
-> > +		      <0 0x0c380000 0 0x10000>,
-> > +		      <0 0x0c390000 0 0x10000>;
-> > +		reg-names = "pmc", "wake", "aotag", "scratch";
-> > +
-> > +		...
-> > +
-> > +		sdmmc1_3v3: sdmmc1-3v3 {
-> > +			pins = "sdmmc1-hv";
-> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-> > +		};
-> > +
-> > +		sdmmc1_1v8: sdmmc1-1v8 {
-> > +			pins = "sdmmc1-hv";
-> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-> > +		};  
-> 
-> Wouldn't these be implicitly low-power-disable? What if these are off by
-> default? Selecting these states would change the power source but keep
-> them in power down, no? Don't we want something like the below instead?
+>   	iovad->flush_cb = NULL;
+>   	iovad->fq = NULL;
+>   	iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
+> @@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain *iovad, struct iova *free)
+>   
+>   	cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
+>   	if (free->pfn_hi < iovad->dma_32bit_pfn &&
+> -	    free->pfn_lo >= cached_iova->pfn_lo)
+> +	    free->pfn_lo >= cached_iova->pfn_lo) {
+>   		iovad->cached32_node = rb_next(&free->node);
+> +		iovad->free_32bit_pfns = true;
 
-The power state isn't modified. By default the pads are powered.
+		iovad->max_32bit_free = iovad->dma_32bit_pfn;
 
-> 		sdmmc1_3v3: sdmmc1-3v3 {
-> 			pins = "sdmmc1-hv";
-> 			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-> 			/* low-power-disable implied here */
-> 		};
-> 
-> 		sdmmc1_1v8: sdmmc1-1v8 {
-> 			pins = "sdmmc1-hv";
-> 			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-> 			/* low-power-disable implied here */
-> 		};
-> 
-> 		sdmmc1_off: sdmmc1-off {
-> 			pins = "sdmmc1-hv";
-> 			low-power;
-> 		};
-> 
-> That would allow the SDHCI driver to select between the two signaling
-> modes and a separate state for powering down the pad.
-> 
-> > +
-> > +		hdmi_off: hdmi-off {
-> > +			pins = "hdmi";
-> > +			low-power-enable;
-> > +		}
-> > +
-> > +		hdmi_on: hdmi-on {
-> > +			pins = "hdmi";
-> > +			low-power-disable;
-> > +		}  
-> 
-> These would similarily become:
-> 
-> 		hdmi_off: hdmi-off {
-> 			pins = "hdmi";
-> 			low-power;
-> 		};
-> 
-> 		hdmi_on: hdmi-on {
-> 			pins = "hdmi";
-> 		};
-> 
-> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> > index a74b37b..5363b90 100644
-> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> > @@ -195,3 +195,106 @@ Example:
-> >  		power-domains = <&pd_audio>;
-> >  		...
-> >  	};
-> > +
-> > +== Pad Control ==
-> > +
-> > +On Tegra SoCs a pad is a set of pins which are configured as a group.
-> > +The pin grouping is a fixed attribute of the hardware. The PMC can be
-> > +used to set pad power state and signaling voltage. A pad can be either
-> > +in active or power down mode. The support for power state and signaling
-> > +voltage configuration varies depending on the pad in question. 3.3 V and
-> > +1.8 V signaling voltages are supported on pins where software
-> > +controllable signaling voltage switching is available.
-> > +
-> > +The pad configuration state nodes are placed under the pmc node and they
-> > +are referred to by the pinctrl client properties. For more information
-> > +see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-> > +The pad name should be used as the value of the pins property in pin
-> > +configuration nodes.
-> > +
-> > +Following pads are present on Tegra124 and Tegra132:
-> > +audio		bb		cam		comp
-> > +csia		csb		cse		dsi
-> > +dsib		dsic		dsid		hdmi
-> > +hsic		hv		lvds		mipi-bias
-> > +nand		pex-bias	pex-clk1	pex-clk2
-> > +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
-> > +sys_ddc		uart		usb0		usb1
-> > +usb2		usb_bias
-> > +
-> > +Following pads are present on Tegra210:
-> > +audio		audio-hv	cam		csia
-> > +csib		csic		csid		csie
-> > +csif		dbg		debug-nonao	dmic
-> > +dp		dsi		dsib		dsic
-> > +dsid		emmc		emmc2		gpio
-> > +hdmi		hsic		lvds		mipi-bias
-> > +pex-bias	pex-clk1	pex-clk2	pex-cntrl
-> > +sdmmc1		sdmmc3		spi		spi-hv
-> > +uart		usb0		usb1		usb2
-> > +usb3		usb-bias  
-> 
-> What about chips prior to Tegra124?
+> +	}
+>   
+>   	cached_iova = rb_entry(iovad->cached_node, struct iova, node);
+>   	if (free->pfn_lo >= cached_iova->pfn_lo)
+> @@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned long size,
+>   	struct iova *new_iova;
+>   	int ret;
+>   
+> +	if (limit_pfn <= iovad->dma_32bit_pfn &&
+> +			!iovad->free_32bit_pfns)
 
-PMC pad configuration of this sort was introduced in Tegra124.
+			size >= iovad->max_32bit_free)
 
- -Aapo
+> +		return NULL;
+> +
+>   	new_iova = alloc_iova_mem();
+>   	if (!new_iova)
+>   		return NULL;
+> @@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned long size,
+>   
+>   	if (ret) {
+>   		free_iova_mem(new_iova);
+> +		if (limit_pfn <= iovad->dma_32bit_pfn)
+> +			iovad->free_32bit_pfns = false;
+
+			iovad->max_32bit_free = size;
+
+What do you think?
+
+Robin.
+
+>   		return NULL;
+>   	}
+>   
+> diff --git a/include/linux/iova.h b/include/linux/iova.h
+> index 928442d..3810ba9 100644
+> --- a/include/linux/iova.h
+> +++ b/include/linux/iova.h
+> @@ -96,6 +96,7 @@ struct iova_domain {
+>   						   flush-queues */
+>   	atomic_t fq_timer_on;			/* 1 when timer is active, 0
+>   						   when not */
+> +	bool	free_32bit_pfns;
+>   };
+>   
+>   static inline unsigned long iova_size(struct iova *iova)
+> 
