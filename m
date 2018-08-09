@@ -2,157 +2,214 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0953C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B679C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E96217C6
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E96217C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C686C217C6
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:50:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g0ruX+uw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C686C217C6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbeHIMOw (ORCPT
+        id S1729993AbeHIMOv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:14:52 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35375 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeHIMOv (ORCPT
+        Thu, 9 Aug 2018 08:14:51 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58858 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727371AbeHIMOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 Aug 2018 08:14:51 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g1-v6so4607782wru.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 02:50:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i5Jr1LfDxInYdZWLslIxXL3LNdZ6Lf1WSFgYwnQQMi4=;
-        b=F8789eELwK1PNNXsPnI+luD0yXbSdaAxlKaAARXAp9jeNk9FmBsAr7SbLBMNJAMznT
-         L3HF1LRE3M7mLiTg7iPXsH0CQyxWd0LmfkD/KbnaJei5K1w7U5otf3wc8VAwAVAgpMuP
-         IUtBV03I5CDcHjS6oymYTjAOzf9ABfiKI8RZftAjgSMj4genSKmI5IoBt/FYp5O6KPyV
-         xXVBHbHa44cz9eIuwNEY6DjQ882GomeyW1ivr8UKDw6QlJ4hIi4oCYGe0rO+BWeOhMxR
-         MCdUjd9GbZiE/24JIXGQDljqamuyyOjn5tQuPQoo3WpVKqdGPKcZoPPne/HHAkRp6Yth
-         gz7w==
-X-Gm-Message-State: AOUpUlHZxNKIPzqjfZ3uzZa0slH7gQpcFV8A/9Vf6xHp0kMbT4dvUd53
-        U3nsRmJRv2mLtid+SDnip6N7mA==
-X-Google-Smtp-Source: AA+uWPw296GVQf/0nt046qYtjTgit2k8nCMO2IQwYUxH2V5IQMB7SKfF1oFpeaY3W1q4W67QOV/wDg==
-X-Received: by 2002:adf:f188:: with SMTP id h8-v6mr1031696wro.214.1533808245785;
-        Thu, 09 Aug 2018 02:50:45 -0700 (PDT)
-Received: from localhost.localdomain (hsvpn34.hotsplots.net. [176.74.57.181])
-        by smtp.gmail.com with ESMTPSA id l11-v6sm9265098wru.25.2018.08.09.02.50.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 02:50:45 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 11:50:43 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
- support utilization clamping
-Message-ID: <20180809095043.GC22465@localhost.localdomain>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-2-patrick.bellasi@arm.com>
- <20180807123550.GA3062@localhost.localdomain>
- <20180809091427.4p2c4fbxocpkjaby@darkstar>
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 384A91267;
+        Thu,  9 Aug 2018 11:50:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533808244;
+        bh=2EyUHSnXaCHFG4ti8uE69WfQf0p+zsBO7g1hCOQif7o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=g0ruX+uwrqDhmdvNx1TnPHG6lLOQ/JctxHdTajraHZq4hwVojpGmCqS7m26Jbpzdy
+         tVQR0FBFxGmLSy83EYZvLIVDTLXka+RA6+SQHhaEW/DL6pl1O+wQGa2T/mA2hqy3km
+         SMEEqcLzGlw+Um2vAxed8SyVz8jaE4bv8GjBCF9w=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tfiga@chromium.org, stern@rowland.harvard.edu,
+        ezequiel@collabora.com, hdegoede@redhat.com, hverkuil@xs4all.nl,
+        mchehab@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
+        isely@pobox.com, bhumirks@gmail.com, colin.king@canonical.com,
+        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
+Subject: Re: [PATCH v3 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
+Date:   Thu, 09 Aug 2018 12:51:28 +0300
+Message-ID: <1999611.3qB5YXmi7D@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180809093307.6001-3-matwey@sai.msu.ru>
+References: <20180809093307.6001-1-matwey@sai.msu.ru> <20180809093307.6001-3-matwey@sai.msu.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809091427.4p2c4fbxocpkjaby@darkstar>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/18 10:14, Patrick Bellasi wrote:
-> On 07-Aug 14:35, Juri Lelli wrote:
-> > On 06/08/18 17:39, Patrick Bellasi wrote:
-> > 
-> > [...]
-> > 
-> > > @@ -4218,6 +4245,13 @@ static int __sched_setscheduler(struct task_struct *p,
-> > >  			return retval;
-> > >  	}
-> > >  
-> > > +	/* Configure utilization clamps for the task */
-> > > +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
-> > > +		retval = __setscheduler_uclamp(p, attr);
-> > > +		if (retval)
-> > > +			return retval;
-> > > +	}
-> > > +
-> > 
-> > IIUC, this is available to root and non-root users. In the latter case,
-> > how do we cope with the fact that some user might occupy all the
-> > available clamping groups configured for the system?
+Hi Matwey,
+
+Thank you for the patch.
+
+On Thursday, 9 August 2018 12:33:07 EEST Matwey V. Kornilov wrote:
+> DMA cocherency slows the transfer down on systems without hardware
+> coherent DMA. Instead we use noncocherent DMA memory and explicit sync at
+> data receive handler.
 > 
-> That's a very good point, glad you noticed it.
+> Based on previous commit the following performance benchmarks have been
+> carried out. Average memcpy() data transfer rate (rate) and handler
+> completion time (time) have been measured when running video stream at
+> 640x480 resolution at 10fps.
 > 
-> What concern me most is that we set constraints to the cgroups
-> delegation model. If all clamp groups have been used it could be
-> not possible for a parent group to shrink resources for its subgroups.
-
-Right, when groups are in use the problem might actually be even more
-serious.
-
-> In both cases however, in principle, I think we can live with the idea
-> that the "System Management Software" (SMS) can pre-allocate all the
-> required boost groups at boot time;  malicious tasks and dependent
-> groups will eventually get an -ENOSPC error.
+> x86_64 based system (Intel Core i5-3470). This platform has hardware
+> coherent DMA support and proposed change doesn't make big difference here.
 > 
-> These are the main reason why I did not posted a more "safe" solution:
-> this series is already big enough, a properly (pre)configured system
-> is still reasonably functional safe and  this feature can be added in
-> a second step.
+>  * kmalloc:            rate = (2.0 +- 0.4) GBps
+>                        time = (5.0 +- 3.0) usec
+>  * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
+>                        time = (3.5 +- 3.0) usec
+> 
+> We see that the measurements agree within error ranges in this case.
+> So theoretically predicted performance downgrade cannot be reliably measured
+> here.
+> 
+> armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform has
+> no hardware coherent DMA support. DMA coherence is implemented via disabled
+> page caching that slows down memcpy() due to memory controller behaviour.
+> 
+>  * kmalloc:            rate =  (114 +- 5) MBps
+>                        time =   (84 +- 4) usec
+>  * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
+>                        time =  (341 +- 2) usec
+> 
+> Note, that quantative difference leads (this commit leads to 4 times
+> acceleration) to qualitative behavior change in this case. As it was
+> stated before, the video stream cannot be successfully received at AM335x
+> platforms with MUSB based USB host controller due to performance issues
+> [1].
+> 
+> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+> 
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> ---
+>  drivers/media/usb/pwc/pwc-if.c | 47 ++++++++++++++++++++++++++++-----------
+>  1 file changed, 35 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+> index 72d2897a4b9f..17f2015a75bb 100644
+> --- a/drivers/media/usb/pwc/pwc-if.c
+> +++ b/drivers/media/usb/pwc/pwc-if.c
+> @@ -159,6 +159,31 @@ static const struct video_device pwc_template = {
+>  /**************************************************************************
+> */ /* Private functions */
+> 
+> +static void* pwc_alloc_urb_buffer(struct device *dev, size_t size,
+> dma_addr_t *dma_handle) {
 
-I see, but I also fear that there will be times and usages of this new
-interface where no SMS is present.
+There are several violations of the Linux coding style here, could you please 
+run your patch through checkpatch.pl to fix them ?
 
-> However, I already have a couple of possible extensions/fixes which I
-> can add on top on the next respin. They are along these lines:
+> +	void* buffer = kmalloc(size, GFP_KERNEL);
+> +
+> +	if (buffer == NULL) {
+> +		goto fail_kmalloc;
+> +	}
 
-These are exactly what I was thinking about as well. :-)
+No need for a goto, you can just return NULL here.
 
-> 1) make CAP_SYS_NICE protected the clamp groups, with an optional boot
->    time parameter to relax this check
+> +	*dma_handle = dma_map_single(dev, buffer, size, DMA_FROM_DEVICE);
+> +	if (dma_mapping_error(dev, *dma_handle)) {
+> +		goto fail_dma_map_single;
 
-It seems to me that this might work well with that the intended usage of
-the interface that you depict above. SMS only (or any privileged user)
-will be in control of how groups are configured, so no problem for
-normal users.
+And you can inline the error handling code here as it's used from a single 
+location.
 
-> 2) add discretization support to clamp groups allocation
+> +	}
+> +
+> +	return buffer;
+> +
+> +fail_dma_map_single:
+> +	kfree(buffer);
+> +fail_kmalloc:
+> +	return NULL;
+> +}
+> +
+> +static void pwc_free_urb_buffer(struct device *dev, size_t size, void*
+> buffer, dma_addr_t dma_handle) {
+> +	dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
+> +	kfree(buffer);
+> +}
+> +
+>  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pdev)
+> {
+>  	unsigned long flags = 0;
+> @@ -306,6 +331,8 @@ static void pwc_isoc_handler(struct urb *urb)
+>  	/* Reset ISOC error counter. We did get here, after all. */
+>  	pdev->visoc_errors = 0;
+> 
+> +	dma_sync_single_for_cpu(&urb->dev->dev, urb->transfer_dma,
+> urb->transfer_buffer_length, DMA_FROM_DEVICE);
+> +
+>  	/* vsync: 0 = don't copy data
+>  		  1 = sync-hunt
+>  		  2 = synched
+> @@ -428,16 +455,13 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+>  		urb->dev = udev;
+>  		urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+>  		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+> -		urb->transfer_buffer = usb_alloc_coherent(udev,
+> -							  ISO_BUFFER_SIZE,
+> -							  GFP_KERNEL,
+> -							  &urb->transfer_dma);
+> +		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+> +		urb->transfer_buffer = pwc_alloc_urb_buffer(&udev->dev,
+> urb->transfer_buffer_length, &urb->transfer_dma);
+>  		if (urb->transfer_buffer == NULL) {
+>  			PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+>  			pwc_isoc_cleanup(pdev);
+>  			return -ENOMEM;
+>  		}
+> -		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+>  		urb->complete = pwc_isoc_handler;
+>  		urb->context = pdev;
+>  		urb->start_frame = 0;
+> @@ -488,15 +512,14 @@ static void pwc_iso_free(struct pwc_device *pdev)
+> 
+>  	/* Freeing ISOC buffers one by one */
+>  	for (i = 0; i < MAX_ISO_BUFS; i++) {
+> -		if (pdev->urbs[i]) {
+> +		struct urb* urb = pdev->urbs[i];
+> +
+> +		if (urb) {
+>  			PWC_DEBUG_MEMORY("Freeing URB\n");
+> -			if (pdev->urbs[i]->transfer_buffer) {
+> -				usb_free_coherent(pdev->udev,
+> -					pdev->urbs[i]->transfer_buffer_length,
+> -					pdev->urbs[i]->transfer_buffer,
+> -					pdev->urbs[i]->transfer_dma);
+> +			if (urb->transfer_buffer) {
+> +				pwc_free_urb_buffer(&urb->dev->dev, urb->transfer_buffer_length,
+> urb->transfer_buffer, urb->transfer_dma); }
+> -			usb_free_urb(pdev->urbs[i]);
+> +			usb_free_urb(urb);
+>  			pdev->urbs[i] = NULL;
+>  		}
+>  	}
 
-And this might also work well if we feel that we don't want to restrict
-usage of the interface to admin only, however...
+-- 
+Regards,
 
-> This second feature specifically, will ensure that clamp values are
-> always mapped into one of the available clamp groups. While the exact
-> clamp value can always be used for tasks placement biasing, when it
-> comes to frequency selection biasing, depending on concurrently
-> running tasks, you can end up with an effective clamp value which is a
-> rounded up.
+Laurent Pinchart
 
-what I'm not so sure about is that we might lose in flexibility if the
-number of available discrete clamp groups is too small compared to the
-number of available OPP on the platform.
 
-> Will likely add a couple of additional patches on v4 posting.
-> Do you have any other possible idea?
 
-As said, I though as well about the two options you mentioned.
