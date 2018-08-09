@@ -3,46 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5590C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EFCC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5600F2238F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5600F2238F
+	by mail.kernel.org (Postfix) with ESMTP id 5ECB32238F
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:33:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ECB32238F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbeHJBAT (ORCPT
+        id S1727502AbeHJBAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:00:19 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28258 "EHLO mga02.intel.com"
+        Thu, 9 Aug 2018 21:00:23 -0400
+Received: from mga17.intel.com ([192.55.52.151]:14661 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbeHJBAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:00:19 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1726890AbeHJBAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 21:00:22 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 15:33:22 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 15:33:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,217,1531810800"; 
-   d="scan'208";a="61997246"
+   d="scan'208";a="82142749"
 Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Aug 2018 15:33:21 -0700
+  by orsmga002.jf.intel.com with ESMTP; 09 Aug 2018 15:33:21 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1fntUR-000H2p-Na; Fri, 10 Aug 2018 06:33:07 +0800
-Date:   Fri, 10 Aug 2018 06:33:16 +0800
-From:   kbuild test robot <lkp@intel.com>
+        id 1fntUR-000H2z-Ov; Fri, 10 Aug 2018 06:33:07 +0800
+Date:   Fri, 10 Aug 2018 06:33:17 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
 To:     Juergen Gross <jgross@suse.com>
 Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
         konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
         boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>
-Subject: Re: [PATCH v2 1/5] xen/blkback: don't keep persistent grants too long
-Message-ID: <201808100636.B2N6Mzlj%fengguang.wu@intel.com>
+Subject: [RFC PATCH] xen/blkback: xen_blkif_pgrant_timeout can be static
+Message-ID: <20180809223317.GA3009@lkp-ivb-ep02>
 References: <20180808142528.31029-2-jgross@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -54,34 +55,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Juergen,
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on block/for-next]
-[also build test WARNING on v4.18-rc8 next-20180809]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Juergen-Gross/xen-blk-persistent-grant-rework/20180810-003229
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/block/xen-blkback/blkback.c:91:14: sparse: symbol 'xen_blkif_pgrant_timeout' was not declared. Should it be static?
-   drivers/block/xen-blkback/blkback.c:1368:41: sparse: expression using sizeof(void)
-   drivers/block/xen-blkback/blkback.c:409:29: sparse: expression using sizeof(void)
-   drivers/block/xen-blkback/blkback.c:409:29: sparse: expression using sizeof(void)
-   drivers/block/xen-blkback/blkback.c:791:38: sparse: expression using sizeof(void)
-   drivers/block/xen-blkback/common.h:434:21: sparse: expression using sizeof(void)
-   drivers/block/xen-blkback/common.h:482:21: sparse: expression using sizeof(void)
-
-Please review and possibly fold the followup patch.
-
+Fixes: 5bed25379565 ("xen/blkback: don't keep persistent grants too long")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ blkback.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index f341ac8..9eae7b24 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -88,7 +88,7 @@ MODULE_PARM_DESC(max_persistent_grants,
+  * use. The time is in seconds, 0 means indefinitely long.
+  */
+ 
+-unsigned int xen_blkif_pgrant_timeout = 60;
++static unsigned int xen_blkif_pgrant_timeout = 60;
+ module_param_named(persistent_grant_unused_seconds, xen_blkif_pgrant_timeout,
+ 		   uint, 0644);
+ MODULE_PARM_DESC(persistent_grant_unused_seconds,
