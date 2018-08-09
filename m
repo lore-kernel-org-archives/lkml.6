@@ -2,105 +2,168 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A66C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D03C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB6721EA2
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:31:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="sVQQ1Gwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB6721EA2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C5F121D68
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:32:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5F121D68
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732427AbeHIR45 (ORCPT
+        id S1732444AbeHIR6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:56:57 -0400
-Received: from mail-yw1-f44.google.com ([209.85.161.44]:46935 "EHLO
-        mail-yw1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732298AbeHIR45 (ORCPT
+        Thu, 9 Aug 2018 13:58:20 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:37802 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732127AbeHIR6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:56:57 -0400
-Received: by mail-yw1-f44.google.com with SMTP id e23-v6so4735285ywe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 08:31:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q+ybpDce2iHfmfRedVYwQZPbXrq5puum25iLpbPcm+k=;
-        b=sVQQ1GwbtgjJHMZdFMjdB2wIZHwdFpyHLMH4v4500uAedUyKe/FwD/qhp04Qmb/ymE
-         ULUIhXrY/8Duu2bau/6FG0rT9I4LyNU0SVlGeoxf+h3+estv2Ms0PR9OBjAep8djwraH
-         TOL1Nih/PSn3RcS7HY9mAPWai3/QA81UIMW9jEUS27RvjcBGY4XKNEazM2555SD6A3Qo
-         9XEeqHu6FquupXx9bKRsjCuq4VT6Y3UKgB0IL9cySuPgSAc/Tbb+ViNo3M8OJ2fH4grz
-         KHgFYo/jjCA2CX1hyApiknC3Xjn5mj2HUltXlRLvygNnNbIItrieiaXht6tcBnI4TgWq
-         DDBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q+ybpDce2iHfmfRedVYwQZPbXrq5puum25iLpbPcm+k=;
-        b=HH8gOhi+fSur60WY06HVY+HDpmBC4+Y2PQcis76H6CjKA0xitceUqdkuQmNWeoS/VW
-         azaFHR7dDBfM/3eNGeR9agpFWlWeHiBzHtP7s1AJ8eBZPzXaCYdkNFADrEk/Lr/NmShI
-         5wpgupdxWVmpBqcI7u2iusfyPcfIG7GJRN1VXfz0BnAhZgR/e55KnLIo5g9paJ10qzuq
-         v9uXUDgVU4/bX6LjUfG3Nl7k6Sh0CQIDCiC4zRcThECD1IRxXkYZPE1swbPbaljRp6AG
-         eJ4OIHmxzA+DByCtW0ffWLiFihe4bmjCVrVxbDmTxKGo/cmX3T1ckt9leK26nY0g3hjN
-         vDBA==
-X-Gm-Message-State: AOUpUlEqXnActRbxkduCrd6tKdCvaTHN4nHAoTsORByoczn6b3Pw1Kxj
-        8scsZUfGuIy+VxvF53SoRpHW4w==
-X-Google-Smtp-Source: AA+uWPyTSeHsuZMsHAJnhaZxlW7MK9Ca9trFrV/SUGrzpEz8Ens3sLnjGhArLeD/yWTYjSoiF1boEA==
-X-Received: by 2002:a25:e905:: with SMTP id n5-v6mr1364769ybd.516.1533828691597;
-        Thu, 09 Aug 2018 08:31:31 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:7b61])
-        by smtp.gmail.com with ESMTPSA id 141-v6sm3575958ywj.65.2018.08.09.08.31.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 08:31:30 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 11:34:30 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     mhocko@kernel.org, Vladimir Davydov <vdavydov@virtuozzo.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: WARNING in try_charge
-Message-ID: <20180809153430.GA17445@cmpxchg.org>
-References: <0000000000005e979605729c1564@google.com>
- <e2869136-9f59-9ce8-8b9f-f75b157ee31d@I-love.SAKURA.ne.jp>
+        Thu, 9 Aug 2018 13:58:20 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fnmvl-0008Qs-F3; Thu, 09 Aug 2018 09:32:53 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fnmvj-0003Of-0Q; Thu, 09 Aug 2018 09:32:53 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <87in4n9zg0.fsf@xmission.com>
+        <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk>
+        <27374.1533824694@warthog.procyon.org.uk>
+Date:   Thu, 09 Aug 2018 10:32:37 -0500
+In-Reply-To: <27374.1533824694@warthog.procyon.org.uk> (David Howells's
+        message of "Thu, 09 Aug 2018 15:24:54 +0100")
+Message-ID: <87in4jwo6i.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2869136-9f59-9ce8-8b9f-f75b157ee31d@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-XM-SPF: eid=1fnmvj-0003Of-0Q;;;mid=<87in4jwo6i.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/dutu1jlcMvCIdX8EM75LvcUKGsoFEdZQ=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and managing a context [ver #11]
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 10:57:43PM +0900, Tetsuo Handa wrote:
-> From b1f38168f14397c7af9c122cd8207663d96e02ec Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Thu, 9 Aug 2018 22:49:40 +0900
-> Subject: [PATCH] mm, oom: task_will_free_mem(current) should retry until
->  memory reserve fails
-> 
-> Commit 696453e66630ad45 ("mm, oom: task_will_free_mem should skip
-> oom_reaped tasks") changed to select next OOM victim as soon as
-> MMF_OOM_SKIP is set. But we don't need to select next OOM victim as
-> long as ALLOC_OOM allocation can succeed. And syzbot is hitting WARN(1)
-> caused by this race window [1].
+David Howells <dhowells@redhat.com> writes:
 
-Huh? That's the memcg path, it has nothing to do with ALLOC_OOM.
+> Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+>> First let me thank you for adding both FSCONFIG_CMD_CREATE and
+>> FSCONFIG_CMD_RECONFIGURE.  Unfortunately the implementation is currently
+>> broken.  So this patch gets my:
+>> 
+>> This is broken in two specific ways.
+>> ...
+>> 2) FSCONFIG_CMD_CREATE will succeed even if the superblock already
+>>    exists and it can not use all of the superblock parameters.
+>> 
+>>    This happens because vfs_get_super will only call fill_super
+>>    if the super block is created.  Which is reasonable on the face
+>>    of it.  But it in practice this introduces security problems.
+>> 
+>>    a) Either through reconfiguring a shared super block you did not
+>>       realize was shared (as we saw with devpts).
+>> 
+>>    b) Mounting a super block and not honoring it's mount options
+>>       because something has already mounted it.  As we see today
+>>       with proc.  Leaving userspace to think the filesystem will behave
+>>       one way when in fact it behaves another.
+>> 
+>> I have already explained this several times, and apparently I have been
+>> ignored.  This fundamental usability issue that leads to security
+>> problems.
+>
+> I've also explained why you're wrong or at least only partially right.  I *do*
+> *not* want to implement sget() in userspace with the ability for userspace to
+> lock out other mount requests - which is what it appears that you've been
+> asking for.
 
-> Since memcg OOM case uses forced charge if current thread is killed,
-> out_of_memory() can return true without selecting next OOM victim.
-> Therefore, this patch changes task_will_free_mem(current) to ignore
-> MMF_OOM_SKIP unless ALLOC_OOM allocation failed.
+All I really care about is that when you ask for a set of paramaters
+that you get a filesystem with that set of parameters.  Not the same
+filsystem mounted a different way.
 
-I have no idea how the first and the second half of this paragraph go
-together. They're completely independent code paths.
+That has gone wrong twice badly.  There is no common case I know of that
+requires returning the same filesystem twice.  AKA the pain of the
+existing semantics seems much much worse than any benefit.  So I am
+asking that we not propagate the existing semantics into the new API.
+You are cleaning up dealing with mount options and this is one of the
+places where they need cleaning up.
+
+> However, as I have said, I *am* willing to add one of more flags to help with
+> this, but I can't make any "legacy" fs honour them as this requires the
+> fs_context to be passed down to sget_fc() and the filesystem - which is why I
+> was considering leaving it for later.
+>
+>  (1) An FSOPEN_EXCL flag to tell sget_fc() to fail if the superblock already
+>      exists at all.
+>
+>  (2) An FSOPEN_FAIL_ON_MISMATCH flag to explicitly say that we *don't* want a
+>      superblock with different parameters.
+>
+> The implication of providing neither flag is that we are happy to accept a
+> superblock from the same source but with different parameters.
+>
+> But it doesn't seem to be an absolute imperative to roll this out immediately,
+> since what I have exactly mirrors what the kernel currently does - and forcing
+> a change in that behaviour risks breaking userspace.  If it keeps you happy,
+> however, I can try and work one up.
+
+What I am asking is that the default behavior for the new API when using
+FSCONFIG_CMD_CREATE is to call sget_fc with either FSOPEN_EXCL or
+FSOPEN_FAIL_ON_MISMATCH.  I know FSOPEN_EXCL is trivial to implement.  I
+don't know if there are any hidden gotcha's with
+FSOPEN_FAIL_ON_MISMATCH.
+
+This change in default behavior for your patch needs to be implemented
+before this hits a released kernel.  Returning a filesystem with
+different than the requested parameters has resulted in at least two
+major issues, that are very hard to clean up after the fact.  A chroot
+system changing the parameters on /dev/pts resulting in some
+distributions keeping the suid pt_chown binary long past it's best buy
+date, and other distributions instead choosing to break userspace.  Then
+there is the current issue where in practice proc does not any of it's
+mount paramaters which breaks the android security model.
+
+The fact that these things happen silently and you have to be on your
+toes to catch them is fundamentally a bug in the API.  If the mount
+request had simply failed people would have noticed the issues much
+sooner and silently b0rkend configuration would not have propagated.  As
+such I do not believe we should propagate this misfeature from the old
+API into the new API.
+
+Conceptually I like FSOPEN_FAIL_ON_MISMATH as it looks like it is
+sufficient to the needs, and with a little luck we could even change
+the old API to those semantics.
+
+
+Ultimately I want to close a giant mental model mismatch.
+
+User:  I am creating the data structures to read filesystem X
+       with parameters Y.
+
+Kernel: He wants filesystem X.  If it is a slow day use parameters Y.
+
+Given that historically the reuse of a superblock did not exist, and
+that in practice it almost never happens.  It is quite reqsonable for
+users to not expect the kernel to completely ignore the mount parameters
+they pass to the kernel.
+
+So please let's fix that now when it is easy.
+
+Eric
