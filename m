@@ -2,153 +2,82 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B62C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 07:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA24C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 07:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37F22174A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 07:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37F22174A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C11621A38
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 07:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C11621A38
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbeHIJ4r (ORCPT
+        id S1729251AbeHIJ5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 05:56:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728224AbeHIJ4q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 05:56:46 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w797O17l039751
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 03:33:14 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2krdj6fp5n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 03:33:14 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 9 Aug 2018 08:33:11 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Aug 2018 08:33:09 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w797X7wX41418906
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Aug 2018 07:33:07 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6065F42041;
-        Thu,  9 Aug 2018 10:33:15 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89B374203F;
-        Thu,  9 Aug 2018 10:33:14 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Aug 2018 10:33:14 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v8 20/22] KVM: s390: Handling of Cypto control block in
- VSIE
-To:     Janosch Frank <frankja@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-21-git-send-email-akrowiak@linux.vnet.ibm.com>
- <dc8b3e66-9ba4-2b78-1e49-12a35d5d234b@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 9 Aug 2018 09:33:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <dc8b3e66-9ba4-2b78-1e49-12a35d5d234b@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080907-0028-0000-0000-000002E8420E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080907-0029-0000-0000-000023A14FE7
-Message-Id: <a8f0c2f2-6e4c-3a06-0f89-aea3fcc0b985@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808090078
+        Thu, 9 Aug 2018 05:57:30 -0400
+Received: from mout.gmx.net ([212.227.17.22]:33297 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727371AbeHIJ5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 05:57:30 -0400
+Received: from homer.simpson.net ([185.221.149.218]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0Le69A-1gHCNz3EJ2-00pxcS; Thu, 09
+ Aug 2018 09:33:31 +0200
+Message-ID: <1533800010.5087.71.camel@gmx.de>
+Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
+From:   Mike Galbraith <efault@gmx.de>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>, kexec@lists.infradead.org
+Date:   Thu, 09 Aug 2018 09:33:30 +0200
+In-Reply-To: <20180809042153.GA4377@dhcp-128-65.nay.redhat.com>
+References: <1533737025.4936.3.camel@gmx.de>
+         <20180809042153.GA4377@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:FSmBjftEw302nboHY0idqCmA4IVMNl6D4ZILbrG5Zxstm0yMX/X
+ +N9ltjDtNfN8BXJaZPV3j9FiRCe84O0i1uw0JlqNM3khlBDtb7RL0TdoHgRQZ42vcf9s0gw
+ Q9O3cxUnn9R1ZghSvyoMymiJM5ptJ3kFg7pvpMzmw3Ne5NV2PlLATEZVl/xeWgJ2f3pXA/T
+ Z7xePfd1rYVn5wHsbasPw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KZN4Er//DNY=:8aWCq/tEtvK9vRuihPTi4B
+ VXKZVVejccB4/ml/6/wVTRQzFYd3PztURWWY43KTe2c7fd8UlcF1rXDTGpgmcD20YuLmpoSHU
+ SxIGOQ0oz9Sa0VzZ6tl4Z8VjEfRJmSAGZvq4XxXxVcMldauPKquVEhz39p+4jrOCG1J322GJI
+ vLymc6vXBr6+/t7vry34NtxJ7HhL5pK6H0nUzxYAdqVR/GzvwybkWiVM/Dh87tp09dxMwS2Mp
+ axR8t7yteu8M2675aO+1dZbuwu5PP/4FnD+zmCMShafop0D+8ryOp/k4ARgWZ0yaEQjMPow3x
+ rZiuMIYTF8GnB0M/AerVlK1rDkVj/gfJV/vdIG//Ju8+6Uq9qR+WyzxqcEBr3ZGFzXtXdA/+I
+ 6C+HmELjMeyuHtaRrxgroDsHQv9qgUEirfXLaWjoZ0hwYrH/fPUIpayFnzMJUHgS9KJyBSGoq
+ LptAisphiIvEnKPrhYTzLy0R54JcwPsnknT8IP1NgfDehgM/0lzB3dbsbf3AqMKrBpwD8aq+2
+ XY23LB15DFOKNTQTmToBi7RgJ//UH0bp5jGwXVovTm5vAMK3HTJhp+hxllahStjcPJPkJbuu6
+ gP61UngKMeax6snKH6XqxKfOv7Hw3w2TteCN/wDhRO1KdqdA1lzRtxU3ubH0Vc73dsEs2Vf3x
+ yeOCtitSdsLZmGZUYoIyBwSiyYddoF+wYS2a/9OvD33qOXJqhEXCM6czcN4K0wfEmALdnJiuw
+ g/Kq3xGTORLYu4mxOg8q7OQYpuRtfzYZEw/G8OIoU7p8xEX2WaVGzshSKGWz7PgGnpmo2oMvT
+ E1ChKdT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2018 08:20, Janosch Frank wrote:
-> On 08.08.2018 16:44, Tony Krowiak wrote:
->> From: Pierre Morel <pmorel@linux.ibm.com>
->> +#define ECA_APIE 0x00000008
-> That shouldn't be necessary, it's defined in kvm_host.h which vsie.c
-> includes. Or is it not?
+On Thu, 2018-08-09 at 12:21 +0800, Dave Young wrote:
+> Hi Mike,
+> 
+> Thanks for the patch!
+> On 08/08/18 at 04:03pm, Mike Galbraith wrote:
+> > When booting with efi=noruntime, we call efi_runtime_map_copy() while
+> > loading the kdump kernel, and trip over a NULL efi.memmap.map.  Avoid
+> > that and a useless allocation when the only mapping we can use (1:1)
+> > is not available.
+> 
+> At first glance, efi_get_runtime_map_size should return 0 in case
+> noruntime.
 
-This was forgotten here for a long long time!
-You are right I remove it.
+What efi does internally at unmap time is to leave everything except
+efi.mmap.map untouched, setting it to NULL and turning off EFI_MEMMAP,
+rendering efi.mmap.map accessors useless/unsafe without first checking
+EFI_MEMMAP.
 
->
->> +static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->> +{
->> +	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
->> +	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
->> +	const uint32_t crycbd_o = READ_ONCE(scb_o->crycbd);
->> +	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
->> +	int g2_fmt = vcpu->arch.sie_block->crycbd & CRYCB_FORMAT_MASK;
->> +	int g3_fmt = crycbd_o & CRYCB_FORMAT_MASK;
->> +	int g2_apie, g2_msa3, g3_apie, g3_msa3;
->> +	int size, ret;
->> +
->> +	/* crycb should not cross a page boundary */
->> +	size = (g3_fmt == CRYCB_FORMAT2) ? 0x100 : 0x80;
->> +	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + size) & PAGE_MASK))
->> +		return set_validity_icpt(scb_s, 0x003CU);
->> +
->> +	g2_apie = vcpu->arch.sie_block->eca & ECA_APIE;
->> +	g3_apie = scb_o->eca & g2_apie;
->> +
->> +	g2_msa3 = test_kvm_facility(vcpu->kvm, 76);
->> +	g3_msa3 = (g3_fmt != CRYCB_FORMAT0) & g2_msa3;
->> +
->> +	scb_s->crycbd = 0;
->> +	/* If no AP instructions and no keys we just set crycbd to 0 */
->> +	if (!(g3_apie || g3_msa3))
->> +		return 0;
->> +
->> +	if (!crycb_addr)
->> +		return set_validity_icpt(scb_s, 0x0039U);
->> +
->> +	if (g3_apie) {
->> +		ret = copy_apcb(vcpu, vsie_page, g2_fmt, g3_fmt);
->> +		if (ret)
->> +			goto out;
-> s/goto out;/return ret;/
-
-better
-
-Thanks
-
-Pierre
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+	-Mike
