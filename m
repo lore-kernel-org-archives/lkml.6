@@ -2,148 +2,114 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC59CC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7EBC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831062239C
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1324E2239C
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZLKfodpE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831062239C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJGvMaK/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1324E2239C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeHJBB2 (ORCPT
+        id S1727619AbeHJBB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 9 Aug 2018 21:01:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34738 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbeHJBB1 (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:39248 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbeHJBB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 Aug 2018 21:01:27 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k19-v6so3533144pfi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:34:31 -0700 (PDT)
+Received: by mail-qt0-f193.google.com with SMTP id q12-v6so8395034qtp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=o4H4JUA/I/YuFlf4T8T0G4dpIKpDacxMwA900eev+NM=;
-        b=ZLKfodpEU8crr1rla7YQ1KfYGztUL6jqaimhknSMMdLwSEWECK4a00S93Bd1K5lM3+
-         Py9XbwIOw3/aMwy2GIFGZZKaiuJcfji9bHMf7CwW8c85IHu+38H/dUdKcXZwtVd9e4zD
-         N7KiIe1PVOnzYdVH/HA+LCcpF7Gz+qUlRxXtfH4fmTHY2Hi8tMQvM2EjjzwsMRGh89mQ
-         7oSqR+az7+gEe/NeB9cIbGGlmh/OvGhCM6Et59yQHyQz/VELs7IFYMvRY53hLeYms8hg
-         vL8o3HwxQyQsT4Ti0DWJ0dRB+66zUXmqyrHO9o/vUnWfDqD7KINip+Sk5hYFKLZIaZHO
-         ELeA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=E6Sx1f0+jHXAyk4T29H/ecTgNXh8lga/ZGsPL6FxikI=;
+        b=IJGvMaK/t8yRyEAhkknRajlmrw2b7Kv2TNIHnSSezkcBhaUdFr527TQP9hz9czzykZ
+         Et/1MRbvBmrznAct3k665/Fr5LEFGimRnuh1xf8Dhw1Uivsowyu83hGLoNEFwYzad8mX
+         6zzgUh5whkKkAItHJ6UBzr0H3tW3cUE3KsQPzAgTWbyXleIej78zQzx7tehcLWlwWVl2
+         YJBh6tQIyKi96c6g1kB3NK+ycqi1rYEpGqL4aaMvTqzaHncs/U/wdlYbAlVL4PNaQuM+
+         E+BfOhRPbnBOC16GwZwVVPWcAM3BFdguXvDTu636yS2dczq4yi0fMejOwKgN+okodZIR
+         VgaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :cc:from:to;
-        bh=o4H4JUA/I/YuFlf4T8T0G4dpIKpDacxMwA900eev+NM=;
-        b=ubSGPYe80/f3ksf3dFwWbrfHJ6+U2cLSoY5aZkbiPZeYoVZfW+p8KjGoe67OLmbFh1
-         fIyZi6GpEaJgQxS3d2zOBueBSM592GCI5Ty8eFpXEG9GToGqa0UCqN98obfAPVi5zcSU
-         0zEc8flnSHUKUdDEUUTDHdGtCx1w1iI1KST/UT1pX43eBNuw2+vpkH7BgcENYfWWfZZp
-         oU8YyVFO5AMYrTTNx5EIUHAQuwdSUOYSLnVr5GmGC6qt938oo9uifGUP6AX/OpknEUB0
-         CzYIoW6oYXBCAHJYtOsmspELkRFEpkyWcLkbHQim+D6rKEoeZjc36Mb5qnsk4lJNH5DL
-         +8Eg==
-X-Gm-Message-State: AOUpUlEX3MoLgeQ6KbbsiPhxFg3zgRL12404CoXjNr9WzWTRpUCSb9WC
-        nXa8pRNB72DfdbLhPE22N28IhQ==
-X-Google-Smtp-Source: AA+uWPzUgZLpghRZ8+axtECkqCO3+fA6Anqv4eie3dQk8qmOka8IWizUisbbep5aJl3gqJzHRiTQ6A==
-X-Received: by 2002:a62:4704:: with SMTP id u4-v6mr4210867pfa.76.1533854071081;
-        Thu, 09 Aug 2018 15:34:31 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id l84-v6sm13585357pfg.3.2018.08.09.15.34.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=E6Sx1f0+jHXAyk4T29H/ecTgNXh8lga/ZGsPL6FxikI=;
+        b=mSiAcAP/VIeokHhqjPzSA9LC+xt2ad9Ft6fCofhNM2sSa1IanQEzJfTLUm8Z3ChY0P
+         PsUy6SlF/OeIJwDsjQYUyv1Rwo/5YMGB8BMQ6V3ICU0VhMu29u0qZCPN3+1/l/1yO8Zg
+         spCNwkK+B6jkU1NNGVOWa+TgTeK5wAMze8b0/yHlbwyioe8+kTP6E6fAp8S+ByCYGLlG
+         t+TbL/OI0JonhN9hMe1Yjk/Msqs7/DGPrZbqStaXouxfNEK9+XLr/x+rrni7kXRzC8eE
+         ZIL+NaCsWVSCIwEk/Td3DqANetrBMxR0kxdacxDGtTJe/q45V4w+act7XZ/RIuj5DDSC
+         mIVA==
+X-Gm-Message-State: AOUpUlH+T0qux5Vrtku426NK5uboL/HcfGdfn7yNG32ZgFj89r/vdy3Z
+        V4Bp8PTNrpjbeV7Vjdu2PkECDtsi
+X-Google-Smtp-Source: AA+uWPw/t89YaIUqVWNSP42ck70KTvmiPYwAqgGmsfNzmkhdyTPMi6/fX/0TeND23zipnHyhWS6XkA==
+X-Received: by 2002:ac8:2463:: with SMTP id d32-v6mr4094964qtd.41.1533854070273;
         Thu, 09 Aug 2018 15:34:30 -0700 (PDT)
-Subject: [PATCH v3 1/2] RISC-V: Define sys_riscv_flush_icache when SMP=n
-Date:   Thu,  9 Aug 2018 15:19:51 -0700
-Message-Id: <20180809221952.24260-2-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180809221952.24260-1-palmer@sifive.com>
-References: <20180809221952.24260-1-palmer@sifive.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        tklauser@distanz.ch, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Waterman <andrew@sifive.com>,
-        linux@dominikbrodowski.net, dan.carpenter@oracle.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Christoph Hellwig <hch@infradead.org>, linux@roeck-us.net
+Received: from WindFlash ([201.82.148.26])
+        by smtp.gmail.com with ESMTPSA id u36-v6sm5391994qtb.27.2018.08.09.15.34.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 15:34:29 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 19:34:24 -0300
+From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
+To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/3] staging: fbtft: Corrects long index line  - Style
+Message-ID: <7cd8c34234ae8603c71f172381cb613dda6797c5.1533853354.git.leobras.c@gmail.com>
+References: <cover.1533853354.git.leobras.c@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1533853354.git.leobras.c@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This would be necessary to make non-SMP builds work, but there is
-another error in the implementation of our syscall linkage that actually
-just causes sys_riscv_flush_icache to never build.  I've build tested
-this on allnoconfig and allnoconfig+SMP=y, as well as defconfig like
-normal.
+Reduces the index size to keep the code more readable. 
 
-CC: Christoph Hellwig <hch@infradead.org>
-CC: Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <20180809055830.GA17533@infradead.org>
-In-Reply-To: <20180809132612.GA31058@roeck-us.net>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- arch/riscv/include/asm/vdso.h |  2 --
- arch/riscv/kernel/sys_riscv.c | 12 ++++++++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/staging/fbtft/fbtft-sysfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/vdso.h b/arch/riscv/include/asm/vdso.h
-index 541544d64c33..ec6180a4b55d 100644
---- a/arch/riscv/include/asm/vdso.h
-+++ b/arch/riscv/include/asm/vdso.h
-@@ -38,8 +38,6 @@ struct vdso_data {
- 	(void __user *)((unsigned long)(base) + __vdso_##name);			\
- })
+diff --git a/drivers/staging/fbtft/fbtft-sysfs.c b/drivers/staging/fbtft/fbtft-sysfs.c
+index 2a5c630dab87..404046d3999a 100644
+--- a/drivers/staging/fbtft/fbtft-sysfs.c
++++ b/drivers/staging/fbtft/fbtft-sysfs.c
+@@ -25,6 +25,7 @@ int fbtft_gamma_parse_str(struct fbtft_par *par, u32 *curves,
+ 	unsigned long val = 0;
+ 	int ret = 0;
+ 	int curve_counter, value_counter;
++	unsigned long idx;
  
--#ifdef CONFIG_SMP
- asmlinkage long sys_riscv_flush_icache(uintptr_t, uintptr_t, uintptr_t);
--#endif
+ 	fbtft_par_dbg(DEBUG_SYSFS, par, "%s() str=\n", __func__);
  
- #endif /* _ASM_RISCV_VDSO_H */
-diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
-index f7181ed8aafc..568026ccf6e8 100644
---- a/arch/riscv/kernel/sys_riscv.c
-+++ b/arch/riscv/kernel/sys_riscv.c
-@@ -48,7 +48,6 @@ SYSCALL_DEFINE6(mmap2, unsigned long, addr, unsigned long, len,
- }
- #endif /* !CONFIG_64BIT */
- 
--#ifdef CONFIG_SMP
- /*
-  * Allows the instruction cache to be flushed from userspace.  Despite RISC-V
-  * having a direct 'fence.i' instruction available to userspace (which we
-@@ -66,15 +65,24 @@ SYSCALL_DEFINE6(mmap2, unsigned long, addr, unsigned long, len,
- SYSCALL_DEFINE3(riscv_flush_icache, uintptr_t, start, uintptr_t, end,
- 	uintptr_t, flags)
- {
-+#ifdef CONFIG_SMP
- 	struct mm_struct *mm = current->mm;
- 	bool local = (flags & SYS_RISCV_FLUSH_ICACHE_LOCAL) != 0;
-+#endif
- 
- 	/* Check the reserved flags. */
- 	if (unlikely(flags & ~SYS_RISCV_FLUSH_ICACHE_ALL))
- 		return -EINVAL;
- 
-+	/*
-+	 * Without CONFIG_SMP flush_icache_mm is a just a flush_icache_all(),
-+	 * which generates unused variable warnings all over this function.
-+	 */
-+#ifdef CONFIG_SMP
- 	flush_icache_mm(mm, local);
-+#else
-+	flush_icache_all();
-+#endif
- 
- 	return 0;
- }
--#endif
+@@ -68,7 +69,9 @@ int fbtft_gamma_parse_str(struct fbtft_par *par, u32 *curves,
+ 			ret = get_next_ulong(&curve_p, &val, " ", 16);
+ 			if (ret)
+ 				goto out;
+-			curves[curve_counter * par->gamma.num_values + value_counter] = val;
++			idx = curve_counter * par->gamma.num_values +
++			      value_counter;
++			curves[idx] = val;
+ 			value_counter++;
+ 		}
+ 		if (value_counter != par->gamma.num_values) {
 -- 
-2.16.4
+2.18.0
 
