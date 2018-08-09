@@ -2,144 +2,188 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F843C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6415C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50CF321B32
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:49:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50CF321B32
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7187F21B32
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:49:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="EQm3pTx4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7187F21B32
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbeHILMu (ORCPT
+        id S1729879AbeHILNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:12:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50278 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727601AbeHILMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:12:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7780B18A;
-        Thu,  9 Aug 2018 01:49:00 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 47F0C3F5D0;
-        Thu,  9 Aug 2018 01:49:00 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id ED8FF1AE2F5E; Thu,  9 Aug 2018 09:49:04 +0100 (BST)
-Date:   Thu, 9 Aug 2018 09:49:04 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>
-Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-Message-ID: <20180809084901.GA28801@arm.com>
-References: <1533558689-3000-1-git-send-email-thunder.leizhen@huawei.com>
- <20180808101215.GB28557@arm.com>
- <5B6B994B.10208@huawei.com>
+        Thu, 9 Aug 2018 07:13:23 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:52201 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727601AbeHILNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:13:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=SRuVrdpwxT3oI12KDLL4JztXEkubOahLp+YZFWkRy/Y=; b=EQm3pTx4M8/xBvpWLi8IBpczRm
+        oXwBdczjh/FkqwcTzkWwh7cbFWlIhZ7vfRnhSL+Tj5H3HUcj3HOYMLvdNZQSWt1QLuJoS5JwSi5IR
+        I812gU53XW7SM8rSSGGwGTMIL14ycZogtSnO1ZvTCe8vOKGoNd8/JAzBvoCGAoNbrZRd1dd6CvnfP
+        N5hIQ77a3gin/1oeHoRbR5vWZ/tXizctHFEAAJPws0p8/VXrFlv5liD5e/yRuqLJtgLFzrA369kPA
+        +QVG+S4NGqrbc5boLoQgzbXTQ+1qcrs4a3wNC3D4PWy9PqDqcAROXxwt1mIZ8cishEK4Kb9zZMCfH
+        KWUpKu1g==;
+Received: from [193.209.96.43] (helo=[10.21.26.144])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1fngdE-0007PI-1J; Thu, 09 Aug 2018 11:49:20 +0300
+Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ", linux-arm-kernel"@lists.infradead.org,
+        srv_heupstream <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-4-mperttunen@nvidia.com>
+ <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
+ <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi>
+ <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
+ <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
+ <b5a91f9e-c3ff-371c-d355-4a5e8a147796@kapsi.fi>
+ <CABb+yY3Ng+rbKRYXTncfHKv6HXBW5hHjMKDpepz31MxpE9bwRQ@mail.gmail.com>
+ <a57fccaa-fcfe-6611-45a5-8c224f4ee2b6@kapsi.fi>
+Message-ID: <b3045f85-eacb-a5ec-1690-b9c63d0f3373@kapsi.fi>
+Date:   Thu, 9 Aug 2018 11:49:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B6B994B.10208@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <a57fccaa-fcfe-6611-45a5-8c224f4ee2b6@kapsi.fi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 193.209.96.43
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 09:30:51AM +0800, Leizhen (ThunderTown) wrote:
-> On 2018/8/8 18:12, Will Deacon wrote:
-> > On Mon, Aug 06, 2018 at 08:31:29PM +0800, Zhen Lei wrote:
-> >> The condition "(int)(VAL - sync_idx) >= 0" to break loop in function
-> >> __arm_smmu_sync_poll_msi requires that sync_idx must be increased
-> >> monotonously according to the sequence of the CMDs in the cmdq.
-> >>
-> >> But ".msidata = atomic_inc_return_relaxed(&smmu->sync_nr)" is not protected
-> >> by spinlock, so the following scenarios may appear:
-> >> cpu0			cpu1
-> >> msidata=0
-> >> 			msidata=1
-> >> 			insert cmd1
-> >> insert cmd0
-> >> 			smmu execute cmd1
-> >> smmu execute cmd0
-> >> 			poll timeout, because msidata=1 is overridden by
-> >> 			cmd0, that means VAL=0, sync_idx=1.
-> > 
-> > Oh yuck, you're right! We probably want a CC stable on this. Did you see
-> > this go wrong in practice?
-> Just misreported and make the caller wait for a long time until TIMEOUT. It's
-> rare to happen, because any other CMD_SYNC during the waiting period will break
-> it.
+Here's my current code:
 
-Thanks. Please mention that in the commit message, because I think it's
-useful to know.
+https://github.com/cyndis/linux/commits/wip/t194-tcu-4
 
-> >> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> >> ---
-> >>  drivers/iommu/arm-smmu-v3.c | 7 +++----
-> >>  1 file changed, 3 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> >> index 1d64710..4810f61 100644
-> >> --- a/drivers/iommu/arm-smmu-v3.c
-> >> +++ b/drivers/iommu/arm-smmu-v3.c
-> >> @@ -566,7 +566,7 @@ struct arm_smmu_device {
-> >>
-> >>  	int				gerr_irq;
-> >>  	int				combined_irq;
-> >> -	atomic_t			sync_nr;
-> >> +	u32				sync_nr;
-> >>
-> >>  	unsigned long			ias; /* IPA */
-> >>  	unsigned long			oas; /* PA */
-> >> @@ -836,7 +836,6 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
-> >>  			cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
-> >>  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
-> >>  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
-> >> -		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent->sync.msidata);
-> >>  		cmd[1] |= ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
-> >>  		break;
-> >>  	default:
-> >> @@ -947,7 +946,6 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
-> >>  	struct arm_smmu_cmdq_ent ent = {
-> >>  		.opcode = CMDQ_OP_CMD_SYNC,
-> >>  		.sync	= {
-> >> -			.msidata = atomic_inc_return_relaxed(&smmu->sync_nr),
-> >>  			.msiaddr = virt_to_phys(&smmu->sync_count),
-> >>  		},
-> >>  	};
-> >> @@ -955,6 +953,8 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
-> >>  	arm_smmu_cmdq_build_cmd(cmd, &ent);
-> >>
-> >>  	spin_lock_irqsave(&smmu->cmdq.lock, flags);
-> >> +	ent.sync.msidata = ++smmu->sync_nr;
-> >> +	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent.sync.msidata);
-> > 
-> > I really don't like splitting this out from building the rest of the
-> > command. Can you just move the call to arm_smmu_cmdq_build_cmd into the
-> > critical section, please?
-> OK. I have considered that before, just worry it will increase the
-> compition of spinlock.
+"fixup! mailbox: tegra-hsp: Add support for shared mailboxes" splits up 
+the controller into two. "tegra-hsp: use polling" changes it to use polling.
 
-If you can provide numbers showing that it's a problem, then we could add
-a helper function e.g. arm_smmu_cmdq_sync_set_msidata(arm_smmu_cmdq_ent *cmd)
+There are two lines in the top patch with comments:
 
-> In addition, I will append a optimization patch: the adjacent CMD_SYNCs,
-> we only need one.
+- at the end of tegra_hsp_mailbox_send_data, I left a "while 
+(!tegra_hsp_mailbox_last_tx_done(chan));". Without it I wasn't able to 
+see even a few garbled characters in the output.
 
-Ok, but please keep them separate, since I don't want to fix up fixes and
-optimisations.
+- as mentioned, if I enable tx_block on the client side, I get a BUG: 
+scheduling while atomic. I assume this gets printed through the earlycon 
+as it's printing out correctly.
 
 Thanks,
+Mikko
 
-Will
+On 08.08.2018 17:46, Mikko Perttunen wrote:
+> On 08/08/2018 05:39 PM, Jassi Brar wrote:
+>> On Wed, Aug 8, 2018 at 8:04 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+>>>
+>>>
+>>> On 08/08/2018 05:10 PM, Jassi Brar wrote:
+>>>>
+>>>> On Wed, Aug 8, 2018 at 5:08 PM, Mikko Perttunen <cyndis@kapsi.fi> 
+>>>> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 04.08.2018 13:45, Mikko Perttunen wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 08/03/2018 03:54 PM, Jassi Brar wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen 
+>>>>>>> <mperttunen@nvidia.com>
+>>>>>>> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
+>>>>>>>> send_data function of the mailbox driver is expected to block until
+>>>>>>>> the message has been sent. The new option is used with the Tegra
+>>>>>>>> Combined UART driver to minimize unnecessary overhead when
+>>>>>>>> transmitting
+>>>>>>>> data.
+>>>>>>>>
+>>>>>>> 1) TXDONE_BY_BLOCK flag :-
+>>>>>>>            Have you tried setting the flag
+>>>>>>> mbox_chan->mbox_client->tx_block
+>>>>>>> ?
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> No - I suppose I should have done that. I'm a bit concerned about
+>>>>>> overhead
+>>>>>> as send_data may be called thousands of times per second, so I 
+>>>>>> tried to
+>>>>>> make
+>>>>>> it as close as possible to the downstream driver that just pokes the
+>>>>>> mailbox
+>>>>>> register directly.
+>>>>>
+>>>>>
+>>>>>
+>>>>> I tried using polling in the mailbox framework. Some printing is done
+>>>>> from
+>>>>> atomic context so it seems tx_block cannot be used -
+>>>>> wait_for_completion_timeout understandably does not work in atomic
+>>>>> context.
+>>>>> I also tried without tx_block, in which case I got some horribly 
+>>>>> garbled
+>>>>> output, but "Try increasing MBOX_TX_QUEUE_LEN" was readable there.
+>>>>>
+>>>>> Any opinions?
+>>>>>
+>>>> The problems arise because your hardware (SM) supports TXDONE_BY_POLL,
+>>>> but your client drives it by TXDONE_BY_ACK because the older DB
+>>>> channels are so.
+>>>>
+>>>> Please populate SM channels as a separate controller than DB.
+>>>> The DB controller, as is, run by ACK method.
+>>>> The SM controller should be run by polling, i.e, set txdone_poll =
+>>>> true and the poll period small enough. The virtual tty client driver
+>>>> should be able to safely set tx_block from appropriate context.
+>>>>
+>>>
+>>> Sorry, I should have clarified that I already split up the 
+>>> controllers. The
+>>> SM controller has txdone_poll = true. I didn't adjust txpoll_period so I
+>>> guess it's zero.
+>>>
+>> Can you please share your code (controller and client) ? Maybe offline
+>> if you wish.
+>>
+> 
+> I'll upload a git branch tomorrow -- I'm not at the machine with the 
+> code now.
+> 
+> Mikko
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
