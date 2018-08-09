@@ -2,114 +2,132 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7EBC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 560C6C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1324E2239C
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:34:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJGvMaK/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1324E2239C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DF4C821EF8
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 22:40:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF4C821EF8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeHJBB2 (ORCPT
+        id S1727500AbeHJBHX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 21:01:28 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:39248 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbeHJBB1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 21:01:27 -0400
-Received: by mail-qt0-f193.google.com with SMTP id q12-v6so8395034qtp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 15:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=E6Sx1f0+jHXAyk4T29H/ecTgNXh8lga/ZGsPL6FxikI=;
-        b=IJGvMaK/t8yRyEAhkknRajlmrw2b7Kv2TNIHnSSezkcBhaUdFr527TQP9hz9czzykZ
-         Et/1MRbvBmrznAct3k665/Fr5LEFGimRnuh1xf8Dhw1Uivsowyu83hGLoNEFwYzad8mX
-         6zzgUh5whkKkAItHJ6UBzr0H3tW3cUE3KsQPzAgTWbyXleIej78zQzx7tehcLWlwWVl2
-         YJBh6tQIyKi96c6g1kB3NK+ycqi1rYEpGqL4aaMvTqzaHncs/U/wdlYbAlVL4PNaQuM+
-         E+BfOhRPbnBOC16GwZwVVPWcAM3BFdguXvDTu636yS2dczq4yi0fMejOwKgN+okodZIR
-         VgaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=E6Sx1f0+jHXAyk4T29H/ecTgNXh8lga/ZGsPL6FxikI=;
-        b=mSiAcAP/VIeokHhqjPzSA9LC+xt2ad9Ft6fCofhNM2sSa1IanQEzJfTLUm8Z3ChY0P
-         PsUy6SlF/OeIJwDsjQYUyv1Rwo/5YMGB8BMQ6V3ICU0VhMu29u0qZCPN3+1/l/1yO8Zg
-         spCNwkK+B6jkU1NNGVOWa+TgTeK5wAMze8b0/yHlbwyioe8+kTP6E6fAp8S+ByCYGLlG
-         t+TbL/OI0JonhN9hMe1Yjk/Msqs7/DGPrZbqStaXouxfNEK9+XLr/x+rrni7kXRzC8eE
-         ZIL+NaCsWVSCIwEk/Td3DqANetrBMxR0kxdacxDGtTJe/q45V4w+act7XZ/RIuj5DDSC
-         mIVA==
-X-Gm-Message-State: AOUpUlH+T0qux5Vrtku426NK5uboL/HcfGdfn7yNG32ZgFj89r/vdy3Z
-        V4Bp8PTNrpjbeV7Vjdu2PkECDtsi
-X-Google-Smtp-Source: AA+uWPw/t89YaIUqVWNSP42ck70KTvmiPYwAqgGmsfNzmkhdyTPMi6/fX/0TeND23zipnHyhWS6XkA==
-X-Received: by 2002:ac8:2463:: with SMTP id d32-v6mr4094964qtd.41.1533854070273;
-        Thu, 09 Aug 2018 15:34:30 -0700 (PDT)
-Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id u36-v6sm5391994qtb.27.2018.08.09.15.34.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 15:34:29 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 19:34:24 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] staging: fbtft: Corrects long index line  - Style
-Message-ID: <7cd8c34234ae8603c71f172381cb613dda6797c5.1533853354.git.leobras.c@gmail.com>
-References: <cover.1533853354.git.leobras.c@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1533853354.git.leobras.c@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 9 Aug 2018 21:07:23 -0400
+Received: from nautica.notk.org ([91.121.71.147]:35296 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727380AbeHJBHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 21:07:23 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 88426C009; Fri, 10 Aug 2018 00:40:21 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Doron Roberts-Kedes <doronrk@fb.com>,
+        Tom Herbert <tom@quantonium.net>,
+        Dave Watson <davejwatson@fb.com>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v0] strparser: remove any offset before parsing messages
+Date:   Fri, 10 Aug 2018 00:40:11 +0200
+Message-Id: <1533854411-28184-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduces the index size to keep the code more readable. 
+Offset is not well handled by strparser users right now.
 
-Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+Out of the current strparser users, we have:
+ - tls, that handles offset properly in parse and rcv callbacks
+ - kcm, that handles offset in rcv but not in parse
+ - bpf sockmap, that does not seem to handle offset anywhere
+
+Calling pskb_pull() on the skb before parsing ensures that the offset
+will be 0 everywhere in practice unless the user modifies it themselves
+like tls, as a workaround for the other two protocols.
+
+This fixes a bug whilch can be exhibited by implementing a simpe kcm
+parser that looks for the packet size in the first word of the packet,
+and sending two such packets in a single write() call on the other side: 
+the second message will be cut at the length of the first message.
+Since this is a stream protocol, all the following messages will also
+be corrupt since it will start looking for the next offset at a wrong
+position.
+
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 ---
- drivers/staging/fbtft/fbtft-sysfs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fbtft-sysfs.c b/drivers/staging/fbtft/fbtft-sysfs.c
-index 2a5c630dab87..404046d3999a 100644
---- a/drivers/staging/fbtft/fbtft-sysfs.c
-+++ b/drivers/staging/fbtft/fbtft-sysfs.c
-@@ -25,6 +25,7 @@ int fbtft_gamma_parse_str(struct fbtft_par *par, u32 *curves,
- 	unsigned long val = 0;
- 	int ret = 0;
- 	int curve_counter, value_counter;
-+	unsigned long idx;
+Discussions on the bug along with a (bad) reproducer can be found here:
+http://lkml.kernel.org/m/20180803182830.GB29193@nautica
+(now the problem is better understood though it's much simpler to send
+two messages at once than to spam and wait for tcp aggregation to do it)
+
+
+Two notes:
+ - I've marked this patch v0 as we could move the pskb_pull() up to
+where strp.offset is set, and just always leave it at 0 in the strparser
+code.
+This will let applications that are fine dealing with a non-zero offset
+deal with it as they seem fit (tls writes into the offset and full_len
+fields behind the back of the stream parser), while still being safe for
+kcm/sockmap
+
+ - Even with that modification I'm not totally happy with
+single-handedly eating the offset for strparser users which could handle
+it, but I'm not really familiar with the cost this really has in
+practice...
+A better fix would be to handle the offset properly in the callbacks,
+but frankly at least for kcm I don't see how (maybe because I'm not
+familiar with how bpf programs work)
+
+Another idea I had would be to write flags when registering the protocol
+e.g. strp->cb.flags & STRP_CAN_PARSE_WITH_OFFSET or something like that,
+but without an idea of the cost of that pull I don't know if it's worth
+doing.
+
+
+Anyway, comments welcome.
+
+
+ net/strparser/strparser.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/net/strparser/strparser.c b/net/strparser/strparser.c
+index 625acb27efcc..d7a3b81c3481 100644
+--- a/net/strparser/strparser.c
++++ b/net/strparser/strparser.c
+@@ -222,6 +222,16 @@ static int __strp_recv(read_descriptor_t *desc, struct sk_buff *orig_skb,
+ 		if (!stm->strp.full_len) {
+ 			ssize_t len;
  
- 	fbtft_par_dbg(DEBUG_SYSFS, par, "%s() str=\n", __func__);
++			/* Can only parse if there is no offset */
++			if (unlikely(stm->strp.offset)) {
++				if (!pskb_pull(skb, stm->strp.offset)) {
++					STRP_STATS_INCR(strp->stats.mem_fail);
++					strp_parser_err(strp, -ENOMEM, desc);
++					break;
++				}
++				stm->strp.offset = 0;
++			}
++
+ 			len = (*strp->cb.parse_msg)(strp, head);
  
-@@ -68,7 +69,9 @@ int fbtft_gamma_parse_str(struct fbtft_par *par, u32 *curves,
- 			ret = get_next_ulong(&curve_p, &val, " ", 16);
- 			if (ret)
- 				goto out;
--			curves[curve_counter * par->gamma.num_values + value_counter] = val;
-+			idx = curve_counter * par->gamma.num_values +
-+			      value_counter;
-+			curves[idx] = val;
- 			value_counter++;
- 		}
- 		if (value_counter != par->gamma.num_values) {
+ 			if (!len) {
+@@ -249,8 +259,7 @@ static int __strp_recv(read_descriptor_t *desc, struct sk_buff *orig_skb,
+ 				STRP_STATS_INCR(strp->stats.msg_too_big);
+ 				strp_parser_err(strp, -EMSGSIZE, desc);
+ 				break;
+-			} else if (len <= (ssize_t)head->len -
+-					  skb->len - stm->strp.offset) {
++			} else if (len <= (ssize_t)head->len - skb->len) {
+ 				/* Length must be into new skb (and also
+ 				 * greater than zero)
+ 				 */
 -- 
-2.18.0
+2.17.1
 
