@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EECC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D38C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7D42238D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:18:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7D42238D
+	by mail.kernel.org (Postfix) with ESMTP id 53BED2238D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 20:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53BED2238D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbeHIWoI (ORCPT
+        id S1727426AbeHIWo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:44:08 -0400
+        Thu, 9 Aug 2018 18:44:26 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:15158 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726744AbeHIWoH (ORCPT
+        by vger.kernel.org with ESMTP id S1726744AbeHIWoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:44:07 -0400
+        Thu, 9 Aug 2018 18:44:08 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Thu, 9 Aug 2018 13:17:20 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id B2335406EC;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D0925406DA;
         Thu,  9 Aug 2018 13:17:37 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -36,9 +36,9 @@ CC:     <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v7 06/10] x86: bug: prevent gcc distortions
-Date:   Thu, 9 Aug 2018 13:15:49 -0700
-Message-ID: <20180809201554.168804-7-namit@vmware.com>
+Subject: [PATCH v7 08/10] x86: extable: use macros instead of inline assembly
+Date:   Thu, 9 Aug 2018 13:15:51 -0700
+Message-ID: <20180809201554.168804-9-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180809201554.168804-1-namit@vmware.com>
 References: <20180809201554.168804-1-namit@vmware.com>
@@ -51,28 +51,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
-
-The solution is to set an assembly macro and call it from the inlinedv
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
-
-This patch increases the kernel size:
+Use assembly macros for exception-tables and call them from inline
+assembly.  This not only makes the code more readable and allows to
+avoid the duplicate implementation, but also improves compilation
+decision, specifically inline decisions which GCC base on the number of
+new lines in inline assembly.
 
    text	   data	    bss	    dec	    hex	filename
-18146889 10225380 2957312 31329581 1de0d2d ./vmlinux before
-18147336 10226688 2957312 31331336 1de1408 ./vmlinux after (+1755)
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux before
+18162879 10226256 2957312 31346447 1de4f0f ./vmlinux after (+292)
 
-But enables more aggressive inlining (and probably branch decisions).
-The number of static text symbols in vmlinux is lower.
-
-Static text symbols:
-Before:	40218
-After:	40053	(-165)
+This allows to inline functions such as nested_vmx_exit_reflected(),
+set_segment_reg(), __copy_xstate_to_user().
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -82,174 +72,109 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/bug.h | 98 ++++++++++++++++++++++----------------
+ arch/x86/include/asm/asm.h | 61 +++++++++++++++++---------------------
  arch/x86/kernel/macros.S   |  1 +
- include/asm-generic/bug.h  |  8 ++--
- 3 files changed, 61 insertions(+), 46 deletions(-)
+ 2 files changed, 28 insertions(+), 34 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..5090035e6d16 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -4,6 +4,8 @@
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 990770f9e76b..e47a2256c64e 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -117,28 +117,44 @@
+ # define CC_OUT(c) [_cc_ ## c] "=qm"
+ #endif
  
- #include <linux/stringify.h>
- 
-+#ifndef __ASSEMBLY__
+-/* Exception table entry */
+ #ifdef __ASSEMBLY__
+ # define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	.pushsection "__ex_table","a" ;				\
+-	.balign 4 ;						\
+-	.long (from) - . ;					\
+-	.long (to) - . ;					\
+-	.long (handler) - . ;					\
+-	.popsection
++	ASM_EXTABLE_HANDLE from to handler
 +
- /*
-  * Despite that some emulators terminate on UD2, we use it for WARN().
-  *
-@@ -20,53 +22,15 @@
- 
- #define LEN_UD2		2
- 
--#ifdef CONFIG_GENERIC_BUG
--
--#ifdef CONFIG_X86_32
--# define __BUG_REL(val)	".long " __stringify(val)
--#else
--# define __BUG_REL(val)	".long " __stringify(val) " - 2b"
--#endif
--
--#ifdef CONFIG_DEBUG_BUGVERBOSE
--
--#define _BUG_FLAGS(ins, flags)						\
--do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
--		     "\t.word %c1"        "\t# bug_entry::line\n"	\
--		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c3\n"					\
--		     ".popsection"					\
--		     : : "i" (__FILE__), "i" (__LINE__),		\
--			 "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
--} while (0)
--
--#else /* !CONFIG_DEBUG_BUGVERBOSE */
--
- #define _BUG_FLAGS(ins, flags)						\
- do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c1\n"					\
--		     ".popsection"					\
--		     : : "i" (flags),					\
-+	asm volatile("ASM_BUG ins=\"" ins "\" file=%c0 line=%c1 "	\
-+		     "flags=%c2 size=%c3"				\
-+		     : : "i" (__FILE__), "i" (__LINE__),                \
-+			 "i" (flags),                                   \
- 			 "i" (sizeof(struct bug_entry)));		\
- } while (0)
- 
--#endif /* CONFIG_DEBUG_BUGVERBOSE */
--
--#else
--
--#define _BUG_FLAGS(ins, flags)  asm volatile(ins)
--
--#endif /* CONFIG_GENERIC_BUG */
--
- #define HAVE_ARCH_BUG
- #define BUG()							\
- do {								\
-@@ -82,4 +46,54 @@ do {								\
- 
- #include <asm-generic/bug.h>
- 
 +#else /* __ASSEMBLY__ */
 +
-+#ifdef CONFIG_GENERIC_BUG
++# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
++	"ASM_EXTABLE_HANDLE from=" #from " to=" #to		\
++	" handler=\"" #handler "\"\n\t"
 +
-+#ifdef CONFIG_X86_32
-+.macro __BUG_REL val:req
-+	.long \val
-+.endm
-+#else
-+.macro __BUG_REL val:req
-+	.long \val - 2b
-+.endm
-+#endif
-+
-+#ifdef CONFIG_DEBUG_BUGVERBOSE
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+1:	\ins
-+	.pushsection __bug_table,"aw"
-+2:	__BUG_REL val=1b	# bug_entry::bug_addr
-+	__BUG_REL val=\file	# bug_entry::file
-+	.word \line		# bug_entry::line
-+	.word \flags		# bug_entry::flags
-+	.org 2b+\size
-+	.popsection
-+.endm
-+
-+#else /* !CONFIG_DEBUG_BUGVERBOSE */
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+1:	\ins
-+	.pushsection __bug_table,"aw"
-+2:	__BUG_REL val=1b	# bug_entry::bug_addr
-+	.word \flags		# bug_entry::flags
-+	.org 2b+\size
-+	.popsection
-+.endm
-+
-+#endif /* CONFIG_DEBUG_BUGVERBOSE */
-+
-+#else /* CONFIG_GENERIC_BUG */
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+	\ins
-+.endm
-+
-+#endif /* CONFIG_GENERIC_BUG */
++/* For C file, we already have NOKPROBE_SYMBOL macro */
 +
 +#endif /* __ASSEMBLY__ */
+ 
+-# define _ASM_EXTABLE(from, to)					\
++#define _ASM_EXTABLE(from, to)					\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+ 
+-# define _ASM_EXTABLE_FAULT(from, to)				\
++#define _ASM_EXTABLE_FAULT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
+ 
+-# define _ASM_EXTABLE_EX(from, to)				\
++#define _ASM_EXTABLE_EX(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+ 
+-# define _ASM_EXTABLE_REFCOUNT(from, to)			\
++#define _ASM_EXTABLE_REFCOUNT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
+ 
++/* Exception table entry */
++#ifdef __ASSEMBLY__
 +
- #endif /* _ASM_X86_BUG_H */
++.macro ASM_EXTABLE_HANDLE from:req to:req handler:req
++	.pushsection "__ex_table","a"
++	.balign 4
++	.long (\from) - .
++	.long (\to) - .
++	.long (\handler) - .
++	.popsection
++.endm
++
+ # define _ASM_NOKPROBE(entry)					\
+ 	.pushsection "_kprobe_blacklist","aw" ;			\
+ 	_ASM_ALIGN ;						\
+@@ -169,29 +185,6 @@
+ 	_ASM_EXTABLE(101b,103b)
+ 	.endm
+ 
+-#else
+-# define _EXPAND_EXTABLE_HANDLE(x) #x
+-# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	" .pushsection \"__ex_table\",\"a\"\n"			\
+-	" .balign 4\n"						\
+-	" .long (" #from ") - .\n"				\
+-	" .long (" #to ") - .\n"				\
+-	" .long (" _EXPAND_EXTABLE_HANDLE(handler) ") - .\n"	\
+-	" .popsection\n"
+-
+-# define _ASM_EXTABLE(from, to)					\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+-
+-# define _ASM_EXTABLE_FAULT(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
+-
+-# define _ASM_EXTABLE_EX(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+-
+-# define _ASM_EXTABLE_REFCOUNT(from, to)			\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
+-
+-/* For C file, we already have NOKPROBE_SYMBOL macro */
+ #endif
+ 
+ #ifndef __ASSEMBLY__
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 852487a9fc56..66ccb8e823b1 100644
+index 71d8b716b111..7baa40d5bf16 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -9,3 +9,4 @@
- #include <linux/compiler.h>
- #include <asm/refcount.h>
+@@ -11,3 +11,4 @@
  #include <asm/alternative-asm.h>
-+#include <asm/bug.h>
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index a7613e1b0c87..cf7f4ef4749e 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -17,10 +17,8 @@
- #ifndef __ASSEMBLY__
- #include <linux/kernel.h>
- 
--#ifdef CONFIG_BUG
--
--#ifdef CONFIG_GENERIC_BUG
- struct bug_entry {
-+#ifdef CONFIG_GENERIC_BUG
- #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
- 	unsigned long	bug_addr;
- #else
-@@ -35,8 +33,10 @@ struct bug_entry {
- 	unsigned short	line;
- #endif
- 	unsigned short	flags;
--};
- #endif	/* CONFIG_GENERIC_BUG */
-+};
-+
-+#ifdef CONFIG_BUG
- 
- /*
-  * Don't use BUG() or BUG_ON() unless there's really no way out; one
+ #include <asm/bug.h>
+ #include <asm/paravirt.h>
++#include <asm/asm.h>
 -- 
 2.17.1
 
