@@ -2,84 +2,121 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D01C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B129BC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFCEA21D05
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCEA21D05
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 723BE21524
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:14:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 723BE21524
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbeHILhi (ORCPT
+        id S1730264AbeHILid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:37:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34316 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727579AbeHILhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:37:38 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57097818B123;
-        Thu,  9 Aug 2018 09:13:42 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-178.pek2.redhat.com [10.72.12.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1371510AF9D5;
-        Thu,  9 Aug 2018 09:13:37 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 17:13:33 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Baoquan He <bhe@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, ard.biesheuvel@linaro.org
-Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
-Message-ID: <20180809091333.GA8008@dhcp-128-65.nay.redhat.com>
-References: <1533737025.4936.3.camel@gmx.de>
- <20180809042153.GA4377@dhcp-128-65.nay.redhat.com>
- <1533800010.5087.71.camel@gmx.de>
+        Thu, 9 Aug 2018 07:38:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50748 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730060AbeHILid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:38:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA80C18A;
+        Thu,  9 Aug 2018 02:14:37 -0700 (PDT)
+Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EEDF3F5D4;
+        Thu,  9 Aug 2018 02:14:32 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 10:14:27 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
+ support utilization clamping
+Message-ID: <20180809091427.4p2c4fbxocpkjaby@darkstar>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-2-patrick.bellasi@arm.com>
+ <20180807123550.GA3062@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533800010.5087.71.camel@gmx.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 09:13:42 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 09 Aug 2018 09:13:42 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+In-Reply-To: <20180807123550.GA3062@localhost.localdomain>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/09/18 at 09:33am, Mike Galbraith wrote:
-> On Thu, 2018-08-09 at 12:21 +0800, Dave Young wrote:
-> > Hi Mike,
-> > 
-> > Thanks for the patch!
-> > On 08/08/18 at 04:03pm, Mike Galbraith wrote:
-> > > When booting with efi=noruntime, we call efi_runtime_map_copy() while
-> > > loading the kdump kernel, and trip over a NULL efi.memmap.map.  Avoid
-> > > that and a useless allocation when the only mapping we can use (1:1)
-> > > is not available.
-> > 
-> > At first glance, efi_get_runtime_map_size should return 0 in case
-> > noruntime.
+On 07-Aug 14:35, Juri Lelli wrote:
+> On 06/08/18 17:39, Patrick Bellasi wrote:
 > 
-> What efi does internally at unmap time is to leave everything except
-> efi.mmap.map untouched, setting it to NULL and turning off EFI_MEMMAP,
-> rendering efi.mmap.map accessors useless/unsafe without first checking
-> EFI_MEMMAP.
+> [...]
+> 
+> > @@ -4218,6 +4245,13 @@ static int __sched_setscheduler(struct task_struct *p,
+> >  			return retval;
+> >  	}
+> >  
+> > +	/* Configure utilization clamps for the task */
+> > +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
+> > +		retval = __setscheduler_uclamp(p, attr);
+> > +		if (retval)
+> > +			return retval;
+> > +	}
+> > +
+> 
+> IIUC, this is available to root and non-root users. In the latter case,
+> how do we cope with the fact that some user might occupy all the
+> available clamping groups configured for the system?
 
-Probably the x86 efi_init should reset nr_map to zero in case runtime is
-disabled.  But let's see how Ard thinks about this and cc linux-efi.
+That's a very good point, glad you noticed it.
 
-As for efi_get_runtime_map_size, it was introduced for x86 kexec use.
-for copying runtime maps,  so I think it is reasonable this function
-return zero in case no runtime.
+What concern me most is that we set constraints to the cgroups
+delegation model. If all clamp groups have been used it could be
+not possible for a parent group to shrink resources for its subgroups.
 
-Thanks
-Dave
+In both cases however, in principle, I think we can live with the idea
+that the "System Management Software" (SMS) can pre-allocate all the
+required boost groups at boot time;  malicious tasks and dependent
+groups will eventually get an -ENOSPC error.
+
+These are the main reason why I did not posted a more "safe" solution:
+this series is already big enough, a properly (pre)configured system
+is still reasonably functional safe and  this feature can be added in
+a second step.
+
+However, I already have a couple of possible extensions/fixes which I
+can add on top on the next respin. They are along these lines:
+1) make CAP_SYS_NICE protected the clamp groups, with an optional boot
+   time parameter to relax this check
+2) add discretization support to clamp groups allocation
+
+This second feature specifically, will ensure that clamp values are
+always mapped into one of the available clamp groups. While the exact
+clamp value can always be used for tasks placement biasing, when it
+comes to frequency selection biasing, depending on concurrently
+running tasks, you can end up with an effective clamp value which is a
+rounded up.
+
+Will likely add a couple of additional patches on v4 posting.
+Do you have any other possible idea?
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
