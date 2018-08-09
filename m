@@ -2,132 +2,212 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C5FC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A01C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C95221E97
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:49:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9AF321E97
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:49:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Oa2yj/fk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C95221E97
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdOiu/OJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AF321E97
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732687AbeHIUPh (ORCPT
+        id S1732711AbeHIUPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:15:37 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35735 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732496AbeHIUPh (ORCPT
+        Thu, 9 Aug 2018 16:15:51 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37225 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732496AbeHIUPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:15:37 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p12-v6so3201432pfh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 10:49:42 -0700 (PDT)
+        Thu, 9 Aug 2018 16:15:51 -0400
+Received: by mail-oi0-f66.google.com with SMTP id j205-v6so11312424oib.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 10:49:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=huIdhvc31zB8/Q083cdPlHCFVCmDNsdTuSlR1lc3GSU=;
-        b=Oa2yj/fkQIyGPN4upHFmFAl/lI3qBYvExBHsJHoSTxeD3bI/PoAtGncdL8kAwUxY7c
-         kZ8FnH166BjuXwgmZfglFbUhpfqR7UGT3Gg5CybUzymeLxdKC0kgBwOiNqrRTRcxZt2s
-         P6/xxAbLxzSYPAFHKfytWjs9N8XRXpqepNiEY=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VTMCT/kYNEDzZrEOGiVHoWNeqRR9eXXQB/ruTwB4j6E=;
+        b=FdOiu/OJLS7HuLGr8O+UhnF3J+NDaHRLlEobKo6NgLoR68QAkLUede0MG659uHj9+6
+         VoMwXPJyKsBfvPVTQ44wo6rNm+Jn4RvzBf4sxuHu+yvpsD+W2UKj/tkeFgEUREda9iES
+         w6LJTVb2mkmPwZqOAjw6GIfbIZzrx8NRTEzJT76SELeuC+qhY+VhhPjt2xiGzP+iSjbH
+         SRNtYiTJAB45tQX9z4yPFpnSj9eblKlPXbz5//SbTQ+tfmeNME7Kxvi5S4SOmUXcKz4u
+         ry2zU8f3kjk05Sof4Wq8S6E7aYxZAV1Ymyv4X4hfTG0LRP4LL/URgXRdyqG1DBLFjFnq
+         tGRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=huIdhvc31zB8/Q083cdPlHCFVCmDNsdTuSlR1lc3GSU=;
-        b=P+xI35DYqdmr4EEHHVbP8dbuhJRLqWsR10q8/v7kNgfcyjsfzjyfVUdnFplFgzhepI
-         SKMl9t2udhRKm3zvB0a9QUGWSOskM/F9HLiL54muzlfuB5NT6rUwivZcQePqMREdk58l
-         OnbaskYSbdEFQ3tMS0mSNUhVgd2H85JNBS4x7DqER7TWYOt3PV4nrxaJ4KzfGy9DSB0/
-         JM9mt7so127J603ZXqbCL/j6sBuXhe5goQ41slkchr48TXedMUYrNcHOzgLS4UM3n6l0
-         VvAYwU/YQ75s8i59Q9DNHxSDyKDVNZiILmiAeGEm8Egj8TWTLVLW22LF0aTkSLNloklN
-         XG9w==
-X-Gm-Message-State: AOUpUlGuLZWx8Y9yAYNjH0c8YYAungZAel9pWKSJoAoVPysfi4Hsr0Fn
-        S2lLwlOt+ICdlmuFeCl7m0/13A==
-X-Google-Smtp-Source: AA+uWPxh9GdhQO9TPWvLsa1yiqUDQ6DoNmnuaXg0l+X7pdluUCYIbWq9PrJXjOaMg9m2FJdANSEIRg==
-X-Received: by 2002:a63:3d41:: with SMTP id k62-v6mr3096258pga.254.1533836981776;
-        Thu, 09 Aug 2018 10:49:41 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id u11-v6sm13755492pfd.117.2018.08.09.10.49.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 10:49:40 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 10:49:38 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH v3 2/7] firmware: coreboot: Unmap ioregion on failure
-Message-ID: <20180809174936.GC129285@ban.mtv.corp.google.com>
-References: <20180809171722.144325-1-swboyd@chromium.org>
- <20180809171722.144325-3-swboyd@chromium.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VTMCT/kYNEDzZrEOGiVHoWNeqRR9eXXQB/ruTwB4j6E=;
+        b=nN4splxrJIJCyEQ4o2QQJH4v3+864hOyJ2fUH1SGRXOdAU+2/j/a4zbTR5MmZ3SXD5
+         cD6VEX5tIF3AZU9Vy4BIpRabcZM32YLQYOgDwz2XUqtjS9GrTNGaUdCG4SpBtfkp2r1u
+         +ZFZF7bi4YMwHvbBx/tHqlse4e5UaBBuaXP24AKXoKypWg6/MxUNkLwjbRaH2ToP5fCI
+         exAw5WQZ070EG4YpRaR0UvcN9vn6MUEAn6tZUrWoPk5fpyeqhdUH1EVtJ+1zCpoBDM1p
+         nQ5rXpT19KyGUOaVO/asoErfUADc5ipEIibgnoJX0X4tuiTmwpp1z/0lTjkzb+JUWvV1
+         Bo/A==
+X-Gm-Message-State: AOUpUlFNxXsDgZfro6cfYo1NdTRl8GRW1vh5MzfiTqrmQ7Mp/2Z0KXw0
+        Fj2IduALE9JXBYAPHI+xwvYtHrRzdq+6KD4rscw=
+X-Google-Smtp-Source: AA+uWPyqXzZo/cIxQCcxks6wKmylVPoFG41YTLIvLb5n0dDY0jbrKxAhvkYdvH6pwcIghxdNaZzZGnVngG2OGC0VaQs=
+X-Received: by 2002:aca:b355:: with SMTP id c82-v6mr3286824oif.9.1533836995132;
+ Thu, 09 Aug 2018 10:49:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809171722.144325-3-swboyd@chromium.org>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 10:49:54 -0700 (PDT)
+In-Reply-To: <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com>
+References: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com> <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Thu, 9 Aug 2018 23:19:54 +0530
+Message-ID: <CAKTKpr6HfLtkeertCyfA_vJt2rXi5qFOKKXohLfX1Z9QiK=Uvw@mail.gmail.com>
+Subject: Re: [PATCH] iommu/iova: Optimise attempts to allocate iova from 32bit
+ address range
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
+        jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 10:17:17AM -0700, Stephen Boyd wrote:
-> Both callers of coreboot_table_init() ioremap the pointer that comes in
-> but they don't unmap the memory on failure. Both of them also fail probe
-> immediately with the return value of coreboot_table_init(), leaking a
-> mapping when it fails. Plug the leak so the mapping isn't left unused.
-> 
-> Cc: Wei-Ning Huang <wnhuang@chromium.org>
-> Cc: Julius Werner <jwerner@chromium.org>
-> Cc: Brian Norris <briannorris@chromium.org>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table as a bus")
+Hi Robin,
 
-I suppose this is fair, since that commit introduced error paths and
-didn't clean them up. But one warning below:
+On Thu, Aug 9, 2018 at 9:54 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 07/08/18 09:54, Ganapatrao Kulkarni wrote:
+>>
+>> As an optimisation for PCI devices, there is always first attempt
+>> been made to allocate iova from SAC address range. This will lead
+>> to unnecessary attempts/function calls, when there are no free ranges
+>> available.
+>>
+>> This patch optimises by adding flag to track previous failed attempts
+>> and avoids further attempts until replenish happens.
+>
+>
+> Agh, what I overlooked is that this still suffers from the original problem,
+> wherein a large allocation which fails due to fragmentation then blocks all
+> subsequent smaller allocations, even if they may have succeeded.
+>
+> For a minimal change, though, what I think we could do is instead of just
+> having a flag, track the size of the last 32-bit allocation which failed. If
+> we're happy to assume that nobody's likely to mix aligned and unaligned
+> allocations within the same domain, then that should be sufficiently robust
+> whilst being no more complicated than this version, i.e. (modulo thinking up
+> a better name for it):
 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/firmware/google/coreboot_table.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-> index 19db5709ae28..0d3e140444ae 100644
-> --- a/drivers/firmware/google/coreboot_table.c
-> +++ b/drivers/firmware/google/coreboot_table.c
-> @@ -138,6 +138,9 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
->  		ptr_entry += entry.size;
->  	}
->  
-> +	if (ret)
-> +		iounmap(ptr);
+I agree, it would be better to track size and attempt to allocate for
+smaller chunks, if not for bigger one.
 
-This works because no sub-driver is using this mapping any more (i.e.,
-because we killed coreboot_table_find()). Otherwise, we'd need to
-explicitly kill all the sub-devices first. IOW, if this gets backported
-to older kernels, it would need to go along with this and its other
-dependencies:
+>
+>>
+>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>> ---
+>> This patch is based on comments from Robin Murphy <robin.murphy@arm.com>
+>> for patch [1]
+>>
+>> [1] https://lkml.org/lkml/2018/4/19/780
+>>
+>>   drivers/iommu/iova.c | 11 ++++++++++-
+>>   include/linux/iova.h |  1 +
+>>   2 files changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+>> index 83fe262..d97bb5a 100644
+>> --- a/drivers/iommu/iova.c
+>> +++ b/drivers/iommu/iova.c
+>> @@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned
+>> long granule,
+>>         iovad->granule = granule;
+>>         iovad->start_pfn = start_pfn;
+>>         iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
+>> +       iovad->free_32bit_pfns = true;
+>
+>
+>         iovad->max_32bit_free = iovad->dma_32bit_pfn;
+>
+>>         iovad->flush_cb = NULL;
+>>         iovad->fq = NULL;
+>>         iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
+>> @@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain
+>> *iovad, struct iova *free)
+>>         cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
+>>         if (free->pfn_hi < iovad->dma_32bit_pfn &&
+>> -           free->pfn_lo >= cached_iova->pfn_lo)
+>> +           free->pfn_lo >= cached_iova->pfn_lo) {
+>>                 iovad->cached32_node = rb_next(&free->node);
+>> +               iovad->free_32bit_pfns = true;
+>
+>
+>                 iovad->max_32bit_free = iovad->dma_32bit_pfn;
 
-b616cf53aa7a firmware: coreboot: Remove unused coreboot_table_find
+i think, you intended to say,
+  iovad->max_32bit_free += (free->pfn_hi - free->pfn_lo);
 
-But I guess that's a question for -stable. Or, we remove the 'Fixes'
-tag? Or add another tag, to list other dependencies? Or just ignore it.
+>
+>> +       }
+>>         cached_iova = rb_entry(iovad->cached_node, struct iova, node);
+>>         if (free->pfn_lo >= cached_iova->pfn_lo)
+>> @@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned long
+>> size,
+>>         struct iova *new_iova;
+>>         int ret;
+>>   +     if (limit_pfn <= iovad->dma_32bit_pfn &&
+>> +                       !iovad->free_32bit_pfns)
+>
+>
+>                         size >= iovad->max_32bit_free)
+>
+>> +               return NULL;
+>> +
+>>         new_iova = alloc_iova_mem();
+>>         if (!new_iova)
+>>                 return NULL;
+>> @@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned long
+>> size,
+>>         if (ret) {
+>>                 free_iova_mem(new_iova);
+>> +               if (limit_pfn <= iovad->dma_32bit_pfn)
+>> +                       iovad->free_32bit_pfns = false;
+>
+>
+>                         iovad->max_32bit_free = size;
 
-But for this change as applied to mainline:
+same here, we should decrease available free range after successful allocation.
+iovad->max_32bit_free -= size;
 
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+>
+> What do you think?
 
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL(coreboot_table_init);
-> -- 
-> Sent by a computer through tubes
-> 
+most likely this should work, i will try this and confirm at the earliest,
+
+>
+> Robin.
+>
+>
+>>                 return NULL;
+>>         }
+>>   diff --git a/include/linux/iova.h b/include/linux/iova.h
+>> index 928442d..3810ba9 100644
+>> --- a/include/linux/iova.h
+>> +++ b/include/linux/iova.h
+>> @@ -96,6 +96,7 @@ struct iova_domain {
+>>                                                    flush-queues */
+>>         atomic_t fq_timer_on;                   /* 1 when timer is active,
+>> 0
+>>                                                    when not */
+>> +       bool    free_32bit_pfns;
+>>   };
+>>     static inline unsigned long iova_size(struct iova *iova)
+>>
+>
+
+thanks,
+Ganapat
