@@ -2,275 +2,262 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D16C3C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65EDC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8699E21E1F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8699E21E1F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D97321E22
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:59:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+GCVjoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D97321E22
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732331AbeHIQXV (ORCPT
+        id S1732352AbeHIQYc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 12:23:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54112 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730090AbeHIQXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 12:23:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D8CF7A9;
-        Thu,  9 Aug 2018 06:58:19 -0700 (PDT)
-Received: from e107985-lin.Emea.Arm.com (e107985-lin.emea.arm.com [10.4.12.239])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8E9AA3F5B3;
-        Thu,  9 Aug 2018 06:58:18 -0700 (PDT)
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Fengguang Wu <fengguang.wu@intel.com>,
-        Li Zhijian <zhijianx.li@intel.com>,
+        Thu, 9 Aug 2018 12:24:32 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51230 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731227AbeHIQYb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 12:24:31 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y2-v6so321753wma.1;
+        Thu, 09 Aug 2018 06:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=57oEn7KMrVxRFnb3pB0G+gQz6PDSflcxMJKcq7T+gm8=;
+        b=X+GCVjoE6hLabnSAY8HHwSc8DVal1TebeYQpacr7r5BA7u1Lp6YYfusGBKeCukfJLZ
+         mnq5lqmppMqZCSIbYyPj/0UDIP4zuSYp1Jidtp/zTroxpJO2GVyOqIsNnWUGWmjFm0jt
+         nofRKyqrSyfd+V7LwoNQJmVvNT9/QxGpkklNSnn0J5wyiWtiELHXTATG2s5/BY/GXHma
+         RjMIcExFMi1Ex96i0fUPUlpc54TXWnZqsDXTU/ku4eHA0usmjsp8keIW4t0pHWo8xJQO
+         0HwSLbRjJdQpmpo+fw/MS7Uz+Bd69IgXs+umxnCvFy0x3/0JcSxZ4NYdqYTfZLc9Hw0+
+         q2Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=57oEn7KMrVxRFnb3pB0G+gQz6PDSflcxMJKcq7T+gm8=;
+        b=hokn3EHlai34CWGAZA673v/EBWtpXSy2FiAw2zkAMXKfSXhAxDZYuBt5vdpnyGkwfr
+         2Hs5+Jqe943M+5OXHAvt45sJIf4/ZVPaxF2uwVyn+Kr2/3c6KzAD5LDdDIDuEN7XWaT6
+         60iaIa2WgrUQY1gXvDz4rqK60KVRpKT5+1PzyKgzp4ilj0TCPaQwfEZiUQ9Ig1h+GH7K
+         ERlle1ntxGFPlVnb4HXZu6DQ0dJsY2jLh7oV6SfeuBc+Rg13Hz3/CgXoLQbKxwurUR1P
+         C22/DMG/3yHyqknmSSHkZ8SUrzagJo+B1MWU+QyWDnsE0Ca4JfHPeJ+/QGPRE8Srp2Th
+         xezA==
+X-Gm-Message-State: AOUpUlENP62l7k/ckhxxHJEaOLwuMEZ6yNO/NGA6SMq+mwQoI/4gUSc8
+        Qgb0+zhpCEOIdwNR8EYa08g=
+X-Google-Smtp-Source: AA+uWPxHGovmrnoX3X0U1KROCwSBSBwEhhHPbnTRu3aOjgrVWyiAk89Jyk/O3unUWGPXEmJnUT/HUg==
+X-Received: by 2002:a1c:b756:: with SMTP id h83-v6mr1840915wmf.8.1533823167235;
+        Thu, 09 Aug 2018 06:59:27 -0700 (PDT)
+Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
+        by smtp.gmail.com with ESMTPSA id b10-v6sm5175742wrr.88.2018.08.09.06.59.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 06:59:26 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 15:59:24 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/fair: Disable LB_BIAS by default
-Date:   Thu,  9 Aug 2018 14:57:53 +0100
-Message-Id: <20180809135753.21077-1-dietmar.eggemann@arm.com>
-X-Mailer: git-send-email 2.11.0
+Subject: Re: [PATCH v2 2/8] iommu/tegra: gart: Provide access to Memory
+ Controller driver
+Message-ID: <20180809135924.GG21639@ulmo>
+References: <20180804143003.15817-1-digetx@gmail.com>
+ <20180804143003.15817-3-digetx@gmail.com>
+ <20180809111746.GG21639@ulmo>
+ <16855111.9YhuyP46zb@dimapc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FBBJgEOSAOerUJIT"
+Content-Disposition: inline
+In-Reply-To: <16855111.9YhuyP46zb@dimapc>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LB_BIAS allows the adjustment on how conservative load should be
-balanced.
 
-The rq->cpu_load[idx] array is used for this functionality. It contains
-weighted CPU load decayed average values over different intervals
-(idx = 1..4). Idx = 0 is the weighted CPU load itself.
+--FBBJgEOSAOerUJIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The values are updated during scheduler_tick, before idle balance and at
-nohz exit.
+On Thu, Aug 09, 2018 at 02:39:03PM +0300, Dmitry Osipenko wrote:
+> On Thursday, 9 August 2018 14:17:46 MSK Thierry Reding wrote:
+> > On Sat, Aug 04, 2018 at 05:29:57PM +0300, Dmitry Osipenko wrote:
+> > > GART contain registers needed by the Memory Controller driver, provide
+> > > access to the MC driver by utilizing its GART-integration facility.
+> > >=20
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > ---
+> > >=20
+> > >  drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
+> > >  1 file changed, 23 insertions(+)
+> > >=20
+> > > diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+> > > index a004f6da35f2..f8b653e25914 100644
+> > > --- a/drivers/iommu/tegra-gart.c
+> > > +++ b/drivers/iommu/tegra-gart.c
+> > > @@ -31,6 +31,8 @@
+> > >=20
+> > >  #include <linux/iommu.h>
+> > >  #include <linux/of.h>
+> > >=20
+> > > +#include <soc/tegra/mc.h>
+> > > +
+> > >=20
+> > >  #include <asm/cacheflush.h>
+> > > =20
+> > >  /* bitmap of the page sizes currently supported */
+> > >=20
+> > > @@ -41,6 +43,8 @@
+> > >=20
+> > >  #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
+> > >  #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
+> > >  #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
+> > >=20
+> > > +#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
+> > > +#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
+> > >=20
+> > >  #define GART_PAGE_SHIFT		12
+> > >  #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
+> > >=20
+> > > @@ -63,6 +67,8 @@ struct gart_device {
+> > >=20
+> > >  	struct device		*dev;
+> > >  =09
+> > >  	struct iommu_device	iommu;		/* IOMMU Core handle */
+> > >=20
+> > > +
+> > > +	struct tegra_mc_gart_handle mc_gart_handle;
+> > >=20
+> > >  };
+> > > =20
+> > >  struct gart_domain {
+> > >=20
+> > > @@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device *dev)
+> > >=20
+> > >  	return 0;
+> > > =20
+> > >  }
+> > >=20
+> > > +static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle *handle)
+> > > +{
+> > > +	struct gart_device *gart =3D container_of(handle, struct gart_devic=
+e,
+> > > +						mc_gart_handle);
+> > > +	return readl_relaxed(gart->regs + GART_ERROR_ADDR);
+> > > +}
+> > > +
+> > > +static u32 tegra_gart_error_req(struct tegra_mc_gart_handle *handle)
+> > > +{
+> > > +	struct gart_device *gart =3D container_of(handle, struct gart_devic=
+e,
+> > > +						mc_gart_handle);
+> > > +	return readl_relaxed(gart->regs + GART_ERROR_REQ);
+> > > +}
+> > > +
+> > >=20
+> > >  static int tegra_gart_probe(struct platform_device *pdev)
+> > >  {
+> > > =20
+> > >  	struct gart_device *gart;
+> > >=20
+> > > @@ -464,6 +484,8 @@ static int tegra_gart_probe(struct platform_device
+> > > *pdev)>=20
+> > >  	gart->regs =3D gart_regs;
+> > >  	gart->iovmm_base =3D (dma_addr_t)res_remap->start;
+> > >  	gart->page_count =3D (resource_size(res_remap) >> GART_PAGE_SHIFT);
+> > >=20
+> > > +	gart->mc_gart_handle.error_addr =3D tegra_gart_error_addr;
+> > > +	gart->mc_gart_handle.error_req =3D tegra_gart_error_req;
+> > >=20
+> > >  	gart->savedata =3D vmalloc(array_size(sizeof(u32), gart->page_count=
+));
+> > >  	if (!gart->savedata) {
+> > >=20
+> > > @@ -475,6 +497,7 @@ static int tegra_gart_probe(struct platform_device
+> > > *pdev)>=20
+> > >  	do_gart_setup(gart, NULL);
+> > >  =09
+> > >  	gart_handle =3D gart;
+> > >=20
+> > > +	tegra_mc_register_gart(&gart->mc_gart_handle);
+> > >=20
+> > >  	return 0;
+> > > =20
+> > >  }
+> >=20
+> > I see now why you've did it this way. We have separate devices unlike
+> > with SMMU where it is properly modeled as part of the memory controller.
+> > I think we should consider breaking ABI at this point and properly merge
+> > both the memory controller and GART nodes. There's really no reason why
+> > they should be separate and we're jumping through multiple hoops to do
+> > what we need to do just because a few years back we made a mistake.
+> >=20
+> > I know we're technically not supposed to break the DT ABI, but I think
+> > in this particular case we can make a good case for it. The current DT
+> > bindings are plainly broken, and obviously so. Also, we don't currently
+> > use the GART upstream for anything, so we can't break any existing
+> > systems either.
+>=20
+> IIUC, that will require to break the stable DT ABI of the tegra20-mc, whi=
+ch is=20
+> working fine and does its job. I'm personally not seeing the slight lamen=
+ess=20
+> of the current DT as a good excuse to break the ABI. Let's then break DT =
+ABI=20
+> on all Tegra's and convert them all to genpd and other goodies like assig=
+ned=20
+> clock parents and clock rate.
 
-There are 5 different types of idx's per sched domain (sd). Each of them
-is used to index into the rq->cpu_load[idx] array in a specific scenario
-(busy, idle and newidle for load balancing, forkexec for wake-up
-slow-path load balancing and wake for affine wakeup based on weight).
-Only the sd idx's for busy and idle load balancing are set to 2,3 or 1,2
-respectively. All the other sd idx's are set to 0.
+genpd and assigned clocks are complementary, they can be switched to
+without breaking ABI.
 
-Conservative load balancing is achieved for sd idx's >= 1 by using the
-min/max (source_load()/target_load()) value between the current weighted
-CPU load and the rq->cpu_load[sd idx -1] for the busiest(idlest)/local
-CPU load in load balancing or vice versa in the wake-up slow-path load
-balancing.
-There is no conservative balancing for sd idx = 0 since only current
-weighted CPU load is used in this case.
+And that's also different from the memory controller on Tegra20 where we
+just made the mistake of describing what is effectively one device as
+two separate devices. From what I can tell, the only reason this was
+done was because it mapped better to the Linux driver model where there
+is a framework to represent an IOMMU and a misunderstanding of how to
+work with the driver model and device tree.
 
-It is very likely that LB_BIAS' influence on load balancing can be
-neglected (see test results below). This is further supported by:
+As such, I would describe it as more of a bug in the DT that should be
+fixed rather than breaking the ABI.
 
-(1) Weighted CPU load today is by itself a decayed average value (PELT)
-    (cfs_rq->avg->runnable_load_avg) and not the instantaneous load
-    (rq->load.weight) it was when LB_BIAS was introduced.
+And, like I said, we are in the somewhat fortunate situation that we
+don't actively use the GART, at least in upstream, yet. So even if we
+break ABI, nobody will notice anyway. Those are about as good pre-
+conditions as you're going to get for fixing ABI.
 
-(2) Sd imbalance_pct is used for CPU_NEWLY_IDLE and CPU_NOT_IDLE (relate
-    to sd's newidle and busy idx) in find_busiest_group() when comparing
-    busiest and local avg load to make load balancing even more
-    conservative.
+Thierry
 
-(3) The sd forkexec and newidle idx are always set to 0 so there is no
-    adjustment on how conservatively load balancing is done here.
+--FBBJgEOSAOerUJIT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(4) Affine wakeup based on weight (wake_affine_weight()) will not be
-    impacted since the sd wake idx is always set to 0.
+-----BEGIN PGP SIGNATURE-----
 
-Let's disable LB_BIAS by default for a few kernel releases to make sure
-that no workload and no scheduler topology is affected. The benefit of
-being able to remove the LB_BIAS dependency from source_load() and
-target_load() is that the entire rq->cpu_load[idx] code could be removed
-in this case.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsSLwACgkQ3SOs138+
+s6EBkg/+ItgkU95kpNhbkVG8JkfdRyQbLS8pyeTJe5HPuqcYg5Kx0uzCi7/VOV9K
+MFC7ziLMZUKGcnVdELJFiQOiOcH6WXfWTtULf9MDOeQNw2Qu1co/3GE2eyOt0Zh+
+DsgLZWsHkRoVGE3BA5u9Vd9M2Zv/5Z9uNuFzv/4ELYcnlJOktK5zpRAbwwvzFK3q
+3vCboh4o+zos1mzBAFcPsm4cuKoQvEaOvf5U28UgrToVSsYq5niau/7AQlYh+HGC
+WgVW7RXO0SNT+h0OfXCJhh8My41EmeTd3FUMyNvRa5Ur3e6P6Wtfy1LtWxLKYc7g
+8w3uPHaGzu//y6Yam/oMO+d/hRdrMpvUJQCi/s+2EkJ3qwQApQl6zmynzyM/Tkes
+eu0bBIhjoGLUGt/4J75hKWtLhVw6r2PSDikxir6wvzUOIhHPfrkPLNdFE5wcD3Og
+Xjb+pGGE439LVcVkWe79f64YSV403VR+4xHjEToegOuXYyjL7TYCBYwsLN/TVece
+MbuigLG8SQMEafCuTtvyvs3gf1Rp5AezvNgGbatQ0bgflhcAqX+ug0SJ9h3n7J4h
+zpri3YMd2RwIkDi40ihiGz4JWT6SnoY8NfsaLTCoie3FzVDBfsBtDoZZ3GY81zl1
+ip5R1lND1+lCGXxQcF+7R6otT9difNAkGD0AbZ/KbEWSCvrdHsE=
+=odYV
+-----END PGP SIGNATURE-----
 
-It is really hard to say if there is no regression w/o testing this with
-a lot of different workloads on a lot of different platforms, especially
-NUMA machines.
-The following 104 LKP (Linux Kernel Performance) tests were run by the
-0-Day guys mostly on multi-socket hosts with a larger number of logical
-cpus (88, 192).
-The base for the test was commit b3dae109fa89 ("sched/swait: Rename to
-exclusive") (tip/sched/core v4.18-rc1).
-Only 2 out of the 104 tests had a significant change in one of the
-metrics (fsmark/1x-1t-1HDD-btrfs-nfsv4-4M-60G-NoSync-performance +7%
-files_per_sec, unixbench/300s-100%-syscall-performance -11% score).
-Tests which showed a change in one of the metrics are marked with a '*'
-and this change is listed as well.
-
-(a) lkp-bdw-ep3:
-      88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz 64G
-
-    dd-write/10m-1HDD-cfq-btrfs-100dd-performance
-    fsmark/1x-1t-1HDD-xfs-nfsv4-4M-60G-NoSync-performance
-  * fsmark/1x-1t-1HDD-btrfs-nfsv4-4M-60G-NoSync-performance
-      7.50  7%  8.00  ±  6%  fsmark.files_per_sec
-    fsmark/1x-1t-1HDD-btrfs-nfsv4-4M-60G-fsyncBeforeClose-performance
-    fsmark/1x-1t-1HDD-btrfs-4M-60G-NoSync-performance
-    fsmark/1x-1t-1HDD-btrfs-4M-60G-fsyncBeforeClose-performance
-    kbuild/300s-50%-vmlinux_prereq-performance
-    kbuild/300s-200%-vmlinux_prereq-performance
-    kbuild/300s-50%-vmlinux_prereq-performance-1HDD-ext4
-    kbuild/300s-200%-vmlinux_prereq-performance-1HDD-ext4
-
-(b) lkp-skl-4sp1:
-      192 threads Intel(R) Xeon(R) Platinum 8160 768G
-
-    dbench/100%-performance
-    ebizzy/200%-100x-10s-performance
-    hackbench/1600%-process-pipe-performance
-    iperf/300s-cs-localhost-tcp-performance
-    iperf/300s-cs-localhost-udp-performance
-    perf-bench-numa-mem/2t-300M-performance
-    perf-bench-sched-pipe/10000000ops-process-performance
-    perf-bench-sched-pipe/10000000ops-threads-performance
-    schbench/2-16-300-30000-30000-performance
-    tbench/100%-cs-localhost-performance
-
-(c) lkp-bdw-ep6:
-      88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz 128G
-
-    stress-ng/100%-60s-pipe-performance
-    unixbench/300s-1-whetstone-double-performance
-    unixbench/300s-1-shell1-performance
-    unixbench/300s-1-shell8-performance
-    unixbench/300s-1-pipe-performance
-  * unixbench/300s-1-context1-performance
-      312  315  unixbench.score
-    unixbench/300s-1-spawn-performance
-    unixbench/300s-1-syscall-performance
-    unixbench/300s-1-dhry2reg-performance
-    unixbench/300s-1-fstime-performance
-    unixbench/300s-1-fsbuffer-performance
-    unixbench/300s-1-fsdisk-performance
-    unixbench/300s-100%-whetstone-double-performance
-    unixbench/300s-100%-shell1-performance
-    unixbench/300s-100%-shell8-performance
-    unixbench/300s-100%-pipe-performance
-    unixbench/300s-100%-context1-performance
-    unixbench/300s-100%-spawn-performance
-  * unixbench/300s-100%-syscall-performance
-      3571  ±  3%  -11%  3183  ±  4%  unixbench.score
-    unixbench/300s-100%-dhry2reg-performance
-    unixbench/300s-100%-fstime-performance
-    unixbench/300s-100%-fsbuffer-performance
-    unixbench/300s-100%-fsdisk-performance
-    unixbench/300s-1-execl-performance
-    unixbench/300s-100%-execl-performance
-  * will-it-scale/brk1-performance
-      365004  360387  will-it-scale.per_thread_ops
-  * will-it-scale/dup1-performance
-      432401  437596  will-it-scale.per_thread_ops
-    will-it-scale/eventfd1-performance
-    will-it-scale/futex1-performance
-    will-it-scale/futex2-performance
-    will-it-scale/futex3-performance
-    will-it-scale/futex4-performance
-    will-it-scale/getppid1-performance
-    will-it-scale/lock1-performance
-    will-it-scale/lseek1-performance
-    will-it-scale/lseek2-performance
-  * will-it-scale/malloc1-performance
-      47025  45817  will-it-scale.per_thread_ops
-      77499  76529  will-it-scale.per_process_ops
-    will-it-scale/malloc2-performance
-  * will-it-scale/mmap1-performance
-      123399  120815  will-it-scale.per_thread_ops
-      152219  149833  will-it-scale.per_process_ops
-  * will-it-scale/mmap2-performance
-      107327  104714  will-it-scale.per_thread_ops
-      136405  133765  will-it-scale.per_process_ops
-    will-it-scale/open1-performance
-  * will-it-scale/open2-performance
-      171570  168805  will-it-scale.per_thread_ops
-      532644  526202  will-it-scale.per_process_ops
-    will-it-scale/page_fault1-performance
-    will-it-scale/page_fault2-performance
-    will-it-scale/page_fault3-performance
-    will-it-scale/pipe1-performance
-    will-it-scale/poll1-performance
-  * will-it-scale/poll2-performance
-      176134  172848  will-it-scale.per_thread_ops
-      281361  275053  will-it-scale.per_process_ops
-    will-it-scale/posix_semaphore1-performance
-    will-it-scale/pread1-performance
-    will-it-scale/pread2-performance
-    will-it-scale/pread3-performance
-    will-it-scale/pthread_mutex1-performance
-    will-it-scale/pthread_mutex2-performance
-    will-it-scale/pwrite1-performance
-    will-it-scale/pwrite2-performance
-    will-it-scale/pwrite3-performance
-  * will-it-scale/read1-performance
-      1190563  1174833  will-it-scale.per_thread_ops
-  * will-it-scale/read2-performance
-      1105369  1080427  will-it-scale.per_thread_ops
-    will-it-scale/readseek1-performance
-  * will-it-scale/readseek2-performance
-      261818  259040  will-it-scale.per_thread_ops
-    will-it-scale/readseek3-performance
-  * will-it-scale/sched_yield-performance
-      2408059  2382034  will-it-scale.per_thread_ops
-    will-it-scale/signal1-performance
-    will-it-scale/unix1-performance
-    will-it-scale/unlink1-performance
-    will-it-scale/unlink2-performance
-  * will-it-scale/write1-performance
-      976701  961588  will-it-scale.per_thread_ops
-  * will-it-scale/writeseek1-performance
-      831898  822448  will-it-scale.per_thread_ops
-  * will-it-scale/writeseek2-performance
-      228248  225065  will-it-scale.per_thread_ops
-  * will-it-scale/writeseek3-performance
-      226670  224058  will-it-scale.per_thread_ops
-    will-it-scale/context_switch1-performance
-    aim7/performance-fork_test-2000
-  * aim7/performance-brk_test-3000
-      74869  76676  aim7.jobs-per-min
-    aim7/performance-disk_cp-3000
-    aim7/performance-disk_rd-3000
-    aim7/performance-sieve-3000
-    aim7/performance-page_test-3000
-    aim7/performance-creat-clo-3000
-    aim7/performance-mem_rtns_1-8000
-    aim7/performance-disk_wrt-8000
-    aim7/performance-pipe_cpy-8000
-    aim7/performance-ram_copy-8000
-
-(d) lkp-avoton3:
-      8 threads Intel(R) Atom(TM) CPU C2750 @ 2.40GHz 16G
-
-    netperf/ipv4-900s-200%-cs-localhost-TCP_STREAM-performance
-
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
----
- kernel/sched/features.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 85ae8488039c..858589b83377 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -39,7 +39,7 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
- 
- SCHED_FEAT(HRTICK, false)
- SCHED_FEAT(DOUBLE_TICK, false)
--SCHED_FEAT(LB_BIAS, true)
-+SCHED_FEAT(LB_BIAS, false)
- 
- /*
-  * Decrement CPU capacity based on time not spent running tasks
--- 
-2.11.0
-
+--FBBJgEOSAOerUJIT--
