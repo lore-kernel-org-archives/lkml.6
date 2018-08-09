@@ -2,43 +2,30 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5EAC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A328C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B803B22395
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:17:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x2ynNGSq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B803B22395
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CF94522393
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF94522393
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbeHIXn5 (ORCPT
+        id S1727327AbeHIXpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 19:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38374 "EHLO mail.kernel.org"
+        Thu, 9 Aug 2018 19:45:35 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40922 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727221AbeHIXn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 19:43:56 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9F2922392;
-        Thu,  9 Aug 2018 21:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533849437;
-        bh=SCjrb7khR34Q6FqUL9WizJDiZe8T4dzx6gDIYuT2DUo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=x2ynNGSqQkc2AWYILX3sT+RerEXEteJFCyR2gRrOAMvy1CB4DMs3qJtmMWMSLK0BX
-         aizGxGju+X57ogukzEhVsTS+jTbXKteiREJzs0U240cIgYqw2jI1Xr+Y+mgUuuXoNA
-         FVNxitVFfZHf+CpFScR2QYfY9qu6xdbaSDSBZzos=
-Date:   Thu, 9 Aug 2018 16:17:14 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
+        id S1727182AbeHIXpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 19:45:35 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fnsK8-0008EB-0F; Thu, 09 Aug 2018 15:18:24 -0600
+To:     Bjorn Helgaas <helgaas@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
         Christoph Hellwig <hch@lst.de>,
@@ -51,73 +38,66 @@ Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v8 3/4] PCI: Introduce disable_acs_redir quirk
-Message-ID: <20180809211714.GG113140@bhelgaas-glaptop.roam.corp.google.com>
 References: <20180730161840.13733-1-logang@deltatee.com>
- <20180730161840.13733-4-logang@deltatee.com>
+ <20180730161840.13733-2-logang@deltatee.com>
+ <20180809211541.GF113140@bhelgaas-glaptop.roam.corp.google.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <512aa96e-1c31-ecbd-88c7-a5e417d533ba@deltatee.com>
+Date:   Thu, 9 Aug 2018 15:18:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730161840.13733-4-logang@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180809211541.GF113140@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: willy@infradead.org, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v8 1/4] PCI: Make specifying PCI devices in kernel
+ parameters reusable
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 10:18:39AM -0600, Logan Gunthorpe wrote:
-> Intel SPT PCH hardware has an implementation of the ACS bits that
-> does not comply with the PCI express standard. To deal with this
-> the existing code has an enable_acs() quirk for the hardware.
-> 
-> In order to be able to correctly disable the ACS redirect bits for
-> all hardware we need an analagous quirk to disable those bits.
-> 
-> This adds the function pci_dev_specific_disable_acs_redir() which
-> behaves similarly to pci_dev_specific_enable_acs() but uses a new
-> function pointer for quirks which disables the ACS redirect bits.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
-> ---
-> ...
 
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index abd5d5e17aee..0a436ec4fef5 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1880,6 +1880,7 @@ enum pci_fixup_pass {
->  void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev);
->  int pci_dev_specific_acs_enabled(struct pci_dev *dev, u16 acs_flags);
->  int pci_dev_specific_enable_acs(struct pci_dev *dev);
-> +int pci_dev_specific_disable_acs_redir(struct pci_dev *dev);
->  #else
->  static inline void pci_fixup_device(enum pci_fixup_pass pass,
->  				    struct pci_dev *dev) { }
-> @@ -1892,6 +1893,10 @@ static inline int pci_dev_specific_enable_acs(struct pci_dev *dev)
->  {
->  	return -ENOTTY;
->  }
-> +static inline int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
-> +{
-> +	return -ENOTTY;
-> +}
 
-I assume these could go in drivers/pci/pci.h instead of
-include/linux/pci.h?
-
-I can do that (and add another patch to move the
-pci_dev_specific_acs_enabled() and pci_dev_specific_enable_acs()
-declarations, which also are only used inside drivers/pci) if you agree.
-
->  #endif
->  
->  void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen);
-> -- 
-> 2.11.0
+On 09/08/18 03:15 PM, Bjorn Helgaas wrote:
+>> @@ -2994,7 +2994,26 @@
+>>  			See header of drivers/block/paride/pcd.c.
+>>  			See also Documentation/blockdev/paride.txt.
+>>  
+>> -	pci=option[,option...]	[PCI] various PCI subsystem options:
+>> +	pci=option[,option...]	[PCI] various PCI subsystem options.
+>> +
+>> +				Some options herein operate on a specific device
+>> +				or a set of devices (<pci_dev>). These are
+>> +				specified in one of the following formats:
+>> +
+>> +				[<domain>:]<bus>:<slot>.<func>
+>> +				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+>> +
+>> +				Note: the first format specifies a PCI
+>> +				bus/slot/function address which may change
 > 
+> Unless you object, I'm going to change "slot" references like this to
+> "device" so they match "BDF" and the language in the spec, which uses
+> "slot" to refer to a physical slot and "device" when referring to
+> geographical device addresses.  I can do this when I apply these, so
+> no need for you to repost them.
+
+No objection. I never liked the "slot" reference but was trying to
+remain consistent with what was there before. If I remember correctly
+there's a bunch of places in the kernel that use slot as well.
+
+Thanks,
+
+Logan
