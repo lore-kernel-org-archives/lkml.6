@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA255C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE4BC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC3B223A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:36:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC3B223A4
+	by mail.kernel.org (Postfix) with ESMTP id A1A86223A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 23:36:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A86223A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeHJCDq (ORCPT
+        id S1727681AbeHJCD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 22:03:46 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47492 "EHLO
+        Thu, 9 Aug 2018 22:03:56 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:49779 "EHLO
         out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726979AbeHJCDq (ORCPT
+        by vger.kernel.org with ESMTP id S1726979AbeHJCD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 22:03:46 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T6MWc.W_1533857777;
+        Thu, 9 Aug 2018 22:03:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T6MWc.W_1533857777;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6MWc.W_1533857777)
           by smtp.aliyun-inc.com(127.0.0.1);
           Fri, 10 Aug 2018 07:36:27 +0800
@@ -35,9 +35,9 @@ To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
         namhyung@kernel.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC v7 PATCH 3/4] uprobes: make vma_has_uprobes non-static
-Date:   Fri, 10 Aug 2018 07:36:02 +0800
-Message-Id: <1533857763-43527-4-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [RFC v7 PATCH 4/4] mm: unmap special vmas with regular do_munmap()
+Date:   Fri, 10 Aug 2018 07:36:03 +0800
+Message-Id: <1533857763-43527-5-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -46,59 +46,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vma_has_uprobes() will be used in the following patch to check if a vma
-could be unmapped with holding read mmap_sem, but it is static. So, make
-it non-static to use outside uprobe.
+Unmapping vmas, which have VM_HUGETLB | VM_PFNMAP flag set or
+have uprobes set, need get done with write mmap_sem held since
+they may update vm_flags.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+So, it might be not safe enough to deal with these kind of special
+mappings with read mmap_sem. Deal with such mappings with regular
+do_munmap() call.
+
+Michal suggested to make this as a separate patch for safer and more
+bisectable sake.
+
+Cc: Michal Hocko <mhocko@kernel.org>
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- include/linux/uprobes.h | 7 +++++++
- kernel/events/uprobes.c | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ mm/mmap.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 0a294e9..caeb26b 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -149,6 +149,8 @@ struct uprobes_state {
- extern bool arch_uprobe_ignore(struct arch_uprobe *aup, struct pt_regs *regs);
- extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
- 					 void *src, unsigned long len);
-+extern bool vma_has_uprobes(struct vm_area_struct *vma, unsigned long start,
-+			    unsigned long end);
- #else /* !CONFIG_UPROBES */
- struct uprobes_state {
- };
-@@ -203,5 +205,10 @@ static inline void uprobe_copy_process(struct task_struct *t, unsigned long flag
- static inline void uprobe_clear_state(struct mm_struct *mm)
- {
- }
-+static inline bool vma_has_uprobes(struct vm_area_struct *vma, unsigned long start,
-+				   unsigned long end)
-+{
-+	return false;
-+}
- #endif /* !CONFIG_UPROBES */
- #endif	/* _LINUX_UPROBES_H */
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index ccc579a..4880c46 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1095,7 +1095,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
- 	return 0;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 2234d5a..06cb83c 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2766,6 +2766,16 @@ static inline void munlock_vmas(struct vm_area_struct *vma,
+ 	}
  }
  
--static bool
-+bool
- vma_has_uprobes(struct vm_area_struct *vma, unsigned long start, unsigned long end)
- {
- 	loff_t min, max;
++static inline bool can_zap_with_rlock(struct vm_area_struct *vma)
++{
++	if ((vma->vm_file &&
++	     vma_has_uprobes(vma, vma->vm_start, vma->vm_end)) ||
++	     (vma->vm_flags | (VM_HUGETLB | VM_PFNMAP)))
++		return false;
++
++	return true;
++}
++
+ /*
+  * Zap pages with read mmap_sem held
+  *
+@@ -2808,6 +2818,17 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
+ 			goto out;
+ 	}
+ 
++	/*
++	 * Unmapping vmas, which have VM_HUGETLB | VM_PFNMAP flag set or
++	 * have uprobes set, need get done with write mmap_sem held since
++	 * they may update vm_flags. Deal with such mappings with regular
++	 * do_munmap() call.
++	 */
++	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
++		if (!can_zap_with_rlock(vma))
++			goto regular_path;
++	}
++
+ 	/* Handle mlocked vmas */
+ 	if (mm->locked_vm) {
+ 		vma = start_vma;
+@@ -2828,6 +2849,9 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
+ 
+ 	return 0;
+ 
++regular_path:
++	ret = do_munmap(mm, start, len, uf);
++
+ out:
+ 	up_write(&mm->mmap_sem);
+ 	return ret;
 -- 
 1.8.3.1
 
