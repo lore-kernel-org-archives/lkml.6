@@ -2,135 +2,201 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FEFC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D89EC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6DE21E17
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:48:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgTMguWF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6DE21E17
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 339B121E20
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 13:49:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339B121E20
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732186AbeHIQM5 (ORCPT
+        id S1732249AbeHIQOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 12:12:57 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:33332 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730090AbeHIQM5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 12:12:57 -0400
-Received: by mail-wm0-f46.google.com with SMTP id r24-v6so2403959wmh.0;
-        Thu, 09 Aug 2018 06:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zxg7bg+vo19iUMu7Ix6Z3a2GLgAnlB+VB7+utD84aZY=;
-        b=hgTMguWFXngD18HGGAWyQSS4an18UulvNoVPWTsdMkxie3EEGk0I8kXIDZ+HkBAMWY
-         XwRBDOZE9C2WduoQ3sZjFemDKkrn4spT9SxlXHGR3y9cVdanab7LQ7snRRrhz6u+76so
-         HUyeBZP1D/kdjMvkB0GyF7dNv0hp8a7AG9EzTtToK+CkO9X01GMNEdG8A9uM+4XhrBmU
-         liKCFc+ktgoxyD/woTpb3oPNd7SgILqcaE3LgTjrKZBSoo4P8UsVZPigHVu4JJvh/+95
-         HxjtY/eR9TbRtlTjzZ5KuXvxp8QjeQxbJaw8tuqXCj3rD+E7p4WwD0QHkcCWtLMZYrfN
-         OmUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zxg7bg+vo19iUMu7Ix6Z3a2GLgAnlB+VB7+utD84aZY=;
-        b=FfPDrgHBS7sv5acOvpS1pIZ7VPD6QgHIPhJ5X8ASJucY8IB2TGqnmvVZst/UOflHo7
-         xWfaUvde/LaolLWrZ17wBBbM9jMjB4b1jUbcLcm0fvilVuHt4tGZPhnWsPR6TkEv/Jp0
-         7KhE8zDddkXqmoNv/jcNwIdKsgP6hZGH3LhCCoUuHUjsGL3Wmsg7NWEn8IJ2Ra/AwseL
-         rWYTEzKiTmgLexv3nsumVDam7x19SLCq1Xgvz5n7jrHBmY4YPbGCEkLhCHmfNV64fh62
-         YyNzCe9vOPeyry+5IzK3euV8vnosQD4KTbewxcDtfaUGNWy0rdXF1wg5Ido4u8qDPesp
-         zyxw==
-X-Gm-Message-State: AOUpUlEpOneQeQdVGEriXacAVd9Y5CKr4CMZQ08oKRCpQlXCsO+/1ofY
-        bAssnWdRMiCcoLvG8yD89Xc=
-X-Google-Smtp-Source: AA+uWPzynSvY2O1BRpFHd03P9GVdtR3PE02cXOGONt6JxIijmlOPxgpVyJt5ycxxLtO12utWa8Dgqg==
-X-Received: by 2002:a1c:e409:: with SMTP id b9-v6mr1626995wmh.34.1533822476589;
-        Thu, 09 Aug 2018 06:47:56 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id q188-v6sm14412242wmd.36.2018.08.09.06.47.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 06:47:55 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 15:47:54 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] mmc: tegra: Implement HS400 enhanced strobe
-Message-ID: <20180809134754.GE21639@ulmo>
-References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
- <1533650404-18125-4-git-send-email-avienamo@nvidia.com>
- <20180809114345.GL21639@ulmo>
- <20180809152254.03b97af0@dhcp-10-21-25-168>
+        Thu, 9 Aug 2018 12:14:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730090AbeHIQOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 12:14:33 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2741221837;
+        Thu,  9 Aug 2018 13:49:32 +0000 (UTC)
+Date:   Thu, 9 Aug 2018 09:49:30 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tfiga@chromium.org, laurent.pinchart@ideasonboard.com,
+        stern@rowland.harvard.edu, ezequiel@collabora.com,
+        hdegoede@redhat.com, hverkuil@xs4all.nl, mchehab@kernel.org,
+        mingo@redhat.com, isely@pobox.com, bhumirks@gmail.com,
+        colin.king@canonical.com, kieran.bingham@ideasonboard.com,
+        keiichiw@chromium.org
+Subject: Re: [PATCH v3 1/2] media: usb: pwc: Introduce TRACE_EVENTs for
+ pwc_isoc_handler()
+Message-ID: <20180809094930.707da2e0@gandalf.local.home>
+In-Reply-To: <20180809093307.6001-2-matwey@sai.msu.ru>
+References: <20180809093307.6001-1-matwey@sai.msu.ru>
+        <20180809093307.6001-2-matwey@sai.msu.ru>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SqEuGDw53xMPnx3c"
-Content-Disposition: inline
-In-Reply-To: <20180809152254.03b97af0@dhcp-10-21-25-168>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu,  9 Aug 2018 12:33:06 +0300
+"Matwey V. Kornilov" <matwey@sai.msu.ru> wrote:
 
---SqEuGDw53xMPnx3c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> There were reports that PWC-based webcams don't work at some
+> embedded ARM platforms. [1] Isochronous transfer handler seems to
+> work too long leading to the issues in MUSB USB host subsystem.
+> Also note, that urb->giveback() handlers are still called with
+> disabled interrupts. In order to be able to measure performance of
+> PWC driver, traces are introduced in URB handler section.
+> 
+> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+> 
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> ---
+>  drivers/media/usb/pwc/pwc-if.c |  7 +++++
+>  include/trace/events/pwc.h     | 64 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 71 insertions(+)
+>  create mode 100644 include/trace/events/pwc.h
+> 
+> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+> index 54b036d39c5b..72d2897a4b9f 100644
+> --- a/drivers/media/usb/pwc/pwc-if.c
+> +++ b/drivers/media/usb/pwc/pwc-if.c
+> @@ -76,6 +76,9 @@
+>  #include "pwc-dec23.h"
+>  #include "pwc-dec1.h"
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/pwc.h>
+> +
+>  /* Function prototypes and driver templates */
+>  
+>  /* hotplug device table support */
+> @@ -260,6 +263,8 @@ static void pwc_isoc_handler(struct urb *urb)
+>  	int i, fst, flen;
+>  	unsigned char *iso_buf = NULL;
+>  
+> +	trace_pwc_handler_enter(urb, pdev);
+> +
+>  	if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
+>  	    urb->status == -ESHUTDOWN) {
+>  		PWC_DEBUG_OPEN("URB (%p) unlinked %ssynchronously.\n",
+> @@ -348,6 +353,8 @@ static void pwc_isoc_handler(struct urb *urb)
+>  	}
+>  
+>  handler_end:
+> +	trace_pwc_handler_exit(urb, pdev);
+> +
+>  	i = usb_submit_urb(urb, GFP_ATOMIC);
+>  	if (i != 0)
+>  		PWC_ERROR("Error (%d) re-submitting urb in pwc_isoc_handler.\n", i);
+> diff --git a/include/trace/events/pwc.h b/include/trace/events/pwc.h
+> new file mode 100644
+> index 000000000000..71ba98770537
+> --- /dev/null
+> +++ b/include/trace/events/pwc.h
+> @@ -0,0 +1,64 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#if !defined(_TRACE_PWC_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_PWC_H
+> +
+> +#include <linux/usb.h>
+> +#include <linux/tracepoint.h>
+> +
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM pwc
+> +
+> +TRACE_EVENT(pwc_handler_enter,
+> +	TP_PROTO(struct urb *urb, struct pwc_device *pdev),
+> +	TP_ARGS(urb, pdev),
+> +	TP_STRUCT__entry(
+> +		__field(struct urb*, urb)
+> +		__field(int, urb__status)
+> +		__field(u32, urb__actual_length)
+> +		__field(const char*, name)
 
-On Thu, Aug 09, 2018 at 03:22:54PM +0300, Aapo Vienamo wrote:
-> On Thu, 9 Aug 2018 13:43:45 +0200
-> Thierry Reding <thierry.reding@gmail.com> wrote:
->=20
-> > On Tue, Aug 07, 2018 at 04:59:59PM +0300, Aapo Vienamo wrote:
-> > > Implement HS400 enhanced strobe. =20
-> >=20
-> > Can you provide a little more information about what the impact is of
-> > this? Does this increase throughput? How much?
->=20
-> The eMMC enhanced strobe is a mechanism that can be used instead of the
-> HS400 tuning procedure. Note that the delay line calibration implemented
-> later on in this series is Tegra specific and has to be performed
-> regardless of which type of HS400 tuning mechanism is used.
+name needs to be a __string. Never save pointers that you will
+dereference in the print_fmt, as you never know if those pointers will
+exist later. Not to mention, userspace tools like trace-cmd and perf
+have no idea how to display them.
 
-Sounds like a variation of that would be good material for the commit
-message.
+You want:
 
-Thierry
+		__string( name, pdev->v4l2_dev.name ),
 
---SqEuGDw53xMPnx3c
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> +		__field(struct pwc_frame_buf*, fbuf)
+> +		__field(int, fbuf__filled)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->urb = urb;
+> +		__entry->urb__status = urb->status;
+> +		__entry->urb__actual_length = urb->actual_length;
+> +		__entry->name = pdev->v4l2_dev.name;
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsRgoACgkQ3SOs138+
-s6Ek9g/8CIOFqwrTD09B0L2yVYz5rSYuD+fJvJACIETWJSNe4V/jUUsvRnGbCkhm
-92ZLz6diFCrz5/uX/cJAdnbVcSyOjqidVkpJzPlZLeyx0V2q8Gobee0+AuSMHVub
-5WZOms5ZPZhx38G+x7TTwA8p8gtVtoQtAHnDTZU0EhxXyD75YGrUk22bYvXRKSbC
-UumCFuJDmghSAfbahN6bRO/6zbCU1iWCzah4GktlUC88jmtdpLBtue93rGNYthGp
-Dl81TPu43QvOw7/GSGGNWY4cDdjoVon1RUH7dwgA8OY3OnLv33oOLNY9nr5E38PN
-xvJiwMko3YWyIW3/sFmfG91Q0rKQj7b5rCe8kgVdD1wVu8ISMt/uxTos3cwu/j6y
-1c58NWO19sVDPil0TovPqiSb5GBfRZAVSVAhAHYx2aqmEiKvx2/plkvO7fy/J/B3
-OVyHepxiBUURyxNIjPUvUXlhDQ2/0FnoENyZ/SWW/bvWmXzScIq4DODwuF2kOvEO
-lLTNPwVkm9oAhmgY4o396ZhomYI9xMUXb63ozdPdVzKXl3EcinQL0W9B1ysF6ixs
-HvpZN/kp4tEx7/zQ153vPW+4/B4SfwnqvJX6fHP8KcdZAtDVD2/3FTW6aDdAi+vE
-2DL+KGaenRGQ6WAmhFS9CQomXMvP2ELO/dF9ph/H+5sof76udWo=
-=Q54M
------END PGP SIGNATURE-----
+And here you assign it with:
 
---SqEuGDw53xMPnx3c--
+		__assign_str(name, pdev->v4l2_dev.name);
+
+> +		__entry->fbuf = pdev->fill_buf;
+> +		__entry->fbuf__filled = (pdev->fill_buf ? pdev->fill_buf->filled : 0);
+> +	),
+> +	TP_printk("dev=%s (fbuf=%p filled=%d) urb=%p (status=%d actual_length=%u)",
+> +		__entry->name,
+
+And display it with:
+
+		__get_str(name),
+
+> +		__entry->fbuf,
+> +		__entry->fbuf__filled,
+> +		__entry->urb,
+> +		__entry->urb__status,
+> +		__entry->urb__actual_length)
+> +);
+> +
+> +TRACE_EVENT(pwc_handler_exit,
+> +	TP_PROTO(struct urb *urb, struct pwc_device* pdev),
+> +	TP_ARGS(urb, pdev),
+> +	TP_STRUCT__entry(
+> +		__field(struct urb*, urb)
+> +		__field(const char*, name)
+> +		__field(struct pwc_frame_buf*, fbuf)
+> +		__field(int, fbuf__filled)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->urb = urb;
+> +		__entry->name = pdev->v4l2_dev.name;
+> +		__entry->fbuf = pdev->fill_buf;
+> +		__entry->fbuf__filled = pdev->fill_buf->filled;
+> +	),
+> +	TP_printk(" dev=%s (fbuf=%p filled=%d) urb=%p",
+> +		__entry->name,
+
+Same thing here.
+
+-- Steve
+
+> +		__entry->fbuf,
+> +		__entry->fbuf__filled,
+> +		__entry->urb)
+> +);
+> +
+> +#endif /* _TRACE_PWC_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
+
