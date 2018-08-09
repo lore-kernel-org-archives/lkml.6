@@ -5,56 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E541C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C27C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F289C21DEC
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F289C21DEC
+	by mail.kernel.org (Postfix) with ESMTP id 6491E21DEC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:14:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6491E21DEC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeHIXjF (ORCPT
+        id S1727345AbeHIXlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 19:39:05 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37038 "EHLO
+        Thu, 9 Aug 2018 19:41:01 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37094 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727156AbeHIXjF (ORCPT
+        with ESMTP id S1727156AbeHIXlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 19:39:05 -0400
+        Thu, 9 Aug 2018 19:41:00 -0400
 Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2C0D71426BF1C;
-        Thu,  9 Aug 2018 14:12:27 -0700 (PDT)
-Date:   Thu, 09 Aug 2018 14:12:26 -0700 (PDT)
-Message-Id: <20180809.141226.672835989494811513.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id F15741425C4D7;
+        Thu,  9 Aug 2018 14:14:21 -0700 (PDT)
+Date:   Thu, 09 Aug 2018 14:14:21 -0700 (PDT)
+Message-Id: <20180809.141421.2253500435010810503.davem@davemloft.net>
 To:     yuehaibing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        keescook@chromium.org, edumazet@google.com,
-        linux-decnet-user@lists.sourceforge.net
-Subject: Re: [PATCH net-next] decnet: fix using plain integer as NULL
- warning
+Cc:     jiri@mellanox.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, idosch@mellanox.com
+Subject: Re: [PATCH net-next] mlxsw: spectrum_flower: use PTR_ERR_OR_ZERO()
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180808115932.12944-1-yuehaibing@huawei.com>
-References: <20180808115932.12944-1-yuehaibing@huawei.com>
+In-Reply-To: <20180808122908.13664-1-yuehaibing@huawei.com>
+References: <20180808122908.13664-1-yuehaibing@huawei.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 09 Aug 2018 14:12:27 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 09 Aug 2018 14:14:22 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 8 Aug 2018 19:59:32 +0800
+Date: Wed, 8 Aug 2018 20:29:08 +0800
 
-> Fixes the following sparse warning:
-> net/decnet/dn_route.c:407:30: warning: Using plain integer as NULL pointer
-> net/decnet/dn_route.c:1923:22: warning: Using plain integer as NULL pointer
+> Fix ptr_ret.cocci warnings:
+>  drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c:543:1-3: WARNING: PTR_ERR_OR_ZERO can be used
 > 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
