@@ -2,189 +2,154 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BABDC4646D
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBB2C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A95821C2B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:08:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A95821C2B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 313F421BC7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:08:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3GXFrF9L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313F421BC7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbeHIEaZ (ORCPT
+        id S1727977AbeHIEaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:30:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60652 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725757AbeHIEaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:30:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05A8DAB99;
-        Thu,  9 Aug 2018 02:08:01 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Thu, 09 Aug 2018 12:04:41 +1000
-Subject: [PATCH 5/5] fs/locks: create a tree of dependent requests.
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
+        Thu, 9 Aug 2018 00:30:52 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37240 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725757AbeHIEav (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 00:30:51 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w79257tT032869;
+        Thu, 9 Aug 2018 02:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=0AQIJHlhYnPQF/Ro1u5tZroeNx25UA4ETL0XUSNbgrU=;
+ b=3GXFrF9L2N09f32V9uEvK4x1i6SIzaWoc17u+JCgW1AEP3A8enEcWDE1ims0qg0zsKN2
+ 9e2cDkQMuE7q0zRPEIxkSBk3mVb7AZk41tG3um7HJAy+857WnMsACbHk0hTVRjjtGMiT
+ ciZs1PssR302YvPhkaz3VAE8X8F1omjn4QsYJHzsEHnabLNLt/gMHoDZ8e2KECZhdhfD
+ h13nOLgpACDk0+RY5VeIq9HCsGP03F6h8NR8QFQR/i9RcAyC2HDLscrzveJajjonHYR8
+ tqilkSDtmhWCXHYlvRX/Vzo4a2IHqIui/MCBZzzokMYwNGvmx5U+AUQnZM6zUEZRJXa/ gg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kn4sq02ta-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Aug 2018 02:08:25 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7928PaV003225
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Aug 2018 02:08:25 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7928OWm003842;
+        Thu, 9 Aug 2018 02:08:24 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Aug 2018 19:08:24 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     tom.leiming@gmail.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-ID: <153378028121.1220.4418653283078446336.stgit@noble>
-In-Reply-To: <153378012255.1220.6754153662007899557.stgit@noble>
-References: <153378012255.1220.6754153662007899557.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V3] blk-mq: count the hctx as active before allocate tag
+Date:   Thu,  9 Aug 2018 10:09:58 +0800
+Message-Id: <1533780598-23972-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8979 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=821
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808090021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we find an existing lock which conflicts with a request,
-and the request wants to wait, we currently add the request
-to a list.  When the lock is removed, the whole list is woken.
-This can cause the thundering-herd problem.
-To reduce the problem, we make use of the (new) fact that
-a pending request can itself have a list of blocked requests.
-When we find a conflict, we look through the existing blocked requests.
-If any one of them blocks the new request, the new request is attached
-below that request.
-This way, when the lock is released, only a set of non-conflicting
-locks will be woken.  The rest of the herd can stay asleep.
+Currently, we count the hctx as active after allocate driver tag
+successfully. If a previously inactive hctx try to get tag first
+time, it may fails and need to wait. However, due to the stale tag
+->active_queues, the other shared-tags users are still able to
+occupy all driver tags while there is someone waiting for tag.
+Consequently, even if the previously inactive hctx is waked up, it
+still may not be able to get a tag and could be starved.
 
-Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
-Signed-off-by: NeilBrown <neilb@suse.com>
+To fix it, we count the hctx as active before try to allocate driver
+tag, then when it is waiting the tag, the other shared-tag users
+will reserve budget for it.
+
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- fs/locks.c |   69 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 63 insertions(+), 6 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index fc64016d01ee..17843feb6f5b 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -738,6 +738,39 @@ static void locks_delete_block(struct file_lock *waiter)
- 	spin_unlock(&blocked_lock_lock);
- }
+V3:
+  add more detailed comment
+
+V2:
+  only invoke blk_mq_tag_busy w/o io scheduler in blk_mq_get_request
+
+ block/blk-mq-tag.c | 3 +++
+ block/blk-mq.c     | 8 ++++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+index 09b2ee6..a8ebcbd 100644
+--- a/block/blk-mq-tag.c
++++ b/block/blk-mq-tag.c
+@@ -23,6 +23,9 @@ bool blk_mq_has_free_tags(struct blk_mq_tags *tags)
  
-+static void wake_non_conflicts(struct file_lock *waiter, struct file_lock *blocker,
-+			       enum conflict conflict(struct file_lock *,
-+						      struct file_lock *))
-+{
-+	struct file_lock *parent = waiter;
-+	struct file_lock *fl;
-+	struct file_lock  *t;
-+
-+	fl = list_entry(&parent->fl_blocked, struct file_lock, fl_block);
-+restart:
-+	list_for_each_entry_safe_continue(fl, t, &parent->fl_blocked, fl_block) {
-+		switch (conflict(fl, blocker)) {
-+		default:
-+		case FL_NO_CONFLICT:
-+			__locks_wake_one(fl);
-+			break;
-+		case FL_CONFLICT:
-+			/* Need to check children */
-+			parent = fl;
-+			fl = list_entry(&parent->fl_blocked, struct file_lock, fl_block);
-+			goto restart;
-+		case FL_TRANSITIVE_CONFLICT:
-+			/* all children must also conflict, no need to check */
-+			continue;
-+		}
-+	}
-+	if (parent != waiter) {
-+		parent = parent->fl_blocker;
-+		fl = parent;
-+		goto restart;
-+	}
-+}
-+
- /* Insert waiter into blocker's block list.
-  * We use a circular list so that processes can be easily woken up in
-  * the order they blocked. The documentation doesn't require this but
-@@ -747,11 +780,32 @@ static void locks_delete_block(struct file_lock *waiter)
-  * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
-  * that the flc_lock is also held on insertions we can avoid taking the
-  * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
-+ *
-+ * Rather than just adding to the list, we check for conflicts with any existing
-+ * waiter, and add to that waiter instead.
-+ * Thus wakeups don't happen until needed.
+ /*
+  * If a previously inactive queue goes active, bump the active user count.
++ * We need to do this before try to allocate driver tag, then even if fail
++ * to get tag when first time, the other shared-tag users could reserve
++ * budget for it.
   */
- static void __locks_insert_block(struct file_lock *blocker,
--					struct file_lock *waiter)
-+				 struct file_lock *waiter,
-+				 enum conflict conflict(struct file_lock *,
-+							struct file_lock *))
+ bool __blk_mq_tag_busy(struct blk_mq_hw_ctx *hctx)
  {
-+	struct file_lock *fl;
- 	BUG_ON(!list_empty(&waiter->fl_block));
-+
-+	/* Any request in waiter->fl_blocked is know to conflict with
-+	 * waiter, but it might not conflict with blocker.
-+	 * If it doesn't, it needs to be woken now so it can find
-+	 * somewhere else to wait, or possible it can get granted.
-+	 */
-+	if (conflict(waiter, blocker) != FL_TRANSITIVE_CONFLICT)
-+		wake_non_conflicts(waiter, blocker, conflict);
-+new_blocker:
-+	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
-+		if (conflict(fl, waiter)) {
-+			blocker =  fl;
-+			goto new_blocker;
-+		}
- 	waiter->fl_blocker = blocker;
- 	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
- 	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-@@ -760,10 +814,12 @@ static void __locks_insert_block(struct file_lock *blocker,
- 
- /* Must be called with flc_lock held. */
- static void locks_insert_block(struct file_lock *blocker,
--					struct file_lock *waiter)
-+			       struct file_lock *waiter,
-+			       enum conflict conflict(struct file_lock *,
-+						      struct file_lock *))
- {
- 	spin_lock(&blocked_lock_lock);
--	__locks_insert_block(blocker, waiter);
-+	__locks_insert_block(blocker, waiter, conflict);
- 	spin_unlock(&blocked_lock_lock);
- }
- 
-@@ -1033,7 +1089,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
- 		if (!(request->fl_flags & FL_SLEEP))
- 			goto out;
- 		error = FILE_LOCK_DEFERRED;
--		locks_insert_block(fl, request);
-+		locks_insert_block(fl, request, flock_locks_conflict);
- 		goto out;
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index ae44e85..75ac3fbd 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -285,7 +285,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
+ 		rq->tag = -1;
+ 		rq->internal_tag = tag;
+ 	} else {
+-		if (blk_mq_tag_busy(data->hctx)) {
++		if (data->hctx->flags & BLK_MQ_F_TAG_SHARED) {
+ 			rq_flags = RQF_MQ_INFLIGHT;
+ 			atomic_inc(&data->hctx->nr_active);
+ 		}
+@@ -367,6 +367,8 @@ static struct request *blk_mq_get_request(struct request_queue *q,
+ 		if (!op_is_flush(op) && e->type->ops.mq.limit_depth &&
+ 		    !(data->flags & BLK_MQ_REQ_RESERVED))
+ 			e->type->ops.mq.limit_depth(op, data);
++	} else {
++		blk_mq_tag_busy(data->hctx);
  	}
- 	if (request->fl_flags & FL_ACCESS)
-@@ -1107,7 +1163,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
- 			spin_lock(&blocked_lock_lock);
- 			if (likely(!posix_locks_deadlock(request, fl))) {
- 				error = FILE_LOCK_DEFERRED;
--				__locks_insert_block(fl, request);
-+				__locks_insert_block(fl, request,
-+						     posix_locks_conflict);
- 			}
- 			spin_unlock(&blocked_lock_lock);
- 			goto out;
-@@ -1581,7 +1638,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
- 		break_time -= jiffies;
- 	if (break_time == 0)
- 		break_time++;
--	locks_insert_block(fl, new_fl);
-+	locks_insert_block(fl, new_fl, leases_conflict);
- 	trace_break_lease_block(inode, new_fl);
- 	spin_unlock(&ctx->flc_lock);
- 	percpu_up_read_preempt_enable(&file_rwsem);
-
+ 
+ 	tag = blk_mq_get_tag(data);
+@@ -972,6 +974,7 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+ 		.hctx = blk_mq_map_queue(rq->q, rq->mq_ctx->cpu),
+ 		.flags = wait ? 0 : BLK_MQ_REQ_NOWAIT,
+ 	};
++	bool shared;
+ 
+ 	might_sleep_if(wait);
+ 
+@@ -981,9 +984,10 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+ 	if (blk_mq_tag_is_reserved(data.hctx->sched_tags, rq->internal_tag))
+ 		data.flags |= BLK_MQ_REQ_RESERVED;
+ 
++	shared = blk_mq_tag_busy(data.hctx);
+ 	rq->tag = blk_mq_get_tag(&data);
+ 	if (rq->tag >= 0) {
+-		if (blk_mq_tag_busy(data.hctx)) {
++		if (shared) {
+ 			rq->rq_flags |= RQF_MQ_INFLIGHT;
+ 			atomic_inc(&data.hctx->nr_active);
+ 		}
+-- 
+2.7.4
 
