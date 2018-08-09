@@ -2,494 +2,117 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C358C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5927C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD134208A5
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:37:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD134208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A448208A5
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:37:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A448208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732193AbeHIPCX (ORCPT
+        id S1732247AbeHIPCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 11:02:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49682 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730506AbeHIPCX (ORCPT
+        Thu, 9 Aug 2018 11:02:24 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15564 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730506AbeHIPCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 11:02:23 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB325D0E;
-        Thu,  9 Aug 2018 12:37:38 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 14:37:35 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.9.119
-Message-ID: <20180809123735.GB8259@kroah.com>
-References: <20180809123730.GA8259@kroah.com>
+        Thu, 9 Aug 2018 11:02:24 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b6c35880000>; Thu, 09 Aug 2018 05:37:28 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 09 Aug 2018 05:37:41 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 09 Aug 2018 05:37:41 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Aug
+ 2018 12:37:38 +0000
+Date:   Thu, 9 Aug 2018 15:37:32 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Peter Geis <pgwipeout@gmail.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/8] arm64: dts: tegra186: Add SDMMC4 DQS trim value
+Message-ID: <20180809153732.4c91e425@dhcp-10-21-25-168>
+In-Reply-To: <03fc6726-25ff-20de-d271-ebae19b753c7@gmail.com>
+References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
+        <1533650404-18125-6-git-send-email-avienamo@nvidia.com>
+        <20180809114922.GN21639@ulmo>
+        <20180809150226.64657f56@dhcp-10-21-25-168>
+        <03fc6726-25ff-20de-d271-ebae19b753c7@gmail.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809123730.GA8259@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 0940f11fa071..0723bbe1d4a7 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 9
--SUBLEVEL = 118
-+SUBLEVEL = 119
- EXTRAVERSION =
- NAME = Roaring Lionus
- 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index 47fc1f1acff7..4d297d554e52 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -376,6 +376,7 @@ static int i2c_imx_dma_xfer(struct imx_i2c_struct *i2c_imx,
- 		goto err_desc;
- 	}
- 
-+	reinit_completion(&dma->cmd_complete);
- 	txdesc->callback = i2c_imx_dma_callback;
- 	txdesc->callback_param = i2c_imx;
- 	if (dma_submit_error(dmaengine_submit(txdesc))) {
-@@ -619,7 +620,6 @@ static int i2c_imx_dma_write(struct imx_i2c_struct *i2c_imx,
- 	 * The first byte must be transmitted by the CPU.
- 	 */
- 	imx_i2c_write_reg(msgs->addr << 1, i2c_imx, IMX_I2C_I2DR);
--	reinit_completion(&i2c_imx->dma->cmd_complete);
- 	time_left = wait_for_completion_timeout(
- 				&i2c_imx->dma->cmd_complete,
- 				msecs_to_jiffies(DMA_TIMEOUT));
-@@ -678,7 +678,6 @@ static int i2c_imx_dma_read(struct imx_i2c_struct *i2c_imx,
- 	if (result)
- 		return result;
- 
--	reinit_completion(&i2c_imx->dma->cmd_complete);
- 	time_left = wait_for_completion_timeout(
- 				&i2c_imx->dma->cmd_complete,
- 				msecs_to_jiffies(DMA_TIMEOUT));
-diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
-index 613074e963bb..e8e0fa58cb71 100644
---- a/drivers/infiniband/hw/hfi1/rc.c
-+++ b/drivers/infiniband/hw/hfi1/rc.c
-@@ -397,7 +397,7 @@ int hfi1_make_rc_req(struct rvt_qp *qp, struct hfi1_pkt_state *ps)
- 
- 	lockdep_assert_held(&qp->s_lock);
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
- 
- 	ohdr = &ps->s_txreq->phdr.hdr.u.oth;
-diff --git a/drivers/infiniband/hw/hfi1/uc.c b/drivers/infiniband/hw/hfi1/uc.c
-index 5e6d1bac4914..de21128a0181 100644
---- a/drivers/infiniband/hw/hfi1/uc.c
-+++ b/drivers/infiniband/hw/hfi1/uc.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2015, 2016 Intel Corporation.
-+ * Copyright(c) 2015 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -72,7 +72,7 @@ int hfi1_make_uc_req(struct rvt_qp *qp, struct hfi1_pkt_state *ps)
- 	int middle = 0;
- 
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
- 
- 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_SEND_OK)) {
-diff --git a/drivers/infiniband/hw/hfi1/ud.c b/drivers/infiniband/hw/hfi1/ud.c
-index 97ae24b6314c..1a7ce1d740ce 100644
---- a/drivers/infiniband/hw/hfi1/ud.c
-+++ b/drivers/infiniband/hw/hfi1/ud.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2015, 2016 Intel Corporation.
-+ * Copyright(c) 2015 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -285,7 +285,7 @@ int hfi1_make_ud_req(struct rvt_qp *qp, struct hfi1_pkt_state *ps)
- 	u8 sc5;
- 
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
- 
- 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_NEXT_SEND_OK)) {
-diff --git a/drivers/infiniband/hw/hfi1/verbs_txreq.c b/drivers/infiniband/hw/hfi1/verbs_txreq.c
-index 094ab829ec42..d8a5bad49680 100644
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.c
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2016 Intel Corporation.
-+ * Copyright(c) 2016 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -94,7 +94,7 @@ struct verbs_txreq *__get_txreq(struct hfi1_ibdev *dev,
- 				struct rvt_qp *qp)
- 	__must_hold(&qp->s_lock)
- {
--	struct verbs_txreq *tx = ERR_PTR(-EBUSY);
-+	struct verbs_txreq *tx = NULL;
- 
- 	write_seqlock(&dev->iowait_lock);
- 	if (ib_rvt_state_ops[qp->state] & RVT_PROCESS_RECV_OK) {
-diff --git a/drivers/infiniband/hw/hfi1/verbs_txreq.h b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-index 5660897593ba..31ded57592ee 100644
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.h
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2016 Intel Corporation.
-+ * Copyright(c) 2016 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -82,7 +82,7 @@ static inline struct verbs_txreq *get_txreq(struct hfi1_ibdev *dev,
- 	if (unlikely(!tx)) {
- 		/* call slow path to get the lock */
- 		tx = __get_txreq(dev, qp);
--		if (IS_ERR(tx))
-+		if (!tx)
- 			return tx;
- 	}
- 	tx->qp = qp;
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index d966d47c9e80..d38d379bb5c8 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -567,7 +567,7 @@ void acpi_pci_add_bus(struct pci_bus *bus)
- 	union acpi_object *obj;
- 	struct pci_host_bridge *bridge;
- 
--	if (acpi_pci_disabled || !bus->bridge)
-+	if (acpi_pci_disabled || !bus->bridge || !ACPI_HANDLE(bus->bridge))
- 		return;
- 
- 	acpi_pci_slot_enumerate(bus);
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 34bbcfcae67c..5f66b6da65f2 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -329,11 +329,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport, uint32_t flags, uint32_t lun,
- 
- 	wait_for_completion(&tm_iocb->u.tmf.comp);
- 
--	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
--	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
-+	rval = tm_iocb->u.tmf.data;
- 
--	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
--		ql_dbg(ql_dbg_taskm, vha, 0x8030,
-+	if (rval != QLA_SUCCESS) {
-+		ql_log(ql_log_warn, vha, 0x8030,
- 		    "TM IOCB failed (%x).\n", rval);
- 	}
- 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index baccd116f864..c813c9b75a10 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -5218,8 +5218,9 @@ qla2x00_do_dpc(void *data)
- 			}
- 		}
- 
--		if (test_and_clear_bit(ISP_ABORT_NEEDED,
--						&base_vha->dpc_flags)) {
-+		if (test_and_clear_bit
-+		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
-+		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
- 
- 			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
- 			    "ISP abort scheduled.\n");
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 03ac3ab4b3b4..2b96ca68dc10 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4298,6 +4298,7 @@ int try_release_extent_mapping(struct extent_map_tree *map,
- 	struct extent_map *em;
- 	u64 start = page_offset(page);
- 	u64 end = start + PAGE_SIZE - 1;
-+	struct btrfs_inode *btrfs_inode = BTRFS_I(page->mapping->host);
- 
- 	if (gfpflags_allow_blocking(mask) &&
- 	    page->mapping->host->i_size > SZ_16M) {
-@@ -4320,6 +4321,8 @@ int try_release_extent_mapping(struct extent_map_tree *map,
- 					    extent_map_end(em) - 1,
- 					    EXTENT_LOCKED | EXTENT_WRITEBACK,
- 					    0, NULL)) {
-+				set_bit(BTRFS_INODE_NEEDS_FULL_SYNC,
-+					&btrfs_inode->runtime_flags);
- 				remove_extent_mapping(map, em);
- 				/* once for the rb tree */
- 				free_extent_map(em);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 41ef83471ea5..6cbb0f7ead2f 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2231,7 +2231,7 @@ static int ext4_check_descriptors(struct super_block *sb,
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
- 	ext4_fsblk_t last_block;
--	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
-+	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
- 	ext4_fsblk_t block_bitmap;
- 	ext4_fsblk_t inode_bitmap;
- 	ext4_fsblk_t inode_table;
-@@ -3941,13 +3941,13 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 			goto failed_mount2;
- 		}
- 	}
-+	sbi->s_gdb_count = db_count;
- 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
- 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
- 		ret = -EFSCORRUPTED;
- 		goto failed_mount2;
- 	}
- 
--	sbi->s_gdb_count = db_count;
- 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
- 	spin_lock_init(&sbi->s_next_gen_lock);
- 
-diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
-index c60f3d32ee91..a6797986b625 100644
---- a/fs/jfs/xattr.c
-+++ b/fs/jfs/xattr.c
-@@ -491,15 +491,17 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
- 	if (size > PSIZE) {
- 		/*
- 		 * To keep the rest of the code simple.  Allocate a
--		 * contiguous buffer to work with
-+		 * contiguous buffer to work with. Make the buffer large
-+		 * enough to make use of the whole extent.
- 		 */
--		ea_buf->xattr = kmalloc(size, GFP_KERNEL);
-+		ea_buf->max_size = (size + sb->s_blocksize - 1) &
-+		    ~(sb->s_blocksize - 1);
-+
-+		ea_buf->xattr = kmalloc(ea_buf->max_size, GFP_KERNEL);
- 		if (ea_buf->xattr == NULL)
- 			return -ENOMEM;
- 
- 		ea_buf->flag = EA_MALLOC;
--		ea_buf->max_size = (size + sb->s_blocksize - 1) &
--		    ~(sb->s_blocksize - 1);
- 
- 		if (ea_size == 0)
- 			return 0;
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index 4acc552e9279..19d0778ec382 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -162,6 +162,7 @@ void ring_buffer_record_enable(struct ring_buffer *buffer);
- void ring_buffer_record_off(struct ring_buffer *buffer);
- void ring_buffer_record_on(struct ring_buffer *buffer);
- int ring_buffer_record_is_on(struct ring_buffer *buffer);
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer);
- void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu);
- void ring_buffer_record_enable_cpu(struct ring_buffer *buffer, int cpu);
- 
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 2873baf5372a..5e6436741f96 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -59,12 +59,7 @@ extern long do_no_restart_syscall(struct restart_block *parm);
- 
- #ifdef __KERNEL__
- 
--#ifdef CONFIG_DEBUG_STACK_USAGE
--# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK | \
--				 __GFP_ZERO)
--#else
--# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK)
--#endif
-+#define THREADINFO_GFP	(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK | __GFP_ZERO)
- 
- /*
-  * flag set/clear/test wrappers
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 70e10cb49be0..2c98b987808d 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -184,6 +184,9 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
- 			continue;
- 		this_cpu_write(cached_stacks[i], NULL);
- 
-+		/* Clear stale pointers from reused stack. */
-+		memset(s->addr, 0, THREAD_SIZE);
-+
- 		tsk->stack_vm_area = s;
- 		local_irq_enable();
- 		return s->addr;
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 5927da596d42..e121645bb8a1 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1026,6 +1026,13 @@ static int irq_setup_forced_threading(struct irqaction *new)
- 	if (new->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT))
- 		return 0;
- 
-+	/*
-+	 * No further action required for interrupts which are requested as
-+	 * threaded interrupts already
-+	 */
-+	if (new->handler == irq_default_primary_handler)
-+		return 0;
-+
- 	new->flags |= IRQF_ONESHOT;
- 
- 	/*
-@@ -1033,7 +1040,7 @@ static int irq_setup_forced_threading(struct irqaction *new)
- 	 * thread handler. We force thread them as well by creating a
- 	 * secondary action.
- 	 */
--	if (new->handler != irq_default_primary_handler && new->thread_fn) {
-+	if (new->handler && new->thread_fn) {
- 		/* Allocate the secondary action */
- 		new->secondary = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
- 		if (!new->secondary)
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index dae1a45be504..b6bebe28a3e0 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -665,7 +665,7 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
- 
- static inline bool local_timer_softirq_pending(void)
- {
--	return local_softirq_pending() & TIMER_SOFTIRQ;
-+	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
- }
- 
- static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 3e1d11f4fe44..dc29b600d2cb 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -3136,6 +3136,22 @@ int ring_buffer_record_is_on(struct ring_buffer *buffer)
- 	return !atomic_read(&buffer->record_disabled);
- }
- 
-+/**
-+ * ring_buffer_record_is_set_on - return true if the ring buffer is set writable
-+ * @buffer: The ring buffer to see if write is set enabled
-+ *
-+ * Returns true if the ring buffer is set writable by ring_buffer_record_on().
-+ * Note that this does NOT mean it is in a writable state.
-+ *
-+ * It may return true when the ring buffer has been disabled by
-+ * ring_buffer_record_disable(), as that is a temporary disabling of
-+ * the ring buffer.
-+ */
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer)
-+{
-+	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
-+}
-+
- /**
-  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
-  * @buffer: The ring buffer to stop writes to.
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 15b02645ce8b..901c7f15f6e2 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1323,6 +1323,12 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 
- 	arch_spin_lock(&tr->max_lock);
- 
-+	/* Inherit the recordable setting from trace_buffer */
-+	if (ring_buffer_record_is_set_on(tr->trace_buffer.buffer))
-+		ring_buffer_record_on(tr->max_buffer.buffer);
-+	else
-+		ring_buffer_record_off(tr->max_buffer.buffer);
-+
- 	buf = tr->trace_buffer.buffer;
- 	tr->trace_buffer.buffer = tr->max_buffer.buffer;
- 	tr->max_buffer.buffer = buf;
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index a9be8df108b4..9d0b73aa649f 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4370,6 +4370,23 @@ static bool tcp_try_coalesce(struct sock *sk,
- 	return true;
- }
- 
-+static bool tcp_ooo_try_coalesce(struct sock *sk,
-+			     struct sk_buff *to,
-+			     struct sk_buff *from,
-+			     bool *fragstolen)
-+{
-+	bool res = tcp_try_coalesce(sk, to, from, fragstolen);
-+
-+	/* In case tcp_drop() is called later, update to->gso_segs */
-+	if (res) {
-+		u32 gso_segs = max_t(u16, 1, skb_shinfo(to)->gso_segs) +
-+			       max_t(u16, 1, skb_shinfo(from)->gso_segs);
-+
-+		skb_shinfo(to)->gso_segs = min_t(u32, gso_segs, 0xFFFF);
-+	}
-+	return res;
-+}
-+
- static void tcp_drop(struct sock *sk, struct sk_buff *skb)
- {
- 	sk_drops_add(sk, skb);
-@@ -4493,7 +4510,8 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 	/* In the typical case, we are adding an skb to the end of the list.
- 	 * Use of ooo_last_skb avoids the O(Log(N)) rbtree lookup.
- 	 */
--	if (tcp_try_coalesce(sk, tp->ooo_last_skb, skb, &fragstolen)) {
-+	if (tcp_ooo_try_coalesce(sk, tp->ooo_last_skb,
-+				 skb, &fragstolen)) {
- coalesce_done:
- 		tcp_grow_window(sk, skb);
- 		kfree_skb_partial(skb, fragstolen);
-@@ -4543,7 +4561,8 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 				tcp_drop(sk, skb1);
- 				goto merge_right;
- 			}
--		} else if (tcp_try_coalesce(sk, skb1, skb, &fragstolen)) {
-+		} else if (tcp_ooo_try_coalesce(sk, skb1,
-+						skb, &fragstolen)) {
- 			goto coalesce_done;
- 		}
- 		p = &parent->rb_right;
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 8d0aafbdbbc3..025487436438 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -986,6 +986,11 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
- 			return err;
- 	}
- 
-+	if (nlk->ngroups == 0)
-+		groups = 0;
-+	else if (nlk->ngroups < 8*sizeof(groups))
-+		groups &= (1UL << nlk->ngroups) - 1;
-+
- 	bound = nlk->bound;
- 	if (bound) {
- 		/* Ensure nlk->portid is up-to-date. */
+On Thu, 9 Aug 2018 08:23:16 -0400
+Peter Geis <pgwipeout@gmail.com> wrote:
+
+> On 08/09/2018 08:02 AM, Aapo Vienamo wrote:
+> > On Thu, 9 Aug 2018 13:49:22 +0200
+> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> >   
+> >> On Tue, Aug 07, 2018 at 05:00:01PM +0300, Aapo Vienamo wrote:  
+> >>> Add the HS400 DQS trim value for Tegra186 SDMMC4.
+> >>>
+> >>> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> >>> ---
+> >>>   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+> >>>   1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> >>> index 6e9ef26..9e07bc6 100644
+> >>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> >>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> >>> @@ -313,6 +313,7 @@
+> >>>   		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
+> >>>   		nvidia,default-tap = <0x5>;
+> >>>   		nvidia,default-trim = <0x9>;
+> >>> +		nvidia,dqs-trim = <63>;
+> >>>   		status = "disabled";
+> >>>   	};
+> >>>       
+> >>
+> >> Isn't this technically dependent on the board layout and as such would
+> >> belong in the board DTS file? Or does this value work on all existing
+> >> Tegra186 platforms?  
+> > 
+> > This value is specified as part of the controller initialization
+> > sequence in the TRM. I've understood that this (and other tap and trim)
+> > value(s) are used for compensating the propagation delay differences
+> > that are caused by the internal SoC layout.
+> > 
+> >   -Aapo
+> > --  
+> 
+> The Tegra2 and Tegra3 TRMs also specify recommended DQS values, and I am 
+> working on at least one device that differs in the platform data from 
+> the default value.
+> I see that you mentioned this is for the newer devices that support 
+> HS200/HS400 modes, but does it enable setting DQS on older devices?
+
+I can't find any mention of _SDMMC_ DQS trimmer on Tegra2, Tegra3 or
+Tegra124 TRMs. As far as I can tell, programming the DQS trimmer value
+is only required by HS400 signaling on Tegra210 and Tegra186.
+
+ -Aapo
