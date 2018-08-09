@@ -2,275 +2,107 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77050C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CAAC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F4821E21
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:23:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u57aVp2m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F4821E21
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E0AC21E23
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:25:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0AC21E23
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732091AbeHIQsL (ORCPT
+        id S1732274AbeHIQuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 12:48:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33360 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731140AbeHIQsK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 12:48:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id u14-v6so4258276lfu.0;
-        Thu, 09 Aug 2018 07:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vU69f89G8ExRD+0suGr7zc2axYKZ6Qff6YWq4yV6Sk8=;
-        b=u57aVp2mU4Y6WTZc2ndFsFZPBKYX4eRUBbsoxb2FqLqGYU/mbcnLiVkLChbY0GLzHU
-         78Z4EAx9acQ4vOPZbC1RqDtD6ZrDD5nJTKwa6xQvMUPeopTerZ6j66/dDhXvEYx9/oRS
-         JUXF7daiSiMfrhCd03YLCWM/9kpd7zvE1cuJ/geQQYn5rKMynMk0GpR34qgH6QQ9/ku9
-         y9SJDgQ9rhKsDW+rM6I9BBWL51sgPf/75DrfUsxov+XyQCBP3wzhoe+JS5BxNocXgU6L
-         oWOXXoyE5TDYSb/yTPvAfbPpR32zuqm+8yn498UhQP76kJqpKT+nVI9a7GLpgviGtdx7
-         +twQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vU69f89G8ExRD+0suGr7zc2axYKZ6Qff6YWq4yV6Sk8=;
-        b=hfJFaLxpWHMl+CQ3sw7UKN/8KCFg1kC1gI57HPuhpdsF9vanXfmwMLJF8O2JTj+JIe
-         8xWPQFtaJ5iho2I6Z1t6+sZuZ7TMD0TWs6nsd7RIcS+8rlNM9mugo7vxZubqU9dFLW65
-         fUkglI7JmNtV0i64hKYyAAjMYJclr+B/0+JLGU4xtthEr91mzpdDEIuuYx+Ykj9BzdtR
-         TDwT9Yhgz1lCU0/zHwLCq7AhvKsnhoLorWwL/YnQtz+Hpkz4EQIpfVDNhW9uggbO4RTZ
-         rGaVoKMLgRAqrHmpMalUUK/pcRfQAs8lD2J3Hp4S+W2Y8fXLafaEHRMe9VqsQCrG/ZAA
-         pU/w==
-X-Gm-Message-State: AOUpUlGsJw6RxQs1m2LmxBtuM5USxtqT5HJEqxGo3US9l0Q12sNNDJ9l
-        QUgyxe1OJdS1PFIHtZ1mRpI=
-X-Google-Smtp-Source: AA+uWPye1P6w4znin5P76VfeobB/vs+3mAar4rv6/3TIwwrjVVx9VZTZC7hv6iPuJTSB92PexoIFyg==
-X-Received: by 2002:ac2:4117:: with SMTP id b23-v6mr1850361lfi.84.1533824580796;
-        Thu, 09 Aug 2018 07:23:00 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm1165589ljg.55.2018.08.09.07.22.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 07:23:00 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] iommu/tegra: gart: Provide access to Memory Controller driver
-Date:   Thu, 09 Aug 2018 17:22:59 +0300
-Message-ID: <40363808.PZSQB5qk50@dimapc>
-In-Reply-To: <20180809135924.GG21639@ulmo>
-References: <20180804143003.15817-1-digetx@gmail.com> <16855111.9YhuyP46zb@dimapc> <20180809135924.GG21639@ulmo>
+        Thu, 9 Aug 2018 12:50:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59652 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730839AbeHIQuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 12:50:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3DB5F4023444;
+        Thu,  9 Aug 2018 14:24:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EA862314E;
+        Thu,  9 Aug 2018 14:24:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87in4n9zg0.fsf@xmission.com>
+References: <87in4n9zg0.fsf@xmission.com> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk>
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and managing a context [ver #11]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27373.1533824694.1@warthog.procyon.org.uk>
+Date:   Thu, 09 Aug 2018 15:24:54 +0100
+Message-ID: <27374.1533824694@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 14:24:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 14:24:56 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, 9 August 2018 16:59:24 MSK Thierry Reding wrote:
-> On Thu, Aug 09, 2018 at 02:39:03PM +0300, Dmitry Osipenko wrote:
-> > On Thursday, 9 August 2018 14:17:46 MSK Thierry Reding wrote:
-> > > On Sat, Aug 04, 2018 at 05:29:57PM +0300, Dmitry Osipenko wrote:
-> > > > GART contain registers needed by the Memory Controller driver, provide
-> > > > access to the MC driver by utilizing its GART-integration facility.
-> > > > 
-> > > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > > ---
-> > > > 
-> > > >  drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
-> > > >  1 file changed, 23 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> > > > index a004f6da35f2..f8b653e25914 100644
-> > > > --- a/drivers/iommu/tegra-gart.c
-> > > > +++ b/drivers/iommu/tegra-gart.c
-> > > > @@ -31,6 +31,8 @@
-> > > > 
-> > > >  #include <linux/iommu.h>
-> > > >  #include <linux/of.h>
-> > > > 
-> > > > +#include <soc/tegra/mc.h>
-> > > > +
-> > > > 
-> > > >  #include <asm/cacheflush.h>
-> > > >  
-> > > >  /* bitmap of the page sizes currently supported */
-> > > > 
-> > > > @@ -41,6 +43,8 @@
-> > > > 
-> > > >  #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
-> > > >  #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
-> > > >  #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
-> > > > 
-> > > > +#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
-> > > > +#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
-> > > > 
-> > > >  #define GART_PAGE_SHIFT		12
-> > > >  #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
-> > > > 
-> > > > @@ -63,6 +67,8 @@ struct gart_device {
-> > > > 
-> > > >  	struct device		*dev;
-> > > >  	
-> > > >  	struct iommu_device	iommu;		/* IOMMU Core handle */
-> > > > 
-> > > > +
-> > > > +	struct tegra_mc_gart_handle mc_gart_handle;
-> > > > 
-> > > >  };
-> > > >  
-> > > >  struct gart_domain {
-> > > > 
-> > > > @@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device *dev)
-> > > > 
-> > > >  	return 0;
-> > > >  
-> > > >  }
-> > > > 
-> > > > +static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle *handle)
-> > > > +{
-> > > > +	struct gart_device *gart = container_of(handle, struct 
-gart_device,
-> > > > +						mc_gart_handle);
-> > > > +	return readl_relaxed(gart->regs + GART_ERROR_ADDR);
-> > > > +}
-> > > > +
-> > > > +static u32 tegra_gart_error_req(struct tegra_mc_gart_handle *handle)
-> > > > +{
-> > > > +	struct gart_device *gart = container_of(handle, struct 
-gart_device,
-> > > > +						mc_gart_handle);
-> > > > +	return readl_relaxed(gart->regs + GART_ERROR_REQ);
-> > > > +}
-> > > > +
-> > > > 
-> > > >  static int tegra_gart_probe(struct platform_device *pdev)
-> > > >  {
-> > > >  
-> > > >  	struct gart_device *gart;
-> > > > 
-> > > > @@ -464,6 +484,8 @@ static int tegra_gart_probe(struct platform_device
-> > > > *pdev)>
-> > > > 
-> > > >  	gart->regs = gart_regs;
-> > > >  	gart->iovmm_base = (dma_addr_t)res_remap->start;
-> > > >  	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
-> > > > 
-> > > > +	gart->mc_gart_handle.error_addr = tegra_gart_error_addr;
-> > > > +	gart->mc_gart_handle.error_req = tegra_gart_error_req;
-> > > > 
-> > > >  	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
-> > > >  	if (!gart->savedata) {
-> > > > 
-> > > > @@ -475,6 +497,7 @@ static int tegra_gart_probe(struct platform_device
-> > > > *pdev)>
-> > > > 
-> > > >  	do_gart_setup(gart, NULL);
-> > > >  	
-> > > >  	gart_handle = gart;
-> > > > 
-> > > > +	tegra_mc_register_gart(&gart->mc_gart_handle);
-> > > > 
-> > > >  	return 0;
-> > > >  
-> > > >  }
-> > > 
-> > > I see now why you've did it this way. We have separate devices unlike
-> > > with SMMU where it is properly modeled as part of the memory controller.
-> > > I think we should consider breaking ABI at this point and properly merge
-> > > both the memory controller and GART nodes. There's really no reason why
-> > > they should be separate and we're jumping through multiple hoops to do
-> > > what we need to do just because a few years back we made a mistake.
-> > > 
-> > > I know we're technically not supposed to break the DT ABI, but I think
-> > > in this particular case we can make a good case for it. The current DT
-> > > bindings are plainly broken, and obviously so. Also, we don't currently
-> > > use the GART upstream for anything, so we can't break any existing
-> > > systems either.
-> > 
-> > IIUC, that will require to break the stable DT ABI of the tegra20-mc,
-> > which is working fine and does its job. I'm personally not seeing the
-> > slight lameness of the current DT as a good excuse to break the ABI.
-> > Let's then break DT ABI on all Tegra's and convert them all to genpd and
-> > other goodies like assigned clock parents and clock rate.
+Eric W. Biederman <ebiederm@xmission.com> wrote:
+
+> First let me thank you for adding both FSCONFIG_CMD_CREATE and
+> FSCONFIG_CMD_RECONFIGURE.  Unfortunately the implementation is currently
+> broken.  So this patch gets my:
 > 
-> genpd and assigned clocks are complementary, they can be switched to
-> without breaking ABI.
+> This is broken in two specific ways.
+> ...
+> 2) FSCONFIG_CMD_CREATE will succeed even if the superblock already
+>    exists and it can not use all of the superblock parameters.
 > 
-> And that's also different from the memory controller on Tegra20 where we
-> just made the mistake of describing what is effectively one device as
-> two separate devices. From what I can tell, the only reason this was
-> done was because it mapped better to the Linux driver model where there
-> is a framework to represent an IOMMU and a misunderstanding of how to
-> work with the driver model and device tree.
+>    This happens because vfs_get_super will only call fill_super
+>    if the super block is created.  Which is reasonable on the face
+>    of it.  But it in practice this introduces security problems.
 > 
-> As such, I would describe it as more of a bug in the DT that should be
-> fixed rather than breaking the ABI.
+>    a) Either through reconfiguring a shared super block you did not
+>       realize was shared (as we saw with devpts).
 > 
-> And, like I said, we are in the somewhat fortunate situation that we
-> don't actively use the GART, at least in upstream, yet. So even if we
-> break ABI, nobody will notice anyway. Those are about as good pre-
-> conditions as you're going to get for fixing ABI.
+>    b) Mounting a super block and not honoring it's mount options
+>       because something has already mounted it.  As we see today
+>       with proc.  Leaving userspace to think the filesystem will behave
+>       one way when in fact it behaves another.
+> 
+> I have already explained this several times, and apparently I have been
+> ignored.  This fundamental usability issue that leads to security
+> problems.
 
-Please tell exactly what you're suggesting.
+I've also explained why you're wrong or at least only partially right.  I *do*
+*not* want to implement sget() in userspace with the ability for userspace to
+lock out other mount requests - which is what it appears that you've been
+asking for.
 
-Current DT:
+However, as I have said, I *am* willing to add one of more flags to help with
+this, but I can't make any "legacy" fs honour them as this requires the
+fs_context to be passed down to sget_fc() and the filesystem - which is why I
+was considering leaving it for later.
 
-	mc: memory-controller@7000f000 {
-		compatible = "nvidia,tegra20-mc";
-		reg = <0x7000f000 0x024
-		       0x7000f03c 0x3c4>;
-		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-		#reset-cells = <1>;
-	};
+ (1) An FSOPEN_EXCL flag to tell sget_fc() to fail if the superblock already
+     exists at all.
 
-	gart: iommu@7000f024 {
-		compatible = "nvidia,tegra20-gart";
-		reg = <0x7000f024 0x00000018	/* controller registers */
-		       0x58000000 0x02000000>;	/* GART aperture */
-		#iommu-cells = <0>;
-	};
+ (2) An FSOPEN_FAIL_ON_MISMATCH flag to explicitly say that we *don't* want a
+     superblock with different parameters.
 
+The implication of providing neither flag is that we are happy to accept a
+superblock from the same source but with different parameters.
 
+But it doesn't seem to be an absolute imperative to roll this out immediately,
+since what I have exactly mirrors what the kernel currently does - and forcing
+a change in that behaviour risks breaking userspace.  If it keeps you happy,
+however, I can try and work one up.
 
-Variant 1 (break MC ABI):
-
-	mc: memory-controller@7000f000 {
-		compatible = "nvidia,tegra20-mc";
-		reg = <0x7000f000 0x400	/* controller registers */
-		       0x58000000 0x02000000>;	/* GART aperture */
-		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-		#reset-cells = <1>;
-		#iommu-cells = <0>;
-	};
-
-
-
-Variant 2 (don't break MC ABI, extra code churning which seems will be worse 
-than what it is now):
-
-	mc: memory-controller@7000f000 {
-		compatible = "nvidia,tegra20-mc";
-		reg = <0x7000f000 0x024
-		       0x7000f03c 0x3c4
-		       0x7000f024 0x00000018	/* GART registers */
-		       0x58000000 0x02000000>;	/* GART aperture */;
-		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-		#reset-cells = <1>;
-		#iommu-cells = <0>;
-	};
-
-
-
+David
