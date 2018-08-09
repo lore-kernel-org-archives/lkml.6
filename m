@@ -2,115 +2,118 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FB1C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94900C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56AF921EFC
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 439D72238D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eImt2tQd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56AF921EFC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="br22Sloi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439D72238D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeHIV4G (ORCPT
+        id S1727106AbeHIV6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 17:56:06 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36798 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbeHIV4F (ORCPT
+        Thu, 9 Aug 2018 17:58:09 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41246 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbeHIV6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 17:56:05 -0400
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DA969CD;
-        Thu,  9 Aug 2018 21:29:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533842988;
-        bh=/0elRgNoReL0MJycfUBf9YPFFFwfCB/H+oiv4S4uK3k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eImt2tQdvJJxodHm7qfy6TgtUGh0YeCTwtLItmGeQA4yx4R/JrwqIwak3fVnXQ+Ce
-         qbrw5Lp/R+xxpjAfk13nxw73nbNbNuLRweHGSSfIrQU/S1YKYA3btJbdhC/+Kmu039
-         Sq6F+AqBoHBVJ5MldTE8860hhF54Eqk5h4TUjUt8=
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v3] dt-bindings: media: adv748x: Document re-mappable addresses
-Date:   Thu,  9 Aug 2018 20:29:44 +0100
-Message-Id: <20180809192944.7371-1-kieran.bingham@ideasonboard.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 9 Aug 2018 17:58:09 -0400
+Received: by mail-io0-f193.google.com with SMTP id q4-v6so5718360iob.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GDckQAimzeGAxvccrwiW7AveOExWg3iD2zTrElbsxs8=;
+        b=br22SloilJKBiF+hRy99o4ieSlJt/cwbLLioNTMQ4x08M9xWDyQmOIpPVwv+H8UpUK
+         dOOwdeOv07MHF73+uHS0dwnjaVYPC1n+HH0xBgVAsIKxyl7vdrGuQ5pKhBnW/iWWS6Tl
+         v/PS6Rv3Yc7kYmKVYhYbidy53ImnucBIABb3c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GDckQAimzeGAxvccrwiW7AveOExWg3iD2zTrElbsxs8=;
+        b=Z6roOCPuhj1+prF3/8fM3NpcJCCy1qwiYh51MvJhQ9XauDX0/AxKSpb1jWwSOkKFM7
+         9AhqqDXSvaPoenRfGH1blSuxpJKDzWQy10Auvj9gvxMbei9+A+rsZUxzysjUN35JQ90H
+         tzDahe++/fZCgh1F1U/ZEv2fXUZpDFH8BBOZRaYvGCD83vcU85cU8DEH3YwUAc9SVSDX
+         kR1tHXT6e/faLoYZECvl6n+uDq4jPzJwX2mBH45pG6pCr2RDQxpzlfEAkVrjKlwQtfr7
+         tSwC1qUX65jxwS2lc64kE8hYZeSKdexrg7U0ar1T1JDnauHIXI/8MTvBy8L6sA94TAMY
+         ebSw==
+X-Gm-Message-State: AOUpUlELW7r+3gGehH/GSfD9M5V1SoPYdzuZuZyLCkQKvpJx0U/kNGqY
+        u/DMGmwmaUlX9j+0/V+KYptJzF2v07E8kJQ0JewpJg==
+X-Google-Smtp-Source: AA+uWPwIbrJgV+n4hx7PWEYvBK0rVjrQtjrUML/JJLPf/epTqBhN8bnAnXlh2s3ogKmmtoz42n7Ow4ptzduDhJyJvN0=
+X-Received: by 2002:a6b:da14:: with SMTP id x20-v6mr2888980iob.102.1533843112331;
+ Thu, 09 Aug 2018 12:31:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180809181103.15437-1-matwey@sai.msu.ru>
+In-Reply-To: <20180809181103.15437-1-matwey@sai.msu.ru>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 9 Aug 2018 12:31:40 -0700
+Message-ID: <CAADWXX-bXeVdWPrn3BeA=wF3d4rn1S69BYhf398_=T=NF2t44A@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     matwey@sai.msu.ru
+Cc:     linux-media@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        matwey.kornilov@gmail.com, tfiga@chromium.org,
+        laurent.pinchart@ideasonboard.com, stern@rowland.harvard.edu,
+        ezequiel@collabora.com, hdegoede@redhat.com, hverkuil@xs4all.nl,
+        mchehab@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        mingo@redhat.com, isely@pobox.com, bhumirks@gmail.com,
+        Colin Ian King <colin.king@canonical.com>,
+        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ADV748x supports configurable slave addresses for its I2C pages.
-Document the page names, and provide an example for setting each of the
-pages explicitly.
+Matwey,
+ your DKIM signature is garbage, and it causes your emails to be
+marked as spam when they go through a mailing list.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+The reason is this:
 
----
-v2:
- - Fix commit message
- - Extend documentation for the "required property" reg:
+  DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
 
-v3
- - Fix missing comment from Laurent.
- - correct the reg descrption
----
- .../devicetree/bindings/media/i2c/adv748x.txt    | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+where the problem is that the "sender" field is included in the DKIM
+hash calculation.
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-index 21ffb5ed8183..25a02496f4ba 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -10,7 +10,11 @@ Required Properties:
-     - "adi,adv7481" for the ADV7481
-     - "adi,adv7482" for the ADV7482
- 
--  - reg: I2C slave address
-+  - reg: I2C slave addresses
-+    The ADV748x has up to twelve 256-byte maps that can be accessed via the
-+    main I2C ports. Each map has it own I2C address and acts as a standard
-+    slave device on the I2C bus. The main address is mandatory, others are
-+    optional and remain at default values if not specified.
- 
- Optional Properties:
- 
-@@ -18,6 +22,11 @@ Optional Properties:
- 		     "intrq3". All interrupts are optional. The "intrq3" interrupt
- 		     is only available on the adv7481
-   - interrupts: Specify the interrupt lines for the ADV748x
-+  - reg-names : Names of maps with programmable addresses.
-+		It shall contain all maps needing a non-default address.
-+		Possible map names are:
-+		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
-+		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
- 
- The device node must contain one 'port' child node per device input and output
- port, in accordance with the video interface bindings defined in
-@@ -47,7 +56,10 @@ Example:
- 
- 	video-receiver@70 {
- 		compatible = "adi,adv7482";
--		reg = <0x70>;
-+		reg = <0x70 0x71 0x72 0x73 0x74 0x75
-+		       0x60 0x61 0x62 0x63 0x64 0x65>;
-+		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
-+			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
- 
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.17.1
+That is completely incorrect, since a mailing list will - by
+definition - change the sender to the list, not the original sender.
 
+This is not a mailing list bug. This is a bug in your DKIM setup on
+the sending side.
+
+I'm leaving everybody cc'd., because this problem is starting to be
+annoyingly common. We had two people with chromium.org addresses with
+the same misconfiguration, and I want people to be aware of this.
+
+I get too much email, and too much spam, and so when people have
+misc-onfigured email sending that causes problems for spam systems, it
+needs to get fixed.
+
+Your situation *may* be the same as the Chromium guys. Quoting Doug:
+
+ "Looks like it's all fixed.  Both Kees and I setup our chromium.org
+  accounts a long time ago.  IIRC during that time the suggested way to
+  do things was that you'd use your @google.com SMTP settings even when
+  you were sending as your @chroumium.org account.  These days it
+  doesn't appear that there's even any UI in gmail to configure things
+  that way, so presumably nobody else will be stuck in the same hole
+  that Kees and I were in"
+
+and he may have been wrong about that "presumably nobody else will be
+stuck in the same hole" guess.
+
+So you might want to check what the SMTP settings are for your setup.
+
+               Linus
