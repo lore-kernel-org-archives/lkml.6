@@ -4,197 +4,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A86C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2317C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A80E2238B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A0442238B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 18:12:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpRorVYu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A80E2238B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xk+K3KwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A0442238B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=elisp.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbeHIUhm (ORCPT
+        id S1727502AbeHIUhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 16:37:42 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45952 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbeHIUhl (ORCPT
+        Thu, 9 Aug 2018 16:37:37 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38694 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727390AbeHIUhh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 16:37:41 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j143-v6so4738671lfj.12;
-        Thu, 09 Aug 2018 11:11:38 -0700 (PDT)
+        Thu, 9 Aug 2018 16:37:37 -0400
+Received: by mail-pl0-f65.google.com with SMTP id u11-v6so2881103plq.5;
+        Thu, 09 Aug 2018 11:11:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=L5H/UYZ5P59hCTwCDJAfmnKMChFJdMqAWNPRQDX6KkY=;
-        b=XpRorVYuBy9IKLg9E2HVcbmrpa5dEkU3YhtYcZ7xytYeLjrEXbslMQS1T7yMmIF/ih
-         5dUZ+40g1MAUGflLKe+Vbdu2MrkfnEwq8sUGytmCd9mGXnve0+Nx/xAfcJdDKoTa6nMC
-         cyZ387pLmrjs2cQOTfhW3AMbqVTl2lC9SAFB3SeJhQUf3YvltgXW85FMFs9/lSuh8OW3
-         1Q6elZltBTLCaec7KbdWt2uMceBqzTSltuESgGAdnV9lP5eywVRPNMXjB6ccApUVVQLU
-         a2gUqJcTW5OSJXfNpmNLuWWKTn6VMITm0OwSg/W5U8yDMmZ1SuYcnCKd//02rc+lHTbE
-         jSGA==
+        bh=hE4t/T5xBCjUgD1IFsfSM9RZtqZj7metO9MTlR+zsb8=;
+        b=Xk+K3KwUHXcywGM+K3ut6NnKXWYEqvXnqXIz2VvWDycdVMxNYfdkSGfQATZ0aIMiKp
+         1k0TWycLBJmcxbU5pLVJkEy85akmJPaupu1JfdhFso09KTcootzUISgUI57Pl9LLwJdX
+         q31Vb+tun4nLl7X7AAnTf2kUd4bkYc7TdT68qEulTDDrF2BOiDYWqHzUaROTspX+ElJR
+         k5c8aCbaTDBlIciziy0Wnpkiwv1BTJYkeBBDPgOF3N+9/LIMtaEkJIAQfNtMg+5r1pzA
+         SwJVI1jUQHAUwKQAmVZPQlZzr5i5SBLdXR1EfjSblxNBDhs0V4iJ/1gTque3BsnjG5ia
+         sqUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=L5H/UYZ5P59hCTwCDJAfmnKMChFJdMqAWNPRQDX6KkY=;
-        b=dtEY5aEY6LcxtV+PTkqp9zPRHDDNDBNWNC32ZcWjXjyuE25sIXX+Ohp6boKNmE1m9m
-         jNglz5zHdGYvy+c1reGYAWoYltw+C2RqFB/WleVQ08o11mBB4QdxMvIihDZhAxcZtTVg
-         n7KsR+8a78P6v1X8cZKtVo0XNFwQiuQNeDDwWfGvPOkWfxIcMKxud/mGFo1Otn1TjH5g
-         aNVF9LtsuTh+VMmxmjkYbV+/0M8vtA0sfKqsXF5LyrRKkEXAeH4Ohmdy636eJLpv39X5
-         QYGs6dHis4fIIZZGiykhf8BB7/cPGAqYwOn/bMirqxcGgWuM5YZNLNsjjr5deVQaKfPT
-         G2aw==
-X-Gm-Message-State: AOUpUlFPmAzP2YQD3zg7qhUxwM5dvaHDPF9h0DAFPww+0Wx91xxfet2f
-        FUVFothiordqTbDfXlrPeR+4IIWQweo=
-X-Google-Smtp-Source: AA+uWPyireFuc7OWk/bAAotnDcIUlygENij4tdwGQm1yCDzCI/ZK5t23EvpnNfwNUhnGbdjrq2gPDw==
-X-Received: by 2002:a19:10c4:: with SMTP id 65-v6mr2387433lfq.113.1533838297362;
-        Thu, 09 Aug 2018 11:11:37 -0700 (PDT)
-Received: from localhost.localdomain ([213.87.133.10])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm1432211lfe.87.2018.08.09.11.11.35
+        bh=hE4t/T5xBCjUgD1IFsfSM9RZtqZj7metO9MTlR+zsb8=;
+        b=Ssa2V18CEL/BAurzSuCRsX6aSkcrrCpcii7Bq1cxvKtk5cN8UzNZ1N/vFlpuo6fAUT
+         edLFIEioCNnndsp1YlynB8PTgpOw0amp5XEQt99SDT9b3CJMzh5Fadslj18L408oGxLs
+         2MsX42B6fNVz7d4tAkFeuFLGxBhzl7gMsgrJhSUsfkHJGdmRmb+ea87cgurXfgGRLCHI
+         VV8kgoPT2vMR9P7SP3gz/rSqlA244eYaGV48sEUkCM1tCeQI9un75m7rrT/Znb+nd2kv
+         0hYWTj5p8aJxj6gcWtYkN19YY/uYEkFguMWtwDx7CbAz/yKSM1CuCRdCBTMTcHXpUDUc
+         fOdg==
+X-Gm-Message-State: AOUpUlFxe2vU8BeVals/9pn2DVzuCHBC5Cdwr3JWq8XI8LXuj9GXJ+6T
+        aqFrFUXxxCCCNJwS2fzwDmw=
+X-Google-Smtp-Source: AA+uWPx0Ok9f+uiGer0s+0tAOTlYBfKqeTl23atym9n4jQS7pJsLD94drVD1gdLgtwrGLPL80nqmnA==
+X-Received: by 2002:a17:902:6105:: with SMTP id t5-v6mr3025295plj.92.1533838295955;
+        Thu, 09 Aug 2018 11:11:35 -0700 (PDT)
+Received: from localhost (h101-111-148-072.catv02.itscom.jp. [101.111.148.72])
+        by smtp.gmail.com with ESMTPSA id t12-v6sm14913213pgg.72.2018.08.09.11.11.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 11:11:36 -0700 (PDT)
-From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
-To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Matwey V. Kornilov" <matwey@sai.msu.ru>, tfiga@chromium.org,
-        laurent.pinchart@ideasonboard.com, stern@rowland.harvard.edu,
-        ezequiel@collabora.com, hdegoede@redhat.com, hverkuil@xs4all.nl,
-        mchehab@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
-        isely@pobox.com, bhumirks@gmail.com, colin.king@canonical.com,
-        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
-Subject: [PATCH v4 1/2] media: usb: pwc: Introduce TRACE_EVENTs for pwc_isoc_handler()
-Date:   Thu,  9 Aug 2018 21:11:02 +0300
-Message-Id: <20180809181103.15437-2-matwey@sai.msu.ru>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180809181103.15437-1-matwey@sai.msu.ru>
-References: <20180809181103.15437-1-matwey@sai.msu.ru>
+        Thu, 09 Aug 2018 11:11:35 -0700 (PDT)
+From:   Naohiro Aota <naota@elisp.net>
+To:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Naohiro Aota <naota@elisp.net>
+Subject: [RFC PATCH 10/12] btrfs-progs: device-add: support HMZONED device
+Date:   Fri, 10 Aug 2018 03:11:03 +0900
+Message-Id: <20180809181105.12856-10-naota@elisp.net>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180809181105.12856-1-naota@elisp.net>
+References: <20180809180450.5091-1-naota@elisp.net>
+ <20180809181105.12856-1-naota@elisp.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were reports that PWC-based webcams don't work at some
-embedded ARM platforms. [1] Isochronous transfer handler seems to
-work too long leading to the issues in MUSB USB host subsystem.
-Also note, that urb->giveback() handlers are still called with
-disabled interrupts. In order to be able to measure performance of
-PWC driver, traces are introduced in URB handler section.
+This patch check if the target file system is flagged as HMZONED. If it is,
+the device to be added is flagged PREP_DEVICE_HMZONED.  Also add checks to
+prevent mixing non-zoned devices and zoned devices.
 
-[1] https://www.spinics.net/lists/linux-usb/msg165735.html
-
-Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+Signed-off-by: Naohiro Aota <naota@elisp.net>
 ---
- drivers/media/usb/pwc/pwc-if.c |  7 +++++
- include/trace/events/pwc.h     | 65 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+)
- create mode 100644 include/trace/events/pwc.h
+ cmds-device.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-index 54b036d39c5b..72d2897a4b9f 100644
---- a/drivers/media/usb/pwc/pwc-if.c
-+++ b/drivers/media/usb/pwc/pwc-if.c
-@@ -76,6 +76,9 @@
- #include "pwc-dec23.h"
- #include "pwc-dec1.h"
+diff --git a/cmds-device.c b/cmds-device.c
+index 2a05f70a..10696bf7 100644
+--- a/cmds-device.c
++++ b/cmds-device.c
+@@ -56,6 +56,9 @@ static int cmd_device_add(int argc, char **argv)
+ 	int discard = 1;
+ 	int force = 0;
+ 	int last_dev;
++	int res;
++	int hmzoned;
++	struct btrfs_ioctl_feature_flags feature_flags;
  
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/pwc.h>
-+
- /* Function prototypes and driver templates */
+ 	optind = 0;
+ 	while (1) {
+@@ -91,12 +94,33 @@ static int cmd_device_add(int argc, char **argv)
+ 	if (fdmnt < 0)
+ 		return 1;
  
- /* hotplug device table support */
-@@ -260,6 +263,8 @@ static void pwc_isoc_handler(struct urb *urb)
- 	int i, fst, flen;
- 	unsigned char *iso_buf = NULL;
++	res = ioctl(fdmnt, BTRFS_IOC_GET_FEATURES, &feature_flags);
++	if (res) {
++		error("error getting feature flags '%s': %m", mntpnt);
++		return 1;
++	}
++	hmzoned = feature_flags.incompat_flags & BTRFS_FEATURE_INCOMPAT_HMZONED;
++
+ 	for (i = optind; i < last_dev; i++){
+ 		struct btrfs_ioctl_vol_args ioctl_args;
+-		int	devfd, res;
++		int	devfd;
+ 		u64 dev_block_count = 0;
+ 		char *path;
  
-+	trace_pwc_handler_enter(urb, pdev);
++		if (hmzoned && zoned_model(argv[i]) == ZONED_NONE) {
++			error("cannot add non-zoned device to HMZONED file system '%s'",
++			      argv[i]);
++			ret++;
++			continue;
++		}
 +
- 	if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
- 	    urb->status == -ESHUTDOWN) {
- 		PWC_DEBUG_OPEN("URB (%p) unlinked %ssynchronously.\n",
-@@ -348,6 +353,8 @@ static void pwc_isoc_handler(struct urb *urb)
- 	}
++		if (!hmzoned && zoned_model(argv[i]) == ZONED_HOST_MANAGED) {
++			error("cannot add host managed zoned device to non-HMZONED file system '%s'",
++			      argv[i]);
++			ret++;
++			continue;
++		}
++
+ 		res = test_dev_for_mkfs(argv[i], force);
+ 		if (res) {
+ 			ret++;
+@@ -112,7 +136,8 @@ static int cmd_device_add(int argc, char **argv)
  
- handler_end:
-+	trace_pwc_handler_exit(urb, pdev);
-+
- 	i = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (i != 0)
- 		PWC_ERROR("Error (%d) re-submitting urb in pwc_isoc_handler.\n", i);
-diff --git a/include/trace/events/pwc.h b/include/trace/events/pwc.h
-new file mode 100644
-index 000000000000..84807fea2217
---- /dev/null
-+++ b/include/trace/events/pwc.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#if !defined(_TRACE_PWC_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_PWC_H
-+
-+#include <linux/usb.h>
-+#include <linux/tracepoint.h>
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM pwc
-+
-+TRACE_EVENT(pwc_handler_enter,
-+	TP_PROTO(struct urb *urb, struct pwc_device *pdev),
-+	TP_ARGS(urb, pdev),
-+	TP_STRUCT__entry(
-+		__field(struct urb*, urb)
-+		__field(int, urb__status)
-+		__field(u32, urb__actual_length)
-+		__string(name, pdev->v4l2_dev.name)
-+		__field(struct pwc_frame_buf*, fbuf)
-+		__field(int, fbuf__filled)
-+	),
-+	TP_fast_assign(
-+		__entry->urb = urb;
-+		__entry->urb__status = urb->status;
-+		__entry->urb__actual_length = urb->actual_length;
-+		__assign_str(name, pdev->v4l2_dev.name);
-+		__entry->fbuf = pdev->fill_buf;
-+		__entry->fbuf__filled = (pdev->fill_buf
-+					 ? pdev->fill_buf->filled : 0);
-+	),
-+	TP_printk("dev=%s (fbuf=%p filled=%d) urb=%p (status=%d actual_length=%u)",
-+		__get_str(name),
-+		__entry->fbuf,
-+		__entry->fbuf__filled,
-+		__entry->urb,
-+		__entry->urb__status,
-+		__entry->urb__actual_length)
-+);
-+
-+TRACE_EVENT(pwc_handler_exit,
-+	TP_PROTO(struct urb *urb, struct pwc_device *pdev),
-+	TP_ARGS(urb, pdev),
-+	TP_STRUCT__entry(
-+		__field(struct urb*, urb)
-+		__string(name, pdev->v4l2_dev.name)
-+		__field(struct pwc_frame_buf*, fbuf)
-+		__field(int, fbuf__filled)
-+	),
-+	TP_fast_assign(
-+		__entry->urb = urb;
-+		__assign_str(name, pdev->v4l2_dev.name);
-+		__entry->fbuf = pdev->fill_buf;
-+		__entry->fbuf__filled = pdev->fill_buf->filled;
-+	),
-+	TP_printk(" dev=%s (fbuf=%p filled=%d) urb=%p",
-+		__get_str(name),
-+		__entry->fbuf,
-+		__entry->fbuf__filled,
-+		__entry->urb)
-+);
-+
-+#endif /* _TRACE_PWC_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
+ 		res = btrfs_prepare_device(devfd, argv[i], &dev_block_count, 0,
+ 				PREP_DEVICE_ZERO_END | PREP_DEVICE_VERBOSE |
+-				(discard ? PREP_DEVICE_DISCARD : 0));
++				(discard ? PREP_DEVICE_DISCARD : 0) |
++				(hmzoned ? PREP_DEVICE_HMZONED : 0));
+ 		close(devfd);
+ 		if (res) {
+ 			ret++;
 -- 
-2.16.4
+2.18.0
 
