@@ -3,85 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BCCC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AB8C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E94F21CF7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E94F21CF7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id A0C9521508
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:13:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C9521508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729872AbeHILh2 (ORCPT
+        id S1730104AbeHILhi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:37:28 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:43178 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727371AbeHILh2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 07:37:28 -0400
-X-UUID: cf8ff1d5ed8242559352abdb832aaf96-20180809
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <yingjoe.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1545081374; Thu, 09 Aug 2018 17:13:28 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 9 Aug 2018 17:13:20 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 9 Aug 2018 17:13:20 +0800
-Message-ID: <1533806000.3347.6.camel@mtksdaap41>
-Subject: Re: [PATCH v2 2/3] i2c: Add helper to ease DMA handling
-From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     Jun Gao <jun.gao@mediatek.com>, <devicetree@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 9 Aug 2018 17:13:20 +0800
-In-Reply-To: <20180808205752.llowh4bvu2wkuhga@ninjato>
-References: <1530955795-17714-1-git-send-email-jun.gao@mediatek.com>
-         <1530955795-17714-3-git-send-email-jun.gao@mediatek.com>
-         <20180808205752.llowh4bvu2wkuhga@ninjato>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 9 Aug 2018 07:37:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727371AbeHILhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 07:37:37 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 452C912B20;
+        Thu,  9 Aug 2018 09:13:42 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2922960A9E;
+        Thu,  9 Aug 2018 09:13:42 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id B548C4BB78;
+        Thu,  9 Aug 2018 09:13:41 +0000 (UTC)
+Date:   Thu, 9 Aug 2018 05:13:41 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Zhang Yi <yi.z.zhang@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, jack@suse.cz,
+        hch@lst.de, yu c zhang <yu.c.zhang@intel.com>, linux-mm@kvack.org,
+        rkrcmar@redhat.com, yi z zhang <yi.z.zhang@intel.com>
+Message-ID: <2036397219.889906.1533806021412.JavaMail.zimbra@redhat.com>
+In-Reply-To: <d2345e628a697ee17fdd6e360f7a6790caab10d5.1533811181.git.yi.z.zhang@linux.intel.com>
+References: <cover.1533811181.git.yi.z.zhang@linux.intel.com> <d2345e628a697ee17fdd6e360f7a6790caab10d5.1533811181.git.yi.z.zhang@linux.intel.com>
+Subject: Re: [PATCH V3 1/4] kvm: remove redundant reserved page check
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+X-Originating-IP: [10.67.117.219, 10.4.195.28]
+Thread-Topic: remove redundant reserved page check
+Thread-Index: eU8Pao8KRqguboLqsHufj9uJmnci1w==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 09 Aug 2018 09:13:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-08 at 22:57 +0200, Wolfram Sang wrote:
-> On Sat, Jul 07, 2018 at 05:29:54PM +0800, Jun Gao wrote:
-> > From: Jun Gao <jun.gao@mediatek.com>
-> > 
-> > This function is needed by i2c_get_dma_safe_msg_buf() potentially.
-> > It is used to free DMA safe buffer when DMA operation fails.
-> > 
-> > Signed-off-by: Jun Gao <jun.gao@mediatek.com>
+
 > 
-> Right, we need something like this. This leaks in the sh_mobile driver,
-> too :(
+> PageReserved() is already checked inside kvm_is_reserved_pfn(),
+> remove it from kvm_set_pfn_dirty().
 > 
-> I am still thinking if there is a nice way to put this functionality
-> into i2c_release_dma_safe_msg_buf() itself somehow...
+> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
+> ---
+>  virt/kvm/kvm_main.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 8b47507f..c44c406 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1690,12 +1690,8 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty);
+>  
+>  void kvm_set_pfn_dirty(kvm_pfn_t pfn)
+>  {
+> -	if (!kvm_is_reserved_pfn(pfn)) {
+> -		struct page *page = pfn_to_page(pfn);
+> -
+> -		if (!PageReserved(page))
+> -			SetPageDirty(page);
+> -	}
+> +	if (!kvm_is_reserved_pfn(pfn))
+> +		SetPageDirty(pfn_to_page(pfn));
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
 
-Wolfram,
+Acked-by: Pankaj Gupta <pagupta@redhat.com>
 
-I have second thought on these API now. Recently, we have saw similar
-issue for spi device driver.
-
-I believe the reason for these api is because some arch changed to can
-not do DMA on stack recently. Maybe we should have dma_mapping to bounce
-buffer like it bounce un-dma-able address for those arch? or we should
-have a common driver API for this, not just for i2c?
-
-Joe.C
-
-
+>  
+> --
+> 2.7.4
+> 
+> 
