@@ -2,221 +2,157 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3C5C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0953C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB19F217C9
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:48:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB19F217C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 55E96217C6
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:50:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E96217C6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729822AbeHIMM7 (ORCPT
+        id S1730100AbeHIMOw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:12:59 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.116]:58855 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727371AbeHIMM6 (ORCPT
+        Thu, 9 Aug 2018 08:14:52 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35375 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbeHIMOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:12:58 -0400
-Received: from [85.158.142.201] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-5.bemta.az-b.eu-central-1.aws.symcld.net id 63/09-05448-40E0C6B5; Thu, 09 Aug 2018 09:48:52 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRWlGSWpSXmKPExsUSt3OpsS4LX06
-  0waNtQhZXLh5ispj68AmbxbcrHUwWl3fNYbPo3NXParHh+1pGBzaPDZ+b2Dx2zrrL7rFpVSeb
-  x763y9g81m+5yuLxeZNcAFsUa2ZeUn5FAmvG3auPmAtOqFc8mr2IsYHxtGIXIxeHkMA6Rol3s
-  /oYuxg5gZwKiU3H29lAbDYBC4nJJx6A2SwCKhJPp70Bs4UFQiTmz9/PDGKLCHQxSpw/6g1iMw
-  uUS2z5NBEszivgINFypZcVwhaUODnzCQtEjYTEwRcvmCF2GUicXtAIFpcQsJeY/v4qUJwDyNa
-  XaDwWCxE2lPg+6xtUiblEa8t+xgmM/LOQTJ2FZOoCRqZVjBZJRZnpGSW5iZk5uoYGBrqGhsa6
-  5rom5nqJVbpJeqmlusmpeSVFiUBJvcTyYr3iytzknBS9vNSSTYzAcGcAgh2M/X9SDjFKcjApi
-  fKGfM6OFuJLyk+pzEgszogvKs1JLT7EKMPBoSTB28KTEy0kWJSanlqRlpkDjDyYtAQHj5II72
-  aQNG9xQWJucWY6ROoUozHHqeaeScwcf95PncQsxJKXn5cqJc47FaRUAKQ0ozQPbhAsIVxilJU
-  S5mUEOk2IpyC1KDezBFX+FaM4B6OSMO9ZkCk8mXklcPteAZ3CBHTKG+1MkFNKEhFSUg2Mcy75
-  qNeUxx+RE+XqFUnMCbv/12DyrpKkT5Xf/rxhPDxriXjBoXmub6eU1DUobE+oDjuZtcBL4oXxG
-  S+B6snnOhWOf8zjYK485fnzvNbedveLxt7+oo3Zr/5EPJjzZdLyHP26g4v+6nUbCxU4bZ34kb
-  lW4p1XMrv1kb+zv7tNUr/mudbiZ2OmEktxRqKhFnNRcSIAdetDPgMDAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-6.tower-246.messagelabs.com!1533808132!3854365!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 13305 invoked from network); 9 Aug 2018 09:48:52 -0000
-Received: from mailrelay2.diasemi.com (HELO sw-ex-cashub01.diasemi.com) (94.185.165.51)
-  by server-6.tower-246.messagelabs.com with AES128-SHA encrypted SMTP; 9 Aug 2018 09:48:52 -0000
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 9 Aug 2018 10:48:50 +0100
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- F1B623FB9D; Thu,  9 Aug 2018 10:48:50 +0100 (BST)
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Thu, 9 Aug 2018 10:48:50 +0100
-Subject: [PATCH] ASoC: da7219: Add delays to capture path to remove DC offset
- noise
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-CC:     Support Opensource <support.opensource@diasemi.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Message-ID: <20180809094850.F1B623FB9D@swsrvapps-01.diasemi.com>
+        Thu, 9 Aug 2018 08:14:51 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g1-v6so4607782wru.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 02:50:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i5Jr1LfDxInYdZWLslIxXL3LNdZ6Lf1WSFgYwnQQMi4=;
+        b=F8789eELwK1PNNXsPnI+luD0yXbSdaAxlKaAARXAp9jeNk9FmBsAr7SbLBMNJAMznT
+         L3HF1LRE3M7mLiTg7iPXsH0CQyxWd0LmfkD/KbnaJei5K1w7U5otf3wc8VAwAVAgpMuP
+         IUtBV03I5CDcHjS6oymYTjAOzf9ABfiKI8RZftAjgSMj4genSKmI5IoBt/FYp5O6KPyV
+         xXVBHbHa44cz9eIuwNEY6DjQ882GomeyW1ivr8UKDw6QlJ4hIi4oCYGe0rO+BWeOhMxR
+         MCdUjd9GbZiE/24JIXGQDljqamuyyOjn5tQuPQoo3WpVKqdGPKcZoPPne/HHAkRp6Yth
+         gz7w==
+X-Gm-Message-State: AOUpUlHZxNKIPzqjfZ3uzZa0slH7gQpcFV8A/9Vf6xHp0kMbT4dvUd53
+        U3nsRmJRv2mLtid+SDnip6N7mA==
+X-Google-Smtp-Source: AA+uWPw296GVQf/0nt046qYtjTgit2k8nCMO2IQwYUxH2V5IQMB7SKfF1oFpeaY3W1q4W67QOV/wDg==
+X-Received: by 2002:adf:f188:: with SMTP id h8-v6mr1031696wro.214.1533808245785;
+        Thu, 09 Aug 2018 02:50:45 -0700 (PDT)
+Received: from localhost.localdomain (hsvpn34.hotsplots.net. [176.74.57.181])
+        by smtp.gmail.com with ESMTPSA id l11-v6sm9265098wru.25.2018.08.09.02.50.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 02:50:45 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 11:50:43 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
+ support utilization clamping
+Message-ID: <20180809095043.GC22465@localhost.localdomain>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-2-patrick.bellasi@arm.com>
+ <20180807123550.GA3062@localhost.localdomain>
+ <20180809091427.4p2c4fbxocpkjaby@darkstar>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 09/08/2018 05:12:00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180809091427.4p2c4fbxocpkjaby@darkstar>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some platforms it has been noted that a pop noise can be
-witnessed when capturing audio, mainly for first time after a
-headset jack has been inserted. This is due to a DC offset in the
-Mic PGA and so to avoid this delays are required when powering
-up the capture path.
+On 09/08/18 10:14, Patrick Bellasi wrote:
+> On 07-Aug 14:35, Juri Lelli wrote:
+> > On 06/08/18 17:39, Patrick Bellasi wrote:
+> > 
+> > [...]
+> > 
+> > > @@ -4218,6 +4245,13 @@ static int __sched_setscheduler(struct task_struct *p,
+> > >  			return retval;
+> > >  	}
+> > >  
+> > > +	/* Configure utilization clamps for the task */
+> > > +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
+> > > +		retval = __setscheduler_uclamp(p, attr);
+> > > +		if (retval)
+> > > +			return retval;
+> > > +	}
+> > > +
+> > 
+> > IIUC, this is available to root and non-root users. In the latter case,
+> > how do we cope with the fact that some user might occupy all the
+> > available clamping groups configured for the system?
+> 
+> That's a very good point, glad you noticed it.
+> 
+> What concern me most is that we set constraints to the cgroups
+> delegation model. If all clamp groups have been used it could be
+> not possible for a parent group to shrink resources for its subgroups.
 
-This commit rectifies the problem by adding delays post Mic PGA and
-post Mixin PGA. The post Mic PGA delay is determined based on
-Mic Bias voltage, and is only applied the first time after a
-headset jack is inserted.
+Right, when groups are in use the problem might actually be even more
+serious.
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
----
- sound/soc/codecs/da7219-aad.c |  5 +++++
- sound/soc/codecs/da7219.c     | 44 +++++++++++++++++++++++++++++++++++++------
- sound/soc/codecs/da7219.h     |  8 ++++++--
- 3 files changed, 49 insertions(+), 8 deletions(-)
+> In both cases however, in principle, I think we can live with the idea
+> that the "System Management Software" (SMS) can pre-allocate all the
+> required boost groups at boot time;  malicious tasks and dependent
+> groups will eventually get an -ENOSPC error.
+> 
+> These are the main reason why I did not posted a more "safe" solution:
+> this series is already big enough, a properly (pre)configured system
+> is still reasonably functional safe and  this feature can be added in
+> a second step.
 
-diff --git a/sound/soc/codecs/da7219-aad.c b/sound/soc/codecs/da7219-aad.c
-index a49ab75..2c7d508 100644
---- a/sound/soc/codecs/da7219-aad.c
-+++ b/sound/soc/codecs/da7219-aad.c
-@@ -59,6 +59,7 @@ static void da7219_aad_btn_det_work(struct work_struct *work)
- 		container_of(work, struct da7219_aad_priv, btn_det_work);
- 	struct snd_soc_component *component = da7219_aad->component;
- 	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
-+	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
- 	u8 statusa, micbias_ctrl;
- 	bool micbias_up = false;
- 	int retries = 0;
-@@ -86,6 +87,8 @@ static void da7219_aad_btn_det_work(struct work_struct *work)
- 	if (retries >= DA7219_AAD_MICBIAS_CHK_RETRIES)
- 		dev_warn(component->dev, "Mic bias status check timed out");
- 
-+	da7219->micbias_on_event = true;
-+
- 	/*
- 	 * Mic bias pulse required to enable mic, must be done before enabling
- 	 * button detection to prevent erroneous button readings.
-@@ -439,6 +442,8 @@ static irqreturn_t da7219_aad_irq_thread(int irq, void *data)
- 			snd_soc_component_update_bits(component, DA7219_ACCDET_CONFIG_1,
- 					    DA7219_BUTTON_CONFIG_MASK, 0);
- 
-+			da7219->micbias_on_event = false;
-+
- 			/* Disable mic bias */
- 			snd_soc_dapm_disable_pin(dapm, "Mic Bias");
- 			snd_soc_dapm_sync(dapm);
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index c0144f2..e46e9f4 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -768,6 +768,30 @@ static int da7219_tonegen_freq_put(struct snd_kcontrol *kcontrol,
-  * DAPM Events
-  */
- 
-+static int da7219_mic_pga_event(struct snd_soc_dapm_widget *w,
-+				struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-+	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
-+
-+	switch (event) {
-+	case SND_SOC_DAPM_POST_PMU:
-+		if (da7219->micbias_on_event) {
-+			/*
-+			 * Delay only for first capture after bias enabled to
-+			 * avoid possible DC offset related noise.
-+			 */
-+			da7219->micbias_on_event = false;
-+			msleep(da7219->mic_pga_delay);
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- static int da7219_dai_event(struct snd_soc_dapm_widget *w,
- 			    struct snd_kcontrol *kcontrol, int event)
- {
-@@ -937,12 +961,12 @@ static int da7219_gain_ramp_event(struct snd_soc_dapm_widget *w,
- 	SND_SOC_DAPM_INPUT("MIC"),
- 
- 	/* Input PGAs */
--	SND_SOC_DAPM_PGA("Mic PGA", DA7219_MIC_1_CTRL,
--			 DA7219_MIC_1_AMP_EN_SHIFT, DA7219_NO_INVERT,
--			 NULL, 0),
--	SND_SOC_DAPM_PGA("Mixin PGA", DA7219_MIXIN_L_CTRL,
--			 DA7219_MIXIN_L_AMP_EN_SHIFT, DA7219_NO_INVERT,
--			 NULL, 0),
-+	SND_SOC_DAPM_PGA_E("Mic PGA", DA7219_MIC_1_CTRL,
-+			   DA7219_MIC_1_AMP_EN_SHIFT, DA7219_NO_INVERT,
-+			   NULL, 0, da7219_mic_pga_event, SND_SOC_DAPM_POST_PMU),
-+	SND_SOC_DAPM_PGA_E("Mixin PGA", DA7219_MIXIN_L_CTRL,
-+			   DA7219_MIXIN_L_AMP_EN_SHIFT, DA7219_NO_INVERT,
-+			   NULL, 0, da7219_settling_event, SND_SOC_DAPM_POST_PMU),
- 
- 	/* Input Filters */
- 	SND_SOC_DAPM_ADC("ADC", NULL, DA7219_ADC_L_CTRL, DA7219_ADC_L_EN_SHIFT,
-@@ -1847,6 +1871,14 @@ static void da7219_handle_pdata(struct snd_soc_component *component)
- 
- 		snd_soc_component_write(component, DA7219_MICBIAS_CTRL, micbias_lvl);
- 
-+		/*
-+		 * Calculate delay required to compensate for DC offset in
-+		 * Mic PGA, based on Mic Bias voltage.
-+		 */
-+		da7219->mic_pga_delay =  DA7219_MIC_PGA_BASE_DELAY +
-+					(pdata->micbias_lvl *
-+					 DA7219_MIC_PGA_OFFSET_DELAY);
-+
- 		/* Mic */
- 		switch (pdata->mic_amp_in_sel) {
- 		case DA7219_MIC_AMP_IN_SEL_DIFF:
-diff --git a/sound/soc/codecs/da7219.h b/sound/soc/codecs/da7219.h
-index 1b00023..3a00686 100644
---- a/sound/soc/codecs/da7219.h
-+++ b/sound/soc/codecs/da7219.h
-@@ -781,8 +781,10 @@
- #define DA7219_SYS_STAT_CHECK_DELAY	50
- 
- /* Power up/down Delays */
--#define DA7219_SETTLING_DELAY	40
--#define DA7219_MIN_GAIN_DELAY	30
-+#define DA7219_SETTLING_DELAY		40
-+#define DA7219_MIN_GAIN_DELAY		30
-+#define DA7219_MIC_PGA_BASE_DELAY	100
-+#define DA7219_MIC_PGA_OFFSET_DELAY	40
- 
- enum da7219_clk_src {
- 	DA7219_CLKSRC_MCLK = 0,
-@@ -828,6 +830,8 @@ struct da7219_priv {
- 
- 	bool master;
- 	bool alc_en;
-+	bool micbias_on_event;
-+	unsigned int mic_pga_delay;
- 	u8 gain_ramp_ctrl;
- };
- 
--- 
-1.9.1
+I see, but I also fear that there will be times and usages of this new
+interface where no SMS is present.
 
+> However, I already have a couple of possible extensions/fixes which I
+> can add on top on the next respin. They are along these lines:
+
+These are exactly what I was thinking about as well. :-)
+
+> 1) make CAP_SYS_NICE protected the clamp groups, with an optional boot
+>    time parameter to relax this check
+
+It seems to me that this might work well with that the intended usage of
+the interface that you depict above. SMS only (or any privileged user)
+will be in control of how groups are configured, so no problem for
+normal users.
+
+> 2) add discretization support to clamp groups allocation
+
+And this might also work well if we feel that we don't want to restrict
+usage of the interface to admin only, however...
+
+> This second feature specifically, will ensure that clamp values are
+> always mapped into one of the available clamp groups. While the exact
+> clamp value can always be used for tasks placement biasing, when it
+> comes to frequency selection biasing, depending on concurrently
+> running tasks, you can end up with an effective clamp value which is a
+> rounded up.
+
+what I'm not so sure about is that we might lose in flexibility if the
+number of available discrete clamp groups is too small compared to the
+number of available OPP on the platform.
+
+> Will likely add a couple of additional patches on v4 posting.
+> Do you have any other possible idea?
+
+As said, I though as well about the two options you mentioned.
