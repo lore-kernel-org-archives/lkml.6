@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA3DC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F41C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7DD22393
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:06:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7DD22393
+	by mail.kernel.org (Postfix) with ESMTP id 7861F21EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7861F21EFC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeHIXdc (ORCPT
+        id S1727490AbeHIXde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 19:33:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
+        Thu, 9 Aug 2018 19:33:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727168AbeHIXdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 19:33:32 -0400
+        id S1727407AbeHIXdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 19:33:33 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AEB122393;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3245322399;
         Thu,  9 Aug 2018 21:06:56 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fns91-0001S5-30; Thu, 09 Aug 2018 17:06:55 -0400
-Message-Id: <20180809210654.989635876@goodmis.org>
+        id 1fns91-0001Sd-7Q; Thu, 09 Aug 2018 17:06:55 -0400
+Message-Id: <20180809210655.120730709@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 09 Aug 2018 17:03:37 -0400
+Date:   Thu, 09 Aug 2018 17:03:38 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        joel@joelfernandes.org, Colin Ian King <colin.king@canonical.com>
-Subject: [for-next][PATCH 4/6] ftrace: Remove unused pointer ftrace_swapper_pid
+        joel@joelfernandes.org
+Subject: [for-next][PATCH 5/6] tracing: Fix synchronizing to event changes with
+ tracepoint_synchronize_unregister()
 References: <20180809210333.588854137@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -47,37 +47,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Pointer ftrace_swapper_pid is defined but is never used hence it is
-redundant and can be removed. The use of this variable was removed
-in commit 345ddcc882d8 ("ftrace: Have set_ftrace_pid use the bitmap
-like events do").
+Now that some trace events can be protected by srcu_read_lock(tracepoint_srcu),
+we need to make sure all locations that depend on this are also protected.
+There were many places that did a synchronize_sched() thinking that it was
+enough to protect againts access to trace events. This use to be the case,
+but now that we use SRCU for _rcuidle() trace events, they may not be
+protected by synchronize_sched(), as they may be called in paths that RCU is
+not watching for preempt disable.
 
-Cleans up clang warning:
-warning: 'ftrace_swapper_pid' defined but not used [-Wunused-const-variable=]
-
-Link: http://lkml.kernel.org/r/20180809125609.13142-1-colin.king@canonical.com
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 2 --
- 1 file changed, 2 deletions(-)
+ kernel/trace/trace_events.c         |  8 ++++----
+ kernel/trace/trace_events_filter.c  | 15 ++++++++-------
+ kernel/trace/trace_events_hist.c    |  2 +-
+ kernel/trace/trace_events_trigger.c |  6 ++++--
+ 4 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 2d795193024b..48b5b466ec7a 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -1020,8 +1020,6 @@ static __init void ftrace_profile_tracefs(struct dentry *d_tracer)
- }
- #endif /* CONFIG_FUNCTION_PROFILER */
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 7b508ce8ac44..808cf29febe2 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -636,7 +636,7 @@ static void __ftrace_clear_event_pids(struct trace_array *tr)
+ 	rcu_assign_pointer(tr->filtered_pids, NULL);
  
--static struct pid * const ftrace_swapper_pid = &init_struct_pid;
--
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- static int ftrace_graph_active;
- #else
+ 	/* Wait till all users are no longer using pid filtering */
+-	synchronize_sched();
++	tracepoint_synchronize_unregister();
+ 
+ 	trace_free_pid_list(pid_list);
+ }
+@@ -1622,7 +1622,7 @@ ftrace_event_pid_write(struct file *filp, const char __user *ubuf,
+ 	}
+ 
+ 	if (filtered_pids) {
+-		synchronize_sched();
++		tracepoint_synchronize_unregister();
+ 		trace_free_pid_list(filtered_pids);
+ 	} else if (pid_list) {
+ 		/*
+@@ -3036,8 +3036,8 @@ int event_trace_del_tracer(struct trace_array *tr)
+ 	/* Disable any running events */
+ 	__ftrace_set_clr_event_nolock(tr, NULL, NULL, NULL, 0);
+ 
+-	/* Access to events are within rcu_read_lock_sched() */
+-	synchronize_sched();
++	/* Make sure no more events are being executed */
++	tracepoint_synchronize_unregister();
+ 
+ 	down_write(&trace_event_sem);
+ 	__trace_remove_event_dirs(tr);
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 893a206bcba4..184c7685d5ea 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -899,7 +899,8 @@ int filter_match_preds(struct event_filter *filter, void *rec)
+ 	if (!filter)
+ 		return 1;
+ 
+-	prog = rcu_dereference_sched(filter->prog);
++	/* Protected by either SRCU(tracepoint_srcu) or preempt_disable */
++	prog = rcu_dereference_raw(filter->prog);
+ 	if (!prog)
+ 		return 1;
+ 
+@@ -1626,10 +1627,10 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+ 
+ 	/*
+ 	 * The calls can still be using the old filters.
+-	 * Do a synchronize_sched() to ensure all calls are
++	 * Do a synchronize_sched() and to ensure all calls are
+ 	 * done with them before we free them.
+ 	 */
+-	synchronize_sched();
++	tracepoint_synchronize_unregister();
+ 	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
+ 		__free_filter(filter_item->filter);
+ 		list_del(&filter_item->list);
+@@ -1648,7 +1649,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+ 	kfree(filter);
+ 	/* If any call succeeded, we still need to sync */
+ 	if (!fail)
+-		synchronize_sched();
++		tracepoint_synchronize_unregister();
+ 	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
+ 		__free_filter(filter_item->filter);
+ 		list_del(&filter_item->list);
+@@ -1790,7 +1791,7 @@ int apply_event_filter(struct trace_event_file *file, char *filter_string)
+ 		event_clear_filter(file);
+ 
+ 		/* Make sure the filter is not being used */
+-		synchronize_sched();
++		tracepoint_synchronize_unregister();
+ 		__free_filter(filter);
+ 
+ 		return 0;
+@@ -1817,7 +1818,7 @@ int apply_event_filter(struct trace_event_file *file, char *filter_string)
+ 
+ 		if (tmp) {
+ 			/* Make sure the call is done with the filter */
+-			synchronize_sched();
++			tracepoint_synchronize_unregister();
+ 			__free_filter(tmp);
+ 		}
+ 	}
+@@ -1847,7 +1848,7 @@ int apply_subsystem_event_filter(struct trace_subsystem_dir *dir,
+ 		filter = system->filter;
+ 		system->filter = NULL;
+ 		/* Ensure all filters are no longer used */
+-		synchronize_sched();
++		tracepoint_synchronize_unregister();
+ 		filter_free_subsystem_filters(dir, tr);
+ 		__free_filter(filter);
+ 		goto out_unlock;
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index aae18af94c94..c522b51d9909 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -5141,7 +5141,7 @@ static void hist_clear(struct event_trigger_data *data)
+ 	if (data->name)
+ 		pause_named_trigger(data);
+ 
+-	synchronize_sched();
++	tracepoint_synchronize_unregister();
+ 
+ 	tracing_map_clear(hist_data->map);
+ 
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index 58d21fd52932..750044ef15e8 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -34,7 +34,9 @@ void trigger_data_free(struct event_trigger_data *data)
+ 	if (data->cmd_ops->set_filter)
+ 		data->cmd_ops->set_filter(NULL, data, NULL);
+ 
+-	synchronize_sched(); /* make sure current triggers exit before free */
++	/* make sure current triggers exit before free */
++	tracepoint_synchronize_unregister();
++
+ 	kfree(data);
+ }
+ 
+@@ -752,7 +754,7 @@ int set_trigger_filter(char *filter_str,
+ 
+ 	if (tmp) {
+ 		/* Make sure the call is done with the filter */
+-		synchronize_sched();
++		tracepoint_synchronize_unregister();
+ 		free_event_filter(tmp);
+ 	}
+ 
 -- 
 2.18.0
 
