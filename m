@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD2BC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4C6C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2812321D09
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1B321EF8
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 17:02:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYkiW9AV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2812321D09
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pSIXHxBW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1B321EF8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbeHIT1m (ORCPT
+        id S1732716AbeHIT1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 15:27:42 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56027 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730419AbeHIT1m (ORCPT
+        Thu, 9 Aug 2018 15:27:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33880 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732624AbeHIT1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 15:27:42 -0400
-Received: by mail-wm0-f66.google.com with SMTP id f21-v6so876432wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 10:01:55 -0700 (PDT)
+        Thu, 9 Aug 2018 15:27:37 -0400
+Received: by mail-wm0-f67.google.com with SMTP id l2-v6so2842320wme.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 10:01:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=33p3yG2IFPmurjZ6CYknFZJ4X3RruEdrh2lVtZw4qbQ=;
-        b=FYkiW9AVp3sgFRJouyhy4KAHC2/hAptuKxd5QOkqIIHtAPJvVXpRP5pq6UKWTtBsuZ
-         O1xwaMGK/PMkg20ZJenKSa+YJFhOlf4T77YJuODjos+TTxBka/zXCp4yU47KlYXZrr0v
-         SR34WuScP06R2Vr4la/j8BudDrxXnCz6pHsui4GFarl0YaXV9xMWhT9rwA1Dn60KT0v6
-         3q2PUIZK+kJsiPwiNhHt5YwB8kUcsTRbUXIgu3pay7EA2z6+4TFH9tim/dY8Ii/+k0OB
-         3+Cauqmqi9UXdQ7iGzHxCI4Yw7TTH/Bu1oYKsjWd2z05UWTsz+q5MuvG3ykCBrEox5zQ
-         F0sQ==
+        bh=iAk1oh49gfj5IrsHYekIMMg1Eaq524txoZJ3TDIdAmI=;
+        b=pSIXHxBWMDBFQiCMox85MmXB4/H3yMPMj36xrkHqeZJQiYqgEOf2WDOjNyPn7CL5qa
+         oHImGW3jQmm/TA3E1kYbqZL5Qqwi2Iu8ut4nUBXRnZDUwiHMQ7x+APjixuqfYV1Mk6P5
+         LMly7pTbRAm2d8tHmxzjwEARGlGklE8FhcWCiYCVVROyHAoE0HZ1VxrQKgkp5XVSTTeD
+         LrDK3LQV1K3RH73g1UG7m6yTMvLuBwHqJnoNTzPM74kOoVucXvTa9YPZc0S30fqKh6ZO
+         nhMqyknaazxoafwNs65T9I296BsF0Q11ZjipW4dIiDP050L24YVBWBuZPbKBCYWBFnkM
+         CizQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=33p3yG2IFPmurjZ6CYknFZJ4X3RruEdrh2lVtZw4qbQ=;
-        b=OgooDQzZLGYYoEhUK8qjyunsuzjnDWsu2dZcpp3xI3dAOypoqGfibanEwaHRt1cHgb
-         d/3npbpe9/q2PM0tBkrzGSlcbFV6o79TuxD/i0i8m0yL7qA/yM1mEybOVUK8KZKjiQ4r
-         GJgAE01GlxrtuBM+EZuvU0pjnGmSErsNX/SLMEz+H1DZsLhrtKCGm+PlWygR22bx6T+6
-         ttOhr9DXDmAKh4ZV5ORm6xdebx0IaATBRTEcoHh/M+XrrBnx3Dp/8bGXUXhUNRUe9f8I
-         kwWOz9y227ApsntsCd38G0XF/deyD7/ACPF9cWP5iMCoZND1K9bojD5w+apyAwIBdEEC
-         9Y3A==
-X-Gm-Message-State: AOUpUlGDh8iI+G0lPiFeGy5s8vfAX43nljx3TS+VWzt/LeC68wWImgLg
-        7gv+/Jkmyk9RB+4IKMknT3s=
-X-Google-Smtp-Source: AA+uWPy9wf9VjErPGLGsEduKmDFTodpo3PgP/dJc3p0iNiXrewUe5UD9B17bfMZdbiJ4bZHGykPmSw==
-X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr2251023wme.125.1533834114249;
-        Thu, 09 Aug 2018 10:01:54 -0700 (PDT)
+        bh=iAk1oh49gfj5IrsHYekIMMg1Eaq524txoZJ3TDIdAmI=;
+        b=OVNjObZNq4qg15ICr+PZmzhCoLg/+X3NmkxgWyHn69pR+h21/SL6gw2qkt2XO8/YfD
+         /PgH02r6Eehfq7HbbwCjrGguTbxo0/51SSfIDaIquX3CPblxWfdOIdG4fypRjb+8wu4h
+         Oqy1E1Din1qs2u27lcmVoL8YYD7YwzJqxNZBBepcjOVZb9hRml8BRL+aftva0S037SCB
+         +VgMQWjmjefIDxPZjyY1fsCa88b/7ynf5U13Ft0TuF3njExE8UZxcjwToHlSDrwEoZYY
+         JRGJqo0ogLPKsJemsv4WhSlOGvptn341VM9e1onDIxvIItRC02y8gvJ987upu4IZDVQZ
+         585g==
+X-Gm-Message-State: AOUpUlH2u3eC0F7A9Khv6T08OL1/iCk/XghJV9n+7cpnd06snNJzbV9a
+        z4vipAdzaadlu1EDoPq8qEw=
+X-Google-Smtp-Source: AA+uWPyj0NHsLnK5pY8NvCI6Aoc2TT0fja4bjGWKiYPjMJvp7RQzWwGNf0vlbLRRNCims/gMuBu0Kw==
+X-Received: by 2002:a1c:752:: with SMTP id 79-v6mr2293605wmh.59.1533834110628;
+        Thu, 09 Aug 2018 10:01:50 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id b6-v6sm10389440wru.66.2018.08.09.10.01.53
+        by smtp.gmail.com with ESMTPSA id b6-v6sm10389440wru.66.2018.08.09.10.01.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 10:01:53 -0700 (PDT)
+        Thu, 09 Aug 2018 10:01:50 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 5/5] staging: rtl8188eu: use phydm_reg.h from rtlwifi
-Date:   Thu,  9 Aug 2018 19:01:31 +0200
-Message-Id: <20180809170131.29279-5-straube.linux@gmail.com>
+Subject: [PATCH 3/5] staging: rtl8188eu: use is_multicast_ether_addr in rtw_xmit.c
+Date:   Thu,  9 Aug 2018 19:01:29 +0200
+Message-Id: <20180809170131.29279-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180809170131.29279-1-straube.linux@gmail.com>
 References: <20180809170131.29279-1-straube.linux@gmail.com>
@@ -73,144 +73,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use rtlwifi/phydm/phydm_reg.h instead of odm_reg.h and
-remove the now unused odm_reg.h.
-
-All defines from odm_reg.h are defined with the same values
-in rtlwifi/phydm/phydm_reg.h.
+Use is_multicast_ether_addr instead of custom IS_MCAST in
+core/rtw_xmit.c.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- .../staging/rtl8188eu/include/odm_precomp.h   |   2 +-
- drivers/staging/rtl8188eu/include/odm_reg.h   | 106 ------------------
- 2 files changed, 1 insertion(+), 107 deletions(-)
- delete mode 100644 drivers/staging/rtl8188eu/include/odm_reg.h
+ drivers/staging/rtl8188eu/core/rtw_xmit.c | 35 +++++++++++------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/include/odm_precomp.h b/drivers/staging/rtl8188eu/include/odm_precomp.h
-index 658a938df4c1..0cf7f82b805f 100644
---- a/drivers/staging/rtl8188eu/include/odm_precomp.h
-+++ b/drivers/staging/rtl8188eu/include/odm_precomp.h
-@@ -29,7 +29,7 @@
- #include "hal8188e_rate_adaptive.h" /* for RA,Power training */
- #include "rtl8188e_hal.h"
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 2130d78e0d9f..fc06a13a6ea1 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -399,7 +399,7 @@ static s32 update_attrib(struct adapter *padapter, struct sk_buff *pkt, struct p
+ 	struct sta_info *psta = NULL;
+ 	struct ethhdr etherhdr;
  
--#include "odm_reg.h"
-+#include "../../rtlwifi/phydm/phydm_reg.h"
+-	int bmcast;
++	bool mcast;
+ 	struct sta_priv		*pstapriv = &padapter->stapriv;
+ 	struct security_priv	*psecuritypriv = &padapter->securitypriv;
+ 	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
+@@ -460,10 +460,10 @@ static s32 update_attrib(struct adapter *padapter, struct sk_buff *pkt, struct p
+ 	if ((pattrib->ether_type == ETH_P_ARP) || (pattrib->ether_type == ETH_P_PAE) || (pattrib->dhcp_pkt == 1))
+ 		rtw_lps_ctrl_wk_cmd(padapter, LPS_CTRL_SPECIAL_PACKET, 1);
  
- #include "odm_rtl8188e.h"
+-	bmcast = IS_MCAST(pattrib->ra);
++	mcast = is_multicast_ether_addr(pattrib->ra);
  
-diff --git a/drivers/staging/rtl8188eu/include/odm_reg.h b/drivers/staging/rtl8188eu/include/odm_reg.h
-deleted file mode 100644
-index b56549ba1256..000000000000
---- a/drivers/staging/rtl8188eu/include/odm_reg.h
-+++ /dev/null
-@@ -1,106 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/******************************************************************************
-- *
-- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
-- *
-- ******************************************************************************/
--/*  */
--/*  File Name: odm_reg.h */
--/*  */
--/*  Description: */
--/*  */
--/*  This file is for general register definition. */
--/*  */
--/*  */
--/*  */
--#ifndef	__HAL_ODM_REG_H__
--#define __HAL_ODM_REG_H__
+ 	/*  get sta_info */
+-	if (bmcast) {
++	if (mcast) {
+ 		psta = rtw_get_bcmc_stainfo(padapter);
+ 	} else {
+ 		psta = rtw_get_stainfo(pstapriv, pattrib->ra);
+@@ -517,7 +517,7 @@ static s32 update_attrib(struct adapter *padapter, struct sk_buff *pkt, struct p
+ 			goto exit;
+ 		}
+ 	} else {
+-		GET_ENCRY_ALGO(psecuritypriv, psta, pattrib->encrypt, bmcast);
++		GET_ENCRY_ALGO(psecuritypriv, psta, pattrib->encrypt, mcast);
+ 
+ 		switch (psecuritypriv->dot11AuthAlgrthm) {
+ 		case dot11AuthAlgrthm_Open:
+@@ -526,7 +526,7 @@ static s32 update_attrib(struct adapter *padapter, struct sk_buff *pkt, struct p
+ 			pattrib->key_idx = (u8)psecuritypriv->dot11PrivacyKeyIndex;
+ 			break;
+ 		case dot11AuthAlgrthm_8021X:
+-			if (bmcast)
++			if (mcast)
+ 				pattrib->key_idx = (u8)psecuritypriv->dot118021XGrpKeyid;
+ 			else
+ 				pattrib->key_idx = 0;
+@@ -596,7 +596,6 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 	struct	xmit_priv *pxmitpriv = &padapter->xmitpriv;
+ 	u8 priority[4] = {0x0, 0x0, 0x0, 0x0};
+ 	u8 hw_hdr_offset = 0;
+-	int bmcst = IS_MCAST(pattrib->ra);
+ 
+ 	if (pattrib->psta)
+ 		stainfo = pattrib->psta;
+@@ -614,7 +613,7 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 
+ 			pframe = pxmitframe->buf_addr + hw_hdr_offset;
+ 
+-			if (bmcst) {
++			if (is_multicast_ether_addr(pattrib->ra)) {
+ 				if (!memcmp(psecuritypriv->dot118021XGrptxmickey[psecuritypriv->dot118021XGrpKeyid].skey, null_key, 16))
+ 					return _FAIL;
+ 				/* start to calculate the mic code */
+@@ -743,12 +742,10 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+ 
+ 	struct sta_info *psta;
+ 
+-	int bmcst = IS_MCAST(pattrib->ra);
 -
--/*  */
--/*  Register Definition */
--/*  */
--
--/* MAC REG */
--#define	ODM_BB_RESET					0x002
--#define	ODM_DUMMY						0x4fe
--#define	ODM_EDCA_VO_PARAM			0x500
--#define	ODM_EDCA_VI_PARAM			0x504
--#define	ODM_EDCA_BE_PARAM			0x508
--#define	ODM_EDCA_BK_PARAM			0x50C
--#define	ODM_TXPAUSE					0x522
--
--/* BB REG */
--#define	ODM_FPGA_PHY0_PAGE8			0x800
--#define	ODM_PSD_SETTING				0x808
--#define	ODM_AFE_SETTING				0x818
--#define	ODM_TXAGC_B_6_18				0x830
--#define	ODM_TXAGC_B_24_54			0x834
--#define	ODM_TXAGC_B_MCS32_5			0x838
--#define	ODM_TXAGC_B_MCS0_MCS3		0x83c
--#define	ODM_TXAGC_B_MCS4_MCS7		0x848
--#define	ODM_TXAGC_B_MCS8_MCS11		0x84c
--#define	ODM_ANALOG_REGISTER			0x85c
--#define	ODM_RF_INTERFACE_OUTPUT		0x860
--#define	ODM_TXAGC_B_MCS12_MCS15	0x868
--#define	ODM_TXAGC_B_11_A_2_11		0x86c
--#define	ODM_AD_DA_LSB_MASK			0x874
--#define	ODM_ENABLE_3_WIRE			0x88c
--#define	ODM_PSD_REPORT				0x8b4
--#define	ODM_R_ANT_SELECT				0x90c
--#define	ODM_CCK_ANT_SELECT			0xa07
--#define	ODM_CCK_PD_THRESH			0xa0a
--#define	ODM_CCK_RF_REG1				0xa11
--#define	ODM_CCK_MATCH_FILTER			0xa20
--#define	ODM_CCK_RAKE_MAC				0xa2e
--#define	ODM_CCK_CNT_RESET			0xa2d
--#define	ODM_CCK_TX_DIVERSITY			0xa2f
--#define	ODM_CCK_FA_CNT_MSB			0xa5b
--#define	ODM_CCK_FA_CNT_LSB			0xa5c
--#define	ODM_CCK_NEW_FUNCTION		0xa75
--#define	ODM_OFDM_PHY0_PAGE_C		0xc00
--#define	ODM_OFDM_RX_ANT				0xc04
--#define	ODM_R_A_RXIQI					0xc14
--#define	ODM_R_A_AGC_CORE1			0xc50
--#define	ODM_R_A_AGC_CORE2			0xc54
--#define	ODM_R_B_AGC_CORE1			0xc58
--#define	ODM_R_AGC_PAR					0xc70
--#define	ODM_R_HTSTF_AGC_PAR			0xc7c
--#define	ODM_TX_PWR_TRAINING_A		0xc90
--#define	ODM_TX_PWR_TRAINING_B		0xc98
--#define	ODM_OFDM_FA_CNT1				0xcf0
--#define	ODM_OFDM_PHY0_PAGE_D		0xd00
--#define	ODM_OFDM_FA_CNT2				0xda0
--#define	ODM_OFDM_FA_CNT3				0xda4
--#define	ODM_OFDM_FA_CNT4				0xda8
--#define	ODM_TXAGC_A_6_18				0xe00
--#define	ODM_TXAGC_A_24_54			0xe04
--#define	ODM_TXAGC_A_1_MCS32			0xe08
--#define	ODM_TXAGC_A_MCS0_MCS3		0xe10
--#define	ODM_TXAGC_A_MCS4_MCS7		0xe14
--#define	ODM_TXAGC_A_MCS8_MCS11		0xe18
--#define	ODM_TXAGC_A_MCS12_MCS15		0xe1c
--
--/* RF REG */
--#define	ODM_GAIN_SETTING				0x00
--#define	ODM_CHANNEL					0x18
--
--/* Ant Detect Reg */
--#define	ODM_DPDT						0x300
--
--/* PSD Init */
--#define	ODM_PSDREG					0x808
--
--/* 92D Path Div */
--#define	PATHDIV_REG					0xB30
--#define	PATHDIV_TRI					0xBA0
--
--
--/*  */
--/*  Bitmap Definition */
--/*  */
--
--#define	BIT_FA_RESET					BIT(0)
--
--
--
--#endif
+ 	if (pattrib->psta) {
+ 		psta = pattrib->psta;
+ 	} else {
+-		if (bmcst)
++		if (is_multicast_ether_addr(pattrib->ra))
+ 			psta = rtw_get_bcmc_stainfo(padapter);
+ 		else
+ 			psta = rtw_get_stainfo(&padapter->stapriv, pattrib->ra);
+@@ -914,7 +911,7 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, struct
+ 	struct xmit_priv	*pxmitpriv = &padapter->xmitpriv;
+ 	struct pkt_attrib	*pattrib = &pxmitframe->attrib;
+ 	u8 *pbuf_start;
+-	s32 bmcst = IS_MCAST(pattrib->ra);
++	bool mcast = is_multicast_ether_addr(pattrib->ra);
+ 	s32 res = _SUCCESS;
+ 	size_t remainder = pkt->len - ETH_HLEN;
+ 
+@@ -964,13 +961,13 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, struct
+ 				WEP_IV(pattrib->iv, psta->dot11txpn, pattrib->key_idx);
+ 				break;
+ 			case _TKIP_:
+-				if (bmcst)
++				if (mcast)
+ 					TKIP_IV(pattrib->iv, psta->dot11txpn, pattrib->key_idx);
+ 				else
+ 					TKIP_IV(pattrib->iv, psta->dot11txpn, 0);
+ 				break;
+ 			case _AES_:
+-				if (bmcst)
++				if (mcast)
+ 					AES_IV(pattrib->iv, psta->dot11txpn, pattrib->key_idx);
+ 				else
+ 					AES_IV(pattrib->iv, psta->dot11txpn, 0);
+@@ -997,7 +994,7 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, struct
+ 		if ((pattrib->icv_len > 0) && (pattrib->bswenc))
+ 			mpdu_len -= pattrib->icv_len;
+ 
+-		mem_sz = min_t(size_t, bmcst ? pattrib->pktlen : mpdu_len, remainder);
++		mem_sz = min_t(size_t, mcast ? pattrib->pktlen : mpdu_len, remainder);
+ 		skb_copy_bits(pkt, pkt->len - remainder, pframe, mem_sz);
+ 		remainder -= mem_sz;
+ 
+@@ -1010,7 +1007,7 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, struct
+ 
+ 		frg_inx++;
+ 
+-		if (bmcst || remainder == 0) {
++		if (mcast || remainder == 0) {
+ 			pattrib->nr_frags = frg_inx;
+ 
+ 			pattrib->last_txcmdsz = pattrib->hdrlen + pattrib->iv_len + ((pattrib->nr_frags == 1) ? llc_sz : 0) +
+@@ -1041,7 +1038,7 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, struct
+ 
+ 	xmitframe_swencrypt(padapter, pxmitframe);
+ 
+-	if (!bmcst)
++	if (!mcast)
+ 		update_attrib_vcs_info(padapter, pxmitframe);
+ 	else
+ 		pattrib->vcs_mode = NONE_VCS;
+@@ -1632,7 +1629,7 @@ int xmitframe_enqueue_for_sleeping_sta(struct adapter *padapter, struct xmit_fra
+ 	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	struct pkt_attrib *pattrib = &pxmitframe->attrib;
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+-	int bmcst = IS_MCAST(pattrib->ra);
++	bool mcast = is_multicast_ether_addr(pattrib->ra);
+ 
+ 	if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == false)
+ 		return ret;
+@@ -1646,12 +1643,12 @@ int xmitframe_enqueue_for_sleeping_sta(struct adapter *padapter, struct xmit_fra
+ 		return ret;
+ 
+ 	if (pattrib->triggered == 1) {
+-		if (bmcst)
++		if (mcast)
+ 			pattrib->qsel = 0x11;/* HIQ */
+ 		return ret;
+ 	}
+ 
+-	if (bmcst) {
++	if (mcast) {
+ 		spin_lock_bh(&psta->sleep_q.lock);
+ 
+ 		if (pstapriv->sta_dz_bitmap) {/* if any one sta is in ps mode */
 -- 
 2.18.0
 
