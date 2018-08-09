@@ -2,194 +2,202 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD632C46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFCAC46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858ED219EF
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:32:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858ED219EF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3429A21BC9
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:36:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3429A21BC9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbeHIGy4 (ORCPT
+        id S1728169AbeHIG7F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 02:54:56 -0400
-Received: from mga11.intel.com ([192.55.52.93]:22077 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbeHIGyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 02:54:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 21:32:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
-   d="scan'208";a="61024063"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Aug 2018 21:32:03 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ricardo.ner@intel.com, matt@codeblueprint.co.uk,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V1 5/6] x86/mm: If in_atomic(), allocate pages without sleeping
-Date:   Wed,  8 Aug 2018 21:31:16 -0700
-Message-Id: <1533789077-16156-6-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com>
+        Thu, 9 Aug 2018 02:59:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40662 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727724AbeHIG7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 02:59:05 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w794ZQYV113017
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Aug 2018 00:36:12 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr99e22cv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 00:36:11 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Thu, 9 Aug 2018 05:36:02 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Aug 2018 05:36:00 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w794Zxf345416686
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Aug 2018 04:35:59 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1175011C04A;
+        Thu,  9 Aug 2018 07:36:06 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7B3A11C04C;
+        Thu,  9 Aug 2018 07:36:05 +0100 (BST)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.85])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Aug 2018 07:36:05 +0100 (BST)
+Subject: Re: [PATCH 2/3] perf report: Add raw report support for s390
+ auxiliary trace
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     mpe@ellerman.id.au, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <20180802074622.13641-1-tmricht@linux.ibm.com>
+ <20180802074622.13641-3-tmricht@linux.ibm.com>
+ <87r2j9bkax.fsf@concordia.ellerman.id.au>
+ <eda2632e-7919-5ffd-5f68-821e77d216fa@linux.ibm.com>
+ <20180808155328.GA9543@kernel.org> <20180808155921.GB9543@kernel.org>
+ <20180808160843.GC9543@kernel.org> <20180808161451.GD9543@kernel.org>
+ <20180808164214.GE9543@kernel.org>
+From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM
+Date:   Thu, 9 Aug 2018 06:35:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180808164214.GE9543@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080904-0012-0000-0000-000002973371
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080904-0013-0000-0000-000020CA40E0
+Message-Id: <252202b1-bc08-a035-8de1-91136016d021@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-09_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808090047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+On 08/08/2018 06:42 PM, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Aug 08, 2018 at 01:14:51PM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Wed, Aug 08, 2018 at 01:08:43PM -0300, Arnaldo Carvalho de Melo escreveu:
+>>> No need for __packed.
+>>  
+>>> I'm removing that to avoid having this failling in compilers that have
+>>> such a warning, since we default to Werror.
+>>  
+>>> Holler if there is something I'missing :-)
+>>
+>> In file included from util/cpumap.h:10,
+>>                  from util/s390-cpumsf.c:150:
+>> util/s390-cpumsf.c: In function 's390_cpumsf_diag_show':
+>> util/s390-cpumsf.c:208:10: error: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
+>>    pr_err("Invalid AUX trace diagnostic entry [%#08lx]\n", pos);
+>>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> /git/linux/tools/perf/util/debug.h:20:21: note: in definition of macro 'pr_fmt'
+>>  #define pr_fmt(fmt) fmt
+>>                      ^~~
+>> util/s390-cpumsf.c:208:3: note: in expansion of macro 'pr_err'
+>>    pr_err("Invalid AUX trace diagnostic entry [%#08lx]\n", pos);
+>>    ^~~~~~
+>> util/s390-cpumsf.c: In function 's390_cpumsf_trailer_show':
+>> util/s390-cpumsf.c:233:10: error: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
+>>    pr_err("Invalid AUX trace trailer entry [%#08lx]\n", pos);
+> 
+> So for those I applied this, seems to pass the ones that were failing,
+> restarting tests...
+> 
+> diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
+> index 2bcb160a08f0..d2c78ffd9fee 100644
+> --- a/tools/perf/util/s390-cpumsf.c
+> +++ b/tools/perf/util/s390-cpumsf.c
+> @@ -187,7 +187,7 @@ static bool s390_cpumsf_basic_show(const char *color, size_t pos,
+>  		pr_err("Invalid AUX trace basic entry [%#08zx]\n", pos);
+>  		return false;
+>  	}
+> -	color_fprintf(stdout, color, "    [%#08x] Basic   Def:%04x Inst:%#04x"
+> +	color_fprintf(stdout, color, "    [%#08zx] Basic   Def:%04x Inst:%#04x"
+>  		      " %c%c%c%c AS:%d ASN:%#04x IA:%#018llx\n"
+>  		      "\t\tCL:%d HPP:%#018llx GPP:%#018llx\n",
+>  		      pos, basic->def, basic->U,
+> @@ -205,10 +205,10 @@ static bool s390_cpumsf_diag_show(const char *color, size_t pos,
+>  				  struct hws_diag_entry *diag)
+>  {
+>  	if (diag->def < S390_CPUMSF_DIAG_DEF_FIRST) {
+> -		pr_err("Invalid AUX trace diagnostic entry [%#08lx]\n", pos);
+> +		pr_err("Invalid AUX trace diagnostic entry [%#08zx]\n", pos);
+>  		return false;
+>  	}
+> -	color_fprintf(stdout, color, "    [%#08x] Diag    Def:%04x %c\n",
+> +	color_fprintf(stdout, color, "    [%#08zx] Diag    Def:%04x %c\n",
+>  		      pos, diag->def, diag->I ? 'I' : ' ');
+>  	return true;
+>  }
+> @@ -230,10 +230,10 @@ static bool s390_cpumsf_trailer_show(const char *color, size_t pos,
+>  				     struct hws_trailer_entry *te)
+>  {
+>  	if (te->bsdes != sizeof(struct hws_basic_entry)) {
+> -		pr_err("Invalid AUX trace trailer entry [%#08lx]\n", pos);
+> +		pr_err("Invalid AUX trace trailer entry [%#08zx]\n", pos);
+>  		return false;
+>  	}
+> -	color_fprintf(stdout, color, "    [%#08x] Trailer %c%c%c bsdes:%d"
+> +	color_fprintf(stdout, color, "    [%#08zx] Trailer %c%c%c bsdes:%d"
+>  		      " dsdes:%d Overflow:%lld Time:%#llx\n"
+>  		      "\t\tC:%d TOD:%#lx 1:%#llx 2:%#llx\n",
+>  		      pos,
+> @@ -418,7 +418,7 @@ static bool s390_cpumsf_make_event(size_t pos,
+>  	event.sample.header.misc = sample.cpumode;
+>  	event.sample.header.size = sizeof(struct perf_event_header);
+>  
+> -	pr_debug4("%s pos:%#zx ip:%#lx P:%d CL:%d pid:%d.%d cpumode:%d cpu:%d\n",
+> +	pr_debug4("%s pos:%#zx ip:%#" PRIx64 " P:%d CL:%d pid:%d.%d cpumode:%d cpu:%d\n",
+>  		 __func__, pos, sample.ip, basic->P, basic->CL, sample.pid,
+>  		 sample.tid, sample.cpumode, sample.cpu);
+>  	if (perf_session__deliver_synth_event(sfq->sf->session, &event,
+> @@ -498,7 +498,7 @@ static int s390_cpumsf_samples(struct s390_cpumsf_queue *sfq, u64 *ts)
+>  	 */
+>  	aux_ts = get_trailer_time(buf);
+>  	if (!aux_ts) {
+> -		pr_err("[%#08lx] Invalid AUX trailer entry TOD clock base\n",
+> +		pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
+>  		       sfq->buffer->data_offset);
+>  		aux_ts = ~0ULL;
+>  		goto out;
+> @@ -607,7 +607,7 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
+>  		buffer->use_size = buffer->size;
+>  		buffer->use_data = buffer->data;
+>  	}
+> -	pr_debug4("%s queue_nr:%d buffer:%ld offset:%#lx size:%#zx rest:%#zx\n",
+> +	pr_debug4("%s queue_nr:%d buffer:%" PRId64 " offset:%#" PRIx64 " size:%#zx rest:%#zx\n",
+>  		  __func__, sfq->queue_nr, buffer->buffer_nr, buffer->offset,
+>  		  buffer->size, buffer->use_size);
+>  	err = s390_cpumsf_samples(sfq, ts);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-perf-users" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-A page fault occurs when any EFI Runtime Service tries to reference a
-memory region which it shouldn't. If the illegally accessed region
-is EFI_BOOT_SERVICES_<CODE/DATA>, the efi specific page fault handler
-fixes it up by dynamically creating VA->PA mappings using
-efi_map_region().
+I just updated the perf/core branch, compiled it and all works fine.
 
-Originally, efi_map_region() and hence the functionality of creating
-mappings for efi regions was intended to be used *only* during boot time
-(please note __init modifier) and hence when called during runtime (i.e.
-from efi page fault handler), the page allocators complain. Calling
-efi_map_region() during runtime complains because "gfp_allowed_mask"
-value changes from boot time to runtime (GFP_BOOT_MASK to
-__GFP_BITS_MASK). During boot, even though efi_map_region() calls
-alloc_<pte/pmd>_page with GFP_KERNEL, the page allocator doesn't
-complain because "__GFP_RECLAIM" flag is cleared by "gfp_allowed_mask",
-but during runtime it isn't cleared and hence prints below stack trace.
-
-BUG: sleeping function called from invalid context at mm/page_alloc.c:4320
-in_atomic(): 1, irqs_disabled(): 1, pid: 2022, name: fwts
-1 lock held by fwts/2022:
-irq event stamp: 45714
-hardirqs last  enabled at (45713): [<ffffffff81c00a54>] restore_regs_and_return_to_kernel+0x0/0x2c
-hardirqs last disabled at (45714): [<ffffffff81c0112c>] error_entry+0x7c/0x100
-softirqs last  enabled at (44732): [<ffffffff81e00387>] __do_softirq+0x387/0x49a
-softirqs last disabled at (44707): [<ffffffff8106fabb>] irq_exit+0xbb/0xc0
-CPU: 0 PID: 2022 Comm: fwts Not tainted 4.17.0-rc4-efitest+ #405
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-Call Trace:
-dump_stack+0x5e/0x8b
-___might_sleep+0x20c/0x240
-__alloc_pages_nodemask+0xc2/0x330
-get_zeroed_page+0x12/0x40
-alloc_pmd_page+0x13/0x50
-populate_pmd+0xc0/0x2e0
-? __lock_acquire+0x439/0x740
-__cpa_process_fault+0x2e1/0x5d0
-__change_page_attr_set_clr+0x7c3/0xcd0
-? console_unlock+0x34d/0x660
-? kernel_map_pages_in_pgd+0x8c/0x160
-kernel_map_pages_in_pgd+0x8c/0x160
-? printk+0x43/0x4b
-? __map_region+0x3c/0x60
-__map_region+0x3c/0x60
-efi_map_region+0x83/0xd0
-efi_illegal_accesses_fixup+0x1ca/0x1e0
-no_context+0x112/0x390
-__do_page_fault+0xc7/0x4f0
-page_fault+0x1e/0x30
-RIP: 0010:0xfffffffeffc7ccf1
-RSP: 0018:ffffc9000075bbf0 EFLAGS: 00010282
-RAX: 0000000000000048 RBX: ffffc9000075be10 RCX: ffffc9000075bad0
-RDX: 00000000000003f8 RSI: ffffc9000075be10 RDI: fffffffeffc7cccf
-RBP: ffffc9000075bdc8 R08: 0000000000000048 R09: 0000000000000048
-R10: 00000000000003fd R11: 00000000000003f8 R12: ffff880032a92d80
-R13: 0000000000000003 R14: 00007ffcf1eb9d50 R15: 0000000000000000
-? efi_call+0xd1/0x160
-? __lock_acquire+0x439/0x740
-? _raw_spin_unlock+0x24/0x30
-? virt_efi_get_next_high_mono_count+0x77/0xf0
-? efi_test_ioctl+0x1ab/0xc20
-? selinux_file_ioctl+0x122/0x1c0
-? do_vfs_ioctl+0x92/0x6b0
-? do_vfs_ioctl+0x92/0x6b0
-? security_file_ioctl+0x3c/0x50
-? selinux_capable+0x20/0x20
-? ksys_ioctl+0x66/0x70
-? __x64_sys_ioctl+0x16/0x20
-? do_syscall_64+0x50/0x170
-? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fix the above warning by conditionally changing the allocation from
-GFP_KERNEL to GFP_ATOMIC, so that efi page fault handler could use
-efi_map_region() during runtime. This change shouldn't effect any other
-generic page allocations because this allocation is used only by efi
-functions [1].
-
-[1] Comment in __cpa_process_fault() at arch/x86/mm/pageattr.c
-
-if (cpa->pgd) {
-	/*
-	 * Right now, we only execute this code path when mapping
-	 * the EFI virtual memory map regions, no other users
-	 * provide a ->pgd value. This may change in the future.
-	 */
-	return populate_pgd(cpa, vaddr);
-}
-
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Al Stone <astone@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/mm/pageattr.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 3bded76e8d5c..1b28a333c8ce 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -926,7 +926,13 @@ static void unmap_pud_range(p4d_t *p4d, unsigned long start, unsigned long end)
- 
- static int alloc_pte_page(pmd_t *pmd)
- {
--	pte_t *pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
-+	pte_t *pte;
-+
-+	if (in_atomic())
-+		pte = (pte_t *)get_zeroed_page(GFP_ATOMIC);
-+	else
-+		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
-+
- 	if (!pte)
- 		return -1;
- 
-@@ -936,7 +942,13 @@ static int alloc_pte_page(pmd_t *pmd)
- 
- static int alloc_pmd_page(pud_t *pud)
- {
--	pmd_t *pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
-+	pmd_t *pmd;
-+
-+	if (in_atomic())
-+		pmd = (pmd_t *)get_zeroed_page(GFP_ATOMIC);
-+	else
-+		pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
-+
- 	if (!pmd)
- 		return -1;
- 
+Thanks for fixing these errors.
 -- 
-2.7.4
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
