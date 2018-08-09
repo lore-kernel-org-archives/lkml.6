@@ -2,135 +2,79 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7A4C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7932C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125C021C2E
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:21:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tLb9qPSo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125C021C2E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AA9F21C2E
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 08:22:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA9F21C2E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbeHIKp3 (ORCPT
+        id S1729860AbeHIKqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 06:45:29 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54440 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727371AbeHIKp3 (ORCPT
+        Thu, 9 Aug 2018 06:46:03 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:33094 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727371AbeHIKqD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 06:45:29 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 26938CD;
-        Thu,  9 Aug 2018 10:21:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533802903;
-        bh=hxPWGK/dt6G1g17QH1iHITgGhY6TN+xJ61HyDR9nazI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tLb9qPSo2lFaDbb+AfIQJHkBUWb4es4nHgXvvDrGb8wjJOzKf8tT4MRhwG399aW92
-         +rU8i9/J6F1dvVuATXfyxJc0PlusO41KIMOH0O+SJwJ/Tc2i52nL0WmCf7ognWgSO3
-         KB5ytbKu4z0cxQhbYSF/Gb3ujoHIQsZsEUFC9Xkw=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: media: adv748x: Document re-mappable addresses
-Date:   Thu, 09 Aug 2018 11:22:27 +0300
-Message-ID: <3968377.CNlSUayrWh@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180808232941.10582-1-kieran.bingham@ideasonboard.com>
-References: <20180808232941.10582-1-kieran.bingham@ideasonboard.com>
+        Thu, 9 Aug 2018 06:46:03 -0400
+Received: from droid02.amlogic.com (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 9 Aug 2018
+ 16:22:22 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Jianxin <jianxin.pan@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Carlo Caione <carlo@caione.org>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>
+Subject: [PATCH 0/2] arm64: dts: meson-g12a: Introduce new DT files for Meson-G12A SoC
+Date:   Thu, 9 Aug 2018 16:22:29 +0800
+Message-ID: <1533802951-49919-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+From: Jianxin <jianxin.pan@amlogic.com>
 
-Thank you for the patch.
+This attempt will try to add new DT files to support Meson-G12A SoC.
 
-On Thursday, 9 August 2018 02:29:41 EEST Kieran Bingham wrote:
-> The ADV748x supports configurable slave addresses for its I2C pages.
-> Document the page names, and provide an example for setting each of the
-> pages explicitly.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> ---
-> v2:
->  - Fix commit message
->  - Extend documentation for the "required property" reg:
-> 
-> 
->  .../devicetree/bindings/media/i2c/adv748x.txt    | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> b/Documentation/devicetree/bindings/media/i2c/adv748x.txt index
-> 21ffb5ed8183..f7fbe221c15e 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> @@ -10,7 +10,11 @@ Required Properties:
->      - "adi,adv7481" for the ADV7481
->      - "adi,adv7482" for the ADV7482
-> 
-> -  - reg: I2C slave address
-> +  - reg: I2C slave addresses
-> +    The ADV748x has up to twelve 256-byte maps that can be accessed via the
-> +    main I2C ports. Each map has it own I2C address and acts as a standard
-> +    slave device on the I2C bus. The main address is mandatory, others are
-> +    optional and revert to defaults if not specified.
+1) first, Please notice that, in this patch series, the DT node about 16M reserved
+memory for hwrom is removed, since it's not needed by G12A SoC.
+2) second, the pclk for uart_AO need to be fixed once G12A clock_ao driver is
+merged. In this version, it rely on bootloader to enable the pclk gate which 
+belong to AO clock domain. Please add clk_ignore_unused to bootargs.
 
-Maybe "revert" has a meaning I'm not aware of, but don't you mean "default" 
-instead ? "default to defaults" probably needs to be rephrased though.
 
->  Optional Properties:
-> 
-> @@ -18,6 +22,11 @@ Optional Properties:
->  		     "intrq3". All interrupts are optional. The "intrq3" interrupt
->  		     is only available on the adv7481
->    - interrupts: Specify the interrupt lines for the ADV748x
-> +  - reg-names : Names of maps with programmable addresses.
-> +		It can contain any map needed a non-default address.
+Jianxin Pan (2):
+  dt-bindings: arm: amlogic: Add Meson G12A binding
+  arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support
 
-I think you missed my comment to v1:
-
-s/can contain any map needed/shall contain all maps needing/
-
-> +		Possible map names are:
-> +		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
-> +		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
-> 
->  The device node must contain one 'port' child node per device input and
-> output port, in accordance with the video interface bindings defined in
-> @@ -47,7 +56,10 @@ Example:
-> 
->  	video-receiver@70 {
->  		compatible = "adi,adv7482";
-> -		reg = <0x70>;
-> +		reg = <0x70 0x71 0x72 0x73 0x74 0x75
-> +		       0x60 0x61 0x62 0x63 0x64 0x65>;
-> +		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
-> +			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
-> 
->  		#address-cells = <1>;
->  		#size-cells = <0>;
+ Documentation/devicetree/bindings/arm/amlogic.txt |   6 +
+ arch/arm64/boot/dts/amlogic/Makefile              |   1 +
+ arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts   |  22 +++
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi       | 174 ++++++++++++++++++++++
+ 4 files changed, 203 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+1.9.1
 
