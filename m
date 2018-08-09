@@ -2,147 +2,166 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C0AC46470
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FC2C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B99721C16
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C2E721C16
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 02:30:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="fTmm+udA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B99721C16
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+IhOH8j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C2E721C16
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeHIExG (ORCPT
+        id S1727645AbeHIExZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 00:53:06 -0400
-Received: from mail-eopbgr690051.outbound.protection.outlook.com ([40.107.69.51]:36420
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725878AbeHIExG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 00:53:06 -0400
+        Thu, 9 Aug 2018 00:53:25 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:44438 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeHIExZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 00:53:25 -0400
+Received: by mail-wr1-f42.google.com with SMTP id r16-v6so3704163wrt.11;
+        Wed, 08 Aug 2018 19:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Skpc6a+ZBvHSTVFtrzB4Mbf3KftALJPhSRmd5YnY8bQ=;
- b=fTmm+udAMZI8LDgYLKSPij0sG7TWEsSQinW9huttcVnjuQrT6DPEutvzr2WMC3u+m3FV+5AczlvyEN7QjN/tbBoqdzOIntYfIHPjuKNgPZ562neCYMscN3IeXCdXHosb8IV0RcENcDaYxQ/pqUHQJVloa7XosVQ42cnv7SSj0H4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- BLUPR0301MB1571.namprd03.prod.outlook.com (2a01:111:e400:52a9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.22; Thu, 9 Aug
- 2018 02:30:33 +0000
-Date:   Thu, 9 Aug 2018 10:27:59 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH mmc-next v3 0/3] solve SDHCI DWC MSHC 128MB DMA boundary
- limitation
-Message-ID: <20180809102759.191d211e@xhacker.debian>
-In-Reply-To: <20180730104228.28b58bd0@xhacker.debian>
-References: <20180730104228.28b58bd0@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BrnraowXgwPei0cTHdOcDicNFkPP7bEiFOsc0duLjfw=;
+        b=C+IhOH8jCu5OKvycTPXHmPXLtvf2BWuhKR0Gfej8Kzbh/T6q0ko6k8n2O6gccTxDiZ
+         0Ln227clb2JudgAnG1fEGnYMx7fdViL6zoO45wspYxhgyy3lNDmgxF0Sh/4Ydoy5WeZl
+         z99+g38GNk1WIAzp8zDs4RsIqCfh2cTZ8D6IoKgRQUGFl+5mMdn3ToaHRtxbmekR03pP
+         fTV1+aMaKLqwp+AWXE4v25hgspb9I4km+iM3RAsyFB9POuiQlynyRmC/qB2/QOqQsDsY
+         zjFNCXFYnK20useLfuWp+sqzlhsNLqYhIIyS3BSW1XCIpKPsemKMxXbLv7y15hjR0r89
+         X6mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BrnraowXgwPei0cTHdOcDicNFkPP7bEiFOsc0duLjfw=;
+        b=FN/ZmC4vP2y4q7BO4DjK7KF2f+NWujBbJfCfCQek4hp3z1PyWnNgTQsBVq/sjtK9mg
+         uirjQ7fJ42u9t7u3Qok4aERg5xEq/IdJaMACuVyVvmoA6XEiYHtrmuDAoVc6b0KsgpNa
+         dukGvSB82z4TQOaKTbZTCp2Pw/Ok/uf+p6MFJ+EMU/j6/KQgEEl0IHpobXnliZETTwR4
+         k9LwlipKDFhw1mv/lZNU7yZcHQHgH1ZpyfPw46Ab9HfliTX1RKNc27jZrpwGu3Qq+YQt
+         fm5KOPX3AG48B2bYdLu1zix0AO2Vtx7hW5w4Y/5wgLi4iZLS9E/JimxEfJ47cec7qW6l
+         rsmQ==
+X-Gm-Message-State: AOUpUlFl9LcIxbkJ0eykBOsxtLtnqnx6qPcyLkakOBs+eCSnMSOWYPT6
+        qHEm94bh0QUCiTzmYoFVXzcGghR3iVrOUJ6zLww=
+X-Google-Smtp-Source: AA+uWPyI5oEw3vGdwUoTdLDWmo3tJDGMnOUSUMglHzZcv/rSagzEUKtvdJvJR/FsPk5AIZ+0i4tOLdmRgxSLg4SnhSg=
+X-Received: by 2002:adf:adc9:: with SMTP id w67-v6mr113021wrc.135.1533781856026;
+ Wed, 08 Aug 2018 19:30:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR01CA0119.jpnprd01.prod.outlook.com
- (2603:1096:404:2a::35) To BLUPR0301MB1571.namprd03.prod.outlook.com
- (2a01:111:e400:52a9::17)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 620b0aed-1034-4a84-ff1b-08d5fda0160c
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR0301MB1571;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;3:1j0vnUDXRtW9ZrgSxFuBgPalkBKBa8vO+ZMX9s9y49F97CtOxyte6f8sDa5QLLfAYx2ZcpQLwN+byM5nSA+id82Ch6l4V+TnGEdYhFDRwZDFCH7mxwBmPwJkx9ArHgdffFkknfL/uUHNkzes4qUwxbMoZ3P3tbeqfVCvnPfrgO/5ATKWh0GNOzLmUMQ/xUdvLNgjBTGt3+Y/+Qs4N3Yn+LNDNDvE5BfStyYzhiukbKep1IZgIstoskHFikhK48Jg;25:SCbS/4m7ajUOqr1G6T+4y5l+EKpWgAajAQuZhIKson/Dsu0pw04k6jzbyuBYMmwiidvsO60Aig3lj20SJ084j5RxtPB+o1/UfJGfef3QosC+YLvTexSRmPqJb78P1M2rQ9038Nw4Ak6eoztKsAN1D+MMFikCjQyx52Mnt3Mg+gbSMT2/egVTwUGdxhA26KfJZqODTOdKNjMwgbb++4pMwJlk2aompODD0DQYSORNi7NGkeFI3gIayDn6jDWqN126vuhzosrA3pM3ujpm5PLzYWxB03UCz309CQ0GOdiettglr44dIygxnm3UEgLer9LPn3iyawDfQCx3YTcq9IjBDw==;31:zD+vWWmlur9wvGAFjU7T/9U8PfeAMGkiSIfufYl/SVKTASNNFb3dTqMJVy2XSb+EQxFXO4Y6LWmiZDwXrGOXYIh0BXPqUqJ4HKF4OWFjwuOHU6GOqaR1etYOxkhya9E4Wn1nfApvQyYDZKKvbKIClmH0Xk4O/U15bUmyyoHdZfFQ7xWxO3gb1WsTrHHBIOxnsTX/BOqCOCW5itp2SB+ZQ+/2hbZy12PwHoDoT8zVPqE=
-X-MS-TrafficTypeDiagnostic: BLUPR0301MB1571:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;20:UY0UTImHVdRMEHNRUmGnbmWKQcMbPMW750q2BN4sNRXZ85+jbASG4cn2s/oQIpwQKTGfdp6AQKlKcsAbVlkiMDFMMl7l1St5lyYj5AUCN3c9FHwMAgTG2j96rAh4nreG0vT+LuhYbBwQJh3xZsbkwzvt9f1PO6yQ/hKQPVtbl2Ysy57QhVFgWi/PQvwGXnuocfsl/N4J3d/qePsdjlrlJKl7BcVdbsan9f8SgKtczFHvEQdZQyp24jFSQJnnmX/CLRwmVDXCYLInb6C9bgxjgjyt5ta1GhVmp3BQg0xpQjt0j5Ee+OYSgRyqhxneqGOenVZ5vf9fa21dHK88EsyeRozDvSWQjQOyUSWq73yDsqFfIFhCmyurtIaX4fFzag1NgJovjd+X7jvFMnK19PT8UpyF1+eehNHUX8O68tbFnJjllCvqU6zElTzkhWxCK3rlHTXQKYNzNOZg/TstgVQRK7A/CSuLOSWN+pyLTMoXJjHIWBFaLM7hB7+/N2YhmGbi;4:E6eolSY4f6NiRJ9JB5X+JqU+DORk6IrpU32C6WyNEOXm7HcaeF1IZXUEcWTngnK5ux3KorwtL1rQwAQC0h/g5TfKTANyFLATrTrRbldxaKFhN/56XoqYR0Y64d+rKECj69L4BFYwhiWBp/HeP1nocVsskZv3ijt3jtyv0v9daqSqGyksNP+sfxJYpzJJZJ+SKrE2wa1rxG8UEl+kuDVbW5Is8q6V4U0SBe7DhfVrj+PEtq4wLoByr+HLeDopKCpoSGrXVFhmBFj0091jW4/waA==
-X-Microsoft-Antispam-PRVS: <BLUPR0301MB1571691BA954D3C5DB21B1C7ED250@BLUPR0301MB1571.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BLUPR0301MB1571;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0301MB1571;
-X-Forefront-PRVS: 0759F7A50A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(136003)(346002)(376002)(189003)(199004)(51874003)(76176011)(5660300001)(7696005)(52116002)(33896004)(14444005)(50466002)(6666003)(47776003)(53936002)(68736007)(50226002)(476003)(446003)(11346002)(26005)(55016002)(386003)(72206003)(6506007)(66066001)(8936002)(217873002)(110136005)(316002)(486006)(9686003)(956004)(478600001)(8676002)(23726003)(229853002)(4326008)(97736004)(25786009)(81166006)(230700001)(81156014)(106356001)(305945005)(7736002)(105586002)(186003)(16526019)(3846002)(1076002)(6116002)(6246003)(2906002)(86362001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0301MB1571;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR0301MB1571;23:MrNJ3c2YjxmlnUu6389PQsKDS/nfEzREc3ajpwi?=
- =?us-ascii?Q?o9bHRs0Q96LVPe6kmZfjc4ySfZ6IE/ikBDKgIu3agFiRRkj7DvwY2vCKp7pg?=
- =?us-ascii?Q?ezSVFDTbP6AmZiOKKesgMaWKwYRJgkBjnMeV341oUAeiSkBAtuxwHt9ETC+y?=
- =?us-ascii?Q?FA9IjWm8HETiXlQ6JKbTL5vxwgwrcj1ZRp5ZoEXzHgDBvjvqzNjhxaAD5UmU?=
- =?us-ascii?Q?8FjGayar7aLqQpxnvWmfOkcaVL+HQ6RrOREoOHmfiOsOPKwYb33/7Ui+2per?=
- =?us-ascii?Q?3/lT6/+7DBzdkj/AIiEdarITtEoGpW8ufj8mueR0gnoUi6elBiqzv5sJ+3qy?=
- =?us-ascii?Q?8lNAKCseQr6Zm49q6e4+S08m6u4Ru6OY9OC03ez0a5ux8lqqfiLnctJsmbrq?=
- =?us-ascii?Q?qx4Dq8K6pMhzbGhSNwMr0i3ikj9FOH3nM0wua/Mmxkfhfil0RIu9KdP4Cfl/?=
- =?us-ascii?Q?tBVHS7NvEYyzJrEvYKuFuvWI1NQq7eq691YfHQW0q0OHvicGzSTWschIEXU5?=
- =?us-ascii?Q?DwSJlzQvxSZSekCxS63ClI9nfCBza8jrBR8w8pjPL9DVQUaDPsYrxoWaoCA9?=
- =?us-ascii?Q?Shc1U+cfiBOP1ZtFrgiF5Mak/Ptt1wQnUazDGUSNVLWlgx377jMxAuemZLFi?=
- =?us-ascii?Q?EM1eqkk+8mldNTcptdlXdZJtSi9Squ1x/4DjP9mrVVS3kljxCqPKjPrToLxk?=
- =?us-ascii?Q?RTujQpZL17+lJ3D1AxTLrkDIbbf20ukaBUuAKtKorR+rONBGlpRNE5kp0OnY?=
- =?us-ascii?Q?+yqj92b00OggtfyoBw0HmTOLLd/6kUGkDHAwZlzlcciHBJKY1HBv8S7aDM/x?=
- =?us-ascii?Q?CT/wW7s3UkYmQ8U5Y4g0RXy5Ec4aDmrX/Gp1hretK5geOYl+urRGhywQev5a?=
- =?us-ascii?Q?92jtHEd4Unk6b9VELZLRAQaZXCASuRc7lsBwcQfhkz7KICp/ADlttcP/WSYy?=
- =?us-ascii?Q?ijErHtvXg+HaqpM9CcfBYfwVuRQkrpNez6pJ8+eBZUf68d/6ZoBLg2HZ6EDf?=
- =?us-ascii?Q?r689sXkHeCVKwPFRtyZf9tPJQD0AOY/wUC/M2f3WAdk/uehKN+PFBuSqPB6j?=
- =?us-ascii?Q?tsqAbPLTujKNCVwwByXWNAdS/0Kb97WJeHGsuIzZnRomAYLQDqln3OuZgWlV?=
- =?us-ascii?Q?GilZ9BrwkN9rzcgJVzG9W1k0orwV0SbSVceyFEnn1W6wVraoJmCjEAbdjGrO?=
- =?us-ascii?Q?Tu8Rzwx+oUb2nqg15k1EH4pYqJsGQYq2FweWnRkof1KIBekOs2dcXxZPeYl3?=
- =?us-ascii?Q?6K4vC57kq/bl/6eY+6qGfb14Cm29oFoe26bQI7S2Zf1qS78XHuKF9TFQxDfn?=
- =?us-ascii?Q?8WixM0Cldzw/B47tpaGv71Bo=3D?=
-X-Microsoft-Antispam-Message-Info: i6jzyIQRiQ/CfClUn2RRQDNJvvPrfGfs2nlE6NoJEVqB8DWfSsR8BcoAVa3Ih1/VVvfgWHTytXmeeJnny7/rYTAQe5H73mL1gzE1VYXZLGMYp6kl9sFXuKUM6vJVoq+gwjPmV/ytkOexb4QBP0SocIf1LYveM1aICSXxtX4qrB2Ar4brAPmTHZqdX9a7nI9fwiMi9XmHrh5/UR49IWtaWvtWmfyC3CLzWfyWFHHv6laLeUHzu1ScOXO5zLRjkZtidbqJaR0CxSjFT3J3qwcUNDA/58TARxkD7sxJCDaWNHetzCQ5BZCRB31cqjP8+Nmb33IRmtHG23Rt6aBo4SYVkT5byeTowyHSvjUGcjFcjww=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;6:2SywXOceI2lje/5ROuGnKs0hK9jz8Lwt1pj1tqrWyFeEk53RlceO4fyIpMqO1+r8a/XY1P37BwrTTyIqKoHQlm72mcdnC2Qvr4geop4QI1xoOw3fuyxXxaW/V7VwZ9oHSmDktxZ9ITLvMTJpcHFAO0KR37UyavdjqXeTuEl3+cbpQ7agaUtoPo4mvZ/RG5rbYbYAsU6YB9wKJ8VKFYmVHSWyW6YGG5hLWAHNDIXHLDayHQyXrTxz4EMoU2KZe0hv62z9zYC0qEXX0UH36W5EBRhwQ/4DLr+ZtsoE5p84WoPiUasglRACsNRt3Ur9HKV9/Mojk05AvFCi6lEQtCTFEEUNqsydWudu4oMwgfhdLN8RgYyRAKf+bRs1RluHsUcN7Vqn4FuKzPzikhC6O1LUKYG1c/TLbIVSPJFgP2IkAtDJjAibc8DtpJqk3Ji37gV+5e1Zuvy0uS2qfbFPQD1Nkg==;5:MjvOqXM7HLQCrNpFh1N0iVPjQmL5sGDKouPTPW5MEvfp+mMj8xKcNkQw+N9olZn/u+lN1TCjN73C2CktEixwEMM6o576qyADK7dY+Rri81Un6/rieXEAcprIh2v2m/daOJxqNv+z5wo2tKmdEXfEcyuiGf9Nh4No0mCKSR/ORkc=;7:5CE2pXX1zXgrxyQS46idqs7uy2V7OVnDPt3TNq6/JJDW/ML3THQQCQg5poci1CcQpfO0v3mRLJjsOG+os0nxLCJUnf2aHg7o1JHiOW0TVb6ncmF8Zi4YwypkYPw8uxcwQgItZ/hKgDpr+HRGFf8TDF/m8rzRKqXglrDWxRI625/prJX0MqndY8QzE6pYyHwbSf21mGQJz8ZVMfayR1BtbkSTJ4BMawUwI/Zo1YzBsfDTPbQpsQvYWIKHTR5LlWBF
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2018 02:30:33.3243 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 620b0aed-1034-4a84-ff1b-08d5fda0160c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0301MB1571
+Received: by 2002:a1c:9c8:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 19:30:54 -0700 (PDT)
+In-Reply-To: <1533780598-23972-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1533780598-23972-1-git-send-email-jianchao.w.wang@oracle.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Thu, 9 Aug 2018 10:30:54 +0800
+Message-ID: <CACVXFVNLu+fDK3UKhVpWYe_+bZN9LQqcib5q=TkqcvgMZ9EQNw@mail.gmail.com>
+Subject: Re: [PATCH V3] blk-mq: count the hctx as active before allocate tag
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian, Ulf,
+On Thu, Aug 9, 2018 at 10:09 AM, Jianchao Wang
+<jianchao.w.wang@oracle.com> wrote:
+> Currently, we count the hctx as active after allocate driver tag
+> successfully. If a previously inactive hctx try to get tag first
+> time, it may fails and need to wait. However, due to the stale tag
+> ->active_queues, the other shared-tags users are still able to
+> occupy all driver tags while there is someone waiting for tag.
+> Consequently, even if the previously inactive hctx is waked up, it
+> still may not be able to get a tag and could be starved.
+>
+> To fix it, we count the hctx as active before try to allocate driver
+> tag, then when it is waiting the tag, the other shared-tag users
+> will reserve budget for it.
+>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>
+> V3:
+>   add more detailed comment
+>
+> V2:
+>   only invoke blk_mq_tag_busy w/o io scheduler in blk_mq_get_request
+>
+>  block/blk-mq-tag.c | 3 +++
+>  block/blk-mq.c     | 8 ++++++--
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+> index 09b2ee6..a8ebcbd 100644
+> --- a/block/blk-mq-tag.c
+> +++ b/block/blk-mq-tag.c
+> @@ -23,6 +23,9 @@ bool blk_mq_has_free_tags(struct blk_mq_tags *tags)
+>
+>  /*
+>   * If a previously inactive queue goes active, bump the active user count.
+> + * We need to do this before try to allocate driver tag, then even if fail
+> + * to get tag when first time, the other shared-tag users could reserve
+> + * budget for it.
+>   */
+>  bool __blk_mq_tag_busy(struct blk_mq_hw_ctx *hctx)
+>  {
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index ae44e85..75ac3fbd 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -285,7 +285,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
+>                 rq->tag = -1;
+>                 rq->internal_tag = tag;
+>         } else {
+> -               if (blk_mq_tag_busy(data->hctx)) {
+> +               if (data->hctx->flags & BLK_MQ_F_TAG_SHARED) {
+>                         rq_flags = RQF_MQ_INFLIGHT;
+>                         atomic_inc(&data->hctx->nr_active);
+>                 }
+> @@ -367,6 +367,8 @@ static struct request *blk_mq_get_request(struct request_queue *q,
+>                 if (!op_is_flush(op) && e->type->ops.mq.limit_depth &&
+>                     !(data->flags & BLK_MQ_REQ_RESERVED))
+>                         e->type->ops.mq.limit_depth(op, data);
+> +       } else {
+> +               blk_mq_tag_busy(data->hctx);
+>         }
+>
+>         tag = blk_mq_get_tag(data);
+> @@ -972,6 +974,7 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+>                 .hctx = blk_mq_map_queue(rq->q, rq->mq_ctx->cpu),
+>                 .flags = wait ? 0 : BLK_MQ_REQ_NOWAIT,
+>         };
+> +       bool shared;
+>
+>         might_sleep_if(wait);
+>
+> @@ -981,9 +984,10 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+>         if (blk_mq_tag_is_reserved(data.hctx->sched_tags, rq->internal_tag))
+>                 data.flags |= BLK_MQ_REQ_RESERVED;
+>
+> +       shared = blk_mq_tag_busy(data.hctx);
+>         rq->tag = blk_mq_get_tag(&data);
+>         if (rq->tag >= 0) {
+> -               if (blk_mq_tag_busy(data.hctx)) {
+> +               if (shared) {
+>                         rq->rq_flags |= RQF_MQ_INFLIGHT;
+>                         atomic_inc(&data.hctx->nr_active);
+>                 }
+> --
+> 2.7.4
+>
 
-could you please review these patches? Any comments are welcome.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Thanks in advance,
-Jisheng
 
-On Mon, 30 Jul 2018 10:42:28 +0800 Jisheng Zhang wrote:
-
-> When using DMA, if the DMA addr spans 128MB boundary, we have to split
-> the DMA transfer into two so that each one doesn't exceed the boundary.
-> 
-> patch1 adds adma_table_num to struct sdhci_host so that driver can
-> control the ADMA table number.
-> patch2 introduces adma_write_desc() hook to struct sdhci_ops so that
-> driver can override it.
-> patch3 finally solves the 128MB boundary limitation.
-> 
-> since v2:
->   - make use of "likely" to check (!len || BOUNDARY_OK(addr, len))
->   - explictly include <linux/sizes.h> for SZ_128M
-> 
-> since v1:
->   - fix BOUNDARY_OK macro if addr+len is aligned to 128MB
->   - use DIV_ROUND_UP to cal extra desc num
->   - fix !len for dwcmshc_adma_write_desc()
-> 
-> Jisheng Zhang (3):
->   mmc: sdhci: add adma_table_num member to struct sdhci_host
->   mmc: sdhci: introduce adma_write_desc() hook to struct sdhci_ops
->   mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary limitation
-> 
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 43 ++++++++++++++++++++++++++
->  drivers/mmc/host/sdhci.c            | 48 +++++++++++++++++++----------
->  drivers/mmc/host/sdhci.h            |  8 +++++
->  3 files changed, 83 insertions(+), 16 deletions(-)
-> 
-
+Thanks,
+Ming Lei
