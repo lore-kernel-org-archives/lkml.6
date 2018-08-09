@@ -2,107 +2,141 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CAAC46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E44C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0AC21E23
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:25:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0AC21E23
+	by mail.kernel.org (Postfix) with ESMTP id 7BB9721E25
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:27:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB9721E25
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbeHIQuF (ORCPT
+        id S1732157AbeHIQwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 12:50:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59652 "EHLO mx1.redhat.com"
+        Thu, 9 Aug 2018 12:52:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39396 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730839AbeHIQuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 12:50:05 -0400
+        id S1731227AbeHIQwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 12:52:22 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3DB5F4023444;
-        Thu,  9 Aug 2018 14:24:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EA862314E;
-        Thu,  9 Aug 2018 14:24:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <87in4n9zg0.fsf@xmission.com>
-References: <87in4n9zg0.fsf@xmission.com> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk>
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and managing a context [ver #11]
+        by mx1.redhat.com (Postfix) with ESMTPS id 2257E40216EB;
+        Thu,  9 Aug 2018 14:27:13 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9B7D23151;
+        Thu,  9 Aug 2018 14:27:10 +0000 (UTC)
+Date:   Thu, 9 Aug 2018 10:27:09 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     osalvador@techadventures.net, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
+ move it to offline_pages
+Message-ID: <20180809142709.GA3386@redhat.com>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <20180807133757.18352-3-osalvador@techadventures.net>
+ <20180807135221.GA3301@redhat.com>
+ <20180807145900.GH10003@dhcp22.suse.cz>
+ <20180807151810.GB3301@redhat.com>
+ <20180808064758.GB27972@dhcp22.suse.cz>
+ <20180808165814.GB3429@redhat.com>
+ <20180809082415.GB24884@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <27373.1533824694.1@warthog.procyon.org.uk>
-Date:   Thu, 09 Aug 2018 15:24:54 +0100
-Message-ID: <27374.1533824694@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180809082415.GB24884@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 14:24:56 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 09 Aug 2018 14:24:56 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 09 Aug 2018 14:27:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 09 Aug 2018 14:27:13 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric W. Biederman <ebiederm@xmission.com> wrote:
-
-> First let me thank you for adding both FSCONFIG_CMD_CREATE and
-> FSCONFIG_CMD_RECONFIGURE.  Unfortunately the implementation is currently
-> broken.  So this patch gets my:
+On Thu, Aug 09, 2018 at 10:24:15AM +0200, Michal Hocko wrote:
+> On Wed 08-08-18 12:58:15, Jerome Glisse wrote:
+> > On Wed, Aug 08, 2018 at 08:47:58AM +0200, Michal Hocko wrote:
+> > > On Tue 07-08-18 11:18:10, Jerome Glisse wrote:
+> > > > On Tue, Aug 07, 2018 at 04:59:00PM +0200, Michal Hocko wrote:
+> > > > > On Tue 07-08-18 09:52:21, Jerome Glisse wrote:
+> > > > > > On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
+> > > > > > > From: Oscar Salvador <osalvador@suse.de>
+> > > > > > 
+> > > > > > [...]
+> > > > > > 
+> > > > > > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > > > > > > index 9bd629944c91..e33555651e46 100644
+> > > > > > > --- a/mm/memory_hotplug.c
+> > > > > > > +++ b/mm/memory_hotplug.c
+> > > > > > 
+> > > > > > [...]
+> > > > > > 
+> > > > > > >  /**
+> > > > > > >   * __remove_pages() - remove sections of pages from a zone
+> > > > > > > - * @zone: zone from which pages need to be removed
+> > > > > > > + * @nid: node which pages belong to
+> > > > > > >   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
+> > > > > > >   * @nr_pages: number of pages to remove (must be multiple of section size)
+> > > > > > >   * @altmap: alternative device page map or %NULL if default memmap is used
+> > > > > > > @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
+> > > > > > >   * sure that pages are marked reserved and zones are adjust properly by
+> > > > > > >   * calling offline_pages().
+> > > > > > >   */
+> > > > > > > -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> > > > > > > +int __remove_pages(int nid, unsigned long phys_start_pfn,
+> > > > > > >  		 unsigned long nr_pages, struct vmem_altmap *altmap)
+> > > > > > >  {
+> > > > > > >  	unsigned long i;
+> > > > > > > @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> > > > > > >  	int sections_to_remove, ret = 0;
+> > > > > > >  
+> > > > > > >  	/* In the ZONE_DEVICE case device driver owns the memory region */
+> > > > > > > -	if (is_dev_zone(zone)) {
+> > > > > > > -		if (altmap)
+> > > > > > > -			map_offset = vmem_altmap_offset(altmap);
+> > > > > > > -	} else {
+> > > > > > > +	if (altmap)
+> > > > > > > +		map_offset = vmem_altmap_offset(altmap);
+> > > > > > > +	else {
+> > > > > > 
+> > > > > > This will break ZONE_DEVICE at least for HMM. While i think that
+> > > > > > altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
+> > > > > > is not true ie ZONE_DEVICE does not necessarily imply altmap. So
+> > > > > > with the above changes you change the expected behavior.
+> > > > > 
+> > > > > Could you be more specific what is the expected behavior here?
+> > > > > Is this about calling release_mem_region_adjustable? Why does is it not
+> > > > > suitable for zone device ranges?
+> > > > 
+> > > > Correct, you should not call release_mem_region_adjustable() the device
+> > > > region is not part of regular iomem resource as it might not necessarily
+> > > > be enumerated through known ways to the kernel (ie only the device driver
+> > > > can discover the region and core kernel do not know about it).
+> > > 
+> > > If there is no region registered with the range then the call should be
+> > > mere nop, no? So why do we have to special case?
+> > 
+> > IIRC this is because you can not release the resource ie the resource
+> > is still own by the device driver even if you hotremove the memory.
+> > The device driver might still be using the resource without struct page.
 > 
-> This is broken in two specific ways.
-> ...
-> 2) FSCONFIG_CMD_CREATE will succeed even if the superblock already
->    exists and it can not use all of the superblock parameters.
-> 
->    This happens because vfs_get_super will only call fill_super
->    if the super block is created.  Which is reasonable on the face
->    of it.  But it in practice this introduces security problems.
-> 
->    a) Either through reconfiguring a shared super block you did not
->       realize was shared (as we saw with devpts).
-> 
->    b) Mounting a super block and not honoring it's mount options
->       because something has already mounted it.  As we see today
->       with proc.  Leaving userspace to think the filesystem will behave
->       one way when in fact it behaves another.
-> 
-> I have already explained this several times, and apparently I have been
-> ignored.  This fundamental usability issue that leads to security
-> problems.
+> But then it seems to be a property of a device rather than zone_device,
+> no? If there are devices which want to preserve the resource then they
+> should tell that. Doing that unconditionally for all zone_device users
+> seems just wrong.
 
-I've also explained why you're wrong or at least only partially right.  I *do*
-*not* want to implement sget() in userspace with the ability for userspace to
-lock out other mount requests - which is what it appears that you've been
-asking for.
+I am fine with changing that, i did not do that and at the time i did
+not have any feeling on that matter.
 
-However, as I have said, I *am* willing to add one of more flags to help with
-this, but I can't make any "legacy" fs honour them as this requires the
-fs_context to be passed down to sget_fc() and the filesystem - which is why I
-was considering leaving it for later.
-
- (1) An FSOPEN_EXCL flag to tell sget_fc() to fail if the superblock already
-     exists at all.
-
- (2) An FSOPEN_FAIL_ON_MISMATCH flag to explicitly say that we *don't* want a
-     superblock with different parameters.
-
-The implication of providing neither flag is that we are happy to accept a
-superblock from the same source but with different parameters.
-
-But it doesn't seem to be an absolute imperative to roll this out immediately,
-since what I have exactly mirrors what the kernel currently does - and forcing
-a change in that behaviour risks breaking userspace.  If it keeps you happy,
-however, I can try and work one up.
-
-David
+Cheers,
+Jérôme
