@@ -2,110 +2,149 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE06CC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2542AC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D33821BC7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:47:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D33821BC7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C266321A8D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 12:50:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6QIuTQO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C266321A8D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbeHIPLu (ORCPT
+        id S1731103AbeHIPO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 11:11:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53474 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730664AbeHIPLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 11:11:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E163580D;
-        Thu,  9 Aug 2018 05:47:04 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D27EA3F5D4;
-        Thu,  9 Aug 2018 05:47:03 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 13:47:01 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: Trap WFI executed in userspace
-Message-ID: <20180809124701.GO9097@e103592.cambridge.arm.com>
-References: <20180807093326.5090-1-marc.zyngier@arm.com>
- <20180807100437.GA9097@e103592.cambridge.arm.com>
- <9af8bb9a-7c6c-2560-5965-118dfadf8141@arm.com>
- <20180808123408.GC24736@iMac.local>
- <20180809123457.GN9097@e103592.cambridge.arm.com>
- <20180809123812.GB29785@arm.com>
+        Thu, 9 Aug 2018 11:14:57 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46076 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeHIPO5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 11:14:57 -0400
+Received: by mail-qt0-f194.google.com with SMTP id y5-v6so6258486qti.12;
+        Thu, 09 Aug 2018 05:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jYV4d+FTbfzaAnmLf/sqNFCeD44X02d+ak0b9cdNaf0=;
+        b=G6QIuTQO4UXE36Exm0q3+zBfOOTpsabY1LlGNM1Jscs3bcuDzX2/exVbGmDvESj9qu
+         o3N7nGV67NBhi0uBKNbO47nB8KwGrohD4zBo399U5+anh5GmoXSWczCmjyLY98OHU56T
+         SqqBZYOIRPzatjp3uCghzv6nTl9U2+RMmaRbPA0tJ2wV1zgXfAMWvqpPOanycBLdbZsy
+         EFmVB4wGhnCtff4h8Ti6XrueF8+TdiXneVMjVK9tHVrGM7BbzXBTEMDRgf4o/PGZxxWM
+         KawqoaDoqazoBL88fv5pfe8KmsCSs+gFULO3kIUL9GiM/5RjPz38E6WKKup8lct8zNPK
+         +3ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jYV4d+FTbfzaAnmLf/sqNFCeD44X02d+ak0b9cdNaf0=;
+        b=XY+YJlTh1xTDdnjfy0orRudEb1bLwxyBYidxU331hoVN2ymWzJgx7fcJDNmhJ9arEL
+         kgMi/80L2Ml8gOZVuzl9sV19ssKsPMkFKcsMD6cfogSJxpyirLRQoISE0M8nXTnttUrA
+         nas8T6Bm3euh6MX5A7hKwD7PnaLGCwAuF/No4hEGn0rHNuTgthA02jfO9UYM5mzli5BQ
+         ZF0s7Guz0MGChCSeHgjZ9USpMFcGJu0yV5WFP97egSmPUst6/XC9GEWCvg9sOvjxNRCp
+         EQYfb5F7SmnA2ahahWyHbu12yUC4s3xSmDZFb33c+9cWbLHOQa17a0GmP/COJJSuufBw
+         JBGA==
+X-Gm-Message-State: AOUpUlEvSlan6mYM9phsh+bP1H+IXKtPSIOIJGt5wv3J96yaTufHMLzV
+        lOg52ryy5Z+d6rkbbnK7goZ/jzvRy8A=
+X-Google-Smtp-Source: AA+uWPwactbOWyakgtqwDIDudHa483fQ15+P2tFEtHvm4ekULPfjlhmD1sXt82523iECxMNfJUWtwQ==
+X-Received: by 2002:a0c:9408:: with SMTP id h8-v6mr1647713qvh.135.1533819009799;
+        Thu, 09 Aug 2018 05:50:09 -0700 (PDT)
+Received: from [192.168.44.96] (107.sub-174-204-8.myvzw.com. [174.204.8.107])
+        by smtp.gmail.com with ESMTPSA id m15-v6sm4857638qki.44.2018.08.09.05.50.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 05:50:09 -0700 (PDT)
+Subject: Re: [PATCH 5/8] arm64: dts: tegra186: Add SDMMC4 DQS trim value
+To:     Aapo Vienamo <avienamo@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
+ <1533650404-18125-6-git-send-email-avienamo@nvidia.com>
+ <20180809114922.GN21639@ulmo> <20180809150226.64657f56@dhcp-10-21-25-168>
+ <03fc6726-25ff-20de-d271-ebae19b753c7@gmail.com>
+ <20180809153732.4c91e425@dhcp-10-21-25-168>
+From:   Peter Geis <pgwipeout@gmail.com>
+Message-ID: <66f8381b-7c57-d88b-6e75-e9df7843f93c@gmail.com>
+Date:   Thu, 9 Aug 2018 08:50:05 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809123812.GB29785@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180809153732.4c91e425@dhcp-10-21-25-168>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 01:38:12PM +0100, Will Deacon wrote:
-> On Thu, Aug 09, 2018 at 01:34:57PM +0100, Dave Martin wrote:
-> > On Wed, Aug 08, 2018 at 01:34:09PM +0100, Catalin Marinas wrote:
-> > > On Tue, Aug 07, 2018 at 11:24:34AM +0100, Marc Zyngier wrote:
-> > > > On 07/08/18 11:05, Dave Martin wrote:
-> > > > > On Tue, Aug 07, 2018 at 10:33:26AM +0100, Marc Zyngier wrote:
-> > > > >> It recently came to light that userspace can execute WFI, and that
-> > > > >> the arm64 kernel doesn trap this event. This sounds rather benign,
-> > > 
-> > > Nitpick: "doesn't".
-> > > 
-> > > > >> but the kernel should decide when it wants to wait for an interrupt,
-> > > > >> and not userspace.
-> > > > >>
-> > > > >> Let's trap WFI and treat it as a way to yield the CPU to another
-> > > > >> process.
-> > > [...]
-> > > > > I can't think of a legitimate reason for userspace to execute WFI
-> > > > > however.  Userspace doesn't have interrupts under Linux, so it makes
-> > > > > no sense to wait for one.
-> > > > > 
-> > > > > Have we seen anybody using WFI in userspace?  It may be cleaner to
-> > > > > map this to SIGILL rather than be permissive and regret it later.
-> > > > 
-> > > > I couldn't find any user, and I'm happy to just send userspace to hell
-> > > > in that case. But it could also been said that since it was never
-> > > > prevented, it is a de-facto ABI.
-> > > 
-> > > I wouldn't really go as far as SIGILL on WFI. I think the patch is fine
-> > > as it is. In case Will plans to merge it:
-> > 
-> > For practical purposes I agree, because we can't control the binary
-> > blobs out there: I just wanted to bang the drum because we are creating
-> > semantics here and there is not an obvious correct answer to what they
-> > should be.
-> > 
-> > I'd still like to see rationale for why this should map to schedule()
-> > (which userspace currently has no direct way to trigger) as opposed to
-> > sched_yield() or something like that.
+
+
+On 08/09/2018 08:37 AM, Aapo Vienamo wrote:
+> On Thu, 9 Aug 2018 08:23:16 -0400
+> Peter Geis <pgwipeout@gmail.com> wrote:
 > 
-> A better idea might just be to do pc +=4 and return. If there's work
-> pending, we'll hit it on the return path (just like any other ret_to_user
-> call).
+>> On 08/09/2018 08:02 AM, Aapo Vienamo wrote:
+>>> On Thu, 9 Aug 2018 13:49:22 +0200
+>>> Thierry Reding <thierry.reding@gmail.com> wrote:
+>>>    
+>>>> On Tue, Aug 07, 2018 at 05:00:01PM +0300, Aapo Vienamo wrote:
+>>>>> Add the HS400 DQS trim value for Tegra186 SDMMC4.
+>>>>>
+>>>>> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+>>>>> ---
+>>>>>    arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+>>>>>    1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>>>> index 6e9ef26..9e07bc6 100644
+>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>>>> @@ -313,6 +313,7 @@
+>>>>>    		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
+>>>>>    		nvidia,default-tap = <0x5>;
+>>>>>    		nvidia,default-trim = <0x9>;
+>>>>> +		nvidia,dqs-trim = <63>;
+>>>>>    		status = "disabled";
+>>>>>    	};
+>>>>>        
+>>>>
+>>>> Isn't this technically dependent on the board layout and as such would
+>>>> belong in the board DTS file? Or does this value work on all existing
+>>>> Tegra186 platforms?
+>>>
+>>> This value is specified as part of the controller initialization
+>>> sequence in the TRM. I've understood that this (and other tap and trim)
+>>> value(s) are used for compensating the propagation delay differences
+>>> that are caused by the internal SoC layout.
+>>>
+>>>    -Aapo
+>>> --
+>>
+>> The Tegra2 and Tegra3 TRMs also specify recommended DQS values, and I am
+>> working on at least one device that differs in the platform data from
+>> the default value.
+>> I see that you mentioned this is for the newer devices that support
+>> HS200/HS400 modes, but does it enable setting DQS on older devices?
 > 
-> I initially thought about sched_yield(), but it's not clear whether that
-> creates a problem if, e.g. seccomp has been used to restrict that syscall.
-
-Indeed.  I can't see why that might be restricted, but there's presumably
-nothing to stop people doing that today.
-
-Other than putting the task to sleep for 1ms or something, I don't know
-what to suggest ;)
-
-Perhaps we can patch a NOP into .text, like Marc's BX trick :P
-
-Cheers
----Dave
+> I can't find any mention of _SDMMC_ DQS trimmer on Tegra2, Tegra3 or
+> Tegra124 TRMs. As far as I can tell, programming the DQS trimmer value
+> is only required by HS400 signaling on Tegra210 and Tegra186.
+> 
+>   -Aapo
+> 
+Apologies, I was referring to the default Tap/Trim values.
+DQS found it's way into my brain from the memory controller.
