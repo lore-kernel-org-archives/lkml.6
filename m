@@ -2,115 +2,85 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72921C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C45DC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3086C21E5B
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3086C21E5B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AE40821E5B
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qq4GYLD+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE40821E5B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732394AbeHIR77 (ORCPT
+        id S1732429AbeHISCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:59:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55594 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731112AbeHIR77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:59:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D84D77A9;
-        Thu,  9 Aug 2018 08:34:33 -0700 (PDT)
-Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFF553F5B3;
-        Thu,  9 Aug 2018 08:34:27 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 16:34:23 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
- for RT tasks
-Message-ID: <20180809153423.nsoepprhut3dv4u2@darkstar>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-7-patrick.bellasi@arm.com>
- <20180807132630.GB3062@localhost.localdomain>
+        Thu, 9 Aug 2018 14:02:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41094 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731957AbeHISCh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 14:02:37 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w19-v6so2701579ply.8;
+        Thu, 09 Aug 2018 08:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jv/F/IQ1RkQJlztgSuQvRw2qzZpT6NX5FaqeSfTSXHc=;
+        b=qq4GYLD+rDMTwKLEFjPsvC+LeyvNdHRi9WENwsJJygosnL0cmmsi7OtZIe5SKHlLEm
+         tGy9FW6KQ7HzUdHjh+agBysJjJjcuf6WwbvWNf+U+SGqmi402ugkdN9Y7dkXFHSMJnls
+         XdSyq+hcyFo1QGp2TTPZCZx2Yv4d26CfAlo80Y37VX+cYGX1iM5Lf+YV+9Vsg8dYmlBK
+         yDCLilQ7P+maXvI7oiTj9ZmRESYAJHBCNgH9vHVp+Miw4UiCTkAfFHuIl35oAx9/UVox
+         leSFS4gWXVZ6rWIDuKQdkEzNo0+8PnFRdNuaxAgfC/gJfL0W4uUFwBytidaH9vkxo6P0
+         8X4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jv/F/IQ1RkQJlztgSuQvRw2qzZpT6NX5FaqeSfTSXHc=;
+        b=ZQ24P/oz5Zz8Ui00YAvlZcixQE4Z//hyWkOMBNniFpdnhGVhNCYlqLXd1rR8nwoQUO
+         PhZ7/DIkdDyN0lndzG/PdVO6XX1IHxx8xY+WEL1gO805WaNE4TgPVdOQM/x1b4q55rbe
+         o7p6rtjiHxIkawoL9eqAJSPZ/riqCu/miOAGXvyfeqSWvvzQzxkZ0+F+XZ4nieZ3fXaA
+         v8umXcSJgEI+ARMTuGnL+D4M5NU7XC5HhqCnxaUV+4+DOzcnErU4/pVL+2KeKFbGK3HH
+         xyq6/iHkEVf4bsSdaDPizL4qtapmpAefF4EGGxiOWmSTRw3koxgsyB1/la2CZm6Ljlo1
+         2hEw==
+X-Gm-Message-State: AOUpUlFBVObWX+6fdP4N9w0k1UvGl/cMyTBPVwgWyGsTaeT8PI7YFhVB
+        X9vMph0i3JfHX0SAMqQ9OoU=
+X-Google-Smtp-Source: AA+uWPyJwUE/boTg02yIr2gApVXX0NJxy6OTXkvYB4SFvM1ooPUFfwkDgwGaVk9JeA7ge8wmYkLYxg==
+X-Received: by 2002:a17:902:7247:: with SMTP id c7-v6mr2543372pll.79.1533829031091;
+        Thu, 09 Aug 2018 08:37:11 -0700 (PDT)
+Received: from localhost (c-24-4-233-174.hsd1.ca.comcast.net. [24.4.233.174])
+        by smtp.gmail.com with ESMTPSA id g85-v6sm20749858pfk.39.2018.08.09.08.37.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Aug 2018 08:37:10 -0700 (PDT)
+Date:   Thu, 9 Aug 2018 08:37:08 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: dp83640: Mark expected switch fall-throughs
+Message-ID: <20180809153708.gpxozqfnnt2gnu6m@localhost>
+References: <20180809150824.GA15116@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180807132630.GB3062@localhost.localdomain>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180809150824.GA15116@embeddedor.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-Aug 15:26, Juri Lelli wrote:
-> Hi,
-> 
-> On 06/08/18 17:39, Patrick Bellasi wrote:
-> 
-> [...]
-> 
-> > @@ -223,13 +224,25 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
-> >  	 * utilization (PELT windows are synchronized) we can directly add them
-> >  	 * to obtain the CPU's actual utilization.
-> >  	 *
-> > -	 * CFS utilization can be boosted or capped, depending on utilization
-> > -	 * clamp constraints configured for currently RUNNABLE tasks.
-> > +	 * CFS and RT utilizations can be boosted or capped, depending on
-> > +	 * utilization constraints enforce by currently RUNNABLE tasks.
-> > +	 * They are individually clamped to ensure fairness across classes,
-> > +	 * meaning that CFS always gets (if possible) the (minimum) required
-> > +	 * bandwidth on top of that required by higher priority classes.
-> 
-> Is this a stale comment written before UCLAMP_SCHED_CLASS was
-> introduced? It seems to apply to the below if branch only.
+On Thu, Aug 09, 2018 at 10:08:24AM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 
-Yes, you right... I'll update the comment.
-
-> >  	 */
-> > -	util = cpu_util_cfs(rq);
-> > -	if (util)
-> > -		util = uclamp_util(cpu_of(rq), util);
-> > -	util += cpu_util_rt(rq);
-> > +	util_cfs = cpu_util_cfs(rq);
-> > +	util_rt  = cpu_util_rt(rq);
-> > +	if (sched_feat(UCLAMP_SCHED_CLASS)) {
-> > +		util = 0;
-> > +		if (util_cfs)
-> > +			util += uclamp_util(cpu_of(rq), util_cfs);
-> > +		if (util_rt)
-> > +			util += uclamp_util(cpu_of(rq), util_rt);
-> > +	} else {
-> > +		util  = cpu_util_cfs(rq);
-> > +		util += cpu_util_rt(rq);
-> > +		util  = uclamp_util(cpu_of(rq), util);
-> > +	}
-
-Regarding the two policies, do you have any comment?
-
-We had an internal discussion and we found pro/cons for both... but
-I'm not sure keeping the sched_feat is a good solution on the long
-run, i.e. mainline merge ;)
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Acked-by: Richard Cochran <richardcochran@gmail.com>
