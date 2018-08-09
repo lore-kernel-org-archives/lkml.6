@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97796C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD632C46470
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AD6219EF
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:32:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AD6219EF
+	by mail.kernel.org (Postfix) with ESMTP id 858ED219EF
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 04:32:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858ED219EF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbeHIGy5 (ORCPT
+        id S1728548AbeHIGy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 02:54:57 -0400
+        Thu, 9 Aug 2018 02:54:56 -0400
 Received: from mga11.intel.com ([192.55.52.93]:22077 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727211AbeHIGyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 02:54:55 -0400
+        id S1728377AbeHIGyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 02:54:54 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 21:32:04 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 21:32:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,213,1531810800"; 
-   d="scan'208";a="61024070"
+   d="scan'208";a="61024063"
 Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Aug 2018 21:32:04 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 08 Aug 2018 21:32:03 -0700
 From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     ricardo.ner@intel.com, matt@codeblueprint.co.uk,
@@ -41,9 +41,9 @@ Cc:     ricardo.ner@intel.com, matt@codeblueprint.co.uk,
         Bhupesh Sharma <bhsharma@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V1 6/6] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESSES
-Date:   Wed,  8 Aug 2018 21:31:17 -0700
-Message-Id: <1533789077-16156-7-git-send-email-sai.praneeth.prakhya@intel.com>
+Subject: [PATCH V1 5/6] x86/mm: If in_atomic(), allocate pages without sleeping
+Date:   Wed,  8 Aug 2018 21:31:16 -0700
+Message-Id: <1533789077-16156-6-git-send-email-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com>
 References: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com>
@@ -54,39 +54,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-There may exist some buggy UEFI firmware implementations that might
-access efi regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even
-after the kernel has assumed control of the platform. This violates UEFI
-specification.
+A page fault occurs when any EFI Runtime Service tries to reference a
+memory region which it shouldn't. If the illegally accessed region
+is EFI_BOOT_SERVICES_<CODE/DATA>, the efi specific page fault handler
+fixes it up by dynamically creating VA->PA mappings using
+efi_map_region().
 
-If selected, this debug option will print a warning message if the UEFI
-firmware tries to access any memory region which it shouldn't. Along
-with the warning, the efi page fault handler will also try to
-fixup/recover from the page fault triggered by the firmware so that the
-machine doesn't hang.
+Originally, efi_map_region() and hence the functionality of creating
+mappings for efi regions was intended to be used *only* during boot time
+(please note __init modifier) and hence when called during runtime (i.e.
+from efi page fault handler), the page allocators complain. Calling
+efi_map_region() during runtime complains because "gfp_allowed_mask"
+value changes from boot time to runtime (GFP_BOOT_MASK to
+__GFP_BITS_MASK). During boot, even though efi_map_region() calls
+alloc_<pte/pmd>_page with GFP_KERNEL, the page allocator doesn't
+complain because "__GFP_RECLAIM" flag is cleared by "gfp_allowed_mask",
+but during runtime it isn't cleared and hence prints below stack trace.
 
-To support this feature, two changes should be made to the existing efi
-subsystem
-1. Map EFI_BOOT_SERVICES_<CODE/DATA> regions only when
-   EFI_WARN_ON_ILLEGAL_ACCESSES is disabled
-    Presently, the kernel maps EFI_BOOT_SERVICES_<CODE/DATA> regions as
-    a workaround for buggy firmware that accesses them even when they
-    shouldn't. With EFI_WARN_ON_ILLEGAL_ACCESSES enabled (and hence efi
-    page fault handler) kernel can now detect and handle such accesses
-    dynamically. Hence, rather than safely mapping
-    EFI_BOOT_SERVICES_<CODE/DATA> regions *all* the time, map them on
-    demand.
+BUG: sleeping function called from invalid context at mm/page_alloc.c:4320
+in_atomic(): 1, irqs_disabled(): 1, pid: 2022, name: fwts
+1 lock held by fwts/2022:
+irq event stamp: 45714
+hardirqs last  enabled at (45713): [<ffffffff81c00a54>] restore_regs_and_return_to_kernel+0x0/0x2c
+hardirqs last disabled at (45714): [<ffffffff81c0112c>] error_entry+0x7c/0x100
+softirqs last  enabled at (44732): [<ffffffff81e00387>] __do_softirq+0x387/0x49a
+softirqs last disabled at (44707): [<ffffffff8106fabb>] irq_exit+0xbb/0xc0
+CPU: 0 PID: 2022 Comm: fwts Not tainted 4.17.0-rc4-efitest+ #405
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+Call Trace:
+dump_stack+0x5e/0x8b
+___might_sleep+0x20c/0x240
+__alloc_pages_nodemask+0xc2/0x330
+get_zeroed_page+0x12/0x40
+alloc_pmd_page+0x13/0x50
+populate_pmd+0xc0/0x2e0
+? __lock_acquire+0x439/0x740
+__cpa_process_fault+0x2e1/0x5d0
+__change_page_attr_set_clr+0x7c3/0xcd0
+? console_unlock+0x34d/0x660
+? kernel_map_pages_in_pgd+0x8c/0x160
+kernel_map_pages_in_pgd+0x8c/0x160
+? printk+0x43/0x4b
+? __map_region+0x3c/0x60
+__map_region+0x3c/0x60
+efi_map_region+0x83/0xd0
+efi_illegal_accesses_fixup+0x1ca/0x1e0
+no_context+0x112/0x390
+__do_page_fault+0xc7/0x4f0
+page_fault+0x1e/0x30
+RIP: 0010:0xfffffffeffc7ccf1
+RSP: 0018:ffffc9000075bbf0 EFLAGS: 00010282
+RAX: 0000000000000048 RBX: ffffc9000075be10 RCX: ffffc9000075bad0
+RDX: 00000000000003f8 RSI: ffffc9000075be10 RDI: fffffffeffc7cccf
+RBP: ffffc9000075bdc8 R08: 0000000000000048 R09: 0000000000000048
+R10: 00000000000003fd R11: 00000000000003f8 R12: ffff880032a92d80
+R13: 0000000000000003 R14: 00007ffcf1eb9d50 R15: 0000000000000000
+? efi_call+0xd1/0x160
+? __lock_acquire+0x439/0x740
+? _raw_spin_unlock+0x24/0x30
+? virt_efi_get_next_high_mono_count+0x77/0xf0
+? efi_test_ioctl+0x1ab/0xc20
+? selinux_file_ioctl+0x122/0x1c0
+? do_vfs_ioctl+0x92/0x6b0
+? do_vfs_ioctl+0x92/0x6b0
+? security_file_ioctl+0x3c/0x50
+? selinux_capable+0x20/0x20
+? ksys_ioctl+0x66/0x70
+? __x64_sys_ioctl+0x16/0x20
+? do_syscall_64+0x50/0x170
+? entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-2. If EFI_WARN_ON_ILLEGAL_ACCESSES is enabled don't call
-   efi_free_boot_services()
-    Presently, during early boot phase EFI_BOOT_SERVICES_<CODE/DATA>
-    regions are marked as reserved by kernel
-    (see efi_reserve_boot_services()) and are freed before entering
-    runtime (see efi_free_boot_services()). But, while dynamically
-    fixing page faults caused by the firmware, efi page fault handler
-    assumes that EFI_BOOT_SERVICES_<CODE/DATA> regions are still intact.
-    Hence, to make this assumption true, don't call
-    efi_free_boot_services() if EFI_WARN_ON_ILLEGAL_ACCESSES is enabled.
+Fix the above warning by conditionally changing the allocation from
+GFP_KERNEL to GFP_ATOMIC, so that efi page fault handler could use
+efi_map_region() during runtime. This change shouldn't effect any other
+generic page allocations because this allocation is used only by efi
+functions [1].
+
+[1] Comment in __cpa_process_fault() at arch/x86/mm/pageattr.c
+
+if (cpa->pgd) {
+	/*
+	 * Right now, we only execute this code path when mapping
+	 * the EFI virtual memory map regions, no other users
+	 * provide a ->pgd value. This may change in the future.
+	 */
+	return populate_pgd(cpa, vaddr);
+}
 
 Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
 Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
@@ -100,74 +153,42 @@ Cc: Bhupesh Sharma <bhsharma@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/x86/Kconfig            | 21 +++++++++++++++++++++
- arch/x86/platform/efi/efi.c |  4 ++++
- init/main.c                 |  3 ++-
- 3 files changed, 27 insertions(+), 1 deletion(-)
+ arch/x86/mm/pageattr.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index f1dbb4ee19d7..278e5820e8dd 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1957,6 +1957,27 @@ config EFI_MIXED
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 3bded76e8d5c..1b28a333c8ce 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -926,7 +926,13 @@ static void unmap_pud_range(p4d_t *p4d, unsigned long start, unsigned long end)
  
- 	   If unsure, say N.
+ static int alloc_pte_page(pmd_t *pmd)
+ {
+-	pte_t *pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
++	pte_t *pte;
++
++	if (in_atomic())
++		pte = (pte_t *)get_zeroed_page(GFP_ATOMIC);
++	else
++		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
++
+ 	if (!pte)
+ 		return -1;
  
-+config EFI_WARN_ON_ILLEGAL_ACCESSES
-+	bool "Warn about illegal memory accesses by firmware"
-+	depends on EFI
-+	help
-+	  Enable this debug feature so that the kernel can detect illegal
-+	  memory accesses by firmware and issue a warning. Also,
-+	  1. If the illegally accessed region is EFI_BOOT_SERVICES_<CODE/DATA>,
-+	     the kernel fixes it up by mapping the requested region.
-+	  2. If the illegally accessed region is any other region (Eg:
-+	     EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>), then the
-+	     kernel freezes efi_rts_wq and schedules a new process. Also, it
-+	     disables EFI Runtime Services, so that it will never again call
-+	     buggy firmware.
-+	  3. If the access is to any other efi region like above but if the
-+	     buggy efi runtime service is efi_reset_system(), then the
-+	     platform is rebooted through BIOS.
-+	  Please see the UEFI specification for details on the expectations
-+	  of memory usage.
-+
-+	  If unsure, say N.
-+
- config SECCOMP
- 	def_bool y
- 	prompt "Enable seccomp to safely compute untrusted bytecode"
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 7d18b7ed5d41..0ddb22a03d88 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -768,9 +768,13 @@ static bool should_map_region(efi_memory_desc_t *md)
- 	/*
- 	 * Map boot services regions as a workaround for buggy
- 	 * firmware that accesses them even when they shouldn't.
-+	 * (only if CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES is disabled)
- 	 *
- 	 * See efi_{reserve,free}_boot_services().
- 	 */
-+	if (IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES))
-+		return false;
-+
- 	if (md->type == EFI_BOOT_SERVICES_CODE ||
- 	    md->type == EFI_BOOT_SERVICES_DATA)
- 		return true;
-diff --git a/init/main.c b/init/main.c
-index 3b4ada11ed52..dce0520861a1 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -730,7 +730,8 @@ asmlinkage __visible void __init start_kernel(void)
- 	arch_post_acpi_subsys_init();
- 	sfi_init_late();
+@@ -936,7 +942,13 @@ static int alloc_pte_page(pmd_t *pmd)
  
--	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-+	if (efi_enabled(EFI_RUNTIME_SERVICES) &&
-+	    !IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES)) {
- 		efi_free_boot_services();
- 	}
+ static int alloc_pmd_page(pud_t *pud)
+ {
+-	pmd_t *pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
++	pmd_t *pmd;
++
++	if (in_atomic())
++		pmd = (pmd_t *)get_zeroed_page(GFP_ATOMIC);
++	else
++		pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
++
+ 	if (!pmd)
+ 		return -1;
  
 -- 
 2.7.4
