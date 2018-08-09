@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1978DC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A6DC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF84621EB7
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF84621EB7
+	by mail.kernel.org (Postfix) with ESMTP id 8653E21EB7
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 16:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8653E21EB7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbeHITSY (ORCPT
+        id S1732677AbeHITSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 15:18:24 -0400
-Received: from mailoutvs15.siol.net ([185.57.226.206]:43664 "EHLO
+        Thu, 9 Aug 2018 15:18:25 -0400
+Received: from mailoutvs63.siol.net ([185.57.226.254]:43688 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730634AbeHITSX (ORCPT
+        with ESMTP id S1732471AbeHITSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 15:18:23 -0400
+        Thu, 9 Aug 2018 15:18:25 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id C0D0852310A;
-        Thu,  9 Aug 2018 18:52:37 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id 0EF025230A7;
+        Thu,  9 Aug 2018 18:52:40 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id gTVzL5IylKu6; Thu,  9 Aug 2018 18:52:37 +0200 (CEST)
+        with ESMTP id yfEYIav2XOIf; Thu,  9 Aug 2018 18:52:39 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 3701D522FE8;
-        Thu,  9 Aug 2018 18:52:37 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 99E6E522FE8;
+        Thu,  9 Aug 2018 18:52:39 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id CD83452310A;
-        Thu,  9 Aug 2018 18:52:34 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 3D4335230A7;
+        Thu,  9 Aug 2018 18:52:37 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         jernej.skrabec@siol.net
-Subject: [PATCH 3/5] clk: sunxi-ng: r40: Add max. rate constraint to video PLLs
-Date:   Thu,  9 Aug 2018 18:52:15 +0200
-Message-Id: <20180809165217.30680-4-jernej.skrabec@siol.net>
+Subject: [PATCH 4/5] clk: sunxi-ng: nkmp: Add constraint for maximum rate
+Date:   Thu,  9 Aug 2018 18:52:16 +0200
+Message-Id: <20180809165217.30680-5-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
 References: <20180809165217.30680-1-jernej.skrabec@siol.net>
@@ -54,89 +54,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Video PLLs on R40 can be set to higher rate that it is actually
+Some, if not most, NKMP PLLs can be set to higher rate that is really
 supported by HW.
 
-Limit maximum rate to 1008 MHz. This is the maximum allowed rate by BSP
-clock driver. Interestengly, user manual specifies maximum frequency to
-be 600 MHz. Historically, this data was wrong in some user manuals for
-other SoCs, so more faith is put in BSP clock driver.
+Implement support for maximum frequency constrain for NKMP PLLs.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 52 ++++++++++++++--------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 7 +++++++
+ drivers/clk/sunxi-ng/ccu_nkmp.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 0f388f6944d5..582ebd41d20d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -65,19 +65,19 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index ebd9436d2c7c..9b49adb20d07 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -137,6 +137,13 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nkmp->fixed_post_div;
  
--/* TODO: The result of N/M is required to be in [8, 25] range. */
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
--					    "osc24M", 0x0010,
--					    192000000,	/* Minimum rate */
--					    8, 7,	/* N */
--					    0, 4,	/* M */
--					    BIT(24),	/* frac enable */
--					    BIT(25),	/* frac select */
--					    270000000,	/* frac rate 0 */
--					    297000000,	/* frac rate 1 */
--					    BIT(31),	/* gate */
--					    BIT(28),	/* lock */
--					    CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-video0",
-+						"osc24M", 0x0010,
-+						192000000,  /* Minimum rate */
-+						1008000000, /* Maximum rate */
-+						8, 7,       /* N */
-+						0, 4,       /* M */
-+						BIT(24),    /* frac enable */
-+						BIT(25),    /* frac select */
-+						270000000,  /* frac rate 0 */
-+						297000000,  /* frac rate 1 */
-+						BIT(31),    /* gate */
-+						BIT(28),    /* lock */
-+						CLK_SET_RATE_UNGATE);
++	if (nkmp->max_rate && rate > nkmp->max_rate) {
++		rate = nkmp->max_rate;
++		if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++			rate /= nkmp->fixed_post_div;
++		return rate;
++	}
++
+ 	_nkmp.min_n = nkmp->n.min ?: 1;
+ 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min ?: 1;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
+index 6940503e7fc4..a9f8c116a745 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.h
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
+@@ -35,6 +35,7 @@ struct ccu_nkmp {
+ 	struct ccu_div_internal		p;
  
- /* TODO: The result of N/M is required to be in [8, 25] range. */
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
-@@ -152,19 +152,19 @@ static struct ccu_nk pll_periph1_clk = {
- 	},
+ 	unsigned int		fixed_post_div;
++	unsigned int		max_rate;
+ 
+ 	struct ccu_common	common;
  };
- 
--/* TODO: The result of N/M is required to be in [8, 25] range. */
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
--					    "osc24M", 0x030,
--					    192000000,	/* Minimum rate */
--					    8, 7,	/* N */
--					    0, 4,	/* M */
--					    BIT(24),	/* frac enable */
--					    BIT(25),	/* frac select */
--					    270000000,	/* frac rate 0 */
--					    297000000,	/* frac rate 1 */
--					    BIT(31),	/* gate */
--					    BIT(28),	/* lock */
--					    CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video1_clk, "pll-video1",
-+						"osc24M", 0x030,
-+						192000000,  /* Minimum rate */
-+						1008000000, /* Maximum rate */
-+						8, 7,       /* N */
-+						0, 4,       /* M */
-+						BIT(24),    /* frac enable */
-+						BIT(25),    /* frac select */
-+						270000000,  /* frac rate 0 */
-+						297000000,  /* frac rate 1 */
-+						BIT(31),    /* gate */
-+						BIT(28),    /* lock */
-+						CLK_SET_RATE_UNGATE);
- 
- static struct ccu_nkm pll_sata_clk = {
- 	.enable		= BIT(31),
 -- 
 2.18.0
 
