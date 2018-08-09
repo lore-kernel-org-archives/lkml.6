@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9C5C46460
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796AFC46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1A6217D2
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1A6217D2
+	by mail.kernel.org (Postfix) with ESMTP id 2F194217D2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 11:50:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F194217D2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbeHIOPI (ORCPT
+        id S1731109AbeHIOPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 10:15:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10689 "EHLO huawei.com"
+        Thu, 9 Aug 2018 10:15:10 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10688 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727768AbeHIOPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:15:07 -0400
+        id S1730090AbeHIOPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 10:15:08 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id F025ECA327A32;
+        by Forcepoint Email with ESMTP id EAD3249A3C293;
         Thu,  9 Aug 2018 19:50:32 +0800 (CST)
 Received: from localhost (10.177.23.164) by DGGEMS408-HUB.china.huawei.com
  (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Thu, 9 Aug 2018
- 19:50:26 +0800
+ 19:50:27 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Robin Murphy <robin.murphy@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -39,10 +39,12 @@ CC:     Zhen Lei <thunder.leizhen@huawei.com>,
         LinuxArm <linuxarm@huawei.com>,
         Hanjun Guo <guohanjun@huawei.com>,
         Libin <huawei.libin@huawei.com>
-Subject: [PATCH v2 0/2] bugfix and optimization about CMD_SYNC
-Date:   Thu, 9 Aug 2018 19:48:51 +0800
-Message-ID: <1533815333-17320-1-git-send-email-thunder.leizhen@huawei.com>
+Subject: [PATCH v2 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+Date:   Thu, 9 Aug 2018 19:48:52 +0800
+Message-ID: <1533815333-17320-2-git-send-email-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 1.9.5.msysgit.0
+In-Reply-To: <1533815333-17320-1-git-send-email-thunder.leizhen@huawei.com>
+References: <1533815333-17320-1-git-send-email-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.177.23.164]
@@ -52,32 +54,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v1->v2:
-1. move the call to arm_smmu_cmdq_build_cmd into the critical section,
-   and keep itself unchange.
-2. Although patch2 can make sure no two CMD_SYNCs will be adjacent,
-but patch1 is still needed, see below:
+The condition "(int)(VAL - sync_idx) >= 0" to break loop in function
+__arm_smmu_sync_poll_msi requires that sync_idx must be increased
+monotonously according to the sequence of the CMDs in the cmdq.
 
-cpu0			cpu1			cpu2
+But ".msidata = atomic_inc_return_relaxed(&smmu->sync_nr)" is not protected
+by spinlock, so the following scenarios may appear:
+cpu0			cpu1
 msidata=0
 			msidata=1
 			insert cmd1
-						insert a TLBI command
 insert cmd0
 			smmu execute cmd1
-						smmu execute TLBI
 smmu execute cmd0
 			poll timeout, because msidata=1 is overridden by
 			cmd0, that means VAL=0, sync_idx=1.
 
-Zhen Lei (2):
-  iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-  iommu/arm-smmu-v3: avoid redundant CMD_SYNCs if possible
+This is not a functional problem, just make the caller wait for a long
+time until TIMEOUT. It's rare to happen, because any other CMD_SYNCs
+during the waiting period will break it.
 
- drivers/iommu/arm-smmu-v3.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/arm-smmu-v3.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
--- 
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 1d64710..d17a9a7 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -566,7 +566,7 @@ struct arm_smmu_device {
+
+ 	int				gerr_irq;
+ 	int				combined_irq;
+-	atomic_t			sync_nr;
++	u32				sync_nr;
+
+ 	unsigned long			ias; /* IPA */
+ 	unsigned long			oas; /* PA */
+@@ -947,14 +947,13 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+ 	struct arm_smmu_cmdq_ent ent = {
+ 		.opcode = CMDQ_OP_CMD_SYNC,
+ 		.sync	= {
+-			.msidata = atomic_inc_return_relaxed(&smmu->sync_nr),
+ 			.msiaddr = virt_to_phys(&smmu->sync_count),
+ 		},
+ 	};
+
+-	arm_smmu_cmdq_build_cmd(cmd, &ent);
+-
+ 	spin_lock_irqsave(&smmu->cmdq.lock, flags);
++	ent.sync.msidata = ++smmu->sync_nr;
++	arm_smmu_cmdq_build_cmd(cmd, &ent);
+ 	arm_smmu_cmdq_insert_cmd(smmu, cmd);
+ 	spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
+
+@@ -2179,7 +2178,6 @@ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
+ {
+ 	int ret;
+
+-	atomic_set(&smmu->sync_nr, 0);
+ 	ret = arm_smmu_init_queues(smmu);
+ 	if (ret)
+ 		return ret;
+--
 1.8.3
 
 
