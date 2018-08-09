@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC8FC46464
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C496BC46460
 	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DB121C39
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:05:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DB121C39
+	by mail.kernel.org (Postfix) with ESMTP id 8913E21654
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 09:05:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8913E21654
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730045AbeHIL3H (ORCPT
+        id S1730115AbeHIL3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 07:29:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58940 "EHLO mail.bootlin.com"
+        Thu, 9 Aug 2018 07:29:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58959 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728170AbeHIL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728175AbeHIL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 Aug 2018 07:29:07 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4057420997; Thu,  9 Aug 2018 11:05:11 +0200 (CEST)
+        id 9BAF9207AB; Thu,  9 Aug 2018 11:05:11 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C25D1207AB;
-        Thu,  9 Aug 2018 11:05:00 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2B997207E5;
+        Thu,  9 Aug 2018 11:05:01 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -47,9 +47,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v7 2/8] media: v4l: Add definition for the Sunxi tiled NV12 format
-Date:   Thu,  9 Aug 2018 11:04:29 +0200
-Message-Id: <20180809090435.17248-3-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v7 3/8] dt-bindings: media: Document bindings for the Cedrus VPU driver
+Date:   Thu,  9 Aug 2018 11:04:30 +0200
+Message-Id: <20180809090435.17248-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180809090435.17248-1-paul.kocialkowski@bootlin.com>
 References: <20180809090435.17248-1-paul.kocialkowski@bootlin.com>
@@ -58,73 +58,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces support for the Sunxi tiled NV12 format, where each
-component of the YUV frame is divided into macroblocks. Hence, the size
-of each plane requires specific alignment. The pixels inside each
-macroblock are coded in linear order (line after line from top to
-bottom).
-
-This tiled NV12 format is used by the video engine on Allwinner
-platforms: it is the default format for decoded frames (and the only
-one available in the oldest supported platforms).
+This adds a device-tree binding document that specifies the properties
+used by the Cedurs VPU driver, as well as examples.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/media/uapi/v4l/pixfmt-reserved.rst | 15 ++++++++++++++-
- drivers/media/v4l2-core/v4l2-ioctl.c             |  1 +
- include/uapi/linux/videodev2.h                   |  1 +
- 3 files changed, 16 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/media/cedrus.txt      | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/cedrus.txt
 
-diff --git a/Documentation/media/uapi/v4l/pixfmt-reserved.rst b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
-index 38af1472a4b4..0c399858bda2 100644
---- a/Documentation/media/uapi/v4l/pixfmt-reserved.rst
-+++ b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
-@@ -243,7 +243,20 @@ please make a proposal on the linux-media mailing list.
- 	It is an opaque intermediate format and the MDP hardware must be
- 	used to convert ``V4L2_PIX_FMT_MT21C`` to ``V4L2_PIX_FMT_NV12M``,
- 	``V4L2_PIX_FMT_YUV420M`` or ``V4L2_PIX_FMT_YVU420``.
--
-+    * .. _V4L2-PIX-FMT-SUNXI-TILED-NV12:
+diff --git a/Documentation/devicetree/bindings/media/cedrus.txt b/Documentation/devicetree/bindings/media/cedrus.txt
+new file mode 100644
+index 000000000000..a089a0c1ff05
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/cedrus.txt
+@@ -0,0 +1,54 @@
++Device-tree bindings for the VPU found in Allwinner SoCs, referred to as the
++Video Engine (VE) in Allwinner literature.
 +
-+      - ``V4L2_PIX_FMT_SUNXI_TILED_NV12``
-+      - 'ST12'
-+      - Two-planar NV12-based format used by the video engine found on Allwinner
-+	(codenamed sunxi) platforms, with 32x32 tiles for the luminance plane
-+	and 32x64 tiles for the chrominance plane. The data in each tile is
-+	stored in linear order, within the tile bounds. Each tile follows the
-+	previous one linearly in memory (from left to right, top to bottom).
++The VPU can only access the first 256 MiB of DRAM, that are DMA-mapped starting
++from the DRAM base. This requires specific memory allocation and handling.
 +
-+	The associated buffer dimensions are aligned to match an integer number
-+	of tiles, resulting in 32-aligned resolutions for the luminance plane
-+	and 16-aligned resolutions for the chrominance plane (with 2x2
-+	subsampling).
- 
- .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
- 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 192481afa09f..d5d1732dce27 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1337,6 +1337,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 		case V4L2_PIX_FMT_SE401:	descr = "GSPCA SE401"; break;
- 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
- 		case V4L2_PIX_FMT_MT21C:	descr = "Mediatek Compressed Format"; break;
-+		case V4L2_PIX_FMT_SUNXI_TILED_NV12: descr = "Sunxi Tiled NV12 Format"; break;
- 		default:
- 			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
- 			if (fmt->description[0])
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 08d2af1bae0b..dc9afa790e44 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -677,6 +677,7 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
- #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
- #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
-+#define V4L2_PIX_FMT_SUNXI_TILED_NV12 v4l2_fourcc('S', 'T', '1', '2') /* Sunxi Tiled NV12 Format */
- 
- /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
- #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
++Required properties:
++- compatible		: must be one of the following compatibles:
++			- "allwinner,sun4i-a10-video-engine"
++			- "allwinner,sun5i-a13-video-engine"
++			- "allwinner,sun7i-a20-video-engine"
++			- "allwinner,sun8i-a33-video-engine"
++			- "allwinner,sun8i-h3-video-engine"
++- reg			: register base and length of VE;
++- clocks		: list of clock specifiers, corresponding to entries in
++			  the clock-names property;
++- clock-names		: should contain "ahb", "mod" and "ram" entries;
++- resets		: phandle for reset;
++- interrupts		: VE interrupt number;
++- allwinner,sram	: SRAM region to use with the VE.
++
++Optional properties:
++- memory-region		: CMA pool to use for buffers allocation instead of the
++			  default CMA pool.
++
++Example:
++
++reserved-memory {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges;
++
++	/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
++	cma_pool: cma@4a000000 {
++		compatible = "shared-dma-pool";
++		size = <0x6000000>;
++		alloc-ranges = <0x4a000000 0x6000000>;
++		reusable;
++		linux,cma-default;
++	};
++};
++
++video-codec@1c0e000 {
++	compatible = "allwinner,sun7i-a20-video-engine";
++	reg = <0x01c0e000 0x1000>;
++
++	clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
++		 <&ccu CLK_DRAM_VE>;
++	clock-names = "ahb", "mod", "ram";
++
++	resets = <&ccu RST_VE>;
++	interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++	allwinner,sram = <&ve_sram 1>;
++};
 -- 
 2.18.0
 
