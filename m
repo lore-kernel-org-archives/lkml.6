@@ -2,111 +2,93 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7D2C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6150DC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A424D21E1F
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A424D21E1F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A23F21990
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 15:09:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MEGzvEU0";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X51+KHVC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A23F21990
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732617AbeHIRea (ORCPT
+        id S1732698AbeHIRed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:34:30 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.79]:34332 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732368AbeHIRea (ORCPT
+        Thu, 9 Aug 2018 13:34:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40502 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732570AbeHIReb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:34:30 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 22346663A4
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Aug 2018 10:09:10 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id nmY7fTEGAPvAdnmYWfUFrt; Thu, 09 Aug 2018 10:09:09 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.54.46] (port=49984 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fnmY6-001q4T-Ei; Thu, 09 Aug 2018 10:08:26 -0500
-Date:   Thu, 9 Aug 2018 10:08:24 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Richard Cochran <richardcochran@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: dp83640: Mark expected switch fall-throughs
-Message-ID: <20180809150824.GA15116@embeddedor.com>
+        Thu, 9 Aug 2018 13:34:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7D1F660AD8; Thu,  9 Aug 2018 15:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533827351;
+        bh=Iu8B+9lnM7600FfaQTVqxALrhXPsShpQsx8DumCHGcM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=MEGzvEU0PQXOsnfO/uQE/7tAzCSA+4dalz6NAto5ZW8Kv1PzV60T/lB+o/Hf3b3CW
+         vHG26bXWmozae+I/pRpSaxX9jPqrFfAcnfdhInBBQHKE1MXWLG+k/FUgzBJJC5/4zT
+         f0ys5H6rSKA24X/fCwvQWEd6qijR8gCl8vDd41NM=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C768960807;
+        Thu,  9 Aug 2018 15:09:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533827351;
+        bh=Iu8B+9lnM7600FfaQTVqxALrhXPsShpQsx8DumCHGcM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=X51+KHVCIU438ggPeBbpLaQK3emR6KvQu94Fzft2yYCNc49cbUhjP7j80kvFKQJup
+         WrQNMgnwoRvYgYgqeM3FQ1bp74tCl+TfqRwPo/EX3t6xyAPCTmD3awuHUUhgnWrAoA
+         rvyD0hXfFwyAxfttUxH5+rIKWKQDdrwyRYZ2mEYQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C768960807
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.54.46
-X-Source-L: No
-X-Exim-ID: 1fnmY6-001q4T-Ei
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.54.46]:49984
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH wireless-drivers] mt76x0: Remove VLA usage
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180807225040.GA2164@beast>
+References: <20180807225040.GA2164@beast>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180809150911.7D1F660AD8@smtp.codeaurora.org>
+Date:   Thu,  9 Aug 2018 15:09:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Kees Cook <keescook@chromium.org> wrote:
 
-Notice that in this particular case, I replaced the code comment at the
-top of the switch statement with a proper "fall through" annotation for
-each case, which is what GCC is expecting to find.
+> Even with "const" variables, the compiler will generate warnings about
+> VLA usage. In the quest to remove all VLAs from the kernel[1], this uses
+> a #define instead of a const to do the array sizing.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Fixes: e87b5039511a ("mt76x0: eeprom files")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Addresses-Coverity-ID: 1056542 ("Missing break in switch")
-Addresses-Coverity-ID: 1339579 ("Missing break in switch")
-Addresses-Coverity-ID: 1369526 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/phy/dp83640.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
-index 79e9b10..29aa8d7 100644
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -757,13 +757,16 @@ static int decode_evnt(struct dp83640_private *dp83640,
- 
- 	phy_txts = data;
- 
--	switch (words) { /* fall through in every case */
-+	switch (words) {
- 	case 3:
- 		dp83640->edata.sec_hi = phy_txts->sec_hi;
-+		/* fall through */
- 	case 2:
- 		dp83640->edata.sec_lo = phy_txts->sec_lo;
-+		/* fall through */
- 	case 1:
- 		dp83640->edata.ns_hi = phy_txts->ns_hi;
-+		/* fall through */
- 	case 0:
- 		dp83640->edata.ns_lo = phy_txts->ns_lo;
- 	}
+17ad18fd12a3 mt76x0: Remove VLA usage
+
 -- 
-2.7.4
+https://patchwork.kernel.org/patch/10559297/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
