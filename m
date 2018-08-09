@@ -2,385 +2,121 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D77C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7245AC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D0B21E9A
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B391208CA
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 14:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLytVjHe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6D0B21E9A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Fw1WUVqs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B391208CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732572AbeHIRAH (ORCPT
+        id S1732588AbeHIRAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 13:00:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732538AbeHIRAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 13:00:06 -0400
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68D2F21EA0;
-        Thu,  9 Aug 2018 14:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533825295;
-        bh=SU1tyWKNZZ4qyptwZCRndVMEblWPSbzrVIUIxAbeEgI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=JLytVjHePEw9zo+rTMeVo5Ygr4HA27gLoeht0P7A1xO+54KKOrWdKDwA3RSpAWltv
-         XAqrEEsbH1n1o1uJNMPWoiK/VfgJffnaqQWLW+oTuyrxYVVH6W5CSULWprJk6heD6q
-         zexqMKdXsAveUOViud9xBS34Ak2SOpddARmEJEuA=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v3 7/7] tracing: Add hist trigger onchange() handler
-Date:   Thu,  9 Aug 2018 09:34:17 -0500
-Message-Id: <272b4b7e4145557427d18a05bd60a1ecf1243763.1533753152.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1533753152.git.tom.zanussi@linux.intel.com>
-References: <cover.1533753152.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1533753152.git.tom.zanussi@linux.intel.com>
-References: <cover.1533753152.git.tom.zanussi@linux.intel.com>
+        Thu, 9 Aug 2018 13:00:14 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35812 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732384AbeHIRAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 13:00:13 -0400
+Received: by mail-oi0-f66.google.com with SMTP id m11-v6so10214916oic.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 07:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=SS5BDV6V8Wq7DF71MLXBv4Ykz9gcmE7xaZde1hqlAd8=;
+        b=Fw1WUVqsxLSwUOuqvLOLpWbGOReQ141K56mPWa4pD37FN4sFfWZQvHZEcVJLtohvQN
+         nd+gDqxwdSKK5IHxS7HJmXHw7dzxNOriJ7NeJfsPuTzJzKKpUZ62jsil4anmYdAq1IDl
+         oZgubjgmsK/kb6nDhV1l5GFjAHG3U8zqANjeM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=SS5BDV6V8Wq7DF71MLXBv4Ykz9gcmE7xaZde1hqlAd8=;
+        b=tSnQe8NvwAOKHqALU9gTdeThDws4nwyfZS1v5NpttRC6tA3hphpdVsD6Jlk4sY4757
+         kSwseD5TvNzkSI/UA4gKUv9nWnjQEmkI8IksgipJE0n3Yh0uGYcpwukUMjpM7f7eLxUk
+         alRXyNxsar1gAexkSfC9tTM62TWs7ebGbKOHGJyGM9szMY/61v3vor/eXzCQkHVBewDY
+         p0uJZRpi/GQ36JS2LU/xhW11Sb/CnLeb3yHCJDxm/7avWDFcbTfaybCtZn54DKKmg42b
+         xa40s9I4EHN5s16yrQfwacQ5tIl79YDZPKE+yOCLs1/t1IJaifsrcwBv40jRgHb0Cghj
+         8+JA==
+X-Gm-Message-State: AOUpUlERwNiGzAUsx/rQSPIBsDwBtpr1W5rwC7Enk8CZk6+x/I6i56Kw
+        iwGu6Z6fF5Gqdx1bpHw8utHTrHC6HAL49qUCm936bA==
+X-Google-Smtp-Source: AA+uWPyuGY0KVss2mRePpyBvsPkPaNDLJsscF1qw1Pq4w1k+75Q9m1CoVSBd4IbzPdc7ysDrzqqOhF62vTIifOZ4sX4=
+X-Received: by 2002:aca:d04b:: with SMTP id h72-v6mr2223165oig.17.1533825302578;
+ Thu, 09 Aug 2018 07:35:02 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 07:35:01 -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <27374.1533824694@warthog.procyon.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <153313723557.13253.9055982745313603422.stgit@warthog.procyon.org.uk>
+ <87in4n9zg0.fsf@xmission.com> <27374.1533824694@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 9 Aug 2018 16:35:01 +0200
+Message-ID: <CAJfpegvWE9htLjqeR6=2BWBSuvJzJpWcjBC_EmX_k1RCGXTfbw@mail.gmail.com>
+Subject: Re: [PATCH 28/33] vfs: syscall: Add fsconfig() for configuring and
+ managing a context [ver #11]
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On Thu, Aug 9, 2018 at 4:24 PM, David Howells <dhowells@redhat.com> wrote:
+> Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+>> First let me thank you for adding both FSCONFIG_CMD_CREATE and
+>> FSCONFIG_CMD_RECONFIGURE.  Unfortunately the implementation is currently
+>> broken.  So this patch gets my:
+>>
+>> This is broken in two specific ways.
+>> ...
+>> 2) FSCONFIG_CMD_CREATE will succeed even if the superblock already
+>>    exists and it can not use all of the superblock parameters.
+>>
+>>    This happens because vfs_get_super will only call fill_super
+>>    if the super block is created.  Which is reasonable on the face
+>>    of it.  But it in practice this introduces security problems.
+>>
+>>    a) Either through reconfiguring a shared super block you did not
+>>       realize was shared (as we saw with devpts).
+>>
+>>    b) Mounting a super block and not honoring it's mount options
+>>       because something has already mounted it.  As we see today
+>>       with proc.  Leaving userspace to think the filesystem will behave
+>>       one way when in fact it behaves another.
+>>
+>> I have already explained this several times, and apparently I have been
+>> ignored.  This fundamental usability issue that leads to security
+>> problems.
+>
+> I've also explained why you're wrong or at least only partially right.  I *do*
+> *not* want to implement sget() in userspace with the ability for userspace to
+> lock out other mount requests - which is what it appears that you've been
+> asking for.
+>
+> However, as I have said, I *am* willing to add one of more flags to help with
+> this, but I can't make any "legacy" fs honour them as this requires the
+> fs_context to be passed down to sget_fc() and the filesystem - which is why I
+> was considering leaving it for later.
 
-Add support for a hist:onchange($var) handler, similar to the onmax()
-handler but triggering whenever there's any change in $var, not just a
-max.
+You can determine at fsopen() time whether the filesystem is able to
+support the O_EXCL behavior?  If so, then it's trivial to enable this
+conditionally.  I think that's what Eric is asking for, it's obviously
+not fair to ask for a change in behavior of the legacy interface.
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- Documentation/trace/histogram.txt | 97 +++++++++++++++++++++++++++++++++++++++
- kernel/trace/trace_events_hist.c  | 68 +++++++++++++++++++++------
- 2 files changed, 152 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/trace/histogram.txt b/Documentation/trace/histogram.txt
-index 125bf360e9be..5746fd06f1fd 100644
---- a/Documentation/trace/histogram.txt
-+++ b/Documentation/trace/histogram.txt
-@@ -2103,6 +2103,103 @@ hist trigger specification.
-       <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-      <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
- 
-+  - onchange(var).save(field,..	.)
-+
-+    The 'onchange(var).save(field,...)' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
-+
-+    The end result is that the trace event fields specified as the
-+    onchange.save() params will be saved if 'var' changes for that
-+    hist trigger entry.  This allows context from the event that
-+    changed the value to be saved for later reference.  When the
-+    histogram is displayed, additional fields displaying the saved
-+    values will be printed.
-+
-+  - onchange(var).snapshot()
-+
-+    The 'onchange(var).snapshot()' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
-+
-+    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' changes for any
-+    hist trigger entry.
-+
-+    Note that in this case the changed value is a global variable
-+    associated withe current trace instance.  The key of the specific
-+    trace event that caused the value to change and the global value
-+    itself are displayed, along with a message stating that a snapshot
-+    has been taken and where to find it.  The user can use the key
-+    information displayed to locate the corresponding bucket in the
-+    histogram for even more detail.
-+
-+    As an example the below defines a hist trigger on the tcp_probe
-+    event, keyed on dport.  Whenever a tcp_probe event occurs, the
-+    cwnd field is checked against the current value stored in the
-+    $cwnd variable.  If the value has changed, a snapshot is taken.
-+    As part of the setup, all the scheduler and tcp events are also
-+    enabled, which are the events that will show up in the snapshot
-+    when it is taken at some point:
-+
-+    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-+    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
-+
-+    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
-+            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
-+	    onchange($cwnd).snapshot()' >> \
-+	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
-+
-+    When the histogram is displayed, for each bucket the tracked value
-+    and the saved values corresponding to that value are displayed
-+    following the rest of the fields.
-+
-+    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
-+      { dport:       1521 } hitcount:          8
-+	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
-+
-+      { dport:         80 } hitcount:         23
-+	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
-+
-+      { dport:       9001 } hitcount:        172
-+	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
-+
-+      { dport:        443 } hitcount:        211
-+	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
-+
-+    Snapshot taken (see tracing/snapshot).  Details:
-+        triggering value { onchange($cwnd) }:         10
-+        triggered by event with key: { dport:         80 }
-+
-+    Totals:
-+        Hits: 414
-+        Entries: 4
-+        Dropped: 0
-+
-+    In the above case, the event that triggered the snapshot has the
-+    key with dport == 80.  If you look at the bucket that has 80 as
-+    the key, you'll find the additional values save()'d along with the
-+    changed value for that bucket, which should be the same as the
-+    global changed value (since that was the same value that triggered
-+    the global snapshot).
-+
-+    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/snapshot
-+
-+       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
-+     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
-+       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
-+       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
-+       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
-+            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
-+
- 3. User space creating a trigger
- --------------------------------
- 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 56586fcad418..dd46a937d382 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -340,6 +340,7 @@ typedef u64 (*get_track_val_fn_t) (struct hist_trigger_data *hist_data,
- enum handler_id {
- 	HANDLER_ONMATCH = 1,
- 	HANDLER_ONMAX,
-+	HANDLER_ONCHANGE,
- };
- 
- enum action_id {
-@@ -1895,7 +1896,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
- 		return ret;
- 
- 	if ((strncmp(str, "onmatch(", strlen("onmatch(")) == 0) ||
--	    (strncmp(str, "onmax(", strlen("onmax(")) == 0)) {
-+	    (strncmp(str, "onmax(", strlen("onmax(")) == 0) ||
-+	    (strncmp(str, "onchange(", strlen("onchange(")) == 0)) {
- 		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->action_str[attrs->n_actions]) {
- 			ret = -ENOMEM;
-@@ -3355,6 +3357,14 @@ static bool check_track_val_max(u64 track_val, u64 var_val)
- 	return true;
- }
- 
-+static bool check_track_val_changed(u64 track_val, u64 var_val)
-+{
-+	if (var_val == track_val)
-+		return false;
-+
-+	return true;
-+}
-+
- static u64 get_track_val_local(struct hist_trigger_data *hist_data,
- 			       struct tracing_map_elt *elt,
- 			       struct action_data *data)
-@@ -3529,6 +3539,8 @@ static void track_data_print(struct seq_file *m,
- 
- 	if (data->handler == HANDLER_ONMAX)
- 		seq_printf(m, "\n\tmax: %10llu", track_val);
-+	else if (data->handler == HANDLER_ONCHANGE)
-+		seq_printf(m, "\n\tchanged: %10llu", track_val);
- 
- 	if (data->action == ACTION_SNAPSHOT)
- 		return;
-@@ -3559,10 +3571,10 @@ static void ontrack_save(struct hist_trigger_data *hist_data,
- 		update_save_vars(hist_data, elt, rbe, rec);
- }
- 
--static void onmax_snapshot(struct hist_trigger_data *hist_data,
--			   struct tracing_map_elt *elt, void *rec,
--			   struct ring_buffer_event *rbe,
--			   struct action_data *data, u64 *var_ref_vals)
-+static void ontrack_snapshot(struct hist_trigger_data *hist_data,
-+			     struct tracing_map_elt *elt, void *rec,
-+			     struct ring_buffer_event *rbe,
-+			     struct action_data *data, u64 *var_ref_vals)
- {
- 	update_track_val(hist_data, elt, data, var_ref_vals);
- }
-@@ -3612,14 +3624,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
- 
- 	track_data_var_str = data->track_data.var_str;
- 	if (track_data_var_str[0] != '$') {
--		hist_err("For onmax(x), x must be a variable: ", track_data_var_str);
-+		hist_err("For onmax(x) or onchange(x), x must be a variable: ", track_data_var_str);
- 		return -EINVAL;
- 	}
- 	track_data_var_str++;
- 
- 	var_field = find_target_event_var(hist_data, NULL, NULL, track_data_var_str);
- 	if (!var_field) {
--		hist_err("Couldn't find onmax variable: ", track_data_var_str);
-+		hist_err("Couldn't find onmax or onchange variable: ", track_data_var_str);
- 		return -EINVAL;
- 	}
- 
-@@ -3646,6 +3658,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
- 		ret = PTR_ERR(track_var);
- 		goto out;
- 	}
-+
-+	if (data->handler == HANDLER_ONCHANGE)
-+		track_var = create_var(hist_data, file, "__change", sizeof(u64), "u64");
-+	if (IS_ERR(track_var)) {
-+		hist_err("Couldn't create onchange variable: ", "__change");
-+		ret = PTR_ERR(track_var);
-+		goto out;
-+	}
- 	data->track_data.track_var = track_var;
- 
- 	ret = action_create(hist_data, data);
-@@ -3725,6 +3745,8 @@ static int action_parse(char *str, struct action_data *data,
- 
- 		if (handler == HANDLER_ONMAX)
- 			data->track_data.check_val = check_track_val_max;
-+		else if (handler == HANDLER_ONCHANGE)
-+			data->track_data.check_val = check_track_val_changed;
- 		else {
- 			hist_err("action parsing: Handler doesn't support action: ", action_name);
- 			ret = -EINVAL;
-@@ -3748,6 +3770,8 @@ static int action_parse(char *str, struct action_data *data,
- 
- 		if (handler == HANDLER_ONMAX)
- 			data->track_data.check_val = check_track_val_max;
-+		else if (handler == HANDLER_ONCHANGE)
-+			data->track_data.check_val = check_track_val_changed;
- 		else {
- 			hist_err("action parsing: Handler doesn't support action: ", action_name);
- 			ret = -EINVAL;
-@@ -3757,7 +3781,7 @@ static int action_parse(char *str, struct action_data *data,
- 		data->track_data.save_val = save_track_val_snapshot;
- 		data->track_data.get_val = get_track_val_snapshot;
- 
--		data->fn = onmax_snapshot;
-+		data->fn = ontrack_snapshot;
- 
- 		data->action = ACTION_SNAPSHOT;
- 	} else {
-@@ -3771,6 +3795,8 @@ static int action_parse(char *str, struct action_data *data,
- 
- 		if (handler == HANDLER_ONMAX)
- 			data->track_data.check_val = check_track_val_max;
-+		else if (handler == HANDLER_ONCHANGE)
-+			data->track_data.check_val = check_track_val_changed;
- 
- 		data->track_data.save_val = save_track_val_local;
- 		data->track_data.get_val = get_track_val_local;
-@@ -4649,7 +4675,8 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
- 
- 		if (data->handler == HANDLER_ONMATCH)
- 			onmatch_destroy(data);
--		else if (data->handler == HANDLER_ONMAX)
-+		else if (data->handler == HANDLER_ONMAX ||
-+			 data->handler == HANDLER_ONCHANGE)
- 			track_data_destroy(hist_data, data);
- 		else
- 			kfree(data);
-@@ -4684,6 +4711,15 @@ static int parse_actions(struct hist_trigger_data *hist_data)
- 				ret = PTR_ERR(data);
- 				break;
- 			}
-+		} else if (strncmp(str, "onchange(", strlen("onchange(")) == 0) {
-+			char *action_str = str + strlen("onchange(");
-+
-+			data = track_data_parse(hist_data, action_str,
-+						HANDLER_ONCHANGE);
-+			if (IS_ERR(data)) {
-+				ret = PTR_ERR(data);
-+				break;
-+			}
- 		} else {
- 			ret = -EINVAL;
- 			break;
-@@ -4708,7 +4744,8 @@ static int create_actions(struct hist_trigger_data *hist_data)
- 			ret = onmatch_create(hist_data, data);
- 			if (ret)
- 				return ret;
--		} else if (data->handler == HANDLER_ONMAX) {
-+		} else if (data->handler == HANDLER_ONMAX ||
-+			   data->handler == HANDLER_ONCHANGE) {
- 			ret = track_data_create(hist_data, data);
- 			if (ret)
- 				return ret;
-@@ -4736,7 +4773,8 @@ static void print_actions(struct seq_file *m,
- 			continue;
- 		}
- 
--		if (data->handler == HANDLER_ONMAX)
-+		if (data->handler == HANDLER_ONMAX ||
-+		    data->handler == HANDLER_ONCHANGE)
- 			track_data_print(m, hist_data, elt, data);
- 	}
- }
-@@ -4768,6 +4806,8 @@ static void print_track_data_spec(struct seq_file *m,
- {
- 	if (data->handler == HANDLER_ONMAX)
- 		seq_puts(m, ":onmax(");
-+	else if (data->handler == HANDLER_ONCHANGE)
-+		seq_puts(m, ":onchange(");
- 	seq_printf(m, "%s", data->track_data.var_str);
- 	seq_printf(m, ").%s(", data->action_name);
- 
-@@ -4825,7 +4865,8 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 			if (strcmp(data->match_data.event,
- 				   data_test->match_data.event) != 0)
- 				return false;
--		} else if (data->handler == HANDLER_ONMAX) {
-+		} else if (data->handler == HANDLER_ONMAX ||
-+			   data->handler == HANDLER_ONCHANGE) {
- 			if (strcmp(data->track_data.var_str,
- 				   data_test->track_data.var_str) != 0)
- 				return false;
-@@ -4846,7 +4887,8 @@ static void print_actions_spec(struct seq_file *m,
- 
- 		if (data->handler == HANDLER_ONMATCH)
- 			print_onmatch_spec(m, hist_data, data);
--		else if (data->handler == HANDLER_ONMAX)
-+		else if (data->handler == HANDLER_ONMAX ||
-+			 data->handler == HANDLER_ONCHANGE)
- 			print_track_data_spec(m, hist_data, data);
- 	}
- }
--- 
-2.14.1
-
+Thanks,
+Miklos
