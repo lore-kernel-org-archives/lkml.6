@@ -2,112 +2,181 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEF9C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7D6C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6702238E
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:37:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6702238E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BDA12238D
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 19:37:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SOkAVRVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDA12238D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeHIWDy (ORCPT
+        id S1727232AbeHIWEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 18:03:54 -0400
-Received: from mga14.intel.com ([192.55.52.115]:44671 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727038AbeHIWDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 18:03:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 12:37:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,215,1531810800"; 
-   d="scan'208";a="61230332"
-Received: from otc-nc-03.jf.intel.com ([10.54.39.32])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Aug 2018 12:37:37 -0700
-From:   Ashok Raj <ashok.raj@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org
-Cc:     Ashok Raj <ashok.raj@intel.com>, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Gage Eads <gage.eads@intel.com>
-Subject: [PATCH] vfio/pci: Some buggy virtual functions incorrectly report 1 for intx.
-Date:   Thu,  9 Aug 2018 12:37:06 -0700
-Message-Id: <1533843426-79170-1-git-send-email-ashok.raj@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 9 Aug 2018 18:04:14 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40093 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbeHIWEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 18:04:13 -0400
+Received: by mail-yw1-f67.google.com with SMTP id z143-v6so6166167ywa.7
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:37:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Q/G66rTI3ibq9RNzQInnB3gQg9nv61I5r+XmWb/2OPY=;
+        b=SOkAVRVKKq53roeye3WQFiSZud2rzT/Yi+OZ4MYmCN1D7fYLaX7uzjek819ZeKWNe9
+         B9MOMaPn4R+iVwGpMo8CeFtPdOl2fWREihwptlmGm9/9gWM76Zdopmg7VCfD7vRQOgM7
+         w0eexRmQzx744HJLrXGrgYDsWn7jwkYIac/8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Q/G66rTI3ibq9RNzQInnB3gQg9nv61I5r+XmWb/2OPY=;
+        b=fk5ZSGzCbePN6ZjLH2C2ze9MXuh4bS/96fnnVi25vDcHr35AwFcBaTS2U2DsssEFoy
+         RfxM9kZlEY5T6p3b3G+iO7Ka6nXdTyl7FG9L1AZbprHmPQeFrVBugFvpyI2iIkfJ+kLy
+         S95xOKDSjPsIgFSdlJoydhDdOxqTAuiaFURJZM9BoDv11gp+1IfR7p8bwObwVnPQm1UR
+         aNzOWyvhWO7c49wCmHd6+GN6xy+CkgiDQdGA6IgL1s9xL8WWPYoBADS+dpV/iKfUJwfk
+         n0tMSdq2apOIRmlg2D4Lm1mitktoue6coXVGI2WyKQ2isDbwV4fNpConcPHKKFjxkyB7
+         BYUg==
+X-Gm-Message-State: AOUpUlH/v1PcILzUKW/SbGPQlhGdiOdohp6sp5tUDtBJEwV8O07yokNw
+        qW3mOIjH1bAYQ71x+BLJjb/k2zYPAHc=
+X-Google-Smtp-Source: AA+uWPy8eAXbAelHLjZnsCjuueNi+Yvem4xxa/Lv7KDSh49drZGWAob/ySR4rlGkOPpsEdYhzEdj5g==
+X-Received: by 2002:a9f:2266:: with SMTP id 93-v6mr2376336uad.40.1533843475469;
+        Thu, 09 Aug 2018 12:37:55 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id u25-v6sm1071825uan.26.2018.08.09.12.37.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 12:37:54 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id h1-v6so34553uao.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 12:37:54 -0700 (PDT)
+X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr2351191uac.191.1533843473898;
+ Thu, 09 Aug 2018 12:37:53 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 12:37:52 -0700 (PDT)
+In-Reply-To: <1533839042.2283.305.camel@impinj.com>
+References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
+ <152607782792.34267.8023817955251139395@swboyd.mtv.corp.google.com>
+ <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org> <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
+ <20180522173000.GG24776@sirena.org.uk> <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
+ <20180524162940.GA4828@sirena.org.uk> <28d8ab5fdeb34e52eba7ca771a17bc06@codeaurora.org>
+ <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org> <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
+ <1533839042.2283.305.camel@impinj.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 9 Aug 2018 12:37:52 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V4miw3i+8EPZPpgWGaVJhHbb2OBVTz6_iP-pMVhZoBOQ@mail.gmail.com>
+Message-ID: <CAD=FV=V4miw3i+8EPZPpgWGaVJhHbb2OBVTz6_iP-pMVhZoBOQ@mail.gmail.com>
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based QUP
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     "dkota@codeaurora.org" <dkota@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "swboyd@chromium.org" <swboyd@chromium.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "sdharia@codeaurora.org" <sdharia@codeaurora.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "kramasub@codeaurora.org" <kramasub@codeaurora.org>,
+        "girishm@codeaurora.org" <girishm@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI_INTERRUPT_PIN should always read  0 for SRIOV Virtual Functions.
+Hi,
 
-Some SRIOV devices have some bugs in RTL and VF's end up reading 1
-instead of 0 for the PIN.
+On Thu, Aug 9, 2018 at 11:24 AM, Trent Piepho <tpiepho@impinj.com> wrote:
+> On Thu, 2018-08-09 at 11:03 -0700, Doug Anderson wrote:
+>> On Fri, Aug 3, 2018 at 5:18 AM,  <dkota@codeaurora.org> wrote:
+>> > > > +       if (of_property_read_u32(pdev->dev.of_node, "spi-max-frequency",
+>> > > > +                               &spi->max_speed_hz)) {
+>> >
+>> >
+>> > > Why does this need to come from DT?
+>> >
+>> >
+>> > This is required to set the SPI controller max frequency.
+>> > As it is specific to the controller, so looks meaningful to specify it in
+>> > dtsi.
+>> > Also, spi core framework will set the transfer speed to controller max
+>> > frequency
+>> > if transfer frequency is greater than controller max frequency.
+>> > Please mention if you have a other opinion.
+>>
+>> Here are my thoughts:
+>>
+>> 1. It sure seems like the clock framework could be enforcing the max
+>> speed here.  SPI can just ask for the speed and the clock framework
+>> will pick the highest speed it can if you ask for one too high.  Isn't
+>> that the whole point of the "struct freq_tbl" in the clock driver?
+>>
+>>
+>> 2. The device tree writer already provides a max clock speed for each
+>> SPI slave in the device tree.  ...shouldn't the device tree writer
+>> already be taking into account the max of the SPI port when setting
+>> this value?
+>
+> No, the way it works is the actual speed is the lesser of the master's
+> max and the slave device's max.
+>
+> But usually the master's max is determined by:
+>
+> 1. The input clock the SPI master device, as provided by the clock
+> framework.  Usually the max SPI clock will be this clock /2 or
+> something like that.
+>
+> 2. The master has some maximum clock as part of its specifications, in
+> which case the driver basically hard codes it.  Maybe it is different
+> based on model and the driver has a table.
+>
+> The device tree isn't really meant to be a way to remove all data from
+> the device driver just because it can be, or shift work from the driver
+> author to the device tree author.
+>
+> So, one shouldn't specify the master max in the DT if the driver could
+> figure it out.
+>
+> Sometimes you see a field in the DT and I think the thought process
+> that put it there was, "I don't understand how to set this register,
+> I'll just stick in the device tree and then it's Someone Else's Problem
+> to find the correct value."
+>
+> The max speed that some board can talk to a SPI slave might be from the
+> specs of the slave device or maybe it's due to the traces on the board
+> itself that is the limiting factor.  In the latter case the convention
+> is to consider this part of the slave's max speed and put into the DT
+> in the slave's DT node max speed property.
+>
+> So the same spi eeprom chip might have have a max in the DT of 20 MHz
+> on one board, copied out of the eeprom's datasheet.  But on another
+> board it has a max of 10 MHz because on that board's layout it only
+> works up to 10.
 
-Since this is a spec required value, rather than having a device specific
-quirk, we could fix it permanently in vfio.
+I think we're in agreement but perhaps there's a miscommunication here?
 
-Reworked suggestions from Alex https://lkml.org/lkml/2018/7/16/1052
+I'm saying that we _shouldn't_ put the max-speed of the master in the
+device tree.  The max speed for the IP block ought to be in code
+either in the clock driver or in the SPI driver based on the
+compatible string.
 
-Reported-by: Gage Eads <gage.eads@intel.com>
-Tested-by: Gage Eads <gage.eads@intel.com>
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: iommu@lists.linux-foundation.org
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Gage Eads <gage.eads@intel.com>
----
- drivers/vfio/pci/vfio_pci.c        | 12 +++++++++---
- drivers/vfio/pci/vfio_pci_config.c |  3 ++-
- 2 files changed, 11 insertions(+), 4 deletions(-)
+...as one argument _against_ putting a max-speed for the master in the
+device tree I'm saying that we can already specify a max-speed of each
+slave in the device tree.  The max speed of the slave should take into
+account whatever factors are specific to this board including trace
+lengths, noise, etc.  If we somehow did need to get a max speed in the
+device tree it seems like we could just adjust the max speed for the
+slave to be something lower.  In other words if you know a board has
+an sdm845 on it and you know that the SPI clock on sdm845 can't go
+over 50 MHz then it would make no sense to suggest that we should run
+the SPI clock for a device at 100 MHz.
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index b423a30..32943dd 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -433,10 +433,16 @@ static int vfio_pci_get_irq_count(struct vfio_pci_device *vdev, int irq_type)
- {
- 	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
- 		u8 pin;
--		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
--		if (IS_ENABLED(CONFIG_VFIO_PCI_INTX) && !vdev->nointx && pin)
--			return 1;
-+		/*
-+		 * INTx must be 0 for all VF's. Enforce that for all
-+		 * VF's since this is a spec requirement.
-+		 */
-+		if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx ||
-+			vdev->pdev->is_virtfn)
-+			return 0;
- 
-+		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
-+		return (pin ? 1 : 0);
- 	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
- 		u8 pos;
- 		u16 flags;
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index 115a36f..e36b7c3 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1676,7 +1676,8 @@ int vfio_config_init(struct vfio_pci_device *vdev)
- 		*(__le16 *)&vconfig[PCI_DEVICE_ID] = cpu_to_le16(pdev->device);
- 	}
- 
--	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx)
-+	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx ||
-+		pdev->is_virtfn)
- 		vconfig[PCI_INTERRUPT_PIN] = 0;
- 
- 	ret = vfio_cap_init(vdev);
--- 
-2.7.4
 
+-Doug
