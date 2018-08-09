@@ -2,90 +2,85 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573B8C46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A71C46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ADEF22393
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:37:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADEF22393
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D8DF21EFC
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 21:44:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="qTNJ6qHn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8DF21EFC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeHJAEk (ORCPT
+        id S1727364AbeHJALf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 20:04:40 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55369 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727254AbeHJAEk (ORCPT
+        Thu, 9 Aug 2018 20:11:35 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:55138 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbeHJALe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 20:04:40 -0400
-Received: by mail-it0-f68.google.com with SMTP id d10-v6so26166itj.5;
-        Thu, 09 Aug 2018 14:37:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FMKA46lZAxxSR4T4yD7qmkmd2737H+PzOJCS74Hen/A=;
-        b=SqZzh4+23UJvg8yueZiEUDyWBMnRQ9UV/rGlcuCQEWctNvKenYc66wJ5fAAHgdlSXv
-         cac/1NWIH3Y4pp6WXo5jHi/q8wD7gfWmJXWB+S9EeHtg4+3WmlL+0QFlLjWxCWpI8roG
-         ve2lVrRY6tEmRLHwUCTMpSQrop2BBUKrRPDJvwPs2h/9+j1WNxzLd7rEgbzlBGj+6jer
-         BNfDUvnQmTESEXOqy5vHpt+sODARdBLn65K/UzjZWqHBc6sHhGtihHiLosy9h3kDUIF9
-         VCGs0fmnCNcLmT4jjdyl+WZuogtGJBsnhanXS+VeDKB3mgIh4Trwiz7hDbwlyTfUuUm7
-         ARnA==
-X-Gm-Message-State: AOUpUlG2fRtX6FQnkmMTUtcxObVir5EJ8DB4288J+NJQX/GzmUo2UwQ/
-        5CH2AvpzFBGdpIITjjnJPQ==
-X-Google-Smtp-Source: AA+uWPzaO4SrbUgqKoLllnHxouY+YG4+yo8xTCIBZjb2vkiSa+DFhM2djwJSvbd6dkxAmEr2C/3WPA==
-X-Received: by 2002:a24:9686:: with SMTP id z128-v6mr42450itd.58.1533850676573;
-        Thu, 09 Aug 2018 14:37:56 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id k62-v6sm149524itc.21.2018.08.09.14.37.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 14:37:55 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 15:37:55 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Thu, 9 Aug 2018 20:11:34 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: add binding for i.MX8MQ CCM
-Message-ID: <20180809213755.GA23245@rob-hp-laptop>
-References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
- <1533825941-17224-2-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533825941-17224-2-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v6 00/24] Ingenic TCU patchset v6
+Date:   Thu,  9 Aug 2018 23:43:50 +0200
+Message-Id: <20180809214414.20905-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533851085; bh=3JuVblcCRV9q6BAHQO0TVg2MSFYg18n+QUkAOiJzjaw=; h=From:To:Cc:Subject:Date:Message-Id; b=qTNJ6qHnSGirEeuHSOt1QfAmBB8T8PJjBtAUQUA26rpWXI0SKDxX50QqYo95x1nLyGhWETm9VjrU73beTjetkG36oa56UsC9D/b7kIkQFbkG8kd8UIHJecKDsuLvpNpgfbFt+FHn2vDE743MMPqZoFoIqsgsFu23ZhxLEaMSd7A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 05:45:38PM +0300, Abel Vesa wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
-> 
-> This adds the binding for the i.MX8MQ Clock Controller Module.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
->  include/dt-bindings/clock/imx8mq-clock.h           | 629 +++++++++++++++++++++
->  2 files changed, 649 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
->  create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+Hi,
 
-Please add acks/reviewed-bys when posting new versions even if it was 
-back in January.
+This is the V6 of my Ingenic Timer/Counter Unit (TCU) patchset.
 
-Rob
+Major changes since V5:
+
+- ingenic,timer-channel / ingenic,clocksource-channel devicetree
+  properties for the ingenic-timer driver are gone. The system timer
+  will default to use TCU channel #0, the clocksource will default to
+  use TCU channel #1. When a client driver requests one of these TCU
+  channels (e.g. the PWM driver), the ingenic-timer driver will
+  dynamically switch the system timer or clocksource to a new TCU
+  channel.
+
+- The big watchdog commit in v5 was split into multiple smaller commits.
+
+- The watchdog driver now just sets its clock to the lowest rate
+  possible, and calculate the maximum timeout from that.
+
+- The PWM driver now requests the TCU channels it wants to use using the
+  API functions provided by ingenic-timer. Channels 0 and 1 can now be
+  used.
+
+- The register lengths in the pwm/watchdog nodes were fixed. They no
+  longer overlap.
+
+- Small fixes here and there, see each patch's changelog for more info.
+
+Regards,
+-Paul Cercueil
+
