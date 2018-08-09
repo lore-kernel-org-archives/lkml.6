@@ -2,93 +2,106 @@ Return-Path: <SRS0=+sa6=KY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF7EC46464
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E10DC46460
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0595217D2
-	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0595217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id CB0B2217D2
+	for <linux-kernel@archiver.kernel.org>; Thu,  9 Aug 2018 10:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0B2217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kwaak.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbeHIMYv (ORCPT
+        id S1730210AbeHIMZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 08:24:51 -0400
-Received: from sauhun.de ([88.99.104.3]:43832 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbeHIMYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 08:24:51 -0400
-Received: from localhost (p54B3374D.dip0.t-ipconnect.de [84.179.55.77])
-        by pokefinder.org (Postfix) with ESMTPSA id 77ED96DEA52;
-        Thu,  9 Aug 2018 12:00:43 +0200 (CEST)
-Date:   Thu, 9 Aug 2018 12:00:43 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v5 1/4] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
-Message-ID: <20180809100043.2twv3qma22ptkddq@katana>
-References: <20180809091558.4317-1-hdegoede@redhat.com>
- <20180809091558.4317-2-hdegoede@redhat.com>
- <CAJZ5v0jBxL8n8ce7=qgZmHtc4=zCA3u7ePbXaHfyibeNiNrw+w@mail.gmail.com>
+        Thu, 9 Aug 2018 08:25:47 -0400
+Received: from gw-fsck-sorbs.kwaak.net ([84.245.27.153]:43309 "EHLO
+        mail.kwaak.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727371AbeHIMZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 08:25:47 -0400
+Received: from [192.168.0.44] (port=54946 helo=shell3.kwaak.net)
+        by mail.kwaak.net with esmtp (Exim 4.50)
+        id 1fnhl5-0002Ap-Fx; Thu, 09 Aug 2018 12:01:32 +0200
+Received: from ard by shell3.kwaak.net with local (Exim 4.80)
+        (envelope-from <ard@kwaak.net>)
+        id 1fnhl5-0002Ak-09; Thu, 09 Aug 2018 12:01:31 +0200
+Date:   Thu, 9 Aug 2018 12:01:30 +0200
+From:   ard <ard@kwaak.net>
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH 0/3] scsi: fcoe: memleak fixes
+Message-ID: <20180809100130.GF23827@kwaak.net>
+References: <20180731134603.20089-1-jthumshirn@suse.de>
+ <20180806092503.6ed56kukj2i236qt@linux-x5ow.site>
+ <20180806132234.GA23827@kwaak.net>
+ <20180806132725.ihbi5rxvkuuppajr@linux-x5ow.site>
+ <20180806142414.GB23827@kwaak.net>
+ <20180807065400.nxpndw4kf6jdd55i@linux-x5ow.site>
+ <20180807092619.GC23827@kwaak.net>
+ <20180807160452.GE23827@kwaak.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mq743r4htrqmczbp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jBxL8n8ce7=qgZmHtc4=zCA3u7ePbXaHfyibeNiNrw+w@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180807160452.GE23827@kwaak.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Host-Lookup-Failed: Reverse DNS lookup failed for 192.168.0.44 (failed)
+X-Kwaak-Spam-Score: -2.6
+X-kwaak-MailScanner: Found to be clean
+X-kwaak-MailScanner-SpamCheck: not spam, SpamAssassin (score=-2.304,
+        required 5, autolearn=not spam, BAYES_00 -2.60,
+        DNS_FROM_AHBL_RHSBL 0.29)
+X-MailScanner-From: ard@kwaak.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Guys,
 
---mq743r4htrqmczbp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Aug 07, 2018 at 06:04:52PM +0200, ard wrote:
+> PC+steam machine with 4.14 (patched) and 4.16 (upstream,
+> nodebug): no kmemleaks
+> Every device sees every device.
 
+New day, new conflicting results.
+Yay \0/.
 
-> As for the rest of the series I'll wait from comments from Wolfram and
-> the other reviewers.
+As I did not trust the results, I redid the tests, and the same
+tests gave some different results.
+Before giving the results I've changed my stance on the bug:
+The bug is not a regression in memory leak. As far as I can tell
+now, the memory leaks were already there.
+It's a regression in vn2vn enodes being able to PLOGI.
+Since I've seen the steam machine and the PC setup an rport,
+there must be some racy thing going on how the accept or reject
+the PLOGI.
+Now once it rejects, it will never succeed to accept, and the
+relogin happens ad infinitum.
+In this mode there are about 47 kmemleaks per 10 minutes.
+I also notice that the kmemleaks takes a while to be detected or
+to die out. So there are state timers involved that hold on to
+the memory and after time out do not free it.
+And another thing I noticed: When the pc and the steam machine
+had a working rport, after a while the steam machine (4.16
+unpatched) fc_timedout the rports to all nodes (so all nodes with
+kernel < 4.14 too), and all with different timeouts, except the
+one it has an fc_transport with.
+So it's sole remaining rport was the "designated" target.
+Currently I am compiling 4.9 with kmemleak to determine if that
+exhibits the same leaks when disconnecting and reconnecting the
+FCoE vlan.
+This to determine if we have a single regression in just the
+login handling or both.
+I will add the dmesg's of a working rport, and a failing rport
+later.
 
-Well, I acked patch 4 now because I like the general approach. I can't
-say much about the rest since this is mostly ACPI/FW related.
+Regards,
+Ard
 
-Thanks Hans, for keeping at it.
-
-
---mq743r4htrqmczbp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltsEMoACgkQFA3kzBSg
-KbZODg/7BfBqQDftu3X3jlS1Tp8Te05gl1KEVu60oaLRzmn2Gnlr2xTlMKO21L2R
-W4Pze2A5p2/YlCMco2Xcfdc/UqV0hFxVkJTn0LkTxcub2akTwjt6jWmtO78iNmv1
-eIbG6DY+3fwdogXhtgkqitgNvz37hoBYZN5CFlbHHXJDcdwb80hAf3BkyYSqNHc5
-EBT54KKe8b/vVWuzC9eyvncwizbZBy/7jSVoEWwDqnSgj6azxeeYqELBBB5jhzsA
-+SYKTtM3kMdKcJoI9X+60vgIua9LSFbsF0jimphF5n5pRd3uptIp5uZN9OQuDtXL
-+DvBDr8vFGdgAL+7Niscrc/ATPwItpJhOEmQVkGJ4xMlMVZQArY/tCvvm7h97tuw
-p284Lid71WmRnSnem+upzAfy646ZBGozBarijoN9vjqVGjAu/YUNIeT4ZQdQ1C3z
-Q+2105Tl6OffuZK+m6yM6w2/sFmTQRzxY0pR/zwcA2fKBYXayMl8QCZIUTpk2d07
-rBw4NUTInoRQTy7oVXUUgkwtnWVm0BnfuSWRaUVRHektJ4Y5KmKsR1nBCwL24jyt
-9WAiyfu/nncBMQIGrFMeMp8+yfD9WCwJSyX5h0yZTmPNzOQLWEZs2BuQNkEGSuzQ
-KdVTrQGdnMEuSgx6Nxs+8hDR5ZK31CVprtK/R52XEv9GVkTOC8M=
-=UUWI
------END PGP SIGNATURE-----
-
---mq743r4htrqmczbp--
+-- 
+.signature not found
