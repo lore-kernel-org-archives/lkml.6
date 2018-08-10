@@ -2,84 +2,143 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79718C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784F3C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2884922428
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:44:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2884922428
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1692322420
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:47:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="I1Cm6FUE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1692322420
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeHJXQU (ORCPT
+        id S1727412AbeHJXSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 19:16:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57608 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727182AbeHJXQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 19:16:20 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8BBF2738EF;
-        Fri, 10 Aug 2018 20:44:52 +0000 (UTC)
-Received: from treble (ovpn-122-120.rdu2.redhat.com [10.10.122.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F71D215670D;
-        Fri, 10 Aug 2018 20:44:51 +0000 (UTC)
-Date:   Fri, 10 Aug 2018 15:44:49 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: reliable stacktraces
-Message-ID: <20180810204449.4asgonydn6yfb6kq@treble>
-References: <20180810160043.9E45568C76@newverein.lst.de>
- <20180810160311.C988D68CF4@newverein.lst.de>
+        Fri, 10 Aug 2018 19:18:31 -0400
+Received: from imap.thunk.org ([74.207.234.97]:60686 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727167AbeHJXSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 19:18:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=f8MqLZr8j8egydhRejH/u5NxsaJ1gbHp3+lA4oY/Xvw=; b=I1Cm6FUEm/jW9ZytxJXTtRIASB
+        jlnKKVg5ww1ZDUKYS6bf8EGKZKAljrNxoLvyxFPAWmRvHD0dkvl0MFdtuNltg9YU26c33UNr8PB/L
+        YqGvqq6jtQ5HZs+YIcRHePxyC1FYEk8v1Gz3AttByc0o68iBfPKWMUG1Zou9WnOM1/Q8=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1foEIy-00046p-16; Fri, 10 Aug 2018 20:46:40 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5A8417A570B; Fri, 10 Aug 2018 16:46:39 -0400 (EDT)
+Date:   Fri, 10 Aug 2018 16:46:39 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180810204639.GI627@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>, Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>, apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+References: <20180810153902.GH21087@thunk.org>
+ <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk>
+ <28045.1533916438@warthog.procyon.org.uk>
+ <20180810161400.GA627@thunk.org>
+ <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810160311.C988D68CF4@newverein.lst.de>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 10 Aug 2018 20:44:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 10 Aug 2018 20:44:52 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+In-Reply-To: <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 06:03:11PM +0200, Torsten Duwe wrote:
-> This is more an RFC in the original sense: is this basically
-> the correct approach? (as I had to tweak the API a bit).
-> 
-> In particular the code does not detect interrupts and exception
-> frames, and does not yet check whether the code address is valid.
-> The latter check would also have to be omitted for the latest frame
-> on other tasks' stacks. This would require some more tweaking.
-> 
-> unwind_frame() now reports whether we had to stop normally or due to
-> an error condition; walk_stackframe() will pass that info.
-> __save_stack_trace() is used for a start to check the validity of a
-> frame; maybe save_stack_trace_tsk_reliable() will need its own callback.
-> 
-> Any comments welcome.
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
+On Fri, Aug 10, 2018 at 01:06:54PM -0700, Andy Lutomirski wrote:
+> If the same block device is visible, with rw access, in two different
+> containers, I don't see any anything good can happen.
 
-Before we do this we'll need the same analysis we did for ppc64le to
-figure out if objtool is needed.
+It's worse than that.  I've fixed a lot of bugs which cause the kernel
+to crash, and a few that might be levered into a privilege escalationh
+attack, when you mount a maliciously corrupted file system using ext4.
+I'm told told the security researcher filed similar reports with the
+XFS community, and he was told, "that's what metadata checksums are
+for; go away".  Given how much time it takes to work with these
+security researchers, I don't blame them.
 
--- 
-Josh
+But in light of that, I'd make a somewhat stronger statement.  If you
+let an untrusted container mount arbitrary block devices where they
+have rw acccess to the underlying block device, nothing good can
+happen.  Period.  :-)
+
+Which is why I don't think the lack of being able to reject
+"conflicting mount options" is really all that important.  It
+certainly shouldn't block the fsopen patch series.  #1, it's a problem
+we have today, and #2, I'm really not all sure supporting bind mounts
+via specifying block device was ever a good idea to begin with.  And
+#3, while I've been fixing ext4 against security issues caused by
+maliciously corrupted file system images, I'm still sure that allowing
+untrusted containers access to mount *any* file system via a block
+device for which they have r/w access is a Really Bad Idea.
+
+> It seems to me that the current approach mostly involves crossing our fingers.
+
+Agreed!
+
+						- Ted
