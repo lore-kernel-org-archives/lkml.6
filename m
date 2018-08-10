@@ -2,170 +2,184 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DBBC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8129C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A836223FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:41:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ha0nZDo0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A836223FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F147223F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:44:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F147223F0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeHJLKq (ORCPT
+        id S1727765AbeHJLM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 07:10:46 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32777 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbeHJLKq (ORCPT
+        Fri, 10 Aug 2018 07:12:59 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46274 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbeHJLM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 07:10:46 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r24-v6so856281wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EPth9GptfFUebQvbEelxragDP2eSq1lOsVSqbURirDY=;
-        b=Ha0nZDo0son3vThBsdLg5J26fLu5pyhfpYlVfvMKvweVP4Od/1wb/sC9wpjVfvtWFe
-         NrlcNiuT0YyerBizDN2NhpG2T8XCO9HXpVqouEiBU+flOk0sIAiC1lQ61VJpvA8PmZbq
-         rpe2yT7sSZrjzRapx5L4nZ7iyGJ4dojzPeeOQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EPth9GptfFUebQvbEelxragDP2eSq1lOsVSqbURirDY=;
-        b=VtdsaMxUepD/yrF5wAfKT0tgxl9pBEQbikCjVX0U747gPWaPsdoD5Mtj4ax021TuxO
-         AqiAu+rv+Xnm93AUAsmdyB8F/ULmerJoMybTdftqq1WT9V5Er8PBRtrdaeN3I6oeCdyM
-         VaLzFD8OHWFry+xk4rVVPR9cwUY79x1U/JR8T7TG18DeILjaXDVuNm8LT7suOYf7C9kv
-         Jh0df/T8p9QxJ7XDXoi8p6iflVZAjjtaSj36zd0OHqaQnRwcIoQkXGJWKYnbbqVy+88s
-         s2RkPDQZ2OMmcGLZOPpaZt7W+mskUC8a+a4eCQdP5ANULdj+ypXiCu5VPGWUbXsbRyio
-         Ncig==
-X-Gm-Message-State: AOUpUlGeU8c2Tvpu4DQndA7sqGslEECQUGgzDDEDBYWnvw9aVVj2xci3
-        PApAcm56UPq9TdXQznrAzAf2lQ==
-X-Google-Smtp-Source: AA+uWPxEuMLO7+RBZD+PxViAzcqs+O13xVqj3FmV7+uIyKcUie2lkAPxTmUKDSQ6q0hDDNM4K0ToPA==
-X-Received: by 2002:a1c:357:: with SMTP id 84-v6mr849629wmd.8.1533890511435;
-        Fri, 10 Aug 2018 01:41:51 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id m35-v6sm12180272wrf.41.2018.08.10.01.41.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 01:41:50 -0700 (PDT)
-Subject: Re: [PATCH v2 00/29] at24: remove at24_platform_data
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <e3e2e350-f520-8af5-b5d7-6844a58ca479@linaro.org>
-Date:   Fri, 10 Aug 2018 09:41:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 10 Aug 2018 07:12:58 -0400
+Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id c22b0072e55ac5c6; Fri, 10 Aug 2018 10:44:01 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v5 03/14] PM: Introduce an Energy Model management framework
+Date:   Fri, 10 Aug 2018 10:41:56 +0200
+Message-ID: <2467271.WAtZ4Z8dKT@aspire.rjw.lan>
+In-Reply-To: <20180810081537.w3utogy4ujxf2cp4@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com> <1598998.9rBByrtVSM@aspire.rjw.lan> <20180810081537.w3utogy4ujxf2cp4@queper01-lin>
 MIME-Version: 1.0
-In-Reply-To: <20180810080526.27207-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Quentin,
 
+On Friday, August 10, 2018 10:15:39 AM CEST Quentin Perret wrote:
+> Hi Rafael,
+> 
+> On Thursday 09 Aug 2018 at 23:52:29 (+0200), Rafael J. Wysocki wrote:
+> > I'm a bit concerned that the code here appears to be designed around the
+> > frequency domains concept which seems to be a limitation and which probably
+> > is related to the properties of the current generation of hardware.
+> 
+> That's correct. I went for 'frequency domains' only because this is what
+> EAS and IPA are interested in, as of today at least. And both of them
+> are somewhat dependent on CPU-Freq, which is called CPU-*Freq*, not
+> CPU-Perf after all :-)
 
-On 10/08/18 09:04, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> This is a follow-up to the previously rejected series[1] which partially
-> removed the at24_platform_data structure. After further development and
-> taking reviews into account, this series finally removes that struct
-> completely but not without touching many different parts of the code
-> base.
-> 
-> Since I took over maintainership of the at24 driver I've been working
-> towards removing at24_platform_data in favor for device properties.
-> 
-> DaVinci is the only platform that's still using it - all other users
-> have already been converted.
-> 
-> One of the obstacles in case of DaVinci is removing the setup() callback
-> from the pdata struct, the only user of which are some davinci boards.
-> 
-> Most boards use the EEPROM to store the MAC address. This series adds
-> support for cell lookups to the nvmem framework, registers relevant
-> cells for all users, adds nvmem support to eth_platform_get_mac_address(),
-> converts davinci_emac driver to using it and replaces at24_platform_data
-> with device properties.
-> 
-> There's also one board (da850-evm) which uses MTD for reading the MAC
-> address. I used the patch from Alban Bedel's previous submission[2] to
-> add support for nvmem to the MTD framework. Since this user doesn't
-> need device tree, I dropped Alban's patches modifying the DT bindings.
-> We can add that later once an agreement is reached. For the time being
-> MTD devices are registered as nvmem devices and we're registering the
-> mac-address cell using the cell lookup mechanism.
-> 
-> This series adds a blocking notifier chain to the nvmem framework, so
-> that we can keep the EEPROM reading code in the mityomapl138 board file
-> with only slight modifications.
-> 
-> I also included some minor fixes to the modified code.
-> 
-> Tested on da850-evm & dm365-evm.
-> 
-> [1] https://lkml.org/lkml/2018/6/29/153
-> [2] https://lkml.org/lkml/2018/3/24/312
-> 
-...
+Still, cpufreq manages CPU performance scaling really.
 
-> Bartosz Golaszewski (28):
->    nvmem: add support for cell lookups
->    Documentation: nvmem: document lookup entries
->    nvmem: add a notifier chain
->    nvmem: provide nvmem_dev_name()
->    nvmem: remove the name field from struct nvmem_device
+A cpufreq policy may represent a frequency domain or generally a group of
+related CPUs and what matters is that there is a coordination between them
+and not how that coordination happens at the hardware/firmware level etc.
+
+> > Assumptions like that tend to get tangled into the code tightly over time
+> > and they may be hard to untangle from it when new use cases arise later.
+> > 
+> > For example, there probably will be more firmware involvement in future
+> > systems and the firmware may not be willing to expose "raw" frequency
+> > domains to the OS.  That already is the case with P-states on Intel HW and
+> > with ACPI CPPC in general.
 > 
->   Documentation/nvmem/nvmem.txt              |  28 +++++
-..
->   drivers/nvmem/core.c                       | 106 ++++++++++++++++-
-
-nvmem parts looks good to me other then few trivial kernel doc comments!
-I can either Ack those patches or Send them after rc3-4 to Greg KH as 
-4.20 material.
-
-Thanks
-srini
-
+> Agreed, and embedded/mobile systems are going in that direction too ...
 > 
+> > IMO, frequency domains in your current code could be replaced with something
+> > more general, like "performance domains"
+> 
+> I don't mind using a more abstract name as long as we keep the same
+> assumptions, and especially that all CPUs in a perf. domain *must* have
+> the same micro-architecture.
+
+That's fair enough I think.
+
+> From that assumption result several
+> properties that EAS (in its current) form needs. The first one is that
+> all CPUs of a performance domain have the same capacity at any possible
+> performance state. And the second is that they all consume the same
+> amount of (active) power.
+> 
+> I know it is theoretically possible to mix CPU types in the same perf
+> domain, but that becomes nightmare-ish to manage in EAS, and I don't
+> think there is a single platform like this on the market today. And I
+> hope nobody will build one. Peter wanted to mandate that too, I think.
+
+There are departures, say, at least as far as the capacity is concerned.
+
+The uarch is the same for all of them, but the max capacity may vary
+between them.
+
+> > providing the scheduler with the (relative) cost of running a task
+> 
+> What do you mean by relative ? That we should normalize the power costs ?
+> Or just use an abstract scale, without specifying the unit ?
+
+I mean "relative with respect to the other choices"; not absolute.
+
+> The main reason I'm a bit reluctant to do that just now is because IPA
+> needs to compare the power of CPUs with the power of other components
+> (GPUs, for example). And the power of those other components is specified
+> with a specific unit too. So, not imposing a comparable unit for the
+> power of CPUs will result in an unspecified behaviour in IPA, and that
+> will break things for sure. I would very much like to avoid that, of
+> course.
+
+The absolute power numbers are generally hard to get though.
+
+In the majority of cases you can figure out what the extra cost of X with
+respect to (alternative) Y is (in certain units), but you may not be able
+to say what X and Y are equal to in absolute terms (for example, there
+may be an unknown component in both X and Y that you cannot measure, but
+it may not be relevant for the outcome of the computation).
+
+> What I am currently proposing is to keep the unit (mW) in the EM
+> framework so that migrating IPA to using it can be done in a (relatively)
+> painless way. On a system where drivers  don't know the exact wattage,
+> then they should just 'lie' to the EM framework, but it's their job to
+> lie coherently to all subsystems and keep things consistent, because all
+> subsystems have specified power in comparable units.
+
+Alternatively, there could be a translation layer between EM and IPA.
+
+From my experience, if you want people to come up with some numbers,
+they will just choose them to game the system this way or another
+unless those numbers can be measured directly or are clearly documented.
+
+And if that happens and then you want to make any significant changes,
+you'll need to deal with "regressions" occuring because someone chose
+the numbers to make the system behave in a specific way and your changes
+break that.
+
+As a rule, I rather avoid requesting unknown numbers from people. :-)
+
+> Another solution to solve this problem could be to extend the EM
+> framework introduced by this patch and make it manage the EM of any
+> device, not just CPUs. Then we could just specify that all power costs
+> must be in the same scale, regardless of the actual unit, and register
+> the EM of CPUs, GPUs, ...
+> However, I was hoping that this patch as-is was enough for a first step,
+> and that this extension of the framework could be done in a second step ?
+> Thoughts ?
+> 
+> In any case, if we decide to keep the mW unit for now, I should at least
+> explain clearly why in the commit message.
+
+Right.
+
+Actually, the unit is as good as any other, but you need to bear in mind that
+the numbers provided may not be realistic.
+
+> > on a busy (non-idle) CPU (and, analogously,
+> > "idle domains" that would provide the scheduler with the - relative - cost
+> > of waking up an idle CPU to run a task on it or, the other way around, the
+> > possible relative gain from taking all tasks away from a CPU in order to make
+> > it go idle).
+> 
+> +1 for idle costs as a second type of 'domains' which could be managed
+> by the EM framework, alongside the 'perf' domains. I don't think we have
+> users of that just now (or providers of idle costs ?) so maybe that is
+> for later too ?
+
+Yes, this is for later IMO.
+
+Thanks,
+Rafael
+
