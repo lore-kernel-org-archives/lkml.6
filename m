@@ -1,82 +1,218 @@
 Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCAEC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:24:45 +0000 (UTC)
-X-Greylist: delayed 86 seconds by postgrey-1.34 at mail.kernel.org; Fri, 10 Aug 2018 19:24:45 UTC
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58139215A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC76C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:24:58 +0000 (UTC)
 Received: from vger.kernel.org (unknown [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58139215A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 666E2214DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:24:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nK5B7hbt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666E2214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeHJVyW (ORCPT
+        id S1727239AbeHJV4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 17:54:22 -0400
-Received: from smtprelay0112.hostedemail.com ([216.40.44.112]:33102 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726666AbeHJVyV (ORCPT
+        Fri, 10 Aug 2018 17:56:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43389 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbeHJV4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 17:54:21 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 661A3180A8459;
-        Fri, 10 Aug 2018 19:23:09 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hands99_8fb7cafcbc351
-X-Filterd-Recvd-Size: 2126
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 10 Aug 2018 19:23:07 +0000 (UTC)
-Message-ID: <9b5b906f42dfab78f382c90f66851717d258a15d.camel@perches.com>
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-From:   Joe Perches <joe@perches.com>
-To:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Cc:     herbert@gondor.apana.org.au, tim.c.chen@linux.intel.com,
-        martin.petersen@oracle.com, david.darrington@wdc.com,
-        jeff.furlong@wdc.com
-Date:   Fri, 10 Aug 2018 12:23:06 -0700
-In-Reply-To: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 10 Aug 2018 17:56:08 -0400
+Received: by mail-lf1-f68.google.com with SMTP id f135-v6so7313219lfg.10;
+        Fri, 10 Aug 2018 12:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+0a2bpHZiq2SYdJpMWiwGlOjyhLdWhv8a1yKcmBLRXM=;
+        b=nK5B7hbtv4iYKBs8A2DjhgEkVNYT+SU4KzREi7uA8J6z4ZEwQ/SbBs7+XXeUkVAQN+
+         hvQy2AhJ4te/m4hnxDpY0kr5QlZASQCxijiHBPMQBfo60a73U273OY5mPoB7lNPRKiv4
+         FHx1ZBt5sMxO3CcmsNltUgcoP5n3N2w94ZA0DoSrEsb4JzRguZPpjqR6USBo2/fx31TI
+         6ZKhqe5kPfEMJ9CyKK1iPTJDSs8i5KeBl/t8ESjWfWyhYe01bcLO/6tPygcWGCSUdAcG
+         fPzRTLo8mvSV+zzzoykveCDFaXvOM5OmYLnq0cLJ+3WKQFjpqYp2Il55k0P8C4DA3yZ2
+         zEpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+0a2bpHZiq2SYdJpMWiwGlOjyhLdWhv8a1yKcmBLRXM=;
+        b=kSt/Ern9Q+7pbxWJGtBEsS66eooX2A88LvWjR/Z42D2k28S5Mgot0M6RFg3/X0BSWp
+         C032HpiwcDPohbQ723g0XstIF5wNOA7qRIxdvpWtssCmHJnNitGFngVMZqcDyB36X/ET
+         9ljaJteKMergmcoP4wAyUgHCdfqjNnuBoXEDkQtMtfojet9PZN3GQ8/5z9nff9HCs28b
+         juq7bcxaltn2nQOaH4sS7TDJ/shvDUnSxUse5pv289yqsIErvfsMhw8X6LKZdUwSmjyM
+         wbOHaLN+4zHHI64NgLmpZB/i8NdnwfiA6ZWra/B7OgFguBlh6XOgTNwVCSmRtlGiZr7x
+         LSjg==
+X-Gm-Message-State: AOUpUlE90ETNi4nBhg5nVIIY3KfHJ3Pk4WyW3ZSiw1hTBmnZOj7yMAEK
+        ra4r5IvHTXG04cdSIpItQNGY2EEk3PQ=
+X-Google-Smtp-Source: AA+uWPwE6z6HXUHEEWKtrkD/QnPioXtwJU3+OPc+RNJ3G54hUJzTL9zdG5S0gA4uPDG7UOEIn2kW5A==
+X-Received: by 2002:a19:f70d:: with SMTP id z13-v6mr5091166lfe.33.1533929093596;
+        Fri, 10 Aug 2018 12:24:53 -0700 (PDT)
+Received: from gmail.com (c-2ec24faa-74736162.cust.telenor.se. [46.194.79.170])
+        by smtp.gmail.com with ESMTPSA id 85-v6sm2094714lft.76.2018.08.10.12.24.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 10 Aug 2018 12:24:52 -0700 (PDT)
+Date:   Fri, 10 Aug 2018 21:25:05 +0200
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     jic23@kernel.org, broonie@kernel.org, lars@metafoo.de,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
+        mark.rutland@arm.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, robh+dt@kernel.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] iio: adxl372: New driver for Analog Devices
+ ADXL372 Accelerometer
+Message-ID: <20180810192505.GA2723@gmail.com>
+References: <1533557087-10401-1-git-send-email-stefan.popa@analog.com>
+ <1533557087-10401-2-git-send-email-stefan.popa@analog.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
+In-Reply-To: <1533557087-10401-2-git-send-email-stefan.popa@analog.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-10 at 14:12 -0500, Jeff Lien wrote:
-> This patch provides a performance improvement for the CRC16 calculations done in read/write
-> workloads using the T10 Type 1/2/3 guard field.  For example, today with sequential write
-> workloads (one thread/CPU of IO) we consume 100% of the CPU because of the CRC16 computation
-> bottleneck.  Today's block devices are considerably faster, but the CRC16 calculation prevents
-> folks from utilizing the throughput of such devices.  To speed up this calculation and expose
-> the block device throughput, we slice the old single byte for loop into a 16 byte for loop,
-> with a larger CRC table to match.  The result has shown 5x performance improvements on various
-> big endian and little endian systems running the 4.18.0 kernel version.
 
-Thanks.
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This seems a sensible tradeoff for the 4k text size increase.
+Hi Stefan,
 
-> diff --git a/crypto/crct10dif_common.c b/crypto/crct10dif_common.c
 
-[]
+On Mon, Aug 06, 2018 at 03:04:42PM +0300, Stefan Popa wrote:
+> This patch adds basic support for Analog Devices ADXL372 SPI-Bus
+> Three-Axis Digital Accelerometer.
+>=20
+> The device is probed and configured the with some initial default
+> values. With this basic driver, it is possible to read raw acceleration
+> data.
+>=20
+> Datasheet:
+> http://www.analog.com/media/en/technical-documentation/data-sheets/ADXL37=
+2.pdf
+>=20
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> ---
+>  MAINTAINERS                 |   6 +
+>  drivers/iio/accel/Kconfig   |  11 +
+>  drivers/iio/accel/Makefile  |   1 +
+>  drivers/iio/accel/adxl372.c | 525 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 543 insertions(+)
+>  create mode 100644 drivers/iio/accel/adxl372.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 60b1028..2ba47bb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -543,6 +543,12 @@ W:	http://ez.analog.com/community/linux-device-drive=
+rs
+>  S:	Supported
+>  F:	drivers/input/misc/adxl34x.c
+> =20
+> +ADXL372 THREE-AXIS DIGITAL ACCELEROMETER DRIVER
+> +M:	Stefan Popa <stefan.popa@analog.com>
+> +W:	http://ez.analog.com/community/linux-device-drivers
+> +S:	Supported
+> +F:	drivers/iio/accel/adxl372.c
+> +
+>  AF9013 MEDIA DRIVER
+>  M:	Antti Palosaari <crope@iki.fi>
+>  L:	linux-media@vger.kernel.org
+> diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
+> index 62ae7e5..1b496ef 100644
+> --- a/drivers/iio/accel/Kconfig
+> +++ b/drivers/iio/accel/Kconfig
+> @@ -60,6 +60,17 @@ config ADXL345_SPI
+>  	  will be called adxl345_spi and you will also get adxl345_core
+>  	  for the core module.
+> =20
+> +config ADXL372
+> +	tristate "Analog Devices ADXL372 3-Axis Accelerometer Driver"
+> +	depends on SPI
+> +	select IIO_BUFFER
+> +	select IIO_TRIGGERED_BUFFER
+> +	help
+> +	  Say yes here to add support for the Analog Devices ADXL372 triaxial
+> +	  acceleration sensor.
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called adxl372.
+> +
+>  config BMA180
+>  	tristate "Bosch BMA180/BMA250 3-Axis Accelerometer Driver"
+>  	depends on I2C
+> diff --git a/drivers/iio/accel/Makefile b/drivers/iio/accel/Makefile
+> index 636d4d1..5758ffc 100644
+> --- a/drivers/iio/accel/Makefile
+> +++ b/drivers/iio/accel/Makefile
+> @@ -9,6 +9,7 @@ obj-$(CONFIG_ADIS16209) +=3D adis16209.o
+>  obj-$(CONFIG_ADXL345) +=3D adxl345_core.o
+>  obj-$(CONFIG_ADXL345_I2C) +=3D adxl345_i2c.o
+>  obj-$(CONFIG_ADXL345_SPI) +=3D adxl345_spi.o
+> +obj-$(CONFIG_ADXL372) +=3D adxl372.o
+>  obj-$(CONFIG_BMA180) +=3D bma180.o
+>  obj-$(CONFIG_BMA220) +=3D bma220_spi.o
+>  obj-$(CONFIG_BMC150_ACCEL) +=3D bmc150-accel-core.o
+> diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
+> new file mode 100644
+> index 0000000..db9ecd2
+> --- /dev/null
+> +++ b/drivers/iio/accel/adxl372.c
+> @@ -0,0 +1,525 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * ADXL372 3-Axis Digital Accelerometer SPI driver
+> + *
+> + * Copyright 2018 Analog Devices Inc.
+> + */
 
-trivia:
+Please make the SPDX-identifier and MODULE_LICENCE match here as well.
 
-> +static const __u16 t10_dif_crc_table[16][256] = {
-> +	{
-> +	0x0000u, 0x8BB7u, 0x9CD9u, 0x176Eu, 0xB205u, 0x39B2u, 0x2EDCu, 0xA56Bu,
+Either=20
+SPDX-License-Identifier: GPL-2.0+
+MODULE_LICENSE("GPL")
 
-All the 'u's are unnecessary visual noise.
+or
 
+SPDX-License-Identifier: GPL-2.0
+MODULE_LICENSE("GPL v2")
+
+Thanks!
+Marcus Folkesson
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAltt5o0ACgkQiIBOb1ld
+UjKQHQ/+Pgab6MAe9FBMzZA0daGigs/5JetMKzizYOtpj2vhtntcJ5LlgMG6V/Rd
+TfYjIiKPEfc8FVqtPua3DPBcvUL/iuVU7LqQYx8LaIkwT1Fp4dg2OQovOeUEUZ0E
+nmAFwp3QDMPnZgAvDr5WnrFMua7a24ZhaEcDUXStoXPDndSfXkbvsCfovpAnMGk5
+S/fmMoa5gPunEhOWGZR4F8q+LnmlcBUoLeTcNNqHGBpx07TQiXCybtWFKaQ8VtaO
+CEznh2nEc040k4yuk2xubBh5XItJSON5fAuuHirP8gEvkmQzMwNuwO/QLkODNfuh
+JYRmjBoeVm43b+hfazzQu1ZtvC9cmyj5G8SUZsI1PzI9WRFGZKb/oRMHGKaTYFO0
+JtOgTLsmUTnpiP3ArRjoC6Bap5r5mlN8+rC7iELY5prpHHxw5QMiX0SsHnAlR250
+msaRMAWMhiCvQ/fVLlP9YLPro4WqK4rTKQnq2zHv4VrFofxp6g/59nMnpUdPeGpS
+IzByC+01dwqe8D+ZrvtrlYlELUNec6Ba0WaSUFDqu4QSmi3CaZ+UIJQNPZIa82Y5
+0ZPBr7mKqWgN8DRjtB+QABKCWFuFioOWlvHywLAY/wN384etjobzxZfI0XpSY2VX
+9G6KfwVHEqMIlqk+PkCjJhzjbsNf2rsEauqUK99P3UIYd0FU2Dw=
+=R3xe
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
