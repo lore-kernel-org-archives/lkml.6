@@ -5,110 +5,96 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF84C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACA9C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2437922444
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:00:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2437922444
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 21F6422448
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F6422448
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeHJUbg (ORCPT
+        id S1728603AbeHJUgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:31:36 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:59321 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbeHJUbf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:31:35 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1foBiJ-0004jR-Bd; Fri, 10 Aug 2018 12:00:39 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1foBiI-0000br-Bu; Fri, 10 Aug 2018 12:00:39 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-References: <87d0uqpba5.fsf@xmission.com>
-        <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        <22361.1533913891@warthog.procyon.org.uk>
-        <20180810153902.GH21087@thunk.org>
-Date:   Fri, 10 Aug 2018 13:00:22 -0500
-In-Reply-To: <20180810153902.GH21087@thunk.org> (Theodore Y. Ts'o's message of
-        "Fri, 10 Aug 2018 11:39:02 -0400")
-Message-ID: <87mutunlu1.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 10 Aug 2018 16:36:15 -0400
+Received: from mga18.intel.com ([134.134.136.126]:23788 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728168AbeHJUgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 16:36:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 11:05:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,220,1531810800"; 
+   d="scan'208";a="64213117"
+Received: from bchattar-mobl.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.130.118])
+  by orsmga008.jf.intel.com with ESMTP; 10 Aug 2018 11:05:17 -0700
+Subject: Re: [PATCH v4 1/2] tpm: add ptr to the tpm_space struct to file_priv
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
+ <153367366462.18015.12915462188877575543.stgit@tstruk-mobl1.jf.intel.com>
+ <20180810172700.GU4692@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <2bacb3d8-3897-e147-252f-c49de9e7806b@intel.com>
+Date:   Fri, 10 Aug 2018 11:05:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1foBiI-0000br-Bu;;;mid=<87mutunlu1.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+kWSwTl4z3ylb6I+7AATnGbuIYWrjv/2c=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: BUG: Mount ignores mount options
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20180810172700.GU4692@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Theodore Y. Ts'o" <tytso@mit.edu> writes:
+On 08/10/2018 10:27 AM, Jarkko Sakkinen wrote:
+> On Tue, Aug 07, 2018 at 01:27:44PM -0700, Tadeusz Struk wrote:
+>> Add a ptr to struct tpm_space to the file_priv to have an easy
+>> access to it in the async job without the need to allocate memory.
+>> This also allows to consolidate of the write operations for
+>> the two interfaces.
+> 
+> I think the 2nd premise should be the priority and the first premise should
+> be removed as it is not needed in any possible way to justify the
+> change.
 
-> On Fri, Aug 10, 2018 at 04:11:31PM +0100, David Howells wrote:
->> 
->> Yes.  Since you *absolutely* *insist* on this being fixed *right* *now* *or*
->> *else*, I'm working up a set of additional patches to give userspace the
->> option of whether they want no sharing; sharing, but only with exactly the
->> same parameters; or to ignore the parameter differences and just accept
->> sharing of what's already already mounted (ie. the current behaviour).
->
-> But there's no way to support "no sharing", at least not in the
-> general case.  A file system can only be mounted once, and without
-> file system support, there's no way for a file system to be mounted
-> with the bsddf or minixdf mount simultaneously.
->
-> Even *with* file system support, there's no way today for the VFS to
-> keep track of whether a pathname resolution came through one
-> mountpoint or another, so I can't do something like this:
->
-> 	mount /dev/sdXX -o casefold /android-data
-> 	mount /dev/sdXX -o nocasefold /android-data-2
->
-> Which is a pity, since if we could we could much more easily get rid
-> of the horror which is Android's wrapfs...
->
-> So if the file system has been mounted with one set of mount options,
-> and you want to try to mount it with a conflicting set of mount
-> options and you don't want it to silently ignore the mount options,
-> the *only* thing we can today is to refuse the mount and return an
-> error.  
->
-> I'm not sure Eric would really consider that an improvement for the
-> container use case....
-
-I think I would consider it an improvement.  I keep running into cases
-where the mount options differed and something was done silently and
-that causes problems.
-
-Eric
+Jarkko,
+The main reason why the pointer to tpm_space struct was added to the
+file_priv was to have access to space in the async job when it is enqueued
+via the /dev/tpm<N> interface. Currently it is only available in tpmrm_priv.
+Otherwise I would need to introduce yet another struct what would consist of
+a ptr file_priv and a ptr to tpm_space and allocate it on every enqueue.
+Much easier was to to it this way. The consolidation was only a side effect
+of this so I think the description is correct.
+Thanks,
+-- 
+Tadeusz
