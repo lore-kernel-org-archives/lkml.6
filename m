@@ -2,62 +2,63 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F9DC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A7CC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD71622456
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FED822450
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:15:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9r8pfTU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD71622456
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXsvJfvd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FED822450
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbeHJVqQ (ORCPT
+        id S1727426AbeHJVqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 17:46:16 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44581 "EHLO
+        Fri, 10 Aug 2018 17:46:18 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38140 "EHLO
         mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbeHJVqP (ORCPT
+        with ESMTP id S1727395AbeHJVqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 17:46:15 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q127-v6so7930315ljq.11;
-        Fri, 10 Aug 2018 12:15:04 -0700 (PDT)
+        Fri, 10 Aug 2018 17:46:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so7964461ljc.5;
+        Fri, 10 Aug 2018 12:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+NM4jQVeMG08+a8Rtopg+VzU9HMLBx0Bh52idZOyGfE=;
-        b=i9r8pfTUkFdpxloKjmxEGXa8bHul47dWHMX2bOHiZFRWDO9tgqfadUfzbZ80Fkadop
-         cqaBunriEuwK3Svz1vpUS4JYFngBHDefJVRpHiCVn2/l68anH66zzJYvDFHW/kt3knwk
-         cwioZVaNTWszZVShWC1PWCo8GP5V6fRj924M6XeBcZ6MwKO9Hb7BgWNlab48pzP0FhfI
-         Iz/3aHlbjdj0yeEteMYgsi6swfjXK7oTsagYmnRqtXnRGFMkTl/+4324hQLOaw4xBaU6
-         jLoHpBctTQz9XNJEfJLyANB9aJHpb12BJWb8NsivxM9vBP86ekEUuWf6+0Y/+CANblo/
-         /d4A==
+        bh=8IyWERHgMQT0Bw51KugCBU4wS7zbQmLV4VerGSJPGaU=;
+        b=UXsvJfvdFdhMz5OyiSN1Ls3MibXU2wvjj60g5yD3rSP2IaQSeg1ICNjr98RkcbryDS
+         lhBpqrJzhuzaIrXWeOIox9ZVr+9wUvMZ+8BEJ210e8trrZ9O/189PEf8R/wFLIzhwy8D
+         CpifF6G9xUpiaRCOIOlLXpiPH2AOCR4sBZwsOHNn765deW1ec6uBJJQSVNMxAtqonkY4
+         9M/EmmPHxNEtmf5+mXWcKWqZMuB6Nz5Pf2lyfMPjXFvUZ4EZVfBhz/FAEgw740+F5gDE
+         iBiZWS+9l4CW2P6Qe7V2K0BmzmMfxi7kCRh/YMaUMY9KP+nZybauS7nGgJGqHMDBunAc
+         ZBjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+NM4jQVeMG08+a8Rtopg+VzU9HMLBx0Bh52idZOyGfE=;
-        b=WbSa2gw8lmRG3cDzSjF5vUi2IfQj5WY39m9hMtGQwvMfhNxGwAoL4R588v6CXzlgTB
-         X2KprsmJUwf/qI5lNIzWdwRjrYWPjdjAQUgngfWGxlcck3cv9itWlLMQOw3ydOS6ezF5
-         tSLqzYR1mA4Yra9cOu+1lX5xgk5pVzAa4HhK6Z8KOTOCNc1z0iSM1oBo5v/TWDPu1Rw3
-         uzGyuO5nEan0v6Dn9T3So5H8fRcmAhGZxr2kjzsVxf3K8U7zNJ1Mu/jejvDysKXOdd7Z
-         k4T4ZCaIncKKFUErjY8sJxM8H43sCFSrtALPWX3GzINnty0XPPNEv0+5fJgKUocV/hjr
-         gvAw==
-X-Gm-Message-State: AOUpUlGz4Wj/6SXzRB0+iefkLDM/OCYyyrZ+XX5OGCDzh4OI5sijLLnQ
-        xbXQF8tLVN+EDD9Dgpbxfx8=
-X-Google-Smtp-Source: AA+uWPxvxJlQyQvFGZXRBxhldnTRtAgR9MRsgv2FYPLfWo/QbzDP2onkCTolx8i+y9h8xsKOd98mQg==
-X-Received: by 2002:a2e:6304:: with SMTP id x4-v6mr5937636ljb.9.1533928504099;
-        Fri, 10 Aug 2018 12:15:04 -0700 (PDT)
+        bh=8IyWERHgMQT0Bw51KugCBU4wS7zbQmLV4VerGSJPGaU=;
+        b=rf3SdNIiVqFoIRDKGjESk41iBsEODnVMb2JjBCa+ND2qUtlFFnVIhQebJBt/j87Wro
+         CWGJpj6npQjVC2BrBIJQW5l/IIapclprY1q4mPQiKH8ztbjraRsmq+ar4fVJdvzzd7RW
+         olAarL/UEmGtobrRAgodsjAr7nuAWVFSkXqzObeyjpQ63ckbz8xG59wZlKIxcBF62qZx
+         bQM6XkUgSSk1Uk0oO5qWwoW4PVu9BcMsKNSCDvdO2eDykJ7EdhOWFRAxEkdJ5sR9wZhC
+         mr227eVisI4DPhEsttxsjMOKM/i8ilsSVgYouw0KiuWmphnQOaQcz2SW25Y8kbKcI2Rg
+         LfHQ==
+X-Gm-Message-State: AOUpUlHMvOSv00og1ki+6AbAoBtHJYJXGWW637FBX9nbmPRNvMVe2MFu
+        CEoetrsrbei+RZO1CJpzwd0=
+X-Google-Smtp-Source: AA+uWPxYcTjb3lr8D6KQl5oXH1tue2ihZ0cDl8oD0KJjxPzHKYGBkslV1qGliopy+70KCrccPEa2EA==
+X-Received: by 2002:a2e:5c4:: with SMTP id 187-v6mr5360367ljf.28.1533928506066;
+        Fri, 10 Aug 2018 12:15:06 -0700 (PDT)
 Received: from localhost.localdomain (c-2ec24faa-74736162.cust.telenor.se. [46.194.79.170])
-        by smtp.gmail.com with ESMTPSA id d23-v6sm1734931ljg.17.2018.08.10.12.15.02
+        by smtp.gmail.com with ESMTPSA id d23-v6sm1734931ljg.17.2018.08.10.12.15.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 12:15:02 -0700 (PDT)
+        Fri, 10 Aug 2018 12:15:04 -0700 (PDT)
 From:   Marcus Folkesson <marcus.folkesson@gmail.com>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -65,9 +66,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Marcus Folkesson <marcus.folkesson@gmail.com>
 Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: dac: max5821: avoid using CONFIG_PM_SLEEP
-Date:   Fri, 10 Aug 2018 20:51:09 +0200
-Message-Id: <20180810185110.12710-2-marcus.folkesson@gmail.com>
+Subject: [PATCH] iio: dac: mcp4725: avoid using CONFIG_PM_SLEEP
+Date:   Fri, 10 Aug 2018 20:51:10 +0200
+Message-Id: <20180810185110.12710-3-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.11.0.rc2
 In-Reply-To: <20180810185110.12710-1-marcus.folkesson@gmail.com>
 References: <20180810185110.12710-1-marcus.folkesson@gmail.com>
@@ -80,52 +81,54 @@ SIMPLE_DEV_PM_OPS() is already doing this.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- drivers/iio/dac/max5821.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/iio/dac/mcp4725.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iio/dac/max5821.c b/drivers/iio/dac/max5821.c
-index d0ecc1fdd8fc..f0cf6903dcd2 100644
---- a/drivers/iio/dac/max5821.c
-+++ b/drivers/iio/dac/max5821.c
-@@ -270,8 +270,7 @@ static int max5821_write_raw(struct iio_dev *indio_dev,
- 	}
+diff --git a/drivers/iio/dac/mcp4725.c b/drivers/iio/dac/mcp4725.c
+index 8b5aad4c32d9..6d71fd905e29 100644
+--- a/drivers/iio/dac/mcp4725.c
++++ b/drivers/iio/dac/mcp4725.c
+@@ -45,7 +45,7 @@ struct mcp4725_data {
+ 	struct regulator *vref_reg;
+ };
+ 
+-static int mcp4725_suspend(struct device *dev)
++static int __maybe_unused mcp4725_suspend(struct device *dev)
+ {
+ 	struct mcp4725_data *data = iio_priv(i2c_get_clientdata(
+ 		to_i2c_client(dev)));
+@@ -58,7 +58,7 @@ static int mcp4725_suspend(struct device *dev)
+ 	return i2c_master_send(data->client, outbuf, 2);
  }
  
+-static int mcp4725_resume(struct device *dev)
++static int __maybe_unused mcp4725_resume(struct device *dev)
+ {
+ 	struct mcp4725_data *data = iio_priv(i2c_get_clientdata(
+ 		to_i2c_client(dev)));
+@@ -71,13 +71,7 @@ static int mcp4725_resume(struct device *dev)
+ 
+ 	return i2c_master_send(data->client, outbuf, 2);
+ }
+-
 -#ifdef CONFIG_PM_SLEEP
--static int max5821_suspend(struct device *dev)
-+static int __maybe_unused max5821_suspend(struct device *dev)
- {
- 	u8 outbuf[2] = { MAX5821_EXTENDED_COMMAND_MODE,
- 			 MAX5821_EXTENDED_DAC_A |
-@@ -281,7 +280,7 @@ static int max5821_suspend(struct device *dev)
- 	return i2c_master_send(to_i2c_client(dev), outbuf, 2);
- }
- 
--static int max5821_resume(struct device *dev)
-+static int __maybe_unused max5821_resume(struct device *dev)
- {
- 	u8 outbuf[2] = { MAX5821_EXTENDED_COMMAND_MODE,
- 			 MAX5821_EXTENDED_DAC_A |
-@@ -292,10 +291,6 @@ static int max5821_resume(struct device *dev)
- }
- 
- static SIMPLE_DEV_PM_OPS(max5821_pm_ops, max5821_suspend, max5821_resume);
--#define MAX5821_PM_OPS (&max5821_pm_ops)
+ static SIMPLE_DEV_PM_OPS(mcp4725_pm_ops, mcp4725_suspend, mcp4725_resume);
+-#define MCP4725_PM_OPS (&mcp4725_pm_ops)
 -#else
--#define MAX5821_PM_OPS NULL
--#endif /* CONFIG_PM_SLEEP */
+-#define MCP4725_PM_OPS NULL
+-#endif
  
- static const struct iio_info max5821_info = {
- 	.read_raw = max5821_read_raw,
-@@ -392,7 +387,7 @@ static struct i2c_driver max5821_driver = {
+ static ssize_t mcp4725_store_eeprom(struct device *dev,
+ 	struct device_attribute *attr, const char *buf, size_t len)
+@@ -547,7 +541,7 @@ static struct i2c_driver mcp4725_driver = {
  	.driver = {
- 		.name	= "max5821",
- 		.of_match_table = max5821_of_match,
--		.pm     = MAX5821_PM_OPS,
-+		.pm     = &max5821_pm_ops,
+ 		.name	= MCP4725_DRV_NAME,
+ 		.of_match_table = of_match_ptr(mcp4725_of_match),
+-		.pm	= MCP4725_PM_OPS,
++		.pm	= &mcp4725_pm_ops,
  	},
- 	.probe		= max5821_probe,
- 	.remove		= max5821_remove,
+ 	.probe		= mcp4725_probe,
+ 	.remove		= mcp4725_remove,
 -- 
 2.11.0.rc2
 
