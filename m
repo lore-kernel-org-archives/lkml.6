@@ -2,1040 +2,154 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E4CC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838EFC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211CD2242C
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:43:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211CD2242C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F6D42242C
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:43:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="QhblGVl5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6D42242C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeHJVN6 (ORCPT
+        id S1727168AbeHJVO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 17:13:58 -0400
-Received: from smtprelay0176.hostedemail.com ([216.40.44.176]:33402 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726420AbeHJVN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 17:13:58 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 1777C100E86C7;
-        Fri, 10 Aug 2018 18:42:51 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: sense87_52b3675c2b217
-X-Filterd-Recvd-Size: 36760
-Received: from joe-laptop.perches.com (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 10 Aug 2018 18:42:48 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
-Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/bnxt_re: QPLIB: Add and use #define dev_fmt(fmt) "QPLIB: " fmt
-Date:   Fri, 10 Aug 2018 11:42:46 -0700
-Message-Id: <fe07a1dbe1f6699b4a64444505ae2dbacc2155cc.1533926549.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Fri, 10 Aug 2018 17:14:28 -0400
+Received: from mail-bn3nam01on0112.outbound.protection.outlook.com ([104.47.33.112]:36122
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726420AbeHJVO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 17:14:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UW0tX19p1IZKe9qstx0wItLXgu+PPIbQgvnN0PKgBbw=;
+ b=QhblGVl5nt+qXEz0TmWDGpUkFEb8Jwstm26zhQRxeKq/x4dQBKeX2LuWUATSf/IqzN6Y/O/q3n1VUyWIs+1czdhyIrXCAqX2PWXbFSQVqLFpPcLDXoY3GImbI+PO8ZxCMfJMJnQFHbdeBk6zV5RZTmVlwFVy7UiEMA9NpzjTnNU=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3771.namprd06.prod.outlook.com (10.167.236.152) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.21; Fri, 10 Aug 2018 18:43:20 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::c41d:e8d9:b123:5864]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::c41d:e8d9:b123:5864%2]) with mapi id 15.20.1038.023; Fri, 10 Aug 2018
+ 18:43:20 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "dianders@chromium.org" <dianders@chromium.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "swboyd@chromium.org" <swboyd@chromium.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "sdharia@codeaurora.org" <sdharia@codeaurora.org>,
+        "dkota@codeaurora.org" <dkota@codeaurora.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "kramasub@codeaurora.org" <kramasub@codeaurora.org>,
+        "girishm@codeaurora.org" <girishm@codeaurora.org>
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based
+ QUP
+Thread-Topic: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+Thread-Index: AQHT4yafyeQn7soaS0qz4ku89UJpHKQrKQSAgA9INYCAAaFigIAADB0AgAMSxQCAAAEJAIBvT2e2gAnOcoCAAAWfAIAAFKEAgAGDGAA=
+Date:   Fri, 10 Aug 2018 18:43:20 +0000
+Message-ID: <1533926600.2283.358.camel@impinj.com>
+References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
+         <152607782792.34267.8023817955251139395@swboyd.mtv.corp.google.com>
+         <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org>
+         <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
+         <20180522173000.GG24776@sirena.org.uk>
+         <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
+         <20180524162940.GA4828@sirena.org.uk>
+         <28d8ab5fdeb34e52eba7ca771a17bc06@codeaurora.org>
+         <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org>
+         <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
+         <1533839042.2283.305.camel@impinj.com>
+         <CAD=FV=V4miw3i+8EPZPpgWGaVJhHbb2OBVTz6_iP-pMVhZoBOQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=V4miw3i+8EPZPpgWGaVJhHbb2OBVTz6_iP-pMVhZoBOQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3771;6:H3nNFGsMi2g7B6roZzjFhfaud0qRB0UJDDVbu61hPTuv5+/teFU+SEZ87VxXFKgKGrEKmTi5mJ065WPPrbpEYhKBp3/eo/3RXwqLn7K8nJAp/+XVfURr4sSJcW3igI3xt1K9lYw7JgV9EWZDTJstWvaB7DV6+whXl1Sn6LW5CjHFWDLgy1wuTm7SIu6dckVkSUTH8x7Vs5SIflLbDlEC07qGdvWJitMP80SXY6Z7bNY4Gfk7qOdMIsm/QH2hdFxB9Zv7amr8o3YsrGy5OMF22s5XFD7vFtPKc/Yr+UTqjVFPiTAhmkz0H+zJ2Fwpj8zXEH/GGpuUAUa6Mg1fR6Cc5cUTuIVBdMk9qgApV1rcJ0KRg1JeHFdaehDYA0MpBQnwkYS9E2X12MPL1IL9stCgVDdVLBvKPaSjB0eNeNVcYtFTfc7DMcqpNg001I8kTrIKnYz8GIS7cCRM+crFCgEUug==;5:Hu0QxE8iaQGLnVSJyxaZIjZyHtrM0a0eP264xSwj5Pr6wFflsHpHGL7mZjCUuyv16OeUQxcnTt99PyeYynl+Atfg5LcpwauJX40ls9B731duqXiOMpJOmWj5UDRO1xHhWKQ00IomQ6CUu5t8gIWF3lok0in5LheP9O62Ga3Wf/s=;7:T8nuAcaW1O4AZcv4B44ufXEGVkk7BEY4XdVqBXfJeXrkKTzExfD6Zrr0ZkZXSQ07EeDvFkLtiDfCcFTB2SvCyJN0+jHR+lsFmZdIr2utm+ZcLGdjZiyB+lrnKYZgc15mL0lfMXl4E5Ub1loMU9+XUJO+7XuyzsdaP6oOzqm1Aax8yvt7D5UdC3xzuEi5HEpdeZF65q4gjDNxMr0kr5Wlz5IsI+kxfZqQW/P7um57PwhXjG087JT/2yshVk0TAf0Z
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b7f42c9f-75e7-4e4d-4a90-08d5fef12548
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3771;
+x-ms-traffictypediagnostic: MWHPR0601MB3771:
+x-microsoft-antispam-prvs: <MWHPR0601MB37716637048E7A51CA756073D3240@MWHPR0601MB3771.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR0601MB3771;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3771;
+x-forefront-prvs: 07607ED19A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(39850400004)(346002)(376002)(189003)(199004)(93886005)(99286004)(3846002)(6116002)(2501003)(103116003)(7736002)(86362001)(53546011)(54906003)(102836004)(26005)(4326008)(25786009)(106356001)(6512007)(6486002)(5250100002)(5640700003)(229853002)(6436002)(53936002)(36756003)(97736004)(2906002)(6916009)(6246003)(105586002)(316002)(66066001)(2616005)(8676002)(256004)(478600001)(14444005)(446003)(81156014)(81166006)(8936002)(68736007)(1730700003)(486006)(11346002)(76176011)(186003)(305945005)(6506007)(476003)(14454004)(2351001)(2900100001)(7416002)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3771;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: jSygiWGWWDfzz8/a+CasfzyZ1xneKDrxhNGsFl4oiF77aGiG5HqsoRNTUs/Eibc1aJ0JIpaTm2ELWOg8+nNDLR0ehu3Gaq5/BihBAKZE1Dh6LZd2LOEVCZEKc4hpviCKd5OISdphZVggcW4tov2N0thZ2GEmbHAJemok9u7vGZtDOhgI4CWem9QVTgvb0suJeReJUr7nnC2dzHtgJ4YE661Xhinre6f/P3HWnIxjAvZfkARUIRzQtlYPkF8KrvEOJo51mOwyiyvbChNekYSUqRuVaeTMCMP2W+vN6v215OYLvKZVOTyNc/OC5BxKzgISdraHCYPdaRMjedVqF5GrMjQ4S2veZh2eC17gZCgRhKE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <03018E91C631B542897077574CC2F32A@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7f42c9f-75e7-4e4d-4a90-08d5fef12548
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2018 18:43:20.7611
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3771
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Consistently use the "QPLIB: " prefix for dev_<level> logging.
-
-Miscellanea:
-
-o Add missing newlines to avoid possible message interleaving
-o Coalesce consecutive dev_<level> uses that emit a message header to
-  avoid < 80 column lengths and mistakenly output on multiple lines
-o Reflow modified lines to use 80 columns where appropriate
-o Consistently use "%s: " where __func__ is output
-o QPLIB: is now always output immediately after the dev_<level> header
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/infiniband/hw/bnxt_re/qplib_fp.c   | 130 +++++++++++------------------
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c |  51 ++++++-----
- drivers/infiniband/hw/bnxt_re/qplib_res.c  |  29 ++++---
- drivers/infiniband/hw/bnxt_re/qplib_sp.c   |  57 ++++++-------
- 4 files changed, 116 insertions(+), 151 deletions(-)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-index e426b990c1dd..f92605aa42b4 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-@@ -36,6 +36,8 @@
-  * Description: Fast Path Operators
-  */
- 
-+#define dev_fmt(fmt) "QPLIB: " fmt
-+
- #include <linux/interrupt.h>
- #include <linux/spinlock.h>
- #include <linux/sched.h>
-@@ -71,8 +73,7 @@ static void __bnxt_qplib_add_flush_qp(struct bnxt_qplib_qp *qp)
- 
- 	if (!qp->sq.flushed) {
- 		dev_dbg(&scq->hwq.pdev->dev,
--			"QPLIB: FP: Adding to SQ Flush list = %p",
--			qp);
-+			"FP: Adding to SQ Flush list = %p\n", qp);
- 		bnxt_qplib_cancel_phantom_processing(qp);
- 		list_add_tail(&qp->sq_flush, &scq->sqf_head);
- 		qp->sq.flushed = true;
-@@ -80,8 +81,7 @@ static void __bnxt_qplib_add_flush_qp(struct bnxt_qplib_qp *qp)
- 	if (!qp->srq) {
- 		if (!qp->rq.flushed) {
- 			dev_dbg(&rcq->hwq.pdev->dev,
--				"QPLIB: FP: Adding to RQ Flush list = %p",
--				qp);
-+				"FP: Adding to RQ Flush list = %p\n", qp);
- 			list_add_tail(&qp->rq_flush, &rcq->rqf_head);
- 			qp->rq.flushed = true;
- 		}
-@@ -207,7 +207,7 @@ static int bnxt_qplib_alloc_qp_hdr_buf(struct bnxt_qplib_res *res,
- 		if (!qp->sq_hdr_buf) {
- 			rc = -ENOMEM;
- 			dev_err(&res->pdev->dev,
--				"QPLIB: Failed to create sq_hdr_buf");
-+				"Failed to create sq_hdr_buf\n");
- 			goto fail;
- 		}
- 	}
-@@ -221,7 +221,7 @@ static int bnxt_qplib_alloc_qp_hdr_buf(struct bnxt_qplib_res *res,
- 		if (!qp->rq_hdr_buf) {
- 			rc = -ENOMEM;
- 			dev_err(&res->pdev->dev,
--				"QPLIB: Failed to create rq_hdr_buf");
-+				"Failed to create rq_hdr_buf\n");
- 			goto fail;
- 		}
- 	}
-@@ -277,8 +277,7 @@ static void bnxt_qplib_service_nq(unsigned long data)
- 				num_cqne_processed++;
- 			else
- 				dev_warn(&nq->pdev->dev,
--					 "QPLIB: cqn - type 0x%x not handled",
--					 type);
-+					 "cqn - type 0x%x not handled\n", type);
- 			spin_unlock_bh(&cq->compl_lock);
- 			break;
- 		}
-@@ -298,7 +297,7 @@ static void bnxt_qplib_service_nq(unsigned long data)
- 				num_srqne_processed++;
- 			else
- 				dev_warn(&nq->pdev->dev,
--					 "QPLIB: SRQ event 0x%x not handled",
-+					 "SRQ event 0x%x not handled\n",
- 					 nqsrqe->event);
- 			break;
- 		}
-@@ -306,8 +305,7 @@ static void bnxt_qplib_service_nq(unsigned long data)
- 			break;
- 		default:
- 			dev_warn(&nq->pdev->dev,
--				 "QPLIB: nqe with type = 0x%x not handled",
--				 type);
-+				 "nqe with type = 0x%x not handled\n", type);
- 			break;
- 		}
- 		raw_cons++;
-@@ -396,7 +394,7 @@ int bnxt_qplib_nq_start_irq(struct bnxt_qplib_nq *nq, int nq_indx,
- 	rc = irq_set_affinity_hint(nq->vector, &nq->mask);
- 	if (rc) {
- 		dev_warn(&nq->pdev->dev,
--			 "QPLIB: set affinity failed; vector: %d nq_idx: %d\n",
-+			 "set affinity failed; vector: %d nq_idx: %d\n",
- 			 nq->vector, nq_indx);
- 	}
- 	nq->requested = true;
-@@ -443,7 +441,7 @@ int bnxt_qplib_enable_nq(struct pci_dev *pdev, struct bnxt_qplib_nq *nq,
- 	rc = bnxt_qplib_nq_start_irq(nq, nq_idx, msix_vector, true);
- 	if (rc) {
- 		dev_err(&nq->pdev->dev,
--			"QPLIB: Failed to request irq for nq-idx %d", nq_idx);
-+			"Failed to request irq for nq-idx %d\n", nq_idx);
- 		goto fail;
- 	}
- 
-@@ -662,8 +660,8 @@ int bnxt_qplib_post_srq_recv(struct bnxt_qplib_srq *srq,
- 
- 	spin_lock(&srq_hwq->lock);
- 	if (srq->start_idx == srq->last_idx) {
--		dev_err(&srq_hwq->pdev->dev, "QPLIB: FP: SRQ (0x%x) is full!",
--			srq->id);
-+		dev_err(&srq_hwq->pdev->dev,
-+			"FP: SRQ (0x%x) is full!\n", srq->id);
- 		rc = -EINVAL;
- 		spin_unlock(&srq_hwq->lock);
- 		goto done;
-@@ -1324,7 +1322,7 @@ int bnxt_qplib_query_qp(struct bnxt_qplib_res *res, struct bnxt_qplib_qp *qp)
- 		}
- 	}
- 	if (i == res->sgid_tbl.max)
--		dev_warn(&res->pdev->dev, "QPLIB: SGID not found??");
-+		dev_warn(&res->pdev->dev, "SGID not found??\n");
- 
- 	qp->ah.hop_limit = sb->hop_limit;
- 	qp->ah.traffic_class = sb->traffic_class;
-@@ -1536,7 +1534,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
- 
- 	if (bnxt_qplib_queue_full(sq)) {
- 		dev_err(&sq->hwq.pdev->dev,
--			"QPLIB: prod = %#x cons = %#x qdepth = %#x delta = %#x",
-+			"prod = %#x cons = %#x qdepth = %#x delta = %#x\n",
- 			sq->hwq.prod, sq->hwq.cons, sq->hwq.max_elements,
- 			sq->q_full_delta);
- 		rc = -ENOMEM;
-@@ -1561,7 +1559,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
- 		/* Copy the inline data */
- 		if (wqe->inline_len > BNXT_QPLIB_SWQE_MAX_INLINE_LENGTH) {
- 			dev_warn(&sq->hwq.pdev->dev,
--				 "QPLIB: Inline data length > 96 detected");
-+				 "Inline data length > 96 detected\n");
- 			data_len = BNXT_QPLIB_SWQE_MAX_INLINE_LENGTH;
- 		} else {
- 			data_len = wqe->inline_len;
-@@ -1776,7 +1774,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
- 			queue_work(qp->scq->nq->cqn_wq, &nq_work->work);
- 		} else {
- 			dev_err(&sq->hwq.pdev->dev,
--				"QPLIB: FP: Failed to allocate SQ nq_work!");
-+				"FP: Failed to allocate SQ nq_work!\n");
- 			rc = -ENOMEM;
- 		}
- 	}
-@@ -1815,13 +1813,12 @@ int bnxt_qplib_post_recv(struct bnxt_qplib_qp *qp,
- 	if (qp->state == CMDQ_MODIFY_QP_NEW_STATE_ERR) {
- 		sch_handler = true;
- 		dev_dbg(&rq->hwq.pdev->dev,
--			"%s Error QP. Scheduling for poll_cq\n",
--			__func__);
-+			"%s: Error QP. Scheduling for poll_cq\n", __func__);
- 		goto queue_err;
- 	}
- 	if (bnxt_qplib_queue_full(rq)) {
- 		dev_err(&rq->hwq.pdev->dev,
--			"QPLIB: FP: QP (0x%x) RQ is full!", qp->id);
-+			"FP: QP (0x%x) RQ is full!\n", qp->id);
- 		rc = -EINVAL;
- 		goto done;
- 	}
-@@ -1870,7 +1867,7 @@ int bnxt_qplib_post_recv(struct bnxt_qplib_qp *qp,
- 			queue_work(qp->rcq->nq->cqn_wq, &nq_work->work);
- 		} else {
- 			dev_err(&rq->hwq.pdev->dev,
--				"QPLIB: FP: Failed to allocate RQ nq_work!");
-+				"FP: Failed to allocate RQ nq_work!\n");
- 			rc = -ENOMEM;
- 		}
- 	}
-@@ -1932,7 +1929,7 @@ int bnxt_qplib_create_cq(struct bnxt_qplib_res *res, struct bnxt_qplib_cq *cq)
- 
- 	if (!cq->dpi) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: FP: CREATE_CQ failed due to NULL DPI");
-+			"FP: CREATE_CQ failed due to NULL DPI\n");
- 		return -EINVAL;
- 	}
- 	req.dpi = cpu_to_le32(cq->dpi->dpi);
-@@ -2172,7 +2169,7 @@ static int do_wa9060(struct bnxt_qplib_qp *qp, struct bnxt_qplib_cq *cq,
- 						 *  comes back
- 						 */
- 						dev_dbg(&cq->hwq.pdev->dev,
--							"FP:Got Phantom CQE");
-+							"FP: Got Phantom CQE\n");
- 						sq->condition = false;
- 						sq->single = true;
- 						rc = 0;
-@@ -2189,7 +2186,7 @@ static int do_wa9060(struct bnxt_qplib_qp *qp, struct bnxt_qplib_cq *cq,
- 			peek_raw_cq_cons++;
- 		}
- 		dev_err(&cq->hwq.pdev->dev,
--			"Should not have come here! cq_cons=0x%x qp=0x%x sq cons sw=0x%x hw=0x%x",
-+			"Should not have come here! cq_cons=0x%x qp=0x%x sq cons sw=0x%x hw=0x%x\n",
- 			cq_cons, qp->id, sw_sq_cons, cqe_sq_cons);
- 		rc = -EINVAL;
- 	}
-@@ -2213,7 +2210,7 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: Process Req qp is NULL");
-+			"FP: Process Req qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	sq = &qp->sq;
-@@ -2221,16 +2218,14 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
- 	cqe_sq_cons = HWQ_CMP(le16_to_cpu(hwcqe->sq_cons_idx), &sq->hwq);
- 	if (cqe_sq_cons > sq->hwq.max_elements) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process req reported ");
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: sq_cons_idx 0x%x which exceeded max 0x%x",
-+			"FP: CQ Process req reported sq_cons_idx 0x%x which exceeded max 0x%x\n",
- 			cqe_sq_cons, sq->hwq.max_elements);
- 		return -EINVAL;
- 	}
- 
- 	if (qp->sq.flushed) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"%s: QPLIB: QP in Flush QP = %p\n", __func__, qp);
-+			"%s: QP in Flush QP = %p\n", __func__, qp);
- 		goto done;
- 	}
- 	/* Require to walk the sq's swq to fabricate CQEs for all previously
-@@ -2262,9 +2257,7 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
- 		    hwcqe->status != CQ_REQ_STATUS_OK) {
- 			cqe->status = hwcqe->status;
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Processed Req ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id[%d] = 0x%llx with status 0x%x",
-+				"FP: CQ Processed Req wr_id[%d] = 0x%llx with status 0x%x\n",
- 				sw_sq_cons, cqe->wr_id, cqe->status);
- 			cqe++;
- 			(*budget)--;
-@@ -2330,12 +2323,12 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
--		dev_err(&cq->hwq.pdev->dev, "QPLIB: process_cq RC qp is NULL");
-+		dev_err(&cq->hwq.pdev->dev, "process_cq RC qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	if (qp->rq.flushed) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"%s: QPLIB: QP in Flush QP = %p\n", __func__, qp);
-+			"%s: QP in Flush QP = %p\n", __func__, qp);
- 		goto done;
- 	}
- 
-@@ -2356,9 +2349,7 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
- 			return -EINVAL;
- 		if (wr_id_idx >= srq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process RC ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
-+				"FP: CQ Process RC wr_id idx 0x%x exceeded SRQ max 0x%x\n",
- 				wr_id_idx, srq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2371,9 +2362,7 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
- 		rq = &qp->rq;
- 		if (wr_id_idx >= rq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process RC ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded RQ max 0x%x",
-+				"FP: CQ Process RC wr_id idx 0x%x exceeded RQ max 0x%x\n",
- 				wr_id_idx, rq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2409,12 +2398,12 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
--		dev_err(&cq->hwq.pdev->dev, "QPLIB: process_cq UD qp is NULL");
-+		dev_err(&cq->hwq.pdev->dev, "process_cq UD qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	if (qp->rq.flushed) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"%s: QPLIB: QP in Flush QP = %p\n", __func__, qp);
-+			"%s: QP in Flush QP = %p\n", __func__, qp);
- 		goto done;
- 	}
- 	cqe = *pcqe;
-@@ -2439,9 +2428,7 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
- 
- 		if (wr_id_idx >= srq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process UD ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
-+				"FP: CQ Process UD wr_id idx 0x%x exceeded SRQ max 0x%x\n",
- 				wr_id_idx, srq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2454,9 +2441,7 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
- 		rq = &qp->rq;
- 		if (wr_id_idx >= rq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process UD ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded RQ max 0x%x",
-+				"FP: CQ Process UD wr_id idx 0x%x exceeded RQ max 0x%x\n",
- 				wr_id_idx, rq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2508,13 +2493,12 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: process_cq Raw/QP1 qp is NULL");
-+		dev_err(&cq->hwq.pdev->dev, "process_cq Raw/QP1 qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	if (qp->rq.flushed) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"%s: QPLIB: QP in Flush QP = %p\n", __func__, qp);
-+			"%s: QP in Flush QP = %p\n", __func__, qp);
- 		goto done;
- 	}
- 	cqe = *pcqe;
-@@ -2543,14 +2527,12 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
- 		srq = qp->srq;
- 		if (!srq) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: SRQ used but not defined??");
-+				"FP: SRQ used but not defined??\n");
- 			return -EINVAL;
- 		}
- 		if (wr_id_idx >= srq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process Raw/QP1 ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
-+				"FP: CQ Process Raw/QP1 wr_id idx 0x%x exceeded SRQ max 0x%x\n",
- 				wr_id_idx, srq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2563,9 +2545,7 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
- 		rq = &qp->rq;
- 		if (wr_id_idx >= rq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process Raw/QP1 RQ wr_id ");
--			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: ix 0x%x exceeded RQ max 0x%x",
-+				"FP: CQ Process Raw/QP1 RQ wr_id idx 0x%x exceeded RQ max 0x%x\n",
- 				wr_id_idx, rq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2600,14 +2580,14 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
- 	/* Check the Status */
- 	if (hwcqe->status != CQ_TERMINAL_STATUS_OK)
- 		dev_warn(&cq->hwq.pdev->dev,
--			 "QPLIB: FP: CQ Process Terminal Error status = 0x%x",
-+			 "FP: CQ Process Terminal Error status = 0x%x\n",
- 			 hwcqe->status);
- 
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process terminal qp is NULL");
-+			"FP: CQ Process terminal qp is NULL\n");
- 		return -EINVAL;
- 	}
- 
-@@ -2623,16 +2603,14 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
- 
- 	if (cqe_cons > sq->hwq.max_elements) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process terminal reported ");
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: sq_cons_idx 0x%x which exceeded max 0x%x",
-+			"FP: CQ Process terminal reported sq_cons_idx 0x%x which exceeded max 0x%x\n",
- 			cqe_cons, sq->hwq.max_elements);
- 		goto do_rq;
- 	}
- 
- 	if (qp->sq.flushed) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"%s: QPLIB: QP in Flush QP = %p\n", __func__, qp);
-+			"%s: QP in Flush QP = %p\n", __func__, qp);
- 		goto sq_done;
- 	}
- 
-@@ -2673,16 +2651,14 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
- 		goto done;
- 	} else if (cqe_cons > rq->hwq.max_elements) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Processed terminal ");
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: reported rq_cons_idx 0x%x exceeds max 0x%x",
-+			"FP: CQ Processed terminal reported rq_cons_idx 0x%x exceeds max 0x%x\n",
- 			cqe_cons, rq->hwq.max_elements);
- 		goto done;
- 	}
- 
- 	if (qp->rq.flushed) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"%s: QPLIB: QP in Flush QP = %p\n", __func__, qp);
-+			"%s: QP in Flush QP = %p\n", __func__, qp);
- 		rc = 0;
- 		goto done;
- 	}
-@@ -2704,7 +2680,7 @@ static int bnxt_qplib_cq_process_cutoff(struct bnxt_qplib_cq *cq,
- 	/* Check the Status */
- 	if (hwcqe->status != CQ_CUTOFF_STATUS_OK) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process Cutoff Error status = 0x%x",
-+			"FP: CQ Process Cutoff Error status = 0x%x\n",
- 			hwcqe->status);
- 		return -EINVAL;
- 	}
-@@ -2724,16 +2700,12 @@ int bnxt_qplib_process_flush_list(struct bnxt_qplib_cq *cq,
- 
- 	spin_lock_irqsave(&cq->flush_lock, flags);
- 	list_for_each_entry(qp, &cq->sqf_head, sq_flush) {
--		dev_dbg(&cq->hwq.pdev->dev,
--			"QPLIB: FP: Flushing SQ QP= %p",
--			qp);
-+		dev_dbg(&cq->hwq.pdev->dev, "FP: Flushing SQ QP= %p\n", qp);
- 		__flush_sq(&qp->sq, qp, &cqe, &budget);
- 	}
- 
- 	list_for_each_entry(qp, &cq->rqf_head, rq_flush) {
--		dev_dbg(&cq->hwq.pdev->dev,
--			"QPLIB: FP: Flushing RQ QP= %p",
--			qp);
-+		dev_dbg(&cq->hwq.pdev->dev, "FP: Flushing RQ QP= %p\n", qp);
- 		__flush_rq(&qp->rq, qp, &cqe, &budget);
- 	}
- 	spin_unlock_irqrestore(&cq->flush_lock, flags);
-@@ -2801,7 +2773,7 @@ int bnxt_qplib_poll_cq(struct bnxt_qplib_cq *cq, struct bnxt_qplib_cqe *cqe,
- 			goto exit;
- 		default:
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: process_cq unknown type 0x%lx",
-+				"process_cq unknown type 0x%lx\n",
- 				hw_cqe->cqe_type_toggle &
- 				CQ_BASE_CQE_TYPE_MASK);
- 			rc = -EINVAL;
-@@ -2814,7 +2786,7 @@ int bnxt_qplib_poll_cq(struct bnxt_qplib_cq *cq, struct bnxt_qplib_cqe *cqe,
- 			 * next one
- 			 */
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: process_cqe error rc = 0x%x", rc);
-+				"process_cqe error rc = 0x%x\n", rc);
- 		}
- 		raw_cons++;
- 	}
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-index 2852d350ada1..14105004d258 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-@@ -35,6 +35,9 @@
-  *
-  * Description: RDMA Controller HW interface
-  */
-+
-+#define dev_fmt(fmt) "QPLIB: " fmt
-+
- #include <linux/interrupt.h>
- #include <linux/spinlock.h>
- #include <linux/pci.h>
-@@ -96,14 +99,13 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
- 	     opcode != CMDQ_BASE_OPCODE_INITIALIZE_FW &&
- 	     opcode != CMDQ_BASE_OPCODE_QUERY_VERSION)) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: RCFW not initialized, reject opcode 0x%x",
--			opcode);
-+			"RCFW not initialized, reject opcode 0x%x\n", opcode);
- 		return -EINVAL;
- 	}
- 
- 	if (test_bit(FIRMWARE_INITIALIZED_FLAG, &rcfw->flags) &&
- 	    opcode == CMDQ_BASE_OPCODE_INITIALIZE_FW) {
--		dev_err(&rcfw->pdev->dev, "QPLIB: RCFW already initialized!");
-+		dev_err(&rcfw->pdev->dev, "RCFW already initialized!\n");
- 		return -EINVAL;
- 	}
- 
-@@ -115,7 +117,7 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
- 	 */
- 	spin_lock_irqsave(&cmdq->lock, flags);
- 	if (req->cmd_size >= HWQ_FREE_SLOTS(cmdq)) {
--		dev_err(&rcfw->pdev->dev, "QPLIB: RCFW: CMDQ is full!");
-+		dev_err(&rcfw->pdev->dev, "RCFW: CMDQ is full!\n");
- 		spin_unlock_irqrestore(&cmdq->lock, flags);
- 		return -EAGAIN;
- 	}
-@@ -154,7 +156,7 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
- 		cmdqe = &cmdq_ptr[get_cmdq_pg(sw_prod)][get_cmdq_idx(sw_prod)];
- 		if (!cmdqe) {
- 			dev_err(&rcfw->pdev->dev,
--				"QPLIB: RCFW request failed with no cmdqe!");
-+				"RCFW request failed with no cmdqe!\n");
- 			goto done;
- 		}
- 		/* Copy a segment of the req cmd to the cmdq */
-@@ -210,7 +212,7 @@ int bnxt_qplib_rcfw_send_message(struct bnxt_qplib_rcfw *rcfw,
- 
- 		if (!retry_cnt || (rc != -EAGAIN && rc != -EBUSY)) {
- 			/* send failed */
--			dev_err(&rcfw->pdev->dev, "QPLIB: cmdq[%#x]=%#x send failed",
-+			dev_err(&rcfw->pdev->dev, "cmdq[%#x]=%#x send failed\n",
- 				cookie, opcode);
- 			return rc;
- 		}
-@@ -224,7 +226,7 @@ int bnxt_qplib_rcfw_send_message(struct bnxt_qplib_rcfw *rcfw,
- 		rc = __wait_for_resp(rcfw, cookie);
- 	if (rc) {
- 		/* timed out */
--		dev_err(&rcfw->pdev->dev, "QPLIB: cmdq[%#x]=%#x timedout (%d)msec",
-+		dev_err(&rcfw->pdev->dev, "cmdq[%#x]=%#x timedout (%d)msec\n",
- 			cookie, opcode, RCFW_CMD_WAIT_TIME_MS);
- 		set_bit(FIRMWARE_TIMED_OUT, &rcfw->flags);
- 		return rc;
-@@ -232,7 +234,7 @@ int bnxt_qplib_rcfw_send_message(struct bnxt_qplib_rcfw *rcfw,
- 
- 	if (evnt->status) {
- 		/* failed with status */
--		dev_err(&rcfw->pdev->dev, "QPLIB: cmdq[%#x]=%#x status %#x",
-+		dev_err(&rcfw->pdev->dev, "cmdq[%#x]=%#x status %#x\n",
- 			cookie, opcode, evnt->status);
- 		rc = -EFAULT;
- 	}
-@@ -298,9 +300,9 @@ static int bnxt_qplib_process_qp_event(struct bnxt_qplib_rcfw *rcfw,
- 		qp_id = le32_to_cpu(err_event->xid);
- 		qp = rcfw->qp_tbl[qp_id].qp_handle;
- 		dev_dbg(&rcfw->pdev->dev,
--			"QPLIB: Received QP error notification");
-+			"Received QP error notification\n");
- 		dev_dbg(&rcfw->pdev->dev,
--			"QPLIB: qpid 0x%x, req_err=0x%x, resp_err=0x%x\n",
-+			"qpid 0x%x, req_err=0x%x, resp_err=0x%x\n",
- 			qp_id, err_event->req_err_state_reason,
- 			err_event->res_err_state_reason);
- 		if (!qp)
-@@ -323,13 +325,13 @@ static int bnxt_qplib_process_qp_event(struct bnxt_qplib_rcfw *rcfw,
- 			crsqe->resp = NULL;
- 		} else {
- 			dev_err(&rcfw->pdev->dev,
--				"QPLIB: CMD %s resp->cookie = %#x, evnt->cookie = %#x",
-+				"CMD %s resp->cookie = %#x, evnt->cookie = %#x\n",
- 				crsqe->resp ? "mismatch" : "collision",
- 				crsqe->resp ? crsqe->resp->cookie : 0, mcookie);
- 		}
- 		if (!test_and_clear_bit(cbit, rcfw->cmdq_bitmap))
- 			dev_warn(&rcfw->pdev->dev,
--				 "QPLIB: CMD bit %d was not requested", cbit);
-+				 "CMD bit %d was not requested\n", cbit);
- 		cmdq->cons += crsqe->req_size;
- 		crsqe->req_size = 0;
- 
-@@ -376,14 +378,13 @@ static void bnxt_qplib_service_creq(unsigned long data)
- 			    (rcfw, (struct creq_func_event *)creqe))
- 				rcfw->creq_func_event_processed++;
- 			else
--				dev_warn
--				(&rcfw->pdev->dev, "QPLIB:aeqe:%#x Not handled",
--				 type);
-+				dev_warn(&rcfw->pdev->dev,
-+					 "aeqe:%#x Not handled\n", type);
- 			break;
- 		default:
--			dev_warn(&rcfw->pdev->dev, "QPLIB: creqe with ");
- 			dev_warn(&rcfw->pdev->dev,
--				 "QPLIB: op_event = 0x%x not handled", type);
-+				 "creqe with op_event = 0x%x not handled\n",
-+				 type);
- 			break;
- 		}
- 		raw_cons++;
-@@ -551,7 +552,7 @@ int bnxt_qplib_alloc_rcfw_channel(struct pci_dev *pdev,
- 				      BNXT_QPLIB_CREQE_UNITS, 0, PAGE_SIZE,
- 				      HWQ_TYPE_L2_CMPL)) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: HW channel CREQ allocation failed");
-+			"HW channel CREQ allocation failed\n");
- 		goto fail;
- 	}
- 	rcfw->cmdq.max_elements = BNXT_QPLIB_CMDQE_MAX_CNT;
-@@ -560,7 +561,7 @@ int bnxt_qplib_alloc_rcfw_channel(struct pci_dev *pdev,
- 				      BNXT_QPLIB_CMDQE_UNITS, 0, PAGE_SIZE,
- 				      HWQ_TYPE_CTX)) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: HW channel CMDQ allocation failed");
-+			"HW channel CMDQ allocation failed\n");
- 		goto fail;
- 	}
- 
-@@ -616,7 +617,7 @@ void bnxt_qplib_disable_rcfw_channel(struct bnxt_qplib_rcfw *rcfw)
- 	indx = find_first_bit(rcfw->cmdq_bitmap, rcfw->bmap_size);
- 	if (indx != rcfw->bmap_size)
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: disabling RCFW with pending cmd-bit %lx", indx);
-+			"disabling RCFW with pending cmd-bit %lx\n", indx);
- 	kfree(rcfw->cmdq_bitmap);
- 	rcfw->bmap_size = 0;
- 
-@@ -681,8 +682,7 @@ int bnxt_qplib_enable_rcfw_channel(struct pci_dev *pdev,
- 					      RCFW_COMM_BASE_OFFSET,
- 					      RCFW_COMM_SIZE);
- 	if (!rcfw->cmdq_bar_reg_iomem) {
--		dev_err(&rcfw->pdev->dev,
--			"QPLIB: CMDQ BAR region %d mapping failed",
-+		dev_err(&rcfw->pdev->dev, "CMDQ BAR region %d mapping failed\n",
- 			rcfw->cmdq_bar_reg);
- 		return -ENOMEM;
- 	}
-@@ -697,13 +697,12 @@ int bnxt_qplib_enable_rcfw_channel(struct pci_dev *pdev,
- 	res_base = pci_resource_start(pdev, rcfw->creq_bar_reg);
- 	if (!res_base)
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: CREQ BAR region %d resc start is 0!",
-+			"CREQ BAR region %d resc start is 0!\n",
- 			rcfw->creq_bar_reg);
- 	rcfw->creq_bar_reg_iomem = ioremap_nocache(res_base + cp_bar_reg_off,
- 						   4);
- 	if (!rcfw->creq_bar_reg_iomem) {
--		dev_err(&rcfw->pdev->dev,
--			"QPLIB: CREQ BAR region %d mapping failed",
-+		dev_err(&rcfw->pdev->dev, "CREQ BAR region %d mapping failed\n",
- 			rcfw->creq_bar_reg);
- 		return -ENOMEM;
- 	}
-@@ -717,7 +716,7 @@ int bnxt_qplib_enable_rcfw_channel(struct pci_dev *pdev,
- 	rc = bnxt_qplib_rcfw_start_irq(rcfw, msix_vector, true);
- 	if (rc) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: Failed to request IRQ for CREQ rc = 0x%x", rc);
-+			"Failed to request IRQ for CREQ rc = 0x%x\n", rc);
- 		bnxt_qplib_disable_rcfw_channel(rcfw);
- 		return rc;
- 	}
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-index 539a5d44e6db..59eeac55626f 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-@@ -36,6 +36,8 @@
-  * Description: QPLib resource manager
-  */
- 
-+#define dev_fmt(fmt) "QPLIB: " fmt
-+
- #include <linux/spinlock.h>
- #include <linux/pci.h>
- #include <linux/interrupt.h>
-@@ -68,8 +70,7 @@ static void __free_pbl(struct pci_dev *pdev, struct bnxt_qplib_pbl *pbl,
- 						  pbl->pg_map_arr[i]);
- 			else
- 				dev_warn(&pdev->dev,
--					 "QPLIB: PBL free pg_arr[%d] empty?!",
--					 i);
-+					 "PBL free pg_arr[%d] empty?!\n", i);
- 			pbl->pg_arr[i] = NULL;
- 		}
- 	}
-@@ -537,7 +538,7 @@ static void bnxt_qplib_free_pkey_tbl(struct bnxt_qplib_res *res,
- 				     struct bnxt_qplib_pkey_tbl *pkey_tbl)
- {
- 	if (!pkey_tbl->tbl)
--		dev_dbg(&res->pdev->dev, "QPLIB: PKEY tbl not present");
-+		dev_dbg(&res->pdev->dev, "PKEY tbl not present\n");
- 	else
- 		kfree(pkey_tbl->tbl);
- 
-@@ -578,7 +579,7 @@ int bnxt_qplib_dealloc_pd(struct bnxt_qplib_res *res,
- 			  struct bnxt_qplib_pd *pd)
- {
- 	if (test_and_set_bit(pd->id, pdt->tbl)) {
--		dev_warn(&res->pdev->dev, "Freeing an unused PD? pdn = %d",
-+		dev_warn(&res->pdev->dev, "Freeing an unused PD? pdn = %d\n",
- 			 pd->id);
- 		return -EINVAL;
- 	}
-@@ -639,11 +640,11 @@ int bnxt_qplib_dealloc_dpi(struct bnxt_qplib_res *res,
- 			   struct bnxt_qplib_dpi     *dpi)
- {
- 	if (dpi->dpi >= dpit->max) {
--		dev_warn(&res->pdev->dev, "Invalid DPI? dpi = %d", dpi->dpi);
-+		dev_warn(&res->pdev->dev, "Invalid DPI? dpi = %d\n", dpi->dpi);
- 		return -EINVAL;
- 	}
- 	if (test_and_set_bit(dpi->dpi, dpit->tbl)) {
--		dev_warn(&res->pdev->dev, "Freeing an unused DPI? dpi = %d",
-+		dev_warn(&res->pdev->dev, "Freeing an unused DPI? dpi = %d\n",
- 			 dpi->dpi);
- 		return -EINVAL;
- 	}
-@@ -673,22 +674,21 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
- 	u32 dbr_len, bytes;
- 
- 	if (dpit->dbr_bar_reg_iomem) {
--		dev_err(&res->pdev->dev,
--			"QPLIB: DBR BAR region %d already mapped", dbr_bar_reg);
-+		dev_err(&res->pdev->dev, "DBR BAR region %d already mapped\n",
-+			dbr_bar_reg);
- 		return -EALREADY;
- 	}
- 
- 	bar_reg_base = pci_resource_start(res->pdev, dbr_bar_reg);
- 	if (!bar_reg_base) {
--		dev_err(&res->pdev->dev,
--			"QPLIB: BAR region %d resc start failed", dbr_bar_reg);
-+		dev_err(&res->pdev->dev, "BAR region %d resc start failed\n",
-+			dbr_bar_reg);
- 		return -ENOMEM;
- 	}
- 
- 	dbr_len = pci_resource_len(res->pdev, dbr_bar_reg) - dbr_offset;
- 	if (!dbr_len || ((dbr_len & (PAGE_SIZE - 1)) != 0)) {
--		dev_err(&res->pdev->dev, "QPLIB: Invalid DBR length %d",
--			dbr_len);
-+		dev_err(&res->pdev->dev, "Invalid DBR length %d\n", dbr_len);
- 		return -ENOMEM;
- 	}
- 
-@@ -696,8 +696,7 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
- 						  dbr_len);
- 	if (!dpit->dbr_bar_reg_iomem) {
- 		dev_err(&res->pdev->dev,
--			"QPLIB: FP: DBR BAR region %d mapping failed",
--			dbr_bar_reg);
-+			"FP: DBR BAR region %d mapping failed\n", dbr_bar_reg);
- 		return -ENOMEM;
- 	}
- 
-@@ -767,7 +766,7 @@ static int bnxt_qplib_alloc_stats_ctx(struct pci_dev *pdev,
- 	stats->dma = dma_alloc_coherent(&pdev->dev, stats->size,
- 					&stats->dma_map, GFP_KERNEL);
- 	if (!stats->dma) {
--		dev_err(&pdev->dev, "QPLIB: Stats DMA allocation failed");
-+		dev_err(&pdev->dev, "Stats DMA allocation failed\n");
- 		return -ENOMEM;
- 	}
- 	return 0;
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-index 4097f3fa25c5..c80f2eaaf1a3 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-@@ -36,6 +36,8 @@
-  * Description: Slow Path Operators
-  */
- 
-+#define dev_fmt(fmt) "QPLIB: " fmt
-+
- #include <linux/interrupt.h>
- #include <linux/spinlock.h>
- #include <linux/sched.h>
-@@ -89,7 +91,7 @@ int bnxt_qplib_get_dev_attr(struct bnxt_qplib_rcfw *rcfw,
- 	sbuf = bnxt_qplib_rcfw_alloc_sbuf(rcfw, sizeof(*sb));
- 	if (!sbuf) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: SP: QUERY_FUNC alloc side buffer failed");
-+			"SP: QUERY_FUNC alloc side buffer failed\n");
- 		return -ENOMEM;
- 	}
- 
-@@ -186,8 +188,7 @@ int bnxt_qplib_set_func_resources(struct bnxt_qplib_res *res,
- 					  (void *)&resp,
- 					  NULL, 0);
- 	if (rc) {
--		dev_err(&res->pdev->dev,
--			"QPLIB: Failed to set function resources");
-+		dev_err(&res->pdev->dev, "Failed to set function resources\n");
- 	}
- 	return rc;
- }
-@@ -199,7 +200,7 @@ int bnxt_qplib_get_sgid(struct bnxt_qplib_res *res,
- {
- 	if (index >= sgid_tbl->max) {
- 		dev_err(&res->pdev->dev,
--			"QPLIB: Index %d exceeded SGID table max (%d)",
-+			"Index %d exceeded SGID table max (%d)\n",
- 			index, sgid_tbl->max);
- 		return -EINVAL;
- 	}
-@@ -217,13 +218,12 @@ int bnxt_qplib_del_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 	int index;
- 
- 	if (!sgid_tbl) {
--		dev_err(&res->pdev->dev, "QPLIB: SGID table not allocated");
-+		dev_err(&res->pdev->dev, "SGID table not allocated\n");
- 		return -EINVAL;
- 	}
- 	/* Do we need a sgid_lock here? */
- 	if (!sgid_tbl->active) {
--		dev_err(&res->pdev->dev,
--			"QPLIB: SGID table has no active entries");
-+		dev_err(&res->pdev->dev, "SGID table has no active entries\n");
- 		return -ENOMEM;
- 	}
- 	for (index = 0; index < sgid_tbl->max; index++) {
-@@ -231,7 +231,7 @@ int bnxt_qplib_del_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 			break;
- 	}
- 	if (index == sgid_tbl->max) {
--		dev_warn(&res->pdev->dev, "GID not found in the SGID table");
-+		dev_warn(&res->pdev->dev, "GID not found in the SGID table\n");
- 		return 0;
- 	}
- 	/* Remove GID from the SGID table */
-@@ -244,7 +244,7 @@ int bnxt_qplib_del_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 		RCFW_CMD_PREP(req, DELETE_GID, cmd_flags);
- 		if (sgid_tbl->hw_id[index] == 0xFFFF) {
- 			dev_err(&res->pdev->dev,
--				"QPLIB: GID entry contains an invalid HW id");
-+				"GID entry contains an invalid HW id\n");
- 			return -EINVAL;
- 		}
- 		req.gid_index = cpu_to_le16(sgid_tbl->hw_id[index]);
-@@ -258,7 +258,7 @@ int bnxt_qplib_del_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 	sgid_tbl->vlan[index] = 0;
- 	sgid_tbl->active--;
- 	dev_dbg(&res->pdev->dev,
--		"QPLIB: SGID deleted hw_id[0x%x] = 0x%x active = 0x%x",
-+		"SGID deleted hw_id[0x%x] = 0x%x active = 0x%x\n",
- 		 index, sgid_tbl->hw_id[index], sgid_tbl->active);
- 	sgid_tbl->hw_id[index] = (u16)-1;
- 
-@@ -277,20 +277,19 @@ int bnxt_qplib_add_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 	int i, free_idx;
- 
- 	if (!sgid_tbl) {
--		dev_err(&res->pdev->dev, "QPLIB: SGID table not allocated");
-+		dev_err(&res->pdev->dev, "SGID table not allocated\n");
- 		return -EINVAL;
- 	}
- 	/* Do we need a sgid_lock here? */
- 	if (sgid_tbl->active == sgid_tbl->max) {
--		dev_err(&res->pdev->dev, "QPLIB: SGID table is full");
-+		dev_err(&res->pdev->dev, "SGID table is full\n");
- 		return -ENOMEM;
- 	}
- 	free_idx = sgid_tbl->max;
- 	for (i = 0; i < sgid_tbl->max; i++) {
- 		if (!memcmp(&sgid_tbl->tbl[i], gid, sizeof(*gid))) {
- 			dev_dbg(&res->pdev->dev,
--				"QPLIB: SGID entry already exist in entry %d!",
--				i);
-+				"SGID entry already exist in entry %d!\n", i);
- 			*index = i;
- 			return -EALREADY;
- 		} else if (!memcmp(&sgid_tbl->tbl[i], &bnxt_qplib_gid_zero,
-@@ -301,7 +300,7 @@ int bnxt_qplib_add_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 	}
- 	if (free_idx == sgid_tbl->max) {
- 		dev_err(&res->pdev->dev,
--			"QPLIB: SGID table is FULL but count is not MAX??");
-+			"SGID table is FULL but count is not MAX??\n");
- 		return -ENOMEM;
- 	}
- 	if (update) {
-@@ -348,7 +347,7 @@ int bnxt_qplib_add_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
- 		sgid_tbl->vlan[free_idx] = 1;
- 
- 	dev_dbg(&res->pdev->dev,
--		"QPLIB: SGID added hw_id[0x%x] = 0x%x active = 0x%x",
-+		"SGID added hw_id[0x%x] = 0x%x active = 0x%x\n",
- 		 free_idx, sgid_tbl->hw_id[free_idx], sgid_tbl->active);
- 
- 	*index = free_idx;
-@@ -404,7 +403,7 @@ int bnxt_qplib_get_pkey(struct bnxt_qplib_res *res,
- 	}
- 	if (index >= pkey_tbl->max) {
- 		dev_err(&res->pdev->dev,
--			"QPLIB: Index %d exceeded PKEY table max (%d)",
-+			"Index %d exceeded PKEY table max (%d)\n",
- 			index, pkey_tbl->max);
- 		return -EINVAL;
- 	}
-@@ -419,14 +418,13 @@ int bnxt_qplib_del_pkey(struct bnxt_qplib_res *res,
- 	int i, rc = 0;
- 
- 	if (!pkey_tbl) {
--		dev_err(&res->pdev->dev, "QPLIB: PKEY table not allocated");
-+		dev_err(&res->pdev->dev, "PKEY table not allocated\n");
- 		return -EINVAL;
- 	}
- 
- 	/* Do we need a pkey_lock here? */
- 	if (!pkey_tbl->active) {
--		dev_err(&res->pdev->dev,
--			"QPLIB: PKEY table has no active entries");
-+		dev_err(&res->pdev->dev, "PKEY table has no active entries\n");
- 		return -ENOMEM;
- 	}
- 	for (i = 0; i < pkey_tbl->max; i++) {
-@@ -435,8 +433,7 @@ int bnxt_qplib_del_pkey(struct bnxt_qplib_res *res,
- 	}
- 	if (i == pkey_tbl->max) {
- 		dev_err(&res->pdev->dev,
--			"QPLIB: PKEY 0x%04x not found in the pkey table",
--			*pkey);
-+			"PKEY 0x%04x not found in the pkey table\n", *pkey);
- 		return -ENOMEM;
- 	}
- 	memset(&pkey_tbl->tbl[i], 0, sizeof(*pkey));
-@@ -453,13 +450,13 @@ int bnxt_qplib_add_pkey(struct bnxt_qplib_res *res,
- 	int i, free_idx, rc = 0;
- 
- 	if (!pkey_tbl) {
--		dev_err(&res->pdev->dev, "QPLIB: PKEY table not allocated");
-+		dev_err(&res->pdev->dev, "PKEY table not allocated\n");
- 		return -EINVAL;
- 	}
- 
- 	/* Do we need a pkey_lock here? */
- 	if (pkey_tbl->active == pkey_tbl->max) {
--		dev_err(&res->pdev->dev, "QPLIB: PKEY table is full");
-+		dev_err(&res->pdev->dev, "PKEY table is full\n");
- 		return -ENOMEM;
- 	}
- 	free_idx = pkey_tbl->max;
-@@ -471,7 +468,7 @@ int bnxt_qplib_add_pkey(struct bnxt_qplib_res *res,
- 	}
- 	if (free_idx == pkey_tbl->max) {
- 		dev_err(&res->pdev->dev,
--			"QPLIB: PKEY table is FULL but count is not MAX??");
-+			"PKEY table is FULL but count is not MAX??\n");
- 		return -ENOMEM;
- 	}
- 	/* Add PKEY to the pkey_tbl */
-@@ -555,8 +552,7 @@ int bnxt_qplib_free_mrw(struct bnxt_qplib_res *res, struct bnxt_qplib_mrw *mrw)
- 	int rc;
- 
- 	if (mrw->lkey == 0xFFFFFFFF) {
--		dev_info(&res->pdev->dev,
--			 "QPLIB: SP: Free a reserved lkey MRW");
-+		dev_info(&res->pdev->dev, "SP: Free a reserved lkey MRW\n");
- 		return 0;
- 	}
- 
-@@ -666,9 +662,8 @@ int bnxt_qplib_reg_mr(struct bnxt_qplib_res *res, struct bnxt_qplib_mrw *mr,
- 			pages++;
- 
- 		if (pages > MAX_PBL_LVL_1_PGS) {
--			dev_err(&res->pdev->dev, "QPLIB: SP: Reg MR pages ");
- 			dev_err(&res->pdev->dev,
--				"requested (0x%x) exceeded max (0x%x)",
-+				"SP: Reg MR pages requested (0x%x) exceeded max (0x%x)\n",
- 				pages, MAX_PBL_LVL_1_PGS);
- 			return -ENOMEM;
- 		}
-@@ -684,7 +679,7 @@ int bnxt_qplib_reg_mr(struct bnxt_qplib_res *res, struct bnxt_qplib_mrw *mr,
- 					       HWQ_TYPE_CTX);
- 		if (rc) {
- 			dev_err(&res->pdev->dev,
--				"SP: Reg MR memory allocation failed");
-+				"SP: Reg MR memory allocation failed\n");
- 			return -ENOMEM;
- 		}
- 		/* Write to the hwq */
-@@ -795,7 +790,7 @@ int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
- 	sbuf = bnxt_qplib_rcfw_alloc_sbuf(rcfw, sizeof(*sb));
- 	if (!sbuf) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: SP: QUERY_ROCE_STATS alloc side buffer failed");
-+			"SP: QUERY_ROCE_STATS alloc side buffer failed\n");
- 		return -ENOMEM;
- 	}
- 
--- 
-2.15.0
-
+T24gVGh1LCAyMDE4LTA4LTA5IGF0IDEyOjM3IC0wNzAwLCBEb3VnIEFuZGVyc29uIHdyb3RlOg0K
+PiBPbiBUaHUsIEF1ZyA5LCAyMDE4IGF0IDExOjI0IEFNLCBUcmVudCBQaWVwaG8gPHRwaWVwaG9A
+aW1waW5qLmNvbT4gd3JvdGU6DQo+ID4gDQo+IEkgdGhpbmsgd2UncmUgaW4gYWdyZWVtZW50IGJ1
+dCBwZXJoYXBzIHRoZXJlJ3MgYSBtaXNjb21tdW5pY2F0aW9uIGhlcmU/DQo+IA0KPiBJJ20gc2F5
+aW5nIHRoYXQgd2UgX3Nob3VsZG4ndF8gcHV0IHRoZSBtYXgtc3BlZWQgb2YgdGhlIG1hc3RlciBp
+biB0aGUNCj4gZGV2aWNlIHRyZWUuICBUaGUgbWF4IHNwZWVkIGZvciB0aGUgSVAgYmxvY2sgb3Vn
+aHQgdG8gYmUgaW4gY29kZQ0KPiBlaXRoZXIgaW4gdGhlIGNsb2NrIGRyaXZlciBvciBpbiB0aGUg
+U1BJIGRyaXZlciBiYXNlZCBvbiB0aGUNCj4gY29tcGF0aWJsZSBzdHJpbmcuDQoNClllcywgdG90
+YWxseSBhZ3JlZS4NCg0KVXN1YWxseSB0aGUgY2xvY2sgZnJhbWV3b3JrIHByb3ZpZGVzIGEgY2xv
+Y2sgdG8gdGhlIFNQSSBJUCBibG9jayBhdA0Kc29tZSByYXRlLCBvciByYW5nZSBvZiByYXRlcy4g
+IEJhc2VkIG9uIHRoYXQgY2xvY2ssIHRoZSBTUEkgSVAgYmxvY2sNCmhhcyBhIG1heCBTUEkgY2xv
+Y2ssIGFuZCB0aGUgZHJpdmVyIGNhbiBjYWxjdWxhdGUgaXQuDQoNCldlIGRvIGhhdmUgYSBjb25j
+ZXB0IG9mIGEgU1BJIG1hc3RlciBtYXggY2xvY2ssIGJ1dCBpdCdzIG5ldmVyIG5lZWRlZA0KdG8g
+YmUgc3BlY2lmaWVkIGluIHRoZSBEVC4NCg0KQ29uc2lkZXIgdXNlcnNwYWNlIGFjY2VzcyB2aWEg
+c3BpZGV2LiAgVGhlIHRyYW5zZmVyIGFza3MgZm9yIDEwMCBNSHosDQpidXQgdGhlIHNwaSBtYXN0
+ZXIgZHJpdmVyIGNhbiBub3QgcG9zc2libHkgcHJvZ3JhbSB0aGF0IHNwZWVkIGludG8NCndoYXRl
+dmVyIHJlZ2lzdGVyKHMpIGNvbnRyb2wgdGhlIHNwaSBjbG9jay4gIFRoZSBTUEkgY29yZSBoYW5k
+bGVzIHRoYXQNCmNhc2Ugb2YgbGltaXRpbmcgYSB0cmFuc2ZlciB0byB0aGUgbWFzdGVyJ3MgbWF4
+Lg0KDQo+IC4uLmFzIG9uZSBhcmd1bWVudCBfYWdhaW5zdF8gcHV0dGluZyBhIG1heC1zcGVlZCBm
+b3IgdGhlIG1hc3RlciBpbiB0aGUNCj4gZGV2aWNlIHRyZWUgSSdtIHNheWluZyB0aGF0IHdlIGNh
+biBhbHJlYWR5IHNwZWNpZnkgYSBtYXgtc3BlZWQgb2YgZWFjaA0KPiBzbGF2ZSBpbiB0aGUgZGV2
+aWNlIHRyZWUuICBUaGUgbWF4IHNwZWVkIG9mIHRoZSBzbGF2ZSBzaG91bGQgdGFrZSBpbnRvDQo+
+IGFjY291bnQgd2hhdGV2ZXIgZmFjdG9ycyBhcmUgc3BlY2lmaWMgdG8gdGhpcyBib2FyZCBpbmNs
+dWRpbmcgdHJhY2UNCj4gbGVuZ3Rocywgbm9pc2UsIGV0Yy4gIElmIHdlIHNvbWVob3cgZGlkIG5l
+ZWQgdG8gZ2V0IGEgbWF4IHNwZWVkIGluIHRoZQ0KPiBkZXZpY2UgdHJlZSBpdCBzZWVtcyBsaWtl
+IHdlIGNvdWxkIGp1c3QgYWRqdXN0IHRoZSBtYXggc3BlZWQgZm9yIHRoZQ0KPiBzbGF2ZSB0byBi
+ZSBzb21ldGhpbmcgbG93ZXIuICBJbiBvdGhlciB3b3JkcyBpZiB5b3Uga25vdyBhIGJvYXJkIGhh
+cw0KPiBhbiBzZG04NDUgb24gaXQgYW5kIHlvdSBrbm93IHRoYXQgdGhlIFNQSSBjbG9jayBvbiBz
+ZG04NDUgY2FuJ3QgZ28NCj4gb3ZlciA1MCBNSHogdGhlbiBpdCB3b3VsZCBtYWtlIG5vIHNlbnNl
+IHRvIHN1Z2dlc3QgdGhhdCB3ZSBzaG91bGQgcnVuDQo+IHRoZSBTUEkgY2xvY2sgZm9yIGEgZGV2
+aWNlIGF0IDEwMCBNSHouDQoNCldoYXQgeW91IG1pZ2h0IGRvIGlzIGRldGVybWluZSB0aGUgc2xh
+dmUgY2FuIHJ1biBhdCAxMDAgTUh6LCBpbiBzb21lDQpjYXNlcy4gIFRoZSBib2FyZCwgdHJhY2Vz
+LCBtYXN0ZXIsIGV0Yy4gY2FuIGRvIGl0LCBpbiBzb21lIGNhc2VzLiAgQnV0DQppdCdzIGFsc28g
+cG9zc2libGUgdG8gY2hhbmdlIHRoZSBjbG9ja2luZyBkZXNpZ24gb3Igc2V0dGluZ3MgYXQgYQ0K
+aGlnaGVyIGxldmVsLCB3aGljaCB0cmlja2xlcyBkb3duIHRvIHRoZSBTUEkgbWFzdGVyIElQIGJs
+b2NrIGhhdmluZyBhDQpsb3dlciBjbG9jay4gIFRoaXMgaXMgaGFuZGxlZCBieSB0aGUgbWFzdGVy
+IG1heCBzcGVlZCBiZWluZyBsZXNzIHRoZW4NCnRoZSBzbGF2ZSdzIG1heCBzcGVlZC4NCg0KVGhl
+IG1hc3RlciBtYXggd291bGRuJ3QgYmUgaW4gdGhlIERULCBzaW5jZSBpdCdzIHByb2JhYmx5IGRl
+dGVybWluZWQgYXQNCnJ1biB0aW1lIGJhc2VkIG9uIGlucHV0IGNsb2NrIHRvIHRoZSBtYXN0ZXIu
+ICBCYXNlZCBvbiB0aGUgU29DIGNvcmUNCmNsb2NrLCB2b2x0YWdlLCBwb3dlciBtb2RlLCBldGMu
+DQoNClNvIHlvdSBtaWdodCBoYXZlIGEgRFQgd2l0aCBhIHNsYXZlIGF0IDEwMCBNSHosIGV2ZW4g
+aWYgaW4gc29tZSBjYXNlcw0KdGhlIG1hc3RlcidzIG1heCBpcyBsZXNzIHRoYW4gMTAwIE1Iei4g
+IEl0J3Mgb2sgdG8gZGVwZW5kIG9uIHRoZSBtYXN0ZXINCnRvIGJlIHRoZSBsaW1pdGluZyBmYWN0
+b3Iu
