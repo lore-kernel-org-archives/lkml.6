@@ -2,225 +2,189 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A89C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E40C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432E5217FF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB266217FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0rE8hF2V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432E5217FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XC2dn2ZT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dsVQd/Re"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB266217FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbeHJKiM (ORCPT
+        id S1728691AbeHJKiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:38:12 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52102 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbeHJKe3 (ORCPT
+        Fri, 10 Aug 2018 06:38:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44672 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727813AbeHJKiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:34:29 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y2-v6so934728wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K/YhS535+x3roX9HgmgmHSzJ3fTxTwkZzhUtcXxc/ek=;
-        b=0rE8hF2VRFrmynJ0XeHXlsLYkdyEBPWuOydh8hVQx1c39gXULu892TW61of1eC10vZ
-         Ph9riIPat2gBlsn1VUWYqGvl62epG/4dPg4WRyvOO32GTfqVNoLdSyvUSNUpfy6Odcax
-         9sVmRdOcQg6I+csUbmaF9jVEUr2rN1adUP8aExfRZ46GtI9U3baAFwWN4JFZW8GYHuAi
-         oMmJ5GoqE7J0QyPkelrsO7AOTZOV1XXuPm7jem3RH1DGxOFZ68RqKoYhd+9czuSSZVdR
-         8orqsCDB59w2sK9I0h9spv7NT0l3qXx6eUpS329fBTrlUFW1sw7sRIHja330Qb86CUYo
-         kKJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=K/YhS535+x3roX9HgmgmHSzJ3fTxTwkZzhUtcXxc/ek=;
-        b=hQFQE/nPEB1QoUyauLakSLPDLOG0ZzumSw21SJ/sk3Cagutgz8hHACBLEsBFrGh2Cj
-         vVN95UhSQUr4viohUKgBYZSGzdEugToXdlxzmazDQNHzpFYpHUMkWOgvIW0laFKk4/lc
-         PcBjJA/nBaNMyphZJ8EXnZ/aBTwcg4KUJN5sohGchoIZr6Ls+Q/PVCJVDo2Lc9Q//noL
-         12+9D9mgracHxYj4I3igPfBsDUjRrRatVIsNJGgZ+vlmhWMB58pFrTSdaZO9jErY4YCC
-         nwd0iziGjz5q+6hAmUxvNccOKh8S6p42aD4fhjDE3dgl5OACBTEb5h6Fsli9l2RE8Imm
-         i2dg==
-X-Gm-Message-State: AOUpUlGVNku3O0eAhz5FWct7NPqS5P2gDBDbz+MV6lGLR/zDDXwkk0cW
-        Y/cy6l8cVjE77k3NluX4BUQ9JQ==
-X-Google-Smtp-Source: AA+uWPwsxqQbk4KADBd35F8Q1fUTcCgtM0Qk6bisvhFHq8d2nLhuDSZa+S3/rb4nLhfgY2tMkeoIRg==
-X-Received: by 2002:a1c:8952:: with SMTP id l79-v6mr742323wmd.7.1533888343181;
-        Fri, 10 Aug 2018 01:05:43 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm9546405wrs.8.2018.08.10.01.05.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 01:05:42 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 06/29] mtd: Add support for reading MTD devices via the nvmem API
-Date:   Fri, 10 Aug 2018 10:05:03 +0200
-Message-Id: <20180810080526.27207-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180810080526.27207-1-brgl@bgdev.pl>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
+        Fri, 10 Aug 2018 06:38:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B9E0060BE2; Fri, 10 Aug 2018 08:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533888570;
+        bh=FaBHguihff+atTJR0j7IOS8FfgIDZL22FbUQ9nrzULY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XC2dn2ZT1eEzEEvcrkXnQ/8KaflN3qIn7EGKqyQnhJeg2RRcihTbX5ZRpa1l78Gra
+         hHnvX4qon6+LWG6wNphctNpimI90UFdoDjf6uZPaNLkaGqdHYkKETKNIDKplnO/4Wy
+         +x9ugDYM4dAxnsELBDQR/Mq7xtfgL6xbTZMqhTwQ=
+Received: from [10.4.34.47] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 871D260B7B;
+        Fri, 10 Aug 2018 08:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533888567;
+        bh=FaBHguihff+atTJR0j7IOS8FfgIDZL22FbUQ9nrzULY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dsVQd/RepUczRF5XXJAtkISpEWdZ4TglGD3JcYC2TpJen4Z5mAZhBJD/Kxqtw8wP0
+         wt5OHLmUrcSKIwDuwnTVNayqDhPj6tfFLUslN4OOjiO7SugSnbtouNotW2s4a5vOpH
+         +OG/1GeLKDYwRj7Fj1G1cGijPdQt0lQVwxz6Wkas=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 871D260B7B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+To:     Douglas Anderson <dianders@chromium.org>, sboyd@kernel.org,
+        andy.gross@linaro.org
+Cc:     girishm@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        anischal@codeaurora.org, bjorn.andersson@linaro.org,
+        grahamr@codeaurora.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>
+References: <20180724174513.174018-1-dianders@chromium.org>
+ <20180724174513.174018-3-dianders@chromium.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <7f2ac80d-d4b8-ce46-0f1f-8e62f8868a61@codeaurora.org>
+Date:   Fri, 10 Aug 2018 13:39:21 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180724174513.174018-3-dianders@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
 
-Allow drivers that use the nvmem API to read data stored on MTD devices.
-For this the mtd devices are registered as read-only NVMEM providers.
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-[Bartosz:
-  - use the managed variant of nvmem_register(),
-  - set the nvmem name]
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/mtd/Kconfig     |  1 +
- drivers/mtd/mtdcore.c   | 50 +++++++++++++++++++++++++++++++++++++++++
- include/linux/mtd/mtd.h |  2 ++
- 3 files changed, 53 insertions(+)
+On 7/24/2018 11:15 PM, Douglas Anderson wrote:
+> Add both the interface and core clock.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> (am from https://lore.kernel.org/patchwork/patch/966680/mbox)
+> 
+> ---
+> 
+> Changes in v3:
+> - Removed gcc_parent_names_9 which I had left in (doh!).
+> 
+> Changes in v2:
+> - Only 19.2, 100, 150, and 300 MHz now.
+> - All clocks come from MAIN rather than EVEN.
+> - Use parent map 0 instead of new parent map 9.
+> 
+>   drivers/clk/qcom/gcc-sdm845.c | 56 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 56 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index 0f694ed4238a..fc1c6658ad82 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -358,6 +358,28 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
+>   	},
+>   };
+>   
+> +static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+> +	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
+> +	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 gcc_qspi_core_clk_src = {
+> +	.cmd_rcgr = 0x4b008,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = gcc_parent_map_0,
+> +	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "gcc_qspi_core_clk_src",
+> +		.parent_names = gcc_parent_names_0,
+> +		.num_parents = 4,
+> +		.ops = &clk_rcg2_floor_ops,
+> +	},
+> +};
+> +
+>   static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
+>   	F(9600000, P_BI_TCXO, 2, 0, 0),
+>   	F(19200000, P_BI_TCXO, 1, 0, 0),
+> @@ -1935,6 +1957,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
+> +	.halt_reg = 0x4b000,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x4b000,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_qspi_cnoc_periph_ahb_clk",
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch gcc_qspi_core_clk = {
+> +	.halt_reg = 0x4b004,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x4b004,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_qspi_core_clk",
+> +			.parent_names = (const char *[]){
+> +				"gcc_qspi_core_clk_src",
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
+>   	.halt_reg = 0x17030,
+>   	.halt_check = BRANCH_HALT_VOTED,
+> @@ -3383,6 +3436,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
+>   	[GPLL4] = &gpll4.clkr,
+>   	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
+>   	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+> +	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
+> +	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
+> +	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+>   };
+>   
+>   static const struct qcom_reset_map gcc_sdm845_resets[] = {
+> 
 
-diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
-index 46ab7feec6b6..f5549482d0df 100644
---- a/drivers/mtd/Kconfig
-+++ b/drivers/mtd/Kconfig
-@@ -1,5 +1,6 @@
- menuconfig MTD
- 	tristate "Memory Technology Device (MTD) support"
-+	imply NVMEM
- 	help
- 	  Memory Technology Devices are flash, RAM and similar chips, often
- 	  used for solid state file systems on embedded devices. This option
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 42395df06be9..a57302eaceb5 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -488,6 +488,49 @@ int mtd_pairing_groups(struct mtd_info *mtd)
- }
- EXPORT_SYMBOL_GPL(mtd_pairing_groups);
- 
-+static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
-+			      void *val, size_t bytes)
-+{
-+	struct mtd_info *mtd = priv;
-+	size_t retlen;
-+	int err;
-+
-+	err = mtd_read(mtd, offset, bytes, &retlen, val);
-+	if (err && err != -EUCLEAN)
-+		return err;
-+
-+	return retlen == bytes ? 0 : -EIO;
-+}
-+
-+static int mtd_nvmem_add(struct mtd_info *mtd)
-+{
-+	struct nvmem_config config = { };
-+
-+	config.dev = &mtd->dev;
-+	config.owner = THIS_MODULE;
-+	config.name = mtd->name;
-+	config.reg_read = mtd_nvmem_reg_read;
-+	config.size = mtd->size;
-+	config.word_size = 1;
-+	config.stride = 1;
-+	config.read_only = true;
-+	config.root_only = true;
-+	config.priv = mtd;
-+
-+	mtd->nvmem = devm_nvmem_register(&mtd->dev, &config);
-+	if (IS_ERR(mtd->nvmem)) {
-+		/* Just ignore if there is no NVMEM support in the kernel */
-+		if (PTR_ERR(mtd->nvmem) == -ENOSYS) {
-+			mtd->nvmem = NULL;
-+		} else {
-+			dev_err(&mtd->dev, "Failed to register NVMEM device\n");
-+			return PTR_ERR(mtd->nvmem);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static struct dentry *dfs_dir_mtd;
- 
- /**
-@@ -570,6 +613,11 @@ int add_mtd_device(struct mtd_info *mtd)
- 	if (error)
- 		goto fail_added;
- 
-+	/* Add the nvmem provider */
-+	error = mtd_nvmem_add(mtd);
-+	if (error)
-+		goto fail_nvmem_add;
-+
- 	if (!IS_ERR_OR_NULL(dfs_dir_mtd)) {
- 		mtd->dbg.dfs_dir = debugfs_create_dir(dev_name(&mtd->dev), dfs_dir_mtd);
- 		if (IS_ERR_OR_NULL(mtd->dbg.dfs_dir)) {
-@@ -595,6 +643,8 @@ int add_mtd_device(struct mtd_info *mtd)
- 	__module_get(THIS_MODULE);
- 	return 0;
- 
-+fail_nvmem_add:
-+	device_unregister(&mtd->dev);
- fail_added:
- 	of_node_put(mtd_get_of_node(mtd));
- 	idr_remove(&mtd_idr, i);
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index a86c4fa93115..8121c6582285 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -25,6 +25,7 @@
- #include <linux/notifier.h>
- #include <linux/device.h>
- #include <linux/of.h>
-+#include <linux/nvmem-provider.h>
- 
- #include <mtd/mtd-abi.h>
- 
-@@ -339,6 +340,7 @@ struct mtd_info {
- 	struct device dev;
- 	int usecount;
- 	struct mtd_debug_info dbg;
-+	struct nvmem_device *nvmem;
- };
- 
- int mtd_ooblayout_ecc(struct mtd_info *mtd, int section,
+Reviewed-by: Taniya Das <tdas@codeaurora.org>
+
 -- 
-2.18.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
