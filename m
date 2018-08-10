@@ -2,133 +2,156 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8F7C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0281AC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3CAB2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:30:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSDPeOic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3CAB2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AC633223DC
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC633223DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeHJJ7X (ORCPT
+        id S1727662AbeHJKFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 05:59:23 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35159 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbeHJJ7X (ORCPT
+        Fri, 10 Aug 2018 06:05:02 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:59778 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbeHJKFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 05:59:23 -0400
-Received: by mail-pl0-f66.google.com with SMTP id w3-v6so3696954plq.2;
-        Fri, 10 Aug 2018 00:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=wFNnxeBMmkIhuMsk5nFdpZCxOtUWmKM1XRENFKFYPVE=;
-        b=LSDPeOicgUZjZbiNNKKXF4svLnN9XPwDZPnXEJb9Raw25bi612+d2+A6/IAt3G2I55
-         cuHTfZOO7IJihMLLE8dHEuutMpE/8+zZH8EEuquK5bdma6vuSfquqzIbZb8E5on5o+ze
-         Wx56d73W/zrazYcOrv1VPdjZvHeOJpbNCui3CT/xbEDGPSAbl1REDVxn/3QLURWU2Unc
-         iZC33micK3hd+oxUSlQXoKq7oDKNVGtYr1d2pfWMF4Nx8kuD61r3jnhhsKk3uQaUWYiv
-         mlOXCyDDgu7OwBb3XmKG9aLa6hgDp2xbkEqffR66sqlIqzXHXwQcJXV7OzkyVv09rX+g
-         jyFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=wFNnxeBMmkIhuMsk5nFdpZCxOtUWmKM1XRENFKFYPVE=;
-        b=DtzVifHwru8iAgR+xWC8eQTPi9EeeF5MUZ2srqPL5aLhOLbeAmerewzHw+CyeI6VsV
-         ZtaCGXh9kQhLL8vnjqhdvloODOusnH9aVreOwSwm2NTKFzUVrIGXT/q6IrMDR07akM1Z
-         0t5VTcUA4A2xLUCPn2QIzAfD8wgSFa2CvLPVD09td9b1A873/kv49aVOMIfCGgw40wVC
-         piallVlpl1dq/JhVAx74HJzyEtY9deEzwv6RrAmblfv+RiEN7+jdlUmKoK0hrjGUCw2i
-         LH489AzZFXYPOXH87WAElb2znpJfMXimThWbke5r4Gl7hr17zB9AFGbScqJOJXXKI5mM
-         D6Gw==
-X-Gm-Message-State: AOUpUlEkvsmpjP00rd/vj1hbrqJy8uzKE5Z7v4XDsDlyru0PHkwKkY+x
-        ckBp3WvbLlz4Q5PWG9Xk/Z7Kyrq0
-X-Google-Smtp-Source: AA+uWPzVyoPISGFL6CBBm08Ki/rlKgxaCAd75/c2e2RYD+i/GO5aB2R5kB1debg8oC0n1Dmq8T4VnA==
-X-Received: by 2002:a17:902:599b:: with SMTP id p27-v6mr4981212pli.191.1533886245734;
-        Fri, 10 Aug 2018 00:30:45 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.51? ([2402:f000:1:1501:200:5efe:a66f:4733])
-        by smtp.gmail.com with ESMTPSA id y128-v6sm2366807pfb.56.2018.08.10.00.30.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 00:30:45 -0700 (PDT)
-Subject: Re: [BUG] net: xfrm: Two possible sleep-in-atomic-context bugs
-To:     Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <b74ebf58-16c0-4a51-a004-7ce9e6abde7a@gmail.com>
- <20180810053604.uopy5ziikf736p5o@gauss3.secunet.de>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <b996cef6-530d-635a-2e28-eabca3387e2f@gmail.com>
-Date:   Fri, 10 Aug 2018 15:30:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 10 Aug 2018 06:05:02 -0400
+Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 4941ec66a7a73c31; Fri, 10 Aug 2018 09:36:21 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH] cpuidle: menu: Handle stopped tick more aggressively
+Date:   Fri, 10 Aug 2018 09:34:17 +0200
+Message-ID: <1951009.1jlQfyrxio@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180810053604.uopy5ziikf736p5o@gauss3.secunet.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your reply :)
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
+with stopped tick) missed the case when the target residencies of
+deep idle states of CPUs are above the tick boundary which may cause
+the CPU to get stuck in a shallow idle state for a long time.
 
-On 2018/8/10 13:36, Steffen Klassert wrote:
-> On Fri, Aug 10, 2018 at 10:02:42AM +0800, bai wrote:
->> The code may sleep in interrupt handler.
->> xfrm_trans_reinject() is an interrupt handler set in tasklet_init().
->> The function call paths (from bottom to top) in Linux-4.16 are:
->>
->> [FUNC] schedule_timeout
->> net/core/sock.c, 2044: schedule_timeout in sock_wait_for_wmem
->> net/core/sock.c, 2083: sock_wait_for_wmem in sock_alloc_send_pskb
->> net/core/sock.c, 2102: sock_alloc_send_pskb in sock_alloc_send_skb
->> net/ipv6/mcast.c, 1989: sock_alloc_send_skb in igmp6_send
-> igmp6_send calls sock_alloc_send_skb with 'noblock = 1',
-> this means that sock_wait_for_wmem is not executed in
-> sock_alloc_send_pskb.
->
->> net/ipv6/mcast.c, 2391: igmp6_send in igmp6_join_group
->> net/ipv6/mcast.c, 670: igmp6_join_group in igmp6_group_added
->> net/ipv6/mcast.c, 914: igmp6_group_added in ipv6_dev_mc_inc
->> net/ipv6/ndisc.c, 379: ipv6_dev_mc_inc in pndisc_constructor
->> net/core/neighbour.c, 640: [FUNC_PTR]pndisc_constructor in pneigh_lookup
->> net/ipv6/ip6_output.c, 483: pneigh_lookup in ip6_forward
->> ./include/net/dst.h, 449: [FUNC_PTR]ip6_forward in dst_input
->> net/ipv6/ip6_input.c, 71: dst_input in ip6_rcv_finish
->> net/xfrm/xfrm_input.c, 511: [FUNC_PTR]ip6_rcv_finish in xfrm_trans_reinject
->>
->> [FUNC] kmalloc(GFP_KERNEL)
->> net/core/neighbour.c, 630: kmalloc in pneigh_lookup
->> net/ipv6/ip6_output.c, 483: pneigh_lookup in ip6_forward
-> ip6_forward calls pneigh_lookup with 'creat = 0',
-> this means that pneigh_lookup does not do the kmalloc.
->
->> ./include/net/dst.h, 449: [FUNC_PTR]ip6_forward in dst_input
->> net/ipv6/ip6_input.c, 71: dst_input in ip6_rcv_finish
->> net/xfrm/xfrm_input.c, 511: [FUNC_PTR]ip6_rcv_finish in xfrm_trans_reinject
->>
->> Note that [FUNC_PTR] means a function pointer call is used.
->>
->> I do not find a good way to fix them, so I only report.
->> These possible bugs are found by my static analysis tool (DSAC) and checked
->> by my code review.
-> Both codepaths are ok, maybe you should fix your tool ;-)
+Say there are two CPU idle states available: one shallow, with the
+target residency much below the tick boundary and one deep, with
+the target residency significantly above the tick boundary.  In
+that case, if the tick has been stopped already and the expected
+next timer event is relatively far in the future, the governor will
+assume the idle duration to be equal to TICK_USEC and it will select
+the idle state for the CPU accordingly.  However, that will cause the
+shallow state to be selected even though it would have been more
+energy-efficient to select the deep one.
 
-It seems that the path condition checking in my tool needs to be improved.
-I will do it, thanks :)
+To address this issue, modify the governor to always assume idle
+duration to be equal to the time till the closest timer event if
+the tick is not running which will cause the selected idle states
+to always match the known CPU wakeup time.
 
+Also make it always indicate that the tick should be stopped in
+that case for consistency.
 
-Best wishes,
-Jia-Ju Bai
+Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
+Reported-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c |   49 ++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 26 deletions(-)
+
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -307,6 +307,18 @@ static int menu_select(struct cpuidle_dr
+ 	/* determine the expected residency time, round up */
+ 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
+ 
++	/*
++	 * If the tick is already stopped, the cost of possible short idle
++	 * duration misprediction is much higher, because the CPU may be stuck
++	 * in a shallow idle state for a long time as a result of it.  In that
++	 * case say we might mispredict and use the known time till the closest
++	 * timer event for the idle state selection.
++	 */
++	if (tick_nohz_tick_stopped()) {
++		data->predicted_us = ktime_to_us(delta_next);
++		goto select;
++	}
++
+ 	get_iowait_load(&nr_iowaiters, &cpu_load);
+ 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+ 
+@@ -344,29 +356,15 @@ static int menu_select(struct cpuidle_dr
+ 	 */
+ 	data->predicted_us = min(data->predicted_us, expected_interval);
+ 
+-	if (tick_nohz_tick_stopped()) {
+-		/*
+-		 * If the tick is already stopped, the cost of possible short
+-		 * idle duration misprediction is much higher, because the CPU
+-		 * may be stuck in a shallow idle state for a long time as a
+-		 * result of it.  In that case say we might mispredict and try
+-		 * to force the CPU into a state for which we would have stopped
+-		 * the tick, unless a timer is going to expire really soon
+-		 * anyway.
+-		 */
+-		if (data->predicted_us < TICK_USEC)
+-			data->predicted_us = min_t(unsigned int, TICK_USEC,
+-						   ktime_to_us(delta_next));
+-	} else {
+-		/*
+-		 * Use the performance multiplier and the user-configurable
+-		 * latency_req to determine the maximum exit latency.
+-		 */
+-		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+-		if (latency_req > interactivity_req)
+-			latency_req = interactivity_req;
+-	}
++	/*
++	 * Use the performance multiplier and the user-configurable latency_req
++	 * to determine the maximum exit latency.
++	 */
++	interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
++	if (latency_req > interactivity_req)
++		latency_req = interactivity_req;
+ 
++select:
+ 	expected_interval = data->predicted_us;
+ 	/*
+ 	 * Find the idle state with the lowest power while satisfying
+@@ -403,14 +401,13 @@ static int menu_select(struct cpuidle_dr
+ 	 * Don't stop the tick if the selected state is a polling one or if the
+ 	 * expected idle duration is shorter than the tick period length.
+ 	 */
+-	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+-	    expected_interval < TICK_USEC) {
++	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
++	    expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
+ 		unsigned int delta_next_us = ktime_to_us(delta_next);
+ 
+ 		*stop_tick = false;
+ 
+-		if (!tick_nohz_tick_stopped() && idx > 0 &&
+-		    drv->states[idx].target_residency > delta_next_us) {
++		if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
+ 			/*
+ 			 * The tick is not going to be stopped and the target
+ 			 * residency of the state to be returned is not within
+
