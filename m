@@ -2,501 +2,687 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86572C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4DCC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2C9223E6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA02F208B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HefIuFJc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2C9223E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f3YlYkI/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pgo+pasq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA02F208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbeHKBd0 (ORCPT
+        id S1727198AbeHKBfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 21:33:26 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:42443 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbeHKBd0 (ORCPT
+        Fri, 10 Aug 2018 21:35:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56798 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbeHKBfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 21:33:26 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b16-v6so18443590oic.9
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 16:01:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ty6YhRY2fNMR0qCfXsybxBJ+8pKYaa+LZmETNWj0MKQ=;
-        b=HefIuFJcEQOADqc/fbq3itU0MWml6deY2bP+J+Jwo226WD0H9ovHCugeent+0rcKPl
-         anLjOr3RLjubkm9wR399pxC9E1ky4qc7SzY6vo55igEscvuj9UyWKr+uELy0v0vPUPY0
-         d9o5vXoismzfW4yoDNeJ7ZzyLBkEqZwsRE07T05XSjqKpcrasC6hzHzg8K62GI3N7o5L
-         xv+Kprkj6g792aYJLFfL3yttjqxd5epuuy2GkVqxPWhotratbVTZEbVBji3XKmriD6AZ
-         f62NPs+onbxA1vrdSrIKBYM1RC8nuZhDLVNS7QU+tRfRbFeUNqVP9+lIDLsk6hmDzxRr
-         j/9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ty6YhRY2fNMR0qCfXsybxBJ+8pKYaa+LZmETNWj0MKQ=;
-        b=DOUIUxM/NNA/5KQgqH6eA7i+m8lMfVktLYY3WVzib6+J770PJjaO98XjsxwrAuCdxG
-         28li7qVSIPWHcLpZWRo96/uV5c0yBGRW7v45agNVAJBeWsVYkRHJbbvAYhcSp+MC9iI1
-         WAu0lUUMupOEIr8h5lrJ5+jxVYBQHtADJfVCxmbwaIFZkiWf9kLVwNnror2DRfRj5+dq
-         RYM4yfNINhKPk88H2JLfnZ6UsHTO7xJM2R6poCBHz3E5Etrada+HhEDKFiS5isdS9Oyt
-         knLfCyDmlXIUerDhkDo/d0HOhQEAvqRanDvI5lYNuAvJ7enoXhfX9621y6sTy29eslnf
-         GKJw==
-X-Gm-Message-State: AOUpUlFW4YQT5dMBGz8v0qWpXo29GrD6/m9WCL30ZepylXf5gbUmZs5X
-        0FQGgcTHlxrHekM8nLOAoIlUmZuRdDsVQs6Eod68tw==
-X-Google-Smtp-Source: AA+uWPyGTTTuUKHclXwSvd07cR31QdKiCUWrI2mh3XK5PvFDLSygR2Un2QwkopaBQWXbT0JbGlNXszSwF14+wX+tClg=
-X-Received: by 2002:aca:6044:: with SMTP id u65-v6mr9260719oib.323.1533942090444;
- Fri, 10 Aug 2018 16:01:30 -0700 (PDT)
+        Fri, 10 Aug 2018 21:35:30 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5B72360B81; Fri, 10 Aug 2018 23:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533942214;
+        bh=UT6lWc48UYDedrLB0kGPI4OoarnkkjzhOP1Tw/DPcx4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f3YlYkI/dXbuBk4inmTDHu59G1Tw6tfPL9XLAMZXqA4KCFDOak/rVkQywUBxGrlOq
+         UtyP4plIKPOcA016Y84UxX8RwXb+KL7VnlHt7MyJFofuLqREYqc9H6wEi043tumlJI
+         UBd5lGCLWhPOVmM5q6L4PLQBGVJ3yghytbbXRD7g=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6667A60590;
+        Fri, 10 Aug 2018 23:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533942211;
+        bh=UT6lWc48UYDedrLB0kGPI4OoarnkkjzhOP1Tw/DPcx4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Pgo+pasqFoDp2NFBnXtU5GOUvz9LffmtUCt5/Eu34Gn/Y11uicTkVDYi08+lJFrl0
+         qhB07slE6YGrRuJhnIwL3ELdcbEm9XdwwbXoehVA8kowbSbssO0MMuJWCKFc6gI83N
+         q7Zf27l4Q9iy+Z+IT2UtPcrk7F2tq+8ZWed+7YL0=
 MIME-Version: 1.0
-References: <20180806211932.198488-1-jannh@google.com> <CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
- <CAGH-Kgvn5=BT0GQU2qHBwJos8Ev=VgasicXeqQEG166Mi8fc6w@mail.gmail.com>
-In-Reply-To: <CAGH-Kgvn5=BT0GQU2qHBwJos8Ev=VgasicXeqQEG166Mi8fc6w@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 11 Aug 2018 01:01:03 +0200
-Message-ID: <CAG48ez1QS6e4cBsunh=V0fx6Gj-VENGeuakz2XK9eQoHU6Uh6Q@mail.gmail.com>
-Subject: Re: [PATCH] selinux: refactor mls_context_to_sid() and make it stricter
-To:     pmoore@redhat.com
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 10 Aug 2018 16:03:31 -0700
+From:   vnkgutta@codeaurora.org
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     evgreen@chromium.org, robh@kernel.org, mchehab@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, rishabhb@codeaurora.org
+Subject: Re: [PATCH v1 3/4] drivers: edac: Add EDAC driver support for QCOM
+ SoCs
+In-Reply-To: <20180810035954.GB21528@nazgul.tnic>
+References: <1533155615-27929-1-git-send-email-vnkgutta@codeaurora.org>
+ <1533155615-27929-4-git-send-email-vnkgutta@codeaurora.org>
+ <20180810035954.GB21528@nazgul.tnic>
+Message-ID: <6152720eedd8f108c49746942a37813a@codeaurora.org>
+X-Sender: vnkgutta@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 4:07 AM Paul Moore <pmoore@redhat.com> wrote:
->
-> On Wed, Aug 8, 2018 at 9:56 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
-> > >
-> > > The intended behavior change for this patch is to reject any MLS strings
-> > > that contain (trailing) garbage if p->mls_enabled is true.
-> > >
-> > > As suggested by Paul Moore, change mls_context_to_sid() so that the two
-> > > parts of the range are extracted before the rest of the parsing. Because
-> > > now we don't have to scan for two different separators simultaneously
-> > > everywhere, we can actually switch to strchr() everywhere instead of the
-> > > open-coded loops that scan for two separators at once.
-> > >
-> > > mls_context_to_sid() used to signal how much of the input string was parsed
-> > > by updating `*scontext`. However, there is actually no case in which
-> > > mls_context_to_sid() only parses a subset of the input and still returns
-> > > a success (other than the buggy case with a second '-' in which it
-> > > incorrectly claims to have consumed the entire string). Turn `scontext`
-> > > into a simple pointer argument and stop redundantly checking whether the
-> > > entire input was consumed in string_to_context_struct(). This also lets us
-> > > remove the `scontext_len` argument from `string_to_context_struct()`.
-> > >
-> > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > ---
-> > > Refactored version of
-> > > "[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
-> > > Paul's comments. WDYT?
-> > > I've thrown some inputs at it, and it seems to work.
-> > >
-> > >  security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
-> > >  security/selinux/ss/mls.h      |   2 +-
-> > >  security/selinux/ss/services.c |  12 +--
-> > >  3 files changed, 82 insertions(+), 110 deletions(-)
-> >
-> > Thanks for the rework, this looks much better than what we currently
-> > have.  I have some comments/questions below ...
-> >
-> > > diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-> > > index 39475fb455bc..2fe459df3c85 100644
-> > > --- a/security/selinux/ss/mls.c
-> > > +++ b/security/selinux/ss/mls.c
-> > > @@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
-> > >  /*
-> > >   * Set the MLS fields in the security context structure
-> > >   * `context' based on the string representation in
-> > > - * the string `*scontext'.  Update `*scontext' to
-> > > - * point to the end of the string representation of
-> > > - * the MLS fields.
-> > > + * the string `scontext'.
-> > >   *
-> > >   * This function modifies the string in place, inserting
-> > >   * NULL characters to terminate the MLS fields.
-> > > @@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
-> > >   */
-> > >  int mls_context_to_sid(struct policydb *pol,
-> > >                        char oldc,
-> > > -                      char **scontext,
-> > > +                      char *scontext,
-> > >                        struct context *context,
-> > >                        struct sidtab *s,
-> > >                        u32 def_sid)
-> > >  {
-> > > -
-> > > -       char delim;
-> > > -       char *scontextp, *p, *rngptr;
-> > > +       char *sensitivity, *cur_cat, *next_cat, *rngptr;
-> > >         struct level_datum *levdatum;
-> > >         struct cat_datum *catdatum, *rngdatum;
-> > > -       int l, rc = -EINVAL;
-> > > +       int l, rc, i;
-> > > +       char *rangep[2];
-> > >
-> > >         if (!pol->mls_enabled) {
-> > > -               if (def_sid != SECSID_NULL && oldc)
-> > > -                       *scontext += strlen(*scontext) + 1;
-> > > -               return 0;
-> > > +               if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
-> > > +                       return 0;
-> > > +               return -EINVAL;
-> >
-> > Why are we simply not always return 0 in the case where MLS is not
-> > enabled in the policy?  The mls_context_to_sid() is pretty much a
-> > no-op in this case (even more so with your pat regardless of input and
-> > I worry that returning EINVAL here is a deviation from current
-> > behavior which could cause problems.
->
-> Sorry, I was rephrasing the text above when I accidentally hit send.
-> While my emails are generally a good source of typos, the above is
-> pretty bad, so let me try again ...
->
-> Why are we simply not always returning 0 in the case where MLS is not
-> enabled in the policy?  The mls_context_to_sid() function is pretty
-> much a no-op in this case regardless of input and I worry that
-> returning EINVAL here is a deviation from current behavior which could
-> cause problems.
+On 2018-08-09 20:59, Borislav Petkov wrote:
+> On Wed, Aug 01, 2018 at 01:33:34PM -0700, Venkata Narendra Kumar Gutta 
+> wrote:
+>> From: Channagoud Kadabi <ckadabi@codeaurora.org>
+>> 
+>> Add error reporting driver for SBEs and DBEs. As of now, this driver
+> 
+> Please write out those abbreviations.
+Done, I just followed the other commits which has the same and thought 
+they are understood in the community,
+I'll update it in the next patch set.
+> 
+>> supports erp for Last Level Cache Controller (LLCC). This driver takes
+>> care of dumping registers and adding config options to enable and
+>> disable panic when the errors happen in cache.
+>> 
+>> Co-developed-by: Venkata Narendra Kumar Gutta 
+>> <vnkgutta@codeaurora.org>
+>> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+> 
+> The proper order is:
+> 
+> SOB: Author
+> SOB: Sender/handler/...
+> 
+> So:
+> 
+> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Ok, I'll update accordingly.
 
-Reverse call graph of mls_context_to_sid():
+> 
+>> ---
+>>  MAINTAINERS              |   7 +
+>>  drivers/edac/Kconfig     |  28 +++
+>>  drivers/edac/Makefile    |   1 +
+>>  drivers/edac/qcom_edac.c | 507 
+>> +++++++++++++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 543 insertions(+)
+>>  create mode 100644 drivers/edac/qcom_edac.c
+>> 
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index f6a9b08..68b3484 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -5227,6 +5227,13 @@ L:	linux-edac@vger.kernel.org
+>>  S:	Maintained
+>>  F:	drivers/edac/ti_edac.c
+>> 
+>> +EDAC-QUALCOMM
+>> +M:	Channagoud Kadabi<ckadabi@codeaurora.org>
+>> +M:	Venkata Narendra Kumar Gutta<vnkgutta@codeaurora.org>
+> 
+> Space between name and email address.
+> 
+>> +L:	linux-arm-msm@vger.kernel.org
+> 
+> Also
+> 
+> L:      linux-edac@vger.kernel.org
+> 
+> so that the EDAC ML gets CCed too.
+Ok, Done
+> 
+>> +S:	Maintained
+>> +F:	drivers/edac/qcom_edac.c
+>> +
+>>  EDIROL UA-101/UA-1000 DRIVER
+>>  M:	Clemens Ladisch <clemens@ladisch.de>
+>>  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+>> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+>> index 57304b2..c654b0e 100644
+>> --- a/drivers/edac/Kconfig
+>> +++ b/drivers/edac/Kconfig
+>> @@ -460,4 +460,32 @@ config EDAC_TI
+>>  	  Support for error detection and correction on the
+>>            TI SoCs.
+>> 
+>> +config EDAC_QCOM
+>> +	depends on EDAC=y
+> 
+> Why on EDAC=y? Did you blindly copy it or is there a reason why
+> edac_core should be only built-in or can it be a module too?
 
-mls_context_to_sid()
-    mls_from_string()
-        selinux_audit_rule_init()
-            [...]
-    string_to_context_struct()
-        security_context_to_sid_core()
-            [...]
-        convert_context()
-            [...]
+I took it from EDAC_ALTERA example. I want to put it like EDAC_QCOM
+should be dependent on EDAC. Doesn't it make any sense or we don't need 
+this at all?
+or do you think it's redundant?
 
-string_to_context_struct() currently has the following code:
+> 
+>> +	tristate "QCOM EDAC Controller"
+>> +	help
+>> +		Support for error detection and correction on the
+>> +		QCOM SoCs.
+>> +
+>> +config EDAC_QCOM_LLCC
+>> +	depends on EDAC_QCOM=y && QCOM_LLCC
+>> +	tristate "QCOM EDAC Controller for LLCC Cache"
+>> +	help
+>> +		Support for error detection and correction on the
+>> +		QCOM LLCC cache. Report errors caught by LLCC ECC
+>> +		mechanism.
+>> +
+>> +		For debugging issues having to do with stability and overall system
+>> +		health, you should probably say 'Y' here.
+>> +
+>> +config EDAC_QCOM_LLCC_PANIC_ON_UE
+>> +	depends on EDAC_QCOM_LLCC
+>> +	bool "Panic on uncorrectable errors - qcom llcc"
+>> +	help
+>> +		Forcibly cause a kernel panic if an uncorrectable error (UE) is
+>> +		detected. This can reduce debugging times on hardware which may be
+>> +		operating at voltages or frequencies outside normal specification.
+>> +
+>> +		For production builds, you should probably say 'N' here.
+>> +
+>>  endif # EDAC
+>> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+>> index 02b43a7..716096d 100644
+>> --- a/drivers/edac/Makefile
+>> +++ b/drivers/edac/Makefile
+>> @@ -77,3 +77,4 @@ obj-$(CONFIG_EDAC_ALTERA)		+= altera_edac.o
+>>  obj-$(CONFIG_EDAC_SYNOPSYS)		+= synopsys_edac.o
+>>  obj-$(CONFIG_EDAC_XGENE)		+= xgene_edac.o
+>>  obj-$(CONFIG_EDAC_TI)			+= ti_edac.o
+>> +obj-$(CONFIG_EDAC_QCOM)			+= qcom_edac.o
+>> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+>> new file mode 100644
+>> index 0000000..cf3e2b0
+>> --- /dev/null
+>> +++ b/drivers/edac/qcom_edac.c
+>> @@ -0,0 +1,507 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/edac.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/smp.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/soc/qcom/llcc-qcom.h>
+>> +#include "edac_mc.h"
+>> +#include "edac_device.h"
+>> +
+>> +#ifdef CONFIG_EDAC_QCOM_LLCC_PANIC_ON_UE
+>> +#define LLCC_ERP_PANIC_ON_UE            1
+>> +#else
+>> +#define LLCC_ERP_PANIC_ON_UE            0
+>> +#endif
+>> +
+>> +#define EDAC_LLCC                       "qcom_llcc"
+>> +
+>> +#define TRP_SYN_REG_CNT                 6
+>> +
+>> +#define DRP_SYN_REG_CNT                 8
+>> +
+>> +#define LLCC_COMMON_STATUS0             0x0003000C
+>> +#define LLCC_LB_CNT_MASK                GENMASK(31, 28)
+>> +#define LLCC_LB_CNT_SHIFT               28
+>> +
+>> +/* single & Double Bit syndrome register offsets */
+>> +#define TRP_ECC_SB_ERR_SYN0             0x0002304C
+>> +#define TRP_ECC_DB_ERR_SYN0             0x00020370
+>> +#define DRP_ECC_SB_ERR_SYN0             0x0004204C
+>> +#define DRP_ECC_DB_ERR_SYN0             0x00042070
+>> +
+>> +/* Error register offsets */
+>> +#define TRP_ECC_ERROR_STATUS1           0x00020348
+>> +#define TRP_ECC_ERROR_STATUS0           0x00020344
+>> +#define DRP_ECC_ERROR_STATUS1           0x00042048
+>> +#define DRP_ECC_ERROR_STATUS0           0x00042044
+>> +
+>> +/* TRP, DRP interrupt register offsets */
+>> +#define DRP_INTERRUPT_STATUS            0x00041000
+>> +#define TRP_INTERRUPT_0_STATUS          0x00020480
+>> +#define DRP_INTERRUPT_CLEAR             0x00041008
+>> +#define DRP_ECC_ERROR_CNTR_CLEAR        0x00040004
+>> +#define TRP_INTERRUPT_0_CLEAR           0x00020484
+>> +#define TRP_ECC_ERROR_CNTR_CLEAR        0x00020440
+>> +
+>> +/* Mask and shift macros */
+>> +#define ECC_DB_ERR_COUNT_MASK           GENMASK(4, 0)
+>> +#define ECC_DB_ERR_WAYS_MASK            GENMASK(31, 16)
+>> +#define ECC_DB_ERR_WAYS_SHIFT           BIT(4)
+>> +
+>> +#define ECC_SB_ERR_COUNT_MASK           GENMASK(23, 16)
+>> +#define ECC_SB_ERR_COUNT_SHIFT          BIT(4)
+>> +#define ECC_SB_ERR_WAYS_MASK            GENMASK(15, 0)
+>> +
+>> +#define SB_ECC_ERROR                    BIT(0)
+>> +#define DB_ECC_ERROR                    BIT(1)
+>> +
+>> +#define DRP_TRP_INT_CLEAR               GENMASK(1, 0)
+>> +#define DRP_TRP_CNT_CLEAR               GENMASK(1, 0)
+>> +
+>> +/* Config registers offsets*/
+>> +#define DRP_ECC_ERROR_CFG               0x00040000
+>> +
+>> +/* TRP, DRP interrupt register offsets */
+>> +#define CMN_INTERRUPT_0_ENABLE          0x0003001C
+>> +#define CMN_INTERRUPT_2_ENABLE          0x0003003C
+>> +#define TRP_INTERRUPT_0_ENABLE          0x00020488
+>> +#define DRP_INTERRUPT_ENABLE            0x0004100C
+>> +
+>> +#define SB_ERROR_THRESHOLD              0x1
+>> +#define SB_ERROR_THRESHOLD_SHIFT        24
+>> +#define SB_DB_TRP_INTERRUPT_ENABLE      0x3
+>> +#define TRP0_INTERRUPT_ENABLE           0x1
+>> +#define DRP0_INTERRUPT_ENABLE           BIT(6)
+>> +#define SB_DB_DRP_INTERRUPT_ENABLE      0x3
+>> +
+>> +
+>> +enum {
+>> +	LLCC_DRAM_CE = 0,
+>> +	LLCC_DRAM_UE,
+>> +	LLCC_TRAM_CE,
+>> +	LLCC_TRAM_UE,
+>> +};
+>> +
+>> +struct errors_edac {
+>> +	const char *msg;
+>> +	void (*func)(struct edac_device_ctl_info *edev_ctl,
+>> +				int inst_nr, int block_nr, const char *msg);
+>> +};
+>> +
+>> +static const struct errors_edac errors[] = {
+>> +	{"LLCC Data RAM correctable Error", edac_device_handle_ce},
+>> +	{"LLCC Data RAM uncorrectable Error", edac_device_handle_ue},
+>> +	{"LLCC Tag RAM correctable Error", edac_device_handle_ce},
+>> +	{"LLCC Tag RAM uncorrectable Error", edac_device_handle_ue},
+>> +};
+> 
+> An array of function pointers just for two functions?! This looks 
+> silly.
+> Just do a simple if-else.
+Ok, I'll check and update this one.
+> 
+>> +
+>> +static int qcom_llcc_core_setup(struct regmap *llcc_bcast_regmap)
+>> +{
+>> +	u32 sb_err_threshold;
+>> +	int ret;
+>> +
+>> +	/* Enable TRP in instance 2 of common interrupt enable register */
+>> +	ret = regmap_update_bits(llcc_bcast_regmap, CMN_INTERRUPT_2_ENABLE,
+>> +				 TRP0_INTERRUPT_ENABLE,
+>> +				 TRP0_INTERRUPT_ENABLE);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Enable ECC interrupts on Tag Ram */
+>> +	ret = regmap_update_bits(llcc_bcast_regmap, TRP_INTERRUPT_0_ENABLE,
+>> +				 SB_DB_TRP_INTERRUPT_ENABLE,
+>> +				 SB_DB_TRP_INTERRUPT_ENABLE);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Enable SB error for Data RAM */
+>> +	sb_err_threshold = (SB_ERROR_THRESHOLD << SB_ERROR_THRESHOLD_SHIFT);
+>> +	ret = regmap_write(llcc_bcast_regmap, DRP_ECC_ERROR_CFG,
+>> +			   sb_err_threshold);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Enable DRP in instance 2 of common interrupt enable register */
+>> +	ret = regmap_update_bits(llcc_bcast_regmap, CMN_INTERRUPT_2_ENABLE,
+>> +				 DRP0_INTERRUPT_ENABLE,
+>> +				 DRP0_INTERRUPT_ENABLE);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Enable ECC interrupts on Data Ram */
+>> +	ret = regmap_write(llcc_bcast_regmap, DRP_INTERRUPT_ENABLE,
+>> +			   SB_DB_DRP_INTERRUPT_ENABLE);
+>> +	return ret;
+>> +}
+>> +
+>> +/* Clear the error interrupt and counter registers */
+>> +static int qcom_llcc_clear_errors(int err_type, struct llcc_drv_data 
+>> *drv)
+>> +{
+>> +	int ret = 0;
+>> +
+>> +	switch (err_type) {
+>> +	case LLCC_DRAM_CE:
+>> +	case LLCC_DRAM_UE:
+>> +		/* Clear the interrupt */
+>> +		ret = regmap_write(drv->bcast_regmap, DRP_INTERRUPT_CLEAR,
+>> +				   DRP_TRP_INT_CLEAR);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		/* Clear the counters */
+>> +		ret = regmap_write(drv->bcast_regmap, DRP_ECC_ERROR_CNTR_CLEAR,
+>> +				   DRP_TRP_CNT_CLEAR);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case LLCC_TRAM_CE:
+>> +	case LLCC_TRAM_UE:
+>> +		ret = regmap_write(drv->bcast_regmap, TRP_INTERRUPT_0_CLEAR,
+>> +				   DRP_TRP_INT_CLEAR);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		ret = regmap_write(drv->bcast_regmap, TRP_ECC_ERROR_CNTR_CLEAR,
+>> +				   DRP_TRP_CNT_CLEAR);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	}
+>> +	return ret;
+>> +}
+>> +
+>> +/* Dump syndrome registers for tag Ram Double bit errors */
+>> +static int dump_trp_db_syn_reg(struct llcc_drv_data *drv, u32 bank)
+>> +{
+>> +	int db_err_cnt, db_err_ways, ret, i;
+>> +	u32 synd_reg, synd_val;
+>> +
+>> +	for (i = 0; i < TRP_SYN_REG_CNT; i++) {
+>> +		synd_reg = TRP_ECC_DB_ERR_SYN0 + (i * 4);
+>> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+>> +				  &synd_val);
+>> +		if (ret)
+>> +			return ret;
+>> +		edac_printk(KERN_CRIT, EDAC_LLCC, "TRP_ECC_SYN%d: 0x%8x\n",
+>> +			    i, synd_val);
+>> +	}
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + TRP_ECC_ERROR_STATUS1,
+>> +			  &db_err_cnt);
+>> +	if (ret)
+>> +		return ret;
+>> +	db_err_cnt = (db_err_cnt & ECC_DB_ERR_COUNT_MASK);
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error count: 0x%4x\n",
+>> +		    db_err_cnt);
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + TRP_ECC_ERROR_STATUS0,
+>> +			  &db_err_ways);
+>> +	if (ret)
+>> +		return ret;
+>> +	db_err_ways = (db_err_ways & ECC_DB_ERR_WAYS_MASK);
+>> +	db_err_ways >>= ECC_DB_ERR_WAYS_SHIFT;
+>> +
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error ways: 0x%4x\n",
+>> +		    db_err_ways);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/* Dump syndrome register for tag Ram Single Bit Errors */
+>> +static int dump_trp_sb_syn_reg(struct llcc_drv_data *drv, u32 bank)
+>> +{
+>> +	int sb_err_cnt, sb_err_ways, ret, i;
+>> +	u32 synd_reg, synd_val;
+>> +
+>> +	for (i = 0; i < TRP_SYN_REG_CNT; i++) {
+>> +		synd_reg = TRP_ECC_SB_ERR_SYN0 + (i * 4);
+>> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+>> +				  &synd_val);
+>> +		if (ret)
+>> +			return ret;
+>> +		edac_printk(KERN_CRIT, EDAC_LLCC, "TRP_ECC_SYN%d: 0x%8x\n", i,
+>> +			    synd_val);
+>> +	}
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + TRP_ECC_ERROR_STATUS1,
+>> +			  &sb_err_cnt);
+>> +	if (ret)
+>> +		return ret;
+>> +	sb_err_cnt = (sb_err_cnt & ECC_SB_ERR_COUNT_MASK);
+>> +	sb_err_cnt >>= ECC_SB_ERR_COUNT_SHIFT;
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error count: 0x%4x\n",
+>> +		    sb_err_cnt);
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + TRP_ECC_ERROR_STATUS0,
+>> +			  &sb_err_ways);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	sb_err_ways = sb_err_ways & ECC_SB_ERR_WAYS_MASK;
+>> +
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error ways: 0x%4x\n",
+>> +		    sb_err_ways);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/* Dump syndrome registers for Data Ram Double bit errors */
+>> +static int dump_drp_db_syn_reg(struct llcc_drv_data *drv, u32 bank)
+>> +{
+>> +	int db_err_cnt, db_err_ways, ret, i;
+>> +	u32 synd_reg, synd_val;
+>> +
+>> +	for (i = 0; i < DRP_SYN_REG_CNT; i++) {
+>> +		synd_reg = DRP_ECC_DB_ERR_SYN0 + (i * 4);
+>> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+>> +				  &synd_val);
+>> +		if (ret)
+>> +			return ret;
+>> +		edac_printk(KERN_CRIT, EDAC_LLCC, "DRP_ECC_SYN%d: 0x%8x\n", i,
+>> +			    synd_val);
+>> +	}
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + DRP_ECC_ERROR_STATUS1,
+>> +			  &db_err_cnt);
+>> +	if (ret)
+>> +		return ret;
+>> +	db_err_cnt = (db_err_cnt & ECC_DB_ERR_COUNT_MASK);
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error count: 0x%4x\n",
+>> +		    db_err_cnt);
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + DRP_ECC_ERROR_STATUS0,
+>> +			  &db_err_ways);
+>> +	if (ret)
+>> +		return ret;
+>> +	db_err_ways &= ECC_DB_ERR_WAYS_MASK;
+>> +	db_err_ways >>= ECC_DB_ERR_WAYS_SHIFT;
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error ways: 0x%4x\n",
+>> +		    db_err_ways);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/* Dump Syndrome registers for Data Ram Single bit errors*/
+>> +static int dump_drp_sb_syn_reg(struct llcc_drv_data *drv, u32 bank)
+>> +{
+>> +	int sb_err_cnt, sb_err_ways, ret, i;
+>> +	u32 synd_reg, synd_val;
+>> +
+>> +	for (i = 0; i < DRP_SYN_REG_CNT; i++) {
+>> +		synd_reg = DRP_ECC_SB_ERR_SYN0 + (i * 4);
+>> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+>> +				  &synd_val);
+>> +		if (ret)
+>> +			return ret;
+>> +		edac_printk(KERN_CRIT, EDAC_LLCC, "DRP_ECC_SYN%d: 0x%8x\n", i,
+>> +			    synd_val);
+>> +	}
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + DRP_ECC_ERROR_STATUS1,
+>> +			  &sb_err_cnt);
+>> +	if (ret)
+>> +		return ret;
+>> +	sb_err_cnt &= ECC_SB_ERR_COUNT_MASK;
+>> +	sb_err_cnt >>= ECC_SB_ERR_COUNT_SHIFT;
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error count: 0x%4x\n",
+>> +		    sb_err_cnt);
+>> +
+>> +	ret = regmap_read(drv->regmap,
+>> +			  drv->offsets[bank] + DRP_ECC_ERROR_STATUS0,
+>> +			  &sb_err_ways);
+>> +	if (ret)
+>> +		return ret;
+>> +	sb_err_ways = sb_err_ways & ECC_SB_ERR_WAYS_MASK;
+>> +
+>> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error ways: 0x%4x\n",
+>> +		    sb_err_ways);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int dump_syn_reg(struct edac_device_ctl_info *edev_ctl,
+>> +			 int err_type, u32 bank)
+>> +{
+>> +	struct llcc_drv_data *drv = edev_ctl->pvt_info;
+>> +	int ret = 0;
+>> +
+>> +	switch (err_type) {
+>> +	case LLCC_DRAM_CE:
+>> +		ret = dump_drp_sb_syn_reg(drv, bank);
+>> +		break;
+>> +	case LLCC_DRAM_UE:
+>> +		ret = dump_drp_db_syn_reg(drv, bank);
+>> +		break;
+>> +	case LLCC_TRAM_CE:
+>> +		ret = dump_trp_sb_syn_reg(drv, bank);
+>> +		break;
+>> +	case LLCC_TRAM_UE:
+>> +		ret = dump_trp_db_syn_reg(drv, bank);
+> 
+> So those functions look very similar to one another and thus are
+> quadrupled object code. You could have one function instead and pass
+> in the register as an arg. Or some other smarter scheme to save object
+> size...
 
-        rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
-        if (rc)
-                goto out;
+There are actually 6 different registers foe each case handled in each
+function, that's why we had to have different functions with the same
+outline. I can explore the way of having a single method and categorize 
+based on
+the error type. But I don't think I will be reducing a lot of object 
+code. Let me
+explore on what can I do on this.
 
-        rc = -EINVAL;
-        if ((p - scontext) < scontext_len)
-                goto out;
 
-In my patch, I tried to preserve the behavior of
-string_to_context_struct(), at the expense of slightly changing the
-behavior of selinux_audit_rule_init().
-
-But if you think that's a bad idea or unnecessary, say so and I'll change it.
-
-> > >         }
-> > >
-> > >         /*
-> > > @@ -261,113 +258,94 @@ int mls_context_to_sid(struct policydb *pol,
-> > >                 struct context *defcon;
-> > >
-> > >                 if (def_sid == SECSID_NULL)
-> > > -                       goto out;
-> > > +                       return -EINVAL;
-> > >
-> > >                 defcon = sidtab_search(s, def_sid);
-> > >                 if (!defcon)
-> > > -                       goto out;
-> > > +                       return -EINVAL;
-> > >
-> > > -               rc = mls_context_cpy(context, defcon);
-> > > -               goto out;
-> > > +               return mls_context_cpy(context, defcon);
-> > >         }
-> > >
-> > > -       /* Extract low sensitivity. */
-> > > -       scontextp = p = *scontext;
-> > > -       while (*p && *p != ':' && *p != '-')
-> > > -               p++;
-> > > -
-> > > -       delim = *p;
-> > > -       if (delim != '\0')
-> > > -               *p++ = '\0';
-> > > +       /*
-> > > +        * If we're dealing with a range, figure out where the two parts
-> > > +        * of the range begin.
-> > > +        */
-> > > +       rangep[0] = scontext;
-> > > +       rangep[1] = strchr(scontext, '-');
-> > > +       if (rangep[1]) {
-> > > +               rangep[1][0] = '\0';
-> > > +               rangep[1]++;
-> > > +       }
-> > >
-> > > +       /* For each part of the range: */
-> > >         for (l = 0; l < 2; l++) {
-> > > -               levdatum = hashtab_search(pol->p_levels.table, scontextp);
-> > > -               if (!levdatum) {
-> > > -                       rc = -EINVAL;
-> > > -                       goto out;
-> > > -               }
-> > > +               /* Split sensitivity and category set. */
-> > > +               sensitivity = rangep[l];
-> > > +               if (sensitivity == NULL)
-> > > +                       break;
-> > > +               next_cat = strchr(sensitivity, ':');
-> > > +               if (next_cat)
-> > > +                       *(next_cat++) = '\0';
-> > >
-> > > +               /* Parse sensitivity. */
-> > > +               levdatum = hashtab_search(pol->p_levels.table, sensitivity);
-> > > +               if (!levdatum)
-> > > +                       return -EINVAL;
-> > >                 context->range.level[l].sens = levdatum->level->sens;
-> > >
-> > > -               if (delim == ':') {
-> > > -                       /* Extract category set. */
-> > > -                       while (1) {
-> > > -                               scontextp = p;
-> > > -                               while (*p && *p != ',' && *p != '-')
-> > > -                                       p++;
-> > > -                               delim = *p;
-> > > -                               if (delim != '\0')
-> > > -                                       *p++ = '\0';
-> > > -
-> > > -                               /* Separate into range if exists */
-> > > -                               rngptr = strchr(scontextp, '.');
-> > > -                               if (rngptr != NULL) {
-> > > -                                       /* Remove '.' */
-> > > -                                       *rngptr++ = '\0';
-> > > -                               }
-> > > +               /* Extract category set. */
-> > > +               while (next_cat != NULL) {
-> > > +                       cur_cat = next_cat;
-> > > +                       next_cat = strchr(next_cat, ',');
-> > > +                       if (next_cat != NULL)
-> > > +                               *(next_cat++) = '\0';
-> > > +
-> > > +                       /* Separate into range if exists */
-> > > +                       rngptr = strchr(cur_cat, '.');
-> > > +                       if (rngptr != NULL) {
-> > > +                               /* Remove '.' */
-> >
-> > On the chance you need to respin this patch, you can probably get rid
-> > of the above comment and the if-body braces; we don't have "Remove X"
-> > comments in other similar places in this function.
-> >
-> > > +                               *rngptr++ = '\0';
-> > > +                       }
-> > >
-> > > -                               catdatum = hashtab_search(pol->p_cats.table,
-> > > -                                                         scontextp);
-> > > -                               if (!catdatum) {
-> > > -                                       rc = -EINVAL;
-> > > -                                       goto out;
-> > > -                               }
-> > > +                       catdatum = hashtab_search(pol->p_cats.table, cur_cat);
-> > > +                       if (!catdatum)
-> > > +                               return -EINVAL;
-> > >
-> > > -                               rc = ebitmap_set_bit(&context->range.level[l].cat,
-> > > -                                                    catdatum->value - 1, 1);
-> > > -                               if (rc)
-> > > -                                       goto out;
-> > > -
-> > > -                               /* If range, set all categories in range */
-> > > -                               if (rngptr) {
-> > > -                                       int i;
-> > > -
-> > > -                                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-> > > -                                       if (!rngdatum) {
-> > > -                                               rc = -EINVAL;
-> > > -                                               goto out;
-> > > -                                       }
-> > > -
-> > > -                                       if (catdatum->value >= rngdatum->value) {
-> > > -                                               rc = -EINVAL;
-> > > -                                               goto out;
-> > > -                                       }
-> > > -
-> > > -                                       for (i = catdatum->value; i < rngdatum->value; i++) {
-> > > -                                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-> > > -                                               if (rc)
-> > > -                                                       goto out;
-> > > -                                       }
-> > > -                               }
-> > > +                       rc = ebitmap_set_bit(&context->range.level[l].cat,
-> > > +                                            catdatum->value - 1, 1);
-> > > +                       if (rc)
-> > > +                               return rc;
-> > > +
-> > > +                       /* If range, set all categories in range */
-> > > +                       if (rngptr == NULL)
-> > > +                               continue;
-> > > +
-> > > +                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-> > > +                       if (!rngdatum)
-> > > +                               return -EINVAL;
-> > > +
-> > > +                       if (catdatum->value >= rngdatum->value)
-> > > +                               return -EINVAL;
-> > >
-> > > -                               if (delim != ',')
-> > > -                                       break;
-> > > +                       for (i = catdatum->value; i < rngdatum->value; i++) {
-> > > +                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-> > > +                               if (rc)
-> > > +                                       return rc;
-> > >                         }
-> > >                 }
-> > > -               if (delim == '-') {
-> > > -                       /* Extract high sensitivity. */
-> > > -                       scontextp = p;
-> > > -                       while (*p && *p != ':')
-> > > -                               p++;
-> > > -
-> > > -                       delim = *p;
-> > > -                       if (delim != '\0')
-> > > -                               *p++ = '\0';
-> > > -               } else
-> > > -                       break;
-> > >         }
-> > >
-> > > -       if (l == 0) {
-> > > +       /* If we didn't see a '-', the range start is also the range end. */
-> > > +       if (rangep[1] == NULL) {
-> > >                 context->range.level[1].sens = context->range.level[0].sens;
-> > >                 rc = ebitmap_cpy(&context->range.level[1].cat,
-> > >                                  &context->range.level[0].cat);
-> > >                 if (rc)
-> > > -                       goto out;
-> > > +                       return rc;
-> > >         }
-> > > -       *scontext = ++p;
-> > > -       rc = 0;
-> > > -out:
-> > > -       return rc;
-> > > +
-> > > +       return 0;
-> >
-> > In the case where we have a MLS policy loaded (pol->mls_enabled != 0)
-> > and scontext is empty (scontext[0] = '\0'), we could end up returning
-> > 0 couldn't we?  It seems like we might want a quick check for this
-> > before we parse the low/high portions of the field into the rangep
-> > array.
-> >
-> > >  }
-> > >
-> > >  /*
-> > > @@ -379,21 +357,19 @@ int mls_context_to_sid(struct policydb *pol,
-> > >  int mls_from_string(struct policydb *p, char *str, struct context *context,
-> > >                     gfp_t gfp_mask)
-> > >  {
-> > > -       char *tmpstr, *freestr;
-> > > +       char *tmpstr;
-> > >         int rc;
-> > >
-> > >         if (!p->mls_enabled)
-> > >                 return -EINVAL;
-> > >
-> > > -       /* we need freestr because mls_context_to_sid will change
-> > > -          the value of tmpstr */
-> > > -       tmpstr = freestr = kstrdup(str, gfp_mask);
-> > > +       tmpstr = kstrdup(str, gfp_mask);
-> > >         if (!tmpstr) {
-> > >                 rc = -ENOMEM;
-> > >         } else {
-> > > -               rc = mls_context_to_sid(p, ':', &tmpstr, context,
-> > > +               rc = mls_context_to_sid(p, ':', tmpstr, context,
-> > >                                         NULL, SECSID_NULL);
-> > > -               kfree(freestr);
-> > > +               kfree(tmpstr);
-> > >         }
-> > >
-> > >         return rc;
-> > > diff --git a/security/selinux/ss/mls.h b/security/selinux/ss/mls.h
-> > > index 9a3ff7af70ad..67093647576d 100644
-> > > --- a/security/selinux/ss/mls.h
-> > > +++ b/security/selinux/ss/mls.h
-> > > @@ -34,7 +34,7 @@ int mls_level_isvalid(struct policydb *p, struct mls_level *l);
-> > >
-> > >  int mls_context_to_sid(struct policydb *p,
-> > >                        char oldc,
-> > > -                      char **scontext,
-> > > +                      char *scontext,
-> > >                        struct context *context,
-> > >                        struct sidtab *s,
-> > >                        u32 def_sid);
-> > > diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-> > > index dd2ceec06fef..9212d4dd817a 100644
-> > > --- a/security/selinux/ss/services.c
-> > > +++ b/security/selinux/ss/services.c
-> > > @@ -1367,7 +1367,6 @@ int security_sid_to_context_force(struct selinux_state *state, u32 sid,
-> > >  static int string_to_context_struct(struct policydb *pol,
-> > >                                     struct sidtab *sidtabp,
-> > >                                     char *scontext,
-> > > -                                   u32 scontext_len,
-> > >                                     struct context *ctx,
-> > >                                     u32 def_sid)
-> > >  {
-> > > @@ -1428,15 +1427,12 @@ static int string_to_context_struct(struct policydb *pol,
-> > >
-> > >         ctx->type = typdatum->value;
-> > >
-> > > -       rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
-> > > +       rc = mls_context_to_sid(pol, oldc, p, ctx, sidtabp, def_sid);
-> > >         if (rc)
-> > >                 goto out;
-> > >
-> > > -       rc = -EINVAL;
-> > > -       if ((p - scontext) < scontext_len)
-> > > -               goto out;
-> > > -
-> > >         /* Check the validity of the new context. */
-> > > +       rc = -EINVAL;
-> > >         if (!policydb_context_isvalid(pol, ctx))
-> > >                 goto out;
-> > >         rc = 0;
-> > > @@ -1491,7 +1487,7 @@ static int security_context_to_sid_core(struct selinux_state *state,
-> > >         policydb = &state->ss->policydb;
-> > >         sidtab = &state->ss->sidtab;
-> > >         rc = string_to_context_struct(policydb, sidtab, scontext2,
-> > > -                                     scontext_len, &context, def_sid);
-> > > +                                     &context, def_sid);
-> > >         if (rc == -EINVAL && force) {
-> > >                 context.str = str;
-> > >                 context.len = strlen(str) + 1;
-> > > @@ -1959,7 +1955,7 @@ static int convert_context(u32 key,
-> > >                         goto out;
-> > >
-> > >                 rc = string_to_context_struct(args->newp, NULL, s,
-> > > -                                             c->len, &ctx, SECSID_NULL);
-> > > +                                             &ctx, SECSID_NULL);
-> > >                 kfree(s);
-> > >                 if (!rc) {
-> > >                         printk(KERN_INFO "SELinux:  Context %s became valid (mapped).\n",
-> > > --
-> > > 2.18.0.597.ga71716f1ad-goog
-> >
-> > --
-> > paul moore
-> > www.paul-moore.com
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> paul moore
-> security @ redhat
+> 
+>> +		break;
+>> +	}
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = qcom_llcc_clear_errors(err_type, drv);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	errors[err_type].func(edev_ctl, 0, bank, errors[err_type].msg);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static irqreturn_t
+>> +llcc_ecc_irq_handler (int irq, void *edev_ctl)
+> 
+> Stray " " after function name.
+I'll correct this.
+> 
+>> +{
+>> +	struct edac_device_ctl_info *edac_dev_ctl;
+>> +	irqreturn_t irq_rc = IRQ_NONE;
+>> +	u32 drp_error, trp_error, i;
+>> +	struct llcc_drv_data *drv;
+>> +	int ret;
+>> +
+>> +	edac_dev_ctl = (struct edac_device_ctl_info *)edev_ctl;
+>> +	drv = edac_dev_ctl->pvt_info;
+>> +
+>> +	for (i = 0; i < drv->num_banks; i++) {
+>> +		/* Look for Data RAM errors */
+>> +		ret = regmap_read(drv->regmap,
+>> +				  drv->offsets[i] + DRP_INTERRUPT_STATUS,
+>> +				  &drp_error);
+>> +		if (ret)
+>> +			return irq_rc;
+>> +
+>> +		if (drp_error & SB_ECC_ERROR) {
+>> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+>> +				    "Single Bit Error detected in Data Ram\n");
+>> +			dump_syn_reg(edev_ctl, LLCC_DRAM_CE, i);
+>> +			irq_rc = IRQ_HANDLED;
+>> +		} else if (drp_error & DB_ECC_ERROR) {
+>> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+>> +				    "Double Bit Error detected in Data Ram\n");
+>> +			dump_syn_reg(edev_ctl, LLCC_DRAM_UE, i);
+>> +			irq_rc = IRQ_HANDLED;
+>> +		}
+>> +
+>> +		/* Look for Tag RAM errors */
+>> +		ret = regmap_read(drv->regmap,
+>> +				  drv->offsets[i] + TRP_INTERRUPT_0_STATUS,
+>> +				  &trp_error);
+>> +		if (ret)
+>> +			return irq_rc;
+>> +		if (trp_error & SB_ECC_ERROR) {
+>> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+>> +				    "Single Bit Error detected in Tag Ram\n");
+>> +			dump_syn_reg(edev_ctl, LLCC_TRAM_CE, i);
+>> +			irq_rc = IRQ_HANDLED;
+>> +		} else if (trp_error & DB_ECC_ERROR) {
+>> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+>> +				    "Double Bit Error detected in Tag Ram\n");
+>> +			dump_syn_reg(edev_ctl, LLCC_TRAM_UE, i);
+>> +			irq_rc = IRQ_HANDLED;
+>> +		}
+>> +	}
+>> +
+>> +	return irq_rc;
+>> +}
+>> +
+>> +static int qcom_llcc_edac_probe(struct platform_device *pdev)
+>> +{
+>> +	struct llcc_drv_data *llcc_driv_data = pdev->dev.platform_data;
+>> +	struct edac_device_ctl_info *edev_ctl;
+>> +	struct device *dev = &pdev->dev;
+>> +	u32 ecc_irq;
+>> +	int rc;
+>> +
+>> +	rc = qcom_llcc_core_setup(llcc_driv_data->bcast_regmap);
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	/* Allocate edac control info */
+>> +	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
+>> +					      llcc_driv_data->num_banks, 1,
+>> +					      NULL, 0,
+>> +					      edac_device_alloc_index());
+>> +
+>> +	if (!edev_ctl)
+>> +		return -ENOMEM;
+>> +
+>> +	edev_ctl->dev = dev;
+>> +	edev_ctl->mod_name = dev_name(dev);
+>> +	edev_ctl->dev_name = dev_name(dev);
+>> +	edev_ctl->ctl_name = "llcc";
+>> +	edev_ctl->panic_on_ue = LLCC_ERP_PANIC_ON_UE;
+>> +
+>> +	edev_ctl->pvt_info = (struct llcc_drv_data *) llcc_driv_data;
+> 
+> Why is that cast needed?
+Not needed, redundant, the variable is already of that type. I'll check 
+if the cast is needed in the first line of this function.
