@@ -2,121 +2,273 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3E6C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1674C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B84522404
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:18:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEENNbEu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B84522404
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 668F622402
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668F622402
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeHJPso (ORCPT
+        id S1728149AbeHJPvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 11:48:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727539AbeHJPsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 11:48:43 -0400
-Received: from jouet.infradead.org (179.176.1.0.dynamic.adsl.gvt.net.br [179.176.1.0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 10 Aug 2018 11:51:49 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:34133 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727534AbeHJPvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 11:51:49 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6796922402;
-        Fri, 10 Aug 2018 13:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533907130;
-        bh=s8GEecCTn5VcKmdzttf5EtdY24lIlMkzaIuE+3RKqSc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DEENNbEuckvRr+6+yl4Jj22ryTkUQCg+WmoHMh0ZtO8QoJWptAhiIsT7Z3wlIirQu
-         fopcT15MeSVbwp2feRLA0m6BatTtaDEh3+KemhnVbf0cuN5Ymgd5oslasJXn8X8w4h
-         veakl38GVqviy9WemCt0Ly2FwBkn02TVSrnxy0cI=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id D0F5C140A1C; Fri, 10 Aug 2018 10:18:47 -0300 (-03)
-Date:   Fri, 10 Aug 2018 10:18:47 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Benno Evers <bevers@mesosphere.com>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH] perf tools: Check for null when copying nsinfo.
-Message-ID: <20180810131847.GG5395@kernel.org>
-References: <20180809215349.24299-1-bevers@mesosphere.com>
- <20180810045537.GA479@sejong>
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9E7E12012BA067;
+        Fri, 10 Aug 2018 15:21:52 +0200 (CEST)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-scsi@molgen.mpg.de,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org
+From:   Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
+Subject: aacraid: Regression in 4.14.56 with *genirq/affinity: assign vectors
+ to all possible CPUs*
+Message-ID: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
+Date:   Fri, 10 Aug 2018 15:21:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180810045537.GA479@sejong>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000508080401030302090207"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Aug 10, 2018 at 01:55:37PM +0900, Namhyung Kim escreveu:
-> Hello,
-> 
-> On Thu, Aug 09, 2018 at 11:53:48PM +0200, Benno Evers wrote:
-> > The argument to nsinfo__copy() was assumed to be valid, but some code paths
-> > exist that will lead to NULL being passed.
-> > 
-> > In particular, running 'perf script -D' on a perf.data file containing an
-> > PERF_RECORD_MMAP event associating the '[vdso]' dso with pid 0 earlier in
-> > the event stream will lead to a segfault.
-> > 
-> > Since all calling code is already checking for a non-null return value,
-> > just return NULL for this case as well.
-> 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> It seems you missed the Signed-off-by though.
+This is a cryptographically signed message in MIME format.
 
-Yeah, please collect Namhyung's Acked-by and provide yours, i.e. your
-patch should end with the following lines:
+--------------ms000508080401030302090207
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Dear Greg,
 
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Benno Evers <bevers@mesosphere.com>
+Commit ef86f3a7 (genirq/affinity: assign vectors to all possible CPUs) ad=
+ded
+for Linux 4.14.56 causes the aacraid module to not detect the attached de=
+vices
+anymore on a Dell PowerEdge R720 with two six core 24x E5-2630 @ 2.30GHz.=
 
-My git-am scripts will collect the Cc from the e-mail message and add
-the Link:  with the Message-id.
 
-Thanks,
+```
+$ dmesg | grep raid
+[    0.269768] raid6: sse2x1   gen()  7179 MB/s
+[    0.290069] raid6: sse2x1   xor()  5636 MB/s
+[    0.311068] raid6: sse2x2   gen()  9160 MB/s
+[    0.332076] raid6: sse2x2   xor()  6375 MB/s
+[    0.353075] raid6: sse2x4   gen() 11164 MB/s
+[    0.374064] raid6: sse2x4   xor()  7429 MB/s
+[    0.379001] raid6: using algorithm sse2x4 gen() 11164 MB/s
+[    0.386001] raid6: .... xor() 7429 MB/s, rmw enabled
+[    0.391008] raid6: using ssse3x2 recovery algorithm
+[    3.559682] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 =
+EST 2006)
+[    3.570061] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST =
+2006)
+[   10.725767] Adaptec aacraid driver 1.2.1[50834]-custom
+[   10.731724] aacraid 0000:04:00.0: can't disable ASPM; OS doesn't have =
+ASPM control
+[   10.743295] aacraid: Comm Interface type3 enabled
+$ lspci -nn | grep Adaptec
+04:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/=
+PCIe 3 [9005:028d] (rev 01)
+42:00.0 Serial Attached SCSI controller [0107]: Adaptec Smart Storage PQI=
+ 12G SAS/PCIe 3 [9005:028f] (rev 01)
+```
 
-- Arnaldo
- 
-> Thanks,
-> Namhyung
-> 
-> 
-> > ---
-> >  tools/perf/util/namespaces.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-> > index 5be021701f34..cf8bd123cf73 100644
-> > --- a/tools/perf/util/namespaces.c
-> > +++ b/tools/perf/util/namespaces.c
-> > @@ -139,6 +139,9 @@ struct nsinfo *nsinfo__copy(struct nsinfo *nsi)
-> >  {
-> >  	struct nsinfo *nnsi;
-> >  
-> > +	if (nsi == NULL)
-> > +		return NULL;
-> > +
-> >  	nnsi = calloc(1, sizeof(*nnsi));
-> >  	if (nnsi != NULL) {
-> >  		nnsi->pid = nsi->pid;
-> > -- 
-> > 2.17.1
-> > 
+But, it still works with a Dell PowerEdge R715 with two eight core AMD
+Opteron 6136, the card below.
+
+```
+$ lspci -nn | grep Adaptec
+22:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/=
+PCIe 3 [9005:028d] (rev 01)
+```
+
+Reverting the commit fixes the issue.
+
+commit ef86f3a72adb8a7931f67335560740a7ad696d1d
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Fri Jan 12 10:53:05 2018 +0800
+
+    genirq/affinity: assign vectors to all possible CPUs
+   =20
+    commit 84676c1f21e8ff54befe985f4f14dc1edc10046b upstream.
+   =20
+    Currently we assign managed interrupt vectors to all present CPUs.  T=
+his
+    works fine for systems were we only online/offline CPUs.  But in case=
+ of
+    systems that support physical CPU hotplug (or the virtualized version=
+ of
+    it) this means the additional CPUs covered for in the ACPI tables or =
+on
+    the command line are not catered for.  To fix this we'd either need t=
+o
+    introduce new hotplug CPU states just for this case, or we can start
+    assining vectors to possible but not present CPUs.
+   =20
+    Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+    Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+    Tested-by: Stefan Haberland <sth@linux.vnet.ibm.com>
+    Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU")
+    Cc: linux-kernel@vger.kernel.org
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+The problem doesn=E2=80=99t happen with Linux 4.17.11, so there are commi=
+ts in
+Linux master fixing this. Unfortunately, my attempts to find out failed.
+
+I was able to cherry-pick the three commits below on top of 4.14.62,
+but the problem persists.
+
+6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on e=
+rror
+355d7ecdea35 scsi: hpsa: fix selection of reply queue
+e944e9615741 scsi: virtio_scsi: fix IO hang caused by automatic irq vecto=
+r affinity
+
+Trying to cherry-pick the commits below, referencing the commit
+in question, gave conflicts.
+
+1. adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
+2. d3056812e7df genirq/affinity: Spread irq vectors among present CPUs as=
+ far as possible
+
+To avoid further trial and error with the server with a slow firmware,
+do you know what commits should fix the issue?
+
+
+Kind regards,
+
+Paul
+
+
+PS: I couldn=E2=80=99t find, who suggested this for stable, that means ho=
+w
+it was picked to be added to stable. Is there an easy way to find
+that out?
+
+
+--------------ms000508080401030302090207
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODA4MTAxMzIxNTJaMC8GCSqGSIb3DQEJBDEiBCAxmjJjFXpGb85XRIms
+TE8hRyVLcXPg5N+muHv+T+bC/zBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAHh9
+9uG8Yqi5601MrxwMLMbcJjy5VQQEWnaWO0JRgqVYKTGNMndXLuXdxbdZFjKESv/f6CD1d+2h
+jtKGT4SC8AujsPSUf0vW8Cio8qYTX41tsXrr0XUyTavsReiY+1fREb31DQ0UevaLYgWfr/Up
+GV9JGLKkAgxbU7f+qVq+FukaARnoS2VhKqJoHrHnOuqryZeNh81WlOhVDCT2y+y1PVO8h5FA
+WAsX202neddu5tAuZhce+I1Q1Ob/xR3/nOl4+AdVffDdWs89w9KRlVQTs47JtFKkCAp0RwCi
+pD6RpT2Olv8lO2mAdjUnWRRNry4XvawJfgeQvyECSWkveeHdlA4AAAAAAAA=
+--------------ms000508080401030302090207--
