@@ -2,133 +2,168 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAB1C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725ECC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB50A21EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:39:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AC6C223EA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:40:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="O55kWoXW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB50A21EB4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fY2XV99h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC6C223EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbeHJSJv (ORCPT
+        id S1728168AbeHJSKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:09:51 -0400
-Received: from imap.thunk.org ([74.207.234.97]:59400 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727408AbeHJSJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:09:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Pz/6tKnuLzpE5nK588kIUmaUNkjM5HG+kYWHqQtNSA8=; b=O55kWoXWdCcAX/OpdGAlTtiD7c
-        /GcPiJEjqpP9L8X82wEPwnRkO20gVIriOjilKves1QUYT0OFG9fJ3H/dFWC53DUi5T1pqMrzVODrh
-        DTBmR5OWJpp43gd+i8WYjxd+PXqd1qHYS1h885+3AEfesj8zyaYbIvT8Cbt44ETbF9UU=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fo9VH-0001fW-OJ; Fri, 10 Aug 2018 15:39:03 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 080757A570B; Fri, 10 Aug 2018 11:39:02 -0400 (EDT)
-Date:   Fri, 10 Aug 2018 11:39:02 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        viro@zeniv.linux.org.uk,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: BUG: Mount ignores mount options
-Message-ID: <20180810153902.GH21087@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        viro@zeniv.linux.org.uk,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>, Li Zefan <lizefan@huawei.com>,
-        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-References: <87d0uqpba5.fsf@xmission.com>
- <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
- <22361.1533913891@warthog.procyon.org.uk>
+        Fri, 10 Aug 2018 14:10:43 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:45578 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbeHJSKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 14:10:43 -0400
+Received: by mail-ua1-f65.google.com with SMTP id k8-v6so2304795uaq.12
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 08:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=lMH8nArlE6tWHdJMP3sJaKhwcKeq1zibWTG50RcP4Dg=;
+        b=fY2XV99hSDyFZFM7uwU5S0xOt3R3f+3mWaQePP3mM6aHf2Xqhg6fa2NXtVIBmB42aY
+         fhT+rsPd5qAyM1NzRbq+8AvA0tnLlL8Z/QbFUQbh12ysNAxlYe2BNaFvPInpT+2qW0pP
+         C9YgjZvJj5WocQ/7TTn14TogDB8iRXHSxFE8A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=lMH8nArlE6tWHdJMP3sJaKhwcKeq1zibWTG50RcP4Dg=;
+        b=tx+t1g7gCOU7X+cj5regTk5m7PGeJiatDVLeJ6tPFlqOGux3X9W0eEGGKHhPlAIqqc
+         Yo3lobfxS3su38Eb2Xx8cMnRvN4dFTm1NtaX+mtOcI0s4MA6OLwCBNcibHAzlteK0xfe
+         xbxWsT1sNpBYP5b72F12DHZVICQ0FJQF3T4dzVGj8GceZU0eNhpbU1r8sQ0Fa+nLs8uY
+         DW90YO2G/IUavCswsrK9/a4be66w9hpULx8Lm1GCyzCAHYQIfZnZbld0Q0AJuqiNMl4p
+         WAuN0jbaADXOZF8m37pKhy8Tu4Y4Tw0P7fj3ewJ1y2jtoF5T4wq/FGrjNLTTIQKsczRi
+         zI/w==
+X-Gm-Message-State: AOUpUlFmthP86aZbHu4WMzVa6+NLKVGOcrCNgxX47bATdMRqMXdPjE7f
+        stHoXynaMcaDPNswjPFAoZhIrJRZ8kg=
+X-Google-Smtp-Source: AA+uWPxbxHOLl682dIwW/GiVCrqCBeUaw5kLOLT0xcSLDtzksHiTjmgLxF6R/SxcoVp5ksqU+VXw6g==
+X-Received: by 2002:a1f:b449:: with SMTP id d70-v6mr4414336vkf.160.1533915620212;
+        Fri, 10 Aug 2018 08:40:20 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id y196-v6sm2757637vkd.50.2018.08.10.08.40.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 08:40:19 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id k25-v6so2304973uao.11
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 08:40:18 -0700 (PDT)
+X-Received: by 2002:ab0:3141:: with SMTP id e1-v6mr4567775uam.121.1533915618454;
+ Fri, 10 Aug 2018 08:40:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22361.1533913891@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 08:40:17 -0700 (PDT)
+In-Reply-To: <20180810105205.GC20971@sirena.org.uk>
+References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
+ <152607782792.34267.8023817955251139395@swboyd.mtv.corp.google.com>
+ <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org> <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
+ <20180522173000.GG24776@sirena.org.uk> <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
+ <20180524162940.GA4828@sirena.org.uk> <28d8ab5fdeb34e52eba7ca771a17bc06@codeaurora.org>
+ <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org> <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
+ <20180810105205.GC20971@sirena.org.uk>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 10 Aug 2018 08:40:17 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XXyL5q1quxUtBohn2GrcadbY9hr6sdw+4qShQnYTgVwA@mail.gmail.com>
+Message-ID: <CAD=FV=XXyL5q1quxUtBohn2GrcadbY9hr6sdw+4qShQnYTgVwA@mail.gmail.com>
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based QUP
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Dilip Kota <dkota@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "Mahadevan, Girish" <girishm@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 04:11:31PM +0100, David Howells wrote:
-> 
-> Yes.  Since you *absolutely* *insist* on this being fixed *right* *now* *or*
-> *else*, I'm working up a set of additional patches to give userspace the
-> option of whether they want no sharing; sharing, but only with exactly the
-> same parameters; or to ignore the parameter differences and just accept
-> sharing of what's already already mounted (ie. the current behaviour).
+Hi,
 
-But there's no way to support "no sharing", at least not in the
-general case.  A file system can only be mounted once, and without
-file system support, there's no way for a file system to be mounted
-with the bsddf or minixdf mount simultaneously.
+On Fri, Aug 10, 2018 at 3:52 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Aug 09, 2018 at 11:03:55AM -0700, Doug Anderson wrote:
+>> On Fri, Aug 3, 2018 at 5:18 AM,  <dkota@codeaurora.org> wrote:
+>
+>> > Also, spi core framework will set the transfer speed to controller max
+>> > frequency
+>> > if transfer frequency is greater than controller max frequency.
+>> > Please mention if you have a other opinion.
+>
+>> 1. It sure seems like the clock framework could be enforcing the max
+>> speed here.  SPI can just ask for the speed and the clock framework
+>> will pick the highest speed it can if you ask for one too high.  Isn't
+>> that the whole point of the "struct freq_tbl" in the clock driver?
+>
+> This is more about matching the data rate between the two drivers - the
+> clock framework could (and possibly should) reasonably return an error
+> here, we're trying to ensure that drivers and controllers work well
+> together here.
 
-Even *with* file system support, there's no way today for the VFS to
-keep track of whether a pathname resolution came through one
-mountpoint or another, so I can't do something like this:
+The clock framework should be able to accomplish what you want.  If
+you just request the rate it will do its best to make the rate
+requested.  If we want to see what clock would be set before setting
+it, we could use clk_round_rate().  Then we'd have to decide if the
+clock framework is giving us something close enough.  ...but then what
+is "close enough" in this case?  I haven't gone and dug, but I've
+always seen people only specify a max rate for SPI.  ...so as long as
+the clock framework gives us something <= the clock we requested then
+we should be OK, right?  If / when this becomes a problem then we
+should add a min/max to "struct spi_transfer", no?
 
-	mount /dev/sdXX -o casefold /android-data
-	mount /dev/sdXX -o nocasefold /android-data-2
+Note that there are also clk_set_rate_range(), clk_set_min_rate(), and
+clk_set_max_rate() though I'm told those might be a bit quirky.
 
-Which is a pity, since if we could we could much more easily get rid
-of the horror which is Android's wrapfs...
 
-So if the file system has been mounted with one set of mount options,
-and you want to try to mount it with a conflicting set of mount
-options and you don't want it to silently ignore the mount options,
-the *only* thing we can today is to refuse the mount and return an
-error.  
+>> 2. The device tree writer already provides a max clock speed for each
+>> SPI slave in the device tree.  ...shouldn't the device tree writer
+>> already be taking into account the max of the SPI port when setting
+>> this value?
+>
+> Yes.  We're overriding this because drivers can set a speed from code
+> (this is especially common when devices have variable maximum speeds for
+> different operations).
 
-I'm not sure Eric would really consider that an improvement for the
-container use case....
+OK, makes sense.  You can still cap the max per SPI-slave in the
+device tree if you really have to though, right?
 
-						- Ted
+...but maybe we don't need to argue about this anyway since IMHO we
+should just use the clk framework to figure out our maximum speed.
 
-P.S.  And as Al has pointed out, this would require special, per-file
-system support to determine whether the mount options are conflicting
-or not....
+
+>> 3. If you really truly need code in the SPI driver then make sure you
+>> include a compatible string for the SoC and have a table in the driver
+>> that's found with of_device_get_match_data().  AKA:
+>
+>>   compatible = "qcom,geni-spi-sdm845", "qcom,geni-spi";
+>
+> A controller driver really shouldn't need to be open coding anything.
+
+It wouldn't be open-coding, it would be a different way of specifying
+things.  In my understanding it's always a judgement call about how
+much to put in a table that's matched via an SoC-specific compatible
+string and how much to describe the SoC-specific behavior device tree
+properties.  On the spectrum I've found it's usually best to error on
+the side of having a table matched via SoC-specific compatible
+strings.
+
+For an example commit of moving _away_ from describing SoC-specific
+behavior and just matching on the compatible, see commit 0fbc47d9e426
+("phy: rockchip-typec: deprecate some DT properties for various
+register fields.") and the associated bindings commit 6912d4f40bc7
+("dt-bindings: phy-rockchip-typec: deprecate some register
+properties.").
+
+
+-Doug
