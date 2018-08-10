@@ -3,110 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813FCC46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BFBC46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32EFA223A9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32EFA223A9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 3632F223A9
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3632F223A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeHJDfS (ORCPT
+        id S1727069AbeHJDjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 23:35:18 -0400
-Received: from smtprelay0008.hostedemail.com ([216.40.44.8]:58099 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726953AbeHJDfR (ORCPT
+        Thu, 9 Aug 2018 23:39:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46126 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbeHJDjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 23:35:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id C91E81801A0B6;
-        Fri, 10 Aug 2018 01:07:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: glass58_272327c675f19
-X-Filterd-Recvd-Size: 2662
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 10 Aug 2018 01:07:48 +0000 (UTC)
-Message-ID: <13b3efc8ba75f3e857934580effcdc8675bad6c8.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: DT bindings should be a separate patch
-From:   Joe Perches <joe@perches.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>
-Date:   Thu, 09 Aug 2018 18:07:47 -0700
-In-Reply-To: <20180809205032.22205-1-robh@kernel.org>
-References: <20180809205032.22205-1-robh@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
+        Thu, 9 Aug 2018 23:39:54 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8294D9D3;
+        Fri, 10 Aug 2018 01:12:25 +0000 (UTC)
+Date:   Thu, 9 Aug 2018 18:12:24 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Rashmica Gupta <rashmica.g@gmail.com>
+Cc:     toshi.kani@hpe.com, tglx@linutronix.de, bp@suse.de,
+        brijesh.singh@amd.com, thomas.lendacky@amd.com, jglisse@redhat.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        dan.j.williams@intel.com, mhocko@suse.com, iamjoonsoo.kim@lge.com,
+        vbabka@suse.cz, malat@debian.org, bhelgaas@google.com,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rppt@linux.vnet.ibm.com
+Subject: Re: [PATCH v3] resource: Merge resources on a node when hot-adding
+ memory
+Message-Id: <20180809181224.0b7417e51215565dbda9f665@linux-foundation.org>
+In-Reply-To: <20180809025409.31552-1-rashmica.g@gmail.com>
+References: <20180809025409.31552-1-rashmica.g@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-09 at 14:50 -0600, Rob Herring wrote:
-> Devicetree bindings should be their own patch as documented in
-> Documentation/devicetree/bindings/submitting-patches.txt section I.1.
-> This is because bindings are logically independent from a driver
-> implementation, they have a different maintainer (even though they often
-> are applied via the same tree), and it makes for a cleaner history in
-> the DT only tree created with git-filter-branch.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -2236,6 +2236,7 @@ sub process {
->  	our $clean = 1;
->  	my $signoff = 0;
->  	my $is_patch = 0;
-> +	my $is_binding_patch = -1;
->  	my $in_header_lines = $file ? 0 : 1;
->  	my $in_commit_log = 0;		#Scanning lines before patch
->  	my $has_commit_log = 0;		#Encountered lines before patch
-> @@ -2485,6 +2486,27 @@ sub process {
->  				$check = $check_orig;
->  			}
->  			$checklicenseline = 1;
-> +
-> +			if ($realfile !~ /MAINTAINERS/) {
+On Thu,  9 Aug 2018 12:54:09 +1000 Rashmica Gupta <rashmica.g@gmail.com> wrote:
 
-Should probably be /^MAINTAINERS/
+> When hot-removing memory release_mem_region_adjustable() splits
+> iomem resources if they are not the exact size of the memory being
+> hot-deleted. Adding this memory back to the kernel adds a new
+> resource.
+> 
+> Eg a node has memory 0x0 - 0xfffffffff. Offlining and hot-removing
+> 1GB from 0xf40000000 results in the single resource 0x0-0xfffffffff being
+> split into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
+> 
+> When we hot-add the memory back we now have three resources:
+> 0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
+> 
+> Now if we try to remove some memory that overlaps these resources,
+> like 2GB from 0xf40000000, release_mem_region_adjustable() fails as it
+> expects the chunk of memory to be within the boundaries of a single
+> resource.
+> 
+> This patch adds a function request_resource_and_merge(). This is called
+> instead of request_resource_conflict() when registering a resource in
+> add_memory(). It calls request_resource_conflict() and if hot-removing is
+> enabled (if it isn't we won't get resource fragmentation) we attempt to
+> merge contiguous resources on the node.
 
-> +				my $mixed = 0;
-> +				if ($realfile =~ /(Documentation\/devicetree|include\/dt-bindings).*/) {
+What is the end-user impact of this patch?
 
-This should have a ^ for the start of the filename and
-generally, this is easier to read using m@...@ like:
+Do you believe the fix should be merged into 4.18?  Backporting into
+-stable kernels?  If so, why?
 
-				if ($realfile =~ m@^(?:Documentation/devicetree/|include/dt-bindings/)@) {
-
-> +					if ($is_binding_patch == 0) {
-> +						$mixed = 1;
-> +					}
-> +					$is_binding_patch = 1;
-> +				} else {
-> +					if ($is_binding_patch == 1) {
-> +						$mixed = 1;
-> +					}
-> +					$is_binding_patch = 0;
-> +				}
-
-Perhaps there is simpler logic using an xor.
-
-> +				if ($mixed == 1) {
-> +					WARN("DT_SPLIT_BINDING_PATCH",
-> +					     "DT binding docs and includes should be a separate patch\n");
-> +				}
-
-Perhaps add 'see: Documentation/devicetree/bindings/submitting-patches.txt'
-
-> +			}
-
-
+Thanks.
