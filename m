@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D275C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62298C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B6D21EFB
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B6D21EFB
+	by mail.kernel.org (Postfix) with ESMTP id 299F122448
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299F122448
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbeHJUlP (ORCPT
+        id S1730667AbeHJUlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:41:15 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3649 "EHLO
+        Fri, 10 Aug 2018 16:41:18 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3666 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbeHJUlO (ORCPT
+        with ESMTP id S1728001AbeHJUlR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:41:14 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b6dd5070000>; Fri, 10 Aug 2018 11:10:16 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 10 Aug 2018 11:10:19 -0700
+        Fri, 10 Aug 2018 16:41:17 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b6dd50a0000>; Fri, 10 Aug 2018 11:10:19 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 10 Aug 2018 11:10:15 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 10 Aug 2018 11:10:19 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
- 2018 18:10:18 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
- 2018 18:10:18 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Fri, 10 Aug 2018 18:10:18 +0000
+        by hqpgpgate102.nvidia.com on Fri, 10 Aug 2018 11:10:15 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
+ 2018 18:10:21 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Fri, 10 Aug 2018 18:10:21 +0000
 Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b6dd5070002>; Fri, 10 Aug 2018 11:10:18 -0700
+        id <B5b6dd50a0002>; Fri, 10 Aug 2018 11:10:21 -0700
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -49,13 +46,13 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
-        "Stefan Agner" <stefan@agner.ch>
+        Stefan Agner <stefan@agner.ch>
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v2 29/40] mmc: tegra: Enable UHS and HS200 modes for Tegra186
-Date:   Fri, 10 Aug 2018 21:08:31 +0300
-Message-ID: <1533924522-1037-30-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH v2 30/40] arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+Date:   Fri, 10 Aug 2018 21:08:32 +0300
+Message-ID: <1533924522-1037-31-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
 References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
@@ -67,28 +64,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set nvquirks to enable higher speed modes.
+Add pad voltage configuration nodes for sdmmc pads with configurable
+voltages on Tegra210.
 
 Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 8cfa8f4..2d775ad 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -875,7 +875,9 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 	.pdata = &sdhci_tegra186_pdata,
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
--		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP,
-+		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-+		    NVQUIRK_ENABLE_SDR50 |
-+		    NVQUIRK_ENABLE_SDR104,
- };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 3be920e..bc1918e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -3,6 +3,7 @@
+ #include <dt-bindings/gpio/tegra-gpio.h>
+ #include <dt-bindings/memory/tegra210-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
++#include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
  
- static const struct of_device_id sdhci_tegra_dt_match[] = {
+@@ -776,6 +777,26 @@
+ 				#power-domain-cells = <0>;
+ 			};
+ 		};
++
++		sdmmc1_3v3: sdmmc1-3v3 {
++			pins = "sdmmc1";
++			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
++		};
++
++		sdmmc1_1v8: sdmmc1-1v8 {
++			pins = "sdmmc1";
++			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
++		};
++
++		sdmmc3_3v3: sdmmc3-3v3 {
++			pins = "sdmmc3";
++			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
++		};
++
++		sdmmc3_1v8: sdmmc3-1v8 {
++			pins = "sdmmc3";
++			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
++		};
+ 	};
+ 
+ 	fuse@7000f800 {
+@@ -1027,6 +1048,9 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 14>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-0 = <&sdmmc1_3v3>;
++		pinctrl-1 = <&sdmmc1_1v8>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -1049,6 +1073,9 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 69>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-0 = <&sdmmc3_3v3>;
++		pinctrl-1 = <&sdmmc3_1v8>;
+ 		status = "disabled";
+ 	};
+ 
 -- 
 2.7.4
 
