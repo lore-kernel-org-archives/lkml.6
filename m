@@ -2,293 +2,103 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE62C46470
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0225DC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA68223FF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:08:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA68223FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A9A4223FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:10:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ToCURU0a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9A4223FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeHJMhf (ORCPT
+        id S1727767AbeHJMkG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 08:37:35 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10697 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727477AbeHJMhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 08:37:34 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0DD5BE600D866;
-        Fri, 10 Aug 2018 18:08:18 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 10 Aug 2018 18:08:11 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: tune discard speed with storage usage rate
-Date:   Fri, 10 Aug 2018 18:08:06 +0800
-Message-ID: <20180810100806.9298-2-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20180810100806.9298-1-yuchao0@huawei.com>
-References: <20180810100806.9298-1-yuchao0@huawei.com>
+        Fri, 10 Aug 2018 08:40:06 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:55602 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbeHJMkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 08:40:05 -0400
+Received: by mail-it0-f65.google.com with SMTP id d10-v6so1890772itj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 03:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z1XSGgD2g/h71miz+mtYUCYJBOw3XFpuXRf52kOZ7vM=;
+        b=ToCURU0avAFZujog3YX3NS/5wlPF8Z1A2ThdeaQlWxcG1XMBjXRcFXOVJK9l9pUqAJ
+         aQRff1wmlIpB5BvZZScELO73kORlzn+XIkjlHeR3JA8Xe8/oRSdDxEazJ+LXuD5EVaZu
+         igNnVvXJH6E7fTklmT2WxQ9REBTt3DvZlQprA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z1XSGgD2g/h71miz+mtYUCYJBOw3XFpuXRf52kOZ7vM=;
+        b=OJtshn/YMAtgmuHIwU3Sng5to7uLB96wnwk84H68s4PvLXx+Nv8MEtoJg5xyjaEpYc
+         yYyEaVC8f4I6gQ3kXqEcXfIjS3/Qa0p8mtRY6i8l2O/3AAVzC2iSTQgGN6V2tCkFwTXO
+         TXMMstfXot67zB9EQZToyLyg5J5tfGs+e4eaNbbJgLXSoojZXNcen5Hq4lvcF6ZymDYU
+         sexY/muyIVoZ0Qw1N5H5bMSOzWnz2jniedWJNEpR4mmlTLSFU9M9difBrS+aEEUeoDGq
+         eOSgEW89tiF+wnuF5VyrV52628mQZRtryQB9KcomQuv/BsONPQPTcJytuouJekbsJzlt
+         M3SQ==
+X-Gm-Message-State: AOUpUlHcAfagySi3X2Yskv+X4DZluwFrQVBYokNIrGTKramBIRxJiAoZ
+        dt06CHyvmuPjocR7t6dEGBAfG16fDffcHoDW4Nu4vQ==
+X-Google-Smtp-Source: AA+uWPwKsc+VVvT1ZtveGYEMArDQXZ+ddcOFrCDKJk/NAoNxJyDzmQjDkk+EsYFQROGWzoqnAPf2Sd3E3NWDX6V4u1Q=
+X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr1558725itb.38.1533895853368;
+ Fri, 10 Aug 2018 03:10:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-1-jmkrzyszt@gmail.com>
+ <20180806222918.12644-4-jmkrzyszt@gmail.com>
+In-Reply-To: <20180806222918.12644-4-jmkrzyszt@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 10 Aug 2018 12:10:41 +0200
+Message-ID: <CACRpkdaeVRy9XDptCZcTHLo7gs55uQx=6A9HnoQgRP-qnBCqUw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 03/12] ARM: OMAP1: ams-delta: Provide GPIO lookup
+ table for NAND data port
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, discard speed was fixed mostly, and in high usage rate
-device, we will speed up issuing discard, but it doesn't make sense
-that in a non-full filesystem, we still issue discard with slow speed.
+On Tue, Aug 7, 2018 at 12:29 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-Anyway, it comes out undiscarded block makes FTL GC be lower efficient
-and causing high lifetime overhead.
+> Data port used by Amstrad Delta NAND driver is actually an OMAP MPUIO
+> device, already under control of gpio-omap driver.  The NAND driver
+> gets access to the port by ioremapping it and performs read/write
+> operations.  That is done without any proteciton from other users
+> legally manipulating the port pins over GPIO API.
+>
+> The plan is to convert the driver to access the port over GPIO consumer
+> API.  Before that is implemented, the driver can already obtain
+> exclusive access to the port by requesting an array of its GPIO
+> descriptors.
+>
+> Add respective entries to the NAND GPIO lookup table.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Let's tune discard speed as below:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-a. adjust default issue interval:
-		original	after
-min_interval:	50ms		100ms
-mid_interval:	500ms		1000ms
-max_interval:	60000ms		10000ms
-
-b. if last time we stop issuing discard due to IO interruption of user,
-let's reset all {min,mid,max}_interval to default one.
-
-c. tune {min,mid,max}_interval with below calculation method:
-
-base_interval = default_interval / 10;
-total_interval = default_interval - base_interval;
-interval = base_interval + total_interval * (100 - dev_util) / 100;
-
-For example:
-min_interval (:100ms)
-dev_util (%)	interval (ms)
-0		100
-10		91
-20		82
-30		73
-...
-80		28
-90		19
-100		10
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h    | 11 ++++----
- fs/f2fs/segment.c | 64 +++++++++++++++++++++++++++++++++++++----------
- fs/f2fs/segment.h |  9 +++++++
- fs/f2fs/super.c   |  2 +-
- 4 files changed, 67 insertions(+), 19 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 273ffdaf4891..a1dd2e1c3cb9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -185,10 +185,9 @@ enum {
- 
- #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
- #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
--#define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
--#define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
--#define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
--#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
-+#define DEF_MIN_DISCARD_ISSUE_TIME	100	/* 100 ms, if exists */
-+#define DEF_MID_DISCARD_ISSUE_TIME	1000	/* 1000 ms, if device busy */
-+#define DEF_MAX_DISCARD_ISSUE_TIME	10000	/* 10000 ms, if no candidates */
- #define DEF_CP_INTERVAL			60	/* 60 secs */
- #define DEF_IDLE_INTERVAL		5	/* 5 secs */
- 
-@@ -248,7 +247,8 @@ struct discard_entry {
- };
- 
- /* default discard granularity of inner discard thread, unit: block count */
--#define DEFAULT_DISCARD_GRANULARITY		1
-+#define MID_DISCARD_GRANULARITY			16
-+#define MIN_DISCARD_GRANULARITY			1
- 
- /* max discard pend list number */
- #define MAX_PLIST_NUM		512
-@@ -330,6 +330,7 @@ struct discard_cmd_control {
- 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
- 	struct rb_root root;			/* root of discard rb-tree */
- 	bool rbtree_check;			/* config for consistence check */
-+	bool io_interrupted;			/* last state of io interrupted */
- };
- 
- /* for the list of fsync inodes, used only during recovery */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8b52e8dfb12f..9564aaf1f27b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
- #endif
- }
- 
-+static void __adjust_discard_speed(unsigned int *interval,
-+				unsigned int def_interval, int dev_util)
-+{
-+	unsigned int base_interval, total_interval;
-+
-+	base_interval = def_interval / 10;
-+	total_interval = def_interval - base_interval;
-+
-+	/*
-+	 * if def_interval = 100, adjusted interval should be in range of
-+	 * [10, 100].
-+	 */
-+	*interval = base_interval + total_interval * (100 - dev_util) / 100;
-+}
-+
-+static void __tune_discard_policy(struct f2fs_sb_info *sbi,
-+					struct discard_policy *dpolicy)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	int dev_util;
-+
-+	if (dcc->io_interrupted) {
-+		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-+		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-+		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-+		return;
-+	}
-+
-+	dev_util = dev_utilization(sbi);
-+
-+	__adjust_discard_speed(&dpolicy->min_interval,
-+				DEF_MIN_DISCARD_ISSUE_TIME, dev_util);
-+	__adjust_discard_speed(&dpolicy->mid_interval,
-+				DEF_MID_DISCARD_ISSUE_TIME, dev_util);
-+	__adjust_discard_speed(&dpolicy->max_interval,
-+				DEF_MAX_DISCARD_ISSUE_TIME, dev_util);
-+}
-+
- static void __init_discard_policy(struct f2fs_sb_info *sbi,
- 				struct discard_policy *dpolicy,
- 				int discard_type, unsigned int granularity)
-@@ -982,20 +1020,11 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
- 	dpolicy->io_aware_gran = MAX_PLIST_NUM;
- 
- 	if (discard_type == DPOLICY_BG) {
--		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
--		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
--		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
- 		dpolicy->io_aware = true;
- 		dpolicy->sync = false;
- 		dpolicy->ordered = true;
--		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
--			dpolicy->granularity = 1;
--			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
--		}
-+		__tune_discard_policy(sbi, dpolicy);
- 	} else if (discard_type == DPOLICY_FORCE) {
--		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
--		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
--		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
- 		dpolicy->io_aware = false;
- 	} else if (discard_type == DPOLICY_FSTRIM) {
- 		dpolicy->io_aware = false;
-@@ -1353,6 +1382,8 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 	if (!issued && io_interrupted)
- 		issued = -1;
- 
-+	dcc->io_interrupted = io_interrupted;
-+
- 	return issued;
- }
- 
-@@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		if (i + 1 < dpolicy->granularity)
- 			break;
- 
--		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
-+		if (i < MID_DISCARD_GRANULARITY && dpolicy->ordered)
- 			return __issue_discard_cmd_orderly(sbi, dpolicy);
- 
- 		pend_list = &dcc->pend_list[i];
-@@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	if (!issued && io_interrupted)
- 		issued = -1;
- 
-+	dcc->io_interrupted = io_interrupted;
-+
- 	return issued;
- }
- 
-@@ -1576,7 +1609,11 @@ static int issue_discard_thread(void *data)
- 	struct f2fs_sb_info *sbi = data;
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	wait_queue_head_t *q = &dcc->discard_wait_queue;
--	struct discard_policy dpolicy;
-+	struct discard_policy dpolicy = {
-+		.min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
-+		.mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
-+		.max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
-+	};
- 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
- 	int issued;
- 
-@@ -1929,7 +1966,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	if (!dcc)
- 		return -ENOMEM;
- 
--	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
-+	dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
- 	INIT_LIST_HEAD(&dcc->entry_list);
- 	for (i = 0; i < MAX_PLIST_NUM; i++)
- 		INIT_LIST_HEAD(&dcc->pend_list[i]);
-@@ -1945,6 +1982,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	dcc->next_pos = 0;
- 	dcc->root = RB_ROOT;
- 	dcc->rbtree_check = false;
-+	dcc->io_interrupted = false;
- 
- 	init_waitqueue_head(&dcc->discard_wait_queue);
- 	SM_I(sbi)->dcc_info = dcc;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 422b0ceb1eaa..63b4da72cd34 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -616,6 +616,15 @@ static inline int utilization(struct f2fs_sb_info *sbi)
- 					sbi->user_block_count);
- }
- 
-+static inline int dev_utilization(struct f2fs_sb_info *sbi)
-+{
-+	unsigned int dev_blks;
-+
-+	dev_blks = valid_user_blocks(sbi) + SM_I(sbi)->dcc_info->undiscard_blks;
-+	return div_u64((u64)dev_blks * 100,
-+			MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
-+}
-+
- /*
-  * Sometimes f2fs may be better to drop out-of-place update policy.
-  * And, users can control the policy through sysfs entries.
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b055f2ea77c5..55ed76daad23 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
- 	/* adjust parameters according to the volume size */
- 	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
- 		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
--		sm_i->dcc_info->discard_granularity = 1;
-+		sm_i->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
- 		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
- 	}
- 
--- 
-2.18.0.rc1
-
+Yours,
+Linus Walleij
