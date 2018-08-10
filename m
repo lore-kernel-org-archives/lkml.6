@@ -2,118 +2,107 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA7CC46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C52C46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F496223B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:46:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="VPZ56/qq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OGKyjJNx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F496223B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	by mail.kernel.org (Postfix) with ESMTP id E07EA223B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:49:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07EA223B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeHJEOR (ORCPT
+        id S1726610AbeHJERX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 00:14:17 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55827 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725198AbeHJEOR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 00:14:17 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 135E421D23;
-        Thu,  9 Aug 2018 21:46:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 09 Aug 2018 21:46:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=cL+WQ92uM6WkajZ8nC95EVWt/OP9dM/mErMbMwTqynU=; b=VPZ56/qq
-        TAjfqmZvAlt6lm+50u6t2f03DrZZVfH3y0mfmc7qoUHWgSEGqnpS6aYBr8cknnfl
-        JJVWO2H5y3X7RhY9psqU+DtHrA6e/GaWYwWytjRs+r6yZHZLd1IrqwHDrbGejbFI
-        SuOAXz6RbmwawdiAmk1iiATraSd7VS3H+7FoQ412CwouRII0c0kXv+4CnnhxZyO2
-        +arwIzf9zz7+t9T5iwlYqsgR58qO11sGo/ioa6WudOfPW57Aze/qmWZSxB8VssFL
-        Mfp3VC+KymV3js/n4Z1jeNpgqxKIM6dF3iM1xHRnBG88VS0yrMUY/VOTwtfZ4zti
-        HuvaG+5d82400A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=cL+WQ92uM6WkajZ8nC95EVWt/OP9d
-        M/mErMbMwTqynU=; b=OGKyjJNxKI5e2FJhHg6lIGk3LXfpctdTUxthQU0D26RMV
-        jPVtsmQNlTmkFeAlPAey/hdX59p4rE1dkeEMliguuCeiSDbnrXyDyaHGVaUvCAii
-        vtdIlTJxJ49WlZhOhRNutDqujP8tNCl4CO5W5s7S3T6HhhM2hUx24xbLNLmjG5qi
-        TB4EQK7QJQbQSjJSt39l11vrQCNwFBBbD2UZfN1u4ixKhUtrDEGB/fIyGExrsEkE
-        VnhoCpYpcOnkMJ8eEFtjGIQWFNgUMqP4xBkZNx+xr59Erm1J6XNNvkbNrzNOAJtY
-        fXh4Z6NPxlPLaKLGmL6GeGpra2ZOn1hRc1wcmiuiQ==
-X-ME-Proxy: <xmx:gO5sW6lbJfgMU0yShDjOxTWFoDWyNCVouTpQ4L9WMwpCzzXN26jN1w>
-    <xmx:gO5sW9aGRVRhcBE5zCtUYrT5z8iaoWTJh_kFOQr2VOJLONyWjTEMfQ>
-    <xmx:gO5sW_721W6-JdlZ7BHUK5-CyJFogbh1_epUBqPGeS0CObEF6dya-Q>
-    <xmx:gO5sW2-h_rLiorXbA9-yxr_IUxPN7oHaf9oo1rtq5L48_EFO5zL3WA>
-    <xmx:gO5sW0l8nYiKGAcc-UKXDpWTOOrf8BQk0Y22xtUoJeTMJBbhKAP2Xw>
-    <xmx:gO5sWw5bxUR7sur7quICTWcWyztCqrR2e_LvXHRlig6Xox4jUjs9HA>
-X-ME-Sender: <xms:gO5sW91ntSEst4kB57fJvFFSgaspDuDs3ZIQYffg4Q3Ys8rCvfwcgg>
-Received: from localhost (ppp121-44-213-17.bras1.syd2.internode.on.net [121.44.213.17])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 846971025C;
-        Thu,  9 Aug 2018 21:46:39 -0400 (EDT)
-Date:   Fri, 10 Aug 2018 11:46:36 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
-Message-ID: <20180810014636.GJ32374@eros>
-References: <20180809052328.27942-1-me@tobin.cc>
- <20180809060734.rtqqu4sexbwzuqmm@ast-mbp>
- <20180809072753.GF32374@eros>
- <80bdc251-9f57-602f-6536-b34651684bb7@iogearbox.net>
+        Fri, 10 Aug 2018 00:17:23 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54723 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725198AbeHJERX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 00:17:23 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 46EF396E17439;
+        Fri, 10 Aug 2018 09:49:43 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Fri, 10 Aug 2018
+ 09:49:41 +0800
+Subject: Re: [PATCH v3 2/2] net/9p: add a per-client fcall kmem_cache
+To:     Dominique Martinet <asmadeus@codewreck.org>
+References: <1533177452-2165-1-git-send-email-asmadeus@codewreck.org>
+ <1533825236-22896-1-git-send-email-asmadeus@codewreck.org>
+ <1533825236-22896-2-git-send-email-asmadeus@codewreck.org>
+ <5B6CE900.1010103@huawei.com> <20180810014147.GB14699@nautica>
+CC:     <v9fs-developer@lists.sourceforge.net>,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Greg Kurz" <groug@kaod.org>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B6CEF2C.2070606@huawei.com>
+Date:   Fri, 10 Aug 2018 09:49:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80bdc251-9f57-602f-6536-b34651684bb7@iogearbox.net>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180810014147.GB14699@nautica>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 10:24:54AM +0200, Daniel Borkmann wrote:
-> On 08/09/2018 09:27 AM, Tobin C. Harding wrote:
-> > On Wed, Aug 08, 2018 at 11:07:35PM -0700, Alexei Starovoitov wrote:
-> >> On Thu, Aug 09, 2018 at 03:23:24PM +1000, Tobin C. Harding wrote:
-> >>>
-> >>> Daniel and Alexei, can I please have permission to add GPLv2+ to the BPF
-> >>> docs?
-> >>
-> >> kernel licensing is GPLv2 without +
-> > 
-> > According to process/license-rules.rst
-> > 
-> > 	    GPL-2.0+  :  GNU General Public License v2.0 or later
+Thanks for clearing my doubt, and you can add:
+
+Acked-by: Jun Piao <piaojun@huawei.com>
+
+On 2018/8/10 9:41, Dominique Martinet wrote:
+> piaojun wrote on Fri, Aug 10, 2018:
+>> Could you help paste the test result of before-after-applied this patch in
+>> comment? And please see my comments below.
 > 
-> Not really, please see the first three paragraphs of process/license-rules.rst.
-> The COPYING file of the kernel says that it's 'v2' and not 'v2 or later',
-> unless otherwise _explicitly_ noted. Given that and given there is no other
-> specific note in filter.txt, it would mean it's v2-only due to that rule.
+> Thanks the the review, do you mean the commit message?
+> 
+> I'll add the summary I wrote in reply to your question a few mails
+> before.
+> 
+Yes, I mean the commit message.
 
-Thanks for clarifying.  My understanding is now; this is a case where
-checkpatch is too verbose and we do not actually need to add a specific
-license identifier to the documentation files (new or otherwise).  They
-get an implicit GPLv2.
+> 
+>>> diff --git a/include/net/9p/9p.h b/include/net/9p/9p.h
+>>> index e23896116d9a..645266b74652 100644
+>>> --- a/include/net/9p/9p.h
+>>> +++ b/include/net/9p/9p.h
+>>> @@ -336,6 +336,9 @@ enum p9_qid_t {
+>>>  #define P9_NOFID	(u32)(~0)
+>>>  #define P9_MAXWELEM	16
+>>>  
+>>> +/* Minimal header size: len + id + tag */
+>>
+>> Here should be 'size + id + tag'.
+> 
+> hm I didn't want to repeat size, but I guess people do refer to that
+> field as size.
+> I'll actually rewrite it as:
+>  Minimal header size: size[4] type[1] tag[2]
+> 
+It looks better.
 
-I'll remove the licences identifiers and re-spin.
-
-thanks,
-Tobin.
+>>> +	kmem_cache_destroy(clnt->fcall_cache);
+>>
+>> I'm afraid that we should check NULL for clnt->fcall_cache.
+> 
+> kmem_cache_destroy() in mm/slab_common.c does the null check for us:
+> ------
+> void kmem_cache_destroy(struct kmem_cache *s)
+> {
+>         int err;
+>         
+>         if (unlikely(!s))
+>                 return;
+> ------
+> 
+OK, it makes sense.
