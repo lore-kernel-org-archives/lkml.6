@@ -2,99 +2,132 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACA9C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC033C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F6422448
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F6422448
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D2C122448
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D2C122448
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbeHJUgP (ORCPT
+        id S1727996AbeHJUjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:36:15 -0400
-Received: from mga18.intel.com ([134.134.136.126]:23788 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728168AbeHJUgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:36:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 11:05:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,220,1531810800"; 
-   d="scan'208";a="64213117"
-Received: from bchattar-mobl.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.130.118])
-  by orsmga008.jf.intel.com with ESMTP; 10 Aug 2018 11:05:17 -0700
-Subject: Re: [PATCH v4 1/2] tpm: add ptr to the tpm_space struct to file_priv
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
- <153367366462.18015.12915462188877575543.stgit@tstruk-mobl1.jf.intel.com>
- <20180810172700.GU4692@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <2bacb3d8-3897-e147-252f-c49de9e7806b@intel.com>
-Date:   Fri, 10 Aug 2018 11:05:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 16:39:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41792 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727462AbeHJUjH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 16:39:07 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AI01kI124634
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:08:12 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kscgdy8rm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:08:11 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Fri, 10 Aug 2018 14:08:10 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 10 Aug 2018 14:08:05 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AI84uv66125894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Aug 2018 18:08:04 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 35EBFAC065;
+        Fri, 10 Aug 2018 14:08:31 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71D07AC060;
+        Fri, 10 Aug 2018 14:08:30 -0400 (EDT)
+Received: from localhost (unknown [9.80.83.42])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Fri, 10 Aug 2018 14:08:30 -0400 (EDT)
+Date:   Fri, 10 Aug 2018 15:08:00 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        Joe Perches <joe@perches.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Cyril Bur <cyrilbur@gmail.com>,
+        "Tobin C . Harding" <me@tobin.cc>
+Subject: Re: [PATCH v4 5/6] powerpc: Add show_user_instructions()
+References: <20180801213320.11203-1-muriloo@linux.ibm.com>
+ <20180801213320.11203-6-muriloo@linux.ibm.com>
+ <7209fa95-8d40-14ca-f27a-ce3edb64191e@c-s.fr>
+ <20180803004201.GA5891@kermit-br-ibm-com>
+ <69cf990b-d4aa-97e7-be3b-7936caa91688@c-s.fr>
+ <87pnyzhm9l.fsf@concordia.ellerman.id.au>
+ <20180803113141.GA5476@kermit-br-ibm-com>
+ <1cfa56a3-027d-cf2c-3150-12aa45a35bd9@c-s.fr>
 MIME-Version: 1.0
-In-Reply-To: <20180810172700.GU4692@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1cfa56a3-027d-cf2c-3150-12aa45a35bd9@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18081018-0068-0000-0000-00000326E13B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009519; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01071734; UDB=6.00551974; IPR=6.00851529;
+ MB=3.00022638; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-10 18:08:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081018-0069-0000-0000-00004558AE5B
+Message-Id: <20180810180800.GB30475@kermit-br-ibm-com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=747 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808100193
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 10:27 AM, Jarkko Sakkinen wrote:
-> On Tue, Aug 07, 2018 at 01:27:44PM -0700, Tadeusz Struk wrote:
->> Add a ptr to struct tpm_space to the file_priv to have an easy
->> access to it in the async job without the need to allocate memory.
->> This also allows to consolidate of the write operations for
->> the two interfaces.
-> 
-> I think the 2nd premise should be the priority and the first premise should
-> be removed as it is not needed in any possible way to justify the
-> change.
+Hi, Christophe.
 
-Jarkko,
-The main reason why the pointer to tpm_space struct was added to the
-file_priv was to have access to space in the async job when it is enqueued
-via the /dev/tpm<N> interface. Currently it is only available in tpmrm_priv.
-Otherwise I would need to introduce yet another struct what would consist of
-a ptr file_priv and a ptr to tpm_space and allocate it on every enqueue.
-Much easier was to to it this way. The consolidation was only a side effect
-of this so I think the description is correct.
-Thanks,
--- 
-Tadeusz
+On Fri, Aug 10, 2018 at 11:29:43AM +0200, Christophe LEROY wrote:
+>
+>
+> Le 03/08/2018 à 13:31, Murilo Opsfelder Araujo a écrit :
+> > Hi, everyone.
+> >
+> > I'd like to thank you all that contributed to refining and making this
+> > series better.  I did appreciate.
+> >
+> > Thank you!
+>
+> You are welcome.
+>
+> It seems that nested segfaults don't print very well. The code line is split
+> in two, le second half being alone on one line. Any way to avoid that ?
+
+What do you mean by "nested segfaults"?  I'd guess it's related to nested
+virtualization, e.g.: host (kvm hv) -> guest1 (kvm pr) -> guest2?  So the
+segfault would have been originated in guest2?
+
+Can you provide us with more details about how to reproduce that?
+
+Anyway, is "XXXXXXXX" so important that it needs to be printed at all?  Can't we
+just discard it and not print it?
+
+Murilo
+
