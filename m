@@ -2,258 +2,340 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC907C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3762FC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6083D223F8
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6083D223F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C205821CCE
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:58:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ulLbEmfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C205821CCE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeHJOYL (ORCPT
+        id S1727624AbeHJO21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:24:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37964 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727258AbeHJOYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:24:10 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B2C7D40201C7;
-        Fri, 10 Aug 2018 11:54:33 +0000 (UTC)
-Received: from krava (unknown [10.43.17.133])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 71F5CFF69;
-        Fri, 10 Aug 2018 11:54:32 +0000 (UTC)
-Date:   Fri, 10 Aug 2018 13:54:31 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu
-Subject: Re: [PATCH v2] perf ordered_events: fix crash in free_dup_event()
-Message-ID: <20180810115431.GA4162@krava>
-References: <1533767600-7794-1-git-send-email-eranian@google.com>
- <20180809080721.GB19243@krava>
- <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 10 Aug 2018 11:54:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 10 Aug 2018 11:54:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+        Fri, 10 Aug 2018 10:28:27 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40029 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeHJO20 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 10:28:26 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y9-v6so1624660wma.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 04:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4MzyXpHqbFH3x1p7JI/B4cXbI0ZrmuolRNcoDV2ZL4E=;
+        b=ulLbEmfcex2k8eWuKeZTkyCguC5t9rVgmIGQzk9qz5v8bYj9kw1lBbBi91sP45337A
+         5w6ELPMri6Uldhl7p527Im9aDJ8lqSx4XfU2QrJUaMUlK6bL37fLtAvOkMFOWcuOeqgg
+         JpsTpOmzQUH+nbuH64W3vcyMHlyC3ohxy96TPudjaf2D2fRpQ01NBtgXwusGIWhWnlZd
+         aYDk9yLEW4cJrywnH1hhfdvcFNKvrH255nNFCUFKyWTbRAuAeLL8Xn8jOpuvgeikLwko
+         cnw9TgbGKZQX8ukqPHCS5Y0wtGFDHbtQcDoUCFE9rhelHod5KbpGi/lCFTDIhwSjC1VS
+         ZY+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4MzyXpHqbFH3x1p7JI/B4cXbI0ZrmuolRNcoDV2ZL4E=;
+        b=Y2J5uynwW/IwKyeUwXqfL62r8DfMYebetCe1InlXOHVWgeureoypVuz8OfN2vzlwSv
+         2UHcBAfYNgsmFjlJGWV8McsBAlJULpZTsv8HrFfVfTw1sM/tw+ovedSNXwrjwUzrTaBb
+         SRndLLyTN9ht+d8wa8FzmM+pyEjuS0U/frkWcz53TqWHankOnnm+t4bqJaPpfUfFnaFC
+         etn1PFL5U0I7Gu6n+CCt9VgviaRw65MUXhmgF6cIfQBLbSq5WcKAHvNr8Fm1Q4iCFyDv
+         6dpom1Yd8Uk7JEC+0E0ZD4bqCWuod490UdvAzDGfQu4gsrEk5Oy3xxSa8enfr9b7K4RD
+         Ld7Q==
+X-Gm-Message-State: AOUpUlE2DbRq4Ion2t2xp/jHaJVxIF1Aqb/ACbJOxHVjs/22nTWi3eTO
+        /VlwL/4soPM33BAl9V/E9SyGyQ==
+X-Google-Smtp-Source: AA+uWPw+7tXH0ahwrUcmmYdv+TUE46BJrc3k76XJHHS+AMrRiBpy6t0N8HAPE5skz2T0vsthdJfS/A==
+X-Received: by 2002:a1c:b984:: with SMTP id j126-v6mr1255553wmf.25.1533902327986;
+        Fri, 10 Aug 2018 04:58:47 -0700 (PDT)
+Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id t186-v6sm1851675wmf.14.2018.08.10.04.58.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 10 Aug 2018 04:58:46 -0700 (PDT)
+Message-ID: <f21f60423cbc43797e2465f1a734f715795c30b6.camel@baylibre.com>
+Subject: Re: [PATCH 2/2] arm64: dts: meson-g12a: add initial g12a s905d2 SoC
+ DT support
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>
+Date:   Fri, 10 Aug 2018 13:58:34 +0200
+In-Reply-To: <1533802951-49919-3-git-send-email-jianxin.pan@amlogic.com>
+References: <1533802951-49919-1-git-send-email-jianxin.pan@amlogic.com>
+         <1533802951-49919-3-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 01:21:18AM -0700, Stephane Eranian wrote:
-> On Thu, Aug 9, 2018 at 1:07 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> >
-> > On Wed, Aug 08, 2018 at 03:33:20PM -0700, Stephane Eranian wrote:
-> > > This patch fixes a bug in ordered_event.c:alloc_event().
-> > > An ordered_event struct was not initialized properly potentially
-> > > causing crashes later on in free_dup_event() depending on the
-> > > content of the memory. If it was NULL, then it would work fine,
-> > > otherwise, it could cause crashes such as:
-> >
-> > I'm now little puzzled what do we use this first event for..
-> > I can't see anything special about it, other than it's added
-> > on the list uninitialized ;-)
-> >
-> > it seems to work properly when we ditch it.. might be some
-> > prehistoric leftover or I'm terribly missing something
-> >
-> You need to keep track of the buffers to free. You do not free the
-> ordered_event structs
-> individually. For each oe->buffer, you need one free(). Each buffer is
-> put in the to_free
-> list. But to link it into the list it needs a list_head. This is what
-> buffer[0] is used for.
-> But the logic is broken in  ordered_events__free(). It does not free individual
-> ordered_event structs, but a buffer with many. Yet, it is missing
-> freeing all of the duped
-> events.
+On Thu, 2018-08-09 at 16:22 +0800, Jianxin Pan wrote:
+> Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
+> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
+> Timer, UART. It's capable of booting up into the serial console.
 > 
->  void ordered_events__free(struct ordered_events *oe)
-> {
->         while (!list_empty(&oe->to_free)) {
->                 struct ordered_event *buffer;
+> Signed-off-by: Jianxin <jianxin.pan@amlogic.com>
+
+Could please fix your signoff here ? Your last name went missing
+
+> ---
+>  arch/arm64/boot/dts/amlogic/Makefile            |   1 +
+>  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
+>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 174 ++++++++++++++++++++++++
+>  3 files changed, 197 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
 > 
->                 buffer = list_entry(oe->to_free.next, struct
-> ordered_event, list);
->                 list_del(&buffer->list);
-> ---->         free_dup_event(oe, event->event);
->                 free(buffer);
->         }
-> }
-> This only frees the dup_event of buffer[0] which we know is NULL (well, now).
-> It needs to walk all the entries in buffer[] to free buffer[x].event.
+> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
+> index a97c0e2..c31f29d6 100644
+> --- a/arch/arm64/boot/dts/amlogic/Makefile
+> +++ b/arch/arm64/boot/dts/amlogic/Makefile
+> @@ -1,5 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
+> +dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nexbox-a95x.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-odroidc2.dtb
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> new file mode 100644
+> index 0000000..d267a37
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "meson-g12a.dtsi"
+> +
+> +/ {
+> +	compatible = "amlogic,u200", "amlogic,g12a";
+> +	model = "Amlogic Meson G12A U200 Development Board";
+> +
+> +	aliases {
+> +		serial0 = &uart_AO;
+> +	};
+> +};
+> +
+> +&uart_AO {
+> +	status = "okay";
+> +};
+> +
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+> new file mode 100644
+> index 0000000..64a0f2e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+> @@ -0,0 +1,174 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/ {
 
-yes.. if there's copy_on_queue set, we need to do that,
-otherwise we're leaking all the events
+Could you please order the subnodes alphabetically ?
 
-> 
-> I think the goal was likely to avoid adding another list_head field to
-> each ordered_event
-> and instead use one per allocated buffer.
-> This is very convoluted and prone to errors and we are seeing right
-> now. This should
-> be cleaned. So either you add a list_head to ordered_event or you
-> would buffer[x] in
-> ordered_events_free().
-> 
-> At this point, this is my understanding.
-> Do you agree?
-
-yea, I see it now.. thanks for pointing this out
-
-how about something like below? haven't tested properly yet
-
-jirka
+In general, we should try to order nodes by addresses when there is one and
+alphabetically when there is none. This is something we have to fix for the AXG
+as well.
 
 
----
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index bad9e0296e9a..5c0d85e90a18 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
- 	return oe->copy_on_queue ? __dup_event(oe, event) : event;
- }
- 
--static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-+static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
- {
--	if (event && oe->copy_on_queue) {
-+	if (event) {
- 		oe->cur_alloc_size -= event->header.size;
- 		free(event);
- 	}
- }
- 
-+static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-+{
-+	if (oe->copy_on_queue)
-+		__free_dup_event(oe, event);
-+}
-+
- #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
- static struct ordered_event *alloc_event(struct ordered_events *oe,
- 					 union perf_event *event)
-@@ -104,11 +110,11 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 		new = list_entry(cache->next, struct ordered_event, list);
- 		list_del(&new->list);
- 	} else if (oe->buffer) {
--		new = oe->buffer + oe->buffer_idx;
-+		new = &oe->buffer->event[oe->buffer_idx];
- 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
- 			oe->buffer = NULL;
- 	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
--		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
-+		size_t size = sizeof(*oe->buffer) + MAX_SAMPLE_BUFFER * sizeof(*new);
- 
- 		oe->buffer = malloc(size);
- 		if (!oe->buffer) {
-@@ -122,9 +128,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 		oe->cur_alloc_size += size;
- 		list_add(&oe->buffer->list, &oe->to_free);
- 
--		/* First entry is abused to maintain the to_free list. */
--		oe->buffer_idx = 2;
--		new = oe->buffer + 1;
-+		oe->buffer_idx = 1;
-+		new = &oe->buffer->event[0];
- 	} else {
- 		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
- 	}
-@@ -300,15 +305,27 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
- 	oe->deliver	   = deliver;
- }
- 
-+static void
-+ordered_events_buffer__free(struct ordered_events_buffer *buffer,
-+			    struct ordered_events *oe)
-+{
-+	if (oe->copy_on_queue) {
-+		unsigned int i;
-+
-+		for (i = 0; i < MAX_SAMPLE_BUFFER; i++)
-+			__free_dup_event(oe, buffer->event[i].event);
-+	}
-+
-+	free(buffer);
-+}
-+
- void ordered_events__free(struct ordered_events *oe)
- {
--	while (!list_empty(&oe->to_free)) {
--		struct ordered_event *event;
-+	struct ordered_events_buffer *buffer, *tmp;
- 
--		event = list_entry(oe->to_free.next, struct ordered_event, list);
--		list_del(&event->list);
--		free_dup_event(oe, event->event);
--		free(event);
-+	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
-+		list_del(&buffer->list);
-+		ordered_events_buffer__free(buffer, oe);
- 	}
- }
- 
-diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
-index 8c7a2948593e..1338d5c345dc 100644
---- a/tools/perf/util/ordered-events.h
-+++ b/tools/perf/util/ordered-events.h
-@@ -25,23 +25,28 @@ struct ordered_events;
- typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
- 					 struct ordered_event *event);
- 
-+struct ordered_events_buffer {
-+	struct list_head	list;
-+	struct ordered_event	event[0];
-+};
-+
- struct ordered_events {
--	u64			last_flush;
--	u64			next_flush;
--	u64			max_timestamp;
--	u64			max_alloc_size;
--	u64			cur_alloc_size;
--	struct list_head	events;
--	struct list_head	cache;
--	struct list_head	to_free;
--	struct ordered_event	*buffer;
--	struct ordered_event	*last;
--	ordered_events__deliver_t deliver;
--	int			buffer_idx;
--	unsigned int		nr_events;
--	enum oe_flush		last_flush_type;
--	u32			nr_unordered_events;
--	bool                    copy_on_queue;
-+	u64				 last_flush;
-+	u64				 next_flush;
-+	u64				 max_timestamp;
-+	u64				 max_alloc_size;
-+	u64				 cur_alloc_size;
-+	struct list_head		 events;
-+	struct list_head		 cache;
-+	struct list_head		 to_free;
-+	struct ordered_events_buffer	*buffer;
-+	struct ordered_event		*last;
-+	ordered_events__deliver_t	 deliver;
-+	int				 buffer_idx;
-+	unsigned int			 nr_events;
-+	enum oe_flush			 last_flush_type;
-+	u32				 nr_unordered_events;
-+	bool				 copy_on_queue;
- };
- 
- int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
+> +	compatible = "amlogic,g12a";
+> +
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		/* Alternate 3 MiB reserved for ARM Trusted Firmware (BL31) */
+
+It's the only one (for now at least) so it's not really an alternate, isn't it ?
+
+> +		secmon_reserved: secmon@5000000 {
+> +			reg = <0x0 0x05000000 0x0 0x300000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <0x2>;
+> +		#size-cells = <0x0>;
+> +
+> +		cpu0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			reg = <0x0 0x0>;
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			reg = <0x0 0x1>;
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			reg = <0x0 0x2>;
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			reg = <0x0 0x3>;
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		l2: l2-cache0 {
+> +			compatible = "cache";
+> +		};
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
+> +	};
+> +
+> +	xtal: xtal-clk {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "xtal";
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+
+Could you please order the different bus by ascending addresses ?
+
+
+> +
+> +		apb: apb@ffe00000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xffe00000 0x0 0x200000>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x200000>;
+> +		};
+> +
+> +		cbus: bus@ffd00000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xffd00000 0x0 0x25000>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xffd00000 0x0 0x25000>;
+> +
+> +		};
+> +
+> +		gic: interrupt-controller@ffc01000 {
+> +			compatible = "arm,gic-400";
+> +			reg = <0x0 0xffc01000 0 0x1000>,
+> +			      <0x0 0xffc02000 0 0x2000>,
+> +			      <0x0 0xffc04000 0 0x2000>,
+> +			      <0x0 0xffc06000 0 0x2000>;
+> +			interrupt-controller;
+> +			interrupts = <GIC_PPI 9
+> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
+> +		};
+> +
+> +		hiubus: bus@ff63c000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xff63c000 0x0 0x1c00>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+> +
+> +		};
+> +
+> +		periphs: periphs@ff634000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xff634000 0x0 0x2000>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xff634000 0x0 0x2000>;
+> +		};
+> +
+> +		aobus: bus@ff800000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xff800000 0x0 0x100000>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
+> +
+> +			uart_AO: serial@3000 {
+> +				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+> +				reg = <0x0 0x3000 0x0 0x18>;
+> +				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+> +				clocks = <&xtal>, <&xtal>, <&xtal>;
+> +				clock-names = "xtal", "pclk", "baud";
+> +				status = "disabled";
+> +			};
+> +
+> +			uart_AO_B: serial@4000 {
+> +				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+> +				reg = <0x0 0x4000 0x0 0x18>;
+> +				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
+> +				clocks = <&xtal>, <&xtal>, <&xtal>;
+> +				clock-names = "xtal", "pclk", "baud";
+> +				status = "disabled";
+> +			};
+> +
+> +		};
+> +	};
+> +};
+
+
