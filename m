@@ -2,98 +2,76 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F23FC46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A5BC46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB6D2239B
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:53:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADB6D2239B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 866F02239B
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:56:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866F02239B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeHJDVN (ORCPT
+        id S1727197AbeHJDXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 23:21:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45632 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbeHJDVN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 23:21:13 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11FAAC77;
-        Fri, 10 Aug 2018 00:53:49 +0000 (UTC)
-Date:   Thu, 9 Aug 2018 17:53:48 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        Andy Whitcroft <apw@canonical.com>
-Subject: Re: [PATCH] checkpatch: DT bindings should be a separate patch
-Message-Id: <20180809175348.aa8a93ab7deb011f39ac2704@linux-foundation.org>
-In-Reply-To: <20180809205032.22205-1-robh@kernel.org>
-References: <20180809205032.22205-1-robh@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 9 Aug 2018 23:23:51 -0400
+Received: from fieldses.org ([173.255.197.46]:49490 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726882AbeHJDXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 23:23:51 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 155CA3F4; Thu,  9 Aug 2018 20:56:26 -0400 (EDT)
+Date:   Thu, 9 Aug 2018 20:56:26 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] fs/locks: change all *_conflict() functions to
+ return a new enum.
+Message-ID: <20180810005626.GC3915@fieldses.org>
+References: <153378012255.1220.6754153662007899557.stgit@noble>
+ <153378028114.1220.3708291796442871726.stgit@noble>
+ <20180809130959.GH23873@fieldses.org>
+ <87d0urrtvw.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0urrtvw.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  9 Aug 2018 14:50:32 -0600 Rob Herring <robh@kernel.org> wrote:
-
-> Devicetree bindings should be their own patch as documented in
-> Documentation/devicetree/bindings/submitting-patches.txt section I.1.
-> This is because bindings are logically independent from a driver
-> implementation, they have a different maintainer (even though they often
-> are applied via the same tree), and it makes for a cleaner history in
-> the DT only tree created with git-filter-branch.
+On Fri, Aug 10, 2018 at 09:40:35AM +1000, NeilBrown wrote:
+> caller_fl is first and sys_fl is second.
 > 
-> ...
->
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -2236,6 +2236,7 @@ sub process {
->  	our $clean = 1;
->  	my $signoff = 0;
->  	my $is_patch = 0;
-> +	my $is_binding_patch = -1;
->  	my $in_header_lines = $file ? 0 : 1;
->  	my $in_commit_log = 0;		#Scanning lines before patch
->  	my $has_commit_log = 0;		#Encountered lines before patch
-> @@ -2485,6 +2486,27 @@ sub process {
->  				$check = $check_orig;
->  			}
->  			$checklicenseline = 1;
-> +
-> +			if ($realfile !~ /MAINTAINERS/) {
-> +				my $mixed = 0;
-> +				if ($realfile =~ /(Documentation\/devicetree|include\/dt-bindings).*/) {
-> +					if ($is_binding_patch == 0) {
-> +						$mixed = 1;
-> +					}
-> +					$is_binding_patch = 1;
-> +				} else {
-> +					if ($is_binding_patch == 1) {
-> +						$mixed = 1;
-> +					}
-> +					$is_binding_patch = 0;
-> +				}
-> +
-> +				if ($mixed == 1) {
-> +					WARN("DT_SPLIT_BINDING_PATCH",
-> +					     "DT binding docs and includes should be a separate patch\n");
+> if sys_fl, the second, is a read lock, and caller_fl, the first, is a
+> write lock, they clearly conflict but any other lock that conflict
+> with caller_fl (The write lock) would *not* necessarily conflict with
+> the read lock.  So this situation is *not*  FL_TRANSITIVE_CONFLICT.
+> 
+> locks_conflict() only returns FL_TRANSITIVE_CONFLICT when sys_fl (the
+> second) is a write lock, which it isn't in this case.  So I think that
+> this case is handled correctly.
+> posix_locks_conflict() will return FL_CONFLICT, but not
+> FL_TRANSITIVE_CONFLICT.
+> 
+> Have I convinced you, or have I missed your point?
 
-A pointer to Documentation/devicetree/bindings/submitting-patches.txt
-might be helpful?
+Eh, I was just confused.
 
-> +				}
-> +			}
-> +
->  			next;
->  		}
+And now I'm tempted to blame you for confusing me, but maybe that's just
+my ego going defensive.
 
+(My bruised ego suggests leaving locks_conflict and its callers alone,
+and having an entirely separate function that checks this when we need
+it.)
+
+--b.
