@@ -2,83 +2,121 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839C9C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9354BC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FAFE2240E
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:31:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="s8GMP13k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAFE2240E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 43A672240E
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:35:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A672240E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeHJOBQ (ORCPT
+        id S1727738AbeHJOFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:01:16 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41994 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeHJOBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:01:16 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7ABSxwH001532;
-        Fri, 10 Aug 2018 11:31:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Lt/eRAJccFTy6gupPUWMENLVMpzJl5wCCvHW/HNaR50=;
- b=s8GMP13k7eFjY8fj9FQFRGLOpPy4XtVjN57THZowwWLREdZ+rDqw9y6434x/F90qeeIv
- R4lOopB9oVrBlSJAsvi1/SDYDw/QN+CIg0GvaugFudJSFjV+nWh/gMyEn2drJQUr7i9I
- ByRvC0oZULq0r7aDDUYntENLYdb0IorCD5YXn1NawdM0jNKej/n7lObfgji+y3bHHO69
- CKZTjuGcEkGnMPA4b/bl1ebk+f3WD4crDlvnh1QxdPo8JI1pjENkjSTZDP9PG0ik8BkA
- dS4fFUkhZNg4+twrB0SB0juDpnZG0fRwKm5cZKCi+Fu4cxppEgPd6u4n+XvtNZBMOh2b VQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kn43p6yek-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Aug 2018 11:31:40 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7ABVeip031794
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Aug 2018 11:31:40 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7ABVdec004010;
-        Fri, 10 Aug 2018 11:31:39 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 10 Aug 2018 04:31:39 -0700
-Date:   Fri, 10 Aug 2018 14:31:32 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] staging: rtl8188eu: use is_multicast_ether_addr
- in rtw_security.c
-Message-ID: <20180810113132.p3go5yduhyz6cr65@mwanda>
-References: <20180810105133.31224-1-straube.linux@gmail.com>
+        Fri, 10 Aug 2018 10:05:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727445AbeHJOFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 10:05:24 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 695CD40241C3;
+        Fri, 10 Aug 2018 11:35:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 00DC910F1C0B;
+        Fri, 10 Aug 2018 11:35:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 10 Aug 2018 13:35:51 +0200 (CEST)
+Date:   Fri, 10 Aug 2018 13:35:49 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "zhangwei(Jovi)" <jovi.zhangwei@huawei.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] uprobes: Use synchronize_rcu() not synchronize_sched()
+Message-ID: <20180810113548.GA3677@redhat.com>
+References: <20180809160553.469e1e32@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810105133.31224-1-straube.linux@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8980 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=463
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808100127
+In-Reply-To: <20180809160553.469e1e32@gandalf.local.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 10 Aug 2018 11:35:51 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 10 Aug 2018 11:35:51 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No no...  I only gave it a Reviewed-by tag because I didn't want you to
-resend again...  :P
+On 08/09, Steven Rostedt wrote:
+>
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -952,7 +952,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
+>
+>  		list_del_rcu(&link->list);
+>  		/* synchronize with u{,ret}probe_trace_func */
+> -		synchronize_sched();
+> +		synchronize_rcu();
 
-regards,
-dan carpenter
+Can't we change uprobe_trace_func() and uretprobe_trace_func() to use
+rcu_read_lock_sched() instead? It is more cheap.
+
+
+Hmm. probe_event_enable() does list_del + kfree on failure, this doesn't
+look right... Not only because kfree() can race with list_for_each_entry_rcu(),
+we should not put the 1st link on list until uprobe_buffer_enable().
+
+Does the patch below make sense or I am confused?
+
+Oleg.
+
+
+--- x/kernel/trace/trace_uprobe.c
++++ x/kernel/trace/trace_uprobe.c
+@@ -896,8 +896,6 @@ probe_event_enable(struct trace_uprobe *
+ 			return -ENOMEM;
+ 
+ 		link->file = file;
+-		list_add_tail_rcu(&link->list, &tu->tp.files);
+-
+ 		tu->tp.flags |= TP_FLAG_TRACE;
+ 	} else {
+ 		if (tu->tp.flags & TP_FLAG_TRACE)
+@@ -909,7 +907,7 @@ probe_event_enable(struct trace_uprobe *
+ 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+ 
+ 	if (enabled)
+-		return 0;
++		goto add;
+ 
+ 	ret = uprobe_buffer_enable();
+ 	if (ret)
+@@ -920,7 +918,8 @@ probe_event_enable(struct trace_uprobe *
+ 	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+ 	if (ret)
+ 		goto err_buffer;
+-
++ add:
++	list_add_tail_rcu(&link->list, &tu->tp.files);
+ 	return 0;
+ 
+  err_buffer:
+@@ -928,7 +927,6 @@ probe_event_enable(struct trace_uprobe *
+ 
+  err_flags:
+ 	if (file) {
+-		list_del(&link->list);
+ 		kfree(link);
+ 		tu->tp.flags &= ~TP_FLAG_TRACE;
+ 	} else {
 
