@@ -2,155 +2,137 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833A7C46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC9BC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343CB223B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343CB223B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A2FB0223B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:25:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="CJefqNpp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IIMb3Dsm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2FB0223B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbeHJEsX (ORCPT
+        id S1726963AbeHJEwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 00:48:23 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13309 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725198AbeHJEsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 00:48:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2018 19:20:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,217,1531810800"; 
-   d="scan'208";a="253555370"
-Received: from megha-z97x-ud7-th.sc.intel.com (HELO [143.183.85.162]) ([143.183.85.162])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Aug 2018 19:20:36 -0700
-Message-ID: <1533868833.19050.19.camel@megha-Z97X-UD7-TH>
-Subject: Re: [RFC] crypto: Remove mcryptd
-From:   Megha Dey <megha.dey@intel.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Date:   Thu, 09 Aug 2018 19:40:33 -0700
-In-Reply-To: <20180808095621.h7ecacftx5ofe5ki@gondor.apana.org.au>
-References: <1526089453-6542-1-git-send-email-megha.dey@linux.intel.com>
-         <20180720035325.m5tzeuqsfej3y6wd@gondor.apana.org.au>
-         <1532651107.19157.24.camel@megha-Z97X-UD7-TH>
-         <20180808095621.h7ecacftx5ofe5ki@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 10 Aug 2018 00:52:41 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:36719 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725724AbeHJEwl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 00:52:41 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 08D5821E72;
+        Thu,  9 Aug 2018 22:24:59 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 09 Aug 2018 22:24:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :date:from:message-id:subject:to:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=lCMHG/j4cmAj28uIDcx7ix7FFgOPzX7RkPDTQoqeN
+        gA=; b=CJefqNpph0HFIQ4bqTHK1NjswL187gc8C3P0vvo7iFyceKSHishtTLhme
+        gYkzWOPl8d1QdNVgktqMDqkGAfU8LC5ThU4wqC9gDfkp6zG4/2UvnKIRXO2YLtky
+        E6Z+NeXOucXxKbhIGx0bIjw7pPxeC4Gt5Pusa6aMzFtu2JQGKpT7zMhslZsuPQ/E
+        ShWySOGeLHPlsORTWTNdgPndm5pwtJZ0aWr2sM5n9V9wVAXFal23qLzH7N3ME2vP
+        rLGTRguoSA2LZ5YA7vnTLlbnipu7UHAhM6PvXwXYUtTpsJwhL8iyUsv9MrCwcQsV
+        RjynbEypKjxhTw8DUaHyRQ9Oeuygg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:date:from:message-id:subject:to
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=lCMHG/j4cmAj28uID
+        cx7ix7FFgOPzX7RkPDTQoqeNgA=; b=IIMb3DsmUJ3oHEktCf/JS5HmYEMzt9P/A
+        tjGJgqOWrxbevBFJAiXT8qiPPZf+ecjelS70TNd4OGplfQYHG69lLCFdZJj1ahWl
+        hO2+IFtXjxQCo6s/gyGWvUeDZ8GrOz76eBirbovuWLmH6LNGHiJM54cOKgShYboq
+        0c6NA4PMPutS+JdmUz3wV1WMfir+lsSAGLtYayZExoNSXu0A/ZOj+VDoY6/NBDbv
+        orcS7EbxA6lDw8hNRJc2PdZIj6hLDoBJG0EcTbAJB++X7QVXREhFvNM4dIjF0POu
+        H8RzvP672HHx9tIK08W7NJRQkZQoBgNBqfSnhG86UBghTw8QgaPJA==
+X-ME-Proxy: <xmx:evdsW-Phsl31uD34UqFwi9irE7XuihngzUx_DTMIMcwSLriBtZ8U2A>
+    <xmx:evdsW7kTECRaU7S8lW7QeR7WEMovpx7FznviT4i6yx8BLOcfWYR3Jw>
+    <xmx:evdsW04r163k7WqOiNIGU48iLCsTfubgXfvXOyDWyBsAh-ZMyGR_Dw>
+    <xmx:evdsW07l9mUNWt6UYeteR70ObRjn_KrFmLm548pZNADukBla04XWBQ>
+    <xmx:evdsW7tNsnNcccSZZJTx2FrrJgYsoSMCtuvPn2hLkV2r6YgVIRPlqQ>
+    <xmx:evdsW7bWirRqBI53yQLtPUviXZyoFmSQZZGBuEdGbx_B4srFGWhOBQ>
+X-ME-Sender: <xms:evdsW1j6iHAQPIh0qUkujScQuzYRjxYWvbsYGG2fymmMvFo5Vck0Xg>
+Received: from localhost (ppp121-44-213-17.bras1.syd2.internode.on.net [121.44.213.17])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1209B10273;
+        Thu,  9 Aug 2018 22:24:57 -0400 (EDT)
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     "Tobin C. Harding" <me@tobin.cc>, Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 0/4] Convert filter.txt to RST
+Date:   Fri, 10 Aug 2018 12:24:46 +1000
+Message-Id: <20180810022450.1237-1-me@tobin.cc>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-08 at 17:56 +0800, Herbert Xu wrote:
-> On Thu, Jul 26, 2018 at 05:25:07PM -0700, Megha Dey wrote:
-> > 
-> > 1. On the existing algorithms covered in aesni_intel-glue.c (eg:
-> > __cbc-aes-aesni), 3 algorithms are registered in /proc/crypto:
-> > 
-> >      __cbc(aes)
-> >      cryptd(__cbc-aes-aesni)--> registered via cryptd_create_skcipher
-> > 
-> >      cbc(aes)
-> >      cbc-aes-aesni	--> registered via simd_skcipher_create_compat
-> > 
-> >      __cbc(aes)
-> >      __cbc-aes-aesni    --> registered as the internal algorithm
-> > 
-> > I would want to know why do we need the cryptd(__cbc-aes-aesni)
-> > algorithm at all. I do not see any of the associated setkey, encrypt or
-> > decrypt functions getting called during the selftest or while running
-> > tcrypt. I just see the simd_(setkey, encrypt, decrypt) functions
-> > directly called the inner algorithms. However, if I remove the cryptd
-> > algorithm, none of the algorithms are registered.
-> 
-> The simd functions are the fast path where you are running in a
-> context where SIMD can be used directly.  cryptd is the slow path
-> where we defer the work to a work queue.
+seccomp_filter.rst change removed from set, leaving CC list same as v1
+for continuity.
 
-Hi Herbert,
+Hi,
 
-Thank you for the clarification.
+This is my latest attempt at converting Documentation/filter.txt to RST
+format.  This version removes the SPDX licence identifiers added in the
+previous version.
 
-I seem to have gotten things to work (i.e remove mcryptd layer). I have
-tried this with the skcipher on top of my previously posted patches for
-the aes-cbc-mb multibuffer algorithm since the simd wrappers already
-exist for it. I am working on extending to hashes, sorry for the
-confusion.
+This work has gotten a bit mixed up; for reference this set is a
+progression of the follow sets (newest set last)
 
-I would like to get your approval first on the changes I have made in
-the cryptd layer:
+ 1. [PATCH bpf-next 00/13] docs: Convert BPF filter.txt to RST
+ 2. [RFC bpf-next 0/3] docs: Convert filter.txt to RST
+ 3. [RFC bpf-next v2 0/3] docs: Convert filter.txt to RST
+ 4. [PATCH bpf-next 0/4] Convert filter.txt to RST
 
-1. 
-@@ -495,7 +534,10 @@ static void cryptd_skcipher_encrypt(struct
-crypto_async_request *base,
-        skcipher_request_set_crypt(subreq, req->src, req->dst,
-req->cryptlen, req->iv);
- 
--       err = crypto_skcipher_encrypt(subreq);
-+       subreq->base.data = req->base.data;
-+       subreq->base.complete = rctx->complete;
-+       rctx->desc = *subreq;
-+       err = crypto_skcipher_encrypt(&rctx->desc);
-        skcipher_request_zero(subreq);
+As discussed on LKML this set does all the conversion in a single
+patch.
 
-This change is necessary because for the multibuffer algorithms, the
-inner algorithm needs a pointer to the original request. In the slow
-path, since we allocate a skcipher_request on the stack, there is no
-easy way to retrieve the request. In the mcryptd_layer, we had extra
-logic to store this pointer. 
-
-2. Currently, 
--struct cryptd_skcipher_request_ctx {
--       crypto_completion_t complete;
--};
--
-
-For multibuffer algorithms, we need more structure members:
-+struct cryptd_skcipher_request_ctx {
-+        struct list_head waiter;
-+        crypto_completion_t complete;
-+        struct cryptd_tag tag;
-+        struct skcipher_walk walk;
-+        u8 flag;
-+        int nbytes;
-+        int error;
-+        struct skcipher_request desc;
-+        void *job;
-+        u128 seq_iv;
-
-I am not sure if adding the member to the original structure definition
-is acceptable or I should introduce a new structure.
-
-Lastly, for hashes, we have
-struct cryptd_hash_request_ctx {
-        crypto_completion_t complete;
-        struct shash_desc desc;
-};
-
-If we were to use this(with the added fields for multibuffer), we should
-update the shash_desc to ahash_request since we are an async algorithm
-right?
+Please note this set adds three files to the MAINTAINERS file for the
+BPF maintainers.
 
 
-> 
-> > > What you need to do is create an actual simd wrapper with cryptd
-> >  
-> > This simd wrapper is already present for skcipher right(in simd.c)?
-> > Assuming we only have ciphers and no hash algorithms, are any changes
-> > required in these wrappers?
-> 
-> For skcipher yes they already exist.  But this thread was about
-> hashes.
-> 
-> Cheers,
+thanks,
+Tobin.
 
+v2:
+ - Remove SPDX licence identifiers
+ - Update old intree references to filter.txt
+
+
+Tobin C. Harding (4):
+  docs: net: Fix various minor typos
+  docs: Separate and convert filter.txt to RST
+  docs: Judiciously use double ticks
+  docs: Remove filter.txt from the tree
+
+ Documentation/bpf/index.rst                   |   15 +-
+ Documentation/networking/00-INDEX             |    2 -
+ Documentation/networking/filter.txt           | 1476 -----------------
+ Documentation/networking/packet_mmap.txt      |    2 +-
+ Documentation/userspace-api/cBPF.rst          |  430 +++++
+ Documentation/userspace-api/eBPF.rst          | 1004 +++++++++++
+ Documentation/userspace-api/index.rst         |    3 +
+ .../userspace-api/seccomp_filter.rst          |    9 +
+ Documentation/userspace-api/socket_filter.rst |  181 ++
+ MAINTAINERS                                   |    4 +-
+ tools/bpf/bpf_asm.c                           |    6 +-
+ tools/bpf/bpf_dbg.c                           |    9 +-
+ 12 files changed, 1653 insertions(+), 1488 deletions(-)
+ delete mode 100644 Documentation/networking/filter.txt
+ create mode 100644 Documentation/userspace-api/cBPF.rst
+ create mode 100644 Documentation/userspace-api/eBPF.rst
+ create mode 100644 Documentation/userspace-api/socket_filter.rst
+
+-- 
+2.17.1
 
