@@ -5,93 +5,77 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DDCC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31805C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05C3223E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:44:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05C3223E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E52A3223C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52A3223C6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbeHJROy (ORCPT
+        id S1728372AbeHJRQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:14:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43360 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727477AbeHJROy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:14:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F111B03F;
-        Fri, 10 Aug 2018 14:44:35 +0000 (UTC)
-Subject: Re: [PATCH 06/10] x86/paravirt: introduce new config option
- PARAVIRT_XXL
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org
-Cc:     akataria@vmware.com, rusty@rustcorp.com.au, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com
-References: <20180810115252.18213-1-jgross@suse.com>
- <20180810115252.18213-7-jgross@suse.com>
- <cdb31666-f4ca-4a5c-6961-c6e92da722c1@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <080a3358-98eb-c5db-b316-edcc74d938c4@suse.com>
-Date:   Fri, 10 Aug 2018 16:44:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 13:16:13 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33209 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbeHJRQN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 13:16:13 -0400
+Received: by mail-ed1-f66.google.com with SMTP id x5-v6so4934496edr.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:46:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=T+vRjBwjVYr6p5ANu+Lfib/Kw/sEWImfVWRA/qpHXqw=;
+        b=HpGrAMBPUo5xrVLQ+Vtv4euJUl6tuWw4alollzfV1EVvuNiafMmv3vVpYuy4sJtgV0
+         YM28yj43BW6zH7VcSJvTnJHBc3BeuvNP4CWZc5XqB7VMrPZbEQpzI7oRtaH+iQcSLvxS
+         GOP4H2tIyPG5WcSLZdgzwByLFmvUB6DDNvU5fHozAqFseOwP2rBnSFk85Nu5/DjGKGfz
+         MYJSlmIYWM2hrUqsEdMZbyCrM8zaJq9iTGbwTf99DvgyJAmNiHr5R6wmfKKcGEaJFkXD
+         q2hMVIeROVt5+IH6rkralAOL+xJ10e41xisb3hRbUHuCZ+tNINkKZqQ8kOeCmC/sVYLh
+         revg==
+X-Gm-Message-State: AOUpUlGAJ4KfnZ6pBcwoVZThtAiKgEJGgjh2r40nsbV0Fiw7cVvhPBug
+        gADbq/5Lw83HXgKvw7d2R8TF7X8hvigcaA==
+X-Google-Smtp-Source: AA+uWPwtcNTCa5gpXFrx0/R1kp/SFjyE26q2mjk6mOuOvokGMZ3LFHL/NnDXm0vAn0U7eE9YNxrcPQ==
+X-Received: by 2002:a50:86a1:: with SMTP id r30-v6mr9019933eda.138.1533912359926;
+        Fri, 10 Aug 2018 07:45:59 -0700 (PDT)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm3661388edn.95.2018.08.10.07.45.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 07:45:58 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id b15-v6so8514794wrv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:45:58 -0700 (PDT)
+X-Received: by 2002:a5d:4c4c:: with SMTP id n12-v6mr4336566wrt.71.1533912358119;
+ Fri, 10 Aug 2018 07:45:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cdb31666-f4ca-4a5c-6961-c6e92da722c1@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <20180810133636.8340-1-efremov@linux.com> <alpine.DEB.2.20.1808101541270.3390@hadrien>
+ <CADKZ3FLsksV8-cCE6aOnZnLbYj3SSAkPnMs_VRQB3g0V3mUYcg@mail.gmail.com> <alpine.DEB.2.20.1808101627230.3390@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1808101627230.3390@hadrien>
+Reply-To: efremov@linux.com
+From:   Denis Efremov <efremov@linux.com>
+Date:   Fri, 10 Aug 2018 17:45:46 +0300
+X-Gmail-Original-Message-ID: <CADKZ3F+UzwTbcKBHDYQnoFFgWiVoDbxZzBb=PQjMn2x-T26jHg@mail.gmail.com>
+Message-ID: <CADKZ3F+UzwTbcKBHDYQnoFFgWiVoDbxZzBb=PQjMn2x-T26jHg@mail.gmail.com>
+Subject: Re: [PATCH] coccicheck: return proper error code on check fail
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/08/18 16:22, Boris Ostrovsky wrote:
-> On 08/10/2018 07:52 AM, Juergen Gross wrote:
->> A large amount of paravirt ops is used by Xen PV guests only. Add a new
->> config option PARAVIRT_XXL which is selected by XEN_PV. Later we can
->> put the Xen PV only paravirt ops under the PARACVIRT_XXL umbrella.
-> 
-> What does "XXL" stand for? My immediate thought was "extra extra large"
-> but I suspect it's something else.
+My mistake. Initially, I thought that this line signals about errors
+in the code, but now I see that this is about the tool's internal
+error. However, this doesn't change the fact that coccicheck returns
+the improper error code.
 
-No, your immediate thought was correct. :-)
-
-
-Juergen
+I will reformulate the commit message and send the v2 patch with the
+same diff. Thank you for clarifying things.
