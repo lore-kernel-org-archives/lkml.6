@@ -2,114 +2,78 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AEEC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3B5C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0AF122436
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:31:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="PrFvoEFG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0AF122436
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 836CF2242B
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:32:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 836CF2242B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeHJTBx (ORCPT
+        id S1729621AbeHJTDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 15:01:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46188 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728110AbeHJTBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 15:01:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=IuaH2s2bSfOm7d0jiXgypWdOCcHojmL/sl0gSKQfiIM=; b=PrFvoEFGTOj4
-        xz6KwXVndGHkiyPmtZALc/my0YgyW3OKRex/1yImeZmi00k7g13nqlbkUb/ymjmhIWgcL50pl5FU+
-        NPIiLEFzyy+XHlLFtB3jR+MfUBTagMQEBvbokuI1298ZYInkYF3a6Mp1MEU5E5hxSUI1/YdtWAhVG
-        GBfcQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1foAJo-0004sI-KW; Fri, 10 Aug 2018 16:31:16 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5CA7D112435F; Fri, 10 Aug 2018 17:31:16 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: davinci: fix a NULL pointer dereference" to the spi tree
-In-Reply-To:  <20180810091352.30227-1-brgl@bgdev.pl>
-Message-Id: <20180810163116.5CA7D112435F@debutante.sirena.org.uk>
-Date:   Fri, 10 Aug 2018 17:31:16 +0100 (BST)
+        Fri, 10 Aug 2018 15:03:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727795AbeHJTDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 15:03:23 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 152A62242A;
+        Fri, 10 Aug 2018 16:32:47 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 12:32:46 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 2/3] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180810123246.1174ba66@gandalf.local.home>
+In-Reply-To: <20180810113554.1df28050@gandalf.local.home>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
+        <20180730222423.196630-3-joel@joelfernandes.org>
+        <20180810113554.1df28050@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, 10 Aug 2018 11:35:54 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-   spi: davinci: fix a NULL pointer dereference
+> Investigating it, it's that when we register more than one event, the
+> tracepoint code calls "release_probes" when adding new tracepoints (as
+> it updated the tracepoint array), and this is done very early in boot
+> up, causing this warning.
+> 
+> I'm still looking at ways to fix this. Any ideas would help.
 
-has been applied to the spi tree at
+I just posted a patch:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+ http://lkml.kernel.org/r/20180810123042.51ceddb9@gandalf.local.home
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+It appears to fix the issue. I'm going to start testing it in my suite.
+Does anyone have any concerns about it, or a better solution?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Thanks!
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 563a53f3906a6b43692498e5b3ae891fac93a4af Mon Sep 17 00:00:00 2001
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 10 Aug 2018 11:13:52 +0200
-Subject: [PATCH] spi: davinci: fix a NULL pointer dereference
-
-On non-OF systems spi->controlled_data may be NULL. This causes a NULL
-pointer derefence on dm365-evm.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- drivers/spi/spi-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index 60d59b003aa4..4ffc0f495be8 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -217,7 +217,7 @@ static void davinci_spi_chipselect(struct spi_device *spi, int value)
- 	pdata = &dspi->pdata;
- 
- 	/* program delay transfers if tx_delay is non zero */
--	if (spicfg->wdelay)
-+	if (spicfg && spicfg->wdelay)
- 		spidat1 |= SPIDAT1_WDEL;
- 
- 	/*
--- 
-2.18.0
-
+-- Steve
