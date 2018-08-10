@@ -6,65 +6,64 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92777C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0917C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 401A1223C7
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4965B208D4
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:08:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UOpQj9hS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 401A1223C7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P2KbqWUS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4965B208D4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeHJXdT (ORCPT
+        id S1727301AbeHJXkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 19:33:19 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46289 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeHJXdT (ORCPT
+        Fri, 10 Aug 2018 19:40:05 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51025 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbeHJXkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 19:33:19 -0400
-Received: by mail-io0-f194.google.com with SMTP id i18-v6so8791205ioj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:01:49 -0700 (PDT)
+        Fri, 10 Aug 2018 19:40:05 -0400
+Received: by mail-it0-f66.google.com with SMTP id j81-v6so4462284ite.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cKuQdc55buToHxY4tUDYmNjIX5VdJXEWh/mm34D6a+c=;
-        b=UOpQj9hSMlU+9B7VYaBMWVbeJhchb5o3Bl/e/3BvGByb1YLnm6PgjebPeFstno36q4
-         uUJ1RAlJal5lpeROSqj8l17J+LRXq3WLQso6LjNkLqSOyZkEfYN020a452MtTg5SRg0Z
-         9oaA4f7WpWhMnUZPe+yELP242u6u/lzLbPtDo=
+        bh=rbzwpWyopjb9EZV3NWuSuuA5bL4B2lQRW8OnD9zonvQ=;
+        b=P2KbqWUSD6X+nEVM5zQDPxB+UtrdA1VMYkwMTsgMazyXD52Rxa9B/jQ+HG4S+MBGSW
+         lQWJWs7f4BKIqvqK0aKSJZuLovf0Q8LdIf4Mrp5facvmLcF34BsesXu/mq/BG5J+zYNY
+         VhitQFaFMOzZStbKR79WFiN0DVF9lAzLbIFiY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cKuQdc55buToHxY4tUDYmNjIX5VdJXEWh/mm34D6a+c=;
-        b=MXU2J4/OQhG/VUW35rhxSYq1xQ8/Hz7Re+N0kbX4L1fJRuuDk32hBxHZL0n+eFKHPq
-         y0U1T7vppCjSVFb8eihvcb/dYdShJSmdsHCuhNTuczbZkLbH/BqWy/LslNrMpW+I72Kg
-         QA/EDIdMGaIzrP1M6gMdv2UwOvFNU5QsEaOmzD6dJR989dnqJ0xjzabGWEBC6bl7qIPq
-         saIyF5zRT3UajjR7tnIzKO24n8ldpkVL15eDClsab1aJ2sv3jhGaq4hWXCQEtdiuFAb/
-         3BjILUa8nPTJUEdOR7fQtnEgvw/FyVyFEbfBM6yEJR3vfWlz7i3A8hxVBfmpvugzwgvK
-         vREg==
-X-Gm-Message-State: AOUpUlG3VzvWFR3JZorIcrWGRWhWc7/KB422FrJhpJB6X/DfWf3weIrW
-        wTE5AuJ/0vAHfWLukKh0pr7K5QxKYi9yAm13DZqCAg==
-X-Google-Smtp-Source: AA+uWPzG0GFf64zrLA8o3Ctqf+BRj0cnXqlHLal6ExzV/9HnGatOJUeI7VZ3hT8tgnpLnMMkl+m9k3RI9ClETdRpZBY=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr6384384ioa.277.1533934908947;
- Fri, 10 Aug 2018 14:01:48 -0700 (PDT)
+        bh=rbzwpWyopjb9EZV3NWuSuuA5bL4B2lQRW8OnD9zonvQ=;
+        b=lsvUF6RIIkwv9it0HJYmlpz9FYYQhFPchRru9qBLnc911VtYndLWUkyzW8GJR5Gxlf
+         aVsIM0O6YkH6ojIqebRww618cGX1/dB0jWRBGTOOuYc/ZYCdb6maReFdJ/SHjIhSEyax
+         JczdkJQq+iuZpCsbk0G5u5kTJEMsWr75vjh/jw06a6J/4DUwg4/RUEkjo30cwlXf5AyP
+         QI1xRdn3Kq9KAAKpZ2xWvfT1rb21YC7ofau7/PEJ+0HmVxThH2tV5tg5nShF9XfAHJhS
+         qEbozWTxZnDwKmxzmSN8bwBkGqstO1RLcM+3XEw4JjV5EDdC59Jk6ha4vnKVZ+v3geD3
+         EOYA==
+X-Gm-Message-State: AOUpUlFHDcgAeaKgxD4476TLCdeKtCIh1nSntm/ZzfsjEiu+bwHIJKuG
+        gRcGSH10Jl2lCkgN7RJQxHEFKjtmA+oLfh0R80hVj1AM
+X-Google-Smtp-Source: AA+uWPyinvG4+yfHtNwLH+CPh37eByWKMYlgpD8HpCBy2WyhmCVw/9zhb9x87NmE2SKKDUy4E3F+Qg+/nroLpWvsZvA=
+X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr3642692iti.135.1533935313471;
+ Fri, 10 Aug 2018 14:08:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180806163340.27276-1-krzk@kernel.org>
-In-Reply-To: <20180806163340.27276-1-krzk@kernel.org>
+References: <1533610179-13885-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1533610179-13885-1-git-send-email-yamada.masahiro@socionext.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 10 Aug 2018 23:01:37 +0200
-Message-ID: <CACRpkda_9NBKUggzBw5hYokpOEUV+9Zfx-BQg8MYaVTc0oBxiA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: Remove duplicated "wakeup" in printk
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
+Date:   Fri, 10 Aug 2018 23:08:21 +0200
+Message-ID: <CACRpkdYNEhq_3nO1OWokhuop83WAmURHmy0k=xyJRT32UFBSOQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: uniphier: drop meaningless pin from SD1 pin-mux
+ of Pro4
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,13 +71,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 6:33 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, Aug 7, 2018 at 4:50 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> Double "wakeup" appears in printed message.
+> The pin 327 was supposed to be used as a voltage control line for the
+> SD card regulator, but the SD card port1 does not support UHS-I.  It
+> only supports 3.3V signaling, hence this pin is pointless.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Just a note about the background.  At first, hardware engineers tried
+> to implement the UHS for this port.  Then, they needed to shrink the
+> silicon die size, and gave up the UHS, but forgot to remove the pin
+> assignment.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Patch applied.
+This patch does not apply against my devel branch for v4.19.
+
+Please rebase and resend.
 
 Yours,
 Linus Walleij
