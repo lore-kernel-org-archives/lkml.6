@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E2FC46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7D6C46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2603223C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F66D223DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pV+4qH3e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2603223C9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjP3PiKb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F66D223DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbeHJFtd (ORCPT
+        id S1727713AbeHJFtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 01:49:33 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33994 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727711AbeHJFtd (ORCPT
+        Fri, 10 Aug 2018 01:49:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43381 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727671AbeHJFtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 01:49:33 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k19-v6so3841524pfi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:21:39 -0700 (PDT)
+        Fri, 10 Aug 2018 01:49:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a14-v6so3698068pgv.10
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:21:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7Me+ZYectWHujsAxD8lZUB3egYHKO4Vm/esXkM4BdyY=;
-        b=pV+4qH3e15jJ+9gyTRdi4UB7nU+Ka6vh+OgRS3CokOfPxRn+5UimXyKaK5oV0SMiIu
-         VT+ZMKiwKPw2EG33qxa2J/tbnmfpJfYMjM+P/SG9XGg5/IXb+35WO0vUbmnb/r2IVYxJ
-         CGteMvDkZSPjFOuOQ7eoOISGm1j67Ig87LzMnLqqxBmNf1h1LK+5VbXEOgoY8eu8TTZT
-         So07kHsSS/NtERHbY3Zdh2FPlr6YkWT1M5pTvKmf8GmG0g38EA56RG/YWtSG9qQRqt7k
-         zUM4k7i6Q4qGMXsQp/Qd31U7SVPBAQGaBmZ4r3eQKmkN/i+AmXDCkqig5zV85pEwWtIj
-         g0xw==
+        bh=uyp/WsGFpqmURQEyJsdUvTUgfgMYpnGPm7PPRrAblaM=;
+        b=SjP3PiKbC7K+599as6dihD5ItRgFB75V5FKwT1KNeml61vagH+QtDeaSa5qWEDQ7Ae
+         2xO1Faos7F9398KH+1bFA8FC+aHEeJyvEjxYvL94O9rmEivaB303qU1bfyxZu0iUL8NW
+         NuuBkg5MA0BBH9OCQGiBpR1XhQzF1TGaexRIfs4wlJCFPqlbiV35N+Zf6xJV861sbWIC
+         35r34m7lq6MQGSZg51y99N7d1vWqydFOGzwG0LLYY0rZLTRcxH+3+g8fBQ50ozlNrW1M
+         fNBQsWhlIJMxH+S5sQWO+dcI7kt5mtoHgQD65d8q0kyIxHb+aaEpXzQRqk/w273CDeVt
+         CDRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7Me+ZYectWHujsAxD8lZUB3egYHKO4Vm/esXkM4BdyY=;
-        b=ZK+jSxJZbWFKUgNW9dNWbytc3A31Vjli6RUX/2CyhQJ/mVExWawIHBaOPNixfXKA3U
-         ZV57N2h9ka41EAuZTv2avFOCwbY9At8+MF67kIDY4PA9XZ8JTVanB9BuIz2MbeXSTB7D
-         FCaNj25zGFhbx2JD2Q9lAmfHM7F/+1J9yRVUjyWAPhBFWdW+YC8BJzNy/WDn9uZtwzJh
-         ZHSQBqAObJsp/h64XiIHLPAsPtowflUp3f3Du+wwVNPVNQTfkE5gXbtvnyXtbYg5F9hs
-         Bom+u6x3GJHkW/GBqhRO6BNAkYntoLPJqXZHDfBLVY6Cik4H0i40ifOyozfgypuEyTpa
-         Q1wQ==
-X-Gm-Message-State: AOUpUlF+9tsShiqWs4Kyw0LmOGz521iZ7hlaGeobBWuQJe4kWBW/1N+w
-        zz31wouDzIkurx+0AJZoLOs=
-X-Google-Smtp-Source: AA+uWPxg4zvJlvsjZCJNM8QaZHHHweN9CDKtW2BPkV89dBblQh+DnSZ9RpUCn16tAaSXZxq0DAskfw==
-X-Received: by 2002:a63:5106:: with SMTP id f6-v6mr4456917pgb.95.1533871299375;
-        Thu, 09 Aug 2018 20:21:39 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p73-v6sm16130871pfk.186.2018.08.09.20.21.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=uyp/WsGFpqmURQEyJsdUvTUgfgMYpnGPm7PPRrAblaM=;
+        b=Ckejf9DFi9dB/LhwOyy+8//2vBamt1/tOCsFbBc73ywi/tR9hjc2xliEYRr05EQQlf
+         OJ68jcJk1eBRYoBxcPknZR+PVHobmTMRlyW6IZqXA9efzOmD1hUkJ+NQhs0LTWngAArE
+         gyovnMO1Ve/b3LAzFvKfiv/MQyGtaxvLCEamQozVAkBcZe22thLMkrWiks+E5fyFXH5K
+         Stt6NRiNU3+hhCb8pz9I4WZeTup5CW325pm5zTcWL6TtTR0eWeF0L39NPDvnigXzf+ic
+         oROIztT7mARP6LJodK497+7T2r36tgGoTqiM/nzFE/QiA6IZKKXRetDjQCerXxLGS+rn
+         L2Eg==
+X-Gm-Message-State: AOUpUlHgsrs7WvIr6+q9+OD5ZPqa6e2vQKF+kiFSmnYY68NRbtS6BLCO
+        euP1MQH3xzEgtmuGo4pe+fo=
+X-Google-Smtp-Source: AA+uWPzLKQTWKCQcQ+rSkWH4OcuXwp9SItMK358f3y9uoYUmuI0fDwtnvV/u4eOnlMHzgaHKSH/G8g==
+X-Received: by 2002:a62:9f1d:: with SMTP id g29-v6mr4944349pfe.207.1533871298255;
         Thu, 09 Aug 2018 20:21:38 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id p73-v6sm16130871pfk.186.2018.08.09.20.21.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 20:21:37 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 16/16] staging: gasket: interrupt: remove unimplemented interrupt types
-Date:   Thu,  9 Aug 2018 20:21:11 -0700
-Message-Id: <20180810032111.197743-17-toddpoynor@gmail.com>
+Subject: [PATCH 15/16] staging: gasket: interrupt: simplify interrupt init parameters
+Date:   Thu,  9 Aug 2018 20:21:10 -0700
+Message-Id: <20180810032111.197743-16-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180810032111.197743-1-toddpoynor@gmail.com>
 References: <20180810032111.197743-1-toddpoynor@gmail.com>
@@ -81,134 +81,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Interrupt types PCI_MSI and PLATFORM_WIRE are unused and unimplemented.
-Remove these.
+Pass the gasket driver descriptor to the interrupt init function, rather
+than exploding out separate parameters from various fields of that
+structure.  This allows us to make more localized changes to the types
+of interrupts supported (MSIX vs. wire, etc.) without affecting the
+calling sequence, and seems nicer for simplification purposes.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.h      | 11 --------
- drivers/staging/gasket/gasket_interrupt.c | 34 +----------------------
- 2 files changed, 1 insertion(+), 44 deletions(-)
+ drivers/staging/gasket/gasket_core.c      |  8 +------
+ drivers/staging/gasket/gasket_interrupt.c | 27 +++++++++++------------
+ drivers/staging/gasket/gasket_interrupt.h | 24 +-------------------
+ 3 files changed, 15 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
-index fd7e75b765a6d..0203460f48957 100644
---- a/drivers/staging/gasket/gasket_core.h
-+++ b/drivers/staging/gasket/gasket_core.h
-@@ -50,8 +50,6 @@ enum gasket_interrupt_packing {
- /* Type of the interrupt supported by the device. */
- enum gasket_interrupt_type {
- 	PCI_MSIX = 0,
--	PCI_MSI = 1,
--	PLATFORM_WIRE = 2,
- };
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 99f3f11d75ce2..f230bec76ae4e 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1357,13 +1357,7 @@ int gasket_enable_device(struct gasket_dev *gasket_dev)
+ 	const struct gasket_driver_desc *driver_desc =
+ 		gasket_dev->internal_desc->driver_desc;
  
- /*
-@@ -69,12 +67,6 @@ struct gasket_interrupt_desc {
- 	int packing;
- };
- 
--/* Offsets to the wire interrupt handling registers */
--struct gasket_wire_interrupt_offsets {
--	u64 pending_bit_array;
--	u64 mask_array;
--};
--
- /*
-  * This enum is used to identify memory regions being part of the physical
-  * memory that belongs to a device.
-@@ -384,9 +376,6 @@ struct gasket_driver_desc {
- 	 */
- 	struct gasket_coherent_buffer_desc coherent_buffer_description;
- 
--	/* Offset of wire interrupt registers. */
--	const struct gasket_wire_interrupt_offsets *wire_interrupt_offsets;
--
- 	/* Interrupt type. (One of gasket_interrupt_type). */
- 	int interrupt_type;
- 
+-	ret = gasket_interrupt_init(gasket_dev, driver_desc->name,
+-				    driver_desc->interrupt_type,
+-				    driver_desc->interrupts,
+-				    driver_desc->num_interrupts,
+-				    driver_desc->interrupt_pack_width,
+-				    driver_desc->interrupt_bar_index,
+-				    driver_desc->wire_interrupt_offsets);
++	ret = gasket_interrupt_init(gasket_dev);
+ 	if (ret) {
+ 		dev_err(gasket_dev->dev,
+ 			"Critical failure to allocate interrupts: %d\n", ret);
 diff --git a/drivers/staging/gasket/gasket_interrupt.c b/drivers/staging/gasket/gasket_interrupt.c
-index eb5dfbe08e214..2cd262be65ca0 100644
+index f94e4ea9a7ded..eb5dfbe08e214 100644
 --- a/drivers/staging/gasket/gasket_interrupt.c
 +++ b/drivers/staging/gasket/gasket_interrupt.c
-@@ -45,9 +45,6 @@ struct gasket_interrupt_data {
- 	/* The width of a single interrupt in a packed interrupt register. */
- 	int pack_width;
+@@ -331,31 +331,30 @@ static struct gasket_sysfs_attribute interrupt_sysfs_attrs[] = {
+ 	GASKET_END_OF_ATTR_ARRAY,
+ };
  
--	/* offset of wire interrupt registers */
--	const struct gasket_wire_interrupt_offsets *wire_interrupt_offsets;
--
- 	/*
- 	 * Design-wise, these elements should be bundled together, but
- 	 * pci_enable_msix's interface requires that they be managed
-@@ -92,19 +89,6 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
+-int gasket_interrupt_init(struct gasket_dev *gasket_dev, const char *name,
+-			  int type,
+-			  const struct gasket_interrupt_desc *interrupts,
+-			  int num_interrupts, int pack_width, int bar_index,
+-			  const struct gasket_wire_interrupt_offsets *wire_int_offsets)
++int gasket_interrupt_init(struct gasket_dev *gasket_dev)
+ {
+ 	int ret;
+ 	struct gasket_interrupt_data *interrupt_data;
++	const struct gasket_driver_desc *driver_desc =
++		gasket_get_driver_desc(gasket_dev);
  
- 	dev_dbg(gasket_dev->dev, "Running interrupt setup\n");
- 
--	if (interrupt_data->type == PLATFORM_WIRE ||
--	    interrupt_data->type == PCI_MSI) {
--		/* Nothing needs to be done for platform or PCI devices. */
--		return;
--	}
--
--	if (interrupt_data->type != PCI_MSIX) {
--		dev_dbg(gasket_dev->dev,
--			"Cannot handle unsupported interrupt type %d\n",
--			interrupt_data->type);
--		return;
--	}
--
- 	/* Setup the MSIX table. */
- 
- 	for (i = 0; i < interrupt_data->num_interrupts; i++) {
-@@ -351,8 +335,6 @@ int gasket_interrupt_init(struct gasket_dev *gasket_dev)
- 	interrupt_data->interrupt_bar_index = driver_desc->interrupt_bar_index;
- 	interrupt_data->pack_width = driver_desc->interrupt_pack_width;
+ 	interrupt_data = kzalloc(sizeof(struct gasket_interrupt_data),
+ 				 GFP_KERNEL);
+ 	if (!interrupt_data)
+ 		return -ENOMEM;
+ 	gasket_dev->interrupt_data = interrupt_data;
+-	interrupt_data->name = name;
+-	interrupt_data->type = type;
++	interrupt_data->name = driver_desc->name;
++	interrupt_data->type = driver_desc->interrupt_type;
+ 	interrupt_data->pci_dev = gasket_dev->pci_dev;
+-	interrupt_data->num_interrupts = num_interrupts;
+-	interrupt_data->interrupts = interrupts;
+-	interrupt_data->interrupt_bar_index = bar_index;
+-	interrupt_data->pack_width = pack_width;
++	interrupt_data->num_interrupts = driver_desc->num_interrupts;
++	interrupt_data->interrupts = driver_desc->interrupts;
++	interrupt_data->interrupt_bar_index = driver_desc->interrupt_bar_index;
++	interrupt_data->pack_width = driver_desc->interrupt_pack_width;
  	interrupt_data->num_configured = 0;
--	interrupt_data->wire_interrupt_offsets =
--	    driver_desc->wire_interrupt_offsets;
+-	interrupt_data->wire_interrupt_offsets = wire_int_offsets;
++	interrupt_data->wire_interrupt_offsets =
++	    driver_desc->wire_interrupt_offsets;
  
- 	interrupt_data->eventfd_ctxs = kcalloc(driver_desc->num_interrupts,
+-	interrupt_data->eventfd_ctxs = kcalloc(num_interrupts,
++	interrupt_data->eventfd_ctxs = kcalloc(driver_desc->num_interrupts,
  					       sizeof(struct eventfd_ctx *),
-@@ -379,12 +361,7 @@ int gasket_interrupt_init(struct gasket_dev *gasket_dev)
- 		force_msix_interrupt_unmasking(gasket_dev);
- 		break;
- 
--	case PCI_MSI:
--	case PLATFORM_WIRE:
- 	default:
--		dev_err(gasket_dev->dev,
--			"Cannot handle unsupported interrupt type %d\n",
--			interrupt_data->type);
- 		ret = -EINVAL;
+ 					       GFP_KERNEL);
+ 	if (!interrupt_data->eventfd_ctxs) {
+@@ -363,7 +362,7 @@ int gasket_interrupt_init(struct gasket_dev *gasket_dev, const char *name,
+ 		return -ENOMEM;
  	}
  
-@@ -439,12 +416,7 @@ int gasket_interrupt_reinit(struct gasket_dev *gasket_dev)
- 		force_msix_interrupt_unmasking(gasket_dev);
- 		break;
+-	interrupt_data->interrupt_counts = kcalloc(num_interrupts,
++	interrupt_data->interrupt_counts = kcalloc(driver_desc->num_interrupts,
+ 						   sizeof(ulong),
+ 						   GFP_KERNEL);
+ 	if (!interrupt_data->interrupt_counts) {
+diff --git a/drivers/staging/gasket/gasket_interrupt.h b/drivers/staging/gasket/gasket_interrupt.h
+index 835af439e96a9..85526a1374a1a 100644
+--- a/drivers/staging/gasket/gasket_interrupt.h
++++ b/drivers/staging/gasket/gasket_interrupt.h
+@@ -24,30 +24,8 @@ struct gasket_interrupt_data;
+ /*
+  * Initialize the interrupt module.
+  * @gasket_dev: The Gasket device structure for the device to be initted.
+- * @type: Type of the interrupt. (See gasket_interrupt_type).
+- * @name: The name to associate with these interrupts.
+- * @interrupts: An array of all interrupt descriptions for this device.
+- * @num_interrupts: The length of the @interrupts array.
+- * @pack_width: The width, in bits, of a single field in a packed interrupt reg.
+- * @bar_index: The bar containing all interrupt registers.
+- *
+- * Allocates and initializes data to track interrupt state for a device.
+- * After this call, no interrupts will be configured/delivered; call
+- * gasket_interrupt_set_vector[_packed] to associate each interrupt with an
+- * __iomem location, then gasket_interrupt_set_eventfd to associate an eventfd
+- * with an interrupt.
+- *
+- * If num_interrupts interrupts are not available, this call will return a
+- * negative error code. In that case, gasket_interrupt_cleanup should still be
+- * called. Returns 0 on success (which can include a device where interrupts
+- * are not possible to set up, but is otherwise OK; that device will report
+- * status LAMED.)
+  */
+-int gasket_interrupt_init(struct gasket_dev *gasket_dev, const char *name,
+-			  int type,
+-			  const struct gasket_interrupt_desc *interrupts,
+-			  int num_interrupts, int pack_width, int bar_index,
+-			  const struct gasket_wire_interrupt_offsets *wire_int_offsets);
++int gasket_interrupt_init(struct gasket_dev *gasket_dev);
  
--	case PCI_MSI:
--	case PLATFORM_WIRE:
- 	default:
--		dev_dbg(gasket_dev->dev,
--			"Cannot handle unsupported interrupt type %d\n",
--			gasket_dev->interrupt_data->type);
- 		ret = -EINVAL;
- 	}
- 
-@@ -489,12 +461,8 @@ void gasket_interrupt_cleanup(struct gasket_dev *gasket_dev)
- 		gasket_interrupt_msix_cleanup(interrupt_data);
- 		break;
- 
--	case PCI_MSI:
--	case PLATFORM_WIRE:
- 	default:
--		dev_dbg(gasket_dev->dev,
--			"Cannot handle unsupported interrupt type %d\n",
--			interrupt_data->type);
-+		break;
- 	}
- 
- 	kfree(interrupt_data->interrupt_counts);
+ /*
+  * Clean up a device's interrupt structure.
 -- 
 2.18.0.597.ga71716f1ad-goog
 
