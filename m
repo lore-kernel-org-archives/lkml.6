@@ -3,84 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D492C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AD3C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7835F21A5E
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD60621A5E
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:12:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WzhSvA3D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7835F21A5E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgNPWepz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD60621A5E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbeHJXmR (ORCPT
+        id S1727338AbeHJXnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 19:42:17 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41212 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbeHJXmR (ORCPT
+        Fri, 10 Aug 2018 19:43:47 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55366 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727263AbeHJXnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 19:42:17 -0400
-Received: by mail-io0-f193.google.com with SMTP id q4-v6so8832058iob.8
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:10:45 -0700 (PDT)
+        Fri, 10 Aug 2018 19:43:47 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so4440775itj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:12:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VXWCveCycGuwgQIDN5OqZRm3roCUZ5JO3Ldkn7Zx1j8=;
-        b=WzhSvA3DNPR9W2Kz0tq1RVgmJmh1WrSHvceE3TCHFeOayMOApDfOlpYeCc/4Dx2MoE
-         RKERa/23EmRG7rbwf9OwzsPLmqRIytd72zXKPbsIykHFgHU+3yc267hqSoZAu26FBvNB
-         Dmn7k96moWDIQ9Y6P/G/9EHNd844hx8gmVLJ8=
+        bh=YDltJDBlVUyz2coNYErFDqxqvnP1Z/86dxgDtczQxI8=;
+        b=fgNPWepzDbIOcZQT/PSa+kvDik7XPDEAwBSGwY9WgB9pcFRsNDDlohhGggMu42vcEe
+         wdDz8tNj5A5/1NGqYYgyiZqkRZxxm0/jNyyI2XfA/xYHa+17XaxbPKrri8ReCWbUkK3A
+         /3n0C/NFmiKB8LjWp1AF9EO5svQZ4AOdsBuII=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VXWCveCycGuwgQIDN5OqZRm3roCUZ5JO3Ldkn7Zx1j8=;
-        b=oyarrvDu8zbH80MMpDvRpjK8Xuy7BbDdkEw0za033NORkYLyTZ4PJUQ6MUutHaxt5W
-         08aRlHH5IgkFkmiqCoKrBi2lNjrGBuTUpGmtdpRiJerM12t5PW2FV0y5uCeuakAVFwdl
-         KMYIG91inV1UEh/lzb1TA2fIALMAGRLtgMSrH5fhSL5+v+3cxG2z1AXuMzygBgn1/amV
-         cGP/8RzJJtc1lG04s9ipM3nagIkCuVNazr8OhLziJIykQNytgRNmXAFVR/B3fdRNHIv8
-         FVmrZ3BugASi9MNMwOS1nGmN8AqZLZ5TBuoBVQ6bWldaeyAj3CIuFgW5m7qQs8c/ghIb
-         uy1A==
-X-Gm-Message-State: AOUpUlHc5h2UUKTygNJ4M8R90b/j9kkiKvWUpFEeOA8C5zOX8Eznu4C1
-        d53mzoNIalbVN6raM+LJ9puark676wDHSHuHvB/W3eio
-X-Google-Smtp-Source: AA+uWPxKVC7TB88vYEtmWD8b+nr9jvoKzX5n45My2ucaBs50o2tYzNf8bbbz0PwgEugHLR0Yp8Prur8tisusxGktuMQ=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr6411372ioa.277.1533935444826;
- Fri, 10 Aug 2018 14:10:44 -0700 (PDT)
+        bh=YDltJDBlVUyz2coNYErFDqxqvnP1Z/86dxgDtczQxI8=;
+        b=nd/U15iuc5y4H3S0R/K4yfWcBRMW560kiimv5qb/hHsUvRJeE+jCp/r/GmjMDeLSak
+         yeO78MfIpLpKqyB1ZgDFxy1kj4MVbk8s0guFSNLbmUfXkK80swT1qql2Z4OFcaQxXVwH
+         OG4yWceLpqa+szkdcLR3dm+XXx1L/wGy1/iHAZlSpg+xzL/WSls5kg99dEbrPoCNrjdm
+         Rh4Rq9MSPqCXyjA+s52G2+eqg4kaWrGOYoAvA0urEjNwt2uLeQEX/fRPsHJhU0Y9F9G9
+         Xj8s4hiJQGWLG/dHYG90Lwx92Ta32H+9dHLGVkF6X8IOXyycIumY0ehrU/hhPgbKKB5o
+         k6FA==
+X-Gm-Message-State: AOUpUlEpKDNk1MgawitFB3B4uylbq1laNDgWguAlDCnYbg0+4g0E8W2H
+        k6WsZNWET5cpds3xP7zIQmT06vSUdJi+it3+q0szDg==
+X-Google-Smtp-Source: AA+uWPz7mrlvDEFC7JaQieXeV35FK2VEw+pg+oIxDdG5D2eIGwnPnLv7YLx3DAZa+LNnOPV+gM45lyx/xKvdpobKz9E=
+X-Received: by 2002:a02:2505:: with SMTP id g5-v6mr7270988jag.112.1533935534367;
+ Fri, 10 Aug 2018 14:12:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180807093226.5624-1-rf@opensource.cirrus.com>
-In-Reply-To: <20180807093226.5624-1-rf@opensource.cirrus.com>
+References: <20180808084622.26392-1-ipodovalov@gmail.com>
+In-Reply-To: <20180808084622.26392-1-ipodovalov@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 10 Aug 2018 23:10:33 +0200
-Message-ID: <CACRpkdbNT9cs3gXQbGnKmYutbOD4u_9WLhfL+i7oFFpbWyQEHw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: madera: Set is_generic
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        patches@opensource.cirrus.com
+Date:   Fri, 10 Aug 2018 23:12:02 +0200
+Message-ID: <CACRpkdZmpTnTOSQJU4fojjCUVgsJt8Zy4__MihX4OmubF9Fdrw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: it87: add support for IT8718F Super I/O.
+To:     ipodovalov@gmail.com
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 11:32 AM Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
+On Wed, Aug 8, 2018 at 10:46 AM Ivan Podovalov <ipodovalov@gmail.com> wrote:
 
-> We are using the generic pin configuration interface so
-> we can set is_generic.
+> The DIO connector on the WAFER-945GSE is interfaced to GPIO ports
+> on the ITE IT8718F Super I/O chipset. From the datasheet of ITE IT8718F,
+> the GPIO interface is identical to IT8728, so just add it
+> to the same case as the other chip.
 >
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Signed-off-by: Ivan Podovalov <ipodovalov@gmail.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-For these patches.
-
-This is not yet in my tree, but I can apply this and the others
-after -rc1 (probably the easiest).
+Patch applied.
 
 Yours,
 Linus Walleij
