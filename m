@@ -2,140 +2,93 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F45C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A397C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ABB22408
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:45:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29ABB22408
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F234022408
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:47:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F234022408
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbeHJSQB (ORCPT
+        id S1728562AbeHJSSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:16:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728332AbeHJSPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:15:48 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AFiRQh062327
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:45:24 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kscgdtu8h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:45:23 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
-        Fri, 10 Aug 2018 16:45:21 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 Aug 2018 16:45:18 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AFjHlJ41222236
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Aug 2018 15:45:17 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16123AE045;
-        Fri, 10 Aug 2018 18:45:08 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2803AE051;
-        Fri, 10 Aug 2018 18:45:07 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri, 10 Aug 2018 18:45:07 +0100 (BST)
-From:   Ursula Braun <ubraun@linux.ibm.com>
-To:     davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 1/1] net/smc: send response to test link signal
-Date:   Fri, 10 Aug 2018 17:45:11 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18081015-4275-0000-0000-000002A7F847
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081015-4276-0000-0000-000037B10A8A
-Message-Id: <20180810154511.71106-1-ubraun@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=6 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=773 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808100170
+        Fri, 10 Aug 2018 14:18:06 -0400
+Received: from fieldses.org ([173.255.197.46]:50756 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727545AbeHJSSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 14:18:06 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id DC5CFBD4; Fri, 10 Aug 2018 11:47:42 -0400 (EDT)
+Date:   Fri, 10 Aug 2018 11:47:42 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
+Message-ID: <20180810154742.GE7906@fieldses.org>
+References: <153378012255.1220.6754153662007899557.stgit@noble>
+ <20180809173245.GM23873@fieldses.org>
+ <87lg9frxyc.fsf@notabene.neil.brown.name>
+ <20180810002922.GA3915@fieldses.org>
+ <871sb7rnul.fsf@notabene.neil.brown.name>
+ <20180810025251.GO23873@fieldses.org>
+ <87y3derjut.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y3derjut.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With SMC-D z/OS sends a test link signal every 10 seconds. Linux is
-supposed to answer, otherwise the SMC-D connection breaks.
+On Fri, Aug 10, 2018 at 01:17:14PM +1000, NeilBrown wrote:
+> On Thu, Aug 09 2018, J. Bruce Fields wrote:
+> 
+> > On Fri, Aug 10, 2018 at 11:50:58AM +1000, NeilBrown wrote:
+> >> You're good at this game!
+> >
+> > Everybody's got to have a hobby, mine is pathological posix locking
+> > cases....
+> >
+> >> So, because a locker with the same "owner" gets a free pass, you can
+> >> *never* say that any lock which conflicts with A also conflicts with B,
+> >> as a lock with the same owner as B will never conflict with B, even
+> >> though it conflicts with A.
+> >> 
+> >> I think there is still value in having the tree, but when a waiter is
+> >> attached under a new blocker, we need to walk the whole tree beneath the
+> >> waiter and detach/wake anything that is not blocked by the new blocker.
+> >
+> > If you're walking the whole tree every time then it might as well be a
+> > flat list, I think?
+> 
+> The advantage of a tree is that it keeps over-lapping locks closer
+> together.
+> For it to make a difference you would need a load where lots of threads
+> were locking several different small ranges, and other threads were
+> locking large ranges that cover all the small ranges.
 
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
----
- net/smc/smc_ism.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+OK, I'm not sure I understand, but I'll give another look at the next
+version....
 
-diff --git a/net/smc/smc_ism.c b/net/smc/smc_ism.c
-index cfade7fdcc6d..e36f21ce7252 100644
---- a/net/smc/smc_ism.c
-+++ b/net/smc/smc_ism.c
-@@ -184,6 +184,37 @@ struct smc_ism_event_work {
- 	struct smcd_event event;
- };
- 
-+#define ISM_EVENT_REQUEST		0x0001
-+#define ISM_EVENT_RESPONSE		0x0002
-+#define ISM_EVENT_REQUEST_IR		0x00000001
-+#define ISM_EVENT_CODE_TESTLINK		0x83
-+
-+static void smcd_handle_sw_event(struct smc_ism_event_work *wrk)
-+{
-+	union {
-+		u64	info;
-+		struct {
-+			u32		uid;
-+			unsigned short	vlanid;
-+			u16		code;
-+		};
-+	} ev_info;
-+
-+	switch (wrk->event.code) {
-+	case ISM_EVENT_CODE_TESTLINK:	/* Activity timer */
-+		ev_info.info = wrk->event.info;
-+		if (ev_info.code == ISM_EVENT_REQUEST) {
-+			ev_info.code = ISM_EVENT_RESPONSE;
-+			wrk->smcd->ops->signal_event(wrk->smcd,
-+						     wrk->event.tok,
-+						     ISM_EVENT_REQUEST_IR,
-+						     ISM_EVENT_CODE_TESTLINK,
-+						     ev_info.info);
-+			}
-+		break;
-+	}
-+}
-+
- /* worker for SMC-D events */
- static void smc_ism_event_work(struct work_struct *work)
- {
-@@ -196,6 +227,9 @@ static void smc_ism_event_work(struct work_struct *work)
- 		break;
- 	case ISM_EVENT_DMB:
- 		break;
-+	case ISM_EVENT_SWR:	/* Software defined event */
-+		smcd_handle_sw_event(wrk);
-+		break;
- 	}
- 	kfree(wrk);
- }
--- 
-2.16.4
+> I doubt this is common, but it doesn't seem as strange as other things
+> I've seen in the wild.
+> The other advantage, of course, is that I've already written the code,
+> and I like it.
+> 
+> Maybe I'll do a simple-list version, then a patch to convert that to the
+> clever-tree version, and we can then have something concrete to assess.
 
+That might help, thanks.
+
+--b.
