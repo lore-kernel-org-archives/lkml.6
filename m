@@ -2,102 +2,142 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA86C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDB1C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1431B2242C
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:27:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="P4VwI0vW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1431B2242C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 2ED312242C
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED312242C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbeHJU6j (ORCPT
+        id S1727075AbeHJVBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:58:39 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33378 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbeHJU6j (ORCPT
+        Fri, 10 Aug 2018 17:01:44 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32783 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbeHJVBo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:58:39 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so4919753pfn.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7VskxHEPgZDCrQfq0NuHw48BVZC5xgp7njWDBZoBW+0=;
-        b=P4VwI0vWuR5BSz802yg1pxdW3PUO1Yx2+U2XKB39yGZn+MBawHz/wuioBVklKeM2YT
-         SQbBsmUrahblTMr7nq+gYrZyrU3ctOBEBS9OJAYrXQ3X0Gi2TohFOl1UevBJeYr4RZ0x
-         vfQNAnbhuZ53JZ+l70pftVtWSosesmIhnPlUytpa2fkzbNbJopZrufewtAZAyZzhGExB
-         YpZRcxvbmb4lnzd5+YlccqcVr5+/jLkYrCMUvbTj/V5Ze9G+tQnn5b8K5oTNOg042seA
-         uubKlNHfh3fZ0R04nxeVAVuJ1nE5Ez303m5BesoZboT8eCRow/7GiCxc+5+Y8NyVE0Or
-         J+JA==
+        Fri, 10 Aug 2018 17:01:44 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s12-v6so7898609ljj.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:30:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=7VskxHEPgZDCrQfq0NuHw48BVZC5xgp7njWDBZoBW+0=;
-        b=VWc7vptIGnjALCnzq/wqAmivlAGYLVhyh57oa5Ybf+yGIzTp+K1hbzw+4D7M/nnTwB
-         7hcGaEKjbCJctQrG6x0DMqFCz3KfEwph2sQFv+J4IJJKBuT2DRcUMRppdAikoVCyqxsO
-         T/5Zjr3m8cSmdZdifVo1+cbuiU/LKaHd+UlT5kFw/cmqxd/C+xs4KgGwMPECQtrowkaE
-         cz7jDY5KPg6/qt8QmQ8SA5udfHE4cbfN1/i3wwg+yA2Sq35uzMM2D2IvMDFuEXHytA1c
-         /b11xWKP366kdQMeh9U/EKc9wwwnodGUjFRAXPNCenBhgZO/LzzxI2mCDxi/WU8d1+WW
-         xVMw==
-X-Gm-Message-State: AOUpUlHm3rdXQPcbwZA4at3BG5AC251mRmNO+rzGtkYHTuRJzpqhQfdP
-        3orCvpZVXPO7JT9Id3MJ3qO79A==
-X-Google-Smtp-Source: AA+uWPzG+TmWSFljgdEcfnOvkxdKWai99TBClzXq81YY/P0e/CMHxrXCuNyjwskgFNdGi/GuF8kPQQ==
-X-Received: by 2002:a63:8341:: with SMTP id h62-v6mr7257334pge.298.1533925658392;
-        Fri, 10 Aug 2018 11:27:38 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id c68-v6sm23626231pfj.51.2018.08.10.11.27.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 11:27:37 -0700 (PDT)
-Date:   Fri, 10 Aug 2018 11:27:37 -0700 (PDT)
-X-Google-Original-Date: Fri, 10 Aug 2018 11:23:15 PDT (-0700)
-Subject:     Re: [PATCH v3 1/2] RISC-V: Define sys_riscv_flush_icache when SMP=n
-In-Reply-To: <20180810083804.GA20415@infradead.org>
-CC:     aou@eecs.berkeley.edu, Andrew Waterman <andrew@sifive.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net, Christoph Hellwig <hch@infradead.org>,
-        dan.carpenter@oracle.com, tklauser@distanz.ch,
-        linux-riscv@lists.infradead.org, linux@roeck-us.net
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Message-ID: <mhng-341b5b76-2cd6-41e3-859a-6b1d926ba770@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QGhq0w+xFdQXuR+iuKGkis+Pwz1VoJ9tczVJ0IByQDI=;
+        b=oqkq9pSRMoRKOdvCbqTZRGA/+t/V3WqM/7z4nyFouVjihQ1pjygLNaRdXQLlhuDk8Q
+         V8uIxUazkfKe4ATrEQX0zVb2uC7pDraXcs3l/rA+bIhGqM8sQBvUU0t364d/TLZ+Wp4D
+         C9RpqJn43vLvByxtUAwvmh8jzkHkT5sEuJHPANn1aByC80dWVLru9gNklk0RomUMSJ4d
+         KNE/992PAR3alvNDHemtQmp+0FHtkrkMreN6zyLeRoIxzost2JTqZ47LWsc4+RMHXhMA
+         DyffmK2j7f5FudDvYOB8e+8JWpXb5EJT6ZVslNUZgWlgp2YzDYd5x5aQ2t3omahsiU0z
+         Trqg==
+X-Gm-Message-State: AOUpUlGZ7QKK+fXGTGR1ph4YqCSuhe8kwRRj8dwU3k9EFWoDtvp/Rk0R
+        Vk291Jszwi/o4GH82RWUlKdF2u0BNw12EzrveRpJ/A==
+X-Google-Smtp-Source: AA+uWPys/AdDO4e6p+klh2lnbczGPxJk6A3s8/eMzu5aAjxwZbykGE6FFUUdwD9oiVIH4RNPmVt/zqCw8biWJu1baUE=
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr5357518ljj.139.1533925841654;
+ Fri, 10 Aug 2018 11:30:41 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:81a:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 11:30:41 -0700 (PDT)
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F47CDA91A@ORSMSX114.amr.corp.intel.com>
+References: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1533789077-16156-7-git-send-email-sai.praneeth.prakhya@intel.com>
+ <CACi5LpPcaiHEHV9cFm=C4UB23jmfie16VR4m3ZAkZ9bVis5Dqg@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F47CDA91A@ORSMSX114.amr.corp.intel.com>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Sat, 11 Aug 2018 00:00:41 +0530
+Message-ID: <CACi5LpNESNVWFrfQLGi4-GehjO9GxV50sg7HUvxCHYS_z-yBGQ@mail.gmail.com>
+Subject: Re: [PATCH V1 6/6] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESSES
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "ricardo.ner@intel.com" <ricardo.ner@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Aug 2018 01:38:04 PDT (-0700), Christoph Hellwig wrote:
-> On Thu, Aug 09, 2018 at 03:19:51PM -0700, Palmer Dabbelt wrote:
->> This would be necessary to make non-SMP builds work, but there is
->> another error in the implementation of our syscall linkage that actually
->> just causes sys_riscv_flush_icache to never build.  I've build tested
->> this on allnoconfig and allnoconfig+SMP=y, as well as defconfig like
->> normal.
+On Fri, Aug 10, 2018 at 11:04 PM, Prakhya, Sai Praneeth
+<sai.praneeth.prakhya@intel.com> wrote:
+>> > +config EFI_WARN_ON_ILLEGAL_ACCESSES
+>>
+>> How about shortening the name to just 'EFI_WARN_ON_ILLEGAL_ACCESS'?
+>>
 >
-> Would't it make sense to use COND_SYSCALL to stub out the syscall
-> for !SMP builds?
+> Makes sense.. I will shorten it.
+>
+>> > +       bool "Warn about illegal memory accesses by firmware"
+>> > +       depends on EFI
+>>
+>> From a distribution p-o-v, I would suggest that we set this CONFIG option only if
+>> we are in the EXPERT mode, as this need more thrashing with the behaviour we
+>> see on old, buggy EFI firmwares available on very old x86 machines. So
+>> something like:
+>>            bool "Warn about illegal memory accesses by firmware" if EXPERT
+>>
+>
+> Agreed. Although the feature is intended to warn about all these buggy firmware's
+> instead of silently working around (as we are doing presently), it needs more testing.
+> Hence, as you said, I think it's safe to have it as an EXPERT config option.
+>
+>> > +       help
+>> > +         Enable this debug feature so that the kernel can detect illegal
+>> > +         memory accesses by firmware and issue a warning. Also,
+>> > +         1. If the illegally accessed region is EFI_BOOT_SERVICES_<CODE/DATA>,
+>> > +            the kernel fixes it up by mapping the requested region.
+>
+> [....]
+>
+>> > diff --git a/init/main.c b/init/main.c index
+>> > 3b4ada11ed52..dce0520861a1 100644
+>> > --- a/init/main.c
+>> > +++ b/init/main.c
+>> > @@ -730,7 +730,8 @@ asmlinkage __visible void __init start_kernel(void)
+>> >         arch_post_acpi_subsys_init();
+>> >         sfi_init_late();
+>> >
+>> > -       if (efi_enabled(EFI_RUNTIME_SERVICES)) {
+>> > +       if (efi_enabled(EFI_RUNTIME_SERVICES) &&
+>> > +           !IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES)) {
+>>
+>> Since this is an arch agnostic code leg, do we really want to introduce a generic
+>> check for CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES
+>> here, without checking for whether we are actually running this on a
+>> x86 hardware, or alternatively we can consider moving
+>> CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES out of 'arch/x86/Kconfig' to
+>> 'arch/Kconfig' so that later it can be used on other archs like ARM64 as well.
+>>
+>> I think the later would be more useful..
+>
+> Thanks for bringing this up. I see your point. I will refrain from polluting architecture
+> agnostic code. As we don't need efi_free_boot_services() at all, if EFI_WARN_ON_ILLEGAL_ACCESSES
+> is enabled, probably making changes to include/linux/efi.h would be better, I guess..
+>
+> Moving this to arch/Kconfig could be too futuristic.. I guess.. because I am not sure
+> if this problem exists on ARM machines, if so, probably Ard could suggest something here.
 
-I'm not sure.  We can implement the syscall fine in !SMP, it's just that the 
-vDSO is expected to always eat these calls because in non-SMP mode you can do a 
-global fence.i by just doing a local fence.i (there's only one hart).
+I think Ard can comment better but let me chime in with my limited
+experience with Fedora arm64 implementations - we are already seeing
+EFI firmware implementations which are broken/are orphaned (not well
+supported anymore) on arm64 even though the hardware is still in-use.
+With arm64 EFI firmware implementations still catching up with ARM
+server SBBR specifications, we expect more x86 like broken EFI
+implementations on arm64 as well. So, I don't see that as a distant
+problem, in-fact this is something which has been on my Fedora to-do
+list for arm64 for some time.
 
-The original rationale behind not having the syscall in non-SMP mode was to 
-limit the user ABI, but on looking again that seems like it's just a bit of 
-extra complexity that doesn't help anything.  It's already been demonstrated 
-that nothing is checking the error because it's been silently slipping past 
-userspace for six months, so the extra complexity seems like it'll just cause 
-someone else to have to chase the bug in the future.
+If there is a framework on x86 available, I can take a stab and
+extrapolate it for arm64 as well.
 
-But I'm really OK either way.  Is there a precedent for what to do here?
+Thanks,
+Bhupesh
