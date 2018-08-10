@@ -2,134 +2,105 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D814C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8B2C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 435E8223B9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B371223E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:40:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuZ6MPOj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 435E8223B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JhefSlDP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B371223E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeHJFzs (ORCPT
+        id S1727249AbeHJGIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 01:55:48 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37942 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725744AbeHJFzr (ORCPT
+        Fri, 10 Aug 2018 02:08:24 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35065 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeHJGIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 01:55:47 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x17-v6so3838012pfh.5;
-        Thu, 09 Aug 2018 20:27:53 -0700 (PDT)
+        Fri, 10 Aug 2018 02:08:24 -0400
+Received: by mail-oi0-f68.google.com with SMTP id m11-v6so13612617oic.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q4wpwEyaUtF6zel0WNUFlsLAS/Q1EVq5rWWF+p8+z+g=;
-        b=TuZ6MPOjb7mcmres75WC96xdUROZmYuLmPU+YVucQtsw65DDSfWbyG7N5xntYUhcWd
-         3OOMEP0p5965jrJz+Z1V5ahxlqb6Gd32uaNhzXUYo/zU2A8lEHDUzXIC07C1U822Bd32
-         gN++5zkYWeDe2v3RlLbNWr268Bt3v1nqkCars1sSHDnWrM1NgEdA7wPXS93mQWSq+LH7
-         HFwbhIWexbGR3trokD62VMctWVkA0+OxCDZHbFdwxE3MW4hTErnDgqMfvE0DJ7O49wgA
-         rH3pbZR+Lk9LnU2co+O9ULXGhKWct3u2oX3jEWjMudeq3OD7YugsS4/SnwZyC6OQ1kR0
-         Dl4A==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2HnXrY7/eo1Gts0P7tITuTj0xwjhvsQ7ruhjt3n7uq8=;
+        b=JhefSlDPIJSN7RiiK+nUGr7JYFSvMRF0sqWTu+GVPGOZ6jl7pvO1z5Sxo6aTXzMzEC
+         ZNLp/ZgO/Oaci2db+/snLmF+t8pQgo+usygrzyHziVL8wX4eLjJxMjIA/hoLqh/xecEj
+         4iACXafrcf/Ut9MRW6zAd9QXsZfAWvXn5jTX8Lqym9bcuK99s1TGJjh77ZOKLPbZV7I8
+         OPIQ9rlaPtK/ctcxivo+eFEEjW7my+7xP8ArK0ZLrEABaSkC4NAjANxCwp0NYoaVpdMa
+         nhX4XLSGwJmM4w9W7VdpM3uvGNHpzhGEFlLPw5agsYFkJhZxzVXQNySAb/jgqmCRCWC5
+         q7iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q4wpwEyaUtF6zel0WNUFlsLAS/Q1EVq5rWWF+p8+z+g=;
-        b=DpD077PWzvItwCfZemfTxxWkNBJ3N2lOaxhOcGviGCM156bkSB5NFZ4+kcNowAB1xM
-         g2LBWkr8ExrC5vEeztRjp0p2kzD/6O8anU3O0cP71j4syWqWtTCWNQao+FPvS9uzI6vU
-         8XvE6wTHKsrDxf/TOP1azus2WqoJZ9WZatYKL3XxU2WbdvwltQc57cXsZpcFqGb6q63y
-         KjtxFLA8hnKr8FDtq8QYc2/NpbKskL4d5pkfhqSBy6tc/NcmLR3g5GbeI5urAASsynls
-         /5ttN8iGzGeKmNyrRRx8qIvVw0P3p6up4U0EqLQGoNN5Buard49+5qQ7qpLBZ3KwwLdF
-         41/A==
-X-Gm-Message-State: AOUpUlGl/u31m3FwS/6gWfJYwt0b6dllUNz/xzYyzZSJPl7SqTrtp3mu
-        Cj2UobM/FiSE1UX1f6oJfqs=
-X-Google-Smtp-Source: AA+uWPyXgHPayhoCqaQUjgKfz0s1XcXUaW++Oim+y6iQKmK242tEsIgpPf++8jq8QpA6LI0OMSpUsw==
-X-Received: by 2002:a63:5b51:: with SMTP id l17-v6mr4511200pgm.165.1533871672792;
-        Thu, 09 Aug 2018 20:27:52 -0700 (PDT)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm13968823pgj.10.2018.08.09.20.27.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Aug 2018 20:27:51 -0700 (PDT)
-Date:   Thu, 9 Aug 2018 17:27:47 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Daniel Martin <consume.noise@gmail.com>
-Subject: Re: [PATCH 3/4] HID: multitouch: drop reports containing invalid
- values
-Message-ID: <20180810032747.fawrnvyacl27ss6t@gmail.com>
-References: <cover.1530402641.git.joeypabalinas@gmail.com>
- <29ad484c1b357fd7fd670a6f252d097677b808f8.1530402641.git.joeypabalinas@gmail.com>
- <CAO-hwJLPm2UgqYU7CgsqX1CNp5JjHu0mZJp-kZnPmZ2qhi1CxQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2HnXrY7/eo1Gts0P7tITuTj0xwjhvsQ7ruhjt3n7uq8=;
+        b=cqJ2SV7jDsqNjCSbt1YtCedzM/eyQIyJ9wAa+ZLewReviEBpEKPpkgf0yK+Y5nh0hU
+         EASwfXOJqGl7QwdAx/CbmjXJCtAz8PTE4mDygE8K3GMcIEGXTleD332NWiQs4BpihnQ0
+         D0wF7JfP7weyP5xk924CEceRQ87U3CcgqyujUSMjJgfn4oMY/USXTNboeB6LCqsPkTT9
+         MewH3EmhTzWk1ZxrYf3ryKj7ewz63/NDSAN+X3w5/Bj7JdMX3ta5j1LRnoVPXbH/nu0M
+         AnPQd3G+U5n089iGH3OQyihZP/dl7dFH5QekDsjNbRKLN/ACZPUV05egypFnw7tX7dQJ
+         elcg==
+X-Gm-Message-State: AOUpUlHnCgorUaLdyr5JwfazNKWaj1QTN/xNnozWnfDIYuDg0U/Mly9e
+        gcyfmARSavu5nhFKCyO3Sm1/E+vZG+f5x3vBLfY2Pw==
+X-Google-Smtp-Source: AA+uWPz94kfQMf3sbuP6r9v9FZfzBRKPqRnhZJrsiyvkXTZmh2yoNKoPKkFYYCkSed0fc2C23k9IOcyqureIqJlOC28=
+X-Received: by 2002:aca:ba57:: with SMTP id k84-v6mr4524806oif.10.1533872427262;
+ Thu, 09 Aug 2018 20:40:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p6giaonrkbn22nqk"
-Content-Disposition: inline
-In-Reply-To: <CAO-hwJLPm2UgqYU7CgsqX1CNp5JjHu0mZJp-kZnPmZ2qhi1CxQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716-169-191348
+Received: by 2002:ac9:13d3:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 20:40:06 -0700 (PDT)
+In-Reply-To: <20180810032111.197743-2-toddpoynor@gmail.com>
+References: <20180810032111.197743-1-toddpoynor@gmail.com> <20180810032111.197743-2-toddpoynor@gmail.com>
+From:   John Joseph <jnjoseph@google.com>
+Date:   Thu, 9 Aug 2018 20:40:06 -0700
+Message-ID: <CAOmRg6P53DdsmMKOXpB2RWueU5d2Otzg_gyWgcX+5cPf+wSJ7w@mail.gmail.com>
+Subject: Re: [PATCH 01/16] MAINTAINERS: Switch a maintainer for drivers/staging/gasket
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Todd Poynor <toddpoynor@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Acked-by: John Joseph <jnjoseph@google.com>
 
---p6giaonrkbn22nqk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 03, 2018 at 10:13:54AM +0200, Benjamin Tissoires wrote:
-> Hi Joey,
-> You can't really use plain values like that. There is a tiny chance
-> these values are valid on an other device.
-> IIRC, MS spec says that we should ignore out of band values if they
-> are tagged as such. Such input are tagged with NULL values
-> (http://www.usb.org/developers/hidpage/HID1_11.pdf page 31) and MS
-> spec mentioned this.
->=20
-> All in all, if you have this bit set, you need to compare the value
-> with the logical_max/min for each field.
->=20
-> I never encountered a device that required this, so you are probably
-> the lucky one :)
-
-Ah, you are completely right. After giving that pdf a read over
-I will definitely be dropping this patch from the v2.
-
---=20
-Cheers,
-Joey Pabalinas
-
---p6giaonrkbn22nqk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlttBjAACgkQruvLfWhy
-VBmYBg//Tx0H6f8Hv8oFN1auCMamQLSw2L9HGoCbxXK/IR9zFMY2SMKAIzlEZLYo
-9YXUBciotRybA2qasN+WETU7DMEG2wX+NXPGIPKST/3hxjBvt2w2+PND6xMiAJXo
-0nEKNhtGbNMcDWullwxY/fOT8KKU/wtsXnG7V15V5TS/kxO7VKJruexefX6LxU4E
-LB9JQyprhWYnfGNSCMqc7FeLTqN8Tbg04nCcnrchtMgYbsZ87XEkW4tSVZkK/Nor
-JR/ugNRZUCI4FHlHhFPwggegZyc4A8bnHRE8xS+d1GJO6x0//AZC5qktaBE+tkDk
-lOHTFufgMwTiPGc8TFOpPz1hJsRFPR0HgldK9YqD79RcLQK7WxJRjZ8Yt7T7xBa2
-+MfMNnD8o8ONWs7TkdiNCloQE2B53ixR2L4fcXoAkznKS7xvoZp98f728OykUVUv
-04TA5PwsLKwKh01CcqUYwu+UkREh1kOsMdUES7OpgCgUh0q/ljVL3l8Q/JGIFnGd
-624LuMqtQM/Yghfl12Aqyl2JQs0HjHm6CfWVzx53DGov48Uc+TWD+EJLlnp+CtVs
-Pi/mTVfuc+d8nfQap/K5ile1h1u9QyDxlcEvrfhKNNfyp6q+xCEEstK2oAauu+k5
-4UyODDPVZvTYzXtDTYCkW4WFsXEfmnROfbM8naOPGZqy47Yemvk=
-=ig1x
------END PGP SIGNATURE-----
-
---p6giaonrkbn22nqk--
+On Thu, Aug 9, 2018 at 8:20 PM, Todd Poynor <toddpoynor@gmail.com> wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+>
+> Todd Poynor takes over for John Joseph.
+>
+> Signed-off-by: John Joseph <jnjoseph@google.com>
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index af64fe0f0b41f..f3466b5c50482 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5939,7 +5939,7 @@ F:        Documentation/gcc-plugins.txt
+>
+>  GASKET DRIVER FRAMEWORK
+>  M:     Rob Springer <rspringer@google.com>
+> -M:     John Joseph <jnjoseph@google.com>
+> +M:     Todd Poynor <toddpoynor@google.com>
+>  M:     Ben Chan <benchan@chromium.org>
+>  S:     Maintained
+>  F:     drivers/staging/gasket/
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
