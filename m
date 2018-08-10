@@ -6,61 +6,64 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FE3C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E90CC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5885C223FF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:14:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5885C223FF
+	by mail.kernel.org (Postfix) with ESMTP id 20886223FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:15:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20886223FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeHJQoe (ORCPT
+        id S1728208AbeHJQp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:44:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37850 "EHLO mx1.suse.de"
+        Fri, 10 Aug 2018 12:45:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38062 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727869AbeHJQoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:44:34 -0400
+        id S1727288AbeHJQp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:45:29 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9260AEF3;
-        Fri, 10 Aug 2018 14:14:27 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BB527AF52;
+        Fri, 10 Aug 2018 14:15:22 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Borislav Petkov <bp@alien8.de>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+Cc:     Tim Small <tim@buttersideup.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] EDAC: Add missing MEM_LRDDR4 entry in edac_mem_types[]
-Date:   Fri, 10 Aug 2018 16:14:26 +0200
-Message-Id: <20180810141426.8918-1-tiwai@suse.de>
+Subject: [PATCH] EDAC: i82443bxgx: Fix invalid memory type assignment
+Date:   Fri, 10 Aug 2018 16:15:20 +0200
+Message-Id: <20180810141520.8993-1-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The edac_mem_types[] array misses MEM_LRDDR4 entry, and it leads to
-NULL dereference when accessed via sysfs or such.
+The i82443bxgx_edac driver assigns an invalid negative value when an
+unknown DRAM type is detected.  Drop the unnecessary '-' that brings
+misbehavior.
 
-Fixes: 1e8096bb2031 ("EDAC: Add LRDDR4 DRAM type")
+Fixes: 5a2c675c8919 ("drivers/edac: new i82443bxgz MC driver")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/edac/edac_mc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/edac/i82443bxgx_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-index 3bb82e511eca..7d3edd713932 100644
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -215,6 +215,7 @@ const char * const edac_mem_types[] = {
- 	[MEM_LRDDR3]	= "Load-Reduced-DDR3-RAM",
- 	[MEM_DDR4]	= "Unbuffered-DDR4",
- 	[MEM_RDDR4]	= "Registered-DDR4",
-+	[MEM_LRDDR4]	= "Load-Reduced-DDR4-RAM",
- 	[MEM_NVDIMM]	= "Non-volatile-RAM",
- };
- EXPORT_SYMBOL_GPL(edac_mem_types);
+diff --git a/drivers/edac/i82443bxgx_edac.c b/drivers/edac/i82443bxgx_edac.c
+index a2ca929e2168..1638f288fa47 100644
+--- a/drivers/edac/i82443bxgx_edac.c
++++ b/drivers/edac/i82443bxgx_edac.c
+@@ -273,7 +273,7 @@ static int i82443bxgx_edacmc_probe1(struct pci_dev *pdev, int dev_idx)
+ 		break;
+ 	default:
+ 		edac_dbg(0, "Unknown/reserved DRAM type value in DRAMC register!\n");
+-		mtype = -MEM_UNKNOWN;
++		mtype = MEM_UNKNOWN;
+ 	}
+ 
+ 	if ((mtype == MEM_SDR) || (mtype == MEM_RDR))
 -- 
 2.18.0
 
