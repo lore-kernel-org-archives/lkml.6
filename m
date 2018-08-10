@@ -2,163 +2,154 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 117B3C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAB3C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8102242B
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:29:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="af44Dj8i";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DSm6+4QF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8102242B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1369D2242A
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1369D2242A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbeHJTAY (ORCPT
+        id S1729583AbeHJTBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 15:00:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47346 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbeHJTAX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 15:00:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4E45460C7E; Fri, 10 Aug 2018 16:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533918589;
-        bh=DX5luLRMr8isDmhDYk2KBP3TXKqYH/tQc4jZU8G7iMs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=af44Dj8iiN28yBiVuSq86tTxWP/ysVbLDX5Sm2IxBxsTDImoeCS6umhsqd4aic4Az
-         NZUKpDnwVWA4Z7bZyLxWfgW7MfOLoxayrQ8Ans6A4QehOLRkMMUrjkBh7JjwqjYXCN
-         Ip3tOEgcV9qts2nSaElQcbylFeHZHqSAkZsOv494=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 055E560C4F;
-        Fri, 10 Aug 2018 16:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533918587;
-        bh=DX5luLRMr8isDmhDYk2KBP3TXKqYH/tQc4jZU8G7iMs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DSm6+4QFjVGSBGeq73cPOXy3hC146ZYTRGP+yWuV1OMhEcdE6Y8Mdxf+YNzomGBfP
-         +A7SC/mesrtjbmXv91kiyUHKK51u8f71UzoRuEWv+4LvLMSGYtL8oDG34pV3zswfcg
-         TiHvukVh+XqfK9Ra+zQ2ADkLYUIF4oxDDLtv9Ws4=
+        Fri, 10 Aug 2018 15:01:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728110AbeHJTBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 15:01:18 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBF6422432;
+        Fri, 10 Aug 2018 16:30:43 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 12:30:42 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [RFC][PATCH] tracepoints: Free early tracepoints after RCU is
+ initialized
+Message-ID: <20180810123042.51ceddb9@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 10 Aug 2018 21:59:46 +0530
-From:   dkota@codeaurora.org
-To:     Mark Brown <broonie@kernel.org>,
-        Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "Mahadevan, Girish" <girishm@codeaurora.org>
-Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based
- QUP
-In-Reply-To: <20180810161329.GF20971@sirena.org.uk>
-References: <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org>
- <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
- <20180522173000.GG24776@sirena.org.uk>
- <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
- <20180524162940.GA4828@sirena.org.uk>
- <28d8ab5fdeb34e52eba7ca771a17bc06@codeaurora.org>
- <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org>
- <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
- <20180810105205.GC20971@sirena.org.uk>
- <CAD=FV=XXyL5q1quxUtBohn2GrcadbY9hr6sdw+4qShQnYTgVwA@mail.gmail.com>
- <20180810161329.GF20971@sirena.org.uk>
-Message-ID: <c1bc416ba407b5a3cc098e78a529752e@codeaurora.org>
-X-Sender: dkota@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-10 21:43, Mark Brown wrote:
-> On Fri, Aug 10, 2018 at 08:40:17AM -0700, Doug Anderson wrote:
->> On Fri, Aug 10, 2018 at 3:52 AM, Mark Brown <broonie@kernel.org> 
->> wrote:
-> 
->> > This is more about matching the data rate between the two drivers - the
->> > clock framework could (and possibly should) reasonably return an error
->> > here, we're trying to ensure that drivers and controllers work well
->> > together here.
-> 
->> The clock framework should be able to accomplish what you want.  If
->> you just request the rate it will do its best to make the rate
->> requested.  If we want to see what clock would be set before setting
-> 
-> The request could be massively off the deliverable rate - 50% or more.
-> 
->> is "close enough" in this case?  I haven't gone and dug, but I've
->> always seen people only specify a max rate for SPI.  ...so as long as
->> the clock framework gives us something <= the clock we requested then
->> we should be OK, right?  If / when this becomes a problem then we
->> should add a min/max to "struct spi_transfer", no?
-> 
-> On the other hand if I ask for my audio to be played at 44.1kHz and the
-> clock framework says "yes, sure" and gives me 8kHz then the user
-> experience will be poor.
-> 
->> Note that there are also clk_set_rate_range(), clk_set_min_rate(), and
->> clk_set_max_rate() though I'm told those might be a bit quirky.
-> 
-> They're certainly not widely used at any rate.
-> 
->> ...but maybe we don't need to argue about this anyway since IMHO we
->> should just use the clk framework to figure out our maximum speed.
-> 
-> It looks like that's true in this case.
-> 
->> >> 3. If you really truly need code in the SPI driver then make sure you
->> >> include a compatible string for the SoC and have a table in the driver
->> >> that's found with of_device_get_match_data().  AKA:
-> 
->> >>   compatible = "qcom,geni-spi-sdm845", "qcom,geni-spi";
-> 
->> > A controller driver really shouldn't need to be open coding anything.
-> 
->> It wouldn't be open-coding, it would be a different way of specifying
->> things.  In my understanding it's always a judgement call about how
-> 
-> If you're saying we need clock rate selection logic (which is what it
-> sounds like) rather than data then that seems like a problem.
 
-Here are my couple of cents:
-SPI controller maximum frequency can be lesser than or equal to Clock 
-framework's maximum
-frequency, so should not rely on the Clock framework.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-SPI controller maximum frequency should not be derived from the SPI 
-slave maximum frequency.
-Consider the case where N number of slaves connected to SPI controller 
-then there will
-be N number of slave maximum frequency.
-Also it does not look meaningful in communicating the SPI slave maximum 
-frequency
-as SPI controller maximum frequency to the SPI core framework.
+When enabling trace events via the kernel command line, I hit this warning:
 
-Hence relying on SPI slave maximum frequency for SPI controller maximum 
-frequency can be eliminated.
+WARNING: CPU: 0 PID: 13 at kernel/rcu/srcutree.c:236 check_init_srcu_struct+0xe/0x61
+Modules linked in:
+CPU: 0 PID: 13 Comm: watchdog/0 Not tainted 4.18.0-rc6-test+ #6
+Hardware name: MSI MS-7823/CSM-H87M-G43 (MS-7823), BIOS V1.6 02/22/2014
+RIP: 0010:check_init_srcu_struct+0xe/0x61
+Code: 48 c7 c6 ec 8a 65 b4 e8 ff 79 fe ff 48 89 df 31 f6 e8 f2 fa ff ff 5a
+5b 41 5c 5d c3 0f 1f 44 00 00 83 3d 68 94 b8 01 01 75 02 <0f> 0b 48 8b 87 f0
+0a 00 00 a8 03 74 45 55 48 89 e5 41 55 41 54 4c
+RSP: 0000:ffff96eb9ea03e68 EFLAGS: 00010246
+RAX: ffff96eb962b5b01 RBX: ffffffffb4a87420 RCX: 0000000000000001
+RDX: ffffffffb3107969 RSI: ffff96eb962b5b40 RDI: ffffffffb4a87420
+RBP: ffff96eb9ea03eb0 R08: ffffabbd00cd7f48 R09: 0000000000000000
+R10: ffff96eb9ea03e68 R11: ffffffffb4a6eec0 R12: ffff96eb962b5b40
+R13: ffff96eb9ea03ef8 R14: ffffffffb3107969 R15: ffffffffb3107948
+FS:  0000000000000000(0000) GS:ffff96eb9ea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff96eb13ab2000 CR3: 0000000192a1e001 CR4: 00000000001606f0
+Call Trace:
+ <IRQ>
+ ? __call_srcu+0x2d/0x290
+ ? rcu_process_callbacks+0x26e/0x448
+ ? allocate_probes+0x2b/0x2b
+ call_srcu+0x13/0x15
+ rcu_free_old_probes+0x1f/0x21
+ rcu_process_callbacks+0x2ed/0x448
+ __do_softirq+0x172/0x336
+ irq_exit+0x62/0xb2
+ smp_apic_timer_interrupt+0x161/0x19e
+ apic_timer_interrupt+0xf/0x20
+ </IRQ>
 
-Now the need is, how to communicate the SPI controller maximum frequency 
-to SPI core framework?
-Is it by DTSI entry or hardcoding in the SPI controller driver?
+The problem is that the enabling of trace events before RCU is set up will
+cause SRCU to give this warning. To avoid this, add a list to store probes
+that need to be freed till after RCU is initialized, and then free them
+then.
 
-My stand is for providing the DTSI entry.
-Why because, this keeps SPI controller driver generic across the boards 
-and portable.
-Also it is not against to Device tree usage because maximum frequency
-is describing the property of the hardware.
+Link: http://lkml.kernel.org/r/20180810113554.1df28050@gandalf.local.home
 
-Please add your points.
+Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/tracepoint.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
---Dilip
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 955148d91b74..36635d1d8045 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -53,6 +53,9 @@ static LIST_HEAD(tracepoint_module_list);
+  */
+ static DEFINE_MUTEX(tracepoints_mutex);
+ 
++static struct rcu_head *early_probes;
++static bool ok_to_free_tracepoints;
++
+ /*
+  * Note about RCU :
+  * It is used to delay the free of multiple probes array until a quiescent
+@@ -80,11 +83,40 @@ static void rcu_free_old_probes(struct rcu_head *head)
+ 	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+ }
+ 
++static __init int release_early_probes(void)
++{
++	struct rcu_head *tmp;
++
++	ok_to_free_tracepoints = true;
++
++	while (early_probes) {
++		tmp = early_probes;
++		early_probes = tmp->next;
++		call_rcu_sched(tmp, rcu_free_old_probes);
++	}
++
++	return 0;
++}
++
++/* RCU is initialized at core_initcall */
++postcore_initcall(release_early_probes);
++
+ static inline void release_probes(struct tracepoint_func *old)
+ {
+ 	if (old) {
+ 		struct tp_probes *tp_probes = container_of(old,
+ 			struct tp_probes, probes[0]);
++
++		/*
++		 * We can't free probes if RCU is not initialized yet.
++		 * Postpone the freeing till after RCU is initialized.
++		 */
++		if (unlikely(!ok_to_free_tracepoints)) {
++			tp_probes->rcu.next = early_probes;
++			early_probes = &tp_probes->rcu;
++			return;
++		}
++
+ 		/*
+ 		 * Tracepoint probes are protected by both sched RCU and SRCU,
+ 		 * by calling the SRCU callback in the sched RCU callback we
+-- 
+2.13.6
+
