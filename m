@@ -2,99 +2,83 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790A6C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839C9C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2855A22404
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:28:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2855A22404
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FAFE2240E
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:31:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="s8GMP13k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAFE2240E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeHJN6Q (ORCPT
+        id S1727639AbeHJOBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 09:58:16 -0400
-Received: from mga01.intel.com ([192.55.52.88]:1305 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbeHJN6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 09:58:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 04:28:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,219,1531810800"; 
-   d="scan'208";a="64134312"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga008.jf.intel.com with ESMTP; 10 Aug 2018 04:28:42 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fo5ai-000Dne-Nn; Fri, 10 Aug 2018 19:28:24 +0800
-Date:   Fri, 10 Aug 2018 19:27:54 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Leonardo =?iso-8859-1?Q?Br=E1s?= <leobras.c@gmail.com>
-Cc:     kbuild-all@01.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: fbtft: Moves ";" from macro definition to
- macro usage.
-Message-ID: <201808101921.Ee4K5ZhN%fengguang.wu@intel.com>
-References: <d3d79581fccabb25174f5679415c2f985d1271a4.1533857298.git.leobras.c@gmail.com>
+        Fri, 10 Aug 2018 10:01:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41994 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeHJOBQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 10:01:16 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7ABSxwH001532;
+        Fri, 10 Aug 2018 11:31:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Lt/eRAJccFTy6gupPUWMENLVMpzJl5wCCvHW/HNaR50=;
+ b=s8GMP13k7eFjY8fj9FQFRGLOpPy4XtVjN57THZowwWLREdZ+rDqw9y6434x/F90qeeIv
+ R4lOopB9oVrBlSJAsvi1/SDYDw/QN+CIg0GvaugFudJSFjV+nWh/gMyEn2drJQUr7i9I
+ ByRvC0oZULq0r7aDDUYntENLYdb0IorCD5YXn1NawdM0jNKej/n7lObfgji+y3bHHO69
+ CKZTjuGcEkGnMPA4b/bl1ebk+f3WD4crDlvnh1QxdPo8JI1pjENkjSTZDP9PG0ik8BkA
+ dS4fFUkhZNg4+twrB0SB0juDpnZG0fRwKm5cZKCi+Fu4cxppEgPd6u4n+XvtNZBMOh2b VQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2kn43p6yek-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Aug 2018 11:31:40 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7ABVeip031794
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Aug 2018 11:31:40 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7ABVdec004010;
+        Fri, 10 Aug 2018 11:31:39 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 10 Aug 2018 04:31:39 -0700
+Date:   Fri, 10 Aug 2018 14:31:32 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Michael Straube <straube.linux@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] staging: rtl8188eu: use is_multicast_ether_addr
+ in rtw_security.c
+Message-ID: <20180810113132.p3go5yduhyz6cr65@mwanda>
+References: <20180810105133.31224-1-straube.linux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d3d79581fccabb25174f5679415c2f985d1271a4.1533857298.git.leobras.c@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180810105133.31224-1-straube.linux@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8980 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=463
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808100127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonardo,
+No no...  I only gave it a Reviewed-by tag because I didn't want you to
+resend again...  :P
 
-Thank you for the patch! Perhaps something to improve:
+regards,
+dan carpenter
 
-[auto build test WARNING on staging/staging-testing]
-[also build test WARNING on v4.18-rc8 next-20180809]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Leonardo-Br-s/staging-fbtft-Moves-from-macro-definition-to-macro-usage/20180810-154004
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/staging/fbtft/fbtft-bus.c:66:1: sparse: incorrect type in assignment (different base types) @@    expected restricted __be16 [usertype] <noident> @@    got unsignedrestricted __be16 [usertype] <noident> @@
-   drivers/staging/fbtft/fbtft-bus.c:66:1:    expected restricted __be16 [usertype] <noident>
-   drivers/staging/fbtft/fbtft-bus.c:66:1:    got unsigned short [unsigned] [usertype] <noident>
->> drivers/staging/fbtft/fbtft-bus.c:66:1: sparse: incorrect type in assignment (different base types) @@    expected restricted __be16 [usertype] <noident> @@    got unsignedrestricted __be16 [usertype] <noident> @@
-   drivers/staging/fbtft/fbtft-bus.c:66:1:    expected restricted __be16 [usertype] <noident>
-   drivers/staging/fbtft/fbtft-bus.c:66:1:    got unsigned short [unsigned] [usertype] <noident>
->> drivers/staging/fbtft/fbtft-bus.c:66:1: sparse: incorrect type in assignment (different base types) @@    expected restricted __be16 [usertype] <noident> @@    got unsignedrestricted __be16 [usertype] <noident> @@
-   drivers/staging/fbtft/fbtft-bus.c:66:1:    expected restricted __be16 [usertype] <noident>
-   drivers/staging/fbtft/fbtft-bus.c:66:1:    got unsigned short [unsigned] [usertype] <noident>
-   drivers/staging/fbtft/fbtft-bus.c:156:27: sparse: expression using sizeof(void)
-   drivers/staging/fbtft/fbtft-bus.c:156:27: sparse: expression using sizeof(void)
-   drivers/staging/fbtft/fbtft-bus.c:200:27: sparse: expression using sizeof(void)
-   drivers/staging/fbtft/fbtft-bus.c:200:27: sparse: expression using sizeof(void)
-
-vim +66 drivers/staging/fbtft/fbtft-bus.c
-
-    64	
-    65	define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, );
-  > 66	define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, );
-    67	define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, );
-    68	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
