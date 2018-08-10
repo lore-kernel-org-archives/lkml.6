@@ -2,320 +2,226 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4842DC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C55C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B90DF223A9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:24:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ok+9pV3q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B90DF223A9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76847223A9
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:25:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76847223A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbeHJLxF (ORCPT
+        id S1727630AbeHJLyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 07:53:05 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40305 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeHJLxF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 07:53:05 -0400
-Received: by mail-oi0-f67.google.com with SMTP id w126-v6so14701986oie.7
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 02:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vFP/WL9We2wF8QaNBdMcMI6EhgsaqCd8MttlK3pIBI4=;
-        b=ok+9pV3qjOBTkFGac6Rw+f1+VdliBZDwmFEtlbqxhxIkIKflY+fyHxaH5YLs5wZ4/u
-         FlA7sz/2YL4OB3lbnaHf+CV5CcNAWP9HKbQQT7wHzAEjHXcVuO7RRE/+Cadnn0lFYjxx
-         Qm0XdZ290BagRiPCsAlYO+LeoW1MVJ5RS8ekVpBEAsumrrDS0R6GbhIULOvIyl7G5ttG
-         AHs4cYili8GiBMp4X8vKTYGWnC5EUo2Ei+h+X2dUVm4yHBoto8zKMi18pB8giJq5jrBA
-         nk01bsmQXdpxgHqqoIzdKyQVrkyBHr+AFyuMNIt2kpqa4znoDHv3vT7yYYcKPxxWyEaV
-         N9pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vFP/WL9We2wF8QaNBdMcMI6EhgsaqCd8MttlK3pIBI4=;
-        b=bHrSFyonmqtLK4ff+0KO4hPzewvvhRrFaR7J7/SzCEaFIZUptktiAe6KMQC58sN53z
-         dDRZsTAZdTU+zKofPozCsFUVGwHBNG70lm9j5ofHNwDe2Zr0eBGJqX324v5OafhHBjwE
-         /G6ZvqnasBTzqb8LrNoOllL/Wr/X26lDPnOmC4ZdVZkoLgmzEYmvw6ckw/+1J/WWA8R8
-         wBnQBZ8dc4ptrlWexloxEVr3cB9N5dRapBpOUEt6Qr0rXyY9aYkKnTHVi9aXww1ReTu5
-         ioIE4wi/3t4JWB3KzKeyD4Lf2KardY18ooxTWgYutdRcQpYtU3mHjpztKINnMTH2ugET
-         FsEQ==
-X-Gm-Message-State: AOUpUlGYpiL+7MI6NBiOPnFf4b9n6PwupbRnOMBqdpSyvjmLeH/COL1W
-        2z1fHWCenjclARVpvQdq3eqMq1ylibRuUM8wOLs=
-X-Google-Smtp-Source: AA+uWPymgHG/dwwDi4eK0+coGd29dsHmZZ8I1zUg9oabaixqiArAfOEI+M9eaE0gKtxEqGmkRxXyySlUPjkMRaW7sLw=
-X-Received: by 2002:aca:f516:: with SMTP id t22-v6mr6259013oih.56.1533893042530;
- Fri, 10 Aug 2018 02:24:02 -0700 (PDT)
+        Fri, 10 Aug 2018 07:54:17 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:53799 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbeHJLyR (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 10 Aug 2018 07:54:17 -0400
+Received: from linux-l9pv.suse (unknown.telstraglobal.net [134.159.103.118])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 10 Aug 2018 11:25:06 +0200
+Date:   Fri, 10 Aug 2018 17:25:01 +0800
+From:   joeyli <jlee@suse.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/PCI: Claim the resources of firmware enabled IOAPIC
+ before children bus
+Message-ID: <20180810092501.GP13767@linux-l9pv.suse>
+References: <20180724110144.16442-1-jlee@suse.com>
+ <20180806214807.GE30691@bhelgaas-glaptop.roam.corp.google.com>
+ <20180808155318.GE13767@linux-l9pv.suse>
+ <20180808212322.GF49411@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 02:24:02
- -0700 (PDT)
-In-Reply-To: <b7472748-8169-7628-11e5-471045cdf1de@arm.com>
-References: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com>
- <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com> <CAKTKpr6HfLtkeertCyfA_vJt2rXi5qFOKKXohLfX1Z9QiK=Uvw@mail.gmail.com>
- <b7472748-8169-7628-11e5-471045cdf1de@arm.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Fri, 10 Aug 2018 14:54:02 +0530
-Message-ID: <CAKTKpr79N2VBixzGNZUt7XNav7vw3CtSgUTtTgu6rPQDEjv5NQ@mail.gmail.com>
-Subject: Re: [PATCH] iommu/iova: Optimise attempts to allocate iova from 32bit
- address range
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
-        jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808212322.GF49411@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
-
-On Fri, Aug 10, 2018 at 2:13 AM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 2018-08-09 6:49 PM, Ganapatrao Kulkarni wrote:
->>
->> Hi Robin,
->>
->> On Thu, Aug 9, 2018 at 9:54 PM, Robin Murphy <robin.murphy@arm.com> wrote:
->>>
->>> On 07/08/18 09:54, Ganapatrao Kulkarni wrote:
->>>>
->>>>
->>>> As an optimisation for PCI devices, there is always first attempt
->>>> been made to allocate iova from SAC address range. This will lead
->>>> to unnecessary attempts/function calls, when there are no free ranges
->>>> available.
->>>>
->>>> This patch optimises by adding flag to track previous failed attempts
->>>> and avoids further attempts until replenish happens.
->>>
->>>
->>>
->>> Agh, what I overlooked is that this still suffers from the original
->>> problem,
->>> wherein a large allocation which fails due to fragmentation then blocks
->>> all
->>> subsequent smaller allocations, even if they may have succeeded.
->>>
->>> For a minimal change, though, what I think we could do is instead of just
->>> having a flag, track the size of the last 32-bit allocation which failed.
->>> If
->>> we're happy to assume that nobody's likely to mix aligned and unaligned
->>> allocations within the same domain, then that should be sufficiently
->>> robust
->>> whilst being no more complicated than this version, i.e. (modulo thinking
->>> up
->>> a better name for it):
->>
->>
->> I agree, it would be better to track size and attempt to allocate for
->> smaller chunks, if not for bigger one.
->>
->>>
->>>>
->>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>> ---
->>>> This patch is based on comments from Robin Murphy <robin.murphy@arm.com>
->>>> for patch [1]
->>>>
->>>> [1] https://lkml.org/lkml/2018/4/19/780
->>>>
->>>>    drivers/iommu/iova.c | 11 ++++++++++-
->>>>    include/linux/iova.h |  1 +
->>>>    2 files changed, 11 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
->>>> index 83fe262..d97bb5a 100644
->>>> --- a/drivers/iommu/iova.c
->>>> +++ b/drivers/iommu/iova.c
->>>> @@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned
->>>> long granule,
->>>>          iovad->granule = granule;
->>>>          iovad->start_pfn = start_pfn;
->>>>          iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
->>>> +       iovad->free_32bit_pfns = true;
->>>
->>>
->>>
->>>          iovad->max_32bit_free = iovad->dma_32bit_pfn;
->>>
->>>>          iovad->flush_cb = NULL;
->>>>          iovad->fq = NULL;
->>>>          iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
->>>> @@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain
->>>> *iovad, struct iova *free)
->>>>          cached_iova = rb_entry(iovad->cached32_node, struct iova,
->>>> node);
->>>>          if (free->pfn_hi < iovad->dma_32bit_pfn &&
->>>> -           free->pfn_lo >= cached_iova->pfn_lo)
->>>> +           free->pfn_lo >= cached_iova->pfn_lo) {
->>>>                  iovad->cached32_node = rb_next(&free->node);
->>>> +               iovad->free_32bit_pfns = true;
->>>
->>>
->>>
->>>                  iovad->max_32bit_free = iovad->dma_32bit_pfn;
->>
->>
->> i think, you intended to say,
->>    iovad->max_32bit_free += (free->pfn_hi - free->pfn_lo);
->
->
-> Nope, that's why I said it needed a better name ;)
->
-> (I nearly called it last_failed_32bit_alloc_size, but that's a bit much)
-
-may be we can name it "max32_alloc_size"?
->
-> The point of this value (whetever it's called) is that at any given time it
-> holds an upper bound on the size of the largest contiguous free area. It
-> doesn't have to be the *smallest* upper bound, which is why we can keep
-> things simple and avoid arithmetic - in realistic use-cases like yours when
-> the allocations are a pretty constant size, this should work out directly
-> equivalent to the boolean, only with values of "size" and "dma_32bit_pfn"
-> instead of 0 and 1, so we don't do any more work than necessary. In the edge
-> cases where allocations are all different sizes, it does mean that we will
-> probably end up performing more failing allocations than if we actually
-> tried to track all of the free space exactly, but I think that's reasonable
-> - just because I want to make sure we handle such cases fairly gracefully,
-> doesn't mean that we need to do extra work on the typical fast path to try
-> and actually optimise for them (which is why I didn't really like the
-> accounting implementation I came up with).
+On Wed, Aug 08, 2018 at 04:23:22PM -0500, Bjorn Helgaas wrote:
+> On Wed, Aug 08, 2018 at 11:53:18PM +0800, joeyli wrote:
+> > Hi Bjorn,
+> > 
+> > First, thanks for your review!
+> > 
+> > On Mon, Aug 06, 2018 at 04:48:07PM -0500, Bjorn Helgaas wrote:
+> > > On Tue, Jul 24, 2018 at 07:01:44PM +0800, Lee, Chun-Yi wrote:
+> > > > I got a machine that the resource of firmware enabled IOAPIC conflicts
+> > > > with the resource of a children bus when the PCI host bus be hotplug.
+> > > > 
+> > > > [ 3182.243325] PCI host bridge to bus 0001:40
+> > > > [ 3182.243328] pci_bus 0001:40: root bus resource [io  0xc000-0xdfff window]
+> > > > [ 3182.243330] pci_bus 0001:40: root bus resource [mem 0xdc000000-0xebffffff window]
+> > > > [ 3182.243331] pci_bus 0001:40: root bus resource [mem 0x212400000000-0x2125ffffffff window]
+> > > > [ 3182.243334] pci_bus 0001:40: root bus resource [bus 40-7e]
+> > > > ...
+> > > > [ 3182.244737] pci 0001:40:05.4: [8086:6f2c] type 00 class 0x080020
+> > > > [ 3182.244746] pci 0001:40:05.4: reg 0x10: [mem 0xdc000000-0xdc000fff]
+> > > > ...
+> > > > [ 3182.246697] pci 0001:40:02.0: PCI bridge to [bus 41]
+> > > > [ 3182.246702] pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+> > > > ...
+> > > > pci 0001:40:05.4: can't claim BAR 0 [mem 0xdc000000-0xdc000fff]: address conflict with PCI Bus 0001:41 [mem 0xdc000000-0xdc7fffff]
+> > > > 
+> > > > The bus topology:
+> > > > 
+> > > >  +-[0001:40]-+-02.0-[41]--
+> > > >  |           +-03.0-[41]--
+> > > >  |           +-03.2-[41]--+-00.0  Intel Corporation I350 Gigabit Network Connection
+> > > >  |           |            +-00.1  Intel Corporation I350 Gigabit Network Connection
+> > > >  |           |            +-00.2  Intel Corporation I350 Gigabit Network Connection
+> > > >  |           |            \-00.3  Intel Corporation I350 Gigabit Network Connection
+> > > >  |           +-05.0  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D Map/VTd_Misc/System Management
+> > > >  |           +-05.1  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO Hot Plug
+> > > >  |           +-05.2  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO RAS/Control Status/Global Errors
+> > > >  |           \-05.4  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D I/O APIC
+> > > > 
+> > > > This problem causes that the NIC behine the child bus was not available
+> > > > after PCI host bridge hotpluged.
+> > > > 
+> > > > Kernel does not want to change resource of firmware enabled IOAPIC, but
+> > > > the priority of children bus's resources are higher than any other devices.
+> > > > So this conflict can not be handled by the reassigning logic of kernel.
+> > 
+> > Sorry for my description is not clear. The "priority" is for resources
+> > clamining, not for the address decoding.
+> > 
+> > > I don't understand this paragraph.  AFAIK, if two devices on a bus
+> > > both decode the same address, as the IOAPIC and the bridge do here,
+> > > the only real "priority" in PCI would be subtractive decode.  But I
+> > > don't think that applies here since the bridge is using a positive
+> > > decode window.
+> > 
+> > Sorry for I didn't understand... How could you know the bridge doesn't
+> > apply subtractive decode?
+> 
+> A subtractive decode bridge forwards anything appearing on its primary
+> bus to its secondary bus.  In conventional PCI, it only does this if
+> no other agent on the primary bus asserts DEVSEL# (PCI r3.0, sec
+> 3.6.1).  In PCIe, the primary "bus" is a link and there's only one
+> device on it, so a subtractive decode bridge could forward anything it
+> sees.  If the subtractive decode bridge is part of a multi-function
+> device, I assume that multi-function device would have to determine
+> internally whether the subtractive decode bridge or another function
+> should claim the transaction.
+> 
+> Either way, a subtractive decode bridge can forward anything that
+> appears on its primary bus, so a subtractive decode window effectively
+> contains everything the upstream bridge passes down.  In this case you
+> have:
+> 
+>   pci_bus 0001:40: root bus resource [mem 0xdc000000-0xebffffff window]
+>   pci_bus 0001:40: root bus resource [mem 0x212400000000-0x2125ffffffff window]
+>   pci 0001:40:02.0: PCI bridge to [bus 41]
+>   pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+> 
+> The 40:02.0 bridge could see [mem 0xdc000000-0xebffffff] or [mem
+> 0x212400000000-0x2125ffffffff] on its primary bus, so if it were a
+> subtractive decode bridge, its "window" would contain both of those
+> regions, and we should label them as "(subtractive decode)" in the
+> dmesg log.
 >
 
-ok got it, thanks for the explanation.
->>>
->>>> +       }
->>>>          cached_iova = rb_entry(iovad->cached_node, struct iova, node);
->>>>          if (free->pfn_lo >= cached_iova->pfn_lo)
->>>> @@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned long
->>>> size,
->>>>          struct iova *new_iova;
->>>>          int ret;
->>>>    +     if (limit_pfn <= iovad->dma_32bit_pfn &&
->>>> +                       !iovad->free_32bit_pfns)
->>>
->>>
->>>
->>>                          size >= iovad->max_32bit_free)
->>>
->>>> +               return NULL;
->>>> +
->>>>          new_iova = alloc_iova_mem();
->>>>          if (!new_iova)
->>>>                  return NULL;
->>>> @@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned long
->>>> size,
->>>>          if (ret) {
->>>>                  free_iova_mem(new_iova);
->>>> +               if (limit_pfn <= iovad->dma_32bit_pfn)
->>>> +                       iovad->free_32bit_pfns = false;
->>>
->>>
->>>
->>>                          iovad->max_32bit_free = size;
->>
->>
->> same here, we should decrease available free range after successful
->> allocation.
->> iovad->max_32bit_free -= size;
+Learned! Thanks a lot!
+ 
+> Since [mem 0xdc000000-0xdc7fffff] is only part of the first root bus
+> resource, I infer that it must be a positively decoded window.
+> "lspci -vv" would tell you for sure.
 >
->
-> Equivalently, the simple assignment is strictly decreasing the upper bound
-> already, since we can only get here if size < max_32bit_free in the first
-> place. One more thing I've realised is that this is all potentially a bit
-> racy as we're outside the lock here, so it might need to be pulled into
-> __alloc_and_insert_iova_range(), something like the rough diff below (name
-> changed again for the sake of it; it also occurs to me that we don't really
-> need to re-check limit_pfn in the failure path either, because even a 64-bit
-> allocation still has to walk down through the 32-bit space in order to fail
-> completely)
->
->>>
->>> What do you think?
->>
->>
->> most likely this should work, i will try this and confirm at the earliest,
->
->
-> Thanks for sticking with this.
->
-> Robin.
->
-> ----->8-----
->
-> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-> index 83fe2621effe..7cbc58885877 100644
-> --- a/drivers/iommu/iova.c
-> +++ b/drivers/iommu/iova.c
-> @@ -190,6 +190,10 @@ static int __alloc_and_insert_iova_range(struct
-> iova_domain *iovad,
->
->         /* Walk the tree backwards */
->         spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-> +       if (limit_pfn <= iovad->dma_32bit_pfn &&
-> +           size >= iovad->failed_alloc_size)
-> +               goto out_err;
-> +
->         curr = __get_cached_rbnode(iovad, limit_pfn);
->         curr_iova = rb_entry(curr, struct iova, node);
->         do {
-> @@ -200,10 +204,8 @@ static int __alloc_and_insert_iova_range(struct
-> iova_domain *iovad,
->                 curr_iova = rb_entry(curr, struct iova, node);
->         } while (curr && new_pfn <= curr_iova->pfn_hi);
->
-> -       if (limit_pfn < size || new_pfn < iovad->start_pfn) {
-> -               spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
-> -               return -ENOMEM;
-> -       }
-> +       if (limit_pfn < size || new_pfn < iovad->start_pfn)
-> +               goto out_err;
->
->         /* pfn_lo will point to size aligned address if size_aligned is set
-> */
->         new->pfn_lo = new_pfn;
-> @@ -214,9 +216,12 @@ static int __alloc_and_insert_iova_range(struct
-> iova_domain *iovad,
->         __cached_rbnode_insert_update(iovad, new);
->
->         spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
-> -
-> -
->         return 0;
-> +
-> +out_err:
-> +       iovad->failed_alloc_size = size;
-> +       spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
-> +       return -ENOMEM;
->  }
->
->  static struct kmem_cache *iova_cache;
 
+The lspci log shows "Normal decode" on the bridge, I think that means
+positively decode.
+ 
+> > > I would expect that a read to the [mem 0xdc000000-0xdc000fff] range
+> > > would potentially receive two read completions, which would cause an
+> > > Unexpected Completion error.
+> > 
+> > Thanks for your information. The I350 NIC doesn't work after hotplug.
+> > So it may causes by Unexpected Completion error as you mentioned.
+> >  
+> > > Maybe you mean that we don't want to change the IOAPIC resources, but
+> > > it's OK if we move the bridge window, so in that sense, the IOAPIC is
+> > > "higher priority" than the bridge window?  This is the reverse of what
+> > > your paragraph seems to say.
+> > 
+> > Yes, this is what I mean. Sorry for my paragraph causes confusing. 
+> > 
+> > The memory decoder bit in the command register of 0001:40:05.4 IOAPIC
+> > is raised by firmware after hotplug. So kernel treats it as a
+> > _firmware enabled_ IOAPIC. Because kernel don't want to change the IOAPIC
+> > resources, so my patch try to claim the IOAPIC resources before all
+> > bridges. It can workaround the hotplug problem on issue machine.
+> > 
+> > But, actually I am not sure that this hacking makes sense. And, I also
+> > don't know why the memory decoder bit is raised by firmware when hotplug.
+> > Maybe this is a firmware problem.
+> 
+> That's a good point.  It's fine for firmware to enable the IOAPIC
+> memory decode.  But the address conflict:
 
-cant we bump up the size when ranges are freed? otherwise we never be
-able to attempt in 32bit range, even there is enough replenish.
+Per my understood, normally the firmware set memory decode bit for booting.
+I have no idea why firmware set the bit for hotplug.
 
+> 
+>   [ 3906.092119] pci 0001:40:05.4: reg 0x10: [mem 0xdc000000-0xdc000fff]
+>   [ 3906.093898] pci 0001:40:02.0: PCI bridge to [bus 41]
+>   [ 3906.093902] pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+> 
+> is not so fine.  That looks like a firmware bug to me.  These devices
+> should power up with zeroes in their BARs, so the addresses must have
+> been assigned by firmware before it sent the ACPI hotplug notification
+> to Linux.
 
-@@ -139,8 +139,10 @@ __cached_rbnode_delete_update(struct iova_domain
-*iovad, struct iova *free)
+The interesting thing is that the addresses in BAR do not have any
+conflict after normal booting. This problem only happened after hotplug.
 
-        cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
-        if (free->pfn_hi < iovad->dma_32bit_pfn &&
--           free->pfn_lo >= cached_iova->pfn_lo)
-+           free->pfn_lo >= cached_iova->pfn_lo) {
-                iovad->cached32_node = rb_next(&free->node);
-+               iovad->failed_alloc_size += (free->pfn_hi - free->pfn_lo);
-+       }
+hm... I have another question that it may not relates to this issue. I
+was tracing the code path of PCI hot-remove/hotplug. Base on spec, looks
+that the RST# should be asserted when hot-remove. And the memory decode
+bit must be set to zero after RST# be asserted. But I didn't see that
+any kernel PCI/ACPI code set RST#. The only possible code to set RST# is
+in POWER architecture. Do you know who assert the RST# when hot-remove?    
+
+> 
+> In principle, Linux *should* be able to recover from that by moving
+> the IOAPIC or the bridge window, but obviously we don't.
+> 
+> What are the chances of getting a firmware fix?  Has this firmware
+> already shipped to customers?
+>
+
+The good news is that the machine has not shipped yet. As I know
+that manufacturer is also finding the root cause for why firmware
+enabled memory decode bit and also set the wrong addresses.
+ 
+> > > > This patch claims the resources of firmware enabled IOAPIC before
+> > > > children bus. Then kernel gets a chance to reassign the resources of
+> > > > children bus to avoid the conflict.
+> > > 
+> > > Can you open a report at https://bugzilla.kernel.org, attach the
+> > > before and after dmesg logs, and include the URL in the commit log?
+> > 
+> > OK, I have filed a bug on kernel bugzilla and also attached dmesg
+> > log:
+> > 	https://bugzilla.kernel.org/show_bug.cgi?id=200765
+> 
+> Thanks.  Please include this URL in the changelog if you post an
+> updated patch.
+
+OK, I will add the URL to bug description in next version.
+
+Thanks a lot!
+Joey Lee 
