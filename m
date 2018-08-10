@@ -2,104 +2,136 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBC8C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F380C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53BBD223AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:49:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gg7OBvrS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53BBD223AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BCFCB22432
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFCB22432
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbeHJTUS (ORCPT
+        id S1728843AbeHJTWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 15:20:18 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:35626 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbeHJTUS (ORCPT
+        Fri, 10 Aug 2018 15:22:25 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:51253 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727462AbeHJTWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 15:20:18 -0400
-Received: by mail-ua1-f65.google.com with SMTP id q12-v6so2535622ual.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 09:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pzS0sAK3QmLnlcTfr4Qz28c9C9QFNYAbbNOlSMDSzZw=;
-        b=Gg7OBvrSmrl5uV7nc3GrUyZ6hPLjSG4MmdAdghToqtu9AaCmUZTQ8OMDHyXHAKoOgv
-         TN0FZHO6timIuC9cxI4FswpUo2OJIMcQBAZLEEdAPx+stmVrsADpEtRADzbOV9MbF88Z
-         y3ez4AdXurkd8c4c+0xRH5QCZweZAp/bTSmfc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=pzS0sAK3QmLnlcTfr4Qz28c9C9QFNYAbbNOlSMDSzZw=;
-        b=AIHqH2PrSDB/XYjSV1MFtELRT1pSenqhBS8VYeS6dp9nGt9XiEJlgmq6233fHqt9NK
-         NhmVi5sWhcOSKsB7nywnwMP0Zsp05Kq5AvaPqLsoJlUNcq1IwopSZlQ7XfGgmY/l8XVF
-         2O9Rm1ExK2EbBhEhLDgLEgfezhgaouM+4qmqAd7BbdsHBU6mPNGuH/OcwI/bk9ZrpZlX
-         i1U/TtltboJ4m3srsAGaXD2Le/yFl2F1SC6gweZe6YBLR7yd+4rzkkkyOMS5E8uNeSgG
-         UvtkjrqqM643tHmGL5DACgYT2naPbzQTY/ku4CdGq/fArAob0Dl07Wp2kFiP+EvhDR5f
-         W+dA==
-X-Gm-Message-State: AOUpUlHqRNfja5DBa6DY3m9ovzzcEc5dr6Fx55eytE9K7wpoUB78MF44
-        GabjDmM2LXKRe4ivygGq0wvRvytBqp0=
-X-Google-Smtp-Source: AA+uWPzBH1v6rmRXUTFCr7MINiG0qQW0HS00meHxV3i1EUlFYyKWpRv4/XH+dh/yQ2Zy3nyssVYEFA==
-X-Received: by 2002:a1f:3815:: with SMTP id f21-v6mr4616630vka.110.1533919779833;
-        Fri, 10 Aug 2018 09:49:39 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm1506813uap.37.2018.08.10.09.49.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 09:49:38 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id g18-v6so2539162uam.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 09:49:38 -0700 (PDT)
-X-Received: by 2002:a1f:ebc7:: with SMTP id j190-v6mr4588442vkh.114.1533919778343;
- Fri, 10 Aug 2018 09:49:38 -0700 (PDT)
+        Fri, 10 Aug 2018 15:22:25 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R291e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T6Q1GVn_1533919887;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6Q1GVn_1533919887)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 11 Aug 2018 00:51:34 +0800
+Subject: Re: [RFC v7 PATCH 4/4] mm: unmap special vmas with regular
+ do_munmap()
+To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1533857763-43527-5-git-send-email-yang.shi@linux.alibaba.com>
+ <521a7d54-efdb-2401-c677-3f5fcbad557b@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <dcc1542d-e6e5-ef6e-6b13-cb3c4b16f9e0@linux.alibaba.com>
+Date:   Fri, 10 Aug 2018 09:51:25 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 09:49:37 -0700 (PDT)
-In-Reply-To: <c1bc416ba407b5a3cc098e78a529752e@codeaurora.org>
-References: <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org>
- <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
- <20180522173000.GG24776@sirena.org.uk> <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
- <20180524162940.GA4828@sirena.org.uk> <28d8ab5fdeb34e52eba7ca771a17bc06@codeaurora.org>
- <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org> <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
- <20180810105205.GC20971@sirena.org.uk> <CAD=FV=XXyL5q1quxUtBohn2GrcadbY9hr6sdw+4qShQnYTgVwA@mail.gmail.com>
- <20180810161329.GF20971@sirena.org.uk> <c1bc416ba407b5a3cc098e78a529752e@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 10 Aug 2018 09:49:37 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Us65kRtn6wtc+cr-ws0b1vYwARbqt0yY+T2BdSFPnfcg@mail.gmail.com>
-Message-ID: <CAD=FV=Us65kRtn6wtc+cr-ws0b1vYwARbqt0yY+T2BdSFPnfcg@mail.gmail.com>
-Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based QUP
-To:     Dilip Kota <dkota@codeaurora.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "Mahadevan, Girish" <girishm@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <521a7d54-efdb-2401-c677-3f5fcbad557b@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Aug 10, 2018 at 9:29 AM,  <dkota@codeaurora.org> wrote:
-> Here are my couple of cents:
-> SPI controller maximum frequency can be lesser than or equal to Clock
-> framework's maximum
-> frequency, so should not rely on the Clock framework.
 
-You could make that argument on other SoCs perhaps, but from what I've
-seen in Qualcomm clock drivers there is a hardcoded frequency plan
-that takes into account how fast the IP blocks can go.
+On 8/10/18 2:51 AM, Vlastimil Babka wrote:
+> On 08/10/2018 01:36 AM, Yang Shi wrote:
+>> Unmapping vmas, which have VM_HUGETLB | VM_PFNMAP flag set or
+>> have uprobes set, need get done with write mmap_sem held since
+>> they may update vm_flags.
+>>
+>> So, it might be not safe enough to deal with these kind of special
+>> mappings with read mmap_sem. Deal with such mappings with regular
+>> do_munmap() call.
+>>
+>> Michal suggested to make this as a separate patch for safer and more
+>> bisectable sake.
+> Hm I believe Michal meant the opposite "evolution" though. Patch 2/4
+> should be done in a way that special mappings keep using the regular
+> path, and this patch would convert them to the new path. Possibly even
+> each special case separately.
 
--Doug
+Aha, thanks. I understood it oppositely.
+
+Yang
+
+>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   mm/mmap.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index 2234d5a..06cb83c 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -2766,6 +2766,16 @@ static inline void munlock_vmas(struct vm_area_struct *vma,
+>>   	}
+>>   }
+>>   
+>> +static inline bool can_zap_with_rlock(struct vm_area_struct *vma)
+>> +{
+>> +	if ((vma->vm_file &&
+>> +	     vma_has_uprobes(vma, vma->vm_start, vma->vm_end)) ||
+>> +	     (vma->vm_flags | (VM_HUGETLB | VM_PFNMAP)))
+>> +		return false;
+>> +
+>> +	return true;
+>> +}
+>> +
+>>   /*
+>>    * Zap pages with read mmap_sem held
+>>    *
+>> @@ -2808,6 +2818,17 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
+>>   			goto out;
+>>   	}
+>>   
+>> +	/*
+>> +	 * Unmapping vmas, which have VM_HUGETLB | VM_PFNMAP flag set or
+>> +	 * have uprobes set, need get done with write mmap_sem held since
+>> +	 * they may update vm_flags. Deal with such mappings with regular
+>> +	 * do_munmap() call.
+>> +	 */
+>> +	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
+>> +		if (!can_zap_with_rlock(vma))
+>> +			goto regular_path;
+>> +	}
+>> +
+>>   	/* Handle mlocked vmas */
+>>   	if (mm->locked_vm) {
+>>   		vma = start_vma;
+>> @@ -2828,6 +2849,9 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
+>>   
+>>   	return 0;
+>>   
+>> +regular_path:
+>> +	ret = do_munmap(mm, start, len, uf);
+>> +
+>>   out:
+>>   	up_write(&mm->mmap_sem);
+>>   	return ret;
+>>
+
