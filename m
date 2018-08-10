@@ -2,233 +2,147 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4DDC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB549C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 332B82240E
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:04:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332B82240E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 53F93223F8
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:12:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Jcs4XN8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F93223F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeHJNeB (ORCPT
+        id S1727570AbeHJNl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 09:34:01 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42191 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbeHJNeA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 09:34:00 -0400
-Received: by mail-oi0-f66.google.com with SMTP id b16-v6so15058292oic.9;
-        Fri, 10 Aug 2018 04:04:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RyGU7xzaFvcu9E35VuLMhiZv5LFG4/nJK2dt4W2+eiQ=;
-        b=MqmJIMc634fAk1mTJNwVxS9ghm2DVUZitSf+yD9SxTF/5REUUQvvIFu5JQ+t3g8G4B
-         JXIdc2uzVmBeWRlA5qv5IsJ72yi79+vN3Qq+CA9BC2gp0WgCBZiYuzWuS9pa9mjPNlqo
-         6RuuOhdnh5DynxrX6T/5QtXE4c+91UXZBvYqZayMbAQ43UAbKNZXp00ffkPQcJkKuTPW
-         kfjTTxKp2+pCYeP5V4RiXJaMhsX1/dv5isLCw3YmY1OOCpB3axAhWEE7J/io4mikQmFT
-         dmk1I8PoB5s8Vw6oyiqfyHaYtNqxxYWPKIMTuFVt7T+cybnsmUaVrsGY9xKXPiYVJsp0
-         CSMQ==
-X-Gm-Message-State: AOUpUlHGpt1FMS9V0+8oZqyrTiwBaXNs41+o0ma/gtRxaD6p9X/TaaBZ
-        LlBQNu/FwhFqNLtY5knVN+7ZHLgqwBThDgaH3eYahg==
-X-Google-Smtp-Source: AA+uWPwsmos5vfC4f9IanMcG+duijwT5WP8hzZtKaFws9byk6RNk6g0bLCrjRIGdtPzXjJDbUQYaI6HUIoO+T8KY0nY=
-X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr6674819oie.233.1533899074616;
- Fri, 10 Aug 2018 04:04:34 -0700 (PDT)
+        Fri, 10 Aug 2018 09:41:26 -0400
+Received: from mail-ve1eur01on0047.outbound.protection.outlook.com ([104.47.1.47]:41184
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726963AbeHJNl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 09:41:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vgErYSZdJTgYSovNQTkjIrw9frV9K0nrArQ03/iGZfA=;
+ b=Jcs4XN8T65TJGoMQaShpJ4YAkeBqm/Of+bF56qzD7JGgQmRf+mN/k/CE1GC2G1YK7bClYQCa6axZsTvD+VcWuxJxuzKIXetidc1i4y1EFH+wkBNzSgFwWYJJJ44pAIhCeuiywRJAAOvdRobFLiYJNNsHBE1Axf/cufqcIKfuweo=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4417.eurprd04.prod.outlook.com (52.135.148.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Fri, 10 Aug 2018 11:11:55 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273%5]) with mapi id 15.20.1038.019; Fri, 10 Aug 2018
+ 11:11:55 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
+Thread-Topic: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
+Thread-Index: AQHUI2mAdxFCdwbsIEW0mCMYIbqjI6S1xVuAgAAFxICAAAZagIAALWEAgAAKyQCAAAg6gIAC3TMA
+Date:   Fri, 10 Aug 2018 11:11:55 +0000
+Message-ID: <52ee6376fa15d3a9a62bcfa5d87173e454ccc024.camel@nxp.com>
+References: <cover.1532448745.git.leonard.crestez@nxp.com>
+         <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
+         <20180808111429.GC25150@e107981-ln.cambridge.arm.com>
+         <a5556be9a5f62ea0472a1a2336bce8d71df0dcaa.camel@nxp.com>
+         <20180808141938.GA30428@e107981-ln.cambridge.arm.com>
+         <efd9c1d560cae84e2a4ee7585a4c61d5d40ba755.camel@nxp.com>
+         <20180808152741.GA31808@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20180808152741.GA31808@e107981-ln.cambridge.arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4417;6:+ZnfyV88aj+yz3fBShuq6eUd9dBT3DbP0tjBOD39xbaulNOwcRlLE2l87qKEOPYKthWr8KPu7trBuopu0kuzHY/wvrRoxC/V8eEqF6ClDrwnHPGnPaaFcNoWVsASwSFYYlGJ9Mt7EPa6QdoP+Pu8mAt95e/+WYE1T+z4eBZ/nJ4zOyLrNE5u7XzW7P1aW8b3kLVWxEwDPlEv/uAxI1+KqckgF4XhimS16zpb+hL0wqU8j2S1Zaa5uTK69VpQjwOpxYPXEjz8cmdL53vZvNWh+DkVnCg1SCEDZX0XLM6o52xuRhjtpRexpOM6G9JeUWZ+opt9DSxOjssG16TsDseJwFTUPE4wA3QKLOHZAF7T+oVnZOwTvLiEf3mHg8R3nAa/M4eCJTEsUHjGiE93WZyp1U9P4TvK85rvCbloG05rSYtEmvdvfV9HIcq/anhn9uT/iqdRjGVcweFmfZzlZUul2Q==;5:d4zshMGerCNoLeIEjoWpRXBpAuJ/NnhN/dpfOPz0I1zvJFOVgPXNwAByNjJkg9fhx4AJtCphFvlbI9I6LtbpIXZ2gpjy0sR5YME3XeNfDGRyEoDQaJVoYot1bPW98TrX1hBS/2XfUdcoI2ZvJezjfLaKchlqQ90F7wIUjL31AWo=;7:9EPv2YPWSGXNmMjmc57JpbLZtlFoLG6PuwLJx+JW9PvUeoCUhqSUmkpsswT/YVghEeW93yoF99QpSvpLRITrLyzR+7g3fQdyPVmbpfwgEeNIkoCj9FGhtC0oswyzzk7hse4HKidWdKCGHYhwdPK0dnejtOhDxz+WqOfxSguZkePRdwGmcJKc1YlRpLDtpvWbcHmCfJZG+0V/mwW32Jr/+DzJPM0xxYE/d3cufYclyW2A2jvL71lRRbxFyaVzpGFb
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: c9ca41fc-9e35-4efb-28f7-08d5feb2151e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4417;
+x-ms-traffictypediagnostic: AM0PR04MB4417:
+x-microsoft-antispam-prvs: <AM0PR04MB441704ABCAB8DC1BD25EDAD6EE240@AM0PR04MB4417.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4417;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4417;
+x-forefront-prvs: 07607ED19A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(366004)(39860400002)(136003)(189003)(199004)(6246003)(4326008)(39060400002)(81166006)(8676002)(118296001)(81156014)(53936002)(106356001)(229853002)(316002)(6436002)(6512007)(44832011)(478600001)(105586002)(476003)(68736007)(5660300001)(14454004)(486006)(2501003)(8936002)(25786009)(7416002)(2616005)(6486002)(14444005)(2906002)(36756003)(6116002)(97736004)(5250100002)(305945005)(54906003)(99286004)(7736002)(66066001)(50226002)(110136005)(26005)(256004)(76176011)(2201001)(11346002)(102836004)(186003)(446003)(6506007)(93886005)(86362001)(3846002)(2900100001)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4417;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: u93bnJLulu2EaJg1JRvPwbezNvtxaU1EJlz03QJFPxr4dwBvMshom1QZReTZliwbf23K1FjwilGaWP9MmFYBXUhol612dhNXwdLyGdD87SjpxG6pDqwM7N0yRnzTbfdF8G660AwRuQtO3wOcoZVMCa4HY7IzLNLynkh8D+uZ3gMXnBmTuTQ2Ea1VRL2l2QF/TbAVfSfS/wrAcJGiZC4JunovSC9X/s9oBa+V71sXMPNGQnb5b/oqlMN1P9IFt8mf5Qnz2BedaKJ8hwIfN8/WwfdHoorbjFma0kyP/xx/VxGaAwUVBIqGNZOTQGsja9YtWuZwsMf4BWq/dIYr9a71UFdPYYLMOzcYc+Xj1EatTQ8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7B33ED57CA4CD14A80F852F8D095A070@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1951009.1jlQfyrxio@aspire.rjw.lan> <3174357.2tBMdxG3bF@aspire.rjw.lan>
- <20180810092034.GF11817@leoy-ThinkPad-X240s>
-In-Reply-To: <20180810092034.GF11817@leoy-ThinkPad-X240s>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 10 Aug 2018 13:04:22 +0200
-Message-ID: <CAJZ5v0h8T99pqhNoj+V9Mb5yS621OT_=d05YbWtbCW5H362myA@mail.gmail.com>
-Subject: Re: [PATCH v2] cpuidle: menu: Handle stopped tick more aggressively
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9ca41fc-9e35-4efb-28f7-08d5feb2151e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2018 11:11:55.3203
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4417
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 11:20 AM <leo.yan@linaro.org> wrote:
->
-> On Fri, Aug 10, 2018 at 09:57:18AM +0200, Rafael J . Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Subject: [PATCH] cpuidle: menu: Handle stopped tick more aggressively
-> >
-> > Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
-> > with stopped tick) missed the case when the target residencies of
-> > deep idle states of CPUs are above the tick boundary which may cause
-> > the CPU to get stuck in a shallow idle state for a long time.
-> >
-> > Say there are two CPU idle states available: one shallow, with the
-> > target residency much below the tick boundary and one deep, with
-> > the target residency significantly above the tick boundary.  In
-> > that case, if the tick has been stopped already and the expected
-> > next timer event is relatively far in the future, the governor will
-> > assume the idle duration to be equal to TICK_USEC and it will select
-> > the idle state for the CPU accordingly.  However, that will cause the
-> > shallow state to be selected even though it would have been more
-> > energy-efficient to select the deep one.
-> >
-> > To address this issue, modify the governor to always assume idle
-> > duration to be equal to the time till the closest timer event if
-> > the tick is not running which will cause the selected idle states
-> > to always match the known CPU wakeup time.
-> >
-> > Also make it always indicate that the tick should be stopped in
-> > that case for consistency.
-> >
-> > Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
-> > Reported-by: Leo Yan <leo.yan@linaro.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > -> v2: Initialize first_idx properly in the stopped tick case.
-> >
-> > ---
-> >  drivers/cpuidle/governors/menu.c |   55 +++++++++++++++++----------------------
-> >  1 file changed, 25 insertions(+), 30 deletions(-)
-> >
-> > Index: linux-pm/drivers/cpuidle/governors/menu.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/cpuidle/governors/menu.c
-> > +++ linux-pm/drivers/cpuidle/governors/menu.c
-> > @@ -285,9 +285,8 @@ static int menu_select(struct cpuidle_dr
-> >  {
-> >       struct menu_device *data = this_cpu_ptr(&menu_devices);
-> >       int latency_req = cpuidle_governor_latency_req(dev->cpu);
-> > -     int i;
-> > -     int first_idx;
-> > -     int idx;
-> > +     int first_idx = 0;
-> > +     int idx, i;
-> >       unsigned int interactivity_req;
-> >       unsigned int expected_interval;
-> >       unsigned long nr_iowaiters, cpu_load;
-> > @@ -307,6 +306,18 @@ static int menu_select(struct cpuidle_dr
-> >       /* determine the expected residency time, round up */
-> >       data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
-> >
-> > +     /*
-> > +      * If the tick is already stopped, the cost of possible short idle
-> > +      * duration misprediction is much higher, because the CPU may be stuck
-> > +      * in a shallow idle state for a long time as a result of it.  In that
-> > +      * case say we might mispredict and use the known time till the closest
-> > +      * timer event for the idle state selection.
-> > +      */
-> > +     if (tick_nohz_tick_stopped()) {
-> > +             data->predicted_us = ktime_to_us(delta_next);
-> > +             goto select;
-> > +     }
-> > +
->
-> This introduce two potential issues:
->
-> - This will totally ignore the typical pattern in idle loop; I
->   observed on the mmc driver can trigger multiple times (> 10 times)
->   with consistent interval;
-
-I'm not sure what you mean by "ignore".
-
->  but I have no strong opinion to not  use next timer event for this case.
-
-OK
-
-> - Will this break correction factors when the CPU exit from idle?
->   data->bucket is stale value ....
-
-Good point.
-
-I'll send a v3 with this addressed.
-
->
-> >       get_iowait_load(&nr_iowaiters, &cpu_load);
-> >       data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
-> >
-> > @@ -322,7 +333,6 @@ static int menu_select(struct cpuidle_dr
-> >       expected_interval = get_typical_interval(data);
-> >       expected_interval = min(expected_interval, data->next_timer_us);
-> >
-> > -     first_idx = 0;
-> >       if (drv->states[0].flags & CPUIDLE_FLAG_POLLING) {
-> >               struct cpuidle_state *s = &drv->states[1];
-> >               unsigned int polling_threshold;
-> > @@ -344,29 +354,15 @@ static int menu_select(struct cpuidle_dr
-> >        */
-> >       data->predicted_us = min(data->predicted_us, expected_interval);
-> >
-> > -     if (tick_nohz_tick_stopped()) {
-> > -             /*
-> > -              * If the tick is already stopped, the cost of possible short
-> > -              * idle duration misprediction is much higher, because the CPU
-> > -              * may be stuck in a shallow idle state for a long time as a
-> > -              * result of it.  In that case say we might mispredict and try
-> > -              * to force the CPU into a state for which we would have stopped
-> > -              * the tick, unless a timer is going to expire really soon
-> > -              * anyway.
-> > -              */
-> > -             if (data->predicted_us < TICK_USEC)
-> > -                     data->predicted_us = min_t(unsigned int, TICK_USEC,
-> > -                                                ktime_to_us(delta_next));
-> > -     } else {
-> > -             /*
-> > -              * Use the performance multiplier and the user-configurable
-> > -              * latency_req to determine the maximum exit latency.
-> > -              */
-> > -             interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-> > -             if (latency_req > interactivity_req)
-> > -                     latency_req = interactivity_req;
-> > -     }
-> > +     /*
-> > +      * Use the performance multiplier and the user-configurable latency_req
-> > +      * to determine the maximum exit latency.
-> > +      */
-> > +     interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-> > +     if (latency_req > interactivity_req)
-> > +             latency_req = interactivity_req;
-> >
-> > +select:
-> >       expected_interval = data->predicted_us;
-> >       /*
-> >        * Find the idle state with the lowest power while satisfying
-> > @@ -403,14 +399,13 @@ static int menu_select(struct cpuidle_dr
-> >        * Don't stop the tick if the selected state is a polling one or if the
-> >        * expected idle duration is shorter than the tick period length.
-> >        */
-> > -     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-> > -         expected_interval < TICK_USEC) {
-> > +     if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-> > +         expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
->
-> I am not sure this logic is right... Why not use below checking, so
-> for POLLING state we will never ask to stop the tick?
->
->         if (drv->states[idx].flags & CPUIDLE_FLAG_POLLING ||
->             (expected_interval < TICK_USEC && !tick_nohz_tick_stopped())) {
->
-
-The only effect of it would be setting stop_tick to false, but why
-would that matter?
-
-> >               unsigned int delta_next_us = ktime_to_us(delta_next);
-> >
-> >               *stop_tick = false;
-> >
-> > -             if (!tick_nohz_tick_stopped() && idx > 0 &&
-> > -                 drv->states[idx].target_residency > delta_next_us) {
-> > +             if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
-> >                       /*
-> >                        * The tick is not going to be stopped and the target
-> >                        * residency of the state to be returned is not within
-> >
+T24gV2VkLCAyMDE4LTA4LTA4IGF0IDE2OjI3ICswMTAwLCBMb3JlbnpvIFBpZXJhbGlzaSB3cm90
+ZToNCj4gT24gV2VkLCBBdWcgMDgsIDIwMTggYXQgMDI6NTg6MTVQTSArMDAwMCwgTGVvbmFyZCBD
+cmVzdGV6IHdyb3RlOg0KPiA+IE9uIFdlZCwgMjAxOC0wOC0wOCBhdCAxNToxOSArMDEwMCwgTG9y
+ZW56byBQaWVyYWxpc2kgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEF1ZyAwOCwgMjAxOCBhdCAxMToz
+NzoxNEFNICswMDAwLCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6DQo+ID4gPiA+IE9uIFdlZCwgMjAx
+OC0wOC0wOCBhdCAxMjoxNCArMDEwMCwgTG9yZW56byBQaWVyYWxpc2kgd3JvdGU6DQo+ID4gPiA+
+ID4gT24gV2VkLCBBdWcgMDgsIDIwMTggYXQgMTA6NTM6NTJBTSArMDAwMCwgTGVvbmFyZCBDcmVz
+dGV6IHdyb3RlOg0KPiA+ID4gPiA+ID4gT24gVHVlLCAyMDE4LTA3LTI0IGF0IDE5OjE0ICswMzAw
+LCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6DQo+ID4gPiA+ID4gPiA+IENoYW5nZXMgc2luY2UgdjI6
+DQo+ID4gPiA+ID4gPiA+ICAqIFByaW50IHdpdGggZGV2X2luZm8gaWYgbGluayBmYWlscyBvbiBy
+ZXN1bWUgKEx1Y2FzKQ0KPiA+ID4gPiA+ID4gPiAgKiBBZGQgYSBjb21tZW50IG9uIGlteDdkIHBj
+aSBpcnEgbWFwcGluZ3MgKEFuZHJleSkNCj4gPiA+ID4gPiA+ID4gICogTWFrZSBpbXg2X3BjaWVf
+bHRzc21fZGlzYWJsZSBwcmludCBhbiBlcnJvciBvbiBJTVg2USAoTHVjYXMpDQo+ID4gPiA+ID4g
+PiA+IA0KPiA+ID4gPiA+ID4gPiBUaGUgbHRzc21fZGlzYWJsZSBkb2VzIG5vdCByZXR1cm4gYW4g
+ZXJyb3IgYmVjYXVzZSBpdCBjYW4ndCBiZSB1c2VmdWxseQ0KPiA+ID4gPiA+ID4gPiBoYW5kbGVk
+LCByZXZlcnNpbmcgcGFydGlhbCBzdXNwZW5kIGlzIGEgbmlnaHRtYXJlIGFuZCB1bmxpa2VseSB0
+byB3b3JrLg0KPiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gICogRHJvcCAicmVzZXQ6IGlt
+eDc6IEZpeCBhbHdheXMgd3JpdGluZyBiaXRzIGFzIDAgKGFjY2VwdGVkIGJ5IFBoaWxpcHApDQo+
+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gPiBTZXJpZXMgaXMgYWdhaW5zdCBsaW51eC1uZXh0
+IHRhZyBuZXh0LTIwMTgwNzI0IHdoZXJlIHRoZSByZXNldCBwYXRjaCB3YXMNCj4gPiA+ID4gPiA+
+ID4gYWxyZWFkeSBhY2NlcHRlZC4gVGhlIGlteDdkLmR0c2kgcGF0Y2ggaXMgYWxzbyB1c2VmdWwg
+c3RhbmRhbG9uZS4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gVGhpcyBpcyBhIGdlbnRsZSBy
+ZW1pbmRlciB0aGF0IHRoaXMgc2VyaWVzIHdhcyByZXZpZXdlZCBieSBMdWNhcyB0d28NCj4gPiA+
+ID4gPiA+IHdlZWtzIGFnbyBidXQgbm90IHlldCBpbmNsdWRlZC4NCj4gPiA+ID4gPiANCj4gPiA+
+ID4gPiBEb2VzIHRoaXMgc2VyaWVzIGhhdmUgYSBmdW5jdGlvbmFsIGRlcGVuZGVuY3kgb24gdGhl
+IHJlc2V0IGZpeCA/IElmIHllcw0KPiA+ID4gPiA+IHdlIGNhbiBoYXZlIGEgYmlzZWN0aW9uIHBy
+b3BsZW0gZGVwZW5kaW5nIG9uIHdoaWNoIHRyZWUgZ2V0cyBtZXJnZWQNCj4gPiA+ID4gPiBmaXJz
+dC4NCj4gPiA+ID4gDQo+ID4gPiA+IFllcywgd2l0aG91dCB0aGUgcmVzZXQgZml4IEkgZXhwZWN0
+IGhhbmdzLg0KDQpUaGlzIG5lZWRzIGZ1cnRoZXIgY2xhcmlmaWNhdGlvbjogd2l0aG91dCB0aGUg
+cmVzZXQgcGF0Y2ggdGhpcyB3aWxsDQpoYW5nIG9uIGlteDcgc3VzcGVuZC9yZXN1bWUgYnV0IHRo
+aXMgaXMgdGhlIGN1cnJlbnQgYmVoYXZpb3IgYW55d2F5Lg0KDQpCb3RoIHBhdGNoZXMgYXJlIHJl
+cXVpcmVkIGZvciBpbXg3IHBjaSBzdXNwZW5kIGFuZCBpbmNsdWRpbmcgdGhlbSBvdXQNCm9mIG9y
+ZGVyIHNob3VsZG4ndCBicmVhayB1bnJlbGF0ZWQgZnVuY3Rpb25hbGl0eS4NCg0KU28gaXQgc2hv
+dWxkIGFjdHVhbGx5IGJlIGZpbmUgdG8ganVzdCBpbmNsdWRlIHRoZSBwY2kgY2hhbmdlcyBub3cs
+DQpyaWdodD8=
