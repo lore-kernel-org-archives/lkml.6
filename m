@@ -2,112 +2,258 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51084C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC907C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06648223F8
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:53:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06648223F8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6083D223F8
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6083D223F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeHJOWg (ORCPT
+        id S1728185AbeHJOYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:22:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38736 "EHLO mx1.suse.de"
+        Fri, 10 Aug 2018 10:24:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37964 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727493AbeHJOWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:22:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0EE74AE8A;
-        Fri, 10 Aug 2018 11:52:58 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org
-Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
-        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH 05/10] x86/paravirt: remove unused paravirt bits
-Date:   Fri, 10 Aug 2018 13:52:47 +0200
-Message-Id: <20180810115252.18213-6-jgross@suse.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20180810115252.18213-1-jgross@suse.com>
-References: <20180810115252.18213-1-jgross@suse.com>
+        id S1727258AbeHJOYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 10:24:10 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B2C7D40201C7;
+        Fri, 10 Aug 2018 11:54:33 +0000 (UTC)
+Received: from krava (unknown [10.43.17.133])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 71F5CFF69;
+        Fri, 10 Aug 2018 11:54:32 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 13:54:31 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu
+Subject: Re: [PATCH v2] perf ordered_events: fix crash in free_dup_event()
+Message-ID: <20180810115431.GA4162@krava>
+References: <1533767600-7794-1-git-send-email-eranian@google.com>
+ <20180809080721.GB19243@krava>
+ <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 10 Aug 2018 11:54:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 10 Aug 2018 11:54:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The macros ENABLE_INTERRUPTS_SYSEXIT, GET_CR0_INTO_EAX and
-PARAVIRT_ADJUST_EXCEPTION_FRAME are used nowhere. Remove their
-definitions.
+On Fri, Aug 10, 2018 at 01:21:18AM -0700, Stephane Eranian wrote:
+> On Thu, Aug 9, 2018 at 1:07 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Wed, Aug 08, 2018 at 03:33:20PM -0700, Stephane Eranian wrote:
+> > > This patch fixes a bug in ordered_event.c:alloc_event().
+> > > An ordered_event struct was not initialized properly potentially
+> > > causing crashes later on in free_dup_event() depending on the
+> > > content of the memory. If it was NULL, then it would work fine,
+> > > otherwise, it could cause crashes such as:
+> >
+> > I'm now little puzzled what do we use this first event for..
+> > I can't see anything special about it, other than it's added
+> > on the list uninitialized ;-)
+> >
+> > it seems to work properly when we ditch it.. might be some
+> > prehistoric leftover or I'm terribly missing something
+> >
+> You need to keep track of the buffers to free. You do not free the
+> ordered_event structs
+> individually. For each oe->buffer, you need one free(). Each buffer is
+> put in the to_free
+> list. But to link it into the list it needs a list_head. This is what
+> buffer[0] is used for.
+> But the logic is broken in  ordered_events__free(). It does not free individual
+> ordered_event structs, but a buffer with many. Yet, it is missing
+> freeing all of the duped
+> events.
+> 
+>  void ordered_events__free(struct ordered_events *oe)
+> {
+>         while (!list_empty(&oe->to_free)) {
+>                 struct ordered_event *buffer;
+> 
+>                 buffer = list_entry(oe->to_free.next, struct
+> ordered_event, list);
+>                 list_del(&buffer->list);
+> ---->         free_dup_event(oe, event->event);
+>                 free(buffer);
+>         }
+> }
+> This only frees the dup_event of buffer[0] which we know is NULL (well, now).
+> It needs to walk all the entries in buffer[] to free buffer[x].event.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
+yes.. if there's copy_on_queue set, we need to do that,
+otherwise we're leaking all the events
+
+> 
+> I think the goal was likely to avoid adding another list_head field to
+> each ordered_event
+> and instead use one per allocated buffer.
+> This is very convoluted and prone to errors and we are seeing right
+> now. This should
+> be cleaned. So either you add a list_head to ordered_event or you
+> would buffer[x] in
+> ordered_events_free().
+> 
+> At this point, this is my understanding.
+> Do you agree?
+
+yea, I see it now.. thanks for pointing this out
+
+how about something like below? haven't tested properly yet
+
+jirka
+
+
 ---
- arch/x86/include/asm/irqflags.h | 4 ----
- arch/x86/include/asm/paravirt.h | 9 +--------
- arch/x86/kernel/asm-offsets.c   | 1 -
- 3 files changed, 1 insertion(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-index c4fc17220df9..b7a790d03229 100644
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -132,8 +132,6 @@ static inline notrace unsigned long arch_local_irq_save(void)
-  */
- #define SWAPGS_UNSAFE_STACK	swapgs
+diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+index bad9e0296e9a..5c0d85e90a18 100644
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
+ 	return oe->copy_on_queue ? __dup_event(oe, event) : event;
+ }
  
--#define PARAVIRT_ADJUST_EXCEPTION_FRAME	/*  */
--
- #define INTERRUPT_RETURN	jmp native_iret
- #define USERGS_SYSRET64				\
- 	swapgs;					\
-@@ -147,8 +145,6 @@ static inline notrace unsigned long arch_local_irq_save(void)
- #endif
- #else
- #define INTERRUPT_RETURN		iret
--#define ENABLE_INTERRUPTS_SYSEXIT	sti; sysexit
--#define GET_CR0_INTO_EAX		movl %cr0, %eax
- #endif
+-static void free_dup_event(struct ordered_events *oe, union perf_event *event)
++static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
+ {
+-	if (event && oe->copy_on_queue) {
++	if (event) {
+ 		oe->cur_alloc_size -= event->header.size;
+ 		free(event);
+ 	}
+ }
  
++static void free_dup_event(struct ordered_events *oe, union perf_event *event)
++{
++	if (oe->copy_on_queue)
++		__free_dup_event(oe, event);
++}
++
+ #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
+ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 					 union perf_event *event)
+@@ -104,11 +110,11 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 		new = list_entry(cache->next, struct ordered_event, list);
+ 		list_del(&new->list);
+ 	} else if (oe->buffer) {
+-		new = oe->buffer + oe->buffer_idx;
++		new = &oe->buffer->event[oe->buffer_idx];
+ 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
+ 			oe->buffer = NULL;
+ 	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
+-		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
++		size_t size = sizeof(*oe->buffer) + MAX_SAMPLE_BUFFER * sizeof(*new);
  
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index 1b86bb319393..436d270e622b 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -904,14 +904,7 @@ extern void default_banner(void);
- 		  call PARA_INDIRECT(pv_ops+PV_IRQ_irq_enable);		\
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 		oe->buffer = malloc(size);
+ 		if (!oe->buffer) {
+@@ -122,9 +128,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 		oe->cur_alloc_size += size;
+ 		list_add(&oe->buffer->list, &oe->to_free);
  
--#ifdef CONFIG_X86_32
--#define GET_CR0_INTO_EAX				\
--	push %ecx; push %edx;				\
--	ANNOTATE_RETPOLINE_SAFE;				\
--	call PARA_INDIRECT(pv_ops+PV_CPU_read_cr0);	\
--	pop %edx; pop %ecx
--#else	/* !CONFIG_X86_32 */
--
-+#ifdef CONFIG_X86_64
- /*
-  * If swapgs is used while the userspace stack is still current,
-  * there's no way to call a pvop.  The PV replacement *must* be
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index bec9fc3498f8..d0f0348209cb 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -71,7 +71,6 @@ void common(void) {
- 	OFFSET(PV_IRQ_irq_enable, paravirt_patch_template,
- 	       pv_irq_ops.irq_enable);
- 	OFFSET(PV_CPU_iret, paravirt_patch_template, pv_cpu_ops.iret);
--	OFFSET(PV_CPU_read_cr0, paravirt_patch_template, pv_cpu_ops.read_cr0);
- 	OFFSET(PV_MMU_read_cr2, paravirt_patch_template, pv_mmu_ops.read_cr2);
- #endif
+-		/* First entry is abused to maintain the to_free list. */
+-		oe->buffer_idx = 2;
+-		new = oe->buffer + 1;
++		oe->buffer_idx = 1;
++		new = &oe->buffer->event[0];
+ 	} else {
+ 		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
+ 	}
+@@ -300,15 +305,27 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
+ 	oe->deliver	   = deliver;
+ }
  
--- 
-2.13.7
-
++static void
++ordered_events_buffer__free(struct ordered_events_buffer *buffer,
++			    struct ordered_events *oe)
++{
++	if (oe->copy_on_queue) {
++		unsigned int i;
++
++		for (i = 0; i < MAX_SAMPLE_BUFFER; i++)
++			__free_dup_event(oe, buffer->event[i].event);
++	}
++
++	free(buffer);
++}
++
+ void ordered_events__free(struct ordered_events *oe)
+ {
+-	while (!list_empty(&oe->to_free)) {
+-		struct ordered_event *event;
++	struct ordered_events_buffer *buffer, *tmp;
+ 
+-		event = list_entry(oe->to_free.next, struct ordered_event, list);
+-		list_del(&event->list);
+-		free_dup_event(oe, event->event);
+-		free(event);
++	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
++		list_del(&buffer->list);
++		ordered_events_buffer__free(buffer, oe);
+ 	}
+ }
+ 
+diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
+index 8c7a2948593e..1338d5c345dc 100644
+--- a/tools/perf/util/ordered-events.h
++++ b/tools/perf/util/ordered-events.h
+@@ -25,23 +25,28 @@ struct ordered_events;
+ typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
+ 					 struct ordered_event *event);
+ 
++struct ordered_events_buffer {
++	struct list_head	list;
++	struct ordered_event	event[0];
++};
++
+ struct ordered_events {
+-	u64			last_flush;
+-	u64			next_flush;
+-	u64			max_timestamp;
+-	u64			max_alloc_size;
+-	u64			cur_alloc_size;
+-	struct list_head	events;
+-	struct list_head	cache;
+-	struct list_head	to_free;
+-	struct ordered_event	*buffer;
+-	struct ordered_event	*last;
+-	ordered_events__deliver_t deliver;
+-	int			buffer_idx;
+-	unsigned int		nr_events;
+-	enum oe_flush		last_flush_type;
+-	u32			nr_unordered_events;
+-	bool                    copy_on_queue;
++	u64				 last_flush;
++	u64				 next_flush;
++	u64				 max_timestamp;
++	u64				 max_alloc_size;
++	u64				 cur_alloc_size;
++	struct list_head		 events;
++	struct list_head		 cache;
++	struct list_head		 to_free;
++	struct ordered_events_buffer	*buffer;
++	struct ordered_event		*last;
++	ordered_events__deliver_t	 deliver;
++	int				 buffer_idx;
++	unsigned int			 nr_events;
++	enum oe_flush			 last_flush_type;
++	u32				 nr_unordered_events;
++	bool				 copy_on_queue;
+ };
+ 
+ int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
