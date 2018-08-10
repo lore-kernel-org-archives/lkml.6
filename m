@@ -2,213 +2,103 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5D4C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E81C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613CF2240A
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:42:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613CF2240A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ECDE922414
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:53:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECDE922414
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbeHJOMO (ORCPT
+        id S1727653AbeHJOWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:12:14 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44406 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeHJOMN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:12:13 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q127-v6so6899674ljq.11
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 04:42:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=u2IyLpdGopqKzXGQndpXte/9NFuflj8xgQ6zzU1ZXTA=;
-        b=AKDI3Ls3ep0ZhTlC6aZ6t+MDUhg3Yc6y05M1KNlWNVadOn4BI+251od/CnqK+jR2/V
-         2JKjxGMTN/r/8mk8Iyvudej3F1XAPn1n6xm9hx0hDTomeB+9Qz2PC+MnvR50WB8XRC/G
-         He5a9J5vYesCzSmfA50N8EDJtCY2+lM/r47rJRDutMndurAvZ0Yi/DG+d/ZKCAJHcV80
-         96EvaLipBUjMN0YRtDV2ZZfI+vxR/79RPgRDOKY9Qa87xqR14jbm+Mtq4yZByI6bvCgZ
-         HPYlzM78HGJfkm1HKP3yJxR9cUmP1w8Lu2W3cERSZEJ+GbbGhTZndHvldO4GnJuwUhtM
-         N7xg==
-X-Gm-Message-State: AOUpUlHL0/VhQ09uUDEjy+t3sAltxylS6sl/w8P6+bOMyUkrYEPzKZ6P
-        Vnyto7mXNaF7wy8Ou5P9vy1qlfmYA0Aq2/UKAnCpeA==
-X-Google-Smtp-Source: AA+uWPw6g57Rm1tXHwLUlsgYBGMLuwiCkVW0oYE953/MWps6/irpqY2TpKCIzfUu0O0ak9rfIH8HsMvUH9gXgHsdJLg=
-X-Received: by 2002:a2e:9a95:: with SMTP id p21-v6mr4538806lji.60.1533901357863;
- Fri, 10 Aug 2018 04:42:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:81a:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 04:42:37 -0700 (PDT)
-In-Reply-To: <1533789077-16156-7-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com> <1533789077-16156-7-git-send-email-sai.praneeth.prakhya@intel.com>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Fri, 10 Aug 2018 17:12:37 +0530
-Message-ID: <CACi5LpPcaiHEHV9cFm=C4UB23jmfie16VR4m3ZAkZ9bVis5Dqg@mail.gmail.com>
-Subject: Re: [PATCH V1 6/6] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESSES
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc:     linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ricardo.ner@intel.com, Matt Fleming <matt@codeblueprint.co.uk>,
-        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 10 Aug 2018 10:22:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38604 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727493AbeHJOWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 10:22:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 40DBCAE18;
+        Fri, 10 Aug 2018 11:52:57 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org
+Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
+        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, Juergen Gross <jgross@suse.com>
+Subject: [PATCH 01/10] x86/paravirt: make paravirt_patch_call() and paravirt_patch_jmp() static
+Date:   Fri, 10 Aug 2018 13:52:43 +0200
+Message-Id: <20180810115252.18213-2-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
+In-Reply-To: <20180810115252.18213-1-jgross@suse.com>
+References: <20180810115252.18213-1-jgross@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sai,
+paravirt_patch_call() and paravirt_patch_jmp() are used in paravirt.c
+only. Convert them to static.
 
-On Thu, Aug 9, 2018 at 10:01 AM, Sai Praneeth Prakhya
-<sai.praneeth.prakhya@intel.com> wrote:
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
->
-> There may exist some buggy UEFI firmware implementations that might
-> access efi regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even
-> after the kernel has assumed control of the platform. This violates UEFI
-> specification.
->
-> If selected, this debug option will print a warning message if the UEFI
-> firmware tries to access any memory region which it shouldn't. Along
-> with the warning, the efi page fault handler will also try to
-> fixup/recover from the page fault triggered by the firmware so that the
-> machine doesn't hang.
->
-> To support this feature, two changes should be made to the existing efi
-> subsystem
-> 1. Map EFI_BOOT_SERVICES_<CODE/DATA> regions only when
->    EFI_WARN_ON_ILLEGAL_ACCESSES is disabled
->     Presently, the kernel maps EFI_BOOT_SERVICES_<CODE/DATA> regions as
->     a workaround for buggy firmware that accesses them even when they
->     shouldn't. With EFI_WARN_ON_ILLEGAL_ACCESSES enabled (and hence efi
->     page fault handler) kernel can now detect and handle such accesses
->     dynamically. Hence, rather than safely mapping
->     EFI_BOOT_SERVICES_<CODE/DATA> regions *all* the time, map them on
->     demand.
->
-> 2. If EFI_WARN_ON_ILLEGAL_ACCESSES is enabled don't call
->    efi_free_boot_services()
->     Presently, during early boot phase EFI_BOOT_SERVICES_<CODE/DATA>
->     regions are marked as reserved by kernel
->     (see efi_reserve_boot_services()) and are freed before entering
->     runtime (see efi_free_boot_services()). But, while dynamically
->     fixing page faults caused by the firmware, efi page fault handler
->     assumes that EFI_BOOT_SERVICES_<CODE/DATA> regions are still intact.
->     Hence, to make this assumption true, don't call
->     efi_free_boot_services() if EFI_WARN_ON_ILLEGAL_ACCESSES is enabled.
->
-> Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-> Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Cc: Lee Chun-Yi <jlee@suse.com>
-> Cc: Al Stone <astone@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/x86/Kconfig            | 21 +++++++++++++++++++++
->  arch/x86/platform/efi/efi.c |  4 ++++
->  init/main.c                 |  3 ++-
->  3 files changed, 27 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index f1dbb4ee19d7..278e5820e8dd 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1957,6 +1957,27 @@ config EFI_MIXED
->
->            If unsure, say N.
->
-> +config EFI_WARN_ON_ILLEGAL_ACCESSES
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/include/asm/paravirt_types.h |  6 ------
+ arch/x86/kernel/paravirt.c            | 12 ++++++------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
 
-How about shortening the name to just 'EFI_WARN_ON_ILLEGAL_ACCESS'?
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..036b2f88f105 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -370,12 +370,6 @@ extern struct pv_lock_ops pv_lock_ops;
+ 
+ unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len);
+ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len);
+-unsigned paravirt_patch_call(void *insnbuf,
+-			     const void *target, u16 tgt_clobbers,
+-			     unsigned long addr, u16 site_clobbers,
+-			     unsigned len);
+-unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+-			    unsigned long addr, unsigned len);
+ unsigned paravirt_patch_default(u8 type, u16 clobbers, void *insnbuf,
+ 				unsigned long addr, unsigned len);
+ 
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 930c88341e4e..ce560b916b1f 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -80,10 +80,10 @@ struct branch {
+ 	u32 delta;
+ } __attribute__((packed));
+ 
+-unsigned paravirt_patch_call(void *insnbuf,
+-			     const void *target, u16 tgt_clobbers,
+-			     unsigned long addr, u16 site_clobbers,
+-			     unsigned len)
++static unsigned paravirt_patch_call(void *insnbuf,
++				    const void *target, u16 tgt_clobbers,
++				    unsigned long addr, u16 site_clobbers,
++				    unsigned len)
+ {
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
+@@ -102,8 +102,8 @@ unsigned paravirt_patch_call(void *insnbuf,
+ 	return 5;
+ }
+ 
+-unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+-			    unsigned long addr, unsigned len)
++static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
++				   unsigned long addr, unsigned len)
+ {
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
+-- 
+2.13.7
 
-> +       bool "Warn about illegal memory accesses by firmware"
-> +       depends on EFI
-
-From a distribution p-o-v, I would suggest that we set this CONFIG
-option only if we are in the EXPERT mode, as this need more thrashing
-with the behaviour we see on old, buggy EFI firmwares available on
-very old x86 machines. So something like:
-           bool "Warn about illegal memory accesses by firmware" if EXPERT
-
-> +       help
-> +         Enable this debug feature so that the kernel can detect illegal
-> +         memory accesses by firmware and issue a warning. Also,
-> +         1. If the illegally accessed region is EFI_BOOT_SERVICES_<CODE/DATA>,
-> +            the kernel fixes it up by mapping the requested region.
-> +         2. If the illegally accessed region is any other region (Eg:
-> +            EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>), then the
-> +            kernel freezes efi_rts_wq and schedules a new process. Also, it
-> +            disables EFI Runtime Services, so that it will never again call
-> +            buggy firmware.
-> +         3. If the access is to any other efi region like above but if the
-> +            buggy efi runtime service is efi_reset_system(), then the
-> +            platform is rebooted through BIOS.
-> +         Please see the UEFI specification for details on the expectations
-> +         of memory usage.
-> +
-> +         If unsure, say N.
-> +
->  config SECCOMP
->         def_bool y
->         prompt "Enable seccomp to safely compute untrusted bytecode"
-> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> index 7d18b7ed5d41..0ddb22a03d88 100644
-> --- a/arch/x86/platform/efi/efi.c
-> +++ b/arch/x86/platform/efi/efi.c
-> @@ -768,9 +768,13 @@ static bool should_map_region(efi_memory_desc_t *md)
->         /*
->          * Map boot services regions as a workaround for buggy
->          * firmware that accesses them even when they shouldn't.
-> +        * (only if CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES is disabled)
->          *
->          * See efi_{reserve,free}_boot_services().
->          */
-> +       if (IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES))
-> +               return false;
-> +
->         if (md->type == EFI_BOOT_SERVICES_CODE ||
->             md->type == EFI_BOOT_SERVICES_DATA)
->                 return true;
-> diff --git a/init/main.c b/init/main.c
-> index 3b4ada11ed52..dce0520861a1 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -730,7 +730,8 @@ asmlinkage __visible void __init start_kernel(void)
->         arch_post_acpi_subsys_init();
->         sfi_init_late();
->
-> -       if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-> +       if (efi_enabled(EFI_RUNTIME_SERVICES) &&
-> +           !IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES)) {
-
-Since this is an arch agnostic code leg, do we really want to
-introduce a generic check for CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES
-here, without checking for whether we are actually running this on a
-x86 hardware, or alternatively we can consider moving
-CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES out of 'arch/x86/Kconfig' to
-'arch/Kconfig' so that later it can be used on other archs like ARM64
-as well.
-
-I think the later would be more useful..
-
-Thanks,
-Bhupesh
-
->                 efi_free_boot_services();
->         }
->
-> --
-> 2.7.4
->
