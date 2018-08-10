@@ -6,89 +6,176 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A397C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD600C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F234022408
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F234022408
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F79D22416
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F79D22416
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acceis.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbeHJSSG (ORCPT
+        id S1728717AbeHJSSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:18:06 -0400
-Received: from fieldses.org ([173.255.197.46]:50756 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbeHJSSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:18:06 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id DC5CFBD4; Fri, 10 Aug 2018 11:47:42 -0400 (EDT)
-Date:   Fri, 10 Aug 2018 11:47:42 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
-Message-ID: <20180810154742.GE7906@fieldses.org>
-References: <153378012255.1220.6754153662007899557.stgit@noble>
- <20180809173245.GM23873@fieldses.org>
- <87lg9frxyc.fsf@notabene.neil.brown.name>
- <20180810002922.GA3915@fieldses.org>
- <871sb7rnul.fsf@notabene.neil.brown.name>
- <20180810025251.GO23873@fieldses.org>
- <87y3derjut.fsf@notabene.neil.brown.name>
+        Fri, 10 Aug 2018 14:18:45 -0400
+Received: from smtpout6.r2.mail-out.ovh.net ([54.36.141.6]:47493 "EHLO
+        smtpout6.r2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727810AbeHJSSo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 14:18:44 -0400
+Received: from ex.mail.ovh.net (unknown [10.109.160.79])
+        by mo511.mail-out.ovh.net (Postfix) with SMTP id E89563CA1CDB;
+        Fri, 10 Aug 2018 17:48:16 +0200 (CEST)
+Date:   Fri, 10 Aug 2018 17:48:15 +0200
+From:   Virgile Jarry <virgile@acceis.fr>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] Add icmp_echo_ignore_all support for ICMPv6
+Message-ID: <20180810154815.GA18171@_>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <87y3derjut.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [85.170.142.139]
+X-ClientProxiedBy: CAS04.indiv.local (172.16.1.4) To MBX005.indiv.local
+ (172.16.2.5)
+X-Ovh-Tracer-Id: 12953196956387999903
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrtdeigdelhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 01:17:14PM +1000, NeilBrown wrote:
-> On Thu, Aug 09 2018, J. Bruce Fields wrote:
-> 
-> > On Fri, Aug 10, 2018 at 11:50:58AM +1000, NeilBrown wrote:
-> >> You're good at this game!
-> >
-> > Everybody's got to have a hobby, mine is pathological posix locking
-> > cases....
-> >
-> >> So, because a locker with the same "owner" gets a free pass, you can
-> >> *never* say that any lock which conflicts with A also conflicts with B,
-> >> as a lock with the same owner as B will never conflict with B, even
-> >> though it conflicts with A.
-> >> 
-> >> I think there is still value in having the tree, but when a waiter is
-> >> attached under a new blocker, we need to walk the whole tree beneath the
-> >> waiter and detach/wake anything that is not blocked by the new blocker.
-> >
-> > If you're walking the whole tree every time then it might as well be a
-> > flat list, I think?
-> 
-> The advantage of a tree is that it keeps over-lapping locks closer
-> together.
-> For it to make a difference you would need a load where lots of threads
-> were locking several different small ranges, and other threads were
-> locking large ranges that cover all the small ranges.
+Preventing the kernel from responding to ICMP Echo Requests messages
+can be useful in several ways. The sysctl parameter
+'icmp_echo_ignore_all' can be used to prevent the kernel from
+responding to IPv4 ICMP echo requests. For IPv6 pings, such
+a sysctl kernel parameter did not exist.
 
-OK, I'm not sure I understand, but I'll give another look at the next
-version....
+Add the ability to prevent the kernel from responding to IPv6
+ICMP echo requests through the use of the following sysctl
+parameter : /proc/sys/net/ipv6/icmp/echo_ignore_all.
+Update the documentation to reflect this change.
 
-> I doubt this is common, but it doesn't seem as strange as other things
-> I've seen in the wild.
-> The other advantage, of course, is that I've already written the code,
-> and I like it.
-> 
-> Maybe I'll do a simple-list version, then a patch to convert that to the
-> clever-tree version, and we can then have something concrete to assess.
+Signed-off-by: Virgile Jarry <virgile@acceis.fr>
+---
+Changes in v2:
+	- Added support for sysctl interface (and not just /proc filesystem)
 
-That might help, thanks.
+ Documentation/networking/ip-sysctl.txt |  5 +++++
+ include/net/netns/ipv6.h               |  1 +
+ include/uapi/linux/sysctl.h            |  3 ++-
+ net/ipv6/af_inet6.c                    |  1 +
+ net/ipv6/icmp.c                        | 16 +++++++++++++---
+ 5 files changed, 22 insertions(+), 4 deletions(-)
 
---b.
+diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
+index ce8fbf5..5042a13 100644
+--- a/Documentation/networking/ip-sysctl.txt
++++ b/Documentation/networking/ip-sysctl.txt
+@@ -1863,6 +1863,11 @@ ratelimit - INTEGER
+ 	otherwise the minimal space between responses in milliseconds.
+ 	Default: 1000
+ 
++echo_ignore_all - BOOLEAN
++	If set non-zero, then the kernel will ignore all ICMP ECHO
++	requests sent to it over the IPv6 protocol.
++	Default: 0
++
+ xfrm6_gc_thresh - INTEGER
+ 	The threshold at which we will start garbage collecting for IPv6
+ 	destination cache entries.  At twice this value the system will
+diff --git a/include/net/netns/ipv6.h b/include/net/netns/ipv6.h
+index 762ac99..f0e396a 100644
+--- a/include/net/netns/ipv6.h
++++ b/include/net/netns/ipv6.h
+@@ -32,6 +32,7 @@ struct netns_sysctl_ipv6 {
+ 	int flowlabel_consistency;
+ 	int auto_flowlabels;
+ 	int icmpv6_time;
++	int icmpv6_echo_ignore_all;
+ 	int anycast_src_echo_reply;
+ 	int ip_nonlocal_bind;
+ 	int fwmark_reflect;
+diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
+index 6b58371..d71013f 100644
+--- a/include/uapi/linux/sysctl.h
++++ b/include/uapi/linux/sysctl.h
+@@ -575,7 +575,8 @@ enum {
+ 
+ /* /proc/sys/net/ipv6/icmp */
+ enum {
+-	NET_IPV6_ICMP_RATELIMIT=1
++	NET_IPV6_ICMP_RATELIMIT = 1,
++	NET_IPV6_ICMP_ECHO_IGNORE_ALL = 2
+ };
+ 
+ /* /proc/sys/net/<protocol>/neigh/<dev> */
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 9ed0eae..d0033b3 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -833,6 +833,7 @@ static int __net_init inet6_net_init(struct net *net)
+ 
+ 	net->ipv6.sysctl.bindv6only = 0;
+ 	net->ipv6.sysctl.icmpv6_time = 1*HZ;
++	net->ipv6.sysctl.icmpv6_echo_ignore_all = 0;
+ 	net->ipv6.sysctl.flowlabel_consistency = 1;
+ 	net->ipv6.sysctl.auto_flowlabels = IP6_DEFAULT_AUTO_FLOW_LABELS;
+ 	net->ipv6.sysctl.idgen_retries = 3;
+diff --git a/net/ipv6/icmp.c b/net/ipv6/icmp.c
+index ef2505a..1d869f1 100644
+--- a/net/ipv6/icmp.c
++++ b/net/ipv6/icmp.c
+@@ -800,6 +800,7 @@ void icmpv6_notify(struct sk_buff *skb, u8 type, u8 code, __be32 info)
+ 
+ static int icmpv6_rcv(struct sk_buff *skb)
+ {
++	struct net *net = dev_net(skb->dev);
+ 	struct net_device *dev = skb->dev;
+ 	struct inet6_dev *idev = __in6_dev_get(dev);
+ 	const struct in6_addr *saddr, *daddr;
+@@ -849,7 +850,8 @@ static int icmpv6_rcv(struct sk_buff *skb)
+ 
+ 	switch (type) {
+ 	case ICMPV6_ECHO_REQUEST:
+-		icmpv6_echo_reply(skb);
++		if (!net->ipv6.sysctl.icmpv6_echo_ignore_all)
++			icmpv6_echo_reply(skb);
+ 		break;
+ 
+ 	case ICMPV6_ECHO_REPLY:
+@@ -1110,6 +1112,13 @@ static struct ctl_table ipv6_icmp_table_template[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_ms_jiffies,
+ 	},
++	{
++		.procname	= "echo_ignore_all",
++		.data		= &init_net.ipv6.sysctl.icmpv6_echo_ignore_all,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler = proc_dointvec,
++	},
+ 	{ },
+ };
+ 
+@@ -1121,9 +1130,10 @@ struct ctl_table * __net_init ipv6_icmp_sysctl_init(struct net *net)
+ 			sizeof(ipv6_icmp_table_template),
+ 			GFP_KERNEL);
+ 
+-	if (table)
++	if (table) {
+ 		table[0].data = &net->ipv6.sysctl.icmpv6_time;
+-
++		table[1].data = &net->ipv6.sysctl.icmpv6_echo_ignore_all;
++	}
+ 	return table;
+ }
+ #endif
+-- 
+2.7.4
+
