@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F5EC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0ECC46470
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8BD21DEC
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A591C21DEC
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UnNvFeiL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8BD21DEC
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Gcf8YA17"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A591C21DEC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeHJPrO (ORCPT
+        id S1728371AbeHJPrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 11:47:14 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36041 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeHJPrN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 10 Aug 2018 11:47:13 -0400
-Received: by mail-wm0-f66.google.com with SMTP id w24-v6so1876076wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 06:17:20 -0700 (PDT)
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35459 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728291AbeHJPrM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 11:47:12 -0400
+Received: by mail-wm0-f68.google.com with SMTP id o18-v6so1900517wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 06:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ODfbYiBimtCudMwySoSntsM6ZvN5scsZHFcuMUJGLzU=;
-        b=UnNvFeiL+T3lFcA9NnkL9jmAEtCyDqz2HJoasgZkV0RRkpVclTt32PN72z4CmGWbST
-         ZAgDdGhTjt+Iss6nEirsdRUuQlW+MOf22ZK8WVvDIhZY7yblqhUOwGoZMQsie+VkwRJv
-         Ekq0QB9MgIV1dV82crwcWrZgTl2iN/wlP02ryrWULnLDPqdb6ECIhGEioHIiHMs4aN3X
-         HTHg/jgdIe2Lbd5pbtceE/9JaxkENo6vElreHYlrxXLGK4OZR+gMWTJKDfhzuNdbXZi7
-         O1lMyoDVg6mDDt0Oocty2abubf+oof+ST/hm7nreXDCfz3dHa0FgJlvTFvvc7FKkZQQP
-         TJgA==
+        bh=g7DsJGBEEB/Beb5kYu8dgD1IWPiGck1texLkmOUNaYg=;
+        b=Gcf8YA17QiBVYn8JFkfBZA5Zz5qxF+iI8sAiJ+nNkTYJJrXk3+9eSMGSztPrz+zMCt
+         ux8nixnmSuoQQM7qDQWaA0woEsCXIXCPovctz6+fFuVFBNzO8iNWhUY96U/XhJdyNk7v
+         XgZQRElZ5cPMIIBsNL5pQPbRRxhTwD7W8FP/76sknVnVSNN0D/V0IvHGGwX/RHLFi6rI
+         SRjcbgeIthY/zNYrK1tu+YZ4Vc9Ihxru782vDH0U923pPX8haCJqzBrw17rYHmoB95Vg
+         xiIPd4+JGEtDD+HtsTdJPE3/ikteO2eGdWqLY/q1kKoi2Ynti7iXtBIAVUrcpGp638m5
+         lNDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ODfbYiBimtCudMwySoSntsM6ZvN5scsZHFcuMUJGLzU=;
-        b=YbgWJs9IN9v2s2VYoIJy03c+B3RVsARfPBBjy+W0BZf3XwITSCCDy6B8CWDt4C4xWd
-         Ztc9CVcjCIacS+Tuw8iDH100J5P4T0ZSRpgnwU3WldLIs8HeKtzk4cDjWA/CvndCDcq7
-         4v6pp8r2DEU/HteCq43Dj/FRj8btIBT8VosXJRwdKwoJTXbnx55xMznpzq9MOqcDPge9
-         zO8BrgRhaZxKRkG6c65KGBOeuxL/Pcc1hFC5r4chwIExEnYSsWwJV9P5X/SlvjongH6m
-         ojbbxY4ZfzDz3kAU3ceeDMlKpZ6IQ56qcmxvfeJyr4+4gLpeJAoj2CvqNu7lKt7CMWXJ
-         cjXA==
-X-Gm-Message-State: AOUpUlFeJcUxHXJgjtqqT6PRLi20cYxJFu3thDez0JMCUdS2lvzspycY
-        Zf1wJKBQIHc4kN5KTrcCxhxSMw==
-X-Google-Smtp-Source: AA+uWPzn68Y3B8xyBWg+dE6ICZ/2z3Lb+T9lBhm69iaB6xT5hMPftIMPBK0GbWG+VTcFfbNnMUUzgw==
-X-Received: by 2002:a1c:ea9b:: with SMTP id g27-v6mr1434389wmi.152.1533907040084;
-        Fri, 10 Aug 2018 06:17:20 -0700 (PDT)
+        bh=g7DsJGBEEB/Beb5kYu8dgD1IWPiGck1texLkmOUNaYg=;
+        b=jCUbT5k7+BRoznxcFmvKbblEIGXz6m84TEKTvNFppQh4PjUCa9MUtoDPYWQllgm6u0
+         B9zouPYM/LvDBSZFWT59VkWFr06MhyL20GlZIQpbzDcWy5I61ZKKYUECiGsqaSZChH7V
+         85l4of8NzfipbT8rHJa0i1f+4VzSIbFdYcc8GiAJazZL+TcO8pK7sN9pJrKQD6MnCla1
+         b+Djljzch0EcJo25g4MppqgnAHHx/+2HnQs41IYV1OHo6pYgntb/W1XK0lxwu+OCFJYx
+         bqs1y3rIBcmyJhH881tO08Ox9Z8h4DH3IgyVNwE7jmRtEb9hDFemCgFtlpRHo5urMBaj
+         lbaw==
+X-Gm-Message-State: AOUpUlGc+0SVgtiNrVr1xPW4ps1RzWOX6jTWGWUyzgkjH2iep1eg5lsn
+        N5+MArY1UnX5+vyLaqcULn1mnw==
+X-Google-Smtp-Source: AA+uWPzxSBI1QJ/hl/W7x8xQJ8eyruFgGcJ0bJSX9oi0yWsjSXVwaWfb0EquiFdMM6zo8yIuFaQyGw==
+X-Received: by 2002:a1c:888e:: with SMTP id k136-v6mr1572065wmd.6.1533907038940;
+        Fri, 10 Aug 2018 06:17:18 -0700 (PDT)
 Received: from radium.baylibre.local (AStLambert-681-1-8-155.w90-86.abo.wanadoo.fr. [90.86.13.155])
-        by smtp.gmail.com with ESMTPSA id i205-v6sm2069523wmf.30.2018.08.10.06.17.19
+        by smtp.gmail.com with ESMTPSA id i205-v6sm2069523wmf.30.2018.08.10.06.17.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 06:17:19 -0700 (PDT)
+        Fri, 10 Aug 2018 06:17:18 -0700 (PDT)
 From:   Fabien Parent <fparent@baylibre.com>
 To:     Sebastian Reichel <sre@kernel.org>,
         Lee Jones <lee.jones@linaro.org>
 Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         gpain@baylibre.com, Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH v2 3/3] power: supply: cros: add property to detect connected ports
-Date:   Fri, 10 Aug 2018 15:13:49 +0200
-Message-Id: <20180810131349.3883-4-fparent@baylibre.com>
+Subject: [PATCH v2 2/3] power: supply: cros: add support for dedicated port
+Date:   Fri, 10 Aug 2018 15:13:48 +0200
+Message-Id: <20180810131349.3883-3-fparent@baylibre.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180810131349.3883-1-fparent@baylibre.com>
 References: <20180810131349.3883-1-fparent@baylibre.com>
@@ -73,93 +73,228 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a port is connected but acting as a source, its 'online' and
-'status' properties are identical to a port that is not connected. This
-makes it tedious for userspace to know for sure whether a port is
-connected or not.
+ChromeOS devices can have one optional dedicated port.
+The Dedicated port is unique and similar to the USB PD ports
+except that it doesn't support as many properties.
 
-This commit adds a new property 'present' to reflect whether a port
-is connected or not.
+The presence of a dedicated port is determined from whether the
+EC's charger port count is equal to 'number of USB PD port' + 1.
+The dedicated port ID is always the last valid port ID.
+
+This commit keeps compatibility with Embedded Controllers that do not
+support the new EC_CMD_CHARGE_PORT_COUNT command by setting
+the number of charger port to be equal to the number of USB PD port
+when this command fails.
 
 Signed-off-by: Fabien Parent <fparent@baylibre.com>
 ---
 
 V1 -> V2:
-  * No change
+  * Rebased
 
 ---
- drivers/power/supply/cros_usbpd-charger.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/power/supply/cros_usbpd-charger.c | 115 +++++++++++++++++++---
+ 1 file changed, 101 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-index fe1502715e46..6307424f36ec 100644
+index 688a16bacfbb..fe1502715e46 100644
 --- a/drivers/power/supply/cros_usbpd-charger.c
 +++ b/drivers/power/supply/cros_usbpd-charger.c
-@@ -32,6 +32,7 @@ struct port_data {
- 	struct power_supply_desc psy_desc;
- 	int psy_usb_type;
- 	int psy_online;
-+	int psy_present;
- 	int psy_status;
- 	int psy_current_max;
- 	int psy_voltage_max_design;
-@@ -54,6 +55,7 @@ struct charger_data {
+@@ -12,8 +12,12 @@
+ #include <linux/power_supply.h>
+ #include <linux/slab.h>
  
- static enum power_supply_property cros_usbpd_charger_props[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_CURRENT_MAX,
- 	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
-@@ -65,6 +67,7 @@ static enum power_supply_property cros_usbpd_charger_props[] = {
+-#define CHARGER_DIR_NAME			"CROS_USBPD_CHARGER%d"
+-#define CHARGER_DIR_NAME_LENGTH			sizeof(CHARGER_DIR_NAME)
++#define CHARGER_USBPD_DIR_NAME			"CROS_USBPD_CHARGER%d"
++#define CHARGER_DEDICATED_DIR_NAME		"CROS_DEDICATED_CHARGER"
++#define CHARGER_DIR_NAME_LENGTH		(sizeof(CHARGER_USBPD_DIR_NAME) >= \
++					 sizeof(CHARGER_DEDICATED_DIR_NAME) ? \
++					 sizeof(CHARGER_USBPD_DIR_NAME) : \
++					 sizeof(CHARGER_DEDICATED_DIR_NAME))
+ #define CHARGER_CACHE_UPDATE_DELAY		msecs_to_jiffies(500)
+ #define CHARGER_MANUFACTURER_MODEL_LENGTH	32
  
- static enum power_supply_property cros_usbpd_dedicated_charger_props[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+@@ -42,6 +46,7 @@ struct charger_data {
+ 	struct cros_ec_dev *ec_dev;
+ 	struct cros_ec_device *ec_device;
+ 	int num_charger_ports;
++	int num_usbpd_ports;
+ 	int num_registered_psy;
+ 	struct port_data *ports[EC_USB_PD_MAX_PORTS];
+ 	struct notifier_block notifier;
+@@ -58,6 +63,12 @@ static enum power_supply_property cros_usbpd_charger_props[] = {
+ 	POWER_SUPPLY_PROP_USB_TYPE
  };
-@@ -205,18 +208,22 @@ static int cros_usbpd_charger_get_power_info(struct port_data *port)
- 	case USB_PD_PORT_POWER_DISCONNECTED:
- 		port->psy_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
- 		port->psy_online = 0;
-+		port->psy_present = 0;
- 		break;
- 	case USB_PD_PORT_POWER_SOURCE:
- 		port->psy_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
- 		port->psy_online = 0;
-+		port->psy_present = 1;
- 		break;
- 	case USB_PD_PORT_POWER_SINK:
- 		port->psy_status = POWER_SUPPLY_STATUS_CHARGING;
- 		port->psy_online = 1;
-+		port->psy_present = 1;
- 		break;
- 	case USB_PD_PORT_POWER_SINK_NOT_CHARGING:
- 		port->psy_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
- 		port->psy_online = 1;
-+		port->psy_present = 1;
- 		break;
- 	default:
- 		dev_err(dev, "Unknown role %d\n", resp.role);
-@@ -363,6 +370,7 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 		if (ec_device->mkbp_event_supported || port->psy_online)
- 			break;
- 		/* fall through */
-+	case POWER_SUPPLY_PROP_PRESENT:
- 	case POWER_SUPPLY_PROP_CURRENT_MAX:
- 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-@@ -381,6 +389,9 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval = port->psy_online;
- 		break;
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		val->intval = port->psy_present;
-+		break;
- 	case POWER_SUPPLY_PROP_STATUS:
- 		val->intval = port->psy_status;
- 		break;
+ 
++static enum power_supply_property cros_usbpd_dedicated_charger_props[] = {
++	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
++};
++
+ static enum power_supply_usb_type cros_usbpd_charger_usb_types[] = {
+ 	POWER_SUPPLY_USB_TYPE_UNKNOWN,
+ 	POWER_SUPPLY_USB_TYPE_SDP,
+@@ -69,6 +80,11 @@ static enum power_supply_usb_type cros_usbpd_charger_usb_types[] = {
+ 	POWER_SUPPLY_USB_TYPE_APPLE_BRICK_ID
+ };
+ 
++static bool cros_usbpd_charger_port_is_dedicated(struct port_data *port)
++{
++	return port->port_number >= port->charger->num_usbpd_ports;
++}
++
+ static int cros_usbpd_charger_ec_command(struct charger_data *charger,
+ 					 unsigned int version,
+ 					 unsigned int command,
+@@ -102,6 +118,23 @@ static int cros_usbpd_charger_ec_command(struct charger_data *charger,
+ }
+ 
+ static int cros_usbpd_charger_get_num_ports(struct charger_data *charger)
++{
++	struct ec_response_charge_port_count resp;
++	int ret;
++
++	ret = cros_usbpd_charger_ec_command(charger, 0,
++					    EC_CMD_CHARGE_PORT_COUNT,
++					    NULL, 0, &resp, sizeof(resp));
++	if (ret < 0) {
++		dev_err(charger->dev,
++			"Unable to get the number of ports (err:0x%x)\n", ret);
++		return ret;
++	}
++
++	return resp.port_count;
++}
++
++static int cros_usbpd_charger_get_usbpd_num_ports(struct charger_data *charger)
+ {
+ 	struct ec_response_usb_pd_ports resp;
+ 	int ret;
+@@ -246,7 +279,10 @@ static int cros_usbpd_charger_get_power_info(struct port_data *port)
+ 		port->psy_usb_type = POWER_SUPPLY_USB_TYPE_SDP;
+ 	}
+ 
+-	port->psy_desc.type = POWER_SUPPLY_TYPE_USB;
++	if (cros_usbpd_charger_port_is_dedicated(port))
++		port->psy_desc.type = POWER_SUPPLY_TYPE_MAINS;
++	else
++		port->psy_desc.type = POWER_SUPPLY_TYPE_USB;
+ 
+ 	dev_dbg(dev,
+ 		"Port %d: type=%d vmax=%d vnow=%d cmax=%d clim=%d pmax=%d\n",
+@@ -281,7 +317,8 @@ static int cros_usbpd_charger_get_port_status(struct port_data *port,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = cros_usbpd_charger_get_discovery_info(port);
++	if (!cros_usbpd_charger_port_is_dedicated(port))
++		ret = cros_usbpd_charger_get_discovery_info(port);
+ 	port->last_update = jiffies;
+ 
+ 	return ret;
+@@ -426,17 +463,56 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
+ 
+ 	platform_set_drvdata(pd, charger);
+ 
++	/*
++	 * We need to know the number of USB PD ports in order to know whether
++	 * there is a dedicated port. The dedicated port will always be
++	 * after the USB PD ports, and there should be only one.
++	 */
++	charger->num_usbpd_ports =
++		cros_usbpd_charger_get_usbpd_num_ports(charger);
++	if (charger->num_usbpd_ports <= 0) {
++		/*
++		 * This can happen on a system that doesn't support USB PD.
++		 * Log a message, but no need to warn.
++		 */
++		dev_info(dev, "No USB PD charging ports found\n");
++	}
++
+ 	charger->num_charger_ports = cros_usbpd_charger_get_num_ports(charger);
+-	if (charger->num_charger_ports <= 0) {
++	if (charger->num_charger_ports < 0) {
+ 		/*
+ 		 * This can happen on a system that doesn't support USB PD.
+ 		 * Log a message, but no need to warn.
++		 * Older ECs do not support the above command, in that case
++		 * let's set up the number of charger ports equal to the number
++		 * of USB PD ports
++		 */
++		dev_info(dev, "Could not get charger port count\n");
++		charger->num_charger_ports = charger->num_usbpd_ports;
++	}
++
++	if (charger->num_charger_ports <= 0) {
++		/*
++		 * This can happen on a system that doesn't support USB PD and
++		 * doesn't have a dedicated port.
++		 * Log a message, but no need to warn.
+ 		 */
+ 		dev_info(dev, "No charging ports found\n");
+ 		ret = -ENODEV;
+ 		goto fail_nowarn;
+ 	}
+ 
++	/*
++	 * Sanity checks on the number of ports:
++	 *  there should be at most 1 dedicated port
++	 */
++	if (charger->num_charger_ports < charger->num_usbpd_ports ||
++	    charger->num_charger_ports > (charger->num_usbpd_ports + 1)) {
++		dev_err(dev, "Unexpected number of charge port count\n");
++		ret = -EPROTO;
++		goto fail_nowarn;
++	}
++
+ 	for (i = 0; i < charger->num_charger_ports; i++) {
+ 		struct power_supply_config psy_cfg = {};
+ 
+@@ -448,22 +524,33 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
+ 
+ 		port->charger = charger;
+ 		port->port_number = i;
+-		sprintf(port->name, CHARGER_DIR_NAME, i);
+ 
+ 		psy_desc = &port->psy_desc;
+-		psy_desc->name = port->name;
+-		psy_desc->type = POWER_SUPPLY_TYPE_USB;
+ 		psy_desc->get_property = cros_usbpd_charger_get_prop;
+ 		psy_desc->external_power_changed =
+ 					cros_usbpd_charger_power_changed;
+-		psy_desc->properties = cros_usbpd_charger_props;
+-		psy_desc->num_properties =
+-					ARRAY_SIZE(cros_usbpd_charger_props);
+-		psy_desc->usb_types = cros_usbpd_charger_usb_types;
+-		psy_desc->num_usb_types =
+-				ARRAY_SIZE(cros_usbpd_charger_usb_types);
+ 		psy_cfg.drv_data = port;
+ 
++		if (cros_usbpd_charger_port_is_dedicated(port)) {
++			sprintf(port->name, CHARGER_DEDICATED_DIR_NAME);
++			psy_desc->type = POWER_SUPPLY_TYPE_MAINS;
++			psy_desc->properties =
++				cros_usbpd_dedicated_charger_props;
++			psy_desc->num_properties =
++				ARRAY_SIZE(cros_usbpd_dedicated_charger_props);
++		} else {
++			sprintf(port->name, CHARGER_USBPD_DIR_NAME, i);
++			psy_desc->type = POWER_SUPPLY_TYPE_USB;
++			psy_desc->properties = cros_usbpd_charger_props;
++			psy_desc->num_properties =
++				ARRAY_SIZE(cros_usbpd_charger_props);
++			psy_desc->usb_types = cros_usbpd_charger_usb_types;
++			psy_desc->num_usb_types =
++				ARRAY_SIZE(cros_usbpd_charger_usb_types);
++		}
++
++		psy_desc->name = port->name;
++
+ 		psy = devm_power_supply_register_no_ws(dev, psy_desc,
+ 						       &psy_cfg);
+ 		if (IS_ERR(psy)) {
 -- 
 2.18.0
 
