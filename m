@@ -6,87 +6,114 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4631C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A81C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C9122420
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:13:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C9122420
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C248722420
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:16:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C248722420
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbeHJRoN (ORCPT
+        id S1728220AbeHJRqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:44:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:38978 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727422AbeHJRoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:44:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A20477A9;
-        Fri, 10 Aug 2018 08:13:56 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D32293F6C4;
-        Fri, 10 Aug 2018 08:13:53 -0700 (PDT)
-Date:   Fri, 10 Aug 2018 16:13:41 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
-Message-ID: <20180810151341.GA6863@e107981-ln.cambridge.arm.com>
-References: <cover.1532448745.git.leonard.crestez@nxp.com>
- <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
- <20180808111429.GC25150@e107981-ln.cambridge.arm.com>
- <a5556be9a5f62ea0472a1a2336bce8d71df0dcaa.camel@nxp.com>
- <20180808141938.GA30428@e107981-ln.cambridge.arm.com>
- <efd9c1d560cae84e2a4ee7585a4c61d5d40ba755.camel@nxp.com>
- <20180808152741.GA31808@e107981-ln.cambridge.arm.com>
- <52ee6376fa15d3a9a62bcfa5d87173e454ccc024.camel@nxp.com>
+        Fri, 10 Aug 2018 13:46:55 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48048 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeHJRqz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 13:46:55 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fo994-0005ai-Q0; Fri, 10 Aug 2018 15:16:06 +0000
+Date:   Fri, 10 Aug 2018 16:16:06 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180810151606.GA6515@ZenIV.linux.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <87d0uqpba5.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <52ee6376fa15d3a9a62bcfa5d87173e454ccc024.camel@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87d0uqpba5.fsf@xmission.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 11:11:55AM +0000, Leonard Crestez wrote:
-
-[...]
-
-> This needs further clarification: without the reset patch this will
-> hang on imx7 suspend/resume but this is the current behavior anyway.
+On Fri, Aug 10, 2018 at 09:05:22AM -0500, Eric W. Biederman wrote:
 > 
-> Both patches are required for imx7 pci suspend and including them out
-> of order shouldn't break unrelated functionality.
+> There is a serious problem with mount options today that fsopen does not
+> address.  The problem is that mount options are ignored for block based
+> filesystems, and any other type of filesystem that follows the same
+> pattern.
 > 
-> So it should actually be fine to just include the pci changes now,
-> right?
+> The script below demonstrates this bug.  Showing this bug can cause the
+> ext4 "acl" "quota" and "user_xattr" options to be silently ignored.
+> 
+> fsopen has my nack until it addresses this issue.
+> 
+> I don't know if we can fix this in the context of sys_mount.  But we if
+> we are redoing the option parsing of how we mount filesystems this needs
+> to be fixed before we start worrying about bug compatibility.
+> 
+> Hopefully this report is simple and clear enough that we can at least
+> agree on the problem.
 
-It is a bit late for v4.19 but before considering that, this series
-is actually a set of fixes, correct ? If that's the case I think
-Shawn can send them upstream for a v4.19-rc*, I can ACK them if that
-sounds reasonable.
+Sure, it is simple.  So's the solution: MNT_USERNS_SPECIAL_SEMANTICS that
+would get passed to filesystems, so that Eric would be able to implement
+his mount(2)-incompatible behaviour at leisure, without worrying about
+compatibility issues.
 
-Patch (2) subject must make clear you are actually fixing a problem if
-we choose this course of action.
+Does that address your complaint?  Because one thing we are not going
+to do is changing mount(2) behaviour.  Reason: userland-visible
+behaviour of hell knows how many local scripts.  Another thing that
+is flat-out not feasible is some kind of blanket "compare options"
+stuff; it *can* be done as helpers to be used by filesystem when
+it sees that new flag, but it's simply not going to work at the
+fs-independent level.  Trivial example with the same ext4:
+mount /dev/sda1 /mnt/a -o bsddf vs. mount /dev/sda1 /mnt/b
+ext4 can tell that these are the same.  syscall itself has no
+clue.  What's more, it's not just explicitly spelled default
+options - it's the stuff that has more than one form.  And while
+we are at it, the things like two NFS mounts of different trees
+from the same server; they might or might not get the same superblock.
+Depending upon the options.
 
-Lorenzo
+Convenience helper that would allow ext4 to compare options and reject
+the incompatible mount?  Not sure how much ext4-specific knowledge
+would have to go in it, but if you can come up with one - more power
+to you.  But the decision to use it *must* be ext4-specific.  Because
+for e.g. NFS such thing as -o fsid=..., while certainly a part of
+options, has a very different meaning - it's "use a separate fs instance"
+(and let the server deal with coherency issues on its end).
+
+Decision to use sget() (and the way it's used) is up to filesystem.
+We *can't* lift that into syscall.  Not without breaking the fuck out
+of existing behaviour.
+
+Having something like a second callback for mount_bdev() that would
+be called when we'd found an existing instance for the same block
+device?  Sure, no problem.  Having a helper for doing such comparison
+that would work in enough cases to bother, so that different fs
+could avoid boilerplate in that callback?  Again, more power to you.
+
+But I don't see what the hell does that have to the syscall interface.
