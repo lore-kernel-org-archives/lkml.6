@@ -2,180 +2,190 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD600C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E4BC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F79D22416
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F79D22416
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acceis.fr
+	by mail.kernel.org (Postfix) with ESMTP id 43070223FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:50:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43070223FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbeHJSSp (ORCPT
+        id S1728377AbeHJSUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:18:45 -0400
-Received: from smtpout6.r2.mail-out.ovh.net ([54.36.141.6]:47493 "EHLO
-        smtpout6.r2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727810AbeHJSSo (ORCPT
+        Fri, 10 Aug 2018 14:20:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38738 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727771AbeHJSUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:18:44 -0400
-Received: from ex.mail.ovh.net (unknown [10.109.160.79])
-        by mo511.mail-out.ovh.net (Postfix) with SMTP id E89563CA1CDB;
-        Fri, 10 Aug 2018 17:48:16 +0200 (CEST)
-Date:   Fri, 10 Aug 2018 17:48:15 +0200
-From:   Virgile Jarry <virgile@acceis.fr>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] Add icmp_echo_ignore_all support for ICMPv6
-Message-ID: <20180810154815.GA18171@_>
+        Fri, 10 Aug 2018 14:20:42 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AFnFJK146812
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:50:17 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ksb37q25b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:50:17 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 10 Aug 2018 11:50:15 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 10 Aug 2018 11:50:11 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AFo9701245566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Aug 2018 15:50:09 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A6D0AC060;
+        Fri, 10 Aug 2018 11:50:36 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D1A0AC05F;
+        Fri, 10 Aug 2018 11:50:34 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.80.230.146])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Aug 2018 11:50:34 -0400 (EDT)
+Subject: Re: [PATCH v8 04/22] s390/zcrypt: Integrate ap_asm.h into
+ include/asm/ap.h.
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Harald Freudenberger <freude@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180809110645.33b20c1f.cohuck@redhat.com>
+ <aec0af21-270f-c4c5-3aea-f6854ca2fb07@linux.ibm.com>
+ <323af125-f078-919c-3117-f9022f5529ae@linux.ibm.com>
+ <20180810104929.6d40edef.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 10 Aug 2018 11:50:07 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [85.170.142.139]
-X-ClientProxiedBy: CAS04.indiv.local (172.16.1.4) To MBX005.indiv.local
- (172.16.2.5)
-X-Ovh-Tracer-Id: 12953196956387999903
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrtdeigdelhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+In-Reply-To: <20180810104929.6d40edef.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081015-2213-0000-0000-000002D8C37B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009518; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01071695; UDB=6.00551947; IPR=6.00851483;
+ MB=3.00022636; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-10 15:50:14
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081015-2214-0000-0000-00005B2762F5
+Message-Id: <5661f3b9-6b2b-8a50-bc22-97f364f8ea33@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808100171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preventing the kernel from responding to ICMP Echo Requests messages
-can be useful in several ways. The sysctl parameter
-'icmp_echo_ignore_all' can be used to prevent the kernel from
-responding to IPv4 ICMP echo requests. For IPv6 pings, such
-a sysctl kernel parameter did not exist.
+On 08/10/2018 04:49 AM, Cornelia Huck wrote:
+> On Thu, 9 Aug 2018 12:06:56 -0400
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+>
+>> On 08/09/2018 05:17 AM, Harald Freudenberger wrote:
+>>> On 09.08.2018 11:06, Cornelia Huck wrote:
+>>>> On Wed,  8 Aug 2018 10:44:14 -0400
+>>>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>>>>   
+>>>>> From: Harald Freudenberger <freude@de.ibm.com>
+>>>>>
+>>>>> Move all the inline functions from the ap bus header
+>>>>> file ap_asm.h into the in-kernel api header file
+>>>>> arch/s390/include/asm/ap.h so that KVM can make use
+>>>>> of all the low level AP functions.
+>>>>>
+>>>>> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
+>>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>> You should add your own s-o-b if you are sending on patches written by
+>>>> others (even if it does not matter in the end, when they are merged
+>>>> through a different path anyway.)
+>>>>   
+>>>>> ---
+>>>>>    arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
+>>>>>    drivers/s390/crypto/ap_asm.h   |  261 ------------------------------------
+>>>>>    drivers/s390/crypto/ap_bus.c   |   21 +---
+>>>>>    drivers/s390/crypto/ap_bus.h   |    1 +
+>>>>>    drivers/s390/crypto/ap_card.c  |    1 -
+>>>>>    drivers/s390/crypto/ap_queue.c |    1 -
+>>>>>    6 files changed, 259 insertions(+), 310 deletions(-)
+>>>>>    delete mode 100644 drivers/s390/crypto/ap_asm.h
+>>>>>
+>>>>> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+>>>>> index c1bedb4..046e044 100644
+>>>>> --- a/arch/s390/include/asm/ap.h
+>>>>> +++ b/arch/s390/include/asm/ap.h
+>>>>> @@ -47,6 +47,50 @@ struct ap_queue_status {
+>>>>>    };
+>>>>>    
+>>>>>    /**
+>>>>> + * ap_intructions_available() - Test if AP instructions are available.
+>>>>> + *
+>>>>> + * Returns 0 if the AP instructions are installed.
+>>>> Stumbled over this when I was looking at the usage in patch 7: if I see
+>>>> a function called '_available' return 0, I'd assume that whatever the
+>>>> function tests for is *not* available.
+>>>>
+>>>> Rather call this function ap_instructions_check_availability() (and
+>>>> keep the return code convention), or switch this to return 0 if not
+>>>> available and !0 if available?
+>>> Good catch, Cony you are right. I'll fix this to return 1 if AP instructions
+>>> are available and 0 if not. However, this patch will come via Martin's pipe
+>>> to the Linus Torwald kernel sources.
+>> Is your intent to simply indicate whether the AP instructions are
+>> available or
+>> not; or is the intention to indicate whether the AP instructions are
+>> available
+>> and if not, they why? In the former, then I agree that a boolean should be
+>> returned; however, if the case is the latter, then what you have is fine but
+>> maybe the function name should be changed as Connie suggests.
+> So, can this actually fail for any reason other than "instructions not
+> installed"? Even if it did, the end result is that the instructions are
+> not usable -- I don't think the "why" would be interesting at that
+> point.
 
-Add the ability to prevent the kernel from responding to IPv6
-ICMP echo requests through the use of the following sysctl
-parameter : /proc/sys/net/ipv6/icmp/echo_ignore_all.
-Update the documentation to reflect this change.
+The only case I can think of is if something is hosed and it causes an
+exception. In that case, should we proceed?
 
-Signed-off-by: Virgile Jarry <virgile@acceis.fr>
----
-Changes in v2:
-	- Added support for sysctl interface (and not just /proc filesystem)
+>
+>>>>> + */
+>>>>> +static inline int ap_instructions_available(void)
+>>>>> +{
+>>>>> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
+>>>>> +	register unsigned long reg1 asm ("1") = -ENODEV;
+>>>>> +	register unsigned long reg2 asm ("2");
+>>>>> +
+>>>>> +	asm volatile(
+>>>>> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
+>>>>> +		"0: la    %0,0\n"
+>>>>> +		"1:\n"
+>>>>> +		EX_TABLE(0b, 1b)
+>>>>> +		: "+d" (reg1), "=d" (reg2)
+>>>>> +		: "d" (reg0)
+>>>>> +		: "cc");
+>>>>> +	return reg1;
+>>>>> +}
 
- Documentation/networking/ip-sysctl.txt |  5 +++++
- include/net/netns/ipv6.h               |  1 +
- include/uapi/linux/sysctl.h            |  3 ++-
- net/ipv6/af_inet6.c                    |  1 +
- net/ipv6/icmp.c                        | 16 +++++++++++++---
- 5 files changed, 22 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
-index ce8fbf5..5042a13 100644
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -1863,6 +1863,11 @@ ratelimit - INTEGER
- 	otherwise the minimal space between responses in milliseconds.
- 	Default: 1000
- 
-+echo_ignore_all - BOOLEAN
-+	If set non-zero, then the kernel will ignore all ICMP ECHO
-+	requests sent to it over the IPv6 protocol.
-+	Default: 0
-+
- xfrm6_gc_thresh - INTEGER
- 	The threshold at which we will start garbage collecting for IPv6
- 	destination cache entries.  At twice this value the system will
-diff --git a/include/net/netns/ipv6.h b/include/net/netns/ipv6.h
-index 762ac99..f0e396a 100644
---- a/include/net/netns/ipv6.h
-+++ b/include/net/netns/ipv6.h
-@@ -32,6 +32,7 @@ struct netns_sysctl_ipv6 {
- 	int flowlabel_consistency;
- 	int auto_flowlabels;
- 	int icmpv6_time;
-+	int icmpv6_echo_ignore_all;
- 	int anycast_src_echo_reply;
- 	int ip_nonlocal_bind;
- 	int fwmark_reflect;
-diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-index 6b58371..d71013f 100644
---- a/include/uapi/linux/sysctl.h
-+++ b/include/uapi/linux/sysctl.h
-@@ -575,7 +575,8 @@ enum {
- 
- /* /proc/sys/net/ipv6/icmp */
- enum {
--	NET_IPV6_ICMP_RATELIMIT=1
-+	NET_IPV6_ICMP_RATELIMIT = 1,
-+	NET_IPV6_ICMP_ECHO_IGNORE_ALL = 2
- };
- 
- /* /proc/sys/net/<protocol>/neigh/<dev> */
-diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
-index 9ed0eae..d0033b3 100644
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -833,6 +833,7 @@ static int __net_init inet6_net_init(struct net *net)
- 
- 	net->ipv6.sysctl.bindv6only = 0;
- 	net->ipv6.sysctl.icmpv6_time = 1*HZ;
-+	net->ipv6.sysctl.icmpv6_echo_ignore_all = 0;
- 	net->ipv6.sysctl.flowlabel_consistency = 1;
- 	net->ipv6.sysctl.auto_flowlabels = IP6_DEFAULT_AUTO_FLOW_LABELS;
- 	net->ipv6.sysctl.idgen_retries = 3;
-diff --git a/net/ipv6/icmp.c b/net/ipv6/icmp.c
-index ef2505a..1d869f1 100644
---- a/net/ipv6/icmp.c
-+++ b/net/ipv6/icmp.c
-@@ -800,6 +800,7 @@ void icmpv6_notify(struct sk_buff *skb, u8 type, u8 code, __be32 info)
- 
- static int icmpv6_rcv(struct sk_buff *skb)
- {
-+	struct net *net = dev_net(skb->dev);
- 	struct net_device *dev = skb->dev;
- 	struct inet6_dev *idev = __in6_dev_get(dev);
- 	const struct in6_addr *saddr, *daddr;
-@@ -849,7 +850,8 @@ static int icmpv6_rcv(struct sk_buff *skb)
- 
- 	switch (type) {
- 	case ICMPV6_ECHO_REQUEST:
--		icmpv6_echo_reply(skb);
-+		if (!net->ipv6.sysctl.icmpv6_echo_ignore_all)
-+			icmpv6_echo_reply(skb);
- 		break;
- 
- 	case ICMPV6_ECHO_REPLY:
-@@ -1110,6 +1112,13 @@ static struct ctl_table ipv6_icmp_table_template[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_ms_jiffies,
- 	},
-+	{
-+		.procname	= "echo_ignore_all",
-+		.data		= &init_net.ipv6.sysctl.icmpv6_echo_ignore_all,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler = proc_dointvec,
-+	},
- 	{ },
- };
- 
-@@ -1121,9 +1130,10 @@ struct ctl_table * __net_init ipv6_icmp_sysctl_init(struct net *net)
- 			sizeof(ipv6_icmp_table_template),
- 			GFP_KERNEL);
- 
--	if (table)
-+	if (table) {
- 		table[0].data = &net->ipv6.sysctl.icmpv6_time;
--
-+		table[1].data = &net->ipv6.sysctl.icmpv6_echo_ignore_all;
-+	}
- 	return table;
- }
- #endif
--- 
-2.7.4
 
