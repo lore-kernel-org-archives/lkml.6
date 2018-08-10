@@ -5,117 +5,120 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFECC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3CDC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538FD223F8
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:15:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538FD223F8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 6C9022240E
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:17:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9022240E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeHJNo5 (ORCPT
+        id S1728012AbeHJNq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 09:44:57 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49783 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeHJNo5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 09:44:57 -0400
-Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 67a6834cf7f3fea2; Fri, 10 Aug 2018 13:15:26 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v5 03/14] PM: Introduce an Energy Model management framework
-Date:   Fri, 10 Aug 2018 13:13:22 +0200
-Message-ID: <8482157.ZqyaK8WryI@aspire.rjw.lan>
-In-Reply-To: <20180810091216.nieosjtu7l33z4ap@queper01-lin>
-References: <20180724122521.22109-1-quentin.perret@arm.com> <2467271.WAtZ4Z8dKT@aspire.rjw.lan> <20180810091216.nieosjtu7l33z4ap@queper01-lin>
+        Fri, 10 Aug 2018 09:46:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727598AbeHJNq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 09:46:26 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DD1A272620;
+        Fri, 10 Aug 2018 11:16:56 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3373E7C54;
+        Fri, 10 Aug 2018 11:16:51 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 13:16:48 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v8 17/22] s390: vfio-ap: zeroize the AP queues.
+Message-ID: <20180810131648.4fab1d7a.cohuck@redhat.com>
+In-Reply-To: <fa85257e-fda1-8f1d-aa7c-c98e74196d37@linux.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1533739472-7172-18-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180810111445.015fcf2a.cohuck@redhat.com>
+        <fa85257e-fda1-8f1d-aa7c-c98e74196d37@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 10 Aug 2018 11:16:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 10 Aug 2018 11:16:57 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, August 10, 2018 11:12:18 AM CEST Quentin Perret wrote:
-> On Friday 10 Aug 2018 at 10:41:56 (+0200), Rafael J. Wysocki wrote:
-> > On Friday, August 10, 2018 10:15:39 AM CEST Quentin Perret wrote:
+On Fri, 10 Aug 2018 12:49:08 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-[cut]
-
-> Agreed. EAS and IPA don't care about the absolute real power values, all
-> they care about is relative correctness. But what I really want to avoid
-> is having IPA getting the power of the GPUs in mW, and the power of CPUs
-> in an abstract scale without unit. That _will_ create problems eventually
-> IMO, because the behaviour is undefined. Specifying a unit everywhere is
-> an easy way to enforce a consistent design across sub-systems, that's
-> all.
-
-OK
-
-> > > What I am currently proposing is to keep the unit (mW) in the EM
-> > > framework so that migrating IPA to using it can be done in a (relatively)
-> > > painless way. On a system where drivers  don't know the exact wattage,
-> > > then they should just 'lie' to the EM framework, but it's their job to
-> > > lie coherently to all subsystems and keep things consistent, because all
-> > > subsystems have specified power in comparable units.
-> > 
-> > Alternatively, there could be a translation layer between EM and IPA.
+> On 10/08/2018 11:14, Cornelia Huck wrote:
+> > On Wed,  8 Aug 2018 10:44:27 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+> >  
+> >> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> >>
+> >> Let's call PAPQ(ZAPQ) to zeroize a queue:
+> >>
+> >> * For each queue configured for a mediated matrix device
+> >>    when it is released.
+> >>
+> >> Zeroizing a queue resets the queue, clears all pending
+> >> messages for the queue entries and disables adapter interruptions
+> >> associated with the queue.
+> >>
+> >> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> >> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> >> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> >> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> >> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> >> ---
+> >>   drivers/s390/crypto/vfio_ap_ops.c     |   29 ++++++++++++++++++++++++++++-
+> >>   drivers/s390/crypto/vfio_ap_private.h |   25 +++++++++++++++++++++++++
+> >>   2 files changed, 53 insertions(+), 1 deletions(-)
+> >>
+> >> @@ -788,7 +812,10 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
+> >>   {
+> >>   	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> >>   
+> >> -	kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+> >> +	if (matrix_mdev->kvm)
+> >> +		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);  
+> > Confused. Why is the check for matrix_mdev->kvm added here?  
 > 
-> Hmm, interesting... What do you have in mind exactly ? What would you
-> put in that layer ?
-
-Something able to say how the numbers used by EM and IPA are related. :-)
-
-Do you think that IPA and EM will always need to use the same set of data for
-the CPU?
-
-> > From my experience, if you want people to come up with some numbers,
-> > they will just choose them to game the system this way or another
-> > unless those numbers can be measured directly or are clearly documented.
-> > 
-> > And if that happens and then you want to make any significant changes,
-> > you'll need to deal with "regressions" occuring because someone chose
-> > the numbers to make the system behave in a specific way and your changes
-> > break that.
-> > 
-> > As a rule, I rather avoid requesting unknown numbers from people. :-)
-> > 
-> > > Another solution to solve this problem could be to extend the EM
-> > > framework introduced by this patch and make it manage the EM of any
-> > > device, not just CPUs. Then we could just specify that all power costs
-> > > must be in the same scale, regardless of the actual unit, and register
-> > > the EM of CPUs, GPUs, ...
-> > > However, I was hoping that this patch as-is was enough for a first step,
-> > > and that this extension of the framework could be done in a second step ?
-> > > Thoughts ?
-> > > 
-> > > In any case, if we decide to keep the mW unit for now, I should at least
-> > > explain clearly why in the commit message.
-> > 
-> > Right.
-> > 
-> > Actually, the unit is as good as any other, but you need to bear in mind that
-> > the numbers provided may not be realistic.
+> When using the KVM notifier we can get two notifications:
+> -> KVM is here / is comming
+> -> KVM is not here / disappearing  
 > 
-> As long as they're all correct in a relative way, that's fine by me :-)
+> In the first case we initialize matrix_mdev->kvm with a pointer to KVM
+> In the second case we nullify the pointer.
+> 
+> During the open of the mediated device, the guest should have been started
+> or we refuse to start.
+> 
+> During the close of the mediated device, the guest should be there, but
+> we have no certitude that the guest did not disappear before the VFIO
+> file being closed.
+> Since we do not allow multiple guests using the same mediated device
+> this case should not happen with QEMU. But I am not sure that
+> a rogue user program could not stop KVM before closing the VFIO
+> mediated device.
 
-OK
+I'm not sure why the check is introduced in this patch, though. But
+maybe I just need weekend :)
 
-Thanks,
-Rafael
-
+> 
+> Maybe Alex can confirm this point, if not we can remove the test.
