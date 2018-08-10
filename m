@@ -2,188 +2,267 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88896C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DE6C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1B1215B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1B1215B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BAB821EFC
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:39:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJvVDwur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BAB821EFC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeHJMGX (ORCPT
+        id S1727754AbeHJMIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 08:06:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727195AbeHJMGX (ORCPT
+        Fri, 10 Aug 2018 08:08:06 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34846 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727379AbeHJMIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 08:06:23 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7A9SwGc089690
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 05:37:17 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ks5e9xktv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 05:37:16 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Fri, 10 Aug 2018 10:37:15 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 Aug 2018 10:37:11 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7A9b9RS41287824
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Aug 2018 09:37:09 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DA0BAE04D;
-        Fri, 10 Aug 2018 12:37:00 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 102F0AE055;
-        Fri, 10 Aug 2018 12:36:59 +0100 (BST)
-Received: from [10.0.2.15] (unknown [9.84.129.94])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Aug 2018 12:36:58 +0100 (BST)
-Subject: Re: [PATCH v8 04/22] s390/zcrypt: Integrate ap_asm.h into
- include/asm/ap.h.
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180809110645.33b20c1f.cohuck@redhat.com>
- <aec0af21-270f-c4c5-3aea-f6854ca2fb07@linux.ibm.com>
- <323af125-f078-919c-3117-f9022f5529ae@linux.ibm.com>
- <20180810104929.6d40edef.cohuck@redhat.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Fri, 10 Aug 2018 11:37:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 08:08:06 -0400
+Received: by mail-oi0-f66.google.com with SMTP id m11-v6so14813701oic.2;
+        Fri, 10 Aug 2018 02:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zwRb0CrIaxoLbPjskjm54Oa0/lxujNXsManBpG1+Z9g=;
+        b=dJvVDwurcYKofIo7SHT7OgTfqUDLlVICaUGxFbPSzsnEgnsuNaQdUG3XmFUU1dH3mU
+         qntuYqAW5u4CwRYaBs4/GmENABwJcOk/tNByz4FF1c0eoIzKKTuGkm4szVd6xRzYZyza
+         JU8jzzftyRkabCOHT39nwxjwaT0Un4RiJGrFqAHZxa/BUpC2dv4CdrO2dCUIjGczN47/
+         JmoYhHKFPFiNsQbPNMG3OeMciinav/+fHfNitmo0vpDh0BvBL/GvzoNF+QDhPdnJ7KFd
+         ckvN8buCb6evaEmAf5QNG+hGWjh8u6Gc9WdXDTT8mh09l7HvU7Ch4yHefK/1G8HsoZRH
+         BHXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zwRb0CrIaxoLbPjskjm54Oa0/lxujNXsManBpG1+Z9g=;
+        b=SikEiEERK5f3rGxIjeGe0PF1gT65J1OzWdSVrU/mYtB7eoilZHgHmFqp98+GEPpp1z
+         tNZKf+peCQjgU4NcdVYTFGU4r8z2NtnuB+JT5YQJrwRnHgkXGKXKYW5KOxLBtxBDVwdo
+         GtTup6P5FwUNZQ1aP/t9K4izLj2sKgVLO9L3pElQDk/4bHnBureGoWZ2VHE4SGEiTfOd
+         0UA3/DLeyjTkPSR2I34sEHXdGLWdmVwwU2Y5EVSOaliPd8wjow2giglkzUYUKli1/vwK
+         M+weu/NHkSe0n/S6verlDnPPWEW1Ka/6NYctYP/xQHsZmFyg4Qd5oW1w/izQkUYzZaoT
+         Xi4w==
+X-Gm-Message-State: AOUpUlFxAp+lb5NSTuwsu+7jfZKxFSeGo4k7clHmM4E93TIx5F3YJYAn
+        W/htDwhHlWpQijv3XfcmrA/Dxd8MfqnskeVaS4VJFXk+crc=
+X-Google-Smtp-Source: AA+uWPwDtLtfQ9HKN4BXCcApeqnwINa336kcUeqc9zdVRv8x+urtXL8pCS7AY421jA6X3NA8RU3xdWwHbh3nXTOiItQ=
+X-Received: by 2002:aca:dec6:: with SMTP id v189-v6mr6140521oig.98.1533893939733;
+ Fri, 10 Aug 2018 02:38:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180810104929.6d40edef.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18081009-0020-0000-0000-000002B4CA96
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081009-0021-0000-0000-00002101E2F4
-Message-Id: <4251c5c4-6330-d391-f37c-c57dd268efe9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808100104
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 02:38:39 -0700 (PDT)
+In-Reply-To: <2131343.ieGLTDdppT@avalon>
+References: <20180809181103.15437-1-matwey@sai.msu.ru> <20180809181103.15437-3-matwey@sai.msu.ru>
+ <2131343.ieGLTDdppT@avalon>
+From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Date:   Fri, 10 Aug 2018 12:38:39 +0300
+Message-ID: <CAJs94EajH_J268GnxygeTZXOjcTuJq+VG7g+ZfAzf0Rf8Wgkbw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.08.2018 10:49, Cornelia Huck wrote:
-> On Thu, 9 Aug 2018 12:06:56 -0400
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+2018-08-10 11:53 GMT+03:00 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+> Hi Matwey,
 >
->> On 08/09/2018 05:17 AM, Harald Freudenberger wrote:
->>> On 09.08.2018 11:06, Cornelia Huck wrote:  
->>>> On Wed,  8 Aug 2018 10:44:14 -0400
->>>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->>>>  
->>>>> From: Harald Freudenberger <freude@de.ibm.com>
->>>>>
->>>>> Move all the inline functions from the ap bus header
->>>>> file ap_asm.h into the in-kernel api header file
->>>>> arch/s390/include/asm/ap.h so that KVM can make use
->>>>> of all the low level AP functions.
->>>>>
->>>>> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
->>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>  
->>>> You should add your own s-o-b if you are sending on patches written by
->>>> others (even if it does not matter in the end, when they are merged
->>>> through a different path anyway.)
->>>>  
->>>>> ---
->>>>>   arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
->>>>>   drivers/s390/crypto/ap_asm.h   |  261 ------------------------------------
->>>>>   drivers/s390/crypto/ap_bus.c   |   21 +---
->>>>>   drivers/s390/crypto/ap_bus.h   |    1 +
->>>>>   drivers/s390/crypto/ap_card.c  |    1 -
->>>>>   drivers/s390/crypto/ap_queue.c |    1 -
->>>>>   6 files changed, 259 insertions(+), 310 deletions(-)
->>>>>   delete mode 100644 drivers/s390/crypto/ap_asm.h
->>>>>
->>>>> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
->>>>> index c1bedb4..046e044 100644
->>>>> --- a/arch/s390/include/asm/ap.h
->>>>> +++ b/arch/s390/include/asm/ap.h
->>>>> @@ -47,6 +47,50 @@ struct ap_queue_status {
->>>>>   };
->>>>>   
->>>>>   /**
->>>>> + * ap_intructions_available() - Test if AP instructions are available.
->>>>> + *
->>>>> + * Returns 0 if the AP instructions are installed.  
->>>> Stumbled over this when I was looking at the usage in patch 7: if I see
->>>> a function called '_available' return 0, I'd assume that whatever the
->>>> function tests for is *not* available.
->>>>
->>>> Rather call this function ap_instructions_check_availability() (and
->>>> keep the return code convention), or switch this to return 0 if not
->>>> available and !0 if available?  
->>> Good catch, Cony you are right. I'll fix this to return 1 if AP instructions
->>> are available and 0 if not. However, this patch will come via Martin's pipe
->>> to the Linus Torwald kernel sources.  
->> Is your intent to simply indicate whether the AP instructions are 
->> available or
->> not; or is the intention to indicate whether the AP instructions are 
->> available
->> and if not, they why? In the former, then I agree that a boolean should be
->> returned; however, if the case is the latter, then what you have is fine but
->> maybe the function name should be changed as Connie suggests.
-> So, can this actually fail for any reason other than "instructions not
-> installed"? Even if it did, the end result is that the instructions are
-> not usable -- I don't think the "why" would be interesting at that
-> point.
-I can not think of any other reason why the PQAP(TAPQ) would fail
-other than the AP instructions are not available at all. However,
-the old implementation returned -ENODEV on failure and 0 on
-success. The new implementation now returns 1 for success
-and 0 for failure. This is just one of a couple of functions related
-to ap xxx available. I'll rework them all to return a boolean value
-soon.
+> Thank you for the patch.
 >
->>>>> + */
->>>>> +static inline int ap_instructions_available(void)
->>>>> +{
->>>>> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
->>>>> +	register unsigned long reg1 asm ("1") = -ENODEV;
->>>>> +	register unsigned long reg2 asm ("2");
->>>>> +
->>>>> +	asm volatile(
->>>>> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
->>>>> +		"0: la    %0,0\n"
->>>>> +		"1:\n"
->>>>> +		EX_TABLE(0b, 1b)
->>>>> +		: "+d" (reg1), "=d" (reg2)
->>>>> +		: "d" (reg0)
->>>>> +		: "cc");
->>>>> +	return reg1;
->>>>> +}  
+> On Thursday, 9 August 2018 21:11:03 EEST Matwey V. Kornilov wrote:
+>> DMA cocherency slows the transfer down on systems without hardware
+>> coherent DMA.
+>> Instead we use noncocherent DMA memory and explicit sync at data receive
+>> handler.
+>>
+>> Based on previous commit the following performance benchmarks have been
+>> carried out. Average memcpy() data transfer rate (rate) and handler
+>> completion time (time) have been measured when running video stream at
+>> 640x480 resolution at 10fps.
+>>
+>> x86_64 based system (Intel Core i5-3470). This platform has hardware
+>> coherent DMA support and proposed change doesn't make big difference here.
+>>
+>>  * kmalloc:            rate = (2.0 +- 0.4) GBps
+>>                        time = (5.0 +- 3.0) usec
+>>  * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
+>>                        time = (3.5 +- 3.0) usec
+>>
+>> We see that the measurements agree within error ranges in this case.
+>> So theoretically predicted performance downgrade cannot be reliably
+>> measured here.
+>>
+>> armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
+>> has no hardware coherent DMA support. DMA coherence is implemented via
+>> disabled page caching that slows down memcpy() due to memory controller
+>> behaviour.
+>>
+>>  * kmalloc:            rate =  (114 +- 5) MBps
+>>                        time =   (84 +- 4) usec
+>>  * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
+>>                        time =  (341 +- 2) usec
+>>
+>> Note, that quantative difference leads (this commit leads to 4 times
+>> acceleration) to qualitative behavior change in this case. As it was
+>> stated before, the video stream cannot be successfully received at AM335x
+>> platforms with MUSB based USB host controller due to performance issues
+>> [1].
+>>
+>> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+>>
+>> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+>> ---
+>>  drivers/media/usb/pwc/pwc-if.c | 56 +++++++++++++++++++++++++++++++-------
+>>  1 file changed, 44 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+>> index 72d2897a4b9f..e9c826be1ba6 100644
+>> --- a/drivers/media/usb/pwc/pwc-if.c
+>> +++ b/drivers/media/usb/pwc/pwc-if.c
+>> @@ -159,6 +159,32 @@ static const struct video_device pwc_template = {
+>>  /**************************************************************************
+>> */ /* Private functions */
+>>
+>> +static void *pwc_alloc_urb_buffer(struct device *dev,
+>> +                               size_t size, dma_addr_t *dma_handle)
+>> +{
+>> +     void *buffer = kmalloc(size, GFP_KERNEL);
+>> +
+>> +     if (!buffer)
+>> +             return NULL;
+>> +
+>> +     *dma_handle = dma_map_single(dev, buffer, size, DMA_FROM_DEVICE);
+>> +     if (dma_mapping_error(dev, *dma_handle)) {
+>> +             kfree(buffer);
+>> +             return NULL;
+>> +     }
+>> +
+>> +     return buffer;
+>> +}
+>> +
+>> +static void pwc_free_urb_buffer(struct device *dev,
+>> +                             size_t size,
+>> +                             void *buffer,
+>> +                             dma_addr_t dma_handle)
+>> +{
+>> +     dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
+>> +     kfree(buffer);
+>> +}
+>> +
+>>  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pdev)
+>> {
+>>       unsigned long flags = 0;
+>> @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
+>>       /* Reset ISOC error counter. We did get here, after all. */
+>>       pdev->visoc_errors = 0;
+>>
+>> +     dma_sync_single_for_cpu(&urb->dev->dev,
+>> +                             urb->transfer_dma,
+>> +                             urb->transfer_buffer_length,
+>> +                             DMA_FROM_DEVICE);
+>> +
+>
+> Aren't you're missing a dma_sync_single_for_device() call before submitting
+> the URB ? IIRC that's required for correct operation of the DMA mapping API on
+> some platforms, depending on the cache architecture. The additional sync can
+> affect performances, so it would be useful to re-run the perf test.
 
+This was already discussed:
+
+https://lkml.org/lkml/2018/7/23/1051
+
+I rely on Alan's reply:
+
+>According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
+>to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
+>not needed.
+
+
+
+>
+>>       /* vsync: 0 = don't copy data
+>>                 1 = sync-hunt
+>>                 2 = synched
+>> @@ -428,16 +459,15 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+>>               urb->dev = udev;
+>>               urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+>>               urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+>> -             urb->transfer_buffer = usb_alloc_coherent(udev,
+>> -                                                       ISO_BUFFER_SIZE,
+>> -                                                       GFP_KERNEL,
+>> -                                                       &urb->transfer_dma);
+>> +             urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+>> +             urb->transfer_buffer = pwc_alloc_urb_buffer(&udev->dev,
+>> +                                                         urb->transfer_buffer_length,
+>> +                                                         &urb->transfer_dma);
+>>               if (urb->transfer_buffer == NULL) {
+>>                       PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+>>                       pwc_isoc_cleanup(pdev);
+>>                       return -ENOMEM;
+>>               }
+>> -             urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+>>               urb->complete = pwc_isoc_handler;
+>>               urb->context = pdev;
+>>               urb->start_frame = 0;
+>> @@ -488,15 +518,17 @@ static void pwc_iso_free(struct pwc_device *pdev)
+>>
+>>       /* Freeing ISOC buffers one by one */
+>>       for (i = 0; i < MAX_ISO_BUFS; i++) {
+>> -             if (pdev->urbs[i]) {
+>> +             struct urb *urb = pdev->urbs[i];
+>> +
+>> +             if (urb) {
+>>                       PWC_DEBUG_MEMORY("Freeing URB\n");
+>> -                     if (pdev->urbs[i]->transfer_buffer) {
+>> -                             usb_free_coherent(pdev->udev,
+>> -                                     pdev->urbs[i]->transfer_buffer_length,
+>> -                                     pdev->urbs[i]->transfer_buffer,
+>> -                                     pdev->urbs[i]->transfer_dma);
+>> +                     if (urb->transfer_buffer) {
+>> +                             pwc_free_urb_buffer(&urb->dev->dev,
+>> +                                                 urb->transfer_buffer_length,
+>> +                                                 urb->transfer_buffer,
+>> +                                                 urb->transfer_dma);
+>>                       }
+>
+> No need for curly braces.
+>
+>> -                     usb_free_urb(pdev->urbs[i]);
+>> +                     usb_free_urb(urb);
+>>                       pdev->urbs[i] = NULL;
+>>               }
+>>       }
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
+
+-- 
+With best regards,
+Matwey V. Kornilov
