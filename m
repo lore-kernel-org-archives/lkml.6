@@ -2,148 +2,229 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25006C46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A977C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D24AD223A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:39:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24AD223A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 45C4F223A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:40:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="VSUPvNAx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C4F223A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeHJEGv (ORCPT
+        id S1727284AbeHJEHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 00:06:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10694 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725754AbeHJEGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 00:06:51 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 42A08B325640A;
-        Fri, 10 Aug 2018 09:39:14 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 10 Aug
- 2018 09:39:05 +0800
-Date:   Fri, 10 Aug 2018 09:37:40 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-CC:     Jerome Glisse <jglisse@redhat.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "Philippe Ombredanne" <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180810013740.GJ91035@Turing-Arch-b>
-References: <20180802040557.GL160746@Turing-Arch-b>
- <20180802142243.GA3481@redhat.com>
- <20180803034721.GC91035@Turing-Arch-b>
- <20180803143944.GA4079@redhat.com>
- <20180806031252.GG91035@Turing-Arch-b>
- <20180806153257.GB6002@redhat.com>
- <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
- <20180808151835.GA3429@redhat.com>
- <20180809080352.GI91035@Turing-Arch-b>
- <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
+        Fri, 10 Aug 2018 00:07:39 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:34572 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeHJEHi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 00:07:38 -0400
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com [209.85.161.48]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w7A1dtEq015463;
+        Fri, 10 Aug 2018 10:39:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w7A1dtEq015463
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533865196;
+        bh=ZMC7X7IRqnL4wJfRTIDYw7XpButkDZb3WCYLW4dSCFc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=VSUPvNAx4SYCV+jdwr8JeeheA0pJCJ+ixMoz7VhiE/9Wcsts5MSRzoEETv6NBEzBz
+         oUByUl88Nx0sTWR5I4nN7wJl2eIeZg4+ahzxKxD32VNPo8Dq5A63Zjzg95+oWtW4KW
+         W6B3Qt6TfUum5T5VMNdLSLmwEzWKLuyzd56/QMa7xnsuKeTRB9QXFLf87CPqDZUJox
+         tY3+Je9KFGl6LcbfRJts/7iP0srrh3p4s2/iy+xm8kJ75PrZmslcgKtEgzsnmdR1W9
+         f6QHrUno9yPOZppCmZPMA0fOy/qz8VcaMkGVhNq2ZrZJoQK49kbVKKNWcBU+iIJ1uA
+         IbsM9ijbNEH9g==
+X-Nifty-SrcIP: [209.85.161.48]
+Received: by mail-yw1-f48.google.com with SMTP id j68-v6so7418541ywg.1;
+        Thu, 09 Aug 2018 18:39:55 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEIr9lGuQX1vKqaD5rngD3/aGTpRKTkN7uNlxDI0TNfXt9o6ImG
+        au3caHZSC5bYAFtNB9VTszCV1DfSNjtSUB81Ah4=
+X-Google-Smtp-Source: AA+uWPzq59wlqnn7rmTeSxfCUYj0bHjqdFmt+PzPVQr36Kz4jk8zZT1fDihgw2R4ZA9p6LMtMmbxlUVgtunojP97Xn8=
+X-Received: by 2002:a1f:9004:: with SMTP id s4-v6mr84767vkd.10.1533865194453;
+ Thu, 09 Aug 2018 18:39:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 18:39:13 -0700 (PDT)
+In-Reply-To: <20180809201554.168804-3-namit@vmware.com>
+References: <20180809201554.168804-1-namit@vmware.com> <20180809201554.168804-3-namit@vmware.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 10 Aug 2018 10:39:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ6djK_mOAGFj_y8qmm7=7mzGpCQd=Uxu330z_wMfZxkQ@mail.gmail.com>
+Message-ID: <CAK7LNAQ6djK_mOAGFj_y8qmm7=7mzGpCQd=Uxu330z_wMfZxkQ@mail.gmail.com>
+Subject: Re: [PATCH v7 02/10] Makefile: Prepare for using macros for inline asm
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 08:31:31AM +0000, Tian, Kevin wrote:
-> Date: Thu, 9 Aug 2018 08:31:31 +0000
-> From: "Tian, Kevin" <kevin.tian@intel.com>
-> To: Kenneth Lee <liguozhu@hisilicon.com>, Jerome Glisse <jglisse@redhat.com>
-> CC: Kenneth Lee <nek.in.cn@gmail.com>, Alex Williamson
->  <alex.williamson@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>,
->  "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Jonathan Corbet
->  <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo
->  Xu <xuzaibo@huawei.com>, "linux-doc@vger.kernel.org"
->  <linux-doc@vger.kernel.org>, "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
->  Hao Fang <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
->  <linux-kernel@vger.kernel.org>, "linuxarm@huawei.com"
->  <linuxarm@huawei.com>, "iommu@lists.linux-foundation.org"
->  <iommu@lists.linux-foundation.org>, "linux-crypto@vger.kernel.org"
->  <linux-crypto@vger.kernel.org>, Philippe Ombredanne
->  <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, "David S .
->  Miller" <davem@davemloft.net>, "linux-accelerators@lists.ozlabs.org"
->  <linux-accelerators@lists.ozlabs.org>
-> Subject: RE: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-> Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
-> 
-> > From: Kenneth Lee [mailto:liguozhu@hisilicon.com]
-> > Sent: Thursday, August 9, 2018 4:04 PM
-> > 
-> > But we have another requirement which is to combine some device
-> > together to
-> > share the same address space. This is a little like these kinds of solution:
-> > 
-> > http://tce.technion.ac.il/wp-content/uploads/sites/8/2015/06/SC-7.2-M.-
-> > Silberstein.pdf
-> > 
-> > With that, the application can directly pass the NiC packet pointer to the
-> > decryption accelerator, and get the bare data in place. This is the feature
-> > that
-> > the VFIO container can provide.
-> 
-> above is not a good argument, at least in the context of your discussion.
-> If each device has their own interface (similar to GPU) for process to bind 
-> with, then having the process binding to multiple devices one-by-one then
-> you still get same address space shared cross them...
+Hi Nadav,
 
-If we consider this from the VFIO container perspective, with a container, you
-can do DMA to the container applying it to all devices, even the device is added
-after the DMA operation.  
+2018-08-10 5:15 GMT+09:00 Nadav Amit <namit@vmware.com>:
+> Using macros for inline assembly improves both readability and
+> compilation decisions that are distorted by big assembly blocks that use
+> alternative sections. Compile macros.S and use it to assemble all C
+> files. Currently, only x86 will use it.
+>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-So your argument remains true only when SVM is enabled and the whole process space
-is devoted to the devices. 
 
-Yes, the process can do the same all by itself. But if we agree with that, it
-makes no sense to keep the container concept in VFIO;)
 
-> 
-> Thanks
-> Kevin
+I added this in the previous version.
+
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+When you send a new version,
+please make sure to add Acked-by/Reviewed-by reviewers have given.
+
+Thanks.
+
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: linux-kbuild@vger.kernel.org
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  Makefile                 |  9 +++++++--
+>  arch/x86/Makefile        | 11 +++++++++--
+>  arch/x86/kernel/macros.S |  7 +++++++
+>  scripts/Kbuild.include   |  4 +++-
+>  scripts/mod/Makefile     |  2 ++
+>  5 files changed, 28 insertions(+), 5 deletions(-)
+>  create mode 100644 arch/x86/kernel/macros.S
+>
+> diff --git a/Makefile b/Makefile
+> index 7a3c4548162b..39d790e74e0d 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1051,7 +1051,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+>  # version.h and scripts_basic is processed / created.
+>
+>  # Listed in dependency order
+> -PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
+> +PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+>
+>  # prepare3 is used to check if we are building in a separate output directory,
+>  # and if so do:
+> @@ -1075,7 +1075,9 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+>                     include/config/auto.conf
+>         $(cmd_crmodverdir)
+>
+> -archprepare: archheaders archscripts prepare1 scripts_basic
+> +macroprepare: prepare1 archmacros
+> +
+> +archprepare: archheaders archscripts macroprepare scripts_basic
+>
+>  prepare0: archprepare gcc-plugins
+>         $(Q)$(MAKE) $(build)=.
+> @@ -1143,6 +1145,9 @@ archheaders:
+>  PHONY += archscripts
+>  archscripts:
+>
+> +PHONY += archmacros
+> +archmacros:
+> +
+>  PHONY += __headers
+>  __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+>         $(Q)$(MAKE) $(build)=scripts build_unifdef
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index a08e82856563..a4b90ac1629b 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -235,8 +235,8 @@ ifdef CONFIG_X86_64
+>  LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
+>  endif
+>
+> -# Speed up the build
+> -KBUILD_CFLAGS += -pipe
+> +# We cannot use -pipe flag since we give an additional .s file to the compiler
+> +#KBUILD_CFLAGS += -pipe
+>  # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+>  KBUILD_CFLAGS += -Wno-sign-compare
+>  #
+> @@ -258,6 +258,13 @@ archscripts: scripts_basic
+>  archheaders:
+>         $(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+>
+> +archmacros:
+> +       $(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
+> +
+> +ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
+> +export ASM_MACRO_FLAGS
+> +KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
+> +
+>  ###
+>  # Kernel objects
+>
+> diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+> new file mode 100644
+> index 000000000000..cfc1c7d1a6eb
+> --- /dev/null
+> +++ b/arch/x86/kernel/macros.S
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * This file includes headers whose assembly part includes macros which are
+> + * commonly used. The macros are precompiled into assmebly file which is later
+> + * assembled together with each compiled file.
+> + */
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index 86321f06461e..d7b7aadb6cd8 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -115,7 +115,9 @@ __cc-option = $(call try-run,\
+>
+>  # Do not attempt to build with gcc plugins during cc-option tests.
+>  # (And this uses delayed resolution so the flags will be up to date.)
+> -CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
+> +# In addition, do not include the asm macros which are built later.
+> +CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
+> +CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
+>
+>  # cc-option
+>  # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
+> diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
+> index 42c5d50f2bcc..a5b4af47987a 100644
+> --- a/scripts/mod/Makefile
+> +++ b/scripts/mod/Makefile
+> @@ -4,6 +4,8 @@ OBJECT_FILES_NON_STANDARD := y
+>  hostprogs-y    := modpost mk_elfconfig
+>  always         := $(hostprogs-y) empty.o
+>
+> +CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
+> +
+>  modpost-objs   := modpost.o file2alias.o sumversion.o
+>
+>  devicetable-offsets-file := devicetable-offsets.h
+> --
+> 2.17.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-			-Kenneth(Hisilicon)
-
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
-
+Best Regards
+Masahiro Yamada
