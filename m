@@ -3,107 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34DAC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA3CC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC9122426
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCDB218FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:07:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ltzSGBME"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC9122426
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM2RGHWB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCDB218FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeHJWii (ORCPT
+        id S1727412AbeHJWik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 18:38:38 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:35778 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727249AbeHJWih (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 18:38:37 -0400
-Received: by mail-ua1-f68.google.com with SMTP id q12-v6so3162952ual.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 13:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=jdNgFSaH8z8E8xyy4W9So0XahVKzGksztTByXt+jG4M=;
-        b=ltzSGBMEgS+nQ0sMrrdCRUNZBzHXg/aeIuCIUY87djJagKtdO2JpdL0IijGgqXj2Z4
-         ZqVow78ncWpf9oqITivK7ZRqL2hM7crQFelEZehabBUW87WlPBbqSKj5BnbhSJm8rRlX
-         zVmLxv7JHQ4w9OG6CVfmFAZ4Z/rTJssMi8q2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jdNgFSaH8z8E8xyy4W9So0XahVKzGksztTByXt+jG4M=;
-        b=cGfjYxocM1PatLeDU/YNpB3TvtgN3Gsyz5mogqLeFG0X4icHNRJ+AiJ+2DkhKu6JoI
-         51vShsJwR5GlIi36cmm+bfF30dPXvJmG+ArSMtEF8HWlKn1clvYrwEDExwxTTavmml3v
-         ZAbkjmE1ZqULDaabo350p8p9SeR1KQAEWhOU/P0k+VVJcpyfo4IRGQlCgVEBQfjqQ8hW
-         a91/TK1qgmE0TZJvzQ7aDyCBz79FNU3KhDy6pprz98SaqoeALEooOga+G84BReXWRi5P
-         pvg7sYTXf+cp5dZM7uoqvcSwzK6u5q/eAx1XkBiOkKDMvTB/pg5j/s/U94HSg2U2ty3T
-         U7sA==
-X-Gm-Message-State: AOUpUlGiJUtn0xG1QTbIhW/Mw0YJM0wZyG8NYWia8QyujtJsdbJVMl2Q
-        +QsO+SG27PtTiaMCg2gaslZ9UWU/lTI=
-X-Google-Smtp-Source: AA+uWPxtZQSghwjFKWiIchayCqAhfeYXSoN0JroFRv/rs/DN+rNPzNbN/64xk2C6PC0fKhmd4Feyfw==
-X-Received: by 2002:a1f:61c5:: with SMTP id v188-v6mr4980683vkb.19.1533931636957;
-        Fri, 10 Aug 2018 13:07:16 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id m143-v6sm3002522vke.23.2018.08.10.13.07.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 13:07:16 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id i4-v6so3162955uak.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 13:07:15 -0700 (PDT)
-X-Received: by 2002:a1f:9d16:: with SMTP id g22-v6mr4986357vke.5.1533931635475;
+        Fri, 10 Aug 2018 18:38:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727365AbeHJWij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 18:38:39 -0400
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A24F222443
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 20:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533931638;
+        bh=4TWk2KCw4NLl03Adr9PJS4UEz6MH/1QFKlWVAfEqv88=;
+        h=In-Reply-To:References:From:Date:Subject:To:From;
+        b=cM2RGHWBkqxquM6xf+ewTV1bJ1PQ4BB40c7ZYHSMSAs47lSIgthXkCkFv3mY5LSDR
+         Tq3hO6kn9E8EquWtHu1orw6kXbkI/yyuX+YJc39YEo6P3dYyHc8J+gDJ+mI1ZRT/QP
+         eajYu6i2/LEqCd+wEIp2I92SFmetmnDCys6dJst4=
+Received: by mail-wr1-f48.google.com with SMTP id u12-v6so9274981wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 13:07:18 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGLqzszCnJBaBH+x6yOuHHrD36rx6ncsc8XFny6erNaihbEj3BW
+        zbVynuw48AgTaFOirHPNoXAjixvuGxxSulNiTDvj8w==
+X-Google-Smtp-Source: AA+uWPyK/DZT9hsqr2W4Wdt5ydBHyQtGZ2PCkiyoZWWRcBKyuIg/rTHqyTzmlhKXiQ5L8C1KqClQMMG2VDEt5x4hCGg=
+X-Received: by 2002:adf:eec9:: with SMTP id a9-v6mr5323189wrp.21.1533931635210;
  Fri, 10 Aug 2018 13:07:15 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 13:07:14 -0700 (PDT)
-In-Reply-To: <20180810162920.GG20971@sirena.org.uk>
-References: <cover.1531531808.git.collinsd@codeaurora.org> <acfc014f3ae3d7feea30be6beaec3e64d96a2723.1531531808.git.collinsd@codeaurora.org>
- <20180810162920.GG20971@sirena.org.uk>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 10 Aug 2018 13:07:14 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V54aOCTLk3J_0=DL0XHJ-Tc77zKzURTwz5PJsioK73+A@mail.gmail.com>
-Message-ID: <CAD=FV=V54aOCTLk3J_0=DL0XHJ-Tc77zKzURTwz5PJsioK73+A@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] regulator: add QCOM RPMh regulator driver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 13:06:54 -0700 (PDT)
+In-Reply-To: <20180810161400.GA627@thunk.org>
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk> <28045.1533916438@warthog.procyon.org.uk>
+ <20180810161400.GA627@thunk.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 10 Aug 2018 13:06:54 -0700
+X-Gmail-Original-Message-ID: <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+Message-ID: <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+Subject: Re: BUG: Mount ignores mount options
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Aug 10, 2018 at 9:14 AM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> And I'm not really sure it helps the container use
+> case, since the whole point is they want their "guest" to be able to
+> blithely run "mount /dev/sda1 -o noxattr /mnt" and not worry about the
+> fact that in some other container, someone had run "mount /dev/sda1 -o
+> xattr /mnt".  But having the second mount fail because of conflicting
+> mount option breaks the illusion that containers are functionally as
+> rich as VM's.
 
-On Fri, Aug 10, 2018 at 9:29 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Jul 13, 2018 at 06:50:59PM -0700, David Collins wrote:
->
->> +     switch (rpmh_mode) {
->
->> +     default:
->> +             mode = REGULATOR_MODE_INVALID;
->> +     }
->
-> I'm not sure why the break statements are being omitted in default
-> cases, but I do find myself stopping and trying to figure it out?
+If the same block device is visible, with rw access, in two different
+containers, I don't see any anything good can happen.  Sure, with the
+current somewhat erratic semantics of mount(2), something kind of sort
+of reasonable happens if they both mount it.  But if one or both of
+them try to use, say, tune2fs or fsck, it's not going to go well.  And
+a situation where they mount with different options and the result
+depends on the order of the mounts is just plain bad.
 
-Hopefully <https://lore.kernel.org/lkml/20180810200531.88409-1-dianders@chromium.org/>
-addresses this?
+I see four sane ways to deal with this:
 
-Thanks!
+1. Don't put the block device in the container at all.  The container
+manager mounts it.
 
--Doug
+2. Use seccomp or a similar mechanism to intercept and emulate the
+mount request.
+
+3. Teach the filesystem driver to do something sensible.  This will
+inherently be per-fs, and probably involves some serious magic or
+allowing filesystem-specific vfsmount options.
+
+4. Introduce a concept of a special kind of fake block device that
+refers to an existing superblock, doesn't allow direct read or write,
+and does the right thing when mounted.  Not obviously worth the
+effort.
+
+It seems to me that the current approach mostly involves crossing our fingers.
