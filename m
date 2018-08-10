@@ -2,126 +2,98 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDD0C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87F6C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6494A223E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:40:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QyQ+jWbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6494A223E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 9A465223E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:45:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A465223E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeHKCLz (ORCPT
+        id S1727187AbeHKCRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 22:11:55 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40929 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbeHKCLz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 22:11:55 -0400
-Received: by mail-pl0-f67.google.com with SMTP id s17-v6so4628487plp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 16:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SHkDb6qaKxPT3RKCwWTlK162HxGfwzC3DwW8Inu+HKk=;
-        b=QyQ+jWboymP+kH1M8h+mDOk+EuHT0IQANJmMmzwTKJaJ3fxH9ag4EqOiXcQTc7aSbR
-         pi46WirGbtb8a+6eOORZ5bcUys6xC0xqbUMxfGT6grh8RhSrAvUR6QdfLUEB+ysUrOk/
-         QPU9J+NCJ3jnXpAOuEqa2FbRfolJCNTcIsZmQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SHkDb6qaKxPT3RKCwWTlK162HxGfwzC3DwW8Inu+HKk=;
-        b=ORqAMzDhJS5p3+78vTOipn4tJg9e1DrTvIgbsCGEucWZjA9qg9tSwzZu1vNSLhqAh7
-         xykrOoZ1E8LFV0M65c880SYAdqxaWK/JMamx7HG5YcLfnUvJULY3DRhcULPWy3CPeUrp
-         GzX3hqbsEnbdbW2juFqq2FmC3w3bD5BD8crfl8uUOlXeXBCfYD74bURFQzBDfYnMw/eZ
-         Q+Qiz7oMA9IpIv14cHduJwyl6iOpbpgiudrUMo+UlrYY3rgbg+Yscktnh/f+K6lRWG+7
-         uWFNK+vznofoD50jHgS/ZGrZ1qZ+vLkGWxLf5SiDvylOdKAvMtCa+fism3BzTHjNAKel
-         6JNQ==
-X-Gm-Message-State: AOUpUlEKsGA0+jM/9p7dNOrwCnymx43EMjCDFgedeGB6cUJCdOeW6GPE
-        /pDogCx6tY8YKVO/1xJnxnCq1g==
-X-Google-Smtp-Source: AA+uWPwIebREHfzipAAji/gNIqAwhcDRpKSeN9BR7Bf1oFbAPKC7VCriFDmtKbBqJiG23KAhpKnAMg==
-X-Received: by 2002:a17:902:e85:: with SMTP id 5-v6mr7798101plx.73.1533944393185;
-        Fri, 10 Aug 2018 16:39:53 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id 75-v6sm20985577pfr.115.2018.08.10.16.39.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 16:39:51 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Kalle Valo <kvalo@qca.qualcomm.com>
-Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] ath10k: retrieve MAC address from firmware if provided
-Date:   Fri, 10 Aug 2018 16:39:48 -0700
-Message-Id: <20180810233948.144792-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+        Fri, 10 Aug 2018 22:17:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:21517 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbeHKCRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 22:17:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 16:45:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,221,1531810800"; 
+   d="scan'208";a="71895152"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by FMSMGA003.fm.intel.com with ESMTP; 10 Aug 2018 16:45:37 -0700
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 10 Aug 2018 16:45:37 -0700
+Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.40]) by
+ fmsmsx118.amr.corp.intel.com ([169.254.1.229]) with mapi id 14.03.0319.002;
+ Fri, 10 Aug 2018 16:45:36 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "oceanhehy@gmail.com" <oceanhehy@gmail.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "hehy1@lenovo.com" <hehy1@lenovo.com>
+Subject: Re: [PATCH v2] ACPI: nfit: remove redundant assignment if nfit_mem
+ found
+Thread-Topic: [PATCH v2] ACPI: nfit: remove redundant assignment if nfit_mem
+ found
+Thread-Index: AQHUKj0MXtI1OwvIIUypjIK37MuHIqS6KVQA
+Date:   Fri, 10 Aug 2018 23:45:35 +0000
+Message-ID: <1533944734.6054.38.camel@intel.com>
+References: <1533199444-29607-1-git-send-email-oceanhehy@gmail.com>
+In-Reply-To: <1533199444-29607-1-git-send-email-oceanhehy@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.112.133]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DCC5CA9523A00740AB44287C469ACDF3@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Devices may provide their own MAC address via system firmware (e.g.,
-device tree), especially in the case where the device doesn't have a
-useful EEPROM on which to store its MAC address (e.g., for integrated
-Wifi).
-
-Use the generic device helper to retrieve the MAC address, and (if
-present) honor it above the MAC address advertised by the card.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/net/wireless/ath/ath10k/core.c | 3 +++
- drivers/net/wireless/ath/ath10k/wmi.c  | 3 ++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index c40cd129afe7..840c1f039098 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -19,6 +19,7 @@
- #include <linux/module.h>
- #include <linux/firmware.h>
- #include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/dmi.h>
- #include <linux/ctype.h>
- #include <asm/byteorder.h>
-@@ -2602,6 +2603,8 @@ static int ath10k_core_probe_fw(struct ath10k *ar)
- 		ath10k_debug_print_board_info(ar);
- 	}
- 
-+	device_get_mac_address(ar->dev, ar->mac_addr, sizeof(ar->mac_addr));
-+
- 	ret = ath10k_core_init_firmware_features(ar);
- 	if (ret) {
- 		ath10k_err(ar, "fatal problem with firmware features: %d\n",
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index fd612d2905b0..3cfd98de8ad2 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -5449,7 +5449,8 @@ int ath10k_wmi_event_ready(struct ath10k *ar, struct sk_buff *skb)
- 		   arg.mac_addr,
- 		   __le32_to_cpu(arg.status));
- 
--	ether_addr_copy(ar->mac_addr, arg.mac_addr);
-+	if (is_zero_ether_addr(ar->mac_addr))
-+		ether_addr_copy(ar->mac_addr, arg.mac_addr);
- 	complete(&ar->wmi.unified_ready);
- 	return 0;
- }
--- 
-2.18.0.597.ga71716f1ad-goog
-
+DQpPbiBUaHUsIDIwMTgtMDgtMDIgYXQgMDQ6NDQgLTA0MDAsIG9jZWFuaGVoeUBnbWFpbC5jb20g
+d3JvdGU6DQo+IEZyb206IE9jZWFuIEhlIDxoZWh5MUBsZW5vdm8uY29tPg0KPiANCj4gV2hlbiBu
+Zml0X21lbSBpcyBmb3VuZCB2aWEgbGlzdF9mb3JfZWFjaF9lbnRyeSwgaXQgaGFzIGFscmVhZHkg
+YmVlbg0KPiBhc3NpZ25lZCB2YWxpZCB2YWx1ZS4gVGhlcmUgaXMgbm8gbmVlZCB0byBhc3NpZ24g
+aXQgYWdhaW4gaW4gdGhlDQo+IGZvbGxvd2luZw0KPiBjb2Rlcy4NCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IE9jZWFuIEhlIDxoZWh5MUBsZW5vdm8uY29tPg0KPiAtLS0NCj4gdjE6IGh0dHBzOi8vcGF0
+Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA1NTMyNzcvDQo+IHYyOiBTb3JyeSBmb3Igbm9pc2Uu
+IEkgZ290IGFuIGVtYWlsIHByb2JsZW0sIHNvIEkgaGF2ZSB0byByZXNlbmQgdG8NCj4gbG9vcCAN
+Cj4gbGludXgtbnZkaW1tQGxpc3RzLjAxLm9yZy4NCj4gDQo+ICBkcml2ZXJzL2FjcGkvbmZpdC9j
+b3JlLmMgfCA0ICstLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMyBkZWxl
+dGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMgYi9k
+cml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMNCj4gaW5kZXggN2M0NzkwMC4uODVkZGU1NCAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy9hY3BpL25maXQvY29yZS5jDQo+ICsrKyBiL2RyaXZlcnMvYWNwaS9u
+Zml0L2NvcmUuYw0KPiBAQCAtMTA0OCw5ICsxMDQ4LDcgQEAgc3RhdGljIGludCBfX25maXRfbWVt
+X2luaXQoc3RydWN0DQo+IGFjcGlfbmZpdF9kZXNjICphY3BpX2Rlc2MsDQo+ICAJCQkJYnJlYWs7
+DQo+ICAJCQl9DQo+ICANCj4gLQkJaWYgKGZvdW5kKQ0KPiAtCQkJbmZpdF9tZW0gPSBmb3VuZDsN
+Cj4gLQkJZWxzZSB7DQo+ICsJCWlmICghZm91bmQpIHsNCg0KSGkgT2NlYW4sDQoNCldoaWxlIHRo
+aXMgaXMgdGVjaG5pY2FsbHkgY29ycmVjdCwgdGhlIG9sZCB3YXkgd2FzIGVhc2llciB0byByZWFk
+LiBXZQ0KbG9vcCB0aHJvdWdoIGFuZCBmaW5kIHRoZSBtYXRjaGluZyBoYW5kbGUuIElmIHdlIGZv
+dW5kIG9uZSwgdGhlbg0KbmZpdF9tZW0gd2FzIHdoYXRldmVyIHdhcyBmb3VuZC4gSWYgbm90LCB3
+ZSBhbGxvY2F0ZSBpdC4NCg0KV2l0aCB0aGlzIGNoYW5nZSwgb25lIGhhcyB0byBnbyBncm9rIHRo
+ZSBsaXN0X2Zvcl8uLiBsb29wIHRvIGZpZ3VyZSBvdXQNCndoZXJlIG5maXRfbWVtIGlzIGNvbWlu
+ZyBmcm9tLiBJJ2QgcGVyc29uYWxseSBwcmVmZXIgdG8ga2VlcCB0aGUNCmV4aXN0aW5nIHdheS4u
+DQoNCj4gIAkJCW5maXRfbWVtID0gZGV2bV9remFsbG9jKGFjcGlfZGVzYy0+ZGV2LA0KPiAgCQkJ
+CQlzaXplb2YoKm5maXRfbWVtKSwNCj4gR0ZQX0tFUk5FTCk7DQo+ICAJCQlpZiAoIW5maXRfbWVt
+KQ0K
