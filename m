@@ -2,284 +2,115 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9A0C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7922C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC593223E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:00:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC593223E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AC1F223E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:06:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eIWlKhBm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC1F223E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeHJRak (ORCPT
+        id S1727698AbeHJRgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:30:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:38860 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727445AbeHJRak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:30:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B63057A9;
-        Fri, 10 Aug 2018 08:00:25 -0700 (PDT)
-Received: from DESKTOP-E1NTVVP.cambridge.arm.com (DESKTOP-E1NTVVP.cambridge.arm.com [10.1.37.152])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0DFE3F6C4;
-        Fri, 10 Aug 2018 08:00:22 -0700 (PDT)
-From:   Brian Starkey <brian.starkey@arm.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     alexandru-cosmin.gheorghe@arm.com, ayan.halder@arm.com,
-        james.qian.wang@arm.com, daniel@fooishbar.org, daniel@ffwll.ch,
-        krh@bitplanet.net, Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        raymond.smith@arm.com, david.garbett@arm.com, lisa.wu@arm.com,
-        matt.szczesiak@arm.com, charles.xu@arm.com
-Subject: [RFC PATCH] drm/fourcc: Add remaining fourccs for Mali
-Date:   Fri, 10 Aug 2018 16:00:17 +0100
-Message-Id: <20180810150017.19364-1-brian.starkey@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 10 Aug 2018 13:36:47 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38806 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeHJRgr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 13:36:47 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so4664970pfh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 08:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=RzBJh2pCesdUeThBNw6Tgs3r6tBnzuw7rOd88a3tkVs=;
+        b=eIWlKhBmzgpWrTPuxeJ7JKmpLZmIUC4lGzns/FkNCpCaq1HSC49Nkm+Q9G8w3XYyi9
+         jbI+LHwz9LrKKqlgOSZ2G/XXOkp7t89/S55edk+9HBt7n/W8MUC7tfA/yc1oMl7k1tHk
+         ILkqzdlhZOL90r5Ha0cyGOLV0bv0cSKIujTGI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=RzBJh2pCesdUeThBNw6Tgs3r6tBnzuw7rOd88a3tkVs=;
+        b=o4tzqtjsqsmmvVMj5A6A1diE4kbvztoW3fetuiYKTzNsuh9amLNmo2RZu+3I+aSmeq
+         Wm/v2esUEwOfmuIdIpXE9Ccen1/nxOA3wznA75l87TKJyNKPzAYOyOxcR4tkRuciL8qh
+         n8I8WcnjQqB5hs3oOvzHm4iLyiRwwWv40UDy4074pmFuTGgh11l6J69RUHeT+FJ2bl6X
+         QJRxF1wh+e8Q8htIMeGWxLkJapeZxCEm4gQDzSkOLrNYQiMFjPxvWNeGZkE1Dd07Dpnj
+         gRrzH8sdMkPf3YMj/fIJML3SBnqY8muvwxneomzZiyhmQ7miZdkD9ivCNn34kOzbNo71
+         fZLA==
+X-Gm-Message-State: AOUpUlE1/v1ZSUlm+DxrOKOwTNEV6UFtqlaaLG25x5YuNSLFDbRLRp+m
+        vVf+Ip6KWUHcsSeW/6dpWTu0gg==
+X-Google-Smtp-Source: AA+uWPz5I7z5Mwhgwb0rLTmGAFPc7uo3M0/gpTUvUV0M0iKUNKC7vuBUExMVh/QPL60gxaZBRtuXAQ==
+X-Received: by 2002:a63:e318:: with SMTP id f24-v6mr6729153pgh.175.1533913592167;
+        Fri, 10 Aug 2018 08:06:32 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id l71-v6sm17976327pgd.70.2018.08.10.08.06.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 10 Aug 2018 08:06:31 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Marc Zyngier <marc.zyngier@arm.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <86wosypsvr.wl-marc.zyngier@arm.com>
+Cc:     Lina Iyer <ilina@codeaurora.org>, evgreen@chromium.org,
+        linus.walleij@linaro.org, bjorn.andersson@linaro.org,
+        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org
+References: <20180801020021.9782-1-ilina@codeaurora.org>
+ <20180801194538.GA6422@codeaurora.org> <86wot9wb9u.wl-marc.zyngier@arm.com>
+ <20180802065104.GA27850@codeaurora.org> <86sh3xw7m9.wl-marc.zyngier@arm.com>
+ <20180802125827.GB27850@codeaurora.org>
+ <153370830708.220756.4595316550560511917@swboyd.mtv.corp.google.com>
+ <20180808072632.21f076b6@why.wild-wind.fr.eu.org>
+ <153383585322.220756.9422019201626837843@swboyd.mtv.corp.google.com>
+ <86wosypsvr.wl-marc.zyngier@arm.com>
+Message-ID: <153391359077.37448.3410612264580038499@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Date:   Fri, 10 Aug 2018 08:06:30 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This RFC adds the remaining fourcc codes which are needed to cover all
-currently supported formats in Mali IPs.
+Quoting Marc Zyngier (2018-08-10 00:45:12)
+> On Thu, 09 Aug 2018 18:30:53 +0100,
+> Stephen Boyd <swboyd@chromium.org> wrote:
+> > =
 
-There was quite a lengthy discussion on IRC about it - please treat this
-as RFC and read the commentary below!
+> > Quoting Marc Zyngier (2018-08-07 23:26:32)
+> > > =
 
-This patch is on-top of
-https://lists.freedesktop.org/archives/dri-devel/2018-July/184598.html,
-but note I have changed the fourcc code for XVYU2101010 to be more
-consistent. We can of course update the previous patch after we have
-resolved this discussion.
+> > > Level interrupts should be taken care of without doing anything, by t=
+he
+> > > very nature of being a level signal.
+> > =
 
----
+> > Right. I suspect we'll still need to configure the PDC to actually wake
+> > up on the level triggered signal though so PDC needs to be told to
+> > unmask the line.
+> =
 
-As we look to enable AFBC using DRM format modifiers, we run into
-problems which we've historically handled via vendor-private details
-(i.e. gralloc, on Android).
+> Surely this can be done at suspend time with the PDC driver tracking
+> the interrupts that are configured as a wake-up source (although it
+> needs to track an interrupt that is logically connected to the TLMM,
+> which sucks).
 
-AFBC (as an encoding) is fully flexible, and for example YUV data can
-be encoded into 1, 2 or 3 encoded "planes", much like the linear
-equivalents. Component order is also meaningful, as AFBC doesn't
-necessarily care about what each "channel" of the data it encodes
-contains. Therefore ABGR8888 and RGBA8888 can be encoded in AFBC with
-different representations. Similarly, 'X' components may be encoded
-into AFBC streams in cases where a decoder expects to decode a 4th
-component.
+The PDC also needs to be configured for wakeups from deep CPU idle
+states where the GIC and TLMM are powered down. Lina, can you confirm
+this?
 
-In addition, AFBC is a licensable IP, meaning that to support the
-ecosystem we need to ensure that _all_ AFBC users are able to describe
-the encodings that they need. This is much better achieved by
-preserving meaning in the fourcc codes when they are combined with an
-AFBC modifier.
-
-In essence, we want to use the modifier to describe the parameters of
-the AFBC encode/decode, and use the fourcc code to describe the data
-being encoded/decoded.
-
-To do anything different would be to introduce redundancy - we would
-need to duplicate in the modifier information which is _already_
-conveyed clearly and non-ambigiously by a fourcc code.
-
-I hope that for RGB this is non-controversial.
-(BGRA8888 + MODIFIER_AFBC) is a different format from
-(RGBA8888 + MODIFIER_AFBC).
-
-Possibly more controversial is that (XBGR8888 + MODIFIER_AFBC)
-is different from (BGR888 + MODIFIER_AFBC). I understand that in some
-schemes it is not the case - but in AFBC it is so.
-
-Where we run into problems is where there are not already fourcc codes
-which represent the data which the AFBC encoder/decoder is processing.
-To that end, we want to introduce new fourcc codes to describe the
-data being encoded/decoded, in the places where none of the existing
-fourcc codes are applicable.
-
-Where we don't support an equivalent non-compressed layout, or where
-no "obvious" linear layout exists, we are proposing adding fourcc
-codes which have no associated linear layout - because any layout we
-proposed would be completely arbitrary.
-
-Some formats are following the naming conventions from [2].
-
-The summary of the new formats is:
- DRM_FORMAT_VUY888 - Packed 8-bit YUV 4:4:4. Y followed by U then V.
- DRM_FORMAT_VUY101010 - Packed 10-bit YUV 4:4:4. Y followed by U then
-                        V. No defined linear encoding.
- DRM_FORMAT_Y210 - Packed 10-bit YUV 4:2:2. Y followed by U (then Y)
-                   then V. 10-bit samples in 16-bit words.
- DRM_FORMAT_P210 - Semi-planar 10-bit YUV 4:2:2. Y plane, followed by
-                   interleaved U-then-V plane. 10-bit samples in
-                   16-bit words.
- DRM_FORMAT_YUV420_8BIT - Packed 8-bit YUV 4:2:0. Y followed by U then
-                          V. No defined linear encoding
- DRM_FORMAT_YUV420_10BIT - Packed 10-bit YUV 4:2:0. Y followed by U
-                           then V. No defined linear encoding
- DRM_FORMAT_P010 - Semi-planar 10-bit YUV 4:2:0. Y plane, followed by
-                   interleaved U-then-V plane. Added in [1].
-
-Please also note that in the absence of AFBC, we would still need to
-add Y210, P210 and P010.
-
-Full rationale follows:
-
-YUV 4:4:4 8-bit, 1-plane - New format
--------------------------------------
- The currently defined AYUV format encodes a 4th alpha component,
- which makes it unsuitable for representing a 3-component YUV 4:4:4
- AFBC stream.
-
- The proposed[1] XYUV format which is supported by Mali-DP in linear
- layout is also unsuitable, because the component order is the
- opposite of the AFBC version, and it encodes a 4th 'X' component.
-
- DRM_FORMAT_VUY888 is the "obvious" format for a 3-component, packed,
- YUV 444 8-bit format, with the component order which our HW expects to
- encode/decode. It conforms to the same naming convention as the
- existing packed YUV 4:4:4 format.
- The naming here is meant to be consistent with DRM_FORMAT_AYUV and
- DRM_FORMAT_XYUV[1]
-
-YUV 4:4:4 10-bit, 1-plane - New format
---------------------------------------
- There is no currently-defined YUV 4:4:4 10-bit format in
- drm_fourcc.h, irrespective of number of planes.
-
- The proposed[1] XVYU2101010 format which is supported by Mali-DP in
- linear layout uses the wrong component order, and also encodes a 4th
- 'X' component, which doesn't match the AFBC version of YUV 4:4:4
- 10-bit which we support.
-
- There is no "obvious" linear encoding for a 3-component 10:10:10
- packed format, and so DRM_FORMAT_VUY101010 defines a component
- order, but not a bit encoding. Again, the naming is meant to be
- consistent with DRM_FORMAT_AYUV.
-
-YUV 4:2:2 8-bit, 1-plane
-------------------------
- The existing DRM_FORMAT_YUYV (and the other component orders) are
- single-planar YUV 4:2:2 8-bit formats. Following the convention of
- the component orders of the RGB formats, YUYV has the correct
- component order for our AFBC encoding (Y followed by U followed by
- V). We can use YUYV for AFBC YUV 4:2:2 8-bit.
-
-YUV 4:2:2 10-bit, 1-plane - New format
---------------------------------------
- There is no currently-defined YUV 4:2:2 10-bit format in drm_fourcc.h
-
- DRM_FORMAT_Y210 is analogous to YUYV, but with 10-bits per sample
- packed into the upper 10-bits of 16-bit samples. This format is
- supported in both linear and AFBC by Mali GPUs.
-
-YUV 4:2:2 10-bit, 2-plane - New format
---------------------------------------
- There is no currently-defined YUV 4:2:2 10-bit format in drm_fourcc.h
-
- DRM_FORMAT_P210 is analogous to NV16, but with 10-bits per sample
- packed into the upper 10-bits of 16-bit samples. This format is
- supported in both Linear and AFBC by Mali GPUs.
-
-YUV 4:2:0 8-bit, 1-plane - New format
--------------------------------------
- There is no currently defined single-planar YUV 4:2:0, 8-bit format
- in drm_fourcc.h. There's differing opinions on whether using the
- existing fourcc-implied n_planes where possible is a good idea or
- not when using modifiers.
-
- For me, it's much more "obvious" to use NV12 for 2-plane AFBC and
- YUV420 for 3-plane AFBC. This keeps the aforementioned separation
- between the AFBC codec settings (in the modifier) and the pixel data
- format (in the fourcc). With different vendors using AFBC, this helps
- to ensure that there is no confusion in interoperation. It also
- ensures that the AFBC modifiers describe AFBC itself (which is a
- licensable component), and not implementation details which are not
- defined by AFBC.
-
- The proposed[1] X0L0 format which Mali-DP supports with Linear layout
- is unsuitable, as it contains a 4th 'X' component, and our AFBC
- decoder expects only 3 components.
-
- To that end, we propose a new YUV 4:2:0 8-bit format. There is no
- "obvious" linear encoding for a 3-component 8:8:8, 4:2:0, packed format,
- and so DRM_FORMAT_YUV420_8BIT defines a component order, but not a
- bit encoding. I'm happy to hear different naming suggestions.
-
-YUV 4:2:0 8-bit, 2-, 3-plane
-----------------------------
- These already exist, we can use NV12 and YUV420.
-
-YUV 4:2:0 10-bit, 1-plane - New format
--------------------------------------
- As above, no current definition exists, and X0L2 encodes a 4th 'X'
- channel.
-
- Analogous to DRM_FORMAT_YUV420_8BIT, we define DRM_FORMAT_YUV420_10BIT.
-
-YUV 4:2:0 10-bit, 2-plane - New format
---------------------------------------
- The proposed[1] (and relatively common) P010 is a 2-plane, 10-bit YUV
- format, which has the correct component order for our AFBC encoding.
-
-Thanks and best regards,
--Brian
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2018-July/184598.html
-[2] https://docs.microsoft.com/en-us/windows/desktop/medfound/10-bit-and-16-bit-yuv-video-formats
-
- include/uapi/drm/drm_fourcc.h | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index 213357940424..a44bbb032171 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -110,11 +110,14 @@ extern "C" {
- #define DRM_FORMAT_YVYU		fourcc_code('Y', 'V', 'Y', 'U') /* [31:0] Cb0:Y1:Cr0:Y0 8:8:8:8 little endian */
- #define DRM_FORMAT_UYVY		fourcc_code('U', 'Y', 'V', 'Y') /* [31:0] Y1:Cr0:Y0:Cb0 8:8:8:8 little endian */
- #define DRM_FORMAT_VYUY		fourcc_code('V', 'Y', 'U', 'Y') /* [31:0] Y1:Cb0:Y0:Cr0 8:8:8:8 little endian */
-+#define DRM_FORMAT_Y210		fourcc_code('Y', '2', '1', '0') /* [63:0] Cr0:0:Y1:0:Cb0:0:Y0:0 10:6:10:6:10:6:10:6 little endian */
- 
- /* packed YCbCr444 */
- #define DRM_FORMAT_AYUV		fourcc_code('A', 'Y', 'U', 'V') /* [31:0] A:Y:Cb:Cr 8:8:8:8 little endian */
- #define DRM_FORMAT_XYUV8888	fourcc_code('X', 'Y', 'U', 'V') /* [31:0] X:Y:Cb:Cr 8:8:8:8 little endian */
--#define DRM_FORMAT_XVYU2101010	fourcc_code('V', 'U', '3', '0') /* [31:0] X:Cr:Y:Cb 2:10:10:10 little endian */
-+#define DRM_FORMAT_VUY888	fourcc_code('V', 'U', '2', '4') /* [23:0] Cr:Cb:Y 8:8:8 little endian */
-+#define DRM_FORMAT_XVYU2101010	fourcc_code('X', 'V', '3', '0') /* [31:0] X:Cr:Y:Cb 2:10:10:10 little endian */
-+#define DRM_FORMAT_VUY101010    fourcc_code('V', 'U', '3', '0') /* Y followed by U then V, 10:10:10. Non-linear modifier only */
- 
- /*
-  * packed YCbCr420 2x2 tiled formats
-@@ -131,6 +134,15 @@ extern "C" {
- /* [63:0]   X3:X2:Y3:Cr0:Y2:X1:X0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian */
- #define DRM_FORMAT_X0L2		fourcc_code('X', '0', 'L', '2')
- 
-+/*
-+ * 1-plane YUV 4:2:0
-+ * In these formats, the component ordering is specified (Y, followed by U
-+ * then V), but the exact Linear layout is undefined.
-+ * These formats can only be used with a non-Linear modifier.
-+ */
-+#define DRM_FORMAT_YUV420_8BIT	fourcc_code('Y', 'U', '0', '8')
-+#define DRM_FORMAT_YUV420_10BIT	fourcc_code('Y', 'U', '1', '0')
-+
- /*
-  * 2 plane RGB + A
-  * index 0 = RGB plane, same format as the corresponding non _A8 format has
-@@ -164,6 +176,7 @@ extern "C" {
-  * Y plane: [63:0] Y3:0:Y2:0:Y1:0:Y0:0, 10:6:10:6:10:6:10:6
-  * CrCb plane: [63:0] Cr2:0:Cb2:0:Cr0:0:Cb0:0, 10:6:10:6:10:6:10:6
-  */
-+#define DRM_FORMAT_P210		fourcc_code('P', '2', '1', '0') /* 2x1 subsampled Cr:Cb plane */
- #define DRM_FORMAT_P010		fourcc_code('P', '0', '1', '0') /* 2x2 subsampled Cr:Cb plane */
- 
- /*
--- 
-2.17.1
+Hooking system suspend in that case won't work. Is your hope that we can
+avoid using hierarchical irqdomains here entirely?
 
