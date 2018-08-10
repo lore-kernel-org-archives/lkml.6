@@ -2,82 +2,69 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1490C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E26C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 802FF223B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 802FF223B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 65A70223B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A70223B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeHJFU1 (ORCPT
+        id S1727361AbeHJFUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 01:20:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50444 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725725AbeHJFU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 01:20:26 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3044523C56798;
-        Fri, 10 Aug 2018 10:52:36 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 10 Aug 2018 10:52:34 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <linux@armlinux.org.uk>, <vz@mleia.com>, <slemieux.tyco@gmail.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] arm:pm: Use kmemdup to replace duplicating its implementation
-Date:   Fri, 10 Aug 2018 10:40:51 +0800
-Message-ID: <1533868851-316-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Fri, 10 Aug 2018 01:20:39 -0400
+Received: from fieldses.org ([173.255.197.46]:49666 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725725AbeHJFUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 01:20:39 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 7AD663F4; Thu,  9 Aug 2018 22:52:51 -0400 (EDT)
+Date:   Thu, 9 Aug 2018 22:52:51 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
+Message-ID: <20180810025251.GO23873@fieldses.org>
+References: <153378012255.1220.6754153662007899557.stgit@noble>
+ <20180809173245.GM23873@fieldses.org>
+ <87lg9frxyc.fsf@notabene.neil.brown.name>
+ <20180810002922.GA3915@fieldses.org>
+ <871sb7rnul.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871sb7rnul.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmemdup is better than kmalloc() + memcpy(), and we do not like
-open code. So just use kmemdup instead.
+On Fri, Aug 10, 2018 at 11:50:58AM +1000, NeilBrown wrote:
+> You're good at this game!
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- arch/arm/mach-lpc32xx/pm.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Everybody's got to have a hobby, mine is pathological posix locking
+cases....
 
-diff --git a/arch/arm/mach-lpc32xx/pm.c b/arch/arm/mach-lpc32xx/pm.c
-index 6247157..6eefff8 100644
---- a/arch/arm/mach-lpc32xx/pm.c
-+++ b/arch/arm/mach-lpc32xx/pm.c
-@@ -86,7 +86,8 @@ static int lpc32xx_pm_enter(suspend_state_t state)
- 	void *iram_swap_area;
- 
- 	/* Allocate some space for temporary IRAM storage */
--	iram_swap_area = kmalloc(lpc32xx_sys_suspend_sz, GFP_KERNEL);
-+	iram_swap_area = kmemdup((void *)TEMP_IRAM_AREA,
-+				lpc32xx_sys_suspend_sz, GFP_KERNEL);
- 	if (!iram_swap_area) {
- 		printk(KERN_ERR
- 		       "PM Suspend: cannot allocate memory to save portion "
-@@ -94,10 +95,6 @@ static int lpc32xx_pm_enter(suspend_state_t state)
- 		return -ENOMEM;
- 	}
- 
--	/* Backup a small area of IRAM used for the suspend code */
--	memcpy(iram_swap_area, (void *) TEMP_IRAM_AREA,
--		lpc32xx_sys_suspend_sz);
--
- 	/*
- 	 * Copy code to suspend system into IRAM. The suspend code
- 	 * needs to run from IRAM as DRAM may no longer be available
--- 
-1.7.12.4
+> So, because a locker with the same "owner" gets a free pass, you can
+> *never* say that any lock which conflicts with A also conflicts with B,
+> as a lock with the same owner as B will never conflict with B, even
+> though it conflicts with A.
+> 
+> I think there is still value in having the tree, but when a waiter is
+> attached under a new blocker, we need to walk the whole tree beneath the
+> waiter and detach/wake anything that is not blocked by the new blocker.
 
+If you're walking the whole tree every time then it might as well be a
+flat list, I think?
+
+--b.
