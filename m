@@ -2,213 +2,104 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B06C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD4AC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520D8208E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520D8208E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id F29C7223AA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:37:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u/p1kPHs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29C7223AA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeHJDEN (ORCPT
+        id S1727550AbeHJDFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 23:04:13 -0400
-Received: from fieldses.org ([173.255.197.46]:49456 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeHJDEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 23:04:12 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id D28FA1E3A; Thu,  9 Aug 2018 20:36:50 -0400 (EDT)
-Date:   Thu, 9 Aug 2018 20:36:50 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] fs/locks: create a tree of dependent requests.
-Message-ID: <20180810003650.GB3915@fieldses.org>
-References: <153378012255.1220.6754153662007899557.stgit@noble>
- <153378028121.1220.4418653283078446336.stgit@noble>
- <20180809141341.GI23873@fieldses.org>
- <87in4jrxn5.fsf@notabene.neil.brown.name>
+        Thu, 9 Aug 2018 23:05:12 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38860 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeHJDFM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 23:05:12 -0400
+Received: by mail-io0-f194.google.com with SMTP id v26-v6so6317385iog.5
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 17:37:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=UjYM+J0EUkHYDuSg7Gelnkuk3nF0kEX8x4kLy1srcrI=;
+        b=u/p1kPHsFve19eUrbpspxvngqcG1tIpnV2QBrTGaUTNmtfoNruBsyTcWGltl1nNqah
+         eJHDT1EHfwI99dJNPrZySIjisDID7dek7tbPUzpcRKPw5aBHE3Ci2QuwmzbaMQDA2d9a
+         c+kaDuxbQLgW9uku6Zi0hyRADMy35g1JsJYlutsiM+iqZi0e6k6VLK7ABTuYxAw4mD4y
+         rSKbJGYC2avRuIzHH0Qjsdi314RStdupt1pFuuXrFB5DPgf07ve2PSU4SkLS2QvuJ/LO
+         RwrBi+o+rs9tp1CA2ltKgtIwnlfHImQV+NIqR/utP4OBOyOssB+oEagsPqitjUnCo9D7
+         4v0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=UjYM+J0EUkHYDuSg7Gelnkuk3nF0kEX8x4kLy1srcrI=;
+        b=owEsJBEyUz2HdUBGuffumgTXKPHohWz431/da+T+bQG8W1tFhxkOUYJcNcOI8cYMjS
+         hdubQJXKg4UN0Cjn+8hKFMa6lVQyJS/da5xTp1m857xMDTC3EIaLUrFBsUjdXGeHhnZ8
+         nhbwEZ0wZwxG2LpYQW3crpviBwZUKVT5OoBCcEn3US26+H+SRFkcJhMrolV0/pKibW51
+         zGOSnKwjiuFQgGxSRpS3AXaClnN2JRsjRyrw8gm3hgLIBtjILbIH57Mxmv/RuZLKESFK
+         5lxhw9VOh7FyfP58KZylH5X+MrqLDAJj5RVbpE3yUW3HSH76KUaYUjA9LXnbidf9xk/W
+         I4jg==
+X-Gm-Message-State: AOUpUlEQPIy9tnB1UcCRzVHANrEmXxCkxliTr2Hj6GpCKQQjpEH6Qw4p
+        x964Ik3gJDnCqInel5sHCtYO7pTJ0OpK2PManuI=
+X-Google-Smtp-Source: AA+uWPya2Ph/fqH45Way1SLOTepjrUd5OSfpA7qup2JL9kF3ug0OiYr2lIt6J5JOm7LS6gZ57nHW4qWAkxeoA9ilLBs=
+X-Received: by 2002:a6b:35f:: with SMTP id 92-v6mr3661216iod.63.1533861470400;
+ Thu, 09 Aug 2018 17:37:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87in4jrxn5.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <1533223316-9942-1-git-send-email-zong@andestech.com> <3AB16BFE6992A349B44EA6D8F29BFB476B1EA2CC@ATCPCS16.andestech.com>
+In-Reply-To: <3AB16BFE6992A349B44EA6D8F29BFB476B1EA2CC@ATCPCS16.andestech.com>
+From:   Zong Li <zongbox@gmail.com>
+Date:   Fri, 10 Aug 2018 08:37:39 +0800
+Message-ID: <CA+ZOyajyOfjZh8tQB4reAka3s+tqXachY4hiAtpA4Bb67x58AQ@mail.gmail.com>
+Subject: Re: FW: [PATCH v2] RISC-V: Add the directive for alignment of stvec's value
+To:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        hch@infradead.org, linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zong Li <zong@andestech.com>, greentime@adnestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 08:19:26AM +1000, NeilBrown wrote:
-> On Thu, Aug 09 2018, J. Bruce Fields wrote:
-> > I think you could simplify the code a lot by maintaining the tree so
-> > that it always satisfies the condition that waiters are always strictly
-> > "weaker" than their descendents, so that finding a conflict with a
-> > waiter is always enough to know that the descendents also conflict.
-> 
-> Can you define "weaker" please.
-> I suspect it is a partial ordering, in which case a tree would normally
-> be more appropriate than trying to find a total ordering.
-
-Lock X is stronger than lock Y if any lock that would conflict with lock
-Y would also conflict with lock X.
-
-Equivalently, X is stronger than Y if lock X's range is a superset of
-lock Y's and if X is a write lock whenever Y is.  Well, I *thought* that
-was equivalent until I thought about the owner problem.  Ugh.
-
---b.
-
-> 
-> Thanks,
-> NeilBrown
-> 
-> >
-> > So, when you put a waiter to sleep, you don't add it below a child
-> > unless it's "stronger" than the child.
-> >
-> > You give up the property that siblings don't conflict, but again that
-> > just means thundering herds in weird cases, which is OK.
-> >
-> > --b.
-> >
-> >> 
-> >> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
-> >> Signed-off-by: NeilBrown <neilb@suse.com>
-> >> ---
-> >>  fs/locks.c |   69 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
-> >>  1 file changed, 63 insertions(+), 6 deletions(-)
-> >> 
-> >> diff --git a/fs/locks.c b/fs/locks.c
-> >> index fc64016d01ee..17843feb6f5b 100644
-> >> --- a/fs/locks.c
-> >> +++ b/fs/locks.c
-> >> @@ -738,6 +738,39 @@ static void locks_delete_block(struct file_lock *waiter)
-> >>  	spin_unlock(&blocked_lock_lock);
-> >>  }
-> >>  
-> >> +static void wake_non_conflicts(struct file_lock *waiter, struct file_lock *blocker,
-> >> +			       enum conflict conflict(struct file_lock *,
-> >> +						      struct file_lock *))
-> >> +{
-> >> +	struct file_lock *parent = waiter;
-> >> +	struct file_lock *fl;
-> >> +	struct file_lock  *t;
-> >> +
-> >> +	fl = list_entry(&parent->fl_blocked, struct file_lock, fl_block);
-> >> +restart:
-> >> +	list_for_each_entry_safe_continue(fl, t, &parent->fl_blocked, fl_block) {
-> >> +		switch (conflict(fl, blocker)) {
-> >> +		default:
-> >> +		case FL_NO_CONFLICT:
-> >> +			__locks_wake_one(fl);
-> >> +			break;
-> >> +		case FL_CONFLICT:
-> >> +			/* Need to check children */
-> >> +			parent = fl;
-> >> +			fl = list_entry(&parent->fl_blocked, struct file_lock, fl_block);
-> >> +			goto restart;
-> >> +		case FL_TRANSITIVE_CONFLICT:
-> >> +			/* all children must also conflict, no need to check */
-> >> +			continue;
-> >> +		}
-> >> +	}
-> >> +	if (parent != waiter) {
-> >> +		parent = parent->fl_blocker;
-> >> +		fl = parent;
-> >> +		goto restart;
-> >> +	}
-> >> +}
-> >> +
-> >>  /* Insert waiter into blocker's block list.
-> >>   * We use a circular list so that processes can be easily woken up in
-> >>   * the order they blocked. The documentation doesn't require this but
-> >> @@ -747,11 +780,32 @@ static void locks_delete_block(struct file_lock *waiter)
-> >>   * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
-> >>   * that the flc_lock is also held on insertions we can avoid taking the
-> >>   * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
-> >> + *
-> >> + * Rather than just adding to the list, we check for conflicts with any existing
-> >> + * waiter, and add to that waiter instead.
-> >> + * Thus wakeups don't happen until needed.
-> >>   */
-> >>  static void __locks_insert_block(struct file_lock *blocker,
-> >> -					struct file_lock *waiter)
-> >> +				 struct file_lock *waiter,
-> >> +				 enum conflict conflict(struct file_lock *,
-> >> +							struct file_lock *))
-> >>  {
-> >> +	struct file_lock *fl;
-> >>  	BUG_ON(!list_empty(&waiter->fl_block));
-> >> +
-> >> +	/* Any request in waiter->fl_blocked is know to conflict with
-> >> +	 * waiter, but it might not conflict with blocker.
-> >> +	 * If it doesn't, it needs to be woken now so it can find
-> >> +	 * somewhere else to wait, or possible it can get granted.
-> >> +	 */
-> >> +	if (conflict(waiter, blocker) != FL_TRANSITIVE_CONFLICT)
-> >> +		wake_non_conflicts(waiter, blocker, conflict);
-> >> +new_blocker:
-> >> +	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
-> >> +		if (conflict(fl, waiter)) {
-> >> +			blocker =  fl;
-> >> +			goto new_blocker;
-> >> +		}
-> >>  	waiter->fl_blocker = blocker;
-> >>  	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
-> >>  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-> >> @@ -760,10 +814,12 @@ static void __locks_insert_block(struct file_lock *blocker,
-> >>  
-> >>  /* Must be called with flc_lock held. */
-> >>  static void locks_insert_block(struct file_lock *blocker,
-> >> -					struct file_lock *waiter)
-> >> +			       struct file_lock *waiter,
-> >> +			       enum conflict conflict(struct file_lock *,
-> >> +						      struct file_lock *))
-> >>  {
-> >>  	spin_lock(&blocked_lock_lock);
-> >> -	__locks_insert_block(blocker, waiter);
-> >> +	__locks_insert_block(blocker, waiter, conflict);
-> >>  	spin_unlock(&blocked_lock_lock);
-> >>  }
-> >>  
-> >> @@ -1033,7 +1089,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
-> >>  		if (!(request->fl_flags & FL_SLEEP))
-> >>  			goto out;
-> >>  		error = FILE_LOCK_DEFERRED;
-> >> -		locks_insert_block(fl, request);
-> >> +		locks_insert_block(fl, request, flock_locks_conflict);
-> >>  		goto out;
-> >>  	}
-> >>  	if (request->fl_flags & FL_ACCESS)
-> >> @@ -1107,7 +1163,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
-> >>  			spin_lock(&blocked_lock_lock);
-> >>  			if (likely(!posix_locks_deadlock(request, fl))) {
-> >>  				error = FILE_LOCK_DEFERRED;
-> >> -				__locks_insert_block(fl, request);
-> >> +				__locks_insert_block(fl, request,
-> >> +						     posix_locks_conflict);
-> >>  			}
-> >>  			spin_unlock(&blocked_lock_lock);
-> >>  			goto out;
-> >> @@ -1581,7 +1638,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> >>  		break_time -= jiffies;
-> >>  	if (break_time == 0)
-> >>  		break_time++;
-> >> -	locks_insert_block(fl, new_fl);
-> >> +	locks_insert_block(fl, new_fl, leases_conflict);
-> >>  	trace_break_lease_block(inode, new_fl);
-> >>  	spin_unlock(&ctx->flc_lock);
-> >>  	percpu_up_read_preempt_enable(&file_rwsem);
-> >> 
+> Subject: [PATCH v2] RISC-V: Add the directive for alignment of stvec's value
+>
+> The stvec's value must be 4 byte alignment by specification definition.
+> These directives avoid to stvec be set the non-alignment value.
+>
+> Signed-off-by: Zong Li <zong@andestech.com>
+> ---
+>  arch/riscv/kernel/head.S | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S index 3b6293f..11066d5 100644
+> --- a/arch/riscv/kernel/head.S
+> +++ b/arch/riscv/kernel/head.S
+> @@ -94,6 +94,7 @@ relocate:
+>         or a0, a0, a1
+>         sfence.vma
+>         csrw sptbr, a0
+> +.align 2
+>  1:
+>         /* Set trap vector to spin forever to help debug */
+>         la a0, .Lsecondary_park
+> @@ -143,6 +144,7 @@ relocate:
+>         tail smp_callin
+>  #endif
+>
+> +.align 2
+>  .Lsecondary_park:
+>         /* We lack SMP support or have too many harts, so park this hart */
+>         wfi
 
 
+ping
