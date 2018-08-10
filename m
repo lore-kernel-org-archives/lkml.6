@@ -2,133 +2,188 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A7CC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CB6C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FED822450
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:15:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXsvJfvd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FED822450
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AC0BA22450
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:18:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0BA22450
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeHJVqS (ORCPT
+        id S1727187AbeHJVtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 17:46:18 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38140 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727395AbeHJVqR (ORCPT
+        Fri, 10 Aug 2018 17:49:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43723 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbeHJVtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 17:46:17 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p6-v6so7964461ljc.5;
-        Fri, 10 Aug 2018 12:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8IyWERHgMQT0Bw51KugCBU4wS7zbQmLV4VerGSJPGaU=;
-        b=UXsvJfvdFdhMz5OyiSN1Ls3MibXU2wvjj60g5yD3rSP2IaQSeg1ICNjr98RkcbryDS
-         lhBpqrJzhuzaIrXWeOIox9ZVr+9wUvMZ+8BEJ210e8trrZ9O/189PEf8R/wFLIzhwy8D
-         CpifF6G9xUpiaRCOIOlLXpiPH2AOCR4sBZwsOHNn765deW1ec6uBJJQSVNMxAtqonkY4
-         9M/EmmPHxNEtmf5+mXWcKWqZMuB6Nz5Pf2lyfMPjXFvUZ4EZVfBhz/FAEgw740+F5gDE
-         iBiZWS+9l4CW2P6Qe7V2K0BmzmMfxi7kCRh/YMaUMY9KP+nZybauS7nGgJGqHMDBunAc
-         ZBjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8IyWERHgMQT0Bw51KugCBU4wS7zbQmLV4VerGSJPGaU=;
-        b=rf3SdNIiVqFoIRDKGjESk41iBsEODnVMb2JjBCa+ND2qUtlFFnVIhQebJBt/j87Wro
-         CWGJpj6npQjVC2BrBIJQW5l/IIapclprY1q4mPQiKH8ztbjraRsmq+ar4fVJdvzzd7RW
-         olAarL/UEmGtobrRAgodsjAr7nuAWVFSkXqzObeyjpQ63ckbz8xG59wZlKIxcBF62qZx
-         bQM6XkUgSSk1Uk0oO5qWwoW4PVu9BcMsKNSCDvdO2eDykJ7EdhOWFRAxEkdJ5sR9wZhC
-         mr227eVisI4DPhEsttxsjMOKM/i8ilsSVgYouw0KiuWmphnQOaQcz2SW25Y8kbKcI2Rg
-         LfHQ==
-X-Gm-Message-State: AOUpUlHMvOSv00og1ki+6AbAoBtHJYJXGWW637FBX9nbmPRNvMVe2MFu
-        CEoetrsrbei+RZO1CJpzwd0=
-X-Google-Smtp-Source: AA+uWPxYcTjb3lr8D6KQl5oXH1tue2ihZ0cDl8oD0KJjxPzHKYGBkslV1qGliopy+70KCrccPEa2EA==
-X-Received: by 2002:a2e:5c4:: with SMTP id 187-v6mr5360367ljf.28.1533928506066;
-        Fri, 10 Aug 2018 12:15:06 -0700 (PDT)
-Received: from localhost.localdomain (c-2ec24faa-74736162.cust.telenor.se. [46.194.79.170])
-        by smtp.gmail.com with ESMTPSA id d23-v6sm1734931ljg.17.2018.08.10.12.15.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 12:15:04 -0700 (PDT)
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: dac: mcp4725: avoid using CONFIG_PM_SLEEP
-Date:   Fri, 10 Aug 2018 20:51:10 +0200
-Message-Id: <20180810185110.12710-3-marcus.folkesson@gmail.com>
-X-Mailer: git-send-email 2.11.0.rc2
-In-Reply-To: <20180810185110.12710-1-marcus.folkesson@gmail.com>
-References: <20180810185110.12710-1-marcus.folkesson@gmail.com>
+        Fri, 10 Aug 2018 17:49:12 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7AJG5Mh2562261
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 10 Aug 2018 12:16:05 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7AJG3Fd2562257;
+        Fri, 10 Aug 2018 12:16:03 -0700
+Date:   Fri, 10 Aug 2018 12:16:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
+Message-ID: <tip-d878efce73fe86db34ddb2013260adf571a701a7@git.kernel.org>
+Cc:     jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jroedel@suse.de, peterz@infradead.org,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, bp@alien8.de,
+        eduval@amazon.com, llong@redhat.com, torvalds@linux-foundation.org,
+        dhgutteridge@sympatico.ca, brgerst@gmail.com, hpa@zytor.com,
+        tglx@linutronix.de, dvlasenk@redhat.com, jkosina@suse.cz,
+        will.deacon@arm.com, luto@kernel.org, jgross@suse.com,
+        dave.hansen@intel.com, David.Laight@aculab.com,
+        aarcange@redhat.com, boris.ostrovsky@oracle.com
+Reply-To: jroedel@suse.de, peterz@infradead.org, pavel@ucw.cz,
+          jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, torvalds@linux-foundation.org,
+          dhgutteridge@sympatico.ca, brgerst@gmail.com, hpa@zytor.com,
+          eduval@amazon.com, gregkh@linuxfoundation.org, bp@alien8.de,
+          llong@redhat.com, jkosina@suse.cz, will.deacon@arm.com,
+          tglx@linutronix.de, dvlasenk@redhat.com, aarcange@redhat.com,
+          David.Laight@aculab.com, boris.ostrovsky@oracle.com,
+          luto@kernel.org, dave.hansen@intel.com, jgross@suse.com
+In-Reply-To: <1533727000-9172-1-git-send-email-joro@8bytes.org>
+References: <1533727000-9172-1-git-send-email-joro@8bytes.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/mm/pti: Move user W+X check into pti_finalize()
+Git-Commit-ID: d878efce73fe86db34ddb2013260adf571a701a7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SIMPLE_DEV_PM_OPS() is already doing this.
+Commit-ID:  d878efce73fe86db34ddb2013260adf571a701a7
+Gitweb:     https://git.kernel.org/tip/d878efce73fe86db34ddb2013260adf571a701a7
+Author:     Joerg Roedel <jroedel@suse.de>
+AuthorDate: Wed, 8 Aug 2018 13:16:40 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 10 Aug 2018 21:12:45 +0200
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+x86/mm/pti: Move user W+X check into pti_finalize()
+
+The user page-table gets the updated kernel mappings in pti_finalize(),
+which runs after the RO+X permissions got applied to the kernel page-table
+in mark_readonly().
+
+But with CONFIG_DEBUG_WX enabled, the user page-table is already checked in
+mark_readonly() for insecure mappings.  This causes false-positive
+warnings, because the user page-table did not get the updated mappings yet.
+
+Move the W+X check for the user page-table into pti_finalize() after it
+updated all required mappings.
+
+[ tglx: Folded !NX supported fix ]
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Waiman Long <llong@redhat.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
+Cc: joro@8bytes.org
+Link: https://lkml.kernel.org/r/1533727000-9172-1-git-send-email-joro@8bytes.org
 ---
- drivers/iio/dac/mcp4725.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/pgtable.h | 7 +++++--
+ arch/x86/mm/dump_pagetables.c  | 6 +++---
+ arch/x86/mm/pti.c              | 2 ++
+ 3 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iio/dac/mcp4725.c b/drivers/iio/dac/mcp4725.c
-index 8b5aad4c32d9..6d71fd905e29 100644
---- a/drivers/iio/dac/mcp4725.c
-+++ b/drivers/iio/dac/mcp4725.c
-@@ -45,7 +45,7 @@ struct mcp4725_data {
- 	struct regulator *vref_reg;
- };
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index e39088cb59ab..a1cb3339da8d 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -30,11 +30,14 @@ int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
+ void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
+ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user);
+ void ptdump_walk_pgd_level_checkwx(void);
++void ptdump_walk_user_pgd_level_checkwx(void);
  
--static int mcp4725_suspend(struct device *dev)
-+static int __maybe_unused mcp4725_suspend(struct device *dev)
+ #ifdef CONFIG_DEBUG_WX
+-#define debug_checkwx() ptdump_walk_pgd_level_checkwx()
++#define debug_checkwx()		ptdump_walk_pgd_level_checkwx()
++#define debug_checkwx_user()	ptdump_walk_user_pgd_level_checkwx()
+ #else
+-#define debug_checkwx() do { } while (0)
++#define debug_checkwx()		do { } while (0)
++#define debug_checkwx_user()	do { } while (0)
+ #endif
+ 
+ /*
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index ccd92c4da57c..a12afff146d1 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -569,12 +569,13 @@ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user)
+ }
+ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+ 
+-static void ptdump_walk_user_pgd_level_checkwx(void)
++void ptdump_walk_user_pgd_level_checkwx(void)
  {
- 	struct mcp4725_data *data = iio_priv(i2c_get_clientdata(
- 		to_i2c_client(dev)));
-@@ -58,7 +58,7 @@ static int mcp4725_suspend(struct device *dev)
- 	return i2c_master_send(data->client, outbuf, 2);
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	pgd_t *pgd = INIT_PGD;
+ 
+-	if (!static_cpu_has(X86_FEATURE_PTI))
++	if (!(__supported_pte_mask & _PAGE_NX) ||
++	    !static_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	pr_info("x86/mm: Checking user space page tables\n");
+@@ -586,7 +587,6 @@ static void ptdump_walk_user_pgd_level_checkwx(void)
+ void ptdump_walk_pgd_level_checkwx(void)
+ {
+ 	ptdump_walk_pgd_level_core(NULL, NULL, true, false);
+-	ptdump_walk_user_pgd_level_checkwx();
  }
  
--static int mcp4725_resume(struct device *dev)
-+static int __maybe_unused mcp4725_resume(struct device *dev)
- {
- 	struct mcp4725_data *data = iio_priv(i2c_get_clientdata(
- 		to_i2c_client(dev)));
-@@ -71,13 +71,7 @@ static int mcp4725_resume(struct device *dev)
- 
- 	return i2c_master_send(data->client, outbuf, 2);
+ static int __init pt_dump_init(void)
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 1dc5c683e7a5..d58b4aba9510 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -646,4 +646,6 @@ void pti_finalize(void)
+ 	 */
+ 	pti_clone_entry_text();
+ 	pti_clone_kernel_text();
++
++	debug_checkwx_user();
  }
--
--#ifdef CONFIG_PM_SLEEP
- static SIMPLE_DEV_PM_OPS(mcp4725_pm_ops, mcp4725_suspend, mcp4725_resume);
--#define MCP4725_PM_OPS (&mcp4725_pm_ops)
--#else
--#define MCP4725_PM_OPS NULL
--#endif
- 
- static ssize_t mcp4725_store_eeprom(struct device *dev,
- 	struct device_attribute *attr, const char *buf, size_t len)
-@@ -547,7 +541,7 @@ static struct i2c_driver mcp4725_driver = {
- 	.driver = {
- 		.name	= MCP4725_DRV_NAME,
- 		.of_match_table = of_match_ptr(mcp4725_of_match),
--		.pm	= MCP4725_PM_OPS,
-+		.pm	= &mcp4725_pm_ops,
- 	},
- 	.probe		= mcp4725_probe,
- 	.remove		= mcp4725_remove,
--- 
-2.11.0.rc2
-
