@@ -2,118 +2,138 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BD4C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFECC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 676AB22433
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:16:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C922922433
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:17:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kBpGTNE/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kBpGTNE/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676AB22433
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jzZVqEAa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C922922433
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeHJSq2 (ORCPT
+        id S1728479AbeHJSsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:46:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40532 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727462AbeHJSq2 (ORCPT
+        Fri, 10 Aug 2018 14:48:20 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33403 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728076AbeHJSsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:46:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BFEB460B7B; Fri, 10 Aug 2018 16:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533917757;
-        bh=L+VUvWlgbx0w6qxx9lBIIf7MsMw+1OD25y0Obz1hb2s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kBpGTNE/l21403LqqqsK/dQx6Bs17Qtwz5LJytcEofnWZS6730WnsT1dbBBl/Tlzw
-         Ro98XSJG2FvR2h4fMzQbzUM9ALZTN3c15KKcW3Y5Az7HhuIMaEHpNfp78mtRvSAD8j
-         tq5fNRhn91Lqgc7EUJ+lQr8YbyC+CgoImTjly59g=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EED5E60214;
-        Fri, 10 Aug 2018 16:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533917757;
-        bh=L+VUvWlgbx0w6qxx9lBIIf7MsMw+1OD25y0Obz1hb2s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kBpGTNE/l21403LqqqsK/dQx6Bs17Qtwz5LJytcEofnWZS6730WnsT1dbBBl/Tlzw
-         Ro98XSJG2FvR2h4fMzQbzUM9ALZTN3c15KKcW3Y5Az7HhuIMaEHpNfp78mtRvSAD8j
-         tq5fNRhn91Lqgc7EUJ+lQr8YbyC+CgoImTjly59g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EED5E60214
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Fri, 10 Aug 2018 10:15:56 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>, evgreen@chromium.org,
-        linus.walleij@linaro.org, bjorn.andersson@linaro.org,
-        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup
- capability to GPIO
-Message-ID: <20180810161556.GC5081@codeaurora.org>
-References: <20180801194538.GA6422@codeaurora.org>
- <86wot9wb9u.wl-marc.zyngier@arm.com>
- <20180802065104.GA27850@codeaurora.org>
- <86sh3xw7m9.wl-marc.zyngier@arm.com>
- <20180802125827.GB27850@codeaurora.org>
- <153370830708.220756.4595316550560511917@swboyd.mtv.corp.google.com>
- <20180808072632.21f076b6@why.wild-wind.fr.eu.org>
- <153383585322.220756.9422019201626837843@swboyd.mtv.corp.google.com>
- <86wosypsvr.wl-marc.zyngier@arm.com>
- <153391359077.37448.3410612264580038499@swboyd.mtv.corp.google.com>
+        Fri, 10 Aug 2018 14:48:19 -0400
+Received: by mail-it0-f66.google.com with SMTP id d16-v6so5110002itj.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 09:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=qpDChSEoVOJBPGx9YmxkwlUonMQ7vT7RN3awaNxdtiA=;
+        b=jzZVqEAaMmIH2ybo1dK0Fx0LdoATYIo8pEwHs3ChBJMYx0VdKlF2Iu75Lm7yflPCC9
+         RrVTUTphMA/O7ZnVzsvTOKco1FY+JwKhtevTgeU3z5poo56HVg5b08tx/fCezH7Si6E1
+         koel88l99C3elXlb7VRWLdjApI2O1s+g1LWVZB3p+JQFe7NqmvovWt69KNrQ6LJMxf0I
+         saCmBeGEQzSjIc0UAtHPTfurEsVKiDmL7ad8d3+JklSg+yeHesmiOCavnBzExzJHgNWt
+         IczNUjCE7FsPIdOWwsG+8RqKl0/8GdqFyOR4UzwRf3DgACnFdmajmFZQ+BroXCcg6yHr
+         FFuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qpDChSEoVOJBPGx9YmxkwlUonMQ7vT7RN3awaNxdtiA=;
+        b=uLmWmsmzJUEDcVxxrW47QS3MjyumTnmJlECeza0E7NyIL+WxH0/3F62eeJmLEA2R8t
+         XqTDmqQnMqcBoBjSjSndtqIU9XneEyU9ZgLyL5jAxmMcI4pxHfiS+JsCYiG2aK8v8nop
+         9cBnIPxkYtaauG5aLFJNCJacRdWZfwkWiALchHETi2jCXW8AUgpcwmrz2itrSZqygXlD
+         ujnvREXs2aFWA62xGAFntSA8p9NKIqLc9qNUNUHFI36JVLT7h8zukK6/oFsCxXjPPvrh
+         EF3GLx9Ad2NSFPMhj3betL/2dYhqPnqNbTZsTScIhTZUrSDGa2ApGlzqHIfinh4gfxdf
+         wujg==
+X-Gm-Message-State: AOUpUlFRfXBc9cztvAuVeHMZLtHzdEVYtz8Apm/HRJlbERocBaxgwe63
+        75tJZ7ACki5OienjTu4n1jsZbfBMfC9kVa7ty8WEZw==
+X-Google-Smtp-Source: AA+uWPzpeb/2JVSgNeJasnJYXgD7ZXD42sYm44M8NAkM6aadB9hAPMQZexX4qqmVX3WBXtilV3YULLku+p5eZcjZyPs=
+X-Received: by 2002:a24:1013:: with SMTP id 19-v6mr2722355ity.141.1533917868345;
+ Fri, 10 Aug 2018 09:17:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <153391359077.37448.3410612264580038499@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a5e:9403:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 09:17:47
+ -0700 (PDT)
+In-Reply-To: <CAHp75Ve28aNe+FCK3p4OLsDf7dNo-iJ1VR=pyx+Y9OUn3sjYBw@mail.gmail.com>
+References: <20180810080526.27207-1-brgl@bgdev.pl> <20180810080526.27207-15-brgl@bgdev.pl>
+ <CAHp75Ve28aNe+FCK3p4OLsDf7dNo-iJ1VR=pyx+Y9OUn3sjYBw@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 10 Aug 2018 18:17:47 +0200
+Message-ID: <CAMRc=Mc536v+L_u0garWbeyQ78Q6tyEEzhR9pRGf5mBU+daE+w@mail.gmail.com>
+Subject: Re: [PATCH v2 14/29] net: simplify eth_platform_get_mac_address()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10 2018 at 09:06 -0600, Stephen Boyd wrote:
->Quoting Marc Zyngier (2018-08-10 00:45:12)
->> On Thu, 09 Aug 2018 18:30:53 +0100,
->> Stephen Boyd <swboyd@chromium.org> wrote:
->> >
->> > Quoting Marc Zyngier (2018-08-07 23:26:32)
->> > >
->> > > Level interrupts should be taken care of without doing anything, by the
->> > > very nature of being a level signal.
->> >
->> > Right. I suspect we'll still need to configure the PDC to actually wake
->> > up on the level triggered signal though so PDC needs to be told to
->> > unmask the line.
+2018-08-10 16:39 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+> On Fri, Aug 10, 2018 at 11:05 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >>
->> Surely this can be done at suspend time with the PDC driver tracking
->> the interrupts that are configured as a wake-up source (although it
->> needs to track an interrupt that is logically connected to the TLMM,
->> which sucks).
+>> We don't need to use pci_device_to_OF_node() - we can retrieve
+>> dev->of_node directly even for pci devices.
+>>
 >
->The PDC also needs to be configured for wakeups from deep CPU idle
->states where the GIC and TLMM are powered down. Lina, can you confirm
->this?
+>>         struct device_node *dp;
+>>
+>> -       if (dev_is_pci(dev))
+>> -               dp = pci_device_to_OF_node(to_pci_dev(dev));
+>> -       else
+>> -               dp = dev->of_node;
+>> -
+>> +       dp = dev->of_node;
+>>         addr = NULL;
+>>         if (dp)
+>>                 addr = of_get_mac_address(dp);
 >
-Yes, it will need to be handled as part of CPU idle as well, when the
-last CPU powers down.
-
->Hooking system suspend in that case won't work. Is your hope that we can
->avoid using hierarchical irqdomains here entirely?
+> Looking more at this I could even propose to change all above by
 >
-Well, I wasn't trying to avoid hierarchical irqdomains, there were
-restrictions in using it. Not all GPIO pins have parent in PDC and the
-ones that have are all not from the same bank either.
+> addr = device_get_mac_address(dev, mac_addr, ETH_ALEN);
+>
+> Thoughts?
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
--- Lina
+Indeed seems like it's even more generalized. Thanks for spotting that.
 
+Bart
