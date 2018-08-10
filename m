@@ -2,236 +2,186 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D6BC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15192C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B92223BF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA8E820989
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:03:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="DIqUGv+C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B92223BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LD3KJnsU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8E820989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeHJLap (ORCPT
+        id S1727437AbeHJLch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 07:30:45 -0400
-Received: from mail-eopbgr720041.outbound.protection.outlook.com ([40.107.72.41]:24306
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725832AbeHJLap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 07:30:45 -0400
+        Fri, 10 Aug 2018 07:32:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50924 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbeHJLcg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 07:32:36 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s12-v6so1109100wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 02:03:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RgRgPiruDGCotFyun6Wa2FlPgUAUL7bPQo5618qG01I=;
- b=DIqUGv+CKJb7LQPA7f1WtnMc2v4juuUV5p7bQgk8gpKuvCmCu/tTo/leaopvhEKncmpjO+8NTmESwbXqnKGuvgLbb7wDlYtD1QjHnsn60T4+Rzg8ejM8XJw6ohb33OlXByCAcpcBRT9V9eAMPoTDaIaGdaozE8nK1IcaP4CMTaE=
-Received: from CY4PR03CA0099.namprd03.prod.outlook.com (2603:10b6:910:4d::40)
- by BLUPR03MB551.namprd03.prod.outlook.com (2a01:111:e400:882::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.20; Fri, 10 Aug
- 2018 08:46:38 +0000
-Received: from BY2FFO11FD013.protection.gbl (2a01:111:f400:7c0c::193) by
- CY4PR03CA0099.outlook.office365.com (2603:10b6:910:4d::40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1038.20 via Frontend Transport; Fri, 10 Aug 2018 08:46:38 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
-Received: from nwd2mta4.analog.com (137.71.25.57) by
- BY2FFO11FD013.mail.protection.outlook.com (10.1.14.75) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1038.13
- via Frontend Transport; Fri, 10 Aug 2018 08:46:37 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id w7A8kaEB018800
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=OK);
-        Fri, 10 Aug 2018 01:46:36 -0700
-Received: from linux.analog.com (10.50.1.110) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Fri, 10 Aug 2018
- 04:46:35 -0400
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <broonie@kernel.org>
-CC:     Stefan Popa <stefan.popa@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <mark.rutland@arm.com>, <davem@davemloft.net>,
-        <mchehab+samsung@kernel.org>, <gregkh@linuxfoundation.org>,
-        <akpm@linux-foundation.org>, <robh+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 0/6] iio: accel: Add adxl372 driver
-Date:   Fri, 10 Aug 2018 11:46:17 +0300
-Message-ID: <1533890783-13456-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VWvWTyo4FemfhaXHqoHLHvAi0AAe36O/E9EPdlFu26s=;
+        b=LD3KJnsU0XIPxDGcw55of3pKfgE+oglqyE4dhZeA8XPF4cEaCilweemNgTXT5timAp
+         CYLeQSrTm6ErrtNB4Rxmr3EwZv8BZu0IsQNTSp+A5GIq3P3/hfNXBPJ4HxE0VLuUfBwk
+         sG0jG1dF/v1OMUrbEg9vmiABzO7ju47tKjwSo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VWvWTyo4FemfhaXHqoHLHvAi0AAe36O/E9EPdlFu26s=;
+        b=StCR8+miYqzUq9xwb7RKHQCnXiF2FKzd+No0o7+CS35SaVvyOymqBajkzG/1uFN+oL
+         hXAGTOI9rCemNH1aVjqRpBQMD8wXm4aNlF2ltBr39tEsei8JxXVTQqQ9Ygge/EpV6Qps
+         l6Lfj1+gZlNg6AmMTAngq4ycqc9ARponWoMLukdYQc/HWbWJRCSunOuQWHbKWWuozYh8
+         0TQUkpPnBhE61w6DaEDJTa+hGcwMbgQtsCbGJ5Wzn4sA6p19T9wQmRzKWTSR5sD3seS0
+         yhyhSgIQcAXs0cgzUtOya80uLGTbbSFVSpbIDtS80YdeE7aiKAolSg4O6JqrNXZVLIFC
+         HDTQ==
+X-Gm-Message-State: AOUpUlEm7s7bffkuv+v2Dg6sHZavf5bjbEWs4ZM85yWi7uzVo1YSQgnh
+        poNdj9oqHGyYj7mJgP9uWvV1qg==
+X-Google-Smtp-Source: AA+uWPyVkWLk7bHO63MX0rnU5Hw1oX8MeVtBn/YIPqeidAEA9d5NEiG80fuleyqUGtWcLsnlltx1Kg==
+X-Received: by 2002:a1c:1bc2:: with SMTP id b185-v6mr1006589wmb.160.1533891816400;
+        Fri, 10 Aug 2018 02:03:36 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s ([45.76.138.171])
+        by smtp.gmail.com with ESMTPSA id 31-v6sm17997170wra.26.2018.08.10.02.03.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 02:03:35 -0700 (PDT)
+Date:   Fri, 10 Aug 2018 17:03:28 +0800
+From:   leo.yan@linaro.org
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RESEND PATCH v1 1/2] cpuidle: menu: Correct the criteria for
+ stopping tick
+Message-ID: <20180810090327.GE11817@leoy-ThinkPad-X240s>
+References: <1533835203-5789-1-git-send-email-leo.yan@linaro.org>
+ <1533835203-5789-2-git-send-email-leo.yan@linaro.org>
+ <CAJZ5v0hU3Qp3ycJ=aGHtPMMC_6A+XsByYALYN22dz2VJ1Z0MgQ@mail.gmail.com>
+ <20180810071321.GC11817@leoy-ThinkPad-X240s>
+ <CAJZ5v0iyGFFDO83KGcET9a+UpPCDQ=_sxZeGxuG6fL4O+hcw+w@mail.gmail.com>
+ <20180810084906.GD11817@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(39860400002)(346002)(2980300002)(438002)(199004)(189003)(16586007)(106466001)(14444005)(8936002)(54906003)(316002)(110136005)(2906002)(106002)(50226002)(47776003)(8676002)(246002)(7636002)(26005)(305945005)(356003)(51416003)(7696005)(6306002)(48376002)(126002)(5660300001)(7416002)(50466002)(36756003)(478600001)(336012)(77096007)(966005)(186003)(53416004)(476003)(2616005)(6666003)(486006)(4326008)(72206003)(426003)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB551;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD013;1:M4ONnjyPZZPLJFPF4u1fEd/HrBUWiYJkA0O9eTPHbPykFRyhK7ylAfitsv0VlT0DvtowQQanWwfT333MENpwxs7Fl1uL/TvLgsjyX8YKYX3qcROujeS8+etHGSKdByT5
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 47391a7b-bd1c-490d-12d2-08d5fe9dc923
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BLUPR03MB551;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB551;3:9O++qbEnz/mqZ1daJaa87cs037YDRJR4yuQ9Is/QHLc/QW7lEaFQXCxNa4o9DwndzKbfKONnlwvQ+O0ZPS/17mn+Gbn2inV+970weEOpiW1T5kxUxdGyYD7HyRShyhcLjOUMhIcBPipfScRm6LQ94nKel85b2phZD0b1ARAJMsYIc+rWSCXjXJTY05ATwQr2qnn2C4QG3Ppdi6p9CSnuYYPOJhrL/tahxQFafOdauBhY9p55YT21gbxALCRmeoIPsmiFcV4G249a0G78PPkrRjdlMRgxVqzXYglbrZHeQO0qEhyopfowhmaYKNYrxXTh6wggOklK4GXjF6HcXGHU6y0hy6/dTywhJJsaEiueQa0=;25:Bn/XcemnSKaFsLRRt/zq6Dkt7GJ1Pu3wdy1r220tksL2GO4v6YsUKH+lfU6FDfjdcMjBTVlsaB59dGYAo+vKUrj19ids6xranz51PBytO11Rz+PLjPG6dYaXjCPYWyNdwpIx+8oyOSpRmLmdTHW3Gw2bpohl7DnyrRJgQXCapkMLod6/NrcaStbbv3Qy2N944gWvbrdjaV58mV62w8z6NeNUHKAzZyRbq/rnvZmy6D55XdUi42yL++ZCemXa8rwDL8T4TNwbD4TO9Sw43/bHu6f28WVDS2ryHSrfJax22Mz2ThggZjbmnkdGeHeJcFS5r4LKZgdODetM0cQH5pA3Pw==
-X-MS-TrafficTypeDiagnostic: BLUPR03MB551:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB551;31:NPPTJrutsAjzUVOREYOnQtzyfv+pcRNpAc7LG0Tns/02Yp8Lo4WiLjvwu3PiAVgNEJUmk8N6NAcL3ktYJr/JEn47/g7wyw1sseD4dthH9W6PCJZRplUBBdy7q3ME0vCfnuBWsghUmDZtXLRGJRwczlKqVKckxln4XzgvRgPdxob/B5mA7Q8uch19juY5/ngZrJLDwbVpAitk6LnboPgfCy3tM0QTwUgIK5gcjq6N+6o=;20:Sznb4qVGMNf97fskHg9eWBVklEsHN/qN2iz6gNkFo5oGyLnVT/O56KsfTDTZ5uhJLdv4xTYdvmGA+rrRUheSLRnzEumhEV3zCVPJDv6AUdXtRaZ7/HLrQyqky6vPLEBpwhmG8gwbmZH5KRs8QewzkvY/dlJr7/LJXZZtZHp1Ms6TWEbYPx7NMFRISGvvmKymtbX6Ux4D5uLju+08KbNFgpqwSxw1Ua+qM3dC79oHLtSDiz28WFbOqiQKP/bi49gXD08pCzo3+IkB3VoSU65NoKP2VP22DhQ3u0kqAN47kJem4G5B22OPqVSyTGMTnP0Oa7hfUzQsMH7CM4u355Z5cgfR9OgCtA2GLfsGqcpek/f+JdLCs0d0L09zsM79bYGKr1qF/rtUZ/oImKxsBu5tMcWaUe7eSiHnYznMseWi/gw8Z5zajAoQrt88TgsrVJ3YlI+AJeUmc/5ziawIKwRpnv8KoTC58dlNGqVhWHvAw1flOnx2qxHMHJnxK6+xXrpo
-X-Microsoft-Antispam-PRVS: <BLUPR03MB551CD57D9033A24C2C5E5EC9D240@BLUPR03MB551.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(17755550239193);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93004095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BLUPR03MB551;BCL:0;PCL:0;RULEID:;SRVR:BLUPR03MB551;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB551;4:7odMIKDtYkdx0ZMaMqAmcRDTvXcWMwq1MEV+dV/Y12D+PtUXjeZ3PWSG/ip9s1eH98Cf9aZh8+0iQo+5yReXqDNrJbfpqldXilinEB4XTMSmi3QD+KTB1s4dANWyAc4F1lFvq7BtEkXaDPXWtNrjgedYYVB2U33PGVCihsXPwpO/VrqNkDpXneiyPq7WExnjzc+H+h/FmeYHSUV5igmeT15rHnMo9tFhA2c8v89bqcB5jPbIpOS/ll5fna59nBFvBA4UtPxDJfnnhvPIe8hy6cWL5UWKyMeQNZsts+e8lgjwk36r6uQj5idfWsBWElqe
-X-Forefront-PRVS: 07607ED19A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB551;23:y6CfIUCrss1h5fCxY6VIBZUV8FftvWl1NSeN3DOVES?=
- =?us-ascii?Q?AzGqfRYXcav8lqF3Hi9mVPhL4cbdk+cmexDNggZ8JCBdJVSuC/8Jc/Veg6pP?=
- =?us-ascii?Q?1pr511UAi2NMoIyLasuLANiAjLqfGnfw5sIrXQcGICPBr5LaSg4/7kVSxmRE?=
- =?us-ascii?Q?UBF+3vzQeJfUuIhIQ4/U82djlTr2PO9jGoaYphQO8vUa993F/CCj2kGts6sY?=
- =?us-ascii?Q?KgV4yw/iVEXBkNP0UkY6A7pAvk1yVu1NzzBmennURIiOgHkDkJC0mL4eBQww?=
- =?us-ascii?Q?h/RSmSC/to2Mw8kfA32HLb0JiOKtVztat3MbcvEzvvI+qLKyrbRNwkgiDgbV?=
- =?us-ascii?Q?3Dd9uhZPnCGlvysHf2QKPVW5AvgP5tZx2aB0Fxlt131jJvgefO+ERfEVDu7w?=
- =?us-ascii?Q?NMZb4IDM7YqLCFrqM0rjpebVvRy/FjvZR2Y8D3biM8WQPuCc3OvGoQzgaPj3?=
- =?us-ascii?Q?mwWfEKjiY///Kc1JAz/ckfKzv8mdsdWacFLT8JSK/3BlC0WzXib+Xc6mBjFk?=
- =?us-ascii?Q?LIGTFWeZl+pNPtJa9wizic0j613ZteBC2belgc6aQJVmLOQtZ8oPvzfgj4Mf?=
- =?us-ascii?Q?F7D5ObkAViXjmu3u1TEJNPraO8hpYNGyvBfljjYpqn6sfx7O6W7yV6lmx+HM?=
- =?us-ascii?Q?0WrdP37p94HLdGT0HJbU0K5tEphfLRM2dkFp14W1jSB1M1XZWUM7ArNIocx7?=
- =?us-ascii?Q?4fEKC3gE3GdmCMXfzBEOuIYpC30Jv1hp4BfoaQIGusJ8wcX9S6AY7K5PRnka?=
- =?us-ascii?Q?efx/vA60ysD9+Se+CVbNBsigSHi/slSZNcLTVfJjc85n530CzVPn7p5J+seY?=
- =?us-ascii?Q?GubNXtPD/E0Fbx4rEsSYYKwJWoVLyjblYmfdNjUYosfvAvgoGMAbpfTxeUMd?=
- =?us-ascii?Q?O6fyphtypTrfdLTHWHCnZ0llGE2sRYI94YOA11h7C+olqlwF6OoVGXFEaxPd?=
- =?us-ascii?Q?6Ci5ppCI20Oh6IN25JJzuEdhdtB4hV+oQu6+hYcQREo5Axub195yfL2h6qA5?=
- =?us-ascii?Q?eN56H0Adu3QYeXK/yNPoh95cSBq+PnWzg6AFy2v9LvvrUn0qGojU/vk/9CKW?=
- =?us-ascii?Q?6haFUeWtRtFyiAsWA9CEC+ZyAk?=
-X-Microsoft-Antispam-Message-Info: IoumTEdMNx11a6aec+WdTSA3BfMdKr4fyfvRG6tLJD12vCkG5ansXBubM5XrT+GQP1YGxC9mLFT4Q3JRclvJXe3K6M02qr8gEnCi6m/6IEAw8/ZN0GeC8KY43G97x3lyXF3cV4jKFlyhrs6SJC/yeoJRMQRje2e78W9NUeFPngZhY9PYXrTB4lXNtlC308z6x8ljp36p6UsWnhfdpt3SMFPVR76JpPkf9U2IjWy6ZmDALxCCq6yoiMnES2HnCbWFkkGPdLHbngScH/8Ji7G/Oz3uXorwm3OAO3ZZ1G0X3rzrT5DZjgcS4N5H6qGiog+/AYXiE5az/1bF9AIBlPm72RVPEC1BOwGZdHewU6xbv3k=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB551;6:2R81Zu/91n8Qctz6OCbJ7GZV09t2bD7ME3yPydb3uYqXfz8saJ+ix+mZyuSDgjB5lsPSgni89FdvDCW1rxg1VBK+GxZDfmAQ/UdPtzM/vUIEsI1s026T/uTBhbgnpwCH8hctvfQXor2z4P/TsvI2ftX1ubKKuuubaybPco+K2wmnZSXDQrQg57xTGaBN14XlrEccGHhpKkE1eL2hyjchimxDtMM+6bXVHyPeS4xClj96DB+0W5MtgwuK+N1UMWIBak7GBBn7uVJeiwr4vi5UZlHxW5gTC1XfoW1QTYdTSiUx0aCqvMgz4GW+o+2lnVTXDVr8dGtedUC0Ox8P9SmWtSPr6BYYocOQcmP0ORY/DtVjzPPF+59PE2yPLhyIGveYr1XgSYAbuR0dX/OFoEsefXgQeVpHGU+VZ8g8HG/ZVuwxYriFF5x5w81k9i/doQDmtbx2nbOPOSObfqZw+W7PJg==;5:nGIKUWOrmvWP201jq7EDeaCCxj29o78SRFgaet/h5uyG6SxltlyWC+wYiqdqgbxgR7mM0nCQw/PCM79pJXVAz9UEK+H3n25ljSKHD0ETibuU4u8x5FjpqV81NoS9gd6FApJzrRaEjKqrcGK4rjdkos/zREnYG/3IHMUTUDFGG/4=;7:mibGk6WOIpYeDURL1ob6cUxGGknGsbEEbJvZG3lChHi79nsl43aeo++r+cclJN2z4MzVTkCU9nT6H9wLtLxFZw5l+mldX7ymdJSszz6XvzZO6QkJMu3++62l+kl8oSz0keiWXFDrg4HKE3dfm1N6Ul7nwgVsisSC9POj1Iwh4c86IwzKw/rxrd04PIZ9jB8B4PL8YNmgnmLoONkIKc1XhpfRzt/QA+AlIBPKqXFVf8KYveEb/5vFTEaDNyUf9bhq
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2018 08:46:37.7820
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47391a7b-bd1c-490d-12d2-08d5fe9dc923
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB551
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810084906.GD11817@leoy-ThinkPad-X240s>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v6:
-Patch 1:
-	- nothing changed.
-Patch 2, 3:
-	- added reviewed-by's which were lost when new versions were added.
-Patch 4:
-	- fixed kbuild warning by adding a buffer overflow check in
-	  adxl372_buffer_postenable().
-Patch 5, 6:
-	- nothing changed
+On Fri, Aug 10, 2018 at 04:49:06PM +0800, Leo Yan wrote:
+> On Fri, Aug 10, 2018 at 09:22:10AM +0200, Rafael J. Wysocki wrote:
+> > On Fri, Aug 10, 2018 at 9:13 AM,  <leo.yan@linaro.org> wrote:
+> > > On Thu, Aug 09, 2018 at 10:47:17PM +0200, Rafael J. Wysocki wrote:
+> > >> On Thu, Aug 9, 2018 at 7:20 PM, Leo Yan <leo.yan@linaro.org> wrote:
+> > 
+> > [cut]
+> > 
+> > >> And that will cause the tick to be stopped unnecessarily in certain
+> > >> situations, so why is this better?
+> > >
+> > > Let's see below two cases, the first one case we configure
+> > > TICK_USEC=1000 (1ms) and the second case we configure TICK_USEC=4000
+> > > (4ms).
+> > >
+> > > Let's assume we do the testing one the same platform and have two runs,
+> > > in the Case 1 we configure HZ=1000 so TICK_USEC=1ms, expected_interval
+> > > is 3ms and deepest idle state target residency is 2ms, finally the idle
+> > > governor will choose the deepest state and skip to calibrate to shallow
+> > > state caused by 'expected_interval' > TICK_USEC;
+> > >
+> > > In the Case 2 we configure HZ=250 so TICK_USE=4ms, expected_interval
+> > > (3ms) and deepest idle state target residency (2ms) are same with the
+> > > Case 1; but because expected_interval < TICK_USEC so the idle governor
+> > > will do calibration to select a shallower state.  If we image on one
+> > > platform, the deepest idle state's target residency is smaller value,
+> > > then it has bigger gap with TICK_USEC, the deepest idle state is harder
+> > > to be selected due 'expected_interval' can be easily hit the range
+> > > [Deepest target residency..TICK_USEC).
+> > >
+> > > This patch has no any change for Case 1 and it wants to optimize for
+> > > Case 2 so Case 2 has chance to stay in deepest idle state.  I
+> > > understand from the performance pespective, we need to avoid to stop
+> > > tick for shallow states; on the other hand we cannot prevent CPU run
+> > > into deepest idle state just only we want to keep the tick running,
+> > > especially the expected interval is longer than the deepest state
+> > > target residency.
+> > >
+> > > Case 1:
+> > >       Deepest idle state's target residency=2ms
+> > >                      |
+> > >                      V
+> > > |--------------------------------------------------------> time (ms)
+> > >       ^                              ^
+> > >       |                              |
+> > > TICK_USEC=1ms           expected_interval=3ms
+> > >
+> > >
+> > > Case 2:
+> > >       Deepest idle state's target residency = 2ms
+> > >                      |
+> > >                      V
+> > > |--------------------------------------------------------> time (ms)
+> > >                                      ^                  ^
+> > >                                      |                  |
+> > >                           expected_interval = 3ms   TICK_USEC = 4ms
+> > >
+> > >
+> > >
+> > >> >                 unsigned int delta_next_us = ktime_to_us(delta_next);
+> > >> >
+> > >> >                 *stop_tick = false;
+> > >> > --
+> > 
+> > Well, I don't quite agree with the approach here, then.
+> > 
+> > As I said in the previous reply, IMO restarting the stopped tick
+> > before leaving the loop in do_idle() is pointless overhead.  It is not
+> > necessary to do that to avoid leaving CPUs in shallow idle states for
+> > too long (I'll send an alternative patch to fix this issue shortly).
+> > 
+> > While you may think that pointless overhead is not a problem, I don't
+> > quite agree with that.
+> 
+> I disagree this patch will introduce any extra overhead.
+> 
+> Firstly, the idle loop doesn't support restarting tick even this patch
+> tells idle loop to restart the tick; secondly this patch is mainly to
+> resolve issue for the CPU cannot stay in deepest state in Case 2, as a
+> side effect it also can tell idle loop to restart the tick for case 3
+> in below, actually IMHO this makes sense to tell the idle loop to
+> enable the tick but idle loop can ignore this info.
+> 
+> Furthermore, we have another thread for the patch to always stop
+> tick after the the tick has been stopped in the idle loop.
+> 
+> So this patch is still valid.
 
-Changes in v5:
-Patch 1, 2:
-	- nothing changed
-Patch 3:
-	- added a new readable_noinc operation based on feedback from
-	  Mark Brown
-Patch 4:
-	- added a readable_noinc callback based on the changes from the
-	  previous patch.
-Patch 5, 6:
-	- nothing changed
+Correct for Case 3 as below, actually this case will disappear if we
+force to set expected_interval=ktime_to_us(delta_next) in another
+proposaled patch.  If so, this patch will have no any chance to
+introduce extra ticks.
 
-Changes in v4:
-Patch 1:
-	- used a lookup table in adxl372_set_activity_threshold() instead
-	  of a switch(case).
-Patch 2: 
-	- removed the interrupt-parent from the bindings.
-Patch 3:
-	- renamed regmap_pipe_read() stub to regmap_noinc_read().
-Patch 4:
-	- removed the adxl372_read_fifo() wrapper and directly called
-	  regmap_noinc_read().
-	- called iio_triggered_buffer_predisable() before doing the local
-	  changes.
-Patch 5:
-	- nothing changed.
-Patch 6:
-	- nothing changed.
-
-Changes in v3:
-Patch 1, 2:
-	- nothing changed
-Patch 3:
-	- changed the name from regmap_pipe_read() to regmap_noinc_read()
-	- added a check for readable registers
-Patch 4:
-	- dropped the fifo peak mode
-	- corrected the patch based on feedback from Peter Meerwald-Stadler.
-Patch 5 and 6:
-	- nothing changed
-
-Changes in v2:
-Patch 1:
-	- removed ADXL372_RD_FLAG_MSK and ADXL372_WR_FLAG_MSK macros.
-	- handled regmap read/write by setting reg_bits and pad_bits
-	  fields in regmap_config struct.
-	- removed the buffer specifications when defining the channels.
-	- changed the activity and inactivity thresholds.
-	- added two new functions for setting the activity and inactivity
-	  timers: adxl372_set_inactivity_time_ms() and
-	  adxl372_set_activity_time_ms().
-Patch 2:
-	- introduced all the DT bindings in a single patch.
-Patch 3:
-	- backported the patch based on this discussion: 
-          https://lkml.org/lkml/2016/6/16/548.
-	- this patch is required as the regmap_pipe_read() API will be used 
-	  to read the data from the FIFO.
-Patch 4:
-	- removed DT bindings changes from this patch.
-	- removed the linux/gpio/consumer.h header.
-	- used regmap_pipe_read() instead of regmap_bulk_read() when
-	  reading data from the FIFO.
-	- used multiple regmap_write() calls instead of a single
-	  regmap_bulk_write() if there is no fast path.
-	- used be32_to_cpu() inside the adxl372_get_status() function.
-	- added a new in_accel_x&y&z_peak scan element which allows the
-	  user to set the FIFO into XYZ peak mode.
-	- used a adxl372_axis_lookup_table() to determine the fifo format
-	  from the active_scan_mask.
-	- made IRQ optional.
-Patch 5 and 6:
-	- nothing changed
-
-Crestez Dan Leonard (1):
-  regmap: Add regmap_noinc_read API
-
-Stefan Popa (5):
-  iio: adxl372: New driver for Analog Devices ADXL372 Accelerometer
-  dt-bindings: iio: accel: Add docs for ADXL372
-  iio:adxl372: Add FIFO and interrupts support
-  iio:adxl372: Add sampling frequency support
-  iio:adxl372: Add filter bandwidth support
-
- .../devicetree/bindings/iio/accel/adxl372.txt      |  22 +
- MAINTAINERS                                        |   7 +
- drivers/base/regmap/internal.h                     |   3 +
- drivers/base/regmap/regmap.c                       |  79 +-
- drivers/iio/accel/Kconfig                          |  11 +
- drivers/iio/accel/Makefile                         |   1 +
- drivers/iio/accel/adxl372.c                        | 986 +++++++++++++++++++++
- include/linux/regmap.h                             |  19 +
- 8 files changed, 1127 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/iio/accel/adxl372.txt
- create mode 100644 drivers/iio/accel/adxl372.c
-
--- 
-2.7.4
-
+ expected_interval                             Deepest idle state's
+ = min(TICK_USEC,ktime_to_us(delta_next))      target residency = 2ms
+ = TICK_USEC = 1ms                                    |
+      |                                               |
+      V                                               V
+|--------------------------------------------------------> time (ms)
+      ^
+      |
+TICK_USEC=1ms
