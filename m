@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F66DC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210BBC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDC0223F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8D25223F6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:06:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="mt/KXDC4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDC0223F0
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1IezMsPv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D25223F6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeHJKev (ORCPT
+        id S1728506AbeHJKey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:34:51 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43723 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728307AbeHJKeu (ORCPT
+        Fri, 10 Aug 2018 06:34:54 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:55942 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbeHJKew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:34:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b15-v6so7447439wrv.10
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:06:05 -0700 (PDT)
+        Fri, 10 Aug 2018 06:34:52 -0400
+Received: by mail-wm0-f44.google.com with SMTP id f21-v6so918287wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:06:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8UdSyH1lOqINYeO+r/ZsFoxAxuXuxmjPqoo8dlrZx/U=;
-        b=mt/KXDC4nfdwHLn2XlDBPM4y81ESlrV3OFQmRIJZkcXOGIiUGUng/VBMv8ne3TnYv/
-         AvKnsmK7kSXDKQpprVm4gAMTFMkx/qqFRaME6gp/TWgjRkeX6F57yIdIkvtnI16GWvyW
-         qo2U5hnq5J1zzVsY8RFdkrOUyndUEOpQ4osdUWOZAO/uu9t2gNgoatiIyHyyH1k8bc+0
-         vr6GHJJkNiqTgZCHTDC14/Wx6wiNwKD5BMJV0W0m5E9sExbUqWganevGnP9mSmw2N/TO
-         tHJm2ssDpmKuKzflbSb1q1g8LcF5w9GyRfGnjNs93IaD/bDN6iJuZ7zU068+hpt4Mc++
-         noEw==
+        bh=r2kUHt8xOX/X/PnpUK/Av4k3yjo3y+RVMVX0DZ8RBXo=;
+        b=1IezMsPvfeCSNwxz/W7g8guUWIj1MlKn1Y/XH0QHuzFMya6wnUXorRPiYypsD6lbLg
+         gFHq/HzljmuSs7G/4V66s0jCYV/eX55xvrzDQFbLzXBfTSQ6bx5akAyYMzK2+rSdgnLE
+         2syRCvvfjtYgr5FSpZG1euQg55osIUDpajdFLgLu/9GA+6uHpzcADzpxeeAaECNPVjMd
+         8qLN2ZTufzsNa6IsRDTCd3tFKm2w6zazU6l2lxEVxVHmht4uK4hu/cK6H2bbp8X1/lxg
+         RxxwhI+KPGkpj8IqzGLlOI4lpgpM8XpHXOHFKFGkjO6nTIAPM7UqMhWaNBOudfwVLM2K
+         SuqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8UdSyH1lOqINYeO+r/ZsFoxAxuXuxmjPqoo8dlrZx/U=;
-        b=gcTpe1/R1YXSoDisu8pdKBv4xRfHCfUEaeZsV8R8Ql1Ki1LHD0L8CbXKhiW0Ya68ZB
-         SL8bh4M7Fx3TECZG8K+0RZh01r1Otb7cPYMTnODJwjeemvSjc1+PatL3w1oLLmuLXoIc
-         qRUb+BDwO/eVdTIQVeAsa1ins+4wWRCb7AgHPQjXW+tJPMvDBagnByHXp9X1ePHNbFQG
-         OGyREg4OqFugA4eUYu7+kklHi6N3E5ldxo3hD4x9Sdr2oOgrWBWWkjQv7lpiMGPNbb+t
-         rOqjKwVt3nAZ0slVac8jr8BaEO9jFMjWCEeEBP60NaDRL7SNM56Bb2a+Mfrnh3+D58rQ
-         EE+Q==
-X-Gm-Message-State: AOUpUlEuVMZnnQf2YFg5ymXbsoX2HulgBjCOb+mN+xC5V02VV27HglTa
-        xNrSGeUcTWSqszxBnhOThKPosQ==
-X-Google-Smtp-Source: AA+uWPwXvALBFOFWa75Ks0v22iEu5lNMBTlP+OzTuPP/ZK9R0ES25xlWVEHr5kXFii1o2Do3GQC7Tw==
-X-Received: by 2002:adf:fe8f:: with SMTP id l15-v6mr3583225wrr.165.1533888364864;
-        Fri, 10 Aug 2018 01:06:04 -0700 (PDT)
+        bh=r2kUHt8xOX/X/PnpUK/Av4k3yjo3y+RVMVX0DZ8RBXo=;
+        b=h0Vt5OCgkDewFOCk3Zu4DaPYKdeTiA4GIU09ZY8/5Nr2RCXzGkmx3Ca5nFEe/L3zjW
+         tpX+wF5hecByL3NSyoh/o3W7PSAARVHNnYp66fKYZQhJmoimS9b8MScX3CliskvaZIyt
+         WClt6LmzbKEGdp7iuiiNKBGd/hwhZ5YyuelDoTvBQj+GQMD+v8vS6JhCdAHnR+J0WExl
+         HVX/jainlYHanAqXRMU2q3NODotVXAMOj09mOe6SrPlLbIMGzJXEIFDxeqNE4X6FpKxw
+         P8F8szrBdaRbD5P4nyOV2qmyIDudT/JAO4mhrj+FbCIF58C4Lay3TYkO/nkaGXx7CWsD
+         fIUw==
+X-Gm-Message-State: AOUpUlHJ5i9Oq6yyk4f15E2CamCamHsbroQE0aXxRLtZcv+bDasoliLn
+        p+XCHLuF1aZyCUHQRaUHxormyg==
+X-Google-Smtp-Source: AA+uWPxWBZF891XRgjDhENshzdI9BBPFzNgjARcveCg1grLiyw8JKPh+e10lACy6aZz5pXAQkYfpjw==
+X-Received: by 2002:a1c:af53:: with SMTP id y80-v6mr746588wme.55.1533888366699;
+        Fri, 10 Aug 2018 01:06:06 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm9546405wrs.8.2018.08.10.01.06.03
+        by smtp.gmail.com with ESMTPSA id h7-v6sm9546405wrs.8.2018.08.10.01.06.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 01:06:04 -0700 (PDT)
+        Fri, 10 Aug 2018 01:06:06 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -88,9 +88,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 17/29] net: davinci_emac: use eth_platform_get_mac_address()
-Date:   Fri, 10 Aug 2018 10:05:14 +0200
-Message-Id: <20180810080526.27207-18-brgl@bgdev.pl>
+Subject: [PATCH v2 18/29] ARM: davinci: da850-evm: remove dead MTD code
+Date:   Fri, 10 Aug 2018 10:05:15 +0200
+Message-Id: <20180810080526.27207-19-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180810080526.27207-1-brgl@bgdev.pl>
 References: <20180810080526.27207-1-brgl@bgdev.pl>
@@ -101,53 +101,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now support nvmem in eth_platform_get_mac_address() and all boards
-have the mac-address cells defined. Stop getting the MAC from pdata
-and use the dedicated helper.
+We no longer need to register the MTD notifier to read the MAC address
+as it's now being done in the emac driver.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/net/ethernet/ti/davinci_emac.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/arm/mach-davinci/board-da850-evm.c | 28 -------------------------
+ 1 file changed, 28 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index f270beebb428..5d01bad4baa5 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1700,7 +1700,6 @@ davinci_emac_of_get_pdata(struct platform_device *pdev, struct emac_priv *priv)
- 	const struct of_device_id *match;
- 	const struct emac_platform_data *auxdata;
- 	struct emac_platform_data *pdata = NULL;
--	const u8 *mac_addr;
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 521a26b5c20d..1df796b67b82 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -137,32 +137,6 @@ static struct spi_board_info da850evm_spi_info[] = {
+ 	},
+ };
  
- 	if (!IS_ENABLED(CONFIG_OF) || !pdev->dev.of_node)
- 		return dev_get_platdata(&pdev->dev);
-@@ -1712,12 +1711,6 @@ davinci_emac_of_get_pdata(struct platform_device *pdev, struct emac_priv *priv)
- 	np = pdev->dev.of_node;
- 	pdata->version = EMAC_VERSION_2;
- 
--	if (!is_valid_ether_addr(pdata->mac_addr)) {
--		mac_addr = of_get_mac_address(np);
--		if (mac_addr)
--			ether_addr_copy(pdata->mac_addr, mac_addr);
--	}
+-#ifdef CONFIG_MTD
+-static void da850_evm_m25p80_notify_add(struct mtd_info *mtd)
+-{
+-	char *mac_addr = davinci_soc_info.emac_pdata->mac_addr;
+-	size_t retlen;
 -
- 	of_property_read_u32(np, "ti,davinci-ctrl-reg-offset",
- 			     &pdata->ctrl_reg_offset);
+-	if (!strcmp(mtd->name, "MAC-Address")) {
+-		mtd_read(mtd, 0, ETH_ALEN, &retlen, mac_addr);
+-		if (retlen == ETH_ALEN)
+-			pr_info("Read MAC addr from SPI Flash: %pM\n",
+-				mac_addr);
+-	}
+-}
+-
+-static struct mtd_notifier da850evm_spi_notifier = {
+-	.add	= da850_evm_m25p80_notify_add,
+-};
+-
+-static void da850_evm_setup_mac_addr(void)
+-{
+-	register_mtd_user(&da850evm_spi_notifier);
+-}
+-#else
+-static void da850_evm_setup_mac_addr(void) { }
+-#endif
+-
+ static struct mtd_partition da850_evm_norflash_partition[] = {
+ 	{
+ 		.name           = "bootloaders + env",
+@@ -1470,8 +1444,6 @@ static __init void da850_evm_init(void)
+ 	if (ret)
+ 		pr_warn("%s: SATA registration failed: %d\n", __func__, ret);
  
-@@ -1819,8 +1812,11 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 		goto err_free_netdev;
- 	}
- 
-+	rc = eth_platform_get_mac_address(&pdev->dev, priv->mac_addr);
-+	if (rc == -EPROBE_DEFER)
-+		return -EPROBE_DEFER; /* We'll get the MAC address later. */
-+
- 	/* MAC addr and PHY mask , RMII enable info from platform_data */
--	memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
- 	priv->phy_id = pdata->phy_id;
- 	priv->rmii_en = pdata->rmii_en;
- 	priv->version = pdata->version;
+-	da850_evm_setup_mac_addr();
+-
+ 	ret = da8xx_register_rproc();
+ 	if (ret)
+ 		pr_warn("%s: dsp/rproc registration failed: %d\n",
 -- 
 2.18.0
 
