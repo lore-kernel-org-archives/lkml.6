@@ -3,54 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2232AC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B4BC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2671223BC
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:36:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2671223BC
+	by mail.kernel.org (Postfix) with ESMTP id 431B9223BC
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:37:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431B9223BC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeHKAIc (ORCPT
+        id S1727379AbeHKAIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 20:08:32 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51972 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbeHKAIc (ORCPT
+        Fri, 10 Aug 2018 20:08:51 -0400
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:41460 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbeHKAIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 20:08:32 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y2-v6so3251438wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:36:53 -0700 (PDT)
+        Fri, 10 Aug 2018 20:08:51 -0400
+Received: by mail-wr1-f53.google.com with SMTP id j5-v6so9408302wrr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:37:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=8ldG4f2qnd15PlPf+tIrKFP1Ea/R9IYiINta7pcJQRo=;
-        b=mOwc1p/+7a+QUzwy4HNzYF7Qn3LUNYuW26gPfzf76UXgMeiSYNIOukYVlimeOyeK8b
-         YwN1p0fh1vJ/hdykdLEuHRgqGA6TVoMKLx1O9kJ2gIpml1sSFFoGa2JLv6YV1FVW1Elc
-         slfxyaY2ks33TQF5SWF9VxOImU2HD27oCJNsW4T31ZXTEnSi/WwK9Fz9n//FcqKMn//D
-         FnVOYoQ/8QKBNWSwZ3LlZTG2fyzT/nr5pHeFFln6VBVgmtnQyp118jkXRNHHoMdslLki
-         KdNS09y11mXTjMwsP6lwYL6nfq7xC0p4nuzHDqHLn9d61LkvT7Q5wWQxWD1f9ks4y/r8
-         PcOA==
-X-Gm-Message-State: AOUpUlHz+wnQqXIWHzOjc+w5xDRVPNvaChq9qCSSwmTdarl/6iSMdPq8
-        I7Gyc7O5KY9NfqPxwSU1KKPG24MDQlINouwILhx8jQ==
-X-Google-Smtp-Source: AA+uWPy1exOuCzTiLtw8yfnzWs5Lf4OQ7sjdpSNaMdivhDMlMj8xMhX4sLwAlHsEBzNpxL9I3n8MyAFQAelH0bZ1UoM=
-X-Received: by 2002:a1c:5c4:: with SMTP id 187-v6mr2539207wmf.10.1533937013099;
- Fri, 10 Aug 2018 14:36:53 -0700 (PDT)
+        bh=LyNZFtMNJQphQmaldV54Ai55lkL4ab+YmLYwT1zshu0=;
+        b=Zhekg097OfAsC0WeluMlEKWL7Ck7axccW0cNQ0lncP63+MjY5lChSDvUfRqYEFiPoK
+         qfkBTYazHI/UtIRAou0qEgQ0zM2fsGNQ6h/66cek6Yk12qHzJHmVWBlBOaCO9lYIuXb+
+         HXsb1yS+xlbdpAUMLXP7LZvaUDZcFH84o6oriGJ+mYelofZHvZns7SCSNJZ5J2gmyI+r
+         twRgc3siS5o7RjxG3C5YRLVjMZxS4bxI6NoZk24ARv/MZXw4qUdFMTw1XonkC7DjPhXy
+         /4bDwgre3nosDTza52dB9VZXYx7aKMrNkn2mS5ALnHumKa/29mtVTHCvElf+29lbKCF5
+         3r0w==
+X-Gm-Message-State: AOUpUlHNMJ9ZPKA7A+YYoZUrOykcAEMhW+32CAAGbT3bAHaEUtDS4Ppd
+        6Ctue8xvXlRKG6oWJv+5+ywfX9wI9XgQE9PFKDYvIw==
+X-Google-Smtp-Source: AA+uWPzJfmXYSvAF6zhwBFmLIPYqsvKdLgHh2OPKcSfubdNz4Z4z8ODuqGxHst3Gyy9RNKS1COopKjQ/j4jYAtcxEPU=
+X-Received: by 2002:a5d:4007:: with SMTP id n7-v6mr5322287wrp.258.1533937032733;
+ Fri, 10 Aug 2018 14:37:12 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:28c2:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 14:36:52
+Received: by 2002:a1c:28c2:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 14:37:12
  -0700 (PDT)
-In-Reply-To: <20180807203914.2192-8-lyude@redhat.com>
-References: <20180807203914.2192-1-lyude@redhat.com> <20180807203914.2192-8-lyude@redhat.com>
+In-Reply-To: <20180807203914.2192-9-lyude@redhat.com>
+References: <20180807203914.2192-1-lyude@redhat.com> <20180807203914.2192-9-lyude@redhat.com>
 From:   Karol Herbst <kherbst@redhat.com>
-Date:   Fri, 10 Aug 2018 23:36:52 +0200
-Message-ID: <CACO55tshwNd0t5+om_MMU70EiuSw3HbLZMttJHGXCPs3Pc6==w@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH v5 07/13] drm/nouveau: Add missing unroll
- functions in nouveau_do_suspend()
+Date:   Fri, 10 Aug 2018 23:37:12 +0200
+Message-ID: <CACO55tv+QLcNRj7UDK=7NnoxTxpKHWd2GqU=Eftc-suhUn4J6A@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH v5 08/13] drm/nouveau: Don't ignore
+ nouveau_do_suspend() ret value
 To:     Lyude Paul <lyude@redhat.com>
 Cc:     nouveau <nouveau@lists.freedesktop.org>,
         David Airlie <airlied@linux.ie>,
@@ -66,51 +65,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Reviewed-by: Karol Herbst <kherbst@redhat.com>
 
 On Tue, Aug 7, 2018 at 10:39 PM, Lyude Paul <lyude@redhat.com> wrote:
-> Currently, it appears that nouveau_do_suspend() forgets to roll back
-> suspending fbcon and suspending the device LEDs. We also currently skip
-> the entire rollback process if nouveau_display_suspend() fails. So, fix
-> that.
+> Otherwise, how will we roll everything back?
 >
 > Signed-off-by: Lyude Paul <lyude@redhat.com>
 > Cc: stable@vger.kernel.org
 > Cc: Lukas Wunner <lukas@wunner.de>
 > Cc: Karol Herbst <karolherbst@gmail.com>
 > ---
->  drivers/gpu/drm/nouveau/nouveau_drm.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/nouveau/nouveau_drm.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
 > diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> index 5ea8fe992484..db56e9b6b6af 100644
+> index db56e9b6b6af..f79b435368ec 100644
 > --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
 > +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> @@ -674,10 +674,11 @@ nouveau_do_suspend(struct drm_device *dev, bool runtime)
->         if (dev->mode_config.num_crtc) {
->                 NV_DEBUG(drm, "suspending console...\n");
->                 nouveau_fbcon_set_suspend(dev, 1);
-> +
->                 NV_DEBUG(drm, "suspending display...\n");
->                 ret = nouveau_display_suspend(dev, runtime);
->                 if (ret)
-> -                       return ret;
-> +                       goto fail_fbcon;
+> @@ -842,6 +842,9 @@ nouveau_pmops_runtime_suspend(struct device *dev)
 >         }
 >
->         NV_DEBUG(drm, "evicting buffers...\n");
-> @@ -719,7 +720,14 @@ nouveau_do_suspend(struct drm_device *dev, bool runtime)
->         if (dev->mode_config.num_crtc) {
->                 NV_DEBUG(drm, "resuming display...\n");
->                 nouveau_display_resume(dev, runtime);
+>         ret = nouveau_do_suspend(drm_dev, true);
+> +       if (ret)
+> +               return ret;
 > +
-> +fail_fbcon:
-> +               NV_DEBUG(drm, "resuming console...\n");
-> +               nouveau_fbcon_set_suspend(dev, 0);
->         }
-> +
-> +       nouveau_led_resume(dev);
-> +
->         return ret;
->  }
->
+>         nouveau_switcheroo_optimus_dsm();
+>         pci_save_state(pdev);
+>         pci_disable_device(pdev);
 > --
 > 2.17.1
 >
