@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BCEC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11134C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876BC223DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B513D223DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bd0/zAHl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876BC223DB
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDe9hhyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B513D223DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbeHJRXI (ORCPT
+        id S1728742AbeHJRXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:23:08 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34850 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbeHJRXH (ORCPT
+        Fri, 10 Aug 2018 13:23:09 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42600 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728588AbeHJRXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:23:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g1-v6so8575873wru.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:52:52 -0700 (PDT)
+        Fri, 10 Aug 2018 13:23:08 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e7-v6so8533392wrs.9
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1jM7ZXItlRq3zbhWV6TmYrbuDhKvEvpgy6vWixlAq2M=;
-        b=bd0/zAHleQ+UoEgVy6lFTYFaqe5/8Xab+pkrP+rEnpg0qUct15joy45s0zRNMJ/3dM
-         r5TYr4YDO9r9GmVDuJkY2Cl0KWQkGO+UMAxHkUfA92Wid2YSHN3rO6mj/bvkZYKQfPXq
-         ou2i1H9gde03HYnDS6uAooJbips+A/n5+JsZ4=
+        bh=9oUIEusk495SIX9kXu/WUGAbH7L0f6JAltllXHNc7ks=;
+        b=fDe9hhytJG0RF8rhbn+47nA7nVGZgSi5GoxHmDWZ/FDIp3LmfvcWtFr3eeYpffMVsx
+         txJ91+MXpGjCAjUDBTJcZDikUD9hUWJbUzVFMe2UpXWFNt+TQ+fZPtTPKy8VQ1u7xhYZ
+         SDGvN868w6X6yEhGEWaiHRIhLWtVffvPCYGH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1jM7ZXItlRq3zbhWV6TmYrbuDhKvEvpgy6vWixlAq2M=;
-        b=ssqd5ANDYSjxnWZCWSC8WoSjWuGLwxinQB0S850xN/mlqnwfPJv8VLrM+ljrejHoGV
-         6CHGQyDo48gWg2QKnYAbKSmG93JpL1J4UTfFnJSfgSeke3wGh5geD0g9dsK3GOQDPlL5
-         LS4gRIYcPQGYwFyBI9PmXKSNyhH70nroTS1pw+2BGMMc8Aw93FwYvWVxVRb+WXOd31sZ
-         FaSLyasGm0fHsQ8CqFZomh/cs9tDejuXuIUyDKDFdsOvuc5uWmQsxeUTHxeMESadnwxv
-         Uwyl7BuTbryEilP3jj7yki0XVC/bM6C1GKzfkc/qd+GAcKeA6r4/+pb3ngAZYB3uYtCM
-         5M6Q==
-X-Gm-Message-State: AOUpUlEz3uh6y4jdCC3WDYO5oaXtmyCXMxg4Vk6j4eiBfQiaWCcmhYJH
-        Kw17MtSgIixNQeD553CIEqsbvA==
-X-Google-Smtp-Source: AA+uWPw8TJOFpTSbXxDt676MjuVsc14qBtrNwPXnXDi0tZnQz6jUnVkCTkCbvKkl/GWgPY62pYkYEA==
-X-Received: by 2002:adf:ff49:: with SMTP id u9-v6mr4807099wrs.15.1533912772266;
-        Fri, 10 Aug 2018 07:52:52 -0700 (PDT)
+        bh=9oUIEusk495SIX9kXu/WUGAbH7L0f6JAltllXHNc7ks=;
+        b=YhGw9MT4WuDWsVK6VlkXSWI6kDqV7LYauVp/B1ZrFyzeLYih21oCoNLp5PcX2ASsiC
+         m58YGa0GXZWvLBJsYBHaUOR1gV30p/xVHEmoGX2jY234cVx6sid7L5z2btkUoRHXeM39
+         2dYdiP4IPD0pfh8HFaSNI+bncHIJKO8m159GBr5Tst+k6aByNWZWsAJIqKByvTp9V9jQ
+         QaKgOUHFZxKdgbZZ9oyACTc74fN/SFyxY+u92Z46JdTI+mbES82ndV600a0BaAsi8Tri
+         yKpLiNNRWsIZl09CYaLR3fFsIXXL8maUkymyuMjFM6kOawlFvc+pfvzMeMrINSdBbk46
+         mXQw==
+X-Gm-Message-State: AOUpUlGp9sL2t7X4Kxl7wijnaouBnWOVx+z60Ac4hBOpkw7nCwIYYcqE
+        ueedfnS88aEcfDg66V6gHmi9sw==
+X-Google-Smtp-Source: AA+uWPzAPOdHjNzoH6V5FoF5kVMv1FPsMN8GACN1uXMivfEOeFE3M28lKi12tULvW2kju7pOPV1e4w==
+X-Received: by 2002:adf:820a:: with SMTP id 10-v6mr4395879wrb.144.1533912774010;
+        Fri, 10 Aug 2018 07:52:54 -0700 (PDT)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id 9-v6sm19842700wrb.48.2018.08.10.07.52.50
+        by smtp.googlemail.com with ESMTPSA id 9-v6sm19842700wrb.48.2018.08.10.07.52.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 10 Aug 2018 07:52:51 -0700 (PDT)
+        Fri, 10 Aug 2018 07:52:53 -0700 (PDT)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
@@ -65,9 +65,9 @@ Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
         abailon@baylibre.com, arnd@arndb.de, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v8 5/8] interconnect: qcom: Add RPM communication
-Date:   Fri, 10 Aug 2018 17:52:30 +0300
-Message-Id: <20180810145233.16466-6-georgi.djakov@linaro.org>
+Subject: [PATCH v8 6/8] dt-bindings: interconnect: Document qcom,msm8916 NoC bindings
+Date:   Fri, 10 Aug 2018 17:52:31 +0300
+Message-Id: <20180810145233.16466-7-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180810145233.16466-1-georgi.djakov@linaro.org>
 References: <20180810145233.16466-1-georgi.djakov@linaro.org>
@@ -76,208 +76,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some Qualcomm SoCs, there is a remote processor, which controls some of
-the Network-On-Chip interconnect resources. Other CPUs express their needs
-by communicating with this processor. Add a driver to handle communication
-with this remote processor.
+Document the device-tree bindings of the Network-On-Chip interconnect
+hardware found on Qualcomm msm8916 platforms.
 
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- .../bindings/interconnect/qcom-smd.txt        | 32 +++++++
- drivers/interconnect/qcom/Kconfig             | 14 +++
- drivers/interconnect/qcom/Makefile            |  2 +
- drivers/interconnect/qcom/smd-rpm.c           | 91 +++++++++++++++++++
- drivers/interconnect/qcom/smd-rpm.h           | 16 ++++
- 5 files changed, 155 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-smd.txt
- create mode 100644 drivers/interconnect/qcom/Kconfig
- create mode 100644 drivers/interconnect/qcom/Makefile
- create mode 100644 drivers/interconnect/qcom/smd-rpm.c
- create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+ .../bindings/interconnect/qcom-msm8916.txt    | 41 ++++++++
+ include/dt-bindings/interconnect/qcom.h       | 98 +++++++++++++++++++
+ 2 files changed, 139 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-msm8916.txt
+ create mode 100644 include/dt-bindings/interconnect/qcom.h
 
-diff --git a/Documentation/devicetree/bindings/interconnect/qcom-smd.txt b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom-msm8916.txt b/Documentation/devicetree/bindings/interconnect/qcom-msm8916.txt
 new file mode 100644
-index 000000000000..2325167f6eaf
+index 000000000000..744df51df4ed
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
-@@ -0,0 +1,32 @@
-+Qualcomm SMD-RPM interconnect driver binding
-+------------------------------------------------
-+The RPM (Resource Power Manager) is a dedicated hardware engine
-+for managing the shared SoC resources in order to keep the lowest
-+power profile. It communicates with other hardware subsystems via
-+the shared memory driver (SMD) back-end and accepts requests for
-+various resources.
++++ b/Documentation/devicetree/bindings/interconnect/qcom-msm8916.txt
+@@ -0,0 +1,41 @@
++Qualcomm MSM8916 Network-On-Chip interconnect driver binding
++----------------------------------------------------
 +
 +Required properties :
 +- compatible : shall contain only one of the following:
-+			"qcom,interconnect-smd-rpm"
++			"qcom,msm8916-bimc"
++			"qcom,msm8916-pnoc"
++			"qcom,msm8916-snoc"
++- #interconnect-cells : should contain 1
++- reg : shall contain base register location and length
 +
-+Example:
-+	smd {
-+		compatible = "qcom,smd";
++Optional properties :
++clocks : list of phandles and specifiers to all interconnect bus clocks
++clock-names : clock names should include both "bus_clk" and "bus_a_clk"
 +
-+		rpm {
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-+			qcom,ipc = <&apcs 8 0>;
-+			qcom,smd-edge = <15>;
++Examples:
 +
-+			rpm_requests {
-+				compatible = "qcom,rpm-msm8916";
-+				qcom,smd-channels = "rpm_requests";
-+
-+				interconnect-smd-rpm {
-+					compatible = "qcom,interconnect-smd-rpm";
-+				};
-+
-+			};
++		snoc: snoc@580000 {
++			compatible = "qcom,msm8916-snoc";
++			#interconnect-cells = <1>;
++			reg = <0x580000 0x14000>;
++			clock-names = "bus_clk", "bus_a_clk";
++			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
++				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
 +		};
-+	};
-diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
++		bimc: bimc@400000 {
++			compatible = "qcom,msm8916-bimc";
++			#interconnect-cells = <1>;
++			reg = <0x400000 0x62000>;
++			clock-names = "bus_clk", "bus_a_clk";
++			clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
++				 <&rpmcc RPM_SMD_BIMC_A_CLK>;
++		};
++		pnoc: pnoc@500000 {
++			compatible = "qcom,msm8916-pnoc";
++			#interconnect-cells = <1>;
++			reg = <0x500000 0x11000>;
++			clock-names = "bus_clk", "bus_a_clk";
++			clocks = <&rpmcc RPM_SMD_PCNOC_CLK>,
++				 <&rpmcc RPM_SMD_PCNOC_A_CLK>;
++		};
+diff --git a/include/dt-bindings/interconnect/qcom.h b/include/dt-bindings/interconnect/qcom.h
 new file mode 100644
-index 000000000000..812e9464765a
+index 000000000000..f4d154f0afbf
 --- /dev/null
-+++ b/drivers/interconnect/qcom/Kconfig
-@@ -0,0 +1,14 @@
-+config INTERCONNECT_QCOM
-+	bool "Qualcomm Network-on-Chip interconnect drivers"
-+	depends on INTERCONNECT
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  Support for Qualcomm's Network-on-Chip interconnect hardware.
-+
-+config INTERCONNECT_QCOM_SMD_RPM
-+	tristate "Qualcomm SMD RPM interconnect driver"
-+	depends on INTERCONNECT_QCOM
-+	depends on QCOM_SMD_RPM
-+	help
-+	  This is a driver for communicating interconnect related configuration
-+	  details with a remote processor (RPM) on Qualcomm platforms.
-diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-new file mode 100644
-index 000000000000..5b65e4011b59
---- /dev/null
-+++ b/drivers/interconnect/qcom/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += smd-rpm.o
-diff --git a/drivers/interconnect/qcom/smd-rpm.c b/drivers/interconnect/qcom/smd-rpm.c
-new file mode 100644
-index 000000000000..48b7a2a6eb84
---- /dev/null
-+++ b/drivers/interconnect/qcom/smd-rpm.c
-@@ -0,0 +1,91 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RPM over SMD communication wrapper for interconnects
-+ *
-+ * Copyright (C) 2018 Linaro Ltd
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#include <linux/interconnect-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/soc/qcom/smd-rpm.h>
-+#include "smd-rpm.h"
-+
-+#define	RPM_KEY_BW	0x00007762
-+
-+static struct qcom_icc_rpm {
-+	struct qcom_smd_rpm *rpm;
-+} icc_rpm_smd;
-+
-+struct icc_rpm_smd_req {
-+	__le32 key;
-+	__le32 nbytes;
-+	__le32 value;
-+};
-+
-+bool qcom_icc_rpm_smd_available(void)
-+{
-+	if (!icc_rpm_smd.rpm)
-+		return false;
-+
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(qcom_icc_rpm_smd_available);
-+
-+int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val)
-+{
-+	struct icc_rpm_smd_req req = {
-+		.key = cpu_to_le32(RPM_KEY_BW),
-+		.nbytes = cpu_to_le32(sizeof(u32)),
-+		.value = cpu_to_le32(val),
-+	};
-+
-+	return qcom_rpm_smd_write(icc_rpm_smd.rpm, ctx, rsc_type, id, &req,
-+				  sizeof(req));
-+}
-+EXPORT_SYMBOL_GPL(qcom_icc_rpm_smd_send);
-+
-+static int qcom_icc_rpm_smd_probe(struct platform_device *pdev)
-+{
-+	icc_rpm_smd.rpm = dev_get_drvdata(pdev->dev.parent);
-+	if (!icc_rpm_smd.rpm) {
-+		dev_err(&pdev->dev, "unable to retrieve handle to RPM\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_icc_rpm_smd_dt_match[] = {
-+	{ .compatible = "qcom,interconnect-smd-rpm", },
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, qcom_icc_rpm_smd_dt_match);
-+
-+static struct platform_driver qcom_interconnect_rpm_smd_driver = {
-+	.driver = {
-+		.name		= "qcom-interconnect-smd-rpm",
-+		.of_match_table	= qcom_icc_rpm_smd_dt_match,
-+	},
-+	.probe = qcom_icc_rpm_smd_probe,
-+};
-+
-+static int __init rpm_smd_interconnect_init(void)
-+{
-+	return platform_driver_register(&qcom_interconnect_rpm_smd_driver);
-+}
-+subsys_initcall(rpm_smd_interconnect_init);
-+
-+static void __exit rpm_smd_interconnect_exit(void)
-+{
-+	platform_driver_unregister(&qcom_interconnect_rpm_smd_driver);
-+}
-+module_exit(rpm_smd_interconnect_exit)
-+
-+MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
-+MODULE_DESCRIPTION("Qualcomm SMD RPM interconnect driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/interconnect/qcom/smd-rpm.h b/drivers/interconnect/qcom/smd-rpm.h
-new file mode 100644
-index 000000000000..3b1c347475ff
---- /dev/null
-+++ b/drivers/interconnect/qcom/smd-rpm.h
-@@ -0,0 +1,16 @@
++++ b/include/dt-bindings/interconnect/qcom.h
+@@ -0,0 +1,98 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
++ * Qualcomm interconnect IDs
++ *
 + * Copyright (c) 2018, Linaro Ltd.
 + * Author: Georgi Djakov <georgi.djakov@linaro.org>
 + */
 +
-+#ifndef __DRIVERS_INTERCONNECT_QCOM_SMD_RPM_H
-+#define __DRIVERS_INTERCONNECT_QCOM_SMD_RPM_H
++#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_H
++#define __DT_BINDINGS_INTERCONNECT_QCOM_H
 +
-+
-+#include <linux/soc/qcom/smd-rpm.h>
-+
-+bool qcom_icc_rpm_smd_available(void);
-+int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val);
++#define BIMC_SNOC_MAS			0
++#define BIMC_SNOC_SLV			1
++#define MASTER_AMPSS_M0			2
++#define MASTER_BLSP_1			3
++#define MASTER_CRYPTO_CORE0		4
++#define MASTER_DEHR			5
++#define MASTER_GRAPHICS_3D		6
++#define MASTER_JPEG			7
++#define MASTER_LPASS			8
++#define MASTER_MDP_PORT0		9
++#define MASTER_QDSS_BAM			10
++#define MASTER_QDSS_ETR			11
++#define MASTER_SDCC_1			12
++#define MASTER_SDCC_2			13
++#define MASTER_SNOC_CFG			14
++#define MASTER_SPDM			15
++#define MASTER_TCU_0			16
++#define MASTER_TCU_1			17
++#define MASTER_USB_HS			18
++#define MASTER_VFE			19
++#define MASTER_VIDEO_P0			20
++#define PNOC_INT_0			21
++#define PNOC_INT_1			22
++#define PNOC_M_0			23
++#define PNOC_M_1			24
++#define PNOC_SLV_0			25
++#define PNOC_SLV_1			26
++#define PNOC_SLV_2			27
++#define PNOC_SLV_3			28
++#define PNOC_SLV_4			29
++#define PNOC_SLV_8			30
++#define PNOC_SLV_9			31
++#define PNOC_SNOC_MAS			32
++#define PNOC_SNOC_SLV			33
++#define SLAVE_AMPSS_L2			34
++#define SLAVE_BIMC_CFG			35
++#define SLAVE_BLSP_1			36
++#define SLAVE_BOOT_ROM			37
++#define SLAVE_CAMERA_CFG		38
++#define SLAVE_CATS_128			39
++#define SLAVE_CLK_CTL			40
++#define SLAVE_CRYPTO_0_CFG		41
++#define SLAVE_DEHR_CFG			42
++#define SLAVE_DISPLAY_CFG		43
++#define SLAVE_EBI_CH0			44
++#define SLAVE_GRAPHICS_3D_CFG		45
++#define SLAVE_IMEM_CFG			46
++#define SLAVE_LPASS			47
++#define SLAVE_MPM			48
++#define SLAVE_MSM_PDM			49
++#define SLAVE_MSM_TCSR			50
++#define SLAVE_MSS			51
++#define SLAVE_OCMEM_64			52
++#define SLAVE_PMIC_ARB			53
++#define SLAVE_PNOC_CFG			54
++#define SLAVE_PRNG			55
++#define SLAVE_QDSS_CFG			56
++#define SLAVE_QDSS_STM			57
++#define SLAVE_RBCPR_CFG			58
++#define SLAVE_RPM_MSG_RAM		59
++#define SLAVE_SDCC_1			60
++#define SLAVE_SDCC_4			61
++#define SLAVE_SECURITY			62
++#define SLAVE_SERVICE_SNOC		63
++#define SLAVE_SNOC_CFG			64
++#define SLAVE_SPDM			65
++#define SLAVE_SYSTEM_IMEM		66
++#define SLAVE_TLMM			67
++#define SLAVE_USB_HS			68
++#define SLAVE_VENUS_CFG			69
++#define SNOC_BIMC_0_MAS			70
++#define SNOC_BIMC_0_SLV			71
++#define SNOC_BIMC_1_MAS			72
++#define SNOC_BIMC_1_SLV			73
++#define SNOC_INT_0			74
++#define SNOC_INT_1			75
++#define SNOC_INT_BIMC			76
++#define SNOC_MM_INT_0			77
++#define SNOC_MM_INT_1			78
++#define SNOC_MM_INT_2			79
++#define SNOC_MM_INT_BIMC		80
++#define SNOC_PNOC_MAS			81
++#define SNOC_PNOC_SLV			82
++#define SNOC_QDSS_INT			83
++#define SYSTEM_SLAVE_FAB_APPS		84
 +
 +#endif
