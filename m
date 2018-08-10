@@ -2,102 +2,113 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE18C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4508EC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E952240A
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E952240A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id EEF7A2240A
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:59:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOUX2qTz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF7A2240A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbeHJN2O (ORCPT
+        id S1727969AbeHJN3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 09:28:14 -0400
-Received: from sauhun.de ([88.99.104.3]:53974 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbeHJN2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 09:28:13 -0400
-Received: from localhost (p54B337F1.dip0.t-ipconnect.de [84.179.55.241])
-        by pokefinder.org (Postfix) with ESMTPSA id 2940F7230D5;
-        Fri, 10 Aug 2018 12:58:47 +0200 (CEST)
-Date:   Fri, 10 Aug 2018 12:58:43 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.18
-Message-ID: <20180810105840.bajsbm3dx3myusji@ninjato>
+        Fri, 10 Aug 2018 09:29:20 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37143 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeHJN3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 09:29:20 -0400
+Received: by mail-it0-f68.google.com with SMTP id h20-v6so2086670itf.2;
+        Fri, 10 Aug 2018 03:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HdWEbC5MNlUAWSOuaTtiyTEsb0MFuFSQzeIXMyo6x78=;
+        b=lOUX2qTzrsFi2ok/QJyhK1pssq5ZWff9srOoSWO2YsyFhr69B/NrJrTcpo/jS3jhOm
+         3JEJyFXHUW5+midYEXX7B6bmeQT5mLh5qKaKYxs9WVYOOPIYby/6nUhGr3awAsNXRzoB
+         QEa8QACTuuQ1cXB1+ElqFJdg4u5bSZQ15udSaEz4LvFlTIpZMvvOTCtmw2/d9RRJg96J
+         td+2Yjpgx3ZXk2l9+QMFkNNI2qbYsjaxhPiKfDZVjZ5eWOOgj48ZqPrSsGrEGbiJSPBr
+         8yCKIlmBOoC9emAl2fDDu6/evS7cleSOLNyFsk0URjubJP5NoL100Av2VCVxKAZrpHEr
+         KhZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HdWEbC5MNlUAWSOuaTtiyTEsb0MFuFSQzeIXMyo6x78=;
+        b=Bc3XndMKZfG1nQuxjfsPPPa20AgjC/4TaHHtnUpYlxOqSNkbrd9NA/yP9feqFgHQ+O
+         tUKD4TdYTQOHccXwFehpuUipRYBL47Bw3sfOKGgew2PyI0uroEhPEOSlRXZXPZ3ojMe/
+         Bsd0r0GRC8FrWLAHL+FNEvsTi+s3JdoJ55/2WFWQ/6SopFbv0yOhlNlH34QJM6VQsp0u
+         cdhUiKQrEtT9ybmpYNnzMmEA3wDCIHUa37Pe1l68eXiZFOmsle343zcgoxoedKVr/eif
+         qgTUSPb/1S7yHtOURsq4i5Ugx7EerIGXgnIHfI/ViL4s8scopEF+KnzFBbdvexOQAd4G
+         zVIA==
+X-Gm-Message-State: AOUpUlFnR7iDe/odNXE5Yq0vHjYFRTeiHiDHL8iYhFjLbb9WEtumGCi1
+        hS17Dtm0NVFqQtwyTkrkyYuKeEn7evCNKdOtAJM=
+X-Google-Smtp-Source: AA+uWPyDYFsaILXJdQ+1ijqvmK5ugcvnb4VZL7vIwfpao4Pk0Mun1Omd0IDtZAk0c8e3kR6fJKpoAAiV4tpmNh2MXqQ=
+X-Received: by 2002:a24:5d4a:: with SMTP id w71-v6mr1803061ita.118.1533898794740;
+ Fri, 10 Aug 2018 03:59:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dlf7ammxupzzcrry"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20180808115257.6088-1-yuehaibing@huawei.com>
+In-Reply-To: <20180808115257.6088-1-yuehaibing@huawei.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 10 Aug 2018 12:59:43 +0200
+Message-ID: <CAOi1vP-Vg8qoMe12OzTOwVaGgzU4GP2wBdhGyEV67Rd4edKVFw@mail.gmail.com>
+Subject: Re: [PATCH net-next] crush: fix using plain integer as NULL warning
+To:     yuehaibing@huawei.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 8, 2018 at 1:53 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes the following sparse warning:
+> net/ceph/crush/mapper.c:517:76: warning: Using plain integer as NULL pointer
+> net/ceph/crush/mapper.c:728:68: warning: Using plain integer as NULL pointer
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  net/ceph/crush/mapper.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
+> index 417df67..3f323ed 100644
+> --- a/net/ceph/crush/mapper.c
+> +++ b/net/ceph/crush/mapper.c
+> @@ -514,7 +514,7 @@ static int crush_choose_firstn(const struct crush_map *map,
+>                                                 in, work->work[-1-in->id],
+>                                                 x, r,
+>                                                 (choose_args ?
+> -                                                &choose_args[-1-in->id] : 0),
+> +                                                &choose_args[-1-in->id] : NULL),
+>                                                 outpos);
+>                                 if (item >= map->max_devices) {
+>                                         dprintk("   bad item %d\n", item);
+> @@ -725,7 +725,7 @@ static void crush_choose_indep(const struct crush_map *map,
+>                                         in, work->work[-1-in->id],
+>                                         x, r,
+>                                         (choose_args ?
+> -                                        &choose_args[-1-in->id] : 0),
+> +                                        &choose_args[-1-in->id] : NULL),
+>                                         outpos);
+>                                 if (item >= map->max_devices) {
+>                                         dprintk("   bad item %d\n", item);
 
---dlf7ammxupzzcrry
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Linus,
-
-here is a driver bugfix for I2C. The bug was found by systematically
-stress testing the driver, so I am confident to merge it that late in
-the cycle although it is probably unusually large.
-
-Please pull.
+Applied.
 
 Thanks,
 
-   Wolfram
-
-
-The following changes since commit 1ffaddd029c867d134a1dde39f540dcc8c52e274:
-
-  Linux 4.18-rc8 (2018-08-05 12:37:41 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-
-for you to fetch changes up to 5eb173f5c8f3a3cdc47b3952c368f10a28c81ab8:
-
-  i2c: xlp9xx: Fix case where SSIF read transaction completes early (2018-08-09 17:41:13 +0200)
-
-----------------------------------------------------------------
-George Cherian (1):
-      i2c: xlp9xx: Fix case where SSIF read transaction completes early
-
- drivers/i2c/busses/i2c-xlp9xx.c | 41 ++++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
-
---dlf7ammxupzzcrry
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlttb9wACgkQFA3kzBSg
-KbZqNw//VWzQgiTdQZ/J45OLBtjW7ZLkeGqT3s9eiHmYf5FNl/itUk1GO4E7BGyw
-L6YUqcAjTFAcH6DoHa23lMGbY9ZIlUCHA8YZZ80E9LAkKNMLe3NDk48URuPME3FG
-ns9M2mzehl9eQGHkOM0mOsZ7IjnEp/cbGg6zlMs7Dm+ZlJgWgPI1IuhdVWf+nP/2
-cy2YNAyBKZLDnQdC9r4Rdvkqb3XH1hPXCxnYQKY7dl1pPvm4bc8935OgHsoGuWzr
-uuEuOTfvo/HyMWEjDgPDW6HACxBqFJHCwiTf/+Jun92QYYO8mfTy4z2v3HOCkvKT
-dsQXkBBE+K1Km1Si/4ElFQ8+/vPXx7m7OeYRCfs8AcLHf4mqFvrcVZJkIW8qmrnb
-Tg+IO3TL0040Kz5XB4JciP0A5AINwJMt22ewNlm5uNLwZ/KS7JEmjreQjMkctT6o
-EhmTatLhcTmTev04/G3w75Rz72imUvZaMzIxWS/iwKM149lQ6viQj9cO8ao1TqhC
-Ti9+096Vu+Ac2G4YtLlr03+18+jCS9dS5TW1Jmtd41MMjLDm4f+QSDQWd713Bnb0
-rxA9lhfLfcQznwGbQz6IB0TdVKwPO4kVTOVWj90uIFtzWXDoMu2l3h0dRKlgpOK+
-KdBb6AfCfNQsaRRQGLwW+se6xoDoVhtVp6N7+Gn6002todmyRlU=
-=Uzat
------END PGP SIGNATURE-----
-
---dlf7ammxupzzcrry--
+                Ilya
