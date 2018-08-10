@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D45C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205D1C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61AC8217FF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3A4F217FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:09:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="hqq3555X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AC8217FF
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Fj32K78h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A4F217FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeHJKe0 (ORCPT
+        id S1727744AbeHJKeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:34:26 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42733 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727837AbeHJKeZ (ORCPT
+        Fri, 10 Aug 2018 06:34:21 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50633 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727533AbeHJKeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:34:25 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e7-v6so7441278wrs.9
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:05:40 -0700 (PDT)
+        Fri, 10 Aug 2018 06:34:20 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so935730wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=04JNfrthZ6A0LWJO3UnX3P3Vfn7v6Y2LHI6sap4PGyA=;
-        b=hqq3555X+Bd7yqGI0t1QoDEZs08LvoBmD/5MVNG93EeMHXjvwplzU76Hkm8zXr+Ygd
-         /Z0uCU5a/NRcu38Oe0Br2ridMa/KeyRic0KP5+js2bURES6O/kqdLzr6+C9xwUG4sFNL
-         r8NAzGAiPiAuqdHPZPMfZ9hYl2bVy9mpOwWHMBhPcOaV2dpMR0w8+JkFpnFArD3CG/mU
-         aW2eqWWuOTeOY8HZT8NGeTiV9S12TzO44JBtDXx94txANI9ABWQGJzhb52vxtaYgzLjK
-         ZpYxBp8HZ3VmHMSINHEBI/EgEptjSrh3XvyZKc9eNCKYm5H66xWoZYc6CJLyTJoXqrnL
-         EvKg==
+        bh=C6+lAOCD7xYYjqAwsyLpdNynP10DYfCMxlDsoPITD5U=;
+        b=Fj32K78hjOSxM5NAqapijcKbRg/4larGEi8ftAd5tBajKY92mFowMxQQk18GW+qzWv
+         zxrnIkq/69gbVfOxlq2MwcfBKvoO7EWf0UEi4osZ5146rntyi+b7HTFExQOF4+gd5S4e
+         lxawCv1CpztTCSE2PZIiumjeKv0tagGNM+SGuvqHXu4OA+NmbngdtuX3/iBAwu5HHL2p
+         r1F5VqEqMpsYoL7+NMYprdJg8b06eC7uR844xP1ZOSuzCMSbZaE+5EFoaIlz4lzqaKAp
+         IJp6ksJXeDmy4LJPU/G4sGyKCre9FCbhAbo8EVuA7SnlPYJ6QLZWyzRm/LLLZ8DtnR6Q
+         ywKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=04JNfrthZ6A0LWJO3UnX3P3Vfn7v6Y2LHI6sap4PGyA=;
-        b=JDqJa96inpHRC0de5bQ8kbgpt6Hv5ezypfqFHV+4cOkskrcZJobzAveO+CYjmX9kxP
-         ygEaQo5Sc/6x+KBJAwTO5tCyKDzUJQ9Bic7phh0gSCn0O0jsWjMOyYzDRLgcJ3sJk7r2
-         n1iZYZuHK0EoUqkOyriaourhgo7GPiJbMLbNLxQSIx+EpNBthPo2DWiuZjMMkx7AUNFj
-         3eEUHn2PbP4b38zyVdwADfaVaIKzTqyUDBOlDIerz/7k2sB1uFDjx9B4ZBuNjUF4b5Yh
-         h0XRO61QN+dKiGxVc4fKYMn0iDVGKauEA5YS6dBc8hUdrfzRFjCh/pEV9qsjInN1zfYD
-         6InA==
-X-Gm-Message-State: AOUpUlFTU7DTIgA2J0PHbEr1/sUrFEW95r5oOHprsE7ZejpQuiojmvIy
-        sOxvWzqAI3PpVnhJbN/aiIRVyQ==
-X-Google-Smtp-Source: AA+uWPxF5jkAahrpIjYHdzrfx94kx5P6segDsXSK9s9KQJNzxfl4nV8lbGVNt5k9/K+MlFbn7NX+dA==
-X-Received: by 2002:adf:8466:: with SMTP id 93-v6mr3389641wrf.274.1533888339531;
-        Fri, 10 Aug 2018 01:05:39 -0700 (PDT)
+        bh=C6+lAOCD7xYYjqAwsyLpdNynP10DYfCMxlDsoPITD5U=;
+        b=T1Ki1MkBTpIYiniVxJ8qpHeooQR+4sLuyldf9iOVpRgmt8JkuPcv87kudDg6IKRFtS
+         DhPo9qW6Nv3+edHD/Z3lHBujG/rU3X0rK9bve68zaCIOBVYeaU0XlbWEnmG+4PqkeaDQ
+         DwYUlnitJu+Md/aMOsEI7QeMEGz8YaJIXVAlxop19b+lN0vxS5xUqSM/vbUxLS+h1ZGM
+         GVODxWLQW3zwc0++C0Ch+1fceczVHGdSsqFpiyYrWMb57oGe7cx6kjmQQVlmRW7YOzA3
+         i9lsgkFK9q133/4Tcxvm3r1sifB01wD8midHFyETLk6QhuFtTBjgwqYqWJZIeEJXXWcS
+         P0qw==
+X-Gm-Message-State: AOUpUlGtKW/OJYFAgUCDLHJiR2SEA/LbKcEYiHKIo4MWjwSG6gQvWyPQ
+        gpvrfdJyDkMaC6nXS5MN+zfVqA==
+X-Google-Smtp-Source: AA+uWPzy3clBvGJg0JNyQdBbCp/prcqqEHgnMmGGNtBt3AvzUga0oigMCh8jYiBVJd4uCWcmRC7+Ww==
+X-Received: by 2002:a1c:28c2:: with SMTP id o185-v6mr804377wmo.40.1533888333968;
+        Fri, 10 Aug 2018 01:05:33 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm9546405wrs.8.2018.08.10.01.05.37
+        by smtp.gmail.com with ESMTPSA id h7-v6sm9546405wrs.8.2018.08.10.01.05.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 01:05:38 -0700 (PDT)
+        Fri, 10 Aug 2018 01:05:33 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -88,9 +88,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 04/29] nvmem: provide nvmem_dev_name()
-Date:   Fri, 10 Aug 2018 10:05:01 +0200
-Message-Id: <20180810080526.27207-5-brgl@bgdev.pl>
+Subject: [PATCH v2 01/29] nvmem: add support for cell lookups
+Date:   Fri, 10 Aug 2018 10:04:58 +0200
+Message-Id: <20180810080526.27207-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180810080526.27207-1-brgl@bgdev.pl>
 References: <20180810080526.27207-1-brgl@bgdev.pl>
@@ -101,60 +101,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Kernel users don't have any means of checking the names of nvmem
-devices. Add a routine that returns the name of the nvmem provider.
+We can currently only register nvmem cells from device tree or by
+manually calling nvmem_add_cells(). The latter options however forces
+users to make sure that the nvmem provider with which the cells are
+associated is registered before the call.
 
-This will be useful for nvmem notifier subscribers - otherwise they
-can't check what device is being added/removed.
+This patch proposes a new solution inspired by other frameworks that
+offer resource lookups (GPIO, PWM etc.). It adds functions that allow
+machine code to register nvmem lookup which are later lazily used to
+add corresponding nvmem cells and remove them if no longer needed.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c           | 6 ++++++
- include/linux/nvmem-consumer.h | 7 +++++++
- 2 files changed, 13 insertions(+)
+ drivers/nvmem/core.c           | 77 +++++++++++++++++++++++++++++++++-
+ include/linux/nvmem-consumer.h |  6 +++
+ include/linux/nvmem-provider.h | 10 +++++
+ 3 files changed, 92 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 128c8e51bff2..31df2e6d6f72 100644
+index 514d1dfc5630..329ea5b8f809 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -1440,6 +1440,12 @@ int nvmem_device_write(struct nvmem_device *nvmem,
- }
- EXPORT_SYMBOL_GPL(nvmem_device_write);
+@@ -62,6 +62,9 @@ static DEFINE_IDA(nvmem_ida);
+ static LIST_HEAD(nvmem_cells);
+ static DEFINE_MUTEX(nvmem_cells_mutex);
  
-+const char *nvmem_dev_name(struct nvmem_device *nvmem)
-+{
-+	return dev_name(&nvmem->dev);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_dev_name);
++static LIST_HEAD(nvmem_cell_lookups);
++static DEFINE_MUTEX(nvmem_lookup_mutex);
 +
- static int __init nvmem_init(void)
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ static struct lock_class_key eeprom_lock_key;
+ #endif
+@@ -247,6 +250,41 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
+ 	NULL,
+ };
+ 
++/**
++ * nvmem_add_lookup_table() - register a number of nvmem cell lookup entries
++ *
++ * @lookup: array of nvmem cell lookup entries
++ * @nentries: number of lookup entries in the array
++ */
++void nvmem_add_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries)
++{
++	int i;
++
++	mutex_lock(&nvmem_lookup_mutex);
++	for (i = 0; i < nentries; i++)
++		list_add_tail(&lookup[i].list, &nvmem_cell_lookups);
++	mutex_unlock(&nvmem_lookup_mutex);
++}
++EXPORT_SYMBOL_GPL(nvmem_add_lookup_table);
++
++/**
++ * nvmem_del_lookup_table() - unregister a set of previously added nvmem cell
++ *                            lookup entries
++ *
++ * @lookup: array of nvmem cell lookup entries
++ * @nentries: number of lookup entries in the array
++ */
++void nvmem_del_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries)
++{
++	int i;
++
++	mutex_lock(&nvmem_lookup_mutex);
++	for (i = 0; i < nentries; i++)
++		list_del(&lookup[i].list);
++	mutex_unlock(&nvmem_lookup_mutex);
++}
++EXPORT_SYMBOL_GPL(nvmem_del_lookup_table);
++
+ static void nvmem_release(struct device *dev)
  {
- 	return bus_register(&nvmem_bus_type);
+ 	struct nvmem_device *nvmem = to_nvmem_device(dev);
+@@ -916,6 +954,39 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
+ EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
+ #endif
+ 
++static struct nvmem_cell *nvmem_cell_from_lookup(const char *cell_id)
++{
++	struct nvmem_cell *cell = ERR_PTR(-ENOENT);
++	struct nvmem_cell_lookup *lookup;
++	struct nvmem_device *nvmem;
++	int rc;
++
++	mutex_lock(&nvmem_lookup_mutex);
++
++	list_for_each_entry(lookup, &nvmem_cell_lookups, list) {
++		if (strcmp(cell_id, lookup->info.name) == 0) {
++			nvmem = nvmem_find(lookup->nvmem_name);
++			if (!nvmem) {
++				cell = ERR_PTR(-EPROBE_DEFER);
++				goto out;
++			}
++
++			rc = nvmem_add_cells(nvmem, &lookup->info, 1);
++			if (rc) {
++				cell = ERR_PTR(rc);
++				goto out;
++			}
++
++			cell = nvmem_cell_get_from_list(cell_id);
++			break;
++		}
++	}
++
++out:
++	mutex_unlock(&nvmem_lookup_mutex);
++	return cell;
++}
++
+ /**
+  * nvmem_cell_get() - Get nvmem cell of device form a given cell name
+  *
+@@ -940,7 +1011,11 @@ struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *cell_id)
+ 	if (!cell_id)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return nvmem_cell_get_from_list(cell_id);
++	cell = nvmem_cell_get_from_list(cell_id);
++	if (!IS_ERR(cell) || PTR_ERR(cell) == -EPROBE_DEFER)
++		return cell;
++
++	return nvmem_cell_from_lookup(cell_id);
+ }
+ EXPORT_SYMBOL_GPL(nvmem_cell_get);
+ 
 diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index ae4d30347602..14bb86a7a78d 100644
+index 4e85447f7860..f4b5d3186e94 100644
 --- a/include/linux/nvmem-consumer.h
 +++ b/include/linux/nvmem-consumer.h
-@@ -69,6 +69,8 @@ int nvmem_device_cell_write(struct nvmem_device *nvmem,
+@@ -29,6 +29,12 @@ struct nvmem_cell_info {
+ 	unsigned int		nbits;
+ };
  
- int nvmem_register_notifier(struct notifier_block *nb);
- int nvmem_unregister_notifier(struct notifier_block *nb);
++struct nvmem_cell_lookup {
++	struct nvmem_cell_info	info;
++	struct list_head	list;
++	const char		*nvmem_name;
++};
 +
-+const char *nvmem_dev_name(struct nvmem_device *nvmem);
- #else
+ #if IS_ENABLED(CONFIG_NVMEM)
  
- static inline struct nvmem_cell *nvmem_cell_get(struct device *dev,
-@@ -167,6 +169,11 @@ static inline int int nvmem_unregister_notifier(struct notifier_block *nb)
- {
+ /* Cell based interface */
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index 24def6ad09bb..6a17d722062b 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -17,6 +17,7 @@
+ 
+ struct nvmem_device;
+ struct nvmem_cell_info;
++struct nvmem_cell_lookup;
+ typedef int (*nvmem_reg_read_t)(void *priv, unsigned int offset,
+ 				void *val, size_t bytes);
+ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
+@@ -72,6 +73,9 @@ struct nvmem_config {
+ struct nvmem_device *nvmem_register(const struct nvmem_config *cfg);
+ int nvmem_unregister(struct nvmem_device *nvmem);
+ 
++void nvmem_add_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries);
++void nvmem_del_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries);
++
+ struct nvmem_device *devm_nvmem_register(struct device *dev,
+ 					 const struct nvmem_config *cfg);
+ 
+@@ -92,6 +96,12 @@ static inline int nvmem_unregister(struct nvmem_device *nvmem)
  	return -ENOSYS;
  }
-+
-+static inline const char *nvmem_dev_name(struct nvmem_device *nvmem)
-+{
-+	return NULL;
-+}
- #endif /* CONFIG_NVMEM */
  
- #if IS_ENABLED(CONFIG_NVMEM) && IS_ENABLED(CONFIG_OF)
++static inline void
++nvmem_add_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries) {}
++
++static inline void
++nvmem_del_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries) {}
++
+ static inline struct nvmem_device *
+ devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
+ {
 -- 
 2.18.0
 
