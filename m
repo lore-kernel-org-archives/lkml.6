@@ -2,106 +2,112 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96B4C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AA7C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921C8223E6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921C8223E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
+	by mail.kernel.org (Postfix) with ESMTP id C2CBA223E6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:36:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FI5uKq80"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2CBA223E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeHJJEa (ORCPT
+        id S1727503AbeHJJEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 05:04:30 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:39042 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725746AbeHJJE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 05:04:29 -0400
-Received: from mail-qk0-f170.google.com ([209.85.220.170])
-        by mwinf5d27 with ME
-        id MJbz1y0043hB8W903JbzB5; Fri, 10 Aug 2018 08:36:00 +0200
-X-ME-Helo: mail-qk0-f170.google.com
-X-ME-Auth: bWF4aS5qb3VyZGFuQHdhbmFkb28uZnI=
-X-ME-Date: Fri, 10 Aug 2018 08:36:00 +0200
-X-ME-IP: 209.85.220.170
-Received: by mail-qk0-f170.google.com with SMTP id n85-v6so5723365qke.8;
-        Thu, 09 Aug 2018 23:35:59 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEMz4E+BRFHDxq3Z+dKZ2LW/6UWEberGq+IpoePqti5/eT+00WH
-        R10mmfkwHB7Dmt2N43c8u4XsDNQXOWV0758lu4s=
-X-Google-Smtp-Source: AA+uWPw2QH5EKrAZb9Jl+ghHl9p5i04YXmMPzb1phrhnDt/5DFjOC2SCq6G4A7pjCm2KrqEqwjuJQZ0qS75fogNuuv0=
-X-Received: by 2002:a37:5b47:: with SMTP id p68-v6mr4608243qkb.202.1533882958836;
- Thu, 09 Aug 2018 23:35:58 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:aed:278a:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 23:35:58 -0700 (PDT)
-In-Reply-To: <5b6cc316.1c69fb81.682d3.1216@mx.google.com>
-References: <20180801185128.23440-1-maxi.jourdan@wanadoo.fr>
- <20180801185128.23440-5-maxi.jourdan@wanadoo.fr> <5b6cc316.1c69fb81.682d3.1216@mx.google.com>
-From:   Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Fri, 10 Aug 2018 08:35:58 +0200
-X-Gmail-Original-Message-ID: <CAHStOZ6oemCwYWb7dW6SS_ZaWEiVWSfrF=dB_G6CkVb6KS96nA@mail.gmail.com>
-Message-ID: <CAHStOZ6oemCwYWb7dW6SS_ZaWEiVWSfrF=dB_G6CkVb6KS96nA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] drm/meson: convert to the new canvas module
-To:     Rob Herring <robh@kernel.org>
-Cc:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Fri, 10 Aug 2018 05:04:41 -0400
+Received: from ozlabs.org ([203.11.71.1]:57475 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725746AbeHJJEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 05:04:40 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41mwPS4L0xz9s8k;
+        Fri, 10 Aug 2018 16:36:12 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533882972;
+        bh=4NKauE2pbpCvqq3RL76e3sEUx7gsCgnH6q56h/FWtAE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=FI5uKq80PSy2l21icjSq1icigON8SnoJhUtiZrgUfpXY4T49cTP4b5TYmXm0Gt0bN
+         RY//k9mhhWkzJuo/cBKXaMEo9sfCcyPg/1qCkHu53WwI7Ks4EfadXOj3m6gCSgxLt+
+         jN9jSb4yDMT7SwZJmVQtwJRpGABW7nFJ7jZ75N4l+3Ak1b7FbQ1Y1/4jReWb1dkNse
+         db9jLwRquNqs3IikFyDzX5q84CnyggCSbc9GWTbLVD6g0b0Ut1w211OWiVWRPooJB8
+         uV6SCZcl5WfsRWmVP540tfWcwNATYOB+q3d+qJ+1c3A5a1P5u1iKWw0cJaxeNFEySZ
+         vazvzWdYj9low==
+Date:   Fri, 10 Aug 2018 16:36:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mike Christie <mchristi@redhat.com>
+Subject: linux-next: build failure after merge of the ida tree
+Message-ID: <20180810163612.39c88e1e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ki8R8ftO+7xfF_spdjNocgV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-10 0:41 GMT+02:00 Rob Herring <robh@kernel.org>:
-> Hi, this is an automated email from Rob's (experimental) review bot. I
-> found a couple of common problems with your patch. Please see below.
->
-> On Wed,  1 Aug 2018 20:51:28 +0200, Maxime Jourdan wrote:
->> This removes the meson_canvas files within the meson/drm layer
->> and makes use of the new canvas module that is referenced in the dts.
->>
->> Canvases can be used by different IPs and modules, and it is as such
->> preferable to rely on a module that can safely dispatch canvases on
->> demand.
->>
->> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
->
-> The preferred subject prefix is "dt-bindings: <binding dir>: ...".
->
->> ---
->>  .../bindings/display/amlogic,meson-vpu.txt    |  9 +--
->>  arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |  7 +-
->>  drivers/gpu/drm/meson/Kconfig                 |  1 +
->>  drivers/gpu/drm/meson/Makefile                |  2 +-
->>  drivers/gpu/drm/meson/meson_canvas.c          | 70 -------------------
->>  drivers/gpu/drm/meson/meson_canvas.h          | 42 -----------
->>  drivers/gpu/drm/meson/meson_crtc.c            |  5 +-
->>  drivers/gpu/drm/meson/meson_drv.c             | 35 ++++++----
->>  drivers/gpu/drm/meson/meson_drv.h             |  5 +-
->>  drivers/gpu/drm/meson/meson_plane.c           |  3 +-
->>  drivers/gpu/drm/meson/meson_viu.c             |  1 -
->>  11 files changed, 39 insertions(+), 141 deletions(-)
->>  delete mode 100644 drivers/gpu/drm/meson/meson_canvas.c
->>  delete mode 100644 drivers/gpu/drm/meson/meson_canvas.h
->>
->
-> DT bindings (including binding headers) should be a separate patch. See
-> Documentation/devicetree/bindings/submitting-patches.txt.
->
+--Sig_/ki8R8ftO+7xfF_spdjNocgV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi, What's the standard procedure here ? The reason I kept
-devicetree+drm changes together is because I didn't want to have
-floating commits that would break the drm module.
+Hi Matthew,
 
-Should I split the changes anyway ?
+After merging the ida tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Maxime
+drivers/target/iscsi/iscsi_target_login.c: In function 'iscsi_login_zero_ts=
+ih_s1':
+drivers/target/iscsi/iscsi_target_login.c:376:16: error: 'sess_idr_lock' un=
+declared (first use in this function); did you mean 'auth_id_lock'?
+  spin_lock_bh(&sess_idr_lock);
+                ^~~~~~~~~~~~~
+                auth_id_lock
+drivers/target/iscsi/iscsi_target_login.c:376:16: note: each undeclared ide=
+ntifier is reported only once for each function it appears in
+drivers/target/iscsi/iscsi_target_login.c:377:14: error: 'sess_idr' undecla=
+red (first use in this function); did you mean 'sess_ida'?
+  idr_remove(&sess_idr, sess->session_index);
+              ^~~~~~~~
+              sess_ida
+
+Caused by commit
+
+  9cd88edeaa9d ("target/iscsi: Allocate session IDs from an IDA")
+
+interacting with commit
+
+  ad86353cbddb ("iscsi target: fix session creation failure handling")
+
+I have reverted commit 9cd88edeaa9d for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ki8R8ftO+7xfF_spdjNocgV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlttMlwACgkQAVBC80lX
+0GwszAf+PsflRtk5GYQPCcOOFQ48Eh/XGIjtacOmVqMFf9u2AYe4FALfC6NqlXvG
+oTL89OaQKAiGtyq5EQ5xNJvQKfSwG6hGrBJ9jSsD4UNYza+egUN3FvpgdpoxVH5Q
+d0TbPcPHBCfJ7/Tta3/wuBkOj6zxKEu6NK2yISbtqMNMecdmf3/yr1tDenO6X0JN
+9zEZL0cy62wNZ2+PrYZp7Hj4HZ/Aeo3N+jJaTO0vBYUasq40uG3FQDv6Jg0Qjfe2
+n43srCfRK0SqlyLN+Yp30l3Ahc8l9hQxNTIY/xD78FQ6SwN3UC+ZyFsAZJ2xZcm2
+INLVRb9feAr9kqWyJNbmM7LXZl76ZA==
+=f9F1
+-----END PGP SIGNATURE-----
+
+--Sig_/ki8R8ftO+7xfF_spdjNocgV--
