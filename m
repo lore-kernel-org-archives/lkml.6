@@ -2,96 +2,100 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68ADC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A051C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB10223E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:14:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="O3oVgWdD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB10223E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id CE326223E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE326223E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeHJLm7 (ORCPT
+        id S1727624AbeHJLnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 07:42:59 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33181 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbeHJLm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 07:42:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g6-v6so7676727wrp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 02:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=sN96MkAkSAk5peqja7EI7GfPAZIenrIt+iqLM7JFBvM=;
-        b=O3oVgWdDI7x5PEW2EgsgSyfH6jzgyZVkk+rc/TgUMZ6Xc7ldLDHzvFDuTlpb5dzcPq
-         SMA0DEroSzKJUQ2uOah1/3LHczfQkuVTVKF3MWf2W5SBsM5a+o1bawi3wrfC/9pyAFNw
-         LoJvE9bDYOUK5DpxZ/lQ2m780ITR6utO+3U9QTTzA8bvSSEDYy/2OHDrpwU7tyWtAyBX
-         Zju8J0nUJEtkrj3cwid7u6V67VGkCUpVyzWeXCy94zkfQJSqMJPUKYPRNfZw5oB9j5BI
-         KEPpCpIuBxrJKe/myrU9Hv7Gx30Mgej4FvAFTdYDZMXW46oVyTDyc7ewCJsmgDu+62yP
-         wMyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sN96MkAkSAk5peqja7EI7GfPAZIenrIt+iqLM7JFBvM=;
-        b=jbZ8QcslmgmSjlNyOyQ9kkQMNlXH1l45YAAkQgyb7qgyehM9ztl0fTSzpLXSOOdv69
-         IwBFcsQmDZ7umGHD4BgTUGw2FeyLZw+rgRz+mSBiNh7V58hffCizuUuEycaFT27VBUWV
-         zUSt41Q99u97k1mg4reMXbN4Ar8XAuEh+1rLgdcg77HWJ+qf87bP9K4XeSFdSjuGIakH
-         jjHAW9Z7+jjC8TRwI8jtKq5uIAPK9XY4PIQEvdq9PAXCwhbcXAibqVWzlwFkC58kP4gs
-         UA2DXvppqUe6fUs78iJK7OKkfg866S8REOMP10c3Izyk/AjEz7AE4McYU5CwwBTbfLBk
-         jR4A==
-X-Gm-Message-State: AOUpUlGXSmxp9CZh333QvccIJJEqkXaJH/bnPHfF+NKqsCoACmTYnbAy
-        2uTTxt4DBTkcvyKInaQj3fGmmA==
-X-Google-Smtp-Source: AA+uWPwkWe8Jx5i41eMfshVn/6GkPnTjwjV8XxQZQB2XV/v4RrRSbUxB24yFBMR5kffCRrOKfp7XKA==
-X-Received: by 2002:adf:97cf:: with SMTP id t15-v6mr3962897wrb.283.1533892437425;
-        Fri, 10 Aug 2018 02:13:57 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id o6-v6sm800418wmc.15.2018.08.10.02.13.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 02:13:56 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] spi: davinci: fix a NULL pointer dereference
-Date:   Fri, 10 Aug 2018 11:13:52 +0200
-Message-Id: <20180810091352.30227-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
+        Fri, 10 Aug 2018 07:43:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726742AbeHJLnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 07:43:53 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 72CCD402243B;
+        Fri, 10 Aug 2018 09:14:52 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 959D6112D19A;
+        Fri, 10 Aug 2018 09:14:47 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 11:14:45 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v8 17/22] s390: vfio-ap: zeroize the AP queues.
+Message-ID: <20180810111445.015fcf2a.cohuck@redhat.com>
+In-Reply-To: <1533739472-7172-18-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1533739472-7172-18-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 10 Aug 2018 09:14:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 10 Aug 2018 09:14:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed,  8 Aug 2018 10:44:27 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-On non-OF systems spi->controlled_data may be NULL. This causes a NULL
-pointer derefence on dm365-evm.
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Let's call PAPQ(ZAPQ) to zeroize a queue:
+> 
+> * For each queue configured for a mediated matrix device
+>   when it is released.
+> 
+> Zeroizing a queue resets the queue, clears all pending
+> messages for the queue entries and disables adapter interruptions
+> associated with the queue.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c     |   29 ++++++++++++++++++++++++++++-
+>  drivers/s390/crypto/vfio_ap_private.h |   25 +++++++++++++++++++++++++
+>  2 files changed, 53 insertions(+), 1 deletions(-)
+> 
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/spi/spi-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> @@ -788,7 +812,10 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
+>  {
+>  	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>  
+> -	kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+> +	if (matrix_mdev->kvm)
+> +		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
 
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index 577084bb911b..a02099c90c5c 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -217,7 +217,7 @@ static void davinci_spi_chipselect(struct spi_device *spi, int value)
- 	pdata = &dspi->pdata;
- 
- 	/* program delay transfers if tx_delay is non zero */
--	if (spicfg->wdelay)
-+	if (spicfg && spicfg->wdelay)
- 		spidat1 |= SPIDAT1_WDEL;
- 
- 	/*
--- 
-2.18.0
+Confused. Why is the check for matrix_mdev->kvm added here?
 
+> +
+> +	vfio_ap_mdev_reset_queues(mdev, true);
+>  	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>  				 &matrix_mdev->group_notifier);
+>  	matrix_mdev->kvm = NULL;
