@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B82C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D275C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1580721EFB
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1580721EFB
+	by mail.kernel.org (Postfix) with ESMTP id 62B6D21EFB
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B6D21EFB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbeHJUlM (ORCPT
+        id S1730616AbeHJUlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:41:12 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11445 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbeHJUlL (ORCPT
+        Fri, 10 Aug 2018 16:41:15 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3649 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728001AbeHJUlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:41:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b6dd4f90000>; Fri, 10 Aug 2018 11:10:01 -0700
-Received: from HQMAIL104.nvidia.com ([172.20.161.6])
+        Fri, 10 Aug 2018 16:41:14 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b6dd5070000>; Fri, 10 Aug 2018 11:10:16 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 10 Aug 2018 11:10:16 -0700
+  Fri, 10 Aug 2018 11:10:19 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 10 Aug 2018 11:10:16 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
- 2018 18:10:15 +0000
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
- 2018 18:10:15 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Fri, 10 Aug 2018 18:10:15 +0000
+        by hqpgpgate101.nvidia.com on Fri, 10 Aug 2018 11:10:19 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
+ 2018 18:10:18 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Aug
+ 2018 18:10:18 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Fri, 10 Aug 2018 18:10:18 +0000
 Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b6dd5040004>; Fri, 10 Aug 2018 11:10:15 -0700
+        id <B5b6dd5070002>; Fri, 10 Aug 2018 11:10:18 -0700
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -53,9 +53,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v2 28/40] mmc: tegra: Enable UHS and HS200 modes for Tegra210
-Date:   Fri, 10 Aug 2018 21:08:30 +0300
-Message-ID: <1533924522-1037-29-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH v2 29/40] mmc: tegra: Enable UHS and HS200 modes for Tegra186
+Date:   Fri, 10 Aug 2018 21:08:31 +0300
+Message-ID: <1533924522-1037-30-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
 References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
@@ -75,11 +75,11 @@ Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 0959102..8cfa8f4 100644
+index 8cfa8f4..2d775ad 100644
 --- a/drivers/mmc/host/sdhci-tegra.c
 +++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -846,7 +846,9 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- 	.pdata = &sdhci_tegra210_pdata,
+@@ -875,7 +875,9 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+ 	.pdata = &sdhci_tegra186_pdata,
  	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
  		    NVQUIRK_HAS_PADCALIB |
 -		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP,
@@ -88,7 +88,7 @@ index 0959102..8cfa8f4 100644
 +		    NVQUIRK_ENABLE_SDR104,
  };
  
- static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
 -- 
 2.7.4
 
