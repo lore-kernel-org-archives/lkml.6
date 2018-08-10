@@ -2,444 +2,160 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A50C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C250CC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB4A223E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62A6C223C7
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:55:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TynOYCa6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB4A223E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="DUc0CABf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A6C223C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeHKCWy (ORCPT
+        id S1727229AbeHKC11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 22:22:54 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46331 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbeHKCWy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 22:22:54 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f14-v6so5049887pgv.13
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 16:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=JaMLOjsT8MAcPSeOekV0fFbUdP3Phl7ZGYR0YO2fccU=;
-        b=TynOYCa6E8scsvw8+p1hOm6tLe5zJL1vMxDXkN9QvQMi1u6ZfXD62dk4HAPfNK0vMq
-         mRvu8xsAdJ40y6C7WgHGuMmEuHMrqwmMCb3AM0/0kGEV0zhMHL9N5LQNEIMIsOzZE/gJ
-         K3pFY0gvylHVsrp/VLY8ozf50hNS0YkO07Dkc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JaMLOjsT8MAcPSeOekV0fFbUdP3Phl7ZGYR0YO2fccU=;
-        b=jVnZAr0SrQw/gc6iD1tcML+dHKD/SOJrbLFHwZA79Ww5JZsvjCsLXB2JQlMuK0NEdc
-         m3Z6PV9NDLaz41gaZQxCKXTqNWVFTr6GyXm8iq2usWhCDw+6kxDy/3FVrykLg55AZfcZ
-         m0jK4O4PmbdwbCZv40RXEAd3jW/8hbxLz8f2f+ET7Fn75ObnQsjUpsP7nXicIOcdpJPH
-         vjMpaFcpkcgxTkZfWCcnq0aoX/FBU+QLwmtTmuxO4kldLRNzqSavdZhUoGFeyK6nlPch
-         mUWZAyW2tyKn+Ht9Tm/6QdxbrYT5Tdgbwp9NUZPYBGh+mzgbmDS7sXOwx38j9EIY+tM2
-         MCFQ==
-X-Gm-Message-State: AOUpUlEsTuoGrTHddM1Lj/nLQ+2jXIWJ+peWRgSms3cHH7A//wMhrhOZ
-        EyuTg2B36+OOeMb15AhPgSU5ig==
-X-Google-Smtp-Source: AA+uWPyOI5S0B5sdEqootox6XnOsBYx3+XZFdynDOa/UQN86RQJ2qhdocF/gKMhHB58/egGAxSscIQ==
-X-Received: by 2002:a62:229a:: with SMTP id p26-v6mr9064194pfj.53.1533945049799;
-        Fri, 10 Aug 2018 16:50:49 -0700 (PDT)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm15899319pfk.12.2018.08.10.16.50.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 10 Aug 2018 16:50:48 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>
-Cc:     gwendal@chromium.org, Evan Green <evgreen@chromium.org>
-Subject: [PATCH] scsi: ufs: Enable bInitPowerMode of sleep
-Date:   Fri, 10 Aug 2018 16:50:10 -0700
-Message-Id: <20180810235010.6004-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.16.4
+        Fri, 10 Aug 2018 22:27:27 -0400
+Received: from imap.thunk.org ([74.207.234.97]:32946 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbeHKC11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 22:27:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=vZlSeZFflTSzguhVUHJRZPvf4xFZPzVEyKyltvJUbDQ=; b=DUc0CABf8M3gFmRcb72ptNhodT
+        zWr2duq5R0juV8u8FFnyUzNAajKttShvboElxWwbfY3UE0dLYwuP4b6JnmwLeoiLUjViByHffVZGy
+        h2xwpvM+x9I3x6ZX0exsgHkysw2X75Fj+FcDrnhj7XANCD87H/FpYZ9PKEsklfUcIaIc=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1foHF2-0005LW-Ll; Fri, 10 Aug 2018 23:54:48 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id E40A57A5B5B; Fri, 10 Aug 2018 19:54:47 -0400 (EDT)
+Date:   Fri, 10 Aug 2018 19:54:47 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180810235447.GK627@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>, Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>, apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+References: <20180810153902.GH21087@thunk.org>
+ <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk>
+ <28045.1533916438@warthog.procyon.org.uk>
+ <20180810161400.GA627@thunk.org>
+ <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+ <20180810204639.GI627@thunk.org>
+ <20180810221234.GC4211@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810221234.GC4211@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UFS devices can be provisioned to have an initial power mode of either
-active or sleep. If the initial power mode is sleep, then the host
-controller driver must send a START STOP UNIT to the device in order
-to wake it up. Unfortunately, the device will refuse to complete other
-common low level operations, such as reading descriptors and attributes.
-The Linux driver currently fails to enumerate devices that start in
-sleep mode, because it fails to read the device descriptor from the
-unconscious device.
+On Fri, Aug 10, 2018 at 03:12:34PM -0700, Darrick J. Wong wrote:
+> Hey now, there was a little more nuance to it than that[1][2].  The
+> complaint in the first instance had much more to do with breaking
+> existing V4 filesystems by adding format requirements that mkfs didn't
+> know about when the filesystem was created.  Yes, you can create V4
+> filesystems that will hang the system if the log was totally unformatted
+> and metadata updates are made, but OTOH it's fairly obvious when that
+> happens, you have to be root to mount a disk filesystem, and we try to
+> avoid breaking existing users.
 
-The way the UFS controller driver is structured, this presents a bit of
-a Catch-22. In order to perform low-level enumeration of the device, the
-driver needs to send a SCSI command. But SCSI needs low-level enumeration
-of the device to be complete before full enumeration can occur.
+I wasn't thinking about syzbot reports; I've largely written them off
+as far as file system testing is concerned, but rather Wen Xu at
+Georgia Tech, who is much more reasonable than Dmitry, and has helpeyd
+me out a lot; and has complained that the XFS folks haven't been
+engaging with him.
 
-This change adds a method for sending low-level SCSI commands, modeled
-after (and reusing much of) the mechanism for sending device management
-commands. With this primitive, ufshcd_probe_hba can execute REQUEST SENSE
-to clear the Unit Attention, and then a START STOP UNIT in order to bring
-the device out of sleep mode. Only after this is done can the rest of
-enumeration, such as reading the device descriptor and geometry descriptor,
-be done.
+In either case, both security researchers are fuzzing file system
+images, and then fixing the checksums, and discovering that this can
+lead to kernel crashes, and in a few cases, buffer overruns that can
+lead to potential privilege escalations.  Wen can generate reports
+faster than syzbot, but at least he gives me file system images (as
+opposed to having to dig them out of syzbot repro C files) and he
+actually does some analysis and explains what he thinks is going on.
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
- drivers/scsi/ufs/ufshcd.c | 208 +++++++++++++++++++++++++++++++++++++++++++---
- drivers/scsi/ufs/ufshcd.h |  11 +++
- 2 files changed, 206 insertions(+), 13 deletions(-)
+I don't think anyone was claiming that format requirements should be
+added to ext4 or xfs file systems.  But rather, that kernel code
+should be made more robust against maliciously corrupted file system
+images that have valid checksums.  I've been more willing to work with
+Wen; Dave has expressed the opinion that these are not realistic bug
+reports, and since only root can mount file systems, it's not high
+priority.
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 397081d320b1..a17fb3cf5656 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -213,12 +213,18 @@ static struct ufs_dev_fix ufs_fixups[] = {
- 	END_FIX
- };
- 
-+static inline int
-+ufshcd_scsi_cmd_status(struct ufshcd_lrb *lrbp, int scsi_status);
-+
- static void ufshcd_tmc_handler(struct ufs_hba *hba);
- static void ufshcd_async_scan(void *data, async_cookie_t cookie);
- static int ufshcd_reset_and_restore(struct ufs_hba *hba);
- static int ufshcd_eh_host_reset_handler(struct scsi_cmnd *cmd);
- static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag);
- static void ufshcd_hba_exit(struct ufs_hba *hba);
-+static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
-+				   enum ufs_dev_pwr_mode pwr_mode);
-+
- static int ufshcd_probe_hba(struct ufs_hba *hba);
- static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
- 				 bool skip_ref_clk);
-@@ -2523,6 +2529,8 @@ static int
- ufshcd_dev_cmd_completion(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
- {
- 	int resp;
-+	int result;
-+	int scsi_status;
- 	int err = 0;
- 
- 	hba->ufs_stats.last_hibern8_exit_tstamp = ktime_set(0, 0);
-@@ -2547,6 +2555,31 @@ ufshcd_dev_cmd_completion(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
- 		dev_err(hba->dev, "%s: Reject UPIU not fully implemented\n",
- 				__func__);
- 		break;
-+
-+	case UPIU_TRANSACTION_RESPONSE:
-+		/*
-+		 * Get the response UPIU result to extract the SCSI command
-+		 * status.
-+		 */
-+		result = ufshcd_get_rsp_upiu_result(lrbp->ucd_rsp_ptr);
-+		scsi_status = result & MASK_SCSI_STATUS;
-+		result = ufshcd_scsi_cmd_status(lrbp, scsi_status);
-+		if ((result & MASK_SCSI_STATUS) != SAM_STAT_GOOD) {
-+			dev_err(hba->dev,
-+				"%s: Failed SCSI device management command: %x\n",
-+				__func__, result);
-+
-+			print_hex_dump(KERN_ERR, "UFS Sense Data ",
-+				       DUMP_PREFIX_OFFSET, 16, 1,
-+				       lrbp->sense_buffer, lrbp->sense_bufflen,
-+				       false);
-+
-+			ufshcd_print_trs(hba, 1 << lrbp->task_tag, true);
-+			err = -EIO;
-+		}
-+
-+		break;
-+
- 	default:
- 		err = -EINVAL;
- 		dev_err(hba->dev, "%s: Invalid device management cmd response: %x\n",
-@@ -2690,6 +2723,84 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
- 	return err;
- }
- 
-+static void ufshcd_scsi_dev_cmd_done(struct scsi_cmnd *cmd)
-+{
-+	struct ufs_hba *hba = (struct ufs_hba *)cmd->host_scribble;
-+
-+	if (hba->dev_cmd.complete) {
-+		ufshcd_add_command_trace(hba, cmd->tag,
-+				"dev_complete");
-+		complete(hba->dev_cmd.complete);
-+	}
-+}
-+
-+/**
-+ * ufshcd_exec_dev_scsi_cmd - API for sending device management SCSI requests
-+ * @hba: UFS hba
-+ * @cmd: specifies the SCSI command to send
-+ * @timeout: time in seconds
-+ *
-+ * NOTE: Since there is only one available tag for device management commands,
-+ * it is expected you hold the hba->dev_cmd.lock mutex.
-+ */
-+static int ufshcd_exec_dev_scsi_cmd(struct ufs_hba *hba,
-+		struct scsi_cmnd *cmd, int timeout)
-+{
-+	struct ufshcd_lrb *lrbp;
-+	int err;
-+	int tag;
-+	struct completion wait;
-+	unsigned long flags;
-+	u8 sense_data[18];
-+
-+	down_read(&hba->clk_scaling_lock);
-+
-+	/*
-+	 * Get free slot, sleep if slots are unavailable.
-+	 * Even though we use wait_event() which sleeps indefinitely,
-+	 * the maximum wait time is bounded by SCSI request timeout.
-+	 */
-+	wait_event(hba->dev_cmd.tag_wq, ufshcd_get_dev_cmd_tag(hba, &tag));
-+
-+	/* Borrow the host_scribble to store a pointer back to the host */
-+	cmd->scsi_done = ufshcd_scsi_dev_cmd_done;
-+	cmd->host_scribble = (unsigned char *)hba;
-+	cmd->tag = tag;
-+	memset(&sense_data, 0, sizeof(sense_data));
-+	init_completion(&wait);
-+	lrbp = &hba->lrb[tag];
-+	lrbp->cmd = cmd;
-+	lrbp->task_tag = tag;
-+	lrbp->lun = UFS_UPIU_UFS_DEVICE_WLUN;
-+	lrbp->sense_buffer = sense_data;
-+	lrbp->sense_bufflen = sizeof(sense_data);
-+	err = ufshcd_comp_scsi_upiu(hba, lrbp);
-+	if (unlikely(err))
-+		goto out_put_tag;
-+
-+	hba->dev_cmd.complete = &wait;
-+
-+	ufshcd_add_query_upiu_trace(hba, tag, "query_send");
-+	/* Make sure descriptors are ready before ringing the doorbell */
-+	wmb();
-+	spin_lock_irqsave(hba->host->host_lock, flags);
-+	ufshcd_vops_setup_xfer_req(hba, tag, (lrbp->cmd ? true : false));
-+	ufshcd_send_command(hba, tag);
-+	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+
-+	err = ufshcd_wait_for_dev_cmd(hba, lrbp, timeout);
-+	ufshcd_add_query_upiu_trace(hba, tag,
-+			err ? "query_complete_err" : "query_complete");
-+
-+out_put_tag:
-+	lrbp->sense_buffer = NULL;
-+	lrbp->sense_bufflen = 0;
-+	ufshcd_put_dev_cmd_tag(hba, tag);
-+	wake_up(&hba->dev_cmd.tag_wq);
-+	up_read(&hba->clk_scaling_lock);
-+	return err;
-+}
-+
- /**
-  * ufshcd_init_query() - init the query response and request parameters
-  * @hba: per-adapter instance
-@@ -4099,6 +4210,35 @@ static int ufshcd_complete_dev_init(struct ufs_hba *hba)
- 	return err;
- }
- 
-+/**
-+ * ufshcd_power_on() - checks device power state, and sends START STOP UNIT
-+ * if needed to bring the device out of sleep mode.
-+ * @hba: per-adapter instance
-+ *
-+ */
-+static int ufshcd_power_on(struct ufs_hba *hba)
-+{
-+	uint32_t current_pwr_mode;
-+	int rc;
-+
-+	rc = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_POWER_MODE, 0, 0,
-+		&current_pwr_mode);
-+
-+	if (rc) {
-+		dev_err(hba->dev, "Failed to get bCurrentPowerMode: %d\n", rc);
-+		return rc;
-+	}
-+
-+	if (current_pwr_mode != UFS_PWR_SLEEP)
-+		return 0;
-+
-+	rc = ufshcd_set_dev_pwr_mode(hba, UFS_ACTIVE_PWR_MODE);
-+	if (rc)
-+		dev_err(hba->dev, "Failed to set power mode: %d\n", rc);
-+
-+	return rc;
-+}
- /**
-  * ufshcd_make_hba_operational - Make UFS controller operational
-  * @hba: per adapter instance
-@@ -6565,6 +6705,17 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
- 	if (ret)
- 		goto out;
- 
-+	/*
-+	 * Unit Attention will need to be cleared after a reset and before
-+	 * the device can be told to come out of sleep mode.
-+	 */
-+	hba->wlun_dev_clr_ua = true;
-+	ret = ufshcd_power_on(hba);
-+	if (ret) {
-+		printk("ufshcd_power_on failed %d\n", ret);
-+		goto out;
-+	}
-+
- 	/* Init check for device descriptor sizes */
- 	ufshcd_init_desc_sizes(hba);
- 
-@@ -6586,7 +6737,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
- 	/* UFS device is also active now */
- 	ufshcd_set_ufs_dev_active(hba);
- 	ufshcd_force_reset_auto_bkops(hba);
--	hba->wlun_dev_clr_ua = true;
- 
- 	if (ufshcd_get_max_pwr_mode(hba)) {
- 		dev_err(hba->dev,
-@@ -7202,6 +7352,7 @@ static void ufshcd_hba_exit(struct ufs_hba *hba)
- static int
- ufshcd_send_request_sense(struct ufs_hba *hba, struct scsi_device *sdp)
- {
-+	struct scsi_cmnd scmd;
- 	unsigned char cmd[6] = {REQUEST_SENSE,
- 				0,
- 				0,
-@@ -7217,9 +7368,24 @@ ufshcd_send_request_sense(struct ufs_hba *hba, struct scsi_device *sdp)
- 		goto out;
- 	}
- 
--	ret = scsi_execute(sdp, cmd, DMA_FROM_DEVICE, buffer,
--			UFSHCD_REQ_SENSE_SIZE, NULL, NULL,
--			msecs_to_jiffies(1000), 3, 0, RQF_PM, NULL);
-+	if (sdp) {
-+		ret = scsi_execute(sdp, cmd, DMA_FROM_DEVICE, buffer,
-+				UFSHCD_REQ_SENSE_SIZE, NULL, NULL,
-+				msecs_to_jiffies(1000), 3, 0, RQF_PM, NULL);
-+	} else {
-+		memset(&scmd, 0, sizeof(scmd));
-+		scmd.sc_data_direction = DMA_NONE;
-+		scmd.cmnd = cmd;
-+		scmd.cmd_len = sizeof(cmd);
-+		/* No data transfer is performed during early transfers. */
-+		cmd[4] = 0;
-+		mutex_lock(&hba->dev_cmd.lock);
-+		ret = ufshcd_exec_dev_scsi_cmd(hba,
-+			&scmd, msecs_to_jiffies(1000));
-+
-+		mutex_unlock(&hba->dev_cmd.lock);
-+	}
-+
- 	if (ret)
- 		pr_err("%s: failed with err %d\n", __func__, ret);
- 
-@@ -7238,30 +7404,27 @@ ufshcd_send_request_sense(struct ufs_hba *hba, struct scsi_device *sdp)
-  * Returns non-zero if failed to set the requested power mode
-  */
- static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
--				     enum ufs_dev_pwr_mode pwr_mode)
-+				   enum ufs_dev_pwr_mode pwr_mode)
- {
-+	struct scsi_cmnd scmd;
- 	unsigned char cmd[6] = { START_STOP };
- 	struct scsi_sense_hdr sshdr;
- 	struct scsi_device *sdp;
- 	unsigned long flags;
- 	int ret;
- 
-+	cmd[4] = pwr_mode << 4;
- 	spin_lock_irqsave(hba->host->host_lock, flags);
- 	sdp = hba->sdev_ufs_device;
- 	if (sdp) {
- 		ret = scsi_device_get(sdp);
- 		if (!ret && !scsi_device_online(sdp)) {
--			ret = -ENODEV;
- 			scsi_device_put(sdp);
-+			sdp = NULL;
- 		}
--	} else {
--		ret = -ENODEV;
- 	}
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
--	if (ret)
--		return ret;
--
- 	/*
- 	 * If scsi commands fail, the scsi mid-layer schedules scsi error-
- 	 * handling, which would wait for host to be resumed. Since we know
-@@ -7277,7 +7440,24 @@ static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
- 		hba->wlun_dev_clr_ua = false;
- 	}
- 
--	cmd[4] = pwr_mode << 4;
-+	/*
-+	 * If SCSI is not yet alive, try sending this command manually.
-+	 * This is needed to avoid a circular dependency where SCSI
-+	 * needs low level initialization to happen, but sending a
-+	 * SCSI command (like START STOP UNIT) is part of low level
-+	 * initialization.
-+	 */
-+	if (!sdp) {
-+		memset(&scmd, 0, sizeof(scmd));
-+		scmd.sc_data_direction = DMA_TO_DEVICE;
-+		scmd.cmnd = cmd;
-+		scmd.cmd_len = sizeof(cmd);
-+		mutex_lock(&hba->dev_cmd.lock);
-+		ret = ufshcd_exec_dev_scsi_cmd(hba, &scmd, START_STOP_TIMEOUT);
-+		mutex_unlock(&hba->dev_cmd.lock);
-+		hba->host->eh_noresume = 0;
-+		return ret;
-+	}
- 
- 	/*
- 	 * Current function would be generally called from the power management
-@@ -7297,7 +7477,9 @@ static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
- 	if (!ret)
- 		hba->curr_dev_pwr_mode = pwr_mode;
- out:
--	scsi_device_put(sdp);
-+	if (sdp)
-+		scsi_device_put(sdp);
-+
- 	hba->host->eh_noresume = 0;
- 	return ret;
- }
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index f51758f1e5cc..90a6936b07a5 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -128,6 +128,17 @@ enum uic_link_state {
- #define ufshcd_set_link_hibern8(hba) ((hba)->uic_link_state = \
- 				    UIC_LINK_HIBERN8_STATE)
- 
-+/* Values for the bCurrentPowerMode attribute */
-+enum ufs_pwr_mode {
-+	UFS_PWR_IDLE = 0x0,
-+	UFS_PWR_PRE_ACTIVE = 0x1,
-+	UFS_PWR_ACTIVE = 0x11,
-+	UFS_PWR_PRE_SLEEP = 0x20,
-+	UFS_PWR_SLEEP = 0x22,
-+	UFS_PWR_PRE_PWR_DOWN = 0x30,
-+	UFS_PWR_DOWN = 0x33,
-+};
-+
- /*
-  * UFS Power management levels.
-  * Each level is in increasing order of power savings.
--- 
-2.16.4
+The reason why I bring this up here is that in container land, there
+are those who believe that "container root" should be able to mount
+file systems, and if the "container root" isn't trusted, the fact that
+the "container root" can crash the host kernel, or worse, corrupt the
+host kernel and break out of the container as a result, that would be
+sad.
 
+I was pretty sure most file system developers are on the same page
+that allowing untrusted "container roots" the ability to mount
+arbitrary block device file systems is insanity.  Whether or not we
+try to fix these sorts of bugs submitted by security researchers.  :-)
+
+	  	       	    	       		  - Ted
