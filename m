@@ -2,110 +2,140 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D8FC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1484C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E832022432
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:14:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E832022432
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 6713222432
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:14:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="KAdgtBrT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6713222432
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbeHJSo3 (ORCPT
+        id S1729251AbeHJSox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:44:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47255 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728317AbeHJSo2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:44:28 -0400
-Received: from 1.general.jsalisbury.us.vpn ([10.172.67.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <joseph.salisbury@canonical.com>)
-        id 1foA32-0004xg-Hg; Fri, 10 Aug 2018 16:13:56 +0000
-To:     daniel.thompson@linaro.org
-Cc:     ard.biesheuvel@linaro.org, mathias.nyman@linux.intel.com,
-        gregkh@linuxfoundation.org,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Joseph Salisbury <joseph.salisbury@canonical.com>
-Subject: [Regression] usb: xhci: Add XHCI_TRUST_TX_LENGTH for Renesas
- uPD720201
-Openpgp: preference=signencrypt
-Autocrypt: addr=joseph.salisbury@canonical.com; prefer-encrypt=mutual;
- keydata=
- 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
- p24lPxLL08SuCEzuBw==
-Message-ID: <703dd682-d740-d964-242d-43d8d26c8f87@canonical.com>
-Date:   Fri, 10 Aug 2018 12:13:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 14:44:53 -0400
+Received: from imap.thunk.org ([74.207.234.97]:59672 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727639AbeHJSox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 14:44:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=SML2hrdrnTP2GFsjV13UJ8h9GTZNMMCvlSxSz8mpmH8=; b=KAdgtBrTVdOTfYDs4aRsMefQVx
+        vl6HiRbe/6yXPaJz1X13ExHgAY1gdOO3Sd0OgekX1yGQgDPPRCb9/IxZS2qrd8dfWPJ4rxFX6r0kn
+        IEgaWjJ/7zmc/ldAGGqMxPFLkjs3btvKC3Ool3nUBWyuWXSk0neTZrdsbbxZmp6IcrR4=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1foA37-00025N-8W; Fri, 10 Aug 2018 16:14:01 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 881997A570B; Fri, 10 Aug 2018 12:14:00 -0400 (EDT)
+Date:   Fri, 10 Aug 2018 12:14:00 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        viro@zeniv.linux.org.uk,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180810161400.GA627@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        viro@zeniv.linux.org.uk,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>, Li Zefan <lizefan@huawei.com>,
+        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+References: <20180810153902.GH21087@thunk.org>
+ <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk>
+ <28045.1533916438@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28045.1533916438@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRGFuaWVsLAoKQSBrZXJuZWwgYnVnIHJlcG9ydCB3YXMgb3BlbmVkIGFnYWluc3QgVWJ1
-bnR1IFswXS7CoCBJdCB3YXMgZm91bmQgdGhlCmZvbGxvd2luZyBwYXRjaCBpbnRyb2R1Y2Vk
-IHRoZSByZWdyZXNzaW9uOgoKZGE5OTcwNjY4OTQ4ICgidXNiOiB4aGNpOiBBZGQgWEhDSV9U
-UlVTVF9UWF9MRU5HVEggZm9yIFJlbmVzYXMgdVBENzIwMjAxIikKClRoZSBidWcgcmVwb3J0
-ZXIgY2xhaW1zIHRoZXJlIGlzIGEgdHlwbyBpbiB0aGUgcGF0Y2ggdGhhdCBjYXVzZWQgdGhl
-CnJlZ3Jlc3Npb24uwqAgSSBidWlsdCBhIHRlc3Qga2VybmVsIHdpdGggYSBjaGFuZ2UgdG8g
-dGhlIHN1c3BlY3RlZCB0eXBvCmFuZCB0aGUgYnVnIHJlcG9ydGVyIGNsYWltcyBpdCByZXNv
-bHZlZCB0aGUgcmVncmVzc2lvbi7CoCBNeSB0ZXN0IGtlcm5lbApoYWQgdGhlIGZvbGxvd2lu
-ZyBjaGFuZ2U6CgotwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgcGRldi0+ZGV2aWNlID09IDB4MDAxNCkKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHBkZXYtPmRldmljZSA9PSAweDAwMTUpCgpJIHdhcyBob3Bp
-bmcgdG8gZ2V0IHlvdXIgZmVlZGJhY2ssIHNpbmNlIHlvdSBhcmUgdGhlIHBhdGNoIGF1dGhv
-ci7CoCBEbwp5b3UgdGhpbmsgdGhpcyBpcyBhbiBhY3R1YWwgdHlwbywgb3IgbWF5YmUgdGhl
-cmUgcmVhbGx5IG5lZWRzIHRvIGJlIHR3bwpxdWlya3M/CgpUaGFua3MsCgpKb2UKCgpbMF0g
-aHR0cDovL3BhZC5sdi8xNzczNzA0Cg==
+On Fri, Aug 10, 2018 at 04:53:58PM +0100, David Howells wrote:
+> Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> 
+> > Even *with* file system support, there's no way today for the VFS to
+> > keep track of whether a pathname resolution came through one
+> > mountpoint or another, so I can't do something like this:
+> 
+> Ummm...  Isn't that encoded in the vfsmount pointer in struct path?
+
+Well, yes, and we do use this as a hack to make read-only bind mounts
+work.  But that's done as a special case, and it's for permissions
+checking only.
+
+The big problem is that there is single dentry cache object regardless
+of which mount point was used to access it.  So that makes it
+impossible to support case folding as a mount-pointism.
+
+> 
+> However, the case folding stuff - is that a superblockism of a mountpointism?
+
+It's a superblock-ism.  As far as I know the *only* thing that we can
+support as a mount-pointism is the ro flag, and that's handled as a
+special case, and only if the original superblock was mounted
+read/write.  ey That was my point; aside from the ro flag, we can't
+support any other mount options as a per-mount point thing, so the
+only thing we can do is to fail the mount if there are conflicting
+mount options.  And I'm not really sure it helps the container use
+case, since the whole point is they want their "guest" to be able to
+blithely run "mount /dev/sda1 -o noxattr /mnt" and not worry about the
+fact that in some other container, someone had run "mount /dev/sda1 -o
+xattr /mnt".  But having the second mount fail because of conflicting
+mount option breaks the illusion that containers are functionally as
+rich as VM's.
+
+So before you put in lots of work to support rejecting the attmpted
+mount if the mount options conflict, are we sure people will actually
+find this to be useful?  Because it's not only fsopen() work for you,
+but each file system is going to have to implement new functions to
+answer the question "are these mount options conflicting or not?".
+Are we sure it's worth the effort?
+
+					- Ted
