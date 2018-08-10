@@ -2,107 +2,109 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C52C46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61609C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E07EA223B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:49:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07EA223B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1505A223B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:50:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="b+GRVjQE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1505A223B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbeHJERX (ORCPT
+        id S1727087AbeHJEST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 00:17:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54723 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725198AbeHJERX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 00:17:23 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 46EF396E17439;
-        Fri, 10 Aug 2018 09:49:43 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Fri, 10 Aug 2018
- 09:49:41 +0800
-Subject: Re: [PATCH v3 2/2] net/9p: add a per-client fcall kmem_cache
-To:     Dominique Martinet <asmadeus@codewreck.org>
-References: <1533177452-2165-1-git-send-email-asmadeus@codewreck.org>
- <1533825236-22896-1-git-send-email-asmadeus@codewreck.org>
- <1533825236-22896-2-git-send-email-asmadeus@codewreck.org>
- <5B6CE900.1010103@huawei.com> <20180810014147.GB14699@nautica>
-CC:     <v9fs-developer@lists.sourceforge.net>,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Greg Kurz" <groug@kaod.org>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B6CEF2C.2070606@huawei.com>
-Date:   Fri, 10 Aug 2018 09:49:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180810014147.GB14699@nautica>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+        Fri, 10 Aug 2018 00:18:19 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42397 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeHJEST (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 00:18:19 -0400
+Received: by mail-pl0-f66.google.com with SMTP id g6-v6so3329842plq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 18:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6Pk5xjC+A6P1vMMRU6RIuH4TvlyAhlhdL3i7d78PMtw=;
+        b=b+GRVjQEX8ITWftlCKzp7lZEjGfJmPSEe2LIPFH4FJknbCFjwJ8iPsJ1prhqU0RoVT
+         vfOTPXisT4IIUmpmoQKYNnbr8TVJ92N1yhMHgxe20nGW13K1jzF6U3GAO+IadeB7xMHL
+         iRYygWjN4HPbcvSk2JcWM3Wd/u6C5YnBS9/wTbrQbNkIjzODWYBLoNbIQTSzzXOrXdha
+         gcK96X61xoHaxLIn4ru2HdUTetuqxVcl0A9VQGQIDWaqBy9eJAVukfblvmOGyB6VQC5T
+         urMChIIAw1ttJmbenSgnxLFeLPds35LCo+8cTXAvMe9nyNggz0uLudTBl5X411ksQ61S
+         MGlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=6Pk5xjC+A6P1vMMRU6RIuH4TvlyAhlhdL3i7d78PMtw=;
+        b=RFaw1EaHjz5vi8wxNEvdznmYlvi/O2fyer9v9nNHjrrrGZNHeDRaTby+O3gC1o7wxX
+         KDBRTcCqAQ3iOuLdaLwBvnbcPnYScy8pBwSNaHxSs/XD8pNMbV2NxN8QyyJSOv5VaInX
+         s6DPFCnS1QtVemU/G8+vtTS6FsLtUBWRx64eNg8JvYt/9RMqkwxz+OQhaa97Na97LGnH
+         LcdZ3+vDbcF3O5wJu2bF/TiPB4t2pZqR9ApH0oYhWrVBNbCqaRZ2X724rsnrjZmVZGCs
+         xhZjfyWv5l/udhqA19QzdN2nLAAO0bMCmPL67zrCcjjr4aNFtSfQuZ+/S6E/r6SifHeD
+         D0nQ==
+X-Gm-Message-State: AOUpUlFihMOdXipPKr8QrHIy4zhibHS49XPP7UyoRK8MK1fXxvPvQbcK
+        MDTVxoK6B7fdV7iJzSlXkoOQjg==
+X-Google-Smtp-Source: AA+uWPxNCBkBk90o174VM0GX78Ip1z7+1lfJkVSWUKh5WUA6MEYbofyvI2Wex6Jfcx4CYavWhQKT/A==
+X-Received: by 2002:a17:902:934a:: with SMTP id g10-v6mr4174079plp.121.1533865843474;
+        Thu, 09 Aug 2018 18:50:43 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id l84-v6sm13915051pfg.3.2018.08.09.18.50.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 18:50:42 -0700 (PDT)
+Date:   Thu, 09 Aug 2018 18:50:42 -0700 (PDT)
+X-Google-Original-Date: Thu, 09 Aug 2018 18:48:26 PDT (-0700)
+Subject:     Re: FW: [PATCH v2] RISC-V: Add the directive for alignment of stvec's value
+In-Reply-To: <CA+ZOyajyOfjZh8tQB4reAka3s+tqXachY4hiAtpA4Bb67x58AQ@mail.gmail.com>
+CC:     aou@eecs.berkeley.edu, Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        zong@andestech.com, greentime@adnestech.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     zongbox@gmail.com
+Message-ID: <mhng-0cd89708-476d-4cd0-81a2-8ba5d18114ee@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for clearing my doubt, and you can add:
-
-Acked-by: Jun Piao <piaojun@huawei.com>
-
-On 2018/8/10 9:41, Dominique Martinet wrote:
-> piaojun wrote on Fri, Aug 10, 2018:
->> Could you help paste the test result of before-after-applied this patch in
->> comment? And please see my comments below.
-> 
-> Thanks the the review, do you mean the commit message?
-> 
-> I'll add the summary I wrote in reply to your question a few mails
-> before.
-> 
-Yes, I mean the commit message.
-
-> 
->>> diff --git a/include/net/9p/9p.h b/include/net/9p/9p.h
->>> index e23896116d9a..645266b74652 100644
->>> --- a/include/net/9p/9p.h
->>> +++ b/include/net/9p/9p.h
->>> @@ -336,6 +336,9 @@ enum p9_qid_t {
->>>  #define P9_NOFID	(u32)(~0)
->>>  #define P9_MAXWELEM	16
->>>  
->>> +/* Minimal header size: len + id + tag */
+On Thu, 09 Aug 2018 17:37:39 PDT (-0700), zongbox@gmail.com wrote:
+>> Subject: [PATCH v2] RISC-V: Add the directive for alignment of stvec's value
 >>
->> Here should be 'size + id + tag'.
-> 
-> hm I didn't want to repeat size, but I guess people do refer to that
-> field as size.
-> I'll actually rewrite it as:
->  Minimal header size: size[4] type[1] tag[2]
-> 
-It looks better.
-
->>> +	kmem_cache_destroy(clnt->fcall_cache);
+>> The stvec's value must be 4 byte alignment by specification definition.
+>> These directives avoid to stvec be set the non-alignment value.
 >>
->> I'm afraid that we should check NULL for clnt->fcall_cache.
-> 
-> kmem_cache_destroy() in mm/slab_common.c does the null check for us:
-> ------
-> void kmem_cache_destroy(struct kmem_cache *s)
-> {
->         int err;
->         
->         if (unlikely(!s))
->                 return;
-> ------
-> 
-OK, it makes sense.
+>> Signed-off-by: Zong Li <zong@andestech.com>
+>> ---
+>>  arch/riscv/kernel/head.S | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S index 3b6293f..11066d5 100644
+>> --- a/arch/riscv/kernel/head.S
+>> +++ b/arch/riscv/kernel/head.S
+>> @@ -94,6 +94,7 @@ relocate:
+>>         or a0, a0, a1
+>>         sfence.vma
+>>         csrw sptbr, a0
+>> +.align 2
+>>  1:
+>>         /* Set trap vector to spin forever to help debug */
+>>         la a0, .Lsecondary_park
+>> @@ -143,6 +144,7 @@ relocate:
+>>         tail smp_callin
+>>  #endif
+>>
+>> +.align 2
+>>  .Lsecondary_park:
+>>         /* We lack SMP support or have too many harts, so park this hart */
+>>         wfi
+
+Thanks, this got lost in the shuffle somewhere.  It's in for-next now.
