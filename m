@@ -2,119 +2,126 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D973FC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDD0C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E921219C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:25:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6494A223E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:40:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bTDYrOMj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E921219C1
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QyQ+jWbo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6494A223E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeHKB4q (ORCPT
+        id S1727204AbeHKCLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 21:56:46 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34018 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbeHKB4q (ORCPT
+        Fri, 10 Aug 2018 22:11:55 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40929 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbeHKCLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 21:56:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y5-v6so5055308pgv.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 16:24:47 -0700 (PDT)
+        Fri, 10 Aug 2018 22:11:55 -0400
+Received: by mail-pl0-f67.google.com with SMTP id s17-v6so4628487plp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 16:39:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=LAyp1To/rzRpokUCCV8Q9E/81SIcUTUb9xypbQ3b0MU=;
-        b=bTDYrOMj3arptqSnqosqKFyEmQ/2xgdm2cN2goPo7W7Zl4g3QJpZ+fJ8Q1csUbtpYM
-         gtoj/UZpTrul7dXh0iUJbG2yk17YPe1Uwu4LhGzifMFzOFUZxkG8JicMtk7bTOLCymA7
-         bGSk8IWNjroe9OfVLT6o/DRaZboRWUGSxMyrc=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SHkDb6qaKxPT3RKCwWTlK162HxGfwzC3DwW8Inu+HKk=;
+        b=QyQ+jWboymP+kH1M8h+mDOk+EuHT0IQANJmMmzwTKJaJ3fxH9ag4EqOiXcQTc7aSbR
+         pi46WirGbtb8a+6eOORZ5bcUys6xC0xqbUMxfGT6grh8RhSrAvUR6QdfLUEB+ysUrOk/
+         QPU9J+NCJ3jnXpAOuEqa2FbRfolJCNTcIsZmQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=LAyp1To/rzRpokUCCV8Q9E/81SIcUTUb9xypbQ3b0MU=;
-        b=M+Xptg26N374gRsMo6+r7Xn590XRN3ZyfjrNPviEccDajSUBKL7Gk/sbnkugKcI/Nu
-         kIJ8kjjAgTU8u7vpU0By9skcmieP0CXDtWVvwYmj/XdJlWLcTCFL6jlt/cl40asDSDK2
-         3/H9Xrkp+UVVHJ7sakaa3IYrzGkcA5YSg/i0Im5rsQThkFhS8DpwPvDz3r+TgAcg3qSM
-         efD4VaVhIXiIoGQpuoOKYyC2xma3LZpmRCes3BdJG7uhVz8Jes5jusiG1txCsrPPKR6y
-         LYJAQl9IKcHV61mubsaT8kU0yX2DmipqsuLBNTXjSdhaJJ4nKz9XnJRqq1MrOIVOFg1x
-         zA7g==
-X-Gm-Message-State: AOUpUlGPuxNgZrn7mPCm/nTqbmRbR252hmUXh0Zurv2YJpVwV26d8KGy
-        qztgaFb0c1dPP8diJPPcMQRaEw==
-X-Google-Smtp-Source: AA+uWPyZ0FqqQzmONZH3zdnR1drHPC91mjQOxn3s1etDoJf4RF2+4SY89ODVzcD+FeaPxxqOt/Wp4g==
-X-Received: by 2002:a63:5e45:: with SMTP id s66-v6mr8262152pgb.151.1533943487019;
-        Fri, 10 Aug 2018 16:24:47 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id v89-v6sm26288329pfj.22.2018.08.10.16.24.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 Aug 2018 16:24:46 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SHkDb6qaKxPT3RKCwWTlK162HxGfwzC3DwW8Inu+HKk=;
+        b=ORqAMzDhJS5p3+78vTOipn4tJg9e1DrTvIgbsCGEucWZjA9qg9tSwzZu1vNSLhqAh7
+         xykrOoZ1E8LFV0M65c880SYAdqxaWK/JMamx7HG5YcLfnUvJULY3DRhcULPWy3CPeUrp
+         GzX3hqbsEnbdbW2juFqq2FmC3w3bD5BD8crfl8uUOlXeXBCfYD74bURFQzBDfYnMw/eZ
+         Q+Qiz7oMA9IpIv14cHduJwyl6iOpbpgiudrUMo+UlrYY3rgbg+Yscktnh/f+K6lRWG+7
+         uWFNK+vznofoD50jHgS/ZGrZ1qZ+vLkGWxLf5SiDvylOdKAvMtCa+fism3BzTHjNAKel
+         6JNQ==
+X-Gm-Message-State: AOUpUlEKsGA0+jM/9p7dNOrwCnymx43EMjCDFgedeGB6cUJCdOeW6GPE
+        /pDogCx6tY8YKVO/1xJnxnCq1g==
+X-Google-Smtp-Source: AA+uWPwIebREHfzipAAji/gNIqAwhcDRpKSeN9BR7Bf1oFbAPKC7VCriFDmtKbBqJiG23KAhpKnAMg==
+X-Received: by 2002:a17:902:e85:: with SMTP id 5-v6mr7798101plx.73.1533944393185;
+        Fri, 10 Aug 2018 16:39:53 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id 75-v6sm20985577pfr.115.2018.08.10.16.39.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 16:39:51 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Kalle Valo <kvalo@qca.qualcomm.com>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH] ath10k: retrieve MAC address from firmware if provided
+Date:   Fri, 10 Aug 2018 16:39:48 -0700
+Message-Id: <20180810233948.144792-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Julius Werner <jwerner@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <153386966793.37448.12640092735399834661@swboyd.mtv.corp.google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Brian Norris <briannorris@chromium.org>, samuel@sholland.org
-References: <20180809171722.144325-1-swboyd@chromium.org>
- <20180809171722.144325-8-swboyd@chromium.org>
- <CAODwPW8eg2WOh9-Raeb8Q65E-5D7RDheDU8e+H68FHGa0MS37A@mail.gmail.com>
- <153385579866.220756.16086660810932774163@swboyd.mtv.corp.google.com>
- <CAODwPW84FYK3k5=n4gQ4EPJExhQ59LCEi31ZYi2Bq2y9FH_E_A@mail.gmail.com>
- <CAODwPW8+QSittJdNLWpWKU=JNJa5bssMHQ4ER4CfnUAWaL1JGA@mail.gmail.com>
- <153386966793.37448.12640092735399834661@swboyd.mtv.corp.google.com>
-Message-ID: <153394348544.37448.7231279350981818561@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 7/7] firmware: coreboot: Request table region for exclusive
- access
-Date:   Fri, 10 Aug 2018 16:24:45 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2018-08-09 19:54:27)
-> What's with the top posting? ;-)
-> =
+Devices may provide their own MAC address via system firmware (e.g.,
+device tree), especially in the case where the device doesn't have a
+useful EEPROM on which to store its MAC address (e.g., for integrated
+Wifi).
 
-> Quoting Julius Werner (2018-08-09 16:44:43)
-> > Actually, looking at what IO_STRICT_DEVMEM really does, would it
-> > really prevent userspace accesses to these areas? Because it seems
-> > that it only prevents accesses to areas marked as IORESOURCE_BUSY, and
-> > while I can't fully follow how the kernel assigns that, comments
-> > suggest that this is only set when "Driver has marked this resource
-> > busy".
-> =
+Use the generic device helper to retrieve the MAC address, and (if
+present) honor it above the MAC address advertised by the card.
 
-> Requesting the memory region as is done in this patch marks it as busy.
-> =
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/net/wireless/ath/ath10k/core.c | 3 +++
+ drivers/net/wireless/ath/ath10k/wmi.c  | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-> > =
-
-> > So after you make the change to the other patch where we immediately
-> > unmap the coreboot table again at the end of the probe() function,
-> > shouldn't it become available to userspace again even with
-> > IO_STRICT_DEVMEM set?
-> =
-
-> Yes, if we unmap the region immediately after devices are populated then
-> this whole point is moot with the assumption that this code isn't
-> running at the same time as the cbmem utility. I've done this already
-> and it is working on arm. I still need to build/boot/test on an x86
-> platform which I should be able to do tomorrow.
-> =
-
-
-I tried my latest version of the patches (unplubished so far) and those
-work on x86 with cbmem. So things look good and we don't need to keep
-the mapping around.
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index c40cd129afe7..840c1f039098 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -19,6 +19,7 @@
+ #include <linux/module.h>
+ #include <linux/firmware.h>
+ #include <linux/of.h>
++#include <linux/property.h>
+ #include <linux/dmi.h>
+ #include <linux/ctype.h>
+ #include <asm/byteorder.h>
+@@ -2602,6 +2603,8 @@ static int ath10k_core_probe_fw(struct ath10k *ar)
+ 		ath10k_debug_print_board_info(ar);
+ 	}
+ 
++	device_get_mac_address(ar->dev, ar->mac_addr, sizeof(ar->mac_addr));
++
+ 	ret = ath10k_core_init_firmware_features(ar);
+ 	if (ret) {
+ 		ath10k_err(ar, "fatal problem with firmware features: %d\n",
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index fd612d2905b0..3cfd98de8ad2 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -5449,7 +5449,8 @@ int ath10k_wmi_event_ready(struct ath10k *ar, struct sk_buff *skb)
+ 		   arg.mac_addr,
+ 		   __le32_to_cpu(arg.status));
+ 
+-	ether_addr_copy(ar->mac_addr, arg.mac_addr);
++	if (is_zero_ether_addr(ar->mac_addr))
++		ether_addr_copy(ar->mac_addr, arg.mac_addr);
+ 	complete(&ar->wmi.unified_ready);
+ 	return 0;
+ }
+-- 
+2.18.0.597.ga71716f1ad-goog
 
