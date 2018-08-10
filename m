@@ -2,154 +2,110 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BE0C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23399C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF736223DC
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02F920883
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yjBx+zay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF736223DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EYO/uxMi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mayIpF/J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02F920883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeHJKeo (ORCPT
+        id S1729134AbeHJKhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:34:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52126 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbeHJKem (ORCPT
+        Fri, 10 Aug 2018 06:37:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40214 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbeHJKhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:34:42 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y2-v6so935361wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sGOzUdYoefHsqeEVpETOZKTrsiIrdDWkhYzQ4MVNoLM=;
-        b=yjBx+zayQEOO94lbibSVMCOe8LuflnszJtTjXhxHxnNAfEX0Xojae3oYWgqq5tkr4d
-         g3vCgx5kKCd3HlMGta/hSDM4hlMZeDKGze9JbxPuf/PDDu8UUkis04ZdQelg1yVeUtFi
-         vk4sUINL4U61Sk9zgsAXBTlIpBRDXknHB8QEQ/fI8sd89ekAa34atOrHYtNajWFOdEH9
-         HmU/tx9YSxn0rar21U6iq197pLsU+1iYvjlJ9u0elZR2Cq543/JKhyfrkrda/dCICIM4
-         yE69m7ez2k7oT2VXpmM5FwqHfzFhc9rJkrK9OMEWcJGq6d8d++Po3ma+Qw27WEGDjbkg
-         bVNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sGOzUdYoefHsqeEVpETOZKTrsiIrdDWkhYzQ4MVNoLM=;
-        b=k2YN2aOBl5BxzPpYUsjK24wQF1x754PbunnUPkp3l39pypXJ3uncI6w/xsv9h8BvWg
-         g8FTPWqJGMJ1A1PB0pjWr4uCYkOSlyTr4uT+BgLL/FY5nxCAW2RWfLxF30mNx8ZcZ7eo
-         zwH8rmeO7LgJzaXPHFU1QNnqb2Q3zgCJt5c/JKQW+H/byBGGsEAwLRfuUmZ91Wrm90xQ
-         56kyfMSz6uka5VB4sslq+oD6FefejmGXTIrcFaydue5ubmwfbd01fYFdRefjxCI6QExR
-         5yKm1jU4B4f36VFHyr9nBbwsxjzXaNISyPbFg6Uj43qA3Ugp73qdrDEcSIPDuuYe43tn
-         410A==
-X-Gm-Message-State: AOUpUlHWFigXXzxyCNBmdwqZbQ1wW+yjx93oS2SdwwxadHlstZqsB22z
-        Y2CDTzkH3iGgltruXHQN3E6++A==
-X-Google-Smtp-Source: AA+uWPx1+GuHuc4EM7u+V6MsXntd+upjbsWfUo0og6CvAQZLwTMMwUiM1O9oh1yLd3hN3xNEEzy9Jg==
-X-Received: by 2002:a1c:2094:: with SMTP id g142-v6mr731584wmg.144.1533888355605;
-        Fri, 10 Aug 2018 01:05:55 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm9546405wrs.8.2018.08.10.01.05.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 01:05:54 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 12/29] ARM: davinci: da850-evm: use nvmem lookup for mac address
-Date:   Fri, 10 Aug 2018 10:05:09 +0200
-Message-Id: <20180810080526.27207-13-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180810080526.27207-1-brgl@bgdev.pl>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
+        Fri, 10 Aug 2018 06:37:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 257CE60CA2; Fri, 10 Aug 2018 08:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533888510;
+        bh=UWraBiG2/6eyurwWDYPh/iSnwcHlbiFyhdPXWi6YZWI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EYO/uxMiS7PDG/ZkwW3SPnNmMxu9S9uJ4YiQ6TnC/gliHZGfx3HPYRjHIrGaBnEr9
+         myp7TrSQ9jv/xMxOEKjbU3IzGQS313fsmOCHV9w/phi2fwewdoaRzpeEJMe4fJO3N2
+         28jwii42ppZr4dlti1xA3AD49sZ386Y7+Mh2urfA=
+Received: from [10.4.34.47] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9374D60B19;
+        Fri, 10 Aug 2018 08:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533888507;
+        bh=UWraBiG2/6eyurwWDYPh/iSnwcHlbiFyhdPXWi6YZWI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mayIpF/J6zdj8mUFp2cgg6E+Vqft5221v4eyrFa2Mexsd/jVfQGIfELhezKPFo/tT
+         LKD5ENHWkwGDA2F3oWNrCpsnJoqaGlAKaqBw+RKxvMO+MQLHhwKdmga7brxbuLoRSX
+         Vt83xQlMdfMGaqC7LDxFA+hwRDFpBUUrkC6IT0jA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9374D60B19
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for
+ sdm845 to header
+To:     Rob Herring <robh@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+Cc:     sboyd@kernel.org, andy.gross@linaro.org, girishm@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
+        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180724174513.174018-1-dianders@chromium.org>
+ <20180724174513.174018-2-dianders@chromium.org>
+ <20180725160102.GA18545@rob-hp-laptop>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <a081f764-ae7d-e92a-fb15-370768f4fe5c@codeaurora.org>
+Date:   Fri, 10 Aug 2018 13:38:18 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180725160102.GA18545@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now support nvmem lookups for machine code. Add a lookup for
-mac-address.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da850-evm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 7/25/2018 9:31 PM, Rob Herring wrote:
+> On Tue, Jul 24, 2018 at 10:45:12AM -0700, Douglas Anderson wrote:
+>> These clocks will need to be defined in the clock driver and
+>> referenced in device tree files.
+>>
+>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>> ---
+>>
+>> Changes in v3: None
+>> Changes in v2: None
+>>
+>>   include/dt-bindings/clock/qcom,gcc-sdm845.h | 3 +++
+>>   1 file changed, 3 insertions(+)
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+   Reviewed-by: Taniya Das <tdas@codeaurora.org>
 
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index 6d5beb11bd96..5a634a04ec69 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -29,6 +29,7 @@
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
- #include <linux/mtd/physmap.h>
-+#include <linux/nvmem-provider.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/mtd-davinci.h>
-@@ -99,6 +100,19 @@ static struct mtd_partition da850evm_spiflash_part[] = {
- 	},
- };
- 
-+static struct nvmem_cell_lookup da850evm_mac_address_cell = {
-+	.info = {
-+		.name = "mac-address",
-+		.offset = 0x0,
-+		.bytes = ETH_ALEN,
-+	},
-+	/*
-+	 * The nvmem name differs from the partition name because of the
-+	 * internal works of the nvmem framework.
-+	 */
-+	.nvmem_name = "MAC-Address0",
-+};
-+
- static struct flash_platform_data da850evm_spiflash_data = {
- 	.name		= "m25p80",
- 	.parts		= da850evm_spiflash_part,
-@@ -1447,6 +1461,8 @@ static __init void da850_evm_init(void)
- 		pr_warn("%s: spi info registration failed: %d\n", __func__,
- 			ret);
- 
-+	nvmem_add_lookup_table(&da850evm_mac_address_cell, 1);
-+
- 	ret = da8xx_register_spi_bus(1, ARRAY_SIZE(da850evm_spi_info));
- 	if (ret)
- 		pr_warn("%s: SPI 1 registration failed: %d\n", __func__, ret);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
 -- 
-2.18.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
