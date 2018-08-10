@@ -3,232 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CD3C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A900C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B8D223AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:41:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B8D223AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id CAC51223AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:43:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC51223AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeHJQLU (ORCPT
+        id S1728233AbeHJQNC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:11:20 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:42716 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbeHJQLT (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 10 Aug 2018 12:11:19 -0400
-Received: from [10.160.4.48] (nat.nue.novell.com [195.135.221.2])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 10 Aug 2018 15:41:19 +0200
-Subject: Re: [RFC PATCH 03/17] btrfs: Check and enable HMZONED mode
-To:     Naohiro Aota <naota@elisp.net>, David Sterba <dsterba@suse.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        linux-kernel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Matias Bjorling <mb@lightnvm.io>
-References: <20180809180450.5091-1-naota@elisp.net>
- <20180809180450.5091-4-naota@elisp.net>
- <51ed0d0b-7574-b9a9-bae5-2cc8042913e6@suse.com>
- <20180810131558.gadsij5g7tshfg5u@zazie>
-From:   Hannes Reinecke <hare@suse.com>
-Message-ID: <6df03389-5127-28ac-f14b-05846bdd896f@suse.com>
-Date:   Fri, 10 Aug 2018 15:41:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 12:13:02 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:21473
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727624AbeHJQNB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:13:01 -0400
+X-IronPort-AV: E=Sophos;i="5.53,219,1531778400"; 
+   d="scan'208";a="275506813"
+Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 15:43:01 +0200
+Date:   Fri, 10 Aug 2018 15:42:54 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Denis Efremov <efremov@linux.com>
+cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: Re: [PATCH] coccicheck: return proper error code on check fail
+In-Reply-To: <20180810133636.8340-1-efremov@linux.com>
+Message-ID: <alpine.DEB.2.20.1808101541270.3390@hadrien>
+References: <20180810133636.8340-1-efremov@linux.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180810131558.gadsij5g7tshfg5u@zazie>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 03:15 PM, Naohiro Aota wrote:
-> On Fri, Aug 10, 2018 at 02:25:33PM +0200, Hannes Reinecke wrote:
->> On 08/09/2018 08:04 PM, Naohiro Aota wrote:
->>> HMZONED mode cannot be used together with the RAID5/6 profile. Introduce
->>> the function btrfs_check_hmzoned_mode() to check this. This function will
->>> also check if HMZONED flag is enabled on the file system and if the file
->>> system consists of zoned devices with equal zone size.
->>>
->>> Additionally, as updates to the space cache are in-place, the space cache
->>> cannot be located over sequential zones and there is no guarantees that the
->>> device will have enough conventional zones to store this cache. Resolve
->>> this problem by disabling completely the space cache.  This does not
->>> introduces any problems with sequential block groups: all the free space is
->>> located after the allocation pointer and no free space before the pointer.
->>> There is no need to have such cache.
->>>
->>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
->>> Signed-off-by: Naohiro Aota <naota@elisp.net>
->>> ---
->>>  fs/btrfs/ctree.h       |  3 ++
->>>  fs/btrfs/dev-replace.c |  7 ++++
->>>  fs/btrfs/disk-io.c     |  7 ++++
->>>  fs/btrfs/super.c       | 12 +++---
->>>  fs/btrfs/volumes.c     | 87 ++++++++++++++++++++++++++++++++++++++++++
->>>  fs/btrfs/volumes.h     |  1 +
->>>  6 files changed, 112 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
->>> index 66f1d3895bca..14f880126532 100644
->>> --- a/fs/btrfs/ctree.h
->>> +++ b/fs/btrfs/ctree.h
->>> @@ -763,6 +763,9 @@ struct btrfs_fs_info {
->>>  	struct btrfs_root *uuid_root;
->>>  	struct btrfs_root *free_space_root;
->>>  
->>> +	/* Zone size when in HMZONED mode */
->>> +	u64 zone_size;
->>> +
->>>  	/* the log root tree is a directory of all the other log roots */
->>>  	struct btrfs_root *log_root_tree;
->>>  
->>> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
->>> index dec01970d8c5..839a35008fd8 100644
->>> --- a/fs/btrfs/dev-replace.c
->>> +++ b/fs/btrfs/dev-replace.c
->>> @@ -202,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
->>>  		return PTR_ERR(bdev);
->>>  	}
->>>  
->>> +	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
->>> +	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
->>> +	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
->>> +		ret = -EINVAL;
->>> +		goto error;
->>> +	}
->>> +
->>>  	filemap_write_and_wait(bdev->bd_inode->i_mapping);
->>>  
->>>  	devices = &fs_info->fs_devices->devices;
->>> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
->>> index 5124c15705ce..14f284382ba7 100644
->>> --- a/fs/btrfs/disk-io.c
->>> +++ b/fs/btrfs/disk-io.c
->>> @@ -3057,6 +3057,13 @@ int open_ctree(struct super_block *sb,
->>>  
->>>  	btrfs_free_extra_devids(fs_devices, 1);
->>>  
->>> +	ret = btrfs_check_hmzoned_mode(fs_info);
->>> +	if (ret) {
->>> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
->>> +				ret);
->>> +		goto fail_block_groups;
->>> +	}
->>> +
->>>  	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
->>>  	if (ret) {
->>>  		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
->>> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
->>> index 5fdd95e3de05..cc812e459197 100644
->>> --- a/fs/btrfs/super.c
->>> +++ b/fs/btrfs/super.c
->>> @@ -435,11 +435,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
->>>  	bool saved_compress_force;
->>>  	int no_compress = 0;
->>>  
->>> -	cache_gen = btrfs_super_cache_generation(info->super_copy);
->>> -	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
->>> -		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
->>> -	else if (cache_gen)
->>> -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
->>> +	if (!btrfs_fs_incompat(info, HMZONED)) {
->>> +		cache_gen = btrfs_super_cache_generation(info->super_copy);
->>> +		if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
->>> +			btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
->>> +		else if (cache_gen)
->>> +			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
->>> +	}
->>>  
->>>  	/*
->>>  	 * Even the options are empty, we still need to do extra check
->>> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
->>> index 35b3a2187653..ba7ebb80de4d 100644
->>> --- a/fs/btrfs/volumes.c
->>> +++ b/fs/btrfs/volumes.c
->>> @@ -1293,6 +1293,80 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
->>>  	return ret;
->>>  }
->>>  
->>> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
->>> +{
->>> +	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
->>> +	struct btrfs_device *device;
->>> +	u64 hmzoned_devices = 0;
->>> +	u64 nr_devices = 0;
->>> +	u64 zone_size = 0;
->>> +	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
->>> +	int ret = 0;
->>> +
->>> +	/* Count zoned devices */
->>> +	list_for_each_entry(device, &fs_devices->devices, dev_list) {
->>> +		if (!device->bdev)
->>> +			continue;
->>> +		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
->>> +		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
->>> +		     incompat_hmzoned)) {
->>> +			hmzoned_devices++;
->>> +			if (!zone_size) {
->>> +				zone_size = device->zone_size;
->>> +			} else if (device->zone_size != zone_size) {
->>> +				btrfs_err(fs_info,
->>> +					  "Zoned block devices must have equal zone sizes");
->>> +				ret = -EINVAL;
->>> +				goto out;
->>> +			}
->>> +		}
->>> +		nr_devices++;
->>> +	}
->>> +
->>> +	if (!hmzoned_devices && incompat_hmzoned) {
->>> +		/* No zoned block device, disable HMZONED */
->>> +		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
->>> +		ret = -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	fs_info->zone_size = zone_size;
->>> +
->>> +	if (hmzoned_devices != nr_devices) {
->>> +		btrfs_err(fs_info,
->>> +			  "zoned devices mixed with regular devices");
->>> +		ret = -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->> This breaks existing setups; as we're not checking if the device
->> specified by fs_info is a zoned device we'll fail here for normal devices.
-> 
-> Ah, I forgot to deel with the normal devices when I convert HMZONED
-> mount flag to incompat flag.
-> 
->> You need this patch to fix it:
-> 
-> Thank you for fixing this. It's exactly what I wanted to do. I'll fix
-> in the next version.
-> 
-Thanks.
 
-Other than that it seems to be holding up quite well; did a full 'git
-clone && make oldconfig && make -j 16' on the upstream linux kernel with
-no problems at all.
 
-Cheers,
+On Fri, 10 Aug 2018, efremov@linux.com wrote:
 
-Hannes
--- 
-Dr. Hannes Reinecke		               zSeries & Storage
-hare@suse.com			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+> If coccicheck finds errors,
+
+What do you mean by finds errors?  Do you mean that there is an error in
+the behavior of coccicheck or that coccicheck finds an error in the source
+code?
+
+To put it another way, can you give an example of the kind of error you
+are concerned about?
+
+thanks,
+julia
+
+> it should return an error code
+> distinct from zero. Current code instead of exiting with an
+> error code of coccinelle returns error code of
+> 'echo "coccicheck failed"' which is almost always equals to zero,
+> thus failing original intention of alerting about errors.
+> This patch fixes the problem.
+>
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  scripts/coccicheck | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/coccicheck b/scripts/coccicheck
+> index 9fedca611b7f..e04d328210ac 100755
+> --- a/scripts/coccicheck
+> +++ b/scripts/coccicheck
+> @@ -128,9 +128,10 @@ run_cmd_parmap() {
+>  	fi
+>  	echo $@ >>$DEBUG_FILE
+>  	$@ 2>>$DEBUG_FILE
+> -	if [[ $? -ne 0 ]]; then
+> +	err=$?
+> +	if [[ $err -ne 0 ]]; then
+>  		echo "coccicheck failed"
+> -		exit $?
+> +		exit $err
+>  	fi
+>  }
+>
+> --
+> 2.17.1
+>
+>
