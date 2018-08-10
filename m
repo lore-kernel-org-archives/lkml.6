@@ -2,152 +2,132 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DF6C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AD3C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2EFF223FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2EFF223FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id A38CF22405
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:05:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="akqjv2ii"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38CF22405
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbeHJQfs (ORCPT
+        id S1728064AbeHJQf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:35:48 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:59438 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbeHJQfs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:35:48 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fo82t-0000WJ-CF; Fri, 10 Aug 2018 08:05:39 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fo82s-0003iQ-KM; Fri, 10 Aug 2018 08:05:39 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-Date:   Fri, 10 Aug 2018 09:05:22 -0500
-In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        (David Howells's message of "Wed, 01 Aug 2018 16:23:56 +0100")
-Message-ID: <87d0uqpba5.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fo82s-0003iQ-KM;;;mid=<87d0uqpba5.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+56a5RGWuqSbdDITYOIfsW1/M5QV9eOGs=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: BUG: Mount ignores mount options
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Fri, 10 Aug 2018 12:35:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727209AbeHJQf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:35:56 -0400
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0F6E223FE;
+        Fri, 10 Aug 2018 14:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533909952;
+        bh=N5F5zy5LKMLTxUk8qPTB8sy6Xe50g7oS+8nY3+w+pK0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=akqjv2iiB9ZqWF2RdJ3Z6NWQYZXutCQixrlyehEAJ/Vj9WXuJCTR5S7J3nt3Dr2yt
+         6T49aQ1S+jpMp8VVJ7KJi579982dA6qDRY96BOg+Q/ZMVOgq3ziL44cDUTBZdZ6ovq
+         QlW3jV6kB4iNirVpssC29zVW/8PYQCRVl0IYTg7M=
+Message-ID: <1533909950.1918.10.camel@kernel.org>
+Subject: Re: [PATCH v3 4/7] tracing: Add conditional snapshot
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org, kernel-team@lge.com
+Date:   Fri, 10 Aug 2018 09:05:50 -0500
+In-Reply-To: <20180810070225.GC479@sejong>
+References: <cover.1533753152.git.tom.zanussi@linux.intel.com>
+         <d16a83f8320015c6d7cb6659e554bebe03eaabec.1533753152.git.tom.zanussi@linux.intel.com>
+         <20180810070225.GC479@sejong>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-08-10 at 16:02 +0900, Namhyung Kim wrote:
+> On Thu, Aug 09, 2018 at 09:34:14AM -0500, Tom Zanussi wrote:
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > 
+> > Currently, tracing snapshots are context-free - they capture the
+> > ring
+> > buffer contents at the time the tracing_snapshot() function was
+> > invoked, and nothing else.  Additionally, they're always taken
+> > unconditionally - the calling code can decide whether or not to
+> > take a
+> > snapshot, but the data used to make that decision is kept
+> > separately
+> > from the snapshot itself.
+> > 
+> > This change adds the ability to associate with each trace instance
+> > some user data, along with an 'update' function that can use that
+> > data
+> > to determine whether or not to actually take a snapshot.  The
+> > update
+> > function can then update that data along with any other state (as
+> > part
+> > of the data presumably), if warranted.
+> > 
+> > Because snapshots are 'global' per-instance, only one user can
+> > enable
+> > and use a conditional snapshot for any given trace instance.  To
+> > enable a conditional snapshot (see details in the function and data
+> > structure comments), the user calls tracing_snapshot_cond_enable().
+> > Similarly, to disable a conditional snapshot and free it up for
+> > other
+> > users, tracing_snapshot_cond_disable() should be called.
+> > 
+> > To actually initiate a conditional snapshot,
+> > tracing_snapshot_cond()
+> > should be called.  tracing_snapshot_cond() will invoke the update()
+> > callback, allowing the user to decide whether or not to actually
+> > take
+> > the snapshot and update the user-defined data associated with the
+> > snapshot.  If the callback returns 'true', tracing_snapshot_cond()
+> > will then actually take the snapshot and return.
+> > 
+> > This scheme allows for flexibility in snapshot implementations -
+> > for
+> > example, by implementing slightly different update() callbacks,
+> > snapshots can be taken in situations where the user is only
+> > interested
+> > in taking a snapshot when a new maximum in hit versus when a value
+> > changes in any way at all.  Future patches will demonstrate both
+> > cases.
+> > 
+> > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > ---
+> 
+> [SNIP]
+> > @@ -1741,9 +1788,16 @@ static inline bool
+> > event_command_needs_rec(struct event_command *cmd_ops)
+> >  	return cmd_ops->flags & EVENT_CMD_FL_NEEDS_REC;
+> >  }
+> >  
+> > +typedef bool (*cond_update)(struct trace_array *tr, void
+> > *cond_data);
+> > +
+> 
+> I think it's better having "fn_t" suffix like 'cond_update_fn_t'.
+> 
 
-There is a serious problem with mount options today that fsopen does not
-address.  The problem is that mount options are ignored for block based
-filesystems, and any other type of filesystem that follows the same
-pattern.
+Yeah, makes sense, will change.
 
-The script below demonstrates this bug.  Showing this bug can cause the
-ext4 "acl" "quota" and "user_xattr" options to be silently ignored.
+Thanks,
 
-fsopen has my nack until it addresses this issue.
+Tom
 
-I don't know if we can fix this in the context of sys_mount.  But we if
-we are redoing the option parsing of how we mount filesystems this needs
-to be fixed before we start worrying about bug compatibility.
-
-Hopefully this report is simple and clear enough that we can at least
-agree on the problem.
-
-Eric
-
-# cat ~/bin/bdev-loop0.sh
-#!/bin/sh
-set -x
-set -e
-
-LOOP=loop0
-
-dd if=/dev/zero bs=1024 count=1048576 of=$LOOP-file
-losetup /dev/$LOOP $LOOP-file
-mkfs.ext4 /dev/$LOOP
-
-mkdir $LOOP-noacl-noquota-nouser_xattr
-mount -t ext4 /dev/$LOOP -o "noacl,noquota,nouser_xattr" $LOOP-noacl-noquota-nouser_xattr
-
-mkdir $LOOP-acl-quota-user_xattr
-mount -t ext4 /dev/$LOOP  -o "acl,quota,user_xattr" $LOOP-acl-quota-user_xattr
-
-cat /proc/mounts | grep loop0
-
-
-root@finagle:~# ~/bin/bdev-loop0.sh
-+ set -e
-+ LOOP=loop0
-+ dd if=/dev/zero bs=1024 count=1048576 of=loop0-file
-1048576+0 records in
-1048576+0 records out
-1073741824 bytes (1.1 GB) copied, 4.37645 s, 245 MB/s
-+ losetup /dev/loop0 loop0-file
-+ mkfs.ext4 /dev/loop0
-mke2fs 1.41.12 (17-May-2010)
-Filesystem label=
-OS type: Linux
-Block size=4096 (log=2)
-Fragment size=4096 (log=2)
-Stride=0 blocks, Stripe width=0 blocks
-65536 inodes, 262144 blocks
-13107 blocks (5.00%) reserved for the super user
-First data block=0
-Maximum filesystem blocks=268435456
-8 block groups
-32768 blocks per group, 32768 fragments per group
-8192 inodes per group
-Superblock backups stored on blocks: 
-        32768, 98304, 163840, 229376
-
-Writing inode tables: done                            
-Creating journal (8192 blocks): done
-Writing superblocks and filesystem accounting information: done
-
-This filesystem will be automatically checked every 29 mounts or
-180 days, whichever comes first.  Use tune2fs -c or -i to override.
-+ mkdir loop0-noacl-noquota-nouser_xattr
-+ mount -t ext4 /dev/loop0 -o noacl,noquota,nouser_xattr loop0-noacl-noquota-nouser_xattr
-+ mkdir loop0-acl-quota-user_xattr
-+ mount -t ext4 /dev/loop0 -o acl,quota,user_xattr loop0-acl-quota-user_xattr
-+ + grep loop0
-cat /proc/mounts
-/dev/loop0 /root/loop0-noacl-noquota-nouser_xattr ext4 rw,relatime,nouser_xattr,noacl 0 0
-/dev/loop0 /root/loop0-acl-quota-user_xattr ext4 rw,relatime,nouser_xattr,noacl 0 0
