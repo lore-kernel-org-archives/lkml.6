@@ -3,107 +3,176 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F2BC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179C6C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AAF7208AD
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB800223FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:05:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tda+0A4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAF7208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xm+G1Lod"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB800223FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeHJQdL (ORCPT
+        id S1727838AbeHJQfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:33:11 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35683 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbeHJQdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:33:10 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10-v6so4466910pgv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=Ki08Jx3YnliSGLAPep/p6sfozxcIOOmrbzzkmFF5pxo=;
-        b=Tda+0A4DXk/rpo/qbcFAfTQcWTgnIeg10hHf1aTiXdu5aX2DRdajj98G5hlpxpx4cg
-         jBoijHE4hPS4PgVBIoURwlb/MH+v9zGAOassn1TfWQYBsDmTeVB7j14XyVvJGFSWDewS
-         BynzY9EhMM4HSVaijlvumbmTRVxcnEJONovw7L3CWbRpitkESi+KsuIl0FN8f4g6Pdju
-         R1gcDwUu79yZWjXNnmyei90U6DY+2m7PeT4SUD4SrlEkkgJBhEUlJ2VesD+zPx9ck1lW
-         qMvFtlTeuM0BVYM+Yh5Xz6woXAHR1SMjAe2Oo4JpYUTIISv1bSCVA15kmFJHoBE+9nHf
-         O6yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=Ki08Jx3YnliSGLAPep/p6sfozxcIOOmrbzzkmFF5pxo=;
-        b=Yjr556bnXLW2Epf3f5bDH303DH0PMyrXy74CLd8VPjzxEsXu/d7EUmW2E3qrumb+BD
-         IaAZNiTVV4q9YDz1Kb98K+g/8zF62np9QWLwabdckGW2l+AZRgx14T2WjZA1Wvx+1zoK
-         1gjScW2qSERhEBjV1lEPUy/RGXpOfxR39xfhxArj7UDVTamoGM38/b6lLQKKBgrISz7I
-         q33BfdwIMNmPe7HHZXahUw9vDp+sVcJADCAYvwoRrcgmtBZZgQkMKvwGxcoShiJ7Yw9s
-         giGJXGHgG5kAWkyjVQ8pSHvgY5Y2l8VjS1K+gRecsRKryIL8JRLXYQ0AwAxmiwmpHWuh
-         6zIg==
-X-Gm-Message-State: AOUpUlEWgCopKvQ8vyofThYUAf80QzJK19zRCEliLFRQ1IizsVlsAc0S
-        VB/MT4Ee2vbbAHiYLluBTLRzzurv
-X-Google-Smtp-Source: AA+uWPwU7pMAMtgmYdf7KBE4PbxYAejGCycAhsokRyRs3Jno5CsrTPOHOZe24sOTBGEaNnIWnFlnEw==
-X-Received: by 2002:a62:cc4d:: with SMTP id a74-v6mr7298626pfg.200.1533909787606;
-        Fri, 10 Aug 2018 07:03:07 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.51? ([2402:f000:1:1501:200:5efe:a66f:4733])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm17791954pfj.72.2018.08.10.07.03.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 07:03:06 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        hpa@zytor.com, mark.rutland@arm.com, swood@redhat.com,
-        paulmck@linux.vnet.ibm.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [BUG] x86: kernel: nmi: A possible sleep-in-atomic-context bug in
- nmi_handle()
-Message-ID: <75833c57-d263-3b09-8306-62b4a3e371c8@gmail.com>
-Date:   Fri, 10 Aug 2018 22:03:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 10 Aug 2018 12:35:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727209AbeHJQfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:35:09 -0400
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F33FB223FE;
+        Fri, 10 Aug 2018 14:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533909905;
+        bh=5LuEVhbye21cbjBtxu9TXr7+HoHnBo+q5T9TwrvR7P8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=xm+G1Lodzs3yO+47n+0tSc7tZB7ZyG2v1cTYhVlvOB2ws12vD9Tb08FOR1AEZQ+NG
+         tO7lnchfNEEdDyxFeNoPi5urSlwoZFdrzvtEHfJ9KrwTnTjpAClkcSwaa/fMC0zE3M
+         yOqopwOPHLBFEK/P5GTnsY8wUkmlGqrV7MZZ5tY0=
+Message-ID: <1533909903.1918.9.camel@kernel.org>
+Subject: Re: [PATCH v3 1/7] tracing: Refactor hist trigger action code
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org, kernel-team@lge.com
+Date:   Fri, 10 Aug 2018 09:05:03 -0500
+In-Reply-To: <20180810065858.GB479@sejong>
+References: <cover.1533753152.git.tom.zanussi@linux.intel.com>
+         <9d8aaf30dc0c8d48885b0936a038ddd770a55caa.1533753152.git.tom.zanussi@linux.intel.com>
+         <20180810065858.GB479@sejong>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code may sleep with holding a rcu read lock.
+Hi Namhyung,
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+On Fri, 2018-08-10 at 15:58 +0900, Namhyung Kim wrote:
+> Hi Tom,
+> 
+> On Thu, Aug 09, 2018 at 09:34:11AM -0500, Tom Zanussi wrote:
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > 
+> > The hist trigger action code currently implements two essentially
+> > hard-coded pairs of 'actions' - onmax(), which tracks a variable
+> > and
+> > saves some event fields when a max is hit, and onmatch(), which is
+> > hard-coded to generate a synthetic event.
+> > 
+> > These hardcoded pairs (track max/save fields and detect
+> > match/generate
+> > synthetic event) should really be decoupled into separate
+> > components
+> > that can then be arbitrarily combined.  The first component of each
+> > pair (track max/detect match) is called a 'handler' in the new
+> > code,
+> > while the second component (save fields/generate synthetic event)
+> > is
+> > called an 'action' in this scheme.
+> > 
+> > This change refactors the action code to reflect this split by
+> > adding
+> > two handlers, HANDLER_ONMATCH and HANDLER_ONMAX, along with two
+> > actions, ACTION_SAVE and ACTION_TRACE.
+> > 
+> > The new code combines them to produce the existing ONMATCH/TRACE
+> > and
+> > ONMAX/SAVE functionality, but doesn't implement the other
+> > combinations
+> > now possible.  Future patches will expand these to further useful
+> > cases, such as ONMAX/TRACE, as well as add additional handlers and
+> > actions such as ONCHANGE and SNAPSHOT.
+> > 
+> > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > ---
+> 
+> [SNIP]
+> > @@ -3421,10 +3419,69 @@ static int parse_action_params(char
+> > *params, struct action_data *data)
+> >  	return ret;
+> >  }
+> >  
+> > -static struct action_data *onmax_parse(char *str)
+> > +static int action_parse(char *str, struct action_data *data,
+> > +			enum handler_id handler)
+> > +{
+> > +	char *action_name;
+> > +	int ret = 0;
+> > +
+> > +	strsep(&str, ".");
+> > +	if (!str) {
+> > +		hist_err("action parsing: No action found", "");
+> > +		ret = -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	action_name = strsep(&str, "(");
+> > +	if (!action_name || !str) {
+> > +		hist_err("action parsing: No action found", "");
+> > +		ret = -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (strncmp(action_name, "save", strlen("save")) == 0) {
+> > +		char *params = strsep(&str, ")");
+> > +
+> > +		if (!params) {
+> > +			hist_err("action parsing: No params found
+> > for %s", "save");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		ret = parse_action_params(params, data);
+> > +		if (ret)
+> > +			goto out;
+> > +
+> > +		if (handler == HANDLER_ONMAX)
+> > +			data->fn = onmax_save;
+> > +
+> > +		data->action = ACTION_SAVE;
+> > +	} else {
+> > +		char *params = strsep(&str, ")");
+> > +
+> > +		if (params) {
+> > +			ret = parse_action_params(params, data);
+> > +			if (ret)
+> > +				goto out;
+> > +		}
+> > +
+> > +		data->fn = action_trace;
+> > +		data->action = ACTION_TRACE;
+> 
+> This will set action name as (synthetic) event name, right?  I think
 
-========== BUG ==========
-[FUNC] kmalloc(GFP_KERNEL)
-arch/x86/mm/mmio-mod.c, 237: kmalloc in ioremap_trace_core
-arch/x86/mm/mmio-mod.c, 289: ioremap_trace_core in mmiotrace_ioremap
-arch/x86/mm/ioremap.c, 243: mmiotrace_ioremap in __ioremap_caller
-arch/x86/mm/ioremap.c, 367: __ioremap_caller in ioremap_cache
-./include/acpi/acpi_io.h, 13: ioremap_cache in acpi_os_ioremap
-drivers/acpi/osl.c, 702: acpi_os_ioremap in acpi_os_read_memory
-drivers/acpi/apei/apei-base.c, 662: acpi_os_read_memory in apei_read
-drivers/acpi/apei/ghes.c, 335: apei_read in ghes_read_estatus
-drivers/acpi/apei/ghes.c, 941: ghes_read_estatus in ghes_notify_nmi
-arch/x86/kernel/nmi.c, 137: [FUNC_PTR]ghes_notify_nmi in nmi_handle
-arch/x86/kernel/nmi.c, 124: rcu_read_lock in nmi_handle
+Right.
 
-Note that [FUNC_PTR] means a function pointer call is used.
+> it's natural to have "trace" for it with this change.  Maybe it's
+> time
+> to change the syntax like below?
+> 
+>   onmatch(SYS.EVENT).trace(EVENT, FIELD, ...)
+> 
+> Of course it should support old syntax too..
+> 
 
-I do not find a good way to fix it, so I only report.
-These possible bugs are found by my static analysis tool (DSAC) and 
-checked by my code review.
+Yeah, I can easily add this variant while keeping the original syntax. 
+Will do that in v4.
 
+Thanks,
 
-Best wishes,
-Jia-Ju Bai
-
+Tom
