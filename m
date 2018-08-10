@@ -5,97 +5,101 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A900C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B7DC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC51223AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:43:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC51223AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 91C73223D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:44:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C73223D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeHJQNC (ORCPT
+        id S1728238AbeHJQOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:13:02 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:21473
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727624AbeHJQNB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:13:01 -0400
-X-IronPort-AV: E=Sophos;i="5.53,219,1531778400"; 
-   d="scan'208";a="275506813"
-Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 15:43:01 +0200
-Date:   Fri, 10 Aug 2018 15:42:54 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Denis Efremov <efremov@linux.com>
-cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Subject: Re: [PATCH] coccicheck: return proper error code on check fail
-In-Reply-To: <20180810133636.8340-1-efremov@linux.com>
-Message-ID: <alpine.DEB.2.20.1808101541270.3390@hadrien>
-References: <20180810133636.8340-1-efremov@linux.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 10 Aug 2018 12:14:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727209AbeHJQOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:14:14 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F618223D9;
+        Fri, 10 Aug 2018 13:44:14 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 09:44:12 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] uprobes: Use synchronize_rcu() not synchronize_sched()
+Message-ID: <20180810094412.79d7b181@gandalf.local.home>
+In-Reply-To: <20180810133608.GC3677@redhat.com>
+References: <20180809160553.469e1e32@gandalf.local.home>
+        <20180810113548.GA3677@redhat.com>
+        <20180810084832.70b9a62a@gandalf.local.home>
+        <20180810133608.GC3677@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+[ Removing Jovi as his email is bouncing ]
 
-On Fri, 10 Aug 2018, efremov@linux.com wrote:
+On Fri, 10 Aug 2018 15:36:08 +0200
+Oleg Nesterov <oleg@redhat.com> wrote:
 
-> If coccicheck finds errors,
+> > > Can't we change uprobe_trace_func() and uretprobe_trace_func() to use
+> > > rcu_read_lock_sched() instead? It is more cheap.  
+> >
+> > Is it? rcu_read_lock_sched() is a preempt_disable(),  
+> 
+> which is just raw_cpu_inc()
+> 
+> > where
+> > rcu_read_lock() may just be a task counter increment.  
+> 
+> and  __rcu_read_unlock() is more heavy.
+> 
+> OK, I agree, this doesn't really matter.
 
-What do you mean by finds errors?  Do you mean that there is an error in
-the behavior of coccicheck or that coccicheck finds an error in the source
-code?
+Are you OK with this patch? I set it for stable and plan on pushing it
+with the patches for the upcoming merge window. If you are OK, mind
+giving me an Acked or Reviewed-by?
 
-To put it another way, can you give an example of the kind of error you
-are concerned about?
+> 
+> > > Hmm. probe_event_enable() does list_del + kfree on failure, this doesn't
+> > > look right... Not only because kfree() can race with list_for_each_entry_rcu(),
+> > > we should not put the 1st link on list until uprobe_buffer_enable().
+> > >
+> > > Does the patch below make sense or I am confused?  
+> >
+> > I guess the question is, if it isn't enabled, are there any users or
+> > even past users still running.  
+> 
+> Note that uprobe_register() is not "atomic".
+> 
+> To simplify, suppose we have 2 tasks T1 and T2 running the probed binary.
+> So we are going to do install_breakpoint(T1->mm) + install_breakpoint(T2->mm).
+> If the 2nd install_breakpoint() fails for any reason, _register() will do
+> remove_breakpoint(T1->mm) and return the error.
+> 
+> However, T1 can hit this bp right after install_breakpoint(T1->mm), so it
+> can call uprobe_trace_func() before list_del(&link->list).
+> 
+> OK, even if I am right this is mostly theoretical.
 
-thanks,
-julia
+Even if it is theoretical, we should make sure it can't happen. But
+this is unrelated to the current patch, and if we should fix this, then
+it can be a separate patch. I don't think your change hurts, and even
+if it can't technically happen, it may let us sleep better at night.
+Want to send a formal patch to make this change?
 
-> it should return an error code
-> distinct from zero. Current code instead of exiting with an
-> error code of coccinelle returns error code of
-> 'echo "coccicheck failed"' which is almost always equals to zero,
-> thus failing original intention of alerting about errors.
-> This patch fixes the problem.
->
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> ---
->  scripts/coccicheck | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/coccicheck b/scripts/coccicheck
-> index 9fedca611b7f..e04d328210ac 100755
-> --- a/scripts/coccicheck
-> +++ b/scripts/coccicheck
-> @@ -128,9 +128,10 @@ run_cmd_parmap() {
->  	fi
->  	echo $@ >>$DEBUG_FILE
->  	$@ 2>>$DEBUG_FILE
-> -	if [[ $? -ne 0 ]]; then
-> +	err=$?
-> +	if [[ $err -ne 0 ]]; then
->  		echo "coccicheck failed"
-> -		exit $?
-> +		exit $err
->  	fi
->  }
->
-> --
-> 2.17.1
->
->
+-- Steve
