@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C938C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C266C46470
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3F1223C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FBB3223C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:52:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ea8P/LTF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3F1223C6
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oc9dYoU0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBB3223C6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbeHJRXE (ORCPT
+        id S1728558AbeHJRXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:23:04 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36581 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728185AbeHJRXD (ORCPT
+        Fri, 10 Aug 2018 13:23:05 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34126 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728438AbeHJRXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:23:03 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h9-v6so8579517wro.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:52:49 -0700 (PDT)
+        Fri, 10 Aug 2018 13:23:04 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c13-v6so8587728wrt.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fDa6F+JrMAbwz8QNQ6MREvsk7u6fmv3IW/3SwDiD83I=;
-        b=Ea8P/LTFFa6AYRg+RuaprWNj/iR6f/cpPyi8WAUaT925QFM0vg32OQGxz3zI7v2/ni
-         4jkHXgAqcvcaQ8w2NuIgBRMaGke1laRQY8ipQp++5/JAXkPSm+jKr19zQXkx0veuhXzd
-         JI1HviBNCo5nrERkRhIaGtxphJH9pw+GhpeXE=
+        bh=K5qYFSU+P7Ie0HuaSbBHj2ureU4ns5TmNVNvVaDKFEI=;
+        b=Oc9dYoU0IIx5oyfSasJ96vWcCRexjQ9IESwDjDMzi/7iE24sL0+RpUUJPxcQbTnN3l
+         B2B4PriMi1Wy9xWikF3BHBPvxuteu2AZjSMn4zRPuk+chyo9w+42MLzxXpu3M4J8EPb1
+         bL2C2lDdK9kINRngbQ5J7tppzo/vV+UXjhtZs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fDa6F+JrMAbwz8QNQ6MREvsk7u6fmv3IW/3SwDiD83I=;
-        b=J4gHt+dK7Y1NY1irGBfXG7WVsjMHZ8dNdvT+yXiNrcpYNqULMFVR3Oo2QVLKwiKGEz
-         iJihOTcqVg3VNvaKCzesg8i//web9HeQnGOufTRpoqfPiHadOjXAyeyCLjlocgrxuNTc
-         0s4HwjfOfAFoTSJjedbqbSUjNqFCeVRyqT4ovRtSUUbf7nndgXRYfBOmbqj7ApD3XgIc
-         Qq34zfxBrX4wEQfvN0mmv9n85VZlyIrYgoaw+8C5oh5XToW0vP3zURJZfU8CFkDD5TZz
-         KmJUNdOXULFAPuC7yaWA2OG4xwDMmg410+ShkzK8tersgaJO0FxRkCZBVJERJQmkAZBe
-         SLyQ==
-X-Gm-Message-State: AOUpUlGB91y9o192iwP66Eg7rHgyZuJm+sTaCUrHzDCq1T01TYZV70Yk
-        Q9Pwqik1tGtZwqUMOm+1Dd1qyg==
-X-Google-Smtp-Source: AA+uWPyihDVSqFLmSHsltnp7DcVywhYMERKLrnmQXvwygjcmdH/Ko52MJzAEJahXsTNUVFDBAbCLNQ==
-X-Received: by 2002:adf:b2f4:: with SMTP id g107-v6mr4664061wrd.53.1533912768351;
-        Fri, 10 Aug 2018 07:52:48 -0700 (PDT)
+        bh=K5qYFSU+P7Ie0HuaSbBHj2ureU4ns5TmNVNvVaDKFEI=;
+        b=X/lSreClkIVhTbLHwZkO+9YmvU1sCIK1cujrTZCyK42gofs9s1AwBlOfMQIrDg5/yE
+         YIHBwoO8C+GxdyqHmq9euz2VrT2AKOtw9rb2m4cUifESfuykZptiL0K5o4R/Rk0Jgh/u
+         EsQlt58eFOZCRJJQtdlx51EE1lOHQpq4WeEdokZj697y8vZG02wYmtpU1qq/KLcFFNAC
+         mb0jwuEn0X8WeiWsP6A/M4khocuA5lOLUAFsOSkjBDxNVpQp23YrHchqw3cPKVxh5LCv
+         JQPI7Wvwoo9R5R7qRPgePexfqnsbal3CWUDuT9StwY3xO3KS6yra//tzdMsrg55PkWed
+         eNqQ==
+X-Gm-Message-State: AOUpUlELo+qD9YmnDLIKrFBno47Vt2QCYCSKLFcj0hWSKMaGsFe/6zUv
+        g5/xQvJ6tWTHGdIhPt3yeush7A==
+X-Google-Smtp-Source: AA+uWPwPG8JZ+uwAWaTA8PKaZNn8IrBRdx89DB5+g4frnXUbq5xamKzC9FnnF+Tii1bC5h5aYOwzTA==
+X-Received: by 2002:adf:adc9:: with SMTP id w67-v6mr4382476wrc.135.1533912770222;
+        Fri, 10 Aug 2018 07:52:50 -0700 (PDT)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id 9-v6sm19842700wrb.48.2018.08.10.07.52.46
+        by smtp.googlemail.com with ESMTPSA id 9-v6sm19842700wrb.48.2018.08.10.07.52.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 10 Aug 2018 07:52:47 -0700 (PDT)
+        Fri, 10 Aug 2018 07:52:49 -0700 (PDT)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
@@ -65,9 +65,9 @@ Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
         abailon@baylibre.com, arnd@arndb.de, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v8 3/8] interconnect: Allow endpoints translation via DT
-Date:   Fri, 10 Aug 2018 17:52:28 +0300
-Message-Id: <20180810145233.16466-4-georgi.djakov@linaro.org>
+Subject: [PATCH v8 4/8] interconnect: Add debugfs support
+Date:   Fri, 10 Aug 2018 17:52:29 +0300
+Message-Id: <20180810145233.16466-5-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180810145233.16466-1-georgi.djakov@linaro.org>
 References: <20180810145233.16466-1-georgi.djakov@linaro.org>
@@ -76,138 +76,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we support only platform data for specifying the interconnect
-endpoints. As now the endpoints are hard-coded into the consumer driver
-this may lead to complications when a single driver is used by multiple
-SoCs, which may have different interconnect topology.
-To avoid cluttering the consumer drivers, introduce a translation function
-to help us get the board specific interconnect data from device-tree.
+Add a functionality to provide information about the current constraints
+per each node and provider.
 
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/interconnect/core.c  | 78 ++++++++++++++++++++++++++++++++++++
- include/linux/interconnect.h |  7 ++++
- 2 files changed, 85 insertions(+)
+ drivers/interconnect/core.c | 78 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
 diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 9ca39aca4982..8f874d1b0a0f 100644
+index 8f874d1b0a0f..288ef83c3bc0 100644
 --- a/drivers/interconnect/core.c
 +++ b/drivers/interconnect/core.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
+@@ -6,6 +6,7 @@
+  * Author: Georgi Djakov <georgi.djakov@linaro.org>
+  */
+ 
++#include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/idr.h>
+ #include <linux/init.h>
+@@ -17,10 +18,12 @@
  #include <linux/slab.h>
-+#include <linux/of.h>
+ #include <linux/of.h>
  #include <linux/overflow.h>
++#include <linux/uaccess.h>
  
  static DEFINE_IDR(icc_idr);
-@@ -192,6 +193,83 @@ static int apply_constraints(struct icc_path *path)
- 	return ret;
- }
+ static LIST_HEAD(icc_provider_list);
+ static DEFINE_MUTEX(icc_lock);
++static struct dentry *icc_debugfs_dir;
  
-+/**
-+ * of_icc_get() - get a path handle from a DT node based on name
-+ * @dev: device pointer for the consumer device
-+ * @name: interconnect path name
-+ *
-+ * This function will search for a path two endpoints and return an
-+ * icc_path handle on success. Use icc_put() to release constraints when
-+ * they are not needed anymore.
-+ * If the interconnect API is disabled, NULL is returned and the consumer
-+ * drivers will still build. Drivers are free to handle this specifically,
-+ * but they don't have to. NULL is also returned when the "interconnects"
-+ * DT property is missing.
-+ *
-+ * Return: icc_path pointer on success or ERR_PTR() on error. NULL is returned
-+ * when the API is disabled or the "interconnects" DT property is missing.
-+ */
-+struct icc_path *of_icc_get(struct device *dev, const char *name)
+ /**
+  * struct icc_req - constraints that are attached to each node
+@@ -49,6 +52,62 @@ struct icc_path {
+ 	struct icc_req reqs[];
+ };
+ 
++#ifdef CONFIG_DEBUG_FS
++
++static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
 +{
-+	struct device_node *np = NULL;
-+	struct of_phandle_args src_args, dst_args;
-+	u32 src_id, dst_id;
-+	int idx = 0;
-+	int ret;
++	if (!n)
++		return;
 +
-+	if (!dev || !dev->of_node)
-+		return ERR_PTR(-ENODEV);
++	seq_printf(s, "%-30s %12d %12d\n",
++		   n->name, n->avg_bw, n->peak_bw);
++}
 +
-+	np = dev->of_node;
++static int icc_summary_show(struct seq_file *s, void *data)
++{
++	struct icc_provider *provider;
 +
-+	/*
-+	 * When the consumer DT node do not have "interconnects" property
-+	 * return a NULL path to skip setting constraints.
-+	 */
-+	if (!of_find_property(np, "interconnects", NULL))
-+		return NULL;
++	seq_puts(s, " node                                   avg         peak\n");
++	seq_puts(s, "--------------------------------------------------------\n");
 +
-+	/*
-+	 * We use a combination of phandle and specifier for endpoint. For now
-+	 * lets support only global ids and extend this is the future if needed
-+	 * without breaking DT compatibility.
-+	 */
-+	if (name) {
-+		idx = of_property_match_string(np, "interconnect-names", name);
-+		if (idx < 0)
-+			return ERR_PTR(idx);
++	mutex_lock(&icc_lock);
++
++	list_for_each_entry(provider, &icc_provider_list, provider_list) {
++		struct icc_node *n;
++
++		list_for_each_entry(n, &provider->nodes, node_list) {
++			struct icc_req *r;
++
++			icc_summary_show_one(s, n);
++			hlist_for_each_entry(r, &n->req_list, req_node) {
++				if (!r->dev)
++					continue;
++
++				seq_printf(s, "    %-26s %12d %12d\n",
++					   dev_name(r->dev), r->avg_bw,
++					   r->peak_bw);
++			}
++		}
 +	}
 +
-+	ret = of_parse_phandle_with_args(np, "interconnects",
-+					 "#interconnect-cells", idx * 2,
-+					 &src_args);
-+	if (ret)
-+		return ERR_PTR(ret);
++	mutex_unlock(&icc_lock);
 +
-+	of_node_put(src_args.np);
-+
-+	if (!src_args.args_count || src_args.args_count > 1)
-+		return ERR_PTR(-EINVAL);
-+
-+	src_id = src_args.args[0];
-+
-+	ret = of_parse_phandle_with_args(np, "interconnects",
-+					 "#interconnect-cells", idx * 2 + 1,
-+					 &dst_args);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	of_node_put(dst_args.np);
-+
-+	if (!dst_args.args_count || dst_args.args_count > 1)
-+		return ERR_PTR(-EINVAL);
-+
-+	dst_id = dst_args.args[0];
-+
-+	return icc_get(dev, src_id, dst_id);
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(of_icc_get);
 +
- /**
-  * icc_set() - set constraints on an interconnect path between two endpoints
-  * @path: reference to the path returned by icc_get()
-diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-index 593215371fd6..ae6744da9bc2 100644
---- a/include/linux/interconnect.h
-+++ b/include/linux/interconnect.h
-@@ -17,6 +17,7 @@ struct device;
- 
- struct icc_path *icc_get(struct device *dev, const int src_id,
- 			 const int dst_id);
-+struct icc_path *of_icc_get(struct device *dev, const char *name);
- void icc_put(struct icc_path *path);
- int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
- 
-@@ -28,6 +29,12 @@ static inline struct icc_path *icc_get(struct device *dev, const int src_id,
- 	return NULL;
- }
- 
-+static inline struct icc_path *of_icc_get(struct device *dev,
-+					  const char *name)
++static int icc_summary_open(struct inode *inode, struct file *file)
 +{
-+	return NULL;
++	return single_open(file, icc_summary_show, inode->i_private);
 +}
 +
- static inline void icc_put(struct icc_path *path)
++static const struct file_operations icc_summary_fops = {
++	.open		= icc_summary_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++#endif
++
+ static struct icc_node *node_find(const int id)
  {
+ 	return idr_find(&icc_idr, id);
+@@ -646,6 +705,25 @@ int icc_provider_del(struct icc_provider *provider)
  }
+ EXPORT_SYMBOL_GPL(icc_provider_del);
+ 
++static int __init icc_init(void)
++{
++#ifdef CONFIG_DEBUG_FS
++	icc_debugfs_dir = debugfs_create_dir("interconnect", NULL);
++	debugfs_create_file("interconnect_summary", 0444,
++			    icc_debugfs_dir, NULL, &icc_summary_fops);
++#endif
++	return 0;
++}
++
++static void __exit icc_exit(void)
++{
++#ifdef CONFIG_DEBUG_FS
++	debugfs_remove_recursive(icc_debugfs_dir);
++#endif
++}
++module_init(icc_init);
++module_exit(icc_exit);
++
+ MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org");
+ MODULE_DESCRIPTION("Interconnect Driver Core");
+ MODULE_LICENSE("GPL v2");
