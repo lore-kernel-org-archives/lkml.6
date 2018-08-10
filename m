@@ -2,109 +2,209 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC42DC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BF1C46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6C8223AA
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7517A223AA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=apporbit-com.20150623.gappssmtp.com header.i=@apporbit-com.20150623.gappssmtp.com header.b="aIeSZzpj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6C8223AA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=apporbit.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUAZb26K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7517A223AA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbeHJC7c (ORCPT
+        id S1727301AbeHJDDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 22:59:32 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38482 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeHJC7c (ORCPT
+        Thu, 9 Aug 2018 23:03:36 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55659 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeHJDDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 22:59:32 -0400
-Received: by mail-oi0-f66.google.com with SMTP id v8-v6so13017181oie.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 17:32:11 -0700 (PDT)
+        Thu, 9 Aug 2018 23:03:36 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so492420itj.5;
+        Thu, 09 Aug 2018 17:36:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=apporbit-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=wjwS5PrVwSCqQKbMLZ1h+6Sfj8742HGyWMlZ6vsyhJA=;
-        b=aIeSZzpjjr12b+/FlgPxUdrLr/c6ZKrtzWUh0WONeFrheMfw81oKt4nHROQMybpuzA
-         65pHkP3fTKcnEaq1Q1r21CJZlhXc6mGdziPN8L2RKi0CN/MdcfnIc68q7UaEMS3gsWUb
-         gboejdz8Xy4ViT9OYEMVaKrtNzuF80piE1Z1YzV98SWTh224sfLYdJdTVARwV9Czlmdp
-         qGz8YZSsox6p6D/N4bm2Zl5RFm1+8kbxMxD1MJ9rCXOkGZQdqftJk+oprgqu/4R5V9H3
-         yohHnBna61G9Nslk47JDjDmy3nWvlwZmEtIgPHHIjxTO+a+RJBo12kUi9ohnbOnwqkiP
-         c9XA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KTDIyw9de+g8O/ayVeCriIX9Ednpv8OVfO3SEe/FPTw=;
+        b=ZUAZb26KegmOtmEbZzqSeiTfUqHqTqK6iV/XRedb4DXpQ65tJMRSD5BKAybModedN2
+         IqMLFFBCY6Hoii3GooYH58n0DvDqD1Io68zRlavaf02Tebl8QAQyghoH90qbK6fGB0uC
+         OVEXgeAU7TAxIQc9gFAksHjqC2kuTWjIsH6XrAT4vUt5+sf2XKqXcxE21qRuIabCUxyt
+         1TnMv6YDAMl3admFBDLBG5h7r7aLB3z5hbn63dG7EB3UwViw7/ljnHrnr66AXEyJIq9i
+         f4OLo/+j/G+BWFiuFvCFyU/Ldff+qZU6ImK89Cyw9RVmgaJEfxJRo6Y9H+9ucJeJOQtW
+         33vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=wjwS5PrVwSCqQKbMLZ1h+6Sfj8742HGyWMlZ6vsyhJA=;
-        b=U53JHH6VGGNR7iRrHJdsbodwYdRniDEtswWi2QjjYkLTvw//gpIgzPRNIbGLJV7J9x
-         kWzjfpJZXtaPIgby9vfbigdddAZeCvabF0fUKbIWDFc5zA2FFs1fEfPP+e7gT9KwIbRw
-         OB8WHLXXjEqZObpnjR7Tcxxlf/PTWEk2INeiHgwyVfUXdJNBjtnCgMawHQHNzJXpG2na
-         kqQxDKKOxTNbYMbmNfmVBJCnlY52xjuq5z9Srj137d4GdnqHfVcIWCHL5wZhiE3+GqQD
-         Pm1RHso5WuisoGXGmx1QiBPLr5Ooa/TCXfziUdXxhpsUcQ7rQUXR0+6sGTEus62iR+KL
-         Qs1g==
-X-Gm-Message-State: AOUpUlHsQ33PLHCbi1cBuHK7efpwzykQEmWwi8yD40I9IiYuQZWE47EM
-        kuGXCy9wl7aGn6PSX+aeeoSzSdESafU=
-X-Google-Smtp-Source: AA+uWPzYxfSthy+hTzkiEUF0AXAGNJy3/ovEulu9wGDcSeKzMWRZTqJXsa92dKIjk0L3Bfrl8u+AAQ==
-X-Received: by 2002:aca:4204:: with SMTP id p4-v6mr4132520oia.242.1533861131312;
-        Thu, 09 Aug 2018 17:32:11 -0700 (PDT)
-Received: from mail-oi0-f54.google.com (mail-oi0-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id y85-v6sm11096227oie.25.2018.08.09.17.32.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 17:32:10 -0700 (PDT)
-Received: by mail-oi0-f54.google.com with SMTP id m11-v6so13064756oic.2;
-        Thu, 09 Aug 2018 17:32:10 -0700 (PDT)
-X-Received: by 2002:aca:d605:: with SMTP id n5-v6mr4072895oig.287.1533861130017;
- Thu, 09 Aug 2018 17:32:10 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KTDIyw9de+g8O/ayVeCriIX9Ednpv8OVfO3SEe/FPTw=;
+        b=JC0VNbtrGmwJilSubGaBZWjKpGiotVkIhNm63Foit9UX/HILsofg1NuA21P/B/MrBo
+         6omRaOFsU5qgCs/dx9d/lDdQIuKXBSyn+malx1CrhnNEn30O4+coA1KfMchlKyaZrcF/
+         Rl5DRSn7w4DycQVDyalS5xqRXyPF0MBbg8vg51yP4TLfY3J/tKGeUEV7XY4UwbPJyiN/
+         FhQkdUjf/s3od5Qih4WWa2YPiSUIVUrufTIC8PT1zYg1+RlHsQ2Fk+l7LdKY7yyzA8Ui
+         Z98ahcyzhtVMu4ZainAJzuyB4X4IdMfi79UxLubGVm257qdRsA5jiz3DdRFs/V6JD2gp
+         tcjA==
+X-Gm-Message-State: AOUpUlHXkO1vCeZvDz+xsqRlRrOyz2yVr7TKZ7mb32Xb3r5jIYq4qFA9
+        TpgeHV7eNqZPwKV8+TCRb267Y+oykgHRUVRnlMU=
+X-Google-Smtp-Source: AA+uWPxWu/HdOanKRfn8kck67yy6Dn4X18AKKsB/XgyophpPT8mxonbdQtiFNeytK6VH/rS0oQtBVNswepCOYo5kdrA=
+X-Received: by 2002:a02:ba85:: with SMTP id g5-v6mr3968307jao.6.1533861374181;
+ Thu, 09 Aug 2018 17:36:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180621220416.5412-1-tycho@tycho.ws> <20180807024442.GA12274@cisco.lan>
-In-Reply-To: <20180807024442.GA12274@cisco.lan>
-From:   Dinesh Subhraveti <subhraveti@apporbit.com>
-Date:   Thu, 9 Aug 2018 17:31:57 -0700
-X-Gmail-Original-Message-ID: <CAP4sa4+PTxniTjFWGJJjYFJXczgmUnsG2pQU7KuUdeERxxDnnQ@mail.gmail.com>
-Message-ID: <CAP4sa4+PTxniTjFWGJJjYFJXczgmUnsG2pQU7KuUdeERxxDnnQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] seccomp trap to userspace
-To:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1531796756-16982-1-git-send-email-zong@andestech.com>
+In-Reply-To: <1531796756-16982-1-git-send-email-zong@andestech.com>
+From:   Zong Li <zongbox@gmail.com>
+Date:   Fri, 10 Aug 2018 08:36:03 +0800
+Message-ID: <CA+ZOyahU_D616x_PjB=6tzDagWJOf_=bgFOUSx2t2Q3HcNEB5g@mail.gmail.com>
+Subject: Re: [PATCH] module: Add the print format of Elf_Addr for 32/64-bit compatibly
+To:     Zong Li <zong@andestech.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        arnd@arndb.de, schwab@suse.de, hch@infradead.org,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch@vger.kernel.org, greentime@andestech.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 7:44 PM Tycho Andersen <tycho@tycho.ws> wrote:
+Zong Li <zong@andestech.com> =E6=96=BC 2018=E5=B9=B47=E6=9C=8817=E6=97=A5 =
+=E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=8811:06=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-> Hi all,
+> Use a similar way like fixed width integer types in inttypes.h.
 >
-> Dinesh Subhraveti has claimed that some part of this series might be
-> patented. While he has not furnished me with anything to confirm this
-> claim, I'll put this series on hold.
+> For the ELF, the Elf32_Addr is int type and Elf64_Addr is long long
+> type. It is opposite to definition of inttypes.h, so the Elf_Addr cannot
+> re-use the header.
+>
+> In many architectures, the module loader only print the message of
+> module name and relocation type except the address information. We can
+> print the address correctly without compile warning by using PRIdEA,
+> PRIxEA and so on.
+>
+> Signed-off-by: Zong Li <zong@andestech.com>
+> ---
+>  arch/riscv/kernel/module.c   | 13 +++++++------
+>  include/asm-generic/module.h |  9 +++++++++
+>  2 files changed, 16 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+> index 3303ed2cd419..d839528e491a 100644
+> --- a/arch/riscv/kernel/module.c
+> +++ b/arch/riscv/kernel/module.c
+> @@ -16,11 +16,12 @@
+>  #include <linux/err.h>
+>  #include <linux/errno.h>
+>  #include <linux/moduleloader.h>
+> +#include <asm-generic/module.h>
+>
+>  static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_A=
+ddr v)
+>  {
+>         if (v !=3D (u32)v) {
+> -               pr_err("%s: value %016llx out of range for 32-bit field\n=
+",
+> +               pr_err("%s: value %016" PRIxEA "out of range for 32-bit f=
+ield\n",
+>                        me->name, v);
+>                 return -EINVAL;
+>         }
+> @@ -101,7 +102,7 @@ static int apply_r_riscv_pcrel_hi20_rela(struct modul=
+e *me, u32 *location,
+>
+>         if (offset !=3D (s32)offset) {
+>                 pr_err(
+> -                 "%s: target %016llx can not be addressed by the 32-bit =
+offset from PC =3D %p\n",
+> +                 "%s: target %016" PRIxEA "can not be addressed by the 3=
+2-bit offset from PC =3D %p\n",
+>                   me->name, v, location);
+>                 return -EINVAL;
+>         }
+> @@ -143,7 +144,7 @@ static int apply_r_riscv_hi20_rela(struct module *me,=
+ u32 *location,
+>
+>         if (IS_ENABLED(CMODEL_MEDLOW)) {
+>                 pr_err(
+> -                 "%s: target %016llx can not be addressed by the 32-bit =
+offset from PC =3D %p\n",
+> +                 "%s: target %016" PRIxEA "can not be addressed by the 3=
+2-bit offset from PC =3D %p\n",
+>                   me->name, v, location);
+>                 return -EINVAL;
+>         }
+> @@ -187,7 +188,7 @@ static int apply_r_riscv_got_hi20_rela(struct module =
+*me, u32 *location,
+>                 offset =3D (void *)offset - (void *)location;
+>         } else {
+>                 pr_err(
+> -                 "%s: can not generate the GOT entry for symbol =3D %016=
+llx from PC =3D %p\n",
+> +                 "%s: can not generate the GOT entry for symbol =3D %016=
+" PRIxEA "from PC =3D %p\n",
+>                   me->name, v, location);
+>                 return -EINVAL;
+>         }
+> @@ -211,7 +212,7 @@ static int apply_r_riscv_call_plt_rela(struct module =
+*me, u32 *location,
+>                         offset =3D (void *)offset - (void *)location;
+>                 } else {
+>                         pr_err(
+> -                         "%s: target %016llx can not be addressed by the=
+ 32-bit offset from PC =3D %p\n",
+> +                         "%s: target %016" PRIxEA "can not be addressed =
+by the 32-bit offset from PC =3D %p\n",
+>                           me->name, v, location);
+>                         return -EINVAL;
+>                 }
+> @@ -233,7 +234,7 @@ static int apply_r_riscv_call_rela(struct module *me,=
+ u32 *location,
+>
+>         if (offset !=3D fill_v) {
+>                 pr_err(
+> -                 "%s: target %016llx can not be addressed by the 32-bit =
+offset from PC =3D %p\n",
+> +                 "%s: target %016" PRIxEA "can not be addressed by the 3=
+2-bit offset from PC =3D %p\n",
+>                   me->name, v, location);
+>                 return -EINVAL;
+>         }
+> diff --git a/include/asm-generic/module.h b/include/asm-generic/module.h
+> index 98e1541b72b7..d358f2414e5e 100644
+> --- a/include/asm-generic/module.h
+> +++ b/include/asm-generic/module.h
+> @@ -27,6 +27,7 @@ struct mod_arch_specific
+>  #endif
+>  #define ELF_R_TYPE(X)  ELF64_R_TYPE(X)
+>  #define ELF_R_SYM(X)   ELF64_R_SYM(X)
+> +#define ELF_ADDR_PREFIX "ll"
+>
+>  #else /* CONFIG_64BIT */
+>
+> @@ -44,6 +45,14 @@ struct mod_arch_specific
+>  #endif
+>  #define ELF_R_TYPE(X)  ELF32_R_TYPE(X)
+>  #define ELF_R_SYM(X)   ELF32_R_SYM(X)
+> +#define ELF_ADDR_PREFIX
+>  #endif
+>
+> +#define PRIdEA ELF_ADDR_PREFIX "d" /* signed decimal */
+> +#define PRIiEA ELF_ADDR_PREFIX "i" /* signed decimal */
+> +#define PRIuEA ELF_ADDR_PREFIX "u" /* unsigned decimal */
+> +#define PRIoEA ELF_ADDR_PREFIX "o" /* unsigned octal */
+> +#define PRIxEA ELF_ADDR_PREFIX "x" /* unsigned lowercase hexadecimal */
+> +#define PRIXEA ELF_ADDR_PREFIX "X" /* unsigned uppercase hexadecimal */
+> +
+>  #endif /* __ASM_GENERIC_MODULE_H */
+> --
+> 2.16.1
+>
 
-For the sake of everyone's clarity, there is no patent or intellectual
-property issue here and we'd like to see this feature in the kernel.
-I did indicate that there is a patent related to the mechanism
-underlying this patch set but that is completely incidental to the
-issue here.  We have filed that patent only for the purpose of defense
-and have no interest or resources to go after infringements.  As such,
-I spoke about the approach, it's value for networking and a few
-possible ways of implementing it in the kernel at Linux Plumbers
-Conference 2017.
-
-As a contractor and a member of our team at AppSwitch (FKA Fermat),
-Tycho Andersen helped implement a fully user space version of system
-call trap mechanism based on seccomp / fd-passing and participated in
-our team discussions about upstreaming a kernel version of the
-feature.  Given that context, we were taken aback that he posted the
-v1 patch set without letting us know and without any mention of
-AppSwitch in the post even though he was still under contract at that
-time.
-
-In any case, please note that we will communicate with Tycho directly
-regarding this matter going forward.
-
---
-Dinesh Subhraveti
+ping
