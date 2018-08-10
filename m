@@ -2,183 +2,75 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1950C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AE6C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8597A223F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8597A223F0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 59238223F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:02:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59238223F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbeHJK2J (ORCPT
+        id S1727873AbeHJKbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:28:09 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56922 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeHJK2J (ORCPT
+        Fri, 10 Aug 2018 06:31:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38612 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726742AbeHJKbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:28:09 -0400
-Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 9d59f0c1d28d00eb; Fri, 10 Aug 2018 09:59:23 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v2] cpuidle: menu: Handle stopped tick more aggressively
-Date:   Fri, 10 Aug 2018 09:57:18 +0200
-Message-ID: <3174357.2tBMdxG3bF@aspire.rjw.lan>
-In-Reply-To: <1951009.1jlQfyrxio@aspire.rjw.lan>
-References: <1951009.1jlQfyrxio@aspire.rjw.lan>
+        Fri, 10 Aug 2018 06:31:02 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fo2NF-00028g-Ld; Fri, 10 Aug 2018 08:02:17 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: chelsio: cxgb2: remove unused array pci_speed
+Date:   Fri, 10 Aug 2018 09:02:17 +0100
+Message-Id: <20180810080217.26758-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Subject: [PATCH] cpuidle: menu: Handle stopped tick more aggressively
+From: Colin Ian King <colin.king@canonical.com>
 
-Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
-with stopped tick) missed the case when the target residencies of
-deep idle states of CPUs are above the tick boundary which may cause
-the CPU to get stuck in a shallow idle state for a long time.
+Array pci_speed is defined but is never used hence it is redundant
+and can be removed.
 
-Say there are two CPU idle states available: one shallow, with the
-target residency much below the tick boundary and one deep, with
-the target residency significantly above the tick boundary.  In
-that case, if the tick has been stopped already and the expected
-next timer event is relatively far in the future, the governor will
-assume the idle duration to be equal to TICK_USEC and it will select
-the idle state for the CPU accordingly.  However, that will cause the
-shallow state to be selected even though it would have been more
-energy-efficient to select the deep one.
+Cleans up clang warning:
+warning: 'pci_speed' defined but not used [-Wunused-const-variable=]
 
-To address this issue, modify the governor to always assume idle
-duration to be equal to the time till the closest timer event if
-the tick is not running which will cause the selected idle states
-to always match the known CPU wakeup time.
-
-Also make it always indicate that the tick should be stopped in
-that case for consistency.
-
-Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
-Reported-by: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/ethernet/chelsio/cxgb/cxgb2.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
--> v2: Initialize first_idx properly in the stopped tick case.
-
----
- drivers/cpuidle/governors/menu.c |   55 +++++++++++++++++----------------------
- 1 file changed, 25 insertions(+), 30 deletions(-)
-
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -285,9 +285,8 @@ static int menu_select(struct cpuidle_dr
- {
- 	struct menu_device *data = this_cpu_ptr(&menu_devices);
- 	int latency_req = cpuidle_governor_latency_req(dev->cpu);
--	int i;
--	int first_idx;
--	int idx;
-+	int first_idx = 0;
-+	int idx, i;
- 	unsigned int interactivity_req;
- 	unsigned int expected_interval;
- 	unsigned long nr_iowaiters, cpu_load;
-@@ -307,6 +306,18 @@ static int menu_select(struct cpuidle_dr
- 	/* determine the expected residency time, round up */
- 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
+diff --git a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+index 8623be13bf86..0ccdde366ae1 100644
+--- a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
++++ b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+@@ -109,10 +109,6 @@ static int disable_msi = 0;
+ module_param(disable_msi, int, 0);
+ MODULE_PARM_DESC(disable_msi, "Disable Message Signaled Interrupt (MSI)");
  
-+	/*
-+	 * If the tick is already stopped, the cost of possible short idle
-+	 * duration misprediction is much higher, because the CPU may be stuck
-+	 * in a shallow idle state for a long time as a result of it.  In that
-+	 * case say we might mispredict and use the known time till the closest
-+	 * timer event for the idle state selection.
-+	 */
-+	if (tick_nohz_tick_stopped()) {
-+		data->predicted_us = ktime_to_us(delta_next);
-+		goto select;
-+	}
-+
- 	get_iowait_load(&nr_iowaiters, &cpu_load);
- 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
- 
-@@ -322,7 +333,6 @@ static int menu_select(struct cpuidle_dr
- 	expected_interval = get_typical_interval(data);
- 	expected_interval = min(expected_interval, data->next_timer_us);
- 
--	first_idx = 0;
- 	if (drv->states[0].flags & CPUIDLE_FLAG_POLLING) {
- 		struct cpuidle_state *s = &drv->states[1];
- 		unsigned int polling_threshold;
-@@ -344,29 +354,15 @@ static int menu_select(struct cpuidle_dr
- 	 */
- 	data->predicted_us = min(data->predicted_us, expected_interval);
- 
--	if (tick_nohz_tick_stopped()) {
--		/*
--		 * If the tick is already stopped, the cost of possible short
--		 * idle duration misprediction is much higher, because the CPU
--		 * may be stuck in a shallow idle state for a long time as a
--		 * result of it.  In that case say we might mispredict and try
--		 * to force the CPU into a state for which we would have stopped
--		 * the tick, unless a timer is going to expire really soon
--		 * anyway.
--		 */
--		if (data->predicted_us < TICK_USEC)
--			data->predicted_us = min_t(unsigned int, TICK_USEC,
--						   ktime_to_us(delta_next));
--	} else {
--		/*
--		 * Use the performance multiplier and the user-configurable
--		 * latency_req to determine the maximum exit latency.
--		 */
--		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
--		if (latency_req > interactivity_req)
--			latency_req = interactivity_req;
--	}
-+	/*
-+	 * Use the performance multiplier and the user-configurable latency_req
-+	 * to determine the maximum exit latency.
-+	 */
-+	interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-+	if (latency_req > interactivity_req)
-+		latency_req = interactivity_req;
- 
-+select:
- 	expected_interval = data->predicted_us;
- 	/*
- 	 * Find the idle state with the lowest power while satisfying
-@@ -403,14 +399,13 @@ static int menu_select(struct cpuidle_dr
- 	 * Don't stop the tick if the selected state is a polling one or if the
- 	 * expected idle duration is shorter than the tick period length.
- 	 */
--	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
--	    expected_interval < TICK_USEC) {
-+	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-+	    expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
- 		unsigned int delta_next_us = ktime_to_us(delta_next);
- 
- 		*stop_tick = false;
- 
--		if (!tick_nohz_tick_stopped() && idx > 0 &&
--		    drv->states[idx].target_residency > delta_next_us) {
-+		if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
- 			/*
- 			 * The tick is not going to be stopped and the target
- 			 * residency of the state to be returned is not within
+-static const char pci_speed[][4] = {
+-	"33", "66", "100", "133"
+-};
+-
+ /*
+  * Setup MAC to receive the types of packets we want.
+  */
+-- 
+2.17.1
 
