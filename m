@@ -5,102 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911EEC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75002C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F168223FF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:20:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F168223FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C202223FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:22:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C202223FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeHJQua (ORCPT
+        id S1728298AbeHJQwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:50:30 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39511 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbeHJQua (ORCPT
+        Fri, 10 Aug 2018 12:52:21 -0400
+Received: from www62.your-server.de ([213.133.104.62]:39310 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728232AbeHJQwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:50:30 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h4-v6so4867548edi.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:20:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=pa7FxmbHRRU5r+3YlrzOB2oMF5izfnuxuL2q1fIAuZQ=;
-        b=Xs8YNuslNSvGtDKJRJm+OcuLdtS42oBevjRY1dief21eg9Amv2z/XtyiAnLXam0Y0E
-         MFJvVptRy77SAgHpVpXm83n3eCWkyZEnEEFg6vUuIL0gYc73TFMDziArGZK/pJ/PPFmD
-         wFAlspW1dlNVT/TtSBVIhI4nL5ziDv3zAtD+JbsawxKJx37cVx/FGLU0LwIekxwE9bK+
-         p5+LxnP0OX6PTxy3d9e+TrfImlpzcFDJB2KQe/fTodzb9qXUCMkG/wTdlGdAEAKQ9Fny
-         ArHlfoxhie2EIWj7k0Wo1+DryqqDDmJH/QOeHib6EQewBTctozllD+QsJCDvsLPDVYbf
-         pCYw==
-X-Gm-Message-State: AOUpUlGiVH3CMtYh2kioiqAIfItiXMJqs6+ye8OVRCLy+hRMbgFbJajD
-        wBntrkP7ulvPICj2wjo4tNcYJ5CXAOY=
-X-Google-Smtp-Source: AA+uWPwli7EICCLY2xUissqoNZVlTeUSBZwtAhxH+IhouQuq9vUlZri/Ya5zZi4VJtfSk8AlF8K0eQ==
-X-Received: by 2002:a50:ccdb:: with SMTP id b27-v6mr8687949edj.98.1533910822614;
-        Fri, 10 Aug 2018 07:20:22 -0700 (PDT)
-Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com. [74.125.82.43])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm3963010edi.68.2018.08.10.07.20.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 07:20:21 -0700 (PDT)
-Received: by mail-wm0-f43.google.com with SMTP id y9-v6so2105620wma.5
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:20:20 -0700 (PDT)
-X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr1610363wma.101.1533910820744;
- Fri, 10 Aug 2018 07:20:20 -0700 (PDT)
+        Fri, 10 Aug 2018 12:52:21 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fo8Iu-00052G-Eh; Fri, 10 Aug 2018 16:22:12 +0200
+Received: from [2a02:120b:c3f4:b8b0:b5ea:3969:d380:aafd] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fo8Iu-0007yH-9k; Fri, 10 Aug 2018 16:22:12 +0200
+Subject: Re: [BUG] bpf: syscall: a possible sleep-in-atomic-context bug in
+ map_update_elem()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>, ast@kernel.org
+Cc:     netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        brouer@redhat.com
+References: <65830741-bf35-4d32-e365-c32fc17c25cb@gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <97aa2e6b-1863-f123-af2c-24a2e6333ba5@iogearbox.net>
+Date:   Fri, 10 Aug 2018 16:22:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <20180810133636.8340-1-efremov@linux.com> <alpine.DEB.2.20.1808101541270.3390@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1808101541270.3390@hadrien>
-Reply-To: efremov@linux.com
-From:   Denis Efremov <efremov@linux.com>
-Date:   Fri, 10 Aug 2018 17:20:09 +0300
-X-Gmail-Original-Message-ID: <CADKZ3FLsksV8-cCE6aOnZnLbYj3SSAkPnMs_VRQB3g0V3mUYcg@mail.gmail.com>
-Message-ID: <CADKZ3FLsksV8-cCE6aOnZnLbYj3SSAkPnMs_VRQB3g0V3mUYcg@mail.gmail.com>
-Subject: Re: [PATCH] coccicheck: return proper error code on check fail
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <65830741-bf35-4d32-e365-c32fc17c25cb@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24829/Fri Aug 10 10:43:38 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Do you mean that there is an error in the behavior of coccicheck or that coccicheck finds an error in the source code?
+On 08/10/2018 04:07 PM, Jia-Ju Bai wrote:
+> The kernel may sleep with holding a rcu read lock.
+> 
+> The function call paths (from bottom to top) in Linux-4.16 are:
+> 
+> [FUNC] kmalloc(GFP_KERNEL)
+> kernel/kthread.c, 283: kmalloc in __kthread_create_on_node
+> kernel/kthread.c, 365: __kthread_create_on_node in kthread_create_on_node
+> kernel/bpf/cpumap.c, 368: kthread_create_on_node in __cpu_map_entry_alloc
+> kernel/bpf/cpumap.c, 490: __cpu_map_entry_alloc in cpu_map_update_elem
+> kernel/bpf/syscall.c, 724: [FUNC_PTR]cpu_map_update_elem in map_update_elem
+> kernel/bpf/syscall.c, 723: rcu_read_lock in map_update_elem
+> 
+> Note that [FUNC_PTR] means a function pointer call is used.
+> 
+> I do not find a good way to fix it, so I only report.
+> This is found by my static analysis tool (DSAC).
 
-An error in the source code.
+Thanks for the report Jia-Ju! In the map_update_elem() from syscall
+path there's a check map->map_type == BPF_MAP_TYPE_CPUMAP, where we
+call the cpumap's map->ops->map_update_elem() while /not/ being under
+rcu_read_lock() as in other cases, so looks okay to me. Could you point
+out the case for being under rcu_read_lock() more specifically which
+the tool found?
 
-Here is an example of how the patch changes the behavior of 'make
-coccicheck' (my comments after the ###):
-Current behavior:
-$ make M=mymodule coccicheck
-mymodule/file1.c:97:4-14: ERROR: Assignment of bool to non-0/1 constant
-mymodule/file2.c:104:4-19: ERROR: Assignment of bool to non-0/1 constant
-mymodule/file2.c:577:1-15: code aligned with following code on line 583
-mymodule/file3.c:439:5-10: Unneeded variable: "error". Return "0" on line 449
-mymodule/file4.c:451:5-7: Unneeded variable: "rc". Return "0" on line 455
-mymodule/file5.c:433:5-8: Unneeded variable: "ret". Return "0" on line 607
-mymodule/file6.c:433:5-10: Unneeded variable: "error". Return "0" on line 440
-mymodule/file7.c:774:2-3: Unneeded semicolon
-coccicheck failed     ### <-- Check failed
-$ echo $?
-0 ### <-- But error code signals that everthing is OK
-
-After this patch:
-$ make M=mymodule coccicheck
-...
-coccicheck failed
-make: *** [Makefile:1636: coccicheck] Error 2
-$ echo $?
-2 ### <-- The patch changes error code
-
-Why does this matter?
-1) Because it's clear from the source code that the original intention
-was to return an error code of checking command, not the "echo
-'coccicheck failed'" command.
-2) Automated testing systems (CI, for example) rely on the return code.
+Thanks,
+Daniel
