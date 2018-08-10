@@ -2,74 +2,86 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5A8C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6309C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50FE521CCE
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 11:59:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50FE521CCE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5EBD120835
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:03:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hriTxt2h";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fmcvxu4p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EBD120835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbeHJO3Q (ORCPT
+        id S1728039AbeHJOdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:29:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40086 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727381AbeHJO3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:29:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C9748ADB0;
-        Fri, 10 Aug 2018 11:59:37 +0000 (UTC)
-Date:   Fri, 10 Aug 2018 13:59:37 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
-        ldufour@linux.vnet.ibm.com, kirill@shutemov.name,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v7 PATCH 4/4] mm: unmap special vmas with regular
- do_munmap()
-Message-ID: <20180810115937.GB1644@dhcp22.suse.cz>
-References: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
- <1533857763-43527-5-git-send-email-yang.shi@linux.alibaba.com>
- <521a7d54-efdb-2401-c677-3f5fcbad557b@suse.cz>
+        Fri, 10 Aug 2018 10:33:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42860 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727494AbeHJOdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 10:33:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8B3DD60B84; Fri, 10 Aug 2018 12:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533902613;
+        bh=7L2/TuF8xaAFoYbw/Fl4vWmkX5PzO/Y/xK5+i9OpZ+A=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=hriTxt2hevzoHPSJYg0Q3zAKtOrw4hJvQztqDHgoLOWcGKEU3WrXhV/Wjn8oM5O2Q
+         aaOqHsB/pfrlvytwTtiH6gEbiq7oyRnb1Nwja14w97DI264OZRVz1nYNT7FVw2fYiU
+         IBX4AL+BhFbInQAhUoD4SvY6DTBrm4YAnnrdlFSQ=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2283960B19;
+        Fri, 10 Aug 2018 12:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533902612;
+        bh=7L2/TuF8xaAFoYbw/Fl4vWmkX5PzO/Y/xK5+i9OpZ+A=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=fmcvxu4p32g4YTeNV8O8DQefaUSfIYLJLTpJNoxU6bq/oBiJsRevJi+wAADnBZ67Q
+         90jj1AUHq+jl0QbqMRLOkzFXTTCxg7YDJ4mtLFD7Kzfn4yhBPBSfeSkqPnJ60IpT35
+         OWiP2r+WBAXUlRB/M4aaWrc3cnlGPC16EndAHaSo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2283960B19
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     VIJAYAKUMAAR K T <vijay.bvb@samsung.com>
+Cc:     "davem\@davemloft.net" <davem@davemloft.net>,
+        "ath10k\@lists.infradead.org" <ath10k@lists.infradead.org>,
+        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        CPGS <cpgs@samsung.com>
+Subject: Re: [PATCH 1/1] ath10k: avoid possible memory access violation
+References: <1533292805-9709-1-git-send-email-vijay.bvb@samsung.com>
+        <CGME20180803104058epcas1p1d5cdd51e2774d72679aaf15358cb3d00@epcms5p1>
+        <20180810101916epcms5p1e3d60d9cbc49f9a7c9529d87d691f359@epcms5p1>
+Date:   Fri, 10 Aug 2018 15:03:28 +0300
+In-Reply-To: <20180810101916epcms5p1e3d60d9cbc49f9a7c9529d87d691f359@epcms5p1>
+        (VIJAYAKUMAAR K. T.'s message of "Fri, 10 Aug 2018 15:49:16 +0530")
+Message-ID: <87eff6zawf.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <521a7d54-efdb-2401-c677-3f5fcbad557b@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 10-08-18 11:51:54, Vlastimil Babka wrote:
-> On 08/10/2018 01:36 AM, Yang Shi wrote:
-> > Unmapping vmas, which have VM_HUGETLB | VM_PFNMAP flag set or
-> > have uprobes set, need get done with write mmap_sem held since
-> > they may update vm_flags.
-> > 
-> > So, it might be not safe enough to deal with these kind of special
-> > mappings with read mmap_sem. Deal with such mappings with regular
-> > do_munmap() call.
-> > 
-> > Michal suggested to make this as a separate patch for safer and more
-> > bisectable sake.
-> 
-> Hm I believe Michal meant the opposite "evolution" though. Patch 2/4
-> should be done in a way that special mappings keep using the regular
-> path, and this patch would convert them to the new path. Possibly even
-> each special case separately.
+VIJAYAKUMAAR K T <vijay.bvb@samsung.com> writes:
 
-yes, that is what I meant. Each of the special case should have its own
-patch and changelog explaining why it is safe.
+> It would be great, if this patch could be reviewed.
+
+It's in the queue and you can check the state from patchwork:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#checking_state_of_patches_from_patchwork
+
 -- 
-Michal Hocko
-SUSE Labs
+Kalle Valo
