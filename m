@@ -2,135 +2,501 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDD2C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 22:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86572C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D69223E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 22:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2C9223E6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:01:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxWxqFcn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D69223E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HefIuFJc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2C9223E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeHKBYn (ORCPT
+        id S1727140AbeHKBd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 21:24:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46564 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbeHKBYn (ORCPT
+        Fri, 10 Aug 2018 21:33:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42443 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbeHKBd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 21:24:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u24-v6so5138042pfn.13;
-        Fri, 10 Aug 2018 15:52:50 -0700 (PDT)
+        Fri, 10 Aug 2018 21:33:26 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b16-v6so18443590oic.9
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 16:01:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r5Zx3jLyz5UnPm5gmBTdOTfJdyK5/0tWjYpELaC+tT8=;
-        b=IxWxqFcnLD0mb1DuYuCnPPfRaTonUXh9yYRCyEbfE5i2kxNYK/BVA8f13PY8ZPwvQC
-         wHBrnqUhP7Ty/d2BJvkJ8KoG2sFp6MfkO7erCvsrz5j3SULSSAEZrD6wotk4J30/lxH9
-         T4OtdayVnRoM/2UxBtAkH78hVSc6vHla8eU4AReP4k7qBEun+gqws8dRr5zZamLMEH/t
-         /zht7qafwsBZgmjcvWdqlRlJz8tM87ExakUhUG5fVDrOrLIAIA74qWYv/z8vTSYrkur8
-         Sd9lM6oJpHe9aB4BycTQ6NiBz4Yj977OVI4Ib8olG9nJAD4uf18Zc3j+9coKNT+iflvn
-         cfiw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ty6YhRY2fNMR0qCfXsybxBJ+8pKYaa+LZmETNWj0MKQ=;
+        b=HefIuFJcEQOADqc/fbq3itU0MWml6deY2bP+J+Jwo226WD0H9ovHCugeent+0rcKPl
+         anLjOr3RLjubkm9wR399pxC9E1ky4qc7SzY6vo55igEscvuj9UyWKr+uELy0v0vPUPY0
+         d9o5vXoismzfW4yoDNeJ7ZzyLBkEqZwsRE07T05XSjqKpcrasC6hzHzg8K62GI3N7o5L
+         xv+Kprkj6g792aYJLFfL3yttjqxd5epuuy2GkVqxPWhotratbVTZEbVBji3XKmriD6AZ
+         f62NPs+onbxA1vrdSrIKBYM1RC8nuZhDLVNS7QU+tRfRbFeUNqVP9+lIDLsk6hmDzxRr
+         j/9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r5Zx3jLyz5UnPm5gmBTdOTfJdyK5/0tWjYpELaC+tT8=;
-        b=m2WcKmKO+2NISjBmPPzyr++KISRe+4oqF6kjIX7Nd9MW0Yl0E0kTuu5CAxcb1/f9XJ
-         H/TZKL526+uB0Z6Z4Pv+/MBOkIYeQvUvIQTL6hc5zmhP6FzZR/nxgBt+eNiz4Ce6RNg+
-         Ot1MVkM4LtFjfdOvUui0APHmSaGoqUsdDumL4+c4cBNyNqtiDrcFM4pqwDO3Mow4LZdS
-         sGTpwktYReGaKleyYHx3pDmgCmXABweCnRah77NHvaAoSpMrDjzNeVyR1u0/w02EgfXm
-         +P3iAB6oCMe384FsXX/njg15rIoFV9WgzI+yiw9sguYuhusZXAMFQkU08DekYbzRuNoS
-         6qyw==
-X-Gm-Message-State: AOUpUlGNWi/RRtFkMAr/fAJO/O9MsznSbUhkKh/iP/Voi+39L/c9W1tS
-        k5KpV/D6bx1oRE1/a4vv3R4Y9dzR
-X-Google-Smtp-Source: AA+uWPylrqkpg0badehA+YXmiIqL+oPUvPLFMXnl0pUWwiDk65OwJ6cgDtG42DwF63mrvDX6UVKZvQ==
-X-Received: by 2002:a65:60cd:: with SMTP id r13-v6mr8157371pgv.232.1533941569897;
-        Fri, 10 Aug 2018 15:52:49 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::6:e23f])
-        by smtp.gmail.com with ESMTPSA id w192-v6sm12586819pfd.74.2018.08.10.15.52.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 15:52:48 -0700 (PDT)
-Date:   Fri, 10 Aug 2018 15:52:47 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        netdev <netdev@vger.kernel.org>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Chenbo Feng <fengc@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <ast@fb.com>
-Subject: Re: [PATCH v3] Add BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES bpf(2)
- command
-Message-ID: <20180810225246.3d3pa5qvbtoh42bt@ast-mbp.dhcp.thefacebook.com>
-References: <CAKOZuesQ6GdNTGDFsNi4o8LYzxLBtYZ=Cz4=aZbqqCNia+QFnQ@mail.gmail.com>
- <20180729205835.34850-1-dancol@google.com>
- <e8f6e709-e694-ddad-b61e-d2ce1598dff3@iogearbox.net>
- <CAKOZuesH_LRdt15aXaRQRPSNzN-URTQWgSgr0zLsv8ZKFU9=9Q@mail.gmail.com>
- <20180730172641.7d516231@cakuba.netronome.com>
- <CAKOZuesNnY8oKimMk+gnUppMgZt92F+razSZCSfHu=xfq+snGg@mail.gmail.com>
- <67423232-be56-fd47-06e6-394812c2b918@iogearbox.net>
- <CAKOZueu5VdzCEkEv_nR4D0CtYi5r9XOdKOfpKvYWDGPnQGqMHQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ty6YhRY2fNMR0qCfXsybxBJ+8pKYaa+LZmETNWj0MKQ=;
+        b=DOUIUxM/NNA/5KQgqH6eA7i+m8lMfVktLYY3WVzib6+J770PJjaO98XjsxwrAuCdxG
+         28li7qVSIPWHcLpZWRo96/uV5c0yBGRW7v45agNVAJBeWsVYkRHJbbvAYhcSp+MC9iI1
+         WAu0lUUMupOEIr8h5lrJ5+jxVYBQHtADJfVCxmbwaIFZkiWf9kLVwNnror2DRfRj5+dq
+         RYM4yfNINhKPk88H2JLfnZ6UsHTO7xJM2R6poCBHz3E5Etrada+HhEDKFiS5isdS9Oyt
+         knLfCyDmlXIUerDhkDo/d0HOhQEAvqRanDvI5lYNuAvJ7enoXhfX9621y6sTy29eslnf
+         GKJw==
+X-Gm-Message-State: AOUpUlFW4YQT5dMBGz8v0qWpXo29GrD6/m9WCL30ZepylXf5gbUmZs5X
+        0FQGgcTHlxrHekM8nLOAoIlUmZuRdDsVQs6Eod68tw==
+X-Google-Smtp-Source: AA+uWPyGTTTuUKHclXwSvd07cR31QdKiCUWrI2mh3XK5PvFDLSygR2Un2QwkopaBQWXbT0JbGlNXszSwF14+wX+tClg=
+X-Received: by 2002:aca:6044:: with SMTP id u65-v6mr9260719oib.323.1533942090444;
+ Fri, 10 Aug 2018 16:01:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKOZueu5VdzCEkEv_nR4D0CtYi5r9XOdKOfpKvYWDGPnQGqMHQ@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+References: <20180806211932.198488-1-jannh@google.com> <CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
+ <CAGH-Kgvn5=BT0GQU2qHBwJos8Ev=VgasicXeqQEG166Mi8fc6w@mail.gmail.com>
+In-Reply-To: <CAGH-Kgvn5=BT0GQU2qHBwJos8Ev=VgasicXeqQEG166Mi8fc6w@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 11 Aug 2018 01:01:03 +0200
+Message-ID: <CAG48ez1QS6e4cBsunh=V0fx6Gj-VENGeuakz2XK9eQoHU6Uh6Q@mail.gmail.com>
+Subject: Re: [PATCH] selinux: refactor mls_context_to_sid() and make it stricter
+To:     pmoore@redhat.com
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 02:36:39AM -0700, Daniel Colascione wrote:
-> 
-> > An API command name
-> > such as BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES is simply non-generic, and
-> > exposes specific map details (here: map-in-map) into the UAPI whereas it
-> > should reside within a specific implementation instead similar to other ops
-> > we have for maps.
-> 
-> But synchronize isn't conceptually a command that applies to a
-> specific map. It waits on all references. Did you address my point
-> about your proposed map-specific interface requiring redundant
-> synchronize_rcu calls in the case where we swap multiple maps and want
-> to wait for all the references to drain? Under my proposal, you'd just
-> BPF_SYNCHRONIZE_WHATEVER and call schedule_rcu once. Under your
-> proposal, we'd make it a per-map operation, so we'd issue one
-> synchronize_rcu per map.
+On Thu, Aug 9, 2018 at 4:07 AM Paul Moore <pmoore@redhat.com> wrote:
+>
+> On Wed, Aug 8, 2018 at 9:56 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
+> > >
+> > > The intended behavior change for this patch is to reject any MLS strings
+> > > that contain (trailing) garbage if p->mls_enabled is true.
+> > >
+> > > As suggested by Paul Moore, change mls_context_to_sid() so that the two
+> > > parts of the range are extracted before the rest of the parsing. Because
+> > > now we don't have to scan for two different separators simultaneously
+> > > everywhere, we can actually switch to strchr() everywhere instead of the
+> > > open-coded loops that scan for two separators at once.
+> > >
+> > > mls_context_to_sid() used to signal how much of the input string was parsed
+> > > by updating `*scontext`. However, there is actually no case in which
+> > > mls_context_to_sid() only parses a subset of the input and still returns
+> > > a success (other than the buggy case with a second '-' in which it
+> > > incorrectly claims to have consumed the entire string). Turn `scontext`
+> > > into a simple pointer argument and stop redundantly checking whether the
+> > > entire input was consumed in string_to_context_struct(). This also lets us
+> > > remove the `scontext_len` argument from `string_to_context_struct()`.
+> > >
+> > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > ---
+> > > Refactored version of
+> > > "[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
+> > > Paul's comments. WDYT?
+> > > I've thrown some inputs at it, and it seems to work.
+> > >
+> > >  security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
+> > >  security/selinux/ss/mls.h      |   2 +-
+> > >  security/selinux/ss/services.c |  12 +--
+> > >  3 files changed, 82 insertions(+), 110 deletions(-)
+> >
+> > Thanks for the rework, this looks much better than what we currently
+> > have.  I have some comments/questions below ...
+> >
+> > > diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+> > > index 39475fb455bc..2fe459df3c85 100644
+> > > --- a/security/selinux/ss/mls.c
+> > > +++ b/security/selinux/ss/mls.c
+> > > @@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
+> > >  /*
+> > >   * Set the MLS fields in the security context structure
+> > >   * `context' based on the string representation in
+> > > - * the string `*scontext'.  Update `*scontext' to
+> > > - * point to the end of the string representation of
+> > > - * the MLS fields.
+> > > + * the string `scontext'.
+> > >   *
+> > >   * This function modifies the string in place, inserting
+> > >   * NULL characters to terminate the MLS fields.
+> > > @@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
+> > >   */
+> > >  int mls_context_to_sid(struct policydb *pol,
+> > >                        char oldc,
+> > > -                      char **scontext,
+> > > +                      char *scontext,
+> > >                        struct context *context,
+> > >                        struct sidtab *s,
+> > >                        u32 def_sid)
+> > >  {
+> > > -
+> > > -       char delim;
+> > > -       char *scontextp, *p, *rngptr;
+> > > +       char *sensitivity, *cur_cat, *next_cat, *rngptr;
+> > >         struct level_datum *levdatum;
+> > >         struct cat_datum *catdatum, *rngdatum;
+> > > -       int l, rc = -EINVAL;
+> > > +       int l, rc, i;
+> > > +       char *rangep[2];
+> > >
+> > >         if (!pol->mls_enabled) {
+> > > -               if (def_sid != SECSID_NULL && oldc)
+> > > -                       *scontext += strlen(*scontext) + 1;
+> > > -               return 0;
+> > > +               if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
+> > > +                       return 0;
+> > > +               return -EINVAL;
+> >
+> > Why are we simply not always return 0 in the case where MLS is not
+> > enabled in the policy?  The mls_context_to_sid() is pretty much a
+> > no-op in this case (even more so with your pat regardless of input and
+> > I worry that returning EINVAL here is a deviation from current
+> > behavior which could cause problems.
+>
+> Sorry, I was rephrasing the text above when I accidentally hit send.
+> While my emails are generally a good source of typos, the above is
+> pretty bad, so let me try again ...
+>
+> Why are we simply not always returning 0 in the case where MLS is not
+> enabled in the policy?  The mls_context_to_sid() function is pretty
+> much a no-op in this case regardless of input and I worry that
+> returning EINVAL here is a deviation from current behavior which could
+> cause problems.
 
-optimizing for multi-map sync sounds like premature optimization.
-In general I'd prefer DanielB proposal to make the sync logic map and fd specific,
-but before we argue about implementation further let's agree on
-the problem we're trying to solve.
-I believe the only issue being discussed is user space doesn't know
-when it's ok to start draining the inner map when it was replaced
-by bpf_map_update syscall command with another map, right?
-If we agree on that, should bpf_map_update handle it then?
-Wouldn't it be much easier to understand and use from user pov?
-No new commands to learn. map_update syscall replaced the map
-and old map is no longer accessed by the program via this given map-in-map.
-But if the replaced map is used directly or it sits in some other
-map-in-map slot the progs can still access it.
+Reverse call graph of mls_context_to_sid():
 
-My issue with DanielC SYNC cmd that it exposes implementation details
-and introduces complex 'synchronization' semantics. To majority of
-the users it won't be obvious what is being synchronized.
+mls_context_to_sid()
+    mls_from_string()
+        selinux_audit_rule_init()
+            [...]
+    string_to_context_struct()
+        security_context_to_sid_core()
+            [...]
+        convert_context()
+            [...]
 
-My issue with DanielB WAIT_REF map_fd cmd that it needs to wait for all refs
-to this map to be dropped. I think combination of usercnt and refcnt
-can answer that, but feels dangerous to sleep potentially forever
-in a syscall until all prog->map references are gone, though such
-cmd is useful beyond map-in-map use case.
+string_to_context_struct() currently has the following code:
 
+        rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
+        if (rc)
+                goto out;
+
+        rc = -EINVAL;
+        if ((p - scontext) < scontext_len)
+                goto out;
+
+In my patch, I tried to preserve the behavior of
+string_to_context_struct(), at the expense of slightly changing the
+behavior of selinux_audit_rule_init().
+
+But if you think that's a bad idea or unnecessary, say so and I'll change it.
+
+> > >         }
+> > >
+> > >         /*
+> > > @@ -261,113 +258,94 @@ int mls_context_to_sid(struct policydb *pol,
+> > >                 struct context *defcon;
+> > >
+> > >                 if (def_sid == SECSID_NULL)
+> > > -                       goto out;
+> > > +                       return -EINVAL;
+> > >
+> > >                 defcon = sidtab_search(s, def_sid);
+> > >                 if (!defcon)
+> > > -                       goto out;
+> > > +                       return -EINVAL;
+> > >
+> > > -               rc = mls_context_cpy(context, defcon);
+> > > -               goto out;
+> > > +               return mls_context_cpy(context, defcon);
+> > >         }
+> > >
+> > > -       /* Extract low sensitivity. */
+> > > -       scontextp = p = *scontext;
+> > > -       while (*p && *p != ':' && *p != '-')
+> > > -               p++;
+> > > -
+> > > -       delim = *p;
+> > > -       if (delim != '\0')
+> > > -               *p++ = '\0';
+> > > +       /*
+> > > +        * If we're dealing with a range, figure out where the two parts
+> > > +        * of the range begin.
+> > > +        */
+> > > +       rangep[0] = scontext;
+> > > +       rangep[1] = strchr(scontext, '-');
+> > > +       if (rangep[1]) {
+> > > +               rangep[1][0] = '\0';
+> > > +               rangep[1]++;
+> > > +       }
+> > >
+> > > +       /* For each part of the range: */
+> > >         for (l = 0; l < 2; l++) {
+> > > -               levdatum = hashtab_search(pol->p_levels.table, scontextp);
+> > > -               if (!levdatum) {
+> > > -                       rc = -EINVAL;
+> > > -                       goto out;
+> > > -               }
+> > > +               /* Split sensitivity and category set. */
+> > > +               sensitivity = rangep[l];
+> > > +               if (sensitivity == NULL)
+> > > +                       break;
+> > > +               next_cat = strchr(sensitivity, ':');
+> > > +               if (next_cat)
+> > > +                       *(next_cat++) = '\0';
+> > >
+> > > +               /* Parse sensitivity. */
+> > > +               levdatum = hashtab_search(pol->p_levels.table, sensitivity);
+> > > +               if (!levdatum)
+> > > +                       return -EINVAL;
+> > >                 context->range.level[l].sens = levdatum->level->sens;
+> > >
+> > > -               if (delim == ':') {
+> > > -                       /* Extract category set. */
+> > > -                       while (1) {
+> > > -                               scontextp = p;
+> > > -                               while (*p && *p != ',' && *p != '-')
+> > > -                                       p++;
+> > > -                               delim = *p;
+> > > -                               if (delim != '\0')
+> > > -                                       *p++ = '\0';
+> > > -
+> > > -                               /* Separate into range if exists */
+> > > -                               rngptr = strchr(scontextp, '.');
+> > > -                               if (rngptr != NULL) {
+> > > -                                       /* Remove '.' */
+> > > -                                       *rngptr++ = '\0';
+> > > -                               }
+> > > +               /* Extract category set. */
+> > > +               while (next_cat != NULL) {
+> > > +                       cur_cat = next_cat;
+> > > +                       next_cat = strchr(next_cat, ',');
+> > > +                       if (next_cat != NULL)
+> > > +                               *(next_cat++) = '\0';
+> > > +
+> > > +                       /* Separate into range if exists */
+> > > +                       rngptr = strchr(cur_cat, '.');
+> > > +                       if (rngptr != NULL) {
+> > > +                               /* Remove '.' */
+> >
+> > On the chance you need to respin this patch, you can probably get rid
+> > of the above comment and the if-body braces; we don't have "Remove X"
+> > comments in other similar places in this function.
+> >
+> > > +                               *rngptr++ = '\0';
+> > > +                       }
+> > >
+> > > -                               catdatum = hashtab_search(pol->p_cats.table,
+> > > -                                                         scontextp);
+> > > -                               if (!catdatum) {
+> > > -                                       rc = -EINVAL;
+> > > -                                       goto out;
+> > > -                               }
+> > > +                       catdatum = hashtab_search(pol->p_cats.table, cur_cat);
+> > > +                       if (!catdatum)
+> > > +                               return -EINVAL;
+> > >
+> > > -                               rc = ebitmap_set_bit(&context->range.level[l].cat,
+> > > -                                                    catdatum->value - 1, 1);
+> > > -                               if (rc)
+> > > -                                       goto out;
+> > > -
+> > > -                               /* If range, set all categories in range */
+> > > -                               if (rngptr) {
+> > > -                                       int i;
+> > > -
+> > > -                                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
+> > > -                                       if (!rngdatum) {
+> > > -                                               rc = -EINVAL;
+> > > -                                               goto out;
+> > > -                                       }
+> > > -
+> > > -                                       if (catdatum->value >= rngdatum->value) {
+> > > -                                               rc = -EINVAL;
+> > > -                                               goto out;
+> > > -                                       }
+> > > -
+> > > -                                       for (i = catdatum->value; i < rngdatum->value; i++) {
+> > > -                                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
+> > > -                                               if (rc)
+> > > -                                                       goto out;
+> > > -                                       }
+> > > -                               }
+> > > +                       rc = ebitmap_set_bit(&context->range.level[l].cat,
+> > > +                                            catdatum->value - 1, 1);
+> > > +                       if (rc)
+> > > +                               return rc;
+> > > +
+> > > +                       /* If range, set all categories in range */
+> > > +                       if (rngptr == NULL)
+> > > +                               continue;
+> > > +
+> > > +                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
+> > > +                       if (!rngdatum)
+> > > +                               return -EINVAL;
+> > > +
+> > > +                       if (catdatum->value >= rngdatum->value)
+> > > +                               return -EINVAL;
+> > >
+> > > -                               if (delim != ',')
+> > > -                                       break;
+> > > +                       for (i = catdatum->value; i < rngdatum->value; i++) {
+> > > +                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
+> > > +                               if (rc)
+> > > +                                       return rc;
+> > >                         }
+> > >                 }
+> > > -               if (delim == '-') {
+> > > -                       /* Extract high sensitivity. */
+> > > -                       scontextp = p;
+> > > -                       while (*p && *p != ':')
+> > > -                               p++;
+> > > -
+> > > -                       delim = *p;
+> > > -                       if (delim != '\0')
+> > > -                               *p++ = '\0';
+> > > -               } else
+> > > -                       break;
+> > >         }
+> > >
+> > > -       if (l == 0) {
+> > > +       /* If we didn't see a '-', the range start is also the range end. */
+> > > +       if (rangep[1] == NULL) {
+> > >                 context->range.level[1].sens = context->range.level[0].sens;
+> > >                 rc = ebitmap_cpy(&context->range.level[1].cat,
+> > >                                  &context->range.level[0].cat);
+> > >                 if (rc)
+> > > -                       goto out;
+> > > +                       return rc;
+> > >         }
+> > > -       *scontext = ++p;
+> > > -       rc = 0;
+> > > -out:
+> > > -       return rc;
+> > > +
+> > > +       return 0;
+> >
+> > In the case where we have a MLS policy loaded (pol->mls_enabled != 0)
+> > and scontext is empty (scontext[0] = '\0'), we could end up returning
+> > 0 couldn't we?  It seems like we might want a quick check for this
+> > before we parse the low/high portions of the field into the rangep
+> > array.
+> >
+> > >  }
+> > >
+> > >  /*
+> > > @@ -379,21 +357,19 @@ int mls_context_to_sid(struct policydb *pol,
+> > >  int mls_from_string(struct policydb *p, char *str, struct context *context,
+> > >                     gfp_t gfp_mask)
+> > >  {
+> > > -       char *tmpstr, *freestr;
+> > > +       char *tmpstr;
+> > >         int rc;
+> > >
+> > >         if (!p->mls_enabled)
+> > >                 return -EINVAL;
+> > >
+> > > -       /* we need freestr because mls_context_to_sid will change
+> > > -          the value of tmpstr */
+> > > -       tmpstr = freestr = kstrdup(str, gfp_mask);
+> > > +       tmpstr = kstrdup(str, gfp_mask);
+> > >         if (!tmpstr) {
+> > >                 rc = -ENOMEM;
+> > >         } else {
+> > > -               rc = mls_context_to_sid(p, ':', &tmpstr, context,
+> > > +               rc = mls_context_to_sid(p, ':', tmpstr, context,
+> > >                                         NULL, SECSID_NULL);
+> > > -               kfree(freestr);
+> > > +               kfree(tmpstr);
+> > >         }
+> > >
+> > >         return rc;
+> > > diff --git a/security/selinux/ss/mls.h b/security/selinux/ss/mls.h
+> > > index 9a3ff7af70ad..67093647576d 100644
+> > > --- a/security/selinux/ss/mls.h
+> > > +++ b/security/selinux/ss/mls.h
+> > > @@ -34,7 +34,7 @@ int mls_level_isvalid(struct policydb *p, struct mls_level *l);
+> > >
+> > >  int mls_context_to_sid(struct policydb *p,
+> > >                        char oldc,
+> > > -                      char **scontext,
+> > > +                      char *scontext,
+> > >                        struct context *context,
+> > >                        struct sidtab *s,
+> > >                        u32 def_sid);
+> > > diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> > > index dd2ceec06fef..9212d4dd817a 100644
+> > > --- a/security/selinux/ss/services.c
+> > > +++ b/security/selinux/ss/services.c
+> > > @@ -1367,7 +1367,6 @@ int security_sid_to_context_force(struct selinux_state *state, u32 sid,
+> > >  static int string_to_context_struct(struct policydb *pol,
+> > >                                     struct sidtab *sidtabp,
+> > >                                     char *scontext,
+> > > -                                   u32 scontext_len,
+> > >                                     struct context *ctx,
+> > >                                     u32 def_sid)
+> > >  {
+> > > @@ -1428,15 +1427,12 @@ static int string_to_context_struct(struct policydb *pol,
+> > >
+> > >         ctx->type = typdatum->value;
+> > >
+> > > -       rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
+> > > +       rc = mls_context_to_sid(pol, oldc, p, ctx, sidtabp, def_sid);
+> > >         if (rc)
+> > >                 goto out;
+> > >
+> > > -       rc = -EINVAL;
+> > > -       if ((p - scontext) < scontext_len)
+> > > -               goto out;
+> > > -
+> > >         /* Check the validity of the new context. */
+> > > +       rc = -EINVAL;
+> > >         if (!policydb_context_isvalid(pol, ctx))
+> > >                 goto out;
+> > >         rc = 0;
+> > > @@ -1491,7 +1487,7 @@ static int security_context_to_sid_core(struct selinux_state *state,
+> > >         policydb = &state->ss->policydb;
+> > >         sidtab = &state->ss->sidtab;
+> > >         rc = string_to_context_struct(policydb, sidtab, scontext2,
+> > > -                                     scontext_len, &context, def_sid);
+> > > +                                     &context, def_sid);
+> > >         if (rc == -EINVAL && force) {
+> > >                 context.str = str;
+> > >                 context.len = strlen(str) + 1;
+> > > @@ -1959,7 +1955,7 @@ static int convert_context(u32 key,
+> > >                         goto out;
+> > >
+> > >                 rc = string_to_context_struct(args->newp, NULL, s,
+> > > -                                             c->len, &ctx, SECSID_NULL);
+> > > +                                             &ctx, SECSID_NULL);
+> > >                 kfree(s);
+> > >                 if (!rc) {
+> > >                         printk(KERN_INFO "SELinux:  Context %s became valid (mapped).\n",
+> > > --
+> > > 2.18.0.597.ga71716f1ad-goog
+> >
+> > --
+> > paul moore
+> > www.paul-moore.com
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> paul moore
+> security @ redhat
