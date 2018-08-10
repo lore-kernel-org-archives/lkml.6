@@ -2,132 +2,323 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC033C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 736F5C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2C122448
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D2C122448
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 17C9122447
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:08:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C9122447
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbeHJUjH (ORCPT
+        id S1728220AbeHJUjP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:39:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41792 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727462AbeHJUjH (ORCPT
+        Fri, 10 Aug 2018 16:39:15 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:21623 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727462AbeHJUjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:39:07 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AI01kI124634
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:08:12 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kscgdy8rm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 14:08:11 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Fri, 10 Aug 2018 14:08:10 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 Aug 2018 14:08:05 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AI84uv66125894
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Aug 2018 18:08:04 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35EBFAC065;
-        Fri, 10 Aug 2018 14:08:31 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71D07AC060;
-        Fri, 10 Aug 2018 14:08:30 -0400 (EDT)
-Received: from localhost (unknown [9.80.83.42])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Fri, 10 Aug 2018 14:08:30 -0400 (EDT)
-Date:   Fri, 10 Aug 2018 15:08:00 -0300
-From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        "Alastair D'Silva" <alastair@d-silva.org>,
-        Joe Perches <joe@perches.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, Cyril Bur <cyrilbur@gmail.com>,
-        "Tobin C . Harding" <me@tobin.cc>
-Subject: Re: [PATCH v4 5/6] powerpc: Add show_user_instructions()
-References: <20180801213320.11203-1-muriloo@linux.ibm.com>
- <20180801213320.11203-6-muriloo@linux.ibm.com>
- <7209fa95-8d40-14ca-f27a-ce3edb64191e@c-s.fr>
- <20180803004201.GA5891@kermit-br-ibm-com>
- <69cf990b-d4aa-97e7-be3b-7936caa91688@c-s.fr>
- <87pnyzhm9l.fsf@concordia.ellerman.id.au>
- <20180803113141.GA5476@kermit-br-ibm-com>
- <1cfa56a3-027d-cf2c-3150-12aa45a35bd9@c-s.fr>
+        Fri, 10 Aug 2018 16:39:15 -0400
+Received: from [192.168.0.109] (183.194.173.14) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Sat, 11 Aug
+ 2018 02:08:18 +0800
+Subject: Re: [PATCH 2/2] arm64: dts: meson-g12a: add initial g12a s905d2 SoC
+ DT support
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Carlo Caione <carlo@caione.org>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>
+References: <1533802951-49919-1-git-send-email-jianxin.pan@amlogic.com>
+ <1533802951-49919-3-git-send-email-jianxin.pan@amlogic.com>
+ <f21f60423cbc43797e2465f1a734f715795c30b6.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <ae4a9444-9946-578f-0eed-8b235eaa6b4a@amlogic.com>
+Date:   Sat, 11 Aug 2018 02:07:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1cfa56a3-027d-cf2c-3150-12aa45a35bd9@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 18081018-0068-0000-0000-00000326E13B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009519; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01071734; UDB=6.00551974; IPR=6.00851529;
- MB=3.00022638; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-10 18:08:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081018-0069-0000-0000-00004558AE5B
-Message-Id: <20180810180800.GB30475@kermit-br-ibm-com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=747 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808100193
+In-Reply-To: <f21f60423cbc43797e2465f1a734f715795c30b6.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.194.173.14]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Christophe.
+On 8/10/2018 7:58 PM, Jerome Brunet wrote:
+> On Thu, 2018-08-09 at 16:22 +0800, Jianxin Pan wrote:
+>> Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
+>> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
+>> Timer, UART. It's capable of booting up into the serial console.
+>>
+>> Signed-off-by: Jianxin <jianxin.pan@amlogic.com>
+> 
+> Could please fix your signoff here ? Your last name went missing
+> 
+OK, I will fix this mistake. Thank you for your review.
 
-On Fri, Aug 10, 2018 at 11:29:43AM +0200, Christophe LEROY wrote:
->
->
-> Le 03/08/2018 à 13:31, Murilo Opsfelder Araujo a écrit :
-> > Hi, everyone.
-> >
-> > I'd like to thank you all that contributed to refining and making this
-> > series better.  I did appreciate.
-> >
-> > Thank you!
->
-> You are welcome.
->
-> It seems that nested segfaults don't print very well. The code line is split
-> in two, le second half being alone on one line. Any way to avoid that ?
-
-What do you mean by "nested segfaults"?  I'd guess it's related to nested
-virtualization, e.g.: host (kvm hv) -> guest1 (kvm pr) -> guest2?  So the
-segfault would have been originated in guest2?
-
-Can you provide us with more details about how to reproduce that?
-
-Anyway, is "XXXXXXXX" so important that it needs to be printed at all?  Can't we
-just discard it and not print it?
-
-Murilo
+>> ---
+>>  arch/arm64/boot/dts/amlogic/Makefile            |   1 +
+>>  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
+>>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 174 ++++++++++++++++++++++++
+>>  3 files changed, 197 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+>>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
+>> index a97c0e2..c31f29d6 100644
+>> --- a/arch/arm64/boot/dts/amlogic/Makefile
+>> +++ b/arch/arm64/boot/dts/amlogic/Makefile
+>> @@ -1,5 +1,6 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>>  dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
+>> +dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
+>>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
+>>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nexbox-a95x.dtb
+>>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-odroidc2.dtb
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+>> new file mode 100644
+>> index 0000000..d267a37
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+>> @@ -0,0 +1,22 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "meson-g12a.dtsi"
+>> +
+>> +/ {
+>> +	compatible = "amlogic,u200", "amlogic,g12a";
+>> +	model = "Amlogic Meson G12A U200 Development Board";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart_AO;
+>> +	};
+>> +};
+>> +
+>> +&uart_AO {
+>> +	status = "okay";
+>> +};
+>> +
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+>> new file mode 100644
+>> index 0000000..64a0f2e
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+>> @@ -0,0 +1,174 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/interrupt-controller/irq.h>
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +/ {
+> 
+> Could you please order the subnodes alphabetically ?
+> 
+> In general, we should try to order nodes by addresses when there is one and
+> alphabetically when there is none. This is something we have to fix for the AXG
+> as well.
+> 
+> 
+OK, I will fix this in g12a first.>> +	compatible = "amlogic,g12a";
+>> +
+>> +	interrupt-parent = <&gic>;
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +
+>> +	reserved-memory {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		/* Alternate 3 MiB reserved for ARM Trusted Firmware (BL31) */
+> 
+> It's the only one (for now at least) so it's not really an alternate, isn't it ?
+> 
+Yes, the reserved memory for BL31 is a must. I will remove 'Alternate' in V2. 
+>> +		secmon_reserved: secmon@5000000 {
+>> +			reg = <0x0 0x05000000 0x0 0x300000>;
+>> +			no-map;
+>> +		};
+>> +	};
+>> +
+>> +	cpus {
+>> +		#address-cells = <0x2>;
+>> +		#size-cells = <0x0>;
+>> +
+>> +		cpu0: cpu@0 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			reg = <0x0 0x0>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&l2>;
+>> +		};
+>> +
+>> +		cpu1: cpu@1 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			reg = <0x0 0x1>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&l2>;
+>> +		};
+>> +
+>> +		cpu2: cpu@2 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			reg = <0x0 0x2>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&l2>;
+>> +		};
+>> +
+>> +		cpu3: cpu@3 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			reg = <0x0 0x3>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&l2>;
+>> +		};
+>> +
+>> +		l2: l2-cache0 {
+>> +			compatible = "cache";
+>> +		};
+>> +	};
+>> +
+>> +	psci {
+>> +		compatible = "arm,psci-1.0";
+>> +		method = "smc";
+>> +	};
+>> +
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupts = <GIC_PPI 13
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 14
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 11
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 10
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
+>> +	};
+>> +
+>> +	xtal: xtal-clk {
+>> +		compatible = "fixed-clock";
+>> +		clock-frequency = <24000000>;
+>> +		clock-output-names = "xtal";
+>> +		#clock-cells = <0>;
+>> +	};
+>> +
+>> +	soc {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+> 
+> Could you please order the different bus by ascending addresses ?
+> 
+> 
+OK, I will change it in v2. Thank you.
+>> +
+>> +		apb: apb@ffe00000 {
+>> +			compatible = "simple-bus";
+>> +			reg = <0x0 0xffe00000 0x0 0x200000>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x200000>;
+>> +		};
+>> +
+>> +		cbus: bus@ffd00000 {
+>> +			compatible = "simple-bus";
+>> +			reg = <0x0 0xffd00000 0x0 0x25000>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges = <0x0 0x0 0x0 0xffd00000 0x0 0x25000>;
+>> +
+>> +		};
+>> +
+>> +		gic: interrupt-controller@ffc01000 {
+>> +			compatible = "arm,gic-400";
+>> +			reg = <0x0 0xffc01000 0 0x1000>,
+>> +			      <0x0 0xffc02000 0 0x2000>,
+>> +			      <0x0 0xffc04000 0 0x2000>,
+>> +			      <0x0 0xffc06000 0 0x2000>;
+>> +			interrupt-controller;
+>> +			interrupts = <GIC_PPI 9
+>> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+>> +			#interrupt-cells = <3>;
+>> +			#address-cells = <0>;
+>> +		};
+>> +
+>> +		hiubus: bus@ff63c000 {
+>> +			compatible = "simple-bus";
+>> +			reg = <0x0 0xff63c000 0x0 0x1c00>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+>> +
+>> +		};
+>> +
+>> +		periphs: periphs@ff634000 {
+>> +			compatible = "simple-bus";
+>> +			reg = <0x0 0xff634000 0x0 0x2000>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges = <0x0 0x0 0x0 0xff634000 0x0 0x2000>;
+>> +		};
+>> +
+>> +		aobus: bus@ff800000 {
+>> +			compatible = "simple-bus";
+>> +			reg = <0x0 0xff800000 0x0 0x100000>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
+>> +
+>> +			uart_AO: serial@3000 {
+>> +				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>> +				reg = <0x0 0x3000 0x0 0x18>;
+>> +				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+>> +				clocks = <&xtal>, <&xtal>, <&xtal>;
+>> +				clock-names = "xtal", "pclk", "baud";
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +			uart_AO_B: serial@4000 {
+>> +				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>> +				reg = <0x0 0x4000 0x0 0x18>;
+>> +				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
+>> +				clocks = <&xtal>, <&xtal>, <&xtal>;
+>> +				clock-names = "xtal", "pclk", "baud";
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +		};
+>> +	};
+>> +};
+> 
+> 
+> .
+> 
 
