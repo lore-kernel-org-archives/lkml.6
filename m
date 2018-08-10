@@ -2,93 +2,101 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D784C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F181C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA6E223E9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:30:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA6E223E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 21DA0223F8
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:33:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdItCVha"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DA0223F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeHJK7r (ORCPT
+        id S1727539AbeHJLCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:59:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59148 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725784AbeHJK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:59:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7492FAFCC;
-        Fri, 10 Aug 2018 08:30:54 +0000 (UTC)
-Subject: Re: [PATCH v3] resource: Merge resources on a node when hot-adding
- memory
-To:     Rashmica Gupta <rashmica.g@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     toshi.kani@hpe.com, tglx@linutronix.de, bp@suse.de,
-        brijesh.singh@amd.com, thomas.lendacky@amd.com, jglisse@redhat.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        dan.j.williams@intel.com, mhocko@suse.com, iamjoonsoo.kim@lge.com,
-        malat@debian.org, Bjorn Helgaas <bhelgaas@google.com>,
-        osalvador@techadventures.net, yasu.isimatu@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-References: <20180809025409.31552-1-rashmica.g@gmail.com>
- <20180809181224.0b7417e51215565dbda9f665@linux-foundation.org>
- <CAC6rBs=yYYZw-c02yp6rx-+TN2oUGgrp=uuLhZ=Kc_nnjmTRqA@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <41eb4fc8-3b57-478b-05b4-88bed24ed66e@suse.cz>
-Date:   Fri, 10 Aug 2018 10:28:26 +0200
+        Fri, 10 Aug 2018 07:02:12 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33168 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbeHJLCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 07:02:11 -0400
+Received: by mail-wm0-f68.google.com with SMTP id r24-v6so837678wmh.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cdi2TvlBH96SFmWkfoG5hkjVI/vJ8e6JJdfWlbLSQF4=;
+        b=RdItCVhaxuiPJHsJmwwT5Q47pYWjY/Ae1c5n2Oyg9/SKHOvc5gL9iENRuSRpbwZCj1
+         Vb9H9xcSkdsfiWj5k7FXgeYnKSCSxUqeyYKEUQv4SV6JsdUuMeycoLnbWNbzMD5EDlWD
+         m1ufXMOMylVEr+kUzuO55hEnaZ9ybt8jVqdTc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cdi2TvlBH96SFmWkfoG5hkjVI/vJ8e6JJdfWlbLSQF4=;
+        b=jfEObkdfD91w2ScqhpwH8VblQKrXeMhw/BZ5BDphCdDnE9LDS7SB0FT7svaBCPlfkV
+         B7qOpSw0epYS8lFPBT0GPhmnXCNNm22vMEUnxYUng7a3VgkWtLSrRoHi+iDgw4Jb1JgF
+         YIXcu7M3PeUBuuYnrlinwEReEgMc2P3XLlamfOYXJ6pLQJtGIO39qt4cMTSYagPCyeQk
+         UsiyTH2xkIrGkk7quLkZ1n4wLpHsFfvkkUZ2z3p/u5rwNtfjU6UDj1CkkkrVcG0ZqFr1
+         eDG3oPljjoaaAT5WXGtqUBCZPpD3t7BCyJ7Sot9xzGcxgOxMoRrJzp+ih6r1WQ//H24C
+         qAdg==
+X-Gm-Message-State: AOUpUlHHieVNpu8PrDwVOqCSKucddnfCD9jfFQXeQqQAnh9ayPKeBrir
+        EPi/eabx00xd0GAJN26EPKws3A==
+X-Google-Smtp-Source: AA+uWPxhxFcmckse03BprpqLp3lkHRkQvU4HY6mnZIHv32zAT5Zv+dy0icEQbkr4HQPI9hcdHEpLtQ==
+X-Received: by 2002:a1c:9f86:: with SMTP id i128-v6mr776105wme.156.1533889999159;
+        Fri, 10 Aug 2018 01:33:19 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id k6-v6sm9282460wrv.92.2018.08.10.01.33.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 01:33:18 -0700 (PDT)
+Subject: Re: [PATCH v2 03/29] nvmem: add a notifier chain
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+ <20180810080526.27207-4-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <343dde5f-7e92-426f-89e4-1bfcf6714337@linaro.org>
+Date:   Fri, 10 Aug 2018 09:33:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAC6rBs=yYYZw-c02yp6rx-+TN2oUGgrp=uuLhZ=Kc_nnjmTRqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180810080526.27207-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -96,24 +104,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 08:55 AM, Rashmica Gupta wrote:
-> On Fri, Aug 10, 2018 at 11:12 AM, Andrew Morton
-> <akpm@linux-foundation.org> wrote:
->>
->> What is the end-user impact of this patch?
->>
-> 
-> Only architectures/setups that allow the user to remove and add memory of
-> different sizes or different start addresses from the kernel at runtime will
-> potentially encounter the resource fragmentation.
-> 
-> Trying to remove memory that overlaps iomem resources the first time
-> gives us this warning: "Unable to release resource <%pa-%pa>".
-> 
-> Attempting a second time results in a kernel oops (on ppc at least).
 
-An oops? I think that should be investigated and fixed, even if resource
-merging prevents it. Do you have the details?
 
-Thanks,
-Vlastimil
+On 10/08/18 09:05, Bartosz Golaszewski wrote:
+> +int nvmem_register_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_register(&nvmem_notifier, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(nvmem_register_notifier);
+> +
+> +int nvmem_unregister_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_unregister(&nvmem_notifier, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(nvmem_unregister_notifier);
+> +
+Kerneldoc is missing for these both exported symbols too!
+
+--srini
