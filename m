@@ -5,161 +5,298 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F49C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FF4C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A782189B
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:25:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A782189B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 928162189B
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:25:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928162189B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbeHJSza (ORCPT
+        id S1729462AbeHJSzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:55:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41202 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728997AbeHJSz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:55:29 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AGOo2S104993
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 12:24:57 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ksayjrpdk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 12:24:56 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 10 Aug 2018 12:24:55 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 Aug 2018 12:24:52 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AGOoPH19202462
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Aug 2018 16:24:50 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FB4FAC059;
-        Fri, 10 Aug 2018 12:25:17 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5F164AC060;
-        Fri, 10 Aug 2018 12:25:15 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.80.230.146])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Aug 2018 12:25:15 -0400 (EDT)
-Subject: Re: [PATCH v8 17/22] s390: vfio-ap: zeroize the AP queues.
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1533739472-7172-18-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180810111445.015fcf2a.cohuck@redhat.com>
- <fa85257e-fda1-8f1d-aa7c-c98e74196d37@linux.ibm.com>
- <20180810131648.4fab1d7a.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 10 Aug 2018 12:24:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 10 Aug 2018 14:55:47 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3211 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728997AbeHJSzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 14:55:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 09:25:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,220,1531810800"; 
+   d="scan'208";a="223630742"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.94]) ([10.24.14.94])
+  by orsmga004.jf.intel.com with ESMTP; 10 Aug 2018 09:25:03 -0700
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
+ <20180803104956.GU2494@hirez.programming.kicks-ass.net>
+ <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
+ <20180803152523.GY2476@hirez.programming.kicks-ass.net>
+ <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
+ <57c011e1-113d-c38f-c318-defbad085843@intel.com>
+ <20180806221225.GO2458@hirez.programming.kicks-ass.net>
+ <08d51131-7802-5bfe-2cae-d116807183d1@intel.com>
+ <20180807093615.GY2494@hirez.programming.kicks-ass.net>
+ <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
+ <20180808075154.GN2494@hirez.programming.kicks-ass.net>
+ <5960739f-ee27-b182-3804-7e5d9356457f@intel.com>
+Message-ID: <b689b8d4-5fe1-6fae-c873-6e62a273cd07@intel.com>
+Date:   Fri, 10 Aug 2018 09:25:02 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180810131648.4fab1d7a.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <5960739f-ee27-b182-3804-7e5d9356457f@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18081016-0068-0000-0000-00000326D4D7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009518; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01071704; UDB=6.00551954; IPR=6.00851495;
- MB=3.00022637; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-10 16:24:54
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081016-0069-0000-0000-000045587C4F
-Message-Id: <14983b58-f53b-8bd9-179e-29b9a69c21d8@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808100177
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 07:16 AM, Cornelia Huck wrote:
-> On Fri, 10 Aug 2018 12:49:08 +0200
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
->
->> On 10/08/2018 11:14, Cornelia Huck wrote:
->>> On Wed,  8 Aug 2018 10:44:27 -0400
->>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->>>   
->>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+Hi Peter,
+
+On 8/8/2018 10:33 AM, Reinette Chatre wrote:
+> On 8/8/2018 12:51 AM, Peter Zijlstra wrote:
+>> On Tue, Aug 07, 2018 at 03:47:15PM -0700, Reinette Chatre wrote:
+>>>>  - I don't much fancy people accessing the guts of events like that;
+>>>>    would not an inline function like:
 >>>>
->>>> Let's call PAPQ(ZAPQ) to zeroize a queue:
->>>>
->>>> * For each queue configured for a mediated matrix device
->>>>     when it is released.
->>>>
->>>> Zeroizing a queue resets the queue, clears all pending
->>>> messages for the queue entries and disables adapter interruptions
->>>> associated with the queue.
->>>>
->>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>>> ---
->>>>    drivers/s390/crypto/vfio_ap_ops.c     |   29 ++++++++++++++++++++++++++++-
->>>>    drivers/s390/crypto/vfio_ap_private.h |   25 +++++++++++++++++++++++++
->>>>    2 files changed, 53 insertions(+), 1 deletions(-)
->>>>
->>>> @@ -788,7 +812,10 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
+>>>>    static inline u64 x86_perf_rdpmc(struct perf_event *event)
 >>>>    {
->>>>    	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->>>>    
->>>> -	kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
->>>> +	if (matrix_mdev->kvm)
->>>> +		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
->>> Confused. Why is the check for matrix_mdev->kvm added here?
->> When using the KVM notifier we can get two notifications:
->> -> KVM is here / is comming
->> -> KVM is not here / disappearing
+>>>> 	u64 val;
+>>>>
+>>>> 	lockdep_assert_irqs_disabled();
+>>>>
+>>>> 	rdpmcl(event->hw.event_base_rdpmc, val);
+>>>> 	return val;
+>>>>    }
+>>>>
+>>>>    Work for you?
+>>>
+>>> No. This does not provide accurate results. Implementing the above produces:
+>>> pseudo_lock_mea-366   [002] ....    34.950740: pseudo_lock_l2: hits=4096
+>>> miss=4
 >>
->> In the first case we initialize matrix_mdev->kvm with a pointer to KVM
->> In the second case we nullify the pointer.
+>> But it being an inline function should allow the compiler to optimize
+>> and lift the event->hw.event_base_rdpmc load like you now do manually.
+>> Also, like Tony already suggested, you can prime that load just fine by
+>> doing an extra invocation.
 >>
->> During the open of the mediated device, the guest should have been started
->> or we refuse to start.
->>
->> During the close of the mediated device, the guest should be there, but
->> we have no certitude that the guest did not disappear before the VFIO
->> file being closed.
->> Since we do not allow multiple guests using the same mediated device
->> this case should not happen with QEMU. But I am not sure that
->> a rogue user program could not stop KVM before closing the VFIO
->> mediated device.
-> I'm not sure why the check is introduced in this patch, though. But
-> maybe I just need weekend :)
+>> (and note that the above function is _much_ simpler than
+>> perf_event_read_local())
+> 
+> Unfortunately I do not find this to be the case. When I implement
+> x86_perf_rdpmc() _exactly_ as you suggest above and do the measurement like:
+> 
+> l2_hits_before = x86_perf_rdpmc(l2_hit_event);
+> l2_miss_before = x86_perf_rdpmc(l2_miss_event);
+> l2_hits_before = x86_perf_rdpmc(l2_hit_event);
+> l2_miss_before = x86_perf_rdpmc(l2_miss_event);
+> /* read memory */
+> l2_hits_after = x86_perf_rdpmc(l2_hit_event);
+> l2_miss_after = x86_perf_rdpmc(l2_miss_event);
+> 
+> 
+> Then the results are not accurate, neither are the consistently
+> inaccurate to consider a constant adjustment:
+> 
+> pseudo_lock_mea-409   [002] ....   194.322611: pseudo_lock_l2: hits=4100
+> miss=0
+> pseudo_lock_mea-412   [002] ....   195.520203: pseudo_lock_l2: hits=4096
+> miss=3
+> pseudo_lock_mea-415   [002] ....   196.571114: pseudo_lock_l2: hits=4097
+> miss=3
+> pseudo_lock_mea-422   [002] ....   197.629118: pseudo_lock_l2: hits=4097
+> miss=3
+> pseudo_lock_mea-425   [002] ....   198.687160: pseudo_lock_l2: hits=4096
+> miss=3
+> pseudo_lock_mea-428   [002] ....   199.744156: pseudo_lock_l2: hits=4096
+> miss=2
+> pseudo_lock_mea-431   [002] ....   200.801131: pseudo_lock_l2: hits=4097
+> miss=2
+> pseudo_lock_mea-434   [002] ....   201.858141: pseudo_lock_l2: hits=4097
+> miss=2
+> pseudo_lock_mea-437   [002] ....   202.917168: pseudo_lock_l2: hits=4096
+> miss=2
+> 
+> I was able to test Tony's theory and replacing the reading of the
+> "after" counts with a direct rdpmcl() improve the results. What I mean
+> is this:
+> 
+> l2_hit_pmcnum = x86_perf_rdpmc_ctr_get(l2_hit_event);
+> l2_miss_pmcnum = x86_perf_rdpmc_ctr_get(l2_miss_event);
+> l2_hits_before = x86_perf_rdpmc(l2_hit_event);
+> l2_miss_before = x86_perf_rdpmc(l2_miss_event);
+> l2_hits_before = x86_perf_rdpmc(l2_hit_event);
+> l2_miss_before = x86_perf_rdpmc(l2_miss_event);
+> /* read memory */
+> rdpmcl(l2_hit_pmcnum, l2_hits_after);
+> rdpmcl(l2_miss_pmcnum, l2_miss_after);
+> 
+> I did not run my full tests with the above but a simple read of 256KB
+> pseudo-locked memory gives:
+> pseudo_lock_mea-492   [002] ....   372.001385: pseudo_lock_l2: hits=4096
+> miss=0
+> pseudo_lock_mea-495   [002] ....   373.059748: pseudo_lock_l2: hits=4096
+> miss=0
+> pseudo_lock_mea-498   [002] ....   374.117027: pseudo_lock_l2: hits=4096
+> miss=0
+> pseudo_lock_mea-501   [002] ....   375.182864: pseudo_lock_l2: hits=4096
+> miss=0
+> pseudo_lock_mea-504   [002] ....   376.243958: pseudo_lock_l2: hits=4096
+> miss=0
+> 
+> We thus seem to be encountering the issue Tony predicted where the
+> memory being tested is evicting the earlier measurement code and data.
 
-Good catch, it belongs in patch 15 where the function is introduced.
-Is that the only reason for your objection?
+I thoroughly reviewed this email thread to ensure that all your feedback
+is being addressed. At this time I believe the current solution does so
+since it addresses all requirements I was able to capture:
+- Use in-kernel interface to perf.
+- Do not write directly to PMU registers.
+- Do not introduce another PMU owner. perf maintains role as performing
+  resource arbitration for PMU.
+- User space is able to use perf and resctrl at the same time.
+- event_base_rdpmc is accessed and used only within an interrupts
+  disabled section.
+- Internals of events are never accessed directly, inline function used.
+- Due to "pinned" usage the scheduling of event may have failed.  Error
+  state is checked in recommended way and have a credible error
+  handling.
+- use X86_CONFIG
 
->
->> Maybe Alex can confirm this point, if not we can remove the test.
+The pseudocode of the current solution is presented below. With this
+solution I am able to address our customer requirement to be able to
+measure a pseudo-locked region accurately while also addressing your
+requirements to use perf correctly.
 
+Is this solution acceptable to you?
+
+#include "../../events/perf_event.h" /* For X86_CONFIG() */
+
+/*
+ * The X86_CONFIG() macro cannot be used in
+ * a designated initializer as below - the initialization of
+ * the .config attribute is thus deferred to later in order
+ * to use X86_CONFIG
+ */
+
+static struct perf_event_attr l2_miss_attr = {
+        .type           = PERF_TYPE_RAW,
+        .size           = sizeof(struct perf_event_attr),
+        .pinned         = 1,
+        .disabled       = 0,
+        .exclude_user   = 1
+};
+
+static struct perf_event_attr l2_hit_attr = {
+        .type           = PERF_TYPE_RAW,
+        .size           = sizeof(struct perf_event_attr),
+        .pinned         = 1,
+        .disabled       = 0,
+        .exclude_user   = 1
+};
+
+static inline int x86_perf_rdpmc_ctr_get(struct perf_event *event)
+{
+        lockdep_assert_irqs_disabled();
+
+        return IS_ERR(event) ? 0 : event->hw.event_base_rdpmc;
+}
+
+static inline int x86_perf_event_error_state(struct perf_event *event)
+{
+        int ret = 0;
+        u64 tmp;
+
+        ret = perf_event_read_local(event, &tmp, NULL, NULL);
+        if (ret < 0)
+                return ret;
+
+        if (event->attr.pinned && event->oncpu != smp_processor_id())
+                return -EBUSY;
+
+        return ret;
+}
+
+/*
+ * Below is run by kernel thread on correct CPU as triggered
+ * by user via debugfs
+ */
+static int measure_cycles_perf_fn(...)
+{
+        u64 l2_hits_before, l2_hits_after, l2_miss_before, l2_miss_after;
+        struct perf_event *l2_miss_event, *l2_hit_event;
+        int l2_hit_pmcnum, l2_miss_pmcnum;
+        /* Other vars */
+
+        l2_miss_attr.config = X86_CONFIG(.event=0xd1, .umask=0x10);
+        l2_hit_attr.config = X86_CONFIG(.event=0xd1, .umask=0x2);
+        l2_miss_event = perf_event_create_kernel_counter(&l2_miss_attr,
+                                                         cpu,
+                                                         NULL, NULL, NULL);
+        if (IS_ERR(l2_miss_event))
+                goto out;
+
+        l2_hit_event = perf_event_create_kernel_counter(&l2_hit_attr,
+                                                        cpu,
+                                                        NULL, NULL, NULL);
+        if (IS_ERR(l2_hit_event))
+                goto out_l2_miss;
+
+        local_irq_disable();
+        if (x86_perf_event_error_state(l2_miss_event)) {
+                local_irq_enable();
+                goto out_l2_hit;
+        }
+        if (x86_perf_event_error_state(l2_hit_event)) {
+                local_irq_enable();
+                goto out_l2_hit;
+        }
+        /* Disable hardware prefetchers */
+        /* Initialize local variables */
+        l2_hit_pmcnum = x86_perf_rdpmc_ctr_get(l2_hit_event);
+        l2_miss_pmcnum = x86_perf_rdpmc_ctr_get(l2_miss_event);
+        rdpmcl(l2_hit_pmcnum, l2_hits_before);
+        rdpmcl(l2_miss_pmcnum, l2_miss_before);
+        /*
+         * From SDM: Performing back-to-back fast reads are not guaranteed
+         * to be monotonic. To guarantee monotonicity on back-toback reads,
+         * a serializing instruction must be placed between the two
+         * RDPMC instructions
+         */
+        rmb();
+        rdpmcl(l2_hit_pmcnum, l2_hits_before);
+        rdpmcl(l2_miss_pmcnum, l2_miss_before);
+        rmb();
+        /* Loop through pseudo-locked memory */
+        rdpmcl(l2_hit_pmcnum, l2_hits_after);
+        rdpmcl(l2_miss_pmcnum, l2_miss_after);
+        rmb();
+        /* Re-enable hardware prefetchers */
+        local_irq_enable();
+        /* Write results to kernel tracepoints */
+out_l2_hit:
+        perf_event_release_kernel(l2_hit_event);
+out_l2_miss:
+        perf_event_release_kernel(l2_miss_event);
+out:
+        /* Cleanup */
+}
+
+Your feedback has been valuable and greatly appreciated.
+
+Reinette
 
