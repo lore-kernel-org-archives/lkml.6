@@ -2,145 +2,113 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978D7C46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7766DC46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52100223AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:51:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52100223AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 19F72223B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 02:02:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rKtIzjI0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F72223B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeHJESn (ORCPT
+        id S1727160AbeHJEaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 00:18:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57158 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725198AbeHJESn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 00:18:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5857FADF5;
-        Fri, 10 Aug 2018 01:51:05 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Date:   Fri, 10 Aug 2018 11:50:58 +1000
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
-In-Reply-To: <20180810002922.GA3915@fieldses.org>
-References: <153378012255.1220.6754153662007899557.stgit@noble> <20180809173245.GM23873@fieldses.org> <87lg9frxyc.fsf@notabene.neil.brown.name> <20180810002922.GA3915@fieldses.org>
-Message-ID: <871sb7rnul.fsf@notabene.neil.brown.name>
+        Fri, 10 Aug 2018 00:30:24 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41189 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeHJEaY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 00:30:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y10-v6so3737174pfn.8;
+        Thu, 09 Aug 2018 19:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=Mfswak1zEji05YffRKB1yd5fbflV++cN7UbyuxT2104=;
+        b=rKtIzjI0EdHoDD6RxxrgmDTnBRlXnDh6Dlg0B18y0TgLSPV/cBQg6h84IP1bdr6bpX
+         VxFX4kbMtl/oEswar60b7GYg5tHyt/uHyvpGZ6fzMFOt4R9qal/3ru443TMSFxAWNeuF
+         izdnLQpAsuL5mRvd93mCEqkBMPBlKdzbiP+tLsoNkNbS+noI2WEGzova/fCdIKitAb/Y
+         545pJYDzClKP16Qj8sltJCLe/Yuyl3573kfpagXgTyGJlDgaXFrPv34bO/WIAQLbH+yj
+         pfy/Llmz36RuPjPkxsMf/H0yiLgAybMAd3X1qCoMnH+vOBRzyoHpymAlnU0/F21s+6Cl
+         jbxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=Mfswak1zEji05YffRKB1yd5fbflV++cN7UbyuxT2104=;
+        b=d7H/D7cArbQn8Whait1Sn53cQ5YvoiOHlmNOyymukp4qAJrMNCSCUEMd+Hwk7+T9Pk
+         J7k5ohRUo8xmy0V1yLt6jA6+hcedfMWLtPF9xIXFFx6smztOWVwohS2KrOHjiCw4i2NT
+         nNpxk4ZnEMwAst5Pd0bwMYLva4b8zDEWVZ3H8HaJbWHnCG2P0WdZ+3uM0nscqNxzu1nR
+         EYMND3HoFmHOX8VHF3AGIsFylgRlox2kteEWDVc5hNIn7c9hDl5o6Xa2p2VaX17r/tzu
+         uUvXLd4l7RSlY7e1k5fDMQyg/S7HeDeTJi4FXnKGz1EyVy6oX/rrdWHlWUEV1auM1I5t
+         2Hmg==
+X-Gm-Message-State: AOUpUlErILL81rhYJRMaR2PmjLN/IK/nY3MGuOCZIdEADSRW7Huk4Y6J
+        FsSzXZD4xJDvRfL+w00tGryAfuSP
+X-Google-Smtp-Source: AA+uWPwvB1jLONF+tQFzXQ3M1NE9jxrOPvpgS7dBnqdY0ChhFGw2AmBq/5Srluji3QirovTi//p0rw==
+X-Received: by 2002:a62:6948:: with SMTP id e69-v6mr4826961pfc.166.1533866565603;
+        Thu, 09 Aug 2018 19:02:45 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:4414:ec41:2410:dee4:3bda? ([2402:f000:1:4414:ec41:2410:dee4:3bda])
+        by smtp.gmail.com with ESMTPSA id m15-v6sm15829483pfk.149.2018.08.09.19.02.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Aug 2018 19:02:44 -0700 (PDT)
+From:   bai <baijiaju1990@gmail.com>
+Subject: [BUG] net: xfrm: Two possible sleep-in-atomic-context bugs
+To:     steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <b74ebf58-16c0-4a51-a004-7ce9e6abde7a@gmail.com>
+Date:   Fri, 10 Aug 2018 10:02:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The code may sleep in interrupt handler.
+xfrm_trans_reinject() is an interrupt handler set in tasklet_init().
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-On Thu, Aug 09 2018, J. Bruce Fields wrote:
+[FUNC] schedule_timeout
+net/core/sock.c, 2044: schedule_timeout in sock_wait_for_wmem
+net/core/sock.c, 2083: sock_wait_for_wmem in sock_alloc_send_pskb
+net/core/sock.c, 2102: sock_alloc_send_pskb in sock_alloc_send_skb
+net/ipv6/mcast.c, 1989: sock_alloc_send_skb in igmp6_send
+net/ipv6/mcast.c, 2391: igmp6_send in igmp6_join_group
+net/ipv6/mcast.c, 670: igmp6_join_group in igmp6_group_added
+net/ipv6/mcast.c, 914: igmp6_group_added in ipv6_dev_mc_inc
+net/ipv6/ndisc.c, 379: ipv6_dev_mc_inc in pndisc_constructor
+net/core/neighbour.c, 640: [FUNC_PTR]pndisc_constructor in pneigh_lookup
+net/ipv6/ip6_output.c, 483: pneigh_lookup in ip6_forward
+./include/net/dst.h, 449: [FUNC_PTR]ip6_forward in dst_input
+net/ipv6/ip6_input.c, 71: dst_input in ip6_rcv_finish
+net/xfrm/xfrm_input.c, 511: [FUNC_PTR]ip6_rcv_finish in xfrm_trans_reinject
 
-> On Fri, Aug 10, 2018 at 08:12:43AM +1000, NeilBrown wrote:
->> On Thu, Aug 09 2018, J. Bruce Fields wrote:
->>=20
->> > I think there's also a problem with multiple tasks sharing the same
->> > lock owner.
->> >
->> > So, all locks are exclusive locks for the same range.  We have four
->> > tasks.  Tasks 1 and 4 share the same owner, the others' owners are
->> > distinct.
->> >
->> > 	- Task 1 gets a lock.
->> > 	- Task 2 gets a conflicting lock.
->> > 	- Task 3 gets another conflicting lock.  So now we the tree is
->> > 		3->2->1.
->> > 	- Task 1's lock is released.
->> > 	- Before task 2 is scheduled, task 4 acquires a new lock.
->> > 	- Task 2 waits on task 4's lock, we now have
->> > 		3->2->4.
->> >
->> > Task 3 shouldn't be waiting--the lock it's requesting has the same own=
-er
->> > as the lock task 4 holds--but we fail to wake up task 3.
->>=20
->> So task 1 and task 4 are threads in the one process - OK.
->> Tasks 2 and 3 are threads in two other processes.
->>=20
->> So 2 and 3 conflict with either 1 or 4 equally - why should task 3 be
->> woken?
->>=20
->> I suspect you got the numbers bit mixed up,
->
-> Whoops.
->
->> but in any case, the "conflict()" function that is passed around takes
->> ownership into account when assessing if one lock conflicts with
->> another.
->
-> Right, I know, but, let me try again:
->
-> All locks are exclusive locks for the same range.  Only tasks 3 and 4
-> share the the same owner.
->
-> 	- Task 1 gets a lock.
-> 	- Task 2 requests a conflicting lock, so we have    2->1.
-> 	- Task 3 requests a conflicting lock, so we have 3->2->1.
-> 	- Task 1 unlocks.  We wake up task 2, but it isn't scheduled yet.
-> 	- Task 4 gets a new lock.
-> 	- Task 2 runs, discovers the conflict, and waits.  Now we have:
-> 		3->2->4.
->
-> There is no conflict between the lock 3 requested and the lock 4 holds,
-> but 3 is not woken up.
->
-> This is another version of the first problem: there's information we
-> need (the owners of the waiting locks in the tree) that we can't
-> determine just from looking at the root of the tree.
->
-> I'm not sure what to do about that.
+[FUNC] kmalloc(GFP_KERNEL)
+net/core/neighbour.c, 630: kmalloc in pneigh_lookup
+net/ipv6/ip6_output.c, 483: pneigh_lookup in ip6_forward
+./include/net/dst.h, 449: [FUNC_PTR]ip6_forward in dst_input
+net/ipv6/ip6_input.c, 71: dst_input in ip6_rcv_finish
+net/xfrm/xfrm_input.c, 511: [FUNC_PTR]ip6_rcv_finish in xfrm_trans_reinject
 
-You're good at this game!
+Note that [FUNC_PTR] means a function pointer call is used.
 
-So, because a locker with the same "owner" gets a free pass, you can
-*never* say that any lock which conflicts with A also conflicts with B,
-as a lock with the same owner as B will never conflict with B, even
-though it conflicts with A.
+I do not find a good way to fix them, so I only report.
+These possible bugs are found by my static analysis tool (DSAC) and 
+checked by my code review.
 
-I think there is still value in having the tree, but when a waiter is
-attached under a new blocker, we need to walk the whole tree beneath the
-waiter and detach/wake anything that is not blocked by the new blocker.
 
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlts74IACgkQOeye3VZi
-gblSJxAAwGQ+JxqFSwnyNKDZ/++EmMBpbHrnLsDfxkAxbV+6G18FZ3JSr5OPamQh
-cWT08+vh+Uj5yuZS9skciFM8VcO00+Sz2ZbuzZJHXHH8J/QT4NvkIz8p4beFBDYh
-804bauYb/oOTFEd9YSA2CZK/kc9/pg29oz2VfknbAFXyt85wbMgMLehVAFZhO/RT
-nNejoy2gND8fkOwRTvGvCib5juATh8Z9pWAaU6Qlken9CkJkwLlb29Cty/Wniq7U
-Xcu72xsgzfVwInsSycmFHV9e6YY1cwFDVCiu2PCr0g3H20SinZ6EjT0t/t17zUf5
-0AgMTaziODEpjb1sX5wdTaqNIZRDhZtWlahB0yraa5Rekt45Xuf76OpF4DqVLmMI
-dnORmorS5QlYptJXo7G7K7wJ196n1v9H34wPUKnWNyrCJXPL41mOaCl83tpNjn/9
-MMRdvHnhQ6irRCXQX0k5diL5PW77sDeCtVj5AH0Hz357C0mfESELveqltRWzSWPJ
-Gqd9CPLXJ7WTSS0Bu1j7TQnThmJ7ONPNjTU59Le0nOArVhtI3ozZc8wvmOk5M8bE
-pFk739hFlgVh0/3tSDYwV348bhR+wsTGKfzZkvMdAv4YAhhIXdOvKhaahZZRttuW
-nLodIdJacaRFXKfg093doJd6flFd3JCASoOIjsGbIeJbSr1jZbk=
-=2wkw
------END PGP SIGNATURE-----
---=-=-=--
+Best wishes,
+Jia-Ju Bai
