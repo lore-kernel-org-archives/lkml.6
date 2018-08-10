@@ -2,112 +2,164 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D55C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F49C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE9EB22433
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:22:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9QiCFt/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE9EB22433
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 11A782189B
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:25:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A782189B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbeHJSxU (ORCPT
+        id S1729305AbeHJSza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:53:20 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:38025 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbeHJSxT (ORCPT
+        Fri, 10 Aug 2018 14:55:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41202 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728997AbeHJSz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:53:19 -0400
-Received: by mail-qk0-f195.google.com with SMTP id 126-v6so6732671qke.5
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 09:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=F7hXArw+uwlR1wUYUO8gp6LP77/CD5xiISij8yJBtAw=;
-        b=g9QiCFt/KagNBQpa99M9CjpToFu2JWCQ1OSAiqRcyCHyTLg1Z3yGqfESe+8psyDJQp
-         uK15FdJZ45H+qvjVN3RwKedlfKl/8aZZsEXva3RWS8LwHV9j+zMK5XZPwvS88wL9qSfp
-         wTcvA+cUElPQIIenH6kune+e5HA5H6SIpwcHFCEphehzoK3jH+taY3ArgN9qZnFjSvKS
-         VSAfZNh7wIjgx0MPmB0VzCST3YNszO2JbDGSOJZArvhVoUVvOLq3GYdcji1YDuFfPNYs
-         0B24cIIxwIQG+QbXEt4aFA7m6PqDR2IrFf+aCAs4EiCW/HEhAL4aryxIkTijbBFXUn+u
-         HfyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=F7hXArw+uwlR1wUYUO8gp6LP77/CD5xiISij8yJBtAw=;
-        b=J8B0o8aCnCV6KVZtvdIO1g+T4dVtb6nUVuKeqnR6LAA48OvWFT6C+AHM+S3D0mla0c
-         ZUrYOZBoapPRVd79DJrlQ4V+e+Q/BOr55tlGfSGTTmMEf8GkXpJOIHSjHNcsblQIwyfN
-         txC4KXtXirkmo3rwAqjTDXo4qXu49RNn8tRoDtZyXRpq/89m9mwqUJevXmg3EIymk2GB
-         ATOThN4d9iuLnZGB2e7KY2pJT3VRAjNdwLBpq4dRpxz5M+F8vyUzaPcHwnElDJqDuQbD
-         rbXdDiK6rzf4xVRU03Fj/xapILa774Z66QM7YegMnVhlG1Kjgt+eh2cNjuLgS3Y/cef7
-         eZEQ==
-X-Gm-Message-State: AOUpUlFvn6lgsJAw8cMYSWpCQn/ARO7bY8zhXwR9qGOC7HheFLkutRfn
-        hrN+SWDE/MfxJGFSsQmhYQ==
-X-Google-Smtp-Source: AA+uWPx9e6BWfuMxMzN9UbiHtMGp1PFlq+1do0zWDHkgaAoaVhQ8A2szO3W0XwwiboTpryByzQBWgg==
-X-Received: by 2002:a37:6809:: with SMTP id d9-v6mr6289207qkc.444.1533918167858;
-        Fri, 10 Aug 2018 09:22:47 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id c138-v6sm5375962qkg.79.2018.08.10.09.22.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 09:22:47 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        linux-kernel@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Subject: [PATCH 2/2] docs: kernel-parameters.txt: document rand_mem_physical_padding parameter
-Date:   Fri, 10 Aug 2018 12:21:38 -0400
-Message-Id: <20180810162138.12597-2-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180810162138.12597-1-msys.mizuma@gmail.com>
-References: <20180810162138.12597-1-msys.mizuma@gmail.com>
+        Fri, 10 Aug 2018 14:55:29 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AGOo2S104993
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 12:24:57 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ksayjrpdk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 12:24:56 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 10 Aug 2018 12:24:55 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 10 Aug 2018 12:24:52 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AGOoPH19202462
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Aug 2018 16:24:50 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FB4FAC059;
+        Fri, 10 Aug 2018 12:25:17 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5F164AC060;
+        Fri, 10 Aug 2018 12:25:15 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.80.230.146])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Aug 2018 12:25:15 -0400 (EDT)
+Subject: Re: [PATCH v8 17/22] s390: vfio-ap: zeroize the AP queues.
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-18-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180810111445.015fcf2a.cohuck@redhat.com>
+ <fa85257e-fda1-8f1d-aa7c-c98e74196d37@linux.ibm.com>
+ <20180810131648.4fab1d7a.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 10 Aug 2018 12:24:47 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180810131648.4fab1d7a.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081016-0068-0000-0000-00000326D4D7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009518; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01071704; UDB=6.00551954; IPR=6.00851495;
+ MB=3.00022637; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-10 16:24:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081016-0069-0000-0000-000045587C4F
+Message-Id: <14983b58-f53b-8bd9-179e-29b9a69c21d8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808100177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+On 08/10/2018 07:16 AM, Cornelia Huck wrote:
+> On Fri, 10 Aug 2018 12:49:08 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>
+>> On 10/08/2018 11:14, Cornelia Huck wrote:
+>>> On Wed,  8 Aug 2018 10:44:27 -0400
+>>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>>>   
+>>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>>
+>>>> Let's call PAPQ(ZAPQ) to zeroize a queue:
+>>>>
+>>>> * For each queue configured for a mediated matrix device
+>>>>     when it is released.
+>>>>
+>>>> Zeroizing a queue resets the queue, clears all pending
+>>>> messages for the queue entries and disables adapter interruptions
+>>>> associated with the queue.
+>>>>
+>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>> ---
+>>>>    drivers/s390/crypto/vfio_ap_ops.c     |   29 ++++++++++++++++++++++++++++-
+>>>>    drivers/s390/crypto/vfio_ap_private.h |   25 +++++++++++++++++++++++++
+>>>>    2 files changed, 53 insertions(+), 1 deletions(-)
+>>>>
+>>>> @@ -788,7 +812,10 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
+>>>>    {
+>>>>    	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>>>    
+>>>> -	kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+>>>> +	if (matrix_mdev->kvm)
+>>>> +		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+>>> Confused. Why is the check for matrix_mdev->kvm added here?
+>> When using the KVM notifier we can get two notifications:
+>> -> KVM is here / is comming
+>> -> KVM is not here / disappearing
+>>
+>> In the first case we initialize matrix_mdev->kvm with a pointer to KVM
+>> In the second case we nullify the pointer.
+>>
+>> During the open of the mediated device, the guest should have been started
+>> or we refuse to start.
+>>
+>> During the close of the mediated device, the guest should be there, but
+>> we have no certitude that the guest did not disappear before the VFIO
+>> file being closed.
+>> Since we do not allow multiple guests using the same mediated device
+>> this case should not happen with QEMU. But I am not sure that
+>> a rogue user program could not stop KVM before closing the VFIO
+>> mediated device.
+> I'm not sure why the check is introduced in this patch, though. But
+> maybe I just need weekend :)
 
-This kernel parameter allows to change the padding used for the physical
-memory mapping section when KASLR memory is enabled.
+Good catch, it belongs in patch 15 where the function is introduced.
+Is that the only reason for your objection?
 
-For some systems, the default value, CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING,
-is not enough. The option is useful to adjust the padding size to work
-around such issue.
+>
+>> Maybe Alex can confirm this point, if not we can remove the test.
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 533ff5c..d977091 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3382,6 +3382,13 @@
- 	ramdisk_size=	[RAM] Sizes of RAM disks in kilobytes
- 			See Documentation/blockdev/ramdisk.txt.
- 
-+	rand_mem_physical_padding=
-+			[KNL] Define the padding size in terabytes
-+			used for the physical memory mapping section
-+			when KASLR memory is enabled.
-+			The default value is
-+			CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
-+
- 	ras=option[,option,...]	[KNL] RAS-specific options
- 
- 		cec_disable	[X86]
--- 
-2.18.0
 
