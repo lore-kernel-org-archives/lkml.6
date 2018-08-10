@@ -3,112 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B856CC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC5BC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7927D22415
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7927D22415
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A273B223F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A273B223F0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeHJQGI (ORCPT
+        id S1728254AbeHJQGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:06:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38940 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727534AbeHJQGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:06:07 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C9D97857AB;
-        Fri, 10 Aug 2018 13:36:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6273710075D5;
-        Fri, 10 Aug 2018 13:36:09 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 10 Aug 2018 15:36:10 +0200 (CEST)
-Date:   Fri, 10 Aug 2018 15:36:08 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "zhangwei(Jovi)" <jovi.zhangwei@huawei.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH] uprobes: Use synchronize_rcu() not synchronize_sched()
-Message-ID: <20180810133608.GC3677@redhat.com>
-References: <20180809160553.469e1e32@gandalf.local.home>
- <20180810113548.GA3677@redhat.com>
- <20180810084832.70b9a62a@gandalf.local.home>
+        Fri, 10 Aug 2018 12:06:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52068 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeHJQG3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:06:29 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC02FE5D;
+        Fri, 10 Aug 2018 13:36:31 +0000 (UTC)
+Date:   Fri, 10 Aug 2018 15:36:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
+Cc:     stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-scsi@molgen.mpg.de,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org
+Subject: Re: aacraid: Regression in 4.14.56 with *genirq/affinity: assign
+ vectors to all possible CPUs*
+Message-ID: <20180810133628.GA4131@kroah.com>
+References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180810084832.70b9a62a@gandalf.local.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 10 Aug 2018 13:36:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 10 Aug 2018 13:36:10 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10, Steven Rostedt wrote:
->
-> On Fri, 10 Aug 2018 13:35:49 +0200
-> Oleg Nesterov <oleg@redhat.com> wrote:
->
-> > On 08/09, Steven Rostedt wrote:
-> > >
-> > > --- a/kernel/trace/trace_uprobe.c
-> > > +++ b/kernel/trace/trace_uprobe.c
-> > > @@ -952,7 +952,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
-> > >
-> > >  		list_del_rcu(&link->list);
-> > >  		/* synchronize with u{,ret}probe_trace_func */
-> > > -		synchronize_sched();
-> > > +		synchronize_rcu();
-> >
-> > Can't we change uprobe_trace_func() and uretprobe_trace_func() to use
-> > rcu_read_lock_sched() instead? It is more cheap.
->
-> Is it? rcu_read_lock_sched() is a preempt_disable(),
+On Fri, Aug 10, 2018 at 03:21:52PM +0200, Paul Menzel wrote:
+> Dear Greg,
+> 
+> 
+> Commit ef86f3a7 (genirq/affinity: assign vectors to all possible CPUs) added
+> for Linux 4.14.56 causes the aacraid module to not detect the attached devices
+> anymore on a Dell PowerEdge R720 with two six core 24x E5-2630 @ 2.30GHz.
+> 
+> ```
+> $ dmesg | grep raid
+> [    0.269768] raid6: sse2x1   gen()  7179 MB/s
+> [    0.290069] raid6: sse2x1   xor()  5636 MB/s
+> [    0.311068] raid6: sse2x2   gen()  9160 MB/s
+> [    0.332076] raid6: sse2x2   xor()  6375 MB/s
+> [    0.353075] raid6: sse2x4   gen() 11164 MB/s
+> [    0.374064] raid6: sse2x4   xor()  7429 MB/s
+> [    0.379001] raid6: using algorithm sse2x4 gen() 11164 MB/s
+> [    0.386001] raid6: .... xor() 7429 MB/s, rmw enabled
+> [    0.391008] raid6: using ssse3x2 recovery algorithm
+> [    3.559682] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 EST 2006)
+> [    3.570061] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 2006)
+> [   10.725767] Adaptec aacraid driver 1.2.1[50834]-custom
+> [   10.731724] aacraid 0000:04:00.0: can't disable ASPM; OS doesn't have ASPM control
+> [   10.743295] aacraid: Comm Interface type3 enabled
+> $ lspci -nn | grep Adaptec
+> 04:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
+> 42:00.0 Serial Attached SCSI controller [0107]: Adaptec Smart Storage PQI 12G SAS/PCIe 3 [9005:028f] (rev 01)
+> ```
+> 
+> But, it still works with a Dell PowerEdge R715 with two eight core AMD
+> Opteron 6136, the card below.
+> 
+> ```
+> $ lspci -nn | grep Adaptec
+> 22:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
+> ```
+> 
+> Reverting the commit fixes the issue.
+> 
+> commit ef86f3a72adb8a7931f67335560740a7ad696d1d
+> Author: Christoph Hellwig <hch@lst.de>
+> Date:   Fri Jan 12 10:53:05 2018 +0800
+> 
+>     genirq/affinity: assign vectors to all possible CPUs
+>     
+>     commit 84676c1f21e8ff54befe985f4f14dc1edc10046b upstream.
+>     
+>     Currently we assign managed interrupt vectors to all present CPUs.  This
+>     works fine for systems were we only online/offline CPUs.  But in case of
+>     systems that support physical CPU hotplug (or the virtualized version of
+>     it) this means the additional CPUs covered for in the ACPI tables or on
+>     the command line are not catered for.  To fix this we'd either need to
+>     introduce new hotplug CPU states just for this case, or we can start
+>     assining vectors to possible but not present CPUs.
+>     
+>     Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>     Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>     Tested-by: Stefan Haberland <sth@linux.vnet.ibm.com>
+>     Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU")
+>     Cc: linux-kernel@vger.kernel.org
+>     Cc: Thomas Gleixner <tglx@linutronix.de>
+>     Signed-off-by: Christoph Hellwig <hch@lst.de>
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> The problem doesn’t happen with Linux 4.17.11, so there are commits in
+> Linux master fixing this. Unfortunately, my attempts to find out failed.
+> 
+> I was able to cherry-pick the three commits below on top of 4.14.62,
+> but the problem persists.
+> 
+> 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
+> 355d7ecdea35 scsi: hpsa: fix selection of reply queue
+> e944e9615741 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+> 
+> Trying to cherry-pick the commits below, referencing the commit
+> in question, gave conflicts.
+> 
+> 1. adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
+> 2. d3056812e7df genirq/affinity: Spread irq vectors among present CPUs as far as possible
+> 
+> To avoid further trial and error with the server with a slow firmware,
+> do you know what commits should fix the issue?
 
-which is just raw_cpu_inc()
+Look at the email on the stable mailing list:
+	Subject: Re: Fix for 84676c1f (b5b6e8c8) missing in 4.14.y
+it should help you out here.  Can you try the patches listed there?
 
-> where
-> rcu_read_lock() may just be a task counter increment.
+> PS: I couldn’t find, who suggested this for stable, that means how
+> it was picked to be added to stable. Is there an easy way to find
+> that out?
 
-and  __rcu_read_unlock() is more heavy.
+Dig through the archives is usually the best way.  Looks like it came in
+through a suggestion from Sasha.
 
-OK, I agree, this doesn't really matter.
+thanks,
 
-> > Hmm. probe_event_enable() does list_del + kfree on failure, this doesn't
-> > look right... Not only because kfree() can race with list_for_each_entry_rcu(),
-> > we should not put the 1st link on list until uprobe_buffer_enable().
-> >
-> > Does the patch below make sense or I am confused?
->
-> I guess the question is, if it isn't enabled, are there any users or
-> even past users still running.
-
-Note that uprobe_register() is not "atomic".
-
-To simplify, suppose we have 2 tasks T1 and T2 running the probed binary.
-So we are going to do install_breakpoint(T1->mm) + install_breakpoint(T2->mm).
-If the 2nd install_breakpoint() fails for any reason, _register() will do
-remove_breakpoint(T1->mm) and return the error.
-
-However, T1 can hit this bp right after install_breakpoint(T1->mm), so it
-can call uprobe_trace_func() before list_del(&link->list).
-
-OK, even if I am right this is mostly theoretical.
-
-Oleg.
-
+greg k-h
