@@ -6,68 +6,98 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF93C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285C3C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7016722422
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:17:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7016722422
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id DE50622422
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 15:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE50622422
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbeHJRrX (ORCPT
+        id S1728353AbeHJRsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:47:23 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:57427 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727381AbeHJRrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:47:23 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 891B865617;
-        Fri, 10 Aug 2018 15:16:56 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Rongyi Chen <chenyi@tt-cool.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH] clk: sunxi-ng: h6: fix PWM gate/reset offset
-Date:   Fri, 10 Aug 2018 23:16:38 +0800
-Message-Id: <20180810151638.30900-1-icenowy@aosc.io>
+        Fri, 10 Aug 2018 13:48:15 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:45121 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeHJRsP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 13:48:15 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fo9Ao-0002SF-PF; Fri, 10 Aug 2018 09:17:54 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fo9Ao-0006vJ-4x; Fri, 10 Aug 2018 09:17:54 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <87d0uqpba5.fsf@xmission.com>
+        <0F2FA70F-8C7E-4D7D-B685-244A76BDB459@amacapital.net>
+Date:   Fri, 10 Aug 2018 10:17:37 -0500
+In-Reply-To: <0F2FA70F-8C7E-4D7D-B685-244A76BDB459@amacapital.net> (Andy
+        Lutomirski's message of "Fri, 10 Aug 2018 07:36:17 -0700")
+Message-ID: <8736vmp7xq.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fo9Ao-0006vJ-4x;;;mid=<8736vmp7xq.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1992sMAMDrG0SeaOpUCajB1dFRXYBOw2nA=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: BUG: Mount ignores mount options
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rongyi Chen <chenyi@tt-cool.com>
+Andy Lutomirski <luto@amacapital.net> writes:
 
-Currently the register offset of the PWM bus gate in Allwinner H6 clock
-driver is wrong.
+>> On Aug 10, 2018, at 7:05 AM, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> 
+>> 
+>> There is a serious problem with mount options today that fsopen does not
+>> address.  The problem is that mount options are ignored for block based
+>> filesystems, and any other type of filesystem that follows the same
+>> pattern.
+>> 
+>
+>> /dev/loop0 /root/loop0-noacl-noquota-nouser_xattr ext4 rw,relatime,nouser_xattr,noacl 0 0
+>> /dev/loop0 /root/loop0-acl-quota-user_xattr ext4 rw,relatime,nouser_xattr,noacl 0 0
+>
+> To make sure I understand correctly: the problem is that the second
+> mount ignored the options because the device was already mounted,
+> right?
 
-Fix this issue.
+Yes.
 
-Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-Signed-off-by: Rongyi Chen <chenyi@tt-cool.com>
-[Icenowy: refactor commit message]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> For the new API, I think the only remotely sane approach is to refuse
+> to mount or init or whatever you call it an already mounted bdev. If
+> user code genuinely needs to bind-mount an existing mount that is
+> known only by its bdev, we can add a specific API just for that.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index bdbfe78fe133..8eea58f9298c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -352,7 +352,7 @@ static SUNXI_CCU_GATE(bus_dbg_clk, "bus-dbg", "psi-ahb1-ahb2",
- static SUNXI_CCU_GATE(bus_psi_clk, "bus-psi", "psi-ahb1-ahb2",
- 		      0x79c, BIT(0), 0);
- 
--static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x79c, BIT(0), 0);
-+static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x7ac, BIT(0), 0);
- 
- static SUNXI_CCU_GATE(bus_iommu_clk, "bus-iommu", "apb1", 0x7bc, BIT(0), 0);
- 
--- 
-2.18.0
+Eric
 
