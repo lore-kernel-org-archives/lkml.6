@@ -6,165 +6,78 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F33C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6469FC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F1C208D5
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F1C208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 1BA1622432
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:12:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA1622432
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbeHJSdb (ORCPT
+        id S1728610AbeHJSma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 14:33:31 -0400
-Received: from verein.lst.de ([213.95.11.211]:48610 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729262AbeHJSdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 14:33:31 -0400
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id C988D68CF4; Fri, 10 Aug 2018 18:03:11 +0200 (CEST)
-From:   Torsten Duwe <duwe@lst.de>
-To:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: [PATCH 3/3] arm64: reliable stacktraces
-In-Reply-To: <20180810160043.9E45568C76@newverein.lst.de>
-References: <20180810160043.9E45568C76@newverein.lst.de>
-Message-Id: <20180810160311.C988D68CF4@newverein.lst.de>
-Date:   Fri, 10 Aug 2018 18:03:11 +0200 (CEST)
+        Fri, 10 Aug 2018 14:42:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54084 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727630AbeHJSma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 14:42:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 59F144021715;
+        Fri, 10 Aug 2018 16:12:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B7952166BA2;
+        Fri, 10 Aug 2018 16:11:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <f199f22e-f064-b089-25bd-6e37ed1a73bd@schaufler-ca.com>
+References: <f199f22e-f064-b089-25bd-6e37ed1a73bd@schaufler-ca.com> <87d0uqpba5.fsf@xmission.com> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <22361.1533913891@warthog.procyon.org.uk> <20180810153902.GH21087@thunk.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        viro@zeniv.linux.org.uk,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30316.1533917515.1@warthog.procyon.org.uk>
+Date:   Fri, 10 Aug 2018 17:11:55 +0100
+Message-ID: <30317.1533917515@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 10 Aug 2018 16:12:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 10 Aug 2018 16:12:00 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is more an RFC in the original sense: is this basically
-the correct approach? (as I had to tweak the API a bit).
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-In particular the code does not detect interrupts and exception
-frames, and does not yet check whether the code address is valid.
-The latter check would also have to be omitted for the latest frame
-on other tasks' stacks. This would require some more tweaking.
+> > P.S.  And as Al has pointed out, this would require special, per-file
+> > system support to determine whether the mount options are conflicting
+> > or not....
+> 
+> This extends to LSMs that support mount options (SELinux and Smack)
+> as well. 
 
-unwind_frame() now reports whether we had to stop normally or due to
-an error condition; walk_stackframe() will pass that info.
-__save_stack_trace() is used for a start to check the validity of a
-frame; maybe save_stack_trace_tsk_reliable() will need its own callback.
+Yes.  I'm doing that.
 
-Any comments welcome.
-
-Signed-off-by: Torsten Duwe <duwe@suse.de>
-
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -127,8 +127,9 @@ config ARM64
- 	select HAVE_PERF_EVENTS
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
--	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RCU_TABLE_FREE
-+	select HAVE_REGS_AND_STACK_ACCESS_API
-+	select HAVE_RELIABLE_STACKTRACE
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_KPROBES
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -33,7 +33,7 @@ struct stackframe {
- };
- 
- extern int unwind_frame(struct task_struct *tsk, struct stackframe *frame);
--extern void walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
-+extern int walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
- 			    int (*fn)(struct stackframe *, void *), void *data);
- extern void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk);
- 
-diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
-index d5718a060672..fe0dd4745ff3 100644
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -81,23 +81,27 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
- 	 * both are NULL.
- 	 */
- 	if (!frame->fp && !frame->pc)
--		return -EINVAL;
-+		return 1;
- 
- 	return 0;
- }
- 
--void notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
-+int notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
- 		     int (*fn)(struct stackframe *, void *), void *data)
- {
- 	while (1) {
- 		int ret;
- 
--		if (fn(frame, data))
--			break;
-+		ret = fn(frame, data);
-+		if (ret)
-+			return ret;
- 		ret = unwind_frame(tsk, frame);
- 		if (ret < 0)
-+			return ret;
-+		if (ret > 0)
- 			break;
- 	}
-+	return 0;
- }
- 
- #ifdef CONFIG_STACKTRACE
-@@ -145,14 +149,15 @@ void save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
- 		trace->entries[trace->nr_entries++] = ULONG_MAX;
- }
- 
--static noinline void __save_stack_trace(struct task_struct *tsk,
-+static noinline int __save_stack_trace(struct task_struct *tsk,
- 	struct stack_trace *trace, unsigned int nosched)
- {
- 	struct stack_trace_data data;
- 	struct stackframe frame;
-+	int ret;
- 
- 	if (!try_get_task_stack(tsk))
--		return;
-+		return -EBUSY;
- 
- 	data.trace = trace;
- 	data.skip = trace->skip;
-@@ -171,11 +176,12 @@ static noinline void __save_stack_trace(struct task_struct *tsk,
- 	frame.graph = tsk->curr_ret_stack;
- #endif
- 
--	walk_stackframe(tsk, &frame, save_trace, &data);
-+	ret = walk_stackframe(tsk, &frame, save_trace, &data);
- 	if (trace->nr_entries < trace->max_entries)
- 		trace->entries[trace->nr_entries++] = ULONG_MAX;
- 
- 	put_task_stack(tsk);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
- 
-@@ -190,4 +196,12 @@ void save_stack_trace(struct stack_trace *trace)
- }
- 
- EXPORT_SYMBOL_GPL(save_stack_trace);
-+
-+int save_stack_trace_tsk_reliable(struct task_struct *tsk,
-+				  struct stack_trace *trace)
-+{
-+	return __save_stack_trace(tsk, trace, 1);
-+}
-+EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
-+
- #endif
-
+David
