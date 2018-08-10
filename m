@@ -2,124 +2,257 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EFDC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2D7C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF63622448
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B22EB22448
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:19:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Ryxz3LZk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF63622448
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IeJVULrM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ar6sBxyM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B22EB22448
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeHJTmk (ORCPT
+        id S1728142AbeHJTuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 15:42:40 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:44987 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbeHJTmk (ORCPT
+        Fri, 10 Aug 2018 15:50:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42548 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeHJTuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 15:42:40 -0400
-Received: by mail-qt0-f193.google.com with SMTP id b15-v6so10960725qtp.11
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 10:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=BYfEQDr68iH+R3gG31Q32XvSo83Zkp2kexYYaePl+B8=;
-        b=Ryxz3LZkQ4w4GAeFC7WXHKd4MmpbO4KPtYzNbhrHZiwVfhTouFMUDWgn2T3eQGgg7Q
-         sC5BSoR9Qpoxd2bsza+IdVUor3bjHKhm0qAKBf3dLMAxu1qMh+ib45Y6rDV60up2gJl+
-         /HgQAelXXKYc5PbEP6tjMU2MAdBe9tRVUcJDU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=BYfEQDr68iH+R3gG31Q32XvSo83Zkp2kexYYaePl+B8=;
-        b=S8uhiIAer7kbhwXFkWfXn3XMsWh0d+BWONAAk/lpdCGLPwf23k64W6E7ENLtM8XYLI
-         Rz3xSO50Xcl2o5Fbd+VmfmgCSy4RmQKAexHvts9hT/GRDtMarAOcoyyPmhdMC2m/n2kg
-         YkSaoLl1uJT4XTxARaDSH3q4YhH7jKWrlSQYx2iEEB1BwSB3fG0YAqk0lVa24OfvhByY
-         EC8M5ciWFIFlGlCfd3SGQ9tGkJtmfv09WGD2VncjzgjY0Iar0tmCLOQammghbXSLHkhp
-         v0OXKQsse+FuXCI6TEwnm2Ii9bNK8DG8ICeCCrUGp5OxcRThtNs2XalNSw1H1J++1tqJ
-         LdWQ==
-X-Gm-Message-State: AOUpUlFkyI20HxwD8Fx/CeV38D6iedpmrVOqnzADhLr5ZdQ/BdTEMICj
-        3EEJnRAm+/JuViEJmh2aR2YwOK08x3jfiV5SiYUl6/K2
-X-Google-Smtp-Source: AA+uWPw5qbWIqCiijotLIQ7jcsuHKJk0lL2na4BRJQXJTp74vRpaXep00P4oIF+rDNIpELKnL80A1My6hHwEcZdkNSI=
-X-Received: by 2002:aed:24b0:: with SMTP id t45-v6mr7335928qtc.86.1533921116261;
- Fri, 10 Aug 2018 10:11:56 -0700 (PDT)
+        Fri, 10 Aug 2018 15:50:32 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0F3AA600C1; Fri, 10 Aug 2018 17:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533921587;
+        bh=akcOJVZGi1ZrmE+cxEg9c6fdi7upunOnanseKrBsi2g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IeJVULrMemvdDi3kHvvCffhMmsy87pIFHTqAPM63bmdURxgWLIFN0Oj78XMPKRLeh
+         Bavv1HaToNPnZCOS146J0prMCzNy1VDKJ+l/1Qu1tvTmevo0UK8lY4zWxI5Pj8kFtp
+         4g0HcFx7QaIeRSi2EPkBgFaDr0VWRto8IOsOR8Ww=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D7C29600C1;
+        Fri, 10 Aug 2018 17:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533921585;
+        bh=akcOJVZGi1ZrmE+cxEg9c6fdi7upunOnanseKrBsi2g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ar6sBxyMHyobgwV1XFFHbg32fK5xqBuxZ3uWTZ4U0ZpyQFSQQCmUXTf8gFX1Dpyae
+         dzM+xOLWdIromcCWLXC8gGBQNfRVrvz4L1oiz4Kg3gbv/flS2RsO2Pw9Dzn1/wghWA
+         E4qUn3xEBdks5svATMgzgZf5Sf42QH8maOabHUto=
 MIME-Version: 1.0
-Received: by 2002:aed:3442:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 10:11:55
- -0700 (PDT)
-In-Reply-To: <20180810123042.51ceddb9@gandalf.local.home>
-References: <20180810123042.51ceddb9@gandalf.local.home>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Fri, 10 Aug 2018 10:11:55 -0700
-Message-ID: <CAEXW_YQPFOrxd_jvHaKF=9gzHd6f=7MLTtkf_VxQXtDxt9Q_dA@mail.gmail.com>
-Subject: Re: [RFC][PATCH] tracepoints: Free early tracepoints after RCU is initialized
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 10 Aug 2018 10:19:45 -0700
+From:   Sodagudi Prasad <psodagud@codeaurora.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        tsoni@codeaurora.org, Vikram Mulukutla <markivx@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ckadabi@codeaurora.org, rjwysocki@gmail.com
+Subject: Re: [PATCH] dd: Invoke one probe retry cycle after every initcall
+ level
+In-Reply-To: <CAJZ5v0gNLMBatBsJCTUwYtn6esYdMu0ZT3JLoRKkBoNuWbFprg@mail.gmail.com>
+References: <1532035440-7860-1-git-send-email-rishabhb@codeaurora.org>
+ <CAJZ5v0gWqx5Op-Bbg7bAYALCyBPsc=-+homAYj2Q1qd3WsqmDw@mail.gmail.com>
+ <e4ca8572ed913ab65f63be8a351d4439@codeaurora.org>
+ <CAJZ5v0ixuWo9RC21Z8zVhuHfkr1uV4vdqMh4s+qGMR7R8Wycag@mail.gmail.com>
+ <68b90830d5024ce75a20b017aaf21c05@codeaurora.org>
+ <CAJZ5v0jpm8tVjyWjA36Sp-bTEWUE+6cExjH7=CM=LUB-6xvePA@mail.gmail.com>
+ <CA+tyz+6ZwtpKM=G5F2Do_sXWyo8r83ma19fWpn4HELiy0XT7=w@mail.gmail.com>
+ <de9fc0924f73bc26e067cce6c18d2714@codeaurora.org>
+ <CAJZ5v0h4=TqzXY3W-eVRyCh1FLzAWASoOdNEJyAmHHgJQEMWeg@mail.gmail.com>
+ <2aecb7753a305aac081c9c9b981cedc1@codeaurora.org>
+ <CAJZ5v0gNLMBatBsJCTUwYtn6esYdMu0ZT3JLoRKkBoNuWbFprg@mail.gmail.com>
+Message-ID: <1b41135c952258102754a0eab876a77b@codeaurora.org>
+X-Sender: psodagud@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 9:30 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
->
-> When enabling trace events via the kernel command line, I hit this warning:
->
-> WARNING: CPU: 0 PID: 13 at kernel/rcu/srcutree.c:236 check_init_srcu_struct+0xe/0x61
-> Modules linked in:
-> CPU: 0 PID: 13 Comm: watchdog/0 Not tainted 4.18.0-rc6-test+ #6
-> Hardware name: MSI MS-7823/CSM-H87M-G43 (MS-7823), BIOS V1.6 02/22/2014
-> RIP: 0010:check_init_srcu_struct+0xe/0x61
-> Code: 48 c7 c6 ec 8a 65 b4 e8 ff 79 fe ff 48 89 df 31 f6 e8 f2 fa ff ff 5a
-> 5b 41 5c 5d c3 0f 1f 44 00 00 83 3d 68 94 b8 01 01 75 02 <0f> 0b 48 8b 87 f0
-> 0a 00 00 a8 03 74 45 55 48 89 e5 41 55 41 54 4c
-> RSP: 0000:ffff96eb9ea03e68 EFLAGS: 00010246
-> RAX: ffff96eb962b5b01 RBX: ffffffffb4a87420 RCX: 0000000000000001
-> RDX: ffffffffb3107969 RSI: ffff96eb962b5b40 RDI: ffffffffb4a87420
-> RBP: ffff96eb9ea03eb0 R08: ffffabbd00cd7f48 R09: 0000000000000000
-> R10: ffff96eb9ea03e68 R11: ffffffffb4a6eec0 R12: ffff96eb962b5b40
-> R13: ffff96eb9ea03ef8 R14: ffffffffb3107969 R15: ffffffffb3107948
-> FS:  0000000000000000(0000) GS:ffff96eb9ea00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff96eb13ab2000 CR3: 0000000192a1e001 CR4: 00000000001606f0
-> Call Trace:
->  <IRQ>
->  ? __call_srcu+0x2d/0x290
->  ? rcu_process_callbacks+0x26e/0x448
->  ? allocate_probes+0x2b/0x2b
->  call_srcu+0x13/0x15
->  rcu_free_old_probes+0x1f/0x21
->  rcu_process_callbacks+0x2ed/0x448
->  __do_softirq+0x172/0x336
->  irq_exit+0x62/0xb2
->  smp_apic_timer_interrupt+0x161/0x19e
->  apic_timer_interrupt+0xf/0x20
->  </IRQ>
->
-> The problem is that the enabling of trace events before RCU is set up will
-> cause SRCU to give this warning. To avoid this, add a list to store probes
-> that need to be freed till after RCU is initialized, and then free them
-> then.
->
-> Link: http://lkml.kernel.org/r/20180810113554.1df28050@gandalf.local.home
->
-> Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On 2018-08-10 00:10, Rafael J. Wysocki wrote:
+> On Fri, Aug 10, 2018 at 12:30 AM,  <rishabhb@codeaurora.org> wrote:
+>> On 2018-08-06 01:53, Rafael J. Wysocki wrote:
+>>> 
+>>> On Fri, Aug 3, 2018 at 12:20 AM, Sodagudi Prasad
+>>> <psodagud@codeaurora.org> wrote:
+>>>>> 
+>>>>> From: RAFAEL J. WYSOCKI <rafael@kernel.org>
+>>>>> Date: Wed, Aug 1, 2018 at 2:21 PM
+>>>>> Subject: Re: [PATCH] dd: Invoke one probe retry cycle after every
+>>>>> initcall level
+>>>>> To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>>>>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman
+>>>>> <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
+>>>>> <linux-kernel@vger.kernel.org>, ckadabi@codeaurora.org,
+>>>>> tsoni@codeaurora.org, Vikram Mulukutla <markivx@codeaurora.org>
+>>>>> 
+>>>>> 
+>>>>> On Wed, Aug 1, 2018 at 11:18 PM,  <rishabhb@codeaurora.org> wrote:
+>>>>>> 
+>>>>>> 
+>>>>>> On 2018-07-24 01:24, Rafael J. Wysocki wrote:
+>>>>>>> 
+>>>>>>> 
+>>>>>>> 
+>>>>>>> On Mon, Jul 23, 2018 at 10:22 PM,  <rishabhb@codeaurora.org> 
+>>>>>>> wrote:
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> On 2018-07-23 04:17, Rafael J. Wysocki wrote:
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> On Thu, Jul 19, 2018 at 11:24 PM, Rishabh Bhatnagar
+>>>>>>>>> <rishabhb@codeaurora.org> wrote:
+>>>>>>>>>> 
+>>>>>>>>>> 
+>>>>>>>>>> 
+>>>>>>>>>> 
+>>>>>>>>>> Drivers that are registered at an initcall level may have to
+>>>>>>>>>> wait until late_init before the probe deferral mechanism can
+>>>>>>>>>> retry their probe functions. It is possible that their
+>>>>>>>>>> dependencies were resolved much earlier, in some cases even
+>>>>>>>>>> before the next initcall level. Invoke one probe retry cycle
+>>>>>>>>>> at every _sync initcall level, allowing these drivers to be
+>>>>>>>>>> probed earlier.
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> 
+>>>>>>>>> Can you please say something about the actual use case this is
+>>>>>>>>> expected to address?
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> We have a display driver that depends 3 other devices to be
+>>>>>>>> probed so that it can bring-up the display. Because of
+>>>>> 
+>>>>> 
+>>>>> dependencies
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> not being met the deferral mechanism defers the probes for a 
+>>>>>>>> later
+>>>>> 
+>>>>> 
+>>>>> time,
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> even though the dependencies might be met earlier. With this
+>>>>> 
+>>>>> 
+>>>>> change
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> display can be brought up much earlier.
+>>>>>>> 
+>>>>>>> 
+>>>>>>> 
+>>>>>>> 
+>>>>>>> OK
+>>>>>>> 
+>>>>>>> What runlevel brings up the display after the change?
+>>>>>>> 
+>>>>>>> Thanks,
+>>>>>>> Rafael
+>>>>>> 
+>>>>>> 
+>>>>>> After the change the display can come up after device_initcall 
+>>>>>> level
+>>>>>> itself.
+>>>>>> The above mentioned 3 devices are probed at 0.503253, 0.505210 and
+>>>>> 
+>>>>> 
+>>>>> 0.523264
+>>>>>> 
+>>>>>> 
+>>>>>> secs.
+>>>>>> Only the first device is probed successfully. With the current
+>>>>>> deferral mechanism the devices get probed again after 
+>>>>>> late_initcall
+>>>>>> at 9.19 and 9.35 secs. So display can only come up after 9.35 
+>>>>>> secs.
+>>>>>> With this change the devices are re-probed successfully at 0.60 
+>>>>>> and
+>>>>>> 0.613 secs. Therefore display can come just after 0.613 secs.
+>>>>> 
+>>>>> 
+>>>>> 
+>>>>> OK, so why do you touch the initcall levels earlier than device_?
+>>>> 
+>>>> 
+>>>> 1)      re-probe probing devices in the active list on every level 
+>>>> help
+>>>> to
+>>>> avoid circular dependency pending list.
+>>>> 2)      There are so many devices which gets deferred in earlier 
+>>>> init
+>>>> call
+>>>> levels, so we wanted to reprobe them at every successive init call 
+>>>> level.
+>>> 
+>>> 
+>>> Do you have specific examples of devices for which that helps?
+>>> 
+>>>>> 
+>>>>>> This change helps in overall android bootup as well.
+>>>>> 
+>>>>> 
+>>>>> 
+>>>>> How exactly?
+>>>> 
+>>>> 
+>>>> We have seen less no of re-probes at late_init and most of the 
+>>>> driver's
+>>>> dependency met earlier than late_init call level. It helped display 
+>>>> and
+>>>> couple of other drivers by executing the re probe work at every init
+>>>> level.
+>>> 
+>>> 
+>>> So I can believe that walking the deferred list on device_initcall 
+>>> and
+>>> maybe on device_initcall_sync may help, but I'm not quite convinced
+>>> that it matters for the earlier initcall levels.
+>> 
+>> 
+>> Many of our drivers are dependent on the regulator and bus driver.
+>> Both the regulator and bus driver are probed in the subsys_initcall 
+>> level.
+>> Now the probe of bus driver requires regulator to be working. If the 
+>> probe
+>> of
+>> bus driver happens before regulator, then bus driver's probe will be
+>> deferred and all other device's probes which depend on bus driver will 
+>> also
+>> be deferred.
+>> The impact of this problem is reduced if we have this patch.
+> 
+> Fair enough, but this information should be there in the changelog of
+> your patch.
+> 
+> And why do you do that for arch_initcall_sync()?
+<Prasad> You are right and we can remove arch_initcall_sync().
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Added some logging and observed that, none of the devices are re-probed 
+in the arch_initcall_sync level.
 
-thanks,
-
- - Joel
+-Thanks, Prasad
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
