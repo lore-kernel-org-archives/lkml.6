@@ -3,214 +3,141 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D218C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F8DC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 038C0223F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66768223F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:21:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAjXp5I/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 038C0223F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="K+ym0fRd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66768223F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbeHJJrc (ORCPT
+        id S1727666AbeHJJuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 05:47:32 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53687 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbeHJJrc (ORCPT
+        Fri, 10 Aug 2018 05:50:25 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:42982 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbeHJJuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 05:47:32 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so795724wmh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 00:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=33p3yG2IFPmurjZ6CYknFZJ4X3RruEdrh2lVtZw4qbQ=;
-        b=JAjXp5I/TPln1yvcBcjapmRF05EJCXA0Xg6FVUaSpXLX7zEDQTnQjYt/qlkQnhMeA2
-         +U2S+rd+arx9uyu3fRfWiWrT3/U5KNR18jDFvEoRyrt1OoCnWnUAjzsprxGbjiihYric
-         rL03S8ckD/dsggU5UXrW5st2WHUM93stKi7oatHHPpDf4tb/a5JOAvV3avr2lXibZOJM
-         fATIx2GGP79gDLf5iTtdpq/b9rgDwSo9nJoR4sqdlzGlwtLamCNNVag2koZ3dDZ3MNpc
-         gdeijI+70OQQEwZ0v/SlS0MBuOoAjkIDtHRGmeyNWTEca2KK8sgX7WLSSMtLLJE3LT44
-         wgDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=33p3yG2IFPmurjZ6CYknFZJ4X3RruEdrh2lVtZw4qbQ=;
-        b=KwI4g6bJXmP1Tbp3/ADZ/3+LmEjz2s+xhCSOmcc7ICwF9Kva/mw8FHE1q95f05F9bT
-         d6mEthWEeb9PfGVjtHqBTrFHqo8Ye52CToNhm2DRu4iS1IekQ2bSgyu4eM+eRe/kaBMf
-         F3SfnroNN9umJKNZek44CruKpD/NeJw7a4F2Z4yJ6uWKRGdTzASfPeFp/VwG24KMLh8n
-         lZMlmvHKNo+ZjbQ5AOHFm78L3LJWywEq1nILv/zHpW2lfqNXg2po8ydGzwhH07f4wSlj
-         cEeEJSkZ7VClwW8QQ0KbpBLeE9fQpmDl8s6Hx8ZyNn97TmL8GlLFMurOWNdiTAQt6L3B
-         WRxw==
-X-Gm-Message-State: AOUpUlEVkw5Rwapjl2ZypWR4KE1RP7dZfLqviVhrwux0xbgPY8JmXYw8
-        uyucwZyvFTGMDIgDI5ss4C8=
-X-Google-Smtp-Source: AA+uWPx5DpvgC9vBfZWDuF6INhRceez85ytInylqUJRGQ+Rtrqc2ayt4C/WkHVa7CoCPd8G2uNT5Ig==
-X-Received: by 2002:a1c:4c0e:: with SMTP id z14-v6mr742220wmf.89.1533885531039;
-        Fri, 10 Aug 2018 00:18:51 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id k4-v6sm13253875wrl.12.2018.08.10.00.18.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 00:18:50 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 5/5] staging: rtl8188eu: use phydm_reg.h from rtlwifi
-Date:   Fri, 10 Aug 2018 09:18:33 +0200
-Message-Id: <20180810071833.1661-5-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180810071833.1661-1-straube.linux@gmail.com>
-References: <20180810071833.1661-1-straube.linux@gmail.com>
+        Fri, 10 Aug 2018 05:50:25 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7A7JNmP001356;
+        Fri, 10 Aug 2018 07:21:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=2gkbcH0Y8qS+V1m/ydlCgT5QB0ezMdRDwLCDFAZLDp8=;
+ b=K+ym0fRdCa+e7wHEC/+BkKYU7fyH1d6KwvabHo7afxw+qrsfiVmr83+QWvQHDTt/S0Tq
+ qhuymh4pZgY3oAk3oqWSsp/3iRppM6fmtcHX31qBg2na7MuO2uFlzuGxY/cEqLyxLbX3
+ 4MwVwIkfz7coSv+q3WTQuHp3NBlq1qfTa5hUpR0DiGlisHCGA+5uV1jZXFSotSQn4J9t
+ R4hg7R7SDLZvfM1m+tnYm1wO7qoGlnlowzuHfF4ynW4C6b4PlOExwajQg1WzLNPm5Ail
+ 5MRP5GbgcSiIV5P7DEMjsPy0abymVGHYRoXP0ScA/F+6lBfzDMnRQrUFq+jVvQshRjoa cA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2kn1nde89r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Aug 2018 07:21:09 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7A7L7S3004573
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Aug 2018 07:21:08 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7A7L40M010450;
+        Fri, 10 Aug 2018 07:21:05 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 10 Aug 2018 00:21:04 -0700
+Date:   Fri, 10 Aug 2018 10:20:54 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Stefan Popa <stefan.popa@analog.com>
+Cc:     kbuild-all@01.org, jic23@kernel.org, broonie@kernel.org,
+        Stefan Popa <stefan.popa@analog.com>, lars@metafoo.de,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
+        mark.rutland@arm.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, robh+dt@kernel.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] iio:adxl372: Add FIFO and interrupts support
+Message-ID: <20180810072054.vemdubi6kna3bx2k@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533557087-10401-5-git-send-email-stefan.popa@analog.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8980 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808100080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use rtlwifi/phydm/phydm_reg.h instead of odm_reg.h and
-remove the now unused odm_reg.h.
+Hi Stefan,
 
-All defines from odm_reg.h are defined with the same values
-in rtlwifi/phydm/phydm_reg.h.
+I love your patch! Perhaps something to improve:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+url:    https://github.com/0day-ci/linux/commits/Stefan-Popa/iio-accel-Add-adxl372-driver/20180807-050955
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+
+smatch warnings:
+drivers/iio/accel/adxl372.c:704 adxl372_buffer_postenable() error: buffer overflow 'adxl372_axis_lookup_table' 7 <= 7 (assuming for loop doesn't break)
+
+# https://github.com/0day-ci/linux/commit/021923033c19a85fa8f99993de6591691ee67b1a
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 021923033c19a85fa8f99993de6591691ee67b1a
+vim +704 drivers/iio/accel/adxl372.c
+
+02192303 Stefan Popa 2018-08-06  686  
+02192303 Stefan Popa 2018-08-06  687  static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
+02192303 Stefan Popa 2018-08-06  688  {
+02192303 Stefan Popa 2018-08-06  689  	struct adxl372_state *st = iio_priv(indio_dev);
+02192303 Stefan Popa 2018-08-06  690  	unsigned int mask;
+02192303 Stefan Popa 2018-08-06  691  	int i, ret;
+02192303 Stefan Popa 2018-08-06  692  
+02192303 Stefan Popa 2018-08-06  693  	ret = adxl372_set_interrupts(st, ADXL372_INT1_MAP_FIFO_FULL_MSK, 0);
+02192303 Stefan Popa 2018-08-06  694  	if (ret < 0)
+02192303 Stefan Popa 2018-08-06  695  		return ret;
+02192303 Stefan Popa 2018-08-06  696  
+02192303 Stefan Popa 2018-08-06  697  	mask = *indio_dev->active_scan_mask;
+02192303 Stefan Popa 2018-08-06  698  
+02192303 Stefan Popa 2018-08-06  699  	for (i = 0; i < ARRAY_SIZE(adxl372_axis_lookup_table); i++) {
+02192303 Stefan Popa 2018-08-06  700  		if (mask == adxl372_axis_lookup_table[i].bits)
+02192303 Stefan Popa 2018-08-06  701  			break;
+02192303 Stefan Popa 2018-08-06  702  	}
+02192303 Stefan Popa 2018-08-06  703  
+02192303 Stefan Popa 2018-08-06 @704  	st->fifo_format = adxl372_axis_lookup_table[i].fifo_format;
+02192303 Stefan Popa 2018-08-06  705  	st->fifo_set_size = bitmap_weight(indio_dev->active_scan_mask,
+02192303 Stefan Popa 2018-08-06  706  					  indio_dev->masklength);
+02192303 Stefan Popa 2018-08-06  707  	/*
+02192303 Stefan Popa 2018-08-06  708  	 * The 512 FIFO samples can be allotted in several ways, such as:
+02192303 Stefan Popa 2018-08-06  709  	 * 170 sample sets of concurrent 3-axis data
+02192303 Stefan Popa 2018-08-06  710  	 * 256 sample sets of concurrent 2-axis data (user selectable)
+02192303 Stefan Popa 2018-08-06  711  	 * 512 sample sets of single-axis data
+02192303 Stefan Popa 2018-08-06  712  	 */
+02192303 Stefan Popa 2018-08-06  713  	if ((st->watermark * st->fifo_set_size) > ADXL372_FIFO_SIZE)
+02192303 Stefan Popa 2018-08-06  714  		st->watermark = (ADXL372_FIFO_SIZE  / st->fifo_set_size);
+02192303 Stefan Popa 2018-08-06  715  
+02192303 Stefan Popa 2018-08-06  716  	st->fifo_mode = ADXL372_FIFO_STREAMED;
+02192303 Stefan Popa 2018-08-06  717  
+02192303 Stefan Popa 2018-08-06  718  	ret = adxl372_configure_fifo(st);
+02192303 Stefan Popa 2018-08-06  719  	if (ret < 0) {
+02192303 Stefan Popa 2018-08-06  720  		st->fifo_mode = ADXL372_FIFO_BYPASSED;
+02192303 Stefan Popa 2018-08-06  721  		adxl372_set_interrupts(st, 0, 0);
+02192303 Stefan Popa 2018-08-06  722  		return ret;
+02192303 Stefan Popa 2018-08-06  723  	}
+02192303 Stefan Popa 2018-08-06  724  
+02192303 Stefan Popa 2018-08-06  725  	return iio_triggered_buffer_postenable(indio_dev);
+02192303 Stefan Popa 2018-08-06  726  }
+02192303 Stefan Popa 2018-08-06  727  
+
 ---
- .../staging/rtl8188eu/include/odm_precomp.h   |   2 +-
- drivers/staging/rtl8188eu/include/odm_reg.h   | 106 ------------------
- 2 files changed, 1 insertion(+), 107 deletions(-)
- delete mode 100644 drivers/staging/rtl8188eu/include/odm_reg.h
-
-diff --git a/drivers/staging/rtl8188eu/include/odm_precomp.h b/drivers/staging/rtl8188eu/include/odm_precomp.h
-index 658a938df4c1..0cf7f82b805f 100644
---- a/drivers/staging/rtl8188eu/include/odm_precomp.h
-+++ b/drivers/staging/rtl8188eu/include/odm_precomp.h
-@@ -29,7 +29,7 @@
- #include "hal8188e_rate_adaptive.h" /* for RA,Power training */
- #include "rtl8188e_hal.h"
- 
--#include "odm_reg.h"
-+#include "../../rtlwifi/phydm/phydm_reg.h"
- 
- #include "odm_rtl8188e.h"
- 
-diff --git a/drivers/staging/rtl8188eu/include/odm_reg.h b/drivers/staging/rtl8188eu/include/odm_reg.h
-deleted file mode 100644
-index b56549ba1256..000000000000
---- a/drivers/staging/rtl8188eu/include/odm_reg.h
-+++ /dev/null
-@@ -1,106 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/******************************************************************************
-- *
-- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
-- *
-- ******************************************************************************/
--/*  */
--/*  File Name: odm_reg.h */
--/*  */
--/*  Description: */
--/*  */
--/*  This file is for general register definition. */
--/*  */
--/*  */
--/*  */
--#ifndef	__HAL_ODM_REG_H__
--#define __HAL_ODM_REG_H__
--
--/*  */
--/*  Register Definition */
--/*  */
--
--/* MAC REG */
--#define	ODM_BB_RESET					0x002
--#define	ODM_DUMMY						0x4fe
--#define	ODM_EDCA_VO_PARAM			0x500
--#define	ODM_EDCA_VI_PARAM			0x504
--#define	ODM_EDCA_BE_PARAM			0x508
--#define	ODM_EDCA_BK_PARAM			0x50C
--#define	ODM_TXPAUSE					0x522
--
--/* BB REG */
--#define	ODM_FPGA_PHY0_PAGE8			0x800
--#define	ODM_PSD_SETTING				0x808
--#define	ODM_AFE_SETTING				0x818
--#define	ODM_TXAGC_B_6_18				0x830
--#define	ODM_TXAGC_B_24_54			0x834
--#define	ODM_TXAGC_B_MCS32_5			0x838
--#define	ODM_TXAGC_B_MCS0_MCS3		0x83c
--#define	ODM_TXAGC_B_MCS4_MCS7		0x848
--#define	ODM_TXAGC_B_MCS8_MCS11		0x84c
--#define	ODM_ANALOG_REGISTER			0x85c
--#define	ODM_RF_INTERFACE_OUTPUT		0x860
--#define	ODM_TXAGC_B_MCS12_MCS15	0x868
--#define	ODM_TXAGC_B_11_A_2_11		0x86c
--#define	ODM_AD_DA_LSB_MASK			0x874
--#define	ODM_ENABLE_3_WIRE			0x88c
--#define	ODM_PSD_REPORT				0x8b4
--#define	ODM_R_ANT_SELECT				0x90c
--#define	ODM_CCK_ANT_SELECT			0xa07
--#define	ODM_CCK_PD_THRESH			0xa0a
--#define	ODM_CCK_RF_REG1				0xa11
--#define	ODM_CCK_MATCH_FILTER			0xa20
--#define	ODM_CCK_RAKE_MAC				0xa2e
--#define	ODM_CCK_CNT_RESET			0xa2d
--#define	ODM_CCK_TX_DIVERSITY			0xa2f
--#define	ODM_CCK_FA_CNT_MSB			0xa5b
--#define	ODM_CCK_FA_CNT_LSB			0xa5c
--#define	ODM_CCK_NEW_FUNCTION		0xa75
--#define	ODM_OFDM_PHY0_PAGE_C		0xc00
--#define	ODM_OFDM_RX_ANT				0xc04
--#define	ODM_R_A_RXIQI					0xc14
--#define	ODM_R_A_AGC_CORE1			0xc50
--#define	ODM_R_A_AGC_CORE2			0xc54
--#define	ODM_R_B_AGC_CORE1			0xc58
--#define	ODM_R_AGC_PAR					0xc70
--#define	ODM_R_HTSTF_AGC_PAR			0xc7c
--#define	ODM_TX_PWR_TRAINING_A		0xc90
--#define	ODM_TX_PWR_TRAINING_B		0xc98
--#define	ODM_OFDM_FA_CNT1				0xcf0
--#define	ODM_OFDM_PHY0_PAGE_D		0xd00
--#define	ODM_OFDM_FA_CNT2				0xda0
--#define	ODM_OFDM_FA_CNT3				0xda4
--#define	ODM_OFDM_FA_CNT4				0xda8
--#define	ODM_TXAGC_A_6_18				0xe00
--#define	ODM_TXAGC_A_24_54			0xe04
--#define	ODM_TXAGC_A_1_MCS32			0xe08
--#define	ODM_TXAGC_A_MCS0_MCS3		0xe10
--#define	ODM_TXAGC_A_MCS4_MCS7		0xe14
--#define	ODM_TXAGC_A_MCS8_MCS11		0xe18
--#define	ODM_TXAGC_A_MCS12_MCS15		0xe1c
--
--/* RF REG */
--#define	ODM_GAIN_SETTING				0x00
--#define	ODM_CHANNEL					0x18
--
--/* Ant Detect Reg */
--#define	ODM_DPDT						0x300
--
--/* PSD Init */
--#define	ODM_PSDREG					0x808
--
--/* 92D Path Div */
--#define	PATHDIV_REG					0xB30
--#define	PATHDIV_TRI					0xBA0
--
--
--/*  */
--/*  Bitmap Definition */
--/*  */
--
--#define	BIT_FA_RESET					BIT(0)
--
--
--
--#endif
--- 
-2.18.0
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
