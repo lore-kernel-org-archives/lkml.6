@@ -1,119 +1,108 @@
 Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=BUG6152_INVALID_DATE_TZ_ABSURD,
+	HEADER_FROM_DIFFERENT_DOMAINS,INVALID_DATE_TZ_ABSURD,L_SPAM_TOOL_13,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048ABC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4C5C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC53223D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:02:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC53223D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 28715223D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:02:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28715223D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mageia.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbeHJJa7 (ORCPT
+        id S1727555AbeHJJbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 05:30:59 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:34546 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727432AbeHJJa7 (ORCPT
+        Fri, 10 Aug 2018 05:31:08 -0400
+Received: from mx2.yrkesakademin.fi ([85.134.45.195]:17754 "EHLO
+        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbeHJJbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 05:30:59 -0400
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 10 Aug 2018 16:02:27 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.126 with ESMTP; 10 Aug 2018 16:02:26 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Fri, 10 Aug 2018 16:02:25 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH v3 4/7] tracing: Add conditional snapshot
-Message-ID: <20180810070225.GC479@sejong>
-References: <cover.1533753152.git.tom.zanussi@linux.intel.com>
- <d16a83f8320015c6d7cb6659e554bebe03eaabec.1533753152.git.tom.zanussi@linux.intel.com>
+        Fri, 10 Aug 2018 05:31:08 -0400
+From:   Thomas Backlund <tmb@mageia.org>
+Subject: disabling psp in bios causes errors in dmesg
+To:     <linux-crypto@vger.kernel.org>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <thomas.lendacky@amd.com>, <gary.hook@amd.com>
+Message-ID: <3be85fc6-6323-b368-747f-b7650b3898b4@mageia.org>
+Date:   Fri, 10 Aug 2018 10:02:41 +0259
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d16a83f8320015c6d7cb6659e554bebe03eaabec.1533753152.git.tom.zanussi@linux.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-WatchGuard-Spam-ID: str=0001.0A0C0202.5B6D388C.00CC,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
+X-WatchGuard-Mail-Client-IP: 85.134.45.195
+X-WatchGuard-Mail-From: tmb@mageia.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 09:34:14AM -0500, Tom Zanussi wrote:
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Currently, tracing snapshots are context-free - they capture the ring
-> buffer contents at the time the tracing_snapshot() function was
-> invoked, and nothing else.  Additionally, they're always taken
-> unconditionally - the calling code can decide whether or not to take a
-> snapshot, but the data used to make that decision is kept separately
-> from the snapshot itself.
-> 
-> This change adds the ability to associate with each trace instance
-> some user data, along with an 'update' function that can use that data
-> to determine whether or not to actually take a snapshot.  The update
-> function can then update that data along with any other state (as part
-> of the data presumably), if warranted.
-> 
-> Because snapshots are 'global' per-instance, only one user can enable
-> and use a conditional snapshot for any given trace instance.  To
-> enable a conditional snapshot (see details in the function and data
-> structure comments), the user calls tracing_snapshot_cond_enable().
-> Similarly, to disable a conditional snapshot and free it up for other
-> users, tracing_snapshot_cond_disable() should be called.
-> 
-> To actually initiate a conditional snapshot, tracing_snapshot_cond()
-> should be called.  tracing_snapshot_cond() will invoke the update()
-> callback, allowing the user to decide whether or not to actually take
-> the snapshot and update the user-defined data associated with the
-> snapshot.  If the callback returns 'true', tracing_snapshot_cond()
-> will then actually take the snapshot and return.
-> 
-> This scheme allows for flexibility in snapshot implementations - for
-> example, by implementing slightly different update() callbacks,
-> snapshots can be taken in situations where the user is only interested
-> in taking a snapshot when a new maximum in hit versus when a value
-> changes in any way at all.  Future patches will demonstrate both
-> cases.
-> 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
+Hi,
 
-[SNIP]
-> @@ -1741,9 +1788,16 @@ static inline bool event_command_needs_rec(struct event_command *cmd_ops)
->  	return cmd_ops->flags & EVENT_CMD_FL_NEEDS_REC;
->  }
->  
-> +typedef bool (*cond_update)(struct trace_array *tr, void *cond_data);
-> +
+this is tested on kernel 4.17.14
 
-I think it's better having "fn_t" suffix like 'cond_update_fn_t'.
+hw:
 
-Thanks,
-Namhyung
+MSI X399 GAMING PRO CARBON AC (MS-7B09) bios 1.A0
+
+AMD Ryzen Threadripper 1950X
 
 
->  extern int trace_event_enable_disable(struct trace_event_file *file,
->  				      int enable, int soft_disable);
->  extern int tracing_alloc_snapshot(void);
-> +extern void tracing_snapshot_cond(struct trace_array *tr, void *cond_data);
-> +extern int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update update);
-> +
-> +extern int tracing_snapshot_cond_disable(struct trace_array *tr);
-> +extern void *tracing_cond_snapshot_data(struct trace_array *tr);
->  
->  extern const char *__start___trace_bprintk_fmt[];
->  extern const char *__stop___trace_bprintk_fmt[];
+Disabling psp in bios gets this in the logs:
+
+
+[  246.748978] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[  246.748978] systemd-udevd   D    0   724    716 0x80000124
+[  246.748980] Call Trace:
+[  246.748986]  ? __schedule+0x234/0x840
+[  246.748988]  schedule+0x28/0x80
+[  246.748993]  __sev_do_cmd_locked+0x1f0/0x270 [ccp]
+[  246.748996]  ? wait_woken+0x80/0x80
+[  246.748997]  ? 0xffffffffc0683000
+[  246.749001]  __sev_platform_init_locked+0x2f/0x80 [ccp]
+[  246.749001]  ? mutex_lock+0xe/0x30
+[  246.749004]  sev_platform_init+0x1d/0x30 [ccp]
+[  246.749007]  psp_pci_init+0x40/0xe0 [ccp]
+[  246.749008]  ? 0xffffffffc0683000
+[  246.749011]  sp_mod_init+0x16/0x1000 [ccp]
+[  246.749012]  do_one_initcall+0x46/0x1c3
+[  246.749014]  ? _cond_resched+0x15/0x30
+[  246.749017]  ? kmem_cache_alloc_trace+0x3a/0x170
+[  246.749019]  do_init_module+0x5a/0x210
+[  246.749020]  load_module+0x215b/0x2530
+[  246.749021]  ? kmem_cache_alloc_node_trace+0x45/0x190
+[  246.749024]  ? vmap_page_range_noflush+0x24d/0x320
+[  246.749026]  ? __do_sys_init_module+0x136/0x180
+[  246.749026]  ? _cond_resched+0x15/0x30
+[  246.749027]  __do_sys_init_module+0x136/0x180
+[  246.749029]  do_syscall_64+0x55/0x100
+[  246.749031]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  246.749032] RIP: 0033:0x7ffb1a09018a
+[  246.749033] RSP: 002b:00007ffe196680c8 EFLAGS: 00000246 ORIG_RAX: 
+00000000000000af
+[  246.749034] RAX: ffffffffffffffda RBX: 00005562bb20d080 RCX: 
+00007ffb1a09018a
+[  246.749034] RDX: 00007ffb1994e6f8 RSI: 0000000000029e50 RDI: 
+00005562bba5e710
+[  246.749035] RBP: 00007ffb1994e6f8 R08: 0000000000000004 R09: 
+0000000000000000
+[  246.749035] R10: 0000000000000005 R11: 0000000000000246 R12: 
+00005562bba5e710
+[  246.749036] R13: 0000000000020000 R14: 00005562bb1fde70 R15: 
+00005562bb20d080
+
+
+Should it not detect that its disabled and bail out ?
+
+--
+
+Thomas
+
+
