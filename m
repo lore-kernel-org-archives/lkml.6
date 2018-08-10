@@ -2,113 +2,127 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C24C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BE4C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D64182244B
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 16:58:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D64182244B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9FFCC2244C
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFCC2244C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeHJT3a (ORCPT
+        id S1728011AbeHJTb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 15:29:30 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:55784 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727522AbeHJT3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 15:29:30 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w7AFvBD3010872;
-        Fri, 10 Aug 2018 16:57:12 +0100
-Date:   Fri, 10 Aug 2018 16:57:11 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc:     Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>,
-        netdev@vger.kernel.org,
-        "<linux-arm-kernel@lists.infradead.org\\" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org>," <linux-kernel@vger.kernel.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        Michael =?UTF-8?B?UsO2ZGVy?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        Konstantin =?UTF-8?B?QsO2aG0=?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>,
-        "linux-kernel@vger.kernel.org>," <contact@snootlab.com>,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        Alexander Graf <agraf@suse.de>,
-        Michal =?UTF-8?B?S3ViZcSNZWs=?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        pieter.robyns@uhasselt.be, Hasnain Virk <Hasnain.Virk@arm.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
-        Xue Liu <liuxuenetmail@gmail.com>
-Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
-Message-ID: <20180810165711.59bf26f7@alans-desktop>
-In-Reply-To: <CAC=mGzjn4Kc-q9NFwX6NhU4V_thnzBP8SHtFQKyRbpSKR=yx3w@mail.gmail.com>
-References: <20180701110804.32415-1-afaerber@suse.de>
-        <CAC=mGzgUCopz2xTOA0R-WD8a1DOaOOUn=YpfdMiJ33y3hnh6kg@mail.gmail.com>
-        <92ee4016-1da9-826b-3674-b2d604a64848@suse.de>
-        <20180808213640.10a1d76f@alans-desktop>
-        <a70e9715-beac-d9a8-145e-de00175e56fa@suse.de>
-        <20180809125939.39ac2cc9@alans-desktop>
-        <CAC=mGzjn4Kc-q9NFwX6NhU4V_thnzBP8SHtFQKyRbpSKR=yx3w@mail.gmail.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 10 Aug 2018 15:31:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727381AbeHJTb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 15:31:28 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7AGxMdx142230
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 13:00:47 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ksckswhbw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 13:00:45 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 10 Aug 2018 18:00:43 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 10 Aug 2018 18:00:39 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7AH0cEs34275534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Aug 2018 17:00:38 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7DB0E52051;
+        Fri, 10 Aug 2018 20:00:44 +0100 (BST)
+Received: from srikart450.in.ibm.com (unknown [9.84.228.228])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3000E5204F;
+        Fri, 10 Aug 2018 20:00:40 +0100 (BST)
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Andre Wild <wild@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: [PATCH 1/2] sched/topology: Set correct numa topology type
+Date:   Fri, 10 Aug 2018 22:30:18 +0530
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <reply-to=<20180808081942.GA37418@linux.vnet.ibm.com>
+References: <reply-to=<20180808081942.GA37418@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18081017-0008-0000-0000-0000025FFDEA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081017-0009-0000-0000-000021C81276
+Message-Id: <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808100182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Except saving power, mitigating the wireless signal conflict on the
-> air is one of the reasons.
+With commit 051f3ca02e46 ("sched/topology: Introduce NUMA identity node
+sched domain") scheduler introduces an new numa level. However this
+leads to numa topology on 2 node systems no more marked as NUMA_DIRECT.
+After this commit, it gets reported as NUMA_BACKPLANE. This is because
+sched_domains_numa_level is now 2 on 2 node systems.
 
-If the device level is always receiving when not transmitting it has no
-effect on this. The act of listening does not harm other traffic.
+Fix this by allowing setting systems that have upto 2 numa levels as
+NUMA_DIRECT.
 
-> The sleep/idle/stop mitigate the unconcerned RF signals or messages.
+While here remove a code that assumes level can be 0.
 
-At the physical level it's irrelevant. If we are receiving then we might
-hear more things we later discard. It's not running on a tiny
-microcontroller so the extra CPU cycles are not going to kill us.
+Fixes: 051f3ca02e46 "Introduce NUMA identity node sched domain"
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+---
+ kernel/sched/topology.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> > How do you plan to deal with routing if you've got multiple devices ?  
-> 
-> For LoRaWAN, it is a star topology.
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index a6e6b855ba81..cec3ee3ed320 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1315,7 +1315,7 @@ static void init_numa_topology_type(void)
+ 
+ 	n = sched_max_numa_distance;
+ 
+-	if (sched_domains_numa_levels <= 1) {
++	if (sched_domains_numa_levels <= 2) {
+ 		sched_numa_topology_type = NUMA_DIRECT;
+ 		return;
+ 	}
+@@ -1400,9 +1400,6 @@ void sched_init_numa(void)
+ 			break;
+ 	}
+ 
+-	if (!level)
+-		return;
+-
+ 	/*
+ 	 * 'level' contains the number of unique distances
+ 	 *
+-- 
+2.12.3
 
-No the question was much more how you plan to deal with it in the OS. If
-for example I want to open a LORA connection to something, then there
-needs to be a proper process to figure out where the target is and how to
-get traffic to them.
-
-I guess it's best phrased as
-
-- What does a struct sockaddr_lora look like
-
-- How does the kernel decide which interface it goes out of (if any), and
-  if it loops back
-
-remembering we might only be talking to a hub, or we might even be a
-virtualized LORA interface where we are pretending to be some kind of
-sensor and feeding it back.
-
-Long term yes I think Alexander is right the inevitable fate of all
-networks is to become a link layer in order to transmit IP frames 8)
-
-Alan
