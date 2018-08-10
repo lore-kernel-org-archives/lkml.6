@@ -2,280 +2,108 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9348C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A73C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A5FE21DEC
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 695EB223EA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vQ3EDmvz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A5FE21DEC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=elisp.net
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mlg3NuBq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695EB223EA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeHJPpy (ORCPT
+        id S1728232AbeHJPrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 11:45:54 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40975 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbeHJPpy (ORCPT
+        Fri, 10 Aug 2018 11:47:10 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35454 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727534AbeHJPrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 11:45:54 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w19-v6so4042157ply.8;
-        Fri, 10 Aug 2018 06:16:02 -0700 (PDT)
+        Fri, 10 Aug 2018 11:47:10 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o18-v6so1900369wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 06:17:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5C7rlnK+Ehui25osqk736Z/V79pN1coLKl/Ha3cLQgw=;
-        b=vQ3EDmvzIksh+F+o5xj+jDDXVlrLL3jlvhUFET9+msSQlXBZJ5VbSsBQU+oSq1UDFq
-         B2Oy2s5NPI9QqX+xw0UKTNf4dJfdFtoEaO9/LmazrQFFEOqt0X8R0h1ewtkmnt2WLBsz
-         F/9jSuq9u3TmTX8Wy3NDOm7N8Du7vpcE9Y/PDWUWIKzuEEdM5wGj/KgSHGzAMpc/H57J
-         4nBw24WFohJfFZ4SqpafZpvUDs/NCEo/WT1HIuT+0U1b6B1Yn39kI1cRqdoPcCQMSDw5
-         QZsWVS668zioXvCrhXm423RSSIgoT6I2f4mSWGyldEjJ4lTxwTyknYrpYg4H84kP/Zl4
-         bg8w==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=DmNuopTBWlRSbYnnF/g51P5+p+b3JWyaxeSCwWr4iC8=;
+        b=mlg3NuBqI3kqfp3XR+K2c+4YLoew1/626NMC9yB7vQ5yICfd9xqQaDtis9aNIV+VDT
+         AaMEnSoQHWnnQmqAyIJVXIbubk/kSmyt9RWI0tTG+/+9hVttQpS0jppwDoMJwA1BS7gB
+         GNXcU+/LbbuzHaotUTC9oKh988ze6urcm1+wirzIms0E7qvZhXlvRr6gTObtY/ajHE2Z
+         9CEXuVn9RJIuTzLWJ/UBvjoRMZqXTklJ05yy3SS+6qWw/TcO4sSa3Q596uDTL8kghZvp
+         bgTp5TZKYSx1EFGSkx+1lOFCpC4Zm+dCRnY9JlNkfALp1zLQoR4y8xCy8LX9z1F8RI0O
+         kq5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=5C7rlnK+Ehui25osqk736Z/V79pN1coLKl/Ha3cLQgw=;
-        b=I1krMhCf8TFFNlZCkbSkQAWJRimoqaEBUnZCTU3To0FfWyHF8rHY1YbR4tkFR9eZmd
-         Fz6ABsA5V+L3UBot5uZPxTLGP8Mceo4jlS1C1a3FmRgTL/RBVSDbQdfxVZ//BzcSPlEt
-         vKlILS2/Bl26qCxrqalznEx5CWAEvt7MaLjcEjD9rVycNME22yxli/VJy/lzcNsGuG3S
-         e/OYO/pDx9WMw9qFm0zhrzoaepaaXXjEbEB8eJSqN6NPJVsNSydxqcQXHt0c6n46ZNOe
-         6GluxIwALkaJQL2bzhKBCvQU58Ncs7gIDhWMQLwtwlfcCuXynMrOZIrGPVEinJNFXzTj
-         oD1g==
-X-Gm-Message-State: AOUpUlFrN1doI3Ap5BIEv5BUn6TMhBXWX/8VzJktOXeTr5kQNfe7PRO3
-        6rJ1soY2tcwZK8YrkjlV0ZE=
-X-Google-Smtp-Source: AA+uWPzINx8RFfwfAbLQJ5ZWKrl7wJgtd+RSezFfULKMkXcFJVZ5UKmL50k7l2KwfPkdCEBvL5suEw==
-X-Received: by 2002:a17:902:47c2:: with SMTP id d2-v6mr6079936plh.139.1533906961684;
-        Fri, 10 Aug 2018 06:16:01 -0700 (PDT)
-Received: from localhost (49-156-241-73.ppp.bbiq.jp. [49.156.241.73])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm19819203pfm.97.2018.08.10.06.16.00
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DmNuopTBWlRSbYnnF/g51P5+p+b3JWyaxeSCwWr4iC8=;
+        b=SzHNbOB6KtW17a1EhEpY+XkUSXkcUeh6PUhOS0IRG0Z2Fq+1uUWEjXGVfIZx1yiqZF
+         07hlfki8B0P8b0Of6a6+IlH0K4BuxBiA3Qd2mLesi1fyfM1foCL2Cilr2eFCFqHVUNf7
+         /j4U6MV2KsN1GDIkYVVHdGMj5+8lncds96iOlhYmE+NT9wfWE0+/i+bAVoqkm9R3GOEB
+         Fg70E7D1l076hliVt/fgq9VMfHQiQV3FQjZ3G2s+1p4DiajjIPA8oFiNUZXyOfuu0FZB
+         0BWwBFitYwG9XSeD9n9J8gbQuM4t1DPPfytreNfXeCieN3TBaSnImnTCx2q+5zfKXG2L
+         r6kA==
+X-Gm-Message-State: AOUpUlF+kviO8NBxVS+AbdWIQUl1hUCednlFvDNdIVUD1Mop11J3tobR
+        an1WhAZOCLIq/sYxBhkaJ/NjXg==
+X-Google-Smtp-Source: AA+uWPwUVMXA64JZ0IyxWoYaT9lC5UUw89zp8hzEyI5uvcD7aT9mOGLnw0H0yV4SCDB2/zu/rOxecw==
+X-Received: by 2002:a1c:5f56:: with SMTP id t83-v6mr1606205wmb.27.1533907036696;
+        Fri, 10 Aug 2018 06:17:16 -0700 (PDT)
+Received: from radium.baylibre.local (AStLambert-681-1-8-155.w90-86.abo.wanadoo.fr. [90.86.13.155])
+        by smtp.gmail.com with ESMTPSA id i205-v6sm2069523wmf.30.2018.08.10.06.17.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 06:16:00 -0700 (PDT)
-Date:   Fri, 10 Aug 2018 22:15:58 +0900
-From:   Naohiro Aota <naota@elisp.net>
-To:     Hannes Reinecke <hare@suse.com>, David Sterba <dsterba@suse.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        linux-kernel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Matias Bjorling <mb@lightnvm.io>
-Subject: Re: [RFC PATCH 03/17] btrfs: Check and enable HMZONED mode
-Message-ID: <20180810131558.gadsij5g7tshfg5u@zazie>
-References: <20180809180450.5091-1-naota@elisp.net>
- <20180809180450.5091-4-naota@elisp.net>
- <51ed0d0b-7574-b9a9-bae5-2cc8042913e6@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51ed0d0b-7574-b9a9-bae5-2cc8042913e6@suse.com>
-User-Agent: NeoMutt/20180716
+        Fri, 10 Aug 2018 06:17:15 -0700 (PDT)
+From:   Fabien Parent <fparent@baylibre.com>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gpain@baylibre.com, Fabien Parent <fparent@baylibre.com>
+Subject: [PATCH v2 0/3] power: supply: cros: add support for dedicated port and expose connected ports
+Date:   Fri, 10 Aug 2018 15:13:46 +0200
+Message-Id: <20180810131349.3883-1-fparent@baylibre.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 02:25:33PM +0200, Hannes Reinecke wrote:
-> On 08/09/2018 08:04 PM, Naohiro Aota wrote:
-> > HMZONED mode cannot be used together with the RAID5/6 profile. Introduce
-> > the function btrfs_check_hmzoned_mode() to check this. This function will
-> > also check if HMZONED flag is enabled on the file system and if the file
-> > system consists of zoned devices with equal zone size.
-> > 
-> > Additionally, as updates to the space cache are in-place, the space cache
-> > cannot be located over sequential zones and there is no guarantees that the
-> > device will have enough conventional zones to store this cache. Resolve
-> > this problem by disabling completely the space cache.  This does not
-> > introduces any problems with sequential block groups: all the free space is
-> > located after the allocation pointer and no free space before the pointer.
-> > There is no need to have such cache.
-> > 
-> > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> > Signed-off-by: Naohiro Aota <naota@elisp.net>
-> > ---
-> >  fs/btrfs/ctree.h       |  3 ++
-> >  fs/btrfs/dev-replace.c |  7 ++++
-> >  fs/btrfs/disk-io.c     |  7 ++++
-> >  fs/btrfs/super.c       | 12 +++---
-> >  fs/btrfs/volumes.c     | 87 ++++++++++++++++++++++++++++++++++++++++++
-> >  fs/btrfs/volumes.h     |  1 +
-> >  6 files changed, 112 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> > index 66f1d3895bca..14f880126532 100644
-> > --- a/fs/btrfs/ctree.h
-> > +++ b/fs/btrfs/ctree.h
-> > @@ -763,6 +763,9 @@ struct btrfs_fs_info {
-> >  	struct btrfs_root *uuid_root;
-> >  	struct btrfs_root *free_space_root;
-> >  
-> > +	/* Zone size when in HMZONED mode */
-> > +	u64 zone_size;
-> > +
-> >  	/* the log root tree is a directory of all the other log roots */
-> >  	struct btrfs_root *log_root_tree;
-> >  
-> > diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> > index dec01970d8c5..839a35008fd8 100644
-> > --- a/fs/btrfs/dev-replace.c
-> > +++ b/fs/btrfs/dev-replace.c
-> > @@ -202,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
-> >  		return PTR_ERR(bdev);
-> >  	}
-> >  
-> > +	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
-> > +	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
-> > +	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
-> > +		ret = -EINVAL;
-> > +		goto error;
-> > +	}
-> > +
-> >  	filemap_write_and_wait(bdev->bd_inode->i_mapping);
-> >  
-> >  	devices = &fs_info->fs_devices->devices;
-> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> > index 5124c15705ce..14f284382ba7 100644
-> > --- a/fs/btrfs/disk-io.c
-> > +++ b/fs/btrfs/disk-io.c
-> > @@ -3057,6 +3057,13 @@ int open_ctree(struct super_block *sb,
-> >  
-> >  	btrfs_free_extra_devids(fs_devices, 1);
-> >  
-> > +	ret = btrfs_check_hmzoned_mode(fs_info);
-> > +	if (ret) {
-> > +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
-> > +				ret);
-> > +		goto fail_block_groups;
-> > +	}
-> > +
-> >  	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
-> >  	if (ret) {
-> >  		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
-> > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> > index 5fdd95e3de05..cc812e459197 100644
-> > --- a/fs/btrfs/super.c
-> > +++ b/fs/btrfs/super.c
-> > @@ -435,11 +435,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
-> >  	bool saved_compress_force;
-> >  	int no_compress = 0;
-> >  
-> > -	cache_gen = btrfs_super_cache_generation(info->super_copy);
-> > -	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
-> > -		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
-> > -	else if (cache_gen)
-> > -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
-> > +	if (!btrfs_fs_incompat(info, HMZONED)) {
-> > +		cache_gen = btrfs_super_cache_generation(info->super_copy);
-> > +		if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
-> > +			btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
-> > +		else if (cache_gen)
-> > +			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
-> > +	}
-> >  
-> >  	/*
-> >  	 * Even the options are empty, we still need to do extra check
-> > diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> > index 35b3a2187653..ba7ebb80de4d 100644
-> > --- a/fs/btrfs/volumes.c
-> > +++ b/fs/btrfs/volumes.c
-> > @@ -1293,6 +1293,80 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
-> >  	return ret;
-> >  }
-> >  
-> > +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
-> > +{
-> > +	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-> > +	struct btrfs_device *device;
-> > +	u64 hmzoned_devices = 0;
-> > +	u64 nr_devices = 0;
-> > +	u64 zone_size = 0;
-> > +	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
-> > +	int ret = 0;
-> > +
-> > +	/* Count zoned devices */
-> > +	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-> > +		if (!device->bdev)
-> > +			continue;
-> > +		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
-> > +		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
-> > +		     incompat_hmzoned)) {
-> > +			hmzoned_devices++;
-> > +			if (!zone_size) {
-> > +				zone_size = device->zone_size;
-> > +			} else if (device->zone_size != zone_size) {
-> > +				btrfs_err(fs_info,
-> > +					  "Zoned block devices must have equal zone sizes");
-> > +				ret = -EINVAL;
-> > +				goto out;
-> > +			}
-> > +		}
-> > +		nr_devices++;
-> > +	}
-> > +
-> > +	if (!hmzoned_devices && incompat_hmzoned) {
-> > +		/* No zoned block device, disable HMZONED */
-> > +		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> > +	fs_info->zone_size = zone_size;
-> > +
-> > +	if (hmzoned_devices != nr_devices) {
-> > +		btrfs_err(fs_info,
-> > +			  "zoned devices mixed with regular devices");
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> This breaks existing setups; as we're not checking if the device
-> specified by fs_info is a zoned device we'll fail here for normal devices.
+Dear all,
 
-Ah, I forgot to deel with the normal devices when I convert HMZONED
-mount flag to incompat flag.
+This patch series adds support for an optional dedicated port
+to the ChromeOS power supply driver and adds a new property that expose
+when a power supply is connected. The series was tested on ChromeOS "Fizz"
+hardware.
 
-> You need this patch to fix it:
+This patch series depends on the following patch serie which adds
+the ChromeOS power supply driver:
+ * https://lkml.org/lkml/2018/5/2/585 [PATCH v4 0/3] mfd/power: cros_ec: add
+   support for USBPD charger driver
 
-Thank you for fixing this. It's exactly what I wanted to do. I'll fix
-in the next version.
+The ChromeOS power supply driver also depends on the following patches to be
+applied:
+ * https://lkml.org/lkml/2018/4/23/602 ([PATCH v8 0/6] typec: tcpm: Add
+   sink side support for PPS)
+ * https://lkml.org/lkml/2018/4/18/229 ([RESEND PATCH v5 4/7] mfd:
+   cros_ec_dev: Register cros-ec-rtc driver as a subdevice.)
 
-Regards,
-Naohiro
+Best Regards,
+Fabien
 
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 43eaf0142062..8609776c9a9e 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -1314,6 +1314,9 @@ int btrfs_check_hmzoned_mode(struct btrfs_fs_info
-> *fs_info)
->         int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
->         int ret = 0;
-> 
-> +       if (!incompat_hmzoned)
-> +               return 0;
-> +
->         /* Count zoned devices */
->         list_for_each_entry(device, &fs_devices->devices, dev_list) {
->                 if (!device->bdev)
-> 
-> 
-> Cheers,
-> 
-> Hannes
-> -- 
-> Dr. Hannes Reinecke		               zSeries & Storage
-> hare@suse.com			               +49 911 74053 688
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-> GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
-> HRB 21284 (AG Nürnberg)
+V2:
+  * Rebased to fixed apply issue with patch #2
+
+Fabien Parent (3):
+  mfd: cros: add charger port count command definition
+  power: supply: cros: add support for dedicated port
+  power: supply: cros: add property to detect connected ports
+
+ drivers/power/supply/cros_usbpd-charger.c | 126 +++++++++++++++++++---
+ include/linux/mfd/cros_ec_commands.h      |  10 ++
+ 2 files changed, 122 insertions(+), 14 deletions(-)
+
+-- 
+2.18.0
+
