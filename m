@@ -2,115 +2,121 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5307CC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3E6C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C00822402
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:17:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B84522404
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:18:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FlWt0QWQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C00822402
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEENNbEu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B84522404
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeHJPrM (ORCPT
+        id S1728478AbeHJPso (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 11:47:12 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52508 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeHJPrL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 11:47:11 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o11-v6so1853272wmh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 06:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EKERvPyccN5L6jSux9V7ILEhqtIjCsSZuoPK0qXWjtQ=;
-        b=FlWt0QWQkvC2jCEGddZZXlWvOtTIqPrS7CDfGSQlO2pWIwqxoGMx2LcsyV+45S40ng
-         61Ev0E6Vwl+a3BykxHy65WOTDZMPveZ35Xts0aRCTZyRt15pY5uIbg8B2RsqYXXJ1I2W
-         wz3YkhyIwVjODK5aBCF/y4PPVx5trIAyerNtr1CFducwBVJjpRzCoIx8pxjz7AKqEo+H
-         30AaZMivqxGiwGhUlfm7dVm3Koop4+Hgahh8s5DmU1CqbMtnazRM1yQXg6hs+geEagi6
-         sA/ImXOtBXoOiWVvJ/l3AQGAJH46Skjm6OaFSd2zUDZZ6lMeWGwXvSnCZ8LZzfaYERI8
-         gSCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EKERvPyccN5L6jSux9V7ILEhqtIjCsSZuoPK0qXWjtQ=;
-        b=ud/pODTR09BR78LolDe+jDoQxnoWhMy3LKhb7jlZhhb9G968mktnSzIjpmaks43Ptq
-         c0okMAwMjJ1F1DexXzxb7mz14liynWNuGdM2jWR0oUUb0jQIuxx20VTwy91LsfJg18qn
-         bJM0obMCTBdxJA7c3J9G7lSZWy9K1XgPMID69ixmmdZjmedyU+/rGcEgNV/zntvfexZR
-         n3zIeH/46cHNVgEIQlLivbFDHRUP5qvgTuqsZHa3gvizFWXN+7IpWLnkefnSyailOz2A
-         yxgXsGtf73tNNnoF5xs4ZWFFg4owXvC4i9iujnyVBQ0VwkctQ0lQqZR29ZaLoo5BOiLn
-         64Gg==
-X-Gm-Message-State: AOUpUlHJiY5Ajtv2pGaJKXy0qSMyE7xCpxwnaqAGEpffzkBCfk1lscxV
-        X/wR78c3DL+CJDFQy4/MK2JnAAadDdh7Xg==
-X-Google-Smtp-Source: AA+uWPwZMBbBYV9iQpzCSTR+viV+cpv+hcJT13Eunir9doqtLsTkcGhw8Dznxne+PMdiBDMcIKnGWA==
-X-Received: by 2002:a1c:b213:: with SMTP id b19-v6mr1443257wmf.141.1533907037844;
-        Fri, 10 Aug 2018 06:17:17 -0700 (PDT)
-Received: from radium.baylibre.local (AStLambert-681-1-8-155.w90-86.abo.wanadoo.fr. [90.86.13.155])
-        by smtp.gmail.com with ESMTPSA id i205-v6sm2069523wmf.30.2018.08.10.06.17.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 06:17:17 -0700 (PDT)
-From:   Fabien Parent <fparent@baylibre.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gpain@baylibre.com, Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH v2 1/3] mfd: cros: add charger port count command definition
-Date:   Fri, 10 Aug 2018 15:13:47 +0200
-Message-Id: <20180810131349.3883-2-fparent@baylibre.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180810131349.3883-1-fparent@baylibre.com>
-References: <20180810131349.3883-1-fparent@baylibre.com>
+        Fri, 10 Aug 2018 11:48:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727539AbeHJPsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 11:48:43 -0400
+Received: from jouet.infradead.org (179.176.1.0.dynamic.adsl.gvt.net.br [179.176.1.0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6796922402;
+        Fri, 10 Aug 2018 13:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533907130;
+        bh=s8GEecCTn5VcKmdzttf5EtdY24lIlMkzaIuE+3RKqSc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DEENNbEuckvRr+6+yl4Jj22ryTkUQCg+WmoHMh0ZtO8QoJWptAhiIsT7Z3wlIirQu
+         fopcT15MeSVbwp2feRLA0m6BatTtaDEh3+KemhnVbf0cuN5Ymgd5oslasJXn8X8w4h
+         veakl38GVqviy9WemCt0Ly2FwBkn02TVSrnxy0cI=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id D0F5C140A1C; Fri, 10 Aug 2018 10:18:47 -0300 (-03)
+Date:   Fri, 10 Aug 2018 10:18:47 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Benno Evers <bevers@mesosphere.com>,
+        Krister Johansen <kjlx@templeofstupid.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [PATCH] perf tools: Check for null when copying nsinfo.
+Message-ID: <20180810131847.GG5395@kernel.org>
+References: <20180809215349.24299-1-bevers@mesosphere.com>
+ <20180810045537.GA479@sejong>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810045537.GA479@sejong>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new more command has been added to the ChromeOS embedded controller
-that allows to get the number of charger port count. Unlike
-EC_CMD_USB_PD_PORTS, this new command also includes the dedicated
-port if present.
+Em Fri, Aug 10, 2018 at 01:55:37PM +0900, Namhyung Kim escreveu:
+> Hello,
+> 
+> On Thu, Aug 09, 2018 at 11:53:48PM +0200, Benno Evers wrote:
+> > The argument to nsinfo__copy() was assumed to be valid, but some code paths
+> > exist that will lead to NULL being passed.
+> > 
+> > In particular, running 'perf script -D' on a perf.data file containing an
+> > PERF_RECORD_MMAP event associating the '[vdso]' dso with pid 0 earlier in
+> > the event stream will lead to a segfault.
+> > 
+> > Since all calling code is already checking for a non-null return value,
+> > just return NULL for this case as well.
+> 
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> 
+> It seems you missed the Signed-off-by though.
 
-This command will be used to expose the dedicated charger port
-in the ChromeOS charger driver.
+Yeah, please collect Namhyung's Acked-by and provide yours, i.e. your
+patch should end with the following lines:
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V1 -> V2:
-  * No change
----
- include/linux/mfd/cros_ec_commands.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 0d926492ac3a..e3187f8bdb7e 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -3005,6 +3005,16 @@ struct ec_params_usb_pd_info_request {
- 	uint8_t port;
- } __packed;
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Benno Evers <bevers@mesosphere.com>
+
+My git-am scripts will collect the Cc from the e-mail message and add
+the Link:  with the Message-id.
+
+Thanks,
+
+- Arnaldo
  
-+/*
-+ * This command will return the number of USB PD charge port + the number
-+ * of dedicated port present.
-+ * EC_CMD_USB_PD_PORTS does NOT include the dedicated ports
-+ */
-+#define EC_CMD_CHARGE_PORT_COUNT 0x0105
-+struct ec_response_charge_port_count {
-+	uint8_t port_count;
-+} __packed;
-+
- /* Read USB-PD Device discovery info */
- #define EC_CMD_USB_PD_DISCOVERY 0x0113
- struct ec_params_usb_pd_discovery_entry {
--- 
-2.18.0
-
+> Thanks,
+> Namhyung
+> 
+> 
+> > ---
+> >  tools/perf/util/namespaces.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+> > index 5be021701f34..cf8bd123cf73 100644
+> > --- a/tools/perf/util/namespaces.c
+> > +++ b/tools/perf/util/namespaces.c
+> > @@ -139,6 +139,9 @@ struct nsinfo *nsinfo__copy(struct nsinfo *nsi)
+> >  {
+> >  	struct nsinfo *nnsi;
+> >  
+> > +	if (nsi == NULL)
+> > +		return NULL;
+> > +
+> >  	nnsi = calloc(1, sizeof(*nnsi));
+> >  	if (nnsi != NULL) {
+> >  		nnsi->pid = nsi->pid;
+> > -- 
+> > 2.17.1
+> > 
