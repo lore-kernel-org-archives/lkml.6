@@ -2,301 +2,175 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3356CC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82635C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19A1223E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:40:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19A1223E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 205F6223E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:43:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="BJrPJ+ol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205F6223E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbeHJGIq (ORCPT
+        id S1727373AbeHJGK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 02:08:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10695 "EHLO huawei.com"
+        Fri, 10 Aug 2018 02:10:59 -0400
+Received: from mail-sn1nam02on0062.outbound.protection.outlook.com ([104.47.36.62]:31769
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727284AbeHJGIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 02:08:46 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9AFF2A7B1A700;
-        Fri, 10 Aug 2018 11:40:43 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 10 Aug
- 2018 11:40:38 +0800
-Date:   Fri, 10 Aug 2018 11:39:13 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "Philippe Ombredanne" <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180810033913.GK91035@Turing-Arch-b>
-References: <20180802040557.GL160746@Turing-Arch-b>
- <20180802142243.GA3481@redhat.com>
- <20180803034721.GC91035@Turing-Arch-b>
- <20180803143944.GA4079@redhat.com>
- <20180806031252.GG91035@Turing-Arch-b>
- <20180806153257.GB6002@redhat.com>
- <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
- <20180808151835.GA3429@redhat.com>
- <20180809080352.GI91035@Turing-Arch-b>
- <20180809144613.GB3386@redhat.com>
+        id S1725917AbeHJGK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 02:10:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iSGXHF03AVBo8ArFvEyNfjCzk4U749SHbdaL1oTZ9rA=;
+ b=BJrPJ+olfiQV2y6R/GOqu2t4nFDHdC7kLojZHYHj/jaOp0rTAaur7bP8U3tDVo9cEXkjTAfUTQziWr03VZm74bGGSRCAyOyknScx+zs42RQtROyRrce383B5s5MSWSZC2SPqH0MBR3ExZWdHrl4RvEcXkGfQtiiM6LKdQOiNjuY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ SN1PR0301MB1583.namprd03.prod.outlook.com (2a01:111:e400:5232::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.18; Fri, 10 Aug
+ 2018 03:39:06 +0000
+Date:   Fri, 10 Aug 2018 11:36:27 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: mvneta: fix mvneta_config_rss on armada 3700
+Message-ID: <20180810113627.5dec5d40@xhacker.debian>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180809144613.GB3386@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: HK0PR03CA0014.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::26) To SN1PR0301MB1583.namprd03.prod.outlook.com
+ (2a01:111:e400:5232::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 01390791-ba1e-4542-42b2-08d5fe72d3d3
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:SN1PR0301MB1583;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;3:flyOSZnMS6fGx60F1qzJKYjlFcS207h8osGZLqPij/URSnI3sqMratwkFe7gBrDn4/fr/3OzhF2sIijxDYd2YSU54s6+ycOiSInLTjBYhiWaGfmoLCojt65W2SsBvKyzXUpDteryT/K/TZZjSWOE9rlQ/LE8K335t92sbBoO3w11LJMGbZVSDrgTcGk1Qem0yNgeIUZYePPbJLX5xjWruCdLgUsWpreYuiec3ffeHtFVtYGBVM+924yB5bwxo3eP;25:poog1EB2+8idIc4bMVimrIJx0mvpEHf9oKF9Pw5BWt2NMTgCiNXmb8wkk0jtngSPiB0C1r+NuataGyF1PLNl7eamPRyJBSHQvUAUSQpgu6RJD0Mcndo6MQDCdscdBE7pHVstERRDQBRIkcIjQUb12k7U877fBykOQthAvkedCAx7/28ialTxjG5UQVd/NXPJoQQoNLksG/6xVAU/CvvDLcjzsshM9N/azwiEpsYMYgXs1bifvxjarQIVs0Rve6qK8nv+Msabf9ftNjPhi3SY75PVdpxRE5smqXaq7Dl3IaDPG4kcKV7Ij+NIpoB8KX7g0aW/FzFYq4dT+z0WNYF/bw==;31:+cO/F8ixoNgThntQ3DZxhsza7vRXfK5IfTBaQ5LZdCmWHTnNulAZgB37BvdSlvyTr/P0dtU2w84L8x2sQeoHAMHQux72Kn+5nnekuhaIctq+JmJn/GsQNpRZC7lIOMSc9zRZbDnz+xBsyQL6hiRONpFdxMZ1f6KJA3WKG4X6J20oPDVGRrdeDx7XSRJO9ra8etv0xNYO5k9Pp7b1TTFWeRKDagPosOozZwt3RoZQN18=
+X-MS-TrafficTypeDiagnostic: SN1PR0301MB1583:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;20:B1hiEPMpZ08DRnQyDeDCTGo5+Mde3s4mDifhF4YmikoVjy9zASSbokn88GOrxNs4sIks6G7DxU9sz7zbCjomN2yYPrlnXtjHsiL8oRH3z2yep7Dzt6IB1ItT+43VazlZRF5MMF7uCSO3AwxqDs4eFCs4TeiUOLejGPnXOjsrevcnildHvFw2ca0kSErMKvURIJRR0OkMCg8joF0kVFwYkxKz1ngHJoDYQninI1+jVkt1g8Byu7yKsfV2uTqu3WUDWAx7nqKEz5y6mYcurnvoAWrfTJ8hWhT9c/NfbX2NOiYFTDK2WrWFaHX+a/eN3K4fhaCCcRpaOAkWPpp81Mr4hNukhFeZq5BlaxoCFrbtLL/T8IwzZRnmSQ1TMT3W6L5PlpFTg5PcIiC7GfBdyJ6VozSG8+pzRV08eG0/uJY4AkZ4HKUM1Wyt1UEbC4W+7IfukIJ0YeSfVTAKpdbTnZ3GNzd3Hty47wWZ+q3lXDpslfb1yEUjhtbnvc+F/dr90Rpt;4:VL04RlVd7LOW8cojqu8iaxqypFqsJLLiOafqYqvF6hAmPLGA95ia5cEaXDkkhNvhpHX0YsLtdJrzcAGvDe9WtxQ2finEUqJXlqLA4NxH/6VBYvDo6PhgJ9NAdiCxKC9oawZiNgRnkQ1ixGMkNUYo8p6EWlREvZ9gDpl71Z0Iu8Whmq3rbS3MROj7Ib7jxpxO/D3+Xfmxa/gn9AERTvsezlFyt+NhlQrLpDLZSm3nWRGZWGX1W6DZTSBl3pGPlbE/gHHtNavPawwFJdIAO6KzqQ==
+X-Microsoft-Antispam-PRVS: <SN1PR0301MB15834A728EF7FF4D668EDF4FED240@SN1PR0301MB1583.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN1PR0301MB1583;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0301MB1583;
+X-Forefront-PRVS: 07607ED19A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39850400004)(376002)(346002)(396003)(189003)(199004)(1076002)(8936002)(6116002)(68736007)(478600001)(97736004)(50226002)(14444005)(2906002)(47776003)(6666003)(72206003)(66066001)(23726003)(53936002)(5660300001)(230700001)(3846002)(6506007)(386003)(7736002)(305945005)(8676002)(81156014)(106356001)(105586002)(81166006)(55016002)(86362001)(26005)(7696005)(4326008)(52116002)(186003)(16526019)(25786009)(486006)(9686003)(50466002)(956004)(476003)(33896004)(110136005)(316002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0301MB1583;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR0301MB1583;23:LcNB3KvM+q/eWp191xLVpn50xvBCKY+8k70YIHa?=
+ =?us-ascii?Q?VRC0cUlfDMi3vpFuOdHfVUAt6CqUA8RzNo8Kwdim+AdCl6rooPc9GSAQcWsl?=
+ =?us-ascii?Q?g2tqk7t3SNoXTuuOs1RLBm+f87B4a8B3lHGqJddJrYwl9zUD4rJrSX9HgxqK?=
+ =?us-ascii?Q?5kquwyQxw698y0+0CXbJyJnbyjeBIW7ELeGP8IiKM3f4X2Kd/tlfifGkpv3Z?=
+ =?us-ascii?Q?BBF/WWkNoc9gMVWrkuU9so/fZq8SvfjUFCXEihuMDtIPDKtkRt0fZeUUULeM?=
+ =?us-ascii?Q?u4bPyXwj9+2uTrPi01X3fDObRfPTKa5WqRTtPhbeySeRmrXY4hwyYvEdJNOs?=
+ =?us-ascii?Q?9cl+2iEpG8OfJ1+BDlgRcpudEJIYpX6iNmowQCPdD46hxqCIKuIxRI/pDxQU?=
+ =?us-ascii?Q?L06pAd/Ju39WGyIXHG08loxFDYI0gQHRw3wlcvSwcC0EzLg+fzau2jNqtLO+?=
+ =?us-ascii?Q?fZjk0saMKoAlnpqAMRfhGRnMptUhbFKiBM9Cu9kHqRjXETgacLAeA0l8/UVP?=
+ =?us-ascii?Q?CMlwaUNOGhIypEo6manzJbVhsdMRmMdMKLl8fzbrVj+SbMrmwgwEcLNegHxB?=
+ =?us-ascii?Q?tQKN2xAiJUszuStt2P1w98RRcu25Uk/VtasLXOrow1ZJBg3v1oBYEQQ5mRRX?=
+ =?us-ascii?Q?Q0WKhMvBjrbUZDRvjTx8nBNoLdCSK7g0VlLtrEGVYpA+CkRx3whf3mHRBAYs?=
+ =?us-ascii?Q?aK4peGpMHi1lJZbxT6Hi0ygaXPDth+K+kZvq4XnDaPbe3GfqLPa469/8PrUD?=
+ =?us-ascii?Q?1/XclvFagbyQkufadOXASZaf7hHPOtuhwOwx192sxdPGYhWPaFCEhSjXaJY/?=
+ =?us-ascii?Q?y3f9LWWZVI+rJcSpG0h7yWADniwVYDrIw1i8uccqlLkMvGu8vqy40WfjodG2?=
+ =?us-ascii?Q?+A0DRRx47EnB8mAdzdW1j9vkH5izOXkpYbzG1qA8ZyTfMdCCG+9auMof4f9b?=
+ =?us-ascii?Q?csqBIlZBX9b68rnIl9GaJwY/x3exFBKLteui7rBcSu76FymsXbzYRBwQiijk?=
+ =?us-ascii?Q?G9oRZspGSMaaLLvq8UOREFhW5/A6PWW9XvbaQkXCgwcvcNh52JEnVOiu3R6U?=
+ =?us-ascii?Q?jgHuQWj828ZdAvTzC06CJuw99hq6TB5NvjPq76ylz/6wqYNy9b1mAhaLAJVS?=
+ =?us-ascii?Q?ZXC6c1qDApFyQU11vP4/F9CHYLoPg66lDNTV8i8+h5dmeWDHjWnWrNfff6V1?=
+ =?us-ascii?Q?o0wnjS5gsMn1z9jA=3D?=
+X-Microsoft-Antispam-Message-Info: i0yc+rN5iveDQektSDOmW/WqkELTyFn5ZIY0cGanOHsEU/K6SoVKQMXVlhxaA5CFSCQk+gjv8VFR/+1rBdhjS8ojM35KkM3Ne4roczNKMq8kS+dcTz6KhSo3OQJp4KYQQCAUjO5raRBNiRzl3COoe6Rlwf4sI+c21jetrFHvIPe8MKgD6Wju1ieGYRNflHhiuRDdT/3uNasnpwlgz6VzYZtr02aOGH6t1ficm4Sks7SQmB7ju884hu788B+zmOqkacttRtmQsjzn3GI+6P9l69AJr0k7dCR2CzHzdfk7UY1cDQQaNK7sKvQTDX6stzMSfNpUJr+JklL+uqZFg6sY0Gt9RnhyVXW3Q6LBnhvw6go=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;6:XkpEOQOwEjLDtELg1brJYuQf3bNLBVZvfHHERmXyJI0r2+Yo/mnevVbcU0kyPnPrz4SjkkFzIHabO6s7hydVx4R1w2ZaLJH1VN2BqCi08U1RIMx/OiQnPMqrPwNTvIUGfj2yHn8FrN50HImpI+25HJLmN9pdJD97DtJf2yOWmlf30QbIXK5DIEKaPOCohUfY0OzDhz/ndEzSk1G58LH1j9eIqnLh8D3E356DSt2S07tZ9Qr8POttUlQmE9fCgG3kO/yhU6/yQtnIgwr1HFwyaKkMTqEztyeuEeikuHrSVpwQPUbOTphuThJszCWC4CCIldTPvGstgKanudWoHMavSAM1GIy9gQLNz9cMJRJgbX9TTDHhAC5ewl/T0VSgNR93SjlIr+8PaDXqfOg9/iBQW8hCDPWXDietefX6W345bTEcR8ZIct3bMfyBmf2qB3ulLoCkpSoXk+RhawIoWXAOJQ==;5:VEGppER2SkmkC7GVCdwVSezBLuytzAnsBpqW/Kl/MAUGzosymkuNrtCjbhHhxuk/8p0HevJ9urMg8lCPx5lUSJ9P9MC4JakoAXDyKubjIfRYrRArTF20dpmbfSuY3GCkE587joN1iAo8G3BQwuUHILXOYG3Jj/D1dgibC8/8Ax4=;7:jGxV8DVbz0EL5EVBKaN0MPmZrlz34hh/yLu8c2Df3vOk1Llye+Afmc8Ibbyg+D0nhopz+wOn689GNNRHdvfyQE5SsctbnVHn95eSxRUMNUvbR0dYMlkMtJ2aoIGgDYnSrnyG0ovI7C2gckMJ1p9W85Lasp5JC7kCyjw6I3/ufnl2WDK0aDQzL6XzF1IT0ehtqJgJn873veJhgoGFyh3SpxZQGRD1u6EVkvdAWQcj7+Bngg3hzkmhq3DnXXfkZkB0
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2018 03:39:06.0263 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01390791-ba1e-4542-42b2-08d5fe72d3d3
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0301MB1583
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 10:46:13AM -0400, Jerome Glisse wrote:
-> Date: Thu, 9 Aug 2018 10:46:13 -0400
-> From: Jerome Glisse <jglisse@redhat.com>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Kenneth Lee <nek.in.cn@gmail.com>, "Tian, Kevin"
->  <kevin.tian@intel.com>, Alex Williamson <alex.williamson@redhat.com>,
->  Herbert Xu <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
->  <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
->  Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo Xu <xuzaibo@huawei.com>,
->  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Kumar, Sanjay K"
->  <sanjay.k.kumar@intel.com>, Hao Fang <fanghao11@huawei.com>,
->  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
->  "linuxarm@huawei.com" <linuxarm@huawei.com>,
->  "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
->  "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
->  Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
->  "David S . Miller" <davem@davemloft.net>,
->  "linux-accelerators@lists.ozlabs.org"
->  <linux-accelerators@lists.ozlabs.org>
-> Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-> User-Agent: Mutt/1.10.0 (2018-05-17)
-> Message-ID: <20180809144613.GB3386@redhat.com>
-> 
-> On Thu, Aug 09, 2018 at 04:03:52PM +0800, Kenneth Lee wrote:
-> > On Wed, Aug 08, 2018 at 11:18:35AM -0400, Jerome Glisse wrote:
-> > > On Wed, Aug 08, 2018 at 09:08:42AM +0800, Kenneth Lee wrote:
-> > > > 在 2018年08月06日 星期一 11:32 下午, Jerome Glisse 写道:
-> > > > > On Mon, Aug 06, 2018 at 11:12:52AM +0800, Kenneth Lee wrote:
-> > > > > > On Fri, Aug 03, 2018 at 10:39:44AM -0400, Jerome Glisse wrote:
-> > > > > > > On Fri, Aug 03, 2018 at 11:47:21AM +0800, Kenneth Lee wrote:
-> > > > > > > > On Thu, Aug 02, 2018 at 10:22:43AM -0400, Jerome Glisse wrote:
-> > > > > > > > > On Thu, Aug 02, 2018 at 12:05:57PM +0800, Kenneth Lee wrote:
-> 
-> [...]
-> 
-> > > > > > > > > your mechanisms the userspace must have a specific userspace
-> > > > > > > > > drivers for each hardware and thus there are virtually no
-> > > > > > > > > differences between having this userspace driver open a device
-> > > > > > > > > file in vfio or somewhere else in the device filesystem. This is
-> > > > > > > > > just a different path.
-> > > > > > > > > 
-> > > > > > > > The basic problem WarpDrive want to solve it to avoid syscall. This is important
-> > > > > > > > to accelerators. We have some data here:
-> > > > > > > > https://www.slideshare.net/linaroorg/progress-and-demonstration-of-wrapdrive-a-accelerator-framework-sfo17317
-> > > > > > > > 
-> > > > > > > > (see page 3)
-> > > > > > > > 
-> > > > > > > > The performance is different on using kernel and user drivers.
-> > > > > > > Yes and example i point to is exactly that. You have a one time setup
-> > > > > > > cost (creating command buffer binding PASID with command buffer and
-> > > > > > > couple other setup steps). Then userspace no longer have to do any
-> > > > > > > ioctl to schedule work on the GPU. It is all down from userspace and
-> > > > > > > it use a doorbell to notify hardware when it should go look at command
-> > > > > > > buffer for new thing to execute.
-> > > > > > > 
-> > > > > > > My point stands on that. You have existing driver already doing so
-> > > > > > > with no new framework and in your scheme you need a userspace driver.
-> > > > > > > So i do not see the value add, using one path or the other in the
-> > > > > > > userspace driver is litteraly one line to change.
-> > > > > > > 
-> > > > > > Sorry, I'd got confuse here. I partially agree that the user driver is
-> > > > > > redundance of kernel driver. (But for WarpDrive, the kernel driver is a full
-> > > > > > driver include all preparation and setup stuff for the hardware, the user driver
-> > > > > > is simply to send request and receive answer). Yes, it is just a choice of path.
-> > > > > > But the user path is faster if the request come from use space. And to do that,
-> > > > > > we need user land DMA support. Then why is it invaluable to let VFIO involved?
-> > > > > Some drivers in the kernel already do exactly what you said. The user
-> > > > > space emit commands without ever going into kernel by directly scheduling
-> > > > > commands and ringing a doorbell. They do not need VFIO either and they
-> > > > > can map userspace address into the DMA address space of the device and
-> > > > > again they do not need VFIO for that.
-> > > > Could you please directly point out which driver you refer to here? Thank
-> > > > you.
-> > > 
-> > > drivers/gpu/drm/amd/
-> > > 
-> > > Sub-directory of interest is amdkfd
-> > > 
-> > > Because it is a big driver here is a highlevel overview of how it works
-> > > (this is a simplification):
-> > >   - Process can allocate GPUs buffer (through ioclt) and map them into
-> > >     its address space (through mmap of device file at buffer object
-> > >     specific offset).
-> > >   - Process can map any valid range of virtual address space into device
-> > >     address space (IOMMU mapping). This must be regular memory ie not an
-> > >     mmap of a device file or any special file (this is the non PASID
-> > >     path)
-> > >   - Process can create a command queue and bind its process to it aka
-> > >     PASID, this is done through an ioctl.
-> > >   - Process can schedule commands onto queues it created from userspace
-> > >     without ioctl. For that it just write command into a ring buffer
-> > >     that it mapped during the command queue creation process and it
-> > >     rings a doorbell when commands are ready to be consume by the
-> > >     hardware.
-> > >   - Commands can reference (access) all 3 types of object above ie
-> > >     either full GPUs buffer, process regular memory maped as object
-> > >     (non PASID) and PASID memory all at the same time ie you can
-> > >     mix all of the above in same commands queue.
-> > >   - Kernel can evict, unbind any process command queues, unbind commands
-> > >     queue are still valid from process point of view but commands
-> > >     process schedules on them will not be executed until kernel re-bind
-> > >     the queue.
-> > >   - Kernel can schedule commands itself onto its dedicated command
-> > >     queues (kernel driver create its own command queues).
-> > >   - Kernel can control priorities between all the queues ie it can
-> > >     decides which queues should the hardware executed first next.
-> > > 
-> > 
-> > Thank you. Now I think I understand the point. Indeed, I can see some drivers,
-> > such GPU and IB, attach their own iommu_domain to their iommu_group and do their
-> > own iommu_map().
-> > 
-> > But we have another requirement which is to combine some device together to
-> > share the same address space. This is a little like these kinds of solution:
-> > 
-> > http://tce.technion.ac.il/wp-content/uploads/sites/8/2015/06/SC-7.2-M.-Silberstein.pdf
-> > 
-> > With that, the application can directly pass the NiC packet pointer to the
-> > decryption accelerator, and get the bare data in place. This is the feature that
-> > the VFIO container can provide.
-> 
-> Yes and GPU would very much like do the same. There is already out of
-> tree solution that allow NiC to stream into GPU memory or GPU to stream
-> its memory to a NiC. I am sure we will want to use more accelerator in
-> conjunction with GPU in the future.
-> 
-> > 
-> > > I believe all of the above are the aspects that matters to you. The main
-> > > reason i don't like creating a new driver infrastructure is that a lot
-> > > of existing drivers will want to use some of the new features that are
-> > > coming (memory topology, where to place process memory, pipeline devices,
-> > > ...) and thus existing drivers are big (GPU drivers are the biggest of
-> > > all the kernel drivers).
-> > > 
-> > 
-> > I think it is not necessarily to rewrite the GPU driver if they don't need to
-> > share their space with others. But if they do, no matter how, they have to create
-> > some facility similar to VFIO container. Then why not just create them in VFIO?
-> 
-> No they do not, nor does anyone needs to. We already have that. If you want
-> device to share memory object you have either:
->     - PASID and everything is just easy no need to create anything, as
->       all valid virtual address will work
->     - no PASID or one of the device does not support PASID then use the
->       existing kernel infrastructure aka dma buffer see Documentation/
->       driver-api/dma-buf.rst
-> 
-> Everything you want to do is already happening upstream and they are allready
-> working example.
+The mvneta Ethernet driver is used on a few different Marvell SoCs.
+Some SoCs have per cpu interrupts for Ethernet events, the driver uses
+a per CPU napi structure for this case. Some SoCs such as armada 3700
+have a single interrupt for Ethernet events, the driver uses a global
+napi structure for this case.
 
-OK, I accept it.
+Current mvneta_config_rss() always operates the per cpu napi structure.
+Fix it by operating a global napi for "single interrupt" case, and per
+cpu napi structure for remaining cases.
 
-> 
-> > Actually, some GPUs have already used mdev to manage the resource by different
-> > users, it is already part of VFIO.
-> 
-> The current use of mdev with GPU is to "emulate" the SR_IOV of PCIE in
-> software so that a single device can be share between multiple guests.
-> For this using VFIO make sense, as we want to expose device as a single
-> entity that can be manage without the userspace (QEMU) having to know
-> or learn about each individual devices.
-> 
-> QEMU just has a well define API to probe and attach device to guest.
-> It is the guest that have dedicated drivers for each of those mdev
-> devices.
-> 
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
+---
+ drivers/net/ethernet/marvell/mvneta.c | 31 +++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
-Agree
-
-> 
-> What you are trying to do is recreate a whole driver API inside the
-> VFIO subsystem and i do not see any valid reasons for that. Moreover
-> you want to restrict future use to only drivers that are part of this
-> new driver subsystem and again i do not see any good reasons to
-> mandate any of the existing driver to be rewritten inside a new VFIO
-> infrastructure.
-> 
-
-I think you have persuaded me now. I thought VFIO was the only unified place to do
-user land DMA operations. So I tried to make use of it even there was facility I
-needed not.
-
-Thank you very much for the help.
-
-> 
-> You can achieve everything you want to achieve with existing upstream
-> solution. Re-inventing a whole new driver infrastructure should really
-> be motivated with strong and obvious reasons.
-
-I want to understand better of your idea. If I create some unified helper
-APIs in drivers/iommu/, say:
-
-	wd_create_dev(parent_dev, wd_dev)
-	wd_release_dev(wd_dev)
-
-The API create chrdev to take request from user space for open(resource
-allocation), iomap, epoll (irq), and dma_map(with pasid automatically).
-
-Do you think it is acceptable?
-
-I agree that these all can be done with the driver itself. But without a unified
-interface, it is hard to create a user land ecosystem for accelerator to
-cooperate.
-
-> 
-> Cheers,
-> Jérôme
-
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 55c2a56c5dae..bc80a678abc3 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -4107,13 +4107,18 @@ static int  mvneta_config_rss(struct mvneta_port *pp)
+ 
+ 	on_each_cpu(mvneta_percpu_mask_interrupt, pp, true);
+ 
+-	/* We have to synchronise on the napi of each CPU */
+-	for_each_online_cpu(cpu) {
+-		struct mvneta_pcpu_port *pcpu_port =
+-			per_cpu_ptr(pp->ports, cpu);
++	if (!pp->neta_armada3700) {
++		/* We have to synchronise on the napi of each CPU */
++		for_each_online_cpu(cpu) {
++			struct mvneta_pcpu_port *pcpu_port =
++				per_cpu_ptr(pp->ports, cpu);
+ 
+-		napi_synchronize(&pcpu_port->napi);
+-		napi_disable(&pcpu_port->napi);
++			napi_synchronize(&pcpu_port->napi);
++			napi_disable(&pcpu_port->napi);
++		}
++	} else {
++		napi_synchronize(&pp->napi);
++		napi_disable(&pp->napi);
+ 	}
+ 
+ 	pp->rxq_def = pp->indir[0];
+@@ -4130,12 +4135,16 @@ static int  mvneta_config_rss(struct mvneta_port *pp)
+ 	mvneta_percpu_elect(pp);
+ 	spin_unlock(&pp->lock);
+ 
+-	/* We have to synchronise on the napi of each CPU */
+-	for_each_online_cpu(cpu) {
+-		struct mvneta_pcpu_port *pcpu_port =
+-			per_cpu_ptr(pp->ports, cpu);
++	if (!pp->neta_armada3700) {
++		/* We have to synchronise on the napi of each CPU */
++		for_each_online_cpu(cpu) {
++			struct mvneta_pcpu_port *pcpu_port =
++				per_cpu_ptr(pp->ports, cpu);
+ 
+-		napi_enable(&pcpu_port->napi);
++			napi_enable(&pcpu_port->napi);
++		}
++	} else {
++		napi_enable(&pp->napi);
+ 	}
+ 
+ 	netif_tx_start_all_queues(pp->dev);
 -- 
-			-Kenneth(Hisilicon)
-
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
+2.18.0
 
