@@ -3,381 +3,187 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3618BC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88896C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E0D215B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E0D215B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BC1B1215B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1B1215B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeHJMGI (ORCPT
+        id S1727703AbeHJMGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 08:06:08 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42927 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbeHJMGI (ORCPT
+        Fri, 10 Aug 2018 08:06:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49846 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727195AbeHJMGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 08:06:08 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z8-v6so9580510qto.9
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 02:37:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8QFW3MMWoCxCU6p/h+NghAF9nep3RwhT98qrJGZ2uTM=;
-        b=mLaiMl/r4xPELWYMT3FBhIdpKgb1GtCJzwAOKTwohx4MnPkKqS9P/fkFs/pLPdjvzo
-         RrWoWQfLWNnAmLru9ifn9scDyuZGIq/rliDBRJJh6Ggq7odvd+/gZecHJetPgfp7NmXO
-         iefx/s7xXD+KTmPswFDlAxFyR7ZzajCr6VI354+9LA2rqYWzF0zLQh2wM1nWOxrK8c+u
-         ScS6adVhZKEe/MXnJm3kRwVk1dIYhcb35/2Yyde0NpaWVT6RXKXCvYHI2eSk6OevO9EH
-         DiJV3qkchuootYFKczt3/58xTgisNGSPbHjQE2KKzfervXRwxoHntfu0Bn2s1hfD7xWN
-         gyDA==
-X-Gm-Message-State: AOUpUlEmh5q7CWwZX11caqNaq/U2d2eYz1H2Zb5FZGQzJGnvz2ggOETf
-        pcYS8mXo2VU0nmo5LoSWhgnqTirrjIVw/5Wh2MYm+w==
-X-Google-Smtp-Source: AA+uWPxam4ZKG7+ug0gpQEjwlAnv5RgfDDePfF3Wf2eSPQIJ7uXBPSgad64uYBge5Rcy3M56t9RSrWxWEkLBF02aMys=
-X-Received: by 2002:a0c:9843:: with SMTP id e3-v6mr5104560qvd.44.1533893822511;
- Fri, 10 Aug 2018 02:37:02 -0700 (PDT)
+        Fri, 10 Aug 2018 08:06:23 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7A9SwGc089690
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 05:37:17 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ks5e9xktv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 05:37:16 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Fri, 10 Aug 2018 10:37:15 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 10 Aug 2018 10:37:11 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7A9b9RS41287824
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Aug 2018 09:37:09 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7DA0BAE04D;
+        Fri, 10 Aug 2018 12:37:00 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 102F0AE055;
+        Fri, 10 Aug 2018 12:36:59 +0100 (BST)
+Received: from [10.0.2.15] (unknown [9.84.129.94])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Aug 2018 12:36:58 +0100 (BST)
+Subject: Re: [PATCH v8 04/22] s390/zcrypt: Integrate ap_asm.h into
+ include/asm/ap.h.
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1533739472-7172-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180809110645.33b20c1f.cohuck@redhat.com>
+ <aec0af21-270f-c4c5-3aea-f6854ca2fb07@linux.ibm.com>
+ <323af125-f078-919c-3117-f9022f5529ae@linux.ibm.com>
+ <20180810104929.6d40edef.cohuck@redhat.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Fri, 10 Aug 2018 11:37:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180810001714.14659-1-andrew.smirnov@gmail.com>
-In-Reply-To: <20180810001714.14659-1-andrew.smirnov@gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Fri, 10 Aug 2018 11:36:50 +0200
-Message-ID: <CAO-hwJ+HOmVT5=D5h8Rv6Cuhi=S+tJu3vMKidjNB=_pGCK8jPw@mail.gmail.com>
-Subject: Re: [PATCH] hid: microsoft: Add rumble support for Xbox One S controller
-To:     andrew.smirnov@gmail.com
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        juha.kuikka@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180810104929.6d40edef.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081009-0020-0000-0000-000002B4CA96
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081009-0021-0000-0000-00002101E2F4
+Message-Id: <4251c5c4-6330-d391-f37c-c57dd268efe9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-10_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808100104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On 10.08.2018 10:49, Cornelia Huck wrote:
+> On Thu, 9 Aug 2018 12:06:56 -0400
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+>
+>> On 08/09/2018 05:17 AM, Harald Freudenberger wrote:
+>>> On 09.08.2018 11:06, Cornelia Huck wrote:  
+>>>> On Wed,  8 Aug 2018 10:44:14 -0400
+>>>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>>>>  
+>>>>> From: Harald Freudenberger <freude@de.ibm.com>
+>>>>>
+>>>>> Move all the inline functions from the ap bus header
+>>>>> file ap_asm.h into the in-kernel api header file
+>>>>> arch/s390/include/asm/ap.h so that KVM can make use
+>>>>> of all the low level AP functions.
+>>>>>
+>>>>> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
+>>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>  
+>>>> You should add your own s-o-b if you are sending on patches written by
+>>>> others (even if it does not matter in the end, when they are merged
+>>>> through a different path anyway.)
+>>>>  
+>>>>> ---
+>>>>>   arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
+>>>>>   drivers/s390/crypto/ap_asm.h   |  261 ------------------------------------
+>>>>>   drivers/s390/crypto/ap_bus.c   |   21 +---
+>>>>>   drivers/s390/crypto/ap_bus.h   |    1 +
+>>>>>   drivers/s390/crypto/ap_card.c  |    1 -
+>>>>>   drivers/s390/crypto/ap_queue.c |    1 -
+>>>>>   6 files changed, 259 insertions(+), 310 deletions(-)
+>>>>>   delete mode 100644 drivers/s390/crypto/ap_asm.h
+>>>>>
+>>>>> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+>>>>> index c1bedb4..046e044 100644
+>>>>> --- a/arch/s390/include/asm/ap.h
+>>>>> +++ b/arch/s390/include/asm/ap.h
+>>>>> @@ -47,6 +47,50 @@ struct ap_queue_status {
+>>>>>   };
+>>>>>   
+>>>>>   /**
+>>>>> + * ap_intructions_available() - Test if AP instructions are available.
+>>>>> + *
+>>>>> + * Returns 0 if the AP instructions are installed.  
+>>>> Stumbled over this when I was looking at the usage in patch 7: if I see
+>>>> a function called '_available' return 0, I'd assume that whatever the
+>>>> function tests for is *not* available.
+>>>>
+>>>> Rather call this function ap_instructions_check_availability() (and
+>>>> keep the return code convention), or switch this to return 0 if not
+>>>> available and !0 if available?  
+>>> Good catch, Cony you are right. I'll fix this to return 1 if AP instructions
+>>> are available and 0 if not. However, this patch will come via Martin's pipe
+>>> to the Linus Torwald kernel sources.  
+>> Is your intent to simply indicate whether the AP instructions are 
+>> available or
+>> not; or is the intention to indicate whether the AP instructions are 
+>> available
+>> and if not, they why? In the former, then I agree that a boolean should be
+>> returned; however, if the case is the latter, then what you have is fine but
+>> maybe the function name should be changed as Connie suggests.
+> So, can this actually fail for any reason other than "instructions not
+> installed"? Even if it did, the end result is that the instructions are
+> not usable -- I don't think the "why" would be interesting at that
+> point.
+I can not think of any other reason why the PQAP(TAPQ) would fail
+other than the AP instructions are not available at all. However,
+the old implementation returned -ENODEV on failure and 0 on
+success. The new implementation now returns 1 for success
+and 0 for failure. This is just one of a couple of functions related
+to ap xxx available. I'll rework them all to return a boolean value
+soon.
+>
+>>>>> + */
+>>>>> +static inline int ap_instructions_available(void)
+>>>>> +{
+>>>>> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
+>>>>> +	register unsigned long reg1 asm ("1") = -ENODEV;
+>>>>> +	register unsigned long reg2 asm ("2");
+>>>>> +
+>>>>> +	asm volatile(
+>>>>> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
+>>>>> +		"0: la    %0,0\n"
+>>>>> +		"1:\n"
+>>>>> +		EX_TABLE(0b, 1b)
+>>>>> +		: "+d" (reg1), "=d" (reg2)
+>>>>> +		: "d" (reg0)
+>>>>> +		: "cc");
+>>>>> +	return reg1;
+>>>>> +}  
 
-On Fri, Aug 10, 2018 at 2:17 AM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
->
-> Add HID quirk driver for Xbox One S controller over bluetooth.
->
-> This driver only adds support for rumble. Standard controller
-> functionality is exposed by default HID driver.
->
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
-> Signed-off-by: Juha Kuikka <juha.kuikka@gmail.com>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  drivers/hid/Kconfig         |   8 ++
->  drivers/hid/hid-ids.h       |   1 +
->  drivers/hid/hid-microsoft.c | 142 ++++++++++++++++++++++++++++++++++--
->  drivers/hid/hid-quirks.c    |   1 +
->  4 files changed, 147 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index a49a10437c40..b2e983cb32f0 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -589,6 +589,14 @@ config HID_MICROSOFT
->         ---help---
->         Support for Microsoft devices that are not fully compliant with HID standard.
->
-> +config MICROSOFT_FF
-> +       bool "Microsoft Xbox One S controller force feedback support"
-> +       depends on HID_MICROSOFT
-> +       select INPUT_FF_MEMLESS
-> +       ---help---
-> +       Say Y here if you have a Microsoft Xbox One S controller and want to enable
-> +       force feedback support for it.
-> +
-
-Is there really a need to have a kernel that doesn't enable FF on
-those particular devices?
-It adds a lot of #ifdefs in the code and I would think users want it
-enabled by default.
-
->  config HID_MONTEREY
->         tristate "Monterey Genius KB29E keyboard"
->         depends on HID
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> index c7981ddd8776..c8b4bc7fe053 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -798,6 +798,7 @@
->  #define USB_DEVICE_ID_MS_TOUCH_COVER_2   0x07a7
->  #define USB_DEVICE_ID_MS_TYPE_COVER_2    0x07a9
->  #define USB_DEVICE_ID_MS_POWER_COVER     0x07da
-> +#define USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER 0x02fd
->
->  #define USB_VENDOR_ID_MOJO             0x8282
->  #define USB_DEVICE_ID_RETRO_ADAPTER    0x3201
-> diff --git a/drivers/hid/hid-microsoft.c b/drivers/hid/hid-microsoft.c
-> index 96e7d3231d2f..e2bd31d54e62 100644
-> --- a/drivers/hid/hid-microsoft.c
-> +++ b/drivers/hid/hid-microsoft.c
-> @@ -29,10 +29,29 @@
->  #define MS_NOGET               0x10
->  #define MS_DUPLICATE_USAGES    0x20
->
-> +struct ms_data {
-> +       unsigned long quirks;
-> +       struct hid_device *hdev;
-> +       struct work_struct ff_worker;
-> +       __u8 strong;
-> +       __u8 weak;
-> +       __u8 *output_report_dmabuf;
-> +};
-> +
-> +struct xb1s_ff_report {
-> +       __u8    report_id;
-> +       __u8    enable;
-> +       __u8    magnitude[4];
-> +       __u8    duration_10ms;
-> +       __u8    start_delay_10ms;
-> +       __u8    loop_count;
-> +};
-> +
->  static __u8 *ms_report_fixup(struct hid_device *hdev, __u8 *rdesc,
->                 unsigned int *rsize)
->  {
-> -       unsigned long quirks = (unsigned long)hid_get_drvdata(hdev);
-> +       struct ms_data *ms = hid_get_drvdata(hdev);
-> +       unsigned long quirks = ms->quirks;
->
->         /*
->          * Microsoft Wireless Desktop Receiver (Model 1028) has
-> @@ -134,7 +153,8 @@ static int ms_input_mapping(struct hid_device *hdev, struct hid_input *hi,
->                 struct hid_field *field, struct hid_usage *usage,
->                 unsigned long **bit, int *max)
->  {
-> -       unsigned long quirks = (unsigned long)hid_get_drvdata(hdev);
-> +       struct ms_data *ms = hid_get_drvdata(hdev);
-> +       unsigned long quirks = ms->quirks;
-
-Could you split the change of the quirks mechanism in its own patch.
-This will make the whole code easier to review and spot errors if
-there are.
-
->
->         if (quirks & MS_ERGONOMY) {
->                 int ret = ms_ergonomy_kb_quirk(hi, usage, bit, max);
-> @@ -153,7 +173,8 @@ static int ms_input_mapped(struct hid_device *hdev, struct hid_input *hi,
->                 struct hid_field *field, struct hid_usage *usage,
->                 unsigned long **bit, int *max)
->  {
-> -       unsigned long quirks = (unsigned long)hid_get_drvdata(hdev);
-> +       struct ms_data *ms = hid_get_drvdata(hdev);
-> +       unsigned long quirks = ms->quirks;
->
->         if (quirks & MS_DUPLICATE_USAGES)
->                 clear_bit(usage->code, *bit);
-> @@ -164,7 +185,8 @@ static int ms_input_mapped(struct hid_device *hdev, struct hid_input *hi,
->  static int ms_event(struct hid_device *hdev, struct hid_field *field,
->                 struct hid_usage *usage, __s32 value)
->  {
-> -       unsigned long quirks = (unsigned long)hid_get_drvdata(hdev);
-> +       struct ms_data *ms = hid_get_drvdata(hdev);
-> +       unsigned long quirks = ms->quirks;
->         struct input_dev *input;
->
->         if (!(hdev->claimed & HID_CLAIMED_INPUT) || !field->hidinput ||
-> @@ -219,12 +241,96 @@ static int ms_event(struct hid_device *hdev, struct hid_field *field,
->         return 0;
->  }
->
-> +#ifdef CONFIG_MICROSOFT_FF
-> +
-> +#define XB1S_FF_REPORT         3
-> +#define ENABLE_WEAK            BIT(0)
-> +#define ENABLE_STRONG          BIT(1)
-> +#define MAGNITUDE_WEAK         3
-> +#define MAGNITUDE_STRONG       2
-> +
-> +static void ms_ff_worker(struct work_struct *work)
-> +{
-> +       struct ms_data *ms = container_of(work, struct ms_data, ff_worker);
-> +       struct hid_device *hdev = ms->hdev;
-> +       struct xb1s_ff_report *r =
-> +               (struct xb1s_ff_report *) ms->output_report_dmabuf;
-> +       int ret;
-> +
-> +       memset(r, 0, sizeof(*r));
-> +
-> +       r->report_id = XB1S_FF_REPORT;
-> +       r->enable = ENABLE_WEAK | ENABLE_STRONG;
-> +       /*
-> +        * Specifying maximum duration and maximum loop count should
-> +        * cover maximum duration of a single effect: 65536 ms
-> +        */
-> +       r->duration_10ms = U8_MAX;
-> +       r->loop_count = U8_MAX;
-> +       r->magnitude[MAGNITUDE_STRONG] = ms->strong; /* left actuator */
-> +       r->magnitude[MAGNITUDE_WEAK] = ms->weak;     /* right actuator */
-> +
-> +       ret = hid_hw_output_report(hdev, (__u8 *)r, sizeof(*r));
-> +       if (ret)
-> +               hid_warn(hdev, "failed to send FF report\n");
-> +}
-> +
-> +static int ms_play_effect(struct input_dev *dev, void *data,
-> +                         struct ff_effect *effect)
-> +{
-> +       struct hid_device *hid = input_get_drvdata(dev);
-> +       struct ms_data *ms = hid_get_drvdata(hid);
-> +
-> +       if (effect->type != FF_RUMBLE)
-> +               return 0;
-> +
-> +       /* Magnitude is 0..100 so scale the 16-bit input here */
-> +       ms->strong = ((u32) effect->u.rumble.strong_magnitude * 100) / U16_MAX;
-> +       ms->weak = ((u32) effect->u.rumble.weak_magnitude * 100) / U16_MAX;
-> +
-> +       schedule_work(&ms->ff_worker);
-> +       return 0;
-> +}
-> +
-> +static int ms_init_ff(struct hid_device *hdev, struct ms_data *ms)
-> +{
-> +       struct hid_input *hidinput = list_entry(hdev->inputs.next,
-> +                                               struct hid_input, list);
-> +       struct input_dev *input_dev = hidinput->input;
-> +
-> +       ms->hdev = hdev;
-> +       INIT_WORK(&ms->ff_worker, ms_ff_worker);
-> +
-> +       ms->output_report_dmabuf = devm_kzalloc(&hdev->dev,
-> +                                               sizeof(struct xb1s_ff_report),
-> +                                               GFP_KERNEL);
-> +       if (ms->output_report_dmabuf == NULL)
-> +               return -ENOMEM;
-> +
-> +       input_set_capability(input_dev, EV_FF, FF_RUMBLE);
-> +       return input_ff_create_memless(input_dev, NULL, ms_play_effect);
-> +}
-> +
-> +#else
-> +static int ms_init_ff(struct hid_device *hdev, struct ms_data *ms)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
->  static int ms_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  {
->         unsigned long quirks = id->driver_data;
-> +       struct ms_data *ms;
->         int ret;
->
-> -       hid_set_drvdata(hdev, (void *)quirks);
-> +       ms = devm_kzalloc(&hdev->dev, sizeof(*ms), GFP_KERNEL);
-> +       if (ms == NULL)
-> +               return -ENOMEM;
-> +
-> +       ms->quirks = quirks;
-> +
-> +       hid_set_drvdata(hdev, ms);
->
->         if (quirks & MS_NOGET)
->                 hdev->quirks |= HID_QUIRK_NOGET;
-> @@ -242,11 +348,32 @@ static int ms_probe(struct hid_device *hdev, const struct hid_device_id *id)
->                 goto err_free;
->         }
->
-> +       if (IS_ENABLED(CONFIG_MICROSOFT_FF) &&
-> +           hdev->product == USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER) {
-
-nitpick:
-I'd rather have this test (against the PID) in ms_init_ff. In the long
-run, we might want to add more devices and it would be better to have
-the test where it should be.
-An even better solution would be to add a new MS_QUIRK_FF and test
-this here (or in ms_init_ff()).
-
-> +               ret = ms_init_ff(hdev, ms);
-> +               if (ret) {
-> +                       hid_err(hdev,
-> +                               "could not initialize ff, continuing anyway");
-> +               }
-> +       }
-> +
->         return 0;
->  err_free:
->         return ret;
->  }
->
-> +static void ms_remove(struct hid_device *hdev)
-> +{
-> +       hid_hw_stop(hdev);
-> +
-> +       if (IS_ENABLED(CONFIG_MICROSOFT_FF) &&
-> +           hdev->product == USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER) {
-
-A quirk would be better (see my previous comment)
-
-> +               struct ms_data *ms = hid_get_drvdata(hdev);
-> +
-> +               cancel_work_sync(&ms->ff_worker);
-> +       }
-> +}
-> +
->  static const struct hid_device_id ms_devices[] = {
->         { HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_SIDEWINDER_GV),
->                 .driver_data = MS_HIDINPUT },
-> @@ -281,6 +408,10 @@ static const struct hid_device_id ms_devices[] = {
->
->         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_PRESENTER_8K_BT),
->                 .driver_data = MS_PRESENTER },
-> +#ifdef CONFIG_MICROSOFT_FF
-> +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER),
-> +               .driver_data = 0 },
-> +#endif
-
-That seems fragile. Also even if we keep the Kconfig option, is there
-any point at conditioning the handling of this device from
-hid-microsoft?
-If it works with or without the Kconfig, I'd just drop the #ifdef.
-
->         { }
->  };
->  MODULE_DEVICE_TABLE(hid, ms_devices);
-> @@ -293,6 +424,7 @@ static struct hid_driver ms_driver = {
->         .input_mapped = ms_input_mapped,
->         .event = ms_event,
->         .probe = ms_probe,
-> +       .remove = ms_remove,
->  };
->  module_hid_driver(ms_driver);
->
-> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-> index 249d49b6b16c..10fefd0ed43c 100644
-> --- a/drivers/hid/hid-quirks.c
-> +++ b/drivers/hid/hid-quirks.c
-> @@ -496,6 +496,7 @@ static const struct hid_device_id hid_have_special_driver[] = {
->         { HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_DIGITAL_MEDIA_3KV1) },
->         { HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_POWER_COVER) },
->         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_PRESENTER_8K_BT) },
-> +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER) },
-
-You don't need to add your device to hid_have_special_driver since
-v4.15 or v4.16. So please drop this :)
-
-Cheers,
-Benjamin
-
->  #endif
->  #if IS_ENABLED(CONFIG_HID_MONTEREY)
->         { HID_USB_DEVICE(USB_VENDOR_ID_MONTEREY, USB_DEVICE_ID_GENIUS_KB29E) },
-> --
-> 2.17.1
->
