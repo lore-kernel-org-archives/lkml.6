@@ -2,87 +2,148 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1769DC46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25006C46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2FA2223A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:36:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=tom.com header.i=@tom.com header.b="xnYLHKo1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2FA2223A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=tom.com
+	by mail.kernel.org (Postfix) with ESMTP id D24AD223A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 01:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24AD223A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbeHJEE2 (ORCPT
+        id S1727225AbeHJEGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 00:04:28 -0400
-Received: from smtprz14.163.net ([106.3.154.247]:59507 "EHLO smtp.tom.com"
+        Fri, 10 Aug 2018 00:06:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10694 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725724AbeHJEE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 00:04:28 -0400
-Received: from antispam1.tom.com (unknown [172.25.16.55])
-        by freemail01.tom.com (Postfix) with ESMTP id 648A61C80E07
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 08:29:17 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tom.com; s=201807;
-        t=1533860957; bh=kkr0rmNyVHLT08DMyrgPHVJvmTyplOXY60evB4g3gwc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xnYLHKo1hId7vLa7Ihmtp8oWTQea+84n5UpklNGc7Rzsv2vUjr44TtzpxWkLtsrPW
-         MNZW5pqEDUR3OnJE5CFEWIFSeXlpAuEFK8t/u46tzljBVOptLHiQiYS8l1UqGoS8j0
-         LV5gJLpzSklMBQZTYwW1qc06XOV9RqBmS2QluCFI=
-Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
-        by antispam1.tom.com (Postfix) with ESMTP id 5C92E100133B
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 08:29:17 +0800 (CST)
-X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
-Received: from antispam1.tom.com ([127.0.0.1])
-        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id KMvRrR8gaNcL for <linux-kernel@vger.kernel.org>;
-        Fri, 10 Aug 2018 08:29:15 +0800 (CST)
-Received: from localhost.localdomain (unknown [59.63.206.36])
-        by antispam1.tom.com (Postfix) with ESMTPA id CCC951001333;
-        Fri, 10 Aug 2018 08:29:14 +0800 (CST)
-From:   zhouxianrong <zhouxianrong@tom.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, minchan@kernel.org,
-        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
-        zhouxianrong@tom.com, zhouxianrong <zhouxianrong@huawei.com>
-Subject: [PATCH] zsmalloc: fix linking bug in init_zspage
-Date:   Thu,  9 Aug 2018 20:28:17 -0400
-Message-Id: <20180810002817.2667-1-zhouxianrong@tom.com>
-X-Mailer: git-send-email 2.13.6
+        id S1725754AbeHJEGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 00:06:51 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 42A08B325640A;
+        Fri, 10 Aug 2018 09:39:14 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 10 Aug
+ 2018 09:39:05 +0800
+Date:   Fri, 10 Aug 2018 09:37:40 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "Philippe Ombredanne" <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180810013740.GJ91035@Turing-Arch-b>
+References: <20180802040557.GL160746@Turing-Arch-b>
+ <20180802142243.GA3481@redhat.com>
+ <20180803034721.GC91035@Turing-Arch-b>
+ <20180803143944.GA4079@redhat.com>
+ <20180806031252.GG91035@Turing-Arch-b>
+ <20180806153257.GB6002@redhat.com>
+ <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
+ <20180808151835.GA3429@redhat.com>
+ <20180809080352.GI91035@Turing-Arch-b>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhouxianrong <zhouxianrong@huawei.com>
+On Thu, Aug 09, 2018 at 08:31:31AM +0000, Tian, Kevin wrote:
+> Date: Thu, 9 Aug 2018 08:31:31 +0000
+> From: "Tian, Kevin" <kevin.tian@intel.com>
+> To: Kenneth Lee <liguozhu@hisilicon.com>, Jerome Glisse <jglisse@redhat.com>
+> CC: Kenneth Lee <nek.in.cn@gmail.com>, Alex Williamson
+>  <alex.williamson@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+>  "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Jonathan Corbet
+>  <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo
+>  Xu <xuzaibo@huawei.com>, "linux-doc@vger.kernel.org"
+>  <linux-doc@vger.kernel.org>, "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+>  Hao Fang <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
+>  <linux-kernel@vger.kernel.org>, "linuxarm@huawei.com"
+>  <linuxarm@huawei.com>, "iommu@lists.linux-foundation.org"
+>  <iommu@lists.linux-foundation.org>, "linux-crypto@vger.kernel.org"
+>  <linux-crypto@vger.kernel.org>, Philippe Ombredanne
+>  <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, "David S .
+>  Miller" <davem@davemloft.net>, "linux-accelerators@lists.ozlabs.org"
+>  <linux-accelerators@lists.ozlabs.org>
+> Subject: RE: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+> Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912B39B3@SHSMSX101.ccr.corp.intel.com>
+> 
+> > From: Kenneth Lee [mailto:liguozhu@hisilicon.com]
+> > Sent: Thursday, August 9, 2018 4:04 PM
+> > 
+> > But we have another requirement which is to combine some device
+> > together to
+> > share the same address space. This is a little like these kinds of solution:
+> > 
+> > http://tce.technion.ac.il/wp-content/uploads/sites/8/2015/06/SC-7.2-M.-
+> > Silberstein.pdf
+> > 
+> > With that, the application can directly pass the NiC packet pointer to the
+> > decryption accelerator, and get the bare data in place. This is the feature
+> > that
+> > the VFIO container can provide.
+> 
+> above is not a good argument, at least in the context of your discussion.
+> If each device has their own interface (similar to GPU) for process to bind 
+> with, then having the process binding to multiple devices one-by-one then
+> you still get same address space shared cross them...
 
-The last partial object in last subpage of zspage should not be linked
-in allocation list. Otherwise it could trigger BUG_ON explicitly at
-function zs_map_object. But it happened rarely.
+If we consider this from the VFIO container perspective, with a container, you
+can do DMA to the container applying it to all devices, even the device is added
+after the DMA operation.  
 
-Signed-off-by: zhouxianrong <zhouxianrong@huawei.com>
----
- mm/zsmalloc.c | 2 ++
- 1 file changed, 2 insertions(+)
+So your argument remains true only when SVM is enabled and the whole process space
+is devoted to the devices. 
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 8d87e973a4f5..24dd8da0aa59 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -1040,6 +1040,8 @@ static void init_zspage(struct size_class *class, struct zspage *zspage)
- 			 * Reset OBJ_TAG_BITS bit to last link to tell
- 			 * whether it's allocated object or not.
- 			 */
-+			if (off > PAGE_SIZE)
-+				link -= class->size / sizeof(*link);
- 			link->next = -1UL << OBJ_TAG_BITS;
- 		}
- 		kunmap_atomic(vaddr);
+Yes, the process can do the same all by itself. But if we agree with that, it
+makes no sense to keep the container concept in VFIO;)
+
+> 
+> Thanks
+> Kevin
+
 -- 
-2.13.6
+			-Kenneth(Hisilicon)
+
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
 
