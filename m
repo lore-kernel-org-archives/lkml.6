@@ -1,125 +1,299 @@
 Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB5DC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9861DC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B172244B
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:34:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Piu7PBCF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B172244B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 37E7222428
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:40:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E7222428
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeHJUFB (ORCPT
+        id S1728110AbeHJUKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38724 "EHLO mail.kernel.org"
+        Fri, 10 Aug 2018 16:10:47 -0400
+Received: from mout.gmx.net ([212.227.15.18]:51035 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727404AbeHJUFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:05:01 -0400
-Received: from mail-qt0-f177.google.com (mail-qt0-f177.google.com [209.85.216.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D76242244B;
-        Fri, 10 Aug 2018 17:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533922453;
-        bh=xexaJaKN8Jd8Uk1lDhJ82rRvfauPvMV6C+w8qphCsgs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Piu7PBCF9nCkcKZDXoyzcLA/qRmCpaTj2qizSOlb7smWw7Gs9Qg5ImOeQgVLN7LfH
-         2Mij84KgaZ/KsNKaNCMY6QvPHfCoMeta40pPbQDBiVz+1GQDrQ7D8sRnAci6zp0Z3/
-         8x24BNtU5Gvx8e1Gr5W6jb4u8QkEnYSH621BmEkM=
-Received: by mail-qt0-f177.google.com with SMTP id q12-v6so11095128qtp.6;
-        Fri, 10 Aug 2018 10:34:12 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHcexeqEYyuQkYkXpXJDlk1CTYNVzNkQbLtQVCHQvfCzo+8vOqV
-        RcRhg4+/03rmqyeRpQz5pOkv6YM1VA4N3Kxe2A==
-X-Google-Smtp-Source: AA+uWPzNCJ6lzWLUpSweuSQkyccYwcmZ9Dhd4vz/IMhpTpssdm+3N7GOBvFV1lRDcAJiZ+fBhUZvYQfAuYs4oA/mEFI=
-X-Received: by 2002:ac8:2c72:: with SMTP id e47-v6mr7698782qta.60.1533922452110;
- Fri, 10 Aug 2018 10:34:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAL_JsqKNnfgESG6ON95D7nD8VNrcVy7-x6cGGnae_GbbGKAuPQ@mail.gmail.com>
- <20180805232651.10605-1-afaerber@suse.de>
-In-Reply-To: <20180805232651.10605-1-afaerber@suse.de>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 10 Aug 2018 11:34:00 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+f5VMWZg9GNF=e-UmFjcjbVnE7Dr0EBF56E6gUrdTnuQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+f5VMWZg9GNF=e-UmFjcjbVnE7Dr0EBF56E6gUrdTnuQ@mail.gmail.com>
-Subject: Re: [RFC] serial: sc16is7xx: Use DT sub-nodes for UART ports
-To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc:     "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, jringle@gridpoint.com,
-        Michael Allwright <allsey87@gmail.com>,
-        Jakub Kicinski <kubakici@wp.pl>, liuxuenetmail@gmail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727381AbeHJUKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 16:10:47 -0400
+Received: from homer.simpson.net ([185.221.150.53]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0M2LZc-1g4TDi3fc4-00s7q6; Fri, 10
+ Aug 2018 19:39:46 +0200
+Message-ID: <1533922786.5083.7.camel@gmx.de>
+Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
+From:   Mike Galbraith <efault@gmx.de>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>
+Date:   Fri, 10 Aug 2018 19:39:46 +0200
+In-Reply-To: <20180810102846.GA31327@dhcp-128-65.nay.redhat.com>
+References: <1533737025.4936.3.camel@gmx.de>
+         <20180810084501.GA11901@dhcp-128-65.nay.redhat.com>
+         <20180810102846.GA31327@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:/d/hhCwU74g/0FJGvEYcS0kWO4QfeHayaCfQfDa1xJnPUPOVJ0b
+ F4177QIjaZOWayBusxkFxURQERC5dpXsnNiztyIUlzOQaVht2Avp4VHS0/JUBZoZCVu7itQ
+ C5ss+e3MKsW4FqYBMmXENgUJLOglNWdarbw9tS3nuBGaZANlHqb3rWq3UWPcydRhh1GJjQw
+ /a7vQgne3E7284TRuRLGg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5tv+BC+Ui1w=:RFvoORBrok85co5a8G1IkE
+ uvCn+3niVzF8Sk+Z6eGghkuE3FnHdyW9sGyG0mmHPQPe5CSwxXwjGmD1xXUOmf64InMw4QA4k
+ c2rX5OETNINEKYCQ6prpOD5+lwHnYB9wEjl02nJ5mYp3IBAQysmkHXMaDNRzTnUWQ+iLJKUJQ
+ DBvr2VgM+XFcddeUOu3c4NUCduVX/kqyBe4l1fBhGbArgLEZ9RCuulqW7d2zhHC0VPNwCJ5LW
+ toauu3z9D2H0SHeq/x7PSfekfOPZEv4ASyHlyt9D4GyLVtCwL5jUIiT7/a/a9d9FR2VGCX8MT
+ zYJqcEDiK/s8if76cClFNoHV2WGvIJ/61KrAjh5QrssD+IAivUWr6Ojf3km3d2CYezhAw9aTQ
+ RMc1SrJ7mQWoyGjKAtHU8N6dMa63qW1v3tmO1tylaON+PQqjPc2oEFDZUG9cqzzgsZfd4rXQF
+ hx4HgxMCnBxBdFdsKxoydcbs0Rqisomn4FPqSod9ssl3QrHRNco1yEibHZKE+Su+MzMuRy8Vf
+ ZghBcLXt/wJQ1TJTbcrfn/a0pgLGV8N3Odx9ZFsQeoeFBU0WDyXWE+4afIhLof5+dLs9Ru2/d
+ GvJpZAeqCt2mKetgtL9Sz3/s3zyUnX3Tg9DdTNhbX/MetN8sxbO9+t6ItrBxd+S2nsOTpRiCm
+ HHspUvMSr5EUOp2yaBJjazbWfb5FmvnxeLnX65dbQ+qMdywyAjfYFAinjxGalX6v/Dm9O7lHd
+ ARG0RphQQYKdXwXoIOMqY7C8LVM3uow8dnOntaSexbmaw4bsp1mZuF8CKWP99Rf3j1HkVQLBW
+ jFPRr+Y
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 5, 2018 at 5:27 PM Andreas F=C3=A4rber <afaerber@suse.de> wrote=
-:
->
-> This is to allow using serdev.
->
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  drivers/tty/serial/sc16is7xx.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7x=
-x.c
-> index 243c96025053..ad7267274f65 100644
-> --- a/drivers/tty/serial/sc16is7xx.c
-> +++ b/drivers/tty/serial/sc16is7xx.c
-> @@ -1213,9 +1213,31 @@ static int sc16is7xx_probe(struct device *dev,
->                         SC16IS7XX_IOCONTROL_SRESET_BIT);
->
->         for (i =3D 0; i < devtype->nr_uart; ++i) {
-> +#ifdef CONFIG_OF
-> +               struct device_node *np;
-> +               struct platform_device *pdev;
-> +               char name[6] =3D "uartx";
-> +#endif
-> +
->                 s->p[i].line            =3D i;
->                 /* Initialize port data */
-> +#ifdef CONFIG_OF
-> +               name[4] =3D '0' + i;
-> +               np =3D of_get_child_by_name(dev->of_node, name);
-> +               if (IS_ERR(np)) {
-> +                       ret =3D PTR_ERR(np);
-> +                       goto out_ports;
-> +               }
-> +               pdev =3D of_platform_device_create(np, NULL, dev);
+On Fri, 2018-08-10 at 18:28 +0800, Dave Young wrote:
+> 
+> > @@ -250,8 +253,10 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+> >  
+> >  #ifdef CONFIG_EFI
+> >  	/* Setup EFI state */
+> > -	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+> > +	ret = setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+> >  			efi_setup_data_offset);
+> > +	if (ret)
+> 
+> Here should check efi_enabled(EFI_BOOT) && ret
 
-Ideally, you would use of_platform_default_populate here. I think
-you'd have to add a compatible to the child nodes, but that wouldn't
-be a bad thing. I could envision that the child nodes ultimately
-become their own driver utilizing the standard 8250 driver and a
-compatible string would be needed in that case.
+Patch with that works for me.
 
-You'd then have to loop over each child of 'dev' instead of the DT nodes.
+> In case efi boot we need the efi info set correctly,  or one need pass
+> acpi_rsdp= in kernel cmdline param.
+> 
+> Still not sure how to allow one to workaround it by using acpi_rsdp=
+> param with kexec_file_load..
 
-> +               if (IS_ERR(pdev)) {
-> +                       ret =3D PTR_ERR(pdev);
-> +                       goto out_ports;
-> +               }
-> +               platform_set_drvdata(pdev, dev_get_drvdata(dev));
-> +               s->p[i].port.dev        =3D &pdev->dev;
-> +#else
->                 s->p[i].port.dev        =3D dev;
-> +#endif
->                 s->p[i].port.irq        =3D irq;
->                 s->p[i].port.type       =3D PORT_SC16IS7XX;
->                 s->p[i].port.fifosize   =3D SC16IS7XX_FIFO_SIZE;
+Does this improve things, and plug the no boot hole?
+
+x86, kdump: cleanup efi setup data handling a bit
+
+1. Remove efi specific variables from bzImage64_load() other than the
+one it needs, efi_map_sz, passing it and params_cmdline_sz on to efi
+setup functions, giving them all they need without duplication.
+
+2. Only allocate space for efi setup data when a 1:1 mapping is available.
+Bail early with -ENODEV if not available, but is required to boot, and
+acpi_rsdp= was not passed on the command line. 
+
+3. Use the proper config dependency to isolate efi setup functions,
+adding a !EFI_RUNTIME_MAP stub for setup_efi_state().
+
+4. Change efi functions that cannot fail to void. 
+
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+---
+ arch/x86/kernel/kexec-bzimage64.c |   99 +++++++++++++++++---------------------
+ 1 file changed, 45 insertions(+), 54 deletions(-)
+
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -112,35 +112,32 @@ static int setup_e820_entries(struct boo
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_EFI
+-static int setup_efi_info_memmap(struct boot_params *params,
++#ifdef CONFIG_EFI_RUNTIME_MAP
++static void setup_efi_info_memmap(struct boot_params *params,
+ 				  unsigned long params_load_addr,
+-				  unsigned int efi_map_offset,
++				  unsigned int params_cmdline_sz,
+ 				  unsigned int efi_map_sz)
+ {
+-	void *efi_map = (void *)params + efi_map_offset;
+-	unsigned long efi_map_phys_addr = params_load_addr + efi_map_offset;
++	void *efi_map = (void *)params + params_cmdline_sz;
++	unsigned long efi_map_phys_addr = params_load_addr + params_cmdline_sz;
+ 	struct efi_info *ei = &params->efi_info;
+ 
+-	if (!efi_map_sz)
+-		return -EINVAL;
+-
+ 	efi_runtime_map_copy(efi_map, efi_map_sz);
+ 
+ 	ei->efi_memmap = efi_map_phys_addr & 0xffffffff;
+ 	ei->efi_memmap_hi = efi_map_phys_addr >> 32;
+ 	ei->efi_memmap_size = efi_map_sz;
+-
+-	return 0;
+ }
+ 
+-static int
++static void
+ prepare_add_efi_setup_data(struct boot_params *params,
+-		       unsigned long params_load_addr,
+-		       unsigned int efi_setup_data_offset)
++			   unsigned long params_load_addr,
++			   unsigned int params_cmdline_sz,
++			   unsigned int efi_map_sz)
+ {
++	unsigned int data_offset = params_cmdline_sz + ALIGN(efi_map_sz, 16);
+ 	unsigned long setup_data_phys;
+-	struct setup_data *sd = (void *)params + efi_setup_data_offset;
++	struct setup_data *sd = (void *)params + data_offset;
+ 	struct efi_setup_data *esd = (void *)sd + sizeof(struct setup_data);
+ 
+ 	esd->fw_vendor = efi.fw_vendor;
+@@ -152,33 +149,20 @@ prepare_add_efi_setup_data(struct boot_p
+ 	sd->len = sizeof(struct efi_setup_data);
+ 
+ 	/* Add setup data */
+-	setup_data_phys = params_load_addr + efi_setup_data_offset;
++	setup_data_phys = params_load_addr + data_offset;
+ 	sd->next = params->hdr.setup_data;
+ 	params->hdr.setup_data = setup_data_phys;
+-
+-	return 0;
+ }
+ 
+ static int
+ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+-		unsigned int efi_map_offset, unsigned int efi_map_sz,
+-		unsigned int efi_setup_data_offset)
++		unsigned int params_cmdline_sz, unsigned int efi_map_sz)
+ {
+ 	struct efi_info *current_ei = &boot_params.efi_info;
+ 	struct efi_info *ei = &params->efi_info;
+-	int ret;
+-
+-	if (!current_ei->efi_memmap_size)
+-		return -EINVAL;
+ 
+-	/*
+-	 * If 1:1 mapping is not enabled, second kernel can not setup EFI
+-	 * and use EFI run time services. User space will have to pass
+-	 * acpi_rsdp=<addr> on kernel command line to make second kernel boot
+-	 * without efi.
+-	 */
+-	if (efi_enabled(EFI_OLD_MEMMAP) || !efi_enabled(EFI_RUNTIME_SERVICES))
+-		return -ENODEV;
++	if (!efi_map_sz || !current_ei->efi_memmap_size)
++		return efi_map_sz ? -EINVAL : 0;
+ 
+ 	ei->efi_loader_signature = current_ei->efi_loader_signature;
+ 	ei->efi_systab = current_ei->efi_systab;
+@@ -187,21 +171,24 @@ setup_efi_state(struct boot_params *para
+ 	ei->efi_memdesc_version = current_ei->efi_memdesc_version;
+ 	ei->efi_memdesc_size = efi_get_runtime_map_desc_size();
+ 
+-	ret = setup_efi_info_memmap(params, params_load_addr, efi_map_offset,
++	setup_efi_info_memmap(params, params_load_addr, params_cmdline_sz,
+ 			      efi_map_sz);
+-	if (ret)
+-		return ret;
+-	prepare_add_efi_setup_data(params, params_load_addr,
+-				   efi_setup_data_offset);
++	prepare_add_efi_setup_data(params, params_load_addr, params_cmdline_sz,
++				   efi_map_sz);
+ 	return 0;
+ }
+-#endif /* CONFIG_EFI */
++#else /* !CONFIG_EFI_RUNTIME_MAP */
++static int
++setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
++		unsigned int params_cmdline_sz, unsigned int efi_map_sz)
++{ return 0; }
++#endif /* CONFIG_EFI_RUNTIME_MAP */
+ 
+ static int
+ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+ 		      unsigned long params_load_addr,
+-		      unsigned int efi_map_offset, unsigned int efi_map_sz,
+-		      unsigned int efi_setup_data_offset)
++		      unsigned int params_cmdline_sz,
++		      unsigned int efi_map_sz)
+ {
+ 	unsigned int nr_e820_entries;
+ 	unsigned long long mem_k, start, end;
+@@ -251,13 +238,9 @@ setup_boot_parameters(struct kimage *ima
+ 		}
+ 	}
+ 
+-#ifdef CONFIG_EFI
+-	/* Setup EFI state */
+-	ret = setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+-			efi_setup_data_offset);
+-	if (efi_enabled(EFI_BOOT) && ret)
++	ret = setup_efi_state(params, params_load_addr, params_cmdline_sz, efi_map_sz);
++	if (ret)
+ 		return ret;
+-#endif
+ 
+ 	/* Setup EDD info */
+ 	memcpy(params->eddbuf, boot_params.eddbuf,
+@@ -343,7 +326,7 @@ static void *bzImage64_load(struct kimag
+ 	struct kexec_entry64_regs regs64;
+ 	void *stack;
+ 	unsigned int setup_hdr_offset = offsetof(struct boot_params, hdr);
+-	unsigned int efi_map_offset, efi_map_sz, efi_setup_data_offset;
++	unsigned int efi_map_sz = 0;
+ 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+ 				  .top_down = true };
+ 	struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
+@@ -402,19 +385,28 @@ static void *bzImage64_load(struct kimag
+ 	 * have to create separate segment for each. Keeps things
+ 	 * little bit simple
+ 	 */
+-	efi_map_sz = efi_get_runtime_map_size();
+ 	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
+ 				MAX_ELFCOREHDR_STR_LEN;
+ 	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
+-	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
+-				sizeof(struct setup_data) +
+-				sizeof(struct efi_setup_data);
++	kbuf.bufsz = params_cmdline_sz + sizeof(struct setup_data);
++
++	/*
++	 * If a 1:1 mapping does not exist, the second kernel cannot setup
++	 * and use EFI run time services, user space will have to pass
++	 * acpi_rsdp=<addr> on the kernel command line to make the second
++	 * kernel boot without efi.  Allocate space for efi setup data if
++	 * this constraint is met, bail if not, but is required to boot,
++	 * and acpi_rsdp=<addr> was not passed on the command line.
++	 */
++	if (efi_enabled(EFI_RUNTIME_SERVICES) && !efi_enabled(EFI_OLD_MEMMAP)) {
++		efi_map_sz = efi_get_runtime_map_size();
++		kbuf.bufsz += ALIGN(efi_map_sz, 16) + sizeof(struct efi_setup_data);
++	} else if (efi_enabled(EFI_BOOT) && !strstr(cmdline, "acpi_rsdp="))
++		return ERR_PTR(-ENODEV);
+ 
+ 	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
+ 	if (!params)
+ 		return ERR_PTR(-ENOMEM);
+-	efi_map_offset = params_cmdline_sz;
+-	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
+ 
+ 	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
+ 	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
+@@ -494,8 +486,7 @@ static void *bzImage64_load(struct kimag
+ 		goto out_free_params;
+ 
+ 	ret = setup_boot_parameters(image, params, bootparam_load_addr,
+-				    efi_map_offset, efi_map_sz,
+-				    efi_setup_data_offset);
++				    params_cmdline_sz, efi_map_sz);
+ 	if (ret)
+ 		goto out_free_params;
+ 
+
