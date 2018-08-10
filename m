@@ -2,298 +2,387 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A22AC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1964C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E448E223EA
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E448E223EA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CB57223FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:01:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdFwhEcR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB57223FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeHJMYB (ORCPT
+        id S1727530AbeHJMa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 08:24:01 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:12148 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbeHJMYA (ORCPT
+        Fri, 10 Aug 2018 08:30:28 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46738 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbeHJMa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 08:24:00 -0400
-Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Fri, 10 Aug 2018
- 17:54:51 +0800
-From:   Jian Hu <jian.hu@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
-Date:   Fri, 10 Aug 2018 17:54:28 +0800
-Message-ID: <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
-References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+        Fri, 10 Aug 2018 08:30:27 -0400
+Received: by mail-oi0-f65.google.com with SMTP id y207-v6so14784879oie.13
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 03:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=JkrsEBtrFw5jbMiFaE6wHs/1Etc/wqwYmGpa3QKg0Hk=;
+        b=AdFwhEcRSmDtGqG+QgSJwqoKWRM1vTn1aUt/fToZRMf+KtwkRlD1ZKcLc3QGVpc8P5
+         qCLdvREOI8/ckETJSx6Nx7RT/SNPGpXaDAwa2wm+oYIwzghobaymUiFgoIMZW37cq17x
+         nsocY4rld955pclzi2Al22gJtz3Dwbesg2IyvXzEahF9/nvMvJQlPWSMDT9g1r4WzbTV
+         T41NiryxniTFkRq+AazGADdL3Cg1JNJt7LofKKprvO8sixqO5MKVi3BEae5II6tmiBnb
+         mM2pH0xEt7z/fwjnHvI9i0DzL4Vd85g+ay7gpUQ4h7utEvMFZ1hZSXETcfPGaRcjs8fM
+         zrnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=JkrsEBtrFw5jbMiFaE6wHs/1Etc/wqwYmGpa3QKg0Hk=;
+        b=cbZm3JwKTmHKavzI/QIWIkHBfGZoNSIODC0MfNw8IwCQ0V/n9t9OIb84qyZYXK8hbq
+         fZ/3oYFPnouVcnJsce84+bHxlommv2iRb2TnivAC1jLHZxnzlYLXIwoge3Rne+gA2ReY
+         8XtoXNEQB1jtmvdmQD9y+BkH3BE9++Ha3P9Z7SyVUMgE5rMjfAZ1fhvtOCG3gR5HW6od
+         0kri5xFz7s6MB270s/ZmuFOp9y2QQOEfhXE65gQq+o9mRLIO1KRB9ktALj5PfOieGDox
+         immT7iQTWxb+laI85yJztABGhprGWyKEtbbS5Z52jD3aroJSZVt5T6kQJbHWRiWOi8XB
+         6RRQ==
+X-Gm-Message-State: AOUpUlHAmtlAskS5DgihuYbk4xxBzGMr9T4NLz0mKcGrZb5/sTHnELsx
+        LCG9vIo19GFUT1fWJNkFYCmge0O9MRkYScW2030=
+X-Google-Smtp-Source: AA+uWPyrCLgQqnQ/yqe6voOAjC5GPGzqawIbBEMco/ngBPNWEBv0H9drleU5y3XkpjE/Mi1Aw4cIMswON6EWvxpaAp0=
+X-Received: by 2002:aca:3ad4:: with SMTP id h203-v6mr5686952oia.294.1533895276420;
+ Fri, 10 Aug 2018 03:01:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.28.8.25]
+Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 03:01:15
+ -0700 (PDT)
+In-Reply-To: <f5e38b8b-33e3-33a5-6176-175f6149f561@arm.com>
+References: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com>
+ <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com> <CAKTKpr6HfLtkeertCyfA_vJt2rXi5qFOKKXohLfX1Z9QiK=Uvw@mail.gmail.com>
+ <b7472748-8169-7628-11e5-471045cdf1de@arm.com> <CAKTKpr79N2VBixzGNZUt7XNav7vw3CtSgUTtTgu6rPQDEjv5NQ@mail.gmail.com>
+ <f5e38b8b-33e3-33a5-6176-175f6149f561@arm.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Fri, 10 Aug 2018 15:31:15 +0530
+Message-ID: <CAKTKpr6DwC7Rx6=-VRXw+CvRYX5QzhwtT5W9Qwno5KmBxVw7og@mail.gmail.com>
+Subject: Re: [PATCH] iommu/iova: Optimise attempts to allocate iova from 32bit
+ address range
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
+        jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a Clock driver for the ALways-On part
-of the Amlogic Meson-G12A SoC.
+On Fri, Aug 10, 2018 at 3:19 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 10/08/18 10:24, Ganapatrao Kulkarni wrote:
+>>
+>> Hi Robin,
+>>
+>> On Fri, Aug 10, 2018 at 2:13 AM, Robin Murphy <robin.murphy@arm.com>
+>> wrote:
+>>>
+>>> On 2018-08-09 6:49 PM, Ganapatrao Kulkarni wrote:
+>>>>
+>>>>
+>>>> Hi Robin,
+>>>>
+>>>> On Thu, Aug 9, 2018 at 9:54 PM, Robin Murphy <robin.murphy@arm.com>
+>>>> wrote:
+>>>>>
+>>>>>
+>>>>> On 07/08/18 09:54, Ganapatrao Kulkarni wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> As an optimisation for PCI devices, there is always first attempt
+>>>>>> been made to allocate iova from SAC address range. This will lead
+>>>>>> to unnecessary attempts/function calls, when there are no free ranges
+>>>>>> available.
+>>>>>>
+>>>>>> This patch optimises by adding flag to track previous failed attempts
+>>>>>> and avoids further attempts until replenish happens.
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> Agh, what I overlooked is that this still suffers from the original
+>>>>> problem,
+>>>>> wherein a large allocation which fails due to fragmentation then blocks
+>>>>> all
+>>>>> subsequent smaller allocations, even if they may have succeeded.
+>>>>>
+>>>>> For a minimal change, though, what I think we could do is instead of
+>>>>> just
+>>>>> having a flag, track the size of the last 32-bit allocation which
+>>>>> failed.
+>>>>> If
+>>>>> we're happy to assume that nobody's likely to mix aligned and unaligned
+>>>>> allocations within the same domain, then that should be sufficiently
+>>>>> robust
+>>>>> whilst being no more complicated than this version, i.e. (modulo
+>>>>> thinking
+>>>>> up
+>>>>> a better name for it):
+>>>>
+>>>>
+>>>>
+>>>> I agree, it would be better to track size and attempt to allocate for
+>>>> smaller chunks, if not for bigger one.
+>>>>
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>>>>>> ---
+>>>>>> This patch is based on comments from Robin Murphy
+>>>>>> <robin.murphy@arm.com>
+>>>>>> for patch [1]
+>>>>>>
+>>>>>> [1] https://lkml.org/lkml/2018/4/19/780
+>>>>>>
+>>>>>>     drivers/iommu/iova.c | 11 ++++++++++-
+>>>>>>     include/linux/iova.h |  1 +
+>>>>>>     2 files changed, 11 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+>>>>>> index 83fe262..d97bb5a 100644
+>>>>>> --- a/drivers/iommu/iova.c
+>>>>>> +++ b/drivers/iommu/iova.c
+>>>>>> @@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned
+>>>>>> long granule,
+>>>>>>           iovad->granule = granule;
+>>>>>>           iovad->start_pfn = start_pfn;
+>>>>>>           iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
+>>>>>> +       iovad->free_32bit_pfns = true;
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>           iovad->max_32bit_free = iovad->dma_32bit_pfn;
+>>>>>
+>>>>>>           iovad->flush_cb = NULL;
+>>>>>>           iovad->fq = NULL;
+>>>>>>           iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
+>>>>>> @@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain
+>>>>>> *iovad, struct iova *free)
+>>>>>>           cached_iova = rb_entry(iovad->cached32_node, struct iova,
+>>>>>> node);
+>>>>>>           if (free->pfn_hi < iovad->dma_32bit_pfn &&
+>>>>>> -           free->pfn_lo >= cached_iova->pfn_lo)
+>>>>>> +           free->pfn_lo >= cached_iova->pfn_lo) {
+>>>>>>                   iovad->cached32_node = rb_next(&free->node);
+>>>>>> +               iovad->free_32bit_pfns = true;
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>                   iovad->max_32bit_free = iovad->dma_32bit_pfn;
+>>>>
+>>>>
+>>>>
+>>>> i think, you intended to say,
+>>>>     iovad->max_32bit_free += (free->pfn_hi - free->pfn_lo);
+>>>
+>>>
+>>>
+>>> Nope, that's why I said it needed a better name ;)
+>>>
+>>> (I nearly called it last_failed_32bit_alloc_size, but that's a bit much)
+>>
+>>
+>> may be we can name it "max32_alloc_size"?
+>>>
+>>>
+>>> The point of this value (whetever it's called) is that at any given time
+>>> it
+>>> holds an upper bound on the size of the largest contiguous free area. It
+>>> doesn't have to be the *smallest* upper bound, which is why we can keep
+>>> things simple and avoid arithmetic - in realistic use-cases like yours
+>>> when
+>>> the allocations are a pretty constant size, this should work out directly
+>>> equivalent to the boolean, only with values of "size" and "dma_32bit_pfn"
+>>> instead of 0 and 1, so we don't do any more work than necessary. In the
+>>> edge
+>>> cases where allocations are all different sizes, it does mean that we
+>>> will
+>>> probably end up performing more failing allocations than if we actually
+>>> tried to track all of the free space exactly, but I think that's
+>>> reasonable
+>>> - just because I want to make sure we handle such cases fairly
+>>> gracefully,
+>>> doesn't mean that we need to do extra work on the typical fast path to
+>>> try
+>>> and actually optimise for them (which is why I didn't really like the
+>>> accounting implementation I came up with).
+>>>
+>>
+>> ok got it, thanks for the explanation.
+>>>>>
+>>>>>
+>>>>>> +       }
+>>>>>>           cached_iova = rb_entry(iovad->cached_node, struct iova,
+>>>>>> node);
+>>>>>>           if (free->pfn_lo >= cached_iova->pfn_lo)
+>>>>>> @@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned
+>>>>>> long
+>>>>>> size,
+>>>>>>           struct iova *new_iova;
+>>>>>>           int ret;
+>>>>>>     +     if (limit_pfn <= iovad->dma_32bit_pfn &&
+>>>>>> +                       !iovad->free_32bit_pfns)
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>                           size >= iovad->max_32bit_free)
+>>>>>
+>>>>>> +               return NULL;
+>>>>>> +
+>>>>>>           new_iova = alloc_iova_mem();
+>>>>>>           if (!new_iova)
+>>>>>>                   return NULL;
+>>>>>> @@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned
+>>>>>> long
+>>>>>> size,
+>>>>>>           if (ret) {
+>>>>>>                   free_iova_mem(new_iova);
+>>>>>> +               if (limit_pfn <= iovad->dma_32bit_pfn)
+>>>>>> +                       iovad->free_32bit_pfns = false;
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>                           iovad->max_32bit_free = size;
+>>>>
+>>>>
+>>>>
+>>>> same here, we should decrease available free range after successful
+>>>> allocation.
+>>>> iovad->max_32bit_free -= size;
+>>>
+>>>
+>>>
+>>> Equivalently, the simple assignment is strictly decreasing the upper
+>>> bound
+>>> already, since we can only get here if size < max_32bit_free in the first
+>>> place. One more thing I've realised is that this is all potentially a bit
+>>> racy as we're outside the lock here, so it might need to be pulled into
+>>> __alloc_and_insert_iova_range(), something like the rough diff below
+>>> (name
+>>> changed again for the sake of it; it also occurs to me that we don't
+>>> really
+>>> need to re-check limit_pfn in the failure path either, because even a
+>>> 64-bit
+>>> allocation still has to walk down through the 32-bit space in order to
+>>> fail
+>>> completely)
+>>>
+>>>>>
+>>>>> What do you think?
+>>>>
+>>>>
+>>>>
+>>>> most likely this should work, i will try this and confirm at the
+>>>> earliest,
+>>>
+>>>
+>>>
+>>> Thanks for sticking with this.
+>>>
+>>> Robin.
+>>>
+>>> ----->8-----
+>>>
+>>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+>>> index 83fe2621effe..7cbc58885877 100644
+>>> --- a/drivers/iommu/iova.c
+>>> +++ b/drivers/iommu/iova.c
+>>> @@ -190,6 +190,10 @@ static int __alloc_and_insert_iova_range(struct
+>>> iova_domain *iovad,
+>>>
+>>>          /* Walk the tree backwards */
+>>>          spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+>>> +       if (limit_pfn <= iovad->dma_32bit_pfn &&
+>>> +           size >= iovad->failed_alloc_size)
+>>> +               goto out_err;
+>>> +
+>>>          curr = __get_cached_rbnode(iovad, limit_pfn);
+>>>          curr_iova = rb_entry(curr, struct iova, node);
+>>>          do {
+>>> @@ -200,10 +204,8 @@ static int __alloc_and_insert_iova_range(struct
+>>> iova_domain *iovad,
+>>>                  curr_iova = rb_entry(curr, struct iova, node);
+>>>          } while (curr && new_pfn <= curr_iova->pfn_hi);
+>>>
+>>> -       if (limit_pfn < size || new_pfn < iovad->start_pfn) {
+>>> -               spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+>>> -               return -ENOMEM;
+>>> -       }
+>>> +       if (limit_pfn < size || new_pfn < iovad->start_pfn)
+>>> +               goto out_err;
+>>>
+>>>          /* pfn_lo will point to size aligned address if size_aligned is
+>>> set
+>>> */
+>>>          new->pfn_lo = new_pfn;
+>>> @@ -214,9 +216,12 @@ static int __alloc_and_insert_iova_range(struct
+>>> iova_domain *iovad,
+>>>          __cached_rbnode_insert_update(iovad, new);
+>>>
+>>>          spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+>>> -
+>>> -
+>>>          return 0;
+>>> +
+>>> +out_err:
+>>> +       iovad->failed_alloc_size = size;
+>>> +       spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+>>> +       return -ENOMEM;
+>>>   }
+>>>
+>>>   static struct kmem_cache *iova_cache;
+>>
+>>
+>>
+>> cant we bump up the size when ranges are freed? otherwise we never be
+>> able to attempt in 32bit range, even there is enough replenish.
+>
+>
+> Oh, I just left that part out of the example for clarity, since it's already
+> under the lock - I didn't mean to suggest that that we should remove it!
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- drivers/clk/meson/Makefile     |   2 +-
- drivers/clk/meson/g12a-aoclk.c | 170 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/g12a-aoclk.h |  36 +++++++++
- 3 files changed, 207 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/g12a-aoclk.c
- create mode 100644 drivers/clk/meson/g12a-aoclk.h
+ok, thanks
+>
+> (I was just too lazy to actually apply your patch to generate a real diff on
+> top of it)
+>
+no problem, i will post next version at the earliest.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 2b1a562..d5c2dcd 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -9,5 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
--obj-$(CONFIG_COMMON_CLK_G12A)	 += g12a.o
-+obj-$(CONFIG_COMMON_CLK_G12A)	 += g12a.o g12a-aoclk.c
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-new file mode 100644
-index 0000000..a5cd95c
---- /dev/null
-+++ b/drivers/clk/meson/g12a-aoclk.c
-@@ -0,0 +1,170 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Amlogic Meson-G12A Clock Controller Driver
-+ *
-+ * Copyright (c) 2016 Baylibre SAS.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Jian Hu <jian.hu@amlogic.com>
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/init.h>
-+#include "clkc.h"
-+#include "g12a-aoclk.h"
-+
-+#define G12A_AO_GATE0(_name, _bit)					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = (AO_CLK_GATE0),			\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name "_ao",					\
-+		.ops = &clk_regmap_gate_ops,				\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+	},								\
-+}
-+
-+G12A_AO_GATE0(ahb_bus,		0);
-+G12A_AO_GATE0(remote,		1);
-+G12A_AO_GATE0(i2c_master,	2);
-+G12A_AO_GATE0(i2c_slave,	3);
-+G12A_AO_GATE0(uart1,		4);
-+G12A_AO_GATE0(prod_i2c,		5);
-+G12A_AO_GATE0(uart2,		6);
-+G12A_AO_GATE0(ir_blaster,	7);
-+G12A_AO_GATE0(saradc,		8);
-+
-+static struct clk_regmap ao_clk81 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTI_PWR_CNTL_REG0,
-+		.mask = 0x1,
-+		.shift = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_clk81",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap g12a_saradc_mux = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_SAR_CLK,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "g12a_saradc_mux",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap g12a_saradc_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = AO_SAR_CLK,
-+		.shift = 0,
-+		.width = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "g12a_saradc_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "g12a_saradc_mux" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap g12a_saradc_gate = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = AO_SAR_CLK,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "g12a_saradc_gate",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "g12a_saradc_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static unsigned int g12a_aoclk_reset[] = {
-+	[RESET_AO_REMOTE] =	16,
-+	[RESET_AO_UART1] =	17,
-+	[RESET_AO_I2C_MASTER] = 18,
-+	[RESET_AO_I2C_SLAVE] =	19,
-+	[RESET_AO_SARADC] =	20,
-+	[RESET_AO_UART2] =	22,
-+	[RESET_AO_IR_BLASTER] = 23,
-+};
-+
-+static struct clk_regmap *g12a_aoclk_regmap[] = {
-+	[CLKID_AO_AHB_BUS]	= &ahb_bus_ao,
-+	[CLKID_AO_REMOTE]	= &remote_ao,
-+	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
-+	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
-+	[CLKID_AO_UART1]	= &uart1_ao,
-+	[CLKID_AO_PROD_I2C]	= &prod_i2c_ao,
-+	[CLKID_AO_UART2]	= &uart2_ao,
-+	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
-+	[CLKID_AO_SAR_ADC]	= &saradc_ao,
-+	[CLKID_AO_CLK81]	= &ao_clk81,
-+	[CLKID_AO_SAR_ADC_SEL]	= &g12a_saradc_mux,
-+	[CLKID_AO_SAR_ADC_DIV]	= &g12a_saradc_div,
-+	[CLKID_AO_SAR_ADC_CLK]	= &g12a_saradc_gate,
-+};
-+
-+static struct clk_hw_onecell_data g12a_aoclk_onecell_data = {
-+	.hws = {
-+		[CLKID_AO_AHB_BUS]	= &ahb_bus_ao.hw,
-+		[CLKID_AO_REMOTE]	= &remote_ao.hw,
-+		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
-+		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
-+		[CLKID_AO_UART1]	= &uart1_ao.hw,
-+		[CLKID_AO_PROD_I2C]	= &prod_i2c_ao.hw,
-+		[CLKID_AO_UART2]	= &uart2_ao.hw,
-+		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
-+		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
-+		[CLKID_AO_CLK81]	= &ao_clk81.hw,
-+		[CLKID_AO_SAR_ADC_SEL]	= &g12a_saradc_mux.hw,
-+		[CLKID_AO_SAR_ADC_DIV]	= &g12a_saradc_div.hw,
-+		[CLKID_AO_SAR_ADC_CLK]	= &g12a_saradc_gate.hw,
-+	},
-+	.num = NR_CLKS,
-+};
-+
-+static struct meson_aoclk_data g12a_aoclkc_data = {
-+	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
-+	.num_reset	= ARRAY_SIZE(g12a_aoclk_reset),
-+	.reset		= g12a_aoclk_reset,
-+	.num_clks	= ARRAY_SIZE(g12a_aoclk_regmap),
-+	.clks		= g12a_aoclk_regmap,
-+	.hw_data	= &g12a_aoclk_onecell_data,
-+};
-+
-+static const struct of_device_id g12a_aoclkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,g12a-aoclkc",
-+		.data		= &g12a_aoclkc_data,
-+	},
-+	{ }
-+};
-+
-+static struct platform_driver g12a_aoclkc_driver = {
-+	.probe		= meson_aoclkc_probe,
-+	.driver		= {
-+		.name	= "g12a-aoclkc",
-+		.of_match_table = g12a_aoclkc_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(g12a_aoclkc_driver);
-diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
-new file mode 100644
-index 0000000..007183e
---- /dev/null
-+++ b/drivers/clk/meson/g12a-aoclk.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Jian Hu <Jian.Hu@amlogic.com>
-+ */
-+
-+#ifndef __G12A_AOCLKC_H
-+#define __G12A_AOCLKC_H
-+
-+//#include "meson-aoclk.h"
-+
-+#define NR_CLKS				14
-+
-+/* AO Configuration Clock registers offsets
-+ * Register offsets from the data sheet must be multiplied by 4.
-+ */
-+#define AO_RTI_PWR_CNTL_REG0		0x10
-+#define AO_RTI_GEN_CNTL_REG0		0x40
-+#define AO_OSCIN_CNTL			0x58
-+#define AO_CRT_CLK_CNTL1		0x68
-+#define AO_SAR_CLK			0x90
-+#define AO_RTC_ALT_CLK_CNTL0		0x94
-+#define AO_RTC_ALT_CLK_CNTL1		0x98
-+
-+/*
-+ *AO CLK81 gate clocks
-+ */
-+#define AO_CLK_GATE0			0x4c
-+
-+#include <dt-bindings/clock/g12a-aoclkc.h>
-+#include <dt-bindings/reset/g12a-aoclkc.h>
-+
-+#endif /* __G12A_AOCLKC_H */
--- 
-1.9.1
+> Robin.
+>
+>
+>>
+>>
+>> @@ -139,8 +139,10 @@ __cached_rbnode_delete_update(struct iova_domain
+>> *iovad, struct iova *free)
+>>
+>>          cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
+>>          if (free->pfn_hi < iovad->dma_32bit_pfn &&
+>> -           free->pfn_lo >= cached_iova->pfn_lo)
+>> +           free->pfn_lo >= cached_iova->pfn_lo) {
+>>                  iovad->cached32_node = rb_next(&free->node);
+>> +               iovad->failed_alloc_size += (free->pfn_hi - free->pfn_lo);
+>> +       }
+>>
+>
 
+thanks
+Ganapat
