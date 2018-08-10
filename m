@@ -2,175 +2,93 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 766D2C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03124C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BC522429
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:45:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BC522429
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 9FE5C22428
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:51:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAwjnDgK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE5C22428
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbeHJUQg (ORCPT
+        id S1728396AbeHJUWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:16:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51232 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727493AbeHJUQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:16:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B99E8ADAB;
-        Fri, 10 Aug 2018 17:45:43 +0000 (UTC)
-Subject: Re: [RFC] serial: sc16is7xx: Use DT sub-nodes for UART ports
-To:     Rob Herring <robh@kernel.org>
-Cc:     SERIAL DRIVERS <linux-serial@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, jringle@gridpoint.com,
-        Michael Allwright <allsey87@gmail.com>,
-        Jakub Kicinski <kubakici@wp.pl>, liuxuenetmail@gmail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CAL_JsqKNnfgESG6ON95D7nD8VNrcVy7-x6cGGnae_GbbGKAuPQ@mail.gmail.com>
- <20180805232651.10605-1-afaerber@suse.de>
- <CAL_Jsq+f5VMWZg9GNF=e-UmFjcjbVnE7Dr0EBF56E6gUrdTnuQ@mail.gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <0aa77961-fe60-6afe-e6c5-d2db4250cb22@suse.de>
-Date:   Fri, 10 Aug 2018 19:45:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 16:22:32 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33625 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728142AbeHJUWc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 16:22:32 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r24-v6so2076067wmh.0;
+        Fri, 10 Aug 2018 10:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kPSVhjfaOxOd+GxbIJMoV0BYyps/tceCOxFgDKuLtbI=;
+        b=nAwjnDgKJogxei4HaELzKQHeXP/BV87J0pK1KQHEVg0cCda1rsIisGECzv5ynwFaFb
+         eeC4Es9ZJbTNwwaBmH6Aci2YTsfZahv7pYWaUsMLVGNBW5kzOnZ0mWmv/ZjtL7lY4+6m
+         gD9haKtr4d+Xx1OXdxs6n7nsYJpbbJEOulOQ0pMSSn+pYycZebBamLUGcvop5Jv4Hh2M
+         fPVe6Oabz76auxv9tNSEGViX7uMOWNlO2yN99oEhSx788X/r+ayW/fPbEq0kHnaflmWk
+         xTU9rTRoXVNs2iUF91ml5rJiibs5pB9KUY3AyjxV1tYsGhQkTHQ3i6UCHhflu/r8TjbT
+         //gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kPSVhjfaOxOd+GxbIJMoV0BYyps/tceCOxFgDKuLtbI=;
+        b=iMuZKnGigexVQCrbqAB4FB/lE+DeSGhzRUgsAb13coZTWMRMs7k9Ct5lBaXU4R+Qpp
+         L1sRaqqpr6zNWdiJaNrudPeBFgt7qCSmn3KSQncUocM7z3YWuQQCNsy8zgwy0/gCnghz
+         DhWVgCXQjzWOu2QQLRGekbjCjYSvYILEOGgOsEF5Hu3pbNon13MGekDIMLFdfVXG53t7
+         dejJSeZRtcMQe4fySgoSmoyXhBEnZ+hAXfFkA9n3JY8iQWBfgbhVwZeL6vmvbQgHbk+m
+         VPmIJWEwjVMk1Sp03hMDaNwW0AKNVGR8LCDEYpk4rtd+yRiFluytmkfWf4PYCWfjBjW4
+         u1sw==
+X-Gm-Message-State: AOUpUlGZGkXkkY5/uf4dskVYC46/3MM8Ow9Zg+cs30ZUDZ4F23n4PXLx
+        5EF4JFvhHw0B8lwGY+5HZAdmospRleLA9wgYZFY=
+X-Google-Smtp-Source: AA+uWPxs8UVigLbD2EOvTcVzPxM++OJq+Z9QpCPjzlZbrqE9ED9usTsYEafUTnTQoJAhsDaMr8IyJT14iDJZ7q70iXY=
+X-Received: by 2002:a1c:adca:: with SMTP id w193-v6mr1988696wme.147.1533923500115;
+ Fri, 10 Aug 2018 10:51:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+f5VMWZg9GNF=e-UmFjcjbVnE7Dr0EBF56E6gUrdTnuQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180809052328.27942-1-me@tobin.cc> <20180809060734.rtqqu4sexbwzuqmm@ast-mbp>
+ <20180809072753.GF32374@eros> <80bdc251-9f57-602f-6536-b34651684bb7@iogearbox.net>
+ <20180810014636.GJ32374@eros> <20180810065752.2ab5473d@lwn.net>
+In-Reply-To: <20180810065752.2ab5473d@lwn.net>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 10 Aug 2018 10:51:28 -0700
+Message-ID: <CAADnVQL-ekJXQoP+Peuh1uBJ1RGxMJ0G0DVp-UoGcWOY9BATeQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Tobin C. Harding" <me@tobin.cc>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 10.08.2018 um 19:34 schrieb Rob Herring:
-> On Sun, Aug 5, 2018 at 5:27 PM Andreas Färber <afaerber@suse.de> wrote:
->>
->> This is to allow using serdev.
->>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>  drivers/tty/serial/sc16is7xx.c | 25 +++++++++++++++++++++++++
->>  1 file changed, 25 insertions(+)
->>
->> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
->> index 243c96025053..ad7267274f65 100644
->> --- a/drivers/tty/serial/sc16is7xx.c
->> +++ b/drivers/tty/serial/sc16is7xx.c
->> @@ -1213,9 +1213,31 @@ static int sc16is7xx_probe(struct device *dev,
->>                         SC16IS7XX_IOCONTROL_SRESET_BIT);
->>
->>         for (i = 0; i < devtype->nr_uart; ++i) {
->> +#ifdef CONFIG_OF
->> +               struct device_node *np;
->> +               struct platform_device *pdev;
->> +               char name[6] = "uartx";
->> +#endif
->> +
->>                 s->p[i].line            = i;
->>                 /* Initialize port data */
->> +#ifdef CONFIG_OF
->> +               name[4] = '0' + i;
->> +               np = of_get_child_by_name(dev->of_node, name);
->> +               if (IS_ERR(np)) {
->> +                       ret = PTR_ERR(np);
->> +                       goto out_ports;
->> +               }
->> +               pdev = of_platform_device_create(np, NULL, dev);
-> 
-> Ideally, you would use of_platform_default_populate here. I think
-> you'd have to add a compatible to the child nodes, but that wouldn't
-> be a bad thing. I could envision that the child nodes ultimately
-> become their own driver utilizing the standard 8250 driver and a
-> compatible string would be needed in that case.
+On Fri, Aug 10, 2018 at 5:57 AM Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> The objective actually is to have SPDX tags in all files in the kernel.
+> That includes documentation, even though people, as always, care less
+> about the docs than they do the code.
 
-Separate compatibles would mean separate drivers.
-
-Unlike your DUART example this is not an MMIO device that we can easily
-split but a SPI slave (well, regmap due to some I2C models).
-
-I don't see how separate drivers could work, given that the whole
-spi_device has a single interrupt for all functions of this device.
-
-That left me with this ugly but working construct.
-
-Is the uartX naming correct, or should it be serialX?
-
-Regards,
-Andreas
-
-> 
-> You'd then have to loop over each child of 'dev' instead of the DT nodes.
-> 
->> +               if (IS_ERR(pdev)) {
->> +                       ret = PTR_ERR(pdev);
->> +                       goto out_ports;
->> +               }
->> +               platform_set_drvdata(pdev, dev_get_drvdata(dev));
->> +               s->p[i].port.dev        = &pdev->dev;
->> +#else
->>                 s->p[i].port.dev        = dev;
->> +#endif
->>                 s->p[i].port.irq        = irq;
->>                 s->p[i].port.type       = PORT_SC16IS7XX;
->>                 s->p[i].port.fifosize   = SC16IS7XX_FIFO_SIZE;
-
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+right, but let's do that as a separate patch set.
+In the current set I'd focus on reviewing the actual doc changes.
+In particular completely removing
+Documentation/networking/filter.txt
+feels wrong, since lots of websites point directly there.
+Can we have at least few words there pointing to new location?
