@@ -2,163 +2,96 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934C8C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DDCC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3824E223C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:44:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3824E223C6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acceis.fr
+	by mail.kernel.org (Postfix) with ESMTP id D05C3223E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:44:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05C3223E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbeHJROM (ORCPT
+        id S1728336AbeHJROy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:14:12 -0400
-Received: from smtpout13.r2.mail-out.ovh.net ([54.36.141.13]:48739 "EHLO
-        smtpout13.r2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727635AbeHJROM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:14:12 -0400
-X-Greylist: delayed 445 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Aug 2018 13:14:12 EDT
-Received: from ex.mail.ovh.net (unknown [10.109.160.219])
-        by mo512.mail-out.ovh.net (Postfix) with SMTP id A036A3E07F3E;
-        Fri, 10 Aug 2018 16:36:35 +0200 (CEST)
-Date:   Fri, 10 Aug 2018 16:36:33 +0200
-From:   Virgile Jarry <virgile@acceis.fr>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ICMPv6: Add icmp_echo_ignore_all support for ICMPv6
-Message-ID: <20180810143633.GA14235@_>
+        Fri, 10 Aug 2018 13:14:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43360 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727477AbeHJROy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 13:14:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F111B03F;
+        Fri, 10 Aug 2018 14:44:35 +0000 (UTC)
+Subject: Re: [PATCH 06/10] x86/paravirt: introduce new config option
+ PARAVIRT_XXL
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org
+Cc:     akataria@vmware.com, rusty@rustcorp.com.au, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com
+References: <20180810115252.18213-1-jgross@suse.com>
+ <20180810115252.18213-7-jgross@suse.com>
+ <cdb31666-f4ca-4a5c-6961-c6e92da722c1@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <080a3358-98eb-c5db-b316-edcc74d938c4@suse.com>
+Date:   Fri, 10 Aug 2018 16:44:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [85.170.142.139]
-X-ClientProxiedBy: CAS04.indiv.local (172.16.1.4) To MBX005.indiv.local
- (172.16.2.5)
-X-Ovh-Tracer-Id: 11742010130889670815
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrtdeigdektdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+In-Reply-To: <cdb31666-f4ca-4a5c-6961-c6e92da722c1@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preventing the kernel from responding to ICMP Echo Requests messages
-can be useful in several ways. The sysctl parameter
-'icmp_echo_ignore_all' can be used to prevent the kernel from
-responding to IPv4 ICMP echo requests. For IPv6 pings, such
-a sysctl kernel parameter did not exist.
+On 10/08/18 16:22, Boris Ostrovsky wrote:
+> On 08/10/2018 07:52 AM, Juergen Gross wrote:
+>> A large amount of paravirt ops is used by Xen PV guests only. Add a new
+>> config option PARAVIRT_XXL which is selected by XEN_PV. Later we can
+>> put the Xen PV only paravirt ops under the PARACVIRT_XXL umbrella.
+> 
+> What does "XXL" stand for? My immediate thought was "extra extra large"
+> but I suspect it's something else.
 
-Add the ability to prevent the kernel from responding to IPv6
-ICMP echo requests through the use of the following sysctl
-parameter : /proc/sys/net/ipv6/icmp/echo_ignore_all.
-Update the documentation to reflect this change.
+No, your immediate thought was correct. :-)
 
-Signed-off-by: Virgile Jarry <virgile@acceis.fr>
----
- Documentation/networking/ip-sysctl.txt |  5 +++++
- include/net/netns/ipv6.h               |  1 +
- net/ipv6/af_inet6.c                    |  1 +
- net/ipv6/icmp.c                        | 16 +++++++++++++---
- 4 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
-index ce8fbf5..5042a13 100644
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -1863,6 +1863,11 @@ ratelimit - INTEGER
- 	otherwise the minimal space between responses in milliseconds.
- 	Default: 1000
- 
-+echo_ignore_all - BOOLEAN
-+	If set non-zero, then the kernel will ignore all ICMP ECHO
-+	requests sent to it over the IPv6 protocol.
-+	Default: 0
-+
- xfrm6_gc_thresh - INTEGER
- 	The threshold at which we will start garbage collecting for IPv6
- 	destination cache entries.  At twice this value the system will
-diff --git a/include/net/netns/ipv6.h b/include/net/netns/ipv6.h
-index 762ac99..f0e396a 100644
---- a/include/net/netns/ipv6.h
-+++ b/include/net/netns/ipv6.h
-@@ -32,6 +32,7 @@ struct netns_sysctl_ipv6 {
- 	int flowlabel_consistency;
- 	int auto_flowlabels;
- 	int icmpv6_time;
-+	int icmpv6_echo_ignore_all;
- 	int anycast_src_echo_reply;
- 	int ip_nonlocal_bind;
- 	int fwmark_reflect;
-diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
-index 9ed0eae..d0033b3 100644
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -833,6 +833,7 @@ static int __net_init inet6_net_init(struct net *net)
- 
- 	net->ipv6.sysctl.bindv6only = 0;
- 	net->ipv6.sysctl.icmpv6_time = 1*HZ;
-+	net->ipv6.sysctl.icmpv6_echo_ignore_all = 0;
- 	net->ipv6.sysctl.flowlabel_consistency = 1;
- 	net->ipv6.sysctl.auto_flowlabels = IP6_DEFAULT_AUTO_FLOW_LABELS;
- 	net->ipv6.sysctl.idgen_retries = 3;
-diff --git a/net/ipv6/icmp.c b/net/ipv6/icmp.c
-index ef2505a..1d869f1 100644
---- a/net/ipv6/icmp.c
-+++ b/net/ipv6/icmp.c
-@@ -800,6 +800,7 @@ void icmpv6_notify(struct sk_buff *skb, u8 type, u8 code, __be32 info)
- 
- static int icmpv6_rcv(struct sk_buff *skb)
- {
-+	struct net *net = dev_net(skb->dev);
- 	struct net_device *dev = skb->dev;
- 	struct inet6_dev *idev = __in6_dev_get(dev);
- 	const struct in6_addr *saddr, *daddr;
-@@ -849,7 +850,8 @@ static int icmpv6_rcv(struct sk_buff *skb)
- 
- 	switch (type) {
- 	case ICMPV6_ECHO_REQUEST:
--		icmpv6_echo_reply(skb);
-+		if (!net->ipv6.sysctl.icmpv6_echo_ignore_all)
-+			icmpv6_echo_reply(skb);
- 		break;
- 
- 	case ICMPV6_ECHO_REPLY:
-@@ -1110,6 +1112,13 @@ static struct ctl_table ipv6_icmp_table_template[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_ms_jiffies,
- 	},
-+	{
-+		.procname	= "echo_ignore_all",
-+		.data		= &init_net.ipv6.sysctl.icmpv6_echo_ignore_all,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler = proc_dointvec,
-+	},
- 	{ },
- };
- 
-@@ -1121,9 +1130,10 @@ struct ctl_table * __net_init ipv6_icmp_sysctl_init(struct net *net)
- 			sizeof(ipv6_icmp_table_template),
- 			GFP_KERNEL);
- 
--	if (table)
-+	if (table) {
- 		table[0].data = &net->ipv6.sysctl.icmpv6_time;
--
-+		table[1].data = &net->ipv6.sysctl.icmpv6_echo_ignore_all;
-+	}
- 	return table;
- }
- #endif
--- 
-2.7.4
-
+Juergen
