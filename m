@@ -2,121 +2,124 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C125C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB5DC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32042244B
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32042244B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 67B172244B
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 17:34:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Piu7PBCF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B172244B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeHJUEy (ORCPT
+        id S1728090AbeHJUFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:04:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:13753 "EHLO mga07.intel.com"
+        Fri, 10 Aug 2018 16:05:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727404AbeHJUEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:04:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 10:34:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,220,1531810800"; 
-   d="scan'208";a="223648662"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by orsmga004.jf.intel.com with ESMTP; 10 Aug 2018 10:34:06 -0700
-Received: from orsmsx152.amr.corp.intel.com (10.22.226.39) by
- ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 10 Aug 2018 10:34:05 -0700
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.8]) by
- ORSMSX152.amr.corp.intel.com ([169.254.8.164]) with mapi id 14.03.0319.002;
- Fri, 10 Aug 2018 10:34:05 -0700
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "ricardo.ner@intel.com" <ricardo.ner@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: RE: [PATCH V1 6/6] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESSES
-Thread-Topic: [PATCH V1 6/6] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESSES
-Thread-Index: AQHUL5nwjlQMwsqeUU6o6WRW0cpG8KS5VJ2A///l7/A=
-Date:   Fri, 10 Aug 2018 17:34:04 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F47CDA91A@ORSMSX114.amr.corp.intel.com>
-References: <1533789077-16156-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1533789077-16156-7-git-send-email-sai.praneeth.prakhya@intel.com>
- <CACi5LpPcaiHEHV9cFm=C4UB23jmfie16VR4m3ZAkZ9bVis5Dqg@mail.gmail.com>
-In-Reply-To: <CACi5LpPcaiHEHV9cFm=C4UB23jmfie16VR4m3ZAkZ9bVis5Dqg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjBlNWE4ZjctYjU3Yi00Mzk2LTg4ZTYtYWQwNTNhZjIxOTlmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNDFkbkhJUlBcLzZFRWorQVFDdW1iZ3l6djI5UmlTRVR1TjJ1bWZud1k1S250MzBDem9jek5wb0FrM1g4WUpQbHUifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727404AbeHJUFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 16:05:01 -0400
+Received: from mail-qt0-f177.google.com (mail-qt0-f177.google.com [209.85.216.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D76242244B;
+        Fri, 10 Aug 2018 17:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533922453;
+        bh=xexaJaKN8Jd8Uk1lDhJ82rRvfauPvMV6C+w8qphCsgs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Piu7PBCF9nCkcKZDXoyzcLA/qRmCpaTj2qizSOlb7smWw7Gs9Qg5ImOeQgVLN7LfH
+         2Mij84KgaZ/KsNKaNCMY6QvPHfCoMeta40pPbQDBiVz+1GQDrQ7D8sRnAci6zp0Z3/
+         8x24BNtU5Gvx8e1Gr5W6jb4u8QkEnYSH621BmEkM=
+Received: by mail-qt0-f177.google.com with SMTP id q12-v6so11095128qtp.6;
+        Fri, 10 Aug 2018 10:34:12 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHcexeqEYyuQkYkXpXJDlk1CTYNVzNkQbLtQVCHQvfCzo+8vOqV
+        RcRhg4+/03rmqyeRpQz5pOkv6YM1VA4N3Kxe2A==
+X-Google-Smtp-Source: AA+uWPzNCJ6lzWLUpSweuSQkyccYwcmZ9Dhd4vz/IMhpTpssdm+3N7GOBvFV1lRDcAJiZ+fBhUZvYQfAuYs4oA/mEFI=
+X-Received: by 2002:ac8:2c72:: with SMTP id e47-v6mr7698782qta.60.1533922452110;
+ Fri, 10 Aug 2018 10:34:12 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAL_JsqKNnfgESG6ON95D7nD8VNrcVy7-x6cGGnae_GbbGKAuPQ@mail.gmail.com>
+ <20180805232651.10605-1-afaerber@suse.de>
+In-Reply-To: <20180805232651.10605-1-afaerber@suse.de>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 10 Aug 2018 11:34:00 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+f5VMWZg9GNF=e-UmFjcjbVnE7Dr0EBF56E6gUrdTnuQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+f5VMWZg9GNF=e-UmFjcjbVnE7Dr0EBF56E6gUrdTnuQ@mail.gmail.com>
+Subject: Re: [RFC] serial: sc16is7xx: Use DT sub-nodes for UART ports
+To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc:     "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, jringle@gridpoint.com,
+        Michael Allwright <allsey87@gmail.com>,
+        Jakub Kicinski <kubakici@wp.pl>, liuxuenetmail@gmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ICtjb25maWcgRUZJX1dBUk5fT05fSUxMRUdBTF9BQ0NFU1NFUw0KPiANCj4gSG93IGFib3V0
-IHNob3J0ZW5pbmcgdGhlIG5hbWUgdG8ganVzdCAnRUZJX1dBUk5fT05fSUxMRUdBTF9BQ0NFU1Mn
-Pw0KPiANCg0KTWFrZXMgc2Vuc2UuLiBJIHdpbGwgc2hvcnRlbiBpdC4NCg0KPiA+ICsgICAgICAg
-Ym9vbCAiV2FybiBhYm91dCBpbGxlZ2FsIG1lbW9yeSBhY2Nlc3NlcyBieSBmaXJtd2FyZSINCj4g
-PiArICAgICAgIGRlcGVuZHMgb24gRUZJDQo+IA0KPiBGcm9tIGEgZGlzdHJpYnV0aW9uIHAtby12
-LCBJIHdvdWxkIHN1Z2dlc3QgdGhhdCB3ZSBzZXQgdGhpcyBDT05GSUcgb3B0aW9uIG9ubHkgaWYN
-Cj4gd2UgYXJlIGluIHRoZSBFWFBFUlQgbW9kZSwgYXMgdGhpcyBuZWVkIG1vcmUgdGhyYXNoaW5n
-IHdpdGggdGhlIGJlaGF2aW91ciB3ZQ0KPiBzZWUgb24gb2xkLCBidWdneSBFRkkgZmlybXdhcmVz
-IGF2YWlsYWJsZSBvbiB2ZXJ5IG9sZCB4ODYgbWFjaGluZXMuIFNvDQo+IHNvbWV0aGluZyBsaWtl
-Og0KPiAgICAgICAgICAgIGJvb2wgIldhcm4gYWJvdXQgaWxsZWdhbCBtZW1vcnkgYWNjZXNzZXMg
-YnkgZmlybXdhcmUiIGlmIEVYUEVSVA0KPiANCg0KQWdyZWVkLiBBbHRob3VnaCB0aGUgZmVhdHVy
-ZSBpcyBpbnRlbmRlZCB0byB3YXJuIGFib3V0IGFsbCB0aGVzZSBidWdneSBmaXJtd2FyZSdzDQpp
-bnN0ZWFkIG9mIHNpbGVudGx5IHdvcmtpbmcgYXJvdW5kIChhcyB3ZSBhcmUgZG9pbmcgcHJlc2Vu
-dGx5KSwgaXQgbmVlZHMgbW9yZSB0ZXN0aW5nLg0KSGVuY2UsIGFzIHlvdSBzYWlkLCBJIHRoaW5r
-IGl0J3Mgc2FmZSB0byBoYXZlIGl0IGFzIGFuIEVYUEVSVCBjb25maWcgb3B0aW9uLg0KDQo+ID4g
-KyAgICAgICBoZWxwDQo+ID4gKyAgICAgICAgIEVuYWJsZSB0aGlzIGRlYnVnIGZlYXR1cmUgc28g
-dGhhdCB0aGUga2VybmVsIGNhbiBkZXRlY3QgaWxsZWdhbA0KPiA+ICsgICAgICAgICBtZW1vcnkg
-YWNjZXNzZXMgYnkgZmlybXdhcmUgYW5kIGlzc3VlIGEgd2FybmluZy4gQWxzbywNCj4gPiArICAg
-ICAgICAgMS4gSWYgdGhlIGlsbGVnYWxseSBhY2Nlc3NlZCByZWdpb24gaXMgRUZJX0JPT1RfU0VS
-VklDRVNfPENPREUvREFUQT4sDQo+ID4gKyAgICAgICAgICAgIHRoZSBrZXJuZWwgZml4ZXMgaXQg
-dXAgYnkgbWFwcGluZyB0aGUgcmVxdWVzdGVkIHJlZ2lvbi4NCg0KWy4uLi5dDQoNCj4gPiBkaWZm
-IC0tZ2l0IGEvaW5pdC9tYWluLmMgYi9pbml0L21haW4uYyBpbmRleA0KPiA+IDNiNGFkYTExZWQ1
-Mi4uZGNlMDUyMDg2MWExIDEwMDY0NA0KPiA+IC0tLSBhL2luaXQvbWFpbi5jDQo+ID4gKysrIGIv
-aW5pdC9tYWluLmMNCj4gPiBAQCAtNzMwLDcgKzczMCw4IEBAIGFzbWxpbmthZ2UgX192aXNpYmxl
-IHZvaWQgX19pbml0IHN0YXJ0X2tlcm5lbCh2b2lkKQ0KPiA+ICAgICAgICAgYXJjaF9wb3N0X2Fj
-cGlfc3Vic3lzX2luaXQoKTsNCj4gPiAgICAgICAgIHNmaV9pbml0X2xhdGUoKTsNCj4gPg0KPiA+
-IC0gICAgICAgaWYgKGVmaV9lbmFibGVkKEVGSV9SVU5USU1FX1NFUlZJQ0VTKSkgew0KPiA+ICsg
-ICAgICAgaWYgKGVmaV9lbmFibGVkKEVGSV9SVU5USU1FX1NFUlZJQ0VTKSAmJg0KPiA+ICsgICAg
-ICAgICAgICFJU19FTkFCTEVEKENPTkZJR19FRklfV0FSTl9PTl9JTExFR0FMX0FDQ0VTU0VTKSkg
-ew0KPiANCj4gU2luY2UgdGhpcyBpcyBhbiBhcmNoIGFnbm9zdGljIGNvZGUgbGVnLCBkbyB3ZSBy
-ZWFsbHkgd2FudCB0byBpbnRyb2R1Y2UgYSBnZW5lcmljDQo+IGNoZWNrIGZvciBDT05GSUdfRUZJ
-X1dBUk5fT05fSUxMRUdBTF9BQ0NFU1NFUw0KPiBoZXJlLCB3aXRob3V0IGNoZWNraW5nIGZvciB3
-aGV0aGVyIHdlIGFyZSBhY3R1YWxseSBydW5uaW5nIHRoaXMgb24gYQ0KPiB4ODYgaGFyZHdhcmUs
-IG9yIGFsdGVybmF0aXZlbHkgd2UgY2FuIGNvbnNpZGVyIG1vdmluZw0KPiBDT05GSUdfRUZJX1dB
-Uk5fT05fSUxMRUdBTF9BQ0NFU1NFUyBvdXQgb2YgJ2FyY2gveDg2L0tjb25maWcnIHRvDQo+ICdh
-cmNoL0tjb25maWcnIHNvIHRoYXQgbGF0ZXIgaXQgY2FuIGJlIHVzZWQgb24gb3RoZXIgYXJjaHMg
-bGlrZSBBUk02NCBhcyB3ZWxsLg0KPiANCj4gSSB0aGluayB0aGUgbGF0ZXIgd291bGQgYmUgbW9y
-ZSB1c2VmdWwuLg0KDQpUaGFua3MgZm9yIGJyaW5naW5nIHRoaXMgdXAuIEkgc2VlIHlvdXIgcG9p
-bnQuIEkgd2lsbCByZWZyYWluIGZyb20gcG9sbHV0aW5nIGFyY2hpdGVjdHVyZQ0KYWdub3N0aWMg
-Y29kZS4gQXMgd2UgZG9uJ3QgbmVlZCBlZmlfZnJlZV9ib290X3NlcnZpY2VzKCkgYXQgYWxsLCBp
-ZiBFRklfV0FSTl9PTl9JTExFR0FMX0FDQ0VTU0VTDQppcyBlbmFibGVkLCBwcm9iYWJseSBtYWtp
-bmcgY2hhbmdlcyB0byBpbmNsdWRlL2xpbnV4L2VmaS5oIHdvdWxkIGJlIGJldHRlciwgSSBndWVz
-cy4uDQoNCk1vdmluZyB0aGlzIHRvIGFyY2gvS2NvbmZpZyBjb3VsZCBiZSB0b28gZnV0dXJpc3Rp
-Yy4uIEkgZ3Vlc3MuLiBiZWNhdXNlIEkgYW0gbm90IHN1cmUNCmlmIHRoaXMgcHJvYmxlbSBleGlz
-dHMgb24gQVJNIG1hY2hpbmVzLCBpZiBzbywgcHJvYmFibHkgQXJkIGNvdWxkIHN1Z2dlc3Qgc29t
-ZXRoaW5nIGhlcmUuDQoNClJlZ2FyZHMsDQpTYWkNCg==
+On Sun, Aug 5, 2018 at 5:27 PM Andreas F=C3=A4rber <afaerber@suse.de> wrote=
+:
+>
+> This is to allow using serdev.
+>
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> ---
+>  drivers/tty/serial/sc16is7xx.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
+> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7x=
+x.c
+> index 243c96025053..ad7267274f65 100644
+> --- a/drivers/tty/serial/sc16is7xx.c
+> +++ b/drivers/tty/serial/sc16is7xx.c
+> @@ -1213,9 +1213,31 @@ static int sc16is7xx_probe(struct device *dev,
+>                         SC16IS7XX_IOCONTROL_SRESET_BIT);
+>
+>         for (i =3D 0; i < devtype->nr_uart; ++i) {
+> +#ifdef CONFIG_OF
+> +               struct device_node *np;
+> +               struct platform_device *pdev;
+> +               char name[6] =3D "uartx";
+> +#endif
+> +
+>                 s->p[i].line            =3D i;
+>                 /* Initialize port data */
+> +#ifdef CONFIG_OF
+> +               name[4] =3D '0' + i;
+> +               np =3D of_get_child_by_name(dev->of_node, name);
+> +               if (IS_ERR(np)) {
+> +                       ret =3D PTR_ERR(np);
+> +                       goto out_ports;
+> +               }
+> +               pdev =3D of_platform_device_create(np, NULL, dev);
+
+Ideally, you would use of_platform_default_populate here. I think
+you'd have to add a compatible to the child nodes, but that wouldn't
+be a bad thing. I could envision that the child nodes ultimately
+become their own driver utilizing the standard 8250 driver and a
+compatible string would be needed in that case.
+
+You'd then have to loop over each child of 'dev' instead of the DT nodes.
+
+> +               if (IS_ERR(pdev)) {
+> +                       ret =3D PTR_ERR(pdev);
+> +                       goto out_ports;
+> +               }
+> +               platform_set_drvdata(pdev, dev_get_drvdata(dev));
+> +               s->p[i].port.dev        =3D &pdev->dev;
+> +#else
+>                 s->p[i].port.dev        =3D dev;
+> +#endif
+>                 s->p[i].port.irq        =3D irq;
+>                 s->p[i].port.type       =3D PORT_SC16IS7XX;
+>                 s->p[i].port.fifosize   =3D SC16IS7XX_FIFO_SIZE;
