@@ -2,171 +2,150 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FFAC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB96C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47F93223FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B4FF223EA
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 09:52:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GFJZmcY3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F93223FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I5fe8omd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4FF223EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeHJMSS (ORCPT
+        id S1727630AbeHJMV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 08:18:18 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45830 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbeHJMSS (ORCPT
+        Fri, 10 Aug 2018 08:21:26 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41135 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbeHJMV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 08:18:18 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8974ACD;
-        Fri, 10 Aug 2018 11:49:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533894548;
-        bh=u+wY/gEyyy5wd3Mu7xb458rLrOe13NUGCtK5NlVMC1o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GFJZmcY3gY2zByvr1zFJ07CFBF7g6jTQ5Eqe2kFK7Wd0ydvQykIgsz7jR+DE9Zgst
-         RE1nJri93wlDID41RoBP5PFypmG4fPM+qq+pyxg3BR4X4BB3Apa6Ji7KiChkOiEUCk
-         tTM69xahTOon4JBu7osaKXkSKmswB6JUIbCBv6mA=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Subject: Re: [PATCH v4 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
-Date:   Fri, 10 Aug 2018 12:49:53 +0300
-Message-ID: <66694963.VB7x4V86dC@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAJs94EajH_J268GnxygeTZXOjcTuJq+VG7g+ZfAzf0Rf8Wgkbw@mail.gmail.com>
-References: <20180809181103.15437-1-matwey@sai.msu.ru> <2131343.ieGLTDdppT@avalon> <CAJs94EajH_J268GnxygeTZXOjcTuJq+VG7g+ZfAzf0Rf8Wgkbw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 10 Aug 2018 08:21:26 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z8-v6so4160766pgu.8
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 02:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=B/Wq136zb0MCV57dOEVEM5K37uB2RSDGwJBOts+o2MQ=;
+        b=I5fe8omdpFORiG1cLPYLGvAEqGavPStje+HQ18xjtYhAqiFTKDPlOfir1f8viGBITx
+         XCrupjOnzUCkAsaIbooyz7WmAX2R6wXS7K7K6o1XfGVOCdDrmMyF2Y8zSFtZ4l3n+0Vj
+         Bfg+ReR5h5k52VU5aFABfJizX2xMS/B7/WuUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B/Wq136zb0MCV57dOEVEM5K37uB2RSDGwJBOts+o2MQ=;
+        b=HEruEL1SUAneqoGqBCEYRceWmWZZ4V0tOGwHckWt35PA7z0U4Ufnk2kvWy6iaFK3hJ
+         G8JaHIPBP85A2vX/mwlyh+32mALdAH+Wd+uGXq70carEkRMOt9RJo3QIdgbxJqMSfpFV
+         E/ggeKHAA/L5mO7Q4z1ERGXkpMlJV6mKqzKgKwjJ6jBMRZSRHMwtQ9efYdb/ShsmHoj2
+         W7Qa5/HIFWpozAfRrJg6A0as9yOB62WVYPMvaZ9AACdm7+bYY4ocBV8FEXJLOaCwhz3r
+         9QUm2pGN8A4LcVPeoHr+yAgcEvulyijMGF72FAhFNiuRG2qdDvHcvg9RGV2vhkyvfRO7
+         R9jw==
+X-Gm-Message-State: AOUpUlEO5wadQx4n55eTEHBmZwzffz/29UvjO9XAfjxzW9iGxYEuE7LP
+        wZS0cD6qMlt4KfWKpIsfP0Ax
+X-Google-Smtp-Source: AA+uWPxsJO0211o8DKd6tGlsEN33gcaUzP8Y0o4y6BcjsHw4YIbdzxe51TDRlCS5e4lHnjz7crIOcQ==
+X-Received: by 2002:a62:4bc6:: with SMTP id d67-v6mr6269459pfj.175.1533894738258;
+        Fri, 10 Aug 2018 02:52:18 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:6391:e983:9562:f5f7:1a60:4363])
+        by smtp.gmail.com with ESMTPSA id n83-v6sm25315120pfk.19.2018.08.10.02.52.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 02:52:17 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+        afaerber@suse.de, robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+        pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/9] Add Reset Controller support for Actions Semi Owl SoCs
+Date:   Fri, 10 Aug 2018 15:21:04 +0530
+Message-Id: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matwey,
+This patchset adds Reset Controller (RMU) support for Actions Semi
+Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+the clock subsystem in hardware. Hence, in software we integrate RMU
+support into common clock driver inorder to maintain compatibility. The
+syscon approach is not taken into account based on the review by Rob.
 
-On Friday, 10 August 2018 12:38:39 EEST Matwey V. Kornilov wrote:
-> 2018-08-10 11:53 GMT+03:00 Laurent Pinchart:
-> > On Thursday, 9 August 2018 21:11:03 EEST Matwey V. Kornilov wrote:
-> >> DMA cocherency slows the transfer down on systems without hardware
-> >> coherent DMA.
-> >> Instead we use noncocherent DMA memory and explicit sync at data receive
-> >> handler.
-> >> 
-> >> Based on previous commit the following performance benchmarks have been
-> >> carried out. Average memcpy() data transfer rate (rate) and handler
-> >> completion time (time) have been measured when running video stream at
-> >> 640x480 resolution at 10fps.
-> >> 
-> >> x86_64 based system (Intel Core i5-3470). This platform has hardware
-> >> coherent DMA support and proposed change doesn't make big difference
-> >> here.
-> >> 
-> >>  * kmalloc:            rate = (2.0 +- 0.4) GBps
-> >>                        time = (5.0 +- 3.0) usec
-> >>  
-> >>  * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
-> >>                        time = (3.5 +- 3.0) usec
-> >> 
-> >> We see that the measurements agree within error ranges in this case.
-> >> So theoretically predicted performance downgrade cannot be reliably
-> >> measured here.
-> >> 
-> >> armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
-> >> has no hardware coherent DMA support. DMA coherence is implemented via
-> >> disabled page caching that slows down memcpy() due to memory controller
-> >> behaviour.
-> >> 
-> >>  * kmalloc:            rate =  (114 +- 5) MBps
-> >>  
-> >>                        time =   (84 +- 4) usec
-> >>  
-> >>  * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
-> >>  
-> >>                        time =  (341 +- 2) usec
-> >> 
-> >> Note, that quantative difference leads (this commit leads to 4 times
-> >> acceleration) to qualitative behavior change in this case. As it was
-> >> stated before, the video stream cannot be successfully received at AM335x
-> >> platforms with MUSB based USB host controller due to performance issues
-> >> [1].
-> >> 
-> >> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> >> 
-> >> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> >> ---
-> >> 
-> >> drivers/media/usb/pwc/pwc-if.c | 56 +++++++++++++++++++++++++++++-------
-> >> 1 file changed, 44 insertions(+), 12 deletions(-)
-> >> 
-> >> diff --git a/drivers/media/usb/pwc/pwc-if.c
-> >> b/drivers/media/usb/pwc/pwc-if.c index 72d2897a4b9f..e9c826be1ba6 100644
-> >> --- a/drivers/media/usb/pwc/pwc-if.c
-> >> +++ b/drivers/media/usb/pwc/pwc-if.c
+This patch series depends on the recently posted S700 clk series:
+"[PATCH v7 0/5] Add clock driver for Actions S700 SoC". For the S700 clk
+series, driver and bindings patches are applied through the clk tree.
+But the DTS patches are not yet picked up by the platform maintainer,
+Andreas.
 
-[snip]
+Hence, Andreas is expected to pick the DTS patches in this series once
+reviewed by the maintainers along with S700 clk DTS patches.
 
-> >> @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
-> >> 
-> >>       /* Reset ISOC error counter. We did get here, after all. */
-> >>       pdev->visoc_errors = 0;
-> >> 
-> >> +     dma_sync_single_for_cpu(&urb->dev->dev,
-> >> +                             urb->transfer_dma,
-> >> +                             urb->transfer_buffer_length,
-> >> +                             DMA_FROM_DEVICE);
-> >> +
-> > 
-> > Aren't you're missing a dma_sync_single_for_device() call before
-> > submitting the URB ? IIRC that's required for correct operation of the DMA
-> > mapping API on some platforms, depending on the cache architecture. The
-> > additional sync can affect performances, so it would be useful to re-run
-> > the perf test.
-> 
-> This was already discussed:
-> 
-> https://lkml.org/lkml/2018/7/23/1051
-> 
-> I rely on Alan's reply:
-> 
-> > According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
-> > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
-> > not needed.
+Because of the absence of the S500 SoC clk support, the reset controller
+registration code is added to both S700 and S900 SoC clk drivers for now.
+But once S500 clk support is added, the reset controller registration part
+will be moved to Owl SoCs common clk code.
 
-I fully agree that the CPU should not write to the buffer. However, I think 
-the sync call is still needed. It's been a long time since I touched this 
-area, but IIRC, some cache architectures (VIVT ?) require both cache clean 
-before the transfer and cache invalidation after the transfer. On platforms 
-where no cache management operation is needed before the transfer in the 
-DMA_FROM_DEVICE direction, the dma_sync_*_for_device() calls should be no-ops 
-(and if they're not, it's a bug of the DMA mapping implementation).
+Thanks,
+Mani
+
+Changes in v3:
+
+* Reverted back the syscon approach based on the review by Rob Herring
+* Dropped the MAINTAINERS patch
+* Converted reset_map struct definitions to const based on the review by
+  Philipp
+* Fixed S700 header in DT spotted by Parthiban
+* Added Reviewed-by tags from Rob for 3 bindings patches
+
+Changes in v2:
+
+* Converted the CMU and RMU drivers to syscon for a more cleaner
+  approach
+* Declared the owl_reset_map structs to const
+* Used regmap_update_bits instead of a combined regmap_read and write
+* Removed unused headers in RMU drivers
+* Added MAINTAINERS entry for the RMU driver and bindings
+
+Manivannan Sadhasivam (9):
+  clk: actions: Cache regmap info in private clock descriptor
+  dt-bindings: clock: Add reset controller bindings for Actions Semi Owl
+    SoCs
+  dt-bindings: reset: Add binding constants for Actions Semi S700 RMU
+  dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
+  arm64: dts: actions: Add Reset Controller support for S700 SoC
+  arm64: dts: actions: Add Reset Controller support for S900 SoC
+  clk: actions: Add Actions Semi Owl SoCs Reset Management Unit support
+  clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
+  clk: actions: Add Actions Semi S900 SoC Reset Management Unit support
+
+ .../bindings/clock/actions,owl-cmu.txt        |  2 +
+ arch/arm64/boot/dts/actions/s700.dtsi         |  2 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  2 +
+ drivers/clk/actions/Kconfig                   |  1 +
+ drivers/clk/actions/Makefile                  |  1 +
+ drivers/clk/actions/owl-common.c              |  3 +-
+ drivers/clk/actions/owl-common.h              |  5 +-
+ drivers/clk/actions/owl-reset.c               | 66 ++++++++++++++
+ drivers/clk/actions/owl-reset.h               | 31 +++++++
+ drivers/clk/actions/owl-s700.c                | 55 +++++++++++-
+ drivers/clk/actions/owl-s900.c                | 86 ++++++++++++++++++-
+ .../dt-bindings/reset/actions,s700-reset.h    | 34 ++++++++
+ .../dt-bindings/reset/actions,s900-reset.h    | 65 ++++++++++++++
+ 13 files changed, 347 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/actions/owl-reset.c
+ create mode 100644 drivers/clk/actions/owl-reset.h
+ create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
+ create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.17.1
 
