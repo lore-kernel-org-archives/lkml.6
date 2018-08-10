@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ECEC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB60C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F8BB223C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCEDB223BD
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:21:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoOOy+py"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8BB223C6
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cnuww0wd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCEDB223BD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeHJFt3 (ORCPT
+        id S1727657AbeHJFta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 01:49:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44394 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeHJFt0 (ORCPT
+        Fri, 10 Aug 2018 01:49:30 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46590 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeHJFt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 01:49:26 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k21-v6so3815926pff.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:21:33 -0700 (PDT)
+        Fri, 10 Aug 2018 01:49:29 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u24-v6so3809322pfn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TNmYLqAxTb3jeW0Q6N6Ne0QZTGyVHkNhmPFxBrYsNj0=;
-        b=IoOOy+pypujUuhhIsSn/x4pWAF+qllGoGcP+NyGiZ8HpgQXluX8sczlKn1+EfQx+jK
-         JzqxUSJ+ky5NXzxX1Y+yrw2UFPQR56BmdQRxBblGh8tas04WNP5z+rvaQuyV/9zQLX5f
-         ikBR0TvI2RciKhGa6y0r3XCfv1yGDiKqkg5Tg/brPHse6gP54CDc8uRUE455v9BsXS6a
-         yHMJ94qyur6SQ/e9q7FL9++ee6goJsRi2ZXa6JFhELeW2xh/o/g71EXF3QHKOALHQMTh
-         N5zgiBaUjaKC3EHXkui6PlhDo9tStMymxf//EwPzPLmHAyH7HKqyxo6l8UTghl9MlH3p
-         L5pQ==
+        bh=4yKRoNB8jaLqCKetKdjFfRuRMieIWkj2B3lhufLvp+E=;
+        b=Cnuww0wdw/NKe7o1DU5uP1hwaHOxnHs+CGFAbLlZwBa96TbAgZZPGbR4Fo6AL5N057
+         ymNUM8P1yZpswcz9TactVbcEMvnh06drwSmW+3pOyDkQ0cNJwLFm0rAv4gFXdrRpNMkm
+         wGnci3+pVhj+9Y2ctwRhJzww1bTWKyLiBhrni5RmIdcQeeqH5RhWsUXbabnMNxRMaHxS
+         v5poQWQsrGZZhDmh/ASc2Kd71TuUbsx3PFqSEnyU7qSDm82VvNr08xt1QmJ9M9W2SXex
+         RxXnd08HEyGqwSTrrBQivKQeyjG43UuyjE33lUsgpBi5gf4ob8nSBGR4GSb9UZWPWlmp
+         PoTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TNmYLqAxTb3jeW0Q6N6Ne0QZTGyVHkNhmPFxBrYsNj0=;
-        b=I+GbCqwYbcny8iQdQpgDdIwGNgcEio/nZamODhgqKaTL9z5tqxAN7VchCd8Iu7DLwb
-         P6Z0t1bgPWp36w+HGxkH4hXYsxQZjJ3Uw+jvBKnjGfOYTvRv0DO+9MoNiUMhcEHf4kvR
-         3uE3IAQrA8Qn+lfJnCLWAjHhYvriOw2LyCn0hud23WJMoYNmGtE5UVUDhn2DybgrRd9m
-         yg8Iuf3ZhUR+vXjUL8SgDetb3Zf6hS64LmTZcSqwhkQGC/uXxExywumv9LZTXoi+tXDJ
-         H8medqCTNr0cBv38vP0eLFDXKTKaN47On4HbPTYOFo97Ka0lNEPaBaS90VNFE62nDiYO
-         C2zw==
-X-Gm-Message-State: AOUpUlFIaKuaNaQ48saK8d4Nx0H5EVyPCQuaOrk4AdJ3I+kV5lpBz0XK
-        DA/NA8VpI6fa/8Qkyn8yk18=
-X-Google-Smtp-Source: AA+uWPw3X73GWn/1EviGnl1E0xRg5wfXqOo7ZPb6IcAnTguhvRvVG+NeDe0Xe2YN1SwxZS9TwjBgig==
-X-Received: by 2002:a62:d544:: with SMTP id d65-v6mr4995656pfg.107.1533871293181;
-        Thu, 09 Aug 2018 20:21:33 -0700 (PDT)
+        bh=4yKRoNB8jaLqCKetKdjFfRuRMieIWkj2B3lhufLvp+E=;
+        b=eAGWcxVFo864qJosWdB4BJ0GqX/loZffuhOHwDIX0/veHf7e/PL9FFf3pmML+7zY6M
+         Rl6eBqXZvdKaxKgYfKGIdr/qHxAXUu5/jLPlksNURH2ogD+h/R6IbrLc42VGbX4RgQ3O
+         br3qRN6I11WQ/cZcruMNL/dVEdefjR++qWOwdmn0TiDF5m5SNQFwIn+BUHGzmmeTl4vW
+         Db7wJDdAGrH3apcAC4Q2be70STj17/rn0AS6QFYG312zfzvLVFwmfkSdpGwqEOTKh/8I
+         USKzKjV2Rr9On7WG3+8ED9sLhM/YaXvTFsIoxi2qzP6XU9WDd2XztseJZC9oV4OQKOiK
+         +QYw==
+X-Gm-Message-State: AOUpUlFEx7wwdaFjjdKcxd2fiCeFYEUkIBR0tfw/LBwnBgr/xk7AhgI0
+        M4bqU6Z60Ies3aSZuU0H0I7/V+Hg
+X-Google-Smtp-Source: AA+uWPyKQ67Ew1W0VTWDZlIox6HVMSt54wYe/m5Gksx8CA8O3IwRgqa3OfAaTluHIDEhDV37EouQLA==
+X-Received: by 2002:a63:dc17:: with SMTP id s23-v6mr4679669pgg.40.1533871296265;
+        Thu, 09 Aug 2018 20:21:36 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p73-v6sm16130871pfk.186.2018.08.09.20.21.32
+        by smtp.gmail.com with ESMTPSA id p73-v6sm16130871pfk.186.2018.08.09.20.21.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 20:21:32 -0700 (PDT)
+        Thu, 09 Aug 2018 20:21:35 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 10/16] staging: gasket: page table: remove extraneous memory barriers
-Date:   Thu,  9 Aug 2018 20:21:05 -0700
-Message-Id: <20180810032111.197743-11-toddpoynor@gmail.com>
+Subject: [PATCH 13/16] staging: gasket: core: rename lookup_internal_desc to be PCI-specific
+Date:   Thu,  9 Aug 2018 20:21:08 -0700
+Message-Id: <20180810032111.197743-14-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180810032111.197743-1-toddpoynor@gmail.com>
 References: <20180810032111.197743-1-toddpoynor@gmail.com>
@@ -81,71 +81,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Some explicit memory barriers in the page table code are not necessary,
-either because:
-
-(a) The barrier follows a non-relaxed MMIO access that already performs
-a read or write memory barrier.
-
-(b) The barrier follows DMA API calls for which the device-visible
-effects of IOMMU programming are guaranteed to be flushed to the IOMMU
-prior to the call returning, and doesn't need to sync with normal memory
-access.
+Rename lookup_internal_desc() to lookup_pci_internal_desc() to reflect
+use for PCI devices only, in prep for non-PCI devices in the future.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_page_table.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 4d2499269499b..53492f4fad6aa 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -317,8 +317,6 @@ static void gasket_free_extended_subtable(struct gasket_page_table *pg_tbl,
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 5e048f6e16e12..99f3f11d75ce2 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -651,13 +651,13 @@ void gasket_disable_device(struct gasket_dev *gasket_dev)
+ EXPORT_SYMBOL(gasket_disable_device);
  
- 	/* Release the page table from the device */
- 	writeq(0, slot);
--	/* Force sync around the address release. */
--	mb();
+ /*
+- * Registered descriptor lookup.
++ * Registered driver descriptor lookup for PCI devices.
+  *
+  * Precondition: Called with g_mutex held (to avoid a race on return).
+  * Returns NULL if no matching device was found.
+  */
+ static struct gasket_internal_desc *
+-lookup_internal_desc(struct pci_dev *pci_dev)
++lookup_pci_internal_desc(struct pci_dev *pci_dev)
+ {
+ 	int i;
  
- 	if (pte->dma_addr)
- 		dma_unmap_page(pg_tbl->device, pte->dma_addr, PAGE_SIZE,
-@@ -504,8 +502,6 @@ static int gasket_perform_mapping(struct gasket_page_table *pg_tbl,
- 					(void *)page_to_phys(page));
- 				return -1;
- 			}
--			/* Wait until the page is mapped. */
--			mb();
- 		}
+@@ -1488,7 +1488,7 @@ int gasket_pci_add_device(struct pci_dev *pci_dev,
+ 	dev_dbg(&pci_dev->dev, "add PCI gasket device\n");
  
- 		/* Make the DMA-space address available to the device. */
-@@ -604,12 +600,13 @@ static void gasket_perform_unmapping(struct gasket_page_table *pg_tbl,
- 	 */
- 	for (i = 0; i < num_pages; i++) {
- 		/* release the address from the device, */
--		if (is_simple_mapping || ptes[i].status == PTE_INUSE)
-+		if (is_simple_mapping || ptes[i].status == PTE_INUSE) {
- 			writeq(0, &slots[i]);
--		else
-+		} else {
- 			((u64 __force *)slots)[i] = 0;
--		/* Force sync around the address release. */
--		mb();
-+			/* sync above PTE update before updating mappings */
-+			wmb();
-+		}
- 
- 		/* release the address from the driver, */
- 		if (ptes[i].status == PTE_INUSE) {
-@@ -898,8 +895,6 @@ static int gasket_alloc_extended_subtable(struct gasket_page_table *pg_tbl,
- 	/* Map the page into DMA space. */
- 	pte->dma_addr = dma_map_page(pg_tbl->device, pte->page, 0, PAGE_SIZE,
- 				     DMA_BIDIRECTIONAL);
--	/* Wait until the page is mapped. */
--	mb();
- 
- 	/* make the addresses available to the device */
- 	dma_addr = (pte->dma_addr + pte->offset) | GASKET_VALID_SLOT_FLAG;
+ 	mutex_lock(&g_mutex);
+-	internal_desc = lookup_internal_desc(pci_dev);
++	internal_desc = lookup_pci_internal_desc(pci_dev);
+ 	mutex_unlock(&g_mutex);
+ 	if (!internal_desc) {
+ 		dev_err(&pci_dev->dev,
+@@ -1536,7 +1536,7 @@ void gasket_pci_remove_device(struct pci_dev *pci_dev)
+ 	struct gasket_dev *gasket_dev = NULL;
+ 	/* Find the device desc. */
+ 	mutex_lock(&g_mutex);
+-	internal_desc = lookup_internal_desc(pci_dev);
++	internal_desc = lookup_pci_internal_desc(pci_dev);
+ 	if (!internal_desc) {
+ 		mutex_unlock(&g_mutex);
+ 		return;
 -- 
 2.18.0.597.ga71716f1ad-goog
 
