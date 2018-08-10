@@ -2,122 +2,93 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605C4C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDEAC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E032244C
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E032244C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BBCF42244C
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:21:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuN6FNbv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCF42244C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeHJUw2 (ORCPT
+        id S1728562AbeHJUw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:52:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:38783 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728305AbeHJUwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:52:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 11:21:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,220,1531810800"; 
-   d="scan'208";a="64216641"
-Received: from bchattar-mobl.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.130.118])
-  by orsmga008.jf.intel.com with ESMTP; 10 Aug 2018 11:21:14 -0700
-Subject: Re: [PATCH v4 2/2] tpm: add support for nonblocking operation
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
- <153367366969.18015.14742040525393494830.stgit@tstruk-mobl1.jf.intel.com>
- <20180810174320.GV4692@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
-Date:   Fri, 10 Aug 2018 11:21:14 -0700
+        Fri, 10 Aug 2018 16:52:27 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36992 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbeHJUw0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 16:52:26 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so9067313wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 11:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Qo65ECmky3MG3rQEE2JIvGZQrHIjBVVDPUJOzaStr9k=;
+        b=OuN6FNbvxQ8BmpLzTxHrq1LuafQvNIN4toBlMUCOfzGp/t7Vj57dxhLMSnvwqha6oO
+         0LhipA/wP25w2X4pn6cEt+4ee16IdELNAvIeu1m2IuO1o/97DzynVdLD5vR+klzp+P30
+         lb31FXPEH5dZzUruhGl52aVFz6vCjFRpeWnQt7YXwGsmKAS23tVdFZSCnJ2bBBfyM+nA
+         JbDJue91rpO3n0i46+bchAbNzg9uDY4Klk/guVH+0tKOccu3wwV2Hzs4fFz8UMp7lXSg
+         3Gr63JYoi8pGIUC8ejljkg7gHlUwiTYKNJS2jyNTQMG83kmeZo62AoAngPVUtfNO0j6Y
+         svNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Qo65ECmky3MG3rQEE2JIvGZQrHIjBVVDPUJOzaStr9k=;
+        b=dt14ZOLOscciFz3949ExHmaDbIvsFE6C/mEjgIKMmJPvIHGKXWv1hvozzANutloKT2
+         /uKFp9tMi/9r9oJPKnkIY3MCAHnQvFZxNde0zSnFYoOZGze0FlzyfdtlMttoos8emivj
+         cRgMfrle/Bsvy/GSECIH8WcnfZWGNLFjdZoYQRfkpHu1sCbDU9qxOV+8Ndp8MQAkz+uK
+         2VgKUMV5fyZJGpy8dKx2VLCvV8+gmtZfb+QhLMCFr8ed5vxEKptbZLH9NLLRRCdW8SbB
+         qNygnV4ZgBx7j0J4W/8jSZt5cqHrf99X4OHE/XLKqkJVSSVkDXj3epvQneRNUGW8/HNI
+         W0gw==
+X-Gm-Message-State: AOUpUlGd19cCKeip4DyHS6FeGFYG1q1uD8hCPE+6bzk7BbiX4RRx3lGE
+        UvUu9/IW0rZ0l4Dh6n4k9wsa4hrp
+X-Google-Smtp-Source: AA+uWPxOTpBQF6mLCOid4gNoJT5BwoLEjFIwNOwlXHcPKxM5xg2rGI7rjSeELRbuQaSSIVSJNdcPiA==
+X-Received: by 2002:adf:94c6:: with SMTP id 64-v6mr841987wrr.99.1533925286434;
+        Fri, 10 Aug 2018 11:21:26 -0700 (PDT)
+Received: from ?IPv6:2a02:8108:85c0:57c8:2d5d:7423:2a5d:6ca9? ([2a02:8108:85c0:57c8:2d5d:7423:2a5d:6ca9])
+        by smtp.gmail.com with ESMTPSA id o10-v6sm7188379wrw.79.2018.08.10.11.21.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Aug 2018 11:21:25 -0700 (PDT)
+Subject: Re: [PATCH v3 1/5] staging: rtl8188eu: use is_multicast_ether_addr in
+ rtw_security.c
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+References: <20180810105133.31224-1-straube.linux@gmail.com>
+ <20180810113132.p3go5yduhyz6cr65@mwanda>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <76d01501-e2b2-8f98-724f-8d4c326013e4@gmail.com>
+Date:   Fri, 10 Aug 2018 20:21:23 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180810174320.GV4692@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180810113132.p3go5yduhyz6cr65@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 10:43 AM, Jarkko Sakkinen wrote:
->> +static struct workqueue_struct *tpm_dev_wq;
-> A naming contradiction with tpm_common_read() and tpm_common_write(). To
-> sort that up I would suggest adding a commit to the patch set that
-> renames these functions as tpm_dev_common_read() and
-> tpm_dev_common_write() and use the name tpm_common_dev_wq here.
-> 
+On 08/10/18 13:31, Dan Carpenter wrote:
+> No no...  I only gave it a Reviewed-by tag because I didn't want you to
+> resend again...  :P
 
-Currently we have: tpm_open(), tpm_write(), tpm_release() in tpm-dev.c
-tpmrm_open(), tpmrm_read(), tpmrm_write(), tpmrm_release() in tpmrm-dev.c
-tpm_common_open(), tpm_common_read(), tpm_common_write(), tpm_common_release() in tpm-dev-common.c
+Ah, sorry. So I shouldn't have added the tag?
+Should I remove it again? I guess not..
+How are those tags (reviewed, acked, etc.) handled normaly?
+I'm a bit confused now. ;)
 
-I think that's pretty consistent. Do you want me to rename all of them to tpm_dev_*()?
-I don't see any value in doing this. What about if I just rename: 
-tpm_dev_wq_lock to tpm_common_wq_lock, and tpm_dev_wq to tpm_common_wq?
-
->> +static DEFINE_MUTEX(tpm_dev_wq_lock);
-> This is an unacceptable way to do it, Rather add:
-> 
-> int __init  tpm_dev_common_init(void)
-> {
-> 	tpm_dev_common_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
-> 	if (!tpm_dev_common_wq)
-> 		return -ENOMEM;
-> 
-> 	return 0;
-> }
-> 
-> and call this in the driver initialization.
-> 
-That was the way it was implemented in v1 https://patchwork.kernel.org/patch/10442125/
-
-See: static int __init tpm_dev_common_init(void)
-
-and the feedback I got from Jason was:
-
-"I wonder if it is worth creating this when the first file is
-opened.. Lots of systems have TPMs but few use the userspace.."
-
-so I changed this to allocate the WQ on first open. I think it makes sense,
-but I leave it to you to decide.
-
-Tadeusz,
--- 
-Tadeusz
+Michael
