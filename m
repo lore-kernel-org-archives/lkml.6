@@ -2,81 +2,135 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3828C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16045C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C98223D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C98223D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id C34B7223D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 07:05:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34B7223D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbeHJJdX (ORCPT
+        id S1727662AbeHJJde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 05:33:23 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41988 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726961AbeHJJdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 05:33:23 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E916A84A94A8;
-        Fri, 10 Aug 2018 15:04:48 +0800 (CST)
-Received: from dessert.huawei.com (10.69.192.158) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 10 Aug 2018 15:04:42 +0800
-From:   Zeng Tao <prime.zeng@hisilicon.com>
-To:     <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
-        <mathias.nyman@linux.intel.com>, <drinkcat@chromium.org>,
-        <felipe.balbi@linux.intel.com>, <drake@endlessm.com>,
-        <mike.looijmans@topic.nl>, <joe@perches.com>
-CC:     Zeng Tao <prime.zeng@hisilicon.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] usb: hub: try old enumeration scheme first for high speed devices
-Date:   Fri, 10 Aug 2018 23:01:42 +0800
-Message-ID: <1533913304-15737-1-git-send-email-prime.zeng@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 10 Aug 2018 05:33:34 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:52054 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727542AbeHJJde (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 10 Aug 2018 05:33:34 -0400
+Received: from [10.160.4.48] (nat.nue.novell.com [195.135.221.2])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 10 Aug 2018 09:05:00 +0200
+Subject: Re: [RFC PATCH 00/17] btrfs zoned block device support
+To:     Naohiro Aota <naota@elisp.net>, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        linux-kernel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Matias Bjorling <mb@lightnvm.io>
+References: <20180809180450.5091-1-naota@elisp.net>
+From:   Hannes Reinecke <hare@suse.com>
+Message-ID: <b60c72ff-8fba-839f-4c42-df68318b9222@suse.com>
+Date:   Fri, 10 Aug 2018 09:04:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.158]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180809180450.5091-1-naota@elisp.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new scheme is required just to support legacy low and full-speed
-devices. For high speed devices, it will slower the enumeration speed.
-So in this patch we try the "old" enumeration scheme first for high speed
-devices.
+On 08/09/2018 08:04 PM, Naohiro Aota wrote:
+> This series adds zoned block device support to btrfs.
+> 
+> A zoned block device consists of a number of zones. Zones are either
+> conventional and accepting random writes or sequential and requiring that
+> writes be issued in LBA order from each zone write pointer position. This
+> patch series ensures that the sequential write constraint of sequential
+> zones is respected while fundamentally not changing BtrFS block and I/O
+> management for block stored in conventional zones.
+> 
+> To achieve this, the default dev extent size of btrfs is changed on zoned
+> block devices so that dev extents are always aligned to a zone. Allocation
+> of blocks within a block group is changed so that the allocation is always
+> sequential from the beginning of the block groups. To do so, an allocation
+> pointer is added to block groups and used as the allocation hint.  The
+> allocation changes also ensures that block freed below the allocation
+> pointer are ignored, resulting in sequential block allocation regardless of
+> the block group usage.
+> 
+> While the introduction of the allocation pointer ensure that blocks will be
+> allocated sequentially, I/Os to write out newly allocated blocks may be
+> issued out of order, causing errors when writing to sequential zones. This
+> problem s solved by introducing a submit_buffer() function and changes to
+> the internal I/O scheduler to ensure in-order issuing of write I/Os for
+> each chunk and corresponding to the block allocation order in the chunk.
+> 
+> The zones of a chunk are reset to allow reusing of the zone only when the
+> block group is being freed, that is, when all the extents of the block group
+> are unused.
+> 
+> For btrfs volumes composed of multiple zoned disks, restrictions are added
+> to ensure that all disks have the same zone size. This matches the existing
+> constraint that all dev extents in a chunk must have the same size.
+> 
+> It requires zoned block devices to test the patchset. Even if you don't
+> have zone devices, you can use tcmu-runner [1] to emulate zoned block
+> devices. It can export emulated zoned block devices via iSCSI. Please see
+> the README.md of tcmu-runner [2] for howtos to generate a zoned block
+> device on tcmu-runner.
+> 
+> [1] https://github.com/open-iscsi/tcmu-runner
+> [2] https://github.com/open-iscsi/tcmu-runner/blob/master/README.md
+> 
+> Patch 1 introduces the HMZONED incompatible feature flag to indicate that
+> the btrfs volume was formatted for use on zoned block devices.
+> 
+> Patches 2 and 3 implement functions to gather information on the zones of
+> the device (zones type and write pointer position).
+> 
+> Patch 4 restrict the possible locations of super blocks to conventional
+> zones to preserve the existing update in-place mechanism for the super
+> blocks.
+> 
+> Patches 5 to 7 disable features which are not compatible with the sequential
+> write constraints of zoned block devices. This includes fallocate and
+> direct I/O support. Device replace is also disabled for now.
+> 
+> Patches 8 and 9 tweak the extent buffer allocation for HMZONED mode to
+> implement sequential block allocation in block groups and chunks.
+> 
+> Patches 10 to 12 implement the new submit buffer I/O path to ensure sequential
+> write I/O delivery to the device zones.
+> 
+> Patches 13 to 16 modify several parts of btrfs to handle free blocks
+> without breaking the sequential block allocation and sequential write order
+> as well as zone reset for unused chunks.
+> 
+> Finally, patch 17 adds the HMZONED feature to the list of supported
+> features.
+> 
+Thanks for doing all the work.
+However, the patches don't apply cleanly to current master branch.
+Can you please rebase them?
 
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
----
- drivers/usb/core/hub.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks.
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 1fb2668..d265b19 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2661,10 +2661,13 @@ static bool use_new_scheme(struct usb_device *udev, int retry,
- 	int old_scheme_first_port =
- 		port_dev->quirks & USB_PORT_QUIRK_OLD_SCHEME;
- 
-+	int quick_enumeration = (udev->speed == USB_SPEED_HIGH);
-+
- 	if (udev->speed >= USB_SPEED_SUPER)
- 		return false;
- 
--	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first);
-+	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first
-+			      || quick_enumeration);
- }
- 
- /* Is a USB 3.0 port in the Inactive or Compliance Mode state?
+Cheers,
+
+Hannes
 -- 
-2.7.4
-
+Dr. Hannes Reinecke		               zSeries & Storage
+hare@suse.com			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
