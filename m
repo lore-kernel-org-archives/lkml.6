@@ -2,209 +2,213 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BF1C46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B06C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7517A223AA
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUAZb26K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7517A223AA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 520D8208E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 00:36:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520D8208E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeHJDDg (ORCPT
+        id S1727422AbeHJDEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 9 Aug 2018 23:03:36 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55659 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeHJDDg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Aug 2018 23:03:36 -0400
-Received: by mail-it0-f68.google.com with SMTP id d10-v6so492420itj.5;
-        Thu, 09 Aug 2018 17:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KTDIyw9de+g8O/ayVeCriIX9Ednpv8OVfO3SEe/FPTw=;
-        b=ZUAZb26KegmOtmEbZzqSeiTfUqHqTqK6iV/XRedb4DXpQ65tJMRSD5BKAybModedN2
-         IqMLFFBCY6Hoii3GooYH58n0DvDqD1Io68zRlavaf02Tebl8QAQyghoH90qbK6fGB0uC
-         OVEXgeAU7TAxIQc9gFAksHjqC2kuTWjIsH6XrAT4vUt5+sf2XKqXcxE21qRuIabCUxyt
-         1TnMv6YDAMl3admFBDLBG5h7r7aLB3z5hbn63dG7EB3UwViw7/ljnHrnr66AXEyJIq9i
-         f4OLo/+j/G+BWFiuFvCFyU/Ldff+qZU6ImK89Cyw9RVmgaJEfxJRo6Y9H+9ucJeJOQtW
-         33vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KTDIyw9de+g8O/ayVeCriIX9Ednpv8OVfO3SEe/FPTw=;
-        b=JC0VNbtrGmwJilSubGaBZWjKpGiotVkIhNm63Foit9UX/HILsofg1NuA21P/B/MrBo
-         6omRaOFsU5qgCs/dx9d/lDdQIuKXBSyn+malx1CrhnNEn30O4+coA1KfMchlKyaZrcF/
-         Rl5DRSn7w4DycQVDyalS5xqRXyPF0MBbg8vg51yP4TLfY3J/tKGeUEV7XY4UwbPJyiN/
-         FhQkdUjf/s3od5Qih4WWa2YPiSUIVUrufTIC8PT1zYg1+RlHsQ2Fk+l7LdKY7yyzA8Ui
-         Z98ahcyzhtVMu4ZainAJzuyB4X4IdMfi79UxLubGVm257qdRsA5jiz3DdRFs/V6JD2gp
-         tcjA==
-X-Gm-Message-State: AOUpUlHXkO1vCeZvDz+xsqRlRrOyz2yVr7TKZ7mb32Xb3r5jIYq4qFA9
-        TpgeHV7eNqZPwKV8+TCRb267Y+oykgHRUVRnlMU=
-X-Google-Smtp-Source: AA+uWPxWu/HdOanKRfn8kck67yy6Dn4X18AKKsB/XgyophpPT8mxonbdQtiFNeytK6VH/rS0oQtBVNswepCOYo5kdrA=
-X-Received: by 2002:a02:ba85:: with SMTP id g5-v6mr3968307jao.6.1533861374181;
- Thu, 09 Aug 2018 17:36:14 -0700 (PDT)
+        Thu, 9 Aug 2018 23:04:13 -0400
+Received: from fieldses.org ([173.255.197.46]:49456 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeHJDEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Aug 2018 23:04:12 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id D28FA1E3A; Thu,  9 Aug 2018 20:36:50 -0400 (EDT)
+Date:   Thu, 9 Aug 2018 20:36:50 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] fs/locks: create a tree of dependent requests.
+Message-ID: <20180810003650.GB3915@fieldses.org>
+References: <153378012255.1220.6754153662007899557.stgit@noble>
+ <153378028121.1220.4418653283078446336.stgit@noble>
+ <20180809141341.GI23873@fieldses.org>
+ <87in4jrxn5.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <1531796756-16982-1-git-send-email-zong@andestech.com>
-In-Reply-To: <1531796756-16982-1-git-send-email-zong@andestech.com>
-From:   Zong Li <zongbox@gmail.com>
-Date:   Fri, 10 Aug 2018 08:36:03 +0800
-Message-ID: <CA+ZOyahU_D616x_PjB=6tzDagWJOf_=bgFOUSx2t2Q3HcNEB5g@mail.gmail.com>
-Subject: Re: [PATCH] module: Add the print format of Elf_Addr for 32/64-bit compatibly
-To:     Zong Li <zong@andestech.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        arnd@arndb.de, schwab@suse.de, hch@infradead.org,
-        linux-riscv@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, greentime@andestech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87in4jrxn5.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zong Li <zong@andestech.com> =E6=96=BC 2018=E5=B9=B47=E6=9C=8817=E6=97=A5 =
-=E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=8811:06=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Use a similar way like fixed width integer types in inttypes.h.
->
-> For the ELF, the Elf32_Addr is int type and Elf64_Addr is long long
-> type. It is opposite to definition of inttypes.h, so the Elf_Addr cannot
-> re-use the header.
->
-> In many architectures, the module loader only print the message of
-> module name and relocation type except the address information. We can
-> print the address correctly without compile warning by using PRIdEA,
-> PRIxEA and so on.
->
-> Signed-off-by: Zong Li <zong@andestech.com>
-> ---
->  arch/riscv/kernel/module.c   | 13 +++++++------
->  include/asm-generic/module.h |  9 +++++++++
->  2 files changed, 16 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
-> index 3303ed2cd419..d839528e491a 100644
-> --- a/arch/riscv/kernel/module.c
-> +++ b/arch/riscv/kernel/module.c
-> @@ -16,11 +16,12 @@
->  #include <linux/err.h>
->  #include <linux/errno.h>
->  #include <linux/moduleloader.h>
-> +#include <asm-generic/module.h>
->
->  static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_A=
-ddr v)
->  {
->         if (v !=3D (u32)v) {
-> -               pr_err("%s: value %016llx out of range for 32-bit field\n=
-",
-> +               pr_err("%s: value %016" PRIxEA "out of range for 32-bit f=
-ield\n",
->                        me->name, v);
->                 return -EINVAL;
->         }
-> @@ -101,7 +102,7 @@ static int apply_r_riscv_pcrel_hi20_rela(struct modul=
-e *me, u32 *location,
->
->         if (offset !=3D (s32)offset) {
->                 pr_err(
-> -                 "%s: target %016llx can not be addressed by the 32-bit =
-offset from PC =3D %p\n",
-> +                 "%s: target %016" PRIxEA "can not be addressed by the 3=
-2-bit offset from PC =3D %p\n",
->                   me->name, v, location);
->                 return -EINVAL;
->         }
-> @@ -143,7 +144,7 @@ static int apply_r_riscv_hi20_rela(struct module *me,=
- u32 *location,
->
->         if (IS_ENABLED(CMODEL_MEDLOW)) {
->                 pr_err(
-> -                 "%s: target %016llx can not be addressed by the 32-bit =
-offset from PC =3D %p\n",
-> +                 "%s: target %016" PRIxEA "can not be addressed by the 3=
-2-bit offset from PC =3D %p\n",
->                   me->name, v, location);
->                 return -EINVAL;
->         }
-> @@ -187,7 +188,7 @@ static int apply_r_riscv_got_hi20_rela(struct module =
-*me, u32 *location,
->                 offset =3D (void *)offset - (void *)location;
->         } else {
->                 pr_err(
-> -                 "%s: can not generate the GOT entry for symbol =3D %016=
-llx from PC =3D %p\n",
-> +                 "%s: can not generate the GOT entry for symbol =3D %016=
-" PRIxEA "from PC =3D %p\n",
->                   me->name, v, location);
->                 return -EINVAL;
->         }
-> @@ -211,7 +212,7 @@ static int apply_r_riscv_call_plt_rela(struct module =
-*me, u32 *location,
->                         offset =3D (void *)offset - (void *)location;
->                 } else {
->                         pr_err(
-> -                         "%s: target %016llx can not be addressed by the=
- 32-bit offset from PC =3D %p\n",
-> +                         "%s: target %016" PRIxEA "can not be addressed =
-by the 32-bit offset from PC =3D %p\n",
->                           me->name, v, location);
->                         return -EINVAL;
->                 }
-> @@ -233,7 +234,7 @@ static int apply_r_riscv_call_rela(struct module *me,=
- u32 *location,
->
->         if (offset !=3D fill_v) {
->                 pr_err(
-> -                 "%s: target %016llx can not be addressed by the 32-bit =
-offset from PC =3D %p\n",
-> +                 "%s: target %016" PRIxEA "can not be addressed by the 3=
-2-bit offset from PC =3D %p\n",
->                   me->name, v, location);
->                 return -EINVAL;
->         }
-> diff --git a/include/asm-generic/module.h b/include/asm-generic/module.h
-> index 98e1541b72b7..d358f2414e5e 100644
-> --- a/include/asm-generic/module.h
-> +++ b/include/asm-generic/module.h
-> @@ -27,6 +27,7 @@ struct mod_arch_specific
->  #endif
->  #define ELF_R_TYPE(X)  ELF64_R_TYPE(X)
->  #define ELF_R_SYM(X)   ELF64_R_SYM(X)
-> +#define ELF_ADDR_PREFIX "ll"
->
->  #else /* CONFIG_64BIT */
->
-> @@ -44,6 +45,14 @@ struct mod_arch_specific
->  #endif
->  #define ELF_R_TYPE(X)  ELF32_R_TYPE(X)
->  #define ELF_R_SYM(X)   ELF32_R_SYM(X)
-> +#define ELF_ADDR_PREFIX
->  #endif
->
-> +#define PRIdEA ELF_ADDR_PREFIX "d" /* signed decimal */
-> +#define PRIiEA ELF_ADDR_PREFIX "i" /* signed decimal */
-> +#define PRIuEA ELF_ADDR_PREFIX "u" /* unsigned decimal */
-> +#define PRIoEA ELF_ADDR_PREFIX "o" /* unsigned octal */
-> +#define PRIxEA ELF_ADDR_PREFIX "x" /* unsigned lowercase hexadecimal */
-> +#define PRIXEA ELF_ADDR_PREFIX "X" /* unsigned uppercase hexadecimal */
-> +
->  #endif /* __ASM_GENERIC_MODULE_H */
-> --
-> 2.16.1
->
+On Fri, Aug 10, 2018 at 08:19:26AM +1000, NeilBrown wrote:
+> On Thu, Aug 09 2018, J. Bruce Fields wrote:
+> > I think you could simplify the code a lot by maintaining the tree so
+> > that it always satisfies the condition that waiters are always strictly
+> > "weaker" than their descendents, so that finding a conflict with a
+> > waiter is always enough to know that the descendents also conflict.
+> 
+> Can you define "weaker" please.
+> I suspect it is a partial ordering, in which case a tree would normally
+> be more appropriate than trying to find a total ordering.
 
-ping
+Lock X is stronger than lock Y if any lock that would conflict with lock
+Y would also conflict with lock X.
+
+Equivalently, X is stronger than Y if lock X's range is a superset of
+lock Y's and if X is a write lock whenever Y is.  Well, I *thought* that
+was equivalent until I thought about the owner problem.  Ugh.
+
+--b.
+
+> 
+> Thanks,
+> NeilBrown
+> 
+> >
+> > So, when you put a waiter to sleep, you don't add it below a child
+> > unless it's "stronger" than the child.
+> >
+> > You give up the property that siblings don't conflict, but again that
+> > just means thundering herds in weird cases, which is OK.
+> >
+> > --b.
+> >
+> >> 
+> >> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
+> >> Signed-off-by: NeilBrown <neilb@suse.com>
+> >> ---
+> >>  fs/locks.c |   69 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+> >>  1 file changed, 63 insertions(+), 6 deletions(-)
+> >> 
+> >> diff --git a/fs/locks.c b/fs/locks.c
+> >> index fc64016d01ee..17843feb6f5b 100644
+> >> --- a/fs/locks.c
+> >> +++ b/fs/locks.c
+> >> @@ -738,6 +738,39 @@ static void locks_delete_block(struct file_lock *waiter)
+> >>  	spin_unlock(&blocked_lock_lock);
+> >>  }
+> >>  
+> >> +static void wake_non_conflicts(struct file_lock *waiter, struct file_lock *blocker,
+> >> +			       enum conflict conflict(struct file_lock *,
+> >> +						      struct file_lock *))
+> >> +{
+> >> +	struct file_lock *parent = waiter;
+> >> +	struct file_lock *fl;
+> >> +	struct file_lock  *t;
+> >> +
+> >> +	fl = list_entry(&parent->fl_blocked, struct file_lock, fl_block);
+> >> +restart:
+> >> +	list_for_each_entry_safe_continue(fl, t, &parent->fl_blocked, fl_block) {
+> >> +		switch (conflict(fl, blocker)) {
+> >> +		default:
+> >> +		case FL_NO_CONFLICT:
+> >> +			__locks_wake_one(fl);
+> >> +			break;
+> >> +		case FL_CONFLICT:
+> >> +			/* Need to check children */
+> >> +			parent = fl;
+> >> +			fl = list_entry(&parent->fl_blocked, struct file_lock, fl_block);
+> >> +			goto restart;
+> >> +		case FL_TRANSITIVE_CONFLICT:
+> >> +			/* all children must also conflict, no need to check */
+> >> +			continue;
+> >> +		}
+> >> +	}
+> >> +	if (parent != waiter) {
+> >> +		parent = parent->fl_blocker;
+> >> +		fl = parent;
+> >> +		goto restart;
+> >> +	}
+> >> +}
+> >> +
+> >>  /* Insert waiter into blocker's block list.
+> >>   * We use a circular list so that processes can be easily woken up in
+> >>   * the order they blocked. The documentation doesn't require this but
+> >> @@ -747,11 +780,32 @@ static void locks_delete_block(struct file_lock *waiter)
+> >>   * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
+> >>   * that the flc_lock is also held on insertions we can avoid taking the
+> >>   * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
+> >> + *
+> >> + * Rather than just adding to the list, we check for conflicts with any existing
+> >> + * waiter, and add to that waiter instead.
+> >> + * Thus wakeups don't happen until needed.
+> >>   */
+> >>  static void __locks_insert_block(struct file_lock *blocker,
+> >> -					struct file_lock *waiter)
+> >> +				 struct file_lock *waiter,
+> >> +				 enum conflict conflict(struct file_lock *,
+> >> +							struct file_lock *))
+> >>  {
+> >> +	struct file_lock *fl;
+> >>  	BUG_ON(!list_empty(&waiter->fl_block));
+> >> +
+> >> +	/* Any request in waiter->fl_blocked is know to conflict with
+> >> +	 * waiter, but it might not conflict with blocker.
+> >> +	 * If it doesn't, it needs to be woken now so it can find
+> >> +	 * somewhere else to wait, or possible it can get granted.
+> >> +	 */
+> >> +	if (conflict(waiter, blocker) != FL_TRANSITIVE_CONFLICT)
+> >> +		wake_non_conflicts(waiter, blocker, conflict);
+> >> +new_blocker:
+> >> +	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
+> >> +		if (conflict(fl, waiter)) {
+> >> +			blocker =  fl;
+> >> +			goto new_blocker;
+> >> +		}
+> >>  	waiter->fl_blocker = blocker;
+> >>  	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
+> >>  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
+> >> @@ -760,10 +814,12 @@ static void __locks_insert_block(struct file_lock *blocker,
+> >>  
+> >>  /* Must be called with flc_lock held. */
+> >>  static void locks_insert_block(struct file_lock *blocker,
+> >> -					struct file_lock *waiter)
+> >> +			       struct file_lock *waiter,
+> >> +			       enum conflict conflict(struct file_lock *,
+> >> +						      struct file_lock *))
+> >>  {
+> >>  	spin_lock(&blocked_lock_lock);
+> >> -	__locks_insert_block(blocker, waiter);
+> >> +	__locks_insert_block(blocker, waiter, conflict);
+> >>  	spin_unlock(&blocked_lock_lock);
+> >>  }
+> >>  
+> >> @@ -1033,7 +1089,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+> >>  		if (!(request->fl_flags & FL_SLEEP))
+> >>  			goto out;
+> >>  		error = FILE_LOCK_DEFERRED;
+> >> -		locks_insert_block(fl, request);
+> >> +		locks_insert_block(fl, request, flock_locks_conflict);
+> >>  		goto out;
+> >>  	}
+> >>  	if (request->fl_flags & FL_ACCESS)
+> >> @@ -1107,7 +1163,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+> >>  			spin_lock(&blocked_lock_lock);
+> >>  			if (likely(!posix_locks_deadlock(request, fl))) {
+> >>  				error = FILE_LOCK_DEFERRED;
+> >> -				__locks_insert_block(fl, request);
+> >> +				__locks_insert_block(fl, request,
+> >> +						     posix_locks_conflict);
+> >>  			}
+> >>  			spin_unlock(&blocked_lock_lock);
+> >>  			goto out;
+> >> @@ -1581,7 +1638,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+> >>  		break_time -= jiffies;
+> >>  	if (break_time == 0)
+> >>  		break_time++;
+> >> -	locks_insert_block(fl, new_fl);
+> >> +	locks_insert_block(fl, new_fl, leases_conflict);
+> >>  	trace_break_lease_block(inode, new_fl);
+> >>  	spin_unlock(&ctx->flc_lock);
+> >>  	percpu_up_read_preempt_enable(&file_rwsem);
+> >> 
+
+
