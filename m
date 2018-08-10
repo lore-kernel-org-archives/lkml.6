@@ -2,143 +2,153 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC7DC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904CCC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530CC216E5
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41A7B223B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="Pmo1YYHp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530CC216E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fk3ox4uT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A7B223B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeHJKqb (ORCPT
+        id S1727444AbeHJKuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:46:31 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:35921 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbeHJKqb (ORCPT
+        Fri, 10 Aug 2018 06:50:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39619 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbeHJKuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:46:31 -0400
-Received: by mail-ua1-f68.google.com with SMTP id c12-v6so1022729uan.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:17:42 -0700 (PDT)
+        Fri, 10 Aug 2018 06:50:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h10-v6so7503053wre.6
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 01:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+5+vk8TzJLekk5CR7j60VyV+5jkEGyiKn3CZR+45tKo=;
-        b=Pmo1YYHpk+PHLs6C0HDfPs9MNbGbA5uUA6HQFxvKQGzpSL8y4cqEfHdVY9skZJq8Kd
-         ONGPYtEvA3tg9uisHNgAwTIvQJit4G796Ji7rDccUA0+GxfLtRr0/qhzV76+t1kuHxX0
-         XAEp3ZZHmv2kVsy9N/UVYUvWmKmcvFjMx7eeO6vNQW95Fa1cGs4rIcOTE2lyAXymdnvG
-         geQZUdSdx4ij2IoKwq2UzrmkbY3Rf03lYKIk/EF6OsAfVR8m+sNjIfZViyEN3z3Lq7lN
-         oYNY1dgLp7b4d3XygKJtfg+J1d6ESz4Hd6fvQvWf3aRp481yml76flSTqK3cKduPuFzh
-         tv1g==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cO4PA/1+z2tQO0z/RG+l0qNJjq3sAN2geBDB5jiMFMc=;
+        b=Fk3ox4uTLbCn1iN0ReYGQQUDlEzhvJYAquvN2hS/iew9REIRUEuFhTGkA6u02iuRTI
+         iiTo+d+dXK/d/X0FhBNb6j+7GpE8334vFNXnHncbT5CzU6tZSRlyHR/d+QD4xvlkNx0n
+         Y5BMhImHgRxsG3zSowOm0CMEj7EdsypUvxk+j8tHnhRwRj9WZ/VcTqXc/+KYyforyaeU
+         6VL5LNGxvhCiZ7GQMvw9e1QHDzNs28mrQ4J533fNZVrgHHQuC0qI63pd8IK20NRbT+fD
+         gFSg6yP6j6fx1NtUBkfCfnPXYPovS9nXDtMA3pMlK2yr5pLqcCdlVdwp3hoD4D5x28my
+         6r1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+5+vk8TzJLekk5CR7j60VyV+5jkEGyiKn3CZR+45tKo=;
-        b=nls2NExCfntk/p4bk9Sh9kueA080hYRZbhoFGGWcLrSnroTNfbCqUP2rR4ZBc3gNvE
-         Z+ckPvdTzizVhqVipxxS0r5zaqPfAJK/OyTdVIeGBDACHHUtAW+jVNFdgwvexHOFFJE8
-         iZY+RPmz4Iwp3/dibGS/cVH+/S7c8DK2j2BmOXyFTFTiA1FrGNHI1nK9bjjcYciNfM1V
-         W/oM/EN4cdBlNYzYOoX+s00O7bsCtCyVDJE9gI0hHcQYD0nfIKm25F9p6oEMBtKSqwa9
-         ly9GH8H296IhGPhdhvLgQcOj7JdCrmv8XL0JnaiGjndNLAehH2UfkPTP2MLEmzsvb11+
-         /ZSg==
-X-Gm-Message-State: AOUpUlHZP9ahkz6fA6pQHuXfHrthbY28Ik86d9q/NNAGb7iMsydoWuOw
-        mqvW1pxyIbVgTuFVMUn3EHeHJZSgP8Z3EUKgm6GRWw==
-X-Google-Smtp-Source: AA+uWPwQ61ld5vuVE+z5Tyr3U3XeQVklbDAiR94Hqrt3svXFbJuEsQkNCBkceuje9xUJK7VZJE2AUso4mifDWhCOGtc=
-X-Received: by 2002:ab0:72d1:: with SMTP id g17-v6mr3789446uap.33.1533889062117;
- Fri, 10 Aug 2018 01:17:42 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cO4PA/1+z2tQO0z/RG+l0qNJjq3sAN2geBDB5jiMFMc=;
+        b=FBo/CVuCoov7DcxfE/Dsr05Ndq7wpqEp+xaZfDCLNLZdUbaq7/atitwIn29og6HTAn
+         cxSvs9+asG631vc7bmtnx3ZLGYkjAYNN3YDH3LhPnW4SYPfBYOZejDNdckWocySPNg0/
+         AI+roVx1bRRUvqbU88R/DEqMAZrz7j75tPpElgX3V7IFq8y4KQR3M6IhSXqn3kjpEbpT
+         p1f0hLgdv9P5RKBPsxjOHAzW3OntRT4JzA64sfwGf78eY7P4DhvzdfQC/d0LVwGLfra/
+         SryvANk7/nDEth3C2CqPLdVNxs6TyVkFXplhnb/eQgYarUmUlBbs6zH3dOlE+imC608u
+         297g==
+X-Gm-Message-State: AOUpUlEg0FQojg3fdlaIj8JUoXja+MvXa5TeQmN94gGk43ZPDlpaK1N0
+        BUdjol9oHOYWFYRRmPWNWmPComO92j3LD3hEzJQfIQ==
+X-Google-Smtp-Source: AA+uWPzJKUY9vRybPxTquRZc9+sbrpjSs28L4BXTRBeBpnEIVZ6kTT9mN5Gapk7uhzkgRGAMxU4xt9wJD9dOyiLBz80=
+X-Received: by 2002:adf:fc45:: with SMTP id e5-v6mr3543287wrs.157.1533889290104;
+ Fri, 10 Aug 2018 01:21:30 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:984f:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 01:17:41
- -0700 (PDT)
-In-Reply-To: <20180802205023.29094-1-mb@lightnvm.io>
-References: <20180802205023.29094-1-mb@lightnvm.io>
-From:   Hans Holmberg <hans@owltronix.com>
-Date:   Fri, 10 Aug 2018 10:17:41 +0200
-Message-ID: <CANr-nt1SrDTa+im3THtOPgh=0vPP+iBfGjVJuLZkVnvF3Z0WXA@mail.gmail.com>
-Subject: Re: [PATCH] lightnvm: pblk: fix rqd.error return value in pblk_blk_erase_sync
-To:     =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        Javier Gonzalez <javier@cnexlabs.com>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1533767600-7794-1-git-send-email-eranian@google.com> <20180809080721.GB19243@krava>
+In-Reply-To: <20180809080721.GB19243@krava>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Fri, 10 Aug 2018 01:21:18 -0700
+Message-ID: <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
+Subject: Re: [PATCH v2] perf ordered_events: fix crash in free_dup_event()
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 10:50 PM, Matias Bj=C3=B8rling <mb@lightnvm.io> wrot=
-e:
-> rqd.error is masked by the return value of pblk_submit_io_sync.
-> The rqd structure is then passed on to the end_io function, which
-> assumes that any error should lead to a chunk being marked
-> offline/bad. Since the pblk_submit_io_sync can fail before the
-> command is issued to the device, the error value maybe not correspond
-> to a media failure, leading to chunks being immaturely retired.
+On Thu, Aug 9, 2018 at 1:07 AM Jiri Olsa <jolsa@redhat.com> wrote:
 >
-> Also, the pblk_blk_erase_sync function prints an error message in case
-> the erase fails. Since the caller prints an error message by itself,
-> remove the error message in this function.
+> On Wed, Aug 08, 2018 at 03:33:20PM -0700, Stephane Eranian wrote:
+> > This patch fixes a bug in ordered_event.c:alloc_event().
+> > An ordered_event struct was not initialized properly potentially
+> > causing crashes later on in free_dup_event() depending on the
+> > content of the memory. If it was NULL, then it would work fine,
+> > otherwise, it could cause crashes such as:
 >
-> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+> I'm now little puzzled what do we use this first event for..
+> I can't see anything special about it, other than it's added
+> on the list uninitialized ;-)
+>
+> it seems to work properly when we ditch it.. might be some
+> prehistoric leftover or I'm terribly missing something
+>
+You need to keep track of the buffers to free. You do not free the
+ordered_event structs
+individually. For each oe->buffer, you need one free(). Each buffer is
+put in the to_free
+list. But to link it into the list it needs a list_head. This is what
+buffer[0] is used for.
+But the logic is broken in  ordered_events__free(). It does not free individual
+ordered_event structs, but a buffer with many. Yet, it is missing
+freeing all of the duped
+events.
+
+ void ordered_events__free(struct ordered_events *oe)
+{
+        while (!list_empty(&oe->to_free)) {
+                struct ordered_event *buffer;
+
+                buffer = list_entry(oe->to_free.next, struct
+ordered_event, list);
+                list_del(&buffer->list);
+---->         free_dup_event(oe, event->event);
+                free(buffer);
+        }
+}
+This only frees the dup_event of buffer[0] which we know is NULL (well, now).
+It needs to walk all the entries in buffer[] to free buffer[x].event.
+
+I think the goal was likely to avoid adding another list_head field to
+each ordered_event
+and instead use one per allocated buffer.
+This is very convoluted and prone to errors and we are seeing right
+now. This should
+be cleaned. So either you add a list_head to ordered_event or you
+would buffer[x] in
+ordered_events_free().
+
+At this point, this is my understanding.
+Do you agree?
+
+
+>
+> thanks,
+> jirka
+>
+>
 > ---
->  drivers/lightnvm/pblk-core.c | 19 ++-----------------
->  1 file changed, 2 insertions(+), 17 deletions(-)
+> diff --cc tools/perf/util/ordered-events.c
+> index bad9e0296e9a,0e837b0b8582..000000000000
+> --- a/tools/perf/util/ordered-events.c
+> +++ b/tools/perf/util/ordered-events.c
+> @@@ -119,12 -119,8 +119,9 @@@ static struct ordered_event *alloc_even
+>                 pr("alloc size %" PRIu64 "B (+%zu), max %" PRIu64 "B\n",
+>                    oe->cur_alloc_size, size, oe->max_alloc_size);
 >
-> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-> index 72acf2f6dbd6..814204d22a2e 100644
-> --- a/drivers/lightnvm/pblk-core.c
-> +++ b/drivers/lightnvm/pblk-core.c
-> @@ -886,10 +886,8 @@ static void pblk_setup_e_rq(struct pblk *pblk, struc=
-t nvm_rq *rqd,
->
->  static int pblk_blk_erase_sync(struct pblk *pblk, struct ppa_addr ppa)
->  {
-> -       struct nvm_rq rqd;
-> -       int ret =3D 0;
+>  +              oe->cur_alloc_size += size;
+> -               list_add(&oe->buffer->list, &oe->to_free);
 > -
-> -       memset(&rqd, 0, sizeof(struct nvm_rq));
-> +       struct nvm_rq rqd =3D {0};
-> +       int ret;
->
->         pblk_setup_e_rq(pblk, &rqd, ppa);
->
-> @@ -897,19 +895,6 @@ static int pblk_blk_erase_sync(struct pblk *pblk, st=
-ruct ppa_addr ppa)
->          * with writes. Thus, there is no need to take the LUN semaphore.
->          */
->         ret =3D pblk_submit_io_sync(pblk, &rqd);
-> -       if (ret) {
-> -               struct nvm_tgt_dev *dev =3D pblk->dev;
-> -               struct nvm_geo *geo =3D &dev->geo;
-> -
-> -               pblk_err(pblk, "could not sync erase line:%d,blk:%d\n",
-> -                                       pblk_ppa_to_line(ppa),
-> -                                       pblk_ppa_to_pos(geo, ppa));
-> -
-> -               rqd.error =3D ret;
-> -               goto out;
-> -       }
-> -
-> -out:
->         rqd.private =3D pblk;
->         __pblk_end_io_erase(pblk, &rqd);
->
-> --
-> 2.11.0
->
-
-
-Nice catch! I just added fixing this exact issue in my own backlog,
-great that you've already fixed it.
-
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> -               /* First entry is abused to maintain the to_free list. */
+> -               oe->buffer_idx = 2;
+> -               new = oe->buffer + 1;
+> +               oe->buffer_idx = 1;
+> +               new = oe->buffer;
+>         } else {
+>                 pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
+>         }
