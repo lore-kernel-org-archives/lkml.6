@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E11E6C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98CFC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C422242C
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:24:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C422242C
+	by mail.kernel.org (Postfix) with ESMTP id 613F922450
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 18:26:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613F922450
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeHJUzP (ORCPT
+        id S1728004AbeHJU5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 16:55:15 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:33745 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727570AbeHJUzP (ORCPT
+        Fri, 10 Aug 2018 16:57:39 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:40026 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726432AbeHJU5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 16:55:15 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T6QQEkV_1533925426;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6QQEkV_1533925426)
+        Fri, 10 Aug 2018 16:57:39 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T6QQEsX_1533925575;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6QQEsX_1533925575)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 11 Aug 2018 02:23:54 +0800
-Subject: Re: [RFC v7 PATCH 1/4] mm: refactor do_munmap() to extract the common
- part
+          Sat, 11 Aug 2018 02:26:19 +0800
+Subject: Re: [RFC v7 PATCH 2/4] mm: mmap: zap pages with read mmap_sem in
+ munmap
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
         kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
@@ -37,15 +37,15 @@ Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
         namhyung@kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 References: <1533857763-43527-1-git-send-email-yang.shi@linux.alibaba.com>
- <1533857763-43527-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180810174150.GA6487@bombadil.infradead.org>
+ <1533857763-43527-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180810175759.GB6487@bombadil.infradead.org>
 From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <30ee3dd0-a794-1c93-dd22-5c643a9037a6@linux.alibaba.com>
-Date:   Fri, 10 Aug 2018 11:23:45 -0700
+Message-ID: <0594c845-68c8-e15f-6ec6-91641c5fbdd1@linux.alibaba.com>
+Date:   Fri, 10 Aug 2018 11:26:14 -0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
  Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180810174150.GA6487@bombadil.infradead.org>
+In-Reply-To: <20180810175759.GB6487@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -56,66 +56,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 8/10/18 10:41 AM, Matthew Wilcox wrote:
-> On Fri, Aug 10, 2018 at 07:36:00AM +0800, Yang Shi wrote:
->> +static inline bool addr_ok(unsigned long start, size_t len)
-> Maybe munmap_range_ok()?  Otherwise some of the conditions here don't make
-> sense for such a generic sounding function.
-
-I don't know. I think the argument is about munmap_ prefix should be used.
-
->
->>   {
->> -	unsigned long end;
->> -	struct vm_area_struct *vma, *prev, *last;
->> -
->>   	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
->> -		return -EINVAL;
->> +		return false;
->>   
->> -	len = PAGE_ALIGN(len);
->> -	if (len == 0)
->> -		return -EINVAL;
->> +	if (PAGE_ALIGN(len) == 0)
->> +		return false;
->> +
->> +	return true;
->> +}
->> +
+On 8/10/18 10:57 AM, Matthew Wilcox wrote:
+> On Fri, Aug 10, 2018 at 07:36:01AM +0800, Yang Shi wrote:
 >> +/*
->> + * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
->> + * @mm: mm_struct
->> + * @start: start address
->> + * @end: end address
+>> + * Zap pages with read mmap_sem held
 >> + *
->> + * returns the pointer to vma, NULL or err ptr when spilt_vma returns error.
-> kernel-doc prefers:
->
->   * Return: %NULL if no VMA overlaps this range.  An ERR_PTR if an
->   * overlapping VMA could not be split.  Otherwise a pointer to the first
->   * VMA which overlaps the range.
-
-Ok, will fix it.
-
->
+>> + * uf is the list for userfaultfd
 >> + */
->> +static struct vm_area_struct *munmap_lookup_vma(struct mm_struct *mm,
->> +			unsigned long start, unsigned long end)
->> +{
->> +	struct vm_area_struct *vma, *prev, *last;
->>   
->>   	/* Find the first overlapping VMA */
->>   	vma = find_vma(mm, start);
->>   	if (!vma)
->> -		return 0;
->> -	prev = vma->vm_prev;
->> -	/* we have  start < vma->vm_end  */
->> +		return NULL;
->>   
->> +	/* we have  start < vma->vm_end  */
-> Can you remove the duplicate spaces here?
+>> +static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
+>> +			       size_t len, struct list_head *uf)
+> I don't like the name here.  We aren't zapping rlocks, we're zapping
+> pages.  Not sure what to call it though ...
 
-Sure
+It may look ambiguous, it means "zap with rlock", but I don't think 
+anyone would expect we are zapping locks.
 
 Thanks,
 Yang
