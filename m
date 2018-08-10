@@ -2,106 +2,181 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBB8C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF29C46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CE2223BD
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:17:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CE2223BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B46A4223BF
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:20:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eg7dGrDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46A4223BF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeHJFpQ (ORCPT
+        id S1727225AbeHJFr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 01:45:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44888 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725907AbeHJFpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 01:45:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0F2E4ADD7;
-        Fri, 10 Aug 2018 03:17:22 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Date:   Fri, 10 Aug 2018 13:17:14 +1000
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
-In-Reply-To: <20180810025251.GO23873@fieldses.org>
-References: <153378012255.1220.6754153662007899557.stgit@noble> <20180809173245.GM23873@fieldses.org> <87lg9frxyc.fsf@notabene.neil.brown.name> <20180810002922.GA3915@fieldses.org> <871sb7rnul.fsf@notabene.neil.brown.name> <20180810025251.GO23873@fieldses.org>
-Message-ID: <87y3derjut.fsf@notabene.neil.brown.name>
+        Fri, 10 Aug 2018 01:47:58 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37845 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725725AbeHJFr5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 01:47:57 -0400
+Received: by mail-oi0-f65.google.com with SMTP id j205-v6so13533383oib.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KH4RMPR0Uy0KQwVwsRjWEsvEaTUrpbpHoPb7j6AV/eY=;
+        b=eg7dGrDjsh52mMkJ1qoH1Z1F4dM2V7KTL4KF8PGcIC86zb723/R36f7W1648YG6clM
+         N5/wUhZKfu97Fuyc8Lgbzcb3mPwkX7t3aREya7svWDPY3TFNOCOzOw0afPy5VPTf/U9E
+         Fnc1CZmGdtW6KomkKoRp8fHf1nFyuaNvUVZIFET+uCjr71RFYeoWDp7uix/pDwFXYY7T
+         fw0W0kpQh482JsbmAlfqQmlhPth4bpbDJnzA2W0wjQwA5Fyc6osVFMwINRl08kx7n3Mk
+         RK/ZFLJ+cKL1o290ubkQuYYozKfYisGs30l8ej4oHLLBcnrU8vOfiKiexd+5J4RDgHVe
+         Copw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KH4RMPR0Uy0KQwVwsRjWEsvEaTUrpbpHoPb7j6AV/eY=;
+        b=sVz9WnWbCNLnKGHpPq4RlXlWhrqUAc2StwKi2uxxaWQwGXuLhxQfwATkhsizyAegXT
+         BeznSV5gNqi9g8AV2UinVHrFkL14guRocL1MhLAomPCzXYthok2wpvyGmrLqMew3/e47
+         2BBC3H7cqKxnuEoJiWcMUspQ2g2QkGmTghXQzUoI2B8b07vs0KtZtIXvbKiHCXzmdK0j
+         MpZxlUaeUA8I5dSvb9I/dgHUCGiLSCQWdwgvVYKO0sV7JzVThrsyY2VPwGaACJdBzzLy
+         r8t/4C5DK9CbDs0R1oh+GxNhn8GeYONbBfBTqJ4sEn7ULhpbUx8igwJvF5Ik+4PK0AZ9
+         6i7Q==
+X-Gm-Message-State: AOUpUlHLCzgLytlmEzeEWt6Cp3RKdMDf5rQGOhDHB5bKo0dtTH5BAXXZ
+        jjcMUy+YfE9fvjqQ5UNS3TvcDke+ZRqpHW3vtgp7xA==
+X-Google-Smtp-Source: AA+uWPznjkvyaKL20+WvTFI7sJ9T6OQUQlvVgPuKLp9MH5hbtrWtQkyru80T2ZRBpQ4twdawjqtOYvIvcQmUEtvI7eA=
+X-Received: by 2002:aca:fc94:: with SMTP id a142-v6mr4564160oii.29.1533871204054;
+ Thu, 09 Aug 2018 20:20:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20180802151539.5373-1-jannh@google.com>
+In-Reply-To: <20180802151539.5373-1-jannh@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 10 Aug 2018 05:19:38 +0200
+Message-ID: <CAG48ez0GhqL=z+UuxgGeEVcR6HBcsTHg2EmcZHLZMmedhH3fXw@mail.gmail.com>
+Subject: Re: [PATCH] reiserfs: fix broken xattr handling (heap corruption, bad retval)
+To:     reiserfs-devel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, security@kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, jeffm@suse.com
+Cc:     kernel list <linux-kernel@vger.kernel.org>, ebiggers@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Aug 09 2018, J. Bruce Fields wrote:
-
-> On Fri, Aug 10, 2018 at 11:50:58AM +1000, NeilBrown wrote:
->> You're good at this game!
+On Thu, Aug 2, 2018 at 5:16 PM Jann Horn <jannh@google.com> wrote:
 >
-> Everybody's got to have a hobby, mine is pathological posix locking
-> cases....
+> This fixes the following issues:
 >
->> So, because a locker with the same "owner" gets a free pass, you can
->> *never* say that any lock which conflicts with A also conflicts with B,
->> as a lock with the same owner as B will never conflict with B, even
->> though it conflicts with A.
->>=20
->> I think there is still value in having the tree, but when a waiter is
->> attached under a new blocker, we need to walk the whole tree beneath the
->> waiter and detach/wake anything that is not blocked by the new blocker.
+>  - When a buffer size is supplied to reiserfs_listxattr() such that each
+>    individual name fits, but the concatenation of all names doesn't
+>    fit, reiserfs_listxattr() overflows the supplied buffer. This leads to
+>    a kernel heap overflow (verified using KASAN) followed by an
+>    out-of-bounds usercopy and is therefore a security bug.
+>  - When a buffer size is supplied to reiserfs_listxattr() such that a name
+>    doesn't fit, -ERANGE should be returned. But reiserfs instead just
+>    truncates the list of names; I have verified that if the only xattr on
+>    a file has a longer name than the supplied buffer length, listxattr()
+>    incorrectly returns zero.
 >
-> If you're walking the whole tree every time then it might as well be a
-> flat list, I think?
+> With my patch applied, -ERANGE is returned in both cases and the memory
+> corruption doesn't happen anymore.
+>
+> Credit for making me clean this code up a bit goes to Al Viro, who pointed
+> out that the ->actor calling convention is suboptimal and should be
+> changed.
+>
+> Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-The advantage of a tree is that it keeps over-lapping locks closer
-together.
-For it to make a difference you would need a load where lots of threads
-were locking several different small ranges, and other threads were
-locking large ranges that cover all the small ranges.
-I doubt this is common, but it doesn't seem as strange as other things
-I've seen in the wild.
-The other advantage, of course, is that I've already written the code,
-and I like it.
++security@
+Ping. I have not received any replies to this patch, which fixes a
+kernel security bug, for a week.
+Whose tree should this go through? reiserfs is marked as "supported",
+but does not have a maintainer or a git repo listed, just a
+mailinglist, so I guess it probably has to go through either Al Viro's
+or akpm's tree? Looks like akpm signed off on the last commits in
+reiserfs...
 
-Maybe I'll do a simple-list version, then a patch to convert that to the
-clever-tree version, and we can then have something concrete to assess.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlttA7oACgkQOeye3VZi
-gbkH3xAApCIb/A9UBynqqfnjJRW/vVHFLNxgfIH0mV+kWYcqqJjdk9OgJVXFZN8Z
-pgmXWpOvIPgiEWvP/AJ0j68gr2SX0apqrRIJM4hC5PDUlZ5yd/HG6Boj9iSuuwxz
-mleDidqXpu5zVsdgqrr6tVD9WoYmIDPj9fV6iK5oJlUez89rPnv6ota1CmDYJ/iz
-1JherxaK9Pgsm9pZjmSx5q+xkg6dOf/wNOrwjImnuOUTUvtBWJWfiWzu8a6REyDr
-kn+1skNaHIaX3xEtiglV85c3Yr88I4JEXzXmeNZoAvDvJmzXy6jb4kxW4zL8VTet
-T6eTT97sek405Ljhp7EL7pnVcnk8Tpx7jovtvaaSvoA/HiOCz2JadOmzOcSheexi
-gCl2xU0sSk34tjpImdUK95YMl+/qIud+ddsp/+z6m1bt0WiMXR/QqjlvtPps+tn5
-Qy/gD0bzlkaGaWd9gGJ/fEHCkiYZ98OGE7Z3ZpBZLWSSTho9McWB8f6+IaoZV3q9
-7bfoRLMacuS7j0dfbSSdjtxIsk6NKEO42w8msIRu78vZNA/2Kh/GrJ/PjRUHlwPq
-mejxpHg34IvxvIY/TG3+bIbG0+ltXAHPlwpA8tpZ+QD6rB8fzOivBbzNODoWeGom
-7GIrcEA0e1AwmFs1Bg7yQt/X5qLzMRUPuXxCrfMs6PvghkAhDk8=
-=yBJt
------END PGP SIGNATURE-----
---=-=-=--
+> ---
+> Triggering the bug:
+>
+> root@debian:/home/user# mount -o user_xattr reiserimg reisermount/
+> root@debian:/home/user# cd reisermount/
+> root@debian:/home/user/reisermount# touch test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo1 -v A test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo2 -v A test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo3 -v A test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo4 -v A test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo5 -v A test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo6 -v A test_file
+> root@debian:/home/user/reisermount# cat xattr_test.c
+> #include <sys/types.h>
+> #include <attr/xattr.h>
+> #include <err.h>
+> #include <stdio.h>
+> #include <string.h>
+> int main(int argc, char **argv) {
+>   if (argc != 2) errx(1, "bad invocation");
+>   char list[10];
+>   int res = listxattr(argv[1], list, sizeof(list));
+>   if (res == -1)
+>     err(1, "listxattr failed");
+>   printf("listxattr returned %d\n", res);
+>   for (char *p = list; p < list+res-1; p = p + strlen(p) + 1) {
+>     printf("list entry: %s\n", p);
+>   }
+> }
+> root@debian:/home/user/reisermount# gcc -o xattr_test xattr_test.c
+> root@debian:/home/user/reisermount# ./xattr_test test_file
+> Segmentation fault
+> root@debian:/home/user/reisermount#
+>
+> Result:
+>
+> [  122.071318] ==================================================================
+> [  122.072334] BUG: KASAN: slab-out-of-bounds in listxattr_filler+0x170/0x1b0
+> [  122.073173] Write of size 9 at addr ffff8801c43b474a by task xattr_test/923
+> [  122.074030]
+> [  122.074223] CPU: 1 PID: 923 Comm: xattr_test Not tainted 4.18.0-rc7+ #67
+> [  122.075050] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [  122.076107] Call Trace:
+> [  122.076453]  dump_stack+0x71/0xab
+> [  122.076900]  print_address_description+0x6a/0x250
+> [  122.077514]  kasan_report+0x258/0x380
+> [  122.077961]  ? listxattr_filler+0x170/0x1b0
+> [  122.078469]  memcpy+0x34/0x50
+> [  122.078894]  listxattr_filler+0x170/0x1b0
+> [...]
+>
+>  fs/reiserfs/xattr.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+> index ff94fad477e4..48cdfc81fe10 100644
+> --- a/fs/reiserfs/xattr.c
+> +++ b/fs/reiserfs/xattr.c
+> @@ -792,8 +792,10 @@ static int listxattr_filler(struct dir_context *ctx, const char *name,
+>                         return 0;
+>                 size = namelen + 1;
+>                 if (b->buf) {
+> -                       if (size > b->size)
+> +                       if (b->pos + size > b->size) {
+> +                               b->pos = -ERANGE;
+>                                 return -ERANGE;
+> +                       }
+>                         memcpy(b->buf + b->pos, name, namelen);
+>                         b->buf[b->pos + namelen] = 0;
+>                 }
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
