@@ -2,98 +2,108 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAE2C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E98C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD14822408
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:22:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="ohICQVfS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD14822408
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 0CF1B2154C
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:25:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF1B2154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeHJOwZ (ORCPT
+        id S1727981AbeHJOzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:52:25 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:45723 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeHJOwY (ORCPT
+        Fri, 10 Aug 2018 10:55:14 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52297 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeHJOzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:52:24 -0400
-Received: by mail-qk0-f193.google.com with SMTP id c192-v6so6172321qkg.12
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 05:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AdoxhlBj3rFH3dxzCCJRR9mwXTXoWCGHM9DrGub/UeA=;
-        b=ohICQVfS7IQtTdvtChJAJ9CbLsxdVGKr55N5nz+PDWwkr5/iLfjQbMuSRYc9aS4V23
-         bH17PWqE/1+LdEmT3eoegBUilRig1G0SYSjri9aaZUaaV3Vk3nKHgLIcyUkLHmIyIzkA
-         LkRXivy3StrMeSJyzR6JA8eolOKwHCWlofLfY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AdoxhlBj3rFH3dxzCCJRR9mwXTXoWCGHM9DrGub/UeA=;
-        b=dmyHolic7a7qm3owemWZMWM3XEo49D+LLKUmtgnhixFY5sk6kNuMPkLPgY4Somk0OG
-         iNFOU8WMuRXwKHLZc8mR2ATwKP1H+asWojrpkR7FGp/HJpzP2aX6uwplF2MBdA82c1xq
-         PD4GqjeiPddynEPkf5nZWBQu2ekZx5CkTaLrUW6tZYUN1HCtDryd1ZcYpH3C2PdZ0osO
-         kzSksXszAfBzT6xuSfEvU4qZiXDvhRrRBniDq+jasndVcoSvaoYn2HrMwnReaTyfDJfi
-         DVOgewsdK+5KZcAXYwLcWj6VqJ7ZnFMvaokv39jxhWH29CEIwMMNY/Ou3a36nPfLoiV+
-         XrRw==
-X-Gm-Message-State: AOUpUlGQp1Vr4027pV3rwaMgTUVCH3NnkeRRfYjC5YguNglJgm1Pij3I
-        zXB5Adl84ij8cWa5VMQkGZz9oXdpirjSSpL+de2P+w==
-X-Google-Smtp-Source: AA+uWPxPORsfvkxZM18YhRGfoUUrdZzMGPrdJjtp0o5JspKFUDKya+/o0jdkPGTbezt7dyYW+dK1Td6pc18uNo8UBhY=
-X-Received: by 2002:ae9:f449:: with SMTP id z9-v6mr5750879qkl.410.1533903762709;
- Fri, 10 Aug 2018 05:22:42 -0700 (PDT)
+        Fri, 10 Aug 2018 10:55:14 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fo6Tl-0004JF-LF; Fri, 10 Aug 2018 14:25:17 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fo6Tf-0003P0-3V; Fri, 10 Aug 2018 14:25:11 +0200
+Date:   Fri, 10 Aug 2018 14:25:11 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Esben Haabendal <esben.haabendal@gmail.com>
+Cc:     linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yuan Yao <yao.yuan@freescale.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Phil Reid <preid@electromag.com.au>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Peter Rosin <peda@axentia.se>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] i2c: imx: Simplify stopped state tracking
+Message-ID: <20180810122511.2xnelcn6tguirfbp@pengutronix.de>
+References: <20180709094304.8814-1-esben.haabendal@gmail.com>
+ <20180709094304.8814-4-esben.haabendal@gmail.com>
+ <20180724075919.iyysd7dtbddvbavq@pengutronix.de>
+ <87k1ozzquk.fsf@gmail.com>
+ <20180809162652.r34omvkctzxte422@pengutronix.de>
+ <87zhxuo9o1.fsf@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:aed:3442:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 05:22:42
- -0700 (PDT)
-In-Reply-To: <20180809210654.622445925@goodmis.org>
-References: <20180809210333.588854137@goodmis.org> <20180809210654.622445925@goodmis.org>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Fri, 10 Aug 2018 05:22:42 -0700
-Message-ID: <CAEXW_YRShy=3yPOZvr3afpD6sJ4y=rdgC-FpxjQAT31KEqstOQ@mail.gmail.com>
-Subject: Re: [for-next][PATCH 3/6] tracing: More reverting of "tracing:
- Centralize preemptirq tracepoints and unify their usage"
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87zhxuo9o1.fsf@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 2:03 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
->
-> Joel Fernandes created a nice patch that cleaned up the duplicate hooks used
-> by lockdep and irqsoff latency tracer. It made both use tracepoints. But the
-> latency tracer is triggering warnings when using tracepoints to call into
-> the latency tracer's routines. Mainly, they can be called from NMI context.
-> If that happens, then the SRCU may not work properly because on some
-> architectures, SRCU is not safe to be called in both NMI and non-NMI
-> context.
->
-> This is a partial revert of the clean up patch c3bc8fd637a9 ("tracing:
-> Centralize preemptirq tracepoints and unify their usage") that adds back the
-> direct calls into the latency tracer. It also only calls the trace events
-> when not in NMI.
->
-> Cc: Joel Fernandes <joelaf@google.com>
-> Fixes: c3bc8fd637a9 ("tracing: Centralize preemptirq tracepoints and unify their usage")
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Hello Esben,
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+On Fri, Aug 10, 2018 at 11:25:34AM +0200, Esben Haabendal wrote:
+> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
+> > Currently you have:
+> >
+> > 	if (for_busy && (temp & I2SR_IBB)) {
+> > 		i2c_imx->stopped = 0;
+> > 		break;
+> > 	}
+> >
+> > 	if (!for_busy && !(temp & I2SR_IBB)) {
+> > 		i2c_imx->stopped = 1;
+> > 		break;
+> > 	}
+> >
+> > The semantic of this is the same (apart from always updating .stopped)
+> > but is imho easier:
+> >
+> > 	i2c_imx->stopped = !(temp & I2SR_IBB);
+> >
+> > 	if (for_busy != i2c_imx->stopped)
+> > 		break;
+> 
+> Yes, that should work also.
+> Shorter, but IMHO a bit more convoluted to read.
+> Let me know if I should send a new version with this change.
 
-thanks,
+unless someone else chimes in I'd say keep it as is. I'd prefer my
+variant, but I accept that this is something subjective.
 
-- Joel
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
