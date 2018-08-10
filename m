@@ -2,117 +2,133 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA21DC4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88363C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83D5F21E25
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32498217FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 14:39:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="cWGPdesv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D5F21E25
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkvyuyAn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32498217FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbeHJRGa (ORCPT
+        id S1728012AbeHJRJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 13:06:30 -0400
-Received: from mail-pf1-f181.google.com ([209.85.210.181]:38684 "EHLO
-        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbeHJRGa (ORCPT
+        Fri, 10 Aug 2018 13:09:31 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:34200 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeHJRJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 13:06:30 -0400
-Received: by mail-pf1-f181.google.com with SMTP id x17-v6so4625025pfh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 07:36:19 -0700 (PDT)
+        Fri, 10 Aug 2018 13:09:31 -0400
+Received: by mail-ua1-f65.google.com with SMTP id r15-v6so2076684uao.1;
+        Fri, 10 Aug 2018 07:39:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Od3N1wcXJvUpd0PxTTwy6ZnytWciK1KR8OXq83jCjNw=;
-        b=cWGPdesvVHmNUSRMPGrJd49EcCmb3Y/WsXAKLQ8qrVL228cU2SkpHBws+jZT5tu/69
-         PDs5kTBPAVEeq6r7p0kBGhINDnOF/qd5IHE4LOhlSHluWBIx8bIWOIE2CtX7bw3DBCJ0
-         LD3kppSQzFQeqz58R/tYRKQjIkYGUTjZBMcOS8yW7cG9NIMK7m76EJlK1mpCtQwe9xV4
-         YL3YPBEClvCJsgUrFWCZxhHzUWXpjlLw2d4UZcj0A+ZnpGBOZ7o8Z6s+nM2zaggN79XM
-         VJTUqR2Udsaw6ZzDlaqdigMeaETUEtEUWAap4EHUnPOqUBc5OpNMSqpV4/jL5oVorcPP
-         EbJQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=My/dG6rVWDQZhO6jex8h3m0BrUhvSJlqED5P1zQEhPI=;
+        b=CkvyuyAn/IvEkyOfyQNJCGXYdFaz/573Y2n/oE3HynlUveaioUy7eSY+eO79r6/qvI
+         PWG8lCpqv1cV6JsSdufd68jZ0JPllLZzlaZMPg42742XoTooBIe2yhEgwvtDWly8fvt4
+         STZ5k8Q8rdf+QfLDj167PkQfqB38tJzRkitKS6bbR9HtG2eGAxC4QmTqfdqd5EIx+wGS
+         /tR73NqsbIxVamPiAvWu+MycRvk3Z5wQ+4a8zB375h7hlGnOzeqTsyrLV3kpO/dvuGsr
+         p51fYJLEJvREVtZGhK6CbKS1/ZTempzOyHU1NUBv4RLPOCLz0S7YM1rSOSFOWvoRtII9
+         CG7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Od3N1wcXJvUpd0PxTTwy6ZnytWciK1KR8OXq83jCjNw=;
-        b=HDqNV+Iv90N/s+3LkS4no4jFe5Wu0gNNzoHuHFsVqnek1cNvf+zhoWwapon/rHMihC
-         SFqrcH7bnsoIR3BC4kRhqm4l1wpwLqM/VvRl7eiLsVZ2j3Q32j0/Bwl4vys05heQQ2wW
-         vJtgUvUL58qLfEzb3lU5zjp4lPnuNpfr3NRUbHMDcU0ipX8spNu1DpgBYmNs50Afyy9N
-         5mSSchTT8ouDljEV5WhZkZxiV3eUi33MlC258JrGGVMORkpVLNVps7B9HUzpVy085Lg+
-         gLF+6a1cqWjTb3jhATCfCWEwJ7ccd+ly01eNrqOZXdMG9xQi62jLoG6nyJvYIkrWuEhR
-         csDQ==
-X-Gm-Message-State: AOUpUlFzI67hhLItHy2MMfRtAg9/S0DUqlBC5QceHXlMss26PDZaJg5z
-        tloXVruXe1U150cp43YxPmFV4g==
-X-Google-Smtp-Source: AA+uWPxRTjXs2PcLibPICdjrTlb1UGkS8ALK+cDsLwvn8Enaa5aZTYBzSK+8RUEBkoBXt/ux2GCMsg==
-X-Received: by 2002:a62:f0d:: with SMTP id x13-v6mr7246949pfi.123.1533911779369;
-        Fri, 10 Aug 2018 07:36:19 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:308a:3596:3d07:5420? ([2601:646:c200:7429:308a:3596:3d07:5420])
-        by smtp.gmail.com with ESMTPSA id u17-v6sm21235294pfa.176.2018.08.10.07.36.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 07:36:18 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: BUG: Mount ignores mount options
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <87d0uqpba5.fsf@xmission.com>
-Date:   Fri, 10 Aug 2018 07:36:17 -0700
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=My/dG6rVWDQZhO6jex8h3m0BrUhvSJlqED5P1zQEhPI=;
+        b=boelu90iMG/7FgcDGsaEpIKzf8vAYws6mCZaqtXgITsP+hZ/9A/ya5TsiIl9RFe4jM
+         BZ1xZYsBmXRtTedTk/63oVshuIqiYHjaIHeWVHywIC40OyMJ6lavv8nHeIlx7U+dC+69
+         nl8NvyZsF5erkYPX613ffNVYvx7uatO6f+exdRTEXXanGm+bcBizPmYblxEbhiqgsiXL
+         8s1VLlbf3x1sXP8Arq5b+kO7ybz3gMNfDZQRu4tfvuTHiJy/bqjKd/HWew55eG3kmpUV
+         h02D2tTZegWOTbbc/e0ahdXmIahAR0K3wtO2o2KLJsEjeM7+AEKeCl60Z282sfvbhBI/
+         U3EQ==
+X-Gm-Message-State: AOUpUlGusMobR+wtpLtmmYxnjKl4Y2eRoJBpiXZvuR2WZPOGY0bo4Flj
+        +YZVsfXVGfS1Yc9517ftYxAK5SSShRUWwHUGe2M=
+X-Google-Smtp-Source: AA+uWPw7npaJth81OsgUAnPtWm2CQNdU7mXBF6xljaL5Y+szAOoVbL7m3rlILgOUtmh3sHnxTC/hLgMTOD7PPuid/Jc=
+X-Received: by 2002:a1f:c884:: with SMTP id y126-v6mr4146396vkf.76.1533911959062;
+ Fri, 10 Aug 2018 07:39:19 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 07:39:17
+ -0700 (PDT)
+In-Reply-To: <20180810080526.27207-15-brgl@bgdev.pl>
+References: <20180810080526.27207-1-brgl@bgdev.pl> <20180810080526.27207-15-brgl@bgdev.pl>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 10 Aug 2018 17:39:17 +0300
+Message-ID: <CAHp75Ve28aNe+FCK3p4OLsDf7dNo-iJ1VR=pyx+Y9OUn3sjYBw@mail.gmail.com>
+Subject: Re: [PATCH v2 14/29] net: simplify eth_platform_get_mac_address()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0F2FA70F-8C7E-4D7D-B685-244A76BDB459@amacapital.net>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <87d0uqpba5.fsf@xmission.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 10, 2018 at 11:05 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> We don't need to use pci_device_to_OF_node() - we can retrieve
+> dev->of_node directly even for pci devices.
+>
 
+>         struct device_node *dp;
+>
+> -       if (dev_is_pci(dev))
+> -               dp = pci_device_to_OF_node(to_pci_dev(dev));
+> -       else
+> -               dp = dev->of_node;
+> -
+> +       dp = dev->of_node;
+>         addr = NULL;
+>         if (dp)
+>                 addr = of_get_mac_address(dp);
 
-> On Aug 10, 2018, at 7:05 AM, Eric W. Biederman <ebiederm@xmission.com> wro=
-te:
->=20
->=20
-> There is a serious problem with mount options today that fsopen does not
-> address.  The problem is that mount options are ignored for block based
-> filesystems, and any other type of filesystem that follows the same
-> pattern.
->=20
+Looking more at this I could even propose to change all above by
 
-> /dev/loop0 /root/loop0-noacl-noquota-nouser_xattr ext4 rw,relatime,nouser_=
-xattr,noacl 0 0
-> /dev/loop0 /root/loop0-acl-quota-user_xattr ext4 rw,relatime,nouser_xattr,=
-noacl 0 0
+addr = device_get_mac_address(dev, mac_addr, ETH_ALEN);
 
-To make sure I understand correctly: the problem is that the second mount ig=
-nored the options because the device was already mounted, right?
+Thoughts?
 
-For the new API, I think the only remotely sane approach is to refuse to mou=
-nt or init or whatever you call it an already mounted bdev. If user code gen=
-uinely needs to bind-mount an existing mount that is known only by its bdev,=
- we can add a specific API just for that.=
+-- 
+With Best Regards,
+Andy Shevchenko
