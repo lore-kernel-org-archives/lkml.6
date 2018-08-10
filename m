@@ -6,28 +6,28 @@ X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47E4C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA8FC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B94122450
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B94122450
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=promotionalproductsco.com
+	by mail.kernel.org (Postfix) with ESMTP id 03E0E22450
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 19:11:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E0E22450
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buyindiankitchen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeHJVmk (ORCPT
+        id S1727335AbeHJVmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 17:42:40 -0400
-Received: from 107-172-5-14-host.colocrossing.com ([107.172.5.14]:33861 "EHLO
+        Fri, 10 Aug 2018 17:42:52 -0400
+Received: from 107-172-5-14-host.colocrossing.com ([107.172.5.14]:34155 "EHLO
         azcleanequip.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726619AbeHJVmj (ORCPT
+        with ESMTP id S1727310AbeHJVmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 17:42:39 -0400
+        Fri, 10 Aug 2018 17:42:52 -0400
 To:     linux-kernel@vger.kernel.org
 Subject: support editing
-Message-ID: <4f5b11ec3c4398cefe910d8997a010c5@saxstonecarving.com>
-Date:   Fri, 10 Aug 2018 12:17:15 +0200
-From:   "Kelly" <keisident@promotionalproductsco.com>
+Message-ID: <0e816ad89d0180d6f832965e4a0907c1@saxstonecarving.com>
+Date:   Fri, 10 Aug 2018 12:11:39 +0200
+From:   "Kelly" <pencefighko@buyindiankitchen.com>
 Reply-To: qilanzhan@aliyun.com
 MIME-Version: 1.0
 Content-Type: text/plain; format=flowed; charset="UTF-8"
