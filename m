@@ -2,108 +2,234 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E98C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 139CCC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF1B2154C
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:25:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF1B2154C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C12452154C
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 12:25:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12452154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbeHJOzO (ORCPT
+        id S1728076AbeHJOzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 10:55:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52297 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbeHJOzO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 10:55:14 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fo6Tl-0004JF-LF; Fri, 10 Aug 2018 14:25:17 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fo6Tf-0003P0-3V; Fri, 10 Aug 2018 14:25:11 +0200
-Date:   Fri, 10 Aug 2018 14:25:11 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yuan Yao <yao.yuan@freescale.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Phil Reid <preid@electromag.com.au>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Peter Rosin <peda@axentia.se>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] i2c: imx: Simplify stopped state tracking
-Message-ID: <20180810122511.2xnelcn6tguirfbp@pengutronix.de>
-References: <20180709094304.8814-1-esben.haabendal@gmail.com>
- <20180709094304.8814-4-esben.haabendal@gmail.com>
- <20180724075919.iyysd7dtbddvbavq@pengutronix.de>
- <87k1ozzquk.fsf@gmail.com>
- <20180809162652.r34omvkctzxte422@pengutronix.de>
- <87zhxuo9o1.fsf@gmail.com>
+        Fri, 10 Aug 2018 10:55:19 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:37448 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeHJOzT (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 10 Aug 2018 10:55:19 -0400
+Received: from [10.160.4.48] (charybdis-ext.suse.de [195.135.221.2])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 10 Aug 2018 14:25:35 +0200
+Subject: Re: [RFC PATCH 03/17] btrfs: Check and enable HMZONED mode
+To:     Naohiro Aota <naota@elisp.net>, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        linux-kernel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Matias Bjorling <mb@lightnvm.io>
+References: <20180809180450.5091-1-naota@elisp.net>
+ <20180809180450.5091-4-naota@elisp.net>
+From:   Hannes Reinecke <hare@suse.com>
+Message-ID: <51ed0d0b-7574-b9a9-bae5-2cc8042913e6@suse.com>
+Date:   Fri, 10 Aug 2018 14:25:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20180809180450.5091-4-naota@elisp.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87zhxuo9o1.fsf@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Esben,
-
-On Fri, Aug 10, 2018 at 11:25:34AM +0200, Esben Haabendal wrote:
-> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
-> > Currently you have:
-> >
-> > 	if (for_busy && (temp & I2SR_IBB)) {
-> > 		i2c_imx->stopped = 0;
-> > 		break;
-> > 	}
-> >
-> > 	if (!for_busy && !(temp & I2SR_IBB)) {
-> > 		i2c_imx->stopped = 1;
-> > 		break;
-> > 	}
-> >
-> > The semantic of this is the same (apart from always updating .stopped)
-> > but is imho easier:
-> >
-> > 	i2c_imx->stopped = !(temp & I2SR_IBB);
-> >
-> > 	if (for_busy != i2c_imx->stopped)
-> > 		break;
+On 08/09/2018 08:04 PM, Naohiro Aota wrote:
+> HMZONED mode cannot be used together with the RAID5/6 profile. Introduce
+> the function btrfs_check_hmzoned_mode() to check this. This function will
+> also check if HMZONED flag is enabled on the file system and if the file
+> system consists of zoned devices with equal zone size.
 > 
-> Yes, that should work also.
-> Shorter, but IMHO a bit more convoluted to read.
-> Let me know if I should send a new version with this change.
+> Additionally, as updates to the space cache are in-place, the space cache
+> cannot be located over sequential zones and there is no guarantees that the
+> device will have enough conventional zones to store this cache. Resolve
+> this problem by disabling completely the space cache.  This does not
+> introduces any problems with sequential block groups: all the free space is
+> located after the allocation pointer and no free space before the pointer.
+> There is no need to have such cache.
+> 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Signed-off-by: Naohiro Aota <naota@elisp.net>
+> ---
+>  fs/btrfs/ctree.h       |  3 ++
+>  fs/btrfs/dev-replace.c |  7 ++++
+>  fs/btrfs/disk-io.c     |  7 ++++
+>  fs/btrfs/super.c       | 12 +++---
+>  fs/btrfs/volumes.c     | 87 ++++++++++++++++++++++++++++++++++++++++++
+>  fs/btrfs/volumes.h     |  1 +
+>  6 files changed, 112 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index 66f1d3895bca..14f880126532 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -763,6 +763,9 @@ struct btrfs_fs_info {
+>  	struct btrfs_root *uuid_root;
+>  	struct btrfs_root *free_space_root;
+>  
+> +	/* Zone size when in HMZONED mode */
+> +	u64 zone_size;
+> +
+>  	/* the log root tree is a directory of all the other log roots */
+>  	struct btrfs_root *log_root_tree;
+>  
+> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+> index dec01970d8c5..839a35008fd8 100644
+> --- a/fs/btrfs/dev-replace.c
+> +++ b/fs/btrfs/dev-replace.c
+> @@ -202,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
+>  		return PTR_ERR(bdev);
+>  	}
+>  
+> +	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
+> +	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
+> +	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
+> +		ret = -EINVAL;
+> +		goto error;
+> +	}
+> +
+>  	filemap_write_and_wait(bdev->bd_inode->i_mapping);
+>  
+>  	devices = &fs_info->fs_devices->devices;
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 5124c15705ce..14f284382ba7 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -3057,6 +3057,13 @@ int open_ctree(struct super_block *sb,
+>  
+>  	btrfs_free_extra_devids(fs_devices, 1);
+>  
+> +	ret = btrfs_check_hmzoned_mode(fs_info);
+> +	if (ret) {
+> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
+> +				ret);
+> +		goto fail_block_groups;
+> +	}
+> +
+>  	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
+>  	if (ret) {
+>  		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 5fdd95e3de05..cc812e459197 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -435,11 +435,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  	bool saved_compress_force;
+>  	int no_compress = 0;
+>  
+> -	cache_gen = btrfs_super_cache_generation(info->super_copy);
+> -	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+> -		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> -	else if (cache_gen)
+> -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> +	if (!btrfs_fs_incompat(info, HMZONED)) {
+> +		cache_gen = btrfs_super_cache_generation(info->super_copy);
+> +		if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+> +			btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> +		else if (cache_gen)
+> +			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> +	}
+>  
+>  	/*
+>  	 * Even the options are empty, we still need to do extra check
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index 35b3a2187653..ba7ebb80de4d 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -1293,6 +1293,80 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
+>  	return ret;
+>  }
+>  
+> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
+> +{
+> +	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
+> +	struct btrfs_device *device;
+> +	u64 hmzoned_devices = 0;
+> +	u64 nr_devices = 0;
+> +	u64 zone_size = 0;
+> +	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
+> +	int ret = 0;
+> +
+> +	/* Count zoned devices */
+> +	list_for_each_entry(device, &fs_devices->devices, dev_list) {
+> +		if (!device->bdev)
+> +			continue;
+> +		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
+> +		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
+> +		     incompat_hmzoned)) {
+> +			hmzoned_devices++;
+> +			if (!zone_size) {
+> +				zone_size = device->zone_size;
+> +			} else if (device->zone_size != zone_size) {
+> +				btrfs_err(fs_info,
+> +					  "Zoned block devices must have equal zone sizes");
+> +				ret = -EINVAL;
+> +				goto out;
+> +			}
+> +		}
+> +		nr_devices++;
+> +	}
+> +
+> +	if (!hmzoned_devices && incompat_hmzoned) {
+> +		/* No zoned block device, disable HMZONED */
+> +		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	fs_info->zone_size = zone_size;
+> +
+> +	if (hmzoned_devices != nr_devices) {
+> +		btrfs_err(fs_info,
+> +			  "zoned devices mixed with regular devices");
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+This breaks existing setups; as we're not checking if the device
+specified by fs_info is a zoned device we'll fail here for normal devices.
 
-unless someone else chimes in I'd say keep it as is. I'd prefer my
-variant, but I accept that this is something subjective.
+You need this patch to fix it:
 
-Best regards
-Uwe
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 43eaf0142062..8609776c9a9e 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -1314,6 +1314,9 @@ int btrfs_check_hmzoned_mode(struct btrfs_fs_info
+*fs_info)
+        int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
+        int ret = 0;
 
++       if (!incompat_hmzoned)
++               return 0;
++
+        /* Count zoned devices */
+        list_for_each_entry(device, &fs_devices->devices, dev_list) {
+                if (!device->bdev)
+
+
+Cheers,
+
+Hannes
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Dr. Hannes Reinecke		               zSeries & Storage
+hare@suse.com			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 NÃ¼rnberg
+GF: F. ImendÃ¶rffer, J. Smithard, D. Upmanyu, G. Norton
+HRB 21284 (AG NÃ¼rnberg)
