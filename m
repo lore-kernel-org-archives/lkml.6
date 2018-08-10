@@ -2,187 +2,145 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C06C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B14C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABA9223E8
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7077C21EF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 06:55:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Blmgy7fy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABA9223E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKXDifrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7077C21EF6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbeHJJLe (ORCPT
+        id S1727493AbeHJJYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 05:11:34 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:44383 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727493AbeHJJLd (ORCPT
+        Fri, 10 Aug 2018 05:24:12 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33961 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725746AbeHJJYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 05:11:33 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180810064302epoutp049082ca0091a0d3b4469b1d9313a5c82f~Jcs80N7e61377913779epoutp04v
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 06:43:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180810064302epoutp049082ca0091a0d3b4469b1d9313a5c82f~Jcs80N7e61377913779epoutp04v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533883382;
-        bh=itFgbxMwOV/olzqViLJBayc6YObzXBUaPFlwYTiMWII=;
-        h=Date:From:Reply-To:To:CC:Subject:In-Reply-To:References:From;
-        b=Blmgy7fyVXRS3un+MDzdgoy3TemJGErpRqopI3L3xVAZmUo7uwRgpGem6lG2rCK15
-         I3rUvcrflqLhl8aKPhxJUbbY6bkWy1lOmC3MLf/fTnxzwu/l7eAcjTYLnJR0IjcRHZ
-         CZ/0Y7d8yQlaKt5IHmE8aVzYlExzOTMD78EvKDdc=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180810064259epcas1p472275ebef6c10f7acd255bbaac96f63d~Jcs6NAII91970819708epcas1p42;
-        Fri, 10 Aug 2018 06:42:59 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        93.4D.04292.2F33D6B5; Fri, 10 Aug 2018 15:42:58 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20180810064258epcas1p3eb68d29dbd60b705d0473b3c645496ff~Jcs48Q55D0165001650epcas1p3e;
-        Fri, 10 Aug 2018 06:42:58 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180810064258epsmtrp218f93c12b95f1a693c4d55f6aa59127d~Jcs46SYzF2227622276epsmtrp2p;
-        Fri, 10 Aug 2018 06:42:58 +0000 (GMT)
-X-AuditID: b6c32a38-d53ff700000010c4-57-5b6d33f26eaa
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        15.4E.03889.2F33D6B5; Fri, 10 Aug 2018 15:42:58 +0900 (KST)
-Received: from [10.113.63.222] (unknown [10.113.63.222]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20180810064257epsmtip29c53fbf852485cd2aeeae9eddffc6ee7~Jcs4sWV4j2964429644epsmtip2b;
-        Fri, 10 Aug 2018 06:42:57 +0000 (GMT)
-Date:   Fri, 10 Aug 2018 15:43:02 +0900
-From:   Seung-Woo Kim <sw0312.kim@samsung.com>
-Reply-To: sw0312.kim@samsung.com
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:16.0) Gecko/20121011
-        Thunderbird/16.0.1
+        Fri, 10 Aug 2018 05:24:12 -0400
+Received: by mail-oi0-f68.google.com with SMTP id 13-v6so14180625ois.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 23:55:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=VIT5pBLEs8pV4p05cyoQVg0TMlj90PAJM7OAqUi62n8=;
+        b=mKXDifrhVZRajeLQT7J0y8cIi0k4SJ6e5iOrWq8iJGAxrzaIEeqC2ydKSww8rB6OoJ
+         6VNrTemKeBHoRwyq+hkImN0m3Ivpd144jZ397uD3ZwH0OdNiz0arLwYPSZAOgkkNuV26
+         Qxf0VlV2Z1FVOAGmNAuhfgZ+vLvtc8VQE6U78AxDSymYnXojKVRcHOY2uk81biMon7eS
+         iqVkb/9myxm9Uodd+RF9/E8r/dyiKhk0MqAT6KJVrJGgLb6JPcvvPF9YLstAY2gxV4Bj
+         5QDMac5Bzpzw0DulRHAFImmuQGrQp+7yxsZ9SCbTblZplidCGjHVtX/M6/hmITYIRHF6
+         blCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=VIT5pBLEs8pV4p05cyoQVg0TMlj90PAJM7OAqUi62n8=;
+        b=HKcZ9vXZHy5toBFUenvOGrGAKfWXk6MAESI56+hygpr+honXiqe4lO0NKfBKmHKNww
+         ufCBrZMVkajROuUR3E+87XoVeuUDGBUmkNpEMGJ3qfy1GtQqxuubGs+3kUKJvx+AwUTU
+         VMk0vwknuHNRGBqsDkRVRlDWZDL075wFyLQjrh+LRYKFQbt6wNNXDdQSNl8cWgCsBZm/
+         SQtwP6vOymMt0azhR7j+RmlB5LRHGLsm3vPvdltwByvDl0yOfHRJ7ZgY2JNKO/dQEG3A
+         SJtET+KLG9H8SSUl5FFQyo++NdUPm1jKkRwds277VChAukXIPZ40MiOi6EscKQmebS9U
+         fKpQ==
+X-Gm-Message-State: AOUpUlERZHCE65HXZFDoMMyqwKW3lwjT4Ap33P5eNS8HgH9Q23cJFGMp
+        ncpe6zuyP0Nb31w5qeqV1Q6BGg8C25B1CiX6qVA=
+X-Google-Smtp-Source: AA+uWPx55eImrBL7alo9UTeFqoi+bAP63RAiWO3wvNU4262dhWs6ChM+QG6YtVo/q4QcwMmANlxVDEzl0KrjeGHywME=
+X-Received: by 2002:aca:5b88:: with SMTP id p130-v6mr5667961oib.247.1533884141413;
+ Thu, 09 Aug 2018 23:55:41 -0700 (PDT)
 MIME-Version: 1.0
-To:     sw0312.kim@samsung.com
-CC:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>, lwn@lwn.net,
-        Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.111
-In-Reply-To: <20180808100622epcas1p1d4e3d6f858a9de3014f6d79bf284ff2c~I4L612J9p0428204282epcas1p1X@epcas1p1.samsung.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmge4n49xog+07FC3mrF/DZtG8eD2b
-        xeffu1gtLu+aw2ax4vB0FosFGx8xWsyY/JLN4lHfW3aL83+PszpwepyY8ZvFY//cNewei/sm
-        s3r0bVnF6HFmwRF2j8+b5Dw2PXnLFMAelWqTkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhr
-        aGlhrqSQl5ibaqvk4hOg65aZA3SakkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKdrQ0EjP
-        0MBcz8gISBvHWhmZApUkpGb0XH7MWrBCuOJsU10D40H+LkZODgkBE4krr1eydDFycQgJ7GCU
-        ePD8PzNIQkjgE6PE9ds2EIlvjBKfd+1lhulYuf4bM0RiL6PExTlnoJy3jBIPm+exglSxCKhK
-        7L10EayDTUBHYv+S36wQYxUkLmydwQZiiwqEScw42M8IYvMKCEqcnPmEBcQWEZCS+H/oPlg9
-        s8BBJol5f1NAbGEBaYkrZzazg9icAuUSn1/+YYaokZdo3job7AgJgd9sEp2Xv7NCDC2T+N3f
-        wwRxtovE87frWCBsYYlXx7ewQ9hSEp/f7WWDsNsZJQ7OrIMYNIVR4trfT1BFxhLPFnYBDeIA
-        2qYpsX6XPsRiPol3X3tYQcISArwSHW1CENUqEjuPTmKDCEtJzNoQDBH2kGi7sBcaVo9YJFpO
-        NLNOYFSYheT9WUjemYWwbAEj8ypGsdSC4tz01GLDAhO94sTc4tK8dL3k/NxNjOA0qmWxg3HP
-        OZ9DjAIcjEo8vAypOdFCrIllxZW5hxglOJiVRHj3vAMK8aYkVlalFuXHF5XmpBYfYjQFxtRE
-        ZinR5Hxgis8riTc0NTI2NrYwMTQzNTRUEuc18guOFhJITyxJzU5NLUgtgulj4uCUamDsKjog
-        vPuM3vxZehM+OZi4LmSzl3h952zP9Xc7Ku7dmmfdvDxhwecg6X3NcyrmJ52Y8WTn6cPRJ1w/
-        XZzvoffHJ6u6NTWK5+Df0p/6d5JOO77eILmg7YPw+RaBWULXth4xFp28rv304hblmf1xku94
-        BdvKA8znHva60/jnUMrcuOIp1U/rnwVpKbEUZyQaajEXFScCAPADzei5AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJXveTcW60waZWFos569ewWTQvXs9m
-        8fn3LlaLy7vmsFmsODydxWLBxkeMFjMmv2SzeNT3lt3i/N/jrA6cHidm/Gbx2D93DbvH4r7J
-        rB59W1YxepxZcITd4/MmOY9NT94yBbBHcdmkpOZklqUW6dslcGX0XH7MWrBCuOJsU10D40H+
-        LkZODgkBE4mV678xdzFycQgJ7GaUWHa4jR0iISUx99t2xi5GDiBbWOLw4WKQsJDAa0aJ1dPV
-        QWxeAS2Jrt9XmEFsFgFVib2XLoLZbAI6EvuX/GaFqFeQuLB1BhuILSoQIvHr4xVWiF5BiZMz
-        n7CA2CJAq/4fug8WZxY4yiRxeytYvbCAtMSVM5vZIW67wiLxZdlRsNs4BcolPr/8wwxyG7OA
-        usT6eUIQvfISzVtnM09gFJqFZMUshKpZSKoWMDKvYpRMLSjOTc8tNiwwykst1ytOzC0uzUvX
-        S87P3cQIjh8trR2MJ07EH2IU4GBU4uFlSM2JFmJNLCuuzD3EKMHBrCTCu+cdUIg3JbGyKrUo
-        P76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwenVAOjwqKW+e3+DQyeBRpFfzlP
-        uUpwfWM8KOQ1r+dCwpQZ4XndZ+wNJ5cG7HtTtm5jVqVM4Ie2JrF19o+YGc8vd9Gr+XtFt3rR
-        4UereBl4Qvb+WMXZpzunTvU3z4mju+sLp05ZzJPybZ70Ba7ms/tTN29cp9K25THfD8ZjWqqn
-        a69F7v2WwXhl0o6VSizFGYmGWsxFxYkAtVja6JsCAAA=
-Message-Id: <20180810064258epcas1p3eb68d29dbd60b705d0473b3c645496ff~Jcs48Q55D0165001650epcas1p3e@epcas1p3.samsung.com>
-X-CMS-MailID: 20180810064258epcas1p3eb68d29dbd60b705d0473b3c645496ff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180530073304epcas3p4967df82d2d086fd08fd354781df61861
-References: <CGME20180530073304epcas3p4967df82d2d086fd08fd354781df61861@epcas3p4.samsung.com>
-        <20180530073211.GA22422@kroah.com>
-        <20180703032456epcas1p29c4570ae3f6bb3f8d7c2d475e1ba4658~9vfIpgNT51989519895epcas1p2d@epcas1p2.samsung.com>
-        <20180703043655.GA9793@kroah.com>
-        <20180703044302epcas1p4ff5961129c010a2df3548cf678b6274c~9wjUy-vFW2959129591epcas1p4p@epcas1p4.samsung.com>
-        <CA+55aFz-K8s-Sh86PqxRaXTD5pG=YsVUCxf9ue8XOSaGmg-brw@mail.gmail.com>
-        <20180705005205.GC30522@ZenIV.linux.org.uk>
-        <20180808100622epcas1p1d4e3d6f858a9de3014f6d79bf284ff2c~I4L612J9p0428204282epcas1p1X@epcas1p1.samsung.com>
+Received: by 2002:a4a:1785:0:0:0:0:0 with HTTP; Thu, 9 Aug 2018 23:55:40 -0700 (PDT)
+In-Reply-To: <20180809181224.0b7417e51215565dbda9f665@linux-foundation.org>
+References: <20180809025409.31552-1-rashmica.g@gmail.com> <20180809181224.0b7417e51215565dbda9f665@linux-foundation.org>
+From:   Rashmica Gupta <rashmica.g@gmail.com>
+Date:   Fri, 10 Aug 2018 16:55:40 +1000
+X-Google-Sender-Auth: kSM2Y4pQbhd0_u07QW-xfLdy3aQ
+Message-ID: <CAC6rBs=yYYZw-c02yp6rx-+TN2oUGgrp=uuLhZ=Kc_nnjmTRqA@mail.gmail.com>
+Subject: Re: [PATCH v3] resource: Merge resources on a node when hot-adding memory
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     toshi.kani@hpe.com, tglx@linutronix.de, bp@suse.de,
+        brijesh.singh@amd.com, thomas.lendacky@amd.com, jglisse@redhat.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        dan.j.williams@intel.com, mhocko@suse.com, iamjoonsoo.kim@lge.com,
+        Vlastimil Babka <vbabka@suse.cz>, malat@debian.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 08월 08일 19:06, Seung-Woo Kim wrote:
-> On 2018년 07월 05일 09:52, Al Viro wrote:
->> On Mon, Jul 02, 2018 at 10:01:25PM -0700, Linus Torvalds wrote:
->>> On Mon, Jul 2, 2018 at 9:43 PM Seung-Woo Kim <sw0312.kim@samsung.com> wrote:
->>>>
->>>> I think the commit itself is required. Simple, but not reliable,
->>>> workaround fix is like below:
->>>>
->>>> diff --git a/fs/dcache.c b/fs/dcache.c
->>>> index a34d401..7c751f2 100644
->>>> --- a/fs/dcache.c
->>>> +++ b/fs/dcache.c
->>>> @@ -1879,6 +1879,8 @@ void d_instantiate_new(struct dentry *entry,
->>>> struct inode *inode)
->>>>         BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
->>>>         BUG_ON(!inode);
->>>>         lockdep_annotate_inode_mutex_key(inode);
->>>> +       /* WORKAROUND for calling security_d_instantiate() */
->>>> +       entry->d_inode = inode;
->>>>         security_d_instantiate(entry, inode);
->>>>         spin_lock(&inode->i_lock);
->>>>         __d_instantiate(entry, inode);
->>>
->>> Ugh. That looks horrible even if it might avoid the oops.
->>>
->>> I think a much better solution is to back-port commit b296821a7c42
->>> ("xattr_handler: pass dentry and inode as separate arguments of
->>> ->get()") to older kernels. Then the inode is passed down all the way,
->>> and you don't have people try to get it from the (not yet initialized)
->>> dentry.
->>>
->>> But there might be other parts missing too, and I didn't look at how
->>> easy/painful that backport would be.
->>>
->>> Al - comments? This is all because of commit 1e2e547a93a0 ("do
->>> d_instantiate/unlock_new_inode combinations safely") being marked for
->>> stable, and various cases of security_d_instantiate() calling down to
->>> getxattr. Which used to not get the inode at all, so those older
->>> kernels use d_inode(dentry), which doesn't work in this path since
->>> dentry->d_inode hasn't been instantiated yet..
+On Fri, Aug 10, 2018 at 11:12 AM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Thu,  9 Aug 2018 12:54:09 +1000 Rashmica Gupta <rashmica.g@gmail.com> wrote:
+>
+>> When hot-removing memory release_mem_region_adjustable() splits
+>> iomem resources if they are not the exact size of the memory being
+>> hot-deleted. Adding this memory back to the kernel adds a new
+>> resource.
 >>
->> You also want b96809173e94 and ce23e6401334 there...
-> 
-> For above two commits, also b296821a7c42 is required. And after
-> backport, smack still crashed because setxattr. To fix it, 5930122683df
-> and 3767e255b390 are also required.
-> 
-> By the way, does no one have met this kind getxattr crash issue with
-> selinux from 3.18.y?
-> 
+>> Eg a node has memory 0x0 - 0xfffffffff. Offlining and hot-removing
+>> 1GB from 0xf40000000 results in the single resource 0x0-0xfffffffff being
+>> split into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
+>>
+>> When we hot-add the memory back we now have three resources:
+>> 0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
+>>
+>> Now if we try to remove some memory that overlaps these resources,
+>> like 2GB from 0xf40000000, release_mem_region_adjustable() fails as it
+>> expects the chunk of memory to be within the boundaries of a single
+>> resource.
+>>
+>> This patch adds a function request_resource_and_merge(). This is called
+>> instead of request_resource_conflict() when registering a resource in
+>> add_memory(). It calls request_resource_conflict() and if hot-removing is
+>> enabled (if it isn't we won't get resource fragmentation) we attempt to
+>> merge contiguous resources on the node.
+>
+> What is the end-user impact of this patch?
+>
 
-I have checked with selinux, and it is confirmed that there is no crash
-because selinux_d_instantiate() has null check for inode. So, it is only
-security smack issue.
+Only architectures/setups that allow the user to remove and add memory of
+different sizes or different start addresses from the kernel at runtime will
+potentially encounter the resource fragmentation.
 
--- 
-Seung-Woo Kim
-Samsung Research
---
+Trying to remove memory that overlaps iomem resources the first time
+gives us this warning: "Unable to release resource <%pa-%pa>".
 
+Attempting a second time results in a kernel oops (on ppc at least).
+
+With this patch the user will not be restricted, by resource fragmentation
+caused by previous hotremove/hotplug attempts, to what chunks of memory
+they can remove.
+
+
+
+> Do you believe the fix should be merged into 4.18?  Backporting into
+> -stable kernels?  If so, why?
+
+
+I hit this when adding hot-add code to memtrace on ppc.
+
+Most memory hotplug/hotremove seems to be block or section based, and
+always adds and removes memory at the same place.
+
+Memtrace on ppc is different in that given a size (aligned to a block size),
+it scans each node and finds a chunk of memory of that size that we can offline
+and then removes it.
+
+As this is possibly only as issue for memtrace on ppc with a patch that is not
+in 4.18, I don't think this code needs to go in 4.18.
+
+
+>
+> Thanks.
