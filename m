@@ -2,203 +2,114 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36525C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A13C46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8DAB21E17
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:36:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cJCkj+dr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TwNeByi+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8DAB21E17
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D4FAA223A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 20:41:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4FAA223A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeHJXHd (ORCPT
+        id S1727444AbeHJXMd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 19:07:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35292 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbeHJXHc (ORCPT
+        Fri, 10 Aug 2018 19:12:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51857 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727197AbeHJXMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 19:07:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7AE8B60B23; Fri, 10 Aug 2018 20:36:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533933366;
-        bh=fkHHVmOz1r4sMon1YaYHWBo8hxWmP4NWuZxp1RFAriA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cJCkj+drrg7FWRF3RTHzlEqx7kL9b9tdII2IxvqBMcesE7hEvH5glXyd5QPyYFhW6
-         YOfFgPh/FyNgANI5JxZegCGfrpy9HNqoci+4dUkLEYbzUNk6BXnqC/V+lHGdK54wmJ
-         PErAOdrIKeXMMawhdJCZ3oqAuDhQbkQVplpXhBNE=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2048860807;
-        Fri, 10 Aug 2018 20:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533933365;
-        bh=fkHHVmOz1r4sMon1YaYHWBo8hxWmP4NWuZxp1RFAriA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TwNeByi+mkdTraNl0MKjwMj95RjVyc47TlrJ5cuQRYqvrqlPhlaGXE9PSptjG9UqL
-         UdxCJ1ROb06dKMCF41+tsFBVkv+sxlbsCcUYK6jux0zLsZAUaXMoY+ZqhyakDHbtHq
-         cHxH+mB0/6fdZt8zlN46pHY/cOwiWO0Ayg/slehM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2048860807
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Fri, 10 Aug 2018 14:36:04 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle
- path for CPUs
-Message-ID: <20180810203604.GF5081@codeaurora.org>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <2056372.NMt4aPaF4h@aspire.rjw.lan>
- <2205807.cU2puvubpP@aspire.rjw.lan>
- <1726374.375PCQfjLZ@aspire.rjw.lan>
- <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
- <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
- <20180808105619.GB25150@e107981-ln.cambridge.arm.com>
- <20180808180248.GC27850@codeaurora.org>
- <CAJZ5v0gnZCmfgERSJfAFM6Y+jLX4V3Rsr4D5gBACWRNbGcEN-A@mail.gmail.com>
+        Fri, 10 Aug 2018 19:12:32 -0400
+Received: from 1.general.jsalisbury.us.vpn ([10.172.67.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <joseph.salisbury@canonical.com>)
+        id 1foEDX-0007LR-U6; Fri, 10 Aug 2018 20:41:04 +0000
+To:     dmilburn@redhat.com
+From:   Joseph Salisbury <joseph.salisbury@canonical.com>
+Subject: [Regression] libata: sata_down_spd_limit should return if driver has
+ not recorded sstatus speed
+Openpgp: preference=signencrypt
+Autocrypt: addr=joseph.salisbury@canonical.com; prefer-encrypt=mutual;
+ keydata=
+ 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
+ p24lPxLL08SuCEzuBw==
+Cc:     tj@kernel.org, linux-ide@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        1783906@bugs.launchpad.net
+Message-ID: <479e7a10-1fdc-5742-e488-3c36233a5393@canonical.com>
+Date:   Fri, 10 Aug 2018 16:41:00 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gnZCmfgERSJfAFM6Y+jLX4V3Rsr4D5gBACWRNbGcEN-A@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09 2018 at 02:16 -0600, Rafael J. Wysocki wrote:
->On Wed, Aug 8, 2018 at 8:02 PM, Lina Iyer <ilina@codeaurora.org> wrote:
->> On Wed, Aug 08 2018 at 04:56 -0600, Lorenzo Pieralisi wrote:
->>>
->>> On Mon, Aug 06, 2018 at 11:37:55AM +0200, Rafael J. Wysocki wrote:
->>>>
->>>> On Fri, Aug 3, 2018 at 1:42 PM, Ulf Hansson <ulf.hansson@linaro.org>
->>>> wrote:
->>>> > [...]
->>>> >
->>>> >>>
->>>> >>> Assuming that I have got that right, there are concerns, mostly
->>>> >>> regarding
->>>> >>> patch [07/26], but I will reply to that directly.
->>>> >>
->>>> >> Well, I haven't got that right, so never mind.
->>>> >>
->>>> >> There are a few minor things to address, but apart from that the
->>>> >> general
->>>> >> genpd patches look ready.
->>>> >
->>>> > Alright, thanks!
->>>> >
->>>> > I will re-spin the series and post a new version once 4.19 rc1 is out.
->>>> > Hopefully we can queue it up early in next cycle to get it tested in
->>>> > next for a while.
->>>> >
->>>> >>
->>>> >>> The $subject patch is fine by me by itself, but it obviously depends
->>>> >>> on the
->>>> >>> previous ones.  Patches [01-02/26] are fine too, but they don't seem
->>>> >>> to be
->>>> >>> particularly useful without the rest of the series.
->>>> >>>
->>>> >>> As far as patches [10-26/26] go, I'd like to see some review comments
->>>> >>> and/or
->>>> >>> tags from the people with vested interest in there, in particular
->>>> >>> from Daniel
->>>> >>> on patch [12/26] and from Sudeep on the PSCI ones.
->>>> >>
->>>> >> But this still holds.
->>>> >
->>>> > Actually, patch 10 and patch11 is ready to go as well. I ping Daniel
->>>> > on patch 12.
->>>> >
->>>> > In regards to the rest of the series, some of the PSCI/ARM changes
->>>> > have been reviewed by Mark Rutland, however several changes have not
->>>> > been acked.
->>>> >
->>>> > On the other hand, one can also interpret the long silence in regards
->>>> > to PSCI/ARM changes as they are good to go. :-)
->>>>
->>>> Well, in that case giving an ACK to them should not be an issue for
->>>> the people with a vested interest I suppose.
->>>
->>>
->>> Apologies to everyone for the delay in replying.
->>>
->>> Side note: cpu_pm_enter()/exit() are also called through syscore ops in
->>> s2RAM/IDLE, you know that but I just wanted to mention it to compound
->>> the discussion.
->>>
->>> As for PSCI patches I do not personally think PSCI OSI enablement is
->>> beneficial (and my position has always been the same since PSCI OSI was
->>> added to the specification, I am not even talking about this patchset)
->>> and Arm Trusted Firmware does not currently support it for the same
->>> reason.
->>>
->>> We (if Mark and Sudeep agree) will enable PSCI OSI if and when we have a
->>> definitive and constructive answer to *why* we have to do that that is
->>> not a dogmatic "the kernel knows better" but rather a comprehensive
->>> power benchmark evaluation - I thought that was the agreement reached
->>> at OSPM but apparently I was mistaken.
->>>
->> I will not speak to any comparison of benchmarks between OSI and PC.
->> AFAIK, there are no platforms supporting both.
->>
->> But, the OSI feature is critical for QCOM mobile platforms. The
->> last man activities during cpuidle save quite a lot of power. Powering
->> off the clocks, busses, regulators and even the oscillator is very
->> important to have a reasonable battery life when using the phone.
->> Platform coordinated approach falls quite short of the needs of a
->> powerful processor with a desired battery efficiency.
->
->Even so, you still need firmware (or hardware) to do the right thing
->in the concurrent wakeup via an edge-triggered interrupt case AFAICS.
->That is, you need the domain to be prevented from being turned off if
->one of the CPUs in it has just been woken up and the interrupt is
->still pending.
-Yes, that is true and we have been doing this on pretty much every QC
-SoC there is, for CPU domains. Generally, there is a handshake of sorts
-with the power domain controller when the core executes WFI. It
-decrements the reference on the controller when going down and
-increments when coming up. The controller is only turned off when the
-reference count is 0 and is turned back on before the CPU is ready to
-exit the WFI.
+Hi David,
 
-What we are doing here is hand the domain's ->power_off and ->power_on
-over to the platform firmware, which needs to make sure the races are
-handled correctly either in h/w or through mechanisms like MCPM or in
-the firmware. I would consider what happens during the power on/off of
-the domains beyond the realm of the genpd at least for CPU specific PM
-domains.
+A kernel bug report was opened against Ubuntu [0].  This bug is a
+regression introduced in v4.15-rc4.  The following commit was identified
+as the cause of the regression:
+
+        2dc0b46b5ea3 ("libata: sata_down_spd_limit should return if
+driver has not recorded sstatus speed")
+
+I was hoping to get your feedback, since you are the patch author.  Do
+you think gathering any additional data will help diagnose this issue,
+or would it be best to submit a revert request?
+
 
 Thanks,
-Lina
+
+Joe
+
+http://pad.lv/1783906
 
 
