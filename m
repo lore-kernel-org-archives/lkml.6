@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DB9C46460
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E3CC46460
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40445223E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B26BE223E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 03:22:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8F0Efcn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40445223E0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="To1t41ep"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26BE223E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeHJFt5 (ORCPT
+        id S1727522AbeHJFtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 01:49:57 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41683 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeHJFt2 (ORCPT
+        Fri, 10 Aug 2018 01:49:23 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36873 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbeHJFtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 01:49:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z8-v6so3706222pgu.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:21:35 -0700 (PDT)
+        Fri, 10 Aug 2018 01:49:20 -0400
+Received: by mail-pl0-f66.google.com with SMTP id d5-v6so3435037pll.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Aug 2018 20:21:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zt0lm5ekJ1wGmSK9QTAKo5hWh+iePyb259udOMm8/cs=;
-        b=m8F0EfcnUwZm1kKvB0HNlIvBQjGa3fCmw4WqMyHfoiPc/IhIc+iGSLn8mk6LVeMWC7
-         hH34fARMNHtVi0wA709JiRQB+1o3DK54T4i/dJ5SI18k1yz5zrA9Cs3fFnyxNNC3DWzC
-         5qhvQZVYG77XvsDBbMdXzNNfXUew368rPcWbMpfMmXqoUFtYvSYI6l5s6e9Y5D7cfHFx
-         Eies15gM0VbfTgsxX8r8IxK/6EuSpVL6IBjNWWHEVX12StixiPlSz0nMvGJedp3XLE5w
-         GIuDcseYegSLIM5mNgpyMNaKpuH0SVGkTcm1l2sQU1K38berhJmrB6n+Mg4E9fBq1pLa
-         71sg==
+        bh=+gG9X64yFfh3t0HzNukSh7fXF8kJQf5vX++7kKagUn8=;
+        b=To1t41epPSkISRSgp6MXw1A/McpoH8DF1nsOSPOfk0cLegnsG0VLVOmSR92BSQ3laB
+         MwFdqkor02UJ0ndY5uwTUXE0LktIaaXjuEVpLONzcsq0ap4QsVoFgx3OiImqVps8XZdO
+         Fr26Rmhsv0jteHK6m7z+FKVHF4eExrqxibLQdUaLGla8VKZMd67av7qnKBKm3Md5+ntN
+         sASkncq2Jl75OQUV5rX1r/FIYWtvD/afbDA8FIB8ZezgxtA9Cz45R9K9DqPX8HOEQBRg
+         m3+VRM4P88zNT8E86bvHoSLq/GklmCQkPLyt/B1PrfghtPlxjWpotQUEJhJLF7jAMNlE
+         1ygA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zt0lm5ekJ1wGmSK9QTAKo5hWh+iePyb259udOMm8/cs=;
-        b=nlkgDrY+nRWMH8nnKRRCdpXXAdyRuvDIVh9ZSOVnXCqPhTStdql2n6rXs8TYWqy03e
-         8FVuSxQaUC10eUuRoN/5yCtwkrJbUY2vAKYFvOyYfJYOLqnsusLLYgPz5zqBwxxMSyon
-         eOr+d5UYQ5O1OF94YDYjcBmKsIImAr75gGh7eBAY4DCZ2US7rb2l1MmRllkCvqEpWv6S
-         wdeL7E6CNS0016aenm467QTrx+JG076WVxhCWBfolO4HoJXPktZRWQlxA5mE+nFFsJJx
-         RVtZ1I/RFGSn1Ie39YWEewkP8Lr1Lvme6lRoZCVya3vBCzh5TBXvTM27vpwVk6l9DlEM
-         lX8g==
-X-Gm-Message-State: AOUpUlHaSoMyIy95jHrF1J8U3AoI0FwK4Zmu5KIe2LwDC+7m2aEu9o6G
-        LzNZibGg1INFN8SMQjY3WF8=
-X-Google-Smtp-Source: AA+uWPyozgi58CDsGHpT/nOL+ULaW2+qjlAHDMZorcw5xom27Qa6NX931+IwdLpXHq7bTCvGCha5Mg==
-X-Received: by 2002:a63:1b49:: with SMTP id b9-v6mr4519160pgm.72.1533871295132;
-        Thu, 09 Aug 2018 20:21:35 -0700 (PDT)
+        bh=+gG9X64yFfh3t0HzNukSh7fXF8kJQf5vX++7kKagUn8=;
+        b=dfuvBPpPAwIirfqOK6J2dyHCRmARgHMrxitHIYmJaaDTyJWHjldDNTLp4tZukwjLUI
+         Dq1LAogLj0w8nun+vu6Fy6/pq2R4kG0U3RhnA/m51g/LyFjJAI146+kLuzbj8G0Tkb0l
+         i7mRElDhK5t3tbFHnNyL40hbZ0cU5/uEfVirTcwGENrdBtkbul1OXsmtLGXGvF2WvqDD
+         wns5pckwYCeVhd1uz1kuWZ3GJJ+ZQB77i34g8pEy8OaQzfDSL2yN2C33aOdoxe4KdBX2
+         wuo/WBZWYZbZZ1lFeHaZkvcG0JfloyhP7AahKJ8dPRFLSZY6C30GIWjhHNzwWQbCxuEy
+         qeOQ==
+X-Gm-Message-State: AOUpUlEXv2RoadMw7zaTD+QlKisCM33Qqyl0mMmq7euTIZB4Z5dQvTYa
+        mweV8VE63/iQgfaR6029Soc=
+X-Google-Smtp-Source: AA+uWPzxyWby8oUzLXgi1Oo6yh3PSm5JysIpejxwhYjKBODUxnBqsuqo6X0Q7+M3Ig9M62wyNew7oA==
+X-Received: by 2002:a17:902:b609:: with SMTP id b9-v6mr4373924pls.321.1533871287795;
+        Thu, 09 Aug 2018 20:21:27 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p73-v6sm16130871pfk.186.2018.08.09.20.21.34
+        by smtp.gmail.com with ESMTPSA id p73-v6sm16130871pfk.186.2018.08.09.20.21.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Aug 2018 20:21:34 -0700 (PDT)
+        Thu, 09 Aug 2018 20:21:27 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 12/16] staging: gasket: core: factor out generic device remove code from PCI
-Date:   Thu,  9 Aug 2018 20:21:07 -0700
-Message-Id: <20180810032111.197743-13-toddpoynor@gmail.com>
+Subject: [PATCH 05/16] staging: gasket: core: remove ftrace-style debug logs
+Date:   Thu,  9 Aug 2018 20:21:00 -0700
+Message-Id: <20180810032111.197743-6-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180810032111.197743-1-toddpoynor@gmail.com>
 References: <20180810032111.197743-1-toddpoynor@gmail.com>
@@ -81,73 +81,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Separate code for generic parts of gasket device removal sequence from
-the PCI device removal code, in prep for non-PCI devices later.
+Remove debug logs that only indicate the name of the entered function,
+in favor of using ftrace for function tracing style logs.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index ce8ae226f82d9..5e048f6e16e12 100644
+index 5f54b3615f67c..0fe5b86b294c8 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -1461,6 +1461,14 @@ static int __gasket_add_device(struct device *parent_dev,
- 	return ret;
- }
- 
-+static void __gasket_remove_device(struct gasket_internal_desc *internal_desc,
-+				   struct gasket_dev *gasket_dev)
-+{
-+	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
-+	device_destroy(internal_desc->class, gasket_dev->dev_info.devt);
-+	gasket_free_dev(gasket_dev);
-+}
-+
- /*
-  * Add PCI gasket device.
-  *
-@@ -1515,9 +1523,7 @@ int gasket_pci_add_device(struct pci_dev *pci_dev,
- 
- cleanup_pci:
- 	gasket_cleanup_pci(gasket_dev);
--	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
--	device_destroy(internal_desc->class, gasket_dev->dev_info.devt);
--	gasket_free_dev(gasket_dev);
-+	__gasket_remove_device(internal_desc, gasket_dev);
- 	return ret;
- }
- EXPORT_SYMBOL(gasket_pci_add_device);
-@@ -1528,7 +1534,6 @@ void gasket_pci_remove_device(struct pci_dev *pci_dev)
+@@ -1789,7 +1789,6 @@ static int __init gasket_init(void)
+ {
  	int i;
- 	struct gasket_internal_desc *internal_desc;
- 	struct gasket_dev *gasket_dev = NULL;
--	const struct gasket_driver_desc *driver_desc;
- 	/* Find the device desc. */
+ 
+-	pr_debug("%s\n", __func__);
  	mutex_lock(&g_mutex);
- 	internal_desc = lookup_internal_desc(pci_dev);
-@@ -1538,8 +1543,6 @@ void gasket_pci_remove_device(struct pci_dev *pci_dev)
- 	}
- 	mutex_unlock(&g_mutex);
+ 	for (i = 0; i < GASKET_FRAMEWORK_DESC_MAX; i++) {
+ 		g_descs[i].driver_desc = NULL;
+@@ -1804,7 +1803,6 @@ static int __init gasket_init(void)
  
--	driver_desc = internal_desc->driver_desc;
--
- 	/* Now find the specific device */
- 	mutex_lock(&internal_desc->mutex);
- 	for (i = 0; i < GASKET_DEV_MAX; i++) {
-@@ -1558,10 +1561,7 @@ void gasket_pci_remove_device(struct pci_dev *pci_dev)
- 		internal_desc->driver_desc->name);
- 
- 	gasket_cleanup_pci(gasket_dev);
--
--	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
--	device_destroy(internal_desc->class, gasket_dev->dev_info.devt);
--	gasket_free_dev(gasket_dev);
-+	__gasket_remove_device(internal_desc, gasket_dev);
+ static void __exit gasket_exit(void)
+ {
+-	pr_debug("%s\n", __func__);
  }
- EXPORT_SYMBOL(gasket_pci_remove_device);
- 
+ MODULE_DESCRIPTION("Google Gasket driver framework");
+ MODULE_VERSION(GASKET_FRAMEWORK_VERSION);
 -- 
 2.18.0.597.ga71716f1ad-goog
 
