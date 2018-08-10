@@ -2,128 +2,161 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CBEC46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC4BC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80BBF22402
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:01:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cw4qYfN4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BBF22402
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B6EFC22402
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:02:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EFC22402
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeHJPb0 (ORCPT
+        id S1728132AbeHJPcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 11:31:26 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:41059 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbeHJPbZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 11:31:25 -0400
-Received: by mail-yw1-f67.google.com with SMTP id q129-v6so8483362ywg.8
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 06:01:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=tusA5xAlIzxwgbYzfV50sQn1WpDTr2pLF3kNCqXNVeI=;
-        b=Cw4qYfN4VPXuIl9eHN07+sYdlySSwxxAtoNnZozAQ2KOlS2k+3AwnJbagSnIsXQlra
-         OpdxxNdvvGVQH+2xZGLq1qUHLP9x5/rGKJ2DrOhWRKBZlijezNHB6vFt/KquuN9++G0Z
-         kgoH+cr0QHCn6afIFJUC3FXIHPc89LQuOKrWFS5LLWiRv9/ysU49WqEtPDq8Z11X7Cmg
-         Cm3LueGDByR4GRz34op0ikeREBzVXP4CZzDkuzm1zA1H/fr8YubUE8SiCLOdZpvPhRAU
-         0v0alwA55D/UYgw1Fbxb+0lraZKA4iXuTlXFGkY1ibnIyB2PShqeSlR/R8IdVuxZ/ewy
-         eOHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=tusA5xAlIzxwgbYzfV50sQn1WpDTr2pLF3kNCqXNVeI=;
-        b=Dl1cU03hMm4HHnVmZnnzxpQQl+YraewoY9ll2APxtV2eUUeorSlHj/Gs1zpF5Y6NqL
-         jF7O41rQaRms1nxhz0BVwE2ik9B7782IYrnnNW19dExcYxS2nvwsIFz/EfwkgwEzEr/+
-         Ncr78QKcIaYKfv6XlXSfXfkg1/oOuPQ9m0l2/d9PekmsmgFf3mUEUb870Ua+3sKdDFoN
-         UiItqOwqMre9MzPOt5NP/LJ6WThumQh3PlEy0SBrBx4ll4hD/bnmo3KsKaWhkokBbjTd
-         VkS6w2LDr4fLCIFRGpTiugx+GRddNHY0qGlc5geeKkjmU1usAubJJNS5hk+W1nDw0Tq/
-         eNIA==
-X-Gm-Message-State: AOUpUlGsPVf4AU6aN/m99+kL1iylxwnom6REZ8WK81GRY2ioINh5C92q
-        /pw0ijyXUtucGKeBxAaYGty7ajZZkL8EtsVhAYUdzA==
-X-Google-Smtp-Source: AA+uWPxEei3/HxAMSh9Mmuj6SVdLCbADrGPZWa5xbgMAOv+qqtdJjtvNnM6jAhaM0wd2kHznY0cYasLfttDAGL1WqM4=
-X-Received: by 2002:a5b:607:: with SMTP id d7-v6mr3609527ybq.281.1533906095111;
- Fri, 10 Aug 2018 06:01:35 -0700 (PDT)
+        Fri, 10 Aug 2018 11:32:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:44930 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727543AbeHJPcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 11:32:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 06:02:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,219,1531810800"; 
+   d="scan'208";a="79217257"
+Received: from irsmsx107.ger.corp.intel.com ([163.33.3.99])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Aug 2018 06:02:17 -0700
+Received: from irsmsx105.ger.corp.intel.com ([169.254.7.54]) by
+ IRSMSX107.ger.corp.intel.com ([169.254.10.116]) with mapi id 14.03.0319.002;
+ Fri, 10 Aug 2018 14:02:16 +0100
+From:   "Lisovskiy, Stanislav" <stanislav.lisovskiy@intel.com>
+To:     "Mun, Gwan-gyeong" <gwan-gyeong.mun@intel.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>
+CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+        "airlied@linux.ie" <airlied@linux.ie>
+Subject: Re: [Intel-gfx] [v3] drm/i915: Add detection of changing of edid on
+ between suspend and resume
+Thread-Topic: [Intel-gfx] [v3] drm/i915: Add detection of changing of edid
+ on between suspend and resume
+Thread-Index: AQHUL9IVf6Y5qJIUuEqQJ2o2jGunTqS45E8A
+Date:   Fri, 10 Aug 2018 13:02:15 +0000
+Message-ID: <919efd746382923946f9f443909cec65590ffc37.camel@intel.com>
+References: <20180803163453.7760-1-gwan-gyeong.mun@intel.com>
+         <20180809111330.5113-1-gwan-gyeong.mun@intel.com>
+In-Reply-To: <20180809111330.5113-1-gwan-gyeong.mun@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.237.72.193]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <043A71653A2E014F9BA78391B54AB612@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a25:3995:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 06:01:34
- -0700 (PDT)
-In-Reply-To: <20180810215511.60d5882c8efd271c01043881@kernel.org>
-References: <20180806034049.67949-1-joel@joelfernandes.org>
- <20180806230536.ef217b2c2c008838606bedc3@kernel.org> <CAJWu+orzTpcjAcWRmgE8bLtK6BfzfQ_SW1WMho5Y-nsiACTCyQ@mail.gmail.com>
- <20180810215511.60d5882c8efd271c01043881@kernel.org>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Fri, 10 Aug 2018 06:01:34 -0700
-Message-ID: <CAJWu+opTKi5+LFRea1oim9-pPci13kH-Af65hQ+SjKtcazu+Bw@mail.gmail.com>
-Subject: Re: [PATCH ftrace/core] tracing: irqsoff: Account for additional preempt_disable
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 5:55 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-[..]
->>
->> >> The other way to fix this is to just use SRCU for all tracepoints.
->> >> However we can't do that because we can't use NMIs from RCU context.
->> >>
->> >> Fixes: c3bc8fd637a9 ("tracing: Centralize preemptirq tracepoints
->> >>                       and unify their usage")
->> >> Fixes: e6753f23d961 ("tracepoint: Make rcuidle tracepoint callers use SRCU")
->> >> Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
->> >> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> >> ---
->> >>  kernel/trace/trace_irqsoff.c | 26 ++++++++++++++++++++++++++
->> >>  1 file changed, 26 insertions(+)
->> >>
->> >> diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
->> >> index 770cd30cda40..ffbf1505d5bc 100644
->> >> --- a/kernel/trace/trace_irqsoff.c
->> >> +++ b/kernel/trace/trace_irqsoff.c
->> >> @@ -603,14 +603,40 @@ static void irqsoff_tracer_stop(struct trace_array *tr)
->> >>   */
->> >>  static void tracer_hardirqs_on(void *none, unsigned long a0, unsigned long a1)
->> >>  {
->> >
->> > To ensure this function must not be preempted even if we increment preempt
->> > count, I think you should check irq_disabled() whole this process, put below
->> > here.
->> >
->> >         if (unlikely(!irq_disabled()))
->> >                 return;
->> >
->> > Since irq_disabled() will be checked in irq_trace() anyway, so no problem
->> > to return here when !irq_disabled().
->>
->> IRQs can never be enabled here. The trace hooks are called only after
->> disabling interrupts, or before enabling them. Right?
->>
->
-> Even though, it should be verified or atleast commented on the function header.
-
-Ok.  ftrace/core has been fixed since since so this patch is outdated
-and isn't needed any more, but I agree a separate patch doc comment
-would help make it clear about this fact. Both IRQ and preempt
-tracepoints work this way, they fire only within their critical
-section.
+T24gVGh1LCAyMDE4LTA4LTA5IGF0IDE0OjEzICswMzAwLCBHd2FuLWd5ZW9uZyBNdW4gd3JvdGU6
+DQo+IFRoZSBob3RwbHVnIGRldGVjdGlvbiByb3V0aW5lIG9mIGk5MTUgdXNlcw0KPiBkcm1faGVs
+cGVyX2hwZF9pcnFfZXZlbnQoKS4gVGhpcw0KPiBoZWxwZXIgY2FuIGRldGVjdCBjaGFuZ2luZyBv
+ZiBzdGF0dXMgb2YgY29ubmVjdG9yLCBidXQgaXQgY2FuIG5vdA0KPiBkZXRlY3QNCj4gY2hhbmdp
+bmcgb2YgZWRpZC4NCj4gDQo+IEZvbGxvd2luZyBzY2VuYXJpbyByZXF1aXJlcyBkZXRlY3Rpb24g
+b2YgY2hhbmdpbmcgb2YgZWRpZC4NCj4gDQo+ICAxKSBwbHVnIGRpc3BsYXkgZGV2aWNlIHRvIGEg
+Y29ubmVjdG9yDQo+ICAyKSBzeXN0ZW0gc3VzcGVuZA0KPiAgMykgdW5wbHVnIDEpJ3MgZGlzcGxh
+eSBkZXZpY2UgYW5kIHBsdWcgdGhlIG90aGVyIGRpc3BsYXkgZGV2aWNlIHRvIGENCj4gY29ubmVj
+dG9yDQo+ICA0KSBzeXN0ZW0gcmVzdW1lDQo+IA0KPiBJdCBhZGRzIGVkaWQgY2hlY2sgcm91dGlu
+ZSB3aGVuIGEgY29ubmVjdG9yIHN0YXR1cyBzdGlsbCByZW1haW5zIGFzDQo+ICJjb25uZWN0b3Jf
+c3RhdHVzX2Nvbm5lY3RlZCIuDQo+IA0KPiB2MjogQWRkIE5VTEwgY2hlY2sgYmVmb3JlIGNvbXBh
+cmluZyBvZiBFRElEcy4NCj4gDQo+IFRlc3RjYXNlOiBpZ3Qva21zX2NoYW1lbGl1bS9oZG1pLWVk
+aWQtY2hhbmdlLWR1cmluZy1oaWJlcm5hdGUNCj4gVGVzdGNhc2U6IGlndC9rbXNfY2hhbWVsaXVt
+L2hkbWktZWRpZC1jaGFuZ2UtZHVyaW5nLXN1c3BlbmQNCj4gVGVzdGNhc2U6IGlndC9rbXNfY2hh
+bWVsaXVtL2RwLWVkaWQtY2hhbmdlLWR1cmluZy1oaWJlcm5hdGUNCj4gVGVzdGNhc2U6IGlndC9r
+bXNfY2hhbWVsaXVtL2RwLWVkaWQtY2hhbmdlLWR1cmluZy1zdXNwZW5kDQo+IA0KPiBTaWduZWQt
+b2ZmLWJ5OiBHd2FuLWd5ZW9uZyBNdW4gPGd3YW4tZ3llb25nLm11bkBpbnRlbC5jb20+DQo+IC0t
+LQ0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfaG90cGx1Zy5jIHwgODQNCj4gKysrKysr
+KysrKysrKysrKysrKysrKysrKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDgzIGluc2VydGlvbnMo
+KyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkx
+NS9pbnRlbF9ob3RwbHVnLmMNCj4gYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9ob3RwbHVn
+LmMNCj4gaW5kZXggNjQ4YTEzYzYwNDNjLi45NjVmMmQ3NzFmYzAgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2hvdHBsdWcuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vaTkxNS9pbnRlbF9ob3RwbHVnLmMNCj4gQEAgLTUwNyw2ICs1MDcsODggQEAgdm9pZCBpbnRl
+bF9ocGRfaW5pdChzdHJ1Y3QgZHJtX2k5MTVfcHJpdmF0ZQ0KPiAqZGV2X3ByaXYpDQo+ICAJfQ0K
+PiAgfQ0KPiAgDQo+ICsvKioNCj4gKyAqIGludGVsX2hwZF9pcnFfZXZlbnQgLSBob3RwbHVnIHBy
+b2Nlc3NpbmcNCj4gKyAqIEBkZXY6IGRybV9kZXZpY2UNCj4gKyAqDQo+ICsgKiBEcml2ZXJzIGNh
+biB1c2UgdGhpcyBmdW5jdGlvbiB0byBydW4gYSBkZXRlY3QgY3ljbGUgb24gYWxsDQo+IGNvbm5l
+Y3RvcnMgd2hpY2gNCj4gKyAqIGhhdmUgdGhlIERSTV9DT05ORUNUT1JfUE9MTF9IUEQgZmxhZyBz
+ZXQgaW4gdGhlaXIgJnBvbGxlZCBtZW1iZXIuDQo+IEFsbCBvdGhlcg0KPiArICogY29ubmVjdG9y
+cyBhcmUgaWdub3JlZCwgd2hpY2ggaXMgdXNlZnVsIHRvIGF2b2lkIHJlcHJvYmluZyBmaXhlZA0K
+PiBwYW5lbHMuDQo+ICsgKg0KPiArICogVGhpcyBmdW5jdGlvbiBpcyB1c2VmdWwgZm9yIGRyaXZl
+cnMgd2hpY2ggY2FuJ3Qgb3IgZG9uJ3QgdHJhY2sNCj4gaG90cGx1ZyBpbnRlcnJ1cHRzDQo+ICsg
+KiBmb3IgZWFjaCBjb25uZWN0b3IuIFRoaXMgZnVuY3Rpb24gaXMgYmFzZWQgb24NCj4gZHJtX2hl
+bHBlcl9ocGRfaXJxX2V2ZW50KCkgaGVscGVyDQo+ICsgKiBmdW5jdGlvbiBhbmQgYmVzaWRlcyBp
+dCBhZGRzIGVkaWQgY2hlY2sgcm91dGluZSB3aGVuIGEgY29ubmVjdG9yDQo+IHN0YXR1cyBzdGls
+bA0KPiArICogcmVtYWlucyBhcyAiY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQiLg0KPiArICoN
+Cj4gKyAqIEZvbGxvd2luZyBzY2VuYXJpbyByZXF1aXJlcyBkZXRlY3Rpb24gb2YgY2hhbmdpbmcg
+b2YgZWRpZC4NCj4gKyAqICAxKSBwbHVnIGRpc3BsYXkgZGV2aWNlIHRvIGEgY29ubmVjdG9yDQo+
+ICsgKiAgMikgc3lzdGVtIHN1c3BlbmQNCj4gKyAqICAzKSB1bnBsdWcgMSkncyBkaXNwbGF5IGRl
+dmljZSBhbmQgcGx1ZyB0aGUgb3RoZXIgZGlzcGxheSBkZXZpY2UNCj4gdG8gYSBjb25uZWN0b3IN
+Cj4gKyAqICA0KSBzeXN0ZW0gcmVzdW1lDQo+ICsNCj4gKyAqIFRoaXMgZnVuY3Rpb24gbXVzdCBi
+ZSBjYWxsZWQgZnJvbSBwcm9jZXNzIGNvbnRleHQgd2l0aCBubyBtb2RlDQo+ICsgKiBzZXR0aW5n
+IGxvY2tzIGhlbGQuDQo+ICsgKg0KPiArICogTm90ZSB0aGF0IGEgY29ubmVjdG9yIGNhbiBiZSBi
+b3RoIHBvbGxlZCBhbmQgcHJvYmVkIGZyb20gdGhlDQo+IGhvdHBsdWcgaGFuZGxlciwNCj4gKyAq
+IGluIGNhc2UgdGhlIGhvdHBsdWcgaW50ZXJydXB0IGlzIGtub3duIHRvIGJlIHVucmVsaWFibGUu
+DQo+ICsgKi8NCj4gK3N0YXRpYyBib29sIGludGVsX2hwZF9pcnFfZXZlbnQoc3RydWN0IGRybV9k
+ZXZpY2UgKmRldikNCj4gK3sNCj4gKwlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yOw0K
+PiArCXN0cnVjdCBkcm1fY29ubmVjdG9yX2xpc3RfaXRlciBjb25uX2l0ZXI7DQo+ICsJZW51bSBk
+cm1fY29ubmVjdG9yX3N0YXR1cyBvbGRfc3RhdHVzLCBjdXJfc3RhdHVzOw0KPiArCXN0cnVjdCBl
+ZGlkICpvbGRfZWRpZDsNCj4gKwlib29sIGNoYW5nZWQgPSBmYWxzZTsNCj4gKw0KPiArCWlmICgh
+ZGV2LT5tb2RlX2NvbmZpZy5wb2xsX2VuYWJsZWQpDQo+ICsJCXJldHVybiBmYWxzZTsNCj4gKw0K
+PiArCW11dGV4X2xvY2soJmRldi0+bW9kZV9jb25maWcubXV0ZXgpOw0KPiArCWRybV9jb25uZWN0
+b3JfbGlzdF9pdGVyX2JlZ2luKGRldiwgJmNvbm5faXRlcik7DQo+ICsJZHJtX2Zvcl9lYWNoX2Nv
+bm5lY3Rvcl9pdGVyKGNvbm5lY3RvciwgJmNvbm5faXRlcikgew0KPiArCQkvKiBPbmx5IGhhbmRs
+ZSBIUEQgY2FwYWJsZSBjb25uZWN0b3JzLiAqLw0KPiArCQlpZiAoIShjb25uZWN0b3ItPnBvbGxl
+ZCAmIERSTV9DT05ORUNUT1JfUE9MTF9IUEQpKQ0KPiArCQkJY29udGludWU7DQo+ICsNCj4gKwkJ
+b2xkX3N0YXR1cyA9IGNvbm5lY3Rvci0+c3RhdHVzOw0KPiArCQlvbGRfZWRpZCA9IHRvX2ludGVs
+X2Nvbm5lY3Rvcihjb25uZWN0b3IpLQ0KPiA+ZGV0ZWN0X2VkaWQ7DQo+ICsNCj4gKwkJY3VyX3N0
+YXR1cyA9IGRybV9oZWxwZXJfcHJvYmVfZGV0ZWN0KGNvbm5lY3RvciwNCj4gTlVMTCwgZmFsc2Up
+Ow0KPiArCQlEUk1fREVCVUdfS01TKCJbQ09OTkVDVE9SOiVkOiVzXSBzdGF0dXMgdXBkYXRlZCBm
+cm9tDQo+ICVzIHRvICVzXG4iLA0KPiArCQkJICAgICAgY29ubmVjdG9yLT5iYXNlLmlkLCBjb25u
+ZWN0b3ItPm5hbWUsDQo+ICsJCQkgICAgICBkcm1fZ2V0X2Nvbm5lY3Rvcl9zdGF0dXNfbmFtZShv
+bGRfc3RhdA0KPiB1cyksDQo+ICsJCQkgICAgICBkcm1fZ2V0X2Nvbm5lY3Rvcl9zdGF0dXNfbmFt
+ZShjdXJfc3RhdA0KPiB1cykpOw0KPiArDQo+ICsJCWlmIChvbGRfc3RhdHVzICE9IGN1cl9zdGF0
+dXMpDQo+ICsJCQljaGFuZ2VkID0gdHJ1ZTsNCj4gKw0KPiArCQkvKiBDaGVjayBjaGFuZ2luZyBv
+ZiBlZGlkIHdoZW4gYSBjb25uZWN0b3Igc3RhdHVzDQo+IHN0aWxsIHJlbWFpbnMNCj4gKwkJICog
+YXMgImNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkIi4NCj4gKwkJICovDQo+ICsJCWlmIChvbGRf
+c3RhdHVzID09IGN1cl9zdGF0dXMgJiYNCj4gKwkJICAgIGN1cl9zdGF0dXMgPT0gY29ubmVjdG9y
+X3N0YXR1c19jb25uZWN0ZWQpIHsNCj4gKwkJCXN0cnVjdCBlZGlkICpjdXJfZWRpZCA9DQo+IHRv
+X2ludGVsX2Nvbm5lY3Rvcihjb25uZWN0b3IpLT5kZXRlY3RfZWRpZDsNCj4gKw0KPiArCQkJaWYg
+KCFvbGRfZWRpZCB8fCAhY3VyX2VkaWQpDQo+ICsJCQkJY29udGludWU7DQo+ICsNCj4gKwkJCWlm
+IChtZW1jbXAob2xkX2VkaWQsIGN1cl9lZGlkLA0KPiBzaXplb2YoKmN1cl9lZGlkKSkpIHsNCj4g
+KwkJCQljaGFuZ2VkID0gdHJ1ZTsNCj4gKwkJCQlEUk1fREVCVUdfS01TKCJbQ09OTkVDVE9SOiVk
+OiVzXQ0KPiBlZGlkIHVwZGF0ZWRcbiIsDQo+ICsJCQkJCSAgICAgIGNvbm5lY3Rvci0+YmFzZS5p
+ZCwNCj4gKwkJCQkJICAgICAgY29ubmVjdG9yLT5uYW1lKTsNCj4gKwkJCX0NCj4gKwkJfQ0KPiAr
+CX0NCj4gKwlkcm1fY29ubmVjdG9yX2xpc3RfaXRlcl9lbmQoJmNvbm5faXRlcik7DQo+ICsJbXV0
+ZXhfdW5sb2NrKCZkZXYtPm1vZGVfY29uZmlnLm11dGV4KTsNCj4gKw0KPiArCWlmIChjaGFuZ2Vk
+KQ0KPiArCQlkcm1fa21zX2hlbHBlcl9ob3RwbHVnX2V2ZW50KGRldik7DQo+ICsNCj4gKwlyZXR1
+cm4gY2hhbmdlZDsNCj4gK30NCj4gKw0KPiAgc3RhdGljIHZvaWQgaTkxNV9ocGRfcG9sbF9pbml0
+X3dvcmsoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQ0KPiAgew0KPiAgCXN0cnVjdCBkcm1faTkx
+NV9wcml2YXRlICpkZXZfcHJpdiA9DQo+IEBAIC01NTIsNyArNjM0LDcgQEAgc3RhdGljIHZvaWQg
+aTkxNV9ocGRfcG9sbF9pbml0X3dvcmsoc3RydWN0DQo+IHdvcmtfc3RydWN0ICp3b3JrKQ0KPiAg
+CSAqIGluIHRoZSBtaWRkbGUgb2YgZGlzYWJsaW5nIHBvbGxpbmcNCj4gIAkgKi8NCj4gIAlpZiAo
+IWVuYWJsZWQpDQo+IC0JCWRybV9oZWxwZXJfaHBkX2lycV9ldmVudChkZXYpOw0KPiArCQlpbnRl
+bF9ocGRfaXJxX2V2ZW50KGRldik7DQo+ICB9DQoNCkp1c3Qgd29uZGVyaW5nLCBhcyBJIHNhdyBw
+cmV2aW91c2x5IGRybV9oZWxwZXJfaHBkX2lycV9ldmVudCBmdW5jdGlvbg0Kd2FzIHVzZWQsIHdo
+aWNoIGJhc2ljYWxseSBkb2VzIHRoZSBzYW1lIHRoaW5nLCBleGNlcHQgZG9pbmcgbWVtY21wDQpm
+b3IgZGV0ZWN0aW5nIHRoZSBlZGlkIGNoYW5nZS4gSXMgaXQgb25seSBJbnRlbCBzcGVjaWZpYyBj
+aGFuZ2U/IEFzIHdlDQpjb3VsZCBqdXN0IGFkZCB0aGlzIG1vZGlmaWNhdGlvbiB0byBleGlzdGlu
+ZyBoZWxwZXIgZnVuY3Rpb24gb3IgYWRkDQphbm90aGVyIGhlbHBlciBmdW5jdGlvbiB0byB0aGUg
+ZHJtIChkcm1fcHJvYmVfaGVscGVyLmMpLCBzbyB0aGF0IGl0IGlzDQphbHNvIHVzYWJsZSBlbHNl
+d2hlcmUuLg0KDQo+ICANCj4gIC8qKg0KLS0gDQpCZXN0IFJlZ2FyZHMsDQoNCkxpc292c2tpeSBT
+dGFuaXNsYXY=
