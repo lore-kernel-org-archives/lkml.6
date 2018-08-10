@@ -3,386 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1964C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261C2C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB57223FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5220223E8
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 10:06:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdFwhEcR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB57223FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pg+SCAJZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5220223E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeHJMa2 (ORCPT
+        id S1727507AbeHJMf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 08:30:28 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46738 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbeHJMa1 (ORCPT
+        Fri, 10 Aug 2018 08:35:58 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42880 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeHJMf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 08:30:27 -0400
-Received: by mail-oi0-f65.google.com with SMTP id y207-v6so14784879oie.13
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 03:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=JkrsEBtrFw5jbMiFaE6wHs/1Etc/wqwYmGpa3QKg0Hk=;
-        b=AdFwhEcRSmDtGqG+QgSJwqoKWRM1vTn1aUt/fToZRMf+KtwkRlD1ZKcLc3QGVpc8P5
-         qCLdvREOI8/ckETJSx6Nx7RT/SNPGpXaDAwa2wm+oYIwzghobaymUiFgoIMZW37cq17x
-         nsocY4rld955pclzi2Al22gJtz3Dwbesg2IyvXzEahF9/nvMvJQlPWSMDT9g1r4WzbTV
-         T41NiryxniTFkRq+AazGADdL3Cg1JNJt7LofKKprvO8sixqO5MKVi3BEae5II6tmiBnb
-         mM2pH0xEt7z/fwjnHvI9i0DzL4Vd85g+ay7gpUQ4h7utEvMFZ1hZSXETcfPGaRcjs8fM
-         zrnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=JkrsEBtrFw5jbMiFaE6wHs/1Etc/wqwYmGpa3QKg0Hk=;
-        b=cbZm3JwKTmHKavzI/QIWIkHBfGZoNSIODC0MfNw8IwCQ0V/n9t9OIb84qyZYXK8hbq
-         fZ/3oYFPnouVcnJsce84+bHxlommv2iRb2TnivAC1jLHZxnzlYLXIwoge3Rne+gA2ReY
-         8XtoXNEQB1jtmvdmQD9y+BkH3BE9++Ha3P9Z7SyVUMgE5rMjfAZ1fhvtOCG3gR5HW6od
-         0kri5xFz7s6MB270s/ZmuFOp9y2QQOEfhXE65gQq+o9mRLIO1KRB9ktALj5PfOieGDox
-         immT7iQTWxb+laI85yJztABGhprGWyKEtbbS5Z52jD3aroJSZVt5T6kQJbHWRiWOi8XB
-         6RRQ==
-X-Gm-Message-State: AOUpUlHAmtlAskS5DgihuYbk4xxBzGMr9T4NLz0mKcGrZb5/sTHnELsx
-        LCG9vIo19GFUT1fWJNkFYCmge0O9MRkYScW2030=
-X-Google-Smtp-Source: AA+uWPyrCLgQqnQ/yqe6voOAjC5GPGzqawIbBEMco/ngBPNWEBv0H9drleU5y3XkpjE/Mi1Aw4cIMswON6EWvxpaAp0=
-X-Received: by 2002:aca:3ad4:: with SMTP id h203-v6mr5686952oia.294.1533895276420;
- Fri, 10 Aug 2018 03:01:16 -0700 (PDT)
+        Fri, 10 Aug 2018 08:35:58 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7AA6bK3075271;
+        Fri, 10 Aug 2018 05:06:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533895597;
+        bh=8qHl82uj/MXSecuLNDbKhCyiyUcXuvViGKsoHE/KlC8=;
+        h=From:Subject:To:CC:References:Date:In-Reply-To;
+        b=pg+SCAJZMqi/7yGMYEM5XAJ/4rqFuaS/SFmhA6vVBR1ZPxBq2ScB03ffi/xSD/T/B
+         enkWRiJqhzXkvIQLqzw3Q64mIITyS/A/yR2mnTUpldI3KthOItqjfJhRPTbDK7RL19
+         +oQXRFFudJ8fxK+0iIO+RN+Nzv7pxxIJbdg4FeFk=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7AA6bnK022550;
+        Fri, 10 Aug 2018 05:06:37 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 10
+ Aug 2018 05:06:36 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 10 Aug 2018 05:06:37 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7AA6XrN015345;
+        Fri, 10 Aug 2018 05:06:34 -0500
+From:   Vignesh R <vigneshr@ti.com>
+Subject: Re: [PATCH v3 0/4] pci-dra7xx: Enable errata i870 workaround for RC
+ mode
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Tony Lindgren <tony@atomide.com>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180724173150.2701-1-vigneshr@ti.com>
+ <20180808165700.GB486@e107981-ln.cambridge.arm.com>
+Message-ID: <ba428a15-77bf-e09c-3bd7-b5a0eae7ee13@ti.com>
+Date:   Fri, 10 Aug 2018 15:37:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 03:01:15
- -0700 (PDT)
-In-Reply-To: <f5e38b8b-33e3-33a5-6176-175f6149f561@arm.com>
-References: <20180807085437.15965-1-ganapatrao.kulkarni@cavium.com>
- <318f9118-df78-e78f-1ae2-72a33cbee28e@arm.com> <CAKTKpr6HfLtkeertCyfA_vJt2rXi5qFOKKXohLfX1Z9QiK=Uvw@mail.gmail.com>
- <b7472748-8169-7628-11e5-471045cdf1de@arm.com> <CAKTKpr79N2VBixzGNZUt7XNav7vw3CtSgUTtTgu6rPQDEjv5NQ@mail.gmail.com>
- <f5e38b8b-33e3-33a5-6176-175f6149f561@arm.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Fri, 10 Aug 2018 15:31:15 +0530
-Message-ID: <CAKTKpr6DwC7Rx6=-VRXw+CvRYX5QzhwtT5W9Qwno5KmBxVw7og@mail.gmail.com>
-Subject: Re: [PATCH] iommu/iova: Optimise attempts to allocate iova from 32bit
- address range
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
-        jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180808165700.GB486@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 3:19 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 10/08/18 10:24, Ganapatrao Kulkarni wrote:
->>
->> Hi Robin,
->>
->> On Fri, Aug 10, 2018 at 2:13 AM, Robin Murphy <robin.murphy@arm.com>
->> wrote:
->>>
->>> On 2018-08-09 6:49 PM, Ganapatrao Kulkarni wrote:
->>>>
->>>>
->>>> Hi Robin,
->>>>
->>>> On Thu, Aug 9, 2018 at 9:54 PM, Robin Murphy <robin.murphy@arm.com>
->>>> wrote:
->>>>>
->>>>>
->>>>> On 07/08/18 09:54, Ganapatrao Kulkarni wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> As an optimisation for PCI devices, there is always first attempt
->>>>>> been made to allocate iova from SAC address range. This will lead
->>>>>> to unnecessary attempts/function calls, when there are no free ranges
->>>>>> available.
->>>>>>
->>>>>> This patch optimises by adding flag to track previous failed attempts
->>>>>> and avoids further attempts until replenish happens.
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> Agh, what I overlooked is that this still suffers from the original
->>>>> problem,
->>>>> wherein a large allocation which fails due to fragmentation then blocks
->>>>> all
->>>>> subsequent smaller allocations, even if they may have succeeded.
->>>>>
->>>>> For a minimal change, though, what I think we could do is instead of
->>>>> just
->>>>> having a flag, track the size of the last 32-bit allocation which
->>>>> failed.
->>>>> If
->>>>> we're happy to assume that nobody's likely to mix aligned and unaligned
->>>>> allocations within the same domain, then that should be sufficiently
->>>>> robust
->>>>> whilst being no more complicated than this version, i.e. (modulo
->>>>> thinking
->>>>> up
->>>>> a better name for it):
->>>>
->>>>
->>>>
->>>> I agree, it would be better to track size and attempt to allocate for
->>>> smaller chunks, if not for bigger one.
->>>>
->>>>>
->>>>>>
->>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>>>> ---
->>>>>> This patch is based on comments from Robin Murphy
->>>>>> <robin.murphy@arm.com>
->>>>>> for patch [1]
->>>>>>
->>>>>> [1] https://lkml.org/lkml/2018/4/19/780
->>>>>>
->>>>>>     drivers/iommu/iova.c | 11 ++++++++++-
->>>>>>     include/linux/iova.h |  1 +
->>>>>>     2 files changed, 11 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
->>>>>> index 83fe262..d97bb5a 100644
->>>>>> --- a/drivers/iommu/iova.c
->>>>>> +++ b/drivers/iommu/iova.c
->>>>>> @@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned
->>>>>> long granule,
->>>>>>           iovad->granule = granule;
->>>>>>           iovad->start_pfn = start_pfn;
->>>>>>           iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
->>>>>> +       iovad->free_32bit_pfns = true;
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>           iovad->max_32bit_free = iovad->dma_32bit_pfn;
->>>>>
->>>>>>           iovad->flush_cb = NULL;
->>>>>>           iovad->fq = NULL;
->>>>>>           iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
->>>>>> @@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain
->>>>>> *iovad, struct iova *free)
->>>>>>           cached_iova = rb_entry(iovad->cached32_node, struct iova,
->>>>>> node);
->>>>>>           if (free->pfn_hi < iovad->dma_32bit_pfn &&
->>>>>> -           free->pfn_lo >= cached_iova->pfn_lo)
->>>>>> +           free->pfn_lo >= cached_iova->pfn_lo) {
->>>>>>                   iovad->cached32_node = rb_next(&free->node);
->>>>>> +               iovad->free_32bit_pfns = true;
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>                   iovad->max_32bit_free = iovad->dma_32bit_pfn;
->>>>
->>>>
->>>>
->>>> i think, you intended to say,
->>>>     iovad->max_32bit_free += (free->pfn_hi - free->pfn_lo);
->>>
->>>
->>>
->>> Nope, that's why I said it needed a better name ;)
->>>
->>> (I nearly called it last_failed_32bit_alloc_size, but that's a bit much)
->>
->>
->> may be we can name it "max32_alloc_size"?
->>>
->>>
->>> The point of this value (whetever it's called) is that at any given time
->>> it
->>> holds an upper bound on the size of the largest contiguous free area. It
->>> doesn't have to be the *smallest* upper bound, which is why we can keep
->>> things simple and avoid arithmetic - in realistic use-cases like yours
->>> when
->>> the allocations are a pretty constant size, this should work out directly
->>> equivalent to the boolean, only with values of "size" and "dma_32bit_pfn"
->>> instead of 0 and 1, so we don't do any more work than necessary. In the
->>> edge
->>> cases where allocations are all different sizes, it does mean that we
->>> will
->>> probably end up performing more failing allocations than if we actually
->>> tried to track all of the free space exactly, but I think that's
->>> reasonable
->>> - just because I want to make sure we handle such cases fairly
->>> gracefully,
->>> doesn't mean that we need to do extra work on the typical fast path to
->>> try
->>> and actually optimise for them (which is why I didn't really like the
->>> accounting implementation I came up with).
->>>
->>
->> ok got it, thanks for the explanation.
->>>>>
->>>>>
->>>>>> +       }
->>>>>>           cached_iova = rb_entry(iovad->cached_node, struct iova,
->>>>>> node);
->>>>>>           if (free->pfn_lo >= cached_iova->pfn_lo)
->>>>>> @@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned
->>>>>> long
->>>>>> size,
->>>>>>           struct iova *new_iova;
->>>>>>           int ret;
->>>>>>     +     if (limit_pfn <= iovad->dma_32bit_pfn &&
->>>>>> +                       !iovad->free_32bit_pfns)
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>                           size >= iovad->max_32bit_free)
->>>>>
->>>>>> +               return NULL;
->>>>>> +
->>>>>>           new_iova = alloc_iova_mem();
->>>>>>           if (!new_iova)
->>>>>>                   return NULL;
->>>>>> @@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned
->>>>>> long
->>>>>> size,
->>>>>>           if (ret) {
->>>>>>                   free_iova_mem(new_iova);
->>>>>> +               if (limit_pfn <= iovad->dma_32bit_pfn)
->>>>>> +                       iovad->free_32bit_pfns = false;
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>                           iovad->max_32bit_free = size;
->>>>
->>>>
->>>>
->>>> same here, we should decrease available free range after successful
->>>> allocation.
->>>> iovad->max_32bit_free -= size;
->>>
->>>
->>>
->>> Equivalently, the simple assignment is strictly decreasing the upper
->>> bound
->>> already, since we can only get here if size < max_32bit_free in the first
->>> place. One more thing I've realised is that this is all potentially a bit
->>> racy as we're outside the lock here, so it might need to be pulled into
->>> __alloc_and_insert_iova_range(), something like the rough diff below
->>> (name
->>> changed again for the sake of it; it also occurs to me that we don't
->>> really
->>> need to re-check limit_pfn in the failure path either, because even a
->>> 64-bit
->>> allocation still has to walk down through the 32-bit space in order to
->>> fail
->>> completely)
->>>
->>>>>
->>>>> What do you think?
->>>>
->>>>
->>>>
->>>> most likely this should work, i will try this and confirm at the
->>>> earliest,
->>>
->>>
->>>
->>> Thanks for sticking with this.
->>>
->>> Robin.
->>>
->>> ----->8-----
->>>
->>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
->>> index 83fe2621effe..7cbc58885877 100644
->>> --- a/drivers/iommu/iova.c
->>> +++ b/drivers/iommu/iova.c
->>> @@ -190,6 +190,10 @@ static int __alloc_and_insert_iova_range(struct
->>> iova_domain *iovad,
->>>
->>>          /* Walk the tree backwards */
->>>          spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
->>> +       if (limit_pfn <= iovad->dma_32bit_pfn &&
->>> +           size >= iovad->failed_alloc_size)
->>> +               goto out_err;
->>> +
->>>          curr = __get_cached_rbnode(iovad, limit_pfn);
->>>          curr_iova = rb_entry(curr, struct iova, node);
->>>          do {
->>> @@ -200,10 +204,8 @@ static int __alloc_and_insert_iova_range(struct
->>> iova_domain *iovad,
->>>                  curr_iova = rb_entry(curr, struct iova, node);
->>>          } while (curr && new_pfn <= curr_iova->pfn_hi);
->>>
->>> -       if (limit_pfn < size || new_pfn < iovad->start_pfn) {
->>> -               spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
->>> -               return -ENOMEM;
->>> -       }
->>> +       if (limit_pfn < size || new_pfn < iovad->start_pfn)
->>> +               goto out_err;
->>>
->>>          /* pfn_lo will point to size aligned address if size_aligned is
->>> set
->>> */
->>>          new->pfn_lo = new_pfn;
->>> @@ -214,9 +216,12 @@ static int __alloc_and_insert_iova_range(struct
->>> iova_domain *iovad,
->>>          __cached_rbnode_insert_update(iovad, new);
->>>
->>>          spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
->>> -
->>> -
->>>          return 0;
->>> +
->>> +out_err:
->>> +       iovad->failed_alloc_size = size;
->>> +       spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
->>> +       return -ENOMEM;
->>>   }
->>>
->>>   static struct kmem_cache *iova_cache;
->>
->>
->>
->> cant we bump up the size when ranges are freed? otherwise we never be
->> able to attempt in 32bit range, even there is enough replenish.
->
->
-> Oh, I just left that part out of the example for clarity, since it's already
-> under the lock - I didn't mean to suggest that that we should remove it!
 
-ok, thanks
->
-> (I was just too lazy to actually apply your patch to generate a real diff on
-> top of it)
->
-no problem, i will post next version at the earliest.
 
-> Robin.
->
->
+On Wednesday 08 August 2018 10:27 PM, Lorenzo Pieralisi wrote:
+> On Tue, Jul 24, 2018 at 11:01:46PM +0530, Vignesh R wrote:
+>> Make workaround for errata i870 applicable in Host mode as
+>> well(previously it was enabled only for EP mode) as per errata
+>> documentation: http://www.ti.com/lit/er/sprz450/sprz450.pdf
 >>
+>> Tested on DRA72 EVM
 >>
->> @@ -139,8 +139,10 @@ __cached_rbnode_delete_update(struct iova_domain
->> *iovad, struct iova *free)
+>> Tony,
 >>
->>          cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
->>          if (free->pfn_hi < iovad->dma_32bit_pfn &&
->> -           free->pfn_lo >= cached_iova->pfn_lo)
->> +           free->pfn_lo >= cached_iova->pfn_lo) {
->>                  iovad->cached32_node = rb_next(&free->node);
->> +               iovad->failed_alloc_size += (free->pfn_hi - free->pfn_lo);
->> +       }
->>
->
+>> If you are okay with the series, could you pick this via omap tree?
+>> All ACKs are in place and Lorenzo is okay with PCIe bits to go along with
+>> rest of DTS changes.
+> 
+> I think we have missed the v4.19 merge window by now - 
 
-thanks
-Ganapat
+Right. I didn't get any response from Tony.
+
+> please let me know if I can drop this series from the PCI patch queue.
+> 
+
+Ok, I will resend the patch after 4.19-rc. Thanks!
+
+Regards
+Vignesh
+
+
+> Thanks,
+> Lorenzo
+> 
+>> Regards
+>> Vignesh
+>>
+>>
+>> Changes since v2:
+>> Reorder patch 2 to appear at the last.
+>> Collect all the ACKs
+>>
+>> Changes since v1:
+>> Drop IRQ handling rework (will be sent out separately)
+>>
+>> v2: https://patchwork.ozlabs.org/cover/935454/
+>> v1: https://lkml.org/lkml/2017/12/1/59
+>>
+>>
+>> Vignesh R (4):
+>>   dt-bindings: PCI: dra7xx: Add bindings for unaligned access in host
+>>     mode
+>>   ARM: dts: dra7: Enable workaround for errata i870 in PCIe host mode
+>>   ARM: dts: dra7: Fix up unaligned access setting for PCIe EP
+>>   pci: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
+>>
+>>  Documentation/devicetree/bindings/pci/ti-pci.txt |  5 +++++
+>>  arch/arm/boot/dts/dra7.dtsi                      |  4 +++-
+>>  drivers/pci/controller/dwc/pci-dra7xx.c          | 12 ++++++------
+>>  3 files changed, 14 insertions(+), 7 deletions(-)
+>>
+>> -- 
+>> 2.18.0
+>>
