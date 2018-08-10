@@ -2,153 +2,114 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9245C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED81DC46464
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7A921E26
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B5F3223A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 21:54:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bQ2fnfsU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BOEAnnGi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7A921E26
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="WWOOEBwo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GyXc+eTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5F3223A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeHKAYO (ORCPT
+        id S1727197AbeHKA0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 20:24:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58832 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725754AbeHKAYO (ORCPT
+        Fri, 10 Aug 2018 20:26:01 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:35137 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725754AbeHKA0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 20:24:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2165C6085F; Fri, 10 Aug 2018 21:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533937952;
-        bh=Za3zMK+6qbDXrwONyY3COsYBYegk6+341nnqD9rCues=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bQ2fnfsUkQCSkxGPsTw8xItzOPwB2pn5PrgwTHHOV3LnF8AQt2halxT89YY6+y5sB
-         moFscCYajjINSxVKKjzmX5Mmsi8d/bKX+r/ojN5tjrA+x6DjolmnUX44rK50OAPLw8
-         NoiB4jp1HPHsW8fMoXVVdqrw9eEF9anJTmVxkKd0=
-Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1933560BE8;
-        Fri, 10 Aug 2018 21:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533937949;
-        bh=Za3zMK+6qbDXrwONyY3COsYBYegk6+341nnqD9rCues=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BOEAnnGiT2AqqSraSZaV4067XbduQvaQJjLNemxC94yUwRJ/8eZVq/eq+ioJHkHFs
-         mVvN3ZN3tHtOCO8EM4w7RZd1+UY92UQIHhKDHD9nasr7cikNVw90VPT6UbPdKWQxvH
-         c86u4V5BYVw2RdqEjiblZSYoq7g59HVmkkRnGCuM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1933560BE8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To:     rafael@kernel.org, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, psodagud@codeaurora.org,
-        tsoni@codeaurora.org, ckadabi@codeaurora.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Vikram Mulukutla <markivx@codeaurora.org>
-Subject: [PATCH v1] dd: Invoke one probe retry cycle after some initcall levels
-Date:   Fri, 10 Aug 2018 14:52:04 -0700
-Message-Id: <1533937924-6774-1-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 10 Aug 2018 20:26:00 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id A9FA821E;
+        Fri, 10 Aug 2018 17:54:17 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 10 Aug 2018 17:54:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=Z0fwvBjK/vhko80D9qlRnuU1JQwHLv8owOQaQ+OaGR0=; b=WWOOEBwo
+        jJ3B13KJlW5m8640j4/jS/Rf8zZivhKz5ImrRtFZPQLY0H2Jsa7+kK0K9dQZ5RoU
+        IHh5CAJNbBfN+A86bu3WvXXxiqzViVR2g/T+auqqaP+DUUVhqs7209+T9J/+XLaF
+        e6aUIYFjvqAQWAyTtb2FSCiGc/i+vVuNPk65Iymdu3BPEc/lrcjwAcna59QHAGI1
+        p2/wgTDHs8nlctJZbL55/pkkacM+WAzWn/lk4uqvbUveH2sMChu8dqaORHzhN5VW
+        kOYtjplit8/EnmKDGv2kjqS/y3wwAxpf91rt5JJub+lgIllK97hOFUc/mHIY9KFi
+        bi0PCWNsiq4u7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=Z0fwvBjK/vhko80D9qlRnuU1JQwHL
+        v8owOQaQ+OaGR0=; b=GyXc+eTGVMro56QyC3fk5Nhzm6UtuNPKx9jmi6Q5uvqXR
+        XixFsipoWjUjFhcdL5My6J3bm8k7IC1RFe8uBbxdisLnhnQwzz+c9K44BiBUXCaO
+        g2sxLeTfdpbjC/ke8oTIIslZTPcEKkUhyQClsEsCXK+YTD6F2WygdmkJaVb28SZF
+        NyhIBKW6pZK+vVxat0XXrv0hUfpnj7mVttk8ytJjvUByLfkZ7iub9tY68Sd6Yemj
+        NAthvc+tbQBJ08td3kMkiXVbKnfZTknDpoR5gtoFFcbJ7gufEOjulOfcYQ3roCaf
+        t4Zz8GdO7FY/7uXpwwtKnLCrI3RloWc5xA0eKL02g==
+X-ME-Proxy: <xmx:iAluWzRqbSnsP24f1QBJlhIYopVGXadmKQ9dhjb4Z6GBxq5NUFBfdA>
+    <xmx:iAluWwcpl2SAsUHaGmQ-o6KyRNdnOIBBW4BxWSwmvg6C8ejqDDCkXQ>
+    <xmx:iAluW1TDIbjfCULNS8F6o2BnaS5R7BNbyGNQ77C-T7AY5eBeLEDFqA>
+    <xmx:iAluW8J6awEidpaxWG4b8Rrc4DZMsc_t9CycisMnLZ6kz2Xyq6hFhg>
+    <xmx:iAluWyII6Goy1R0ecldqQM2NoiVnAuNHGg2CtbEil_IrPwbFoalNtQ>
+    <xmx:iQluW07oQO6ICOoM3qEEbwVeL0KzB0EKcJQ26Oe27s8Xp0dXCb-0kw>
+X-ME-Sender: <xms:iAluW4V7Kz-0I0YvVPeiEZSx8rfatLpW-ojkdqags2ncy5ulWiv8Kg>
+Received: from localhost (124-169-145-41.dyn.iinet.net.au [124.169.145.41])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6955BE455F;
+        Fri, 10 Aug 2018 17:54:15 -0400 (EDT)
+Date:   Sat, 11 Aug 2018 07:54:12 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
+Message-ID: <20180810215412.GM32374@eros>
+References: <20180809052328.27942-1-me@tobin.cc>
+ <20180809060734.rtqqu4sexbwzuqmm@ast-mbp>
+ <20180809072753.GF32374@eros>
+ <80bdc251-9f57-602f-6536-b34651684bb7@iogearbox.net>
+ <20180810014636.GJ32374@eros>
+ <20180810065752.2ab5473d@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810065752.2ab5473d@lwn.net>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drivers that are registered at an initcall level may have to
-wait until late_init before the probe deferral mechanism can
-retry their probe functions. It is possible that their
-dependencies were resolved much earlier, in some cases even
-before the next initcall level. Invoke one probe retry cycle
-at every _sync initcall level after subsys initcall, allowing
-these drivers to be probed earlier.
+On Fri, Aug 10, 2018 at 06:57:52AM -0600, Jonathan Corbet wrote:
+> On Fri, 10 Aug 2018 11:46:36 +1000
+> "Tobin C. Harding" <me@tobin.cc> wrote:
+> 
+> > Thanks for clarifying.  My understanding is now; this is a case where
+> > checkpatch is too verbose and we do not actually need to add a specific
+> > license identifier to the documentation files (new or otherwise).  They
+> > get an implicit GPLv2.
+> 
+> The objective actually is to have SPDX tags in all files in the kernel.
+> That includes documentation, even though people, as always, care less
+> about the docs than they do the code.
+>
+> As I understood it, the complaint with the tags you put in wasn't their
+> existence, it was your putting GPLv2+ rather than straight GPLv2.  In the
+> absence of information to the contrary, you really have to assume the
+> latter, since that's the overall license for the kernel.
 
-Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
----
+Righto, thanks Jon.  GPLv0 tags going in for v3
 
-To give an example many Qualcomm drivers are dependent on the regulator and 
-bus driver. Both the regulator and bus driver are probed in the 
-subsys_initcall level. Now the probe of bus driver requires regulator to be 
-working. If the probe of bus driver happens before regulator, then bus 
-driver's probe will be deferred and all other device's probes which depend 
-on bus driver will also be deferred. 
-The impact of this problem is reduced if we have this patch.
 
-Changes since v0:
-* Remove arch_initcall_sync(deferred_probe_initcall) from patch. This is not
-  really needed as none of the devices are re-probed in arch_initcall_sync
-  level.
-
- drivers/base/dd.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 1435d72..9aa41aa 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -224,23 +224,43 @@ void device_unblock_probing(void)
- 	driver_deferred_probe_trigger();
- }
- 
-+static void enable_trigger_defer_cycle(void)
-+{
-+	driver_deferred_probe_enable = true;
-+	driver_deferred_probe_trigger();
-+	/*
-+	 * Sort as many dependencies as possible before the next initcall
-+	 * level
-+	 */
-+	flush_work(&deferred_probe_work);
-+}
-+
- /**
-  * deferred_probe_initcall() - Enable probing of deferred devices
-  *
-  * We don't want to get in the way when the bulk of drivers are getting probed.
-  * Instead, this initcall makes sure that deferred probing is delayed until
-- * late_initcall time.
-+ * all the registered initcall functions at a particular level are completed.
-+ * This function is invoked at every *_initcall_sync level.
-  */
- static int deferred_probe_initcall(void)
- {
--	driver_deferred_probe_enable = true;
--	driver_deferred_probe_trigger();
--	/* Sort as many dependencies as possible before exiting initcalls */
--	flush_work(&deferred_probe_work);
-+	enable_trigger_defer_cycle();
-+	driver_deferred_probe_enable = false;
-+	return 0;
-+}
-+subsys_initcall_sync(deferred_probe_initcall);
-+fs_initcall_sync(deferred_probe_initcall);
-+device_initcall_sync(deferred_probe_initcall);
-+
-+static int deferred_probe_enable_fn(void)
-+{
-+	/* Enable deferred probing for all time */
-+	enable_trigger_defer_cycle();
- 	initcalls_done = true;
- 	return 0;
- }
--late_initcall(deferred_probe_initcall);
-+late_initcall(deferred_probe_enable_fn);
- 
- /**
-  * device_is_bound() - Check if device is bound to a driver
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+	Tobin
