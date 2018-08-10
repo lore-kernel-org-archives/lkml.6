@@ -2,148 +2,118 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD988C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D784C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7027D223E9
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:29:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b73anoaw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7027D223E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ADA6E223E9
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 08:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA6E223E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbeHJK6F (ORCPT
+        id S1727450AbeHJK7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 06:58:05 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45720 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbeHJK6F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 06:58:05 -0400
-Received: by mail-oi0-f67.google.com with SMTP id q11-v6so14448939oic.12;
-        Fri, 10 Aug 2018 01:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=qhfzfyiSFxtUHvRLdHQJUeQxcaonyKKvrjCdkzXY9bM=;
-        b=b73anoawBLYOgqQAG9HeANyOxs37vldprumRL1Q/8zrmk3U2kua0drvhOqM6OqFfa7
-         vwKOKkaSHETqEYc4XDWxnNy6intBmL5/LzBJTGF4DrrtlqKc7DoNnAkB7lkbj+VmLzvZ
-         XLOWXctUUpLL45lk3QcDkO2cPOcpAEQfNKXmkk9Ik4A3yrwB6upSMyvvp2xgTImXH4di
-         ubea66CfNA/8fyBi3ZioyJUucnxqPf8kEiedOagLPhJrWZWC4jdosACzq7vsHge2YpSP
-         ddVhcE1X7UB/QC8UL2+7Mc/gt9lN6rUPZH+R+KLlAak0CYZKi2LEL/gg1jy5fUfkASrx
-         uYvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=qhfzfyiSFxtUHvRLdHQJUeQxcaonyKKvrjCdkzXY9bM=;
-        b=hA/I5GevEJshyGFFzfy0EQLBHDawtC6cV1YQCtudYnaqyHEm9kpi+RoIBMqOkVrDTp
-         Z5t4n2l0OokE40XT88ylQjppJzXVxmIBlBNtWjK4UKimI7DD+Em5ZP+STdYcKpylsNtb
-         fPZQCvhgcJn/pZMUeOvh07iIcoy8oTSsE4nL66Y+uROxqjWIMaZLUWs0fqcMwjpVVPGx
-         FTrNfgWOct+I9EJCdD6ZE/gRYfAm5uKxTj2JQuqN0puPDSdAFS63SvAInEvTzEyJYkiN
-         +nV7coyF8o1trZN8EA6qo/MPmRhkiWvSRfqtjFrFsGzNRM8AUIs9WxQiVnPcx9oYTCiB
-         G9ow==
-X-Gm-Message-State: AOUpUlEB8rAsvU4EUp6ye9Ydi5yKiVmVmbH/WCqBAb43eU/X4Cq01w6R
-        F5WYqbq2PoIpRFhgjByRdcBiW13Tie+ZwWEUCss=
-X-Google-Smtp-Source: AA+uWPx5Oc1fGfhx5nEPWgvRk4ESi2Cq3SYHR5tGlprrqMfng8F7XLHoRsDdsjXOCJkhVaSupYhTl/JDm371n5PYJKc=
-X-Received: by 2002:aca:dec6:: with SMTP id v189-v6mr5928565oig.98.1533889753685;
- Fri, 10 Aug 2018 01:29:13 -0700 (PDT)
+        Fri, 10 Aug 2018 06:59:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59148 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725784AbeHJK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 06:59:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7492FAFCC;
+        Fri, 10 Aug 2018 08:30:54 +0000 (UTC)
+Subject: Re: [PATCH v3] resource: Merge resources on a node when hot-adding
+ memory
+To:     Rashmica Gupta <rashmica.g@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     toshi.kani@hpe.com, tglx@linutronix.de, bp@suse.de,
+        brijesh.singh@amd.com, thomas.lendacky@amd.com, jglisse@redhat.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        dan.j.williams@intel.com, mhocko@suse.com, iamjoonsoo.kim@lge.com,
+        malat@debian.org, Bjorn Helgaas <bhelgaas@google.com>,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+References: <20180809025409.31552-1-rashmica.g@gmail.com>
+ <20180809181224.0b7417e51215565dbda9f665@linux-foundation.org>
+ <CAC6rBs=yYYZw-c02yp6rx-+TN2oUGgrp=uuLhZ=Kc_nnjmTRqA@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <41eb4fc8-3b57-478b-05b4-88bed24ed66e@suse.cz>
+Date:   Fri, 10 Aug 2018 10:28:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 01:28:53 -0700 (PDT)
-In-Reply-To: <CAADWXX-bXeVdWPrn3BeA=wF3d4rn1S69BYhf398_=T=NF2t44A@mail.gmail.com>
-References: <20180809181103.15437-1-matwey@sai.msu.ru> <CAADWXX-bXeVdWPrn3BeA=wF3d4rn1S69BYhf398_=T=NF2t44A@mail.gmail.com>
-From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Date:   Fri, 10 Aug 2018 11:28:53 +0300
-Message-ID: <CAJs94EamyYZQo+AYZtBGYP4qk-82QqOQa-qW7UiRCFqmmBzGsA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAC6rBs=yYYZw-c02yp6rx-+TN2oUGgrp=uuLhZ=Kc_nnjmTRqA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 08/10/2018 08:55 AM, Rashmica Gupta wrote:
+> On Fri, Aug 10, 2018 at 11:12 AM, Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+>>
+>> What is the end-user impact of this patch?
+>>
+> 
+> Only architectures/setups that allow the user to remove and add memory of
+> different sizes or different start addresses from the kernel at runtime will
+> potentially encounter the resource fragmentation.
+> 
+> Trying to remove memory that overlaps iomem resources the first time
+> gives us this warning: "Unable to release resource <%pa-%pa>".
+> 
+> Attempting a second time results in a kernel oops (on ppc at least).
 
-Thanks for pointing it out, I'll try to do my best to avoid this in future.
+An oops? I think that should be investigated and fixed, even if resource
+merging prevents it. Do you have the details?
 
-As I see now, in my case, the 'sender' in DKIM is triggered when using
-GMail with alien domain in "Send From:".
-I would not say that it is configuration "bug" (at least I can imagine
-why do they do that), but it definitely must be avoided for maillists.
-It is also interesting that if I use alien "From" email address with
-google-apps (g suite) domain, then GMail generated two DKIM-Signature
-headers, both for gmail.com and for the google-apps domain.
-
-
-2018-08-09 22:31 GMT+03:00 Linus Torvalds <torvalds@linux-foundation.org>:
-> Matwey,
->  your DKIM signature is garbage, and it causes your emails to be
-> marked as spam when they go through a mailing list.
->
-> The reason is this:
->
->   DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
->         d=gmail.com; s=20161025;
->         h=sender:from:to:cc:subject:date:message-id;
->
-> where the problem is that the "sender" field is included in the DKIM
-> hash calculation.
->
-> That is completely incorrect, since a mailing list will - by
-> definition - change the sender to the list, not the original sender.
->
-> This is not a mailing list bug. This is a bug in your DKIM setup on
-> the sending side.
->
-> I'm leaving everybody cc'd., because this problem is starting to be
-> annoyingly common. We had two people with chromium.org addresses with
-> the same misconfiguration, and I want people to be aware of this.
->
-> I get too much email, and too much spam, and so when people have
-> misc-onfigured email sending that causes problems for spam systems, it
-> needs to get fixed.
->
-> Your situation *may* be the same as the Chromium guys. Quoting Doug:
->
->  "Looks like it's all fixed.  Both Kees and I setup our chromium.org
->   accounts a long time ago.  IIRC during that time the suggested way to
->   do things was that you'd use your @google.com SMTP settings even when
->   you were sending as your @chroumium.org account.  These days it
->   doesn't appear that there's even any UI in gmail to configure things
->   that way, so presumably nobody else will be stuck in the same hole
->   that Kees and I were in"
->
-> and he may have been wrong about that "presumably nobody else will be
-> stuck in the same hole" guess.
->
-> So you might want to check what the SMTP settings are for your setup.
->
->                Linus
-
--- 
-With best regards,
-Matwey V. Kornilov
+Thanks,
+Vlastimil
