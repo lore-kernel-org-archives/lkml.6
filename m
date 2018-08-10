@@ -2,43 +2,43 @@ Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE58C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D28C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65D8F22404
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D8F22404
+	by mail.kernel.org (Postfix) with ESMTP id D8526223F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 13:38:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8526223F0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbeHJQHy (ORCPT
+        id S1729122AbeHJQH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 12:07:54 -0400
+        Fri, 10 Aug 2018 12:07:56 -0400
 Received: from mga12.intel.com ([192.55.52.136]:31368 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728097AbeHJQHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 12:07:53 -0400
+        id S1728097AbeHJQHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Aug 2018 12:07:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 06:37:56 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Aug 2018 06:37:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,219,1531810800"; 
-   d="scan'208";a="80633150"
+   d="scan'208";a="80633157"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.114])
-  by orsmga001.jf.intel.com with ESMTP; 10 Aug 2018 06:37:56 -0700
+  by orsmga001.jf.intel.com with ESMTP; 10 Aug 2018 06:37:58 -0700
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH RFC 4/7] perf sort: Add sort option for page size
-Date:   Fri, 10 Aug 2018 06:36:24 -0700
-Message-Id: <1533908187-25204-4-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH RFC 5/7] perf mem: Clean up output format and sort order string
+Date:   Fri, 10 Aug 2018 06:36:25 -0700
+Message-Id: <1533908187-25204-5-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533908187-25204-1-git-send-email-kan.liang@linux.intel.com>
 References: <1533908187-25204-1-git-send-email-kan.liang@linux.intel.com>
@@ -49,211 +49,227 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Add a new sort option "page_size" for --mem-mode sort.  With this
-option applied, perf can sort and report by sample's page size.
+Now, "--phys-data" is the only option which impacts the output format and
+sort order. A simple "if else" is enough to handle the option.
+But there will be more options added, e.g. "--page-size", which also
+impact the output format and sort order. The code will become too
+complex to be maintained.
 
-Here is an example.
-perf report --stdio --mem-mode --sort=comm,symbol,phys_daddr,page_size
+Divide the big printf into several small pieces. Output the specific
+piece only if the related option is applied.
 
- # To display the perf.data header info, please use
- # --header/--header-only options.
- #
- #
- # Total Lost Samples: 0
- #
- # Samples: 9K of event 'mem-loads:uP'
- # Total weight : 9028
- # Sort order   : comm,symbol,phys_daddr,page_size
- #
- # Overhead  Command  Symbol                        Data Physical Address
- # Page Size
- # ........  .......  ............................
- # ......................  ......................
- #
-    11.19%  dtlb     [.] touch_buffer              [.]
-0x00000003fec82ea8  4K
-     8.61%  dtlb     [.] GetTickCount              [.]
-0x00000003c4f2c8a8  4K
-     4.52%  dtlb     [.] GetTickCount              [.]
-0x00000003fec82f58  4K
-     4.33%  dtlb     [.] __gettimeofday            [.]
-0x00000003fec82f48  4K
-     4.32%  dtlb     [.] GetTickCount              [.]
-0x00000003fec82f78  4K
-     4.28%  dtlb     [.] GetTickCount              [.]
-0x00000003fec82f50  4K
-     4.23%  dtlb     [.] GetTickCount              [.]
-0x00000003fec82f70  4K
-     4.11%  dtlb     [.] GetTickCount              [.]
-0x00000003fec82f68  4K
-     4.00%  dtlb     [.] Calibrate                 [.]
-0x00000003fec82f98  4K
-     3.91%  dtlb     [.] Calibrate                 [.]
-0x00000003fec82f90  4K
-     3.43%  dtlb     [.] touch_buffer              [.]
-0x00000003fec82e98  4K
-     3.42%  dtlb     [.] touch_buffer              [.]
-0x00000003fec82e90  4K
-     0.09%  dtlb     [.] DoDependentLoads          [.]
-0x000000036ea084c0  2M
-     0.08%  dtlb     [.] DoDependentLoads          [.]
-0x000000032b010b80  2M
+Divide the big sort order string into several small pieces as well.
+Appends specific sort string only if the related option is applied.
+
+No functional change.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- tools/perf/Documentation/perf-report.txt |  1 +
- tools/perf/util/hist.c                   |  3 +++
- tools/perf/util/hist.h                   |  1 +
- tools/perf/util/machine.c                |  7 +++++--
- tools/perf/util/sort.c                   | 28 ++++++++++++++++++++++++++++
- tools/perf/util/sort.h                   |  1 +
- tools/perf/util/symbol.h                 |  1 +
- 7 files changed, 40 insertions(+), 2 deletions(-)
+ tools/perf/builtin-mem.c | 132 +++++++++++++++++++++++------------------------
+ tools/perf/util/sort.h   |   2 +
+ 2 files changed, 66 insertions(+), 68 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 917e36f..53fadad 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -139,6 +139,7 @@ OPTIONS
- 	- snoop: type of snoop (if any) for the data at the time of the sample
- 	- dcacheline: the cacheline the data address is on at the time of the sample
- 	- phys_daddr: physical address of data being executed on at the time of sample
-+	- page_size: the page size of data being executed on at the time of sample
+diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
+index 57393e9..6048fca 100644
+--- a/tools/perf/builtin-mem.c
++++ b/tools/perf/builtin-mem.c
+@@ -14,6 +14,7 @@
+ #include "util/mem-events.h"
+ #include "util/debug.h"
+ #include "util/symbol.h"
++#include "util/sort.h"
  
- 	And the default sort keys are changed to local_weight, mem, sym, dso,
- 	symbol_daddr, dso_daddr, snoop, tlb, locked, see '--mem-mode'.
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 828cb97..96d2b40 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -174,6 +174,9 @@ void hists__calc_col_len(struct hists *hists, struct hist_entry *h)
- 		hists__new_col_len(hists, HISTC_MEM_PHYS_DADDR,
- 				   unresolved_col_width + 4 + 2);
- 
-+		hists__new_col_len(hists, HISTC_MEM_PAGE_SIZE,
-+				   unresolved_col_width + 4 + 2);
-+
- 	} else {
- 		symlen = unresolved_col_width + 4 + 2;
- 		hists__new_col_len(hists, HISTC_MEM_DADDR_SYMBOL, symlen);
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 3badd7f..1c42c8e 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -49,6 +49,7 @@ enum hist_column {
- 	HISTC_MEM_DADDR_SYMBOL,
- 	HISTC_MEM_DADDR_DSO,
- 	HISTC_MEM_PHYS_DADDR,
-+	HISTC_MEM_PAGE_SIZE,
- 	HISTC_MEM_LOCKED,
- 	HISTC_MEM_TLB,
- 	HISTC_MEM_LVL,
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index b300a39..e79bbc8 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1829,11 +1829,12 @@ static void ip__resolve_ams(struct thread *thread,
- 	ams->sym = al.sym;
- 	ams->map = al.map;
- 	ams->phys_addr = 0;
-+	ams->page_size = PERF_MEM_PAGE_SIZE_NONE;
- }
- 
- static void ip__resolve_data(struct thread *thread,
- 			     u8 m, struct addr_map_symbol *ams,
--			     u64 addr, u64 phys_addr)
-+			     u64 addr, u64 phys_addr, u64 daddr_page_size)
+ #define MEM_OPERATION_LOAD	0x1
+ #define MEM_OPERATION_STORE	0x2
+@@ -153,7 +154,7 @@ dump_raw_samples(struct perf_tool *tool,
  {
+ 	struct perf_mem *mem = container_of(tool, struct perf_mem, tool);
  	struct addr_location al;
+-	const char *fmt;
++	const char *fmt, *field_sep;
  
-@@ -1846,6 +1847,7 @@ static void ip__resolve_data(struct thread *thread,
- 	ams->sym = al.sym;
- 	ams->map = al.map;
- 	ams->phys_addr = phys_addr;
-+	ams->page_size = daddr_page_size;
+ 	if (machine__resolve(machine, &al, sample) < 0) {
+ 		fprintf(stderr, "problem processing %d event, skipping it.\n",
+@@ -167,60 +168,45 @@ dump_raw_samples(struct perf_tool *tool,
+ 	if (al.map != NULL)
+ 		al.map->dso->hit = 1;
+ 
+-	if (mem->phys_addr) {
+-		if (symbol_conf.field_sep) {
+-			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s0x%016"PRIx64
+-			      "%s%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
+-		} else {
+-			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
+-			      "%s0x%016"PRIx64"%s%5"PRIu64"%s0x%06"PRIx64
+-			      "%s%s:%s\n";
+-			symbol_conf.field_sep = " ";
+-		}
+-
+-		printf(fmt,
+-			sample->pid,
+-			symbol_conf.field_sep,
+-			sample->tid,
+-			symbol_conf.field_sep,
+-			sample->ip,
+-			symbol_conf.field_sep,
+-			sample->addr,
+-			symbol_conf.field_sep,
+-			sample->phys_addr,
+-			symbol_conf.field_sep,
+-			sample->weight,
+-			symbol_conf.field_sep,
+-			sample->data_src,
+-			symbol_conf.field_sep,
+-			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
+-			al.sym ? al.sym->name : "???");
++	field_sep = symbol_conf.field_sep;
++	if (field_sep) {
++		fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s";
+ 	} else {
+-		if (symbol_conf.field_sep) {
+-			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s%"PRIu64
+-			      "%s0x%"PRIx64"%s%s:%s\n";
+-		} else {
+-			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
+-			      "%s%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
+-			symbol_conf.field_sep = " ";
+-		}
++		fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64"%s";
++		symbol_conf.field_sep = " ";
++	}
++	printf(fmt,
++		sample->pid,
++		symbol_conf.field_sep,
++		sample->tid,
++		symbol_conf.field_sep,
++		sample->ip,
++		symbol_conf.field_sep,
++		sample->addr,
++		symbol_conf.field_sep);
+ 
++	if (mem->phys_addr) {
++		if (field_sep)
++			fmt = "0x%"PRIx64"%s";
++		else
++			fmt = "0x%016"PRIx64"%s";
+ 		printf(fmt,
+-			sample->pid,
+-			symbol_conf.field_sep,
+-			sample->tid,
+-			symbol_conf.field_sep,
+-			sample->ip,
+-			symbol_conf.field_sep,
+-			sample->addr,
+-			symbol_conf.field_sep,
+-			sample->weight,
+-			symbol_conf.field_sep,
+-			sample->data_src,
+-			symbol_conf.field_sep,
+-			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
+-			al.sym ? al.sym->name : "???");
++			sample->phys_addr,
++			symbol_conf.field_sep);
+ 	}
++
++	if (field_sep)
++		fmt = "%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
++	else
++		fmt = "%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
++
++	printf(fmt,
++		sample->weight,
++		symbol_conf.field_sep,
++		sample->data_src,
++		symbol_conf.field_sep,
++		al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
++		al.sym ? al.sym->name : "???");
+ out_put:
+ 	addr_location__put(&al);
+ 	return 0;
+@@ -262,10 +248,12 @@ static int report_raw_events(struct perf_mem *mem)
+ 	if (ret < 0)
+ 		goto out_delete;
+ 
++	printf("# PID, TID, IP, ADDR, ");
++
+ 	if (mem->phys_addr)
+-		printf("# PID, TID, IP, ADDR, PHYS ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
+-	else
+-		printf("# PID, TID, IP, ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
++		printf("PHYS ADDR, ");
++
++	printf("LOCAL WEIGHT, DSRC, SYMBOL\n");
+ 
+ 	ret = perf_session__process_events(session);
+ 
+@@ -273,11 +261,30 @@ static int report_raw_events(struct perf_mem *mem)
+ 	perf_session__delete(session);
+ 	return ret;
  }
- 
- struct mem_info *sample__resolve_mem(struct perf_sample *sample,
-@@ -1858,7 +1860,8 @@ struct mem_info *sample__resolve_mem(struct perf_sample *sample,
- 
- 	ip__resolve_ams(al->thread, &mi->iaddr, sample->ip);
- 	ip__resolve_data(al->thread, al->cpumode, &mi->daddr,
--			 sample->addr, sample->phys_addr);
-+			 sample->addr, sample->phys_addr,
-+			 sample->page_size);
- 	mi->data_src.val = sample->data_src;
- 
- 	return mi;
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index fed2952..68b0f9e 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -1334,6 +1334,33 @@ struct sort_entry sort_mem_phys_daddr = {
- };
- 
- static int64_t
-+sort__page_size_cmp(struct hist_entry *left, struct hist_entry *right)
++static char *get_sort_order(struct perf_mem *mem)
 +{
-+	uint64_t l = 0, r = 0;
++	char sort[MAX_SORT_ORDER_STR];
 +
-+	if (left->mem_info)
-+		l = left->mem_info->daddr.page_size;
-+	if (right->mem_info)
-+		r = right->mem_info->daddr.page_size;
++	/*
++	 * there is no weight (cost) associated with stores, so don't print
++	 * the column
++	 */
++	if (mem->operation & MEM_OPERATION_STORE)
++		strcpy(sort, "--sort=mem,sym,dso,symbol_daddr,dso_daddr,tlb,locked");
++	else
++		strcpy(sort, default_mem_sort_order);
 +
-+	return (int64_t)(r - l);
++	if (mem->phys_addr)
++		strcat(sort, ",phys_daddr");
++
++	return strdup(sort);
 +}
-+
-+static int hist_entry__page_size_snprintf(struct hist_entry *he, char *bf,
-+					  size_t size, unsigned int width)
-+{
-+	return repsep_snprintf(bf, size, "%-*s", width,
-+			       get_page_size_name(he->mem_info->daddr.page_size));
-+}
-+
-+struct sort_entry sort_mem_page_size = {
-+	.se_header	= "Page Size",
-+	.se_cmp		= sort__page_size_cmp,
-+	.se_snprintf	= hist_entry__page_size_snprintf,
-+	.se_width_idx	= HISTC_MEM_PAGE_SIZE,
-+};
-+
-+static int64_t
- sort__abort_cmp(struct hist_entry *left, struct hist_entry *right)
+ 
+ static int report_events(int argc, const char **argv, struct perf_mem *mem)
  {
- 	if (!left->branch_info || !right->branch_info)
-@@ -1607,6 +1634,7 @@ static struct sort_dimension memory_sort_dimensions[] = {
- 	DIM(SORT_MEM_SNOOP, "snoop", sort_mem_snoop),
- 	DIM(SORT_MEM_DCACHELINE, "dcacheline", sort_mem_dcacheline),
- 	DIM(SORT_MEM_PHYS_DADDR, "phys_daddr", sort_mem_phys_daddr),
-+	DIM(SORT_MEM_PAGE_SIZE, "page_size", sort_mem_page_size),
- };
+ 	const char **rep_argv;
+ 	int ret, i = 0, j, rep_argc;
++	char *new_sort_order;
  
- #undef DIM
+ 	if (mem->dump_raw)
+ 		return report_raw_events(mem);
+@@ -291,20 +298,9 @@ static int report_events(int argc, const char **argv, struct perf_mem *mem)
+ 	rep_argv[i++] = "--mem-mode";
+ 	rep_argv[i++] = "-n"; /* display number of samples */
+ 
+-	/*
+-	 * there is no weight (cost) associated with stores, so don't print
+-	 * the column
+-	 */
+-	if (!(mem->operation & MEM_OPERATION_LOAD)) {
+-		if (mem->phys_addr)
+-			rep_argv[i++] = "--sort=mem,sym,dso,symbol_daddr,"
+-					"dso_daddr,tlb,locked,phys_daddr";
+-		else
+-			rep_argv[i++] = "--sort=mem,sym,dso,symbol_daddr,"
+-					"dso_daddr,tlb,locked";
+-	} else if (mem->phys_addr)
+-		rep_argv[i++] = "--sort=local_weight,mem,sym,dso,symbol_daddr,"
+-				"dso_daddr,snoop,tlb,locked,phys_daddr";
++	new_sort_order = get_sort_order(mem);
++	if (new_sort_order)
++		rep_argv[i++] = new_sort_order;
+ 
+ 	for (j = 1; j < argc; j++, i++)
+ 		rep_argv[i] = argv[j];
 diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 8bf302c..c6b2f30 100644
+index c6b2f30..4632e25 100644
 --- a/tools/perf/util/sort.h
 +++ b/tools/perf/util/sort.h
-@@ -254,6 +254,7 @@ enum sort_type {
- 	SORT_MEM_DCACHELINE,
- 	SORT_MEM_IADDR_SYMBOL,
- 	SORT_MEM_PHYS_DADDR,
-+	SORT_MEM_PAGE_SIZE,
- };
+@@ -46,6 +46,8 @@ extern struct sort_entry sort_srcline;
+ extern enum sort_type sort__first_dimension;
+ extern const char default_mem_sort_order[];
  
- /*
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index f25fae4..567a1e1 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -187,6 +187,7 @@ struct addr_map_symbol {
- 	u64	      addr;
- 	u64	      al_addr;
- 	u64	      phys_addr;
-+	u64	      page_size;
- };
- 
- struct branch_info {
++#define MAX_SORT_ORDER_STR	128
++
+ struct he_stat {
+ 	u64			period;
+ 	u64			period_sys;
 -- 
 2.7.4
 
