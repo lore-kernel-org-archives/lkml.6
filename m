@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AE1C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D151BC46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E872218C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:26:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E872218C4
+	by mail.kernel.org (Postfix) with ESMTP id 94E52218C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:27:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E52218C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeHKQBF (ORCPT
+        id S1727539AbeHKQBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 12:01:05 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:36941 "EHLO cstnet.cn"
+        Sat, 11 Aug 2018 12:01:22 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:37376 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727304AbeHKQBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 12:01:05 -0400
+        id S1727304AbeHKQBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 12:01:22 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowACHae4H5G5bDnZfAA--.619S2;
-        Sat, 11 Aug 2018 21:26:40 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowACnjR0d5G5bh3tfAA--.569S2;
+        Sat, 11 Aug 2018 21:26:59 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
         pbonzini@redhat.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v3 03/17] x86/mtrr: get MTRR number and support TOP_MEM2
-Date:   Sat, 11 Aug 2018 21:26:29 +0800
-Message-Id: <2df39b151f12498ae8b10bc904df59fae10e8e80.1533989492.git.puwen@hygon.cn>
+Subject: [PATCH v3 04/17] x86/smpboot: smp init nodelay and no flush caches before sleep
+Date:   Sat, 11 Aug 2018 21:26:47 +0800
+Message-Id: <a45bfc85114fb2b7482be69a21956bbeaba6f458.1533989492.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1533989492.git.puwen@hygon.cn>
 References: <cover.1533989492.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowACHae4H5G5bDnZfAA--.619S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr43Cw1xCrWrZr1xZw43Jrb_yoW8tr4Dpr
-        W7XF48tF4UWan8Jayqyr4kXrW8Zw1qga1fKw4DGF95J3WFvr9rXF4kZw1Sqw12vr1rWr1r
-        KFyY9F4Yyws5AaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
-        W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-        Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-        xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-        MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-        0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAFwI0_
-        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
-        7GYJUUUUU==
+X-CM-TRANSID: swCowACnjR0d5G5bh3tfAA--.569S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtry5GrWkuw4DKry7Kr4fuFg_yoWkKrb_Wr
+        yUCr4UZ3yFya4avanrWw4rXr13JwsYkF40gFyqyrWUCrWayF15Wa9FyrWvqrn3Cw4xZr4q
+        kw4akrZ0kw4akjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbxxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+        Gr1UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+        4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AKxVWU
+        JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5J
+        PEDUUUU
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,66 +61,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hygon CPU have a special magic MSR way to force WB for memory >4GB,
-and also support TOP_MEM2. Therefore, it is necessary to add Hygon
-support in amd_special_default_mtrr().
-
-The MtrrFixDramModEn bit on Hygon platform should also be set to 1
-during BIOS initialization of the fixed MTRRs, then cleared to 0 for
-operation.
-
-The number of variable MTRRs for Hygon is 2 as AMD's.
+Dhyana use no delay in smp_quirk_init_udelay(), and return in
+mwait_play_dead() as AMD does.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- arch/x86/kernel/cpu/mtrr/cleanup.c | 3 ++-
- arch/x86/kernel/cpu/mtrr/generic.c | 5 +++--
- arch/x86/kernel/cpu/mtrr/mtrr.c    | 2 +-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/kernel/smpboot.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mtrr/cleanup.c b/arch/x86/kernel/cpu/mtrr/cleanup.c
-index 765afd5..3668c5d 100644
---- a/arch/x86/kernel/cpu/mtrr/cleanup.c
-+++ b/arch/x86/kernel/cpu/mtrr/cleanup.c
-@@ -831,7 +831,8 @@ int __init amd_special_default_mtrr(void)
- {
- 	u32 l, h;
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index db9656e..32eec7f 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -658,7 +658,8 @@ static void __init smp_quirk_init_udelay(void)
  
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
- 		return 0;
- 	if (boot_cpu_data.x86 < 0xf)
- 		return 0;
-diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtrr/generic.c
-index e12ee86..77c3eaa 100644
---- a/arch/x86/kernel/cpu/mtrr/generic.c
-+++ b/arch/x86/kernel/cpu/mtrr/generic.c
-@@ -49,8 +49,9 @@ static inline void k8_check_syscfg_dram_mod_en(void)
- {
- 	u32 lo, hi;
- 
--	if (!((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) &&
--	      (boot_cpu_data.x86 >= 0x0f)))
-+	if (!((boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
-+	       boot_cpu_data.x86 >= 0x0f) ||
-+	       boot_cpu_data.x86_vendor == X86_VENDOR_HYGON))
+ 	/* if modern processor, use no delay */
+ 	if (((boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) && (boot_cpu_data.x86 == 6)) ||
+-	    ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) && (boot_cpu_data.x86 >= 0xF))) {
++	    ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) && (boot_cpu_data.x86 >= 0xF)) ||
++	     (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)) {
+ 		init_udelay = 0;
  		return;
+ 	}
+@@ -1574,7 +1575,8 @@ static inline void mwait_play_dead(void)
+ 	void *mwait_ptr;
+ 	int i;
  
- 	rdmsr(MSR_K8_SYSCFG, lo, hi);
-diff --git a/arch/x86/kernel/cpu/mtrr/mtrr.c b/arch/x86/kernel/cpu/mtrr/mtrr.c
-index 9a19c80..507039c 100644
---- a/arch/x86/kernel/cpu/mtrr/mtrr.c
-+++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
-@@ -127,7 +127,7 @@ static void __init set_num_var_ranges(void)
- 
- 	if (use_intel())
- 		rdmsr(MSR_MTRRcap, config, dummy);
--	else if (is_cpu(AMD))
-+	else if (is_cpu(AMD) || is_cpu(HYGON))
- 		config = 2;
- 	else if (is_cpu(CYRIX) || is_cpu(CENTAUR))
- 		config = 8;
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+ 		return;
+ 	if (!this_cpu_has(X86_FEATURE_MWAIT))
+ 		return;
 -- 
 2.7.4
 
