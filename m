@@ -2,138 +2,149 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2CDC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1198C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463C621E5D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46984214F1
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TqEMiEkC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463C621E5D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfOGqxFb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46984214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbeHKWX1 (ORCPT
+        id S1727614AbeHKWbc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 18:23:27 -0400
-Received: from sonic311-20.consmr.mail.bf2.yahoo.com ([74.6.131.194]:43331
-        "EHLO sonic311-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727514AbeHKWX0 (ORCPT
+        Sat, 11 Aug 2018 18:31:32 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33325 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbeHKWbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 18:23:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1534016894; bh=sf4khYezCdxrT+rmqNy8MWwtEJ/vcYtOYusNjA8nknA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=TqEMiEkCy5ofOPn4MVtWVxgz2k5WWxAl4NTlDNu/dCl3FUfrHVxTPDErM9GQDvD1nGEfKc0E1NMN58ZczV3slUU4o9vdNCmjrK9/6nQyUHHppI3+RgxGcHyPWAT5m9TDJnVazd0mqL6XzLEDGIMqF7kVZbTL1nuUQNLbxN4UyHB31Ju/E9nSX78SChYBcGOflMCQK3ZMCRcyoDMaNPkJ8inNcQAwLH2sGqPFrQ9O3+LY77bEjzQcs6Ocxgd8cUMVC+ONulbuFF18jBKd3DnyG9h3V5y9T4u/NFNblGc55nWhNR213r/Fp/NcE1HZyGnUUQgGwrm181cdJPFoMef8Kw==
-X-YMail-OSG: .kpIcTgVM1ma.JQGyJc9NQ2310qDi_5gy1cZ2GWDibZBkvh5hUlwXOJqDL6edWz
- Rk7XJYmZC8MW_3YTngTECiWqz24npVwPz7dN98iotFB76XvHSjw3VbeiGNN_S3AgMEO7eUTjPJrr
- 0A412_dH7LCmBQbUOyXAx_DSHF38TsYhZaut8vlzGwbOfYY5YDs4fjzszboeYJSaBH_4o5llKDZk
- 3tWzYUubO6I3sGV.GRrkytEJoDsm5Hk2irtSYBr0oW7aklnEPlYtlUdVGgVkXIyDAAuuhaorQmKe
- YF4Yrpw6qzdjHVDw1CXhZsZTcWuZQGpEdsVlM_UHLv283mI51pKrLLTeY50LuXZ6xDSl0_E1LdYq
- 1YOtOcgqrc4i3Rn4PTIxVfgmSFn_fiXP1avXtsC1YiIxKQLIKqat5a272S.9T5KonMPCONMXGwlf
- Cy2DbN1B.u4oKj5IEE6NJbqN.HytdV9XSBiHRH6AoUVEIZxHPJn64lEymOwibMeh_A2.8T7S2ImE
- MSCW9vskHm.KKONJZpLHytg4x0fVESymww2YKKdIik.lCo6nFEVyCqU_tBgpTE85t4wPyMUM4mK.
- UQ_EPxF6HVAjJgz3Y2JkmTamjyu9kOV9rQ4JYOiB8O69chMPL17vEqkC37z7aAyCJbqSIUfah2bu
- snR5TJ8Udu.gsqJ62C3Vk_s9avlk8bo00d.DaFYUwUJ1bUt0TT7wnS3jiPpHVUvbyG20Zzu9SChN
- IrBTey0MS6GAOWC_n_rNSQFAy3.Bp1zn3akgMuYq1wQtnA9BYqxlEmUeEywxE9J57WuAdpllqUGX
- ysysAg4E3bzxsE.0W_Zjq7kIgv69z4.bAuqCV_J7f_z1ssFSgbIlcJ4WIkPQ0Ijd.HCZ57N6Y4gh
- 3QxZcQdVPnFv4afRrAvTvJjhELWTu_BY2mVVByysAcYhC3dWSfxGJBOJ.lSRl.3WnubGnr7ptH51
- du9i0Rcs9iLu3tlKB0U9fF2BY133QXj5slF7F8H2rPiLGOLcCLrIArv9EI8TwTenswmI-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Sat, 11 Aug 2018 19:48:14 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp420.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 023c21f71d5c09aba96ed487ecc5ad84;
-          Sat, 11 Aug 2018 17:48:00 +0000 (UTC)
-Subject: Re: BUG: Mount ignores mount options
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
- <87d0uqpba5.fsf@xmission.com> <20180810151606.GA6515@ZenIV.linux.org.uk>
- <87pnypiufr.fsf@xmission.com> <20180811014619.GA14368@thunk.org>
- <8736vlo6ef.fsf@xmission.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <001a1608-d0fa-84c1-9c54-ae36df95fd89@schaufler-ca.com>
-Date:   Sat, 11 Aug 2018 10:47:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 11 Aug 2018 18:31:32 -0400
+Received: by mail-it0-f68.google.com with SMTP id d16-v6so7790139itj.0;
+        Sat, 11 Aug 2018 12:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/LJNveq1C9HkSRJBF9bsVpXf7r8DCqUSlpuqyr5NESI=;
+        b=jfOGqxFbh4Z1AImsCMqb+s/avt1PQTtj4/2+/lvCxGHW/RTXrOsuWlrUuGfEWnFbur
+         Cri2f1nL+CBtq/5lIzbN/wMK5F3rwUzG/1HW/PzgY3237Doeq3Y5qCu2ocrAVa4OMIGy
+         mDhsQmSpdEwjQF9spc4r1bSGlEx/JS76zswKjycbGgn5axV/jVF29IYlYdnx8sKFdaZX
+         gAaxtb96KfGL+K6GZm0HlMjb0FKWV7VeEdKgouHd4Uh9c4IjPLxv8u9WAeHeFYEJ7Ehd
+         Ah7b+Uc1kLRqk/pPlzEk0Zmgj2Y/KfDWDoKjN5QrO1aqvGAn9UWsCPg1+FIPHV8UeVy3
+         ZXBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/LJNveq1C9HkSRJBF9bsVpXf7r8DCqUSlpuqyr5NESI=;
+        b=NIBvdQ7flkXY0Ktj9H7oBAZrrsW2z5ExVgmgt1LrwUTCRKEIReLo1+0BD7AXq8IAgy
+         76kkazCuQYcAo/Mngzqp5wLtrN28SfumBJng6mSUhB1ChnQcoLgQUScNZ++lpCCscujZ
+         PJ+92wEVZhBdvO/Xv2hj1B8OqkHItjjltw8ieZ9+3HQ6ic5qYVcl881/JMV1QbLTvDRD
+         oW+Ps/nACOem7GKtfHQKHiODpQBHepKeY/lgnmzbG/SPbUJ3WLZ1aX/UcHv7vLiIM0g8
+         Cv6H5SKk/hePDevW7NUISvezkRXfH5WgONwlHezHSMjcItKrGkhkeg4qVEA2B8EqLO2y
+         +yNw==
+X-Gm-Message-State: AOUpUlGuRSHHNMFHUHQRj1swk8b+1xTwoB7Y6NuKDzw5pQEhp05jKoc3
+        Fz3KO5sDkyEGgaJwuRTfRdajivbl/ThwKdXVmEU=
+X-Google-Smtp-Source: AA+uWPxeKoCyeTCUgYG15qP60iH4I8ZnR3TRaoQvDeyFragQ7AmKsox19PSjfaBEAhIuC1G1FZVZ0iZ6WfFTJxuAfmw=
+X-Received: by 2002:a24:fe89:: with SMTP id w131-v6mr6591487ith.153.1534017378355;
+ Sat, 11 Aug 2018 12:56:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8736vlo6ef.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a4f:5a03:0:0:0:0:0 with HTTP; Sat, 11 Aug 2018 12:56:17
+ -0700 (PDT)
+In-Reply-To: <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
+References: <cover.1533989492.git.puwen@hygon.cn> <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
+From:   Michael Jin <mikhail.jin@gmail.com>
+Date:   Sat, 11 Aug 2018 15:56:17 -0400
+Message-ID: <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
+Subject: Re: [PATCH v3 16/17] driver/edac: enable Hygon support to AMD64 EDAC driver
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-edac@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/10/2018 9:48 PM, Eric W. Biederman wrote:
-> "Theodore Y. Ts'o" <tytso@mit.edu> writes:
+On Sat, Aug 11, 2018 at 9:30 AM, Pu Wen <puwen@hygon.cn> wrote:
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 18aeabb..fb81354 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -211,7 +211,7 @@ static int __set_scrub_rate(struct amd64_pvt *pvt, u32 new_bw, u32 min_rate)
 >
->> On Fri, Aug 10, 2018 at 08:05:44PM -0500, Eric W. Biederman wrote:
->>> My complaint is that the current implemented behavior of practically
->>> every filesystem in the kernel, is that it will ignore mount options
->>> when mounted a second time.
->> The file system is ***not*** mounted a second time.
->>
->> The design bug is that we allow bind mounts to be specified via a
->> block device.  A bind mount is not "a second mount" of the file
->> system.  Bind mounts != mounts.
->>
->> I had assumed we had allowed bind mounts to be specified via the block
->> device because of container use cases.  If the container folks don't
->> want it, I would be pushing to simply not allow bind mounts to be
->> specified via block device at all.
-> No it is not a container thing.
+>         scrubval = scrubrates[i].scrubval;
+>
+> -       if (pvt->fam == 0x17) {
+> +       if (pvt->fam == 0x17 || pvt->vendor == X86_VENDOR_HYGON) {
+>                 __f17h_set_scrubval(pvt, scrubval);
 
-	Inigo: "Hello. My name is Inigo Montoya. You killed my father. Prepare to die."
-	Rugen: "Stop saying that!"
+Separating the vendor check as an "else if (pvt->vendor ==
+X86_VENDOR_HYGON)" block would make architectural changes (future
+hygon models, i.e. 19h, 20h, etc) less confusing.
 
-	Eric:  "It is not a container thing."
-	Casey: "Stop saying that!"
 
-Yes, Virginia, it *is* a container thing. Your container manager expects all
-filesystems to be server-client based. It makes bad assumptions. It is doing
-things that we would fire a sysadmin for doing. Don't blame the filesystems
-for behaving as documented. Export the filesystem using NFS and mount them
-using the NFS mechanism, which is designed to do what you're asking for. The
-problem is not in the mount mechanism, it's in the way you want to abuse it.
 
->> The only reason why we should support it is because we don't want to
->> break scripts; and if the goal is not to break scripts, then we have
->> to keep to the current semantics, however broken you think it is.
-> But we don't have to support returning filesystems with mismatched mount
-> options in the new fsopen api.   That is my concern.  Confusing
-> userspace this way has been shown to be harmful let's not keep doing it.
+> +                       amd64_read_pci_cfg(pvt->F6,
+> +                               F17H_SCR_BASE_ADDR, &scrubval);
+> +                       if (scrubval & BIT(0)) {
+> +                               amd64_read_pci_cfg(pvt->F6,
 
-It's not "userspace" that's confused. Developers of userspace code
-implementing system behavior (e.g. systemd, container managers) need to
-understand how the system works. The container manager needs to know
-that it can't mount filesystems with different options. That's the kind
-of thing "managers" do. If it has to go to the mount table and check
-on how the device is already mounted before doing a mount, so be it.
+The new lines after "amd64_read_pci_cfg(pvt->F6," can be removed.
 
-Unless, of course, you want the concept of "container" introduced into
-the kernel. There's a whole lot of feldercarb that container managers
-have to deal with that would be lots easier to deal with down below.
-I'm not advocating that, and I understand the arguments against it.
-On the other hand, if you want a platform that is optimized for a
-container environment ...
 
-> Eric
 
+> @@ -1051,6 +1065,16 @@ static void determine_memory_type(struct amd64_pvt *pvt)
+>                 else
+>                         pvt->dram_type = MEM_DDR4;
+>                 return;
+> +       case 0x18:
+> +               if (pvt->vendor == X86_VENDOR_HYGON) {
+
+This vendor checking is not necessary as there are no other known
+family 18h processors.
+
+
+>         switch (pvt->fam) {
+> @@ -3192,6 +3227,13 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
+>                 pvt->ops        = &family_types[F17_CPUS].ops;
+>                 break;
+>
+> +       case 0x18:
+> +               if (pvt->vendor == X86_VENDOR_HYGON) {
+> +                       fam_type        = &family_types[HYGON_F18_CPUS];
+> +                       pvt->ops        = &family_types[HYGON_F18_CPUS].ops;
+> +                       break;
+> +               }
+
+There is a missing second 'break' statement after the "if (pvt->vendor
+== X86_VENDOR_HYGON)" block for case 0x18, see case 0x15 and case 0x16
+for comparison.
+
+
+
+> diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+> index 2ab4d61..f7adc47 100644
+> +       case 0x18:
+> +               if (c->x86_vendor == X86_VENDOR_HYGON) {
+> +                       xec_mask = 0x3f;
+> +                       if (!boot_cpu_has(X86_FEATURE_SMCA)) {
+> +                               pr_warn("Decoding supported only on Scalable MCA processors.\n");
+> +                               goto err_out;
+> +                       }
+> +                       break;
+> +               }
+
+The 'break' statement could be moved outside of the "if (c->x86_vendor
+== X86_VENDOR_HYGON)" block, this is to allow case 0x18 to reach the
+'break' statement if the vendor is not X86_VENDOR_HYGON.
