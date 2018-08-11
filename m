@@ -4,108 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1754C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 06:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16E3C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 06:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76094223F8
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 06:14:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8842D223F6
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 06:40:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vWAY5wcJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76094223F8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkvXlBJd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8842D223F6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeHKIrG (ORCPT
+        id S1727304AbeHKJMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 04:47:06 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:39166 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeHKIrG (ORCPT
+        Sat, 11 Aug 2018 05:12:52 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44527 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbeHKJMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 04:47:06 -0400
-Received: by mail-qt0-f195.google.com with SMTP id q12-v6so12581462qtp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 23:14:02 -0700 (PDT)
+        Sat, 11 Aug 2018 05:12:52 -0400
+Received: by mail-oi0-f65.google.com with SMTP id s198-v6so19417384oih.11;
+        Fri, 10 Aug 2018 23:39:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6VmG1RyVENc8mmnW0eOrrpkUlIOoG8loqawhUUTZdMA=;
-        b=vWAY5wcJS1gplO5dSmb3jnOqU5p1fqDcwnhjcbcG5+clI5BQAjufI6qqdz0rPZP4Ls
-         JMu8gaak9chBq5nsK4YyrL0aDxDHyXjaMbmdA8x+IAKmGpC3veL3aiZ1PPpvBKjB1MJF
-         JpzlNOOCk0sD1GjkIdQ3+n47or8v0/z++0cd4J8lQBSqNZwHB6bWKD1ZwAWPZS2kZP+1
-         suSrsrNdv6/aqXJMbXHs7ytmlLRH5lQ1cSd+SeggMsTskM6CnDmG99FsYHCvM8Vm/G4p
-         aMOCox6byGlThlUFYjLTQsDH/tFkGvfUIKHdQiVFSjllvTc/36NZ8GktQ3ElwD9t53gP
-         s14w==
+        bh=2H5V+MsyJWgmAHjUWpt5J9RUyXdh63HxS/RARgMFm7A=;
+        b=GkvXlBJduwn/XOJ9Vnr3Lp7tzmLZCmgyci8F/CHBhwcJGgj7l+NPccKGYhntQaroNI
+         AReBPsRhjC9pOr38P1mXyKfy+mk8EJhQxxmhHX/0ZU/gEGiKvljdK9TkEB690dB4RVfG
+         Kv9vNROsD5000eP37d8N6HNxsOkwGH+w80HTLhX3KEkkeTQnmOAXU2yppTicSIWm8yZe
+         JjztC1e6LJFc2CEArF6/9d1OT8Y7CXyqJzPethjw6sCdPhfcWeZdI1k+kmTDJK/0JXXP
+         q2J/RSNHyHwCU14yYTnCu5csTGWVj7LHgOC1WNZSR2PRJNdv+KB5HeJyzZcFzFf4AmiY
+         CNcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6VmG1RyVENc8mmnW0eOrrpkUlIOoG8loqawhUUTZdMA=;
-        b=mfeHSsFnlpiDUOMrfSRDd5fZuJwwP+A1VBirCfe5vJlGhHfHsIcPygxfuwFyO5n2st
-         PEGvx8awXVl2zyvSVqweUJin/ndKktrAZcRgGndzbpH7ku27Xvuo0MnKZJWWYUtoyaR/
-         lHlRi7nsgnneXDd9GSH3R72tv2TF1mthnzlwEM1A81kQ/JPTse3PlqJeTpdQX0kj4DsG
-         BZ+TxtaVjT67XNAkrChLipyC1GohbZdRKMSkPs7iinHpngAFHfnCf/xmk2EaYcJcscMt
-         RbtPn8LTufDYwbnowMchuu3xFLhVi2s2BpYO+BKCFL1CdmDiGR4hZymx1hXZHTjZ9kgK
-         Uzug==
-X-Gm-Message-State: AOUpUlFvhQmrwhMvoiYSMgM6zw5iV/xgGulY8TQR8NatgzHCpGHz7xIc
-        nOszp1VUhFpSgKi/87Uc3yIC5qTArdJmc0172E4=
-X-Google-Smtp-Source: AA+uWPyUpLiZ6AipTTolAPCfrCvUaxTSZVTmtH0orJ9isZI5hHoFN7u0qwPDXS566j9dVteVJYsJ5nAEHNgAtIP5mwE=
-X-Received: by 2002:ac8:1abd:: with SMTP id x58-v6mr9448098qtj.180.1533968041795;
- Fri, 10 Aug 2018 23:14:01 -0700 (PDT)
+        bh=2H5V+MsyJWgmAHjUWpt5J9RUyXdh63HxS/RARgMFm7A=;
+        b=MMWqWh/FXjaA2IXneB05wQ94Vrd1E0EcqemVMVhCkCHb+6ut5c8Pbe+TEepXIEHI/Z
+         UJwaWbDpdDqt5EqUJahwDIulj3p+xigjovFvtm7o6Qs4ODiM094nUEjugsR2V9iPhcga
+         MlOKhikEKo5TP9m3Zz9rncWAu9HJgwJ4sYtvGxnaK5/kseMcc3fuL4BMg4E/vJEAZKxl
+         SB/+YYqtyjmmQWFIyO2Veagy5lEON69uLrQ7WaVqD6BHSLRsrDeqHd7xD9W/1gL3DGXO
+         gkSogltiwS3z204o0IfVg55vNBDfEsvXcycTK0BA1EYCHP0eoyCOyo9qatvrxQWtsKmD
+         wihQ==
+X-Gm-Message-State: AOUpUlF4iMqVKhCRcaCEHt3LMoyme9Kp5hNlma5k2j20pwUGaW2MKsVs
+        V6VmCUG+OT9ru81KrSl++laVATK9Fmq5I0VgP9MKCg4K
+X-Google-Smtp-Source: AA+uWPz9I3WHlX/6Y1+j8N1Og6yHQCqJV7uFuR+8EXXfv5Cce8F5ytnKC9FZfp/mnBlsTS2RyRE1DZQs/0EILFuSVrw=
+X-Received: by 2002:aca:f516:: with SMTP id t22-v6mr10375330oih.56.1533969583667;
+ Fri, 10 Aug 2018 23:39:43 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 23:14:01
- -0700 (PDT)
-In-Reply-To: <20180810155813.49259913@gandalf.local.home>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
- <20180809041856.1547-4-ravi.bangoria@linux.ibm.com> <20180809143827.GC22636@redhat.com>
- <20180810155813.49259913@gandalf.local.home>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Fri, 10 Aug 2018 23:14:01 -0700
-Message-ID: <CAPhsuW4ymZAxLdDOAz-rKkyb_POA3ibNW7+2G3BE5Mxtntyqsg@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        srikar@linux.vnet.ibm.com, mhiramat@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ananth@linux.vnet.ibm.com,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+References: <20180806160933.6578-1-krzk@kernel.org>
+In-Reply-To: <20180806160933.6578-1-krzk@kernel.org>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Sat, 11 Aug 2018 12:09:31 +0530
+Message-ID: <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos: Add missing used PMIC regulators on
+ Exynos5422 Odroid boards
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 12:58 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Thu, 9 Aug 2018 16:38:28 +0200
-> Oleg Nesterov <oleg@redhat.com> wrote:
->
->> I need to read this (hopefully final) version carefully. I'll try to do
->> this before next Monday.
->>
->
-> Monday may be the opening of the merge window (more likely Sunday). Do
-> you think this is good enough for pushing it in this late in the game,
-> or do you think we should wait another cycle?
->
-> -- Steve
+Hi Krzysztof,
 
-We (Facebook) have use cases in production that would benefit from this work, so
-I would rather see this gets in sooner than later. After a brief
-review (I will more
-careful review before Monday), I think this set is not likely to break
-existing uprobes
-(those w/o ref_ctr). Therefore, I think it is safe to put it in this cycle.
+These patches should also be ported to u-boot to enable PMIC.
 
-Thanks,
-Song
+I was just looking into S2MPS11B data sheet
+According to the 1.2 Key Features of  S2MPS11
+
+BUCK1, BUCK2, BUCK3, BUCK4, BUCK6 have (0.65 V to 1.6 V) min /max range.
+BUCK5 have (0.65 V to 2.0 V) min /max range.
+BUCK7 have (1.2 V to 1.5 V) min / max range.
+BUCK8 have (1.8 V to 2.1 V) min / max range.
+BUCK10 have (0.75 V to 1.4 V) min / max range.
+
+BUCKBOST9 (3.0 V to 3.75 V) min / max range.
+
+LDO1, LDO6, LDO11, LDO22, LDO23, LDO27, LDO35 (0.8 V to 2.375 V) min / max range
+
+LDO2, LDO3, LDO5, LDO7, LDO9, LDO10, LD012, LDO13, LDO14, LDO15,
+LDO16, LDO17, LDO18, LDO19, LDO20, LD021, LDO24, LDO25, LDO26,
+LDO28, LDO29, LDO30, LDO31, LDO32, LDO33, LDO34, LDO36, LDO37, LDO38
+(0.8 V to 3.95 V) min / max range
+
+I am aware off we have configures the min/max range as per board schematics.
+but each regulator support dynamic voltage scale and have different
+turn on/off voltage and current rating.
+
+So why are we not setting the regulator-min-microvolt /
+regulator-max-microvolt as per datasheets.
+Please correct me if I am wrong.
+
+Best Regards
+-Anand
