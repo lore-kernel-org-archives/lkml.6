@@ -2,126 +2,173 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7546CC46464
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F2EC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8FE22430
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:35:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9sM9xws"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8FE22430
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 97CD1223C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CD1223C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbeHKFIJ (ORCPT
+        id S1727363AbeHKFMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 01:08:09 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42505 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbeHKFIJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 01:08:09 -0400
-Received: by mail-pl0-f65.google.com with SMTP id g6-v6so4739114plq.9
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 19:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jttnbhd4Er7Bk31HDxo7R23H6lhSzWKwj8rB7AhvxiU=;
-        b=e9sM9xwsinY/v05qig8Jm3pReghkRU4vY5RDNqV7Kp41uHNaKmKJHHa/bYTq4fd91f
-         4F3y3BxBzX6623c846JiiIw8476oahTP9b5HaolWiDFvR244UhblnFhkDn2GKJEbya6W
-         aJbAHuKofXq8DbZrh+L9e4aR1FTfX/9QqeqjLj7NMwKS1Co2QxGs++6kNbqdpW4413lL
-         ejb1DJ0aYN51tSiC/Rlf4Rh8UOeeZlhJcvKvayLcy5e2SR7H6FpU8wMo3NE4y9shJt4o
-         BurMG0aTCML5CfTh0XBt8+aymjAFsdUwuj28HQ/JQRG9qqBNi6j8ozo4QnhY4Sj3ETwa
-         R+IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jttnbhd4Er7Bk31HDxo7R23H6lhSzWKwj8rB7AhvxiU=;
-        b=m53LloNXB9s867abeDKco6dcBwcBLWhTpuvtK56cMseFZ9VRFfKuGL4nhCZJcr7HKV
-         GKEShRrtr+wrj9GYJIcaNhnnBYTYEtVVCd6VqTAL/keEr0MkNh+wUogMFyo2CyB+MfDM
-         zFxTvpj2XZSAF4Eu6fjHK7voO+3TwUTZ6Br615nQLRdwljIhmIq5pG/iOXkNREfWV/1v
-         Dg3Vo9g79sOI+I5smXO45sH0pvItz2CjjXIQLcw+Rzbo4dqQsRgeauiNDmGwWXKS0lvr
-         UQafNbxRnOAh/LKAZgOvEMcCaWI1AfTYtMVqfHDdNHDbl3VNMpehQ+mJM28DAUH87rMJ
-         RNrw==
-X-Gm-Message-State: AOUpUlG0GJJBrMoGCWc8KL5R6N/wFkcy7KN8+XKTAML7GzNHptkbmB8k
-        aMtyNJoLuOx9KweCkz1KllA=
-X-Google-Smtp-Source: AA+uWPyAtq+JersKV7E0dGgXAVv5NrJscOPglVLO5VMcFtZXaHNM/w3ATQoslH3Jo6VpqykaXvaZzg==
-X-Received: by 2002:a17:902:33c2:: with SMTP id b60-v6mr8338176plc.11.1533954939829;
-        Fri, 10 Aug 2018 19:35:39 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:a5a3:1607:66e7:4841])
-        by smtp.gmail.com with ESMTPSA id t12-v6sm20233537pgg.72.2018.08.10.19.35.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 19:35:39 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com
-Cc:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] kernel: locking: rtmutex: Fix a possible sleep-in-atomic-context bug in rt_mutex_handle_deadlock()
-Date:   Sat, 11 Aug 2018 10:35:24 +0800
-Message-Id: <20180811023524.13845-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 11 Aug 2018 01:12:03 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:58335 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727093AbeHKFMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 01:12:03 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id F2F5D20423F;
+        Sat, 11 Aug 2018 04:39:29 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Qq60Z3zOAbre; Sat, 11 Aug 2018 04:39:23 +0200 (CEST)
+Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
+        by smtp.infotech.no (Postfix) with ESMTPA id 24425204145;
+        Sat, 11 Aug 2018 04:39:20 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+To:     Joe Perches <joe@perches.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
+        tim.c.chen@linux.intel.com, martin.petersen@oracle.com,
+        david.darrington@wdc.com, jeff.furlong@wdc.com
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <9b5b906f42dfab78f382c90f66851717d258a15d.camel@perches.com>
+ <nycvar.YSQ.7.76.1808101601110.13885@knanqh.ubzr>
+ <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <75d66dfa-688b-f941-04fd-5a39cf882b21@interlog.com>
+Date:   Fri, 10 Aug 2018 22:39:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
+On 2018-08-10 08:11 PM, Joe Perches wrote:
+> On Fri, 2018-08-10 at 16:02 -0400, Nicolas Pitre wrote:
+>> On Fri, 10 Aug 2018, Joe Perches wrote:
+>>
+>>> On Fri, 2018-08-10 at 14:12 -0500, Jeff Lien wrote:
+>>>> This patch provides a performance improvement for the CRC16 calculations done in read/write
+>>>> workloads using the T10 Type 1/2/3 guard field.  For example, today with sequential write
+>>>> workloads (one thread/CPU of IO) we consume 100% of the CPU because of the CRC16 computation
+>>>> bottleneck.  Today's block devices are considerably faster, but the CRC16 calculation prevents
+>>>> folks from utilizing the throughput of such devices.  To speed up this calculation and expose
+>>>> the block device throughput, we slice the old single byte for loop into a 16 byte for loop,
+>>>> with a larger CRC table to match.  The result has shown 5x performance improvements on various
+>>>> big endian and little endian systems running the 4.18.0 kernel version.
+>>>
+>>> Thanks.
+>>>
+>>> This seems a sensible tradeoff for the 4k text size increase.
+>>
+>> More like 7.5KB.  Would be best if this was configurable so the small
+>> version remained available.
+> 
+> Maybe something like: (compiled, untested)
+> ---
+>   crypto/Kconfig            |  10 +
+>   crypto/crct10dif_common.c | 543 +++++++++++++++++++++++++++++++++++++++++++++-
+>   2 files changed, 549 insertions(+), 4 deletions(-)
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index f3e40ac56d93..88d9d17bb18a 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -618,6 +618,16 @@ config CRYPTO_CRCT10DIF
+>   	  a crypto transform.  This allows for faster crc t10 diff
+>   	  transforms to be used if they are available.
+>   
+> +config CRYPTO_CRCT10DIF_TABLE_SIZE
+> +	int "Size of CRCT10DIF crc tables (as a power of 2)"
+> +	depends on CRYPTO_CRCT10DIF
+> +	range 1 5
+> +	default 1 if EMBEDDED
+> +	default 5
+> +	help
+> +	  Set the table size used by the CRYPTO_CRCT10DIF crc calculation
+> +	  Larger values use more memory and are faster.
+> +
+>   config CRYPTO_CRCT10DIF_PCLMUL
+>   	tristate "CRCT10DIF PCLMULQDQ hardware acceleration"
+>   	depends on X86 && 64BIT && CRC_T10DIF
+> diff --git a/crypto/crct10dif_common.c b/crypto/crct10dif_common.c
+> index b2fab366f518..4eb1c50c3688 100644
+> --- a/crypto/crct10dif_common.c
+> +++ b/crypto/crct10dif_common.c
+> @@ -32,7 +32,8 @@
+>    * x^16 + x^15 + x^11 + x^9 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1
+>    * gt: 0x8bb7
+>    */
+> -static const __u16 t10_dif_crc_table[256] = {
+> +static const __u16 t10dif_crc_table[][256] = {
+> +	{
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+<snip data table>
 
-[FUNC] schedule
-kernel/locking/rtmutex.c, 1223: 
-	schedule in rt_mutex_handle_deadlock
-kernel/locking/rtmutex.c, 1273: 
-	rt_mutex_handle_deadlock in rt_mutex_slowlock
-kernel/locking/rtmutex.c, 1249: 
-	_raw_spin_lock_irqsave in rt_mutex_slowlock
+> +	},
+> +#endif
+>   };
+>   
+>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer, size_t len)
+>   {
+> -	unsigned int i;
+> +	const u8 *ptr = (const __u8 *)buffer;
+> +	const u8 *ptr_end = ptr + len;
+> +#if CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE > 1
+> +	size_t tablesize = 1 << (CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE - 1);
+> +	const u8 *ptr_last = ptr + (len / tablesize * tablesize);
+>   
+> -	for (i = 0 ; i < len ; i++)
+> -		crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
+> +	while (ptr < ptr_last) {
+> +		size_t index = tablesize;
+> +		__u16 t;
+> +
+> +		t = t10dif_crc_table[--index][*ptr++ ^ (u8)(crc >> 8)];
+> +		t ^= t10dif_crc_table[--index][*ptr++ ^ (u8)crc];
+> +		crc = t;
+> +		while (index > 0)
+> +			crc ^= t10dif_crc_table[--index][*ptr++];
+> +	}
+> +#endif
+> +	while (ptr < ptr_end)
+> +		crc = t10dif_crc_table[0][*ptr++ ^ (u8)(crc >> 8)] ^ (crc << 8);
+>   
+>   	return crc;
+>   }
+> 
+> 
 
-To fix the bug, the spinlock is released before schedule() and then acquired again.
-This is found by my static analysis tool (DSAC).
+It is a bit messy but below is a copy and paste of a table 27 from draft SBC-4
+revision 15 in chapter 4.22.4.4 on page 87.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- kernel/locking/rtmutex.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Table 27 — CRC test cases
+Pattern
+32 bytes each set to 00h             CRC=0000h
+32 bytes each set to FFh             CRC=A293h
+32 bytes of an incrementing pattern from 00h to 1Fh   CRC=0224h
+2 bytes each set to FFh followed by 30 bytes set to 00h   CRC=21B8h
+32 bytes of a decrementing pattern from FFh to E0h    CRC=A0B7h
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 2823d4163a37..af03e162f812 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1205,7 +1205,7 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int state,
- }
- 
- static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
--				     struct rt_mutex_waiter *w)
-+				     struct rt_mutex_waiter *w, struct rt_mutex *lock)
- {
- 	/*
- 	 * If the result is not -EDEADLOCK or the caller requested
-@@ -1219,8 +1219,10 @@ static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
- 	 */
- 	rt_mutex_print_deadlock(w);
- 	while (1) {
-+		raw_spin_unlock_irq(&lock->wait_lock);
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		schedule();
-+		raw_spin_lock_irq(&lock->wait_lock);
- 	}
- }
- 
-@@ -1269,7 +1271,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
- 	if (unlikely(ret)) {
- 		__set_current_state(TASK_RUNNING);
- 		remove_waiter(lock, &waiter);
--		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
-+		rt_mutex_handle_deadlock(ret, chwalk, &waiter, lock);
- 	}
- 
- 	/*
--- 
-2.17.0
+There is also example C code for its calculation in Annex C on pages
+375 and 376.
+
+Doug Gilbert
+
 
