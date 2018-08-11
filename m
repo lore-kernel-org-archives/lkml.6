@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0819CC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 11:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73205C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 11:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4EB721C16
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 11:51:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2102422392
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 11:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="doY9n+Ei"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4EB721C16
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8vb9esN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2102422392
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbeHKOZO (ORCPT
+        id S1727359AbeHKOa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 10:25:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48808 "EHLO mail.kernel.org"
+        Sat, 11 Aug 2018 10:30:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbeHKOZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 10:25:14 -0400
+        id S1727267AbeHKOa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 10:30:26 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9303321B32;
-        Sat, 11 Aug 2018 11:51:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5053221EB6;
+        Sat, 11 Aug 2018 11:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533988276;
-        bh=lB1fxtSIz+OnOJG6BvD9ZmhnKWpENUR/Ndl5n0kj24s=;
+        s=default; t=1533988587;
+        bh=aVS1gRD3+urPpUIY6bgKnp/wC73c3RhohIWBM5l5g0Y=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=doY9n+EizSTcTTlB6ZQr03bYh/XExzeahE/v/WDamHzBHVEakpL86p2DtnV6onr/u
-         16me+Eh66pdRxylPSfqF+egEWAVtqaSZXAD8glnqkFM1cDXcN2gfmHGtEtUpnP7ypx
-         4jgxw9wEEc5sKLNFszivunt4k4H+5cDVa2/hj3fE=
-Message-ID: <f1b9ca11a26eafbeb348bbfdf12d2ccdd43dc3c9.camel@kernel.org>
+        b=u8vb9esN3FXCRTzpZwyBuWSgmYpfz1WVUBCiqsMmqAYXyXPFnr3poNj2oQXGCp8K8
+         mJrBKINKYNKg0zseQBF/TDrCdY9KikC6P6lC4xqIyAmjz+hCFi+xvNXwUEbGz9fdn9
+         Oja9IzWHf2q5Tn8NfXURao3a8JQGPWN2XkN3fqeI=
+Message-ID: <0f198c62b057ab7d796746144d458835a6c7433e.camel@kernel.org>
 Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
 From:   Jeff Layton <jlayton@kernel.org>
 To:     "J. Bruce Fields" <bfields@fieldses.org>,
@@ -45,12 +45,16 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
         Frank Filz <ffilzlnx@mindspring.com>,
         linux-kernel@vger.kernel.org
-Date:   Sat, 11 Aug 2018 07:51:13 -0400
-In-Reply-To: <20180810002922.GA3915@fieldses.org>
+Date:   Sat, 11 Aug 2018 07:56:25 -0400
+In-Reply-To: <20180810154742.GE7906@fieldses.org>
 References: <153378012255.1220.6754153662007899557.stgit@noble>
          <20180809173245.GM23873@fieldses.org>
          <87lg9frxyc.fsf@notabene.neil.brown.name>
          <20180810002922.GA3915@fieldses.org>
+         <871sb7rnul.fsf@notabene.neil.brown.name>
+         <20180810025251.GO23873@fieldses.org>
+         <87y3derjut.fsf@notabene.neil.brown.name>
+         <20180810154742.GE7906@fieldses.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
@@ -60,73 +64,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-09 at 20:29 -0400, J. Bruce Fields wrote:
-> On Fri, Aug 10, 2018 at 08:12:43AM +1000, NeilBrown wrote:
+On Fri, 2018-08-10 at 11:47 -0400, J. Bruce Fields wrote:
+> On Fri, Aug 10, 2018 at 01:17:14PM +1000, NeilBrown wrote:
 > > On Thu, Aug 09 2018, J. Bruce Fields wrote:
 > > 
-> > > I think there's also a problem with multiple tasks sharing the same
-> > > lock owner.
+> > > On Fri, Aug 10, 2018 at 11:50:58AM +1000, NeilBrown wrote:
+> > > > You're good at this game!
 > > > 
-> > > So, all locks are exclusive locks for the same range.  We have four
-> > > tasks.  Tasks 1 and 4 share the same owner, the others' owners are
-> > > distinct.
+> > > Everybody's got to have a hobby, mine is pathological posix locking
+> > > cases....
 > > > 
-> > > 	- Task 1 gets a lock.
-> > > 	- Task 2 gets a conflicting lock.
-> > > 	- Task 3 gets another conflicting lock.  So now we the tree is
-> > > 		3->2->1.
-> > > 	- Task 1's lock is released.
-> > > 	- Before task 2 is scheduled, task 4 acquires a new lock.
-> > > 	- Task 2 waits on task 4's lock, we now have
-> > > 		3->2->4.
+> > > > So, because a locker with the same "owner" gets a free pass, you can
+> > > > *never* say that any lock which conflicts with A also conflicts with B,
+> > > > as a lock with the same owner as B will never conflict with B, even
+> > > > though it conflicts with A.
+> > > > 
+> > > > I think there is still value in having the tree, but when a waiter is
+> > > > attached under a new blocker, we need to walk the whole tree beneath the
+> > > > waiter and detach/wake anything that is not blocked by the new blocker.
 > > > 
-> > > Task 3 shouldn't be waiting--the lock it's requesting has the same owner
-> > > as the lock task 4 holds--but we fail to wake up task 3.
+> > > If you're walking the whole tree every time then it might as well be a
+> > > flat list, I think?
 > > 
-> > So task 1 and task 4 are threads in the one process - OK.
-> > Tasks 2 and 3 are threads in two other processes.
+> > The advantage of a tree is that it keeps over-lapping locks closer
+> > together.
+> > For it to make a difference you would need a load where lots of threads
+> > were locking several different small ranges, and other threads were
+> > locking large ranges that cover all the small ranges.
+> 
+> OK, I'm not sure I understand, but I'll give another look at the next
+> version....
+> 
+> > I doubt this is common, but it doesn't seem as strange as other things
+> > I've seen in the wild.
+> > The other advantage, of course, is that I've already written the code,
+> > and I like it.
 > > 
-> > So 2 and 3 conflict with either 1 or 4 equally - why should task 3 be
-> > woken?
-> > 
-> > I suspect you got the numbers bit mixed up,
+> > Maybe I'll do a simple-list version, then a patch to convert that to the
+> > clever-tree version, and we can then have something concrete to assess.
 > 
-> Whoops.
-> 
-> > but in any case, the "conflict()" function that is passed around takes
-> > ownership into account when assessing if one lock conflicts with
-> > another.
-> 
-> Right, I know, but, let me try again:
-> 
-> All locks are exclusive locks for the same range.  Only tasks 3 and 4
-> share the the same owner.
-> 
-> 	- Task 1 gets a lock.
-> 	- Task 2 requests a conflicting lock, so we have    2->1.
-> 	- Task 3 requests a conflicting lock, so we have 3->2->1.
-> 	- Task 1 unlocks.  We wake up task 2, but it isn't scheduled yet.
-> 	- Task 4 gets a new lock.
-> 	- Task 2 runs, discovers the conflict, and waits.  Now we have:
-> 		3->2->4.
-> 
-> There is no conflict between the lock 3 requested and the lock 4 holds,
-> but 3 is not woken up.
-> 
-> This is another version of the first problem: there's information we
-> need (the owners of the waiting locks in the tree) that we can't
-> determine just from looking at the root of the tree.
-> 
-> I'm not sure what to do about that.
+> That might help, thanks.
 > 
 
-Is this still a problem in the v2 set?
+FWIW, I did a bit of testing with lockperf tests that I had written on
+an earlier rework of this code:
 
-wake_non_conflicts walks the whole tree of requests that were blocked on
-it, so a. After task 2 discovers the conflict, it should wake any of its
-children that don't conflict. So in that last step, task 3 would be
-awoken before task 2 goes back to sleep.
+    https://git.samba.org/jlayton/linux.git/?p=jlayton/lockperf.git;a=summary
 
+
+The posix01 and flock01 tests in there show about a 10x speedup with
+this set in place.
+
+I think something closer to Neil's design will end up being what we want
+here. Consider the relatively common case where you have a whole-file
+POSIX write lock held with a bunch of different waiters blocked on it
+(all whole file write locks with different owners):
+
+With Neil's patches, you will just wake up a single waiter when the
+blocked lock is released, as they would all be in a long chain of
+waiters.
+
+If you keep all the locks in a single list, you'll either have to:
+
+a) wake up all the waiters on the list when the lock comes free: no lock
+is held at that point so none of them will conflict.
+
+...or...
+
+b) keep track of what waiters have already been awoken, and compare any
+further candidate for waking against the current set of held locks and
+any lock requests by waiters that you just woke.
+
+b seems more expensive as you have to walk over a larger set of locks
+on every change.
 -- 
 Jeff Layton <jlayton@kernel.org>
 
