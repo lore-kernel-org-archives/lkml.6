@@ -2,84 +2,113 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D27C46470
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1C8C46464
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65B6C22429
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:20:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65B6C22429
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7264E22429
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:32:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7264E22429
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbeHKDwS (ORCPT
+        id S1726747AbeHKEEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 23:52:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46050 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbeHKDwR (ORCPT
+        Sat, 11 Aug 2018 00:04:45 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:59717 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725199AbeHKEEp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 23:52:17 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f1-v6so5108706pgq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 18:20:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=D63r0xiGiaiLw2jT3WA/5l6edqPcX4ejpQkanUWiva4=;
-        b=ujKmc0CjknfpVmc1ANiAdHKh70VBfhvsTBKhITzQM5j0AL05uxUOecfDY4A8W2t62e
-         mM/D5JfkhD9YkiS91G9UfHvvPfjy+Za/leBjLB0+c0lrZCGzNz/HzN55jSagGPn5GOtI
-         X+ODhM4GYyB9CiaEuuZzSfOKmVBVGAx3OwUaBr5qDX0oTHZLwNaSkA24O3NLJVZAXU7M
-         ddtJxCkG0nfJVDDHqFiIdHR5R74cqnuZrzkp4KXDUpqqK4w5PJ7RtbyO7Q94GVGaJule
-         9eQtZ0obFl5nQ71ifDtNIL8P/A19TqPFpncI5lBjq9J/SzoL/kWaz/S2DTEjZJA/re9K
-         1Sxg==
-X-Gm-Message-State: AOUpUlG3dFsY5ipOe8+xoyz6DXFAtCOw6NAOqHZof6TnB4V3PJlGE4xT
-        FQhCDCmZUvPoiyTFImzvJJOFmprOzus=
-X-Google-Smtp-Source: AA+uWPyEoBToYUoPBOlVdLzRwZSEurqoCenS5Xloxa32wQjh+4SXSDD5tu3rsIuu7+613l/Qs4eZIg==
-X-Received: by 2002:a62:5984:: with SMTP id k4-v6mr9272709pfj.116.1533950399675;
-        Fri, 10 Aug 2018 18:19:59 -0700 (PDT)
-Received: from localhost (c-107-3-165-230.hsd1.ca.comcast.net. [107.3.165.230])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm21071384pgf.52.2018.08.10.18.19.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 Aug 2018 18:19:59 -0700 (PDT)
-From:   Moritz Fischer <mdf@kernel.org>
-To:     davem@davemloft.net
-Cc:     keescook@chromium.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williams@ni.com,
-        Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH 2/2] net: nixge: Don't store skb in app4 field of descriptor
-Date:   Fri, 10 Aug 2018 18:19:41 -0700
-Message-Id: <20180811011941.6187-3-mdf@kernel.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180811011941.6187-1-mdf@kernel.org>
-References: <20180811011941.6187-1-mdf@kernel.org>
+        Sat, 11 Aug 2018 00:04:45 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1foIlS-0004RL-5c; Fri, 10 Aug 2018 19:32:22 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1foIlQ-00025T-Mm; Fri, 10 Aug 2018 19:32:21 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list\:CONTROL GROUP \(CGROUP\)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
+        <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <22361.1533913891@warthog.procyon.org.uk>
+        <28045.1533916438@warthog.procyon.org.uk>
+        <20180810161400.GA627@thunk.org>
+        <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+        <20180810204639.GI627@thunk.org> <20180810221234.GC4211@magnolia>
+        <20180810235447.GK627@thunk.org> <20180811003852.GA10463@magnolia>
+Date:   Fri, 10 Aug 2018 20:32:04 -0500
+In-Reply-To: <20180811003852.GA10463@magnolia> (Darrick J. Wong's message of
+        "Fri, 10 Aug 2018 17:38:52 -0700")
+Message-ID: <87zhxtg02z.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1foIlQ-00025T-Mm;;;mid=<87zhxtg02z.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19wpjpXAcK0hVjLBP3Ytr6c51gH4N7KUKo=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: BUG: Mount ignores mount options
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't store skb in app4 field of descriptor since it is
-not being used anywhere (including hardware).
+"Darrick J. Wong" <darrick.wong@oracle.com> writes:
 
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
- drivers/net/ethernet/ni/nixge.c | 1 -
- 1 file changed, 1 deletion(-)
+> On Fri, Aug 10, 2018 at 07:54:47PM -0400, Theodore Y. Ts'o wrote:
 
-diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
-index ac31b0d30415..76efed058f33 100644
---- a/drivers/net/ethernet/ni/nixge.c
-+++ b/drivers/net/ethernet/ni/nixge.c
-@@ -503,7 +503,6 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	tx_skb->skb = skb;
- 
- 	cur_p->cntrl |= XAXIDMA_BD_CTRL_TXEOF_MASK;
--	cur_p->app4 = (unsigned long)skb;
- 
- 	tail_p = priv->tx_bd_p + sizeof(*priv->tx_bd_v) * priv->tx_bd_tail;
- 	/* Start the transfer */
--- 
-2.18.0
+>> The reason why I bring this up here is that in container land, there
+>> are those who believe that "container root" should be able to mount
+>> file systems, and if the "container root" isn't trusted, the fact that
+>> the "container root" can crash the host kernel, or worse, corrupt the
+>> host kernel and break out of the container as a result, that would be
+>> sad.
+>> 
+>> I was pretty sure most file system developers are on the same page
+>> that allowing untrusted "container roots" the ability to mount
+>> arbitrary block device file systems is insanity.
+>
+> Agreed.
 
+For me I am happy with fuse.  That is sufficient to cover any container
+use cases people have.   If anyone comes bugging you for more I will be
+happy to push back.
+
+The only thing that containers have to do with this is I wind up
+touching a lot of the kernel/user boundary so I get to see a lot of it
+and sometimes see weird things.
+
+Eric
