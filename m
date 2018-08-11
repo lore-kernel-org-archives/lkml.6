@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0005C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D044C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B31204EC
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B31204EC
+	by mail.kernel.org (Postfix) with ESMTP id 3FBD72077B
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:48:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBD72077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeHKHQU (ORCPT
+        id S1727301AbeHKHVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 03:16:20 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:40360 "EHLO
+        Sat, 11 Aug 2018 03:21:20 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:40749 "EHLO
         out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbeHKHQU (ORCPT
+        with ESMTP id S1726858AbeHKHVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 03:16:20 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
+        Sat, 11 Aug 2018 03:21:20 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
         by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1foLkN-0000ul-2O; Fri, 10 Aug 2018 22:43:27 -0600
+        id 1foLpF-0001HY-1G; Fri, 10 Aug 2018 22:48:29 -0600
 Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1foLkL-0001rK-9f; Fri, 10 Aug 2018 22:43:26 -0600
+        id 1foLpE-0007vZ-Fj; Fri, 10 Aug 2018 22:48:28 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>,
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
         John Johansen <john.johansen@canonical.com>,
         Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
         Paul Moore <paul@paul-moore.com>,
@@ -50,86 +50,58 @@ Cc:     David Howells <dhowells@redhat.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
         torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
 References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
         <87d0uqpba5.fsf@xmission.com>
         <20180810151606.GA6515@ZenIV.linux.org.uk>
-        <87pnypiufr.fsf@xmission.com>
-        <20180811015815.GD6515@ZenIV.linux.org.uk>
-        <20180811021704.GE6515@ZenIV.linux.org.uk>
-Date:   Fri, 10 Aug 2018 23:43:20 -0500
-In-Reply-To: <20180811021704.GE6515@ZenIV.linux.org.uk> (Al Viro's message of
-        "Sat, 11 Aug 2018 03:17:04 +0100")
-Message-ID: <87mutto6mv.fsf@xmission.com>
+        <87pnypiufr.fsf@xmission.com> <20180811014619.GA14368@thunk.org>
+Date:   Fri, 10 Aug 2018 23:48:24 -0500
+In-Reply-To: <20180811014619.GA14368@thunk.org> (Theodore Y. Ts'o's message of
+        "Fri, 10 Aug 2018 21:46:19 -0400")
+Message-ID: <8736vlo6ef.fsf@xmission.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1foLkL-0001rK-9f;;;mid=<87mutto6mv.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/WCCYVSKk/QTVxU98k2T+AX8pP+BodV3w=
+X-XM-SPF: eid=1foLpE-0007vZ-Fj;;;mid=<8736vlo6ef.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/7iC9C0vySju5oNK9rKvy8DgkmTU/ux0Q=
 X-SA-Exim-Connect-IP: 97.119.167.31
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 Subject: Re: BUG: Mount ignores mount options
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> writes:
+"Theodore Y. Ts'o" <tytso@mit.edu> writes:
 
-> On Sat, Aug 11, 2018 at 02:58:15AM +0100, Al Viro wrote:
->> On Fri, Aug 10, 2018 at 08:05:44PM -0500, Eric W. Biederman wrote:
+> On Fri, Aug 10, 2018 at 08:05:44PM -0500, Eric W. Biederman wrote:
 >> 
->> > All I proposed was that we distinguish between a first mount and an
->> > additional mount so that userspace knows the options will be ignored.
->> 
->> For pity sake, just what does it take to explain to you that your
->> notions of "first mount" and "additional mount" ARE HEAVILY FS-DEPENDENT
->> and may depend upon the pieces of state userland (especially in container)
->> simply does not have?
->> 
->> One more time, slowly:
->> 
->> mount -t nfs4 wank.example.org:/foo/bar /mnt/a
->> mount -t nfs4 wank.example.org:/baz/barf /mnt/b
->> 
->> yield the same superblock.  Is anyone who mounts something over NFS
->> required to know if anybody else has mounted something from the same
->> server, and if so how the hell are they supposed to find that out,
->> so that they could decide whether they are creating the "first" or
->> "additional" mount, whatever that might mean in this situation?
->> 
->> And how, kernel-side, is that supposed to be handled by generic code
->> of any description?  
->> 
->> While we are at it,
->> mount -t nfs4 wank.example.org:/foo/bar -o wsize=16384 /mnt/c
->> is *NOT* the same superblock as the previous two.
+>> My complaint is that the current implemented behavior of practically
+>> every filesystem in the kernel, is that it will ignore mount options
+>> when mounted a second time.
 >
-> s/as the previous two/as in the previous two cases/, that is - the first two
-> examples yield one superblock, this one - another.
+> The file system is ***not*** mounted a second time.
+>
+> The design bug is that we allow bind mounts to be specified via a
+> block device.  A bind mount is not "a second mount" of the file
+> system.  Bind mounts != mounts.
+>
+> I had assumed we had allowed bind mounts to be specified via the block
+> device because of container use cases.  If the container folks don't
+> want it, I would be pushing to simply not allow bind mounts to be
+> specified via block device at all.
 
-Exactly because the mount options differ.
+No it is not a container thing.
 
-I don't have a problem if we have something sophisticated like nfs that
-handles all of the hairy details and does not reuse a superblock unless the
-mount options match.
+> The only reason why we should support it is because we don't want to
+> break scripts; and if the goal is not to break scripts, then we have
+> to keep to the current semantics, however broken you think it is.
 
-What I have a problem with is the helper for ordinary filesystems that
-are not as sophisticated as nfs that don't handle all of the option
-magic and give userspace something different from what userspace asked
-for.
-
-It may take a little generalization of the definitions I proposed but it
-still remains simple and straight forward.
-
-CMD_THESE_MOUNT_OPTIONS_NO_SURPRISES
-CMD_WHATEVER_ALREADY_EXISTS
-
-Or we can make the filesystems more sophisticated when we move
-them to the new API and perform the comparisons there.  I think
-that is what David Howells is working on.
+But we don't have to support returning filesystems with mismatched mount
+options in the new fsopen api.   That is my concern.  Confusing
+userspace this way has been shown to be harmful let's not keep doing it.
 
 Eric
+
