@@ -2,123 +2,79 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B083C4646D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C151CC46464
 	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40ECF223FF
+	by mail.kernel.org (Postfix) with ESMTP id 78DD122430
 	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40ECF223FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DD122430
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbeHKFRa (ORCPT
+        id S1727426AbeHKFS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 01:17:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbeHKFRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 01:17:30 -0400
-Received: from home.goodmis.org (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF3C7223FF;
-        Sat, 11 Aug 2018 02:44:58 +0000 (UTC)
-Date:   Fri, 10 Aug 2018 22:44:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel: locking: rtmutex: Fix a possible
- sleep-in-atomic-context bug in rt_mutex_handle_deadlock()
-Message-ID: <20180811024456.ykccnkbdrac4nbem@home.goodmis.org>
-References: <20180811023524.13845-1-baijiaju1990@gmail.com>
+        Sat, 11 Aug 2018 01:18:29 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60734 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeHKFS3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 01:18:29 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1foJub-0000QB-UZ; Sat, 11 Aug 2018 02:45:53 +0000
+Date:   Sat, 11 Aug 2018 03:45:53 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Richard Henderson <rth@twiddle.net>
+Cc:     Firoz Khan <firoz.khan@linaro.org>, linux-alpha@vger.kernel.org,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
+Subject: Re: [PATCH 3/6] alpha: Unify the not-implemented system call entry
+ name
+Message-ID: <20180811024553.GF6515@ZenIV.linux.org.uk>
+References: <1531736638-15294-1-git-send-email-firoz.khan@linaro.org>
+ <1531736638-15294-4-git-send-email-firoz.khan@linaro.org>
+ <20180811000455.GC6515@ZenIV.linux.org.uk>
+ <98937991-cefa-b7f3-11c3-12727b3159b1@twiddle.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180811023524.13845-1-baijiaju1990@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <98937991-cefa-b7f3-11c3-12727b3159b1@twiddle.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 11, 2018 at 10:35:24AM +0800, Jia-Ju Bai wrote:
-> The driver may sleep with holding a spinlock.
+On Fri, Aug 10, 2018 at 07:31:55PM -0700, Richard Henderson wrote:
+
+> > +++ b/arch/alpha/kernel/entry.S
+> > @@ -473,7 +473,7 @@ entSys:
+> >  	bne     $3, strace
+> >  	beq	$4, 1f
+> >  	ldq	$27, 0($5)
+> > -1:	jsr	$26, ($27), alpha_ni_syscall
+> > +1:	jsr	$26, ($27), sys_ni_syscall
+> >  	ldgp	$gp, 0($26)
+> >  	blt	$0, $syscall_error	/* the call failed */
+> >  	stq	$0, 0($sp)
 > 
-> The function call paths (from bottom to top) in Linux-4.16 are:
-> 
-> [FUNC] schedule
-> kernel/locking/rtmutex.c, 1223: 
-> 	schedule in rt_mutex_handle_deadlock
-> kernel/locking/rtmutex.c, 1273: 
-> 	rt_mutex_handle_deadlock in rt_mutex_slowlock
-> kernel/locking/rtmutex.c, 1249: 
-> 	_raw_spin_lock_irqsave in rt_mutex_slowlock
-> 
-> To fix the bug, the spinlock is released before schedule() and then acquired again.
-> This is found by my static analysis tool (DSAC).
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  kernel/locking/rtmutex.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-> index 2823d4163a37..af03e162f812 100644
-> --- a/kernel/locking/rtmutex.c
-> +++ b/kernel/locking/rtmutex.c
-> @@ -1205,7 +1205,7 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int state,
->  }
->  
->  static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
-> -				     struct rt_mutex_waiter *w)
-> +				     struct rt_mutex_waiter *w, struct rt_mutex *lock)
->  {
->  	/*
->  	 * If the result is not -EDEADLOCK or the caller requested
-> @@ -1219,8 +1219,10 @@ static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
->  	 */
->  	rt_mutex_print_deadlock(w);
->  	while (1) {
-> +		raw_spin_unlock_irq(&lock->wait_lock);
->  		set_current_state(TASK_INTERRUPTIBLE);
->  		schedule();
-> +		raw_spin_lock_irq(&lock->wait_lock);
->  	}
+> Once upon a time I had a patch to make the hint
+> be sys_gettimeofday, as the most common syscall.
+> Dunno what happened to that.
 
-If you look at the code you will notice that it stops the task and never lets
-it continue. Ever.
+Might as well... ptraced case has it, non-ptraced doesn't.
 
-If we hit this path, it means we are in a deadlock scenario and will not make
-any forward progress.
-
-If anything, it should simply be:
-
-	rt_mutex_print_deadlock(w);
-+	/* We're not going anywhere, release the wait_lock */
-+	raw_spin_unlock_irq(&lock->wait_lock);
-	while (1) {
-		set_current_state(TASK_INTERRUPTIBLE);
-		schedule();
-	}
-
--- Steve
-
-
->  }
->  
-> @@ -1269,7 +1271,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
->  	if (unlikely(ret)) {
->  		__set_current_state(TASK_RUNNING);
->  		remove_waiter(lock, &waiter);
-> -		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
-> +		rt_mutex_handle_deadlock(ret, chwalk, &waiter, lock);
->  	}
->  
->  	/*
-> -- 
-> 2.17.0
+BTW, seeing that it's your code - why was unop used in
+alpha_ni_syscall?  I don't remember the rules re pipeline
+stalls; is it that some earlier variants prefer unop to
+nop in such places?  It's not that microoptimizing that
+one makes any difference, but just out of curiosity -
+would something like
+	lda     $0, -ENOSYS
+	stq     $sp, 0($sp)	/* sp != 0 */
+	ret
+do just as well there?
