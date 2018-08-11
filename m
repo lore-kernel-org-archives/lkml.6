@@ -2,104 +2,140 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E9BC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 16:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAE1C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 16:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FD721A13
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 16:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4B7121A13
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 16:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OTp+BqMR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FD721A13
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=sinax.be header.i=@sinax.be header.b="KmRNM+FK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B7121A13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=sinax.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeHKSno (ORCPT
+        id S1727546AbeHKStu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 14:43:44 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:54560 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbeHKSno (ORCPT
+        Sat, 11 Aug 2018 14:49:50 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35074 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727450AbeHKStu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 14:43:44 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 2CD5610C087E;
-        Sat, 11 Aug 2018 09:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1534003745; bh=6oMecutyGk97An4ahqNcn/BG17MCKYXdRN1ejPwkub8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OTp+BqMRvfi7cU4mbfGExK2ATNU+Y3/QyliMhEIhxFY6LfqYGEzZmjpE1CXtMfZPk
-         d4QRkZiqueWAXkxZSF7eaRK0A9ElVHgbSKSZysIiN2Mh5uUvJanlAPJdc/rpl2NLnR
-         D7i/OxcI7c0T4imUA9LNk/i2pj1v1r8UMGOfMSrl4U2FGzeUVYT5lIBsiZMDA6KBew
-         ra5CIdzJCg+MPCinMD2cLxvq8dYakx026cO9gGDTRpHmVnBAK52T4UR8fwZeo7ST5C
-         HWCbPmDZiZLHz5nsA4bu6wWKtUfv+JBpTz+ysff1Z2qFXk851s/LDdghD4ji3scMUn
-         Ah5430pm3TFGA==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.86])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 8FF053D01;
-        Sat, 11 Aug 2018 09:09:02 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH] ARC: atomic64: fix atomic64_add_unless function
-Date:   Sat, 11 Aug 2018 19:08:56 +0300
-Message-Id: <20180811160856.24936-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.4
+        Sat, 11 Aug 2018 14:49:50 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o18-v6so4770410wmc.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 09:15:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sinax.be; s=google;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=r0WtAf6jv1aOBEvWq2QkiAMWOc6nfS8saAlliB/x44A=;
+        b=KmRNM+FK0pR9xyIXJIJRvtwCK4fot1WXSkYnFSaEwGh2I6c6vZ9hL2yNQZMEl+fRAX
+         3Kda6zoBG0nhynJSSzPJmUr8v1x2peX+AAHQq/+pYvShNQM6J6jGqcA/A0szCmYjCLkb
+         t375TCeZy5dzKbVVzPdSF9jtQUpDQkWj1QjW0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=r0WtAf6jv1aOBEvWq2QkiAMWOc6nfS8saAlliB/x44A=;
+        b=FcK5lFmMo1V3/aw7XQDWz2PAvL/rPUAkTZ60kb/dP/uFHGBVQAtF9iL0UkN7EgLUfQ
+         zMQ0/Sc+plqV0E7IsmGhlGNjii3js94mQYKFNRt1xn1cvWJ56bSw0p8nupMfqP8q0MV9
+         RfmaW4ldXe34xb/1e9rJa4LC4HQno9R9hPls74Q5+pkxWnYXfGyPYwUtmL6GeZ2BHqQc
+         Ge0kS50m0ecTLcnO+QL2m5ruoaFHp5HkEGFiqpNCy6TiG9MIonrrcdvbFnJcIg5CcvcZ
+         umRptIOV1upa7m+0ozAoUmVo2Yxsy2YpA9YBJy8TVC4iuIPq99MABw5cDBprKzguL9OC
+         i2Qw==
+X-Gm-Message-State: AOUpUlE9w6PMiSVsLvPiT+FseSv9jVNrXYEClvBudlP74+NIoPO73Fxi
+        M3CW64D89qFsR0Z1zS68z4LmGYO1/iQ=
+X-Google-Smtp-Source: AA+uWPwetdiniq9Sk7nYyokgVadAgmq/LSqQOIyV6j234oRvRzhtgOYxvDyo/M0Jz2TUVlqhBuI9VA==
+X-Received: by 2002:a1c:6f06:: with SMTP id k6-v6mr4023131wmc.1.1534004108264;
+        Sat, 11 Aug 2018 09:15:08 -0700 (PDT)
+Received: from winston.localdomain (ptr-dkbjq8a20487yy59lye.18120a2.ip6.access.telenet.be. [2a02:1811:c412:9000:7272:808c:939c:a466])
+        by smtp.gmail.com with ESMTPSA id h14-v6sm15986308wro.15.2018.08.11.09.15.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 11 Aug 2018 09:15:07 -0700 (PDT)
+Date:   Sat, 11 Aug 2018 18:15:05 +0200
+From:   Michael Anckaert <michael.anckaert@sinax.be>
+To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: netlogic: Fixed comments to include
+ SPDX-License-Identifier
+Message-ID: <20180811161505.GA7309@winston.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current implementation of 'atomic64_add_unless' function
-(and hence 'atomic64_inc_not_zero') return incorrect value
-if lover 32 bits of compared 64-bit number are equal and
-higher 32 bits aren't.
+This patch fixes some issues with missing SPDX-License-Identifier
+comments. 
 
-For in following example atomic64_add_unless must return '1'
-but it actually returns '0':
---------->8---------
-atomic64_t val = ATOMIC64_INIT(0x4444000000000000LL);
-int ret = atomic64_add_unless(&val, 1LL, 0LL)
---------->8---------
+Disclaimer: this is my first patch and instructions were taken from the
+KernelNewbies project. 
 
-This happens because we write '0' to returned variable regardless
-of higher 32 bits comparison result.
-
-So fix it.
-
-NOTE:
- this change was tested with atomic64_test.
-
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Michael Anckaert <michael.anckaert@sinax.be>
 ---
- arch/arc/include/asm/atomic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/netlogic/Kconfig        | 6 +++---
+ drivers/staging/netlogic/platform_net.c | 1 +
+ drivers/staging/netlogic/platform_net.h | 1 +
+ drivers/staging/netlogic/xlr_net.c      | 1 +
+ drivers/staging/netlogic/xlr_net.h      | 1 +
+ 5 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arc/include/asm/atomic.h b/arch/arc/include/asm/atomic.h
-index 11859287c52a..e840cb1763b2 100644
---- a/arch/arc/include/asm/atomic.h
-+++ b/arch/arc/include/asm/atomic.h
-@@ -578,11 +578,11 @@ static inline int atomic64_add_unless(atomic64_t *v, long long a, long long u)
- 
- 	__asm__ __volatile__(
- 	"1:	llockd  %0, [%2]	\n"
--	"	mov	%1, 1		\n"
- 	"	brne	%L0, %L4, 2f	# continue to add since v != u \n"
- 	"	breq.d	%H0, %H4, 3f	# return since v == u \n"
- 	"	mov	%1, 0		\n"
- 	"2:				\n"
-+	"	mov	%1, 1		\n"
- 	"	add.f   %L0, %L0, %L3	\n"
- 	"	adc     %H0, %H0, %H3	\n"
- 	"	scondd  %0, [%2]	\n"
+diff --git a/drivers/staging/netlogic/Kconfig b/drivers/staging/netlogic/Kconfig
+index d660de51b541..ab0b756bc08b 100644
+--- a/drivers/staging/netlogic/Kconfig
++++ b/drivers/staging/netlogic/Kconfig
+@@ -2,6 +2,6 @@ config NETLOGIC_XLR_NET
+ 	tristate "Netlogic XLR/XLS network device"
+ 	depends on CPU_XLR
+ 	select PHYLIB
+-	---help---
+-	This driver support Netlogic XLR/XLS on chip gigabit
+-	Ethernet.
++	help
++		This driver support Netlogic XLR/XLS on chip gigabit
++		Ethernet.
+diff --git a/drivers/staging/netlogic/platform_net.c b/drivers/staging/netlogic/platform_net.c
+index abf4c71ee66b..3886c99c1f68 100644
+--- a/drivers/staging/netlogic/platform_net.c
++++ b/drivers/staging/netlogic/platform_net.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2003-2012 Broadcom Corporation
+  * All Rights Reserved
+diff --git a/drivers/staging/netlogic/platform_net.h b/drivers/staging/netlogic/platform_net.h
+index e1b27f649590..1d994f0d0995 100644
+--- a/drivers/staging/netlogic/platform_net.h
++++ b/drivers/staging/netlogic/platform_net.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2003-2012 Broadcom Corporation
+  * All Rights Reserved
+diff --git a/drivers/staging/netlogic/xlr_net.c b/drivers/staging/netlogic/xlr_net.c
+index e461168313bf..201db10692de 100644
+--- a/drivers/staging/netlogic/xlr_net.c
++++ b/drivers/staging/netlogic/xlr_net.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2003-2012 Broadcom Corporation
+  * All Rights Reserved
+diff --git a/drivers/staging/netlogic/xlr_net.h b/drivers/staging/netlogic/xlr_net.h
+index f76e16cfd15d..de51d64c1f23 100644
+--- a/drivers/staging/netlogic/xlr_net.h
++++ b/drivers/staging/netlogic/xlr_net.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2003-2012 Broadcom Corporation
+  * All Rights Reserved
 -- 
-2.14.4
+2.17.1
 
