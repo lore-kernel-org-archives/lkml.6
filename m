@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FE6C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA71C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121D12173C
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:29:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121D12173C
+	by mail.kernel.org (Postfix) with ESMTP id 4FD232173C
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD232173C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeHKQDW (ORCPT
+        id S1727657AbeHKQDi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 12:03:22 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:40980 "EHLO cstnet.cn"
+        Sat, 11 Aug 2018 12:03:38 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:41401 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727304AbeHKQDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 12:03:21 -0400
+        id S1727304AbeHKQDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 12:03:37 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowACHjpKV5G5bEZlfAA--.289S2;
-        Sat, 11 Aug 2018 21:28:57 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowAAXHpKn5G5bnZ5fAA--.574S2;
+        Sat, 11 Aug 2018 21:29:15 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, tony.luck@intel.com
+        pbonzini@redhat.com, rkrcmar@redhat.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-edac@vger.kernel.org, Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v3 11/17] x86/mce: enable Hygon support to MCE infrastructure
-Date:   Sat, 11 Aug 2018 21:28:49 +0800
-Message-Id: <d9ade02d30a6b6357fc32254cfa1c6bf8232a019.1533989493.git.puwen@hygon.cn>
+        kvm@vger.kernel.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v3 12/17] x86/kvm: enable Hygon support to KVM infrastructure
+Date:   Sat, 11 Aug 2018 21:29:08 +0800
+Message-Id: <eacb5892319c76c05efaa9de1011a76c456c9d96.1533989493.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1533989492.git.puwen@hygon.cn>
 References: <cover.1533989492.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowACHjpKV5G5bEZlfAA--.289S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr1kXw4DGrWrJw17Zw4fZrb_yoWrZryDpr
-        W7tFWvgF48uF97G34Dtr4DZr4rZF1vga1xWry3Cw1rA3Z8AryUXrs0yw1YqryDA393u3Wf
-        ta15uw47Ja1kAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: swCowAAXHpKn5G5bnZ5fAA--.574S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFWUCw1Duw13Xr4UJF15twb_yoW5Jr17pF
+        ZrGFs7XFsYgrsIk34DJrsrZw1UZFs8Kw18Kry5uw1FvF4YvayxXr4Fkw15Ja17Aa95ua4r
+        KFy8W3WkJ3yxZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
         9KBjDU0xBIdaVrnRJUUUvI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
         rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
         1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -61,122 +61,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hygon machine check arch is similar to AMD family 17h. To enable the MCE
-infrastructure support, add CPU vendor check for Hygon to share the code
-path of AMD.
-
-Add hygon mce init function mce_hygon_feature_init() to minimize further
-maintenance effort.
+Hygon Dhyana CPU has the SVM feature as AMD family 17h does.
+Add Hygon support in the KVM infrastructure.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- arch/x86/include/asm/mce.h                |  5 +++++
- arch/x86/kernel/cpu/mcheck/mce-severity.c |  3 ++-
- arch/x86/kernel/cpu/mcheck/mce.c          | 21 +++++++++++++++------
- 3 files changed, 22 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/kvm_emulate.h |  4 ++++
+ arch/x86/include/asm/virtext.h     |  5 +++--
+ arch/x86/kvm/emulate.c             | 11 ++++++++++-
+ 3 files changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 8c7b3e5..0af3b0e 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -213,6 +213,11 @@ static inline void mce_amd_feature_init(struct cpuinfo_x86 *c) { }
- static inline int umc_normaddr_to_sysaddr(u64 norm_addr, u16 nid, u8 umc, u64 *sys_addr) { return -EINVAL; };
- #endif
+diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
+index 0f82cd9..93c4bf5 100644
+--- a/arch/x86/include/asm/kvm_emulate.h
++++ b/arch/x86/include/asm/kvm_emulate.h
+@@ -364,6 +364,10 @@ struct x86_emulate_ctxt {
+ #define X86EMUL_CPUID_VENDOR_AMDisbetterI_ecx 0x21726574
+ #define X86EMUL_CPUID_VENDOR_AMDisbetterI_edx 0x74656273
  
-+static inline void mce_hygon_feature_init(struct cpuinfo_x86 *c)
-+{
-+	return mce_amd_feature_init(c);
-+}
++#define X86EMUL_CPUID_VENDOR_HygonGenuine_ebx 0x6f677948
++#define X86EMUL_CPUID_VENDOR_HygonGenuine_ecx 0x656e6975
++#define X86EMUL_CPUID_VENDOR_HygonGenuine_edx 0x6e65476e
 +
- int mce_available(struct cpuinfo_x86 *c);
- bool mce_is_memory_error(struct mce *m);
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-severity.c b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-index f34d89c..44396d5 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-@@ -336,7 +336,8 @@ int (*mce_severity)(struct mce *m, int tolerant, char **msg, bool is_excp) =
- 
- void __init mcheck_vendor_init_severity(void)
- {
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
- 		mce_severity = mce_severity_amd;
- }
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 8c50754..65d13f8 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -274,7 +274,8 @@ static void print_mce(struct mce *m)
- {
- 	__print_mce(m);
- 
--	if (m->cpuvendor != X86_VENDOR_AMD)
-+	if (m->cpuvendor != X86_VENDOR_AMD &&
-+	    m->cpuvendor != X86_VENDOR_HYGON)
- 		pr_emerg_ratelimited(HW_ERR "Run the above through 'mcelog --ascii'\n");
- }
- 
-@@ -512,9 +513,9 @@ static int mce_usable_address(struct mce *m)
- 
- bool mce_is_memory_error(struct mce *m)
- {
--	if (m->cpuvendor == X86_VENDOR_AMD) {
-+	if (m->cpuvendor == X86_VENDOR_AMD ||
-+	    m->cpuvendor == X86_VENDOR_HYGON) {
- 		return amd_mce_is_memory_error(m);
--
- 	} else if (m->cpuvendor == X86_VENDOR_INTEL) {
- 		/*
- 		 * Intel SDM Volume 3B - 15.9.2 Compound Error Codes
-@@ -540,7 +541,9 @@ EXPORT_SYMBOL_GPL(mce_is_memory_error);
- 
- static bool mce_is_correctable(struct mce *m)
- {
--	if (m->cpuvendor == X86_VENDOR_AMD && m->status & MCI_STATUS_DEFERRED)
-+	if ((m->cpuvendor == X86_VENDOR_AMD ||
-+	     m->cpuvendor == X86_VENDOR_HYGON) &&
-+	    (m->status & MCI_STATUS_DEFERRED))
- 		return false;
- 
- 	if (m->status & MCI_STATUS_UC)
-@@ -1725,7 +1728,8 @@ static int __mcheck_cpu_ancient_init(struct cpuinfo_x86 *c)
+ #define X86EMUL_CPUID_VENDOR_GenuineIntel_ebx 0x756e6547
+ #define X86EMUL_CPUID_VENDOR_GenuineIntel_ecx 0x6c65746e
+ #define X86EMUL_CPUID_VENDOR_GenuineIntel_edx 0x49656e69
+diff --git a/arch/x86/include/asm/virtext.h b/arch/x86/include/asm/virtext.h
+index 0116b2e..e05e0d3 100644
+--- a/arch/x86/include/asm/virtext.h
++++ b/arch/x86/include/asm/virtext.h
+@@ -83,9 +83,10 @@ static inline void cpu_emergency_vmxoff(void)
   */
- static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
+ static inline int cpu_has_svm(const char **msg)
  {
--	if (c->x86_vendor == X86_VENDOR_AMD) {
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON) {
- 		mce_flags.overflow_recov = !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
- 		mce_flags.succor	 = !!cpu_has(c, X86_FEATURE_SUCCOR);
- 		mce_flags.smca		 = !!cpu_has(c, X86_FEATURE_SMCA);
-@@ -1766,6 +1770,9 @@ static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
- 		mce_amd_feature_init(c);
- 		break;
- 		}
-+	case X86_VENDOR_HYGON:
-+		mce_hygon_feature_init(c);
-+		break;
- 	case X86_VENDOR_CENTAUR:
- 		mce_centaur_feature_init(c);
- 		break;
-@@ -1991,12 +1998,14 @@ static void mce_disable_error_reporting(void)
- static void vendor_disable_error_reporting(void)
- {
- 	/*
--	 * Don't clear on Intel or AMD CPUs. Some of these MSRs are socket-wide.
-+	 * Don't clear on Intel or AMD or Hygon CPUs. Some of these MSRs
-+	 * are socket-wide.
- 	 * Disabling them for just a single offlined CPU is bad, since it will
- 	 * inhibit reporting for all shared resources on the socket like the
- 	 * last level cache (LLC), the integrated memory controller (iMC), etc.
- 	 */
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON ||
- 	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
- 		return;
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON) {
+ 		if (msg)
+-			*msg = "not amd";
++			*msg = "not amd or hygon";
+ 		return 0;
+ 	}
+ 
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 4c4f426..1ab7758 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -2711,7 +2711,16 @@ static bool em_syscall_is_enabled(struct x86_emulate_ctxt *ctxt)
+ 	    edx == X86EMUL_CPUID_VENDOR_AMDisbetterI_edx)
+ 		return true;
+ 
+-	/* default: (not Intel, not AMD), apply Intel's stricter rules... */
++	/* Hygon ("HygonGenuine") */
++	if (ebx == X86EMUL_CPUID_VENDOR_HygonGenuine_ebx &&
++	    ecx == X86EMUL_CPUID_VENDOR_HygonGenuine_ecx &&
++	    edx == X86EMUL_CPUID_VENDOR_HygonGenuine_edx)
++		return true;
++
++	/*
++	 * default: (not Intel, not AMD, not Hygon), apply Intel's
++	 * stricter rules...
++	 */
+ 	return false;
+ }
  
 -- 
 2.7.4
