@@ -6,145 +6,134 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EDDC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2CDC46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46EF21A2B
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463C621E5D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:48:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="jY3PlUh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46EF21A2B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cern.ch
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TqEMiEkC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463C621E5D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeHKWWK (ORCPT
+        id S1727554AbeHKWX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 18:22:10 -0400
-Received: from mail-eopbgr30046.outbound.protection.outlook.com ([40.107.3.46]:12640
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727178AbeHKWWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 18:22:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
- s=selector1-cern-ch;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oyQjNw0CAzYwXHDfB0zXfsv/4X70WSZBMlhdGc5GRCU=;
- b=jY3PlUh0huuGAAuavGXnb39hvT+k53TwpYG1Ct9TjkJakcMTJxrPSRlcCiXaFDxALtYY18r6ReT3s652gdBZHs+R0B0c9Nl90dzCcqKptK/Lf4i2Vz9xAPNfQIaz1fZ7uy+LcMSxjdhiGAb/Q/9KT8WhXJdBfxWjh1vKhfTU0Wg=
-Received: from DB6PR0601CA0040.eurprd06.prod.outlook.com (2603:10a6:4:17::26)
- by AM5PR0602MB3235.eurprd06.prod.outlook.com (2603:10a6:206:7::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.21; Sat, 11 Aug
- 2018 17:13:56 +0000
-Received: from VE1EUR02FT019.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e06::205) by DB6PR0601CA0040.outlook.office365.com
- (2603:10a6:4:17::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1038.22 via Frontend
- Transport; Sat, 11 Aug 2018 17:13:56 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.48)
- smtp.mailfrom=cern.ch; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=cern.ch;
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
- VE1EUR02FT019.mail.protection.outlook.com (10.152.12.107) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P256) id
- 15.20.1059.14 via Frontend Transport; Sat, 11 Aug 2018 17:13:55 +0000
-Received: from cernfe05.cern.ch (188.184.36.45) by cernmxgwlb4.cern.ch
- (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 11 Aug
- 2018 19:13:55 +0200
-Received: from harkonnen.localnet (178.196.40.127) by smtp.cern.ch
- (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 11 Aug
- 2018 19:13:55 +0200
-From:   Federico Vaga <federico.vaga@cern.ch>
-To:     <linux-i2c@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, Peter Korsgaard <jacmet@sunsite.dk>
-Subject: Re: i2c:ocores: fixes and polling mechanism
-Date:   Sat, 11 Aug 2018 19:13:54 +0200
-Message-ID: <5011687.103nMUzm2u@harkonnen>
-Organization: CERN
-In-Reply-To: <20180625161303.7991-1-federico.vaga@cern.ch>
-References: <20180625161303.7991-1-federico.vaga@cern.ch>
+        Sat, 11 Aug 2018 18:23:27 -0400
+Received: from sonic311-20.consmr.mail.bf2.yahoo.com ([74.6.131.194]:43331
+        "EHLO sonic311-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727514AbeHKWX0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 18:23:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1534016894; bh=sf4khYezCdxrT+rmqNy8MWwtEJ/vcYtOYusNjA8nknA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=TqEMiEkCy5ofOPn4MVtWVxgz2k5WWxAl4NTlDNu/dCl3FUfrHVxTPDErM9GQDvD1nGEfKc0E1NMN58ZczV3slUU4o9vdNCmjrK9/6nQyUHHppI3+RgxGcHyPWAT5m9TDJnVazd0mqL6XzLEDGIMqF7kVZbTL1nuUQNLbxN4UyHB31Ju/E9nSX78SChYBcGOflMCQK3ZMCRcyoDMaNPkJ8inNcQAwLH2sGqPFrQ9O3+LY77bEjzQcs6Ocxgd8cUMVC+ONulbuFF18jBKd3DnyG9h3V5y9T4u/NFNblGc55nWhNR213r/Fp/NcE1HZyGnUUQgGwrm181cdJPFoMef8Kw==
+X-YMail-OSG: .kpIcTgVM1ma.JQGyJc9NQ2310qDi_5gy1cZ2GWDibZBkvh5hUlwXOJqDL6edWz
+ Rk7XJYmZC8MW_3YTngTECiWqz24npVwPz7dN98iotFB76XvHSjw3VbeiGNN_S3AgMEO7eUTjPJrr
+ 0A412_dH7LCmBQbUOyXAx_DSHF38TsYhZaut8vlzGwbOfYY5YDs4fjzszboeYJSaBH_4o5llKDZk
+ 3tWzYUubO6I3sGV.GRrkytEJoDsm5Hk2irtSYBr0oW7aklnEPlYtlUdVGgVkXIyDAAuuhaorQmKe
+ YF4Yrpw6qzdjHVDw1CXhZsZTcWuZQGpEdsVlM_UHLv283mI51pKrLLTeY50LuXZ6xDSl0_E1LdYq
+ 1YOtOcgqrc4i3Rn4PTIxVfgmSFn_fiXP1avXtsC1YiIxKQLIKqat5a272S.9T5KonMPCONMXGwlf
+ Cy2DbN1B.u4oKj5IEE6NJbqN.HytdV9XSBiHRH6AoUVEIZxHPJn64lEymOwibMeh_A2.8T7S2ImE
+ MSCW9vskHm.KKONJZpLHytg4x0fVESymww2YKKdIik.lCo6nFEVyCqU_tBgpTE85t4wPyMUM4mK.
+ UQ_EPxF6HVAjJgz3Y2JkmTamjyu9kOV9rQ4JYOiB8O69chMPL17vEqkC37z7aAyCJbqSIUfah2bu
+ snR5TJ8Udu.gsqJ62C3Vk_s9avlk8bo00d.DaFYUwUJ1bUt0TT7wnS3jiPpHVUvbyG20Zzu9SChN
+ IrBTey0MS6GAOWC_n_rNSQFAy3.Bp1zn3akgMuYq1wQtnA9BYqxlEmUeEywxE9J57WuAdpllqUGX
+ ysysAg4E3bzxsE.0W_Zjq7kIgv69z4.bAuqCV_J7f_z1ssFSgbIlcJ4WIkPQ0Ijd.HCZ57N6Y4gh
+ 3QxZcQdVPnFv4afRrAvTvJjhELWTu_BY2mVVByysAcYhC3dWSfxGJBOJ.lSRl.3WnubGnr7ptH51
+ du9i0Rcs9iLu3tlKB0U9fF2BY133QXj5slF7F8H2rPiLGOLcCLrIArv9EI8TwTenswmI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Sat, 11 Aug 2018 19:48:14 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp420.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 023c21f71d5c09aba96ed487ecc5ad84;
+          Sat, 11 Aug 2018 17:48:00 +0000 (UTC)
+Subject: Re: BUG: Mount ignores mount options
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <87d0uqpba5.fsf@xmission.com> <20180810151606.GA6515@ZenIV.linux.org.uk>
+ <87pnypiufr.fsf@xmission.com> <20180811014619.GA14368@thunk.org>
+ <8736vlo6ef.fsf@xmission.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <001a1608-d0fa-84c1-9c54-ae36df95fd89@schaufler-ca.com>
+Date:   Sat, 11 Aug 2018 10:47:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Originating-IP: [178.196.40.127]
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(2980300002)(438002)(199004)(189003)(2351001)(305945005)(53546011)(186003)(5660300001)(8676002)(16526019)(23726003)(6116002)(246002)(3846002)(356003)(7736002)(26005)(14444005)(478600001)(230700001)(229853002)(33896004)(47776003)(9686003)(4326008)(74482002)(6916009)(106466001)(7636002)(66066001)(97756001)(336012)(8936002)(486006)(476003)(126002)(33716001)(6246003)(44832011)(76176011)(9576002)(36916002)(50466002)(11346002)(2906002)(956004)(786003)(426003)(46406003)(54906003)(106002)(446003)(86362001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0602MB3235;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cd35e76f-6ffd-40f9-4ff0-08d5ffadd205
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060)(7193020);SRVR:AM5PR0602MB3235;
-X-MS-TrafficTypeDiagnostic: AM5PR0602MB3235:
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0602MB3235;20:oM0VY+tzbMc1IpcuVJ0wg6IQGYuIDIQxJYoTnirwxJrx99JGRdIbgQOib2hNjULDjeuYuRGQbDFvEbXcdulkjSh1g6mkDlSPpGV1VDJZ2TVl7Lp3uEfSMuk7NMW0vxXNQiS9mPLwuUVcrGkBVtpNzOL92UbZzCZmAL8+SPX5ZfG6XMwnRfvIRElZjsgrh/RMQ+NWkQcIoHXdIvI1Ibg7TiVq+LXS29s5gufIvJvaymcsywXLDTMXEWk4A9yxR5qh1utpcoUHq7asfgE1b18l6XvovVQG4WdGHlVVCPjuWvM/956PVLbhsvMN/V9PPRi+vSNXUzz5hVAlmr/ExER0jrYAS0/+j0mDTpZc8vbvhNm7yPI/B1xT+bC90MahZFhf/JXvAbg6l8HlKgeJEvlKaBUyHpC9LwdfydbJouzKogDdIXpl81i8trZJx1KSzZLianFtyVNyMlzePJSqDT1+aHuV3UbUBGw6PWft57txjTYR95IB9E5A/JzfT+p5F/S2;4:EynJ0Zj2eBSSnmoDkXROlY7lCMeA+q8y1Y+HVg+Ui7BoK9GOs57xPxl+mLzVOZBLRmxFHqHVszFpzu5Vhl5Np05OsMYz/gopInpdglTNDZRB6lE+x/4q9Z4VSiTYdMHclXUIuSBCkS+v8jYEi+dPlippAmWRhrynTFtc49g/r+j4iYnrAx4i5f8nPz1ELyMT4etLxjOYrYvXm5g5WY1tBesmKLTTPInePasMKrRQN7P+rF3EB2S2BXJt+TTyWM54B3BJSCCtGvAXtrpLcjOjgg==
-X-Microsoft-Antispam-PRVS: <AM5PR0602MB3235CA3C348D0A4079B16E52EF3B0@AM5PR0602MB3235.eurprd06.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0602MB3235;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0602MB3235;
-X-Forefront-PRVS: 0761DE1EDD
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0602MB3235;23:MK+HbKdSpYjMcohB6TTDbqm9FImxyM4dG9XSqeR?=
- =?us-ascii?Q?d4ewSfXsWklbH404uxEPWKokKVZCmN+EKYtIdcZemwffNh0GJknWX/VDEOEn?=
- =?us-ascii?Q?mAhYPzF4i0aR316kVAQlsSjnPpxFfwDqQnTG8qNeJ3mF9TqUEBQBj4Sdr9jY?=
- =?us-ascii?Q?jBG7F+ONR7irPov59PxdM91J4v4w40454X9NjBaYvk6YMHvm8xdtm0naSmti?=
- =?us-ascii?Q?3V3MkcKYk6tW4M7HXudGnrW9hm4szHtrrohoZ057mWDHwLc0qM3Gucrxq0Ee?=
- =?us-ascii?Q?yqfjT94d488dza9VgdPf2dfnYOc9YyTCINZn3S/0j3ew2Su+9xm9JNlztrRH?=
- =?us-ascii?Q?g11Nm6Hr/imTZsPcm1ach9CLgrpoMlx/ZnrLBzWLWK+S2Q2yC6FI3YsdjHeN?=
- =?us-ascii?Q?avmRmhKnCaxiUe5uQWntya9SSLDXcback49Eqp8et493v4oeiW9eLzjDWNAS?=
- =?us-ascii?Q?2pjgOtvOMwEE8J7C60DxH8YPTDqbqzgUI6i0CRLUrtj9Gv2mkIqRozLDWa0f?=
- =?us-ascii?Q?ajvMpSgzNsGdNfjoXItfnilitPEMfGo4bNvg//kywW2kvK4PUn4l8jKUSaFy?=
- =?us-ascii?Q?w/Z3xLvmg5aAW4umYiPIgage05tpsDvbZXfJ+Xx8tc6uKCUIgDD8bvlO4s6/?=
- =?us-ascii?Q?8CgUE3CQ3Ks3awbc2GtIZIlJgi1g1A4iI3/3jh8Y7HN6tRj3p1VhiwU5lcvL?=
- =?us-ascii?Q?4QL/RhgGv9+kzbRbbOwsZsPXCE/usd70sKDN3WHITV9WsaNNSSKwirGSasMN?=
- =?us-ascii?Q?Yl6Osc0tESP8ImOZZ753IsjmQqatVVptfnM6u9Cbmx4JOoFqwhdHR0FFK6l3?=
- =?us-ascii?Q?hgcAAErYFUQlbqrMmXvAoAnm8bmJNPZ4JG5TvdBKdw7SYhahxGquceHwg9u/?=
- =?us-ascii?Q?Z6iAYpzypkFgpOTgYwBGAru+MpUGE6qPQTWuJvheBO4T3W7xf1y6YGzR5gMa?=
- =?us-ascii?Q?Xr06T4mowhhyht93P1EtPZcE0LZpJC3oc2nd4AMVrbJrL+rfqCrqPBqH4474?=
- =?us-ascii?Q?0IGM/N2Id20PcjZlbri6uiJkByrJONZ3+2es5nF7Mg7XyDEcapqvLcVsWbzT?=
- =?us-ascii?Q?41/qWpI+zmqNM1NBV9Jv2i6tu6TfAECYejNJ4NFrgppypmXbPUDkaI4H+V5M?=
- =?us-ascii?Q?P9Fsc4uUH6l6A/pKb+S6YtBJnjfFL3Vhxc41S/fhpEgszGblKEqbkhQlmB38?=
- =?us-ascii?Q?LGtTTOjpZJfETNcp1Y185mtF86AQ8mihK0NyX/aySpJ+YzfOITFlZjBz/2N+?=
- =?us-ascii?Q?ESywA6H8/SbN/hhVFPpBuPLTn3YzeHY49VxUNd4a7aOioWCYErv1eKmHWpRI?=
- =?us-ascii?Q?V5A=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Xv9T+eSnbEnMBprx2AM7Y5ya+vDD94zu7h0ztIsv0g9HNxcWlYaaOMd0tg7krl6CjiazV3x0ash5ICygt8ZGVxUVpWNt09uqTNa2WA1segffrMMkpKOcfIJIgMMa8NvrhtvD9gywOpedEGbFqrZHhhpeHp3svJV2RBzQYrdpNeMJhS55e1FB2Fh4+bTC6EE5sJ2M3j/Gvh/n2sVt3VD26XjfLGwLnmFaDtpREMdtSK02K+mPybcT4nyqNYoPe/DYWVoYnnzmLwOM6vVM4HLCVVfsUSQg83GlsUXPgqw+IPxrdSrJRweSyHfeaEJM5e9y0q1COyAgyuNpQKkOljZLhKulneZZaS7FP7hLgMzS8OQ=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0602MB3235;6:SdabZkG4B55JYsO/jlcm6kXDEemVMRTycvVkXdDs0v2sNFUd+tv2X/XwZIN9bxcWuL/aLVQ7iW+iHvH5jXMt5CE756NvxSg49d6Sc4OwPXslmXtc4tXX9KTjmp5RsLTSJp3ynk0d+ZopyPEMfa90oDFfsyoCvEimZzt/D952ZGQwZX7qupVJq11MLazNfenIoOVvaUx5kDkdPhtXz/+tzPgzXc4rvjfK1QIjVWUvPu73Ijh11N7NOSrcQ7mYl0r6uWDkEcfwL8iukmCNYyT3AfwyrrCEJXlUs5sraZKANNQlp9MM8VdG37OzUnffgSSVVTzySzfaCIJjvuXp8aP7AoAMMwJWDvDpLMjMcQpXJslomQzY1i3R+7ie7earEubGIO2Fe5pcFz5nFC/Pw91P/9Wi6KCxsFX+KGb/YUzlvBlP6AVijrKVYraJQQe1EsgZGjisUi6gcfkx5QxJsCeLRA==;5:TpJu1X+M23FsLq5lV2s+yiohl2fO0YqB5fK3uV6cd0fvELCjexxO8HCV8GKXZN21IDTSlA0wG1zvgyPnfAeosaoFegdwc7bPGzaWCbQvyAbVjNyIgHqKHeZ+Y5VVZ6WhMWFMElfR1MWO5WeO3CpNlk0MESmHqtce8yI4mXqNjEk=;7:DLUDWcanVVsTWicWw2aquWqL7cl48z2GKCwdsAxhkj713iIT6COKXQn2QdlODyNIYpNq6SSuvGsAazM2lo9cssYRTIy7YN59nalXZWuZ0Sa7Z352BWjee9FEAo5GZDejMyv8h8FnS4Kr+zIOXALgX82jPO9gTmfIJwBm0agkFH23sxyRv0tkqtXqR5vRNMmvFl/JHX4wMZb6FRI3NXqubzCwbYfe8h3KZ0nQGY9wRwvpfOxletE4hx0Zh0xbiwei
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2018 17:13:55.8125
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd35e76f-6ffd-40f9-4ff0-08d5ffadd205
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0602MB3235
+In-Reply-To: <8736vlo6ef.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 8/10/2018 9:48 PM, Eric W. Biederman wrote:
+> "Theodore Y. Ts'o" <tytso@mit.edu> writes:
+>
+>> On Fri, Aug 10, 2018 at 08:05:44PM -0500, Eric W. Biederman wrote:
+>>> My complaint is that the current implemented behavior of practically
+>>> every filesystem in the kernel, is that it will ignore mount options
+>>> when mounted a second time.
+>> The file system is ***not*** mounted a second time.
+>>
+>> The design bug is that we allow bind mounts to be specified via a
+>> block device.  A bind mount is not "a second mount" of the file
+>> system.  Bind mounts != mounts.
+>>
+>> I had assumed we had allowed bind mounts to be specified via the block
+>> device because of container use cases.  If the container folks don't
+>> want it, I would be pushing to simply not allow bind mounts to be
+>> specified via block device at all.
+> No it is not a container thing.
 
-sorry to disturb you all but after one month and a half I never received 
-any comment about this patch set and I fear it ended up in a forgotten 
-corner. I would like to know if someone is considering it or not.
+	Inigo: "Hello. My name is Inigo Montoya. You killed my father. Prepare to die."
+	Rugen: "Stop saying that!"
 
-Thanks :)
+	Eric:  "It is not a container thing."
+	Casey: "Stop saying that!"
 
-On Monday, June 25, 2018 6:13:00 PM CEST Federico Vaga wrote:
-> The first two patches fix what I believe are bugs.
-> 
-> The third patch add a polling mechanism for those systems where
-> interrupts are not available.
-> 
-> All these patches have been tested on a system without interrupt, this
-> means that I used my third patch to validate also the other two.
-> I would be nice if someone can run verify this also on other system,
-> perhaps with interrupts. If you consider it a useful information, I'm not
-> using devicetree for this installation.
+Yes, Virginia, it *is* a container thing. Your container manager expects all
+filesystems to be server-client based. It makes bad assumptions. It is doing
+things that we would fire a sysadmin for doing. Don't blame the filesystems
+for behaving as documented. Export the filesystem using NFS and mount them
+using the NFS mechanism, which is designed to do what you're asking for. The
+problem is not in the mount mechanism, it's in the way you want to abuse it.
 
+>> The only reason why we should support it is because we don't want to
+>> break scripts; and if the goal is not to break scripts, then we have
+>> to keep to the current semantics, however broken you think it is.
+> But we don't have to support returning filesystems with mismatched mount
+> options in the new fsopen api.   That is my concern.  Confusing
+> userspace this way has been shown to be harmful let's not keep doing it.
 
--- 
-Federico Vaga
-[BE-CO-HT]
+It's not "userspace" that's confused. Developers of userspace code
+implementing system behavior (e.g. systemd, container managers) need to
+understand how the system works. The container manager needs to know
+that it can't mount filesystems with different options. That's the kind
+of thing "managers" do. If it has to go to the mount table and check
+on how the device is already mounted before doing a mount, so be it.
 
+Unless, of course, you want the concept of "container" introduced into
+the kernel. There's a whole lot of feldercarb that container managers
+have to deal with that would be lots easier to deal with down below.
+I'm not advocating that, and I understand the arguments against it.
+On the other hand, if you want a platform that is optimized for a
+container environment ...
+
+> Eric
 
