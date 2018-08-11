@@ -2,204 +2,193 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA46BC46470
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C655C46473
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70B43217AE
+	by mail.kernel.org (Postfix) with ESMTP id D4846217AE
 	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B43217AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4846217AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbeHKQYe (ORCPT
+        id S1727993AbeHKQYn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 12:24:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727851AbeHKQYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 12:24:34 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6554421A2B;
-        Sat, 11 Aug 2018 13:50:18 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1foUHZ-0006H9-2L; Sat, 11 Aug 2018 09:50:17 -0400
-Message-Id: <20180811135016.978955328@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Sat, 11 Aug 2018 09:50:00 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 32/34] tracing: Fix synchronizing to event changes with
- tracepoint_synchronize_unregister()
-References: <20180811134928.034373761@goodmis.org>
+        Sat, 11 Aug 2018 12:24:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41068 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbeHKQYn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 12:24:43 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB7EC25A;
+        Sat, 11 Aug 2018 13:50:25 +0000 (UTC)
+Date:   Sat, 11 Aug 2018 15:50:21 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
+Cc:     stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-scsi@molgen.mpg.de,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org
+Subject: Re: aacraid: Regression in 4.14.56 with *genirq/affinity: assign
+ vectors to all possible CPUs*
+Message-ID: <20180811135021.GA2186@kroah.com>
+References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
+ <20180810133628.GA4131@kroah.com>
+ <29b5f3ce-2c23-bf5e-fe50-29bedd4833e1@molgen.mpg.de>
+ <20180810155511.GA17092@kroah.com>
+ <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Sat, Aug 11, 2018 at 10:14:18AM +0200, Paul Menzel wrote:
+> Dear Greg,
+> 
+> 
+> Am 10.08.2018 um 17:55 schrieb Greg Kroah-Hartman:
+> > On Fri, Aug 10, 2018 at 04:11:23PM +0200, Paul Menzel wrote:
+> 
+> > > On 08/10/18 15:36, Greg Kroah-Hartman wrote:
+> > > > On Fri, Aug 10, 2018 at 03:21:52PM +0200, Paul Menzel wrote:
+> > > > > Dear Greg,
+> > > > > 
+> > > > > 
+> > > > > Commit ef86f3a7 (genirq/affinity: assign vectors to all possible CPUs) added
+> > > > > for Linux 4.14.56 causes the aacraid module to not detect the attached devices
+> > > > > anymore on a Dell PowerEdge R720 with two six core 24x E5-2630 @ 2.30GHz.
+> > > > > 
+> > > > > ```
+> > > > > $ dmesg | grep raid
+> > > > > [    0.269768] raid6: sse2x1   gen()  7179 MB/s
+> > > > > [    0.290069] raid6: sse2x1   xor()  5636 MB/s
+> > > > > [    0.311068] raid6: sse2x2   gen()  9160 MB/s
+> > > > > [    0.332076] raid6: sse2x2   xor()  6375 MB/s
+> > > > > [    0.353075] raid6: sse2x4   gen() 11164 MB/s
+> > > > > [    0.374064] raid6: sse2x4   xor()  7429 MB/s
+> > > > > [    0.379001] raid6: using algorithm sse2x4 gen() 11164 MB/s
+> > > > > [    0.386001] raid6: .... xor() 7429 MB/s, rmw enabled
+> > > > > [    0.391008] raid6: using ssse3x2 recovery algorithm
+> > > > > [    3.559682] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 EST 2006)
+> > > > > [    3.570061] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 2006)
+> > > > > [   10.725767] Adaptec aacraid driver 1.2.1[50834]-custom
+> > > > > [   10.731724] aacraid 0000:04:00.0: can't disable ASPM; OS doesn't have ASPM control
+> > > > > [   10.743295] aacraid: Comm Interface type3 enabled
+> > > > > $ lspci -nn | grep Adaptec
+> > > > > 04:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
+> > > > > 42:00.0 Serial Attached SCSI controller [0107]: Adaptec Smart Storage PQI 12G SAS/PCIe 3 [9005:028f] (rev 01)
+> > > > > ```
+> > > > > 
+> > > > > But, it still works with a Dell PowerEdge R715 with two eight core AMD
+> > > > > Opteron 6136, the card below.
+> > > > > 
+> > > > > ```
+> > > > > $ lspci -nn | grep Adaptec
+> > > > > 22:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
+> > > > > ```
+> > > > > 
+> > > > > Reverting the commit fixes the issue.
+> > > > > 
+> > > > > commit ef86f3a72adb8a7931f67335560740a7ad696d1d
+> > > > > Author: Christoph Hellwig <hch@lst.de>
+> > > > > Date:   Fri Jan 12 10:53:05 2018 +0800
+> > > > > 
+> > > > >      genirq/affinity: assign vectors to all possible CPUs
+> > > > >      commit 84676c1f21e8ff54befe985f4f14dc1edc10046b upstream.
+> > > > >      Currently we assign managed interrupt vectors to all present CPUs.  This
+> > > > >      works fine for systems were we only online/offline CPUs.  But in case of
+> > > > >      systems that support physical CPU hotplug (or the virtualized version of
+> > > > >      it) this means the additional CPUs covered for in the ACPI tables or on
+> > > > >      the command line are not catered for.  To fix this we'd either need to
+> > > > >      introduce new hotplug CPU states just for this case, or we can start
+> > > > >      assining vectors to possible but not present CPUs.
+> > > > >      Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> > > > >      Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> > > > >      Tested-by: Stefan Haberland <sth@linux.vnet.ibm.com>
+> > > > >      Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU")
+> > > > >      Cc: linux-kernel@vger.kernel.org
+> > > > >      Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > >      Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > > >      Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > > > >      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > 
+> > > > > The problem doesn’t happen with Linux 4.17.11, so there are commits in
+> > > > > Linux master fixing this. Unfortunately, my attempts to find out failed.
+> > > > > 
+> > > > > I was able to cherry-pick the three commits below on top of 4.14.62,
+> > > > > but the problem persists.
+> > > > > 
+> > > > > 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
+> > > > > 355d7ecdea35 scsi: hpsa: fix selection of reply queue
+> > > > > e944e9615741 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+> > > > > 
+> > > > > Trying to cherry-pick the commits below, referencing the commit
+> > > > > in question, gave conflicts.
+> > > > > 
+> > > > > 1. adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
+> > > > > 2. d3056812e7df genirq/affinity: Spread irq vectors among present CPUs as far as possible
+> > > > > 
+> > > > > To avoid further trial and error with the server with a slow firmware,
+> > > > > do you know what commits should fix the issue?
+> > > > 
+> > > > Look at the email on the stable mailing list:
+> > > > 	Subject: Re: Fix for 84676c1f (b5b6e8c8) missing in 4.14.y
+> > > > it should help you out here.
+> > > 
+> > > Ah, I didn’t see that [1] yet. Also I can’t find the original message, and a
+> > > way to reply to that thread. Therefore, here is my reply.
+> > > 
+> > > > Can you try the patches listed there?
+> > > 
+> > > I tried some of these already without success.
+> > > 
+> > > b5b6e8c8d3b4 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+> > > 2f31115e940c scsi: core: introduce force_blk_mq
+> > > adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
+> > > 
+> > > The commit above is already in v4.14.56.
+> > > 
+> > > 8b834bff1b73 scsi: hpsa: fix selection of reply queue
+> > > 
+> > > The problem persists.
+> > > 
+> > > The problem also persists with the state below.
+> > > 
+> > > 3528f73a4e5d scsi: core: introduce force_blk_mq
+> > > 16dc4d8215f3 scsi: hpsa: fix selection of reply queue
+> > > f0a7ab12232d scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+> > > 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
+> > > 1aa1166eface (tag: v4.14.62, stable/linux-4.14.y) Linux 4.14.62
+> > > 
+> > > So, some more commits are necessary.
+> > 
+> > Or I revert the original patch here, and the follow-on ones that were
+> > added to "fix" this issue.  I think that might be the better thing
+> > overall here, right?  Have you tried that?
+> 
+> Yes, reverting the commit fixed the issue for us. If Christoph or Ming do
+> not have another suggestion for a commit, that would be the way to go.
 
-Now that some trace events can be protected by srcu_read_lock(tracepoint_srcu),
-we need to make sure all locations that depend on this are also protected.
-There were many places that did a synchronize_sched() thinking that it was
-enough to protect againts access to trace events. This use to be the case,
-but now that we use SRCU for _rcuidle() trace events, they may not be
-protected by synchronize_sched(), as they may be called in paths that RCU is
-not watching for preempt disable.
+Christoph or Ming, any ideas here?
 
-Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events.c         |  8 ++++----
- kernel/trace/trace_events_filter.c  | 15 ++++++++-------
- kernel/trace/trace_events_hist.c    |  2 +-
- kernel/trace/trace_events_trigger.c |  6 ++++--
- 4 files changed, 17 insertions(+), 14 deletions(-)
+In looking at the aacraid code, I don't see anywhere that this is using
+a specific cpu number for queues or anything, but I could be wrong.
+Ideally this should also be failing in 4.17 or 4.18-rc right now as well
+as I don't see anything that would have "fixed" this recently.  Unless
+I'm missing something here?
 
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 7b508ce8ac44..808cf29febe2 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -636,7 +636,7 @@ static void __ftrace_clear_event_pids(struct trace_array *tr)
- 	rcu_assign_pointer(tr->filtered_pids, NULL);
- 
- 	/* Wait till all users are no longer using pid filtering */
--	synchronize_sched();
-+	tracepoint_synchronize_unregister();
- 
- 	trace_free_pid_list(pid_list);
- }
-@@ -1622,7 +1622,7 @@ ftrace_event_pid_write(struct file *filp, const char __user *ubuf,
- 	}
- 
- 	if (filtered_pids) {
--		synchronize_sched();
-+		tracepoint_synchronize_unregister();
- 		trace_free_pid_list(filtered_pids);
- 	} else if (pid_list) {
- 		/*
-@@ -3036,8 +3036,8 @@ int event_trace_del_tracer(struct trace_array *tr)
- 	/* Disable any running events */
- 	__ftrace_set_clr_event_nolock(tr, NULL, NULL, NULL, 0);
- 
--	/* Access to events are within rcu_read_lock_sched() */
--	synchronize_sched();
-+	/* Make sure no more events are being executed */
-+	tracepoint_synchronize_unregister();
- 
- 	down_write(&trace_event_sem);
- 	__trace_remove_event_dirs(tr);
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 893a206bcba4..184c7685d5ea 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -899,7 +899,8 @@ int filter_match_preds(struct event_filter *filter, void *rec)
- 	if (!filter)
- 		return 1;
- 
--	prog = rcu_dereference_sched(filter->prog);
-+	/* Protected by either SRCU(tracepoint_srcu) or preempt_disable */
-+	prog = rcu_dereference_raw(filter->prog);
- 	if (!prog)
- 		return 1;
- 
-@@ -1626,10 +1627,10 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
- 
- 	/*
- 	 * The calls can still be using the old filters.
--	 * Do a synchronize_sched() to ensure all calls are
-+	 * Do a synchronize_sched() and to ensure all calls are
- 	 * done with them before we free them.
- 	 */
--	synchronize_sched();
-+	tracepoint_synchronize_unregister();
- 	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
- 		__free_filter(filter_item->filter);
- 		list_del(&filter_item->list);
-@@ -1648,7 +1649,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
- 	kfree(filter);
- 	/* If any call succeeded, we still need to sync */
- 	if (!fail)
--		synchronize_sched();
-+		tracepoint_synchronize_unregister();
- 	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
- 		__free_filter(filter_item->filter);
- 		list_del(&filter_item->list);
-@@ -1790,7 +1791,7 @@ int apply_event_filter(struct trace_event_file *file, char *filter_string)
- 		event_clear_filter(file);
- 
- 		/* Make sure the filter is not being used */
--		synchronize_sched();
-+		tracepoint_synchronize_unregister();
- 		__free_filter(filter);
- 
- 		return 0;
-@@ -1817,7 +1818,7 @@ int apply_event_filter(struct trace_event_file *file, char *filter_string)
- 
- 		if (tmp) {
- 			/* Make sure the call is done with the filter */
--			synchronize_sched();
-+			tracepoint_synchronize_unregister();
- 			__free_filter(tmp);
- 		}
- 	}
-@@ -1847,7 +1848,7 @@ int apply_subsystem_event_filter(struct trace_subsystem_dir *dir,
- 		filter = system->filter;
- 		system->filter = NULL;
- 		/* Ensure all filters are no longer used */
--		synchronize_sched();
-+		tracepoint_synchronize_unregister();
- 		filter_free_subsystem_filters(dir, tr);
- 		__free_filter(filter);
- 		goto out_unlock;
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index aae18af94c94..c522b51d9909 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -5141,7 +5141,7 @@ static void hist_clear(struct event_trigger_data *data)
- 	if (data->name)
- 		pause_named_trigger(data);
- 
--	synchronize_sched();
-+	tracepoint_synchronize_unregister();
- 
- 	tracing_map_clear(hist_data->map);
- 
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 58d21fd52932..750044ef15e8 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -34,7 +34,9 @@ void trigger_data_free(struct event_trigger_data *data)
- 	if (data->cmd_ops->set_filter)
- 		data->cmd_ops->set_filter(NULL, data, NULL);
- 
--	synchronize_sched(); /* make sure current triggers exit before free */
-+	/* make sure current triggers exit before free */
-+	tracepoint_synchronize_unregister();
-+
- 	kfree(data);
- }
- 
-@@ -752,7 +754,7 @@ int set_trigger_filter(char *filter_str,
- 
- 	if (tmp) {
- 		/* Make sure the call is done with the filter */
--		synchronize_sched();
-+		tracepoint_synchronize_unregister();
- 		free_event_filter(tmp);
- 	}
- 
--- 
-2.18.0
+thanks,
 
-
+greg k-h
