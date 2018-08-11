@@ -2,106 +2,141 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D044C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26664C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 05:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBD72077B
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:48:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBD72077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id B43AC223E6
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 05:02:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvciDqjc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43AC223E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeHKHVU (ORCPT
+        id S1727289AbeHKHfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 03:21:20 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:40749 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbeHKHVU (ORCPT
+        Sat, 11 Aug 2018 03:35:06 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45754 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbeHKHfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 03:21:20 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1foLpF-0001HY-1G; Fri, 10 Aug 2018 22:48:29 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1foLpE-0007vZ-Fj; Fri, 10 Aug 2018 22:48:28 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        <87d0uqpba5.fsf@xmission.com>
-        <20180810151606.GA6515@ZenIV.linux.org.uk>
-        <87pnypiufr.fsf@xmission.com> <20180811014619.GA14368@thunk.org>
-Date:   Fri, 10 Aug 2018 23:48:24 -0500
-In-Reply-To: <20180811014619.GA14368@thunk.org> (Theodore Y. Ts'o's message of
-        "Fri, 10 Aug 2018 21:46:19 -0400")
-Message-ID: <8736vlo6ef.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sat, 11 Aug 2018 03:35:06 -0400
+Received: by mail-ua1-f66.google.com with SMTP id k8-v6so4086569uaq.12;
+        Fri, 10 Aug 2018 22:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZC8+1yclx5WDaSPytBCKjdTzkJ9PyCnM2cGCx68V9F8=;
+        b=SvciDqjcf/LasIuocpLlDc6+UH+0MkbdhUkqTPjZfA0lv1fTr6v+3DCH6KvmEpvZsR
+         N7Ff62udRQPezz0fzsfRaOoIaPI7EOnyPFJYvhVsYstTSoX4bajSM+6KaBTczRlUZ+Xp
+         wdhpXz97yeTVHeH7naiYfwxpbBGqERwpk+oXinCwwmGXOPzxVYD5B47CSpGgy6zw/69V
+         kAGOJGZLjk6ScN4dD1m70N1HCxH5otiOFlOECHqm0G7EjtZqJR0aKT7Yvjzhd48ihBYK
+         RdH3punV7Uv3QgC5qlm4NxC6JHnzHHGmGNd6cP1kUgkUOCQJUllBI9xVefrHA6rwmn3N
+         Saaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZC8+1yclx5WDaSPytBCKjdTzkJ9PyCnM2cGCx68V9F8=;
+        b=YI+sr3cZoe8KlScRsNf1ZuRH1uGuFpmxP86h4selC1r/mleX+zqHehGeLHSzYZHsfz
+         0jJoF269I6idqyHSa2YY9T19KJrWkFODrS53acrLitbqankJ4+R70731NtHPiK1pfRWj
+         gUY4fs4O+504kfxlu1W21xAU2BGjAUZclwsUMEI/s4pqO0tsH1tJdCC8hNe3tvJFOkbx
+         nTfKSBXfEMpNx7OSiTK14L8XrynZ+hxTYN3rPJAHLigpvrreqD2ZmfIvUBTk8Jpwu1TY
+         kN+kfl4fwK4rQoQvd1bhte0LZkh4Tn1vqV6lCZpTKmmIRVgNNWTY88ryIB+kuzFY3bBL
+         MEEA==
+X-Gm-Message-State: AOUpUlGozgSHhzblPzvO4xwPQzJuDhur7d9oF29m8hPKXPtoqS80rHhP
+        hQ50W0Ch3LofT73XZdTAJ7nuVKfpaiIyZUwDZZY=
+X-Google-Smtp-Source: AA+uWPzDjibaRT8H0rjI8nAKsh22zUNwbaDcaOxzKJgYRqeklM3kxNALHud/1DNKGowi2i2sw5EhU+2vd8wEe7Wueyo=
+X-Received: by 2002:ab0:1c1a:: with SMTP id a26-v6mr6228724uaj.142.1533963733777;
+ Fri, 10 Aug 2018 22:02:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1foLpE-0007vZ-Fj;;;mid=<8736vlo6ef.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/7iC9C0vySju5oNK9rKvy8DgkmTU/ux0Q=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: BUG: Mount ignores mount options
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Received: by 2002:a67:7f52:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 22:01:33
+ -0700 (PDT)
+In-Reply-To: <4f9a083d-1498-8cfb-b54c-614abccb193e@gmail.com>
+References: <65830741-bf35-4d32-e365-c32fc17c25cb@gmail.com>
+ <97aa2e6b-1863-f123-af2c-24a2e6333ba5@iogearbox.net> <4f9a083d-1498-8cfb-b54c-614abccb193e@gmail.com>
+From:   Y Song <ys114321@gmail.com>
+Date:   Fri, 10 Aug 2018 22:01:33 -0700
+Message-ID: <CAH3MdRWBrEfapBMkK9sOa-e_bBZzdkcxhioEHJoZ31hF6XXuxQ@mail.gmail.com>
+Subject: Re: [BUG] bpf: syscall: a possible sleep-in-atomic-context bug in map_update_elem()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Theodore Y. Ts'o" <tytso@mit.edu> writes:
-
-> On Fri, Aug 10, 2018 at 08:05:44PM -0500, Eric W. Biederman wrote:
->> 
->> My complaint is that the current implemented behavior of practically
->> every filesystem in the kernel, is that it will ignore mount options
->> when mounted a second time.
+On Fri, Aug 10, 2018 at 6:57 PM, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 >
-> The file system is ***not*** mounted a second time.
 >
-> The design bug is that we allow bind mounts to be specified via a
-> block device.  A bind mount is not "a second mount" of the file
-> system.  Bind mounts != mounts.
+> On 2018/8/10 22:22, Daniel Borkmann wrote:
+>>
+>> On 08/10/2018 04:07 PM, Jia-Ju Bai wrote:
+>>>
+>>> The kernel may sleep with holding a rcu read lock.
+>>>
+>>> The function call paths (from bottom to top) in Linux-4.16 are:
+>>>
+>>> [FUNC] kmalloc(GFP_KERNEL)
+>>> kernel/kthread.c, 283: kmalloc in __kthread_create_on_node
+>>> kernel/kthread.c, 365: __kthread_create_on_node in kthread_create_on_node
+>>> kernel/bpf/cpumap.c, 368: kthread_create_on_node in __cpu_map_entry_alloc
+>>> kernel/bpf/cpumap.c, 490: __cpu_map_entry_alloc in cpu_map_update_elem
+>>> kernel/bpf/syscall.c, 724: [FUNC_PTR]cpu_map_update_elem in
+>>> map_update_elem
+>>> kernel/bpf/syscall.c, 723: rcu_read_lock in map_update_elem
+>>>
+>>> Note that [FUNC_PTR] means a function pointer call is used.
+>>>
+>>> I do not find a good way to fix it, so I only report.
+>>> This is found by my static analysis tool (DSAC).
+
+Maybe your static analysis tool have false positives in this case?
+
+>>
+>> Thanks for the report Jia-Ju! In the map_update_elem() from syscall
+>> path there's a check map->map_type == BPF_MAP_TYPE_CPUMAP, where we
+>> call the cpumap's map->ops->map_update_elem() while /not/ being under
+>> rcu_read_lock() as in other cases, so looks okay to me. Could you point
+>> out the case for being under rcu_read_lock() more specifically which
+>> the tool found?
 >
-> I had assumed we had allowed bind mounts to be specified via the block
-> device because of container use cases.  If the container folks don't
-> want it, I would be pushing to simply not allow bind mounts to be
-> specified via block device at all.
+>
+> Thanks for your reply :)
+> My tool cannot accurately track the case of map->map_type at present...
+>
+> According to my code review, there is a indeed check on line 697 in
+> Linux-4.16:
+>     else if (map->map_type == BPF_MAP_TYPE_CPUMAP) {
+>         err = map->ops->map_update_elem(map, key, value, attr->flags);
+>         goto out;
+>     }
+> But there is a call to map->ops->map_update_elem() that is under
+> rcu_read_lock on line 724:
+>         rcu_read_lock();
+>         err = map->ops->map_update_elem(map, key, value, attr->flags);
+>         rcu_read_unlock();
+>
+> So I think if map->map_type is not equal to BPF_MAP_TYPE_CPUMAP,
+> map->ops->map_update_elem() can still be called under rcu_read_lock, is it
+> right?
 
-No it is not a container thing.
+map->ops->map_update_elem() can be called under rcu_read_lock(), but
+since it is not type cpumap, the function should not be cpu_map_update_elem().
+Could you double check your static analysis tool?
 
-> The only reason why we should support it is because we don't want to
-> break scripts; and if the goal is not to break scripts, then we have
-> to keep to the current semantics, however broken you think it is.
-
-But we don't have to support returning filesystems with mismatched mount
-options in the new fsopen api.   That is my concern.  Confusing
-userspace this way has been shown to be harmful let's not keep doing it.
-
-Eric
-
+>
+>
+> Best wishes,
+> Jia-Ju Bai
