@@ -2,75 +2,57 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EBEC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 07:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455CDC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 07:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC51D223E6
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 07:11:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC51D223E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 00780223E6
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 07:15:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00780223E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbeHKJoZ (ORCPT
+        id S1727304AbeHKJtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 05:44:25 -0400
-Received: from nautica.notk.org ([91.121.71.147]:53973 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbeHKJoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 05:44:25 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id EA312C009; Sat, 11 Aug 2018 09:11:10 +0200 (CEST)
-From:   Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
-        linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        "Ronald G. Minnich" <rminnich@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>
-Subject: [PATCH] 9p: Remove Ron Minnich from MAINTAINERS
-Date:   Sat, 11 Aug 2018 09:10:53 +0200
-Message-Id: <1533971453-24314-1-git-send-email-asmadeus@codewreck.org>
-X-Mailer: git-send-email 1.7.10.4
-In-Reply-To: <1533869305-29325-1-git-send-email-asmadeus@codewreck.org>
-References: <1533869305-29325-1-git-send-email-asmadeus@codewreck.org>
-To:     unlisted-recipients:; (no To-header on input)
+        Sat, 11 Aug 2018 05:49:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58844 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbeHKJtJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 05:49:09 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0420BBF;
+        Sat, 11 Aug 2018 07:15:54 +0000 (UTC)
+Date:   Sat, 11 Aug 2018 09:15:51 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sodagudi Prasad <psodagud@codeaurora.org>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
+        andreyknvl@google.com, keescook@chromium.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: KASAN errors from unwind_frame
+Message-ID: <20180811071551.GA25283@kroah.com>
+References: <e296f7e70a0d0e61c94337bf334e80c2@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e296f7e70a0d0e61c94337bf334e80c2@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+On Fri, Aug 10, 2018 at 07:29:30PM -0700, Sodagudi Prasad wrote:
+> Hi All,
+> 
+> I have observed following KASAN error with 4.14.56 kernel.
+> Can you please copy change-[1](kasan: add no_sanitize attribute for clang
+> builds) into stable kernels?
 
-Ron Minnich has left Sandia in 2011, and has not been involved in any
-9p commit in the recent years.
+Applied to 4.14 and 4.9 now, thanks.
 
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Ron Minnich <rminnich@sandia.gov>
-Cc: Ronald G. Minnich <rminnich@gmail.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
----
-Thanks for agreeing Ron.
-
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 15116e6dff3a..09c2a6c0fb0c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -199,7 +199,6 @@ F:	drivers/net/ethernet/8390/
- 
- 9P FILE SYSTEM
- M:	Eric Van Hensbergen <ericvh@gmail.com>
--M:	Ron Minnich <rminnich@sandia.gov>
- M:	Latchesar Ionkov <lucho@ionkov.net>
- M:	Dominique Martinet <asmadeus@codewreck.org>
- L:	v9fs-developer@lists.sourceforge.net
--- 
-2.17.1
-
+greg k-h
