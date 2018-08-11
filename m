@@ -3,98 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5397DC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5086C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23CB21A08
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23CB21A08
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id 308A321A00
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308A321A00
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeHKXCG (ORCPT
+        id S1727570AbeHKXUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 19:02:06 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:47723 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbeHKXCG (ORCPT
+        Sat, 11 Aug 2018 19:20:53 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:47078 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeHKXUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 19:02:06 -0400
-Received: from [IPv6:2003:e9:d72e:f37f:3252:cbff:fe54:190f] (p200300E9D72EF37F3252CBFFFE54190F.dip0.t-ipconnect.de [IPv6:2003:e9:d72e:f37f:3252:cbff:fe54:190f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 9499FC85D4;
-        Sat, 11 Aug 2018 20:30:30 +0200 (CEST)
-Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc:     Andreas Faerber <afaerber@suse.de>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        Alexander Graf <agraf@suse.de>, mkubecek@suse.cz,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        pieter.robyns@uhasselt.be, Hasnain Virk <Hasnain.Virk@arm.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
-        Xue Liu <liuxuenetmail@gmail.com>
-References: <20180701110804.32415-1-afaerber@suse.de>
- <CAC=mGzgUCopz2xTOA0R-WD8a1DOaOOUn=YpfdMiJ33y3hnh6kg@mail.gmail.com>
- <92ee4016-1da9-826b-3674-b2d604a64848@suse.de>
- <20180808213640.10a1d76f@alans-desktop>
- <a70e9715-beac-d9a8-145e-de00175e56fa@suse.de>
- <20180809125939.39ac2cc9@alans-desktop>
- <CAC=mGzjn4Kc-q9NFwX6NhU4V_thnzBP8SHtFQKyRbpSKR=yx3w@mail.gmail.com>
- <20180810165711.59bf26f7@alans-desktop>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <e703bd38-f45d-6dda-b0e3-404598fd4bab@datenfreihafen.org>
-Date:   Sat, 11 Aug 2018 20:30:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180810165711.59bf26f7@alans-desktop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sat, 11 Aug 2018 19:20:52 -0400
+Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 89F961435F3F6;
+        Sat, 11 Aug 2018 11:20:19 -0700 (PDT)
+Date:   Sat, 11 Aug 2018 11:20:14 -0700 (PDT)
+Message-Id: <20180811.112014.1000535824675753364.davem@davemloft.net>
+To:     torvalds@linux-foundation.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 11 Aug 2018 11:20:19 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
 
-On 08/10/2018 05:57 PM, Alan Cox wrote:
-> 
-> Long term yes I think Alexander is right the inevitable fate of all
-> networks is to become a link layer in order to transmit IP frames 8)
+Last bit of straggler fixes...
 
-There should be a niche for both at the same time. LoRaWAN is relevant
-right now and we should aim for making it possible to run a native Linux
-gateway for it.
+1) Fix btf library licensing to LGPL, from Martin KaFai lau.
 
-As for IP for long range low power there is the static context header
-compression draft to adapt IPv6 to the characteristics for some use
-cases of such networks. Implementing it within the existing 6lwopan
-subsystem should be possible.
+2) Fix error handling in bpf sockmap code, from Daniel Borkmann.
 
-https://tools.ietf.org/html/draft-ietf-lpwan-ipv6-static-context-hc-16
+3) XDP cpumap teardown handling wrt. execution contexts, from
+   Jesper Dangaard Brouer.
 
-regards
-Stefan Schmidt
+4) Fix loss of runtime PM on failed vlan add/del, from Ivan
+   Khoronzhuk.
+
+5) xen-netfront caches skb_shinfo(skb) across a __pskb_pull_tail()
+   call, which potentially changes the skb's data buffer, and thus
+   skb_shinfo().  Fix from Juergen Gross.
+
+Please pull, thanks a lot!
+
+The following changes since commit 112cbae26d18e75098d95cc234cfa5059de8d479:
+
+  Merge branch 'linus' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6 (2018-08-09 10:00:15 -0700)
+
+are available in the Git repository at:
+
+  gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to d472b3a6cf63cd31cae1ed61930f07e6cd6671b5:
+
+  xen/netfront: don't cache skb_shinfo() (2018-08-11 09:41:58 -0700)
+
+----------------------------------------------------------------
+Alexei Starovoitov (1):
+      Merge branch 'sockmap-fixes'
+
+Daniel Borkmann (4):
+      bpf, sockmap: fix bpf_tcp_sendmsg sock error handling
+      bpf, sockmap: fix leak in bpf_tcp_sendmsg wait for mem path
+      bpf, sockmap: fix cork timeout for select due to epipe
+      Merge branch 'bpf-fix-cpu-and-devmap-teardown'
+
+David S. Miller (2):
+      Merge git://git.kernel.org/.../bpf/bpf
+      Merge branch 'cpsw-runtime-pm-fix'
+
+Ivan Khoronzhuk (2):
+      net: ethernet: ti: cpsw: clear all entries when delete vid
+      net: ethernet: ti: cpsw: fix runtime_pm while add/kill vlan
+
+Jesper Dangaard Brouer (3):
+      xdp: fix bug in cpumap teardown code path
+      samples/bpf: xdp_redirect_cpu adjustment to reproduce teardown race easier
+      xdp: fix bug in devmap teardown code path
+
+Juergen Gross (1):
+      xen/netfront: don't cache skb_shinfo()
+
+Martin KaFai Lau (1):
+      bpf: btf: Change tools/lib/bpf/btf to LGPL
+
+ drivers/net/ethernet/ti/cpsw.c             | 25 +++++++++++--------------
+ drivers/net/ethernet/ti/cpsw_ale.c         |  2 +-
+ drivers/net/xen-netfront.c                 |  8 ++++----
+ kernel/bpf/cpumap.c                        | 15 +++++++++------
+ kernel/bpf/devmap.c                        | 14 +++++++++-----
+ kernel/bpf/sockmap.c                       |  9 ++++++---
+ samples/bpf/xdp_redirect_cpu_kern.c        |  2 +-
+ samples/bpf/xdp_redirect_cpu_user.c        |  4 ++--
+ tools/lib/bpf/btf.c                        |  2 +-
+ tools/lib/bpf/btf.h                        |  2 +-
+ tools/testing/selftests/bpf/test_sockmap.c |  2 +-
+ 11 files changed, 46 insertions(+), 39 deletions(-)
