@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B4FC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E62C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 09:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB5321986
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DB5321986
+	by mail.kernel.org (Postfix) with ESMTP id D8FBC21986
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 09:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8FBC21986
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbeHKLcf (ORCPT
+        id S1727330AbeHKLde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 07:32:35 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:33664 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbeHKLcf (ORCPT
+        Sat, 11 Aug 2018 07:33:34 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:58144 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbeHKLde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 07:32:35 -0400
-Received: by mail-io0-f199.google.com with SMTP id s14-v6so9037924ioc.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 01:59:04 -0700 (PDT)
+        Sat, 11 Aug 2018 07:33:34 -0400
+Received: by mail-it0-f71.google.com with SMTP id e6-v6so4106897itc.7
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 02:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=i28oY4LUjc5jmWoDvJ/BmpSuCWDUqLmi+2ahq4UwFNE=;
-        b=JbJ62saEXivYywC/80haXDixOAbg+HdxQ0YaAXGQYqQ2a8T6dXVs1pDa/rSi4/rFyJ
-         v9Z+SwU0SM6UIiDzPuGxbVOJzErbSHzGogoDKDf6OkOe/vb9cE0AwlpQ/hhWyByJwrVc
-         RKjsGW4GXRzeZyQ/zXGxksljI7LqB7TnDgivKM1UwvS4lmyCqbwKyQkG4qyD6oCnJCrn
-         D/iOXs30kVU6lcqYuyNQvHcyeRchnipbh7enFmaa5RMd3ZQDn6IZHzWBn80O2BipoOnw
-         8PpELc+rwTqOld5+9KLkfqVspn5KK8WGYazJFA1yfLity8t/sZPL3S5xckWZabDRBhFl
-         UinQ==
-X-Gm-Message-State: AOUpUlGR/3ZSly62h7jecUkjZ/8Id1P2FzzJcjpzWPZzUJahZ+qk+eS+
-        vycV9apk+ptlmFldfIREWpzodx5zMgwaF7+EX5T0Vq+FNTGG
-X-Google-Smtp-Source: AA+uWPwZScvspYWwavc3jaC+Hfs6JvixKzgemp3/SXGVCRsSLNwIWP3exjpTImhISu2g3EO9aQ1Vb6gDnJzMyCSOazZYhYR4pv21
+        bh=4SSNiMoGvpjw741qPowh7+TsCkqXWfqrhf8m2tJA9I4=;
+        b=sGCgt93iLv7c2HS6k4LKCM1q8FL+WoQKQOMRE73bljhSh2bGwlGN497c0j3l5FPJMs
+         xjOzXSyae0MTDRvfBqv8pyQsdFhc2AseJGiml1Rojuy5R0hE32YyM5vQjpQ67Zv5CPvZ
+         nZObjqD0cyXMN2u1+EMk+y4Fpzgv0x2pPOJ8ChHIqDrNJzq7fTpU0ktkNtNt2irGY9+7
+         qLPJQMcFYdsb0cUUAoWtcpaWvuAaHEhdeA4rgWYGf/o+zS0oUp10jiwPpGjBZ7YGr0/U
+         W1rf+YfY+JcB8eYn8ZBeeILxKgIOc5h1IpI2zMN+gKpMggBbXtNhbRK3EvouNZLvpqHS
+         ivyw==
+X-Gm-Message-State: AOUpUlFX5bg56vafb/qA0QJi9nCBq1hAsleroXLtmr839ljdka7MKHps
+        Nd55i5m7wG2vZYdmQ2518j9+pWQtyatalwxUrl85R84QEhBd
+X-Google-Smtp-Source: AA+uWPyq1iwXx4wdQ+qjYYNBpXiycFFBmY5tHVBefsUBpFsBkGxd3xzwtarQO64DlFHJwApuWoysJXstaIJuQY13BR4Ng+FdhjfE
 MIME-Version: 1.0
-X-Received: by 2002:a24:d51:: with SMTP id 78-v6mr2649955itx.7.1533977943533;
- Sat, 11 Aug 2018 01:59:03 -0700 (PDT)
-Date:   Sat, 11 Aug 2018 01:59:03 -0700
+X-Received: by 2002:a24:56ce:: with SMTP id o197-v6mr2735798itb.32.1533978002653;
+ Sat, 11 Aug 2018 02:00:02 -0700 (PDT)
+Date:   Sat, 11 Aug 2018 02:00:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006af1a90573251240@google.com>
-Subject: general protection fault in kvm_lapic_hv_timer_in_use
-From:   syzbot <syzbot+1c69d94fe42901b029c1@syzkaller.appspotmail.com>
-To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Message-ID: <000000000000f10c530573251563@google.com>
+Subject: BUG: corrupted list in end_requests
+From:   syzbot <syzbot+0d2dc8aade663e725664@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,97 +59,90 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    8c8399e0a3fb Add linux-next specific files for 20180806
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1796b8e2400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b6bc1781e49e93e
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c69d94fe42901b029c1
+HEAD commit:    1236568ee3cb Merge tag 'gpio-v4.18-3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bf0c9c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=152cb8ccd35b1f70
+dashboard link: https://syzkaller.appspot.com/bug?extid=0d2dc8aade663e725664
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1c69d94fe42901b029c1@syzkaller.appspotmail.com
+Reported-by: syzbot+0d2dc8aade663e725664@syzkaller.appspotmail.com
 
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004ce2d8 R14: 00000000004c4c6d R15: 0000000000000000
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 27598 Comm: syz-executor2 Not tainted 4.18.0-rc8-next-20180806+  
-#32
+list_del corruption. prev->next should be ffff8801ae811e00, but was  
+ffff8801b5477738
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:53!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 17968 Comm: syz-executor0 Not tainted 4.18.0-rc8+ #180
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:kvm_lapic_hv_timer_in_use+0x56/0xd0 arch/x86/kvm/lapic.c:1569
-Code: c1 ea 03 80 3c 02 00 75 7a 48 8b 9b e0 03 00 00 e8 4f ec 64 00 48 8d  
-7b 7c 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 51 0f b6 5b 7c
-RSP: 0018:ffff880196037398 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc90006a2a000
-RDX: 000000000000000f RSI: ffffffff81182bc1 RDI: 000000000000007c
-RBP: ffff8801960373a0 R08: ffff8801ae9f0140 R09: ffffed0033772ba4
-R10: ffffed0033772ba4 R11: ffff88019bb95d27 R12: 0000000000000001
-R13: 1ffff10032c06e7a R14: ffff88019bb90260 R15: 0000000000000000
-FS:  00007f9e4c576700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+RIP: 0010:__list_del_entry_valid.cold.1+0x48/0x58 lib/list_debug.c:51
+Code: 68 3a 87 e8 36 92 02 fe 0f 0b 48 89 de 48 c7 c7 e0 69 3a 87 e8 25 92  
+02 fe 0f 0b 48 89 de 48 c7 c7 80 69 3a 87 e8 14 92 02 fe <0f> 0b 90 90 90  
+90 90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57
+RSP: 0018:ffff8801b5477490 EFLAGS: 00010282
+RAX: 0000000000000054 RBX: ffff8801ae811e00 RCX: ffffc90002e24000
+RDX: 0000000000000000 RSI: ffffffff81632481 RDI: 0000000000000001
+RBP: ffff8801b54774a8 R08: ffff88019a1760c0 R09: ffffed003b604fc0
+R10: ffffed003b604fc0 R11: ffff8801db027e07 R12: ffff8801ae811e00
+R13: ffff8801b5477738 R14: ffff8801ae811e00 R15: dffffc0000000000
+FS:  00007f8f17566700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000015447d0 CR3: 00000001b6019000 CR4: 00000000001426e0
+CR2: 0000000000704071 CR3: 00000001ac63b000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  kvm_arch_vcpu_load+0x4fa/0x940 arch/x86/kvm/x86.c:3103
-  kvm_sched_in+0x82/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3975
-  __fire_sched_in_preempt_notifiers kernel/sched/core.c:2481 [inline]
-  fire_sched_in_preempt_notifiers kernel/sched/core.c:2487 [inline]
-  finish_task_switch+0x50d/0x870 kernel/sched/core.c:2679
-  context_switch kernel/sched/core.c:2826 [inline]
-  __schedule+0x884/0x1ec0 kernel/sched/core.c:3471
-  preempt_schedule_common+0x22/0x60 kernel/sched/core.c:3595
-  _cond_resched+0x1d/0x30 kernel/sched/core.c:4961
-  slab_pre_alloc_hook mm/slab.h:421 [inline]
-  slab_alloc mm/slab.c:3378 [inline]
-  kmem_cache_alloc_trace+0x2c1/0x780 mm/slab.c:3618
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  kvm_create_vm_debugfs arch/x86/kvm/../../../virt/kvm/kvm_main.c:613  
-[inline]
-  kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:3214  
-[inline]
-  kvm_dev_ioctl+0xc37/0x1b10 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3241
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del_init include/linux/list.h:159 [inline]
+  end_requests+0x180/0x460 fs/fuse/dev.c:2044
+  fuse_abort_conn+0xf9c/0x1580 fs/fuse/dev.c:2138
+  fuse_put_super+0x123/0x440 fs/fuse/inode.c:396
+  generic_shutdown_super+0x1bf/0x530 fs/super.c:453
+  kill_anon_super+0x3c/0x50 fs/super.c:1046
+  fuse_kill_sb_anon+0x90/0xb0 fs/fuse/inode.c:1223
+  deactivate_locked_super+0x97/0x100 fs/super.c:326
+  deactivate_super+0x193/0x1c0 fs/super.c:357
+  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
+  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x456cb9
 Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f9e4c575c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9e4c5766d4 RCX: 0000000000456cb9
-RDX: 0000000000000000 RSI: 000000000000ae01 RDI: 0000000000000018
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+RSP: 002b:00007f8f17565c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f8f175666d4 RCX: 0000000000456cb9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000100
+RBP: 00000000009301e0 R08: 0000000000000000 R09: 0000000000000000
 R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004ce2d8 R14: 00000000004c4c6d R15: 0000000000000000
+R13: 00000000004d6360 R14: 00000000004c9ab8 R15: 0000000000000002
 Modules linked in:
 Dumping ftrace buffer:
     (ftrace buffer empty)
----[ end trace 33ef5bcbdea594e3 ]---
-RIP: 0010:kvm_lapic_hv_timer_in_use+0x56/0xd0 arch/x86/kvm/lapic.c:1569
-Code: c1 ea 03 80 3c 02 00 75 7a 48 8b 9b e0 03 00 00 e8 4f ec 64 00 48 8d  
-7b 7c 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 51 0f b6 5b 7c
-RSP: 0018:ffff880196037398 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc90006a2a000
-RDX: 000000000000000f RSI: ffffffff81182bc1 RDI: 000000000000007c
-RBP: ffff8801960373a0 R08: ffff8801ae9f0140 R09: ffffed0033772ba4
-R10: ffffed0033772ba4 R11: ffff88019bb95d27 R12: 0000000000000001
-R13: 1ffff10032c06e7a R14: ffff88019bb90260 R15: 0000000000000000
-FS:  00007f9e4c576700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+---[ end trace 060c5491c93d7527 ]---
+RIP: 0010:__list_del_entry_valid.cold.1+0x48/0x58 lib/list_debug.c:51
+Code: 68 3a 87 e8 36 92 02 fe 0f 0b 48 89 de 48 c7 c7 e0 69 3a 87 e8 25 92  
+02 fe 0f 0b 48 89 de 48 c7 c7 80 69 3a 87 e8 14 92 02 fe <0f> 0b 90 90 90  
+90 90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57
+RSP: 0018:ffff8801b5477490 EFLAGS: 00010282
+RAX: 0000000000000054 RBX: ffff8801ae811e00 RCX: ffffc90002e24000
+RDX: 0000000000000000 RSI: ffffffff81632481 RDI: 0000000000000001
+RBP: ffff8801b54774a8 R08: ffff88019a1760c0 R09: ffffed003b604fc0
+R10: ffffed003b604fc0 R11: ffff8801db027e07 R12: ffff8801ae811e00
+R13: ffff8801b5477738 R14: ffff8801ae811e00 R15: dffffc0000000000
+FS:  00007f8f17566700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000015447d0 CR3: 00000001b6019000 CR4: 00000000001426e0
+CR2: 0000000000704071 CR3: 00000001ac63b000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
