@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE13C46464
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 895CCC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1373222436
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 412FA22436
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:35:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E3IbYcNP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1373222436
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JAiJ76gp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412FA22436
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbeHKEHi (ORCPT
+        id S1727319AbeHKEHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 00:07:38 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43073 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725199AbeHKEHh (ORCPT
+        Sat, 11 Aug 2018 00:07:42 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39920 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeHKEHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 00:07:37 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j26-v6so5260620pfi.10
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 18:35:17 -0700 (PDT)
+        Sat, 11 Aug 2018 00:07:42 -0400
+Received: by mail-pl0-f66.google.com with SMTP id w14-v6so4706163plp.6
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 18:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=8CDeotPCFhWraUTKO4OTKwuHQrhaCDvB5WlDvjgwrqk=;
-        b=E3IbYcNPU87ATDvdxX2es1fhPdEJ6mt9XAiAM4FpKCcmNOQ+u05ZGQLRQdmbgGDX/7
-         n324cRqMlfkDGTUMeBcMGI+vm8cU+fnq3cEOeGV/XwDnW/okCNyO651W3Bvm311XnxFQ
-         vLi6F1Iw3ml9T4VuVSkb3269Ez5wjSdombkNY=
+        bh=NMIMGPdCCPLrDPv8AS7WcTkWP7rJgACQRrnn+5ajOBs=;
+        b=JAiJ76gpwdRJQsLtQnbO/EbQ4gk/wIyhMdwA9Q2tR4ClBLLP4fkXTeVs0hs++4WEoZ
+         UdtxoRXBC7or16pavVmiAJBSjSYTuBnHdxNPC94dYqUtzs6jnH/EFn+7zrqv+YnOCB65
+         FwqQO4uQulUD6LMQc9CSX3pja7sNuK1wsUM/4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=8CDeotPCFhWraUTKO4OTKwuHQrhaCDvB5WlDvjgwrqk=;
-        b=LAi/LIoe+r6OKJg6yFOUEtn9Twu4bmtINDfMR7LTLSYXoTO6NvBGAji8Rb65nIutOw
-         cSsMwuNEev1o+XKluwANFhExWxHdFunx192t+2Ngf/BCpXZCrvvDk3R/EdByCbFL4gDe
-         plUjowM616LnvYq1s2QbEKRNfnu+G5V0mmonBUt4Y3D7l5hhS3AYZ9AP5Lgf92HisLyO
-         YilavmlhWSdyzEqCRpf8EugZMOxrIAuijIDsq0/jdCGA5AX7k/eF42EF1WaWDRF6b/23
-         iAkChnhwFiJRDYlrZdld42MNot2wtrrVEB3b9HTm0miuhP7qbAT67xZyBgFc76o4UAmu
-         4MWw==
-X-Gm-Message-State: AOUpUlG2w8Ves/++syqKW4Mfew6L2FQBukoSluapA9+kewGlC/3YSilA
-        pWAV66embesYP/kEWgGVoxlUJg==
-X-Google-Smtp-Source: AA+uWPwOe1P0/YjRM2N+7hPT/iKK6+HDLx69KXj8zv1Lbx0QyqYYN7fXHhSARwFdj/JYx8EYh4j3jA==
-X-Received: by 2002:a63:ff21:: with SMTP id k33-v6mr8357019pgi.38.1533951317037;
-        Fri, 10 Aug 2018 18:35:17 -0700 (PDT)
+        bh=NMIMGPdCCPLrDPv8AS7WcTkWP7rJgACQRrnn+5ajOBs=;
+        b=VOSVtlneXFXMYqvkctN7P6fiEN/mSATEmXPGDRf3oPNGc3/JL0sxrPffoJzEisgAGp
+         y2QlzEid/hG7rhDLGTm2oIyBH0PeoKPQCt5LzRsqZ1nD3qETVXoJf7EVcweAm6RPmtai
+         rbon7L2tnvPL9Ys/AtZNi5nrMW9dUekEmEDi4Le1hph3mulHY54OCfXNnJC6HPTi8jV+
+         SZ4DDspiltRSCYsbfo2YFl5UgXndI6nAaDyeVziwZ0UYNJVbncfAO27mCjFc3RW7mJvy
+         lbRnzUB2WQuvKd46u/P8eHSFllMbuhS48oeDo+liF4PlkL++Llp03eaCPn5nPRJKMezz
+         rUnQ==
+X-Gm-Message-State: AOUpUlG/rn1hFCThA7F7UZIEFeSn5ZR+1aev/OtljzM3lVw7QZoHY+G2
+        49552P1lnlOzi5bjx3Pi3fwt1w==
+X-Google-Smtp-Source: AA+uWPyZPZ+n/gtVENDmBmwEg8OkY0Gv6W4OG9nfbnQy+e12plHW9L6+q9h1LZ1N4qG1J2Eq3TqBig==
+X-Received: by 2002:a17:902:7202:: with SMTP id ba2-v6mr8072421plb.179.1533951321536;
+        Fri, 10 Aug 2018 18:35:21 -0700 (PDT)
 Received: from ubuntu.localdomain ([45.56.155.48])
-        by smtp.gmail.com with ESMTPSA id d22-v6sm21722373pfk.69.2018.08.10.18.35.12
+        by smtp.gmail.com with ESMTPSA id d22-v6sm21722373pfk.69.2018.08.10.18.35.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 10 Aug 2018 18:35:16 -0700 (PDT)
+        Fri, 10 Aug 2018 18:35:21 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     gregkh@linuxfoundation.org, jslaby@suse.com
 Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
         broonie@kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] serial: sprd: Remove unnecessary resource validation
-Date:   Fri, 10 Aug 2018 18:34:25 -0700
-Message-Id: <b48edead2c6abb862b121d347b01bf07dec818ea.1533950271.git.baolin.wang@linaro.org>
+Subject: [PATCH 4/5] serial: sprd: Change 'int' to 'unsigned int'
+Date:   Fri, 10 Aug 2018 18:34:26 -0700
+Message-Id: <59172367ea674d5d4a3bd7c4d52362445174536e.1533950271.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <50e1f7f4673bff9d71936b4eb34cbf2571b0fda9.1533950271.git.baolin.wang@linaro.org>
 References: <50e1f7f4673bff9d71936b4eb34cbf2571b0fda9.1533950271.git.baolin.wang@linaro.org>
@@ -73,36 +73,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The devm_ioremap_resource() will valid the resources, thus remove the
-unnecessary resource validation in the driver.
+The register offset value should be 'unsigned int' type.
+
+Moreover, prefer 'unsigned int' to bare use of 'unsigned'.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/tty/serial/sprd_serial.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/tty/serial/sprd_serial.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index e18d8af..03b0cd4 100644
+index 03b0cd4..8d5c9cd 100644
 --- a/drivers/tty/serial/sprd_serial.c
 +++ b/drivers/tty/serial/sprd_serial.c
-@@ -710,15 +710,12 @@ static int sprd_probe(struct platform_device *pdev)
- 		up->uartclk = clk_get_rate(clk);
+@@ -109,12 +109,14 @@ struct sprd_uart_port {
+ static struct sprd_uart_port *sprd_port[UART_NR_MAX];
+ static int sprd_ports_num;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "not provide mem resource\n");
--		return -ENODEV;
--	}
--	up->mapbase = res->start;
- 	up->membase = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(up->membase))
- 		return PTR_ERR(up->membase);
+-static inline unsigned int serial_in(struct uart_port *port, int offset)
++static inline unsigned int serial_in(struct uart_port *port,
++				     unsigned int offset)
+ {
+ 	return readl_relaxed(port->membase + offset);
+ }
  
-+	up->mapbase = res->start;
-+
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		dev_err(&pdev->dev, "not provide irq resource: %d\n", irq);
+-static inline void serial_out(struct uart_port *port, int offset, int value)
++static inline void serial_out(struct uart_port *port, unsigned int offset,
++			      int value)
+ {
+ 	writel_relaxed(value, port->membase + offset);
+ }
+@@ -598,8 +600,7 @@ static void sprd_putc(struct uart_port *port, int c)
+ 	writeb(c, port->membase + SPRD_TXD);
+ }
+ 
+-static void sprd_early_write(struct console *con, const char *s,
+-				    unsigned n)
++static void sprd_early_write(struct console *con, const char *s, unsigned int n)
+ {
+ 	struct earlycon_device *dev = con->data;
+ 
 -- 
 1.9.1
 
