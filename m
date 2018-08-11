@@ -1,186 +1,607 @@
-Return-Path: <SRS0=aVpA=KZ=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5D2C46464
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77ED4C46464
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C9322404
-	for <linux-kernel@archiver.kernel.org>; Fri, 10 Aug 2018 23:58:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uV8WVZc1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C9322404
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 166CC214FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166CC214FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeHKCaZ (ORCPT
+        id S1727198AbeHKChF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 22:30:25 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:47092 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbeHKCaZ (ORCPT
+        Fri, 10 Aug 2018 22:37:05 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:58480 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbeHKChF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 22:30:25 -0400
-Received: by mail-qt0-f195.google.com with SMTP id d4-v6so12055449qtn.13;
-        Fri, 10 Aug 2018 16:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/rPtkvK6VGyzH7m8qJNwZAJ1M7VqUh7QIpcBaVKllpg=;
-        b=uV8WVZc1ORIo+iqnVx2NedVCtzX6WXboMtllCPY4nEmY0R/IU3VUeOj021o/vnMla9
-         I6vjzJxb2oD+I19zPCWzJzPgtpiUchYwSjpePwYBEcsz+PuUg3L+n0TnbP8n22qOvg2c
-         ZhYKOw8hJDOD5z4kNyIcdEGqgWOXJ6xMt1eAjU5NllRGPIzud4Zxg30OoY2nLe86mg6L
-         0OH4lC+r7AY0beNgA0AoVvbS2DhdtHbNy3JcyI36pLu2bvvuzAs5RpYlHXN+RjjDvWus
-         2P/hz5wALD98aUbt18+r+uDbyQRgoXvIuC7wySuDFi6p9GtieK/3o1ShnxIZc3Wf4Sdt
-         oG7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/rPtkvK6VGyzH7m8qJNwZAJ1M7VqUh7QIpcBaVKllpg=;
-        b=Cr4twBzPYiSjTxQ6U1AfvD+oi7HA+gDVLZJu6JB32UXHRAnLXq8G4xr/Y6fifIAqZh
-         k3Yy2jNrmVN78BW+jp+gXLBmUy5ODGlQjipIbhyrzek1u4l3t1cQTyZP0uxQmAiz7+k+
-         lR5BErIgnRIZK66QYcCg5MaiTB+FptRjGIXZjdcK8Ojb+2KcMGe2t7LMqSNDnGb4e2Fg
-         sy3Dhp4IE3yCOFF65McIrg0WDZw1JrwLNLC5lvnefQb8p4XXSBy7Pus95Hg0d23IHMJ9
-         DwD6zGOj8E9pEp1E8sZFysYZJLP+ZMMRGUrMbW9HsYs+hHGPMEdhlTxv55aMn8K9fQvi
-         Ycgg==
-X-Gm-Message-State: AOUpUlE7MPnjM0/Qgbo6uW66kF+x4et12QK6Zb5iZ2JEvss1ym6GJClx
-        N+dqjvWpwTpLPsJRYFunNzxni2jT
-X-Google-Smtp-Source: AA+uWPyQSLDlQfVQRymmCBJtRdV+FvFOTQ5wJ02jWoAF6yWq9e4RdNGf82RAe69WiyhrILo7FpRFIQ==
-X-Received: by 2002:a0c:a482:: with SMTP id x2-v6mr7490540qvx.76.1533945499269;
-        Fri, 10 Aug 2018 16:58:19 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id e20-v6sm8250421qkh.32.2018.08.10.16.58.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 16:58:18 -0700 (PDT)
-Subject: Re: [PATCH RFT] net: dsa: Allow configuring CPU port VLANs
-To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Petr Machata <petrm@mellanox.com>
-Cc:     netdev@vger.kernel.org, jiri@mellanox.com,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180624153339.13572-1-f.fainelli@gmail.com>
- <wih4lhrgrfd.fsf@dev-r-vrt-156.mtr.labs.mlnx> <20180625091713.GA13442@apalos>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <9ce291a4-b40d-81d8-1c1a-c4311e5cc113@gmail.com>
-Date:   Fri, 10 Aug 2018 16:58:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 10 Aug 2018 22:37:05 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1foHOp-0006UT-4G; Sat, 11 Aug 2018 00:04:55 +0000
+Date:   Sat, 11 Aug 2018 01:04:55 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     linux-alpha@vger.kernel.org, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
+Subject: Re: [PATCH 3/6] alpha: Unify the not-implemented system call entry
+ name
+Message-ID: <20180811000455.GC6515@ZenIV.linux.org.uk>
+References: <1531736638-15294-1-git-send-email-firoz.khan@linaro.org>
+ <1531736638-15294-4-git-send-email-firoz.khan@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180625091713.GA13442@apalos>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531736638-15294-4-git-send-email-firoz.khan@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/2018 02:17 AM, Ilias Apalodimas wrote:
-> On Mon, Jun 25, 2018 at 12:13:10PM +0300, Petr Machata wrote:
->> Florian Fainelli <f.fainelli@gmail.com> writes:
->>
->>>  	if (netif_is_bridge_master(vlan->obj.orig_dev))
->>> -		return -EOPNOTSUPP;
->>> +		info.port = dp->cpu_dp->index;
->>
->> The condition above will trigger also when a VLAN is added on a member
->> port, and there's no other port with that VLAN. In that case the VLAN
->> comes without the BRIDGE_VLAN_INFO_BRENTRY flag. In mlxsw we have this
->> to get the bridge VLANs:
->>
->> 	if (netif_is_bridge_master(orig_dev)) {
->> 		[...]
->> 		if ((vlan->flags & BRIDGE_VLAN_INFO_BRENTRY) &&
->> 		[...]
->>
->> This doesn't appear to be done in DSA unless I'm missing something.
-> Petr's right. This will trigger for VLANs added on 'not cpu ports' if the VLAN
-> is not already a member. 
-> 
-> This command has BRIDGE_VLAN_INFO_BRENTRY set:
-> bridge vlan add dev br0 vid 100 pvid untagged self 
-> I had the same issue on my CPSW RFC and solved it
-> exactly the same was as Petr suggested.
+On Mon, Jul 16, 2018 at 03:53:55PM +0530, Firoz Khan wrote:
+> systbl.S contain two types of system call entry name which are
+> alpha_ni_syscall and sys_ni_syscall. So this patch will unify
+> the not-implemented system call entry name as alpha_ni_syscall.
 
-Humm, there must be something obvious I am missing, but the following
-don't exactly result in what I would expect after adding a check for
-vlan->flags & BRIDGE_VLAN_INFO_BRENTRY:
+Umm...  The thing is, alpha_ni_syscall should really be called
+alpha_syscall_0.  Its use for other not implemented syscalls in
+OSF syscall numbers range is a historical accident.
 
-brctl addbr br0
-echo 1 > /sys/class/net/br0/bridge/vlan_filtering
-brctl addif br0 lan1
+What that thing does is, in addition usual return -ENOSYS, is
+the opposite of force_successful_syscall_return().
 
-#1 results in lan1 being programmed with VID 1, PVID, untagged, but not
-the CPU port. I would have sort of expected that the bridge layer would
-also push the configuration to br0/CPU port since this is the default VLAN:
+On alpha the syscall number is passed in r0.  So for every
+real syscall we have non-zero current_pt_regs()->r0
+and force_successful_syscall_return() simply assigns 0 to
+that.
 
-bridge vlan show dev br0
-port	vlan ids
-br0	1 PVID Egress Untagged
+Return value goes in the same register; additionally, register #19
+(a3) is left 0 on success and 1 on error.  Normally it's controlled
+by the sign of sys_something() return value (left in r0), but for
+some syscalls we want to be able to tell the userland that the damn
+thing has succeeded, negative result be damned.
 
-But it does not.
+The original value of r0 is left in pt_regs; it will be used only
+in case of syscall restarts, i.e. *not* in "that's no error" case.
+And it's non-zero on any real syscall, so it serves as a nice
+available place for storing the "it's not an error" flag.
 
-bridge vlan add vid 2 dev lan1
+That works nicely, but leaves a bit of a twist in one case: if we
+tried to issue syscall 0, we want it to return -ENOSYS and we want
+that to be treated as an error, TYVM.  That's where this trick
+comes to bite - unlike the normal case, we have pt_regs->r0
+containing zero, which would trigger the "that's no error" logics.
 
-#2 same thing, results in only lan1 being programmed with VID 2, tagged
-but that is expected because we are creating the VLAN only for the
-user-facing port.
+Since -ENOSYS is not a restart-triggering error, we don't need to
+preserve the original value of pt_regs->r0 in this case either.
+Solution:
 
-bridge vlan add vid 3 dev br0 self
+alpha_ni_syscall:
+	make current_pt_regs()->r0 non-zero
+	return -ENOSYS
 
-#3 results in the CPU port being programmed with VID 3, tagged, again,
-this is expected because we are only programming the bridge master/CPU
-port here.
+That's what the comment in
+alpha_ni_syscall:
+        .prologue 0
+        /* Special because it also implements overflow handling via
+           syscall number 0.  And if you recall, zero is a special
+           trigger for "not an error".  Store large non-zero there.  */
+        lda     $0, -ENOSYS
+        unop
+        stq     $0, 0($sp)
+        ret
+is about.
 
-Does #1 also happen for cpsw and mlxsw or do you actually get events
-about the bridge's default VLAN configuration? Or does the switch driver
-actually need to obtain that at the time the port is enslaved somehow?
+Once upon a time it used to have a C part that printed a warning
+about unimplemented OSF syscalls.  That's what it's been doing
+all over the OSF syscall range, while the native Linux syscall
+range uses sys_ni_syscall().
 
-Thanks!
--- 
-Florian
+With those warnings about unimplemented OSF syscalls gone (circa 2.4),
+alpha_ni_syscall() has shrunk to that little bit of asm and the
+only reason it hasn't been replaced with sys_ni_syscall() everywhere
+is that extra twist needed in case of syscall #0.
+
+Let's keep it only for syscall #0 and replace the rest with sys_ni_syscall.
+And use sys_ni_syscall for "number out range" in ptraced-call case, as
+we'd been doing for normal codepath since 2.1.86...
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/arch/alpha/kernel/entry.S b/arch/alpha/kernel/entry.S
+index c64806a2daf5..21840e7042f3 100644
+--- a/arch/alpha/kernel/entry.S
++++ b/arch/alpha/kernel/entry.S
+@@ -473,7 +473,7 @@ entSys:
+ 	bne     $3, strace
+ 	beq	$4, 1f
+ 	ldq	$27, 0($5)
+-1:	jsr	$26, ($27), alpha_ni_syscall
++1:	jsr	$26, ($27), sys_ni_syscall
+ 	ldgp	$gp, 0($26)
+ 	blt	$0, $syscall_error	/* the call failed */
+ 	stq	$0, 0($sp)
+@@ -587,7 +587,7 @@ strace:
+ 	/* get the system call pointer.. */
+ 	lda	$1, NR_SYSCALLS($31)
+ 	lda	$2, sys_call_table
+-	lda	$27, alpha_ni_syscall
++	lda	$27, sys_ni_syscall
+ 	cmpult	$0, $1, $1
+ 	s8addq	$0, $2, $2
+ 	beq	$1, 1f
+@@ -843,15 +843,20 @@ sys_rt_sigreturn:
+ .end sys_rt_sigreturn
+ 
+ 	.align	4
+-	.globl	alpha_ni_syscall
+-	.ent	alpha_ni_syscall
+-alpha_ni_syscall:
++	.globl	alpha_syscall_zero
++	.ent	alpha_syscall_zero
++alpha_syscall_zero:
+ 	.prologue 0
+-	/* Special because it also implements overflow handling via
+-	   syscall number 0.  And if you recall, zero is a special
+-	   trigger for "not an error".  Store large non-zero there.  */
++	/* Special because it needs to do something opposite to
++	   force_successful_syscall_return().  We use the saved
++	   syscall number for that, zero meaning "not an error".
++	   That works nicely, but for real syscall 0 we need to
++	   make sure that this logics doesn't get confused.
++	   Store a non-zero there - -ENOSYS we need in register
++	   for our return value will do just fine.
++	  */
+ 	lda	$0, -ENOSYS
+ 	unop
+ 	stq	$0, 0($sp)
+ 	ret
+-.end alpha_ni_syscall
++.end alpha_syscall_zero
+diff --git a/arch/alpha/kernel/systbls.S b/arch/alpha/kernel/systbls.S
+index 1374e591511f..5b2e8ecb7ce3 100644
+--- a/arch/alpha/kernel/systbls.S
++++ b/arch/alpha/kernel/systbls.S
+@@ -11,93 +11,93 @@
+ 	.align 3
+ 	.globl sys_call_table
+ sys_call_table:
+-	.quad alpha_ni_syscall			/* 0 */
++	.quad alpha_syscall_zero		/* 0 */
+ 	.quad sys_exit
+ 	.quad alpha_fork
+ 	.quad sys_read
+ 	.quad sys_write
+-	.quad alpha_ni_syscall			/* 5 */
++	.quad sys_ni_syscall			/* 5 */
+ 	.quad sys_close
+ 	.quad sys_osf_wait4
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_link
+ 	.quad sys_unlink			/* 10 */
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_chdir
+ 	.quad sys_fchdir
+ 	.quad sys_mknod
+ 	.quad sys_chmod				/* 15 */
+ 	.quad sys_chown
+ 	.quad sys_osf_brk
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_lseek
+ 	.quad sys_getxpid			/* 20 */
+ 	.quad sys_osf_mount
+ 	.quad sys_umount
+ 	.quad sys_setuid
+ 	.quad sys_getxuid
+-	.quad alpha_ni_syscall			/* 25 */
++	.quad sys_ni_syscall			/* 25 */
+ 	.quad sys_ptrace
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 30 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 30 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_access
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 35 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 35 */
+ 	.quad sys_sync
+ 	.quad sys_kill
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_setpgid
+-	.quad alpha_ni_syscall			/* 40 */
++	.quad sys_ni_syscall			/* 40 */
+ 	.quad sys_dup
+ 	.quad sys_alpha_pipe
+ 	.quad sys_osf_set_program_attributes
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_open				/* 45 */
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_getxgid
+ 	.quad sys_osf_sigprocmask
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 50 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 50 */
+ 	.quad sys_acct
+ 	.quad sys_sigpending
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_ioctl
+-	.quad alpha_ni_syscall			/* 55 */
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall			/* 55 */
++	.quad sys_ni_syscall
+ 	.quad sys_symlink
+ 	.quad sys_readlink
+ 	.quad sys_execve
+ 	.quad sys_umask				/* 60 */
+ 	.quad sys_chroot
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_getpgrp
+ 	.quad sys_getpagesize
+-	.quad alpha_ni_syscall			/* 65 */
++	.quad sys_ni_syscall			/* 65 */
+ 	.quad alpha_vfork
+ 	.quad sys_newstat
+ 	.quad sys_newlstat
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 70 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 70 */
+ 	.quad sys_osf_mmap
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_munmap
+ 	.quad sys_mprotect
+ 	.quad sys_madvise			/* 75 */
+ 	.quad sys_vhangup
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_getgroups
+ 	/* map BSD's setpgrp to sys_setpgid for binary compatibility: */
+ 	.quad sys_setgroups			/* 80 */
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_setpgid
+ 	.quad sys_osf_setitimer
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 85 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 85 */
+ 	.quad sys_osf_getitimer
+ 	.quad sys_gethostname
+ 	.quad sys_sethostname
+@@ -119,19 +119,19 @@ sys_call_table:
+ 	.quad sys_bind
+ 	.quad sys_setsockopt			/* 105 */
+ 	.quad sys_listen
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 110 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 110 */
+ 	.quad sys_sigsuspend
+ 	.quad sys_osf_sigstack
+ 	.quad sys_recvmsg
+ 	.quad sys_sendmsg
+-	.quad alpha_ni_syscall			/* 115 */
++	.quad sys_ni_syscall			/* 115 */
+ 	.quad sys_osf_gettimeofday
+ 	.quad sys_osf_getrusage
+ 	.quad sys_getsockopt
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ #ifdef CONFIG_OSF4_COMPAT
+ 	.quad sys_osf_readv			/* 120 */
+ 	.quad sys_osf_writev
+@@ -156,66 +156,66 @@ sys_call_table:
+ 	.quad sys_mkdir
+ 	.quad sys_rmdir
+ 	.quad sys_osf_utimes
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 140 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 140 */
+ 	.quad sys_getpeername
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_getrlimit
+ 	.quad sys_setrlimit			/* 145 */
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_setsid
+ 	.quad sys_quotactl
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_getsockname			/* 150 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 155 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 155 */
+ 	.quad sys_osf_sigaction
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_osf_getdirentries
+ 	.quad sys_osf_statfs			/* 160 */
+ 	.quad sys_osf_fstatfs
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_osf_getdomainname		/* 165 */
+ 	.quad sys_setdomainname
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 170 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 175 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 180 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 185 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 190 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 195 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 170 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 175 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 180 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 185 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 190 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 195 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	/* The OSF swapon has two extra arguments, but we ignore them.  */
+ 	.quad sys_swapon
+ 	.quad sys_msgctl			/* 200 */
+@@ -231,93 +231,93 @@ sys_call_table:
+ 	.quad sys_shmctl			/* 210 */
+ 	.quad sys_shmdt
+ 	.quad sys_shmget
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 215 */
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 215 */
++	.quad sys_ni_syscall
+ 	.quad sys_msync
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 220 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 220 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_osf_stat
+ 	.quad sys_osf_lstat			/* 225 */
+ 	.quad sys_osf_fstat
+ 	.quad sys_osf_statfs64
+ 	.quad sys_osf_fstatfs64
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 230 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 230 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_getpgid
+ 	.quad sys_getsid
+ 	.quad sys_sigaltstack			/* 235 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 240 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 240 */
+ 	.quad sys_osf_sysinfo
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_osf_proplist_syscall
+-	.quad alpha_ni_syscall			/* 245 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 250 */
++	.quad sys_ni_syscall			/* 245 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 250 */
+ 	.quad sys_osf_usleep_thread
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ 	.quad sys_sysfs
+-	.quad alpha_ni_syscall			/* 255 */
++	.quad sys_ni_syscall			/* 255 */
+ 	.quad sys_osf_getsysinfo
+ 	.quad sys_osf_setsysinfo
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 260 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 265 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 270 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 275 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 280 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 285 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 290 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall			/* 295 */
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
+-	.quad alpha_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 260 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 265 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 270 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 275 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 280 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 285 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 290 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall			/* 295 */
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
++	.quad sys_ni_syscall
+ /* linux-specific system calls start at 300 */
+ 	.quad sys_bdflush			/* 300 */
+ 	.quad sys_sethae
