@@ -2,392 +2,169 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B766BC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB24C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E28421AA7
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:50:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="R1EU0BKk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E28421AA7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 30E5B21A13
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E5B21A13
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeHKSZU (ORCPT
+        id S1727531AbeHKSan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 14:25:20 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51556 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727333AbeHKSZT (ORCPT
+        Sat, 11 Aug 2018 14:30:43 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:58135 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbeHKSam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 14:25:19 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8C1A38EE14B;
-        Sat, 11 Aug 2018 08:50:43 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id g9gLr2znsDkU; Sat, 11 Aug 2018 08:50:43 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id EDA718EE0C6;
-        Sat, 11 Aug 2018 08:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1534002643;
-        bh=tS/Aqt/spAkb0+TuWEfjsrI/n8o/90/vZVveyzlIHVo=;
-        h=Subject:From:To:Cc:Date:From;
-        b=R1EU0BKkzVREjcF1EoxbNssOUPGDUZ09+xxwNuhBsXDH5MwQUcVLni67RSdNVTdB8
-         GHJmTtAbHg2vEFLejlCqgU/T94P8AHPFtW85e9aL0CFP1Uq4b32hiWTAoAgR1f4Wl1
-         ++gSETWl94wp+Ugz7eClzZa0Od5cLs6lu3f7faO8=
-Message-ID: <1534002642.3198.1.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 4.18-rc8
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Sat, 11 Aug 2018 08:50:42 -0700
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 11 Aug 2018 14:30:42 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LbJdK-1gCLXq0seY-00ktti; Sat, 11 Aug 2018 17:55:56 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
+        Harry Wentland <harry.wentland@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>,
+        Shirish S <shirish.s@amd.com>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] drm: amd: dc: don't use FP math when Kcov is enabled
+Date:   Sat, 11 Aug 2018 17:54:12 +0200
+Message-Id: <20180811155554.3382650-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:xadu5Mbisj0rdRv1SpZEDEGE/0LZVTOXKYr4TUKiBp2UotWWysF
+ FbVRI+Fxl94VafIaaUyFnT5o1hCoQItOh8KqDP3+5bG7EiFqCuFQXbH380Lw2HfL9kPJJCv
+ VpDXR9O4dZFnl1wPjGjEVLwsVOmapOrtRg2bH1ow2sT/3WGcK1A/ytUkjW2mxLm+MRbrBbB
+ Kiha0AaRUHNGDXWJi6Tdw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VYG+L64LzqE=:TNIlA1yBgeNESs0leETm6B
+ /YusAmR8pmFJZznl9diTwQiJuxZGaOsC5ok63cghNBIQ1qMHWy6BO/FB4uM7mvz0nImBe0OZW
+ F8ZQz5RpmUdB6lKfMhvXzGYtb2OivwifTjIak2vmi7vvSKqjmSMTQNRfJal+77X5TykrDd6zL
+ MymjflEQ3ed08BPOgQV6YqVaLNba+OSNxdiQ284N2WOsDwz6p5VDdCHxwLS0gbT9gv01sSIvt
+ mKOLp0SW3wRIVvUlWU6Hf8AtHa6UJE/ZAoIQ5Iw2y4wx6PtYBaI8hnbCKDgEcyl8XORJP1p8U
+ Ln8w16yoCm/4CxlqZPnRF2uVGy0diF8wkmwLxMjrXvjfl0nJEnJmayzfTdSskDQpCaRh/RhrS
+ YCT3N652BKkU4SP7IBBFKiqiFVLYzztxCVu9NC60NQxdnYiOt5g+giAHuXzVsX4u4Y5T7sqUn
+ oqXIL3wrGbQoyTQVzTKNOzvvfUPrSk2OlThX0Nv7SDUZO0UWu5NFTU0VDsJ6MHlyzFIRmzpjI
+ sQONdDMpBu+jdSgH7PBtIAgIWtLMKHGQ16xqeLJfitELOVx+Q8FAbYRdgHa5SRjbpH0hTvrun
+ LHVzYZZJsWiYHJf7HIvBg1zeLfZj58huHQZ+lwKAYlCytfkX0p5CK7v6x4X5gc+q8xlAJB1uq
+ nNlk/r4srwSaZiDFd49vtjN5jCWgC+CyTzgXKZe6FYZnjqIDGbMDc9NcmCXRwQfUzreg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eight fixes.  The most important one is the mpt3sas fix which makes the
-driver work again on big endian systems.  The rest are mostly minor
-error path or checker issues and the vmw_scsi one fixes a performance
-problem.
+Building the DCN 1.0 Raven display driver with CONFIG_KCOV_INSTRUMENT_ALL=y
+and CONFIG_KCOV_ENABLE_COMPARISONS=y results in warnings about many functions
+that do a comparison of floating-point variables:
 
-The patch is available here:
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `dcn_bw_calc_rq_dlg_ttu':
+dcn_calcs.c:(.text+0x263): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `hack_force_pipe_split':
+dcn_calcs.c:(.text+0x155b): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `dcn_find_dcfclk_suits_all':
+dcn_calcs.c:(.text+0x190e): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `dcn_validate_bandwidth':
+dcn_calcs.c:(.text+0xe121): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_mod':
+dcn_calc_math.c:(.text+0x22): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_min2':
+dcn_calc_math.c:(.text+0xb2): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_ceil2':
+dcn_calc_math.c:(.text+0x2a0): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_max3':
+dcn_calc_math.c:(.text+0x325): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_max5':
+dcn_calc_math.c:(.text+0x3c3): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_log':
+dcn_calc_math.c:(.text+0x54e): undefined reference to `__sanitizer_cov_trace_cmpd'
+dcn_calc_math.c:(.text+0x57c): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `scaler_settings_calculation':
+dcn_calc_auto.c:(.text+0x5c5): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
+dcn_calc_auto.c:(.text+0x137c): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
+dcn_calc_auto.c:(.text+0x9233): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
+dcn_calc_auto.c:(.text+0xb70f): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
+dcn_calc_auto.c:(.text+0x121fd): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `display_pipe_configuration':
+dcn_calc_auto.c:(.text+0x15a2f): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
+dcn_calc_auto.c:(.text+0x17c2d): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
+dcn_calc_auto.c:(.text+0x19362): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
+dcn_calc_auto.c:(.text+0x25575): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
+dcn_calc_auto.c:(.text+0x27f33): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/display_rq_dlg_calc.o: In function `get_refcyc_per_delivery':
+display_rq_dlg_calc.c:(.text+0xb5): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/display_rq_dlg_calc.o: In function `calculate_ttu_cursor.isra.1':
+display_rq_dlg_calc.c:(.text+0x9f6): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/display_rq_dlg_calc.o: In function `dml_rq_dlg_get_dlg_params':
+display_rq_dlg_calc.c:(.text+0x82cc): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `get_refcyc_per_delivery.isra.0':
+dml1_display_rq_dlg_calc.c:(.text+0x6c4): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `get_vratio_pre.isra.2':
+dml1_display_rq_dlg_calc.c:(.text+0x957): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `get_swath_need.isra.3':
+dml1_display_rq_dlg_calc.c:(.text+0xc8e): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `dml1_extract_rq_regs':
+dml1_display_rq_dlg_calc.c:(.text+0x30a8): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `dml1_rq_dlg_get_dlg_params':
+dml1_display_rq_dlg_calc.c:(.text+0x41ee): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `dml1_rq_dlg_get_dlg_params':
+dml1_display_rq_dlg_calc.c:(.text+0x8f95): undefined reference to `__sanitizer_cov_trace_cmpf'
+drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.o: In function `dml_round':
+dml_common_defs.c:(.text+0x77): undefined reference to `__sanitizer_cov_trace_cmpd'
+drivers/gpu/drm/amd/display/dc/dml/display_mode_vba.o: In function `adjust_ReturnBW':
+display_mode_vba.c:(.text+0x4490): undefined reference to `__sanitizer_cov_trace_cmpd'
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+We already prevent the driver from being built on non-x86 architectures
+because of its use of floating-point arithmetic, this extends the
+dependency to also cover Kcov-enabled builds, which arguably is a much
+more severe limitation.
 
-The short changelog is:
+I tried implementing the two functions in KCOV: __sanitizer_cov_trace_cmpd
+and __sanitizer_cov_trace_cmpf, but that fails to build on architectures
+that do not support any floating-point functions, or would require making
+that code x86 specific as well.  I also looked at what it would take to
+convert the code to fixed-point arithmetic, but quickly gave up. This
+is probably the right approach, but it requires a non-trivial amount of
+work and certainly won't be appropriate as a bugfix.
 
-Bart Van Assche (2):
-      scsi: sr: Avoid that opening a CD-ROM hangs with runtime power management enabled
-      scsi: qedi: Fix a potential buffer overflow
-
-Jim Gill (1):
-      scsi: vmw_pvscsi: Return DID_RESET for status SAM_STAT_COMMAND_TERMINATED
-
-Johannes Thumshirn (3):
-      scsi: fcoe: clear FC_RP_STARTED flags when receiving a LOGO
-      scsi: fcoe: drop frames in ELS LOGO error path
-      scsi: fcoe: fix use-after-free in fcoe_ctlr_els_send
-
-Quinn Tran (1):
-      scsi: qla2xxx: Fix memory leak for allocating abort IOCB
-
-Sreekanth Reddy (1):
-      scsi: mpt3sas: Swap I/O memory read value back to cpu endianness
-
-And the diffstat:
-
- drivers/scsi/fcoe/fcoe_ctlr.c       |  6 ++---
- drivers/scsi/libfc/fc_rport.c       |  1 +
- drivers/scsi/mpt3sas/mpt3sas_base.c | 16 +++++------
- drivers/scsi/qedi/qedi_main.c       |  2 +-
- drivers/scsi/qla2xxx/qla_iocb.c     | 53 +++++++++++++++++++------------------
- drivers/scsi/sr.c                   | 29 ++++++++++++++------
- drivers/scsi/vmw_pvscsi.c           | 11 +++++---
- 7 files changed, 69 insertions(+), 49 deletions(-)
-
-With full diff below.
-
-James
-
+Fixes: bf2e2e2e0ea9 ("drm/amd/display: Limit DCN to x86 arch")
+Fixes: 4841203102a3 ("drm/amdgpu/display: Replace CONFIG_DRM_AMD_DC_DCN1_0 with CONFIG_X86")
+Link: drm: amd: dc: don't use FP math when Kcov is enabled
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
+v3: rebase on top of 4841203102a3, which removed the option for
+CONFIG_DRM_AMD_DC_DCN1_0. The problem still gets hit occasionally
+in randconfig testing.
+---
+ drivers/gpu/drm/amd/display/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
-index ea23c8dffc25..ffec695e0bfb 100644
---- a/drivers/scsi/fcoe/fcoe_ctlr.c
-+++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-@@ -754,9 +754,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr *fip, struct fc_lport *lport,
- 	case ELS_LOGO:
- 		if (fip->mode == FIP_MODE_VN2VN) {
- 			if (fip->state != FIP_ST_VNMP_UP)
--				return -EINVAL;
-+				goto drop;
- 			if (ntoh24(fh->fh_d_id) == FC_FID_FLOGI)
--				return -EINVAL;
-+				goto drop;
- 		} else {
- 			if (fip->state != FIP_ST_ENABLED)
- 				return 0;
-@@ -799,9 +799,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr *fip, struct fc_lport *lport,
- 	fip->send(fip, skb);
- 	return -EINPROGRESS;
- drop:
--	kfree_skb(skb);
- 	LIBFCOE_FIP_DBG(fip, "drop els_send op %u d_id %x\n",
- 			op, ntoh24(fh->fh_d_id));
-+	kfree_skb(skb);
- 	return -EINVAL;
- }
- EXPORT_SYMBOL(fcoe_ctlr_els_send);
-diff --git a/drivers/scsi/libfc/fc_rport.c b/drivers/scsi/libfc/fc_rport.c
-index 31d31aad3de1..89b1f1af2fd4 100644
---- a/drivers/scsi/libfc/fc_rport.c
-+++ b/drivers/scsi/libfc/fc_rport.c
-@@ -2164,6 +2164,7 @@ static void fc_rport_recv_logo_req(struct fc_lport *lport, struct fc_frame *fp)
- 		FC_RPORT_DBG(rdata, "Received LOGO request while in state %s\n",
- 			     fc_rport_state(rdata));
+diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+index 325083b0297e..b132d434e572 100644
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@ -3,6 +3,7 @@ menu "Display Engine Configuration"
  
-+		rdata->flags &= ~FC_RP_STARTED;
- 		fc_rport_enter_delete(rdata, RPORT_EV_STOP);
- 		mutex_unlock(&rdata->rp_mutex);
- 		kref_put(&rdata->kref, fc_rport_destroy);
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 569392d0d4c9..e44c91edf92d 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -3343,11 +3343,10 @@ _base_mpi_ep_writeq(__u64 b, volatile void __iomem *addr,
- 					spinlock_t *writeq_lock)
- {
- 	unsigned long flags;
--	__u64 data_out = b;
- 
- 	spin_lock_irqsave(writeq_lock, flags);
--	writel((u32)(data_out), addr);
--	writel((u32)(data_out >> 32), (addr + 4));
-+	__raw_writel((u32)(b), addr);
-+	__raw_writel((u32)(b >> 32), (addr + 4));
- 	mmiowb();
- 	spin_unlock_irqrestore(writeq_lock, flags);
- }
-@@ -3367,7 +3366,8 @@ _base_mpi_ep_writeq(__u64 b, volatile void __iomem *addr,
- static inline void
- _base_writeq(__u64 b, volatile void __iomem *addr, spinlock_t *writeq_lock)
- {
--	writeq(b, addr);
-+	__raw_writeq(b, addr);
-+	mmiowb();
- }
- #else
- static inline void
-@@ -5268,7 +5268,7 @@ _base_handshake_req_reply_wait(struct MPT3SAS_ADAPTER *ioc, int request_bytes,
- 
- 	/* send message 32-bits at a time */
- 	for (i = 0, failed = 0; i < request_bytes/4 && !failed; i++) {
--		writel((u32)(request[i]), &ioc->chip->Doorbell);
-+		writel(cpu_to_le32(request[i]), &ioc->chip->Doorbell);
- 		if ((_base_wait_for_doorbell_ack(ioc, 5)))
- 			failed = 1;
- 	}
-@@ -5289,7 +5289,7 @@ _base_handshake_req_reply_wait(struct MPT3SAS_ADAPTER *ioc, int request_bytes,
- 	}
- 
- 	/* read the first two 16-bits, it gives the total length of the reply */
--	reply[0] = (u16)(readl(&ioc->chip->Doorbell)
-+	reply[0] = le16_to_cpu(readl(&ioc->chip->Doorbell)
- 	    & MPI2_DOORBELL_DATA_MASK);
- 	writel(0, &ioc->chip->HostInterruptStatus);
- 	if ((_base_wait_for_doorbell_int(ioc, 5))) {
-@@ -5298,7 +5298,7 @@ _base_handshake_req_reply_wait(struct MPT3SAS_ADAPTER *ioc, int request_bytes,
- 			ioc->name, __LINE__);
- 		return -EFAULT;
- 	}
--	reply[1] = (u16)(readl(&ioc->chip->Doorbell)
-+	reply[1] = le16_to_cpu(readl(&ioc->chip->Doorbell)
- 	    & MPI2_DOORBELL_DATA_MASK);
- 	writel(0, &ioc->chip->HostInterruptStatus);
- 
-@@ -5312,7 +5312,7 @@ _base_handshake_req_reply_wait(struct MPT3SAS_ADAPTER *ioc, int request_bytes,
- 		if (i >=  reply_bytes/2) /* overflow case */
- 			readl(&ioc->chip->Doorbell);
- 		else
--			reply[i] = (u16)(readl(&ioc->chip->Doorbell)
-+			reply[i] = le16_to_cpu(readl(&ioc->chip->Doorbell)
- 			    & MPI2_DOORBELL_DATA_MASK);
- 		writel(0, &ioc->chip->HostInterruptStatus);
- 	}
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index 091ec1207bea..cff83b9457f7 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -888,7 +888,7 @@ static void qedi_get_boot_tgt_info(struct nvm_iscsi_block *block,
- 	ipv6_en = !!(block->generic.ctrl_flags &
- 		     NVM_ISCSI_CFG_GEN_IPV6_ENABLED);
- 
--	snprintf(tgt->iscsi_name, NVM_ISCSI_CFG_ISCSI_NAME_MAX_LEN, "%s\n",
-+	snprintf(tgt->iscsi_name, sizeof(tgt->iscsi_name), "%s\n",
- 		 block->target[index].target_name.byte);
- 
- 	tgt->ipv6_en = ipv6_en;
-diff --git a/drivers/scsi/qla2xxx/qla_iocb.c b/drivers/scsi/qla2xxx/qla_iocb.c
-index a91cca52b5d5..dd93a22fe843 100644
---- a/drivers/scsi/qla2xxx/qla_iocb.c
-+++ b/drivers/scsi/qla2xxx/qla_iocb.c
-@@ -2130,34 +2130,11 @@ __qla2x00_alloc_iocbs(struct qla_qpair *qpair, srb_t *sp)
- 	req_cnt = 1;
- 	handle = 0;
- 
--	if (!sp)
--		goto skip_cmd_array;
--
--	/* Check for room in outstanding command list. */
--	handle = req->current_outstanding_cmd;
--	for (index = 1; index < req->num_outstanding_cmds; index++) {
--		handle++;
--		if (handle == req->num_outstanding_cmds)
--			handle = 1;
--		if (!req->outstanding_cmds[handle])
--			break;
--	}
--	if (index == req->num_outstanding_cmds) {
--		ql_log(ql_log_warn, vha, 0x700b,
--		    "No room on outstanding cmd array.\n");
--		goto queuing_error;
--	}
--
--	/* Prep command array. */
--	req->current_outstanding_cmd = handle;
--	req->outstanding_cmds[handle] = sp;
--	sp->handle = handle;
--
--	/* Adjust entry-counts as needed. */
--	if (sp->type != SRB_SCSI_CMD)
-+	if (sp && (sp->type != SRB_SCSI_CMD)) {
-+		/* Adjust entry-counts as needed. */
- 		req_cnt = sp->iocbs;
-+	}
- 
--skip_cmd_array:
- 	/* Check for room on request queue. */
- 	if (req->cnt < req_cnt + 2) {
- 		if (qpair->use_shadow_reg)
-@@ -2183,6 +2160,28 @@ __qla2x00_alloc_iocbs(struct qla_qpair *qpair, srb_t *sp)
- 	if (req->cnt < req_cnt + 2)
- 		goto queuing_error;
- 
-+	if (sp) {
-+		/* Check for room in outstanding command list. */
-+		handle = req->current_outstanding_cmd;
-+		for (index = 1; index < req->num_outstanding_cmds; index++) {
-+			handle++;
-+			if (handle == req->num_outstanding_cmds)
-+				handle = 1;
-+			if (!req->outstanding_cmds[handle])
-+				break;
-+		}
-+		if (index == req->num_outstanding_cmds) {
-+			ql_log(ql_log_warn, vha, 0x700b,
-+			    "No room on outstanding cmd array.\n");
-+			goto queuing_error;
-+		}
-+
-+		/* Prep command array. */
-+		req->current_outstanding_cmd = handle;
-+		req->outstanding_cmds[handle] = sp;
-+		sp->handle = handle;
-+	}
-+
- 	/* Prep packet */
- 	req->cnt -= req_cnt;
- 	pkt = req->ring_ptr;
-@@ -2195,6 +2194,8 @@ __qla2x00_alloc_iocbs(struct qla_qpair *qpair, srb_t *sp)
- 		pkt->handle = handle;
- 	}
- 
-+	return pkt;
-+
- queuing_error:
- 	qpair->tgt_counters.num_alloc_iocb_failed++;
- 	return pkt;
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 3f3cb72e0c0c..d0389b20574d 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -523,18 +523,26 @@ static int sr_init_command(struct scsi_cmnd *SCpnt)
- static int sr_block_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct scsi_cd *cd;
-+	struct scsi_device *sdev;
- 	int ret = -ENXIO;
- 
-+	cd = scsi_cd_get(bdev->bd_disk);
-+	if (!cd)
-+		goto out;
-+
-+	sdev = cd->device;
-+	scsi_autopm_get_device(sdev);
- 	check_disk_change(bdev);
- 
- 	mutex_lock(&sr_mutex);
--	cd = scsi_cd_get(bdev->bd_disk);
--	if (cd) {
--		ret = cdrom_open(&cd->cdi, bdev, mode);
--		if (ret)
--			scsi_cd_put(cd);
--	}
-+	ret = cdrom_open(&cd->cdi, bdev, mode);
- 	mutex_unlock(&sr_mutex);
-+
-+	scsi_autopm_put_device(sdev);
-+	if (ret)
-+		scsi_cd_put(cd);
-+
-+out:
- 	return ret;
- }
- 
-@@ -562,6 +570,8 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	if (ret)
- 		goto out;
- 
-+	scsi_autopm_get_device(sdev);
-+
- 	/*
- 	 * Send SCSI addressing ioctls directly to mid level, send other
- 	 * ioctls to cdrom/block level.
-@@ -570,15 +580,18 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	case SCSI_IOCTL_GET_IDLUN:
- 	case SCSI_IOCTL_GET_BUS_NUMBER:
- 		ret = scsi_ioctl(sdev, cmd, argp);
--		goto out;
-+		goto put;
- 	}
- 
- 	ret = cdrom_ioctl(&cd->cdi, bdev, mode, cmd, arg);
- 	if (ret != -ENOSYS)
--		goto out;
-+		goto put;
- 
- 	ret = scsi_ioctl(sdev, cmd, argp);
- 
-+put:
-+	scsi_autopm_put_device(sdev);
-+
- out:
- 	mutex_unlock(&sr_mutex);
- 	return ret;
-diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
-index 777e5f1e52d1..0cd947f78b5b 100644
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -561,9 +561,14 @@ static void pvscsi_complete_request(struct pvscsi_adapter *adapter,
- 	    (btstat == BTSTAT_SUCCESS ||
- 	     btstat == BTSTAT_LINKED_COMMAND_COMPLETED ||
- 	     btstat == BTSTAT_LINKED_COMMAND_COMPLETED_WITH_FLAG)) {
--		cmd->result = (DID_OK << 16) | sdstat;
--		if (sdstat == SAM_STAT_CHECK_CONDITION && cmd->sense_buffer)
--			cmd->result |= (DRIVER_SENSE << 24);
-+		if (sdstat == SAM_STAT_COMMAND_TERMINATED) {
-+			cmd->result = (DID_RESET << 16);
-+		} else {
-+			cmd->result = (DID_OK << 16) | sdstat;
-+			if (sdstat == SAM_STAT_CHECK_CONDITION &&
-+			    cmd->sense_buffer)
-+				cmd->result |= (DRIVER_SENSE << 24);
-+		}
- 	} else
- 		switch (btstat) {
- 		case BTSTAT_SUCCESS:
+ config DRM_AMD_DC
+ 	bool "AMD DC - Enable new display engine"
++	depends on !X86 || !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS) || BROKEN
+ 	default y
+ 	help
+ 	  Choose this option if you want to use the new display engine
+-- 
+2.18.0
+
