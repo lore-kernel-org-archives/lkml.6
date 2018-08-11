@@ -4,147 +4,305 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1198C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2269C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46984214F1
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 19:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BFC21E20
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfOGqxFb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46984214F1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oDAjEi0H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61BFC21E20
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeHKWbc (ORCPT
+        id S1727628AbeHKWlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 18:31:32 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33325 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeHKWbc (ORCPT
+        Sat, 11 Aug 2018 18:41:22 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41734 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbeHKWlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 18:31:32 -0400
-Received: by mail-it0-f68.google.com with SMTP id d16-v6so7790139itj.0;
-        Sat, 11 Aug 2018 12:56:18 -0700 (PDT)
+        Sat, 11 Aug 2018 18:41:22 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j5-v6so10987700wrr.8;
+        Sat, 11 Aug 2018 13:06:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/LJNveq1C9HkSRJBF9bsVpXf7r8DCqUSlpuqyr5NESI=;
-        b=jfOGqxFbh4Z1AImsCMqb+s/avt1PQTtj4/2+/lvCxGHW/RTXrOsuWlrUuGfEWnFbur
-         Cri2f1nL+CBtq/5lIzbN/wMK5F3rwUzG/1HW/PzgY3237Doeq3Y5qCu2ocrAVa4OMIGy
-         mDhsQmSpdEwjQF9spc4r1bSGlEx/JS76zswKjycbGgn5axV/jVF29IYlYdnx8sKFdaZX
-         gAaxtb96KfGL+K6GZm0HlMjb0FKWV7VeEdKgouHd4Uh9c4IjPLxv8u9WAeHeFYEJ7Ehd
-         Ah7b+Uc1kLRqk/pPlzEk0Zmgj2Y/KfDWDoKjN5QrO1aqvGAn9UWsCPg1+FIPHV8UeVy3
-         ZXBQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CNM0zI6wYeKD4vnra9jXtYMqpohgR/GVN0J08BJTvGc=;
+        b=oDAjEi0H31t0RRlUPuqYdsjycVIQBI/oExLpRroAs2crWdgwpL3l7hwOBc2FsWEwxH
+         huUl31XLQYuOePrq2y72cT0OJF7J2LLxzkfApYt5fjfP19XbOtTiKhZN84u9pncXNzdW
+         RTZRVzlm2YoE+UvLukNkmu9PfHMeQfnk0qQb9lrqF12VXjA56Fq0GtWHLsfXx4mX2MwK
+         foVmDAgmUm3IkINszDziGZ7IZZfqpDZw9lXI+zTiam71HbblhxKH8QnCz2iEkzuMdO/j
+         pPNPacWJyLo3GNiL8Jz9bBNu3GLi7nG0OQ4eKlv+5vkFh3LFvdyOPZzoaKrZqPSC57UK
+         Zmyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/LJNveq1C9HkSRJBF9bsVpXf7r8DCqUSlpuqyr5NESI=;
-        b=NIBvdQ7flkXY0Ktj9H7oBAZrrsW2z5ExVgmgt1LrwUTCRKEIReLo1+0BD7AXq8IAgy
-         76kkazCuQYcAo/Mngzqp5wLtrN28SfumBJng6mSUhB1ChnQcoLgQUScNZ++lpCCscujZ
-         PJ+92wEVZhBdvO/Xv2hj1B8OqkHItjjltw8ieZ9+3HQ6ic5qYVcl881/JMV1QbLTvDRD
-         oW+Ps/nACOem7GKtfHQKHiODpQBHepKeY/lgnmzbG/SPbUJ3WLZ1aX/UcHv7vLiIM0g8
-         Cv6H5SKk/hePDevW7NUISvezkRXfH5WgONwlHezHSMjcItKrGkhkeg4qVEA2B8EqLO2y
-         +yNw==
-X-Gm-Message-State: AOUpUlGuRSHHNMFHUHQRj1swk8b+1xTwoB7Y6NuKDzw5pQEhp05jKoc3
-        Fz3KO5sDkyEGgaJwuRTfRdajivbl/ThwKdXVmEU=
-X-Google-Smtp-Source: AA+uWPxeKoCyeTCUgYG15qP60iH4I8ZnR3TRaoQvDeyFragQ7AmKsox19PSjfaBEAhIuC1G1FZVZ0iZ6WfFTJxuAfmw=
-X-Received: by 2002:a24:fe89:: with SMTP id w131-v6mr6591487ith.153.1534017378355;
- Sat, 11 Aug 2018 12:56:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CNM0zI6wYeKD4vnra9jXtYMqpohgR/GVN0J08BJTvGc=;
+        b=hP9abW1wdbGNpsPr1PPxbeg8YRpxUwuvuaI2BZtiQ3AY+Bxf3bxGD2/6XQJlpOw6Hz
+         eSjimcSdaaOHUGe+dAuuKWIEhfl3CV3vkn4EPfMHeNdqeGXe9wser0lgE/VW4UDYPUst
+         sf6Zu5Rp4WQ7lcHibTwjOMMq1Qj+IXk1YxquVHQcGzQFN41mPyv5yeNnF3MGUiu0UqoM
+         5QgehToVd7hiYAMv6MCTFaVbrLP18fOZX1QLSIU6/JL7EE6mzdUUIOqSZrOpsJ7usqOq
+         /lgfpoFzDooWJ7Nasmq2S814kQ3UNf45dxELDwYub5jVp73fstWbB5q3C1YlmE9QY4kx
+         nGpQ==
+X-Gm-Message-State: AOUpUlFrTs5CGBxF3YVOHc2c+CbHv7uVy9jLYPNSM9BaIlGXuioMTyXa
+        3gaFyUPlTVox0DX+xyf8B/Lkt6EL
+X-Google-Smtp-Source: AA+uWPwUyhYYTDBS4gftCkCjnIjphQ9R8px6FFq1l9pLFh7X2HiKCYA4gbeyqpxqInhnQDxuZGfJvQ==
+X-Received: by 2002:adf:f906:: with SMTP id b6-v6mr4302509wrr.28.1534008464673;
+        Sat, 11 Aug 2018 10:27:44 -0700 (PDT)
+Received: from debian64.daheim (p4FD092A7.dip0.t-ipconnect.de. [79.208.146.167])
+        by smtp.gmail.com with ESMTPSA id j8-v6sm11953745wrp.11.2018.08.11.10.27.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 11 Aug 2018 10:27:44 -0700 (PDT)
+Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
+        by debian64.daheim with esmtp (Exim 4.91)
+        (envelope-from <chunkeey@gmail.com>)
+        id 1foXfz-0002JZ-Dc; Sat, 11 Aug 2018 19:27:43 +0200
+From:   Christian Lamparter <chunkeey@gmail.com>
+To:     Craig Tatlor <ctatlor97@gmail.com>, linux-arm-msm@vger.kernel.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: qcom: Add sdm660 pinctrl driver
+Date:   Sat, 11 Aug 2018 19:27:43 +0200
+Message-ID: <2202961.SmUWKIdeCe@debian64>
+In-Reply-To: <20180811162520.11641-1-ctatlor97@gmail.com>
+References: <20180811162520.11641-1-ctatlor97@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:5a03:0:0:0:0:0 with HTTP; Sat, 11 Aug 2018 12:56:17
- -0700 (PDT)
-In-Reply-To: <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
-References: <cover.1533989492.git.puwen@hygon.cn> <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
-From:   Michael Jin <mikhail.jin@gmail.com>
-Date:   Sat, 11 Aug 2018 15:56:17 -0400
-Message-ID: <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
-Subject: Re: [PATCH v3 16/17] driver/edac: enable Hygon support to AMD64 EDAC driver
-To:     Pu Wen <puwen@hygon.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-edac@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 11, 2018 at 9:30 AM, Pu Wen <puwen@hygon.cn> wrote:
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index 18aeabb..fb81354 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -211,7 +211,7 @@ static int __set_scrub_rate(struct amd64_pvt *pvt, u32 new_bw, u32 min_rate)
->
->         scrubval = scrubrates[i].scrubval;
->
-> -       if (pvt->fam == 0x17) {
-> +       if (pvt->fam == 0x17 || pvt->vendor == X86_VENDOR_HYGON) {
->                 __f17h_set_scrubval(pvt, scrubval);
+On Saturday, August 11, 2018 6:25:19 PM CEST Craig Tatlor wrote:
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for sdm660.
+> Based off CAF implementation.
+> 
+> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+> ---
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
+> new file mode 100644
+> index 000000000000..85e6c6c17c04
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
+> @@ -0,0 +1,195 @@
+> +Qualcomm Technologies, Inc. SDM660 TLMM block
+> +
+> +This binding describes the Top Level Mode Multiplexer block found in the
+> +SDM660 platform.
+> +
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be "qcom,sdm660-pinctrl"
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: the base address and size of the TLMM register space.
+> +
+> +- interrupts:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: should specify the TLMM summary IRQ.
+> +
+> +- interrupt-controller:
+> +	Usage: required
+> +	Value type: <none>
+> +	Definition: identifies this node as an interrupt controller
+> +
+> +- #interrupt-cells:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: must be 2. Specifying the pin number and flags, as defined
+> +		    in <dt-bindings/interrupt-controller/irq.h>
+> +
+> +- gpio-controller:
+> +	Usage: required
+> +	Value type: <none>
+> +	Definition: identifies this node as a gpio controller
+> +
+> +- #gpio-cells:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: must be 2. Specifying the pin number and flags, as defined
+> +		    in <dt-bindings/gpio/gpio.h>
+> +
+> +Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
+> +a general description of GPIO and interrupt bindings.
+You want to specify gpio-ranges here as well. The property is explained
+in Section "2.1) gpio- and pin-controller interaction" in ../gpio/gpio.txt
 
-Separating the vendor check as an "else if (pvt->vendor ==
-X86_VENDOR_HYGON)" block would make architectural changes (future
-hygon models, i.e. 19h, 20h, etc) less confusing.
+Without it, the gpio-hogs construct (part of ../gpio/gpio.txt) will cause
+the driver to fail during boot. (try it, ;-) )
+
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+> +
+> +The pin configuration nodes act as a container for an arbitrary number of
+> +subnodes. Each of these subnodes represents some desired configuration for a
+> +pin, a group, or a list of pins or groups. This configuration can include the
+> +mux function to select on those pin(s)/group(s), and various pin configuration
+> +parameters, such as pull-up, drive strength, etc.
+> +
+> +
+> +PIN CONFIGURATION NODES:
+> +
+> +The name of each subnode is not important; all subnodes should be enumerated
+> +and processed purely based on their content.
+> +
+> +Each subnode only affects those parameters that are explicitly listed. In
+> +other words, a subnode that lists a mux function but no pin configuration
+> +parameters implies no information about any pin configuration parameters.
+> +Similarly, a pin subnode that describes a pullup parameter implies no
+> +information about e.g. the mux function.
+> +
+> +
+> +The following generic properties as defined in pinctrl-bindings.txt are valid
+> +to specify in a pin configuration subnode:
+> +
+> +- pins:
+> +	Usage: required
+> +	Value type: <string-array>
+> +	Definition: List of gpio pins affected by the properties specified in
+> +		    this subnode.  Valid pins are:
+> +		    gpio0-gpio149,
+> +		        Supports mux, bias and drive-strength
+> +		    sdc1_clk, sdc1_cmd, sdc1_data sdc2_clk, sdc2_cmd, sdc2_data sdc1_rclk,
+> +		        Supports bias and drive-strength
+> +
+> +- function:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: Specify the alternative function to be configured for the
+> +		    specified pins. Functions are only valid for gpio pins.
+> +		    Valid values are:
+> +
+> +		    blsp_uart1, blsp_spi1, blsp_i2c1, blsp_uim1, atest_tsens,
+> +		    bimc_dte1, dac_calib0, blsp_spi8, blsp_uart8, blsp_uim8,
+> +		    qdss_cti_trig_out_b, bimc_dte0, dac_calib1, qdss_cti_trig_in_b,
+> +		    dac_calib2, atest_tsens2, atest_usb1, blsp_spi10, blsp_uart10,
+> +		    blsp_uim10, atest_bbrx1, atest_usb13, atest_bbrx0, atest_usb12,
+> +		    mdp_vsync, edp_lcd, blsp_i2c10, atest_gpsadc1, atest_usb11,
+> +		    atest_gpsadc0, edp_hot, atest_usb10, m_voc, dac_gpio, atest_char,
+> +		    cam_mclk, pll_bypassnl, qdss_stm7, blsp_i2c8, qdss_tracedata_b,
+> +		    pll_reset, qdss_stm6, qdss_stm5, qdss_stm4, atest_usb2, cci_i2c,
+> +		    qdss_stm3, dac_calib3, atest_usb23, atest_char3, dac_calib4,
+> +		    qdss_stm2, atest_usb22, atest_char2, qdss_stm1, dac_calib5,
+> +		    atest_usb21, atest_char1, dbg_out, qdss_stm0, dac_calib6,
+> +		    atest_usb20, atest_char0, dac_calib10, qdss_stm10,
+> +		    qdss_cti_trig_in_a, cci_timer4, blsp_spi6, blsp_uart6, blsp_uim6,
+> +		    blsp2_spi, qdss_stm9, qdss_cti_trig_out_a, dac_calib11,
+> +		    qdss_stm8, cci_timer0, qdss_stm13, dac_calib7, cci_timer1,
+> +		    qdss_stm12, dac_calib8, cci_timer2, blsp1_spi, qdss_stm11,
+> +		    dac_calib9, cci_timer3, cci_async, dac_calib12, blsp_i2c6,
+> +		    qdss_tracectl_a, dac_calib13, qdss_traceclk_a, dac_calib14,
+> +		    dac_calib15, hdmi_rcv, dac_calib16, hdmi_cec, pwr_modem,
+> +		    dac_calib17, hdmi_ddc, pwr_nav, dac_calib18, pwr_crypto,
+> +		    dac_calib19, hdmi_hot, dac_calib20, dac_calib21, pci_e0,
+> +		    dac_calib22, dac_calib23, dac_calib24, tsif1_sync, dac_calib25,
+> +		    sd_write, tsif1_error, blsp_spi2, blsp_uart2, blsp_uim2,
+> +		    qdss_cti, blsp_i2c2, blsp_spi3, blsp_uart3, blsp_uim3, blsp_i2c3,
+> +		    uim3, blsp_spi9, blsp_uart9, blsp_uim9, blsp10_spi, blsp_i2c9,
+> +		    blsp_spi7, blsp_uart7, blsp_uim7, qdss_tracedata_a, blsp_i2c7,
+> +		    qua_mi2s, gcc_gp1_clk_a, ssc_irq, uim4, blsp_spi11, blsp_uart11,
+> +		    blsp_uim11, gcc_gp2_clk_a, gcc_gp3_clk_a, blsp_i2c11, cri_trng0,
+> +		    cri_trng1, cri_trng, qdss_stm18, pri_mi2s, qdss_stm17, blsp_spi4,
+> +		    blsp_uart4, blsp_uim4, qdss_stm16, qdss_stm15, blsp_i2c4,
+> +		    qdss_stm14, dac_calib26, spkr_i2s, audio_ref, lpass_slimbus,
+> +		    isense_dbg, tsense_pwm1, tsense_pwm2, btfm_slimbus, ter_mi2s,
+> +		    qdss_stm22, qdss_stm21, qdss_stm20, qdss_stm19, gcc_gp1_clk_b,
+> +		    sec_mi2s, blsp_spi5, blsp_uart5, blsp_uim5, gcc_gp2_clk_b,
+> +		    gcc_gp3_clk_b, blsp_i2c5, blsp_spi12, blsp_uart12, blsp_uim12,
+> +		    qdss_stm25, qdss_stm31, blsp_i2c12, qdss_stm30, qdss_stm29,
+> +		    tsif1_clk, qdss_stm28, tsif1_en, tsif1_data, sdc4_cmd, qdss_stm27,
+> +		    qdss_traceclk_b, tsif2_error, sdc43, vfr_1, qdss_stm26, tsif2_clk,
+> +		    sdc4_clk, qdss_stm24, tsif2_en, sdc42, qdss_stm23, qdss_tracectl_b,
+> +		    sd_card, tsif2_data, sdc41, tsif2_sync, sdc40, mdp_vsync_p_b,
+> +		    ldo_en, mdp_vsync_s_b, ldo_update, blsp11_uart_tx_b, blsp11_uart_rx_b,
+> +		    blsp11_i2c_sda_b, prng_rosc, blsp11_i2c_scl_b, uim2, uim1, uim_batt,
+> +		    pci_e2, pa_indicator, adsp_ext, ddr_bist, qdss_tracedata_11,
+> +		    qdss_tracedata_12, modem_tsync, nav_dr, nav_pps, pci_e1, gsm_tx,
+> +		    qspi_cs, ssbi2, ssbi1, mss_lte, qspi_clk, qspi0, qspi1, qspi2, qspi3,
+> +		    gpio
+> +
+> +- bias-disable:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as no pull.
+> +
+> +- bias-pull-down:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull down.
+> +
+> +- bias-pull-up:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull up.
+> +
+> +- output-high:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins are configured in output mode, driven
+> +		    high.
+> +		    Not valid for sdc pins.
+> +
+> +- output-low:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins are configured in output mode, driven
+> +		    low.
+> +		    Not valid for sdc pins.
+> +
+> +- drive-strength:
+> +	Usage: optional
+> +	Value type: <u32>
+> +	Definition: Selects the drive strength for the specified pins, in mA.
+> +		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
+> +
+> +Example:
+> +
+> +	tlmm: pinctrl@01010000 {
+> +		compatible = "qcom,sdm660-pinctrl";
+> +		reg = <0x01010000 0x300000>;
+> +		interrupts = <0 208 0>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
++		gpio-ranges = <&tlmm 0 0 114>;
+
+(please verify, I saw that sdm660_pinctrl sets .ngpios = 114.)
+
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +
+> +		uart_console_active: uart_console_active {
+> +			mux {
+> +				pins = "gpio4", "gpio5";
+> +				function = "blsp_uart8";
+> +			};
+> +
+> +			config {
+> +				pins = "gpio4", "gpio5";
+> +				drive-strength = <2>;
+> +				bias-disable;
+> +			};
+> +		};
+> +	};
+[...]
 
 
 
-> +                       amd64_read_pci_cfg(pvt->F6,
-> +                               F17H_SCR_BASE_ADDR, &scrubval);
-> +                       if (scrubval & BIT(0)) {
-> +                               amd64_read_pci_cfg(pvt->F6,
-
-The new lines after "amd64_read_pci_cfg(pvt->F6," can be removed.
-
-
-
-> @@ -1051,6 +1065,16 @@ static void determine_memory_type(struct amd64_pvt *pvt)
->                 else
->                         pvt->dram_type = MEM_DDR4;
->                 return;
-> +       case 0x18:
-> +               if (pvt->vendor == X86_VENDOR_HYGON) {
-
-This vendor checking is not necessary as there are no other known
-family 18h processors.
-
-
->         switch (pvt->fam) {
-> @@ -3192,6 +3227,13 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
->                 pvt->ops        = &family_types[F17_CPUS].ops;
->                 break;
->
-> +       case 0x18:
-> +               if (pvt->vendor == X86_VENDOR_HYGON) {
-> +                       fam_type        = &family_types[HYGON_F18_CPUS];
-> +                       pvt->ops        = &family_types[HYGON_F18_CPUS].ops;
-> +                       break;
-> +               }
-
-There is a missing second 'break' statement after the "if (pvt->vendor
-== X86_VENDOR_HYGON)" block for case 0x18, see case 0x15 and case 0x16
-for comparison.
-
-
-
-> diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-> index 2ab4d61..f7adc47 100644
-> +       case 0x18:
-> +               if (c->x86_vendor == X86_VENDOR_HYGON) {
-> +                       xec_mask = 0x3f;
-> +                       if (!boot_cpu_has(X86_FEATURE_SMCA)) {
-> +                               pr_warn("Decoding supported only on Scalable MCA processors.\n");
-> +                               goto err_out;
-> +                       }
-> +                       break;
-> +               }
-
-The 'break' statement could be moved outside of the "if (c->x86_vendor
-== X86_VENDOR_HYGON)" block, this is to allow case 0x18 to reach the
-'break' statement if the vendor is not X86_VENDOR_HYGON.
