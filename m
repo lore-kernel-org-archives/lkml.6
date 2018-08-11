@@ -2,122 +2,103 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDB0C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7D2C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A5B223E6
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA09F21708
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:49:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPw0Tz0p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A5B223E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="K6DHdvoe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA09F21708
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeHKLNB (ORCPT
+        id S1727251AbeHKLWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 07:13:01 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39740 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbeHKLNB (ORCPT
+        Sat, 11 Aug 2018 07:22:46 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:48944 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbeHKLWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 07:13:01 -0400
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so8881644lji.6
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 01:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XbnXujNJw7aH+RdjV088rtentPGBRXGxsTZCnSE8ygs=;
-        b=kPw0Tz0pUz5YqGwl5jeue4A3MUbjwZySreh7LlAHMpT151udhByWnaJZdOA+1p0k1C
-         wsjTdhbAuKXhQ15OIdkgNvpkiux1z14Ikz/q8sIlnUhcwZ3L15273GY9bZkDThs8eyKu
-         NX/3nXBc4TSSOYNVlSkiTyypDUF6ZeZwUFOWcrum0uIRzTHXELVYrkIGN9ct2IHB2KwY
-         2xKHk3SccpZuPZOLjIPOiiQKkz8KFMgUv7eRkOc0wMrjrrm19ouxyqEqxrIGKAheMGV0
-         +jCL7CZkeksjO01+NapNXr32/TNDL3mfAG0IrOMUBt4LIyoqjuTBUUfz82uf1BPZbio+
-         C9Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XbnXujNJw7aH+RdjV088rtentPGBRXGxsTZCnSE8ygs=;
-        b=ZLEk0Prj4vyy+Sm8rv327/1yoUmVJ9uc+HNfP+iWhsgxNEpUCSlnF+WKhjz2xiHXxO
-         4IqOtuUPY/tXXorp5xdVA79VdT0kGpOc+hF6R53X3c56Or4NZ3u1i7aTSEhoGfg3AV2C
-         Jo0g4WzXFrwWLDcqImTUpufDJwqxq7AL9na040mk3jNy49Vn3tzbDaEn2OX/GsYYDDwF
-         8JkgX00PExTqTot3QV+LjWd5j6unPjSSg50+ILlcJQq8VNtSaeN8v3qwoHzMgeAPlBRh
-         TwWO1t73iMEIiW4WlKIeo7Gov6gjpRlyR6ErzzW83+s7ZPjQ2pM6h6mpfV5G5v2f5Tu2
-         drLQ==
-X-Gm-Message-State: AOUpUlGf1V5TOWSsbOj5W45ebLuQUo+8XkIbaw80aToU909w+jvsRcuY
-        uOwbdGBUNVMnfv/vVYF43ZI=
-X-Google-Smtp-Source: AA+uWPxr4vvjMozxLz84Z1H9XxWODvnNdnlDgb/joQuBt3L83+5YPTwYDKDdrFqgEEqB1HC1HEiEgQ==
-X-Received: by 2002:a2e:557:: with SMTP id 84-v6mr7300926ljf.152.1533976772048;
-        Sat, 11 Aug 2018 01:39:32 -0700 (PDT)
-Received: from pc-sasha.localdomain (213-227-222-226.static.vega-ua.net. [213.227.222.226])
-        by smtp.gmail.com with ESMTPSA id j64-v6sm2328063lfe.56.2018.08.11.01.39.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 Aug 2018 01:39:31 -0700 (PDT)
-From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
-To:     jolsa@kernel.org, acme@kernel.org
-Cc:     mingo@kernel.org, namhyung@kernel.org, dsahern@gmail.com,
-        alexander.shishkin@linux.intel.com, a.p.zijlstra@chello.nl,
-        linux-kernel@vger.kernel.org, alexander.kapshuk@gmail.com
-Subject: [PATCH] perf tools: Fix check-headers.sh AND list path of execution
-Date:   Sat, 11 Aug 2018 11:39:15 +0300
-Message-Id: <20180811083915.17471-1-alexander.kapshuk@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723070145.GB7523@krava>
-References: <20180723070145.GB7523@krava>
+        Sat, 11 Aug 2018 07:22:45 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id AD36E5C015D;
+        Sat, 11 Aug 2018 10:49:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1533977354;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8DDpqdcnLkDHBDSAZv8XG60tLf86pNGv3jUE/TNeGk0=;
+        b=K6DHdvoeVNRSlqm41u0GBV+j7ug+OSfKJ2xN+2XcsMmJzHFgNHO64OMJbirC9AM90Oy/qu
+        GdquIkbmvRqR1B53ODoMcGozius6YnwwAEmQufkuSvUQjo6+0PwG8hYBcrlberjgBIWITo
+        GmySm4gOsAp/uxboju/NyP9o8WAFcXs=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 11 Aug 2018 10:49:14 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Alistair Strachan <astrachan@google.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-efi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] efi/libstub: arm: support building with clang
+In-Reply-To: <20180809164042.210675-1-astrachan@google.com>
+References: <20180809164042.210675-1-astrachan@google.com>
+Message-ID: <32f5ce9b26a386e81857afcd7d135bad@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The '||' path of execution in the 'test' block of the check_2() function
-may also be taken if file2 does not exist, in which case the warning
-message about the ABI headers being different would still be printed
-where it should not be.  See below.
+On 09.08.2018 18:40, Alistair Strachan wrote:
+> When building with CONFIG_EFI and CONFIG_EFI_STUB on ARM, the libstub
+> Makefile would use -mno-single-pic-base without checking it was
+> supported by the compiler. As the ARM (32-bit) clang backend does not
+> support this flag, the build would fail.
+> 
+> This changes the Makefile to check the compiler's support for
+> -mno-single-pic-base before using it, similar to c1c386681bd7 ("ARM:
+> 8767/1: add support for building ARM kernel with clang").
 
-% file1=file1; file2=file2
-% cmd="echo diff $file1 $file2"
-% test -f $file2 &&
-eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file1'
-differs from latest version at '$file2'" >&2
-Warning: Kernel ABI header at 'tools/file1' differs from latest
-version at 'file2'
+Looks good to me:
 
-The proposed patch converts the code following the '&&' operator into a
-compound list to be executed in the current process environment only if
-file2 does exist. Should the files being compared differ, a diff command
-to compare the files concerned is printed on standard output. E.g.
+Reviewed-by: Stefan Agner <stefan@agner.ch>
 
-diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
-
-Signed-off-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
----
- tools/perf/check-headers.sh | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index de28466c0186..ea48aa6f8d19 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -67,8 +67,12 @@ check_2 () {
- 
-   cmd="diff $* $file1 $file2 > /dev/null"
- 
--  test -f $file2 &&
--  eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
-+  test -f $file2 && {
-+    eval $cmd || {
-+      echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
-+      echo diff -u tools/$file $file
-+    }
-+  }
- }
- 
- check () {
--- 
-2.18.0
-
+> 
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-efi@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Alistair Strachan <astrachan@google.com>
+> ---
+>  drivers/firmware/efi/libstub/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/efi/libstub/Makefile
+> b/drivers/firmware/efi/libstub/Makefile
+> index a34e9290a699..91339d13f2a1 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -13,7 +13,8 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
+>  
+>  cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
+>  cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
+> -				   -fno-builtin -fpic -mno-single-pic-base
+> +				   -fno-builtin -fpic \
+> +				   $(call cc-option,-mno-single-pic-base)
+>  
+>  cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
