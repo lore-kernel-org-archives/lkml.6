@@ -2,90 +2,107 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D631C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769C7C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B652219F2
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:31:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B652219F2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 15E0821A0B
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:48:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYySlrD6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E0821A0B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeHLAGb (ORCPT
+        id S1727521AbeHLAXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 20:06:31 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50706 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbeHLAGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 20:06:31 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Aug 2018 14:30:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,226,1531810800"; 
-   d="scan'208";a="254001822"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by fmsmga006.fm.intel.com with ESMTP; 11 Aug 2018 14:30:41 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fobSe-000BCd-69; Sun, 12 Aug 2018 05:30:12 +0800
-Date:   Sun, 12 Aug 2018 05:30:02 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     kbuild-all@01.org, ctatlor97@gmail.com,
-        linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM660
-Message-ID: <201808120507.D1Aw6GcB%fengguang.wu@intel.com>
-References: <20180810202123.29238-1-ctatlor97@gmail.com>
+        Sat, 11 Aug 2018 20:23:31 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41382 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbeHLAXb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 20:23:31 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z8-v6so5882896pgu.8
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 14:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=KKxaNydyGpmRa//Lja/l6lRO0TveX+lDLJnNrPc+i+Q=;
+        b=jYySlrD6HjoIDSDnZZ0oblP+l74XmqBPySzvOnH2+FTWOWTfHwdOFjnTO2sok/2LLZ
+         NikPNje/vcNCHaHTSq0GIqfbqxrK1Qxo6+wn+1ASmGqW0uMn3H2eB+yP+RGZvMgUS81e
+         XlaC5Bsge0iOpAyphX2Q6JSfu3thaBeQt3gXQpW8fFwQJYVYRACgAUROST56jZ8X+MW+
+         ARlx9WgdNFXJCeudJfIIMQ4qKXYwbXz1DXv+PIXQpjF3/RPX2JvwG9r6S1a0zbEpxWMr
+         4e9HWQRYV8djdY8oE/hcCyNf6cJGrgRULtYBEyRDFKHGzsC3saQlJk3NLvY2zJmP6K3R
+         l6Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=KKxaNydyGpmRa//Lja/l6lRO0TveX+lDLJnNrPc+i+Q=;
+        b=sCd2YTDz+i9F7Dq4JtmUU6eJauaujkhfyKayCSOVNuqjZkSy7H/ZzgF35zEZONP5G3
+         ecfF7IGOc74MjGKjGpsZKWwj6JXE9K3+qz3IDSFN6OeU1Z9v34EYe9iOdKmMkXg05HXs
+         52ldqpbO/pfyr6zmYbimdNIvokNSl61yCDUevHzv0jvVU4/fKclbNoIWElFSVg1W2FNm
+         lu3Wex/4l4jnAqSF99JWNFH5OqwvWoQPIosbNIEgdMv2N0uIaZnyelJOwhVVStNwzjay
+         Dw+LZYmINWXt/Z0t+HTfvXDa+PgvijoimR93LssQYPSLo3/gowkVhw22NJALRQkbv+oA
+         FhKg==
+X-Gm-Message-State: AOUpUlH5wnigahDkuwdzWDh2409RCQTuwIMEFdx7xS6v9K7vbGJ5Gwk5
+        RMJiTbc+i1pnEzClKvsqHogYYBAqWZw=
+X-Google-Smtp-Source: AA+uWPxkKreIDmMFS8vSQf8XRxHqCpLIraaZewMZ04s+TVpa2236BpshR2vUc+DoSx9IXlFvJyFUNQ==
+X-Received: by 2002:a65:5c83:: with SMTP id a3-v6mr11480397pgt.164.1534024078551;
+        Sat, 11 Aug 2018 14:47:58 -0700 (PDT)
+Received: from ubuntu ([119.82.107.14])
+        by smtp.gmail.com with ESMTPSA id h130-v6sm52608986pgc.88.2018.08.11.14.47.57
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 11 Aug 2018 14:47:58 -0700 (PDT)
+From:   Sumit Kumar <sumit686215@gmail.com>
+X-Google-Original-From: Sumit Kumar <sumit686215@example.com>
+Date:   Sun, 12 Aug 2018 03:17:53 +0530
+To:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: gasket: remove null ptr check before kfree
+Message-ID: <20180811214753.GA14868@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810202123.29238-1-ctatlor97@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Craig,
+Remove null ptr check before kfree because kfree is null ptr safe.
+Issue found by checkpatch.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on agross/for-next]
-[also build test WARNING on v4.18-rc8]
-[cannot apply to next-20180810]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Craig-Tatlor/clk-qcom-Add-Global-Clock-controller-GCC-driver-for-SDM660/20180811-150111
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/clk/qcom/gcc-sdm660.c:2255:15: sparse: symbol 'gcc_sdm660_hws' was not declared. Should it be static?
-   drivers/clk/qcom/gcc-sdm660.c:2304:10: sparse: Initializer entry defined twice
-   drivers/clk/qcom/gcc-sdm660.c:2306:10:   also defined here
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Sumit Kumar <sumit686215@example.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/staging/gasket/gasket_page_table.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index d4c5f8a..bd921dc 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -1328,10 +1328,8 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
+ 				  num_pages * PAGE_SIZE, mem, handle);
+ 	}
+ 
+-	if (gasket_dev->page_table[index]->coherent_pages) {
+-		kfree(gasket_dev->page_table[index]->coherent_pages);
+-		gasket_dev->page_table[index]->coherent_pages = NULL;
+-	}
++	kfree(gasket_dev->page_table[index]->coherent_pages);
++	gasket_dev->page_table[index]->coherent_pages = NULL;
+ 	gasket_dev->page_table[index]->num_coherent_pages = 0;
+ 	return -ENOMEM;
+ }
+-- 
+2.7.4
+
