@@ -2,129 +2,136 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A45B1C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 03:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839DBC46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4598022438
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 03:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CAA62084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:10:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOM+Wpv1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4598022438
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy3X6h52"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAA62084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=twiddle.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeHKFdX (ORCPT
+        id S1727239AbeHKGmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 01:33:23 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36400 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbeHKFdX (ORCPT
+        Sat, 11 Aug 2018 02:42:52 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37450 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeHKGmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 01:33:23 -0400
-Received: by mail-pg1-f195.google.com with SMTP id h12-v6so5196030pgs.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 20:00:49 -0700 (PDT)
+        Sat, 11 Aug 2018 02:42:51 -0400
+Received: by mail-pl0-f66.google.com with SMTP id d5-v6so4809915pll.4;
+        Fri, 10 Aug 2018 21:10:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=B9vO4OXrh3KNw+pSpZxYm5noIXOJzlSyxuge9i+Dg5I=;
-        b=fOM+Wpv1CunMnB2WcO9V7/JxlQHveEeGI5Y8gpWXW/QQi/IxOr2CLG0j3+n8OxGRRK
-         xW68GhknzVdzcNegO+IIzsmcj67/QaDNiPpNA2xLiUyeH5nLDaed7fNuzLo6T49s/TtE
-         ukuQqTT5m9b1mqJIqVxYGEMQ8WF0W1TRTkxYsrGcXo3P8wiH8nQ+0iv/bJXesqTKJTNH
-         zYsA/l69JBGpD6ATIMnDCpeSl2No8YtsffRLhD7TDRvqGVBc9Yx79cRSxVJ5Hi5LybFm
-         JQPvZlLfc2daU/h2UXnryeNiZehSURG8zwJ0nRKlCNA7O2JUYDKWi1kAH2FlgXEBrWhx
-         G6Qw==
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gh+wWwkv/kRkVjUWYe0v6f4wp36nB59d6Dd6MqPCPqI=;
+        b=Fy3X6h52nTQdyrqS+m74le4jvIWwOBLc/ckl5kGCD3AWZhqByyIqv2pXznM2j+6/cW
+         OVesYxGsHUeDi2wcIYj2o41BUaTiZQqgYQ9A4bQXarDlXmo6BmzYK4kVmtS/6ANZu3Mi
+         RYHpC49PtQA0uXCwkq9pXm1z6Mwb0eS+Jh10zb1OJsc6qJzAVHGNlCbpKtN8YW+OISIb
+         qVU1NqB+ybwxiqnzVsnu3j+4FNCY0sutUx2I3jJdxoOFhFJ0I0QAkHz56sZEnh7McC3M
+         6QSMaEy/MNmnJYqXFUoK0Qh1GameIK7AdlWNqN8nYv5WECsNsYpQ3yx9DLK23EkNIDz0
+         R/sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=B9vO4OXrh3KNw+pSpZxYm5noIXOJzlSyxuge9i+Dg5I=;
-        b=HAcpN7paBt9zwIZnjl647QIpjE48r1XdeyefI6v5lie5QWa/tBrjc9xmoZsXhw8pOi
-         tHZ0CpAe4iExaPbnx/Mre+Oq+M/nZuiaQfSD3EriSVYouT7FCKx49JLycD2nvWnuFvXk
-         6jJ8/KN3BY/yy5BlQ3F71Sog+t7fRdUu9CUKsKi6AN5RYIA9lID5DpO9emXeIy0WhRbG
-         JpCA57gZwNVvLrfWwiROyTcXUexmZ9Z+HeOBY0La+ay5VvYrQY0Ds95qYOFfn3G6sqnw
-         c40sqoXyUka0YcMdLWpyUkcVSLIAr+2vLT3bes3zSKeNBBUhYTMnKC5RF02aPILOs963
-         vhwg==
-X-Gm-Message-State: AOUpUlGDj9AQHo0kAg4Hi1jjzKF0WLrH3nYNsbgz/peq3vWrC6JA1mnw
-        7AuZ5WE5pBJ5+DkXzCUoIGw=
-X-Google-Smtp-Source: AA+uWPzWXJTpVLN6KHJoP/nHT+xs/gThxplPYaedorlc2cfJhbdiF6vYCJhE27G1A7p68NsuyCoKhw==
-X-Received: by 2002:a62:5302:: with SMTP id h2-v6mr9620552pfb.183.1533956449324;
-        Fri, 10 Aug 2018 20:00:49 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:a5a3:1607:66e7:4841])
-        by smtp.gmail.com with ESMTPSA id q85-v6sm18846365pfa.151.2018.08.10.20.00.47
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=gh+wWwkv/kRkVjUWYe0v6f4wp36nB59d6Dd6MqPCPqI=;
+        b=evIEMVAAL5LoRFq1n8ovbMa/RQDQD0bFaplgjfHh8j2x3BA3wzBrOaa5nvWVHqOB6j
+         742MKMY5gHCCdsqMq4hTOmxH+XzHKU/Ol971/lHbmzq6IR/p29e19ZLhE03dqH+eua7+
+         WsH8Cjpe+OLqPuFFchPHAXjZlHFMhBD3qgRr6g3PmF1/3dWl0zddvCZ/n9/klv4stCYP
+         QtlWnFD5PPSqpCDYsg7eJrOQMacb+TSSMobQGYZ79AZ0SiYlsXm35mcZKxvKifP5MY8j
+         8W1pTVRQSnzfCEbKtsh2zFr1+SDFcLle9niS6JOMNrigjIDXJJvTM0qmF4ngMcIY6EOR
+         cotA==
+X-Gm-Message-State: AOUpUlGOnMJnXKZPpuHUsSGcpsegN7k7pz8GMBEna1vQ+Cj3xb2eL0LG
+        YKoG2Vj4BQy6j6kVnhwFxEI=
+X-Google-Smtp-Source: AA+uWPzXtk98kIzltr2VtqbJHdANy0fZyIa2YTc/dn8JC2LdnZYpx9I+UZywiBDa9Am/vIyYn4u94g==
+X-Received: by 2002:a17:902:904c:: with SMTP id w12-v6mr8541747plz.95.1533960607436;
+        Fri, 10 Aug 2018 21:10:07 -0700 (PDT)
+Received: from cloudburst.twiddle.net (97-113-8-179.tukw.qwest.net. [97.113.8.179])
+        by smtp.googlemail.com with ESMTPSA id r23-v6sm22345799pfj.5.2018.08.10.21.10.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 20:00:48 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com
-Cc:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH V2] kernel: locking: rtmutex: Fix a possible sleep-in-atomic-context bug in rt_mutex_handle_deadlock()
-Date:   Sat, 11 Aug 2018 11:00:37 +0800
-Message-Id: <20180811030037.14885-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 10 Aug 2018 21:10:06 -0700 (PDT)
+Subject: Re: [PATCH 3/6] alpha: Unify the not-implemented system call entry
+ name
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Firoz Khan <firoz.khan@linaro.org>, linux-alpha@vger.kernel.org,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
+References: <1531736638-15294-1-git-send-email-firoz.khan@linaro.org>
+ <1531736638-15294-4-git-send-email-firoz.khan@linaro.org>
+ <20180811000455.GC6515@ZenIV.linux.org.uk>
+ <98937991-cefa-b7f3-11c3-12727b3159b1@twiddle.net>
+ <20180811024553.GF6515@ZenIV.linux.org.uk>
+From:   Richard Henderson <rth@twiddle.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=rth@twiddle.net; prefer-encrypt=mutual; keydata=
+ xsBNBFGuLC8BCADcAoWcnW9lTsDMzbO3MBU+KbiGaj5JPatEUscRDkQYM2fyNjJp2tIWDK5a
+ n4yngeXB3eX61WbYR3QraRK8mlYLGxyAdHMEQfPipbqf3TmN043fssT2bc82ApJcs1zvLYgI
+ rhMht7Dck7A0wNC1jo+ZjVVFig5gDTN7gOzaAdBtV8tVNUddwkLzzaGpfihhSD6U46NdqKOG
+ Wlnn6TrkMy0QGdQ5NaXHkRlUjnnUTSW/nKfoxD+EI+A9V4sYOd8mc/TL4aJh/i/AiU57eLbo
+ n17uQI6/VTWDUWl8USiz4x9c8vmqlywLx00tAFxxoRWqk4KVJlj+Sh0up/D/sJ+vPpgBABEB
+ AAHNI1JpY2hhcmQgSGVuZGVyc29uIDxydGhAdHdpZGRsZS5uZXQ+wsCBBBMBAgArAhsDBgsJ
+ CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUJC7UHogUCWaDNVgIZAQAKCRCtEnDMTdAnm9N5CADO
+ cB8F/SudJ72IupxQf40hbJdBK176+gb3sHMsixyLtrU59lee+lIM1OZmlNjsnCYmiSnbA5ks
+ Q7p0HfO7DgdmfLzcK6xsHZukqSZy5LByw348Y913ZyjOrJZFdPP7kDg1MnqRqH4+3ZdzxV4y
+ eYBWFU9GYMIF06JbUubossOOO4ArNVZbnIPu8Vn2tDZVVqsCBqkoCSBMj519xrvyOu5z4mHS
+ LkCglXmVDOXMbqLuNAC3rfNXSnyM4hYkLUyfALJlAAy1Ro+jUqYhu7XUFV/MiwRuFMh5GbtY
+ Urkx7tqsWQXLT3GeDk/LqvpWJQwk4cHHckYjRih+70CHIenm81PVzsBNBFGuLC8BCACyEx3x
+ 94HIkTX0CHu2sA0w75+h9wuoA8ggJ7+S4ri0y2YsijWad5TTt6z6MMiqxk9kSA5bppaj4HXh
+ 86hBF/dWCtMpNr3Rb8FNOKyeA/qkYHVD6HiAiw9c6D8Dr9hWmOk3/HSmGrNURxeUFOckDXsv
+ I+yGGKBNshj59j7QZr7ZiuIi2rWlBL8dFN/OWa/o3x7HKsE4k6K8ngwvCKP/QbDLwLLBOWH+
+ VEUtpyeyxTr3OJ47ECTxdYvXoAV2iJaKr+6doVQiiR5eVFiMYrUPUECJeolOCwqc/JlWE18L
+ +PCAFaW1H+/mpPVfSpN4wnkJ5cQiQVB41IaCM4p20iRzx7ZJABEBAAHCwGUEGAECAA8CGwwF
+ AlmgzYEFCQu1CEoACgkQrRJwzE3QJ5s7rggAwABzDAGrZ6uWsMxg5PeiiAYPy6LBnCBJSpB5
+ Tfy5jH8QTmLfXW+u4Ib4sWXG7PYNR7sIrtqUHjRqXLVXrSnBX9ASGcYw/Xil45khW6LsRpO1
+ prHv9gkwQfa6fTiWXVfSfm2Nant6u02q+MaYtQpCVTiz/9ki4FfftUwUHFLU0MhIQogjd11y
+ /E08RJsqBwaHQdt14PwU1HphDOzSkhOXRXQLSd3ysyeGUXvL+gqQoXl5XYdvk8IId4PoJRo4
+ jcyJ4VbnldvXh5gdGhFA/f9JgkLk9tPW+C3wNtNWyRUq8azR9hF2fg2HJUf4IXQlIu8OOgh1
+ VcROBqvtH3ecaIL9iw==
+Message-ID: <d223ad23-04ae-408f-2a73-d5fa641ad725@twiddle.net>
+Date:   Fri, 10 Aug 2018 21:10:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180811024553.GF6515@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
+On 08/10/2018 07:45 PM, Al Viro wrote:
+> BTW, seeing that it's your code - why was unop used in
+> alpha_ni_syscall?  I don't remember the rules re pipeline
+> stalls; is it that some earlier variants prefer unop to
+> nop in such places?  It's not that microoptimizing that
+> one makes any difference, but just out of curiosity -
+> would something like
+> 	lda     $0, -ENOSYS
+> 	stq     $sp, 0($sp)	/* sp != 0 */
+> 	ret
+> do just as well there?
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+Oh that.  Well, unop is a "load" and pairs with everything
+on all cpus, where nop is an integer and doesn't always
+pair.  So I got into the habit of using unop for everything.
 
-[FUNC] schedule
-kernel/locking/rtmutex.c, 1223:
-	schedule in rt_mutex_handle_deadlock
-kernel/locking/rtmutex.c, 1273:
-	rt_mutex_handle_deadlock in rt_mutex_slowlock
-kernel/locking/rtmutex.c, 1249:
-	_raw_spin_lock_irqsave in rt_mutex_slowlock
+The extra nop was so that lda + unop // stq + ret paired up
+in in two cycles as opposed to lda /stall/ stq // ret in
+three cycles on ev4+ev5.  ev6 didn't care.  FWIW.
 
-To fix the bug, the spinlock is released before the loop of schedule()
-This is found by my static analysis tool (DSAC).
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
-v2:
-* Release the spinlock before the loop, instead of v1 that releases the
-  spinlock before schedule() and then acquires the spinlock again.
-  Thank Steven for good advice.
----
- kernel/locking/rtmutex.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 2823d4163a37..8f25a289abe8 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1205,7 +1205,7 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int state,
- }
- 
- static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
--				     struct rt_mutex_waiter *w)
-+				     struct rt_mutex_waiter *w, struct rt_mutex *lock)
- {
- 	/*
- 	 * If the result is not -EDEADLOCK or the caller requested
-@@ -1218,6 +1218,8 @@ static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
- 	 * Yell lowdly and stop the task right here.
- 	 */
- 	rt_mutex_print_deadlock(w);
-+	/* We're not going anywhere, release the wait_lock */
-+	raw_spin_unlock_irq(&lock->wait_lock);
- 	while (1) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		schedule();
-@@ -1269,7 +1271,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
- 	if (unlikely(ret)) {
- 		__set_current_state(TASK_RUNNING);
- 		remove_waiter(lock, &waiter);
--		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
-+		rt_mutex_handle_deadlock(ret, chwalk, &waiter, lock);
- 	}
- 
- 	/*
--- 
-2.17.0
+r~
 
