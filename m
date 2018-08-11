@@ -2,101 +2,87 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74063C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B4AC46464
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204A221A8F
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:03:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hp+jg6VR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204A221A8F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC929219C8
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 02:11:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC929219C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeHKEgU (ORCPT
+        id S1727251AbeHKEoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 00:36:20 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45182 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeHKEgU (ORCPT
+        Sat, 11 Aug 2018 00:44:20 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:33178 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeHKEoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 00:36:20 -0400
-Received: by mail-pl0-f67.google.com with SMTP id j8-v6so4714841pll.12;
-        Fri, 10 Aug 2018 19:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=m4oJQ3Klb6EHwpB4flm8l7xyZNv0Bc5AeSJmEn3eVB4=;
-        b=hp+jg6VREaiGlLDeMhGRiwFovGK2+YHPfh808bNx4duZEPgfINANxd9xtBdXDf+eEE
-         bw93w94Hh9TqX6/r2GPpmTR5mZDtvLN8yLH8EyOhwCLJXQvRu5dRhl0v9JON/1e/dhda
-         T8M/UUEjoKJ9kHPw9ZkrtZba49du/FvZY2XoY/lieEk05OrWKs8FGFGeB5GO8adXZZ8L
-         BU3/qptPcyCnXAn19jUhNaTVLtqSUzRt2MFCDlU8YTqK2QVMWUvwCJO1xVmnUxY1E0QY
-         mLAc2HrxhIenjzbpVU8RTjKmiiBVB759RD4Edof7DuvwnztmQUYqFHZSuKHF27IhOXme
-         h01A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=m4oJQ3Klb6EHwpB4flm8l7xyZNv0Bc5AeSJmEn3eVB4=;
-        b=qbcQQsLy1d6XjdIy0U6R0mV5nJgvlm3vcgoNmpdt3SZc3DCK2g3NjhGP6tP0uyIAT7
-         eZieH3WWoFsD85bLOWbThwrVctYT8JR6ttHC8DAt7jpL6iM4TUUc67ZB+Z2ij+n0Rf+r
-         7CRdac1oOsODbtDa/bc2KbEcgtji0AiwuGEaKBKYG7cAPING1P4h3hJW4HCsEZ2fdo2M
-         YsC7J4AccNQVTjFpKvnz7R0ax2BBqEnPpGjWZIw8d9RL4pafi7fCdb3xG5uo0VrYKXPo
-         OeK4QZWHniMSU4PwA/IRdXs1SgEEJIJeEKdeNiS6+QIn3JyVJ4QBZk9aK6AUkAYzQizv
-         bePA==
-X-Gm-Message-State: AOUpUlHxiCM5iwy1onNB4C0NRt0i1Fmac+RRM9/Tjh/Xe5bPHNs1uIat
-        H/vTZ+QDHfZfnOfsLmUwPhOIS65I
-X-Google-Smtp-Source: AA+uWPydZbDptkvWCO7dbQ85LbJ6QHpJBmQvJIsSxdIV2e7v6o8frfUTLeAP79UPkF3BwaTm3yaWLw==
-X-Received: by 2002:a17:902:20e9:: with SMTP id v38-v6mr8283202plg.107.1533953035615;
-        Fri, 10 Aug 2018 19:03:55 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.51? ([2402:f000:1:1501:200:5efe:a66f:4733])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm34385603pfe.42.2018.08.10.19.03.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 19:03:55 -0700 (PDT)
-To:     michael.hennerich@analog.com, linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug in
- adp5588_gpio_direction_input()
-Message-ID: <f741be3e-bc4d-9ea3-a2a7-d05fdc9cef5e@gmail.com>
-Date:   Sat, 11 Aug 2018 10:03:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Sat, 11 Aug 2018 00:44:20 -0400
+Received: from localhost (unknown [172.58.35.185])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3E5681434C5F9;
+        Fri, 10 Aug 2018 19:11:54 -0700 (PDT)
+Date:   Fri, 10 Aug 2018 19:11:53 -0700 (PDT)
+Message-Id: <20180810.191153.2290770424551316173.davem@davemloft.net>
+To:     andrew@lunn.ch
+Cc:     Jisheng.Zhang@synaptics.com, thomas.petazzoni@free-electrons.com,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: mvneta: fix mvneta_config_rss on armada
+ 3700
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180810222335.GD11955@lunn.ch>
+References: <20180810113627.5dec5d40@xhacker.debian>
+        <20180810.144031.861564620036768413.davem@davemloft.net>
+        <20180810222335.GD11955@lunn.ch>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 10 Aug 2018 19:11:54 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Sat, 11 Aug 2018 00:23:35 +0200
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+> On Fri, Aug 10, 2018 at 02:40:31PM -0700, David Miller wrote:
+>> From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+>> Date: Fri, 10 Aug 2018 11:36:27 +0800
+>> 
+>> > The mvneta Ethernet driver is used on a few different Marvell SoCs.
+>> > Some SoCs have per cpu interrupts for Ethernet events, the driver uses
+>> > a per CPU napi structure for this case. Some SoCs such as armada 3700
+>> > have a single interrupt for Ethernet events, the driver uses a global
+>> > napi structure for this case.
+>> > 
+>> > Current mvneta_config_rss() always operates the per cpu napi structure.
+>> > Fix it by operating a global napi for "single interrupt" case, and per
+>> > cpu napi structure for remaining cases.
+>> > 
+>> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+>> > Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
+>> 
+>> Applied, thanks.
+> 
+> Hi David
+> 
+> Please can you queue up:
+> 
+> Fixes: 7a86f05faf11 ("net: ethernet: mvneta: Fix napi structure mixup on armada 3700")
+> 
+> and this patch for stable.
 
-[FUNC] mutex_lock_nested
-drivers/gpio/gpio-adp5588.c, 113: mutex_lock_nested in 
-adp5588_gpio_direction_input
-drivers/gpio/gpio-adp5588.c, 224: adp5588_gpio_direction_input in 
-adp5588_irq_set_type
-kernel/irq/manage.c, 686: [FUNC_PTR]adp5588_irq_set_type in 
-__irq_set_trigger
-kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
+If you want things to go to -stable, don't mark them for net-next as this
+patch was.
 
-Note that [FUNC_PTR] means a function pointer call is used.
-
-I do not find a good way to fix, so I only report.
-This is found by my static analysis tool (DSAC).
-
-
-Best wishes,
-Jia-Ju Bai
+If it isn't appropriate for 'net' it isn't appropriate for -stable either.
