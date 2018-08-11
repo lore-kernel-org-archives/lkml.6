@@ -2,136 +2,92 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839DBC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854B5C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CAA62084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E7EE21870
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:35:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy3X6h52"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAA62084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=twiddle.net
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z85Vyl/c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7EE21870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeHKGmw (ORCPT
+        id S1727312AbeHKHIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 02:42:52 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37450 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbeHKGmv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 02:42:51 -0400
-Received: by mail-pl0-f66.google.com with SMTP id d5-v6so4809915pll.4;
-        Fri, 10 Aug 2018 21:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gh+wWwkv/kRkVjUWYe0v6f4wp36nB59d6Dd6MqPCPqI=;
-        b=Fy3X6h52nTQdyrqS+m74le4jvIWwOBLc/ckl5kGCD3AWZhqByyIqv2pXznM2j+6/cW
-         OVesYxGsHUeDi2wcIYj2o41BUaTiZQqgYQ9A4bQXarDlXmo6BmzYK4kVmtS/6ANZu3Mi
-         RYHpC49PtQA0uXCwkq9pXm1z6Mwb0eS+Jh10zb1OJsc6qJzAVHGNlCbpKtN8YW+OISIb
-         qVU1NqB+ybwxiqnzVsnu3j+4FNCY0sutUx2I3jJdxoOFhFJ0I0QAkHz56sZEnh7McC3M
-         6QSMaEy/MNmnJYqXFUoK0Qh1GameIK7AdlWNqN8nYv5WECsNsYpQ3yx9DLK23EkNIDz0
-         R/sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=gh+wWwkv/kRkVjUWYe0v6f4wp36nB59d6Dd6MqPCPqI=;
-        b=evIEMVAAL5LoRFq1n8ovbMa/RQDQD0bFaplgjfHh8j2x3BA3wzBrOaa5nvWVHqOB6j
-         742MKMY5gHCCdsqMq4hTOmxH+XzHKU/Ol971/lHbmzq6IR/p29e19ZLhE03dqH+eua7+
-         WsH8Cjpe+OLqPuFFchPHAXjZlHFMhBD3qgRr6g3PmF1/3dWl0zddvCZ/n9/klv4stCYP
-         QtlWnFD5PPSqpCDYsg7eJrOQMacb+TSSMobQGYZ79AZ0SiYlsXm35mcZKxvKifP5MY8j
-         8W1pTVRQSnzfCEbKtsh2zFr1+SDFcLle9niS6JOMNrigjIDXJJvTM0qmF4ngMcIY6EOR
-         cotA==
-X-Gm-Message-State: AOUpUlGOnMJnXKZPpuHUsSGcpsegN7k7pz8GMBEna1vQ+Cj3xb2eL0LG
-        YKoG2Vj4BQy6j6kVnhwFxEI=
-X-Google-Smtp-Source: AA+uWPzXtk98kIzltr2VtqbJHdANy0fZyIa2YTc/dn8JC2LdnZYpx9I+UZywiBDa9Am/vIyYn4u94g==
-X-Received: by 2002:a17:902:904c:: with SMTP id w12-v6mr8541747plz.95.1533960607436;
-        Fri, 10 Aug 2018 21:10:07 -0700 (PDT)
-Received: from cloudburst.twiddle.net (97-113-8-179.tukw.qwest.net. [97.113.8.179])
-        by smtp.googlemail.com with ESMTPSA id r23-v6sm22345799pfj.5.2018.08.10.21.10.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 21:10:06 -0700 (PDT)
-Subject: Re: [PATCH 3/6] alpha: Unify the not-implemented system call entry
- name
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Firoz Khan <firoz.khan@linaro.org>, linux-alpha@vger.kernel.org,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
-References: <1531736638-15294-1-git-send-email-firoz.khan@linaro.org>
- <1531736638-15294-4-git-send-email-firoz.khan@linaro.org>
- <20180811000455.GC6515@ZenIV.linux.org.uk>
- <98937991-cefa-b7f3-11c3-12727b3159b1@twiddle.net>
- <20180811024553.GF6515@ZenIV.linux.org.uk>
-From:   Richard Henderson <rth@twiddle.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=rth@twiddle.net; prefer-encrypt=mutual; keydata=
- xsBNBFGuLC8BCADcAoWcnW9lTsDMzbO3MBU+KbiGaj5JPatEUscRDkQYM2fyNjJp2tIWDK5a
- n4yngeXB3eX61WbYR3QraRK8mlYLGxyAdHMEQfPipbqf3TmN043fssT2bc82ApJcs1zvLYgI
- rhMht7Dck7A0wNC1jo+ZjVVFig5gDTN7gOzaAdBtV8tVNUddwkLzzaGpfihhSD6U46NdqKOG
- Wlnn6TrkMy0QGdQ5NaXHkRlUjnnUTSW/nKfoxD+EI+A9V4sYOd8mc/TL4aJh/i/AiU57eLbo
- n17uQI6/VTWDUWl8USiz4x9c8vmqlywLx00tAFxxoRWqk4KVJlj+Sh0up/D/sJ+vPpgBABEB
- AAHNI1JpY2hhcmQgSGVuZGVyc29uIDxydGhAdHdpZGRsZS5uZXQ+wsCBBBMBAgArAhsDBgsJ
- CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUJC7UHogUCWaDNVgIZAQAKCRCtEnDMTdAnm9N5CADO
- cB8F/SudJ72IupxQf40hbJdBK176+gb3sHMsixyLtrU59lee+lIM1OZmlNjsnCYmiSnbA5ks
- Q7p0HfO7DgdmfLzcK6xsHZukqSZy5LByw348Y913ZyjOrJZFdPP7kDg1MnqRqH4+3ZdzxV4y
- eYBWFU9GYMIF06JbUubossOOO4ArNVZbnIPu8Vn2tDZVVqsCBqkoCSBMj519xrvyOu5z4mHS
- LkCglXmVDOXMbqLuNAC3rfNXSnyM4hYkLUyfALJlAAy1Ro+jUqYhu7XUFV/MiwRuFMh5GbtY
- Urkx7tqsWQXLT3GeDk/LqvpWJQwk4cHHckYjRih+70CHIenm81PVzsBNBFGuLC8BCACyEx3x
- 94HIkTX0CHu2sA0w75+h9wuoA8ggJ7+S4ri0y2YsijWad5TTt6z6MMiqxk9kSA5bppaj4HXh
- 86hBF/dWCtMpNr3Rb8FNOKyeA/qkYHVD6HiAiw9c6D8Dr9hWmOk3/HSmGrNURxeUFOckDXsv
- I+yGGKBNshj59j7QZr7ZiuIi2rWlBL8dFN/OWa/o3x7HKsE4k6K8ngwvCKP/QbDLwLLBOWH+
- VEUtpyeyxTr3OJ47ECTxdYvXoAV2iJaKr+6doVQiiR5eVFiMYrUPUECJeolOCwqc/JlWE18L
- +PCAFaW1H+/mpPVfSpN4wnkJ5cQiQVB41IaCM4p20iRzx7ZJABEBAAHCwGUEGAECAA8CGwwF
- AlmgzYEFCQu1CEoACgkQrRJwzE3QJ5s7rggAwABzDAGrZ6uWsMxg5PeiiAYPy6LBnCBJSpB5
- Tfy5jH8QTmLfXW+u4Ib4sWXG7PYNR7sIrtqUHjRqXLVXrSnBX9ASGcYw/Xil45khW6LsRpO1
- prHv9gkwQfa6fTiWXVfSfm2Nant6u02q+MaYtQpCVTiz/9ki4FfftUwUHFLU0MhIQogjd11y
- /E08RJsqBwaHQdt14PwU1HphDOzSkhOXRXQLSd3ysyeGUXvL+gqQoXl5XYdvk8IId4PoJRo4
- jcyJ4VbnldvXh5gdGhFA/f9JgkLk9tPW+C3wNtNWyRUq8azR9hF2fg2HJUf4IXQlIu8OOgh1
- VcROBqvtH3ecaIL9iw==
-Message-ID: <d223ad23-04ae-408f-2a73-d5fa641ad725@twiddle.net>
-Date:   Fri, 10 Aug 2018 21:10:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 11 Aug 2018 03:08:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:57579 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726858AbeHKHIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 03:08:32 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41nTgy1G0tz9s4c;
+        Sat, 11 Aug 2018 14:35:41 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533962142;
+        bh=SggvAUw+rvkUeVGdhHwp49uw2d5mLYXEuYMKz/7FvyA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Z85Vyl/chp+52mv1+rNcJFNGTH9JQqGPfK+oX9qBcaXIWkm6HDYC699YSi9OWjvkJ
+         9dzhcsrElv9kGaQRxa5gsB4v8Z4vm/PHMKeF6sLwzADRQDVJBY8P4n2HFkyfj9J8nA
+         9Fajvj+Zpw+9TA7twzUHpFl1i+AMDAvuFQvslcDnVuGHltQUcOwluBxCAHABbbF0hq
+         EeBg1dlYT3Oo/FYhRQB+aTuCyQClv4FPe1F5JUpivmkcXcoHsv9Dc4QGBVf9z3scHT
+         yM9cUVdFmJptDETjfuZt/ovkkrMuXQMnSVFdiSNGj6hF/vKiDsGpWCH8x5JCOtnKPc
+         69y8/kpErwUOg==
+Date:   Sat, 11 Aug 2018 14:35:36 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
+Message-ID: <20180811143536.46ceac24@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180811024553.GF6515@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/BDS_lyjHP7Vv7fw.bY=dCed"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 07:45 PM, Al Viro wrote:
-> BTW, seeing that it's your code - why was unop used in
-> alpha_ni_syscall?  I don't remember the rules re pipeline
-> stalls; is it that some earlier variants prefer unop to
-> nop in such places?  It's not that microoptimizing that
-> one makes any difference, but just out of curiosity -
-> would something like
-> 	lda     $0, -ENOSYS
-> 	stq     $sp, 0($sp)	/* sp != 0 */
-> 	ret
-> do just as well there?
+--Sig_/BDS_lyjHP7Vv7fw.bY=dCed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oh that.  Well, unop is a "load" and pairs with everything
-on all cpus, where nop is an integer and doesn't always
-pair.  So I got into the habit of using unop for everything.
+Hi Mauro,
 
-The extra nop was so that lda + unop // stq + ret paired up
-in in two cycles as opposed to lda /stall/ stq // ret in
-three cycles on ev4+ev5.  ev6 didn't care.  FWIW.
+Commit
 
+  da2048b7348a ("Revert "media: vivid: shut up warnings due to a non-trivia=
+l logic"")
 
-r~
+is missing a Signed-off-by from its author and committer.
 
+Reverts are commits, too.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BDS_lyjHP7Vv7fw.bY=dCed
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltuZ5gACgkQAVBC80lX
+0Gx9YQf+P4c4wlibivB1wkP1A/isq/NLXaddttn8VujWsBJrYSRc9Q1CMH8gdaWZ
+jNWEesTgDSfSV9nyYTnw3xOGQ56YDQrq1cohai530/Whc7k+Fdlb/BikqFxAHD7k
+vE3mSYllc+3UjWTBEMXaHKS5Uf+nv8HTUiuLhXXXFiiOEsI/OhTansGhHVPtXj+k
+av2V+GxykyNbXmNmMPrf/valofSkRRrrIv6KoddjmooYIjz6NsO08DTyJxy10qBS
+7A9yQiQg+rYHdDVrQRhJ3bmf6JR8F1mWFz353D1bQEy3ggR2qHSjZJ1MxN9pwPng
+LoyAQ+McsFzuLEgMwYYUWGGgSgWK1w==
+=4uo2
+-----END PGP SIGNATURE-----
+
+--Sig_/BDS_lyjHP7Vv7fw.bY=dCed--
