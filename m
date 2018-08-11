@@ -2,173 +2,92 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D364C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF0FC46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439BB21E26
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6D9621A41
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:10:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qBa+GiVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439BB21E26
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMUp6Xi2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D9621A41
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeHKWoO (ORCPT
+        id S1727649AbeHKWqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 18:44:14 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35036 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727441AbeHKWoO (ORCPT
+        Sat, 11 Aug 2018 18:46:08 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43592 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbeHKWqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 18:44:14 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w3-v6so5370357plq.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 13:08:58 -0700 (PDT)
+        Sat, 11 Aug 2018 18:46:08 -0400
+Received: by mail-io0-f196.google.com with SMTP id y10-v6so10779959ioa.10;
+        Sat, 11 Aug 2018 13:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=CtbgM/NTlNYiBS2GbCvGWHgIJawlE9w7f17w5mGE2FU=;
-        b=qBa+GiVfooIUlcgUC0My3Zm5pHoPNbNPSkOVTLoB/J+oEXB08pcGO1Ev5w/f+eLKrc
-         P+5701UAuSukHnpjj2T+EO+tX/UAdyQxEtBbJ3of+y+QFwI1yg0lahOob+Y2pacJ3KLh
-         IkF93Z1NpNmCSzncdJTvKKGfjsTSRTIWfs57hVs2gbOL8AoRw+mY1bAVIM1kFX2gYFOw
-         ZOHH2cw5wNCVXMMc1Z8sQKwOq47u7VW1THPSu7IW017zU89dt90HcffWmJzXDssl0/xY
-         azHaEpICMhN6Q82l2YsCiZseLmx1XkfitoXJ7bjaaRGkYfiwYGh5wpXWn+nVt4cJePaP
-         ohPQ==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=r+y+Zajymd/Qx2UO0PkuaCsx985b7ym6QDvEeNYFWXc=;
+        b=LMUp6Xi2gty8TFSQIF5o8frVlfncYFYTcx+KWsROiv++P4VYg4HJ7ZDlR6VU/mw3NU
+         Y1iCu4D8uJcrD220LRfJLn6xfImH65z1IQTMwjlaoDQQl8eqJu1jDHyAUwRsE/0dXuAW
+         pOJ+s5P3uSKOY4SZZrVOdxZCcvC7ShfDbrgkp9F0ii7mThcW0rNlsSwfzkd+HPkev6gs
+         TSAsUnF25XgGahRADAM0iKJvHPoA9ax0DxL9zUz9v/KHNU5ugqNaUTfgR2vAx9dFMe+S
+         D+w2kThiHodC3Jqcvj5kbsK7X9I9NZyL3gUENr4NDmoAcQeqPuzgFA9V6pZ79Aevoc0O
+         AnLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=CtbgM/NTlNYiBS2GbCvGWHgIJawlE9w7f17w5mGE2FU=;
-        b=OP0hUA6lqTLH+kxbul2MKS7u8ZcXwLUUAXaeAgS0aOhzls09BjpKVIIiktE9l4pTyQ
-         NFKn/rczyJ8lsF37vN+NIs85gVZuaD4BKQSd0bB+uLtgtYJ2bN6S1MoHdgahCYj0I4b7
-         TN5f8zFyR3zDSUmM/jMJz0pzbJKtBglkYu+RSdvvjSa+Uw9qdmDNWx5jostXq9l6gdOO
-         ukgPQgaXRfB+Hry10ulU2+24qPVM0wtYCy0yuUE6OEkGofFVQCnEKtmDdkkrcCe0HMiJ
-         X22s2/12A5X3sAmj9tyYPH49edK3J9iHsFTcpXdJWlRVdSz98+HnENFKWirYn0YYnCk6
-         lklQ==
-X-Gm-Message-State: AOUpUlFo7RrbKayTICKSw6kBY+q73L/gHMkM3KdISQN0D2l2EOBvZ1/B
-        0riNi1xrv44vz25jFkXsnyaINT51
-X-Google-Smtp-Source: AA+uWPxc75kY/OfXOHDZcyS4skJJHf2XNv8Y0WoXIZpN8QV4IulCo4x3NbQdV+Hk9mRuUWlttq7Wgg==
-X-Received: by 2002:a17:902:4124:: with SMTP id e33-v6mr10896600pld.48.1534018138184;
-        Sat, 11 Aug 2018 13:08:58 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([183.82.16.163])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm38561409pfm.48.2018.08.11.13.08.55
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 11 Aug 2018 13:08:56 -0700 (PDT)
-Date:   Sun, 12 Aug 2018 01:41:48 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     linux-graphics-maintainer@vmware.com, syeh@vmware.com,
-        thellstrom@vmware.com, airlied@linux.ie, ajitn.linux@gmail.com,
-        daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vmwgfx: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20180811201147.GA14169@jordon-HP-15-Notebook-PC>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=r+y+Zajymd/Qx2UO0PkuaCsx985b7ym6QDvEeNYFWXc=;
+        b=Mgp0q52fbH1V2Yh40FI2Y/yJqc5mi0D859H8Yt3YNddgj38IgTds+e/krifLL2BBpk
+         vKIQxDlIAges3dxRzpjCIgCAEbYP1iHgT8FgGJxXyEPMLWm3PbHsUzgdjSJ+wCOUtrdO
+         V4i7htUXpkGYstEhKuEZs4sfsqZZM1jpZAl7Q/vtG18veSNVbXnsbai2sEVW82T237Fj
+         kSyPe/WdD9ZZgZE7Y0NtFVwm6Z4oJbU1K9XyNFkezxI7wZkbxH/wxivFzadUX5S3nIUY
+         WzXjFK83Y3HEPx07YUmRkAqVfKpTY9/43kPy3wjyDqd3biD1KiTkWV9KwNFS5EBnx2V6
+         91CQ==
+X-Gm-Message-State: AOUpUlGd5H4psPmEyZ5+jFv9xL6EJR77tmpgQNLwfRipEKaZ8j7XcEeu
+        Mq3JJCfPiAAOliXVXrXd4XJFUPqvK4KRZY5hOxleVeAB748=
+X-Google-Smtp-Source: AA+uWPxzci5cn3h1d03Efhlk1eEMVcdLrtqagzfvAth01jA6faf9v+uHY2cCyB//LLhWzrwGcdnkmzTlhuzX/dYp1tM=
+X-Received: by 2002:a6b:9f0e:: with SMTP id i14-v6mr10228722ioe.0.1534018252394;
+ Sat, 11 Aug 2018 13:10:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a4f:5a03:0:0:0:0:0 with HTTP; Sat, 11 Aug 2018 13:10:51
+ -0700 (PDT)
+In-Reply-To: <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
+References: <cover.1533989492.git.puwen@hygon.cn> <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
+ <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
+From:   Michael Jin <mikhail.jin@gmail.com>
+Date:   Sat, 11 Aug 2018 16:10:51 -0400
+Message-ID: <CAO6F7D=voK9Vof7-c-D8TNmppJUaEj4Qhd37kdRVHxOU9mZntA@mail.gmail.com>
+Subject: Re: [PATCH v3 16/17] driver/edac: enable Hygon support to AMD64 EDAC driver
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-edac@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
+On Sat, Aug 11, 2018 at 3:56 PM, Michael Jin <mikhail.jin@gmail.com> wrote:
+> On Sat, Aug 11, 2018 at 9:30 AM, Pu Wen <puwen@hygon.cn> wrote:
+>> @@ -1051,6 +1065,16 @@ static void determine_memory_type(struct amd64_pvt *pvt)
+>>                 else
+>>                         pvt->dram_type = MEM_DDR4;
+>>                 return;
+>> +       case 0x18:
+>> +               if (pvt->vendor == X86_VENDOR_HYGON) {
+>
+> This vendor checking is not necessary as there are no other known
+> family 18h processors.
 
-suspend_state can be removed from vmw_private as
-it will not be used anymore.
-
-Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |  6 +++---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h |  1 -
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 25 ++-----------------------
- 3 files changed, 5 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index bb6dbbe..a317cda 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -1521,7 +1521,7 @@ static int vmw_pm_freeze(struct device *kdev)
- 		WARN_ON(vmw_request_device_late(dev_priv));
- 		dev_priv->suspend_locked = false;
- 		ttm_suspend_unlock(&dev_priv->reservation_sem);
--		if (dev_priv->suspend_state)
-+		if (dev->mode_config.suspend_state)
- 			vmw_kms_resume(dev);
- 		if (dev_priv->enable_fb)
- 			vmw_fb_on(dev_priv);
-@@ -1558,8 +1558,8 @@ static int vmw_pm_restore(struct device *kdev)
- 	vmw_fence_fifo_up(dev_priv->fman);
- 	dev_priv->suspend_locked = false;
- 	ttm_suspend_unlock(&dev_priv->reservation_sem);
--	if (dev_priv->suspend_state)
--		vmw_kms_resume(dev_priv->dev);
-+	if (dev->mode_config.suspend_state)
-+		vmw_kms_resume(dev);
- 
- 	if (dev_priv->enable_fb)
- 		vmw_fb_on(dev_priv);
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index 1abe217..b8e200b 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -438,7 +438,6 @@ struct vmw_private {
- 	struct vmw_framebuffer *implicit_fb;
- 	struct mutex global_kms_state_mutex;
- 	spinlock_t cursor_lock;
--	struct drm_atomic_state *suspend_state;
- 
- 	/*
- 	 * Context and surface management.
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-index 23beff5..2d011a1 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-@@ -3028,19 +3028,7 @@ int vmw_kms_set_config(struct drm_mode_set *set,
-  */
- int vmw_kms_suspend(struct drm_device *dev)
- {
--	struct vmw_private *dev_priv = vmw_priv(dev);
--
--	dev_priv->suspend_state = drm_atomic_helper_suspend(dev);
--	if (IS_ERR(dev_priv->suspend_state)) {
--		int ret = PTR_ERR(dev_priv->suspend_state);
--
--		DRM_ERROR("Failed kms suspend: %d\n", ret);
--		dev_priv->suspend_state = NULL;
--
--		return ret;
--	}
--
--	return 0;
-+	return drm_mode_config_helper_suspend(dev);
- }
- 
- 
-@@ -3055,16 +3043,7 @@ int vmw_kms_suspend(struct drm_device *dev)
-  */
- int vmw_kms_resume(struct drm_device *dev)
- {
--	struct vmw_private *dev_priv = vmw_priv(dev);
--	int ret;
--
--	if (WARN_ON(!dev_priv->suspend_state))
--		return 0;
--
--	ret = drm_atomic_helper_resume(dev, dev_priv->suspend_state);
--	dev_priv->suspend_state = NULL;
--
--	return ret;
-+	return drm_mode_config_helper_resume(dev);
- }
- 
- /**
--- 
-1.9.1
-
+Actually, vendor checking works here. Although, AMD has not released a
+family 18h yet.
