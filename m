@@ -2,92 +2,116 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 854B5C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CB0C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7EE21870
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:35:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z85Vyl/c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7EE21870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 6CB5621870
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 04:36:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB5621870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeHKHIc (ORCPT
+        id S1727331AbeHKHJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 03:08:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:57579 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeHKHIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 03:08:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41nTgy1G0tz9s4c;
-        Sat, 11 Aug 2018 14:35:41 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533962142;
-        bh=SggvAUw+rvkUeVGdhHwp49uw2d5mLYXEuYMKz/7FvyA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Z85Vyl/chp+52mv1+rNcJFNGTH9JQqGPfK+oX9qBcaXIWkm6HDYC699YSi9OWjvkJ
-         9dzhcsrElv9kGaQRxa5gsB4v8Z4vm/PHMKeF6sLwzADRQDVJBY8P4n2HFkyfj9J8nA
-         9Fajvj+Zpw+9TA7twzUHpFl1i+AMDAvuFQvslcDnVuGHltQUcOwluBxCAHABbbF0hq
-         EeBg1dlYT3Oo/FYhRQB+aTuCyQClv4FPe1F5JUpivmkcXcoHsv9Dc4QGBVf9z3scHT
-         yM9cUVdFmJptDETjfuZt/ovkkrMuXQMnSVFdiSNGj6hF/vKiDsGpWCH8x5JCOtnKPc
-         69y8/kpErwUOg==
-Date:   Sat, 11 Aug 2018 14:35:36 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
-Message-ID: <20180811143536.46ceac24@canb.auug.org.au>
+        Sat, 11 Aug 2018 03:09:27 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10700 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726858AbeHKHJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 03:09:26 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AFE67C9BD85C3;
+        Sat, 11 Aug 2018 12:36:35 +0800 (CST)
+Received: from SHA150392835-N.china.huawei.com (10.45.59.148) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.399.0; Sat, 11 Aug 2018 12:36:26 +0800
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+To:     <rjw@rjwysocki.net>, <bp@suse.de>, <bp@alien8.de>,
+        <will.deacon@arm.com>, <james.morse@arm.com>,
+        <baicar.tyler@gmail.com>, <lenb@kernel.org>,
+        <robert.moore@intel.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <gengdongjiu@huawei.com>
+CC:     Tyler Baicar <tbaicar@codeaurora.org>
+Subject: [PATCH RESEND v3] arm64: clean the additional checks before calling ghes_notify_sea()
+Date:   Sat, 11 Aug 2018 12:35:47 +0800
+Message-ID: <20180811043547.560-1-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 2.11.0.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BDS_lyjHP7Vv7fw.bY=dCed"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.45.59.148]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BDS_lyjHP7Vv7fw.bY=dCed
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In order to remove the additional check before calling the
+ghes_notify_sea(), make stub definition when !CONFIG_ACPI_APEI_SEA.
 
-Hi Mauro,
+After this cleanup, we can simply call the ghes_notify_sea() to let
+APEI driver handle the SEA notification.
 
-Commit
+CC: Tyler Baicar <tbaicar@codeaurora.org>
+CC: James Morse <james.morse@arm.com>
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
+---
+This cleanup is ever mentioned by Mark Rutland in [1]
 
-  da2048b7348a ("Revert "media: vivid: shut up warnings due to a non-trivia=
-l logic"")
+[1]:
+https://lkml.org/lkml/2018/5/31/289
 
-is missing a Signed-off-by from its author and committer.
+change since v2:
+1. Add 'Reviewed-by' of Tyler
 
-Reverts are commits, too.
+change since v1:
+1. Update the commit messages
+2. CC Tyler and James
+3. Add 'Acked-by' of Will
+---
+ arch/arm64/mm/fault.c | 7 +------
+ include/acpi/ghes.h   | 4 ++++
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index b8eecc7..9ffe01d 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -727,12 +727,7 @@ static int do_sea(unsigned long addr, unsigned int esr, struct pt_regs *regs)
+ 
+ int handle_guest_sea(phys_addr_t addr, unsigned int esr)
+ {
+-	int ret = -ENOENT;
+-
+-	if (IS_ENABLED(CONFIG_ACPI_APEI_SEA))
+-		ret = ghes_notify_sea();
+-
+-	return ret;
++	return ghes_notify_sea();
+ }
+ 
+ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
+index 1624e2b..82cb4eb 100644
+--- a/include/acpi/ghes.h
++++ b/include/acpi/ghes.h
+@@ -118,6 +118,10 @@ static inline void *acpi_hest_get_next(struct acpi_hest_generic_data *gdata)
+ 	     (void *)section - (void *)(estatus + 1) < estatus->data_length; \
+ 	     section = acpi_hest_get_next(section))
+ 
++#ifdef CONFIG_ACPI_APEI_SEA
+ int ghes_notify_sea(void);
++#else
++static inline int ghes_notify_sea(void) { return -ENOENT; }
++#endif
+ 
+ #endif /* GHES_H */
+-- 
+1.9.1
 
---Sig_/BDS_lyjHP7Vv7fw.bY=dCed
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltuZ5gACgkQAVBC80lX
-0Gx9YQf+P4c4wlibivB1wkP1A/isq/NLXaddttn8VujWsBJrYSRc9Q1CMH8gdaWZ
-jNWEesTgDSfSV9nyYTnw3xOGQ56YDQrq1cohai530/Whc7k+Fdlb/BikqFxAHD7k
-vE3mSYllc+3UjWTBEMXaHKS5Uf+nv8HTUiuLhXXXFiiOEsI/OhTansGhHVPtXj+k
-av2V+GxykyNbXmNmMPrf/valofSkRRrrIv6KoddjmooYIjz6NsO08DTyJxy10qBS
-7A9yQiQg+rYHdDVrQRhJ3bmf6JR8F1mWFz353D1bQEy3ggR2qHSjZJ1MxN9pwPng
-LoyAQ+McsFzuLEgMwYYUWGGgSgWK1w==
-=4uo2
------END PGP SIGNATURE-----
-
---Sig_/BDS_lyjHP7Vv7fw.bY=dCed--
