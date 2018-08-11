@@ -2,142 +2,112 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D1FC46464
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AC3C46464
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E2D1223C6
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:14:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PoOC7Dg3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E2D1223C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id AB2FA2189B
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:28:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2FA2189B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeHKCq6 (ORCPT
+        id S1727247AbeHKDAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 22:46:58 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36034 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbeHKCq6 (ORCPT
+        Fri, 10 Aug 2018 23:00:41 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:43344 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbeHKDAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 22:46:58 -0400
-Received: by mail-lf1-f65.google.com with SMTP id b22-v6so7726274lfa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=isu/2bjwTW1W1CEBaS7T1ApZkb8pdoWekjbye+rJkpw=;
-        b=PoOC7Dg3bm7FoijqfMPXuRTZC9S80ykoXKn2hZT66KYMIrEOwQKH28P6BjbXHjmNty
-         zcgjIJ60zLMtK8ivZlEQD82vPA5m1e75FaucvCEuTPFL2MOozQQHcnuECuqcUchr2e+7
-         XcvYWUYCCfKUw+XGHfJPRMW9ddkSZx/JWISDI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=isu/2bjwTW1W1CEBaS7T1ApZkb8pdoWekjbye+rJkpw=;
-        b=Z/namsah0OOxAnDXZu4oL1mraJ8cEIx8+zeIZlrBtb1L0lltTVbh3/SQQzXzd63Abk
-         +puEqhQcExOPh+WwTrg0CFQfT1BjmHmUvMRST1yMYXb8Hab6Qib9QR3NnNG7TMP+VFqu
-         DDBzegepxgLejxP4HyZFh+QrZ4paV2dKIZrGw33MSNufsHCE6JQgHx8KaARrl5glN33k
-         gVeOtJbvC4GQTby0JXsgZjr4qg9z/yeBqZxC3C0lHh2lpxbcjQ7R80fviZSUAzri4A+D
-         KOy/znmjH1mdlbsBI6ERT1mJP7ZIDldwbq3aVYucH4EIsnMuDJxXiWj8EUy4/eBM4EJO
-         nDJA==
-X-Gm-Message-State: AOUpUlF5veHL/rzQURyTVnYURbpwhysDfTZuTIRt74pX16anjMi7XztI
-        JKEl8YphXpp5i5JZVvwCCiPXMOdv95A=
-X-Google-Smtp-Source: AA+uWPwTsvU67sDG71IfNSSJ4ypM13YBYn+ILbw9aFSY98O82riPtvq4Va3nERQTUIhlhTEtFyLz7A==
-X-Received: by 2002:a19:26d2:: with SMTP id m201-v6mr5492852lfm.43.1533946488891;
-        Fri, 10 Aug 2018 17:14:48 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm2059946lfj.69.2018.08.10.17.14.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 17:14:47 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id p6-v6so8408299ljc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:14:46 -0700 (PDT)
-X-Received: by 2002:a2e:540d:: with SMTP id i13-v6mr5734323ljb.51.1533946486671;
- Fri, 10 Aug 2018 17:14:46 -0700 (PDT)
+        Fri, 10 Aug 2018 23:00:41 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1foHlR-0005cO-Au; Fri, 10 Aug 2018 18:28:17 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1foHlQ-0001fM-Dt; Fri, 10 Aug 2018 18:28:17 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
+        <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <22361.1533913891@warthog.procyon.org.uk>
+        <28045.1533916438@warthog.procyon.org.uk>
+        <20180810161400.GA627@thunk.org>
+Date:   Fri, 10 Aug 2018 19:28:00 -0500
+In-Reply-To: <20180810161400.GA627@thunk.org> (Theodore Y. Ts'o's message of
+        "Fri, 10 Aug 2018 12:14:00 -0400")
+Message-ID: <87bma9oigf.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <1533155615-27929-1-git-send-email-vnkgutta@codeaurora.org>
- <1533155615-27929-4-git-send-email-vnkgutta@codeaurora.org>
- <CAE=gft5-5sVE-ih26KzJdpeth7Hq6QKNrP+oj_1JR=zYrdo0rw@mail.gmail.com> <2f1f8fcb95ed82219817800577ced67d@codeaurora.org>
-In-Reply-To: <2f1f8fcb95ed82219817800577ced67d@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 10 Aug 2018 17:14:08 -0700
-X-Gmail-Original-Message-ID: <CAE=gft5dOURp02K9StHsXySCYCu-nO-44Sw0=+CTxkO-Yra_5A@mail.gmail.com>
-Message-ID: <CAE=gft5dOURp02K9StHsXySCYCu-nO-44Sw0=+CTxkO-Yra_5A@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] drivers: edac: Add EDAC driver support for QCOM SoCs
-To:     vnkgutta@codeaurora.org
-Cc:     robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org, bp@alien8.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1foHlQ-0001fM-Dt;;;mid=<87bma9oigf.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Yp1iyvwgqhEviaB7XCawr7/9SZazFcvo=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: BUG: Mount ignores mount options
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 4:13 PM <vnkgutta@codeaurora.org> wrote:
->
-> On 2018-08-10 10:23, Evan Green wrote:
-> > On Wed, Aug 1, 2018 at 1:34 PM Venkata Narendra Kumar Gutta
-> > <vnkgutta@codeaurora.org> wrote:
-> >>
-> >> From: Channagoud Kadabi <ckadabi@codeaurora.org>
-> >>
-> >> Add error reporting driver for SBEs and DBEs. As of now, this driver
-> >> supports erp for Last Level Cache Controller (LLCC). This driver takes
-> >> care of dumping registers and adding config options to enable and
-> >> disable panic when the errors happen in cache.
-> >>
-> >> Co-developed-by: Venkata Narendra Kumar Gutta
-> >> <vnkgutta@codeaurora.org>
-> >> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> >> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
-> >> ---
-> >>  MAINTAINERS              |   7 +
-> >>  drivers/edac/Kconfig     |  28 +++
-> >>  drivers/edac/Makefile    |   1 +
-> >>  drivers/edac/qcom_edac.c | 507
-> >> +++++++++++++++++++++++++++++++++++++++++++++++
-> >>  4 files changed, 543 insertions(+)
-> >>  create mode 100644 drivers/edac/qcom_edac.c
-> >>
-> > ...
-> >> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
-> >> new file mode 100644
-> >> index 0000000..cf3e2b0
-> >> --- /dev/null
-> >> +++ b/drivers/edac/qcom_edac.c
-> >> @@ -0,0 +1,507 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> >> + */
-> >> +
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/edac.h>
-> >> +#include <linux/of_device.h>
-> >> +#include <linux/platform_device.h>
-> >> +#include <linux/smp.h>
-> >> +#include <linux/regmap.h>
-> >> +#include <linux/interrupt.h>
-> >> +#include <linux/soc/qcom/llcc-qcom.h>
-> >
-> > Please alphabetize these includes, and remove any unneeded ones.
-> Ok, I'll update it in the next version. I didn't know that it's
-> mandatory to have in alphabetic order.
-> Is it recommended or a strict rule that we have includes in alphabetize
-> order?
+"Theodore Y. Ts'o" <tytso@mit.edu> writes:
 
-You know, I'm not actually sure if it's a strict rule. I'm still
-learning many of the conventions here myself. But it seems to get
-commented on consistently by reviewers, so it's in my bag of "things I
-look out for".
+> On Fri, Aug 10, 2018 at 04:53:58PM +0100, David Howells wrote:
+>> Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>> 
+>> > Even *with* file system support, there's no way today for the VFS to
+>> > keep track of whether a pathname resolution came through one
+>> > mountpoint or another, so I can't do something like this:
+>> 
+
+>> However, the case folding stuff - is that a superblockism of a mountpointism?
+>
+> It's a superblock-ism.  As far as I know the *only* thing that we can
+> support as a mount-pointism is the ro flag, and that's handled as a
+> special case, and only if the original superblock was mounted
+> read/write.  ey That was my point; aside from the ro flag, we can't
+> support any other mount options as a per-mount point thing, so the
+> only thing we can do is to fail the mount if there are conflicting
+> mount options.  And I'm not really sure it helps the container use
+> case, since the whole point is they want their "guest" to be able to
+> blithely run "mount /dev/sda1 -o noxattr /mnt" and not worry about the
+> fact that in some other container, someone had run "mount /dev/sda1 -o
+> xattr /mnt".  But having the second mount fail because of conflicting
+> mount option breaks the illusion that containers are functionally as
+> rich as VM's.
+
+Ted this isn't about some container case.
+
+It about the fact that practically every filesystem in the kernel has
+the behavior I have described and it means that if root is not super
+careful root will shoot himself in the foot with the shotgun we have
+pointed there.
+
+It really is about loosing acls or some other filesystem option.
+
+
+Eric
