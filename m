@@ -2,104 +2,89 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28939C46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80194C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D4F21A8E
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D4F21A8E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=orcon.net.nz
+	by mail.kernel.org (Postfix) with ESMTP id 3DB5F21A8E
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 21:18:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB5F21A8E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeHKXxA (ORCPT
+        id S1727676AbeHKXxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 19:53:00 -0400
-Received: from smtp-4.orcon.net.nz ([60.234.4.59]:39399 "EHLO
-        smtp-4.orcon.net.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbeHKXxA (ORCPT
+        Sat, 11 Aug 2018 19:53:55 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46458 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbeHKXxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 19:53:00 -0400
-X-Greylist: delayed 1093 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 Aug 2018 19:52:59 EDT
-Received: from [121.99.228.40] (port=44121 helo=tower)
-        by smtp-4.orcon.net.nz with esmtpa (Exim 4.86_2)
-        (envelope-from <mcree@orcon.net.nz>)
-        id 1foayY-00035n-S7; Sun, 12 Aug 2018 08:59:06 +1200
-Date:   Sun, 12 Aug 2018 08:59:01 +1200
-From:   Michael Cree <mcree@orcon.net.nz>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Firoz Khan <firoz.khan@linaro.org>, linux-alpha@vger.kernel.org,
-        rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
-Subject: Re: [PATCH 1/6] alpha: Move __IGNORE* entries to non uapi header
-Message-ID: <20180811205901.gxbcn5vf4z36cozi@tower>
-Mail-Followup-To: Michael Cree <mcree@orcon.net.nz>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Firoz Khan <firoz.khan@linaro.org>, linux-alpha@vger.kernel.org,
-        rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
-References: <1531736638-15294-1-git-send-email-firoz.khan@linaro.org>
- <1531736638-15294-2-git-send-email-firoz.khan@linaro.org>
- <20180811192804.GI6515@ZenIV.linux.org.uk>
+        Sat, 11 Aug 2018 19:53:55 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1foX6q-0007DN-3j; Sat, 11 Aug 2018 16:51:24 +0000
+Date:   Sat, 11 Aug 2018 17:51:24 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180811165123.GH6515@ZenIV.linux.org.uk>
+References: <87pnyphf8i.fsf@xmission.com>
+ <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk>
+ <30365.1533972586@warthog.procyon.org.uk>
+ <9B6E2781-484B-4C42-95F5-F900EA36CEA5@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180811192804.GI6515@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-GeoIP: NZ
-X-Spam_score: -2.9
-X-Spam_score_int: -28
-X-Spam_bar: --
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9B6E2781-484B-4C42-95F5-F900EA36CEA5@amacapital.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 11, 2018 at 08:28:04PM +0100, Al Viro wrote:
-> On Mon, Jul 16, 2018 at 03:53:53PM +0530, Firoz Khan wrote:
-> > It is correct to keep __IGNORE* entry in non uapi header
-> > asm/unistd.h while uapi/asm/unistd.h must hold information
-> > only useful for user space applications.
-> 
-> > diff --git a/arch/alpha/include/uapi/asm/unistd.h b/arch/alpha/include/uapi/asm/unistd.h
-> > index e153ca6..3bb6ac1 100644
-> > --- a/arch/alpha/include/uapi/asm/unistd.h
-> > +++ b/arch/alpha/include/uapi/asm/unistd.h
-> > @@ -481,9 +481,4 @@
-> >  #define __NR_pwritev2			521
-> >  #define __NR_statx			522
-> >  
-> > -/* Alpha doesn't have protection keys. */
-> > -#define __IGNORE_pkey_mprotect
-> > -#define __IGNORE_pkey_alloc
-> > -#define __IGNORE_pkey_free
-> > -
-> >  #endif /* _UAPI_ALPHA_UNISTD_H */
-> 
-> Hmm...  There's also
-> 
-> #define __IGNORE_alarm
-> #define __IGNORE_creat
+On Sat, Aug 11, 2018 at 09:31:29AM -0700, Andy Lutomirski wrote:
 
-Tell you what, I wouldn't mind if the following ones were actually
-implemented as syscalls in the kernel on Alpha:
+> I don’t see why we need all this fancy “do the options match” stuff.  For the handful of filesystems (like NFS) that do something intelligent when multiple non-bind mount requests against the same underlying storage happen,  we can keep that behavior in the new API. For other filesystems that don’t have this feature, we should simply fail the request.
 
-> #define __IGNORE_getegid
-> #define __IGNORE_geteuid
-> #define __IGNORE_getgid
-> #define __IGNORE_getpid
-> #define __IGNORE_getppid
-> #define __IGNORE_getuid
+> IOW I see so compelling reason to call sget() at all from the new API.  The only sort-of-legit use case I can think of is mounting more than one btrfs subvolume. But even that should probably not be done by asking the kernel to separately instantiate the filesystem.
 
-There's a growing number of software packages that are deciding
-to sideskip glibc and call these syscalls directly.  Supporting
-OSF's C ABI incompliant getxpid, etc., in such packages is not
-easy and rather intrusive.
 
-Cheers,
-Michael.
+May I politely suggest the esteemed participants of that conversation
+to RTFS?  Yes, I know that it's less fun that talking about your
+rather vague ideas of how the things (surely) work, but it just might
+avoid the feats of idiocy like the above.
+
+Andy, I don't know how to put it more plainly: read the fucking source.
+Even grep would do.  The same NFS you've granted (among the "handful"
+of filesystems) an exception, *DOES* *CALL* *THE* *FUCKING* sget().
+
+Yes, really.  And in some obscure[1] cases (including the one mentioned
+upthread) it does reuse a pre-existing superblock.  For a very good
+reason.
+
+[1] such as, oh, mounting two filesystems from the same server with
+default options - who would've ever thought of doing something so
+perverted?
