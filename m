@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A39DC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C162C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 464D3217AE
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464D3217AE
+	by mail.kernel.org (Postfix) with ESMTP id CF38E217AE
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:50:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF38E217AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeHKQYy (ORCPT
+        id S1727821AbeHKQYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 12:24:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40548 "EHLO mail.kernel.org"
+        Sat, 11 Aug 2018 12:24:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727856AbeHKQYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 12:24:34 -0400
+        id S1727627AbeHKQYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 12:24:32 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8B0921A28;
-        Sat, 11 Aug 2018 13:50:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1E9E21A2B;
+        Sat, 11 Aug 2018 13:50:16 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1foUHZ-0006ID-OC; Sat, 11 Aug 2018 09:50:17 -0400
-Message-Id: <20180811135017.655911310@goodmis.org>
+        id 1foUHX-0006Di-Qs; Sat, 11 Aug 2018 09:50:15 -0400
+Message-Id: <20180811135015.738126021@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sat, 11 Aug 2018 09:50:02 -0400
+Date:   Sat, 11 Aug 2018 09:49:54 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [for-next][PATCH 34/34] tracepoints: Free early tracepoints after RCU is initialized
+Subject: [for-next][PATCH 26/34] trace: Use rcu_dereference_raw for hooks from trace-event subsystem
 References: <20180811134928.034373761@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,112 +48,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-When enabling trace events via the kernel command line, I hit this warning:
+Since we switched to using SRCU for tracepoints used in the idle path,
+we can no longer use rcu_dereference_sched for dereferencing points in
+trace-event hooks.
 
-WARNING: CPU: 0 PID: 13 at kernel/rcu/srcutree.c:236 check_init_srcu_struct+0xe/0x61
-Modules linked in:
-CPU: 0 PID: 13 Comm: watchdog/0 Not tainted 4.18.0-rc6-test+ #6
-Hardware name: MSI MS-7823/CSM-H87M-G43 (MS-7823), BIOS V1.6 02/22/2014
-RIP: 0010:check_init_srcu_struct+0xe/0x61
-Code: 48 c7 c6 ec 8a 65 b4 e8 ff 79 fe ff 48 89 df 31 f6 e8 f2 fa ff ff 5a
-5b 41 5c 5d c3 0f 1f 44 00 00 83 3d 68 94 b8 01 01 75 02 <0f> 0b 48 8b 87 f0
-0a 00 00 a8 03 74 45 55 48 89 e5 41 55 41 54 4c
-RSP: 0000:ffff96eb9ea03e68 EFLAGS: 00010246
-RAX: ffff96eb962b5b01 RBX: ffffffffb4a87420 RCX: 0000000000000001
-RDX: ffffffffb3107969 RSI: ffff96eb962b5b40 RDI: ffffffffb4a87420
-RBP: ffff96eb9ea03eb0 R08: ffffabbd00cd7f48 R09: 0000000000000000
-R10: ffff96eb9ea03e68 R11: ffffffffb4a6eec0 R12: ffff96eb962b5b40
-R13: ffff96eb9ea03ef8 R14: ffffffffb3107969 R15: ffffffffb3107948
-FS:  0000000000000000(0000) GS:ffff96eb9ea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff96eb13ab2000 CR3: 0000000192a1e001 CR4: 00000000001606f0
-Call Trace:
- <IRQ>
- ? __call_srcu+0x2d/0x290
- ? rcu_process_callbacks+0x26e/0x448
- ? allocate_probes+0x2b/0x2b
- call_srcu+0x13/0x15
- rcu_free_old_probes+0x1f/0x21
- rcu_process_callbacks+0x2ed/0x448
- __do_softirq+0x172/0x336
- irq_exit+0x62/0xb2
- smp_apic_timer_interrupt+0x161/0x19e
- apic_timer_interrupt+0xf/0x20
- </IRQ>
+Since tracepoints can now use either SRCU or sched-RCU, just use
+rcu_dereference_raw for traceevents just like we're doing when
+dereferencing the tracepoint table.
 
-The problem is that the enabling of trace events before RCU is set up will
-cause SRCU to give this warning. To avoid this, add a list to store probes
-that need to be freed till after RCU is initialized, and then free them
-then.
+This prevents an RCU warning reported by Masami:
 
-Link: http://lkml.kernel.org/r/20180810113554.1df28050@gandalf.local.home
-Link: http://lkml.kernel.org/r/20180810123517.5e9714ad@gandalf.local.home
+[  282.060593] WARNING: can't dereference registers at 00000000f3c7f62b
+[  282.063200] =============================
+[  282.064082] WARNING: suspicious RCU usage
+[  282.064963] 4.18.0-rc6+ #15 Tainted: G        W
+[  282.066048] -----------------------------
+[  282.066923] /home/mhiramat/ksrc/linux/kernel/trace/trace_events.c:242
+				suspicious rcu_dereference_check() usage!
+[  282.068974]
+[  282.068974] other info that might help us debug this:
+[  282.068974]
+[  282.070770]
+[  282.070770] RCU used illegally from idle CPU!
+[  282.070770] rcu_scheduler_active = 2, debug_locks = 1
+[  282.072938] RCU used illegally from extended quiescent state!
+[  282.074183] no locks held by swapper/0/0.
+[  282.075071]
+[  282.075071] stack backtrace:
+[  282.076121] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
+[  282.077782] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
+[  282.079604] Call Trace:
+[  282.080212]  <IRQ>
+[  282.080755]  dump_stack+0x85/0xcb
+[  282.081523]  trace_event_ignore_this_pid+0x66/0x70
+[  282.082541]  trace_event_raw_event_preemptirq_template+0xa2/0xb0
+[  282.083774]  ? interrupt_entry+0xc4/0xe0
+[  282.084665]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[  282.085669]  trace_hardirqs_off_caller+0x90/0xd0
+[  282.086597]  trace_hardirqs_off_thunk+0x1a/0x1c
+[  282.087433]  ? call_function_interrupt+0xa/0x20
+[  282.088201]  interrupt_entry+0xc4/0xe0
+[  282.088848]  ? call_function_interrupt+0xa/0x20
+[  282.089579]  </IRQ>
+[  282.090029]  ? native_safe_halt+0x2/0x10
+[  282.090695]  ? default_idle+0x1f/0x160
+[  282.091330]  ? default_idle_call+0x24/0x40
+[  282.091997]  ? do_idle+0x210/0x250
+[  282.092658]  ? cpu_startup_entry+0x6f/0x80
+[  282.093338]  ? start_kernel+0x49d/0x4bd
+[  282.093987]  ? secondary_startup_64+0xa5/0xb0
 
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
+Link: http://lkml.kernel.org/r/20180803023407.225852-1-joel@joelfernandes.org
+
+Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: e6753f23d961 ("tracepoint: Make rcuidle tracepoint callers use SRCU")
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/tracepoint.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ kernel/trace/trace_events.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 955148d91b74..96db841bf0fc 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -53,6 +53,9 @@ static LIST_HEAD(tracepoint_module_list);
-  */
- static DEFINE_MUTEX(tracepoints_mutex);
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 14ff4ff3caab..7b508ce8ac44 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -239,7 +239,7 @@ bool trace_event_ignore_this_pid(struct trace_event_file *trace_file)
+ 	struct trace_array_cpu *data;
+ 	struct trace_pid_list *pid_list;
  
-+static struct rcu_head *early_probes;
-+static bool ok_to_free_tracepoints;
-+
- /*
-  * Note about RCU :
-  * It is used to delay the free of multiple probes array until a quiescent
-@@ -80,11 +83,40 @@ static void rcu_free_old_probes(struct rcu_head *head)
- 	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+-	pid_list = rcu_dereference_sched(tr->filtered_pids);
++	pid_list = rcu_dereference_raw(tr->filtered_pids);
+ 	if (!pid_list)
+ 		return false;
+ 
+@@ -512,7 +512,7 @@ event_filter_pid_sched_process_exit(void *data, struct task_struct *task)
+ 	struct trace_pid_list *pid_list;
+ 	struct trace_array *tr = data;
+ 
+-	pid_list = rcu_dereference_sched(tr->filtered_pids);
++	pid_list = rcu_dereference_raw(tr->filtered_pids);
+ 	trace_filter_add_remove_task(pid_list, NULL, task);
  }
  
-+static __init int release_early_probes(void)
-+{
-+	struct rcu_head *tmp;
-+
-+	ok_to_free_tracepoints = true;
-+
-+	while (early_probes) {
-+		tmp = early_probes;
-+		early_probes = tmp->next;
-+		call_rcu_sched(tmp, rcu_free_old_probes);
-+	}
-+
-+	return 0;
-+}
-+
-+/* SRCU is initialized at core_initcall */
-+postcore_initcall(release_early_probes);
-+
- static inline void release_probes(struct tracepoint_func *old)
- {
- 	if (old) {
- 		struct tp_probes *tp_probes = container_of(old,
- 			struct tp_probes, probes[0]);
-+
-+		/*
-+		 * We can't free probes if SRCU is not initialized yet.
-+		 * Postpone the freeing till after SRCU is initialized.
-+		 */
-+		if (unlikely(!ok_to_free_tracepoints)) {
-+			tp_probes->rcu.next = early_probes;
-+			early_probes = &tp_probes->rcu;
-+			return;
-+		}
-+
- 		/*
- 		 * Tracepoint probes are protected by both sched RCU and SRCU,
- 		 * by calling the SRCU callback in the sched RCU callback we
 -- 
 2.18.0
 
