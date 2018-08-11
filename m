@@ -4,71 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC88C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A190C46464
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8FA21E20
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4071B21E20
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:10:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RWnjM8VJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8FA21E20
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aETVaHkX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4071B21E20
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbeHKCl2 (ORCPT
+        id S1727263AbeHKCmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 22:41:28 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40221 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727042AbeHKCl2 (ORCPT
+        Fri, 10 Aug 2018 22:42:32 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:33606 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbeHKCmb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 22:41:28 -0400
-Received: by mail-ua1-f66.google.com with SMTP id m13-v6so3713087uaq.7
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:09:20 -0700 (PDT)
+        Fri, 10 Aug 2018 22:42:31 -0400
+Received: by mail-ua1-f68.google.com with SMTP id i4-v6so3709567uak.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:10:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=WOlSMCycc3/+pGpdrWR976ZTJ1PF+/RE+twQyhlUgTE=;
-        b=RWnjM8VJ2hptNOYHNUG958hLQL9xyHdkcv58v4+gza9r/fow8xkuGE/mvLgqtrb6EL
-         THHk69yYdc9ITtpZoebdLugw/ObNbOIDGbhGEaJrf+I1OsCUgTb9rtTnN8qSLYQgPNpT
-         0xqU4T6Pu7RoqFJFRu37UUAeh2k122OvrcMpY=
+        bh=dBcOzPxgsDsgY/0J292gIancZF+R+JOXoOwlFmL7Dns=;
+        b=aETVaHkX+YaTloHCYF0gH2KDx/MF6bAIqtJqGiD7cNyvxmS8W2AwVEoT+r2L2ueFek
+         y3KDDKn8Mfsc/yk/pkTNW3B8U8ybjLu9GMTudpU8rS33wiawyExYChb6ndYctL3TphgV
+         YZyMawebFEhMyjhXWYhqJYkaAHcIEiI7kykYM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=WOlSMCycc3/+pGpdrWR976ZTJ1PF+/RE+twQyhlUgTE=;
-        b=Kd6TBe6vOcOE3eRlE/1MVqkPVm3oOVM3jNQcr+pl5ImWx9S16+K/q6tvxZ6f/1Nn3y
-         IX36qYNqWDgDdW1zItS4KXcKa+rGeulaqpwVGG1IY6uWmIfza2mRL9jyUjgUXEkr8FsM
-         Sv7yP1RSd1ojOEmFz3Xk3qGqz4TuGEjEv7jsLP2AacfzbHON/Unp2tVLKIbtRQOookBl
-         uXEl4agA+0uTsrWr7YMTc32OBF//oBnzQQXIaMJp8FIqzriOVy/huC0UThjxMMnYdM9c
-         5Yd2bO1JBoxs1MIxnP9jTish2q9F2LzalfckKRNT7255X/adKGBY0l3wKn/J9+ag1E5e
-         +PVg==
-X-Gm-Message-State: AOUpUlH2I8YzpCQAm16pBRwfENpRFybVnZU5AlH7avE5WB3SBBFxEAON
-        pkID7rgmToO5O+1yqV+jqFcSDpD/oJQ=
-X-Google-Smtp-Source: AA+uWPyEvs8V4kmYrNSr+6acn1LWbiDuUvSV6v1XdvenEhBGHzEzCjKlfnVNOYYiDX9I71Csfa+BKA==
-X-Received: by 2002:a1f:a94b:: with SMTP id s72-v6mr5464109vke.122.1533946160434;
-        Fri, 10 Aug 2018 17:09:20 -0700 (PDT)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id b21-v6sm3124417vkb.33.2018.08.10.17.09.18
+        bh=dBcOzPxgsDsgY/0J292gIancZF+R+JOXoOwlFmL7Dns=;
+        b=MJAxQM5Fd/DKWzdqmH0ExBZmZevlZ+zSoDNItnC90Y9v/lFQ3O82mFHMW1k06ZL/Ef
+         nSk4DtG92bWQPXUKV3YOqRub1lL47siUly39gUqjXRZSpnRPfqOIuYIgRSex0rHTeoHq
+         qwvIK9Ra40HYoD5Tdx3szwBa5AtG/tG3cuTmFLdgW47MCzEAR4bR3cwPIdwdGVOAl4np
+         K7BvOv0Kd9ymlo+VeDYoPgZwnK6X5GRJDOThM/oqT+LRfP+J1ePhzS0y+WVmaD425Bs2
+         0dozXOx9cd0wYs6qOkRre8vnyBlJRe9/L/cvrYfa1JW093AIVkZuqHWGmQiHm7RqrPqi
+         3eQQ==
+X-Gm-Message-State: AOUpUlGUWPLHtTCn0DWhqgdZdCgcmjbaDAktSgTGPJ7fdUEUyWf56Ozy
+        FLA4d0HW+PFmnXJ53mtWp9d03WSDf9Q=
+X-Google-Smtp-Source: AA+uWPx+xCqwomz4NIO1LIj2rruFX/f3Z8kWBHcNLvXpx8iI9PQOxqzLlwn2oYhmv96TiGemvbx91w==
+X-Received: by 2002:ab0:80e:: with SMTP id a14-v6mr5981521uaf.114.1533946223992;
+        Fri, 10 Aug 2018 17:10:23 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id q19-v6sm1682258uap.13.2018.08.10.17.10.23
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 17:09:18 -0700 (PDT)
-Received: by mail-ua1-f53.google.com with SMTP id y10-v6so3711506uao.4
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:09:18 -0700 (PDT)
-X-Received: by 2002:ab0:4946:: with SMTP id a6-v6mr5845841uad.82.1533946157850;
- Fri, 10 Aug 2018 17:09:17 -0700 (PDT)
+        Fri, 10 Aug 2018 17:10:23 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id m13-v6so3714801uaq.7
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:10:23 -0700 (PDT)
+X-Received: by 2002:a1f:854d:: with SMTP id h74-v6mr5402051vkd.69.1533946223061;
+ Fri, 10 Aug 2018 17:10:23 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 17:09:17 -0700 (PDT)
-In-Reply-To: <20180808191339.16875-3-mka@chromium.org>
-References: <20180808191339.16875-1-mka@chromium.org> <20180808191339.16875-3-mka@chromium.org>
+Received: by 2002:a1f:de84:0:0:0:0:0 with HTTP; Fri, 10 Aug 2018 17:10:22
+ -0700 (PDT)
+In-Reply-To: <20180808191339.16875-4-mka@chromium.org>
+References: <20180808191339.16875-1-mka@chromium.org> <20180808191339.16875-4-mka@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 10 Aug 2018 17:09:17 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Ug3oiHOLxYRXtr0LbBUyXjBB=92fAYfpfhEQ8Xih6PNA@mail.gmail.com>
-Message-ID: <CAD=FV=Ug3oiHOLxYRXtr0LbBUyXjBB=92fAYfpfhEQ8Xih6PNA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: pm8998: Add adc node
+Date:   Fri, 10 Aug 2018 17:10:22 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VOhqHTnxJaF5d+qLYyy=QARQq+Y8Q+Oxyyqacnnt-grQ@mail.gmail.com>
+Message-ID: <CAD=FV=VOhqHTnxJaF5d+qLYyy=QARQq+Y8Q+Oxyyqacnnt-grQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: pm8998: Add die temperature channel
+ node to the ADC
 To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -91,50 +93,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi,
 
 On Wed, Aug 8, 2018 at 12:13 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> This adds the adc node to pm8998 based on the examples in the
-> bindings. It also fixes the order of the included headers.
+> Add a channel node for the die temperature to the ADC.
 >
 > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  arch/arm64/boot/dts/qcom/pm8998.dtsi | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/qcom/pm8998.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
 > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> index 92bed1e7d4bb..f70f6101bceb 100644
+> index f70f6101bceb..499bae0afb7f 100644
 > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
 > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> @@ -1,8 +1,9 @@
->  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->  /* Copyright 2018 Google LLC. */
->
-> -#include <dt-bindings/spmi/spmi.h>
-> +#include <dt-bindings/iio/qcom,spmi-vadc.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/spmi/spmi.h>
->
->  &spmi_bus {
->         pm8998_lsid0: pmic@0 {
-> @@ -11,6 +12,16 @@
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> +               pm8998_adc: adc@3100 {
-> +                       compatible = "qcom,spmi-adc-rev2";
-> +                       reg = <0x3100>;
-> +                       interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       #io-channel-cells = <1>;
-> +                       io-channel-ranges;
-> +               };
+> @@ -20,6 +20,11 @@
+>                         #size-cells = <0>;
+>                         #io-channel-cells = <1>;
+>                         io-channel-ranges;
+> +
+> +                       die-temp {
+> +                               reg = <ADC5_DIE_TEMP>;
+> +                               label = "die_temp";
+> +                       };
 
-I'm a little confused about what the "io-channel-ranges" does here.
-The documentation isn't clear at all to me for it.  If I'm reading it
-right it's also supposed to be for iio-consumers, but you're using it
-in a provider.  I see you copied this from the example.  Maybe the
-example is wrong?  ...or I'm just confused...
+Seems to match the binding.
 
-Other than that question, this looks fine to me.
+I'm no expert, but FWIW:
 
-
--Doug
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
