@@ -2,172 +2,190 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A88EC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49660C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF98223FF
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:13:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MCqiRjNW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF98223FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 85409223FF
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:14:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85409223FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbeHKKqX (ORCPT
+        id S1727296AbeHKKrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 06:46:23 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:32868 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbeHKKqX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 06:46:23 -0400
-Received: by mail-qt0-f195.google.com with SMTP id c15-v6so12775928qtp.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 01:12:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=o/M+1IBC3Rqq5DOdqfmm82fc4zlpQX+5ynqgob8xkyE=;
-        b=MCqiRjNWlMRXktlq++HNVT/QVra1RpRKyyuAvW0yatC72uRWA+bJjs5whvTcC1quLF
-         SegDGq6wPRGTU78e7VGQKhL7AwgrH/7vnjNesF/bcOnrJCkfqHj7qxcF2/NA0+z8D40i
-         ci9lgmnDOEdABiQdPFrEJbn+BL5RKyn7cISVWFEypIHYet1ieprsv80hXWg+2R7Aq5fC
-         wgRLmtdtP6vHsu+IPvRaeGmlatrMsxJBL43V7RhTKA/9SzUCZuflTfjhlv1J+nsucviW
-         hsp/AigDLwUgEFb01OYSDj6/kFthGRxFFVvlJTxG1TdJJ4Jdn/y1HffBBZT/qCdMLcHC
-         GrcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=o/M+1IBC3Rqq5DOdqfmm82fc4zlpQX+5ynqgob8xkyE=;
-        b=DrceJ2OwioS6ZfXqlp3NUXvglT0H1sdcR2tmBnficB5Dx2G3kYc6AfJAFCqbHHZPkr
-         TmXlGmP2THW09rhgRBfvb1yxrwX87xwu2Eou19i1mbw5VN1yD3+dfRulfGO7+AT7ug8S
-         ip2b/Lky8w4CVMWAZPF1WVUecTFJlh995+N/mMdMV9/rPxvsx+A0MBV6Gvu9lKcK4WhQ
-         YQznajhGiTfiD/9+CWujyEnJt/HaEF4lqRkl7+br1Cb5TxM4mKSg5xyuPnbhfPot/tC4
-         htTBA8KA7K0NCuHLxsryRPC/PGeU6ousvTJEFexd7U9l6qV8lkgaBJK4l4HMRi4cONY6
-         n2aA==
-X-Gm-Message-State: AOUpUlFNELG5x/QezVilGGCF4HTXF/TNLwhN/Ak4wq7J6qxJtPXlCB3R
-        V2L4Uzij0C/uZP0bkluGccLynCXmh7ojPSVoHN0=
-X-Google-Smtp-Source: AA+uWPzuvJrrrXF8zsaHJbeludt4pcl5U7U1HJXuD5sg0BYjUW0IsPhnTljVwSUtjPzSrO72/CM7UHnyEMUPXEAZ09I=
-X-Received: by 2002:aed:3688:: with SMTP id f8-v6mr9656903qtb.276.1533975179248;
- Sat, 11 Aug 2018 01:12:59 -0700 (PDT)
+        Sat, 11 Aug 2018 06:47:46 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:39589 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727173AbeHKKrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 06:47:46 -0400
+Received: from [192.168.0.5] (unknown [95.91.211.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id DE7062012BA067;
+        Sat, 11 Aug 2018 10:14:18 +0200 (CEST)
+Subject: Re: aacraid: Regression in 4.14.56 with *genirq/affinity: assign
+ vectors to all possible CPUs*
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-scsi@molgen.mpg.de,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org
+References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
+ <20180810133628.GA4131@kroah.com>
+ <29b5f3ce-2c23-bf5e-fe50-29bedd4833e1@molgen.mpg.de>
+ <20180810155511.GA17092@kroah.com>
+From:   Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
+Message-ID: <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
+Date:   Sat, 11 Aug 2018 10:14:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Sat, 11 Aug 2018 01:12:58
- -0700 (PDT)
-In-Reply-To: <20180809041856.1547-6-ravi.bangoria@linux.ibm.com>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com> <20180809041856.1547-6-ravi.bangoria@linux.ibm.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Sat, 11 Aug 2018 01:12:58 -0700
-Message-ID: <CAPhsuW5g1dOnceA=kqfpC+rR6EguJaR+wPwY9nSWLbGSSj5XjQ@mail.gmail.com>
-Subject: Re: [PATCH v8 5/6] trace_uprobe/sdt: Prevent multiple reference
- counter for same uprobe
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     srikar@linux.vnet.ibm.com, Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ananth@linux.vnet.ibm.com,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180810155511.GA17092@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do we really need this given we already have PATCH 4/6?
-uprobe_regsiter() can be called
-out of trace_uprobe, this patch won't catch all conflicts anyway.
+Dear Greg,
 
-Song
 
-On Wed, Aug 8, 2018 at 9:18 PM, Ravi Bangoria
-<ravi.bangoria@linux.ibm.com> wrote:
-> We assume to have only one reference counter for one uprobe.
-> Don't allow user to add multiple trace_uprobe entries having
-> same inode+offset but different reference counter.
->
-> Ex,
->   # echo "p:sdt_tick/loop2 /home/ravi/tick:0x6e4(0x10036)" > uprobe_events
->   # echo "p:sdt_tick/loop2_1 /home/ravi/tick:0x6e4(0xfffff)" >> uprobe_events
->   bash: echo: write error: Invalid argument
->
->   # dmesg
->   trace_kprobe: Reference counter offset mismatch.
->
-> There is one exception though:
-> When user is trying to replace the old entry with the new
-> one, we allow this if the new entry does not conflict with
-> any other existing entries.
->
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
->  kernel/trace/trace_uprobe.c | 37 +++++++++++++++++++++++++++++++++++--
->  1 file changed, 35 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index bf2be098eb08..be64d943d7ea 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -324,6 +324,35 @@ static int unregister_trace_uprobe(struct trace_uprobe *tu)
->         return 0;
->  }
->
-> +/*
-> + * Uprobe with multiple reference counter is not allowed. i.e.
-> + * If inode and offset matches, reference counter offset *must*
-> + * match as well. Though, there is one exception: If user is
-> + * replacing old trace_uprobe with new one(same group/event),
-> + * then we allow same uprobe with new reference counter as far
-> + * as the new one does not conflict with any other existing
-> + * ones.
-> + */
-> +static struct trace_uprobe *find_old_trace_uprobe(struct trace_uprobe *new)
-> +{
-> +       struct trace_uprobe *tmp, *old = NULL;
-> +       struct inode *new_inode = d_real_inode(new->path.dentry);
-> +
-> +       old = find_probe_event(trace_event_name(&new->tp.call),
-> +                               new->tp.call.class->system);
-> +
-> +       list_for_each_entry(tmp, &uprobe_list, list) {
-> +               if ((old ? old != tmp : true) &&
-> +                   new_inode == d_real_inode(tmp->path.dentry) &&
-> +                   new->offset == tmp->offset &&
-> +                   new->ref_ctr_offset != tmp->ref_ctr_offset) {
-> +                       pr_warn("Reference counter offset mismatch.");
-> +                       return ERR_PTR(-EINVAL);
-> +               }
-> +       }
-> +       return old;
-> +}
-> +
->  /* Register a trace_uprobe and probe_event */
->  static int register_trace_uprobe(struct trace_uprobe *tu)
->  {
-> @@ -333,8 +362,12 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
->         mutex_lock(&uprobe_lock);
->
->         /* register as an event */
-> -       old_tu = find_probe_event(trace_event_name(&tu->tp.call),
-> -                       tu->tp.call.class->system);
-> +       old_tu = find_old_trace_uprobe(tu);
-> +       if (IS_ERR(old_tu)) {
-> +               ret = PTR_ERR(old_tu);
-> +               goto end;
-> +       }
-> +
->         if (old_tu) {
->                 /* delete old event */
->                 ret = unregister_trace_uprobe(old_tu);
-> --
-> 2.14.4
->
+Am 10.08.2018 um 17:55 schrieb Greg Kroah-Hartman:
+> On Fri, Aug 10, 2018 at 04:11:23PM +0200, Paul Menzel wrote:
+
+>> On 08/10/18 15:36, Greg Kroah-Hartman wrote:
+>>> On Fri, Aug 10, 2018 at 03:21:52PM +0200, Paul Menzel wrote:
+>>>> Dear Greg,
+>>>>
+>>>>
+>>>> Commit ef86f3a7 (genirq/affinity: assign vectors to all possible CPUs) added
+>>>> for Linux 4.14.56 causes the aacraid module to not detect the attached devices
+>>>> anymore on a Dell PowerEdge R720 with two six core 24x E5-2630 @ 2.30GHz.
+>>>>
+>>>> ```
+>>>> $ dmesg | grep raid
+>>>> [    0.269768] raid6: sse2x1   gen()  7179 MB/s
+>>>> [    0.290069] raid6: sse2x1   xor()  5636 MB/s
+>>>> [    0.311068] raid6: sse2x2   gen()  9160 MB/s
+>>>> [    0.332076] raid6: sse2x2   xor()  6375 MB/s
+>>>> [    0.353075] raid6: sse2x4   gen() 11164 MB/s
+>>>> [    0.374064] raid6: sse2x4   xor()  7429 MB/s
+>>>> [    0.379001] raid6: using algorithm sse2x4 gen() 11164 MB/s
+>>>> [    0.386001] raid6: .... xor() 7429 MB/s, rmw enabled
+>>>> [    0.391008] raid6: using ssse3x2 recovery algorithm
+>>>> [    3.559682] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 EST 2006)
+>>>> [    3.570061] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 2006)
+>>>> [   10.725767] Adaptec aacraid driver 1.2.1[50834]-custom
+>>>> [   10.731724] aacraid 0000:04:00.0: can't disable ASPM; OS doesn't have ASPM control
+>>>> [   10.743295] aacraid: Comm Interface type3 enabled
+>>>> $ lspci -nn | grep Adaptec
+>>>> 04:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
+>>>> 42:00.0 Serial Attached SCSI controller [0107]: Adaptec Smart Storage PQI 12G SAS/PCIe 3 [9005:028f] (rev 01)
+>>>> ```
+>>>>
+>>>> But, it still works with a Dell PowerEdge R715 with two eight core AMD
+>>>> Opteron 6136, the card below.
+>>>>
+>>>> ```
+>>>> $ lspci -nn | grep Adaptec
+>>>> 22:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
+>>>> ```
+>>>>
+>>>> Reverting the commit fixes the issue.
+>>>>
+>>>> commit ef86f3a72adb8a7931f67335560740a7ad696d1d
+>>>> Author: Christoph Hellwig <hch@lst.de>
+>>>> Date:   Fri Jan 12 10:53:05 2018 +0800
+>>>>
+>>>>      genirq/affinity: assign vectors to all possible CPUs
+>>>>      
+>>>>      commit 84676c1f21e8ff54befe985f4f14dc1edc10046b upstream.
+>>>>      
+>>>>      Currently we assign managed interrupt vectors to all present CPUs.  This
+>>>>      works fine for systems were we only online/offline CPUs.  But in case of
+>>>>      systems that support physical CPU hotplug (or the virtualized version of
+>>>>      it) this means the additional CPUs covered for in the ACPI tables or on
+>>>>      the command line are not catered for.  To fix this we'd either need to
+>>>>      introduce new hotplug CPU states just for this case, or we can start
+>>>>      assining vectors to possible but not present CPUs.
+>>>>      
+>>>>      Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>>      Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>>      Tested-by: Stefan Haberland <sth@linux.vnet.ibm.com>
+>>>>      Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU")
+>>>>      Cc: linux-kernel@vger.kernel.org
+>>>>      Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>>      Signed-off-by: Christoph Hellwig <hch@lst.de>
+>>>>      Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>>      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>
+>>>> The problem doesn’t happen with Linux 4.17.11, so there are commits in
+>>>> Linux master fixing this. Unfortunately, my attempts to find out failed.
+>>>>
+>>>> I was able to cherry-pick the three commits below on top of 4.14.62,
+>>>> but the problem persists.
+>>>>
+>>>> 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
+>>>> 355d7ecdea35 scsi: hpsa: fix selection of reply queue
+>>>> e944e9615741 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+>>>>
+>>>> Trying to cherry-pick the commits below, referencing the commit
+>>>> in question, gave conflicts.
+>>>>
+>>>> 1. adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
+>>>> 2. d3056812e7df genirq/affinity: Spread irq vectors among present CPUs as far as possible
+>>>>
+>>>> To avoid further trial and error with the server with a slow firmware,
+>>>> do you know what commits should fix the issue?
+>>>
+>>> Look at the email on the stable mailing list:
+>>> 	Subject: Re: Fix for 84676c1f (b5b6e8c8) missing in 4.14.y
+>>> it should help you out here.
+>>
+>> Ah, I didn’t see that [1] yet. Also I can’t find the original message, and a
+>> way to reply to that thread. Therefore, here is my reply.
+>>
+>>> Can you try the patches listed there?
+>>
+>> I tried some of these already without success.
+>>
+>> b5b6e8c8d3b4 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+>> 2f31115e940c scsi: core: introduce force_blk_mq
+>> adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
+>>
+>> The commit above is already in v4.14.56.
+>>
+>> 8b834bff1b73 scsi: hpsa: fix selection of reply queue
+>>
+>> The problem persists.
+>>
+>> The problem also persists with the state below.
+>>
+>> 3528f73a4e5d scsi: core: introduce force_blk_mq
+>> 16dc4d8215f3 scsi: hpsa: fix selection of reply queue
+>> f0a7ab12232d scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
+>> 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
+>> 1aa1166eface (tag: v4.14.62, stable/linux-4.14.y) Linux 4.14.62
+>>
+>> So, some more commits are necessary.
+> 
+> Or I revert the original patch here, and the follow-on ones that were
+> added to "fix" this issue.  I think that might be the better thing
+> overall here, right?  Have you tried that?
+
+Yes, reverting the commit fixed the issue for us. If Christoph or Ming 
+do not have another suggestion for a commit, that would be the way to go.
+
+
+Kind regards,
+
+Paul
