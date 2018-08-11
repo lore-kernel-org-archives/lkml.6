@@ -2,336 +2,321 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5485DC46460
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 14:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785F6C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 14:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0366321A28
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 14:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1514321A28
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 14:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpoOMogP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0366321A28
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l7WXFr3c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1514321A28
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeHKRRc (ORCPT
+        id S1727531AbeHKRTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 13:17:32 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44981 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbeHKRRb (ORCPT
+        Sat, 11 Aug 2018 13:19:01 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:43744 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbeHKRTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 13:17:31 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so10593805wrt.11;
-        Sat, 11 Aug 2018 07:43:04 -0700 (PDT)
+        Sat, 11 Aug 2018 13:19:01 -0400
+Received: by mail-qt0-f195.google.com with SMTP id f18-v6so13256668qtp.10;
+        Sat, 11 Aug 2018 07:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NW1zrHVggqTYcyk7jlANWahgIrW7rPmetvwLmknNPSc=;
-        b=WpoOMogPWcpy98JpWTLnDs1MKnd3uG0pUzd1FU/9RNjJJjnUlWqVodnO0maJgcxgXc
-         sFEL5k+yYTAm1otT+PYpaarMufZBAxKatFgWk7OcSsQFz6eDPEPN2qPfM92VXXEtS9up
-         T6PhUTjnJZp7qjnmmyiN+Ui8/sRR0nUzM1jPNGrAX1psnZdnjWXiSeJCzgiad5vssJA8
-         bMN6674l4AwjET10Wtp93757jN0kzG6wVdSsJUnINZi7EyRKU592n/43CU/pCe8/8pUz
-         N+58PvsCg1pCKSTiJ/laX2qsQeDOGnlsNJhYMvCmHqZckS2f1W9AGHjN1zkCJPk32Rfe
-         SQ9g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=/r5urReUY4d+Y9c2SgRGajwRZo34JFgw+JIQy+LLTs4=;
+        b=l7WXFr3cnaOTnqugG0Uc95/aH4PaBNipX2RUacx5iq/i+dBRSXI9SSAPgReP3SllOu
+         xq7bbc1cXw7ZDVP3I2KxibqorOSFMilV2pDjNdLpBtdzxPljqVr37z+R2BVokp6aUsoJ
+         FO//SIRVCF5D7+OyGca5au96GPjelvvr9ohNYB+rcGckemSomM7FVRkmVJ1bHtkAbwrr
+         ZczNm+kfnhjuMSbF9KnK+O2m83nIO2tdS+dJK7o14QaHFJZvPRm4iKN7dPOps1Fj6jom
+         3ptFI+hQcNALC7wsINe8trsNfVPaPXH9KbqnzKudOWVqgt+k4nz4dsHVOG5Mufq4VOE2
+         fwYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NW1zrHVggqTYcyk7jlANWahgIrW7rPmetvwLmknNPSc=;
-        b=VnwqeLHpoyMtKXunT13h8DAMTu46tk6okWdJB3N25+ehSPsCmjF53PZLJvEWYk+iV1
-         JVw1WqVlDzATMkQ2y12Ta5APDKSbKAbHv0kISLYWfYvjNtnLc/M1tIdklv6gmptRGbtv
-         6z47ijnZxSn+bBxTC2EU08l2QksEzj2dMLK1N5wtxrteYhXJu2ZDd5mOQwZOD+wFhKzp
-         mJppApemt3XakXUUoIJ3Lcblay+HghVXra7jLJ8nijl3BdhnH1WvBhsaELaziElgJ0AG
-         c1rWvMh9WC6MWMBdiC8tHEHBVi7ZZ7zve6k5YEEo776sUnOVtizPegaNMIJiVPy0R8xB
-         Kkkw==
-X-Gm-Message-State: AOUpUlHGzkOfwaxPVKQ0+6JjG82Ot9TPdc8abUjWuzqZJeYmpihIsGr5
-        XHwzAFGcL+LYiMaZGnrTzz4=
-X-Google-Smtp-Source: AA+uWPwUnPG2//MiwwV7AVTEQsEeRgMVoVNURZD/APiFgWMSvoEyCVKEIwtz6PBsh0OvosjkUmVGpg==
-X-Received: by 2002:adf:9a55:: with SMTP id z79-v6mr6497792wrb.153.1533998583533;
-        Sat, 11 Aug 2018 07:43:03 -0700 (PDT)
-Received: from localhost.localdomain ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm2949956wro.84.2018.08.11.07.43.01
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=/r5urReUY4d+Y9c2SgRGajwRZo34JFgw+JIQy+LLTs4=;
+        b=iyz0cUGFJ20jsZYmZ290pLuUvqweRZGR5ZT6qcfSDPeGACTFMerAh0BBCGpbfWw8Id
+         mIYgxJW/TxN2wKg/DM/jUYaVJgBZmx5kDzeyJfXlmZ5uy+Z6Ho5hFQ4J+thcViuvqRqI
+         dLRuRH32D+LrcuIDLvPYrwwL7DX7u2gIVvMn86RL7PQ7cSE0HCXeTP45Ewp82eyYy+Yc
+         ueKifiqdGxQmuYsxygWPS4qmlwlHuwAI69LZBn0geUIqgGhMdYrUP0ofH28RcLHYNQkq
+         ikS6WuJg0NEXPCtkVvw8/K9slS67qndytQ1ghAAcfgp5md89KgBiE96KSJbxAfC4huFg
+         Z/aQ==
+X-Gm-Message-State: AOUpUlFbjMIRkBX3xVwvklLrMNuvtAWpgAg2xYVnxtmstLzVHXvPdpw7
+        sMJz160GygAMyzdPF7Gl8lM=
+X-Google-Smtp-Source: AA+uWPxGNESc/icmwNKddiQv+rbdwp1+SKXwpw0JyGkKDforeYY+KldgbDK1tWqibZkmB7c9k2v6mw==
+X-Received: by 2002:aed:237a:: with SMTP id i55-v6mr10457763qtc.263.1533998673998;
+        Sat, 11 Aug 2018 07:44:33 -0700 (PDT)
+Received: from [10.151.0.126] ([104.237.86.7])
+        by smtp.gmail.com with ESMTPSA id s64-v6sm7054121qkc.70.2018.08.11.07.44.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 Aug 2018 07:43:02 -0700 (PDT)
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-To:     asmadeus@codewreck.org, ericvh@gmail.com, rminnich@sandia.gov,
-        lucho@ionkov.net
-Cc:     davem@davemloft.net, v9fs-developer@lists.sourceforge.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com, Tomas Bortoli <tomasbortoli@gmail.com>,
-        Dominique Martinet <dominique.martinet@cea.fr>
-Subject: [PATCH 2/2] 9p: Add refcount to p9_req_t
-Date:   Sat, 11 Aug 2018 16:42:54 +0200
-Message-Id: <20180811144254.23665-2-tomasbortoli@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180811144254.23665-1-tomasbortoli@gmail.com>
-References: <20180811144254.23665-1-tomasbortoli@gmail.com>
+        Sat, 11 Aug 2018 07:44:33 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+References: <20180802142243.GA3481@redhat.com>
+ <20180803034721.GC91035@Turing-Arch-b> <20180803143944.GA4079@redhat.com>
+ <20180806031252.GG91035@Turing-Arch-b> <20180806153257.GB6002@redhat.com>
+ <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
+ <20180808151835.GA3429@redhat.com> <20180809080352.GI91035@Turing-Arch-b>
+ <20180809144613.GB3386@redhat.com> <20180810033913.GK91035@Turing-Arch-b>
+ <20180810143231.GA7253@redhat.com>
+From:   Kenneth Lee <nek.in.cn@gmail.com>
+Message-ID: <f675e2b1-7e7d-0a5a-18ac-cba1491f2846@gmail.com>
+Date:   Sat, 11 Aug 2018 22:44:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180810143231.GA7253@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid use-after-free(s), use a refcount to keep track of the
-usable references to any instantiated struct p9_req_t.
 
-This commit adds p9_req_put(), p9_req_get() and p9_req_try_get() as
-wrappers to kref_put(), kref_get() and kref_get_unless_zero().
-These are used by the client and the transports to keep track of
-valid requests' references.
 
-p9_free_req() is added back and used as callback by kref_put().
+在 2018年08月10日 星期五 10:32 下午, Jerome Glisse 写道:
+> On Fri, Aug 10, 2018 at 11:39:13AM +0800, Kenneth Lee wrote:
+>> On Thu, Aug 09, 2018 at 10:46:13AM -0400, Jerome Glisse wrote:
+>>> Date: Thu, 9 Aug 2018 10:46:13 -0400
+>>> From: Jerome Glisse <jglisse@redhat.com>
+>>> To: Kenneth Lee <liguozhu@hisilicon.com>
+>>> CC: Kenneth Lee <nek.in.cn@gmail.com>, "Tian, Kevin"
+>>>   <kevin.tian@intel.com>, Alex Williamson <alex.williamson@redhat.com>,
+>>>   Herbert Xu <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
+>>>   <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
+>>>   Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo Xu <xuzaibo@huawei.com>,
+>>>   "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Kumar, Sanjay K"
+>>>   <sanjay.k.kumar@intel.com>, Hao Fang <fanghao11@huawei.com>,
+>>>   "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+>>>   "linuxarm@huawei.com" <linuxarm@huawei.com>,
+>>>   "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+>>>   "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
+>>>   Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
+>>>   "David S . Miller" <davem@davemloft.net>,
+>>>   "linux-accelerators@lists.ozlabs.org"
+>>>   <linux-accelerators@lists.ozlabs.org>
+>>> Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+>>> User-Agent: Mutt/1.10.0 (2018-05-17)
+>>> Message-ID: <20180809144613.GB3386@redhat.com>
+>>>
+>>> On Thu, Aug 09, 2018 at 04:03:52PM +0800, Kenneth Lee wrote:
+>>>> On Wed, Aug 08, 2018 at 11:18:35AM -0400, Jerome Glisse wrote:
+>>>>> On Wed, Aug 08, 2018 at 09:08:42AM +0800, Kenneth Lee wrote:
+>>>>>> 在 2018年08月06日 星期一 11:32 下午, Jerome Glisse 写道:
+>>>>>>> On Mon, Aug 06, 2018 at 11:12:52AM +0800, Kenneth Lee wrote:
+>>>>>>>> On Fri, Aug 03, 2018 at 10:39:44AM -0400, Jerome Glisse wrote:
+>>>>>>>>> On Fri, Aug 03, 2018 at 11:47:21AM +0800, Kenneth Lee wrote:
+>>>>>>>>>> On Thu, Aug 02, 2018 at 10:22:43AM -0400, Jerome Glisse wrote:
+>>>>>>>>>>> On Thu, Aug 02, 2018 at 12:05:57PM +0800, Kenneth Lee wrote:
+>>> [...]
+>>>
+>>>>>>>>>>> your mechanisms the userspace must have a specific userspace
+>>>>>>>>>>> drivers for each hardware and thus there are virtually no
+>>>>>>>>>>> differences between having this userspace driver open a device
+>>>>>>>>>>> file in vfio or somewhere else in the device filesystem. This is
+>>>>>>>>>>> just a different path.
+>>>>>>>>>>>
+>>>>>>>>>> The basic problem WarpDrive want to solve it to avoid syscall. This is important
+>>>>>>>>>> to accelerators. We have some data here:
+>>>>>>>>>> https://www.slideshare.net/linaroorg/progress-and-demonstration-of-wrapdrive-a-accelerator-framework-sfo17317
+>>>>>>>>>>
+>>>>>>>>>> (see page 3)
+>>>>>>>>>>
+>>>>>>>>>> The performance is different on using kernel and user drivers.
+>>>>>>>>> Yes and example i point to is exactly that. You have a one time setup
+>>>>>>>>> cost (creating command buffer binding PASID with command buffer and
+>>>>>>>>> couple other setup steps). Then userspace no longer have to do any
+>>>>>>>>> ioctl to schedule work on the GPU. It is all down from userspace and
+>>>>>>>>> it use a doorbell to notify hardware when it should go look at command
+>>>>>>>>> buffer for new thing to execute.
+>>>>>>>>>
+>>>>>>>>> My point stands on that. You have existing driver already doing so
+>>>>>>>>> with no new framework and in your scheme you need a userspace driver.
+>>>>>>>>> So i do not see the value add, using one path or the other in the
+>>>>>>>>> userspace driver is litteraly one line to change.
+>>>>>>>>>
+>>>>>>>> Sorry, I'd got confuse here. I partially agree that the user driver is
+>>>>>>>> redundance of kernel driver. (But for WarpDrive, the kernel driver is a full
+>>>>>>>> driver include all preparation and setup stuff for the hardware, the user driver
+>>>>>>>> is simply to send request and receive answer). Yes, it is just a choice of path.
+>>>>>>>> But the user path is faster if the request come from use space. And to do that,
+>>>>>>>> we need user land DMA support. Then why is it invaluable to let VFIO involved?
+>>>>>>> Some drivers in the kernel already do exactly what you said. The user
+>>>>>>> space emit commands without ever going into kernel by directly scheduling
+>>>>>>> commands and ringing a doorbell. They do not need VFIO either and they
+>>>>>>> can map userspace address into the DMA address space of the device and
+>>>>>>> again they do not need VFIO for that.
+>>>>>> Could you please directly point out which driver you refer to here? Thank
+>>>>>> you.
+>>>>> drivers/gpu/drm/amd/
+>>>>>
+>>>>> Sub-directory of interest is amdkfd
+>>>>>
+>>>>> Because it is a big driver here is a highlevel overview of how it works
+>>>>> (this is a simplification):
+>>>>>    - Process can allocate GPUs buffer (through ioclt) and map them into
+>>>>>      its address space (through mmap of device file at buffer object
+>>>>>      specific offset).
+>>>>>    - Process can map any valid range of virtual address space into device
+>>>>>      address space (IOMMU mapping). This must be regular memory ie not an
+>>>>>      mmap of a device file or any special file (this is the non PASID
+>>>>>      path)
+>>>>>    - Process can create a command queue and bind its process to it aka
+>>>>>      PASID, this is done through an ioctl.
+>>>>>    - Process can schedule commands onto queues it created from userspace
+>>>>>      without ioctl. For that it just write command into a ring buffer
+>>>>>      that it mapped during the command queue creation process and it
+>>>>>      rings a doorbell when commands are ready to be consume by the
+>>>>>      hardware.
+>>>>>    - Commands can reference (access) all 3 types of object above ie
+>>>>>      either full GPUs buffer, process regular memory maped as object
+>>>>>      (non PASID) and PASID memory all at the same time ie you can
+>>>>>      mix all of the above in same commands queue.
+>>>>>    - Kernel can evict, unbind any process command queues, unbind commands
+>>>>>      queue are still valid from process point of view but commands
+>>>>>      process schedules on them will not be executed until kernel re-bind
+>>>>>      the queue.
+>>>>>    - Kernel can schedule commands itself onto its dedicated command
+>>>>>      queues (kernel driver create its own command queues).
+>>>>>    - Kernel can control priorities between all the queues ie it can
+>>>>>      decides which queues should the hardware executed first next.
+>>>>>
+>>>> Thank you. Now I think I understand the point. Indeed, I can see some drivers,
+>>>> such GPU and IB, attach their own iommu_domain to their iommu_group and do their
+>>>> own iommu_map().
+>>>>
+>>>> But we have another requirement which is to combine some device together to
+>>>> share the same address space. This is a little like these kinds of solution:
+>>>>
+>>>> http://tce.technion.ac.il/wp-content/uploads/sites/8/2015/06/SC-7.2-M.-Silberstein.pdf
+>>>>
+>>>> With that, the application can directly pass the NiC packet pointer to the
+>>>> decryption accelerator, and get the bare data in place. This is the feature that
+>>>> the VFIO container can provide.
+>>> Yes and GPU would very much like do the same. There is already out of
+>>> tree solution that allow NiC to stream into GPU memory or GPU to stream
+>>> its memory to a NiC. I am sure we will want to use more accelerator in
+>>> conjunction with GPU in the future.
+>>>
+>>>>> I believe all of the above are the aspects that matters to you. The main
+>>>>> reason i don't like creating a new driver infrastructure is that a lot
+>>>>> of existing drivers will want to use some of the new features that are
+>>>>> coming (memory topology, where to place process memory, pipeline devices,
+>>>>> ...) and thus existing drivers are big (GPU drivers are the biggest of
+>>>>> all the kernel drivers).
+>>>>>
+>>>> I think it is not necessarily to rewrite the GPU driver if they don't need to
+>>>> share their space with others. But if they do, no matter how, they have to create
+>>>> some facility similar to VFIO container. Then why not just create them in VFIO?
+>>> No they do not, nor does anyone needs to. We already have that. If you want
+>>> device to share memory object you have either:
+>>>      - PASID and everything is just easy no need to create anything, as
+>>>        all valid virtual address will work
+>>>      - no PASID or one of the device does not support PASID then use the
+>>>        existing kernel infrastructure aka dma buffer see Documentation/
+>>>        driver-api/dma-buf.rst
+>>>
+>>> Everything you want to do is already happening upstream and they are allready
+>>> working example.
+>> OK, I accept it.
+>>
+>>>> Actually, some GPUs have already used mdev to manage the resource by different
+>>>> users, it is already part of VFIO.
+>>> The current use of mdev with GPU is to "emulate" the SR_IOV of PCIE in
+>>> software so that a single device can be share between multiple guests.
+>>> For this using VFIO make sense, as we want to expose device as a single
+>>> entity that can be manage without the userspace (QEMU) having to know
+>>> or learn about each individual devices.
+>>>
+>>> QEMU just has a well define API to probe and attach device to guest.
+>>> It is the guest that have dedicated drivers for each of those mdev
+>>> devices.
+>>>
+>> Agree
+>>
+>>> What you are trying to do is recreate a whole driver API inside the
+>>> VFIO subsystem and i do not see any valid reasons for that. Moreover
+>>> you want to restrict future use to only drivers that are part of this
+>>> new driver subsystem and again i do not see any good reasons to
+>>> mandate any of the existing driver to be rewritten inside a new VFIO
+>>> infrastructure.
+>>>
+>> I think you have persuaded me now. I thought VFIO was the only unified place to do
+>> user land DMA operations. So I tried to make use of it even there was facility I
+>> needed not.
+>>
+>> Thank you very much for the help.
+>>
+>>> You can achieve everything you want to achieve with existing upstream
+>>> solution. Re-inventing a whole new driver infrastructure should really
+>>> be motivated with strong and obvious reasons.
+>> I want to understand better of your idea. If I create some unified helper
+>> APIs in drivers/iommu/, say:
+>>
+>> 	wd_create_dev(parent_dev, wd_dev)
+>> 	wd_release_dev(wd_dev)
+>>
+>> The API create chrdev to take request from user space for open(resource
+>> allocation), iomap, epoll (irq), and dma_map(with pasid automatically).
+>>
+>> Do you think it is acceptable?
+>>
+>> I agree that these all can be done with the driver itself. But without a unified
+>> interface, it is hard to create a user land ecosystem for accelerator to
+>> cooperate.
+> I am fine with creating a new sub-system for pipelining devices (ie some
+> place where it is easy for userspace to get list of all devices that can
+> fit in such model). I am not sure if we want to have everything part of
+> it (ie DMA mapping of memory and pipelining as same thing) i tend to be
+> more unix oriented one tool for one job. But maybe it makes sense, this
+> would likely avoid having each device driver have their own code to
+> create dma buffer or track SVM pointer.
+Yes. The subsystem will become the point to bind the pasid and the 
+allocated resource between the hardware and the process. The io space 
+mapping and command queuing can always be done by the original device 
+driver itself. The subsystem can remain in resource (hardware resource 
+and iommu resource) management.
+>
+> In any case for the non SVM case i would suggest to use dma buffer, it
+> has been widely use, it is well tested in many scenarios. Moreover it
+> would allow many existing device driver to register themself in this
+> new framework with minimal changes (couple hundred lines).
+I will consider it. But maybe I should solve the SVM case first.
 
-Add SLAB_TYPESAFE_BY_RCU as it ensures that the memory freed by
-kmem_cache_free() will not be reused for another type until the rcu
-synchronisation period is over, so an address gotten under rcu read
-lock is safe to inc_ref() without corrupting random memory while
-the lock is held.
-
-Co-developed-by: Dominique Martinet <dominique.martinet@cea.fr>
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+467050c1ce275af2a5b8@syzkaller.appspotmail.com
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
----
- include/net/9p/client.h | 14 +++++++++++++
- net/9p/client.c         | 54 +++++++++++++++++++++++++++++++++++++++++++------
- net/9p/trans_fd.c       | 11 +++++++++-
- net/9p/trans_rdma.c     |  1 +
- 4 files changed, 73 insertions(+), 7 deletions(-)
-
-diff --git a/include/net/9p/client.h b/include/net/9p/client.h
-index 735f3979d559..947a570307a6 100644
---- a/include/net/9p/client.h
-+++ b/include/net/9p/client.h
-@@ -94,6 +94,7 @@ enum p9_req_status_t {
- struct p9_req_t {
- 	int status;
- 	int t_err;
-+	struct kref refcount;
- 	wait_queue_head_t wq;
- 	struct p9_fcall tc;
- 	struct p9_fcall rc;
-@@ -233,6 +234,19 @@ int p9_client_lock_dotl(struct p9_fid *fid, struct p9_flock *flock, u8 *status);
- int p9_client_getlock_dotl(struct p9_fid *fid, struct p9_getlock *fl);
- void p9_fcall_fini(struct p9_fcall *fc);
- struct p9_req_t *p9_tag_lookup(struct p9_client *, u16);
-+
-+static inline void p9_req_get(struct p9_req_t *r)
-+{
-+	kref_get(&r->refcount);
-+}
-+
-+static inline int p9_req_try_get(struct p9_req_t *r)
-+{
-+	return kref_get_unless_zero(&r->refcount);
-+}
-+
-+int p9_req_put(struct p9_req_t *r);
-+
- void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status);
- 
- int p9_parse_header(struct p9_fcall *, int32_t *, int8_t *, int16_t *, int);
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 7942c0bfcc5b..83f2f0aadc14 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -310,6 +310,18 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
- 	if (tag < 0)
- 		goto free;
- 
-+	/*	Init ref to two because in the general case there is one ref
-+	 *	that is put asynchronously by a writer thread, one ref
-+	 *	temporarily given by p9_tag_lookup and put by p9_client_cb
-+	 *	in the recv thread, and one ref put by p9_remove_tag in the
-+	 *	main thread. The only exception is virtio that does not use
-+	 *	p9_tag_lookup but does not have a writer thread either
-+	 *	(the write happens synchronously in the request/zc_request
-+	 *	callback), so p9_client_cb eats the second ref there
-+	 *	as the pointer is duplicated directly by virtqueue_add_sgs()
-+	 */
-+	refcount_set(&req->refcount.refcount, 2);
-+
- 	return req;
- 
- free:
-@@ -333,10 +345,21 @@ struct p9_req_t *p9_tag_lookup(struct p9_client *c, u16 tag)
- 	struct p9_req_t *req;
- 
- 	rcu_read_lock();
-+again:
- 	req = idr_find(&c->reqs, tag);
--	/* There's no refcount on the req; a malicious server could cause
--	 * us to dereference a NULL pointer
--	 */
-+	if (req) {
-+		/* We have to be careful with the req found under rcu_read_lock
-+		 * Thanks to SLAB_TYPESAFE_BY_RCU we can safely try to get the
-+		 * ref again without corrupting other data, then check again
-+		 * that the tag matches once we have the ref
-+		 */
-+		if (!p9_req_try_get(req))
-+			goto again;
-+		if (req->tc.tag != tag) {
-+			p9_req_put(req);
-+			goto again;
-+		}
-+	}
- 	rcu_read_unlock();
- 
- 	return req;
-@@ -350,7 +373,7 @@ EXPORT_SYMBOL(p9_tag_lookup);
-  *
-  * Context: Any context.
-  */
--static void p9_tag_remove(struct p9_client *c, struct p9_req_t *r)
-+static int p9_tag_remove(struct p9_client *c, struct p9_req_t *r)
- {
- 	unsigned long flags;
- 	u16 tag = r->tc.tag;
-@@ -359,11 +382,23 @@ static void p9_tag_remove(struct p9_client *c, struct p9_req_t *r)
- 	spin_lock_irqsave(&c->lock, flags);
- 	idr_remove(&c->reqs, tag);
- 	spin_unlock_irqrestore(&c->lock, flags);
-+	return p9_req_put(r);
-+}
-+
-+static void p9_req_free(struct kref *ref)
-+{
-+	struct p9_req_t *r = container_of(ref, struct p9_req_t, refcount);
- 	p9_fcall_fini(&r->tc);
- 	p9_fcall_fini(&r->rc);
- 	kmem_cache_free(p9_req_cache, r);
- }
- 
-+int p9_req_put(struct p9_req_t *r)
-+{
-+	return kref_put(&r->refcount, p9_req_free);
-+}
-+EXPORT_SYMBOL(p9_req_put);
-+
- /**
-  * p9_tag_cleanup - cleans up tags structure and reclaims resources
-  * @c:  v9fs client struct
-@@ -379,7 +414,9 @@ static void p9_tag_cleanup(struct p9_client *c)
- 	rcu_read_lock();
- 	idr_for_each_entry(&c->reqs, req, id) {
- 		pr_info("Tag %d still in use\n", id);
--		p9_tag_remove(c, req);
-+		if (p9_tag_remove(c, req) == 0)
-+			pr_warn("Packet with tag %d has still references",
-+				req->tc.tag);
- 	}
- 	rcu_read_unlock();
- }
-@@ -403,6 +440,7 @@ void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status)
- 
- 	wake_up(&req->wq);
- 	p9_debug(P9_DEBUG_MUX, "wakeup: %d\n", req->tc.tag);
-+	p9_req_put(req);
- }
- EXPORT_SYMBOL(p9_client_cb);
- 
-@@ -682,6 +720,8 @@ static struct p9_req_t *p9_client_prepare_req(struct p9_client *c,
- 	return req;
- reterr:
- 	p9_tag_remove(c, req);
-+	/* We have to put also the 2nd reference as it won't be used */
-+	p9_req_put(req);
- 	return ERR_PTR(err);
- }
- 
-@@ -716,6 +756,8 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
- 
- 	err = c->trans_mod->request(c, req);
- 	if (err < 0) {
-+		/* write won't happen */
-+		p9_req_put(req);
- 		if (err != -ERESTARTSYS && err != -EFAULT)
- 			c->status = Disconnected;
- 		goto recalc_sigpending;
-@@ -2241,7 +2283,7 @@ EXPORT_SYMBOL(p9_client_readlink);
- 
- int __init p9_client_init(void)
- {
--	p9_req_cache = KMEM_CACHE(p9_req_t, 0);
-+	p9_req_cache = KMEM_CACHE(p9_req_t, SLAB_TYPESAFE_BY_RCU);
- 	return p9_req_cache ? 0 : -ENOMEM;
- }
- 
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 20f46f13fe83..686e24e355d0 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -132,6 +132,7 @@ struct p9_conn {
- 	struct list_head req_list;
- 	struct list_head unsent_req_list;
- 	struct p9_req_t *req;
-+	struct p9_req_t *wreq;
- 	char tmp_buf[7];
- 	struct p9_fcall rc;
- 	int wpos;
-@@ -383,6 +384,7 @@ static void p9_read_work(struct work_struct *work)
- 		m->rc.sdata = NULL;
- 		m->rc.offset = 0;
- 		m->rc.capacity = 0;
-+		p9_req_put(m->req);
- 		m->req = NULL;
- 	}
- 
-@@ -472,6 +474,8 @@ static void p9_write_work(struct work_struct *work)
- 		m->wbuf = req->tc.sdata;
- 		m->wsize = req->tc.size;
- 		m->wpos = 0;
-+		p9_req_get(req);
-+		m->wreq = req;
- 		spin_unlock(&m->client->lock);
- 	}
- 
-@@ -492,8 +496,11 @@ static void p9_write_work(struct work_struct *work)
- 	}
- 
- 	m->wpos += err;
--	if (m->wpos == m->wsize)
-+	if (m->wpos == m->wsize) {
- 		m->wpos = m->wsize = 0;
-+		p9_req_put(m->wreq);
-+		m->wreq = NULL;
-+	}
- 
- end_clear:
- 	clear_bit(Wworksched, &m->wsched);
-@@ -694,6 +701,7 @@ static int p9_fd_cancel(struct p9_client *client, struct p9_req_t *req)
- 	if (req->status == REQ_STATUS_UNSENT) {
- 		list_del(&req->req_list);
- 		req->status = REQ_STATUS_FLSHD;
-+		p9_req_put(req);
- 		ret = 0;
- 	}
- 	spin_unlock(&client->lock);
-@@ -711,6 +719,7 @@ static int p9_fd_cancelled(struct p9_client *client, struct p9_req_t *req)
- 	spin_lock(&client->lock);
- 	list_del(&req->req_list);
- 	spin_unlock(&client->lock);
-+	p9_req_put(req);
- 
- 	return 0;
- }
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index c60655c90c9e..8cff368a11e3 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -365,6 +365,7 @@ send_done(struct ib_cq *cq, struct ib_wc *wc)
- 			    c->busa, c->req->tc.size,
- 			    DMA_TO_DEVICE);
- 	up(&rdma->sq_sem);
-+	p9_req_put(c->req);
- 	kfree(c);
- }
- 
--- 
-2.11.0
+Thanks again. You suggestion is very helpful.
+> Cheers,
+> Jérôme
+>
 
