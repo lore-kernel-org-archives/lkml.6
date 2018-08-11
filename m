@@ -2,146 +2,170 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA366C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208A4C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C7E21A10
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:15:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFZ3DmIR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C7E21A10
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C06A12238D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06A12238D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeHKPth (ORCPT
+        id S1727411AbeHKQAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 11:49:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbeHKPth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 11:49:37 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79E2C21A05;
-        Sat, 11 Aug 2018 13:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533993327;
-        bh=IB9r6NfiKuWoWH0IDGX2zy9hq2ehfkTcWQLxM4zy248=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mFZ3DmIR0xM0J0VJkNdnKx/524vi1Yd5ntoGORI6CreUdaTo/K+OP6o4hpxbvULlR
-         WNl0p687SEa/a0PHd+iGGFk/RrHze5BVAtpb9H2RGahEAnyTZIRb+R8y8oPaIlqKy2
-         brEzs8UupDfPPrb+jctCU91NAwfTkJHfbFgZebHY=
-Message-ID: <68c41d01959f2a8e3bb42483935865ff21e4af75.camel@kernel.org>
-Subject: Re: [PATCH 0/5 - V2] locks: avoid thundering-herd wake-ups
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     NeilBrown <neilb@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 11 Aug 2018 09:15:25 -0400
-In-Reply-To: <20180811122150.GA15848@fieldses.org>
-References: <153378012255.1220.6754153662007899557.stgit@noble>
-         <20180809173245.GM23873@fieldses.org>
-         <87lg9frxyc.fsf@notabene.neil.brown.name>
-         <20180810002922.GA3915@fieldses.org>
-         <f1b9ca11a26eafbeb348bbfdf12d2ccdd43dc3c9.camel@kernel.org>
-         <20180811122150.GA15848@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 11 Aug 2018 12:00:33 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:35787 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727324AbeHKQAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 12:00:33 -0400
+Received: from pw-vbox.higon.com (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowADHrR3K425bTWVfAA--.879S2;
+        Sat, 11 Aug 2018 21:25:37 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, tony.luck@intel.com, rkrcmar@redhat.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
+        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
+        trenn@suse.com, shuah@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v3 00/17] Add support for Hygon Dhyana Family 18h processor
+Date:   Sat, 11 Aug 2018 21:25:16 +0800
+Message-Id: <cover.1533989492.git.puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: swCowADHrR3K425bTWVfAA--.879S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAryUAr4rCFy3Ar1fuFykZrb_yoWrCr18pF
+        Z2yrZ5tF4ru3sxA3srCr1kZFyfZa18uFW7Gw1UW3sxX3WYq347Xrn7J3W7Xw1qvrn5GF1S
+        yFya9F48WFykJFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUv014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+        4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
+        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUj
+        EoGJUUUUU==
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-08-11 at 08:21 -0400, J. Bruce Fields wrote:
-> On Sat, Aug 11, 2018 at 07:51:13AM -0400, Jeff Layton wrote:
-> > On Thu, 2018-08-09 at 20:29 -0400, J. Bruce Fields wrote:
-> > > On Fri, Aug 10, 2018 at 08:12:43AM +1000, NeilBrown wrote:
-> > > > On Thu, Aug 09 2018, J. Bruce Fields wrote:
-> > > > 
-> > > > > I think there's also a problem with multiple tasks sharing the same
-> > > > > lock owner.
-> > > > > 
-> > > > > So, all locks are exclusive locks for the same range.  We have four
-> > > > > tasks.  Tasks 1 and 4 share the same owner, the others' owners are
-> > > > > distinct.
-> > > > > 
-> > > > > 	- Task 1 gets a lock.
-> > > > > 	- Task 2 gets a conflicting lock.
-> > > > > 	- Task 3 gets another conflicting lock.  So now we the tree is
-> > > > > 		3->2->1.
-> > > > > 	- Task 1's lock is released.
-> > > > > 	- Before task 2 is scheduled, task 4 acquires a new lock.
-> > > > > 	- Task 2 waits on task 4's lock, we now have
-> > > > > 		3->2->4.
-> > > > > 
-> > > > > Task 3 shouldn't be waiting--the lock it's requesting has the same owner
-> > > > > as the lock task 4 holds--but we fail to wake up task 3.
-> > > > 
-> > > > So task 1 and task 4 are threads in the one process - OK.
-> > > > Tasks 2 and 3 are threads in two other processes.
-> > > > 
-> > > > So 2 and 3 conflict with either 1 or 4 equally - why should task 3 be
-> > > > woken?
-> > > > 
-> > > > I suspect you got the numbers bit mixed up,
-> > > 
-> > > Whoops.
-> > > 
-> > > > but in any case, the "conflict()" function that is passed around takes
-> > > > ownership into account when assessing if one lock conflicts with
-> > > > another.
-> > > 
-> > > Right, I know, but, let me try again:
-> > > 
-> > > All locks are exclusive locks for the same range.  Only tasks 3 and 4
-> > > share the the same owner.
-> > > 
-> > > 	- Task 1 gets a lock.
-> > > 	- Task 2 requests a conflicting lock, so we have    2->1.
-> > > 	- Task 3 requests a conflicting lock, so we have 3->2->1.
-> > > 	- Task 1 unlocks.  We wake up task 2, but it isn't scheduled yet.
-> > > 	- Task 4 gets a new lock.
-> > > 	- Task 2 runs, discovers the conflict, and waits.  Now we have:
-> > > 		3->2->4.
-> > > 
-> > > There is no conflict between the lock 3 requested and the lock 4 holds,
-> > > but 3 is not woken up.
-> > > 
-> > > This is another version of the first problem: there's information we
-> > > need (the owners of the waiting locks in the tree) that we can't
-> > > determine just from looking at the root of the tree.
-> > > 
-> > > I'm not sure what to do about that.
-> > > 
-> > 
-> > Is this still a problem in the v2 set?
-> > 
-> > wake_non_conflicts walks the whole tree of requests that were blocked on
-> > it,
-> 
-> Not in the FL_TRANSITIVE_CONFLICT case, which is the case here.
-> 
+As a new x86 CPU Vendor, Chengdu Haiguang IC Design Co., Ltd (Hygon)
+is a Joint Venture between AMD and Haiguang Information Technology Co.,
+Ltd., and aims at providing high performance x86 processor for China
+server market.
 
-Got it. Yeah, I'm not sure that the idea of FL_TRANSITIVE_CONFLICT
-really works. I think you could fix this by just getting rid of that and
-folding it into the FL_CONFLICT case.
+The first generation Hygon's processor(Dhyana) originates from AMD
+technology and shares most of the architecture with AMD's family 17h,
+but with different CPU Vendor ID("HygonGenuine")/PCIE Device Vendor ID
+(0x1D94)/Family series number (Family 18h).
 
-In more complex situations (like the one you describe), you may end up
-cycling through several blocked requests before you hit one that can get
-the lock. It may slow things down some for those cases. In the more
-common locking scenarios (whole file locks, different owners), I think
-this will be much more efficient by avoiding so many wakeups.
+To enable the support of Linux kernel to Hygon's CPU, we added a new
+vendor type (X86_VENDOR_HYGON, with value of 9) in arch/x86/include/
+asm/processor.h, and shared most of kernel support codes with AMD
+family 17h.
+
+This patch series have been applied and tested successfully in Hygon's
+Dhyana SoC silicon. Also tested on AMD's EPYC (Family 17h) processor
+works fine and makes no harm to existing codes.
+
+
+v2->v3:
+  - Rebased on 4.18-rc8 and tested against it.
+  - Rework vendor checking codes to improve consistency.
+
+v1->v2:
+  - Rebased on 4.18-rc6 and tested against it.
+  - Split the patchset to small series of patches.
+  - Rework patch descriptions.
+  - Create a separated arch/x86/kernel/cpu/hygon.c for Dhyana CPU
+    initialization to reduce long-term maintenance effort.
+
+
+Pu Wen (17):
+  x86/cpu: create Dhyana init file and register new cpu_dev to system
+  x86/cache: get cache size/leaves and setup cache cpumap for Dhyana
+  x86/mtrr: get MTRR number and support TOP_MEM2
+  x86/smpboot: smp init nodelay and no flush caches before sleep
+  x86/perfctr: return perf counter and event selection bit offset
+  x86/nops: init ideal_nops for Hygon
+  x86/pci: add Hygon PCI vendor and northbridge support
+  x86/apic: add modern APIC support for Hygon
+  x86/bugs: add lfence mitigation to spectre v2 and no meltdown for
+    Hygon
+  x86/events: enable Hygon support to PMU infrastructure
+  x86/mce: enable Hygon support to MCE infrastructure
+  x86/kvm: enable Hygon support to KVM infrastructure
+  x86/xen: enable Hygon support to Xen
+  driver/acpi: enable Hygon support to ACPI driver
+  driver/cpufreq: enable Hygon support to cpufreq driver
+  driver/edac: enable Hygon support to AMD64 EDAC driver
+  tools/cpupower: enable Hygon support to cpupower tool
+
+ MAINTAINERS                                        |   6 +
+ arch/x86/Kconfig                                   |   2 +-
+ arch/x86/Kconfig.cpu                               |  13 +
+ arch/x86/events/amd/core.c                         |   6 +
+ arch/x86/events/amd/uncore.c                       |  15 +-
+ arch/x86/events/core.c                             |   4 +
+ arch/x86/include/asm/cacheinfo.h                   |   1 +
+ arch/x86/include/asm/kvm_emulate.h                 |   4 +
+ arch/x86/include/asm/mce.h                         |   5 +
+ arch/x86/include/asm/nospec-branch.h               |   4 +-
+ arch/x86/include/asm/processor.h                   |   3 +-
+ arch/x86/include/asm/virtext.h                     |   5 +-
+ arch/x86/kernel/alternative.c                      |   4 +
+ arch/x86/kernel/amd_nb.c                           |  51 ++-
+ arch/x86/kernel/apic/apic.c                        |  19 +-
+ arch/x86/kernel/apic/probe_32.c                    |   1 +
+ arch/x86/kernel/cpu/Makefile                       |   1 +
+ arch/x86/kernel/cpu/bugs.c                         |  28 +-
+ arch/x86/kernel/cpu/cacheinfo.c                    |  31 +-
+ arch/x86/kernel/cpu/common.c                       |   1 +
+ arch/x86/kernel/cpu/cpu.h                          |   1 +
+ arch/x86/kernel/cpu/hygon.c                        | 404 +++++++++++++++++++++
+ arch/x86/kernel/cpu/mcheck/mce-severity.c          |   3 +-
+ arch/x86/kernel/cpu/mcheck/mce.c                   |  21 +-
+ arch/x86/kernel/cpu/mtrr/cleanup.c                 |   3 +-
+ arch/x86/kernel/cpu/mtrr/generic.c                 |   5 +-
+ arch/x86/kernel/cpu/mtrr/mtrr.c                    |   2 +-
+ arch/x86/kernel/cpu/perfctr-watchdog.c             |   2 +
+ arch/x86/kernel/smpboot.c                          |   6 +-
+ arch/x86/kvm/emulate.c                             |  11 +-
+ arch/x86/pci/amd_bus.c                             |   6 +-
+ arch/x86/xen/pmu.c                                 |  15 +-
+ drivers/acpi/acpi_pad.c                            |   1 +
+ drivers/acpi/processor_idle.c                      |   1 +
+ drivers/cpufreq/acpi-cpufreq.c                     |   5 +
+ drivers/cpufreq/amd_freq_sensitivity.c             |   9 +-
+ drivers/edac/amd64_edac.c                          |  45 ++-
+ drivers/edac/amd64_edac.h                          |   5 +
+ drivers/edac/mce_amd.c                             |  12 +-
+ include/linux/pci_ids.h                            |   2 +
+ tools/power/cpupower/utils/cpufreq-info.c          |   6 +-
+ tools/power/cpupower/utils/helpers/amd.c           |   4 +-
+ tools/power/cpupower/utils/helpers/cpuid.c         |   8 +-
+ tools/power/cpupower/utils/helpers/helpers.h       |   2 +-
+ tools/power/cpupower/utils/helpers/misc.c          |   3 +-
+ .../cpupower/utils/idle_monitor/mperf_monitor.c    |   3 +-
+ 46 files changed, 719 insertions(+), 70 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/hygon.c
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.7.4
 
