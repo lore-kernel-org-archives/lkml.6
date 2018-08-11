@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DBCC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB51C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E54A223E6
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C9D0223E6
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 08:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anIOopKC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E54A223E6
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ks+y6vOM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9D0223E6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeHKKeI (ORCPT
+        id S1727327AbeHKKfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 06:34:08 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41173 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbeHKKeH (ORCPT
+        Sat, 11 Aug 2018 06:35:10 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:43404 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbeHKKfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 06:34:07 -0400
-Received: by mail-qt0-f195.google.com with SMTP id e19-v6so12713261qtp.8
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 01:00:46 -0700 (PDT)
+        Sat, 11 Aug 2018 06:35:10 -0400
+Received: by mail-qk0-f196.google.com with SMTP id z74-v6so7935875qkb.10
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 01:01:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Sv0P22Iv02OrqwVXx+cIPzWSnuWnVlAhCTSZIIH/v30=;
-        b=anIOopKC7wTPGRnsliOyyaQgepTUqTwB3VIbiZ9XiiVR5bRXGhzWgmuFIKvbHtBXYg
-         F8Yj7FAfWfVwlTzF8yJO1ZZv8B8NVoTE0EqcoIuB03YtTEuvwkNn/wi/BdQUDaPf8Aeb
-         e3AuVhPOIV4t8Jc9muSyKjaCc444wEkLz7EGTEtNCadKi7jep15YYeq92Qhq8pVd9BFn
-         rgvtpXt0fJzuICiMyuV0DL1VPTE8yUoxSG0GdN0QlKc1u1q+fabWU77OfWPDD/TDlSKb
-         S3j+p5sByzUOAAL2akh7ATJQ+ILj45YrZFX5Amjv+0mleKv7TyvIxofGs5s1bemN8Krs
-         TJcA==
+        bh=PcWLAN+atwDcU2RuePCWuiwp/JR1bR56eaOYu+0fdeE=;
+        b=Ks+y6vOMor+hdIBC1RQHOLTMnkZ753y3BQeZuyvTLR3YKhBuPcbKrVcIZFdpzKREcl
+         WGA8DYmd1fTAkN3+Ljzob2fKF+XdpnkMTy1SEkQSsbDAAW5+Hq/+6gUdNAYiAgPXjLEz
+         xOvveq8eI3On+2XxRdgLD1fIKanwoSJLyNXLUr5D6Vk38vO1JB2idBJ+f5nhjJ6JbAkR
+         V3TMQ5EuDByRuYSMzJHhrD1BPvReKQA01ZbUrhfPT98FoLgTH1Sbz9uGQvnsyVc+beW0
+         KdtKHP0V4b7iypVKLUOkSl7sO0Ggf2/f197hurfeYJ3JMUA5/DROsmPhFyfNPN6vjTk/
+         hhHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Sv0P22Iv02OrqwVXx+cIPzWSnuWnVlAhCTSZIIH/v30=;
-        b=TYkYqdsc6xJjTl4PvgkWzg/D/4hsxcOwg/v2+6fJmfG+LBkVm3FwqzkjlsxrxkyngP
-         tFYW4/uTNlYyganBH+Ati2tQDZBn5EfjFV6r4VDN8gyEIFwj0UF2TCt/zDFw6qKUJ8LW
-         h7QzFU8j1Dqj8CkEqxTS1lZ2M8kuzC3sNlXB7v8eeRZaSSL1d98Z0XR6iCOeYZa9aMDG
-         Jmz/63bXVwPs3xrBusG0+uC9/UDN9/SEmoceiukeHUGTLlqdK4Y1GLopF4506SxtdG1b
-         AmotxwPXfezD50lR+mhk55Ow6/Fq8ZY9R0bWlhAop28HbbfchkFRBXv9M8uWY0Z0Ir3h
-         4cNw==
-X-Gm-Message-State: AOUpUlHt0ePcIwTnX71i5kXiYQfyorhijizwdS/LDqrCpShtj8FJxG36
-        mU2b+DzfygVKf6FClVwgu1LYmZeMr6D7NFe7EPk=
-X-Google-Smtp-Source: AA+uWPxT7a8lgIu2GQ6T5o5T8uXOQ65aKjeGQXNX3m1wDGgNtbYMnPLeR47g6YJmRIiloEUkD8AS/ls5dW1466fdr+M=
-X-Received: by 2002:a0c:f883:: with SMTP id u3-v6mr8538230qvn.28.1533974445859;
- Sat, 11 Aug 2018 01:00:45 -0700 (PDT)
+        bh=PcWLAN+atwDcU2RuePCWuiwp/JR1bR56eaOYu+0fdeE=;
+        b=IDi8BK39QU15ax3y7F9ABF2AwcLnokp21dPffFll1jXESDIUf1y2GSwV3ZIWuGrmpk
+         fBq3vYP+0LiUIQ9XVtbOJnJRCaz3xs3cdMhP/GQrZpIGWcatsbPyzssTsi2RDTE/BXY/
+         n2LszKDR0mdyn2ymCHceVhIOKtr/PZESu2F3qN3TOtl151xvLFFy0LZXm/EqsQn0rKqH
+         /CX2ymhwyIWjRbUqY2ZkwydoP4mluqXAf6QEHtCYeiXz6xyKZF3Camc2R1rp23SAIAl/
+         eFr0gNjIuHkgfDUj7Ii1llBIY3qHazLjszoJKwtkUe4lB5WIhrvKDoN1NTc99dTsGqfe
+         7l9A==
+X-Gm-Message-State: AOUpUlHoCkxAm9X4SNZFHOaCDIWM5oeUE1gKUziRgu773Mmu+b5uSvjF
+        /5kkodwQiWTJ3Ur+m2ks1t5Ng1Fy51GW8hrw7rw=
+X-Google-Smtp-Source: AA+uWPzNsBemhq1KxmR4B6+xAsWpuHbAMCNIhaK5X3Ww+fCMvkmj0GGGLRytgYd9F8W0AOkfBzqt2g+cgVqzTq7Niog=
+X-Received: by 2002:a37:6e82:: with SMTP id j124-v6mr8977923qkc.179.1533974508497;
+ Sat, 11 Aug 2018 01:01:48 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Sat, 11 Aug 2018 01:00:45
+Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Sat, 11 Aug 2018 01:01:48
  -0700 (PDT)
-In-Reply-To: <20180809041856.1547-2-ravi.bangoria@linux.ibm.com>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com> <20180809041856.1547-2-ravi.bangoria@linux.ibm.com>
+In-Reply-To: <20180809041856.1547-3-ravi.bangoria@linux.ibm.com>
+References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com> <20180809041856.1547-3-ravi.bangoria@linux.ibm.com>
 From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Sat, 11 Aug 2018 01:00:45 -0700
-Message-ID: <CAPhsuW4zyC1v59bwe4D7j-K3Nw90FbDs2FZ5HuT2HOgR_oooUg@mail.gmail.com>
-Subject: Re: [PATCH v8 1/6] Uprobes: Simplify uprobe_register() body
+Date:   Sat, 11 Aug 2018 01:01:48 -0700
+Message-ID: <CAPhsuW71ysLTafz2y=v_dY_=0BOn0MDL0TKD6eEBQ2ZQUTBuvw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] Uprobe: Additional argument arch_uprobe to uprobe_write_opcode()
 To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Cc:     srikar@linux.vnet.ibm.com, Oleg Nesterov <oleg@redhat.com>,
         Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
@@ -84,140 +84,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, Aug 8, 2018 at 9:18 PM, Ravi Bangoria
 <ravi.bangoria@linux.ibm.com> wrote:
-> Simplify uprobe_register() function body and let __uprobe_register()
-> handle everything. Also move dependency functions around to fix build
-> failures.
+> Add addition argument 'arch_uprobe' to uprobe_write_opcode().
+> We need this in later set of patches.
 >
 > Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
 Reviewed-by: Song Liu <songliubraving@fb.com>
 
 > ---
->  kernel/events/uprobes.c | 69 ++++++++++++++++++++++++++-----------------------
->  1 file changed, 36 insertions(+), 33 deletions(-)
+>  arch/arm/probes/uprobes/core.c | 2 +-
+>  arch/mips/kernel/uprobes.c     | 2 +-
+>  include/linux/uprobes.h        | 2 +-
+>  kernel/events/uprobes.c        | 9 +++++----
+>  4 files changed, 8 insertions(+), 7 deletions(-)
 >
+> diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
+> index d1329f1ba4e4..bf992264060e 100644
+> --- a/arch/arm/probes/uprobes/core.c
+> +++ b/arch/arm/probes/uprobes/core.c
+> @@ -32,7 +32,7 @@ bool is_swbp_insn(uprobe_opcode_t *insn)
+>  int set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>              unsigned long vaddr)
+>  {
+> -       return uprobe_write_opcode(mm, vaddr,
+> +       return uprobe_write_opcode(auprobe, mm, vaddr,
+>                    __opcode_to_mem_arm(auprobe->bpinsn));
+>  }
+>
+> diff --git a/arch/mips/kernel/uprobes.c b/arch/mips/kernel/uprobes.c
+> index f7a0645ccb82..4aaff3b3175c 100644
+> --- a/arch/mips/kernel/uprobes.c
+> +++ b/arch/mips/kernel/uprobes.c
+> @@ -224,7 +224,7 @@ unsigned long arch_uretprobe_hijack_return_addr(
+>  int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>         unsigned long vaddr)
+>  {
+> -       return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
+> +       return uprobe_write_opcode(auprobe, mm, vaddr, UPROBE_SWBP_INSN);
+>  }
+>
+>  void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index 0a294e950df8..bb9d2084af03 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -121,7 +121,7 @@ extern bool is_swbp_insn(uprobe_opcode_t *insn);
+>  extern bool is_trap_insn(uprobe_opcode_t *insn);
+>  extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+>  extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+> -extern int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
+> +extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
+>  extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
+>  extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
+>  extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
 > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index ccc579a7d32e..471eac896635 100644
+> index 471eac896635..c0418ba52ba8 100644
 > --- a/kernel/events/uprobes.c
 > +++ b/kernel/events/uprobes.c
-> @@ -840,13 +840,8 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
->         return err;
->  }
->
-> -static int __uprobe_register(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> -{
-> -       consumer_add(uprobe, uc);
-> -       return register_for_each_vma(uprobe, uc);
-> -}
-> -
-> -static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> +static void
-> +__uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
->  {
->         int err;
->
-> @@ -860,24 +855,46 @@ static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *u
->  }
->
->  /*
-> - * uprobe_register - register a probe
-> + * uprobe_unregister - unregister a already registered probe.
-> + * @inode: the file in which the probe has to be removed.
-> + * @offset: offset from the start of the file.
-> + * @uc: identify which probe if multiple probes are colocated.
-> + */
-> +void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-> +{
-> +       struct uprobe *uprobe;
-> +
-> +       uprobe = find_uprobe(inode, offset);
-> +       if (WARN_ON(!uprobe))
-> +               return;
-> +
-> +       down_write(&uprobe->register_rwsem);
-> +       __uprobe_unregister(uprobe, uc);
-> +       up_write(&uprobe->register_rwsem);
-> +       put_uprobe(uprobe);
-> +}
-> +EXPORT_SYMBOL_GPL(uprobe_unregister);
-> +
-> +/*
-> + * __uprobe_register - register a probe
->   * @inode: the file in which the probe has to be placed.
->   * @offset: offset from the start of the file.
->   * @uc: information on howto handle the probe..
->   *
-> - * Apart from the access refcount, uprobe_register() takes a creation
-> + * Apart from the access refcount, __uprobe_register() takes a creation
->   * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
->   * inserted into the rbtree (i.e first consumer for a @inode:@offset
->   * tuple).  Creation refcount stops uprobe_unregister from freeing the
->   * @uprobe even before the register operation is complete. Creation
->   * refcount is released when the last @uc for the @uprobe
-> - * unregisters. Caller of uprobe_register() is required to keep @inode
-> + * unregisters. Caller of __uprobe_register() is required to keep @inode
->   * (and the containing mount) referenced.
->   *
->   * Return errno if it cannot successully install probes
->   * else return 0 (success)
+> @@ -299,8 +299,8 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
+>   * Called with mm->mmap_sem held for write.
+>   * Return 0 (success) or a negative errno.
 >   */
-> -int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-> +static int __uprobe_register(struct inode *inode, loff_t offset,
-> +                            struct uprobe_consumer *uc)
+> -int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr,
+> -                       uprobe_opcode_t opcode)
+> +int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> +                       unsigned long vaddr, uprobe_opcode_t opcode)
 >  {
->         struct uprobe *uprobe;
->         int ret;
-> @@ -904,7 +921,8 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
->         down_write(&uprobe->register_rwsem);
->         ret = -EAGAIN;
->         if (likely(uprobe_is_active(uprobe))) {
-> -               ret = __uprobe_register(uprobe, uc);
-> +               consumer_add(uprobe, uc);
-> +               ret = register_for_each_vma(uprobe, uc);
->                 if (ret)
->                         __uprobe_unregister(uprobe, uc);
->         }
-> @@ -915,6 +933,12 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
->                 goto retry;
->         return ret;
->  }
-> +
-> +int uprobe_register(struct inode *inode, loff_t offset,
-> +                   struct uprobe_consumer *uc)
-> +{
-> +       return __uprobe_register(inode, offset, uc);
-> +}
->  EXPORT_SYMBOL_GPL(uprobe_register);
->
->  /*
-> @@ -946,27 +970,6 @@ int uprobe_apply(struct inode *inode, loff_t offset,
->         return ret;
->  }
->
-> -/*
-> - * uprobe_unregister - unregister a already registered probe.
-> - * @inode: the file in which the probe has to be removed.
-> - * @offset: offset from the start of the file.
-> - * @uc: identify which probe if multiple probes are colocated.
-> - */
-> -void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-> -{
-> -       struct uprobe *uprobe;
-> -
-> -       uprobe = find_uprobe(inode, offset);
-> -       if (WARN_ON(!uprobe))
-> -               return;
-> -
-> -       down_write(&uprobe->register_rwsem);
-> -       __uprobe_unregister(uprobe, uc);
-> -       up_write(&uprobe->register_rwsem);
-> -       put_uprobe(uprobe);
-> -}
-> -EXPORT_SYMBOL_GPL(uprobe_unregister);
-> -
->  static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
->  {
+>         struct page *old_page, *new_page;
 >         struct vm_area_struct *vma;
+> @@ -351,7 +351,7 @@ int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr,
+>   */
+>  int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr)
+>  {
+> -       return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
+> +       return uprobe_write_opcode(auprobe, mm, vaddr, UPROBE_SWBP_INSN);
+>  }
+>
+>  /**
+> @@ -366,7 +366,8 @@ int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned
+>  int __weak
+>  set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr)
+>  {
+> -       return uprobe_write_opcode(mm, vaddr, *(uprobe_opcode_t *)&auprobe->insn);
+> +       return uprobe_write_opcode(auprobe, mm, vaddr,
+> +                       *(uprobe_opcode_t *)&auprobe->insn);
+>  }
+>
+>  static struct uprobe *get_uprobe(struct uprobe *uprobe)
 > --
 > 2.14.4
 >
