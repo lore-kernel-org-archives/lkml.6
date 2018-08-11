@@ -2,133 +2,111 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AE1C46464
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0004CC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B689722430
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:57:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lb+Pljyu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B689722430
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AF2CD2168B
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 01:58:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2CD2168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeHKE3v (ORCPT
+        id S1727301AbeHKEbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 00:29:51 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43486 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbeHKE3v (ORCPT
+        Sat, 11 Aug 2018 00:31:05 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60002 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbeHKEbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 00:29:51 -0400
-Received: by mail-pg1-f194.google.com with SMTP id a14-v6so5132189pgv.10;
-        Fri, 10 Aug 2018 18:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=K2jIqV8xfVmkkWKsr+88KOuhCmC/IfMhUr/uObbpy3o=;
-        b=lb+PljyuSPtQq+sPM+dQ0lrp7mouRpXSdpJm6WDW+TkOaEeKVSiBkWE0P6rCLCfkB/
-         ZVKH6zwww4SibgyVPlGBHzpyHmothxj/3NplNo7nFhsb4tOsSBBSGJhP4V0wQEF1cCFH
-         xIeMrFJ8zvXxUzTzJJaGLpOYTOJEUyPYKlvAMYCZu/6eT465op0pWQsRw1uN4kLSq1Mq
-         EPT9IF5Kkj6ZdN1oRI60NSSuFK3A6IWpPGUQ2fHIP2UJxCeq+QlV4lody2t8UHtR7ogB
-         NIhGeExsckGwag14HhmxR7GAe5rEJsxIcX5FiDNgErXJVJK8VJEafEV7I5LGYP7ne6Hg
-         wveA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=K2jIqV8xfVmkkWKsr+88KOuhCmC/IfMhUr/uObbpy3o=;
-        b=D6GVEQzsWgM7XwwWKsCCx+qP00lCBk+lqQ5vFVoQQf7GaydbButYE0YFwQEDzUfd0c
-         ONwuqcHloy62ssED7bVE9r4js79UJ39VNUJHCVJ3cwGcLpxEhAPcbEHeQPMU7/yvxsQC
-         2QkE7cek8kMLl7c0DeohOKUXTbKw9Gps8quBGKcdlJL/hMKWMKLevSTBwnmDx6k4xjAR
-         lidfU6d7ajnAJJDr2zUK04+mCcyYi7cIfpu2m/sZ+4U1ZfTiDEwJzzGtFP9PY4ynJ5iC
-         Ykw2FAxQOzRVYpEqmKoWIF4lwXAiWnimojKEsX07evAn1R1I6OLd97SQkse9ApC9GpTk
-         V/1Q==
-X-Gm-Message-State: AOUpUlH9HQP/g6j+FIVf5cE7SAbtUfwpQIT8FyDVzBnLU8eJ0sXUjtkB
-        Xp6UCoQRZH6twKRHPAJoMDQ=
-X-Google-Smtp-Source: AA+uWPytfvhKdzF+w5eVRdaY8rzwa4XO5IL38IVQAvHOM0Qb4d4u+aMLKIFujvTEcvhPrQb81Qi4Eg==
-X-Received: by 2002:a62:c8c2:: with SMTP id i63-v6mr9442325pfk.73.1533952647155;
-        Fri, 10 Aug 2018 18:57:27 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.51? ([2402:f000:1:1501:200:5efe:a66f:4733])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm13705773pfn.59.2018.08.10.18.57.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Aug 2018 18:57:26 -0700 (PDT)
-Subject: Re: [BUG] bpf: syscall: a possible sleep-in-atomic-context bug in
- map_update_elem()
-To:     Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org
-Cc:     netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        brouer@redhat.com
-References: <65830741-bf35-4d32-e365-c32fc17c25cb@gmail.com>
- <97aa2e6b-1863-f123-af2c-24a2e6333ba5@iogearbox.net>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <4f9a083d-1498-8cfb-b54c-614abccb193e@gmail.com>
-Date:   Sat, 11 Aug 2018 09:57:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sat, 11 Aug 2018 00:31:05 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1foJAV-0008D5-9n; Sat, 11 Aug 2018 01:58:15 +0000
+Date:   Sat, 11 Aug 2018 02:58:15 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180811015815.GD6515@ZenIV.linux.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <87d0uqpba5.fsf@xmission.com>
+ <20180810151606.GA6515@ZenIV.linux.org.uk>
+ <87pnypiufr.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <97aa2e6b-1863-f123-af2c-24a2e6333ba5@iogearbox.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pnypiufr.fsf@xmission.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 10, 2018 at 08:05:44PM -0500, Eric W. Biederman wrote:
 
+> All I proposed was that we distinguish between a first mount and an
+> additional mount so that userspace knows the options will be ignored.
 
-On 2018/8/10 22:22, Daniel Borkmann wrote:
-> On 08/10/2018 04:07 PM, Jia-Ju Bai wrote:
->> The kernel may sleep with holding a rcu read lock.
->>
->> The function call paths (from bottom to top) in Linux-4.16 are:
->>
->> [FUNC] kmalloc(GFP_KERNEL)
->> kernel/kthread.c, 283: kmalloc in __kthread_create_on_node
->> kernel/kthread.c, 365: __kthread_create_on_node in kthread_create_on_node
->> kernel/bpf/cpumap.c, 368: kthread_create_on_node in __cpu_map_entry_alloc
->> kernel/bpf/cpumap.c, 490: __cpu_map_entry_alloc in cpu_map_update_elem
->> kernel/bpf/syscall.c, 724: [FUNC_PTR]cpu_map_update_elem in map_update_elem
->> kernel/bpf/syscall.c, 723: rcu_read_lock in map_update_elem
->>
->> Note that [FUNC_PTR] means a function pointer call is used.
->>
->> I do not find a good way to fix it, so I only report.
->> This is found by my static analysis tool (DSAC).
-> Thanks for the report Jia-Ju! In the map_update_elem() from syscall
-> path there's a check map->map_type == BPF_MAP_TYPE_CPUMAP, where we
-> call the cpumap's map->ops->map_update_elem() while /not/ being under
-> rcu_read_lock() as in other cases, so looks okay to me. Could you point
-> out the case for being under rcu_read_lock() more specifically which
-> the tool found?
+For pity sake, just what does it take to explain to you that your
+notions of "first mount" and "additional mount" ARE HEAVILY FS-DEPENDENT
+and may depend upon the pieces of state userland (especially in container)
+simply does not have?
 
-Thanks for your reply :)
-My tool cannot accurately track the case of map->map_type at present...
+One more time, slowly:
 
-According to my code review, there is a indeed check on line 697 in 
-Linux-4.16:
-     else if (map->map_type == BPF_MAP_TYPE_CPUMAP) {
-         err = map->ops->map_update_elem(map, key, value, attr->flags);
-         goto out;
-     }
-But there is a call to map->ops->map_update_elem() that is under 
-rcu_read_lock on line 724:
-         rcu_read_lock();
-         err = map->ops->map_update_elem(map, key, value, attr->flags);
-         rcu_read_unlock();
+mount -t nfs4 wank.example.org:/foo/bar /mnt/a
+mount -t nfs4 wank.example.org:/baz/barf /mnt/b
 
-So I think if map->map_type is not equal to BPF_MAP_TYPE_CPUMAP, 
-map->ops->map_update_elem() can still be called under rcu_read_lock, is 
-it right?
+yield the same superblock.  Is anyone who mounts something over NFS
+required to know if anybody else has mounted something from the same
+server, and if so how the hell are they supposed to find that out,
+so that they could decide whether they are creating the "first" or
+"additional" mount, whatever that might mean in this situation?
 
+And how, kernel-side, is that supposed to be handled by generic code
+of any description?  
 
-Best wishes,
-Jia-Ju Bai
+While we are at it,
+mount -t nfs4 wank.example.org:/foo/bar -o wsize=16384 /mnt/c
+is *NOT* the same superblock as the previous two.
+
+> I don't know how the above wound up being construed as asking that the
+> code call sget directly but that is what has happened.
+
+Not by me.  What I'm saying is that the entire superblock-creating
+machinery - all of it - is nothing but library helpers.  With the
+decision of when/how/if they are to be used being down to filesystem
+driver.  Your "first mount"/"additional mount" simply do not map
+to anything universally applicable.
+
+> > Having something like a second callback for mount_bdev() that would
+> > be called when we'd found an existing instance for the same block
+> > device?  Sure, no problem.  Having a helper for doing such comparison
+> > that would work in enough cases to bother, so that different fs
+> > could avoid boilerplate in that callback?  Again, more power to you.
+> 
+> Normal forms etc.  If we want to do that it just requires a wee bit of
+> discipline.  And if all of the option parsing is being rewritten and
+> retested anyway I don't see why we can't do something like that as well.
+> So it does not sound unreasonable to me.
+
+See above.
