@@ -2,127 +2,170 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2BEC46464
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AD9C46464
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1428A22402
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E99F219C6
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 00:39:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ROdHhA7N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1428A22402
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JRfTZtg2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E99F219C6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeHKDGk (ORCPT
+        id S1727198AbeHKDL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 10 Aug 2018 23:06:40 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33149 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbeHKDGj (ORCPT
+        Fri, 10 Aug 2018 23:11:57 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36340 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbeHKDL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Aug 2018 23:06:39 -0400
-Received: by mail-qt0-f193.google.com with SMTP id c15-v6so12205209qtp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Aug 2018 17:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=qjpWyHbFeAtpFdsgKiqboTNlIPziBETkN4ecKbIrDsc=;
-        b=ROdHhA7NJzQk2woTyRiFM9wOnh5N7uJR3xDmTDChGsqejJkIAX5Jz0yvpOIeOhc8yu
-         CN54RoyybYfWL8CSPAKbOYiwUfOvvF/6lqRP/JvIv0T1wVzZG/bGjH1Fp9hR2yQJQo4t
-         oN7qQXPCkhe2Q4LWEsb35drAeyUTnOdK1QS6g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=qjpWyHbFeAtpFdsgKiqboTNlIPziBETkN4ecKbIrDsc=;
-        b=cnUdWml1DMMbtdlooU+OgncLk5mAuMXPFnslCw1J38gL6QV9JrqfyA38y2bsSG77ZX
-         uqhyFTREVPbjZOj8lvjz5pVR9mAWz1CHybyjMBm6l6GtkQqiIwBgJERSnlae0yXmkAMI
-         T5NfylHGX8bccRunFrQLHpRo5sUGu8LH/OCGfw7w8Ae1t2iCMlG/pmtJEsK8OHkIP49I
-         rw5Uhwrq2BjYNhUSSDQhLPkQnIzwMGXTl5CjjLxgmkRKq6iRISCRuQ2Cr6ix7FxYWgG/
-         dU/yREHJQpZWHPA8L8JYGhWSLJBb8A6hRjWWkPcRKtHEDAZ41K7F4CcxgWgDx08YstfU
-         bsHQ==
-X-Gm-Message-State: AOUpUlHQBxhJ3ULjNHf5XeYTrOUFBCA9YyHCF3SsHPvNv0yAeitMvBO8
-        hAUd05fsUhj7HyOHi46Y4esTzw==
-X-Google-Smtp-Source: AA+uWPyOoxfC9iSE9bmJXPHsPajfzGrUmRzeaenBEkStOCa7uv15nOFuQOXGqBeEbJvbswfh/OuCbA==
-X-Received: by 2002:ac8:6c8:: with SMTP id j8-v6mr8298672qth.314.1533947667190;
-        Fri, 10 Aug 2018 17:34:27 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id q195-v6sm6773790qke.13.2018.08.10.17.34.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 Aug 2018 17:34:26 -0700 (PDT)
-Date:   Fri, 10 Aug 2018 20:34:25 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Joe Perches <joe@perches.com>
-cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
-        tim.c.chen@linux.intel.com, martin.petersen@oracle.com,
-        david.darrington@wdc.com, jeff.furlong@wdc.com
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-In-Reply-To: <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
-Message-ID: <nycvar.YSQ.7.76.1808102027220.13885@knanqh.ubzr>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com> <9b5b906f42dfab78f382c90f66851717d258a15d.camel@perches.com> <nycvar.YSQ.7.76.1808101601110.13885@knanqh.ubzr> <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Fri, 10 Aug 2018 23:11:57 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7B0d0Yd178763;
+        Sat, 11 Aug 2018 00:39:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=kGriiRvaEJZkhi+Lyu+MC6HbJz34ewVUpzQb2zRP+9I=;
+ b=JRfTZtg2ad5i4KaKfQ7EyJB9L+VM8BHmmfvxLpU3mOcDIrIrzEk2mhP4Bc9CLF1efLiw
+ 5YwHJ8+yceqUOfdkSk5pKE5zBk4Ulfimn3QDWXK1Xrvn1wcrRpyCaJ+0/qjHj1j9zzk3
+ XCYugwZh2MQwhX9PnrsjDNrYk//qdylb3+r4wpGvwKmJR0H3km+3vEf/iABd8KJd4MsL
+ KT9DJLTtPUf3JCrxC1IU/VotdUvHvWeEMeAUmQkrSHiwy/QreIvsCWhNWDCHS7R5Ckay
+ BlKV48G3trFXmcFhA6IIbSRo5dtfDmMRINu/4xiw8ZSxe5HbL5pPMpODYXD3P+2uCY1p 4g== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2kn43p9b5u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 11 Aug 2018 00:39:00 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7B0d0Q3007194
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 11 Aug 2018 00:39:00 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7B0ctwS002509;
+        Sat, 11 Aug 2018 00:38:55 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 10 Aug 2018 17:38:55 -0700
+Date:   Fri, 10 Aug 2018 17:38:52 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180811003852.GA10463@magnolia>
+References: <20180810153902.GH21087@thunk.org>
+ <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk>
+ <28045.1533916438@warthog.procyon.org.uk>
+ <20180810161400.GA627@thunk.org>
+ <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+ <20180810204639.GI627@thunk.org>
+ <20180810221234.GC4211@magnolia>
+ <20180810235447.GK627@thunk.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810235447.GK627@thunk.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8981 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808110005
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Aug 2018, Joe Perches wrote:
-
-> On Fri, 2018-08-10 at 16:02 -0400, Nicolas Pitre wrote:
-> > On Fri, 10 Aug 2018, Joe Perches wrote:
-> > 
-> > > On Fri, 2018-08-10 at 14:12 -0500, Jeff Lien wrote:
-> > > > This patch provides a performance improvement for the CRC16 calculations done in read/write
-> > > > workloads using the T10 Type 1/2/3 guard field.  For example, today with sequential write
-> > > > workloads (one thread/CPU of IO) we consume 100% of the CPU because of the CRC16 computation
-> > > > bottleneck.  Today's block devices are considerably faster, but the CRC16 calculation prevents
-> > > > folks from utilizing the throughput of such devices.  To speed up this calculation and expose
-> > > > the block device throughput, we slice the old single byte for loop into a 16 byte for loop,
-> > > > with a larger CRC table to match.  The result has shown 5x performance improvements on various
-> > > > big endian and little endian systems running the 4.18.0 kernel version.
-> > > 
-> > > Thanks.
-> > > 
-> > > This seems a sensible tradeoff for the 4k text size increase.
-> > 
-> > More like 7.5KB.  Would be best if this was configurable so the small 
-> > version remained available.
+On Fri, Aug 10, 2018 at 07:54:47PM -0400, Theodore Y. Ts'o wrote:
+> On Fri, Aug 10, 2018 at 03:12:34PM -0700, Darrick J. Wong wrote:
+> > Hey now, there was a little more nuance to it than that[1][2].  The
+> > complaint in the first instance had much more to do with breaking
+> > existing V4 filesystems by adding format requirements that mkfs didn't
+> > know about when the filesystem was created.  Yes, you can create V4
+> > filesystems that will hang the system if the log was totally unformatted
+> > and metadata updates are made, but OTOH it's fairly obvious when that
+> > happens, you have to be root to mount a disk filesystem, and we try to
+> > avoid breaking existing users.
 > 
-> Maybe something like: (compiled, untested)
-> ---
->  crypto/Kconfig            |  10 +
->  crypto/crct10dif_common.c | 543 +++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 549 insertions(+), 4 deletions(-)
+> I wasn't thinking about syzbot reports; I've largely written them off
+> as far as file system testing is concerned, but rather Wen Xu at
+> Georgia Tech, who is much more reasonable than Dmitry, and has helpeyd
+> me out a lot; and has complained that the XFS folks haven't been
+> engaging with him.
+
+Ahh, ok.  Yes, Wen has been easier to work with, and gives out
+filesystem images.  Hm, I'll go comb the bugzilla again...
+
+> In either case, both security researchers are fuzzing file system
+> images, and then fixing the checksums, and discovering that this can
+> lead to kernel crashes, and in a few cases, buffer overruns that can
+> lead to potential privilege escalations.  Wen can generate reports
+> faster than syzbot, but at least he gives me file system images (as
+> opposed to having to dig them out of syzbot repro C files) and he
+> actually does some analysis and explains what he thinks is going on.
+
+(FWIW I tried to figure out how to add fs image dumping to syzbot and
+whoah that was horrifying.
+
+> I don't think anyone was claiming that format requirements should be
+> added to ext4 or xfs file systems.  But rather, that kernel code
+> should be made more robust against maliciously corrupted file system
+> images that have valid checksums.  I've been more willing to work with
+> Wen; Dave has expressed the opinion that these are not realistic bug
+> reports, and since only root can mount file systems, it's not high
+> priority.
+
+I don't think they're high priority either, but they're at least worth
+/some/ attention.
+
+> The reason why I bring this up here is that in container land, there
+> are those who believe that "container root" should be able to mount
+> file systems, and if the "container root" isn't trusted, the fact that
+> the "container root" can crash the host kernel, or worse, corrupt the
+> host kernel and break out of the container as a result, that would be
+> sad.
 > 
-> diff --git a/crypto/Kconfig b/crypto/Kconfig
-> index f3e40ac56d93..88d9d17bb18a 100644
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -618,6 +618,16 @@ config CRYPTO_CRCT10DIF
->  	  a crypto transform.  This allows for faster crc t10 diff
->  	  transforms to be used if they are available.
->  
-> +config CRYPTO_CRCT10DIF_TABLE_SIZE
-> +	int "Size of CRCT10DIF crc tables (as a power of 2)"
-> +	depends on CRYPTO_CRCT10DIF
-> +	range 1 5
-> +	default 1 if EMBEDDED
-> +	default 5
+> I was pretty sure most file system developers are on the same page
+> that allowing untrusted "container roots" the ability to mount
+> arbitrary block device file systems is insanity.
 
-You could even make the prompt depend on EXPERT.
+Agreed.
 
-I like it!
+> Whether or not we try to fix these sorts of bugs submitted by security
+> researchers.  :-)
 
-Acked-by: Nicolas Pitre <nico@linaro.org>
+and agreed. :)
 
+--D
 
-Nicolas
+> 	  	       	    	       		  - Ted
