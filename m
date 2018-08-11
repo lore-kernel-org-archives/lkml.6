@@ -6,54 +6,52 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49205C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E18C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CBA6218C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:27:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CBA6218C4
+	by mail.kernel.org (Postfix) with ESMTP id 77523218C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 13:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77523218C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeHKQBi (ORCPT
+        id S1727586AbeHKQBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 12:01:38 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:38084 "EHLO cstnet.cn"
+        Sat, 11 Aug 2018 12:01:55 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:38819 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727304AbeHKQBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 12:01:38 -0400
+        id S1727304AbeHKQBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Aug 2018 12:01:55 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowAB3We4w5G5bHYBfAA--.571S2;
-        Sat, 11 Aug 2018 21:27:16 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowAA3F+xA5G5btYRfAA--.414S2;
+        Sat, 11 Aug 2018 21:27:32 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
         pbonzini@redhat.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v3 05/17] x86/perfctr: return perf counter and event selection bit offset
-Date:   Sat, 11 Aug 2018 21:27:07 +0800
-Message-Id: <3c687a337c87923884eb4ba11cf55cbe0203b878.1533989492.git.puwen@hygon.cn>
+Subject: [PATCH v3 06/17] x86/nops: init ideal_nops for Hygon
+Date:   Sat, 11 Aug 2018 21:27:23 +0800
+Message-Id: <9c815eb47007d102eaddb3dc4cb09e25dda92b55.1533989492.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1533989492.git.puwen@hygon.cn>
 References: <cover.1533989492.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowAB3We4w5G5bHYBfAA--.571S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7JFW8AFyxCr43Aw1UAw13Arb_yoW8Jr13pr
-        W0k3yvyw1jvayUu3y5tr4kXry3uF9xK3y8Zr45KayfJ3Z0gF93Xr10kw1FgrW0qryfCr1F
-        v3yrCa18Kw4kAF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
-        W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-        Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-        xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-        MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I
-        0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAFwI0_
-        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
-        rOz3UUUUU==
+X-CM-TRANSID: swCowAA3F+xA5G5btYRfAA--.414S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY27AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+        6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+        kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8I
+        cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2js
+        IEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+        6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72
+        CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+        M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+        1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+        b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0x
+        vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF
+        0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+        VjvjDU0xZFpf9x0JUybyZUUUUU=
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,35 +59,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hygon Dhyana shares similar perfctr arch with AMD family 17h.
-It returns the bit offset of the performance counter register and the
-event selection register for Hygon CPU in the similar way as AMD does.
+The ideal_nops for Dhyana processors should be p6_nops.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- arch/x86/kernel/cpu/perfctr-watchdog.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/alternative.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/perfctr-watchdog.c b/arch/x86/kernel/cpu/perfctr-watchdog.c
-index d389083..9556930 100644
---- a/arch/x86/kernel/cpu/perfctr-watchdog.c
-+++ b/arch/x86/kernel/cpu/perfctr-watchdog.c
-@@ -46,6 +46,7 @@ static inline unsigned int nmi_perfctr_msr_to_bit(unsigned int msr)
- {
- 	/* returns the bit offset of the performance counter register */
- 	switch (boot_cpu_data.x86_vendor) {
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index a481763..8f4925b 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -222,6 +222,10 @@ void __init arch_init_ideal_nops(void)
+ 		}
+ 		break;
+ 
 +	case X86_VENDOR_HYGON:
++		ideal_nops = p6_nops;
++		return;
++
  	case X86_VENDOR_AMD:
- 		if (msr >= MSR_F15H_PERF_CTR)
- 			return (msr - MSR_F15H_PERF_CTR) >> 1;
-@@ -74,6 +75,7 @@ static inline unsigned int nmi_evntsel_msr_to_bit(unsigned int msr)
- {
- 	/* returns the bit offset of the event selection register */
- 	switch (boot_cpu_data.x86_vendor) {
-+	case X86_VENDOR_HYGON:
- 	case X86_VENDOR_AMD:
- 		if (msr >= MSR_F15H_PERF_CTL)
- 			return (msr - MSR_F15H_PERF_CTL) >> 1;
+ 		if (boot_cpu_data.x86 > 0xf) {
+ 			ideal_nops = p6_nops;
 -- 
 2.7.4
 
