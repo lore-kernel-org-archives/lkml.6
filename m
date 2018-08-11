@@ -2,81 +2,134 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F1DC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E37FC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1517B21A1C
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:06:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1517B21A1C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E5C321C39
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 15:07:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5C321C39
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeHKRkn (ORCPT
+        id S1727508AbeHKRmG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 13:40:43 -0400
-Received: from smtprelay0101.hostedemail.com ([216.40.44.101]:33187 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727348AbeHKRkn (ORCPT
+        Sat, 11 Aug 2018 13:42:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41426 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeHKRmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 13:40:43 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 4418F837F24A;
-        Sat, 11 Aug 2018 15:06:13 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: tail16_8d54ac301ad15
-X-Filterd-Recvd-Size: 1986
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 11 Aug 2018 15:06:11 +0000 (UTC)
-Message-ID: <2089960838bccf80f6fb9cc586b1a663f1f9e9da.camel@perches.com>
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-From:   Joe Perches <joe@perches.com>
-To:     dgilbert@interlog.com, Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
-        tim.c.chen@linux.intel.com, martin.petersen@oracle.com,
-        david.darrington@wdc.com, jeff.furlong@wdc.com
-Date:   Sat, 11 Aug 2018 08:06:10 -0700
-In-Reply-To: <8e63583eb6898c3f481f1cb45b067234737a11b4.camel@perches.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
-         <9b5b906f42dfab78f382c90f66851717d258a15d.camel@perches.com>
-         <nycvar.YSQ.7.76.1808101601110.13885@knanqh.ubzr>
-         <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
-         <75d66dfa-688b-f941-04fd-5a39cf882b21@interlog.com>
-         <8e63583eb6898c3f481f1cb45b067234737a11b4.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 11 Aug 2018 13:42:06 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1foVUJ-0005VS-Bf; Sat, 11 Aug 2018 15:07:31 +0000
+Date:   Sat, 11 Aug 2018 16:07:31 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Richard Henderson <rth@twiddle.net>
+Cc:     Firoz Khan <firoz.khan@linaro.org>, linux-alpha@vger.kernel.org,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com
+Subject: Re: [PATCH 3/6] alpha: Unify the not-implemented system call entry
+ name
+Message-ID: <20180811150731.GG6515@ZenIV.linux.org.uk>
+References: <1531736638-15294-1-git-send-email-firoz.khan@linaro.org>
+ <1531736638-15294-4-git-send-email-firoz.khan@linaro.org>
+ <20180811000455.GC6515@ZenIV.linux.org.uk>
+ <98937991-cefa-b7f3-11c3-12727b3159b1@twiddle.net>
+ <20180811024553.GF6515@ZenIV.linux.org.uk>
+ <d223ad23-04ae-408f-2a73-d5fa641ad725@twiddle.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d223ad23-04ae-408f-2a73-d5fa641ad725@twiddle.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-08-11 at 02:04 -0700, Joe Perches wrote:
-> On Fri, 2018-08-10 at 22:39 -0400, Douglas Gilbert wrote:
-> > but below is a copy and paste of a table 27 from draft SBC-4
-> > revision 15 in chapter 4.22.4.4 on page 87.
+On Fri, Aug 10, 2018 at 09:10:04PM -0700, Richard Henderson wrote:
+> On 08/10/2018 07:45 PM, Al Viro wrote:
+> > BTW, seeing that it's your code - why was unop used in
+> > alpha_ni_syscall?  I don't remember the rules re pipeline
+> > stalls; is it that some earlier variants prefer unop to
+> > nop in such places?  It's not that microoptimizing that
+> > one makes any difference, but just out of curiosity -
+> > would something like
+> > 	lda     $0, -ENOSYS
+> > 	stq     $sp, 0($sp)	/* sp != 0 */
+> > 	ret
+> > do just as well there?
 > 
-> The posted code returns the proper crc for each
-> CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE value from
-> 1 to 5 for these arrays.
+> Oh that.  Well, unop is a "load" and pairs with everything
+> on all cpus, where nop is an integer and doesn't always
+> pair.  So I got into the habit of using unop for everything.
+> 
+> The extra nop was so that lda + unop // stq + ret paired up
+> in in two cycles as opposed to lda /stall/ stq // ret in
+> three cycles on ev4+ev5.  ev6 didn't care.  FWIW.
 
-Jeff, could you please test the suggested patch
-with your comparison framework again with each
-CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE from 1 to 5?
+BTW, looking through old patches around entry.S, are you OK with this
+one?  Same kind of macro as that for fork/vfork/clone glue...
 
-I get on a very limited test framework here:
-(runtime average of 10 runs)
-
-1: 4.32
-2: 1.86
-3: 1.31
-4: 1.05
-5: 0.99
-
+diff --git a/arch/alpha/kernel/entry.S b/arch/alpha/kernel/entry.S
+index c64806a2daf5..828d641b4410 100644
+--- a/arch/alpha/kernel/entry.S
++++ b/arch/alpha/kernel/entry.S
+@@ -791,7 +791,7 @@ ret_from_kernel_thread:
+ 
+ /*
+  * Special system calls.  Most of these are special in that they either
+- * have to play switch_stack games or in some way use the pt_regs struct.
++ * have to play switch_stack games.
+  */
+ 
+ .macro	fork_like name
+@@ -812,35 +812,25 @@ fork_like fork
+ fork_like vfork
+ fork_like clone
+ 
++.macro	sigreturn_like name
+ 	.align	4
+-	.globl	sys_sigreturn
+-	.ent	sys_sigreturn
+-sys_sigreturn:
++	.globl	sys_\name
++	.ent	sys_\name
++sys_\name:
+ 	.prologue 0
+ 	lda	$9, ret_from_straced
+ 	cmpult	$26, $9, $9
+ 	lda	$sp, -SWITCH_STACK_SIZE($sp)
+-	jsr	$26, do_sigreturn
++	jsr	$26, do_\name
+ 	bne	$9, 1f
+ 	jsr	$26, syscall_trace_leave
+ 1:	br	$1, undo_switch_stack
+ 	br	ret_from_sys_call
+-.end sys_sigreturn
++.end sys_\name
++.endm
+ 
+-	.align	4
+-	.globl	sys_rt_sigreturn
+-	.ent	sys_rt_sigreturn
+-sys_rt_sigreturn:
+-	.prologue 0
+-	lda	$9, ret_from_straced
+-	cmpult	$26, $9, $9
+-	lda	$sp, -SWITCH_STACK_SIZE($sp)
+-	jsr	$26, do_rt_sigreturn
+-	bne	$9, 1f
+-	jsr	$26, syscall_trace_leave
+-1:	br	$1, undo_switch_stack
+-	br	ret_from_sys_call
+-.end sys_rt_sigreturn
++sigreturn_like sigreturn
++sigreturn_like rt_sigreturn
+ 
+ 	.align	4
+ 	.globl	alpha_ni_syscall
