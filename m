@@ -2,113 +2,173 @@ Return-Path: <SRS0=t4yP=K2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_ADSP_ALL,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20827C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D364C46460
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA950206B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 439BB21E26
+	for <linux-kernel@archiver.kernel.org>; Sat, 11 Aug 2018 20:09:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="Ilbx5OFV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA950206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qBa+GiVf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439BB21E26
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbeHKWnr (ORCPT
+        id S1727703AbeHKWoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 11 Aug 2018 18:43:47 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:19242 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727441AbeHKWnr (ORCPT
+        Sat, 11 Aug 2018 18:44:14 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35036 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbeHKWoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Aug 2018 18:43:47 -0400
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 5F3C73CD566;
-        Sat, 11 Aug 2018 19:39:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1534009196;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3cg8b1QaOuyXtJOtdJeBIIQze9zUNhkyvDkY2087ylA=;
-        b=Ilbx5OFVkjm2xd0evev0V1Itl6cfvX6F3IE0VpWVYqflGEdQuWTuCCF7C8p0rivzPY4KZQ
-        Pueq/O60mw2FtHPG0ab5fj+kIbTA2Yw1A1W0t9/vjyFAbSYb6AO5+I7xkpI95Y11XV9TB1
-        4Bx5ekcffvS7B5ZdO0fQ9WK/yMENAbg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 5F3C73CD566
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Sat, 11 Aug 2018 18:44:14 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w3-v6so5370357plq.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 13:08:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=CtbgM/NTlNYiBS2GbCvGWHgIJawlE9w7f17w5mGE2FU=;
+        b=qBa+GiVfooIUlcgUC0My3Zm5pHoPNbNPSkOVTLoB/J+oEXB08pcGO1Ev5w/f+eLKrc
+         P+5701UAuSukHnpjj2T+EO+tX/UAdyQxEtBbJ3of+y+QFwI1yg0lahOob+Y2pacJ3KLh
+         IkF93Z1NpNmCSzncdJTvKKGfjsTSRTIWfs57hVs2gbOL8AoRw+mY1bAVIM1kFX2gYFOw
+         ZOHH2cw5wNCVXMMc1Z8sQKwOq47u7VW1THPSu7IW017zU89dt90HcffWmJzXDssl0/xY
+         azHaEpICMhN6Q82l2YsCiZseLmx1XkfitoXJ7bjaaRGkYfiwYGh5wpXWn+nVt4cJePaP
+         ohPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=CtbgM/NTlNYiBS2GbCvGWHgIJawlE9w7f17w5mGE2FU=;
+        b=OP0hUA6lqTLH+kxbul2MKS7u8ZcXwLUUAXaeAgS0aOhzls09BjpKVIIiktE9l4pTyQ
+         NFKn/rczyJ8lsF37vN+NIs85gVZuaD4BKQSd0bB+uLtgtYJ2bN6S1MoHdgahCYj0I4b7
+         TN5f8zFyR3zDSUmM/jMJz0pzbJKtBglkYu+RSdvvjSa+Uw9qdmDNWx5jostXq9l6gdOO
+         ukgPQgaXRfB+Hry10ulU2+24qPVM0wtYCy0yuUE6OEkGofFVQCnEKtmDdkkrcCe0HMiJ
+         X22s2/12A5X3sAmj9tyYPH49edK3J9iHsFTcpXdJWlRVdSz98+HnENFKWirYn0YYnCk6
+         lklQ==
+X-Gm-Message-State: AOUpUlFo7RrbKayTICKSw6kBY+q73L/gHMkM3KdISQN0D2l2EOBvZ1/B
+        0riNi1xrv44vz25jFkXsnyaINT51
+X-Google-Smtp-Source: AA+uWPxc75kY/OfXOHDZcyS4skJJHf2XNv8Y0WoXIZpN8QV4IulCo4x3NbQdV+Hk9mRuUWlttq7Wgg==
+X-Received: by 2002:a17:902:4124:: with SMTP id e33-v6mr10896600pld.48.1534018138184;
+        Sat, 11 Aug 2018 13:08:58 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.16.163])
+        by smtp.gmail.com with ESMTPSA id d19-v6sm38561409pfm.48.2018.08.11.13.08.55
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 11 Aug 2018 13:08:56 -0700 (PDT)
+Date:   Sun, 12 Aug 2018 01:41:48 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     linux-graphics-maintainer@vmware.com, syeh@vmware.com,
+        thellstrom@vmware.com, airlied@linux.ie, ajitn.linux@gmail.com,
+        daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/vmwgfx: Convert drm_atomic_helper_suspend/resume()
+Message-ID: <20180811201147.GA14169@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 11 Aug 2018 19:39:56 +0200
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Ming Lei <tom.leiming@gmail.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kurz <groug@kaod.org>, qemu-discuss@nongnu.org,
-        qemu-devel <qemu-devel@nongnu.org>
-Subject: Re: Slow boot in QEMU with virtio-scsi disks
-In-Reply-To: <CACVXFVO1pN=CZvNY8Q4wBrAoA=3w8Ew38aGqpOSHJ1uYAM-sxw@mail.gmail.com>
-References: <f40092b20856d07bd7f870abf5ea939e@natalenko.name>
- <CACVXFVO1pN=CZvNY8Q4wBrAoA=3w8Ew38aGqpOSHJ1uYAM-sxw@mail.gmail.com>
-Message-ID: <98344e68266e447826f133ad14d0c83d@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.6
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1534009196;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3cg8b1QaOuyXtJOtdJeBIIQze9zUNhkyvDkY2087ylA=;
-        b=YPK75TKxjk2BSuDVN08oexAK/qsRzNtdTK5CuMGd88brEPFVrEDZ04az+yq4TOxgL/7o15
-        juyYGW45WnENYmGDgfcj3AwELw6QPmT2LYzmgm1yEnOdD54lQ0ZMgde7muiM83gTf7IBaY
-        buRDrZVvUR7zIk0heC2LQOiwCaO8pzI=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1534009196; a=rsa-sha256;
-        cv=none;
-        b=tWZQWlnEuqNXexarmwbYkZ4R/gy5lyJX0Z7rKb4AundN0QaBxYqGRaKxUS2o2o7+OQD9nypGHI6baqRtLmyF7nXCruvuMh/6hj4L8cFJxd2EXphp6ifNMXNspFHBynsSg7LTdnJQDfkzuBQtFZPdk49uVc+iiUiMqWPKo5QuO24=
-ARC-Authentication-Results: i=1; vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+convert drm_atomic_helper_suspend/resume() to use
+drm_mode_config_helper_suspend/resume().
 
-On 11.08.2018 14:23, Ming Lei wrote:
-> Please test for-4.19/block:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-4.19/block
-> 
-> This slow boot issue should have been fixed by the following commits:
-> 
-> 1311326cf475 blk-mq: avoid to synchronize rcu inside 
-> blk_cleanup_queue()
-> 97889f9ac24f blk-mq: remove synchronize_rcu() from 
-> blk_mq_del_queue_tag_set()
-> 5815839b3ca1 blk-mq: introduce new lock for protecting 
-> hctx->dispatch_wait
-> 2278d69f030f blk-mq: don't pass **hctx to blk_mq_mark_tag_wait()
-> 8ab6bb9ee8d0 blk-mq: cleanup blk_mq_get_driver_tag()
+suspend_state can be removed from vmw_private as
+it will not be used anymore.
 
-Indeed, I can confirm that these commits fix the issue.
+Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |  6 +++---
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h |  1 -
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 25 ++-----------------------
+ 3 files changed, 5 insertions(+), 27 deletions(-)
 
-Thanks a lot.
-
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index bb6dbbe..a317cda 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -1521,7 +1521,7 @@ static int vmw_pm_freeze(struct device *kdev)
+ 		WARN_ON(vmw_request_device_late(dev_priv));
+ 		dev_priv->suspend_locked = false;
+ 		ttm_suspend_unlock(&dev_priv->reservation_sem);
+-		if (dev_priv->suspend_state)
++		if (dev->mode_config.suspend_state)
+ 			vmw_kms_resume(dev);
+ 		if (dev_priv->enable_fb)
+ 			vmw_fb_on(dev_priv);
+@@ -1558,8 +1558,8 @@ static int vmw_pm_restore(struct device *kdev)
+ 	vmw_fence_fifo_up(dev_priv->fman);
+ 	dev_priv->suspend_locked = false;
+ 	ttm_suspend_unlock(&dev_priv->reservation_sem);
+-	if (dev_priv->suspend_state)
+-		vmw_kms_resume(dev_priv->dev);
++	if (dev->mode_config.suspend_state)
++		vmw_kms_resume(dev);
+ 
+ 	if (dev_priv->enable_fb)
+ 		vmw_fb_on(dev_priv);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+index 1abe217..b8e200b 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+@@ -438,7 +438,6 @@ struct vmw_private {
+ 	struct vmw_framebuffer *implicit_fb;
+ 	struct mutex global_kms_state_mutex;
+ 	spinlock_t cursor_lock;
+-	struct drm_atomic_state *suspend_state;
+ 
+ 	/*
+ 	 * Context and surface management.
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+index 23beff5..2d011a1 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+@@ -3028,19 +3028,7 @@ int vmw_kms_set_config(struct drm_mode_set *set,
+  */
+ int vmw_kms_suspend(struct drm_device *dev)
+ {
+-	struct vmw_private *dev_priv = vmw_priv(dev);
+-
+-	dev_priv->suspend_state = drm_atomic_helper_suspend(dev);
+-	if (IS_ERR(dev_priv->suspend_state)) {
+-		int ret = PTR_ERR(dev_priv->suspend_state);
+-
+-		DRM_ERROR("Failed kms suspend: %d\n", ret);
+-		dev_priv->suspend_state = NULL;
+-
+-		return ret;
+-	}
+-
+-	return 0;
++	return drm_mode_config_helper_suspend(dev);
+ }
+ 
+ 
+@@ -3055,16 +3043,7 @@ int vmw_kms_suspend(struct drm_device *dev)
+  */
+ int vmw_kms_resume(struct drm_device *dev)
+ {
+-	struct vmw_private *dev_priv = vmw_priv(dev);
+-	int ret;
+-
+-	if (WARN_ON(!dev_priv->suspend_state))
+-		return 0;
+-
+-	ret = drm_atomic_helper_resume(dev, dev_priv->suspend_state);
+-	dev_priv->suspend_state = NULL;
+-
+-	return ret;
++	return drm_mode_config_helper_resume(dev);
+ }
+ 
+ /**
 -- 
-   Oleksandr Natalenko (post-factum)
+1.9.1
+
