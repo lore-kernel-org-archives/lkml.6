@@ -2,186 +2,108 @@ Return-Path: <SRS0=4YaO=K3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F098BC46464
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D688AC46464
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7CF2150A
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:23:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7CF2150A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+	by mail.kernel.org (Postfix) with ESMTP id 8960C219D1
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:26:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFvr0sWW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8960C219D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeHLQBf (ORCPT
+        id S1728190AbeHLQD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 12:01:35 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:32775 "EHLO 1wt.eu"
+        Sun, 12 Aug 2018 12:03:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728004AbeHLQBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 12:01:35 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id w7CDNPKA001632;
-        Sun, 12 Aug 2018 15:23:25 +0200
-Date:   Sun, 12 Aug 2018 15:23:25 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: provide more details about security bug reporting
-Message-ID: <20180812132325.GA1608@1wt.eu>
+        id S1727796AbeHLQD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Aug 2018 12:03:58 -0400
+Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com [74.125.82.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22BC3219E1;
+        Sun, 12 Aug 2018 13:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534080355;
+        bh=xbd5h2uwqz8c75Caeg17HBQhGz89NCx15Ls0w3wi7DA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ZFvr0sWWpiauOwlUZGilHwXkCIgDoyQZjHCqTCWX8NMa1ZMBcIjTQ8Mm6MGBGUSdu
+         llY8JROCzoTr2SE2IXAQam6s/uXTYFTtTVUFt1/v7a7Xj9qpjsZDpHy31OCf/G3Jge
+         jRXu7Fo5V+5A+w/cT7STLigIa5grm5n224GpUml8=
+Received: by mail-wm0-f44.google.com with SMTP id o18-v6so6255048wmc.0;
+        Sun, 12 Aug 2018 06:25:55 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEudJIlbfzWB8ZND9kw8mtkQSxUIuYKm0fO3fZhlgLp0C0/ngC0
+        DJ8mGsyQvgfO0siNcBqI3hjiz/2XhqB/aljyYR0=
+X-Google-Smtp-Source: AA+uWPxbzQLPXbtq9rLydHfJd5pFoxWmcUNrIusvDgLfV1cWP/8Z/z/YyGYrS0iUWfGsECAx+g5eWwL0oAxgsgpc36k=
+X-Received: by 2002:a1c:588d:: with SMTP id m135-v6mr5575364wmb.118.1534080353650;
+ Sun, 12 Aug 2018 06:25:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Sun, 12 Aug 2018 06:25:53
+ -0700 (PDT)
+In-Reply-To: <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
+References: <20180806160933.6578-1-krzk@kernel.org> <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Sun, 12 Aug 2018 15:25:53 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPds5s8omeR7UOB4u4HrYCZBTJX3t4YU4PSWBGb-9MG7iw@mail.gmail.com>
+Message-ID: <CAJKOXPds5s8omeR7UOB4u4HrYCZBTJX3t4YU4PSWBGb-9MG7iw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos: Add missing used PMIC regulators on
+ Exynos5422 Odroid boards
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11 August 2018 at 08:39, Anand Moon <linux.amoon@gmail.com> wrote:
+> Hi Krzysztof,
+>
+> These patches should also be ported to u-boot to enable PMIC.
+>
+> I was just looking into S2MPS11B data sheet
+> According to the 1.2 Key Features of  S2MPS11
+>
+> BUCK1, BUCK2, BUCK3, BUCK4, BUCK6 have (0.65 V to 1.6 V) min /max range.
+> BUCK5 have (0.65 V to 2.0 V) min /max range.
+> BUCK7 have (1.2 V to 1.5 V) min / max range.
+> BUCK8 have (1.8 V to 2.1 V) min / max range.
+> BUCK10 have (0.75 V to 1.4 V) min / max range.
+>
+> BUCKBOST9 (3.0 V to 3.75 V) min / max range.
+>
+> LDO1, LDO6, LDO11, LDO22, LDO23, LDO27, LDO35 (0.8 V to 2.375 V) min / max range
+>
+> LDO2, LDO3, LDO5, LDO7, LDO9, LDO10, LD012, LDO13, LDO14, LDO15,
+> LDO16, LDO17, LDO18, LDO19, LDO20, LD021, LDO24, LDO25, LDO26,
+> LDO28, LDO29, LDO30, LDO31, LDO32, LDO33, LDO34, LDO36, LDO37, LDO38
+> (0.8 V to 3.95 V) min / max range
+>
+> I am aware off we have configures the min/max range as per board schematics.
+> but each regulator support dynamic voltage scale and have different
+> turn on/off voltage and current rating.
+>
+> So why are we not setting the regulator-min-microvolt /
+> regulator-max-microvolt as per datasheets.
+> Please correct me if I am wrong.
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Which regulators are not configured as in datasheet?
 
-Hi Linus,
-
-please consider applying the attached patch to improve the doc on
-the security reporting process.
-
-Thanks,
-Willy
-
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="0001-docs-provide-more-details-about-security-bug-reporti.patch"
-
-From a587418b587915bcaa5657909f52dc3995f29dcd Mon Sep 17 00:00:00 2001
-From: Willy Tarreau <w@1wt.eu>
-Date: Fri, 10 Aug 2018 16:36:04 +0200
-Subject: [PATCH] docs: provide more details about security bug reporting
-
-The analysis, disclosure and crediting parts were completed a bit to
-add clarification about what types of reports are expected, what the
-reporter may expect in terms of disclosure, and how reporters are
-credited for their discovery.
-
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/admin-guide/security-bugs.rst | 81 +++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
-
-diff --git a/Documentation/admin-guide/security-bugs.rst b/Documentation/admin-guide/security-bugs.rst
-index 30491d9..91ecd48 100644
---- a/Documentation/admin-guide/security-bugs.rst
-+++ b/Documentation/admin-guide/security-bugs.rst
-@@ -26,6 +26,51 @@ information is helpful.  Any exploit code is very helpful and will not
- be released without consent from the reporter unless it has already been
- made public.
- 
-+Analysis
-+--------
-+
-+Sometimes a bug will be very well understood by some of the security
-+officers who will propose you a patch to test.  Please get prepared to
-+receiving extra questions and to provide answers on a timely basis.
-+There is little chance a bug will get fixed if you send an incomplete
-+report and disappear for two weeks.  It is also possible that some of
-+the officers will conclude that the behaviour you observed is normal
-+and expected, that it is bogus but doesn't present an imminent
-+security risk and should rather be discussed on public lists, or that
-+it does indeed represent a risk, but that the risk of breakage induced
-+by fixing it outweights the risks of the bug being exploited.  In such
-+situations, it is possible that you will be requested to post your
-+report to another more suitable place.
-+
-+Analysing a report takes a lot of time, and while sometimes it's
-+better to conclude to a wrong alert because there is nothing to fix,
-+it also is annoying if it is discovered that the reporter should have
-+found it by himself, because the time lost on this analysis was not
-+spent on another one.  This can happen all the time to be wrong about
-+a report, but please be careful not to do this too often or your
-+reports may not be taken seriously in the end.
-+
-+As a rule of thumb, it is recommended not to post messages suggesting
-+that a bug may exist somewhere.  Since the security team manages
-+imminent and important risks, bugs reported there must be based on
-+facts and not on beliefs.  It is fine to report a panic message saying
-+"I just got this, I don't know how it happened but it scares me", it is
-+not fine to say "I ran my new automated analysis tool which thinks a
-+check is missing here, could someone knowledgeable in this area please
-+double-check".  The security team's role is not to have opinions on
-+your beliefs but to spot the right people to help fix a real problem.
-+
-+Very often, some maintainers will be brought to the discussion as the
-+analysis progresses. Most of the time these people will not have received
-+the initial e-mail, and they're discovering the issue late.  So please do
-+not get upset if they ask questions that were already addressed or which
-+were present in the initial report.
-+
-+Also, don't consider the bug fixed until the fix is merged.  It can
-+happen that a fix proposed by one of the security officers doesn't suit
-+a subsystem maintainer and that it has to be reworked differently,
-+possibly after a public discussion.
-+
- Disclosure
- ----------
- 
-@@ -44,6 +89,25 @@ timeframe varies from immediate (esp. if it's already publicly known bug)
- to a few weeks.  As a basic default policy, we expect report date to
- release date to be on the order of 7 days.
- 
-+There is no point threatening to make a report public after XX days
-+without a response because usually what you will end up with is a fix
-+that is merged much earlier than what you possibly expected, for example
-+if you promised to someone not to publish it before a certain date.
-+Please just understand that the security team's goal is for your bug to
-+be fixed as fast as possible and not to sleep on it.
-+
-+If you report a particularly complex issue that you intend to discuss
-+at a conference a few weeks or months later, you cannot really expect
-+from the security team to find a solution in time and at the same time
-+to refrain from disclosing the issue to a broader audience or
-+releasing the fix.  So at the very least you will have to take your
-+dispositions to deal with a disclosure which happens much earlier than
-+your public talk about the issue.  Also if you only sent an early
-+notification about a forthcoming problem that is not yet fully
-+disclosed, you must not expect the security officers to ping you again
-+later about the issue; you are responsible for reloading the
-+discussion at the right moment once all elements are gathered.
-+
- Coordination
- ------------
- 
-@@ -59,6 +123,23 @@ include linux-distros from the start. In this case, remember to prefix
- the email Subject line with "[vs]" as described in the linux-distros wiki:
- <http://oss-security.openwall.org/wiki/mailing-lists/distros#how-to-use-the-lists>
- 
-+Crediting the reporter
-+----------------------
-+
-+The security team has a great respect for reporters' work and wants to
-+encourage high-quality reports that help fix real issues.  As such, the
-+reporter will usually be asked who must be credited for reporting the
-+bug before writing the final patch.  It is often not well perceived to
-+send a report and start by explaining whom to credit for the report, as
-+experience shows that people who focus a bit too much on being properly
-+credited when they don't know yet if what they found is a valid bug tend
-+not to provide the highest quality reports nor to interact the best with
-+the team.  So the best way to be properly credited is to provide a patch
-+with an appropriate commit message along with the analysis.  The second
-+best way is to stay humble and participate with the rest of the team to
-+the bug fixing session.  It will bring you a lot of respect and will help
-+your future reports get more attention.
-+
- CVE assignment
- --------------
- 
--- 
-1.7.12.1
-
-
---ibTvN161/egqYuK8--
+Best regards,
+Krzysztof
