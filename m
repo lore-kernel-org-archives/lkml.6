@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59424C46460
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE954C46460
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE2E21943
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:49:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE2E21943
+	by mail.kernel.org (Postfix) with ESMTP id AF96221943
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF96221943
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeHLM0d (ORCPT
+        id S1728196AbeHLM0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 08:26:33 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36886 "EHLO huawei.com"
+        Sun, 12 Aug 2018 08:26:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10659 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727580AbeHLM0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 08:26:25 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D453AD213CF66;
-        Sun, 12 Aug 2018 17:48:54 +0800 (CST)
+        id S1728084AbeHLM0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Aug 2018 08:26:15 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0EB28DF8384A;
+        Sun, 12 Aug 2018 17:48:45 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.93.119) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 12 Aug 2018 17:48:49 +0800
+ 14.3.399.0; Sun, 12 Aug 2018 17:48:39 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil.lnk@gmail.com>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [PATCH net-next 9/9] net: hns3: Add vlan filter setting by ethtool command -K
-Date:   Sun, 12 Aug 2018 10:47:38 +0100
-Message-ID: <20180812094738.14852-10-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Subject: [PATCH net-next 6/9] net: hns3: Fix desc num set to default when setting channel
+Date:   Sun, 12 Aug 2018 10:47:35 +0100
+Message-ID: <20180812094738.14852-7-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180812094738.14852-1-salil.mehta@huawei.com>
 References: <20180812094738.14852-1-salil.mehta@huawei.com>
@@ -49,43 +49,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-Revision(0x20) HW does not support enabling or disabling individual
-netdev's HW_VLAN_CTAG_FILTER feature, and Revision(0x21) supports
-enabling or disabling individual netdev's HW_VLAN_CTAG_FILTER
-feature.
+When user set the channel num using "ethtool -L ethX", the desc num
+of BD will set to default value, which will cause desc num set by
+user lost problem.
 
+This patch fixes it by restoring the desc num set by user when setting
+channel num.
+
+Fixes: 09f2af6405b8 ("net: hns3: add support to modify tqps number")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index b28c7e142308..3554dca7a680 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1673,6 +1673,9 @@ static struct pci_driver hns3_driver = {
- /* set default feature to hns3 */
- static void hns3_set_default_feature(struct net_device *netdev)
- {
-+	struct hnae3_handle *h = hns3_get_handle(netdev);
-+	struct pci_dev *pdev = h->pdev;
-+
- 	netdev->priv_flags |= IFF_UNICAST_FLT;
- 
- 	netdev->hw_enc_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
-@@ -1706,6 +1709,9 @@ static void hns3_set_default_feature(struct net_device *netdev)
- 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
- 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
- 		NETIF_F_GSO_UDP_TUNNEL_CSUM;
-+
-+	if (pdev->revision != 0x20)
-+		netdev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index c88f5e6a9b77..8510245705cc 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1267,35 +1267,37 @@ static int hclge_map_tqps_to_func(struct hclge_dev *hdev, u16 func_id,
+ 	return ret;
  }
  
- static int hns3_alloc_buffer(struct hns3_enet_ring *ring,
+-static int  hclge_assign_tqp(struct hclge_vport *vport,
+-			     struct hnae3_queue **tqp, u16 num_tqps)
++static int  hclge_assign_tqp(struct hclge_vport *vport)
+ {
++	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
+ 	struct hclge_dev *hdev = vport->back;
+ 	int i, alloced;
+ 
+ 	for (i = 0, alloced = 0; i < hdev->num_tqps &&
+-	     alloced < num_tqps; i++) {
++	     alloced < kinfo->num_tqps; i++) {
+ 		if (!hdev->htqp[i].alloced) {
+ 			hdev->htqp[i].q.handle = &vport->nic;
+ 			hdev->htqp[i].q.tqp_index = alloced;
+-			tqp[alloced] = &hdev->htqp[i].q;
++			hdev->htqp[i].q.desc_num = kinfo->num_desc;
++			kinfo->tqp[alloced] = &hdev->htqp[i].q;
+ 			hdev->htqp[i].alloced = true;
+ 			alloced++;
+ 		}
+ 	}
+-	vport->alloc_tqps = num_tqps;
++	vport->alloc_tqps = kinfo->num_tqps;
+ 
+ 	return 0;
+ }
+ 
+-static int hclge_knic_setup(struct hclge_vport *vport, u16 num_tqps)
++static int hclge_knic_setup(struct hclge_vport *vport,
++			    u16 num_tqps, u16 num_desc)
+ {
+ 	struct hnae3_handle *nic = &vport->nic;
+ 	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
+ 	struct hclge_dev *hdev = vport->back;
+ 	int i, ret;
+ 
+-	kinfo->num_desc = hdev->num_desc;
++	kinfo->num_desc = num_desc;
+ 	kinfo->rx_buf_len = hdev->rx_buf_len;
+ 	kinfo->num_tc = min_t(u16, num_tqps, hdev->tm_info.num_tc);
+ 	kinfo->rss_size
+@@ -1322,7 +1324,7 @@ static int hclge_knic_setup(struct hclge_vport *vport, u16 num_tqps)
+ 	if (!kinfo->tqp)
+ 		return -ENOMEM;
+ 
+-	ret = hclge_assign_tqp(vport, kinfo->tqp, kinfo->num_tqps);
++	ret = hclge_assign_tqp(vport);
+ 	if (ret)
+ 		dev_err(&hdev->pdev->dev, "fail to assign TQPs %d.\n", ret);
+ 
+@@ -1388,7 +1390,7 @@ static int hclge_vport_setup(struct hclge_vport *vport, u16 num_tqps)
+ 	nic->numa_node_mask = hdev->numa_node_mask;
+ 
+ 	if (hdev->ae_dev->dev_type == HNAE3_DEV_KNIC) {
+-		ret = hclge_knic_setup(vport, num_tqps);
++		ret = hclge_knic_setup(vport, num_tqps, hdev->num_desc);
+ 		if (ret) {
+ 			dev_err(&hdev->pdev->dev, "knic setup failed %d\n",
+ 				ret);
+@@ -5944,7 +5946,7 @@ static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
+ 	/* Free old tqps, and reallocate with new tqp number when nic setup */
+ 	hclge_release_tqp(vport);
+ 
+-	ret = hclge_knic_setup(vport, new_tqps_num);
++	ret = hclge_knic_setup(vport, new_tqps_num, kinfo->num_desc);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev, "setup nic fail, ret =%d\n", ret);
+ 		return ret;
 -- 
 2.11.0
 
