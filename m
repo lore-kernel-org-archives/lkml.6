@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8CDC46464
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD22C46464
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 168A9219C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6430219C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:09:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZjfXHwSC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168A9219C6
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aqw4vA0x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6430219C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbeHLSsY (ORCPT
+        id S1728261AbeHLSs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 14:48:24 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35643 "EHLO
+        Sun, 12 Aug 2018 14:48:28 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53849 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbeHLSsY (ORCPT
+        with ESMTP id S1727699AbeHLSs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 14:48:24 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o18-v6so6493717wmc.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 09:09:52 -0700 (PDT)
+        Sun, 12 Aug 2018 14:48:27 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s9-v6so6473898wmh.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 09:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=7HBGepoZSobEplirni1bTS9RRqy0n0ImPx0/6DZ1yMY=;
-        b=ZjfXHwSCpIMK4NY6x+2FBgy4n3qegNH0qS/rm+l5jS8m/q47DkXqz4QoHgvN5EN/ar
-         jv52toc+jNyk6WuqQNqreQVKPdGVm91dVHl92vY/8T25vIfDjrauTZEI/KFuHL+ljjUS
-         5Lj+MtDEMRFbaGTzYp/dyII7KjmATFmcS7uGs=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7syOievGKU1gnJa8oh05y8DUlQgWF5NjJ3xt3wLMcp0=;
+        b=Aqw4vA0xT3WxMfTUxnd2mwPWd8CNO/XKIvCXki9jTDnHbOsEpUGb8lNr5DxnTeREod
+         RtqC2bdKn0+llD37F45FFVZkE3+SCLiR5wyX/knNX9M8hLOei8vErZgtXqz8CuzNhE1W
+         OtoVDdXcF8fJUARQ4SjmDJL1uS57JPBz+gdfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7HBGepoZSobEplirni1bTS9RRqy0n0ImPx0/6DZ1yMY=;
-        b=L23TAovUQhG5e3RgQHeeM67r1ai3guurtudjVZAgHP9VVg7sLO6oYLV/5qfx6ZBoef
-         miWHxqI+xD/AKvua7NUMl8DlrT4mXwDJhFOycbijuwUcbOPeQbvCGO9L9OHH1+8YKk+a
-         +Yo7XOqKlX7pTktTHxPXbIE4QSBNMKVmbGLyow1Mu0DeWAxOvoxKDvPg4SdjfMBHQr8h
-         qyNJJW01pWDdUGnAnWiWUFH43B9+oA9Zv/KpKEm2mJoPOHYeHsO41OllUNco1yfaVByw
-         V+e11GtTX1kqopa0OASvOjlqjS5XfX3izPX6pYSKTFy3oJMGWtZta8EAg902yJnERBCD
-         NF/w==
-X-Gm-Message-State: AOUpUlH6H37UqZxDPARI3vP3DTyXRyGOekVCci9foniJEJkVyntFIj9Z
-        9ilUHNoFQz2PW9JKhJ9K+XSI9g==
-X-Google-Smtp-Source: AA+uWPw0SFiP2X+WnlM8TvHMQLXXB2U9uhu2lXjPR4kP/rWQqw7YKEuFleUruhTysMz6Mn+l9RCdJA==
-X-Received: by 2002:a1c:bb86:: with SMTP id l128-v6mr5991553wmf.26.1534090191939;
-        Sun, 12 Aug 2018 09:09:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7syOievGKU1gnJa8oh05y8DUlQgWF5NjJ3xt3wLMcp0=;
+        b=GfMFuxMZ2VLWTqK3ZFcWjHVWqWwimw/gTaqSDnLuK6kqt0krRbu8tyNSRbee6IyVY9
+         TtDUNqMgSLAjdRANYqMUaDyUh0Ka3fakKZG5KQ4jClBacVWcOIaGSNd6gyKnF1qPN02G
+         3vHO8CwFukgsQHufYBL0nj1OErP0zCoGPcgkvQPhiwDMPxTS1rfY8gty/HhhqsGCXzNp
+         U3UJD+88lA4mK4aTTRYUf7pKQUxk5Hhe9rZLYeItmHU/zppnifltWV0X/okoxygKmvOb
+         A5es1nrASyQFcSlLl5K35ERRrBn7wklEK7y3ixIoTluN9sOs5fDqYblbg595hW85XF+j
+         k3uA==
+X-Gm-Message-State: AOUpUlG2b4Z7J3Sb18GTCpe0LspnbU12EBuMfkm3hKdxzP8zSvBa5u+x
+        38jC68VZr4npmqJUPVg5EY/XWg==
+X-Google-Smtp-Source: AA+uWPw7s5O072Udhi0wx1PE6Pr4V4AHd6MaUxCYSajv11b1UuYlphjFpTQ/V31jboWyqOhGW9JodQ==
+X-Received: by 2002:a1c:28c2:: with SMTP id o185-v6mr6159731wmo.40.1534090195777;
+        Sun, 12 Aug 2018 09:09:55 -0700 (PDT)
 Received: from localhost.localdomain ([45.76.138.171])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm7437369wmf.8.2018.08.12.09.09.48
+        by smtp.gmail.com with ESMTPSA id t6-v6sm7437369wmf.8.2018.08.12.09.09.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 12 Aug 2018 09:09:51 -0700 (PDT)
+        Sun, 12 Aug 2018 09:09:55 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -61,91 +62,70 @@ To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Ramesh Thomas <ramesh.thomas@intel.com>,
         linux-kernel@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 0/5] Improvement stopping tick decision making in 'menu' idle governor
-Date:   Mon, 13 Aug 2018 00:09:26 +0800
-Message-Id: <1534090171-14464-1-git-send-email-leo.yan@linaro.org>
+Subject: [PATCH v1 1/5] cpuidle: menu: Clean up variables usage in menu_select()
+Date:   Mon, 13 Aug 2018 00:09:27 +0800
+Message-Id: <1534090171-14464-2-git-send-email-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534090171-14464-1-git-send-email-leo.yan@linaro.org>
+References: <1534090171-14464-1-git-send-email-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We found the CPU cannot stay in deepest idle state as expected with
-running synthetic workloads with mainline kernel on Arm platform
-(96boards Hikey620 with octa CA53 CPUs).
+The usage for two variables 'data->predicted_us' and 'expected_interval'
+in menu_select() are confused, especially these two variables are
+assigned with each other: firstly 'data->predicted_us' is assigned to
+the minimum value between 'data->predicted_us' and 'expected_interval',
+so it presents the prediction period for taking account different
+factors and include consideration for expected interval; but later
+'data->predicted_us' is assigned back to 'expected_interval' and from
+then on the function uses 'expected_interval' to select idle state; this
+results in 'expected_interval' has two different semantics between the
+top half and the bottom half of the same function.
 
-The main issue is the criteria for decision stopping tick; now
-the criteria is checking expected interval is less than TICK_USEC, but
-this doesn't consider the next tick detla is float due CPU randomly
-eneters and exits idle states; furthermore, it's stick to checking
-TICK_USEC as boundary for decision stopping tick, unfortunately this has
-hole to select a shallow state with stopping tick, so the CPU stays in
-shallow state for long time.
+This patch is to clean up the usage of these two variables, we always
+use 'data->predicted_us' to present the idle duration predictions and
+it can be used to compare with idle state target residency or tick
+boundary for choosing idle state; we purely use 'expected_interval' to
+record the expected interval value, which is mainly for interval
+interrupt estimation.
 
-This patch series is to explore more reasonable making decision for
-stopping tick and the most important fixing is to avoid powernightmares
-issue after we apply these criterias for making decisions.  Patches
-0001 ~ 0003 are used to refactor the variables and structures for more
-readable code, it also provides a function menu_decide_stopping_tick()
-which can be used to encapsulate the making decision logics.  The last
-two patches are primary for improvement, patch 0004 'cpuidle: menu:
-Don't stay in shallow state for a long time' introduces a new criteria
-(it's a more strict criteria than before) for not stopping tick for
-shallow state cases; patch 0005 is use the dynamic tick detla to replace
-the static value TICK_USEC for decision if the tick is expired before or
-after the prediction, according this comparison we can get conclusion if
-need to stop tick or not.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/cpuidle/governors/menu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-With more accurate decision for stopping tick, one immediate benefit is
-the CPUs have more chance to stay in deepest state, it also can avoid to
-run tick unnecessarily and so avoid a shallower state introduced by tick
-event.  For the testing result in below table, we can see the result
-proves the improvement by better stopping tick decision making in this
-patch series, we run the workload generated by rt-app (a single task
-with period 5ms and duty cycle 1%/3%/5%/10%/20%/30%/40%), the total
-running time is 60s.  We do statistics for all CPUs for all idle states
-duration, the unit is second (s), for cases (dutycycle=1%/3%/5%/10%/20%)
-we can see the shallow state C0/C1 duration are reduced and the time
-has been moved to deepest state, so the deepest state C2 duration can
-have improvement for ~9s to ~21s.  for cases (dutycycle=30%/40%) though
-we can see the deepest state durations are parity between with and
-without patch series, but it has a minor improvement for C1 state
-duration by stealing C0 state duration.
-
-Some notations are used in the table:
-
-state: C0: WFI; C1: CPU OFF; C2: Cluster OFF
-
-All testing cases have single task with 5ms period:
-
-		 Without patches           With patches               Difference
-            -----------------------  -----------------------   --------------------------
-Duty cycle    C0     C1       C2       C0      C1      C2        C0        C1        C2
-  1%        2.397  16.528  471.905   0.916    2.688  487.328   -1.481   -13.840   +15.422
-  3%        3.957  20.541  464.434   1.510    2.398  485.914   -2.447   -18.143   +21.480
-  5%        2.866   8.609  474.777   1.166    2.250  483.983   -1.699    -6.359    +9.205
- 10%        2.893  28.753  453.277   1.147   14.134  469.190   -1.745   -14.618   +15.913
- 20%        7.620  41.086  431.735   1.595   35.055  442.482   -6.024    -6.030   +10.747
- 30%        4.394  38.328  431.442   1.964   40.857  430.973   -2.430    +2.529    -0.468
- 40%        7.390  29.415  430.914   1.789   34.832  431.588   -5.600    +5.417    -0.673
-
-
-P.s. for the testing, applied Rafael's patch 'cpuidle: menu: Handle
-stopped tick more aggressively' [1] to avoid select unexpected shallow
-state after tick has been stopped.
-
-[1] https://lkml.org/lkml/2018/8/10/259
-
-Leo Yan (5):
-  cpuidle: menu: Clean up variables usage in menu_select()
-  cpuidle: menu: Record tick delta value in struct menu_device
-  cpuidle: menu: Provide menu_decide_stopping_tick()
-  cpuidle: menu: Don't stay in shallow state for a long time
-  cpuidle: menu: Change to compare prediction with tick delta
-
- drivers/cpuidle/governors/menu.c | 104 ++++++++++++++++++++++++++++-----------
- 1 file changed, 76 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 5eb7d6f..b972db1 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -363,7 +363,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 		latency_req = interactivity_req;
+ 
+ select:
+-	expected_interval = data->predicted_us;
+ 	/*
+ 	 * Find the idle state with the lowest power while satisfying
+ 	 * our constraints.
+@@ -386,7 +385,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 			 * expected idle duration so that the tick is retained
+ 			 * as long as that target residency is low enough.
+ 			 */
+-			expected_interval = drv->states[idx].target_residency;
++			data->predicted_us = drv->states[idx].target_residency;
+ 			break;
+ 		}
+ 		idx = i;
+@@ -400,7 +399,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	 * expected idle duration is shorter than the tick period length.
+ 	 */
+ 	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+-	    expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
++	    data->predicted_us < TICK_USEC) && !tick_nohz_tick_stopped()) {
+ 		unsigned int delta_next_us = ktime_to_us(delta_next);
+ 
+ 		*stop_tick = false;
 -- 
 2.7.4
 
