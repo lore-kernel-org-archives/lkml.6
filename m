@@ -2,250 +2,150 @@ Return-Path: <SRS0=4YaO=K3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7111C46460
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8CDC46464
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D6E8216F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 168A9219C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gPj8ddSW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6E8216F2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZjfXHwSC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168A9219C6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbeHLSqV (ORCPT
+        id S1728154AbeHLSsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 14:46:21 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:45751 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbeHLSqV (ORCPT
+        Sun, 12 Aug 2018 14:48:24 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35643 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbeHLSsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 14:46:21 -0400
-Received: by mail-wr1-f50.google.com with SMTP id f12-v6so12183719wrv.12
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 09:07:49 -0700 (PDT)
+        Sun, 12 Aug 2018 14:48:24 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o18-v6so6493717wmc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 09:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lJDv/KvrmcYy5h/dzyVvArwZEHrF9dhdGQPO6C4/JoU=;
-        b=gPj8ddSWquhc7l0IuEEtF8a3IKizEw0H+1w1o6ltEZRb28z7mK4hqVDe29RAeUhbif
-         QZWqTK3Pc8jyknownGMcfNPS+qxbbwaDaWVk4HvoDy44REmxqbUyaDwQ9PEpPOgF7pob
-         e3jibs5HTnT9z93t13ruR7PNTG3geZwNJr8To=
+        h=from:to:cc:subject:date:message-id;
+        bh=7HBGepoZSobEplirni1bTS9RRqy0n0ImPx0/6DZ1yMY=;
+        b=ZjfXHwSCpIMK4NY6x+2FBgy4n3qegNH0qS/rm+l5jS8m/q47DkXqz4QoHgvN5EN/ar
+         jv52toc+jNyk6WuqQNqreQVKPdGVm91dVHl92vY/8T25vIfDjrauTZEI/KFuHL+ljjUS
+         5Lj+MtDEMRFbaGTzYp/dyII7KjmATFmcS7uGs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lJDv/KvrmcYy5h/dzyVvArwZEHrF9dhdGQPO6C4/JoU=;
-        b=byOta/B2dvz0wsQ86xxbd4hz+ELfK3Pr8tpNWHt5ZYElv40v2uCMHRe0iW+D3UBvAX
-         iP9DslKQydlL7BX3M2/yYKaIu3Fyzj34YBOwPTlLCpOxw6U3b2T0rJQdH8ZZF+s4i8iK
-         3fpht50UFiJE7AZTVuLHCfHfmHUuq0fglOpQoQVhYdnFgHuxYafYb3aB/VyEy5zs5+HF
-         n8afIamVzGuxOS3OiZNDb4NLQHNBSeekIG0P2wZ0u7a1slyMxM0Pd7JvNebdLNmrqor7
-         onYFnQPhXiSrV9eyOf1bYURbW1VSbVv6PjtUp6ksuL5asVv/Qhd6d4c6v0btKUPmid/u
-         9xhw==
-X-Gm-Message-State: AOUpUlEdjvnZS6F0vbdhGyhuSXLD41RlX1xXPqzHM4XZBLcChHwRKfn2
-        k0r7ggALSKe7N0YD63rb/N18kg==
-X-Google-Smtp-Source: AA+uWPwYd2BZrWnM9ltKZJq0B2MSgs5qd4SPcO6o9VrSLFFuVmL3a5vkqc7xeNYEfSixgpu1EWZTOw==
-X-Received: by 2002:a5d:5201:: with SMTP id j1-v6mr8691049wrv.198.1534090068662;
-        Sun, 12 Aug 2018 09:07:48 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s ([45.76.138.171])
-        by smtp.gmail.com with ESMTPSA id n14-v6sm4590630wmc.14.2018.08.12.09.07.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 Aug 2018 09:07:47 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 00:07:40 +0800
-From:   leo.yan@linaro.org
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7HBGepoZSobEplirni1bTS9RRqy0n0ImPx0/6DZ1yMY=;
+        b=L23TAovUQhG5e3RgQHeeM67r1ai3guurtudjVZAgHP9VVg7sLO6oYLV/5qfx6ZBoef
+         miWHxqI+xD/AKvua7NUMl8DlrT4mXwDJhFOycbijuwUcbOPeQbvCGO9L9OHH1+8YKk+a
+         +Yo7XOqKlX7pTktTHxPXbIE4QSBNMKVmbGLyow1Mu0DeWAxOvoxKDvPg4SdjfMBHQr8h
+         qyNJJW01pWDdUGnAnWiWUFH43B9+oA9Zv/KpKEm2mJoPOHYeHsO41OllUNco1yfaVByw
+         V+e11GtTX1kqopa0OASvOjlqjS5XfX3izPX6pYSKTFy3oJMGWtZta8EAg902yJnERBCD
+         NF/w==
+X-Gm-Message-State: AOUpUlH6H37UqZxDPARI3vP3DTyXRyGOekVCci9foniJEJkVyntFIj9Z
+        9ilUHNoFQz2PW9JKhJ9K+XSI9g==
+X-Google-Smtp-Source: AA+uWPw0SFiP2X+WnlM8TvHMQLXXB2U9uhu2lXjPR4kP/rWQqw7YKEuFleUruhTysMz6Mn+l9RCdJA==
+X-Received: by 2002:a1c:bb86:: with SMTP id l128-v6mr5991553wmf.26.1534090191939;
+        Sun, 12 Aug 2018 09:09:51 -0700 (PDT)
+Received: from localhost.localdomain ([45.76.138.171])
+        by smtp.gmail.com with ESMTPSA id t6-v6sm7437369wmf.8.2018.08.12.09.09.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 12 Aug 2018 09:09:51 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [RESEND PATCH v1 1/2] cpuidle: menu: Correct the criteria for
- stopping tick
-Message-ID: <20180812160740.GC28966@leoy-ThinkPad-X240s>
-References: <1533835203-5789-1-git-send-email-leo.yan@linaro.org>
- <1533835203-5789-2-git-send-email-leo.yan@linaro.org>
- <CAJZ5v0hU3Qp3ycJ=aGHtPMMC_6A+XsByYALYN22dz2VJ1Z0MgQ@mail.gmail.com>
- <20180810071321.GC11817@leoy-ThinkPad-X240s>
- <CAJZ5v0iyGFFDO83KGcET9a+UpPCDQ=_sxZeGxuG6fL4O+hcw+w@mail.gmail.com>
- <20180810084906.GD11817@leoy-ThinkPad-X240s>
- <20180810090327.GE11817@leoy-ThinkPad-X240s>
- <CAJZ5v0gM+PNnMH=Myn5yRLYg4SVV3JnF-htO_gueJp4odivT6w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gM+PNnMH=Myn5yRLYg4SVV3JnF-htO_gueJp4odivT6w@mail.gmail.com>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+        Ramesh Thomas <ramesh.thomas@intel.com>,
+        linux-kernel@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v1 0/5] Improvement stopping tick decision making in 'menu' idle governor
+Date:   Mon, 13 Aug 2018 00:09:26 +0800
+Message-Id: <1534090171-14464-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 12, 2018 at 01:12:41PM +0200, Rafael J. Wysocki wrote:
-> On Fri, Aug 10, 2018 at 11:03 AM <leo.yan@linaro.org> wrote:
-> >
-> > On Fri, Aug 10, 2018 at 04:49:06PM +0800, Leo Yan wrote:
-> > > On Fri, Aug 10, 2018 at 09:22:10AM +0200, Rafael J. Wysocki wrote:
-> > > > On Fri, Aug 10, 2018 at 9:13 AM,  <leo.yan@linaro.org> wrote:
-> > > > > On Thu, Aug 09, 2018 at 10:47:17PM +0200, Rafael J. Wysocki wrote:
-> > > > >> On Thu, Aug 9, 2018 at 7:20 PM, Leo Yan <leo.yan@linaro.org> wrote:
-> > > >
-> > > > [cut]
-> > > >
-> > > > >> And that will cause the tick to be stopped unnecessarily in certain
-> > > > >> situations, so why is this better?
-> > > > >
-> > > > > Let's see below two cases, the first one case we configure
-> > > > > TICK_USEC=1000 (1ms) and the second case we configure TICK_USEC=4000
-> > > > > (4ms).
-> > > > >
-> > > > > Let's assume we do the testing one the same platform and have two runs,
-> > > > > in the Case 1 we configure HZ=1000 so TICK_USEC=1ms, expected_interval
-> > > > > is 3ms and deepest idle state target residency is 2ms, finally the idle
-> > > > > governor will choose the deepest state and skip to calibrate to shallow
-> > > > > state caused by 'expected_interval' > TICK_USEC;
-> > > > >
-> > > > > In the Case 2 we configure HZ=250 so TICK_USE=4ms, expected_interval
-> > > > > (3ms) and deepest idle state target residency (2ms) are same with the
-> > > > > Case 1; but because expected_interval < TICK_USEC so the idle governor
-> > > > > will do calibration to select a shallower state.  If we image on one
-> > > > > platform, the deepest idle state's target residency is smaller value,
-> > > > > then it has bigger gap with TICK_USEC, the deepest idle state is harder
-> > > > > to be selected due 'expected_interval' can be easily hit the range
-> > > > > [Deepest target residency..TICK_USEC).
-> > > > >
-> > > > > This patch has no any change for Case 1 and it wants to optimize for
-> > > > > Case 2 so Case 2 has chance to stay in deepest idle state.  I
-> > > > > understand from the performance pespective, we need to avoid to stop
-> > > > > tick for shallow states; on the other hand we cannot prevent CPU run
-> > > > > into deepest idle state just only we want to keep the tick running,
-> > > > > especially the expected interval is longer than the deepest state
-> > > > > target residency.
-> > > > >
-> > > > > Case 1:
-> > > > >       Deepest idle state's target residency=2ms
-> > > > >                      |
-> > > > >                      V
-> > > > > |--------------------------------------------------------> time (ms)
-> > > > >       ^                              ^
-> > > > >       |                              |
-> > > > > TICK_USEC=1ms           expected_interval=3ms
-> > > > >
-> > > > >
-> > > > > Case 2:
-> > > > >       Deepest idle state's target residency = 2ms
-> > > > >                      |
-> > > > >                      V
-> > > > > |--------------------------------------------------------> time (ms)
-> > > > >                                      ^                  ^
-> > > > >                                      |                  |
-> > > > >                           expected_interval = 3ms   TICK_USEC = 4ms
-> > > > >
-> > > > >
-> > > > >
-> > > > >> >                 unsigned int delta_next_us = ktime_to_us(delta_next);
-> > > > >> >
-> > > > >> >                 *stop_tick = false;
-> > > > >> > --
-> > > >
-> > > > Well, I don't quite agree with the approach here, then.
-> > > >
-> > > > As I said in the previous reply, IMO restarting the stopped tick
-> > > > before leaving the loop in do_idle() is pointless overhead.  It is not
-> > > > necessary to do that to avoid leaving CPUs in shallow idle states for
-> > > > too long (I'll send an alternative patch to fix this issue shortly).
-> > > >
-> > > > While you may think that pointless overhead is not a problem, I don't
-> > > > quite agree with that.
-> > >
-> > > I disagree this patch will introduce any extra overhead.
-> > >
-> > > Firstly, the idle loop doesn't support restarting tick even this patch
-> > > tells idle loop to restart the tick;
-> 
-> I'm not talking about restarting the tick, but about stopping it more
-> often on average.
+We found the CPU cannot stay in deepest idle state as expected with
+running synthetic workloads with mainline kernel on Arm platform
+(96boards Hikey620 with octa CA53 CPUs).
 
-Ah, yes, I agree.
+The main issue is the criteria for decision stopping tick; now
+the criteria is checking expected interval is less than TICK_USEC, but
+this doesn't consider the next tick detla is float due CPU randomly
+eneters and exits idle states; furthermore, it's stick to checking
+TICK_USEC as boundary for decision stopping tick, unfortunately this has
+hole to select a shallow state with stopping tick, so the CPU stays in
+shallow state for long time.
 
-> > > secondly this patch is mainly to
-> > > resolve issue for the CPU cannot stay in deepest state in Case 2,
-> 
-> I understand what you are trying to achieve here, but I don't agree with it.
+This patch series is to explore more reasonable making decision for
+stopping tick and the most important fixing is to avoid powernightmares
+issue after we apply these criterias for making decisions.  Patches
+0001 ~ 0003 are used to refactor the variables and structures for more
+readable code, it also provides a function menu_decide_stopping_tick()
+which can be used to encapsulate the making decision logics.  The last
+two patches are primary for improvement, patch 0004 'cpuidle: menu:
+Don't stay in shallow state for a long time' introduces a new criteria
+(it's a more strict criteria than before) for not stopping tick for
+shallow state cases; patch 0005 is use the dynamic tick detla to replace
+the static value TICK_USEC for decision if the tick is expired before or
+after the prediction, according this comparison we can get conclusion if
+need to stop tick or not.
 
-I agree we need find more general method for fixing.
+With more accurate decision for stopping tick, one immediate benefit is
+the CPUs have more chance to stay in deepest state, it also can avoid to
+run tick unnecessarily and so avoid a shallower state introduced by tick
+event.  For the testing result in below table, we can see the result
+proves the improvement by better stopping tick decision making in this
+patch series, we run the workload generated by rt-app (a single task
+with period 5ms and duty cycle 1%/3%/5%/10%/20%/30%/40%), the total
+running time is 60s.  We do statistics for all CPUs for all idle states
+duration, the unit is second (s), for cases (dutycycle=1%/3%/5%/10%/20%)
+we can see the shallow state C0/C1 duration are reduced and the time
+has been moved to deepest state, so the deepest state C2 duration can
+have improvement for ~9s to ~21s.  for cases (dutycycle=30%/40%) though
+we can see the deepest state durations are parity between with and
+without patch series, but it has a minor improvement for C1 state
+duration by stealing C0 state duration.
 
-> The condition modified by this patch is not about how much time the
-> CPU can potentially be idle, but about when it is expected to wake up.
-> The "expected" part is really key here.
-> 
-> The governor has gone through the effort of making an idle duration
-> prediction and it now it has a certain expectation regarding when the
-> CPU will wake up.  If the governor's prediction is any good at all and
-> this expectation is in the tick range, the CPU will be woken up by
-> something close enough to the tick in the majority of cases, so there
-> is no need to stop the tick.  Not because the CPU cannot be idle
-> longer, but because it is expected to wake up early enough anyway (and
-> yes, you can argue that 2 times the tick range may still be "early
-> enough" and so on, but then I'd like to see numbers in support of
-> that).
+Some notations are used in the table:
 
-Thanks for explaination; I also think this is good methodology, but
-just want to improve a bit based on this.  For example, the governor
-is always to use 'expectation' to compare with TICK_USEC, TICK_USEC is a
-predefined interval as a boundary, but in reality the tick incoming time
-is in the range of [0..TICK_USEC]; so currently method we cannot make
-decision according to the tick's delta in realtime.
+state: C0: WFI; C1: CPU OFF; C2: Cluster OFF
 
-I'd like take this issue as 'how to improve the decision for stopping
-tick?', if we can make better decision for stopping tick, then it's
-possible to resolve Case 2 and without stopping tick more offten, e.g.
-the CPU even can run into deepest idle state without stopping the tick
-if the prediction is less than the tick.
+All testing cases have single task with 5ms period:
 
-I will send out a new patch set based on these ideas for reviewing.
+		 Without patches           With patches               Difference
+            -----------------------  -----------------------   --------------------------
+Duty cycle    C0     C1       C2       C0      C1      C2        C0        C1        C2
+  1%        2.397  16.528  471.905   0.916    2.688  487.328   -1.481   -13.840   +15.422
+  3%        3.957  20.541  464.434   1.510    2.398  485.914   -2.447   -18.143   +21.480
+  5%        2.866   8.609  474.777   1.166    2.250  483.983   -1.699    -6.359    +9.205
+ 10%        2.893  28.753  453.277   1.147   14.134  469.190   -1.745   -14.618   +15.913
+ 20%        7.620  41.086  431.735   1.595   35.055  442.482   -6.024    -6.030   +10.747
+ 30%        4.394  38.328  431.442   1.964   40.857  430.973   -2.430    +2.529    -0.468
+ 40%        7.390  29.415  430.914   1.789   34.832  431.588   -5.600    +5.417    -0.673
 
-> Now, if the governor is junk and its predictions are useless, the
-> above will not be the case any more, but then I'm not sure what the
-> benefit from using that governor at all is. :-)
 
-I really don't think the governor and predictions are useless :)
+P.s. for the testing, applied Rafael's patch 'cpuidle: menu: Handle
+stopped tick more aggressively' [1] to avoid select unexpected shallow
+state after tick has been stopped.
 
-Just want to remind the side topic, after introducing tick in idle loop,
-the tick also can impact the predictions (e.g. it have some impactions
-on correction factors but need more time for modeling on this).
+[1] https://lkml.org/lkml/2018/8/10/259
 
-> > > as a side effect it also can tell idle loop to restart the tick for case 3
-> > > in below, actually IMHO this makes sense to tell the idle loop to
-> > > enable the tick but idle loop can ignore this info.
-> > >
-> > > Furthermore, we have another thread for the patch to always stop
-> > > tick after the the tick has been stopped in the idle loop.
-> > >
-> > > So this patch is still valid.
-> >
-> > Correct for Case 3 as below, actually this case will disappear if we
-> > force to set expected_interval=ktime_to_us(delta_next) in another
-> > proposaled patch.  If so, this patch will have no any chance to
-> > introduce extra ticks.
-> 
-> Yes, it will or at least it may.
-> 
-> Assuming shot noise wakeups, if
-> drv->states[drv->state_count-1].target_residency is less than
-> TICK_USEC, the tick will be stopped for CPUs more often on average
-> with the patch applied (simply because the idle duration range for
-> which it will not be stopped is narrower then).
+Leo Yan (5):
+  cpuidle: menu: Clean up variables usage in menu_select()
+  cpuidle: menu: Record tick delta value in struct menu_device
+  cpuidle: menu: Provide menu_decide_stopping_tick()
+  cpuidle: menu: Don't stay in shallow state for a long time
+  cpuidle: menu: Change to compare prediction with tick delta
 
-Yes, good point, so in the new approach I try to change the code
-to compare with next tick delta rather than TICK_USEC, it can keeps
-running tick for the tick with long expire time (similiar with
-comparing with TICK_USEC) but we also can stop tick if the tick is likely
-to break idle residency.
+ drivers/cpuidle/governors/menu.c | 104 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 76 insertions(+), 28 deletions(-)
 
-Thanks,
-Leo Yan
+-- 
+2.7.4
+
