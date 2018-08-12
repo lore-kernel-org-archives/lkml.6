@@ -2,151 +2,215 @@ Return-Path: <SRS0=4YaO=K3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC1AC46460
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA33C46460
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA248219D1
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5394821A01
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:44:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="su4HC5Xb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA248219D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQ1HyRX2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5394821A01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeHLQFT (ORCPT
+        id S1728068AbeHLQWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 12:05:19 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47252 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbeHLQFS (ORCPT
+        Sun, 12 Aug 2018 12:22:25 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39448 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbeHLQWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 12:05:18 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7CDOvbO065556;
-        Sun, 12 Aug 2018 13:26:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=0oSmP8jhb5GKdGHT8m+qwNBcqjy9/paqZDp/9xue0DE=;
- b=su4HC5XbOsEGWByrjESYnJyep5oIppmBGhjLLW3GvOyMXX0iw3xJTRqGJlUpDbDLJJ/n
- BPLvixGkRboDtHM/IHENKZiEdZUJtQVxSEfwUtlmcP6K7H7Rlf3wiC3bGBiDGv1d3/gZ
- tpk7Qt6IHVOeItggiMYODm9GATmND0pW9sXueKKstpUbMf0IPrpk3ESUo21Qt4BzLmKR
- 2/Pt9SIzu2MjeXS8bsDR/UvzTzi099iV+JAMzVROJYJ8Bi0PJFArbxeDPwya72Q+RYus
- D16yRG7iNeNztGlYiGMDVOTrP76z0lx26p43qNDRBubS9wyUuponiwFJhOWf244Qtnh2 vQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2ksqrp1rkx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 12 Aug 2018 13:26:02 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7CDQ2dL023018
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 12 Aug 2018 13:26:02 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7CDPwXb010247;
-        Sun, 12 Aug 2018 13:25:59 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 12 Aug 2018 06:25:58 -0700
-Subject: Re: [PATCH v3 13/17] x86/xen: enable Hygon support to Xen
-To:     Juergen Gross <jgross@suse.com>, Pu Wen <puwen@hygon.cn>,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, JBeulich@suse.com
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <cover.1533989492.git.puwen@hygon.cn>
- <2747ad959f07459000f2693a98d237e2b3149ca1.1533989493.git.puwen@hygon.cn>
- <b32887e0-df6e-fb31-d9cd-6b31961c9c2b@oracle.com>
- <0aa44410-47ec-27e2-10d9-c0dc5d2e457a@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <150f6a8d-33e8-a84d-f34b-17bdb7264ebe@oracle.com>
-Date:   Sun, 12 Aug 2018 09:26:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 12 Aug 2018 12:22:24 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h10-v6so12029075wre.6
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 06:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YOng7MCMDFD/c+9AJx1UhKjv05gBlCSSD2vi76KX05Y=;
+        b=ZQ1HyRX23wHghgb9anf/rxKdn/rpcoCCdYhRHxGKhuMVj4K4BavRgv45Ifj2vDbZ/q
+         Rxa7D14E8HG35wcAembZy+tr6CqZXbcgyCafWzyVr4ivkpCGomTTdmQ99Znfh84dnBAE
+         Qdlzc/8G9/d2WM+npxmfLgK0bN+0GiezEieqY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YOng7MCMDFD/c+9AJx1UhKjv05gBlCSSD2vi76KX05Y=;
+        b=mnYM3l7MAhgheLcvhi0/Ha8fmHt3BLfYIVm14zabytPVMfSEbwf1/c5MnN7F+on7FV
+         00X0gZW4BV3DtREae93jdCLHcADqCVGeXfy91RJWBddJ4cMCvZW5FAcyRbvtef++iM2e
+         C2qDO1b6mrs1Mnyj01menLlYElZgplmbYN5dLc7fpxVGMhbA5S6PLdnDmR6W9Sk7bbRq
+         s203acWKmHjkmceyc9Pz/V9YzjicyuxeS0ASAIIHkthQEhajgauVpaGWSfnYZknqOiLK
+         KUO2wQBhZpN0Wsziy6LATsoqIfldfSfSrHOHeo1LpU4gQtlrbMRJ3nIfYSfG1c2ExjAE
+         uOTQ==
+X-Gm-Message-State: AOUpUlG5sSrKG7RXrVv7hB7l/4TWnuxJ0Tq27RIhq/5BdEiz9c0ZTIsZ
+        X8Lkg9M2+WfJQFNd/xn8mBh4+mvzph3e6g==
+X-Google-Smtp-Source: AA+uWPw6iSyJ1mmr248MZQkj3sTvQCxBA6v+Q2+A48uiyQTeE4GskIKf3aDq0FTFH7CtxDiMyELDoA==
+X-Received: by 2002:adf:9203:: with SMTP id 3-v6mr8442771wrj.275.1534081457173;
+        Sun, 12 Aug 2018 06:44:17 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s ([45.76.138.171])
+        by smtp.gmail.com with ESMTPSA id u4-v6sm7283090wro.47.2018.08.12.06.44.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 Aug 2018 06:44:16 -0700 (PDT)
+Date:   Sun, 12 Aug 2018 21:44:04 +0800
+From:   leo.yan@linaro.org
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v2] cpuidle: menu: Handle stopped tick more aggressively
+Message-ID: <20180812134404.GA28966@leoy-ThinkPad-X240s>
+References: <1951009.1jlQfyrxio@aspire.rjw.lan>
+ <3174357.2tBMdxG3bF@aspire.rjw.lan>
+ <20180810092034.GF11817@leoy-ThinkPad-X240s>
+ <CAJZ5v0h8T99pqhNoj+V9Mb5yS621OT_=d05YbWtbCW5H362myA@mail.gmail.com>
+ <20180810123143.GG11817@leoy-ThinkPad-X240s>
+ <CAJZ5v0h5XWES6ye152MjijWKqTWBVO2mjo5Jz3MmMn+=7tRqWA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <0aa44410-47ec-27e2-10d9-c0dc5d2e457a@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8982 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=885
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808120152
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0h5XWES6ye152MjijWKqTWBVO2mjo5Jz3MmMn+=7tRqWA@mail.gmail.com>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/12/2018 04:55 AM, Juergen Gross wrote:
-> On 11/08/18 16:34, Boris Ostrovsky wrote:
->> On 08/11/2018 09:29 AM, Pu Wen wrote:
->>
->>>  
->>>  bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
->>>  {
->>> -	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
->>> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
->>> +	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
->>
->> 'if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)' please.
-> Really? Xen supports Centaur, too.
+On Sun, Aug 12, 2018 at 12:07:45PM +0200, Rafael J. Wysocki wrote:
 
-VPMU doesn't --- hypervisor will not initialize it. Besides, the
-existing code will steer non-AMD execution to Intel, which is not right
-either.
+[...]
 
-I'll add a check to bail if VPMU is not initialized properly, we seem to
-ignore xen_pmu_init() failures. Which, BTW, makes this patch rather
-pointless until there is support for Hygon Xen.
+> > > > > --- linux-pm.orig/drivers/cpuidle/governors/menu.c
+> > > > > +++ linux-pm/drivers/cpuidle/governors/menu.c
+> > > > > @@ -285,9 +285,8 @@ static int menu_select(struct cpuidle_dr
+> > > > >  {
+> > > > >       struct menu_device *data = this_cpu_ptr(&menu_devices);
+> > > > >       int latency_req = cpuidle_governor_latency_req(dev->cpu);
+> > > > > -     int i;
+> > > > > -     int first_idx;
+> > > > > -     int idx;
+> > > > > +     int first_idx = 0;
+> > > > > +     int idx, i;
+> > > > >       unsigned int interactivity_req;
+> > > > >       unsigned int expected_interval;
+> > > > >       unsigned long nr_iowaiters, cpu_load;
+> > > > > @@ -307,6 +306,18 @@ static int menu_select(struct cpuidle_dr
+> > > > >       /* determine the expected residency time, round up */
+> > > > >       data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
+> > > > >
+> > > > > +     /*
+> > > > > +      * If the tick is already stopped, the cost of possible short idle
+> > > > > +      * duration misprediction is much higher, because the CPU may be stuck
+> > > > > +      * in a shallow idle state for a long time as a result of it.  In that
+> > > > > +      * case say we might mispredict and use the known time till the closest
+> > > > > +      * timer event for the idle state selection.
+> > > > > +      */
+> > > > > +     if (tick_nohz_tick_stopped()) {
+> > > > > +             data->predicted_us = ktime_to_us(delta_next);
+> > > > > +             goto select;
+> > > > > +     }
+> > > > > +
+> > > >
+> > > > This introduce two potential issues:
+> > > >
+> > > > - This will totally ignore the typical pattern in idle loop; I
+> > > >   observed on the mmc driver can trigger multiple times (> 10 times)
+> > > >   with consistent interval;
+> > >
+> > > I'm not sure what you mean by "ignore".
+> >
+> > You could see after move code from blow to this position, the typical
+> > pattern interval will not be accounted; so if in the middle of idles
+> > there have a bunch of interrupts with fix pattern, the upper code
+> > cannot detect this pattern anymore.
+> 
+> I'm not really following you here.
+> 
+> The part of the code skipped for tick_nohz_tick_stopped() doesn't
+> update the data at all AFAICS.  It only computes some values that
+> would be discarded later anyway, so I'm not sure what the point of
+> running that computation is.
 
--boris
+Sorry I don't explain clearly, so try to rephrase:
+
+With your patch for the tick stopped case, it directly uses tick delta
+value as prediction and goto 'select' tag.  So it skips below code
+pieces, these codes have minor improvement for typical pattern which
+can be applied in the middle of idles, for example, the mmc driver
+triggers 16 interrupts with ~1500us interval, these interrupts are all
+handled within the idle loop, so the typical pattern can detect the mmc
+interrupts pattern and it will help idle governor to select a shallower
+idle state so can avoid to break the residency.
+
+You mentioned these computed values would be discarded later, this is
+true for most cases, but it isn't always true actually.  Without your
+patch, the governor will discard the computed values only when
+'data->predicted_us < TICK_USEC', otherwise the interval pattern is
+still be applied in the prediction.
+
+	expected_interval = get_typical_interval(data);
+	expected_interval = min(expected_interval, data->next_timer_us);
+
+	[...]
+
+	/*
+	 * Use the lowest expected idle interval to pick the idle state.
+	 */
+	data->predicted_us = min(data->predicted_us, expected_interval);
+
+> The statistics are updated by menu_update() and that still runs and it
+> will take the actual wakeup events into account, won't it?
+
+Yes.
+
+> > [...]
+> >
+> > > > > -     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+> > > > > -         expected_interval < TICK_USEC) {
+> > > > > +     if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+> > > > > +         expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
+> > > >
+> > > > I am not sure this logic is right... Why not use below checking, so
+> > > > for POLLING state we will never ask to stop the tick?
+> > > >
+> > > >         if (drv->states[idx].flags & CPUIDLE_FLAG_POLLING ||
+> > > >             (expected_interval < TICK_USEC && !tick_nohz_tick_stopped())) {
+> > > >
+> > >
+> > > The only effect of it would be setting stop_tick to false, but why
+> > > would that matter?
+> >
+> > Please consider below situation, not sure if this case is existed or
+> > not:
+> >
+> >   step1: first time: enter one idle state with stopping tick;
+> >   step2: second time: select POLLING state and tick_nohz_tick_stopped()
+> >   is true;
+> >
+> > So in step2, it cannot set stop_tick to false with below sentence.
+> >
+> > > > >               unsigned int delta_next_us = ktime_to_us(delta_next);
+> > > > >
+> > > > >               *stop_tick = false;
+> 
+> But setting *stop_tick has no effect as far as the current code is
+> concerned (up to the bug fixed by the other patch).
+
+Yeah.
+
+> Also the POLLING state can only be selected if there are no other
+> states matching delta_next available in that case which means that
+> there will be a timer to break the polling loop soon enough (and BTW
+> the polling has a built-in timeout too), so I don't really see a
+> problem here.
+
+Ah, now I understand the logic and I misunderstand the POLLING mode
+before; now agree with this.  Sorry for noise.
+
+Thanks,
+Leo Yan
