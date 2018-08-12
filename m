@@ -2,89 +2,91 @@ Return-Path: <SRS0=4YaO=K3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A56D2C46464
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2BBC46464
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F75A219E2
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F75A219E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id C5AE1219E1
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:43:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AE1219E1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeHLMGD (ORCPT
+        id S1727946AbeHLMUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 08:06:03 -0400
-Received: from nikam.ms.mff.cuni.cz ([195.113.20.16]:44436 "EHLO
-        nikam.ms.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727073AbeHLMGC (ORCPT
+        Sun, 12 Aug 2018 08:20:55 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38437 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727275AbeHLMUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 08:06:02 -0400
-Received: by nikam.ms.mff.cuni.cz (Postfix, from userid 2587)
-        id 5BCCD540945; Sun, 12 Aug 2018 11:28:37 +0200 (CEST)
-Date:   Sun, 12 Aug 2018 11:28:37 +0200
-From:   Martin Mares <mj@ucw.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: lspci: Display path to device
-Message-ID: <mj+md-20180812.092635.39872.nikam@ucw.cz>
-References: <20180717170204.30470-1-logang@deltatee.com>
- <20180717203900.GA1771@bombadil.infradead.org>
- <mj+md-20180810.091549.51451.nikam@ucw.cz>
- <mj+md-20180810.103017.64385.nikam@ucw.cz>
- <20180810145655.GA16533@bombadil.infradead.org>
+        Sun, 12 Aug 2018 08:20:55 -0400
+Received: by mail-oi0-f68.google.com with SMTP id v8-v6so22652779oie.5;
+        Sun, 12 Aug 2018 02:43:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zTpRevrKC/CmYKYo6NUngpdJOaN8ON9k05udvKg0ttM=;
+        b=ghlUrnf+YDqrKs9j8K53t6ai/sn8ZjdnaSHmScAevm9Mc1yraTubPejibJRHL8PZC6
+         z1cSilB/vBR+TuZCK+06HZtWT+x0FOQ5A68uWRkapQAiM6fG1521KdOcEl6j5+trvPZG
+         ctgp3xXAmY5xZ2/7EbRT+6ulMuZEKNpwZylXmiiQeDfO2668EJEBwHfoFa/eYcsmKV+V
+         1y06nKiX4NUSPqCyaPin61xkngnorX2HtsoRfgVk29skrT8mGy7YD/eXmZgJFoh+XuTN
+         CBQjbYGErojO7UQmAo8TlEOBgStJlYovek1Go92mg2Egvzk1e65gHFnnRjhDrpbTCRtm
+         AM1w==
+X-Gm-Message-State: AOUpUlH4hu8EEZZkLz3v2tUa3I78ayTUX40sNn4hepBh52lfHnAya+lE
+        f9I1TfGWpVU7Y/yfUSz0BXp1ZW3pePVXywupnKY=
+X-Google-Smtp-Source: AA+uWPyMobLc1l2mkrxPzxOs+vNIpYmJbCM7XfJh1wdIV4JwaLU/Q9CqIU2rh2Ud/TXCM7R3JkczFgQyo/sBgKKT55o=
+X-Received: by 2002:aca:42:: with SMTP id 63-v6mr12364769oia.154.1534067009024;
+ Sun, 12 Aug 2018 02:43:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180810145655.GA16533@bombadil.infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180811043547.560-1-gengdongjiu@huawei.com>
+In-Reply-To: <20180811043547.560-1-gengdongjiu@huawei.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sun, 12 Aug 2018 11:43:17 +0200
+Message-ID: <CAJZ5v0j=2-h8YggK8w6qjn9qKrDX8jAJ87Axox8LBdnn95Xkvg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3] arm64: clean the additional checks before
+ calling ghes_notify_sea()
+To:     Dongjiu Geng <gengdongjiu@huawei.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Borislav Petkov <bp@suse.de>, Borislav Petkov <bp@alien8.de>,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>, baicar.tyler@gmail.com,
+        Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Tyler Baicar <tbaicar@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Sat, Aug 11, 2018 at 6:36 AM Dongjiu Geng <gengdongjiu@huawei.com> wrote:
+>
+> In order to remove the additional check before calling the
+> ghes_notify_sea(), make stub definition when !CONFIG_ACPI_APEI_SEA.
+>
+> After this cleanup, we can simply call the ghes_notify_sea() to let
+> APEI driver handle the SEA notification.
+>
+> CC: Tyler Baicar <tbaicar@codeaurora.org>
+> CC: James Morse <james.morse@arm.com>
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> Acked-by: Will Deacon <will.deacon@arm.com>
+> Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
+> ---
+> This cleanup is ever mentioned by Mark Rutland in [1]
+>
+> [1]:
+> https://lkml.org/lkml/2018/5/31/289
+>
+> change since v2:
+> 1. Add 'Reviewed-by' of Tyler
 
-> One is that using -P and -s together doesn't work because we haven't
-> scanned the entire topology.
-> 
-> $ ./lspci-mw -PF tests/fujitsu-p8010.lspci -s 1d:00.0
-> 00:1e.0/03.0/00.0 Network controller: 3Com Corporation 3com 3CRWE154G72 [Office Connect Wireless LAN Adapter] (rev 01)
-> $ ./lspci-mm -PF tests/fujitsu-p8010.lspci -s 1d:00.0
-> 1d:00.0 Network controller: 3Com Corporation 3com 3CRWE154G72 [Office Connect Wireless LAN Adapter] (rev 01)
+I have applied the v2 already.
 
-Fixed. When topology is required, we now scan all devices and apply the
-filters later.
-
-> The other is that even when not using -s, the topology isn't fully represented:
-> 
-> $ ./lspci-mm -PF tests/fujitsu-p8010.lspci |grep 3com
-> 00:1e.0/00.0 Network controller: 3Com Corporation 3com 3CRWE154G72 [Office Connect Wireless LAN Adapter] (rev 01)
-
-Ah well, it seems that the tree mode never worked with CardBus bridges. Fixed.
-
-After some pondering, I changed the format of the paths to include bus numbers
-in all steps. I think it is more intuitive.
-
-Please give it a try. If it works, I will merge the branch to master.
-
-					Martin
+Thanks!
