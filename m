@@ -2,102 +2,113 @@ Return-Path: <SRS0=4YaO=K3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AB0C46460
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A933C46464
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B46721916
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B46721916
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 1B52921916
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 16:25:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B52921916
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbeHLTDF convert rfc822-to-8bit (ORCPT
+        id S1728367AbeHLTDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 15:03:05 -0400
-Received: from sauhun.de ([88.99.104.3]:45700 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbeHLTDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 15:03:04 -0400
-Received: from localhost (p5B0B5C8B.dip0.t-ipconnect.de [91.11.92.139])
-        by pokefinder.org (Postfix) with ESMTPSA id 68ADB72C645;
-        Sun, 12 Aug 2018 18:24:29 +0200 (CEST)
-Date:   Sun, 12 Aug 2018 18:24:29 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Sun, 12 Aug 2018 15:03:32 -0400
+Received: from regular1.263xmail.com ([211.150.99.141]:53756 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727733AbeHLTDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Aug 2018 15:03:32 -0400
+Received: from huangtao?rock-chips.com (unknown [192.168.167.16])
+        by regular1.263xmail.com (Postfix) with ESMTP id 7787E191;
+        Mon, 13 Aug 2018 00:24:47 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [10.0.0.19] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 0AD33380;
+        Mon, 13 Aug 2018 00:24:45 +0800 (CST)
+X-RL-SENDER: huangtao@rock-chips.com
+X-FST-TO: huangtao@rock-chips.com
+X-SENDER-IP: 110.83.16.9
+X-LOGIN-NAME: huangtao@rock-chips.com
+X-UNIQUE-TAG: <15014a32e8091020739062519ead0f64>
+X-ATTACHMENT-NUM: 0
+X-SENDER: huangtao@rock-chips.com
+X-DNS-TYPE: 7
+Received: from [10.0.0.19] (9.16.83.110.broad.fz.fj.dynamic.163data.com.cn [110.83.16.9])
+        by smtp.263.net (Postfix) whith ESMTP id 27838K4YRA4;
+        Mon, 13 Aug 2018 00:24:48 +0800 (CST)
+Subject: Re: [PATCH] arm64: dts: rockchip: Add idle-states to device tree for
+ rk3399
+To:     Heiko Stuebner <heiko@sntech.de>, Caesar Wang <wxt@rock-chips.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Xing Zheng <zhengxing@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        dbasehore@chromium.org, Will Deacon <will.deacon@arm.com>,
+        dianders@chromium.org, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        tony.xie@rock-chips.com, David Wu <david.wu@rock-chips.com>,
+        cf@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [v0.1 PATCH 0/7] mmc: tmio: refactor TMIO core a bit and add
- UniPhier SD/eMMC controller support
-Message-ID: <20180812162428.GA888@kunai>
-References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1467793254-10808-1-git-send-email-wxt@rock-chips.com>
+ <5620784.b19SH5PkdR@phil>
+From:   Tao Huang <huangtao@rock-chips.com>
+Message-ID: <ae312dc3-f640-ecf3-049a-c8576bb83330@rock-chips.com>
+Date:   Mon, 13 Aug 2018 00:24:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5620784.b19SH5PkdR@phil>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+Hi Heiko:
 
-> Add UniPhier SD/eMMC controller support.
-> 
-> As a preparation, I changed tmio_mmc_set_clock() to a platform hook.
-> The clock rate setting is platform-specific, and UniPhier variants
-> will add another way.  I thought it would be better to split this
-> to a hook to avoid a mess.
+On 2018年08月10日 04:09, Heiko Stuebner wrote:
+> Am Mittwoch, 6. Juli 2016, 10:20:54 CEST schrieb Caesar Wang:
+>
+>>  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+>> index a6dd623..12ce265 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+>> @@ -101,6 +101,18 @@
+>>  			};
+>>  		};
+>>  
+>> +		idle-states {
+>> +			entry-method = "psci";
+>> +			cpu_sleep: cpu-sleep-0 {
+>> +				compatible = "arm,idle-state";
+>> +				local-timer-stop;
+>> +				arm,psci-suspend-param = <0x0010000>;
+>> +				entry-latency-us = <350>;
+>> +				exit-latency-us = <600>;
+>> +				min-residency-us = <1150>;
+> Looking at the chromeos kernel, there are some more patches adapting
+> this idle-state to use different timings.
+Yes, we have another values. So the values of this patch are wrong.
+>
+> There also was a cluster-idle state added for a while but that seems to
+> cause audio issues according to the CrOS history.
 
-Thanks for this series! I see you did not base it on the renaming
-patches. I think is a good decision because it would be a complicated
-dependency. I had a glimpse on the patches and the new hook looks good
-to me. I want to do full review and testing within the next two weeks.
-Then, I can also comment about re-implementing the internal DMA core
-handling vs. factorizing it out. It may be fine this way, I simply can't
-tell now.
+DMA or Audio driver should add PM_QOS_CPU_DMA_LATENCY or other methods to avoid the effects of idle.
+Idle itself is good.
 
-Regards,
+Thanks!
 
-   Wolfram
-
-> 
-> 
-> 
-> Masahiro Yamada (7):
->   mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
->   mmc: tmio: move tmio_mmc_set_clock() to platform hook
->   dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
->   mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
->   mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
->   mmc: renesas_sdhi: refactor CLK_CTL bit calculation
->   mmc: tmio: refactor CLK_CTL bit calculation
-> 
->  .../devicetree/bindings/mmc/uniphier-sd.txt        |  60 ++
->  MAINTAINERS                                        |   1 +
->  drivers/mmc/host/Kconfig                           |  10 +
->  drivers/mmc/host/Makefile                          |   1 +
->  drivers/mmc/host/renesas_sdhi_core.c               |  40 +-
->  drivers/mmc/host/tmio_mmc.c                        |  56 ++
->  drivers/mmc/host/tmio_mmc.h                        |   4 +-
->  drivers/mmc/host/tmio_mmc_core.c                   |  79 +--
->  drivers/mmc/host/uniphier-sd.c                     | 694 +++++++++++++++++++++
->  9 files changed, 869 insertions(+), 76 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
->  create mode 100644 drivers/mmc/host/uniphier-sd.c
-> 
-> -- 
-> 2.7.4
-> 
