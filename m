@@ -6,73 +6,74 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A61C46464
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 11:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 928BBC46460
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 11:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C6F21A1C
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 11:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C6F21A1C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 438E621A2A
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 11:45:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438E621A2A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeHLOAu (ORCPT
+        id S1728210AbeHLOXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 10:00:50 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55036 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbeHLOAu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 10:00:50 -0400
-Received: from 79.184.254.66.ipv4.supernova.orange.pl (79.184.254.66) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id afd8efab8463d50d; Sun, 12 Aug 2018 13:23:05 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     lenb@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: intel_pstate: Ignore turbo active ratio in HWP
-Date:   Sun, 12 Aug 2018 13:20:58 +0200
-Message-ID: <7876484.jIFljIylbc@aspire.rjw.lan>
-In-Reply-To: <20180802002606.42766-1-srinivas.pandruvada@linux.intel.com>
-References: <20180802002606.42766-1-srinivas.pandruvada@linux.intel.com>
+        Sun, 12 Aug 2018 10:23:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53890 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728181AbeHLOXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Aug 2018 10:23:35 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB0077C6A9;
+        Sun, 12 Aug 2018 11:45:47 +0000 (UTC)
+Received: from [10.72.12.110] (ovpn-12-110.pek2.redhat.com [10.72.12.110])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9F4A87C2D;
+        Sun, 12 Aug 2018 11:45:42 +0000 (UTC)
+Subject: Re: Problems with uio_pci_generic in v4.18-rc8
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc:     "Harris, James R" <james.r.harris@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "Walker, Benjamin" <benjamin.walker@intel.com>,
+        "Wodkowski, PawelX" <pawelx.wodkowski@intel.com>
+References: <21BF98B1-0EA5-46BC-BC68-196190880087@intel.com>
+ <7ac09d84-31bf-4d25-dba7-0a61effa2b04@redhat.com>
+ <20180812110305.GA18914@kroah.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <015f1707-e98e-8f8b-b7bf-5970e9dd1b09@redhat.com>
+Date:   Sun, 12 Aug 2018 19:45:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180812110305.GA18914@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 12 Aug 2018 11:45:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 12 Aug 2018 11:45:47 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, August 2, 2018 2:26:06 AM CEST Srinivas Pandruvada wrote:
-> When HWP is active turbo active ratio is not used, so we should allow
-> policy max frequency above turbo activation ratio to be set. When HWP is
-> not active, then any policy max frequency above turbo activation ratio
-> can result upto max one-core turbo frequency.
-> 
-> This fix helps better thermal control in turbo region when other methods
-> like "Running Average Power Limit" is not available to use.
-> 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index efb015a5f7ac..32c10e69241e 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -2020,7 +2020,8 @@ static int intel_pstate_set_policy(struct cpufreq_policy *policy)
->  static void intel_pstate_adjust_policy_max(struct cpufreq_policy *policy,
->  					 struct cpudata *cpu)
->  {
-> -	if (cpu->pstate.max_pstate_physical > cpu->pstate.max_pstate &&
-> +	if (!hwp_active &&
-> +	    cpu->pstate.max_pstate_physical > cpu->pstate.max_pstate &&
->  	    policy->max < policy->cpuinfo.max_freq &&
->  	    policy->max > cpu->pstate.max_freq) {
->  		pr_debug("policy->max > max non turbo frequency\n");
-> 
+On 2018/8/12 19:03, gregkh@linuxfoundation.org wrote:
+> On Sun, Aug 12, 2018 at 06:55:58PM +0800, Xiubo Li wrote:
+>> Hi Harris,
+>>
+>> Since the lock protection in uio irq handler is useless currently as
+>> discussed in the mail list, so I will revert this commit with small changes
+>> and now the testing based LIO/TCMU has been finished.
+> Can you send the fixup patch so I can apply it please?
+Yeah, sure.
 
-Applied, thanks!
+Thanks,
+
+> thanks,
+>
+> greg k-h
 
 
