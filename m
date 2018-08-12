@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8B2C46464
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98201C46460
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBE221919
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:48:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BBE221919
+	by mail.kernel.org (Postfix) with ESMTP id 541E621943
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 09:48:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541E621943
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeHLM0Q (ORCPT
+        id S1728126AbeHLM0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 08:26:16 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10658 "EHLO huawei.com"
+        Sun, 12 Aug 2018 08:26:20 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10705 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728049AbeHLM0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 08:26:15 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0A1A8146207B7;
-        Sun, 12 Aug 2018 17:48:45 +0800 (CST)
+        id S1727580AbeHLM0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Aug 2018 08:26:20 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AD5931F89F38C;
+        Sun, 12 Aug 2018 17:48:49 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.93.119) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 12 Aug 2018 17:48:36 +0800
+ 14.3.399.0; Sun, 12 Aug 2018 17:48:42 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil.lnk@gmail.com>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 5/9] net: hns3: Fix for vf vlan delete failed problem
-Date:   Sun, 12 Aug 2018 10:47:34 +0100
-Message-ID: <20180812094738.14852-6-salil.mehta@huawei.com>
+Subject: [PATCH net-next 7/9] net: hns3: Remove tx ring BD len register in hns3_enet
+Date:   Sun, 12 Aug 2018 10:47:36 +0100
+Message-ID: <20180812094738.14852-8-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180812094738.14852-1-salil.mehta@huawei.com>
 References: <20180812094738.14852-1-salil.mehta@huawei.com>
@@ -51,45 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-There are only 128 entries in vf vlan table, if user has added
-more than 128 vlan, fw will ignore it and disable the vf vlan
-table. So when user deletes the vlan entry that has not been
-set to vf vlan table, fw will return not found result and driver
-treat that as error, which will cause vlan delete failed problem.
+There is no HNS3_RING_TX_RING_BD_LEN_REG register according
+to UM, so this patch removes it.
 
-This patch fixes it by returning ok when fw returns not found
-result.
-
-Fixes: 9dba194574e3 ("{topost} net: hns3: fix for vlan table problem")
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 2 --
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h | 1 -
+ 2 files changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 3b7cd6744280..c88f5e6a9b77 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4684,9 +4684,17 @@ static int hclge_set_vf_vlan_common(struct hclge_dev *hdev, int vfid,
- 			"Add vf vlan filter fail, ret =%d.\n",
- 			req0->resp_code);
- 	} else {
-+#define HCLGE_VF_VLAN_DEL_NO_FOUND	1
- 		if (!req0->resp_code)
- 			return 0;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index a64d69c87f13..b7b9ee3f4d20 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2969,8 +2969,6 @@ static void hns3_init_ring_hw(struct hns3_enet_ring *ring)
+ 		hns3_write_dev(q, HNS3_RING_TX_RING_BASEADDR_H_REG,
+ 			       (u32)((dma >> 31) >> 1));
  
-+		if (req0->resp_code == HCLGE_VF_VLAN_DEL_NO_FOUND) {
-+			dev_warn(&hdev->pdev->dev,
-+				 "vlan %d filter is not in vf vlan table\n",
-+				 vlan);
-+			return 0;
-+		}
-+
- 		dev_err(&hdev->pdev->dev,
- 			"Kill vf vlan filter fail, ret =%d.\n",
- 			req0->resp_code);
+-		hns3_write_dev(q, HNS3_RING_TX_RING_BD_LEN_REG,
+-			       hns3_buf_size2type(ring->buf_size));
+ 		hns3_write_dev(q, HNS3_RING_TX_RING_BD_NUM_REG,
+ 			       ring->desc_num / 8 - 1);
+ 	}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index e4b4a8f2ceaa..0f071a0f4ff9 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -37,7 +37,6 @@ enum hns3_nic_state {
+ #define HNS3_RING_TX_RING_BASEADDR_L_REG	0x00040
+ #define HNS3_RING_TX_RING_BASEADDR_H_REG	0x00044
+ #define HNS3_RING_TX_RING_BD_NUM_REG		0x00048
+-#define HNS3_RING_TX_RING_BD_LEN_REG		0x0004C
+ #define HNS3_RING_TX_RING_TAIL_REG		0x00058
+ #define HNS3_RING_TX_RING_HEAD_REG		0x0005C
+ #define HNS3_RING_TX_RING_FBDNUM_REG		0x00060
 -- 
 2.11.0
 
