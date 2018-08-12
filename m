@@ -2,93 +2,109 @@ Return-Path: <SRS0=4YaO=K3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1C6C46460
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 02:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC8BC4646D
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 02:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE68021A38
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 02:01:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTGXT6aI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE68021A38
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 27FE121A38
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 02:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27FE121A38
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nyt.cloud
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbeHLEhj (ORCPT
+        id S1727646AbeHLEh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 00:37:39 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34105 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbeHLEhj (ORCPT
+        Sun, 12 Aug 2018 00:37:56 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:43248 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbeHLEh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 00:37:39 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f6-v6so5533245plo.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Aug 2018 19:01:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8cLyheqhBcsxd+uT2PiUOI2zJpPwZIO9aZZcC29dn/0=;
-        b=OTGXT6aIHGZOKrKu9kL0VLttUVu68GFDRsZYZrZ6kP6DvFUegWO7p3w0NeNoaEE8Dv
-         f23aKAD27shlMd4yPkWDumaGpZvB+4qymg60/oWsqOcVU7FZr7qb13CSkmO21Y5yMHbu
-         IccFwkhaQVDVk4b2f1vZvgvlOqEwA2PORBfVW6m1MNXfk5XwfZr3fNVawh4DpvtnimZv
-         zTFc2Mpx5j2BNCIPjKiP80/RbFZefpZZXVkOfFGIXd5C804DddqmnRynT5cFYKLJ6iZe
-         ywArUQ7XRINf6GXnichmPQrenryDXVWXWN4BCmIBDPEYE96rj6NxNftpVjlLX3xHiOvJ
-         mcLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8cLyheqhBcsxd+uT2PiUOI2zJpPwZIO9aZZcC29dn/0=;
-        b=a9BI3ibcOH65qoK5cyWYIx+yVDJIPusnrPGhooczEHu4yTaH+kjk6OVBPdFX8g8nzy
-         SJLwG4XDwU0w87Qm+GVlWxqH7FSF1u+5AwGYXLyDUNONYv8Py8ovOTndxl9Ax5udoSNy
-         mQK+1+jswHboJN+1hQFvoXeVEBFLuA6gd1PdzDv+riK1qgcYM/AI8p7HDXX2HX4Cvywy
-         KqcFXiOMR0o/k590IYOY4GY7zooI0s2BGOVeTZ6ahkPhGumfoHMfNB9ae2ZZZt9yYq1R
-         NBkcw4dStVVmwzFrCGvylxz++AR+yhJ9T33DODNQm4IeL7HYxjoAjTg0/KbblOlj2gBN
-         HQLg==
-X-Gm-Message-State: AOUpUlH/ldINrA0HdsV80aq1+x99rA9RceVtWLkrLZLH25p8NmpA1S+8
-        yL4TQwK4BlKMgoYGYo1SC3+2RMP5
-X-Google-Smtp-Source: AA+uWPyPGB+VZjDF0kDjteFNLaqiuGKIXaTxY/ykCUrwx4C0Prm3tVrVj6wVN98Ril2FVj517ssVag==
-X-Received: by 2002:a17:902:7b96:: with SMTP id w22-v6mr11578132pll.24.1534039287078;
-        Sat, 11 Aug 2018 19:01:27 -0700 (PDT)
-Received: from localhost.localdomain ([2601:646:877f:9499::3947])
-        by smtp.gmail.com with ESMTPSA id f90-v6sm23121928pfh.168.2018.08.11.19.01.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 Aug 2018 19:01:26 -0700 (PDT)
-From:   Khem Raj <raj.khem@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Khem Raj <raj.khem@gmail.com>
-Subject: [PATCH] f2fs-tools:: Use srcdir prefix to denote include path
-Date:   Sat, 11 Aug 2018 19:01:18 -0700
-Message-Id: <20180812020118.9633-1-raj.khem@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Sun, 12 Aug 2018 00:37:56 -0400
+Received: from cm-84.208.136.53.getinternet.no ([84.208.136.53]:2573)
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <ywe@nyt.cloud>)
+        id 1fofhP-0004x2-AT
+        for linux-kernel@vger.kernel.org; Sun, 12 Aug 2018 04:01:43 +0200
+To:     LKML <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=c3=a6rlyn?= <ywe@nyt.cloud>
+Subject: GNU censorship hit me again = Fed up, I am just going to say this.
+Message-ID: <709ad89c-e5b9-7438-1c8c-72325965e2f9@nyt.cloud>
+Date:   Sun, 12 Aug 2018 04:00:40 +0200
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helps builds when builddir != srcdir
+GNU senorship hit me again, on Phoronix. This is LKML, a usenet mailing 
+list. So lets try again here.
 
-Signed-off-by: Khem Raj <raj.khem@gmail.com>
----
- tools/sg_write_buffer/Makefile.am | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Linus Torvalds, Richard Stallman, and Andrew Tanenbaum all are 
+pedophilia victims. And oddly enough think they are gods because of  this.
 
-diff --git a/tools/sg_write_buffer/Makefile.am b/tools/sg_write_buffer/Makefile.am
-index 922c328..19c438d 100644
---- a/tools/sg_write_buffer/Makefile.am
-+++ b/tools/sg_write_buffer/Makefile.am
-@@ -1,7 +1,7 @@
- ## Makefile.am
- 
- if LINUX
--AM_CPPFLAGS = -I./include
-+AM_CPPFLAGS = -I$(srcdir)/include
- AM_CFLAGS = -Wall
- sbin_PROGRAMS = sg_write_buffer
- sg_write_buffer_SOURCES = sg_write_buffer.c \
--- 
-2.18.0
+On Linux forums, fanboys attack, because they sympathize, with this 
+pantheon.
 
+In source, GNU zealousy and the same means among others
+
+1000 HZ Kernel Patch.
+10 ms filter in sched.c
+and this is just from a quick look at source.
+
+And Phoronix mails the list and Linus pulls patches from the kernel, 
+without knowing what they were, based on average performance testing. 
+Average performance in a lot of cases, is not important, but rather peak 
+  jitter. Gettig peak jitter down, means best performance, or "average 
+performance" will not even be displayed on screen, because of jitter 
+bottlenecks.
+
+And in earlier "ricer" (abuse victim slang?) discussions it is 
+supposedly obvious that turning certain optimizations on is useless. Yet 
+  nobody sees "defer pop" being on, as usless, that only contributes 
+jitter.
+
+Obviously this is poor patching, poor understanding, and a poor 
+internet. And LKML still is ascii, when most of the world has moved to 
+better technology. Better technology, with more ID, for less obscure 
+behaviour.
+
+Will Linus scubadiving help?
+
+No.
+
+Tanenbaum writing books with circus on them?
+
+No.
+
+Stallman dancing strange dances?
+
+No.
+
+What is needed is a coherent monotheistic philosophy. That is where 
+civilization comes from, and a good word to all, also abuse victims, 
+that this is not about abuse. Neither communism, nor facism.
+
+I am even trying a zén-concept for maximal desirelessness.
+
+"Hacker"-space was actually already quite monotheistic. And it was never 
+  intended to be poor, neither spiritually nor financially.
+
+This is what needs to happen in computing space. Obviously.
+
+A good and moral behaviour pattern, an adhérance to religion that 
+teaches monotheism. Overriding vain egoes, and diciplining it to 
+understand reality, and society at large.
+
+I hope you understand.
+
+Peace.
+
+www.nyt.cloud
