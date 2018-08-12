@@ -3,107 +3,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D688AC46464
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC1AC46460
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8960C219D1
-	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA248219D1
+	for <linux-kernel@archiver.kernel.org>; Sun, 12 Aug 2018 13:27:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFvr0sWW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8960C219D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="su4HC5Xb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA248219D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeHLQD6 (ORCPT
+        id S1728089AbeHLQFT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 12 Aug 2018 12:03:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727796AbeHLQD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Aug 2018 12:03:58 -0400
-Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com [74.125.82.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22BC3219E1;
-        Sun, 12 Aug 2018 13:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534080355;
-        bh=xbd5h2uwqz8c75Caeg17HBQhGz89NCx15Ls0w3wi7DA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=ZFvr0sWWpiauOwlUZGilHwXkCIgDoyQZjHCqTCWX8NMa1ZMBcIjTQ8Mm6MGBGUSdu
-         llY8JROCzoTr2SE2IXAQam6s/uXTYFTtTVUFt1/v7a7Xj9qpjsZDpHy31OCf/G3Jge
-         jRXu7Fo5V+5A+w/cT7STLigIa5grm5n224GpUml8=
-Received: by mail-wm0-f44.google.com with SMTP id o18-v6so6255048wmc.0;
-        Sun, 12 Aug 2018 06:25:55 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEudJIlbfzWB8ZND9kw8mtkQSxUIuYKm0fO3fZhlgLp0C0/ngC0
-        DJ8mGsyQvgfO0siNcBqI3hjiz/2XhqB/aljyYR0=
-X-Google-Smtp-Source: AA+uWPxbzQLPXbtq9rLydHfJd5pFoxWmcUNrIusvDgLfV1cWP/8Z/z/YyGYrS0iUWfGsECAx+g5eWwL0oAxgsgpc36k=
-X-Received: by 2002:a1c:588d:: with SMTP id m135-v6mr5575364wmb.118.1534080353650;
- Sun, 12 Aug 2018 06:25:53 -0700 (PDT)
+        Sun, 12 Aug 2018 12:05:19 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:47252 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbeHLQFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Aug 2018 12:05:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7CDOvbO065556;
+        Sun, 12 Aug 2018 13:26:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=0oSmP8jhb5GKdGHT8m+qwNBcqjy9/paqZDp/9xue0DE=;
+ b=su4HC5XbOsEGWByrjESYnJyep5oIppmBGhjLLW3GvOyMXX0iw3xJTRqGJlUpDbDLJJ/n
+ BPLvixGkRboDtHM/IHENKZiEdZUJtQVxSEfwUtlmcP6K7H7Rlf3wiC3bGBiDGv1d3/gZ
+ tpk7Qt6IHVOeItggiMYODm9GATmND0pW9sXueKKstpUbMf0IPrpk3ESUo21Qt4BzLmKR
+ 2/Pt9SIzu2MjeXS8bsDR/UvzTzi099iV+JAMzVROJYJ8Bi0PJFArbxeDPwya72Q+RYus
+ D16yRG7iNeNztGlYiGMDVOTrP76z0lx26p43qNDRBubS9wyUuponiwFJhOWf244Qtnh2 vQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2ksqrp1rkx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 12 Aug 2018 13:26:02 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7CDQ2dL023018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 12 Aug 2018 13:26:02 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7CDPwXb010247;
+        Sun, 12 Aug 2018 13:25:59 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 12 Aug 2018 06:25:58 -0700
+Subject: Re: [PATCH v3 13/17] x86/xen: enable Hygon support to Xen
+To:     Juergen Gross <jgross@suse.com>, Pu Wen <puwen@hygon.cn>,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, JBeulich@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <cover.1533989492.git.puwen@hygon.cn>
+ <2747ad959f07459000f2693a98d237e2b3149ca1.1533989493.git.puwen@hygon.cn>
+ <b32887e0-df6e-fb31-d9cd-6b31961c9c2b@oracle.com>
+ <0aa44410-47ec-27e2-10d9-c0dc5d2e457a@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <150f6a8d-33e8-a84d-f34b-17bdb7264ebe@oracle.com>
+Date:   Sun, 12 Aug 2018 09:26:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Sun, 12 Aug 2018 06:25:53
- -0700 (PDT)
-In-Reply-To: <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
-References: <20180806160933.6578-1-krzk@kernel.org> <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Sun, 12 Aug 2018 15:25:53 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPds5s8omeR7UOB4u4HrYCZBTJX3t4YU4PSWBGb-9MG7iw@mail.gmail.com>
-Message-ID: <CAJKOXPds5s8omeR7UOB4u4HrYCZBTJX3t4YU4PSWBGb-9MG7iw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: exynos: Add missing used PMIC regulators on
- Exynos5422 Odroid boards
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0aa44410-47ec-27e2-10d9-c0dc5d2e457a@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8982 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=885
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808120152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 August 2018 at 08:39, Anand Moon <linux.amoon@gmail.com> wrote:
-> Hi Krzysztof,
->
-> These patches should also be ported to u-boot to enable PMIC.
->
-> I was just looking into S2MPS11B data sheet
-> According to the 1.2 Key Features of  S2MPS11
->
-> BUCK1, BUCK2, BUCK3, BUCK4, BUCK6 have (0.65 V to 1.6 V) min /max range.
-> BUCK5 have (0.65 V to 2.0 V) min /max range.
-> BUCK7 have (1.2 V to 1.5 V) min / max range.
-> BUCK8 have (1.8 V to 2.1 V) min / max range.
-> BUCK10 have (0.75 V to 1.4 V) min / max range.
->
-> BUCKBOST9 (3.0 V to 3.75 V) min / max range.
->
-> LDO1, LDO6, LDO11, LDO22, LDO23, LDO27, LDO35 (0.8 V to 2.375 V) min / max range
->
-> LDO2, LDO3, LDO5, LDO7, LDO9, LDO10, LD012, LDO13, LDO14, LDO15,
-> LDO16, LDO17, LDO18, LDO19, LDO20, LD021, LDO24, LDO25, LDO26,
-> LDO28, LDO29, LDO30, LDO31, LDO32, LDO33, LDO34, LDO36, LDO37, LDO38
-> (0.8 V to 3.95 V) min / max range
->
-> I am aware off we have configures the min/max range as per board schematics.
-> but each regulator support dynamic voltage scale and have different
-> turn on/off voltage and current rating.
->
-> So why are we not setting the regulator-min-microvolt /
-> regulator-max-microvolt as per datasheets.
-> Please correct me if I am wrong.
+On 08/12/2018 04:55 AM, Juergen Gross wrote:
+> On 11/08/18 16:34, Boris Ostrovsky wrote:
+>> On 08/11/2018 09:29 AM, Pu Wen wrote:
+>>
+>>>  
+>>>  bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
+>>>  {
+>>> -	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
+>>> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+>>> +	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+>>
+>> 'if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)' please.
+> Really? Xen supports Centaur, too.
 
-Which regulators are not configured as in datasheet?
+VPMU doesn't --- hypervisor will not initialize it. Besides, the
+existing code will steer non-AMD execution to Intel, which is not right
+either.
 
-Best regards,
-Krzysztof
+I'll add a check to bail if VPMU is not initialized properly, we seem to
+ignore xen_pmu_init() failures. Which, BTW, makes this patch rather
+pointless until there is support for Hygon Xen.
+
+-boris
