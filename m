@@ -3,56 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CC6C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF6BC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A022821746
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:23:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A022821746
+	by mail.kernel.org (Postfix) with ESMTP id 4B16421746
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:23:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B16421746
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbeHMOFA (ORCPT
+        id S1729679AbeHMOFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:05:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:58517 "EHLO ozlabs.org"
+        Mon, 13 Aug 2018 10:05:03 -0400
+Received: from ozlabs.org ([203.11.71.1]:45927 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbeHMOE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:04:57 -0400
+        id S1728848AbeHMOFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:05:02 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 41ptd634t0z9sBD; Mon, 13 Aug 2018 21:23:05 +1000 (AEST)
+        id 41ptd913q3z9sCX; Mon, 13 Aug 2018 21:23:09 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: fce278af81daf8599f9e94883cbe43068b6c4785
-In-Reply-To: <20180622192749.24954-1-malat@debian.org>
-To:     Mathieu Malaterre <malat@debian.org>
+X-powerpc-patch-commit: 6bd6d8672208e8dc0c18588d6eb4588a195fd788
+In-Reply-To: <975595591e096f4ad3253b5a11713beaf62912c4.1533561636.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: =?utf-8?q?powerpc/mm=3A_remove_warning_about_=E2=80=98type?= =?utf-8?q?=E2=80=99_being_set?=
-Message-Id: <41ptd634t0z9sBD@ozlabs.org>
-Date:   Mon, 13 Aug 2018 21:23:05 +1000 (AEST)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/cpm1: fix compilation error with CONFIG_PPC_EARLY_DEBUG_CPM
+Message-Id: <41ptd913q3z9sCX@ozlabs.org>
+Date:   Mon, 13 Aug 2018 21:23:09 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-22 at 19:27:47 UTC, Mathieu Malaterre wrote:
-> ‘type’ is only used when CONFIG_DEBUG_HIGHMEM is set. So add a possibly
-> unused tag to variable. Remove warning treated as error with W=1:
+On Mon, 2018-08-06 at 15:09:11 UTC, Christophe Leroy wrote:
+> commit e8cb7a55eb8dc ("powerpc: remove superflous inclusions of
+> asm/fixmap.h") removed inclusion of asm/fixmap.h from files not
+> including objects from that file.
 > 
->   arch/powerpc/mm/highmem.c:59:6: error: variable ‘type’ set but not used [-Werror=unused-but-set-variable]
+> However, asm/mmu-8xx.h includes  call to __fix_to_virt(). The proper
+> way would be to include asm/fixmap.h in asm/mmu-8xx.h but it creates
+> an inclusion loop.
 > 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> So we have to leave asm/fixmap.h in sysdep/cpm_common.c for
+> CONFIG_PPC_EARLY_DEBUG_CPM
+> 
+>   CC      arch/powerpc/sysdev/cpm_common.o
+> In file included from ./arch/powerpc/include/asm/mmu.h:340:0,
+>                  from ./arch/powerpc/include/asm/reg_8xx.h:8,
+>                  from ./arch/powerpc/include/asm/reg.h:29,
+>                  from ./arch/powerpc/include/asm/processor.h:13,
+>                  from ./arch/powerpc/include/asm/thread_info.h:28,
+>                  from ./include/linux/thread_info.h:38,
+>                  from ./arch/powerpc/include/asm/ptrace.h:159,
+>                  from ./arch/powerpc/include/asm/hw_irq.h:12,
+>                  from ./arch/powerpc/include/asm/irqflags.h:12,
+>                  from ./include/linux/irqflags.h:16,
+>                  from ./include/asm-generic/cmpxchg-local.h:6,
+>                  from ./arch/powerpc/include/asm/cmpxchg.h:537,
+>                  from ./arch/powerpc/include/asm/atomic.h:11,
+>                  from ./include/linux/atomic.h:5,
+>                  from ./include/linux/mutex.h:18,
+>                  from ./include/linux/kernfs.h:13,
+>                  from ./include/linux/sysfs.h:16,
+>                  from ./include/linux/kobject.h:20,
+>                  from ./include/linux/device.h:16,
+>                  from ./include/linux/node.h:18,
+>                  from ./include/linux/cpu.h:17,
+>                  from ./include/linux/of_device.h:5,
+>                  from arch/powerpc/sysdev/cpm_common.c:21:
+> arch/powerpc/sysdev/cpm_common.c: In function ‘udbg_init_cpm’:
+> ./arch/powerpc/include/asm/mmu-8xx.h:218:25: error: implicit declaration of function ‘__fix_to_virt’ [-Werror=implicit-function-declaration]
+>  #define VIRT_IMMR_BASE (__fix_to_virt(FIX_IMMR_BASE))
+>                          ^
+> arch/powerpc/sysdev/cpm_common.c:75:7: note: in expansion of macro ‘VIRT_IMMR_BASE’
+>        VIRT_IMMR_BASE);
+>        ^
+> ./arch/powerpc/include/asm/mmu-8xx.h:218:39: error: ‘FIX_IMMR_BASE’ undeclared (first use in this function)
+>  #define VIRT_IMMR_BASE (__fix_to_virt(FIX_IMMR_BASE))
+>                                        ^
+> arch/powerpc/sysdev/cpm_common.c:75:7: note: in expansion of macro ‘VIRT_IMMR_BASE’
+>        VIRT_IMMR_BASE);
+>        ^
+> ./arch/powerpc/include/asm/mmu-8xx.h:218:39: note: each undeclared identifier is reported only once for each function it appears in
+>  #define VIRT_IMMR_BASE (__fix_to_virt(FIX_IMMR_BASE))
+>                                        ^
+> arch/powerpc/sysdev/cpm_common.c:75:7: note: in expansion of macro ‘VIRT_IMMR_BASE’
+>        VIRT_IMMR_BASE);
+>        ^
+> cc1: all warnings being treated as errors
+> make[1]: *** [arch/powerpc/sysdev/cpm_common.o] Error 1
+> 
+> Fixes: e8cb7a55eb8dc ("powerpc: remove superflous inclusions of asm/fixmap.h")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/fce278af81daf8599f9e94883cbe43
+https://git.kernel.org/powerpc/c/6bd6d8672208e8dc0c18588d6eb458
 
 cheers
