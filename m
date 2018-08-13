@@ -6,122 +6,115 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D90C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C725C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039C1217CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:27:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039C1217CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DBCF5217B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:29:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCF5217B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729864AbeHMRJo (ORCPT
+        id S1729795AbeHMRLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 13:09:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:59460 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbeHMRJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 13:09:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F76C80D;
-        Mon, 13 Aug 2018 07:27:14 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87C4D3F5D0;
-        Mon, 13 Aug 2018 07:27:13 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 16:27:11 +0200
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Suzuki Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH] KVM: arm/arm64: Skip updating page table entry if no
- change
-Message-ID: <20180813142711.GJ20606@e113682-lin.lund.arm.com>
-References: <20180810111300.17144-1-punit.agrawal@arm.com>
+        Mon, 13 Aug 2018 13:11:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37410 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727367AbeHMRLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 13:11:42 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8C74E406E8C0;
+        Mon, 13 Aug 2018 14:29:10 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 21D51178BC;
+        Mon, 13 Aug 2018 14:29:08 +0000 (UTC)
+Date:   Mon, 13 Aug 2018 10:29:06 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     "Zhang,Yi" <yi.z.zhang@linux.intel.com>
+Cc:     Pankaj Gupta <pagupta@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
+        jack@suse.cz, hch@lst.de, yu c zhang <yu.c.zhang@intel.com>,
+        linux-mm@kvack.org, rkrcmar@redhat.com,
+        yi z zhang <yi.z.zhang@intel.com>
+Subject: Re: [PATCH V3 3/4] mm: add a function to differentiate the pages is
+ from DAX device memory
+Message-ID: <20180813142906.GA3451@redhat.com>
+References: <cover.1533811181.git.yi.z.zhang@linux.intel.com>
+ <2b7856596e519130946c834d5d61b00b7f592770.1533811181.git.yi.z.zhang@linux.intel.com>
+ <872818364.892078.1533806608252.JavaMail.zimbra@redhat.com>
+ <5ea50e63-b55a-c1e1-50be-6e2d951c04cf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180810111300.17144-1-punit.agrawal@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ea50e63-b55a-c1e1-50be-6e2d951c04cf@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 13 Aug 2018 14:29:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 13 Aug 2018 14:29:10 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 12:13:00PM +0100, Punit Agrawal wrote:
-> Contention on updating a page table entry by a large number of vcpus
-> can lead to duplicate work when handling stage 2 page faults. As the
-> page table update follows the break-before-make requirement of the
-> architecture, it can lead to repeated refaults due to clearing the
-> entry and flushing the tlbs.
+On Tue, Aug 14, 2018 at 01:41:40AM +0800, Zhang,Yi wrote:
 > 
-> This problem is more likely when -
 > 
-> * there are large number of vcpus
-> * the mapping is large block mapping
+> On 2018年08月09日 17:23, Pankaj Gupta wrote:
+> >> DAX driver hotplug the device memory and move it to memory zone, these
+> >> pages will be marked reserved flag, however, some other kernel componet
+> >> will misconceive these pages are reserved mmio (ex: we map these dev_dax
+> >> or fs_dax pages to kvm for DIMM/NVDIMM backend). Together with the type
+> >> MEMORY_DEVICE_FS_DAX, we can use is_dax_page() to differentiate the pages
+> >> is DAX device memory or not.
+> >>
+> >> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+> >> Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
+> >> ---
+> >>  include/linux/mm.h | 12 ++++++++++++
+> >>  1 file changed, 12 insertions(+)
+> >>
+> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> >> index 68a5121..de5cbc3 100644
+> >> --- a/include/linux/mm.h
+> >> +++ b/include/linux/mm.h
+> >> @@ -889,6 +889,13 @@ static inline bool is_device_public_page(const struct
+> >> page *page)
+> >>  		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
+> >>  }
+> >>  
+> >> +static inline bool is_dax_page(const struct page *page)
+> >> +{
+> >> +	return is_zone_device_page(page) &&
+> >> +		(page->pgmap->type == MEMORY_DEVICE_FS_DAX ||
+> >> +		page->pgmap->type == MEMORY_DEVICE_DEV_DAX);
+> >> +}
+> > I think question from Dan for KVM VM with 'MEMORY_DEVICE_PUBLIC' still holds?
+> > I am also interested to know if there is any use-case.
+> >
+> > Thanks,
+> > Pankaj
+> Yes, it is, thanks for your remind, Pankaj.
+> Adding Jerome for Dan's questions on V1:
+> [Dan]:
 > 
-> such as when using PMD hugepages (512MB) with 64k pages.
-> 
-> Fix this by skipping the page table update if there is no change in
-> the entry being updated.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Suzuki Poulose <suzuki.poulose@arm.com>
-> --
-> Hi,
-> 
-> This problem was reported by a user when testing PUD hugepages. During
-> VM restore when all threads are running cpu intensive workload, the
-> refauting was causing the VM to not make any forward progress.
-> 
-> This patch fixes the problem for PMD and PTE page fault handling.
-> 
-> Thanks,
-> Punit
-> 
-> Change-Id: I04c9aa8b9fbada47deb1a171c9959f400a0d2a21
-> ---
->  virt/kvm/arm/mmu.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 1d90d79706bd..a66a5441ca2f 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1027,6 +1027,18 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->  	VM_BUG_ON(pmd_present(*pmd) && pmd_pfn(*pmd) != pmd_pfn(*new_pmd));
->  
->  	old_pmd = *pmd;
-> +	/*
-> +	 * Multiple vcpus faulting on the same PMD entry, can lead to
-> +	 * them sequentially updating the PMD with the same
-> +	 * value. Following the break-before-make (pmd_clear()
-> +	 * followed by tlb_flush()) process can hinder forward
-> +	 * progress due to refaults generated on missing translations.
-> +	 *
-> +	 * Skip updating the page table if the entry is unchanged.
-> +	 */
-> +	if (pmd_val(old_pmd) == pmd_val(*new_pmd))
-> +		return 0;
-> +
->  	if (pmd_present(old_pmd)) {
->  		pmd_clear(pmd);
->  		kvm_tlb_flush_vmid_ipa(kvm, addr);
-> @@ -1101,6 +1113,10 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
->  
->  	/* Create 2nd stage page table mapping - Level 3 */
->  	old_pte = *pte;
-> +	/* Skip page table update if there is no change */
-> +	if (pte_val(old_pte) == pte_val(*new_pte))
-> +		return 0;
-> +
->  	if (pte_present(old_pte)) {
->  		kvm_set_pte(pte, __pte(0));
->  		kvm_tlb_flush_vmid_ipa(kvm, addr);
-> -- 
-> 2.18.0
-> 
+> Jerome, might there be any use case to pass MEMORY_DEVICE_PUBLIC
+> memory to a guest vm?
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Yes and no, i am not sure how we are going to do it. But being able to
+share GPU among multiple VM is on TODO list and those GPU will have
+MEMORY_DEVICE_PUBLIC|PRIVATE depending on the platform. So either we
+pass down the real underlying resource to the guest, or we will pass
+down a fake one and have guest and host driver talk to each other so
+that the host driver can do overall resource management accross multiple
+guests.
+
+So i would say that for now you can ignore MEMORY_DEVICE_PUBLIC and when
+we get to the KVM guest sharing of those and decide how we want to do
+it then we can update kvm to properly interpret those.
+
+Cheers,
+Jérôme
