@@ -2,163 +2,150 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D008C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C80D5C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A884217BC
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A884217BC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 7EEB0217DF
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:19:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Kf8WZxN8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EEB0217DF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbeHMTBj (ORCPT
+        id S1730079AbeHMTCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:01:39 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:46695 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728455AbeHMTBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:01:39 -0400
-Received: from [192.168.1.7] (unknown [110.184.152.220])
-        by APP-10 (Coremail) with SMTP id tACowAAnLsZTr3FbrkQBAQ--.8350S2;
-        Tue, 14 Aug 2018 00:18:28 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v3 16/17] driver/edac: enable Hygon support to AMD64 EDAC
- driver
-To:     Michael Jin <mikhail.jin@gmail.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-edac@vger.kernel.org
-References: <cover.1533989492.git.puwen@hygon.cn>
- <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
- <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
-Message-ID: <49bec5ba-3a54-a9ee-f965-5f361e9711d2@hygon.cn>
-Date:   Tue, 14 Aug 2018 00:18:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 13 Aug 2018 15:02:18 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52234 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728455AbeHMTCS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:02:18 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 735B310C0266;
+        Mon, 13 Aug 2018 09:19:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1534177163; bh=/HFuHzFcPYWm6C0H/AllrCyUO/Xm06SWnCPo3OpqmpI=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=Kf8WZxN81XR+Ixz7QnQkvB57Ff31qhLkw2WF0e+aOD9KklZb08G3ym/7vA+sz2a+C
+         kaq15lcjoVg+w5gIjma8D+DhK37VbF+702hypd9W5EhBanYX1/04SFSUlTQSU6Al86
+         KTjxgijDMDk4ookuKE+0BCYail3PZWwXZ/fSbddNlXb2US8lB8+XlFL2OAspBzaTE5
+         JOXwxGAnGhk7j1D+8UEF0z+crVdhppSTp/JGz7s8xob3Ux+vADf2oXjbZjz/f6CKd0
+         pT+7xJ4+8Ie54KIgi7Y0bf/2jnNByIZUwzojrwsVxUogGm9p7ACkKyeAq0Rb3q+Eju
+         KHhD0L+Gr2hQw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3C0B652D8;
+        Mon, 13 Aug 2018 09:19:23 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon, 13
+ Aug 2018 09:19:22 -0700
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "hch@lst.de" <hch@lst.de>
+Subject: Re: [PATCH v2 0/4] ARC: allow to use IOC and non-IOC DMA devices
+ simultaneously
+Thread-Topic: [PATCH v2 0/4] ARC: allow to use IOC and non-IOC DMA devices
+ simultaneously
+Thread-Index: AQHUKCIZ2r1FEf6H/EahxizEoOt7oQ==
+Date:   Mon, 13 Aug 2018 16:19:21 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B08C82C@us01wembx1.internal.synopsys.com>
+References: <20180730162636.3556-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowAAnLsZTr3FbrkQBAQ--.8350S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxurW5Xw45tr13KFWUWF45ZFb_yoW5ZF43pr
-        W5JF4j9rn7JasxJryvvr4UXFyrCw4kJFZrCrsxK3WFqFZ8ZFyrW345tF4fuFyUAF93J3y2
-        vayrWw47Ga1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9Cb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
-        A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-        c7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrw
-        CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-        14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-        IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
-        x2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-        0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jUb18UUUUU=
-X-Originating-IP: [110.184.152.220]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/12 3:56, Michael Jin wrote:
-> On Sat, Aug 11, 2018 at 9:30 AM, Pu Wen <puwen@hygon.cn> wrote:
->> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
->> index 18aeabb..fb81354 100644
->> --- a/drivers/edac/amd64_edac.c
->> +++ b/drivers/edac/amd64_edac.c
->> @@ -211,7 +211,7 @@ static int __set_scrub_rate(struct amd64_pvt *pvt, u32 new_bw, u32 min_rate)
->>
->>          scrubval = scrubrates[i].scrubval;
->>
->> -       if (pvt->fam == 0x17) {
->> +       if (pvt->fam == 0x17 || pvt->vendor == X86_VENDOR_HYGON) {
->>                  __f17h_set_scrubval(pvt, scrubval);
-> 
-> Separating the vendor check as an "else if (pvt->vendor ==
-> X86_VENDOR_HYGON)" block would make architectural changes (future
-> hygon models, i.e. 19h, 20h, etc) less confusing.
-
-Your suggestion is reasonable, but that might make the branch a little
-complicated.If we explicitly testing Hygon family in condition case,
-will that be ok?
-+    if (pvt->fam == 0x17 ||
-+       (pvt->vendor == X86_VENDOR_HYGON && pvt->fam == 0x18))
-
-> 
->> +                       amd64_read_pci_cfg(pvt->F6,
->> +                               F17H_SCR_BASE_ADDR, &scrubval);
->> +                       if (scrubval & BIT(0)) {
->> +                               amd64_read_pci_cfg(pvt->F6,
-> 
-> The new lines after "amd64_read_pci_cfg(pvt->F6," can be removed.
-
-To fix the warning "line over 80 characters" reported by running the
-checking script checkpatch.pl, I added the new line.
-But your sugesstion is reasonable, remove the new line will make the
-codes much easier to read.
-
->> @@ -1051,6 +1065,16 @@ static void determine_memory_type(struct amd64_pvt *pvt)
->>                  else
->>                          pvt->dram_type = MEM_DDR4;
->>                  return;
->> +       case 0x18:
->> +               if (pvt->vendor == X86_VENDOR_HYGON) {
-> 
-> This vendor checking is not necessary as there are no other known
-> family 18h processors.
-> 
-> 
->>          switch (pvt->fam) {
->> @@ -3192,6 +3227,13 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
->>                  pvt->ops        = &family_types[F17_CPUS].ops;
->>                  break;
->>
->> +       case 0x18:
->> +               if (pvt->vendor == X86_VENDOR_HYGON) {
->> +                       fam_type        = &family_types[HYGON_F18_CPUS];
->> +                       pvt->ops        = &family_types[HYGON_F18_CPUS].ops;
->> +                       break;
->> +               }
-> 
-> There is a missing second 'break' statement after the "if (pvt->vendor
-> == X86_VENDOR_HYGON)" block for case 0x18, see case 0x15 and case 0x16
-> for comparison.
-
-The missed second 'break' is on purpose. Thinking that if BIOS report
-a vendor AMD and family 18h processor(which is not in case now),
-the code will fall through and print out "Unsupported family".
-
-> 
->> diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
->> index 2ab4d61..f7adc47 100644
->> +       case 0x18:
->> +               if (c->x86_vendor == X86_VENDOR_HYGON) {
->> +                       xec_mask = 0x3f;
->> +                       if (!boot_cpu_has(X86_FEATURE_SMCA)) {
->> +                               pr_warn("Decoding supported only on Scalable MCA processors.\n");
->> +                               goto err_out;
->> +                       }
->> +                       break;
->> +               }
-> 
-> The 'break' statement could be moved outside of the "if (c->x86_vendor
-> == X86_VENDOR_HYGON)" block, this is to allow case 0x18 to reach the
-> 'break' statement if the vendor is not X86_VENDOR_HYGON.
-
-For the same reason as previous, if the vendor is not X86_VENDOR_HYGON,
-it's not a valid vendor by now, and should fall through to the default
-case and print out error message.
-
-Thanks,
-Pu Wen
-
+On 07/30/2018 09:26 AM, Eugeniy Paltsev wrote:=0A=
+> The ARC HS processor provides an IOC port (I/O coherency bus=0A=
+> interface) that allows external devices such as DMA devices=0A=
+> to access memory through the cache hierarchy, providing=0A=
+> coherency between I/O transactions and the complete memory=0A=
+> hierarchy.=0A=
+=0A=
+You didn't pay attention to my previous comment on this !=0A=
+IOC port can be considered a micro-architecture optimization (an important =
+one=0A=
+though). The main thing is hardware snooping DMA transactions which enabled=
+ IOC in=0A=
+first place.=0A=
+=0A=
+> Some recent SoC with ARC HS (like HSDK) allow to select bus=0A=
+> port (IOC or non-IOC port) for connecting DMA devices in runtime.=0A=
+=0A=
+Again you mention the port but none of your 4 patches actually touch the po=
+rt=0A=
+itself in programming it.=0A=
+=0A=
+=0A=
+> With this patch we can use both HW-coherent and regular DMA=0A=
+> peripherals simultaneously.=0A=
+>=0A=
+> NOTE:=0A=
+> This patch series was stress tested on HSDK with iperf3 (ethernet)=0A=
+> and bonie++ (usb and sdio) in three configurations:=0A=
+>  * IOC enabled globaly=0A=
+>  * IOC disabled globaly=0A=
+>  * IOC enabled partially (USB & SDIO are connected via IOC AXI port,=0A=
+>    ethernet is connected to DDR AXI port (non-IOC port) =0A=
+>=0A=
+> NOTE:=0A=
+> If you want to test some device without IOC it is not enough=0A=
+> to remove "dma-coherent" property from dts. You had to remap this=0A=
+> device to regular DDR AXI port intead of IOC AXI port.=0A=
+=0A=
+Why are we not doing that for the GPU as part of this series.=0A=
+=0A=
+> You also need to apply 3 following patches firstly:=0A=
+> https://www.mail-archive.com/linux-snps-arc@lists.infradead.org/msg03865.=
+html=0A=
+> https://www.mail-archive.com/linux-snps-arc@lists.infradead.org/msg03889.=
+html=0A=
+> https://www.mail-archive.com/linux-snps-arc@lists.infradead.org/msg03887.=
+html=0A=
+>=0A=
+> NOTE:=0A=
+> We don't touch any aperture configuration in this patch series. So we=0A=
+> don't switch any devices between IOC and non-IOC AXI ports on any board.=
+=0A=
+> It can be done later if it is required.=0A=
+>=0A=
+> Changes v1->v2 (Thanks to Christoph):=0A=
+>  * Don't select DMA_DIRECT_OPS explicitly as it is already selected by=0A=
+>    DMA_NONCOHERENT_OPS=0A=
+>  * Remove check for HIGHMEM pages from arch_dma_{alloc, free}=0A=
+>=0A=
+> Eugeniy Paltsev (4):=0A=
+>   ARC: DTS: mark DMA devices connected through IOC port as dma-coherent=
+=0A=
+>   ARC: allow to use IOC and non-IOC DMA devices simultaneously=0A=
+>   ARC: IOC: panic if both IOC and ZONE_HIGHMEM enabled=0A=
+>   ARC: don't check for HIGHMEM pages in arch_dma_alloc=0A=
+>=0A=
+>  arch/arc/boot/dts/axc003.dtsi      | 26 ++++++++++++++++=0A=
+>  arch/arc/boot/dts/axc003_idu.dtsi  | 26 ++++++++++++++++=0A=
+>  arch/arc/boot/dts/hsdk.dts         |  4 +++=0A=
+>  arch/arc/include/asm/dma-mapping.h | 13 ++++++++=0A=
+>  arch/arc/mm/cache.c                | 30 +++++++++---------=0A=
+>  arch/arc/mm/dma.c                  | 62 +++++++++++++++++++-------------=
+------=0A=
+>  6 files changed, 115 insertions(+), 46 deletions(-)=0A=
+>  create mode 100644 arch/arc/include/asm/dma-mapping.h=0A=
+>=0A=
+=0A=
