@@ -2,290 +2,243 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43C5C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D293C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEE421781
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:51:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="O6iG8+wP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEE421781
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B237921781
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:52:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B237921781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729687AbeHMQeS (ORCPT
+        id S1729750AbeHMQet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 12:34:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53778 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728509AbeHMQeS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 12:34:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=03vbchIdhoA490wdeNyJiZzGUUgOvvKYxofZ5xgVJaE=; b=O6iG8+wPPrxzbwvXVWFMRTibi
-        hN5Kr6q6BA4jYlUY9J6pZgHBhMGkj4CH871pFv5Cwvu8Z2Fzvdqu8CaAVV1xt8r7Nt7qjk2wsgc42
-        MEIV5irj4xihDgoiJlPDNWe0v6FlmqR7mnfJSTZPbvcRqnMtSMd2noT2/amw06zhIe+Mk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fpDGC-00083b-19; Mon, 13 Aug 2018 13:51:52 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8CD29112441F; Mon, 13 Aug 2018 14:51:51 +0100 (BST)
-Date:   Mon, 13 Aug 2018 14:51:51 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [GIT PULL] regulator updates for v4.19
-Message-ID: <20180813135151.GF6757@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RE3pQJLXZi4fr8Xo"
-Content-Disposition: inline
-X-Cookie: Many a family tree needs trimming.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 13 Aug 2018 12:34:49 -0400
+Received: from gate.crashing.org ([63.228.1.57]:52185 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728509AbeHMQes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 12:34:48 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7DDpnWQ000660;
+        Mon, 13 Aug 2018 08:51:51 -0500
+Message-ID: <be2863f5037e8326b0906bd0aee82dcb370d2d80.camel@kernel.crashing.org>
+Subject: Re: [PATCH v6 1/2] powerpc: Detect the presence of big-cores via
+ "ibm,thread-groups"
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     ego@linux.vnet.ibm.com,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Mon, 13 Aug 2018 23:51:49 +1000
+In-Reply-To: <20180813113633.GA19859@in.ibm.com>
+References: <1533792728-6304-1-git-send-email-ego@linux.vnet.ibm.com>
+         <1533792728-6304-2-git-send-email-ego@linux.vnet.ibm.com>
+         <20180809132743.GB42474@linux.vnet.ibm.com>
+         <20180813113633.GA19859@in.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-08-13 at 17:06 +0530, Gautham R Shenoy wrote:
+> Hi Srikar,
+> 
+> Thanks for reviewing the patch.
+> 
+> On Thu, Aug 09, 2018 at 06:27:43AM -0700, Srikar Dronamraju wrote:
+> > * Gautham R. Shenoy <ego@linux.vnet.ibm.com> [2018-08-09 11:02:07]:
+> > 
+> > > 
+> > >  int threads_per_core, threads_per_subcore, threads_shift;
+> > > +bool has_big_cores;
+> > >  cpumask_t threads_core_mask;
+> > >  EXPORT_SYMBOL_GPL(threads_per_core);
+> > >  EXPORT_SYMBOL_GPL(threads_per_subcore);
+> > >  EXPORT_SYMBOL_GPL(threads_shift);
+> > > +EXPORT_SYMBOL_GPL(has_big_cores);
+> > 
+> > Why do we need EXPORT_SYMBOL_GPL?
+> 
+> As Christoph pointed out, I was blindly following the suit.
+> 
+> You are right, we don't need to export it at the moment. The remaining
+> EXPORT_SYMBOL_GPL are required by KVM. However, as of now, there is no
+> need for "has_big_cores" in the KVM.
 
---RE3pQJLXZi4fr8Xo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There is actually. KVM needs to refuse to start on big cores, at least
+HV KVM. And when KVM grows support for big cores (may or may not
+happen), it will need to know. So keep the GPL export.
 
-The following changes since commit 1ffaddd029c867d134a1dde39f540dcc8c52e274:
+> Will remove this in the next version.
+> > 
+> > >  EXPORT_SYMBOL_GPL(threads_core_mask);
+> > > 
+> > > + *
+> > > + * Returns 0 on success, -EINVAL if the property does not exist,
+> > > + * -ENODATA if property does not have a value, and -EOVERFLOW if the
+> > > + * property data isn't large enough.
+> > > + */
+> > > +int parse_thread_groups(struct device_node *dn,
+> > > +			struct thread_groups *tg)
+> > > +{
+> > > +	unsigned int nr_groups, threads_per_group, property;
+> > > +	int i;
+> > > +	u32 thread_group_array[3 + MAX_THREAD_LIST_SIZE];
+> > > +	u32 *thread_list;
+> > > +	size_t total_threads;
+> > > +	int ret;
+> > > +
+> > > +	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
+> > > +					 thread_group_array, 3);
+> > > +
+> > > +	if (ret)
+> > > +		goto out_err;
+> > > +
+> > > +	property = thread_group_array[0];
+> > > +	nr_groups = thread_group_array[1];
+> > > +	threads_per_group = thread_group_array[2];
+> > > +	total_threads = nr_groups * threads_per_group;
+> 
+> 
+> > > +
+> > 
+> > Shouldnt we check for property and nr_groups
+> > If the property is not 1 and nr_groups < 1, we should error out
+> > No point in calling a of_property read if property is not right.
+> 
+> Yes, the nr_groups < 1 check can be moved into this function.
+> 
+> However, this function merely parses the the thread group structure
+> exposed by the device tree. So it should error out only if there is a
+> failure in parsing, or as you said the parsed values are incorrect
+> (nr_groups < 1, threads_per_group < 1, etc). Whether the thread group
+> is relevant or not (in this case we are interested in thread groups
+> that share L1 cache, translation etc) is something for the caller to
+> decide.
+> 
+> However, I see what you mean. We can avoid parsing the remainder of
+> the array if the property in the device-tree isn't the property that
+> the caller is interested in.
+> 
+> This can be solved by passing the interested property value as a
+> parameter and so that the code errors out if this property doesn't
+> match the property in the device-tree. Will add this in the next
+> version.
+> 
+> > 
+> > 
+> > Nit: 
+> > Cant we directly assign to tg->property, and hence avoid local
+> > variables, property, nr_groups and threads_per_group?
+> 
+> Will clean this up. This was from an older version where I added the
+> local variables so that the statements referencing them don't need to
+> be split across multiple lines. However, the code has been optimized
+> since then. So, the local variables are not needed.
+> 
+> > 
+> > > +	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
+> > > +					 thread_group_array,
+> > > +					 3 + total_threads);
+> > > +
+> > > +static inline bool dt_has_big_core(struct device_node *dn,
+> > > +				   struct thread_groups *tg)
+> > > +{
+> > > +	if (parse_thread_groups(dn, tg))
+> > > +		return false;
+> > > +
+> > > +	if (tg->property != 1)
+> > > +		return false;
+> > > +
+> > > +	if (tg->nr_groups < 1)
+> > > +		return false;
+> > 
+> > Can avoid these check if we can check in parse_thread_groups.
+> > 
+> > >  /**
+> > >   * setup_cpu_maps - initialize the following cpu maps:
+> > >   *                  cpu_possible_mask
+> > > @@ -457,6 +605,7 @@ void __init smp_setup_cpu_maps(void)
+> > >  	int cpu = 0;
+> > >  	int nthreads = 1;
+> > > 
+> > > diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
+> > > index 755dc98..f5717de 100644
+> > > --- a/arch/powerpc/kernel/sysfs.c
+> > > +++ b/arch/powerpc/kernel/sysfs.c
+> > > @@ -18,6 +18,7 @@
+> > >  #include <asm/smp.h>
+> > >  #include <asm/pmc.h>
+> > >  #include <asm/firmware.h>
+> > > +#include <asm/cputhreads.h>
+> > > 
+> > >  #include "cacheinfo.h"
+> > >  #include "setup.h"
+> > > @@ -1025,6 +1026,33 @@ static ssize_t show_physical_id(struct device *dev,
+> > >  }
+> > >  static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
+> > > 
+> > > +static ssize_t show_small_core_siblings(struct device *dev,
+> > > +					struct device_attribute *attr,
+> > > +					char *buf)
+> > > +{
+> > > +	struct cpu *cpu = container_of(dev, struct cpu, dev);
+> > > +	struct device_node *dn = of_get_cpu_node(cpu->dev.id, NULL);
+> > > +	struct thread_groups tg;
+> > > +	int i, j;
+> > > +	ssize_t ret = 0;
+> > > +
+> > 
+> > Here we need to check for validity of dn and error out accordingly.
+> 
+> Will add this check.
+> 
+> > 
+> > 
+> > > +	if (parse_thread_groups(dn, &tg))
+> > > +		return -ENODATA;
+> > 
+> > Did we miss a of_node_put(dn)?
+> 
+> Yes we did. Will fix this.
+> > 
+> > > +
+> > > +	i = get_cpu_thread_group_start(cpu->dev.id, &tg);
+> > > +
+> > > +	if (i == -1)
+> > > +		return -ENODATA;
+> > > +
+> > > +	for (j = 0; j < tg.threads_per_group - 1; j++)
+> > > +		ret += sprintf(buf + ret, "%d,", tg.thread_list[i + j]);
+> > 
+> > Here, we are making the assumption that group_start will always be the
+> > first thread in the thread_group. However we didnt make the same
+> > assumption in get_cpu_thread_group_start.
+> 
+> Above the get_cpu_thread_group_start function , we have the following
+> comment which indicates that group_start will point to the start of
+> the thread group. Is this what you are referring to?
+> 
+> /*
+>  * Returns the index to tg->thread_list that points to the the start
+>  * of the thread_group that @cpu belongs to.
+>  *
+>  * Returns -1 if cpu doesn't belong to any of the groups pointed to by
+>  * tg->thread_list.
+>  */
 
-  Linux 4.18-rc8 (2018-08-05 12:37:41 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v4.19
-
-for you to fetch changes up to d22d59362b7b2c749245f1269d447011c76ca41d:
-
-  Merge branch 'regulator-4.19' into regulator-next (2018-08-10 17:31:24 +0100)
-
-----------------------------------------------------------------
-regulator: Changes for v4.19
-
-The biggest set of changes in here is the addition of the Qualcomm RPMH
-driver.  As well as the regualtor driver itself being quite large due to
-the usual involved Qualcomm regulator stuff there's also some code
-shared with the arm-soc tree, a bus driver required to communicate with
-the hardware that actually winds up being much larger than the regulator
-driver itself and a LLCC driver that was part of the same signed tag
-used with the arm-soc tree.
-
-Other than that it's a fairly standard and quiet release, highlights
-include:
-
- - Addition of device links from regulator consumers to their
-   regulators, helping the core avoid dependency issues during suspend.
- - Support for the entertainingly innovative suspend implementation in
-   the BD9571MWV.
- - Support for switch regulators on the PFUZE100, this required two goes
-   due to backwards compatibility issues with old DTs that were
-   discovered.
- - Support for Freescale PFUZE3001 and SocioNext UniPhier.
- - The aforementioned Qualcomm RPMH driver together with the driver
-   changes required to support it.
-
-----------------------------------------------------------------
-Anton Vasilyev (1):
-      regulator: tps65217: Fix NULL pointer dereference on probe
-
-Axel Lin (2):
-      regulator: bd71837: Staticize ldo_2_volts
-      regulator: bd71837: Simplify bd71837_set_voltage_sel_restricted implementation
-
-Bjorn Andersson (1):
-      soc: qcom: smem: Correct check for global partition
-
-Charles Keepax (1):
-      regulator: arizona-ldo1: Use correct device to get enable GPIO
-
-Dan Carpenter (1):
-      regulator: max8997: clean up a condition in max8997_list_voltage()
-
-David Collins (2):
-      regulator: dt-bindings: add QCOM RPMh regulator bindings
-      regulator: add QCOM RPMh regulator driver
-
-Douglas Anderson (1):
-      drivers: qcom: rpmh-rsc: Check cmd_db_ready() to help children
-
-Fabio Estevam (1):
-      regulator: Revert "regulator: pfuze100: add enable/disable for switch"
-
-Geert Uytterhoeven (3):
-      regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"
-      regulator: bd9571mwv: Add support for toggle power switches
-      regulator: bd9571mwv: Document "backup_mode" sysfs file
-
-Johan Hovold (1):
-      soc: qcom: rmtfs-mem: fix memleak in probe error paths
-
-Krzysztof Kozlowski (2):
-      regulator: maxim: Add SPDX license identifiers
-      regulator: samsung: Add SPDX license identifiers
-
-Kunihiko Hayashi (2):
-      dt-bindings: regulator: add DT bindings for UniPhier regulator
-      regulator: uniphier: add regulator driver for UniPhier SoC
-
-Lina Iyer (10):
-      drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
-      dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-      drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
-      drivers: qcom: rpmh: add RPMH helper functions
-      drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
-      drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
-      drivers: qcom: rpmh: cache sleep/wake state requests
-      drivers: qcom: rpmh: allow requests to be sent asynchronously
-      drivers: qcom: rpmh: add support for batch RPMH request
-      drivers: qcom: rpmh-rsc: allow active requests from wake TCS
-
-Marco Felsch (2):
-      regulator: pfuze100: add optional disable switch-regulators binding
-      regulator: pfuze100: add support to en-/disable switch regulators
-
-Mark Brown (3):
-      Merge tag 'qcom-drivers-for-4.19' of git://git.kernel.org/.../agross/linux into regulator-4.19 for RPMH
-      Merge branch 'regulator-4.18' into regulator-linus
-      Merge branch 'regulator-4.19' into regulator-next
-
-Matthias Kaehlcke (1):
-      regulator: Fix typo in comment of struct regulator_linear_range
-
-Matti Vaittinen (3):
-      regulator: bd71837: Editorial cleanups.
-      regulator: bd71837: Remove duplicate description from DT bindings
-      regulator: bd71837: adobt MFD changes to regulator driver
-
-Niklas Cassel (6):
-      regulator: qcom_spmi: Fix warning Bad of_node_put()
-      regulator: qcom_spmi: Use correct regmap when checking for error
-      regulator: qcom_spmi: Do not initialise static to NULL
-      regulator: qcom_spmi: Indent with tabs instead of spaces
-      firmware: qcom: scm: add a dummy qcom_scm_assign_mem()
-      soc: qcom: llc-slice: Add missing MODULE_LICENSE()
-
-Peter Geis (2):
-      regulator: Add sw2_sw4 voltage table to cpcap regulator.
-      regulator: Add support for CPCAP regulators on Motorola Xoom devices.
-
-Raju P.L.S.S.S.N (2):
-      drivers: qcom: rpmh-rsc: fix the loop index check in get_req_from_tcs
-      drivers: qcom: rpmh: fix unwanted error check for get_tcs_of_type()
-
-Rishabh Bhatnagar (2):
-      dt-bindings: Documentation for qcom, llcc
-      drivers: soc: Add LLCC driver
-
-Stefan Wahren (2):
-      regulator: pfuze100: add pfuze3001 support
-      regulator: pfuze100: add pfuze3001 support
-
-Wei Yongjun (1):
-      regulator: bd9571mwv: Make symbol 'dev_attr_backup_mode' static
-
-pascal paillet (3):
-      regulator: core: Change suspend_late to suspend
-      driver core: Add device_link_remove function
-      regulator: core: Link consumer with regulator driver
-
- .../ABI/testing/sysfs-driver-bd9571mwv-regulator   |  27 +
- .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  26 +
- .../bindings/regulator/cpcap-regulator.txt         |   1 +
- .../devicetree/bindings/regulator/pfuze100.txt     |  86 ++-
- .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++
- .../bindings/regulator/rohm,bd71837-regulator.txt  |   8 -
- .../bindings/regulator/uniphier-regulator.txt      |  57 ++
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 137 ++++
- drivers/base/core.c                                |  30 +
- drivers/regulator/Kconfig                          |  25 +-
- drivers/regulator/Makefile                         |   4 +-
- drivers/regulator/arizona-ldo1.c                   |  27 +-
- drivers/regulator/bd71837-regulator.c              |  44 +-
- drivers/regulator/bd9571mwv-regulator.c            |  72 +-
- drivers/regulator/core.c                           |  44 +-
- drivers/regulator/cpcap-regulator.c                | 103 +++
- drivers/regulator/max14577-regulator.c             |  22 +-
- drivers/regulator/max77686-regulator.c             |  32 +-
- drivers/regulator/max77693-regulator.c             |  32 +-
- drivers/regulator/max77802-regulator.c             |  34 +-
- drivers/regulator/max8997-regulator.c              |  33 +-
- drivers/regulator/max8998.c                        |  28 +-
- drivers/regulator/pfuze100-regulator.c             | 112 ++-
- drivers/regulator/qcom-rpmh-regulator.c            | 769 +++++++++++++++++++++
- drivers/regulator/qcom_spmi-regulator.c            |  38 +-
- drivers/regulator/s2mpa01.c                        |  14 +-
- drivers/regulator/s2mps11.c                        |  21 +-
- drivers/regulator/s5m8767.c                        |  16 +-
- drivers/regulator/tps65217-regulator.c             |   2 +
- drivers/regulator/uniphier-regulator.c             | 213 ++++++
- drivers/soc/qcom/Kconfig                           |  27 +
- drivers/soc/qcom/Makefile                          |   6 +
- drivers/soc/qcom/llcc-sdm845.c                     |  94 +++
- drivers/soc/qcom/llcc-slice.c                      | 338 +++++++++
- drivers/soc/qcom/rmtfs_mem.c                       |   3 +-
- drivers/soc/qcom/rpmh-internal.h                   | 114 +++
- drivers/soc/qcom/rpmh-rsc.c                        | 693 +++++++++++++++++++
- drivers/soc/qcom/rpmh.c                            | 513 ++++++++++++++
- drivers/soc/qcom/smem.c                            |  10 +-
- drivers/soc/qcom/trace-rpmh.h                      |  82 +++
- include/dt-bindings/regulator/maxim,max77802.h     |   5 +-
- .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +
- include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
- include/linux/device.h                             |   1 +
- include/linux/qcom_scm.h                           |   4 +
- include/linux/regulator/driver.h                   |   4 +-
- include/linux/regulator/pfuze100.h                 |  11 +
- include/linux/soc/qcom/llcc-qcom.h                 | 180 +++++
- include/soc/qcom/rpmh.h                            |  51 ++
- include/soc/qcom/tcs.h                             |  56 ++
- 50 files changed, 4187 insertions(+), 272 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/uniphier-regulator.txt
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
- create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
- create mode 100644 drivers/regulator/uniphier-regulator.c
- create mode 100644 drivers/soc/qcom/llcc-sdm845.c
- create mode 100644 drivers/soc/qcom/llcc-slice.c
- create mode 100644 drivers/soc/qcom/rpmh-internal.h
- create mode 100644 drivers/soc/qcom/rpmh-rsc.c
- create mode 100644 drivers/soc/qcom/rpmh.c
- create mode 100644 drivers/soc/qcom/trace-rpmh.h
- create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
- create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
- create mode 100644 include/linux/soc/qcom/llcc-qcom.h
- create mode 100644 include/soc/qcom/rpmh.h
- create mode 100644 include/soc/qcom/tcs.h
-
---RE3pQJLXZi4fr8Xo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltxjPYACgkQJNaLcl1U
-h9AGlQf/ZgWxOFND4m0AnHGlC2wrvfL1+7l2QZKu2r98fr7/wpac/+Gm7cIdZ3yc
-t7WSCASWyD/wdWnK2g+e/iU4b7kMaF/JUygLKNd4GcrSFdeVeW5rtTruGrDUzrQN
-lDmOAzZRrI3w0Aa2qaCQKv9aLCM5JtCJ+kScJ0OoYNZjWfg5Y0zln4WFpb6DDRVu
-LR2WCJyjabIOVp47rS5Od5WPSEwTyqA79AcnyUzQUIgiKWo/N8hbj6NPjS95qXvQ
-+yRKkl2S6R2/pHkurag1/0Q6wVB3OSE4mr1hwyhXTkwl6mmI0uDVRpuIgTkl549R
-hFkR2drUnPjT8LGcnWZBAW4Nq/IvJw==
-=hSYE
------END PGP SIGNATURE-----
-
---RE3pQJLXZi4fr8Xo--
