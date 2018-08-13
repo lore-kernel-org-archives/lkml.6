@@ -2,90 +2,108 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F90C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF0BC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470EE2175D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:06:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470EE2175D
+	by mail.kernel.org (Postfix) with ESMTP id 14ECF21763
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:10:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14ECF21763
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730806AbeHNAuZ (ORCPT
+        id S1731029AbeHNAyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:50:25 -0400
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:36329 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730281AbeHNAuZ (ORCPT
+        Mon, 13 Aug 2018 20:54:13 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:44088 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729855AbeHNAyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:50:25 -0400
-Received: by mail-qt0-f177.google.com with SMTP id t5-v6so19205002qtn.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 15:06:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EtF1QubMFqNWaECATqGPj9SPzADQYaM49xGkyExDP0E=;
-        b=Zdo38uYz3w8obNeSsPn1o72xR9QXVrO0tWGL8Ak9uywkDE/HQXopO/b+NGsqusvr5N
-         TWXYAla81Xie/4TQT4mXUg6Vuo13S+LuqsZhyLIVDm8kq10hmEFuTpilEyIw6nrNA4nR
-         EXq/Sk5LReJ2Z5X9GA91drhaASip2ZUfDYvFjkUl53j8XiJVxKp3SwnxZ8wbmnIBAYGx
-         cewVEyNJRO6yd+MmiKfAKR7X3DV7vzg+lzwc1aCfCFPkfxfQvEHgcpApK67lV4XVo+Uw
-         ZZY7owjIwc+ckKKJJsWBLklJhqQQetkO2RH3Xx/QR5zpw6KL5zrzabVvAkLU/xKdkenf
-         57pw==
-X-Gm-Message-State: AOUpUlGkAJrqZpsHH91d6EHC2VN2yqnjW4X56fvUhHMeaVIvw6na+o2j
-        a3U4Fif7/x8N7UHr4wOJz349scQ7vpsKan9NM94=
-X-Google-Smtp-Source: AA+uWPyFAhrR4dNOhp5OeETAuGqPUU8jrDQ9SiU8QxmtOAHiKRQqwoTSqHehyBI3gJZNXH1bhIcW0/treJ+2nr9Px3Q=
-X-Received: by 2002:a0c:f804:: with SMTP id r4-v6mr16852150qvn.156.1534197976126;
- Mon, 13 Aug 2018 15:06:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180813215546.3828228-1-arnd@arndb.de> <CA+7y87rkaP5CAd4ionPLvOuoJDbnzbUL-C=E-FaSj7yjde8Lmw@mail.gmail.com>
-In-Reply-To: <CA+7y87rkaP5CAd4ionPLvOuoJDbnzbUL-C=E-FaSj7yjde8Lmw@mail.gmail.com>
+        Mon, 13 Aug 2018 20:54:13 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LiscI-1gRRD102tq-00dD0W; Tue, 14 Aug 2018 00:09:57 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 14 Aug 2018 00:05:59 +0200
-Message-ID: <CAK8P3a1-GQr9PDVZ-qs0qH36TifUfrroiXcfOhRBe6e5k-+SZA@mail.gmail.com>
-Subject: Re: [PATCH] cpumask: provide a dummy cpumask_next_wrap
-To:     caraitto@google.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Willem de Bruijn <willemb@google.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, rakib.mullick@gmail.com,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        mhkelley@outlook.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
+Subject: [PATCH] bitfield: avoid gcc-8 -Wint-in-bool-context warning
+Date:   Tue, 14 Aug 2018 00:09:34 +0200
+Message-Id: <20180813220950.194841-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:SkRN9ZwMqH7s9rpPVdqftpfV2tufaYvAiwkfRYJqjv0O2qjPnFs
+ jUw6O3t1ixiDPAXZjhiVtDvytSKlRTuoxSZxVnOdp6T1NZUd03fnBLG+bsyruBY6cJ2RmMU
+ TPpqZtNxnbTObSEYlhrdIKuRjSIMON1+uaniBPsf9UJBgfh7KYyXNTu8HPEhKWQoyUcVMY5
+ wJ22wfa33yautyoC6oWCg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8/eiLgOZK6w=:eN9pN3hWTqGXNsfIiLisZy
+ tUaCpQ4RJr2GCU3f+yWjpuaK1/RTVlkyyb2gRrWjsD/NyQMHj+mb5/RFb/h88N4UM86X4Nrop
+ DOngQefAM7wgmQ6B5rwUixqEzwL8gjWaTW4G5Vgiguog0ysZ+x0uv4vya0cihmWHDlGZadQCy
+ EkTYyU9DCglgnzaqvscxNw78Y1Zw+vqHtedN6/RX20NqhTG/i/znfc7bDy08A8figekhpwBez
+ NhQgIcFEZBm7ipYkbs0PCldxvXsj/TmdCrLnaXEoC1uWVntL1RfFaVqs5BmRnz2w+2PB9+jA3
+ WC3Ce7wxniXVSfZ7sfaKh/ZfVqZ4lF9H2aH1vYMlIUHc45/aedLpDgE8KivzO4GILs2K2h34u
+ 32n2EK/S7uMBwNkX8Jfao0BMfOQS+YTri0viPwqrquK1zT2zQlJwFmfW0UtB7nssTRxhOxaAF
+ n2k9PB4v0TsOKDlhu91dc+hhclO5+69vllHCg2/a5J7/xAUcDXUsZeB2A1XEbGT+P/s9KvTNI
+ dBZJ6L/jX1cxZhPvkudXtGsb1K2vc3D4TaiETQABWHqJRDvXjRRl6HBN01NMXLmMlRFJIiqEd
+ dqWr8dFqryk4isb1Xe+M5hCODmo5+NjdPTgGbC9BJ8xI/YiI+jiKDmUGgaTdNwpieqWEYCOY4
+ qk3gsDDS57LqbAJmJ1Pu/LZjwdCsLfErxVkq9342489VpAO5f5x0np3D94xZ1Cjhufjg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 12:02 AM Caleb Raitto <caraitto@google.com> wrote:
->
-> On Mon, Aug 13, 2018 at 2:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > The virtio_net driver has become the first one to call cpumask_next_wrap()
-> > even if CONFIG_SMP is disabled, leading to a build error:
-> >
-> > drivers/net/virtio_net.c: In function 'virtnet_set_affinity':
-> > drivers/net/virtio_net.c:1916:10: error: implicit declaration of function 'cpumask_next_wrap'; did you mean 'cpumask_next_and'? [-Werror=implicit-function-declaration]
-> >     cpu = cpumask_next_wrap(cpu, cpu_online_mask,
-> >
-> > Add a stub function along the lines of cpumask_first(), cpumask_next() etc.
-> > I'm not entirely sure what should be returned in this case, but at
-> > least for virtio_net, anything should work.
->
-> Sorry about the build break, I think this patch with a fix was already merged:
->
-> cpumask: make cpumask_next_wrap available without smp
-> https://patchwork.ozlabs.org/patch/956670/
+Passing an enum into FIELD_GET() produces a long but harmless warning on
+newer compilers:
 
-Ok, that's also a better fix than mine I think.
+                 from include/linux/linkage.h:7,
+                 from include/linux/kernel.h:7,
+                 from include/linux/skbuff.h:17,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:63:
+drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c: In function 'iwl_mvm_rx_mpdu_mq':
+include/linux/bitfield.h:56:20: error: enum constant in boolean context [-Werror=int-in-bool-context]
+   BUILD_BUG_ON_MSG(!(_mask), _pfx "mask is zero"); \
+                    ^
+...
+include/linux/bitfield.h:103:3: note: in expansion of macro '__BF_FIELD_CHECK'
+   __BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: "); \
+   ^~~~~~~~~~~~~~~~
+drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:1025:21: note: in expansion of macro 'FIELD_GET'
+    le16_encode_bits(FIELD_GET(IWL_RX_HE_PHY_SIBG_SYM_OR_USER_NUM_MASK,
 
-Thanks,
+The problem here is that the caller has no idea how the macro gets
+expanding, leading to a false-positive. It can be trivially avoided
+by doing a comparison against zero.
 
-        Arnd
+This only recently started appearing as the iwlwifi driver was patched
+to use FIELD_GET.
+
+Fixes: 514c30696fbc ("iwlwifi: add support for IEEE802.11ax")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/bitfield.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index 65a6981eef7b..3f1ef4450a7c 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -53,7 +53,7 @@
+ 	({								\
+ 		BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),		\
+ 				 _pfx "mask is not constant");		\
+-		BUILD_BUG_ON_MSG(!(_mask), _pfx "mask is zero");	\
++		BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");	\
+ 		BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?		\
+ 				 ~((_mask) >> __bf_shf(_mask)) & (_val) : 0, \
+ 				 _pfx "value too large for the field"); \
+-- 
+2.18.0
+
