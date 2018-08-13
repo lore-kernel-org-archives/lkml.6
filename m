@@ -3,203 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D399C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2D5C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E882175F
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C99CA20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:13:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ntc3csj0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E882175F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQUxk0rd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99CA20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbeHMJwU (ORCPT
+        id S1728377AbeHMJy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 05:52:20 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33575 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728237AbeHMJwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 05:52:20 -0400
-Received: by mail-yw1-f66.google.com with SMTP id c135-v6so12898041ywa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 00:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5pCo+BFgJOTsIvnxxdnozrefLH4vLCu7jOheTHlHAWg=;
-        b=Ntc3csj0JwIDangHGSFsgd4gOgBDdzT3oKdzfh0bRAhp5g9kkq2CfierECLlO3B9sC
-         CLnumCk+C8ansE0q1MsI7HYEUts6fQZSz99bfK06tMJunLeTO2e7AM0u63JUVqvyHmYE
-         NgUpBXCTG580zHhj1sCfaZpAvz11/hJxcYFME=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5pCo+BFgJOTsIvnxxdnozrefLH4vLCu7jOheTHlHAWg=;
-        b=UUrqa8KqOzpPgYP5qvB2z/fCrExGJs54ipexND8LjYOCfvw2oYM8paMJ1WLS+iRvKi
-         R7ZhNQQi70hoADJmzatVSrffb9WMO4gL/oltlyA8c68Zv3BFl4x0RPpgkiZgu+0YkCSP
-         x1gn+BJisB4kf6ROUmg8aZjkQOZ3GfeVusPYpSX/MLXrald+cwjMWbcp9e/Z92UkpmGD
-         jG3hO+aPiIfb9XhTZchH/mVmwEf29rkGTvc0RdtUW8mVdC6e8QGxTujEYJp7BDS1Eb5g
-         vUwXGwpxacc1gqYhwQ29VlaY8LIXD4bWbetxdQUIre6NXR5F8HKYSaA0sBCBoH4u9w6l
-         ne6w==
-X-Gm-Message-State: AOUpUlGOLPCUWMVhUW8Irz2WGNes+8zrJ4ntZvhMeP7fmzXJYFdfkke2
-        NM6aWa4/z+ZmSHTs1cCwW69lsAAoTUo=
-X-Google-Smtp-Source: AA+uWPyDH1+OLVvhQ88RDzAiBvAkKZUVRBdqkxCNiiCo4JHesW2m36r7zvsV+HDAzwK4quhMg13UOQ==
-X-Received: by 2002:a81:150d:: with SMTP id 13-v6mr9252284ywv.319.1534144282134;
-        Mon, 13 Aug 2018 00:11:22 -0700 (PDT)
-Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
-        by smtp.gmail.com with ESMTPSA id g203-v6sm9091470ywb.69.2018.08.13.00.11.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 00:11:19 -0700 (PDT)
-Received: by mail-yw1-f50.google.com with SMTP id l9-v6so12875352ywc.11
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 00:11:18 -0700 (PDT)
-X-Received: by 2002:a0d:e7c1:: with SMTP id q184-v6mr8421932ywe.435.1534144278167;
- Mon, 13 Aug 2018 00:11:18 -0700 (PDT)
+        Mon, 13 Aug 2018 05:54:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726704AbeHMJy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 05:54:29 -0400
+Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B36921834;
+        Mon, 13 Aug 2018 07:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534144411;
+        bh=TK1/mfdmnFRbnq1msxDHxVDyTJhU7I5h2Az6/V2GkWc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=bQUxk0rdogg9HNcGUuPSzRfNWaaC0j7HGNjA6gM2hc6/3bh0TQwjEOaFenGqxGQqn
+         aN5tCfeWPLBgtBmxwxhFXTxyCVbnrfG6/bzAH5CTJdKJx3hreExTsJrZcA5yJXhy4N
+         38NTZ7jBBHrntkOX83wH/AJT8eY9pHgSqfnUwTH4=
+Received: by mail-wm0-f46.google.com with SMTP id t25-v6so7712578wmi.3;
+        Mon, 13 Aug 2018 00:13:31 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEW+m9cBR39pNEEYaky0jhsiVf+fowUKiAQcCdSTDdVsO3uObtk
+        6eBLZmGdcwNWvx0qpNUd6oILLGQ/LBO2HORn5r0=
+X-Google-Smtp-Source: AA+uWPwjeTnxaQWWycI4Jebj3o1XDyCrbpi0ewZL+jluSu1XzcSEbfonDfEMvaPi+ASdNK3Z+1tktmzRnHJPhZ8htHM=
+X-Received: by 2002:a1c:9c56:: with SMTP id f83-v6mr6820845wme.135.1534144409782;
+ Mon, 13 Aug 2018 00:13:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180806155339.9473-1-enric.balletbo@collabora.com>
-In-Reply-To: <20180806155339.9473-1-enric.balletbo@collabora.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 13 Aug 2018 16:11:07 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CGhkfTRzSdTqtFh4zuQuFH0H5SVyKWtk98Ceh_izo4=A@mail.gmail.com>
-Message-ID: <CAAFQd5CGhkfTRzSdTqtFh4zuQuFH0H5SVyKWtk98Ceh_izo4=A@mail.gmail.com>
-Subject: Re: [PATCH] drm/rockchip: update cursors asynchronously through atomic.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 00:13:29
+ -0700 (PDT)
+In-Reply-To: <CANAwSgQBthsKMKBBnKBnCJdKwKOMm0XKRn5r=gnpdbC6Eu9=ag@mail.gmail.com>
+References: <20180806160933.6578-1-krzk@kernel.org> <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
+ <CAJKOXPds5s8omeR7UOB4u4HrYCZBTJX3t4YU4PSWBGb-9MG7iw@mail.gmail.com> <CANAwSgQBthsKMKBBnKBnCJdKwKOMm0XKRn5r=gnpdbC6Eu9=ag@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 13 Aug 2018 09:13:29 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdcyRavWHEowbg3Ob=55F5ta6xRUb9_A_e7sG_MFy-k7w@mail.gmail.com>
+Message-ID: <CAJKOXPdcyRavWHEowbg3Ob=55F5ta6xRUb9_A_e7sG_MFy-k7w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos: Add missing used PMIC regulators on
+ Exynos5422 Odroid boards
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On 13 August 2018 at 08:37, Anand Moon <linux.amoon@gmail.com> wrote:
+> Hi Krzysztof,
+>
+> On Sun, 12 Aug 2018 at 18:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 11 August 2018 at 08:39, Anand Moon <linux.amoon@gmail.com> wrote:
+>> > Hi Krzysztof,
+>> >
+>> > These patches should also be ported to u-boot to enable PMIC.
+>> >
+>> > I was just looking into S2MPS11B data sheet
+>> > According to the 1.2 Key Features of  S2MPS11
+>> >
+>> > BUCK1, BUCK2, BUCK3, BUCK4, BUCK6 have (0.65 V to 1.6 V) min /max range.
+>> > BUCK5 have (0.65 V to 2.0 V) min /max range.
+>> > BUCK7 have (1.2 V to 1.5 V) min / max range.
+>> > BUCK8 have (1.8 V to 2.1 V) min / max range.
+>> > BUCK10 have (0.75 V to 1.4 V) min / max range.
+>> >
+>> > BUCKBOST9 (3.0 V to 3.75 V) min / max range.
+>> >
+>> > LDO1, LDO6, LDO11, LDO22, LDO23, LDO27, LDO35 (0.8 V to 2.375 V) min / max range
+>> >
+>> > LDO2, LDO3, LDO5, LDO7, LDO9, LDO10, LD012, LDO13, LDO14, LDO15,
+>> > LDO16, LDO17, LDO18, LDO19, LDO20, LD021, LDO24, LDO25, LDO26,
+>> > LDO28, LDO29, LDO30, LDO31, LDO32, LDO33, LDO34, LDO36, LDO37, LDO38
+>> > (0.8 V to 3.95 V) min / max range
+>> >
+>> > I am aware off we have configures the min/max range as per board schematics.
+>> > but each regulator support dynamic voltage scale and have different
+>> > turn on/off voltage and current rating.
+>> >
+>> > So why are we not setting the regulator-min-microvolt /
+>> > regulator-max-microvolt as per datasheets.
+>> > Please correct me if I am wrong.
+>>
+>> Which regulators are not configured as in datasheet?
+>>
+>> Best regards,
+>> Krzysztof
+>
+> Almost all the regulator have some miss default match of min/max setting.
+> I have tried to adjust the setting on top your above patches.
+>
+> I am attaching my patch diff for testing.
+> I have have perform some stress testing and found no issue at my end.
 
-On Tue, Aug 7, 2018 at 12:53 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Add support to async updates of cursors by using the new atomic
-> interface for that.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> Hi,
->
-> This first version is slightly different from the RFC, note that I did
-> not maintain the Sean reviewed tag for that reason. With this version I
-> don't touch the atomic_update function and all is implemented in the
-> async_check/update functions. See the changelog for a list of changes.
->
-> The patch was tested on a Samsung Chromebook Plus in two ways.
->
->  1. Running all igt kms_cursor_legacy and kms_atomic@plane_cursor_legacy
->     tests and see that there is no regression after the patch.
->
->  2. Running weston using the atomic API.
-
-Thanks for the patch. This feature might look like a really minor
-thing, but we really had hard time dealing with users complaints, so
-having this in upstream would be a really useful thing.
-
-Let me post some comments inline.
-
->
-> Best regards,
->   Enric
->
-> Changes in v1:
-> - Rebased on top of drm-misc
-> - In async_check call drm_atomic_helper_check_plane_state to check that
->   the desired plane is valid and update various bits of derived state
->   (clipped coordinates etc.)
-> - In async_check allow to configure new scaling in the fast path.
-> - In async_update force to flush all registered PSR encoders.
-> - In async_update call atomic_update directly.
-> - In async_update call vop_cfg_done needed to set the vop registers and take effect.
->
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 53 +++++++++++++++++++++
->  1 file changed, 53 insertions(+)
->
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index e9f91278137d..dab70056ee73 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -811,10 +811,63 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
->         spin_unlock(&vop->reg_lock);
->  }
->
-> +static int vop_plane_atomic_async_check(struct drm_plane *plane,
-> +                                       struct drm_plane_state *state)
-> +{
-> +       struct vop_win *vop_win = to_vop_win(plane);
-> +       const struct vop_win_data *win = vop_win->data;
-> +       int min_scale = win->phy->scl ? FRAC_16_16(1, 8) :
-> +                                       DRM_PLANE_HELPER_NO_SCALING;
-> +       int max_scale = win->phy->scl ? FRAC_16_16(8, 1) :
-> +                                       DRM_PLANE_HELPER_NO_SCALING;
-> +       int ret;
-> +
-> +       if (plane != state->crtc->cursor)
-> +               return -EINVAL;
-> +
-> +       if (!plane->state)
-> +               return -EINVAL;
-> +
-> +       if (!plane->state->fb ||
-> +           plane->state->fb != state->fb)
-> +               return -EINVAL;
-
-While it covers for quite a big part of cursor movements, you may
-still expect jumpy cursor when hoovering text boxes or hyperlinks,
-since it changes the cursor image. Our downstream patch [1] actually
-took care of changing the framebuffer as well, although with the added
-complexity of referencing the old buffer at update time and releasing
-it in a flip work.
-
-[1] https://chromium.git.corp.google.com/chromiumos/third_party/kernel/+/1ad887e1a1349991c9e137b48cb32086e65347fc%5E%21/
-
-> +
-> +       ret = drm_atomic_helper_check_plane_state(plane->state,
-> +                                                 plane->crtc->state,
-> +                                                 min_scale, max_scale,
-> +                                                 true, true);
-> +       return ret;
-> +}
-> +
-> +static void vop_plane_atomic_async_update(struct drm_plane *plane,
-> +                                         struct drm_plane_state *new_state)
-> +{
-> +       struct vop *vop = to_vop(plane->state->crtc);
-> +
-> +       plane->state->crtc_x = new_state->crtc_x;
-> +       plane->state->crtc_y = new_state->crtc_y;
-> +       plane->state->crtc_h = new_state->crtc_h;
-> +       plane->state->crtc_w = new_state->crtc_w;
-> +       plane->state->src_x = new_state->src_x;
-> +       plane->state->src_y = new_state->src_y;
-> +       plane->state->src_h = new_state->src_h;
-> +       plane->state->src_w = new_state->src_w;
-> +
-> +       if (vop->is_enabled) {
-> +               rockchip_drm_psr_flush_all(plane->dev);
-
-We should use the inhibit mechanism when accessing VOP hardware. While
-the flush is expected to keep the PSR disabled for at least 100 ms,
-we're not in any atomic (pun not intended) context here and might get
-preempted for some unspecified time in very high load conditions.
+All the regulators you touched in this patch have proper setting of
+min and max values. They are configured to the values required by
+hardware, as in schematics.
 
 Best regards,
-Tomasz
+Krzysztof
