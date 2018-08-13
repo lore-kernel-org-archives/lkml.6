@@ -6,95 +6,95 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF60C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2290EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB712171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:24:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFB712171F
+	by mail.kernel.org (Postfix) with ESMTP id D69DA21781
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69DA21781
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbeHNAH6 (ORCPT
+        id S1730524AbeHNAID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:07:58 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:34543 "EHLO
+        Mon, 13 Aug 2018 20:08:03 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:59941 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728772AbeHNAH6 (ORCPT
+        with ESMTP id S1728772AbeHNAID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:07:58 -0400
+        Mon, 13 Aug 2018 20:08:03 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Lm4C9-1gO72H2RH7-00ZeGn; Mon, 13 Aug 2018 23:23:52 +0200
+ 0LrKaC-1g1Bkw20GS-0136zU; Mon, 13 Aug 2018 23:23:58 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Jordan Crouse <jcrouse@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] drm/msm/gpu: fix msm_gpu_crashstate_capture stub prototype
-Date:   Mon, 13 Aug 2018 23:23:43 +0200
-Message-Id: <20180813212351.2555757-1-arnd@arndb.de>
+Subject: [PATCH 2/2] drm/msm/gpu: fix building without debugfs
+Date:   Mon, 13 Aug 2018 23:23:44 +0200
+Message-Id: <20180813212351.2555757-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:aAPMKN6LEn05fLMvFvs3Ego/oMlVt7g/vCqLOyqWT2xQOc9FmGw
- IuU1/S36zbMj9c2qZacPMilnH2rRjXZqY7FnkcliGXFm5W439wLBP+ecGLKoLTcCSQ+cQne
- gHLtBVscwMvY4EKUJRtHMasPBWbh7vcmMy2oruCrOvq+R35sSz0DtdB8j19ATm7nims9xmV
- 6ki7Sw3KC+8Lw8/hl0qug==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Wp2a2UUF9e4=:gzv1v6e42YtcuflDzTRraK
- NR4rDikwqPofO2UaO0YrTM4ll8i0SZmXyc8fdsceVYGeld3CHA8wr5nWp94sur7DBbgFh+D47
- l7e+0OIS88a6lAQk28h5DmsrbMFr5T80NexT1Kg/VLpSYJKkLvsGfzfNSWw/1Qnvwd17j+B03
- IrqWxEJPRKQXvmvG5UoNumEh8EX+QHp0jYYKIc4kWgxaCy5ekkIpFME2FTGccb1XSAfCv21EE
- imgqzsKa3b+6uTk+aW4NQPs4b5xRcw6gohrvnNXnqqbAJqPIVuTEQSaLaFDjXIG0PZfoE5Mb5
- hIYNWDzn6SmozmHkbe55Vwit9nc+PvIJmr7dQnF4F4N31IUoF/lrGfKTB4h6gC+x8ym/alqd+
- 3eYlcR1A3qxHeHaH5Ohj5dmikEI2SwgWqu5JaTsd5bhmYGu9BFyOXyr3QnIrCyeVTYP5cRvrw
- pOwEZD/dz5Nu8e3CVdnTkWj5WOa8tLWcc3YthXuLv7EQC2yZcU9zJm+aR8pNHZK7eladVjHED
- FOnk5EevBGxGwRxNFHfhVUwPNSJQbmS+pce+N/U6G1QCiE/62l0M5ThlxNTBUViW/SjE/fNDq
- I6wyVmYcY47U2n6cdjd+YUDgOqPkRUhV1fByiR94umlvqcvOGv1BrUjOrRD1pn4q3/cJxAcGR
- 1mOV2AVqEMJMzeMX/Nskt36v8YOVv7G47f2+N8QVgrFN5G+NE9RWHQOjMgb9XuRuuqY4=
+In-Reply-To: <20180813212351.2555757-1-arnd@arndb.de>
+References: <20180813212351.2555757-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:5C9zMnJIm2j7aonRZ0RUaJoxxro5gafvjRhMgH0MCak7wLdTkUa
+ zyun0g7K1f1otb2jXQNiADlqmeT57rnDB+VmT6MUZvsvJ4zT8zbYoXQJuBAVsZOyU9LyZ57
+ stSrWwmSPiA37Vb5PmRVPxQ3ejBNQND3EPkt4NlwHBcnEBsBHUBV27TxejoWSYklzpkZ+AQ
+ Qwy6CcqCidW5tswvVwn6w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7dhPx8wMYqI=:f3Ougk7mbz7qgLOnustbh0
+ dejwPbW4f4RM16aI1nylAUyPn/8Y8jdBNrEhhFQoIdb3MUGUhUi1nngO0yguKM1KliTX4A9QA
+ H072eOE4bPtyeaRIOV2r33zU7XJhk1/mG8CVgjHAKDlxcGyFcOYeW2ItFoF7sE5zkWlKD7n5Y
+ daMcQnn1W3i6A3Detjs3N6gcpn8Ussx5vUbGvS20vCpbltcPEN+bmoTuVcZWc0eIyDYMJHTeH
+ vhBqchwiC69ZPiw3O2V/L0R6nYdRhBXo/erH69XHCpeykz2ffyuSV+/6XG/Phi5eHcn3EGrX2
+ tL+QSWqq1VUToI56K9fqy35WwUYQeiFjRhiDKeSbK99iKfaCnqqJ6b6WbKNg1pXM0BNLdjvAC
+ MgAhh2Xq0tLYz2rEgrvN+45J/QfTceOAM7WFWXkxK9MwNVK4P/Z5kFe3SDmYZ5ySL6AaY4ht6
+ CqYfTt7wkeWtiHjekfwAwL/kydyoq2pDFoCZenP/ibrbkIaoPNXqZAha9HgmWzH5HLgiBEybn
+ FoFbEs7BVp0zrZRMNCHf46D/HYT4wDkpCA3Tl08nR/feLtLnU+MXKLyJ0LY6cjRXp1eznKgt1
+ RV7e2jlBMVVcv/jtcnqF+hOT7YfaKXP6B7ZZ7i7drMwRWWhXtZjeq8g/2V337Nwkjt7HPl0Rh
+ QgF3MkPEz++ZsGYwspULobzZPmq5uLe3ry9fkkaXaQxV0KdFfOXzt6UPhfGEpwBI5IFg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function prototype recently changed, but the patch missed the
-second prototype that is used when CONFIG_DEV_COREDUMP is disabled:
+When debugfs is disabled, but coredump is turned on, the adreno driver fails to build:
 
-drivers/gpu/drm/msm/msm_gpu.c: In function 'recover_worker':
-drivers/gpu/drm/msm/msm_gpu.c:461:34: error: passing argument 2 of 'msm_gpu_crashstate_capture' from incompatible pointer type [-Werror=incompatible-pointer-types]
-  msm_gpu_crashstate_capture(gpu, submit, comm, cmd);
-                                  ^~~~~~
-drivers/gpu/drm/msm/msm_gpu.c:370:67: note: expected 'char *' but argument is of type 'struct msm_gem_submit *'
- static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
-                                                             ~~~~~~^~~~
-drivers/gpu/drm/msm/msm_gpu.c:461:2: error: too many arguments to function 'msm_gpu_crashstate_capture'
-  msm_gpu_crashstate_capture(gpu, submit, comm, cmd);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/msm/msm_gpu.c:370:13: note: declared here
- static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+   .show = adreno_show,
+    ^~~~
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base')
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: error: initialization of 'void (*)(struct msm_gpu *, struct msm_gem_submit *, struct msm_file_private *)' from incompatible pointer type 'void (*)(struct msm_gpu *, struct msm_gpu_state *, struct drm_printer *)' [-Werror=incompatible-pointer-types]
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base.submit')
+drivers/gpu/drm/msm/adreno/a4xx_gpu.c:546:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/adreno/a5xx_gpu.c:1460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/adreno/a6xx_gpu.c:769:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_devcoredump_read':
+drivers/gpu/drm/msm/msm_gpu.c:289:12: error: 'const struct msm_gpu_funcs' has no member named 'show'
 
-Change the stub to match the normal function.
+Adjust the #ifdef to make it build again.
 
-Fixes: cdb95931dea3 ("drm/msm/gpu: Add the buffer objects from the submit to the crash dump")
+Fixes: c0fec7f562ec ("drm/msm/gpu: Capture the GPU state on a GPU hang")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/msm/msm_gpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Not sure if this does the right thing, but it does fix the build regression
+---
+ drivers/gpu/drm/msm/msm_gpu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 5e808cfec345..46e6b82f7b66 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -367,8 +367,8 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 		msm_gpu_devcoredump_read, msm_gpu_devcoredump_free);
- }
- #else
--static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
--		char *cmd)
-+static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
-+		struct msm_gem_submit *submit, char *comm, char *cmd)
- {
- }
- #endif
+diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+index 9122ee6e55e4..1fe93920fb25 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.h
++++ b/drivers/gpu/drm/msm/msm_gpu.h
+@@ -63,7 +63,7 @@ struct msm_gpu_funcs {
+ 	struct msm_ringbuffer *(*active_ring)(struct msm_gpu *gpu);
+ 	void (*recover)(struct msm_gpu *gpu);
+ 	void (*destroy)(struct msm_gpu *gpu);
+-#ifdef CONFIG_DEBUG_FS
++#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_DEV_COREDUMP)
+ 	/* show GPU status in debugfs: */
+ 	void (*show)(struct msm_gpu *gpu, struct msm_gpu_state *state,
+ 			struct drm_printer *p);
 -- 
 2.18.0
 
