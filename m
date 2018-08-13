@@ -2,63 +2,73 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A0FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCB4C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F3621774
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:54:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F3621774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+	by mail.kernel.org (Postfix) with ESMTP id 4951321763
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4951321763
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbeHMSgy (ORCPT
+        id S1730021AbeHMShq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 14:36:54 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:32827 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729191AbeHMSgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 14:36:54 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id w7DFrwh7014771;
-        Mon, 13 Aug 2018 17:53:58 +0200
-Date:   Mon, 13 Aug 2018 17:53:58 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] WireGuard: Secure Network Tunnel
-Message-ID: <20180813155358.GK14633@1wt.eu>
-References: <20180731191102.2434-1-Jason@zx2c4.com>
- <1534174811.7872.3.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534174811.7872.3.camel@HansenPartnership.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+        Mon, 13 Aug 2018 14:37:46 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:52918 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729944AbeHMShq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 14:37:46 -0400
+Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 754FE1458045D;
+        Mon, 13 Aug 2018 08:54:57 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 08:54:56 -0700 (PDT)
+Message-Id: <20180813.085456.1905254242911513146.davem@davemloft.net>
+To:     salil.mehta@huawei.com
+Cc:     yisen.zhuang@huawei.com, lipeng321@huawei.com,
+        mehta.salil.lnk@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        linyunsheng@huawei.com
+Subject: Re: [PATCH net-next 1/9] net: hns3: Add support for serdes
+ loopback selftest
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180812094738.14852-2-salil.mehta@huawei.com>
+References: <20180812094738.14852-1-salil.mehta@huawei.com>
+        <20180812094738.14852-2-salil.mehta@huawei.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 13 Aug 2018 08:54:57 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 08:40:11AM -0700, James Bottomley wrote:
-> Could we please build planning for this crypto failure day into
-> wireguard now rather than have to do it later?  It doesn't need to be
-> full cipher agility, it just needs to be the ability to handle multiple
-> protocol versions ... two should do it because that gives a template to
-> follow (and test version to try to find bugs in the implementation). 
+From: Salil Mehta <salil.mehta@huawei.com>
+Date: Sun, 12 Aug 2018 10:47:30 +0100
 
-It's also what provides a *real* upgrade path to future versions :
-before deploying you need something which works, and the only way to
-get something working at a large scale is to have early adopters. Those
-willing to deploy a beta version will not do it if it requires to lose
-all their users and possibly to make rollbacks impossible. At least for
-this it's important to support an optionnal new version on top of the
-existing one (i.e. prod + beta together).
+> -#define HNS3_SELF_TEST_TPYE_NUM		1
+> +#define HNS3_SELF_TEST_TPYE_NUM		2
 
-Cheers,
-Willy
+Is this supposed to be the number of self test "types"?  If so, this CPP
+macro should be named "HNS3_SELF_TEST_TYPE_NUM".
+
+> +
+> +		count ++;
+                     ^
+
+Please remove that unnecessary space.
+
+> +	} while (++i < HCLGE_SERDES_RETRY_NUM  &&
+                                             ^^
+
+Only need one space there, not two.
+					     
