@@ -3,98 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A752DC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986A4C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6099121759
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:35:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6099121759
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 58F0321798
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:36:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F0321798
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbeHMVTU (ORCPT
+        id S1730281AbeHMVTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 17:19:20 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8627 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729748AbeHMVTU (ORCPT
+        Mon, 13 Aug 2018 17:19:31 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36999 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729748AbeHMVTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 17:19:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b71cf7a0001>; Mon, 13 Aug 2018 11:35:38 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 13 Aug 2018 11:35:56 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 13 Aug 2018 11:35:56 -0700
-Received: from [10.2.160.156] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 13 Aug
- 2018 18:35:55 +0000
-Subject: Re: [PATCH] drivers/thermal/tegra: fix a doule free devce node
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     zhong jiang <zhongjiang@huawei.com>, <ezequiel@collabora.com>,
-        <daniel.lezcano@linaro.org>
-CC:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <1533822056-33930-1-git-send-email-zhongjiang@huawei.com>
- <312fcf2a-ab47-9aa4-3b1f-bca5f6a4d58c@nvidia.com>
-Message-ID: <88fb9427-9f3d-3ddb-c4cc-00b6e4de76ce@nvidia.com>
-Date:   Mon, 13 Aug 2018 19:35:53 +0100
+        Mon, 13 Aug 2018 17:19:31 -0400
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 00EE61BF204;
+        Mon, 13 Aug 2018 18:35:54 +0000 (UTC)
+Subject: Re: [PATCH v6 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+References: <20180806175711.24438-1-alex@ghiti.fr>
+From:   Alex Ghiti <alex@ghiti.fr>
+Message-ID: <55833b7d-3c29-d7ac-41f1-82f1ac228e4a@ghiti.fr>
+Date:   Mon, 13 Aug 2018 18:35:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <312fcf2a-ab47-9aa4-3b1f-bca5f6a4d58c@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20180806175711.24438-1-alex@ghiti.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: fr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding linux-tegra ...
+Hi everyone,
 
-On 13/08/18 19:30, Jon Hunter wrote:
-> 
-> On 09/08/18 14:40, zhong jiang wrote:
->> Device node iterators will get the return node. Meawhile, It is
->> also put the previous device node. An explicit put will cause
->> a double put.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index ed28110..3aa55c9 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -980,7 +980,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
->>  		tcd = thermal_of_cooling_device_register(np_stcc,
->>  							 (char *)name, ts,
->>  							 &throt_cooling_ops);
->> -		of_node_put(np_stcc);
->>  		if (IS_ERR_OR_NULL(tcd)) {
->>  			dev_err(dev,
->>  				"throttle-cfg: %s: failed to register cooling device\n",
->>
-> 
-> Thanks!
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Does someone need anything more to be done regarding this series ?
 
-Just need to fix the typos in the subject and commit log.
+Thanks,
 
-Cheers
-Jon
+Alex
 
--- 
-nvpublic
+
+On 08/06/2018 05:57 PM, Alexandre Ghiti wrote:
+> [CC linux-mm for inclusion in -mm tree]
+>                                                                                   
+> In order to reduce copy/paste of functions across architectures and then
+> make riscv hugetlb port (and future ports) simpler and smaller, this
+> patchset intends to factorize the numerous hugetlb primitives that are
+> defined across all the architectures.
+>                                                                                   
+> Except for prepare_hugepage_range, this patchset moves the versions that
+> are just pass-through to standard pte primitives into
+> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
+> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
+>                                                                                   
+> s390 architecture has not been tackled in this serie since it does not
+> use asm-generic/hugetlb.h at all.
+>                                                                                   
+> This patchset has been compiled on all addressed architectures with
+> success (except for parisc, but the problem does not come from this
+> series).
+>                                                                                   
+> v6:
+>    - Remove nohash/32 and book3s/32 powerpc specific implementations in
+>      order to use the generic ones.
+>    - Add all the Reviewed-by, Acked-by and Tested-by in the commits,
+>      thanks to everyone.
+>                                                                                   
+> v5:
+>    As suggested by Mike Kravetz, no need to move the #include
+>    <asm-generic/hugetlb.h> for arm and x86 architectures, let it live at
+>    the top of the file.
+>                                                                                   
+> v4:
+>    Fix powerpc build error due to misplacing of #include
+>    <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
+>    pointed by Christophe Leroy.
+>                                                                                   
+> v1, v2, v3:
+>    Same version, just problems with email provider and misuse of
+>    --batch-size option of git send-email
+>
+> Alexandre Ghiti (11):
+>    hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+>    hugetlb: Introduce generic version of hugetlb_free_pgd_range
+>    hugetlb: Introduce generic version of set_huge_pte_at
+>    hugetlb: Introduce generic version of huge_ptep_get_and_clear
+>    hugetlb: Introduce generic version of huge_ptep_clear_flush
+>    hugetlb: Introduce generic version of huge_pte_none
+>    hugetlb: Introduce generic version of huge_pte_wrprotect
+>    hugetlb: Introduce generic version of prepare_hugepage_range
+>    hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+>    hugetlb: Introduce generic version of huge_ptep_set_access_flags
+>    hugetlb: Introduce generic version of huge_ptep_get
+>
+>   arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+>   arch/arm/include/asm/hugetlb.h               | 30 ----------
+>   arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+>   arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+>   arch/mips/include/asm/hugetlb.h              | 40 +++----------
+>   arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+>   arch/powerpc/include/asm/book3s/32/pgtable.h |  6 --
+>   arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+>   arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+>   arch/powerpc/include/asm/nohash/32/pgtable.h |  6 --
+>   arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+>   arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+>   arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+>   arch/x86/include/asm/hugetlb.h               | 69 ----------------------
+>   include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
+>   15 files changed, 135 insertions(+), 394 deletions(-)
+>
+
