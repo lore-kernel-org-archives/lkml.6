@@ -4,62 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 181F0C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CAAC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9144A2183C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EAF621840
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:36:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsYEpScZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9144A2183C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n6aG+oVY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EAF621840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeHMKRT (ORCPT
+        id S1728635AbeHMKRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 06:17:19 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46410 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727799AbeHMKRS (ORCPT
+        Mon, 13 Aug 2018 06:17:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55830 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbeHMKRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 06:17:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h14-v6so13335953wrw.13;
-        Mon, 13 Aug 2018 00:36:13 -0700 (PDT)
+        Mon, 13 Aug 2018 06:17:20 -0400
+Received: by mail-wm0-f65.google.com with SMTP id f21-v6so7792968wmc.5;
+        Mon, 13 Aug 2018 00:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:user-agent:in-reply-to:references:mime-version
          :content-transfer-encoding:subject:to:cc:from:message-id;
         bh=1oNbDkLytzdInFomOJqJb5k4arwF7khLx5Lntwye7jo=;
-        b=YsYEpScZG/Vj8E+XYGyW/Z5pEu9mftuaoX3QBtTzDF8v1+D/fWGdVJWiVOnu9uuxX3
-         d6xV548nF3LK1Wq8veLDlykEZ020mGKIIMRVDspbfFfDHnJLw3tvBburcsBAam8hvyjI
-         0SinlHEcLdXwxV+wD8a+8PK9KdZRRjHzNXdZKhG0IenKCYFdos2o0A2Pgaq+YMAXHFsi
-         6BqDqx8Ns9fkFS8l0nujYCu3QR+fJsbi40Sto2r/F3Z0eO8zL9zjMKmfqNg+hIpcKXQh
-         yBa2p/o8JmUPitQ732jj4kwi2aZ740CTXvyUiEJe+C05oXdUCD7iUz3fB+X8cfRiCRTi
-         Ocpg==
+        b=n6aG+oVYPtAnHTVCH1L8b4P0ieib49fYuPyt7LH5UPK1vnftHyb/NgILvGbsfeTKaS
+         f94U1Cw6/+BPGPPNEGTAJ77nCt7qVGXaYWxfXaVqh0TOfITHLtyWLGKz7td+Iyp4fbEH
+         c6vZPlhhmTey47nTyJ0KnCaxn3Bhx2qOjhOn9MlOY0Je/2Bmg4BIRKCVqcN5PvVZyW6V
+         G1WbyZ0/L+E07z6L3dQRcc1gPUllcSNdceCBzLUDGY6BhJrqeDs4RMK+7Yrr0JIHNRFO
+         j9De4pawzHqV9Dt0yQF7d7WiJeOnzSa+4Dm80c5TqVBUilV21WORgx45TVbrJOCt2O1g
+         vlTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:user-agent:in-reply-to:references
          :mime-version:content-transfer-encoding:subject:to:cc:from
          :message-id;
         bh=1oNbDkLytzdInFomOJqJb5k4arwF7khLx5Lntwye7jo=;
-        b=pfGTwqCMoN/w8OFRtcrcfVl8CTjBe0qdGSWv92vhFMehfyhm88GvzOokkCKrvEGZjA
-         oTOmFIDQotsJZyfaaK8M1AjL7ECt5+LKqDL9rcJtiv01bd7dV1HnuAZkWyDpzCzlwS3+
-         +gdXUa0H0+fwar4k4w7AdyNfcazLC2A4kTrFNsRvmpPwhkaipwCWEpnwBjkgiDtpEg7G
-         Kvphi3WKJACmIJvpmpEu56iQGktUeZT74aYOXaTMnS09rGeKWbc0D5slKAGmETSBghtx
-         trX9J3PWVi3mH1BpBojhK3L176ryGl2i3GmqRcQakZ0ehxc+bOGTRkQ3H1dwUO9sAn10
-         NP9A==
-X-Gm-Message-State: AOUpUlGuBn7vu+2Lj1DrfLV0amR8bXOZZo6Meoeem6dGoKfxcLztzWV0
-        +AnonhTJ+goIYiic7KSgxg==
-X-Google-Smtp-Source: AA+uWPyBpga2gbbZylnEjC+TLKaxS4isyRkTcOvHTf/5COIDf/6/et5xnoxAvIUNKApEo8UvZmy4Kg==
-X-Received: by 2002:adf:c4f0:: with SMTP id o45-v6mr10307163wrf.173.1534145773033;
-        Mon, 13 Aug 2018 00:36:13 -0700 (PDT)
+        b=ln6HvzJoS3Uk9bVb/bJ9eauA6D9GQ09IGWecdVbFLbchM5yakIyV49KARZyVH2CHlb
+         +GLXYXe/KA4Ys1fXLINoxYR0cS8KDReNMeJWOOI/sT4BVjeYOWP3B5g0BcXs35xyLaGy
+         SW03e9os87ZB/LbVdvgLF27oUPIALY4slNh5dUPBeEHxGaMLCwMQ+rFav0u76ry8JL0Z
+         JkHiZtNZfgZxJMGSvvDupPCxk6HgvD7kKUbNLaXHxPTbvl8DwcebSwd+SDDYjqyxGYO1
+         L9wRcBmLQy0RMvG2/5ikT9TvXdqfYZVRNbsxZ2e1ocg91w1NNvv557QFWugmo1AAi4bu
+         AA+g==
+X-Gm-Message-State: AOUpUlEdyLoFPA5X5BJbA7cVWbhzesqqoMX++o1j2fpbh8jsDJpdgUbx
+        cNQ5x6d+lFl2VuB9r/Ov0Q==
+X-Google-Smtp-Source: AA+uWPxN8mCvh5RXggN6Td4E81QDk5sHPuwyHxHUQIXw5v44yt/snWDQ0arJyhc/bGdp58KTr0Ey7g==
+X-Received: by 2002:a1c:1748:: with SMTP id 69-v6mr7055497wmx.75.1534145775088;
+        Mon, 13 Aug 2018 00:36:15 -0700 (PDT)
 Received: from Helena.home (host86-141-127-107.range86-141.btcentralplus.com. [86.141.127.107])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm21705589wrp.87.2018.08.13.00.36.12
+        by smtp.gmail.com with ESMTPSA id 66-v6sm19138105wmw.34.2018.08.13.00.36.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 00:36:12 -0700 (PDT)
+        Mon, 13 Aug 2018 00:36:14 -0700 (PDT)
 Date:   Mon, 13 Aug 2018 08:36:09 +0100
 User-Agent: K-9 Mail for Android
 In-Reply-To: <970132e2-63ec-da56-07a2-56858c5b01ce@ysoft.com>
@@ -78,7 +78,7 @@ CC:     linux-arm-msm@vger.kernel.org,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 From:   Craig Tatlor <ctatlor97@gmail.com>
-Message-ID: <0041C2DD-2D93-49CE-9703-4C3FAC041F77@gmail.com>
+Message-ID: <653C916B-1891-4393-8C70-14617AC4CC7F@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
