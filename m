@@ -3,42 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB429C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA69C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7032172D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7032172D
+	by mail.kernel.org (Postfix) with ESMTP id 414402172D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:32:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 414402172D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbeHMXQh (ORCPT
+        id S1730390AbeHMXQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 19:16:37 -0400
-Received: from mga17.intel.com ([192.55.52.151]:55729 "EHLO mga17.intel.com"
+        Mon, 13 Aug 2018 19:16:42 -0400
+Received: from mga04.intel.com ([192.55.52.120]:30711 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728540AbeHMXQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 19:16:36 -0400
+        id S1730300AbeHMXQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 19:16:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2018 13:32:48 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2018 13:32:54 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,234,1531810800"; 
-   d="scan'208";a="248535350"
+   d="scan'208";a="224342244"
 Received: from tstruk-mobl1.jf.intel.com ([10.7.196.170])
-  by orsmga005.jf.intel.com with ESMTP; 13 Aug 2018 13:32:48 -0700
-Subject: [PATCH v5 0/2] tpm: add support for nonblocking operation
+  by orsmga004.jf.intel.com with ESMTP; 13 Aug 2018 13:32:53 -0700
+Subject: [PATCH v5 1/2] tpm: add ptr to the tpm_space struct to file_priv
 From:   Tadeusz Struk <tadeusz.struk@intel.com>
 To:     jarkko.sakkinen@linux.intel.com
 Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date:   Mon, 13 Aug 2018 13:32:48 -0700
-Message-ID: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
+Date:   Mon, 13 Aug 2018 13:32:53 -0700
+Message-ID: <153419237378.8189.17192381683473461307.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
+References: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -48,78 +49,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TCG SAPI specification [1] defines a set of functions, which allow
-applications to use the TPM device in either blocking or non-blocking fashion.
-Each command defined by the specification has a corresponding
-Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-mode of operation. Currently the TPM driver supports only blocking calls,
-which doesn't allow asynchronous IO operations.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this feature.
-The new functionality can be tested using standard TPM tools implemented
-in [2], together with modified TCTI from [3], and an example application
-by Philip Tricca [4]. Here is a short description from Philip:
+Add a ptr to struct tpm_space to the file_priv to have an easy
+access to it in the async job without the need to allocate memory.
+This also allows to consolidate of the write operations for
+the two interfaces.
 
-"The example application `glib-tss2-event` uses a glib main event loop
-to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-using a glib timer event to time the operation. A GSource object is
-used to generate an event when the FD underlying the tss2 function
-call has data ready. While the application waits for an event indicating
-that the CreatePrimary operation is complete, it counts timer events
-that occur every 100ms. Once the CreatePrimary operation completes the
-number of timer events that occurred is used to make a rough calculation
-of the elapsed time. This value is then printed to the console.
-This takes ~300 lines of C code and requires no management or
-synchronization of threads. The glib GMainContext is "just a poll()
-loop" according to the glib documentation here:
-
-https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
-
-and so supporting 'poll' is the easiest way to integrate with glib /
-gtk+. This is true of any other event system that relies on 'poll'
-instead of worker threads."
-
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-[2] https://github.com/tpm2-software/tpm2-tools
-[3] https://github.com/tstruk/tpm2-tss/tree/async
-[4] https://github.com/flihp/glib-tss2-async-example
-
+Tested-by: Philip Tricca <philip.b.tricca@intel.com>
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 ---
-Changes in v5:
-- Changed the workqueue allocation time back from the first user interface
-  open to module init.
+ drivers/char/tpm/tpm-dev-common.c |    8 +++++---
+ drivers/char/tpm/tpm-dev.c        |   10 ++--------
+ drivers/char/tpm/tpm-dev.h        |    5 +++--
+ drivers/char/tpm/tpmrm-dev.c      |   14 ++------------
+ 4 files changed, 12 insertions(+), 25 deletions(-)
 
-Changes in v4:
-- Changed the way buffer_mutex is handled in nonblocking mode so that
-  it is not held when write() returns to user space.
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index e4a04b2d3c32..f0c033b69b62 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -43,9 +43,11 @@ static void timeout_work(struct work_struct *work)
+ }
+ 
+ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+-		     struct file_priv *priv)
++		     struct file_priv *priv, struct tpm_space *space)
+ {
+ 	priv->chip = chip;
++	priv->space = space;
++
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+ 	INIT_WORK(&priv->work, timeout_work);
+@@ -79,7 +81,7 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ }
+ 
+ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+-			 size_t size, loff_t *off, struct tpm_space *space)
++			 size_t size, loff_t *off)
+ {
+ 	struct file_priv *priv = file->private_data;
+ 	size_t in_size = size;
+@@ -119,7 +121,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		mutex_unlock(&priv->buffer_mutex);
+ 		return -EPIPE;
+ 	}
+-	out_size = tpm_transmit(priv->chip, space, priv->data_buffer,
++	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+ 				sizeof(priv->data_buffer), 0);
+ 
+ 	tpm_put_ops(priv->chip);
+diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+index ebd74ab5abef..98b9630c3a36 100644
+--- a/drivers/char/tpm/tpm-dev.c
++++ b/drivers/char/tpm/tpm-dev.c
+@@ -39,7 +39,7 @@ static int tpm_open(struct inode *inode, struct file *file)
+ 	if (priv == NULL)
+ 		goto out;
+ 
+-	tpm_common_open(file, chip, priv);
++	tpm_common_open(file, chip, priv, NULL);
+ 
+ 	return 0;
+ 
+@@ -48,12 +48,6 @@ static int tpm_open(struct inode *inode, struct file *file)
+ 	return -ENOMEM;
+ }
+ 
+-static ssize_t tpm_write(struct file *file, const char __user *buf,
+-			 size_t size, loff_t *off)
+-{
+-	return tpm_common_write(file, buf, size, off, NULL);
+-}
+-
+ /*
+  * Called on file close
+  */
+@@ -73,6 +67,6 @@ const struct file_operations tpm_fops = {
+ 	.llseek = no_llseek,
+ 	.open = tpm_open,
+ 	.read = tpm_common_read,
+-	.write = tpm_write,
++	.write = tpm_common_write,
+ 	.release = tpm_release,
+ };
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index b24cfb4d3ee1..4048677bbd78 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -6,6 +6,7 @@
+ 
+ struct file_priv {
+ 	struct tpm_chip *chip;
++	struct tpm_space *space;
+ 
+ 	/* Data passed to and from the tpm via the read/write calls */
+ 	size_t data_pending;
+@@ -18,11 +19,11 @@ struct file_priv {
+ };
+ 
+ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+-		     struct file_priv *priv);
++		     struct file_priv *priv, struct tpm_space *space);
+ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 			size_t size, loff_t *off);
+ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+-			 size_t size, loff_t *off, struct tpm_space *space);
++			 size_t size, loff_t *off);
+ void tpm_common_release(struct file *file, struct file_priv *priv);
+ 
+ #endif
+diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
+index 1a0e97a5da5a..96006c6b9696 100644
+--- a/drivers/char/tpm/tpmrm-dev.c
++++ b/drivers/char/tpm/tpmrm-dev.c
+@@ -28,7 +28,7 @@ static int tpmrm_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
+ 	}
+ 
+-	tpm_common_open(file, chip, &priv->priv);
++	tpm_common_open(file, chip, &priv->priv, &priv->space);
+ 
+ 	return 0;
+ }
+@@ -45,21 +45,11 @@ static int tpmrm_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-static ssize_t tpmrm_write(struct file *file, const char __user *buf,
+-		   size_t size, loff_t *off)
+-{
+-	struct file_priv *fpriv = file->private_data;
+-	struct tpmrm_priv *priv = container_of(fpriv, struct tpmrm_priv, priv);
+-
+-	return tpm_common_write(file, buf, size, off, &priv->space);
+-}
+-
+ const struct file_operations tpmrm_fops = {
+ 	.owner = THIS_MODULE,
+ 	.llseek = no_llseek,
+ 	.open = tpmrm_open,
+ 	.read = tpm_common_read,
+-	.write = tpmrm_write,
++	.write = tpm_common_write,
+ 	.release = tpmrm_release,
+ };
+-
 
-Changes in v3:
-- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
-  It complained because there is a module_exit() in another file already.
-- Added info on example application from Philip
-
-Changes in v2:
-- Split the change into two separate patches. First patch adds a pointer
-  to the space to the struct file_priv to have access to it from the async job.
-  This is to avoid memory allocations on every write call. Now everything
-  what's needed is in the file_priv struct.
-- Renamed the 'work' member of the timer to avoid confusion.
-  Now there are 'timeout_work' and 'async_work'.
-- Removed the global wait queue and moved it to file_priv.
-- Only creating the work queue when the first file is opened.
-
-Tadeusz Struk (2):
-      tpm: add ptr to the tpm_space struct to file_priv
-      tpm: add support for nonblocking operation
-
- drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   22 +++--
- drivers/char/tpm/tpm-dev.h        |   19 +++--
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
- 6 files changed, 152 insertions(+), 72 deletions(-)
-
---
-TS
