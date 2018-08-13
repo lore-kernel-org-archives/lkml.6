@@ -3,108 +3,258 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFB4C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DBBC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED48B21756
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:37:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED48B21756
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id A15B521767
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:38:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15B521767
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbeHMPTg (ORCPT
+        id S1729324AbeHMPUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 11:19:36 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:52626 "EHLO fuzix.org"
+        Mon, 13 Aug 2018 11:20:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:40529 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728455AbeHMPTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 11:19:36 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w7DCa1iG010017;
-        Mon, 13 Aug 2018 13:36:01 +0100
-Date:   Mon, 13 Aug 2018 13:36:00 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
-Cc:     Jian-Hong Pan <starnight@g.ncu.edu.tw>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        Michael =?UTF-8?B?UsO2ZGVy?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        Konstantin =?UTF-8?B?QsO2aG0=?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>,
-        "contact@snootlab.com" <contact@snootlab.com>,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        Alexander Graf <agraf@suse.de>,
-        Michal =?UTF-8?B?S3ViZcSNZWs=?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Pieter ROBYNS <pieter.robyns@uhasselt.be>,
-        Hasnain Virk <Hasnain.Virk@arm.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
-        Xue Liu <liuxuenetmail@gmail.com>
-Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
-Message-ID: <20180813133600.180abc03@alans-desktop>
-In-Reply-To: <11276f7d-0175-05e9-a9bd-c72868067081@suse.de>
-References: <20180701110804.32415-1-afaerber@suse.de>
-        <CAC=mGzgUCopz2xTOA0R-WD8a1DOaOOUn=YpfdMiJ33y3hnh6kg@mail.gmail.com>
-        <92ee4016-1da9-826b-3674-b2d604a64848@suse.de>
-        <20180808213640.10a1d76f@alans-desktop>
-        <a70e9715-beac-d9a8-145e-de00175e56fa@suse.de>
-        <20180809125939.39ac2cc9@alans-desktop>
-        <CAC=mGzjn4Kc-q9NFwX6NhU4V_thnzBP8SHtFQKyRbpSKR=yx3w@mail.gmail.com>
-        <20180810165711.59bf26f7@alans-desktop>
-        <CAC=mGzhaLiSj5-+euM-YTRLwNDi8QJY0fAbiZbUadkPhZGRh_Q@mail.gmail.com>
-        <11276f7d-0175-05e9-a9bd-c72868067081@suse.de>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1728455AbeHMPUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 11:20:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2018 05:38:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,233,1531810800"; 
+   d="scan'208";a="248416093"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.153]) ([10.237.72.153])
+  by orsmga005.jf.intel.com with ESMTP; 13 Aug 2018 05:38:10 -0700
+Subject: Re: [PATCH V8 1/2] scsi: ufs: set the device reference clock setting
+To:     Sayali Lokhande <sayalil@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, evgreen@chromium.org,
+        riteshh@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <1533805799-5831-1-git-send-email-sayalil@codeaurora.org>
+ <1533805799-5831-2-git-send-email-sayalil@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4efbbb33-95ec-c631-57d4-ca9898e6d475@intel.com>
+Date:   Mon, 13 Aug 2018 15:36:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1533805799-5831-2-git-send-email-sayalil@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The simple answer is that, inspired by CAN, it uses an ifindex to select
-> the interface the user asked to use. That then also answers Alan's next
-> question: This ifindex determines which interface it goes out to.
+On 09/08/18 12:09, Sayali Lokhande wrote:
+> From: Subhash Jadavani <subhashj@codeaurora.org>
 > 
-> sockaddr_lora was in patch 02/15, latest code here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-lora.git/tree/include/uapi/linux/lora.h?h=lora-next
+> UFS host supplies the reference clock to UFS device and UFS device
+> specification allows host to provide one of the 4 frequencies (19.2 MHz,
+> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+> device reference clock frequency setting in the device based on what
+> frequency it is supplying to UFS device.
+> 
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufs.h           | 21 ++++++++++
+>  drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
+>  drivers/scsi/ufs/ufshcd.c        | 89 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h        |  2 +
+>  4 files changed, 114 insertions(+)
+> 
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index 14e5bf7..c555ac0 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -378,6 +378,27 @@ enum query_opcode {
+>  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+>  };
+>  
+> +/* bRefClkFreq attribute values */
+> +enum ref_clk_freq_hz {
+> +	REF_CLK_FREQ_19_2_MHZ	= 19200000,
+> +	REF_CLK_FREQ_26_MHZ	= 26000000,
+> +	REF_CLK_FREQ_38_4_MHZ	= 38400000,
+> +	REF_CLK_FREQ_52_MHZ	= 52000000,
+> +};
+> +
+> +enum bref_clk_freq {
+> +	bREF_CLK_FREQ_0, /* 19.2 MHz */
+> +	bREF_CLK_FREQ_1, /* 26 MHz */
+> +	bREF_CLK_FREQ_2, /* 38.4 MHz */
+> +	bREF_CLK_FREQ_3, /* 52 MHz */
+> +	bREF_CLK_FREQ_INVAL,
+> +};
+> +
+> +struct ufs_ref_clk {
+> +	enum ref_clk_freq_hz freq_hz;
+> +	enum bref_clk_freq val;
+> +};
+> +
+>  /* Query response result code */
+>  enum {
+>  	QUERY_RESULT_SUCCESS                    = 0x00,
+> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+> index e82bde0..0953563 100644
+> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
+> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+> @@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>  	pm_runtime_set_active(&pdev->dev);
+>  	pm_runtime_enable(&pdev->dev);
+>  
+> +	ufshcd_parse_dev_ref_clk_freq(hba);
+> +
+>  	ufshcd_init_lanes_per_dir(hba);
+>  
+>  	err = ufshcd_init(hba, mmio_base, irq);
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index c5b1bf1..0cbdde7 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -6296,6 +6296,89 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+>  	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+>  }
+>  
+> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
+> +	{REF_CLK_FREQ_19_2_MHZ, bREF_CLK_FREQ_0},
+> +	{REF_CLK_FREQ_26_MHZ, bREF_CLK_FREQ_1},
+> +	{REF_CLK_FREQ_38_4_MHZ, bREF_CLK_FREQ_2},
+> +	{REF_CLK_FREQ_52_MHZ, bREF_CLK_FREQ_3},
+> +};
+> +
+> +static inline enum bref_clk_freq
+> +ufs_get_bref_clk_for_ref_clk_freq_hz(u32 freq)
+> +{
+> +	enum bref_clk_freq val;
+> +
+> +	for (val = bREF_CLK_FREQ_0; val <= bREF_CLK_FREQ_3; val++)
+> +		if (ufs_ref_clk_freqs[val].freq_hz == freq)
+> +			return val;
+> +
+> +	/* if no match found, return invalid*/
+> +	return bREF_CLK_FREQ_INVAL;
+> +}
+> +
+> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
+> +{
+> +	struct device *dev = hba->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct clk *refclk = NULL;
+> +	u32 freq = 0;
+> +
+> +	if (!np)
+> +		return;
+> +
+> +	hba->dev_ref_clk_freq = bREF_CLK_FREQ_INVAL;
+> +
+> +	refclk = of_clk_get_by_name(np, "ref_clk");
 
-And any loopback just becomes an ifindex, likewise any virtual lorawan
-device (eg when testing in a cloud or simulating radio properties).
+What about users that don't use DT?
 
-> I still think the user will need to explicitly say which interface they
-> want to bind their socket to. AFAIU the device EUI is more comparable to
+> +	if (!refclk)
+> +		return;
+> +
+> +	freq = clk_get_rate(refclk);
+> +	if (freq > REF_CLK_FREQ_52_MHZ) {
+> +		dev_err(hba->dev,
+> +		"%s: invalid ref_clk setting = %d\n",
+> +		__func__, freq);
+> +		return;
+> +	}
+> +
+> +	hba->dev_ref_clk_freq =
+> +		ufs_get_bref_clk_for_ref_clk_freq_hz(freq);
+> +}
+> +
+> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
+> +{
+> +	int err = 0;
+> +	int ref_clk = -1;
+> +
+> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+> +
+> +	if (err) {
+> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+> +			 __func__, err);
+> +		goto out;
+> +	}
+> +
+> +	if (ref_clk == hba->dev_ref_clk_freq)
+> +		goto out; /* nothing to update */
+> +
+> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
+> +			&hba->dev_ref_clk_freq);
+> +
+> +	if (err)
+> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %d Hz failed\n",
+> +		__func__, ufs_ref_clk_freqs[hba->dev_ref_clk_freq].freq_hz);
+> +	/*
+> +	 * It is good to print this out here to debug any later failures
+> +	 * related to gear switch.
+> +	 */
+> +	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %d Hz succeeded\n",
+> +		__func__, ufs_ref_clk_freqs[hba->dev_ref_clk_freq].freq_hz);
+> +
+> +out:
+> +	return err;
+> +}
+> +
+>  /**
+>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>   * @hba: per-adapter instance
+> @@ -6361,6 +6444,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>  			"%s: Failed getting max supported power mode\n",
+>  			__func__);
+>  	} else {
+> +		/*
+> +		 * Set the right value to bRefClkFreq before attempting to
+> +		 * switch to HS gears.
+> +		 */
+> +		if (hba->dev_ref_clk_freq < bREF_CLK_FREQ_INVAL)
 
-It does make it very hard for any vaguely complex environment because if
-for example you have two interfaces enumerated via USB they will appear
-in random order each boot.
+hba->dev_ref_clk_freq does not always get initialized
 
-CANbus is a bit of a mess in this sense but it's so statically configured
-and embedded into industrial devices it's less of a problem.
+> +			ufshcd_set_dev_ref_clk(hba);
+>  		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+>  		if (ret) {
+>  			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 8110dcd..101a75c 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -548,6 +548,7 @@ struct ufs_hba {
+>  	void *priv;
+>  	unsigned int irq;
+>  	bool is_irq_enabled;
+> +	u32 dev_ref_clk_freq;
+>  
+>  	/* Interrupt aggregation support is broken */
+>  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+> @@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+>  int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+>  				u32 val, unsigned long interval_us,
+>  				unsigned long timeout_ms, bool can_sleep);
+> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+>  
+>  static inline void check_upiu_size(void)
+>  {
+> 
 
-I just wonder if the name would be a better binding (so you can sort the
-order out), or a local physical identifier of some kind so that your
-enumeration is consistent.
-
-> Loopback mode would require a separate virtual device driver such as
-> fakelr or vlora.
-
-And a tunnel device, which is easy enough if you've got tap support or
-similar.
-
-Alan
