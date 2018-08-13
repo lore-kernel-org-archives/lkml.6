@@ -2,221 +2,741 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580E5C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C03C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0140921781
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:36:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P9YWzp/b";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GbioFJna"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0140921781
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A14A21781
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:37:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A14A21781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbeHMQTQ (ORCPT
+        id S1729933AbeHMQT3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 12:19:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53972 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728514AbeHMQTQ (ORCPT
+        Mon, 13 Aug 2018 12:19:29 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:46206 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728427AbeHMQT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 12:19:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5DE7860CA2; Mon, 13 Aug 2018 13:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534167416;
-        bh=jG3+Y4L0tAemm1h9xE1oy6F2PWiRS9GTHYwFzG2W21Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P9YWzp/bQP/YsKvg8uIhaXcBFyeqLbZXOHOah28QFhUuNyXpOM0xMNmOFYjtnrW5j
-         ISElv9bWI4V2ASBFJAv46WWsFF8CeAoheyGMqMOz1YExNpb7iMfQhuCyHg2cYUp3n7
-         LqktKR3u1WknyGAgUj0iSk3+qEITcV7fylBtFVps=
-Received: from srichara-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B72AF60B73;
-        Mon, 13 Aug 2018 13:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534167401;
-        bh=jG3+Y4L0tAemm1h9xE1oy6F2PWiRS9GTHYwFzG2W21Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GbioFJna3R01o1clRxEwvFsU8JMFucTnHd3a26piTChFwoREuuNVQnOU353tSsirS
-         2rwJYZyBjDqtAq1tChs0DpxtaaOiXcVRPxjmcb5hM3ZFWihZNMOYmkkGGJJ1EnUezQ
-         g62aaMGGs8NIc/Y5MYbAdcLXLtz5KP7kpkSQFDso=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B72AF60B73
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From:   Sricharan R <sricharan@codeaurora.org>
-To:     mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
-        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
-        linux@armlinux.org.uk, thierry.escande@linaro.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        niklas.cassel@linaro.org
-Cc:     sricharan@codeaurora.org
-Subject: [PATCH 03/14] clk: qcom: Add HFPLL driver
-Date:   Mon, 13 Aug 2018 19:05:56 +0530
-Message-Id: <1534167367-17545-4-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+        Mon, 13 Aug 2018 12:19:29 -0400
+Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
+        by mail.holtmann.org (Postfix) with ESMTPSA id D78DACEF83;
+        Mon, 13 Aug 2018 15:44:10 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v1 1/2] Bluetooth: mediatek: Add protocol support for
+ MediaTek MT7668U USB devices
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1534155639.31978.23.camel@mtkswgap22>
+Date:   Mon, 13 Aug 2018 15:37:08 +0200
+Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2DBB7D35-7D07-4C3E-BC73-4FAB7BC01079@holtmann.org>
+References: <cover.1534062988.git.sean.wang@mediatek.com>
+ <d976d455588eb0e3007cee1c3447e0455a06573e.1534062988.git.sean.wang@mediatek.com>
+ <8425C80B-7F83-45A0-96FB-9E6968F17C7A@holtmann.org>
+ <1534155639.31978.23.camel@mtkswgap22>
+To:     Sean Wang <sean.wang@mediatek.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Hi Sean,
 
-On some devices (MSM8974 for example), the HFPLLs are
-instantiated within the Krait processor subsystem as separate
-register regions. Add a driver for these PLLs so that we can
-provide HFPLL clocks for use by the system.
+>>> This adds the support of enabling MT7668U Bluetooth function running
+>>> on the top of btusb driver. The patch also adds a newly created file
+>>> mtkbt.c able to be reused independently from the transport type such
+>>> as UART, USB and SDIO.
+>> 
+>> Include /sys/kernel/debug/usb/device portion in the commit message.
+>> 
+> 
+> okay, I will have an inclusion for this.
+> 
+>>> 
+>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+>>> ---
+>>> drivers/bluetooth/Kconfig  |  16 +++
+>>> drivers/bluetooth/Makefile |   1 +
+>>> drivers/bluetooth/btmtk.c  | 308 +++++++++++++++++++++++++++++++++++++++++++++
+>>> drivers/bluetooth/btmtk.h  |  99 +++++++++++++++
+>>> drivers/bluetooth/btusb.c  | 174 +++++++++++++++++++++++++
+>>> 5 files changed, 598 insertions(+)
+>>> create mode 100644 drivers/bluetooth/btmtk.c
+>>> create mode 100644 drivers/bluetooth/btmtk.h
+>>> 
+>>> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+>>> index 07e55cd..2788498 100644
+>>> --- a/drivers/bluetooth/Kconfig
+>>> +++ b/drivers/bluetooth/Kconfig
+>>> @@ -11,6 +11,10 @@ config BT_BCM
+>>> 	tristate
+>>> 	select FW_LOADER
+>>> 
+>>> +config BT_MTK
+>>> +	tristate
+>>> +	select FW_LOADER
+>>> +
+>>> config BT_RTL
+>>> 	tristate
+>>> 	select FW_LOADER
+>>> @@ -52,6 +56,18 @@ config BT_HCIBTUSB_BCM
+>>> 
+>>> 	  Say Y here to compile support for Broadcom protocol.
+>>> 
+>>> +config BT_HCIBTUSB_MTK
+>>> +	bool "MediaTek protocol support"
+>>> +	depends on BT_HCIBTUSB
+>>> +	select BT_MTK
+>>> +	default y
+>> 
+>> This one has to be n since MediaTek hardware was never supported in the first place. The existing y here are only for legacy hardware that was somehow supported in a generic fashion.
+>> 
+> 
+> okay, I will turn it into n
+> 
+>>> +	help
+>>> +	  The MediaTek protocol support enables firmware download
+>>> +	  support and chip initialization for MediaTek Bluetooth
+>>> +	  USB controllers.
+>>> +
+>>> +	  Say Y here to compile support for MediaTek protocol.
+>>> +
+>>> config BT_HCIBTUSB_RTL
+>>> 	bool "Realtek protocol support"
+>>> 	depends on BT_HCIBTUSB
+>>> diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
+>>> index 4e4e44d..bc23724 100644
+>>> --- a/drivers/bluetooth/Makefile
+>>> +++ b/drivers/bluetooth/Makefile
+>>> @@ -23,6 +23,7 @@ obj-$(CONFIG_BT_MRVL_SDIO)	+= btmrvl_sdio.o
+>>> obj-$(CONFIG_BT_WILINK)		+= btwilink.o
+>>> obj-$(CONFIG_BT_QCOMSMD)	+= btqcomsmd.o
+>>> obj-$(CONFIG_BT_BCM)		+= btbcm.o
+>>> +obj-$(CONFIG_BT_MTK)		+= btmtk.o
+>>> obj-$(CONFIG_BT_RTL)		+= btrtl.o
+>>> obj-$(CONFIG_BT_QCA)		+= btqca.o
+>>> 
+>>> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+>>> new file mode 100644
+>>> index 0000000..9e39a0a
+>>> --- /dev/null
+>>> +++ b/drivers/bluetooth/btmtk.c
+>>> @@ -0,0 +1,308 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +// Copyright (c) 2018 MediaTek Inc.
+>>> +
+>>> +/*
+>>> + * Common operations for MediaTek Bluetooth devices
+>>> + * with the UART, USB and SDIO transport
+>>> + *
+>>> + * Author: Sean Wang <sean.wang at mediatek.com>
+>>> + *
+>>> + */
+>>> +#include <asm/unaligned.h>
+>>> +#include <linux/firmware.h>
+>>> +#include <linux/iopoll.h>
+>>> +#include <linux/module.h>
+>>> +
+>>> +#include <net/bluetooth/bluetooth.h>
+>>> +#include <net/bluetooth/hci_core.h>
+>>> +
+>>> +#include "btmtk.h"
+>>> +
+>>> +#define VERSION "0.1"
+>>> +
+>>> +int
+>>> +btmtk_hci_wmt_sync(struct hci_dev *hdev, struct btmtk_hci_wmt_params *params)
+>>> +{
+>>> +	struct btmtk_hci_wmt_evt_funcc *evt_funcc;
+>>> +	u32 hlen, status = BTMTK_WMT_INVALID;
+>>> +	struct btmtk_wmt_hdr *hdr, *ehdr;
+>>> +	struct btmtk_hci_wmt_cmd wc;
+>>> +	struct sk_buff *skb;
+>>> +	int err = 0;
+>>> +
+>>> +	hlen = sizeof(*hdr) + params->dlen;
+>>> +	if (hlen > 255)
+>>> +		return -EINVAL;
+>>> +
+>>> +	hdr = (struct btmtk_wmt_hdr *)&wc;
+>>> +	hdr->dir = 1;
+>>> +	hdr->op = params->op;
+>>> +	hdr->dlen = cpu_to_le16(params->dlen + 1);
+>>> +	hdr->flag = params->flag;
+>>> +	memcpy(wc.data, params->data, params->dlen);
+>>> +
+>>> +	/* TODO: Add a fixup with __hci_raw_sync_ev that uses the hdev->raw_q
+>>> +	 * instead of the hack with __hci_cmd_sync_ev + atomic_inc on cmd_cnt.
+>>> +	 */
+>>> +	atomic_inc(&hdev->cmd_cnt);
+>>> +
+>>> +	skb =  __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+>>> +				 HCI_INIT_TIMEOUT);
+>> 
+>> So first of all HCI_VENDOR_PKT is for H:4 pkt_type 0xff and not a vendor event. Use HCI_EV_VENDOR instead. Second __hci_cmd_sync_ev is not the right way doing this. Use __hci_cmd_send and handle the vendor event. See how we do it for the Intel firmware loading.
+>> 
+> 
+> I didn't use __hci_cmd_send her before because I didn't know much about how to do with skb the returned event from __hci_cmd_send in order to parse the event content.
 
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/Kconfig  |  8 ++++
- drivers/clk/qcom/Makefile |  1 +
- drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
- create mode 100644 drivers/clk/qcom/hfpll.c
+The __hci_cmd_send does not return anything. It is the same usage as within btmtkuart.c since it just queues the HCI command into the core for processing. You can see its usage also in btqca.c for patch downloading.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9c3480d..95f9980 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -253,3 +253,11 @@ config SPMI_PMIC_CLKDIV
- 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
- 	  clkdiv outputs of the PMIC. These clocks are typically wired
- 	  through alternate functions on GPIO pins.
-+
-+config QCOM_HFPLL
-+	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the high-frequency PLLs present on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8974, APQ8084, etc.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 1331ed7..d486aa3 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
- obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-new file mode 100644
-index 0000000..a6de7101
---- /dev/null
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-hfpll.h"
-+
-+static const struct hfpll_data hdata = {
-+	.mode_reg = 0x00,
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.user_reg = 0x10,
-+	.config_reg = 0x14,
-+	.config_val = 0x430405d,
-+	.status_reg = 0x1c,
-+	.lock_bit = 16,
-+
-+	.user_val = 0x8,
-+	.user_vco_mask = 0x100000,
-+	.low_vco_max_rate = 1248000000,
-+	.min_rate = 537600000UL,
-+	.max_rate = 2900000000UL,
-+};
-+
-+static const struct of_device_id qcom_hfpll_match_table[] = {
-+	{ .compatible = "qcom,hfpll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
-+
-+static const struct regmap_config hfpll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30,
-+	.fast_io	= true,
-+};
-+
-+static int qcom_hfpll_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_hfpll *h;
-+	struct clk_init_data init = {
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_ops_hfpll,
-+	};
-+
-+	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+					  0, &init.name))
-+		return -ENODEV;
-+
-+	h->d = &hdata;
-+	h->clkr.hw.init = &init;
-+	spin_lock_init(&h->lock);
-+
-+	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
-+}
-+
-+static struct platform_driver qcom_hfpll_driver = {
-+	.probe		= qcom_hfpll_probe,
-+	.driver		= {
-+		.name	= "qcom-hfpll",
-+		.of_match_table = qcom_hfpll_match_table,
-+	},
-+};
-+module_platform_driver(qcom_hfpll_driver);
-+
-+MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-hfpll");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> I can have a confirmation first about whether the Intel firmware download have the similar logic wants to handle.
+
+Do you need the response from the control IN endpoint? If not, then just send the commands and let the USB stack do the queuing for you. That generally works and it seems that is what btqca.c actually does.
+
+If not, then we need to start a control IN endpoint URB queue that gets schedules and then process the events from there. Then the wait event handling is similar to what you have in btmtkuart.c since it hooks into the recv_event hooks. And as I said before, we have HCI events coming in via bulk endpoints for Intel firmware download already.
+
+
+> 
+>>> +	if (IS_ERR(skb)) {
+>>> +		err = PTR_ERR(skb);
+>>> +
+>>> +		bt_dev_err(hdev, "Failed to send wmt cmd (%d)\n", err);
+>>> +
+>>> +		print_hex_dump(KERN_ERR, "failed cmd: ",
+>>> +			       DUMP_PREFIX_ADDRESS, 16, 1, &wc,
+>>> +			       hlen > 16 ? 16 : hlen, true);
+>> 
+>> Scrap this.
+>> 
+> 
+> okay
+> 
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +	ehdr = (struct btmtk_wmt_hdr *)skb->data;
+>>> +	if (ehdr->op != hdr->op) {
+>>> +		bt_dev_err(hdev, "Wrong op received %d expected %d",
+>>> +			   ehdr->op, hdr->op);
+>>> +		err = -EIO;
+>>> +		goto err_free_skb;
+>>> +	}
+>>> +
+>>> +	switch (ehdr->op) {
+>>> +	case BTMTK_WMT_SEMAPHORE:
+>>> +		if (ehdr->flag == 2)
+>>> +			status = BTMTK_WMT_PATCH_UNDONE;
+>>> +		else
+>>> +			status = BTMTK_WMT_PATCH_DONE;
+>>> +		break;
+>>> +	case BTMTK_WMT_FUNC_CTRL:
+>>> +		evt_funcc = (struct btmtk_hci_wmt_evt_funcc *)ehdr;
+>>> +		if (be16_to_cpu(evt_funcc->status) == 4)
+>>> +			status = BTMTK_WMT_ON_DONE;
+>>> +		else if (be16_to_cpu(evt_funcc->status) == 32)
+>>> +			status = BTMTK_WMT_ON_PROGRESS;
+>>> +		else
+>>> +			status = BTMTK_WMT_ON_UNDONE;
+>>> +		break;
+>>> +	};
+>>> +
+>>> +	if (params->status)
+>>> +		*params->status = status;
+>>> +
+>>> +err_free_skb:
+>>> +	kfree_skb(skb);
+>>> +
+>>> +	return err;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(btmtk_hci_wmt_sync);
+>>> +
+>>> +static int
+>>> +btmtk_setup_firmware(struct hci_dev *hdev, const char *fwname,
+>>> +		     int (*cmd_sync)(struct hci_dev *,
+>>> +				     struct btmtk_hci_wmt_params *))
+>>> +{
+>>> +	struct btmtk_hci_wmt_params wmt_params;
+>>> +	const struct firmware *fw;
+>>> +	const u8 *fw_ptr;
+>>> +	size_t fw_size;
+>>> +	int err, dlen;
+>>> +	u8 flag;
+>>> +
+>>> +	if (!cmd_sync)
+>>> +		return -EINVAL;
+>>> +
+>>> +	err = request_firmware(&fw, fwname, &hdev->dev);
+>>> +	if (err < 0) {
+>>> +		bt_dev_err(hdev, "Failed to load firmware file (%d)", err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +	fw_ptr = fw->data;
+>>> +	fw_size = fw->size;
+>>> +
+>>> +	/* The size of patch header is 30 bytes, should be skip */
+>>> +	if (fw_size < 30)
+>>> +		return -EINVAL;
+>>> +
+>>> +	fw_size -= 30;
+>>> +	fw_ptr += 30;
+>>> +	flag = 1;
+>>> +
+>>> +	wmt_params.op = BTMTK_WMT_PATCH_DWNLD;
+>>> +	wmt_params.status = NULL;
+>>> +
+>>> +	while (fw_size > 0) {
+>>> +		dlen = min_t(int, 250, fw_size);
+>>> +
+>>> +		/* Tell deivice the position in sequence */
+>>> +		if (fw_size - dlen <= 0)
+>>> +			flag = 3;
+>>> +		else if (fw_size < fw->size - 30)
+>>> +			flag = 2;
+>>> +
+>>> +		wmt_params.flag = flag;
+>>> +		wmt_params.dlen = dlen;
+>>> +		wmt_params.data = fw_ptr;
+>>> +
+>>> +		err = cmd_sync(hdev, &wmt_params);
+>>> +		if (err < 0) {
+>>> +			bt_dev_err(hdev, "Failed to send wmt patch dwnld (%d)",
+>>> +				   err);
+>>> +			goto err_release_fw;
+>>> +		}
+>>> +
+>>> +		fw_size -= dlen;
+>>> +		fw_ptr += dlen;
+>>> +	}
+>>> +
+>>> +	wmt_params.op = BTMTK_WMT_RST;
+>>> +	wmt_params.flag = 4;
+>>> +	wmt_params.dlen = 0;
+>>> +	wmt_params.data = NULL;
+>>> +	wmt_params.status = NULL;
+>>> +
+>>> +	/* Activate funciton the firmware providing to */
+>>> +	err = cmd_sync(hdev, &wmt_params);
+>>> +	if (err < 0) {
+>>> +		bt_dev_err(hdev, "Failed to send wmt rst (%d)", err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +err_release_fw:
+>>> +	release_firmware(fw);
+>>> +
+>>> +	return err;
+>>> +}
+>>> +
+>>> +static int
+>>> +btmtk_func_query(struct btmtk_func_query *fq)
+>>> +{
+>>> +	struct btmtk_hci_wmt_params wmt_params;
+>>> +	int status, err;
+>>> +	u8 param = 0;
+>>> +
+>>> +	if (!fq || !fq->hdev || !fq->cmd_sync)
+>>> +		return -EINVAL;
+>>> +
+>>> +	/* Query whether the function is enabled */
+>>> +	wmt_params.op = BTMTK_WMT_FUNC_CTRL;
+>>> +	wmt_params.flag = 4;
+>>> +	wmt_params.dlen = sizeof(param);
+>>> +	wmt_params.data = &param;
+>>> +	wmt_params.status = &status;
+>>> +
+>>> +	err = fq->cmd_sync(fq->hdev, &wmt_params);
+>>> +	if (err < 0) {
+>>> +		bt_dev_err(fq->hdev, "Failed to query function status (%d)",
+>>> +			   err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +	return status;
+>>> +}
+>>> +
+>>> +int btmtk_enable(struct hci_dev *hdev, const char *fwname,
+>>> +		 int (*cmd_sync)(struct hci_dev *hdev,
+>>> +				 struct btmtk_hci_wmt_params *))
+>>> +{
+>>> +	struct btmtk_hci_wmt_params wmt_params;
+>>> +	struct btmtk_func_query func_query;
+>>> +	int status, err;
+>>> +	u8 param;
+>>> +
+>>> +	if (!cmd_sync)
+>>> +		return -EINVAL;
+>>> +
+>>> +	/* Query whether the firmware is already download */
+>>> +	wmt_params.op = BTMTK_WMT_SEMAPHORE;
+>>> +	wmt_params.flag = 1;
+>>> +	wmt_params.dlen = 0;
+>>> +	wmt_params.data = NULL;
+>>> +	wmt_params.status = &status;
+>>> +
+>>> +	err = cmd_sync(hdev, &wmt_params);
+>>> +	if (err < 0) {
+>>> +		bt_dev_err(hdev, "Failed to query firmware status (%d)", err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +	if (status == BTMTK_WMT_PATCH_DONE) {
+>>> +		bt_dev_info(hdev, "firmware already downloaded");
+>>> +		goto ignore_setup_fw;
+>>> +	}
+>>> +
+>>> +	/* Setup a firmware which the device definitely requires */
+>>> +	err = btmtk_setup_firmware(hdev, fwname, cmd_sync);
+>>> +	if (err < 0)
+>>> +		return err;
+>>> +
+>>> +ignore_setup_fw:
+>>> +	func_query.hdev = hdev;
+>>> +	func_query.cmd_sync = cmd_sync;
+>>> +	err = readx_poll_timeout(btmtk_func_query, &func_query, status,
+>>> +				 status < 0 || status != BTMTK_WMT_ON_PROGRESS,
+>>> +				 2000, 5000000);
+>>> +	/* -ETIMEDOUT happens */
+>>> +	if (err < 0)
+>>> +		return err;
+>>> +
+>>> +	/* The other errors happen internally inside btmtk_func_query */
+>>> +	if (status < 0)
+>>> +		return status;
+>>> +
+>>> +	if (status == BTMTK_WMT_ON_DONE) {
+>>> +		bt_dev_info(hdev, "function already on");
+>>> +		goto ignore_func_on;
+>>> +	}
+>>> +
+>>> +	/* Enable Bluetooth protocol */
+>>> +	param = 1;
+>>> +	wmt_params.op = BTMTK_WMT_FUNC_CTRL;
+>>> +	wmt_params.flag = 0;
+>>> +	wmt_params.dlen = sizeof(param);
+>>> +	wmt_params.data = &param;
+>>> +	wmt_params.status = NULL;
+>>> +
+>>> +	err = cmd_sync(hdev, &wmt_params);
+>>> +	if (err < 0) {
+>>> +		bt_dev_err(hdev, "Failed to send wmt func ctrl (%d)", err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +ignore_func_on:
+>>> +	return 0;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(btmtk_enable);
+>>> +
+>>> +int btmtk_disable(struct hci_dev *hdev,
+>>> +		  int (*cmd_sync)(struct hci_dev *hdev,
+>>> +				  struct btmtk_hci_wmt_params *))
+>>> +{
+>>> +	struct btmtk_hci_wmt_params wmt_params;
+>>> +	u8 param = 0;
+>>> +	int err;
+>>> +
+>>> +	if (!cmd_sync)
+>>> +		return -EINVAL;
+>>> +
+>>> +	/* Disable the device */
+>>> +	wmt_params.op = BTMTK_WMT_FUNC_CTRL;
+>>> +	wmt_params.flag = 0;
+>>> +	wmt_params.dlen = sizeof(param);
+>>> +	wmt_params.data = &param;
+>>> +	wmt_params.status = NULL;
+>>> +
+>>> +	err = cmd_sync(hdev, &wmt_params);
+>>> +	if (err < 0) {
+>>> +		bt_dev_err(hdev, "Failed to send wmt func ctrl (%d)", err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(btmtk_disable);
+>>> +
+>>> +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+>>> +MODULE_DESCRIPTION("MediaTek Bluetooth device driver ver " VERSION);
+>>> +MODULE_VERSION(VERSION);
+>>> +MODULE_LICENSE("GPL");
+>>> +MODULE_FIRMWARE(FIRMWARE_MT7668);
+>>> diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+>>> new file mode 100644
+>>> index 0000000..64fc395
+>>> --- /dev/null
+>>> +++ b/drivers/bluetooth/btmtk.h
+>>> @@ -0,0 +1,99 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Copyright (c) 2018 MediaTek Inc.
+>>> + *
+>>> + * Common operations for MediaTek Bluetooth devices
+>>> + * with the UART, USB and SDIO transport
+>>> + *
+>>> + * Author: Sean Wang <sean.wang@mediatek.com>
+>>> + *
+>>> + */
+>>> +
+>>> +#define FIRMWARE_MT7668		"mt7668pr2h.bin"
+>>> +
+>>> +enum {
+>>> +	BTMTK_WMT_PATCH_DWNLD = 0x1,
+>>> +	BTMTK_WMT_FUNC_CTRL = 0x6,
+>>> +	BTMTK_WMT_RST = 0x7,
+>>> +	BTMTK_WMT_SEMAPHORE = 0x17,
+>>> +};
+>>> +
+>>> +enum {
+>>> +	BTMTK_WMT_INVALID,
+>>> +	BTMTK_WMT_PATCH_UNDONE,
+>>> +	BTMTK_WMT_PATCH_DONE,
+>>> +	BTMTK_WMT_ON_UNDONE,
+>>> +	BTMTK_WMT_ON_DONE,
+>>> +	BTMTK_WMT_ON_PROGRESS,
+>>> +};
+>>> +
+>>> +struct btmtk_wmt_hdr {
+>>> +	u8	dir;
+>>> +	u8	op;
+>>> +	__le16	dlen;
+>>> +	u8	flag;
+>>> +} __packed;
+>>> +
+>>> +struct btmtk_hci_wmt_cmd {
+>>> +	struct btmtk_wmt_hdr hdr;
+>>> +	u8 data[256];
+>>> +} __packed;
+>>> +
+>>> +struct btmtk_hci_wmt_evt_funcc {
+>>> +	struct btmtk_wmt_hdr hdr;
+>>> +	__be16 status;
+>>> +} __packed;
+>>> +
+>>> +struct btmtk_hci_wmt_params {
+>>> +	u8 op;
+>>> +	u8 flag;
+>>> +	u16 dlen;
+>>> +	const void *data;
+>>> +	u32 *status;
+>>> +};
+>>> +
+>>> +struct btmtk_func_query {
+>>> +	struct hci_dev *hdev;
+>>> +	int (*cmd_sync)(struct hci_dev *hdev,
+>>> +			struct btmtk_hci_wmt_params *wmt_params);
+>>> +};
+>>> +
+>>> +#if IS_ENABLED(CONFIG_BT_MTK)
+>>> +
+>>> +int
+>>> +btmtk_hci_wmt_sync(struct hci_dev *hdev, struct btmtk_hci_wmt_params *params);
+>>> +
+>>> +int
+>>> +btmtk_enable(struct hci_dev *hdev, const char *fn,
+>>> +	     int (*cmd_sync)(struct hci_dev *,
+>>> +			     struct btmtk_hci_wmt_params *));
+>>> +
+>>> +int
+>>> +btmtk_disable(struct hci_dev *hdev,
+>>> +	      int (*cmd_sync)(struct hci_dev *,
+>>> +			      struct btmtk_hci_wmt_params *));
+>>> +#else
+>>> +
+>>> +static int
+>>> +btmtk_hci_wmt_sync(struct hci_dev *hdev, struct btmtk_hci_wmt_params *params)
+>>> +{
+>>> +	return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>> +static int
+>>> +btmtk_enable(struct hci_dev *hdev, const char *fn,
+>>> +	     int (*cmd_sync)(struct hci_dev *,
+>>> +			     struct btmtk_hci_wmt_params *))
+>>> +{
+>>> +	return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>> +static int
+>>> +btmtk_disable(struct hci_dev *hdev,
+>>> +	      int (*cmd_sync)(struct hci_dev *,
+>>> +			      struct btmtk_hci_wmt_params *))
+>>> +{
+>>> +	return -EOPNOTSUPP;
+>>> +}
+>> 
+>> I dislike this callback parameter to execute. It it convoluted. My suggestion is that first add MediaTek support to btusb.c and then lets try to see how we unify USB transport and UART transport.
+>> 
+> 
+> in fact, I have the 3rd patch to allow btmtkaurt to reuse btuart. I can add the patch to the series in the next version to show the only difference is only at cmd_sync.
+
+I figured as much, but I think that cmd_sync callback in the functions is not an elegant solution. I am pretty sure we can do that a lot cleaner. However first we need to get the btusb.c support working. So as I said, first focus on btusb.c and pretend that btmtkuart.c does not exist and that btmtk.c is not planned.
+
+> 
+>>> +
+>>> +#endif
+>>> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+>>> index 60bf04b..773238b 100644
+>>> --- a/drivers/bluetooth/btusb.c
+>>> +++ b/drivers/bluetooth/btusb.c
+>>> @@ -26,6 +26,7 @@
+>>> #include <linux/usb.h>
+>>> #include <linux/usb/quirks.h>
+>>> #include <linux/firmware.h>
+>>> +#include <linux/iopoll.h>
+>>> #include <linux/of_device.h>
+>>> #include <linux/of_irq.h>
+>>> #include <linux/suspend.h>
+>>> @@ -36,6 +37,7 @@
+>>> 
+>>> #include "btintel.h"
+>>> #include "btbcm.h"
+>>> +#include "btmtk.h"
+>>> #include "btrtl.h"
+>>> 
+>>> #define VERSION "0.8"
+>>> @@ -69,6 +71,7 @@ static struct usb_driver btusb_driver;
+>>> #define BTUSB_BCM2045		0x40000
+>>> #define BTUSB_IFNUM_2		0x80000
+>>> #define BTUSB_CW6622		0x100000
+>>> +#define BTUSB_MEDIATEK		0x200000
+>>> 
+>>> static const struct usb_device_id btusb_table[] = {
+>>> 	/* Generic Bluetooth USB device */
+>>> @@ -355,6 +358,10 @@ static const struct usb_device_id blacklist_table[] = {
+>>> 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0bda, 0xe0, 0x01, 0x01),
+>>> 	  .driver_info = BTUSB_REALTEK },
+>>> 
+>>> +	/* MediaTek Bluetooth devices */
+>>> +	{ USB_VENDOR_AND_INTERFACE_INFO(0x0e8d, 0xe0, 0x01, 0x01),
+>>> +	  .driver_info = BTUSB_MEDIATEK },
+>>> +
+>>> 	/* Additional Realtek 8723AE Bluetooth devices */
+>>> 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+>>> 	{ USB_DEVICE(0x13d3, 0x3394), .driver_info = BTUSB_REALTEK },
+>>> @@ -2347,6 +2354,164 @@ static int btusb_shutdown_intel(struct hci_dev *hdev)
+>>> 	return 0;
+>>> }
+>>> 
+>>> +#ifdef CONFIG_BT_HCIBTUSB_MTK
+>>> +
+>>> +struct btusb_mtk_poll {
+>>> +	struct btusb_data *udata;
+>>> +	void *buf;
+>>> +	size_t len;
+>>> +	size_t actual_len;
+>>> +};
+>>> +
+>>> +struct btusb_mtk_wmt_poll {
+>>> +	struct btusb_data *udata;
+>>> +	struct work_struct work;
+>>> +};
+>>> +
+>>> +static int btusb_mtk_reg_read(struct btusb_data *data, u32 reg, u32 *val)
+>>> +{
+>>> +	int pipe, err, size = sizeof(u32);
+>>> +	void *buf;
+>>> +
+>>> +	buf = kzalloc(size, GFP_KERNEL);
+>>> +	if (!buf)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	pipe = usb_rcvctrlpipe(data->udev, 0);
+>>> +	err = usb_control_msg(data->udev, pipe, 0x63,
+>>> +			      USB_TYPE_VENDOR | USB_DIR_IN,
+>>> +			      reg >> 16, reg & 0xffff,
+>>> +			      buf, size, USB_CTRL_SET_TIMEOUT);
+>>> +	if (err < 0)
+>>> +		goto err_free_buf;
+>>> +
+>>> +	*val = get_unaligned_le32(buf);
+>>> +
+>>> +err_free_buf:
+>>> +	kfree(buf);
+>>> +
+>>> +	return err;
+>>> +}
+>>> +
+>>> +static int btusb_mtk_id_get(struct btusb_data *data, u32 *id)
+>>> +{
+>>> +	return btusb_mtk_reg_read(data, 0x80000008, id);
+>>> +}
+>>> +
+>>> +static int btusb_mtk_wmt_event_poll(struct btusb_mtk_poll *p)
+>>> +{
+>>> +	int pipe, actual_len;
+>>> +
+>>> +	pipe = usb_rcvctrlpipe(p->udata->udev, 0);
+>>> +
+>>> +	actual_len = usb_control_msg(p->udata->udev, pipe, 1,
+>>> +				     USB_TYPE_VENDOR | USB_DIR_IN, 0x30, 0,
+>>> +				     p->buf, p->len, USB_CTRL_SET_TIMEOUT);
+>>> +
+>>> +	p->actual_len = actual_len;
+>>> +
+>>> +	return actual_len;
+>>> +}
+>>> +
+>>> +static void btusb_mtk_wmt_event_polls(struct work_struct *work)
+>>> +{
+>>> +	struct btusb_mtk_wmt_poll *wmt_event_polling;
+>>> +	struct btusb_mtk_poll p;
+>>> +	int polled_dlen, err;
+>>> +	const int len = 64;
+>>> +	void *buf;
+>>> +	char *evt;
+>>> +
+>>> +	wmt_event_polling = container_of(work, typeof(*wmt_event_polling),
+>>> +					 work);
+>>> +	buf = kzalloc(len, GFP_KERNEL);
+>>> +	if (!buf)
+>>> +		return;
+>>> +
+>>> +	p.udata = wmt_event_polling->udata;
+>>> +	p.buf = buf;
+>>> +	p.len = len;
+>>> +	p.actual_len = 0;
+>>> +
+>>> +	/* Polling WMT event via control endpoint until the event returns or
+>>> +	 * the timeout happens.
+>>> +	 */
+>>> +	err = readx_poll_timeout(btusb_mtk_wmt_event_poll, &p, polled_dlen,
+>>> +				 polled_dlen > 0, 200, 1000000);
+>>> +	if (err < 0)
+>>> +		goto err_free_buf;
+>>> +
+>>> +	evt = p.buf;
+>>> +
+>>> +	/* Fix up the vendor event id with 0xff for vendor specific instead
+>>> +	 * of 0xe4 so that event send via monitoring socket can be parsed
+>>> +	 * properly.
+>>> +	 */
+>>> +	if (*evt == 0xe4)
+>>> +		*evt = 0xff;
+>>> +
+>>> +	/* The WMT event is actually a HCI event so that the WMT event should go
+>>> +	 * to the code flow a HCI event should go to.
+>>> +	 */
+>>> +	btusb_recv_intr(p.udata, p.buf, p.actual_len);
+>>> +
+>>> +err_free_buf:
+>>> +	kfree(buf);
+>>> +}
+>> 
+>> So can we not just submit the URB like we do with all others. Can control endpoint IN URBs return early without any data.
+>> 
+> 
+> The control endpoint IN URBs always returns early without any data
+> 
+> so that it's a necessary way I thought to keep data polling until data is available in order to have the short time for firmware download
+> 
+> Fortunately, it only happens on wmt events. so it have no any effect on the other data or events.
+
+What is the timing of that endpoint. Can we schedule a control IN URB similar to interrupt IN URB and keep it running for the duration of the firmware download or start it on demand for the WMT commands during setup.
+
+Regards
+
+Marcel
 
