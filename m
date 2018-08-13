@@ -5,83 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEF6C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A69C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8C621564
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8C621564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id F206921564
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:37:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F206921564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbeHMTTV (ORCPT
+        id S1730151AbeHMTUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:19:21 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:53798 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbeHMTTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:19:21 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w7DGZ3em015022;
-        Mon, 13 Aug 2018 17:35:03 +0100
-Date:   Mon, 13 Aug 2018 17:35:02 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        apparmor@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: BUG: Mount ignores mount options
-Message-ID: <20180813173502.1a7a1d9c@alans-desktop>
-In-Reply-To: <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
-References: <20180810153902.GH21087@thunk.org>
-        <87d0uqpba5.fsf@xmission.com>
-        <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        <22361.1533913891@warthog.procyon.org.uk>
-        <28045.1533916438@warthog.procyon.org.uk>
-        <20180810161400.GA627@thunk.org>
-        <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 13 Aug 2018 15:20:02 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54036 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728293AbeHMTUC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:20:02 -0400
+Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C82C9145A6BF2;
+        Mon, 13 Aug 2018 09:37:03 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 09:37:02 -0700 (PDT)
+Message-Id: <20180813.093702.2205532109074390272.davem@davemloft.net>
+To:     zong@andestech.com
+Cc:     rostedt@goodmis.org, mingo@redhat.com, dsahern@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zongbox@gmail.com, greentime@andestech.com
+Subject: Re: [PATCH] net: Change the layout of structure
+ trace_event_raw_fib_table_lookup
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1534127212-13186-1-git-send-email-zong@andestech.com>
+References: <1534127212-13186-1-git-send-email-zong@andestech.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 13 Aug 2018 09:37:04 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> If the same block device is visible, with rw access, in two different
-> containers, I don't see any anything good can happen.  Sure, with the
+From: Zong Li <zong@andestech.com>
+Date: Mon, 13 Aug 2018 10:26:52 +0800
 
-At the raw level there are lots of use cases involving high performance
-data capture, media streaming and the like.
+> There is an unalignment access about the structure
+> 'trace_event_raw_fib_table_lookup'.
+> 
+> In include/trace/events/fib.h, there is a memory operation which casting
+> the 'src' data member to a pointer, and then store a value to this
+> pointer point to.
+> 
+> p32 = (__be32 *) __entry->src;
+> *p32 = flp->saddr;
+> 
+> The offset of 'src' in structure trace_event_raw_fib_table_lookup is not
+> four bytes alignment. On some architectures, they don't permit the
+> unalignment access, it need to pay the price to handle this situation in
+> exception handler.
+> 
+> Adjust the layout of structure to avoid this case.
+> 
+> Signed-off-by: Zong Li <zong@andestech.com>
 
-At the file system layer you can use GFS2 for example.
-
-So there are cases where it's possible. There are even cases where it's
-actually useful at the filesystem level although not many I agree.
-
-Alan
-
-
+Applied, with Fixes tag from David added.
