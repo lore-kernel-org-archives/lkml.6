@@ -2,159 +2,176 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B97C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 04:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69901C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 04:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C22821785
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 04:30:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C22821785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EEC721785
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 04:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C0ztYqKp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EEC721785
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeHMHKb (ORCPT
+        id S1728205AbeHMHOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 03:10:31 -0400
-Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:36357 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726447AbeHMHKb (ORCPT
+        Mon, 13 Aug 2018 03:14:47 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44748 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbeHMHOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 03:10:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 50FEE837F27E;
-        Mon, 13 Aug 2018 04:30:02 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: low95_57582cfad060a
-X-Filterd-Recvd-Size: 5447
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 13 Aug 2018 04:30:00 +0000 (UTC)
-Message-ID: <a38af0726c54725f80eb3891dc38baf02af6e5b0.camel@perches.com>
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-From:   Joe Perches <joe@perches.com>
-To:     dgilbert@interlog.com, Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
-        tim.c.chen@linux.intel.com, martin.petersen@oracle.com,
-        david.darrington@wdc.com, jeff.furlong@wdc.com
-Date:   Sun, 12 Aug 2018 21:29:58 -0700
-In-Reply-To: <b36d5eb6-3ee8-1bcd-0060-a4d4083a0fe6@interlog.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
-         <9b5b906f42dfab78f382c90f66851717d258a15d.camel@perches.com>
-         <nycvar.YSQ.7.76.1808101601110.13885@knanqh.ubzr>
-         <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
-         <b36d5eb6-3ee8-1bcd-0060-a4d4083a0fe6@interlog.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Aug 2018 03:14:47 -0400
+Received: by mail-pl0-f67.google.com with SMTP id ba4-v6so6383190plb.11
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 21:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AiO51thYNoySjVYDafJZKfYnJh/XWu/jwqbq/Go0ZCs=;
+        b=C0ztYqKp2fFbRQD3Z7SQIDQ/lEjEZmFAiKtlha3wljDfJUWpWk19Vo8s/+hOCw5dle
+         e6peKq+D86q8vSZEUqt8gDJs7l0hqj84BM/yb0EA4pRhZHmj66n5o8GtxBearKLJbj5G
+         Pgwnzar6DViT/35AVgwsEKAE4mp/lyfh7tOXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AiO51thYNoySjVYDafJZKfYnJh/XWu/jwqbq/Go0ZCs=;
+        b=uXqtcusZs4uhHhYav6iAUukSRWCsW8/fTGLp9LGrOg+kCi9iM3CmVkAscamKPPo7vc
+         R/k04z/2Q1mUju7R46uS0uFbbt5HL4QNxs9Usots/FOJs7PeI+uVUIKS+XC8Hq9PhfUZ
+         qL0fn8YgQqrqPflSU5PsqdE8qnJIiFExoyvHZO0ACDE0EoxZhzYf2rx45Kubgq7gfr8H
+         nwVyJz9K1hZPzeVXnHYvskq83YuxrtPLA8IBi19aIojvcgItYOUaZ5GOlPYXJMtmF1D5
+         zplUUDqrm99Kmsf9qbFlVpLEtjtvyVimYBMofXIPe9C/g53Go5eUdF9ZQY0xpCcY7oqC
+         EoQA==
+X-Gm-Message-State: AOUpUlHUHV2U6JGaSNRwPVPjk/eFY+iXYjlKqOwBoRl1RsKGeuzYSyv2
+        E6gvbl/pMm2DUNG193oON9DWXIPuqA==
+X-Google-Smtp-Source: AA+uWPyFWQWbc1NxaGqYs01Ne2EIOESjNY9LZ9E7ri13Las7GPzbCcQnshM0kpC1Lf2QawvRyzkucg==
+X-Received: by 2002:a17:902:8a97:: with SMTP id p23-v6mr15144951plo.21.1534134858156;
+        Sun, 12 Aug 2018 21:34:18 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:631d:d852:4dea:6732:2ed1:5303])
+        by smtp.gmail.com with ESMTPSA id w70-v6sm25779580pgd.18.2018.08.12.21.34.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 Aug 2018 21:34:17 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 10:04:06 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Parthiban Nallathambi <pn@denx.de>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, sravanhome@gmail.com,
+        thomas.liau@actions-semi.com, mp-cs@actions-semi.com,
+        linux@cubietech.com, edgar.righi@lsitec.org.br,
+        laisa.costa@lsitec.org.br, guilherme.simoes@lsitec.org.br,
+        mkzuffo@lsi.usp.br
+Subject: Re: [PATCH v2 1/3] dt-bindings: interrupt-controller: Actions
+ external interrupt controller
+Message-ID: <20180813043406.GA16275@Mani-XPS-13-9360>
+References: <20180812122215.1079590-1-pn@denx.de>
+ <20180812122215.1079590-2-pn@denx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180812122215.1079590-2-pn@denx.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-08-12 at 23:36 -0400, Douglas Gilbert wrote:
-> On 2018-08-10 08:11 PM, Joe Perches wrote:
-> > On Fri, 2018-08-10 at 16:02 -0400, Nicolas Pitre wrote:
-> > > On Fri, 10 Aug 2018, Joe Perches wrote:
-> > > 
-> > > > On Fri, 2018-08-10 at 14:12 -0500, Jeff Lien wrote:
-> > > > > This patch provides a performance improvement for the CRC16 calculations done in read/write
-> > > > > workloads using the T10 Type 1/2/3 guard field.  For example, today with sequential write
-> > > > > workloads (one thread/CPU of IO) we consume 100% of the CPU because of the CRC16 computation
-> > > > > bottleneck.  Today's block devices are considerably faster, but the CRC16 calculation prevents
-> > > > > folks from utilizing the throughput of such devices.  To speed up this calculation and expose
-> > > > > the block device throughput, we slice the old single byte for loop into a 16 byte for loop,
-> > > > > with a larger CRC table to match.  The result has shown 5x performance improvements on various
-> > > > > big endian and little endian systems running the 4.18.0 kernel version.
-> > > > 
-> > > > Thanks.
-> > > > 
-> > > > This seems a sensible tradeoff for the 4k text size increase.
-> > > 
-> > > More like 7.5KB.  Would be best if this was configurable so the small
-> > > version remained available.
-> > 
-> > Maybe something like: (compiled, untested)
-> > ---
-> >   crypto/Kconfig            |  10 +
-> >   crypto/crct10dif_common.c | 543 +++++++++++++++++++++++++++++++++++++++++++++-
-> >   2 files changed, 549 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/crypto/Kconfig b/crypto/Kconfig
-> > index f3e40ac56d93..88d9d17bb18a 100644
-> > --- a/crypto/Kconfig
-> > +++ b/crypto/Kconfig
-> > @@ -618,6 +618,16 @@ config CRYPTO_CRCT10DIF
-> >   	  a crypto transform.  This allows for faster crc t10 diff
-> >   	  transforms to be used if they are available.
-> >   
-> > +config CRYPTO_CRCT10DIF_TABLE_SIZE
-> > +	int "Size of CRCT10DIF crc tables (as a power of 2)"
-> > +	depends on CRYPTO_CRCT10DIF
-> > +	range 1 5
-> > +	default 1 if EMBEDDED
-> > +	default 5
-> > +	help
-> > +	  Set the table size used by the CRYPTO_CRCT10DIF crc calculation
-> > +	  Larger values use more memory and are faster.
-> > +
-> >   config CRYPTO_CRCT10DIF_PCLMUL
-> >   	tristate "CRCT10DIF PCLMULQDQ hardware acceleration"
-> >   	depends on X86 && 64BIT && CRC_T10DIF
-> > diff --git a/crypto/crct10dif_common.c b/crypto/crct10dif_common.c
-> > index b2fab366f518..4eb1c50c3688 100644
-> > --- a/crypto/crct10dif_common.c
-> > +++ b/crypto/crct10dif_common.c
-> > @@ -32,7 +32,8 @@
-> >    * x^16 + x^15 + x^11 + x^9 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1
-> >    * gt: 0x8bb7
-> >    */
-> > -static const __u16 t10_dif_crc_table[256] = {
-> > +static const __u16 t10dif_crc_table[][256] = {
-> 
-> <snip table>
-> 
-> >   };
-> >   
-> >   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer, size_t len)
-> >   {
-> > -	unsigned int i;
-> > +	const u8 *ptr = (const __u8 *)buffer;
-> > +	const u8 *ptr_end = ptr + len;
-> > +#if CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE > 1
-> > +	size_t tablesize = 1 << (CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE - 1);
-> > +	const u8 *ptr_last = ptr + (len / tablesize * tablesize);
-> >   
-> > -	for (i = 0 ; i < len ; i++)
-> > -		crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
-> > +	while (ptr < ptr_last) {
-> > +		size_t index = tablesize;
-> > +		__u16 t;
-> > +
-> > +		t = t10dif_crc_table[--index][*ptr++ ^ (u8)(crc >> 8)];
-> > +		t ^= t10dif_crc_table[--index][*ptr++ ^ (u8)crc];
-> > +		crc = t;
-> > +		while (index > 0)
-> > +			crc ^= t10dif_crc_table[--index][*ptr++];
-> > +	}
-> > +#endif
-> > +	while (ptr < ptr_end)
-> > +		crc = t10dif_crc_table[0][*ptr++ ^ (u8)(crc >> 8)] ^ (crc << 8);
-> >   
-> >   	return crc;
-> >   }
-> > 
-> > 
-> 
-> The attached patch is on top of the one above. I tested it in the user space
-> where it is around 20% faster (with a full size table). Also tried swab16 but
-> there was no gain from that (perhaps around a 2% loss).
+Hi Parthiban,
 
-I don't get a significant difference in performance.
-gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)
+On Sun, Aug 12, 2018 at 02:22:13PM +0200, Parthiban Nallathambi wrote:
+> Actions Semi OWL family SoC's provides support for external interrupt
+> controller to be connected and controlled using SIRQ pins. S500, S700
+> and S900 provides 3 SIRQ lines and works independently for 3 external
+> interrupt controllers.
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  .../interrupt-controller/actions,owl-sirq.txt      | 46 ++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+> new file mode 100644
+> index 000000000000..4b8437751331
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+> @@ -0,0 +1,46 @@
+> +Actions Semi Owl SoCs SIRQ interrupt controller
+> +
+> +S500, S700 and S900 SoC's from Actions provides 3 SPI's from GIC,
+> +in which external interrupt controller can be connected. 3 SPI's
+> +45, 46, 47 from GIC are directly exposed as SIRQ. It has
+> +the following properties:
 
+We should really document the driver here. What it does? and how the
+hierarchy is handled with GIC? etc...
+
+> +
+> +- inputs three interrupt signal from external interrupt controller
+> +
+> +Required properties:
+> +
+> +- compatible: should be "actions,owl-sirq"
+> +- reg: physical base address of the controller and length of memory mapped.
+
+...length of memory mapped region?
+
+> +- interrupt-controller: identifies the node as an interrupt controller
+> +- #interrupt-cells: specifies the number of cells needed to encode an interrupt
+> +  source, should be 2.
+> +- actions,sirq-shared-reg: Applicable for S500 and S700 where SIRQ register
+> +  details are maintained at same offset/register.
+> +- actions,sirq-offset: register offset for SIRQ interrupts. When registers are
+> +  shared, all the three offsets will be same (S500 and S700).
+> +- actions,sirq-clk-sel: external interrupt controller can be either
+> +  connected to 32Khz or 24Mhz external/internal clock. This needs
+
+Hertz should be specified as Hz.
+
+> +  to be configured for per SIRQ line. Failing defaults to 32Khz clock.
+
+What value needs to be specified for selecting 24MHz clock? You should
+mention the available options this property supports.
+
+> +
+> +Example for S900:
+> +
+> +sirq: interrupt-controller@e01b0000 {
+> +	compatible = "actions,owl-sirq";
+> +	reg = <0 0xe01b0000 0 0x1000>;
+
+could be: reg = <0x0 0xe01b0000 0x0 0x1000>;
+
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +	actions,sirq-clk-sel = <0 0 0>;
+> +	actions,sirq-offset = <0x200 0x528 0x52c>;
+> +};
+> +
+> +Example for S500 and S700:
+> +
+> +sirq: interrupt-controller@e01b0000 {
+> +	compatible = "actions,owl-sirq";
+> +	reg = <0 0xe01b0000 0 0x1000>;
+
+For S500, reg base is 0xb01b0000.
+
+Thanks
+Mani
+
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +	actions,sirq-shared-reg;
+> +	actions,sirq-clk-sel = <0 0 0>;
+> +	actions,sirq-offset = <0x200 0x200 0x200>;
+> +};
+> -- 
+> 2.14.4
+> 
