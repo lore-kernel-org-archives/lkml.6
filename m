@@ -2,95 +2,168 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93834C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 23:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D32EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 23:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9BB21755
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 23:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260CF2172A
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 23:53:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vTGzqGEm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9BB21755
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ngu9sJlV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260CF2172A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeHNCfh (ORCPT
+        id S1731690AbeHNCiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 22:35:37 -0400
-Received: from mail-oi0-f73.google.com ([209.85.218.73]:50975 "EHLO
-        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730213AbeHNCfg (ORCPT
+        Mon, 13 Aug 2018 22:38:17 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:34651 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729759AbeHNCiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 22:35:36 -0400
-Received: by mail-oi0-f73.google.com with SMTP id p11-v6so18419447oih.17
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 16:51:06 -0700 (PDT)
+        Mon, 13 Aug 2018 22:38:16 -0400
+Received: by mail-ua1-f66.google.com with SMTP id r15-v6so11222797uao.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 16:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=iMH3pTFkPsV80DDnKoroL+dlXFtNLwIkO9zZEQ+uWfQ=;
-        b=vTGzqGEmr+R4euds+pogDZKdH+Icc9eIyUcy6BrGeqAl0Suq7pHcS8Y/ZjuiPlvair
-         GV1hyBqoG+/1FV+0IbG/Jy0RW/7V6EJPnLSLeCzyReryxD4iSajBXUt4uCpbqzFMZk8D
-         Apk5/CxMk3aTAEK7THVQFQ/YtAX8TNAEqvU1+gHME3Du8HVKzOJVxGF1P0YiJFJdcQ9Q
-         Ajpjs7BDmX1/FV29hWBS7QPa/CuwvlPVHstb19Nl7K2LaZ31qouXIB9wLurK8VJ+uLOs
-         B7qJ3j5MotRo9omBeMWXYnaZp/88PuZSRByVfGMYi87Zbr4Ky/cdnfq3OAlGfwkFwMEd
-         GBFg==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ovG1bxIWfRXuFy1KArdL0QftkGQfpvQIvh0iR7LJufI=;
+        b=Ngu9sJlVh8ZvHB0YXP7Sv751NbjELYfVcWXH326tb7UbzUoJ28uJJkraTe1YuvjTBn
+         xSJRQm1yTSLR0FNSSlAbpnwfBMoskov9B+lyNqnFmEyVUyyV6XaDqYNc9mNiuF8qZ2ug
+         g27o5v7KmWOE5XUOc0dvsH6bud2XjE1zKfhTo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=iMH3pTFkPsV80DDnKoroL+dlXFtNLwIkO9zZEQ+uWfQ=;
-        b=SyAZgxDrJtOAQv7FgsO2w4tn/tzavyXWa6o3L/LmzAw46jTEZc85icjDfJs1W7SLSb
-         Suyy+6jM0ghW88ihyt+bbpiz3NWqzGTTZySRpYqDh6NeGQQ0ApXDvX2DeXQElJkPdxBl
-         ycVZzrRWuuKNQMTD23O+dg0XAzAegGTWYT/MwmL3dfrcIbiLhd6gWcsL1fU7Z3Yt0h8a
-         4rf9XE8h9ULT/o70be2QfiMunHb2uhXWiXkAQWtDzeQMiDEFjNqVngGU2j0eVSEXQSKq
-         9ij2kTeu4juKFAD6d3ZtULCiPeOEirGWG+4pjqr9FkSj9VeKuMkSIwSYOH2fBy8SnbbM
-         EcEg==
-X-Gm-Message-State: AOUpUlH54uRzf9OR4DGsErFiwWyD4qMAsNdmv27AbvuTEN/ATkZP015u
-        lIrq2gB9mEu0qqTsJE7c262FZhDC
-X-Google-Smtp-Source: AA+uWPwWjPCZqEUnWCBTEqvLgjtfEkiDoLIVnF10mHo84t1TsibrVnbljIXw66x2882F8TfoOcbnS03N
-X-Received: by 2002:aca:6146:: with SMTP id v67-v6mr13339932oib.108.1534204265760;
- Mon, 13 Aug 2018 16:51:05 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 16:51:01 -0700
-Message-Id: <20180813235101.195680-1-rkir@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
-Subject: [PATCH 9/9] platform: goldfish: pipe: Add a blank line to separate
- struct members
-From:   rkir@google.com
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
-        Roman Kiryanov <rkir@google.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ovG1bxIWfRXuFy1KArdL0QftkGQfpvQIvh0iR7LJufI=;
+        b=mP9kwN0OayciTCdMvzDC4A/JTm1Lf2PBq9RtSY5I2OFMVXpQmaikO57T9I50hUBVmg
+         MrexdJ3rGvFpegG+46Od6A5qBEsj7Mk00z/eZ/eaxzNCpUjBztcZUePoJ2gJkmz9Wznl
+         06Ic5P7gzAv1hsdwn8xsNb+TJBCMd+RV/ZfORrOLFcK01jeSQJeu6jj9fFHyakjBr2/h
+         1zl3etISpRkoDkHZF7A8PeurROVpdGR+noyEboo9gzl5je0rHQkCsRpmnCQtvcLrkQr9
+         2ZURv94FCXkk9U4VnvET8BTj1LehQ1X1CQzMIWAsuHY3Har+i4GGVu/7Tg7IdWN3bVy6
+         17uQ==
+X-Gm-Message-State: AOUpUlGWBp9SY9Yug0qi5T+XdwXcmLniDQ6IQ2qnjDXELEqfn36+bDZe
+        ua7nXIDzc6osdBJsps7nFbxFyGkITwE=
+X-Google-Smtp-Source: AA+uWPwwXiZQ3xMjpgCIcnOItVDSRfkHrGDpkYr0WVnf51v/Ci65oqJkK5Yn33a+D3yfpUEug6oz6g==
+X-Received: by 2002:ab0:1af:: with SMTP id 44-v6mr12816641ual.173.1534204424383;
+        Mon, 13 Aug 2018 16:53:44 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id r6-v6sm2760875uao.3.2018.08.13.16.53.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Aug 2018 16:53:43 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id i4-v6so11221465uak.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 16:53:43 -0700 (PDT)
+X-Received: by 2002:a1f:c541:: with SMTP id v62-v6mr12013222vkf.99.1534204422682;
+ Mon, 13 Aug 2018 16:53:42 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 16:53:42 -0700 (PDT)
+In-Reply-To: <20180725222900.33231-2-swboyd@chromium.org>
+References: <20180725222900.33231-1-swboyd@chromium.org> <20180725222900.33231-2-swboyd@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 13 Aug 2018 16:53:42 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V8ujNN-jxOm6a_OthyQFGucbv0-1Du3BjScVPKPz-Tsw@mail.gmail.com>
+Message-ID: <CAD=FV=V8ujNN-jxOm6a_OthyQFGucbv0-1Du3BjScVPKPz-Tsw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] pinctrl: msm: Really mask level interrupts to
+ prevent latching
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Kiryanov <rkir@google.com>
+Hi,
 
-To improve readability and to be consistent with other
-struct members.
+On Wed, Jul 25, 2018 at 3:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> The interrupt controller hardware in this pin controller has two status
+> enable bits. The first "normal" status enable bit enables or disables
+> the summary interrupt line being raised when a gpio interrupt triggers
+> and the "raw" status enable bit allows or prevents the hardware from
+> latching an interrupt into the status register for a gpio interrupt.
+> Currently we just toggle the "normal" status enable bit in the mask and
+> unmask ops so that the summary irq interrupt going to the CPU's
+> interrupt controller doesn't trigger for the masked gpio interrupt.
+>
+> For a level triggered interrupt, the flow would be as follows: the pin
+> controller sees the interrupt, latches the status into the status
+> register, raises the summary irq to the CPU, summary irq handler runs
+> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+> interrupt, the interrupt handler runs, and finally unmask the interrupt.
+> When the interrupt handler completes, we expect that the interrupt line
+> level will go back to the deasserted state so the genirq code can unmask
+> the interrupt without it triggering again.
+>
+> If we only mask the interrupt by clearing the "normal" status enable bit
+> then we'll ack the interrupt but it will continue to show up as pending
+> in the status register because the raw status bit is enabled, the
+> hardware hasn't deasserted the line, and thus the asserted state latches
+> into the status register again. When the hardware deasserts the
+> interrupt the pin controller still thinks there is a pending unserviced
+> level interrupt because it latched it earlier. This behavior causes
+> software to see an extra interrupt for level type interrupts each time
+> the interrupt is handled.
+>
+> Let's fix this by clearing the raw status enable bit for level type
+> interrupts so that the hardware stops latching the status of the
+> interrupt after we ack it. We don't do this for edge type interrupts
+> because it seems that toggling the raw status enable bit for edge type
+> interrupts causes spurious edge interrupts.
+>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>
+> Changes from v1:
+>  - Squashed raw_status_bit write into same write on unmask (Doug
+>    Andersson)
+>
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 2155a30c282b..3970dc599092 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -634,6 +634,19 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+>         raw_spin_lock_irqsave(&pctrl->lock, flags);
+>
+>         val = readl(pctrl->regs + g->intr_cfg_reg);
+> +       /*
+> +        * Leaving the RAW_STATUS_EN bit enabled causes level interrupts that
+> +        * are still asserted to re-latch after we ack them. Clear the raw
+> +        * status enable bit too so the interrupt can't even latch into the
+> +        * hardware while it's masked, but only do this for level interrupts
+> +        * because edge interrupts have a problem with the raw status bit
+> +        * toggling and causing spurious interrupts.
 
-Signed-off-by: Roman Kiryanov <rkir@google.com>
----
- drivers/platform/goldfish/goldfish_pipe.c | 1 +
- 1 file changed, 1 insertion(+)
+This whole "spurious interrupts" explanation still seems dodgy.  Have
+you experienced it yourself, or is this looking through some previous
+commits?  As per my comments in v1, I'd still rather the comment state
+the reason as: it's important to _not_ lose edge interrupts when
+masked.
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 3f8e440d62ae..d0621da2c334 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -157,6 +157,7 @@ struct goldfish_pipe {
- 
- 	/* A wake queue for sleeping until host signals an event */
- 	wait_queue_head_t wake_queue;
-+
- 	/* Pointer to the parent goldfish_pipe_dev instance */
- 	struct goldfish_pipe_dev *dev;
- };
--- 
-2.18.0.865.gffc8e1a3cd6-goog
 
+> +        */
+> +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
+> +               val &= ~BIT(g->intr_raw_status_bit);
+> +               writel(val, pctrl->regs + g->intr_cfg_reg);
+> +       }
+
+In v1 you claimed you were going to combine this with the next write
+(you said you'd combine things in both mask and unmask).  ...is there
+a reason why you didn't?  As per my comments in v1 I believe it's
+safer from a correctness point of view to combine them.
+
+
+-Doug
