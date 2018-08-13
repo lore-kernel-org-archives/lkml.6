@@ -2,229 +2,106 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 319F1C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 238F4C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5032174B
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:32:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5032174B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CF50C2174B
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:32:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeiJvmSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF50C2174B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeHMGMt (ORCPT
+        id S1728252AbeHMGNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 02:12:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58176 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725859AbeHMGMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 02:12:49 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7AA1F8780F;
-        Mon, 13 Aug 2018 03:32:29 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-121.pek2.redhat.com [10.72.12.121])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 388031006ED5;
-        Mon, 13 Aug 2018 03:32:09 +0000 (UTC)
-Date:   Mon, 13 Aug 2018 11:32:05 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        it+linux-scsi@molgen.mpg.de,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        linux-scsi@vger.kernel.org
-Subject: Re: aacraid: Regression in 4.14.56 with *genirq/affinity: assign
- vectors to all possible CPUs*
-Message-ID: <20180813033157.GA18254@ming.t460p>
-References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
- <20180810133628.GA4131@kroah.com>
- <29b5f3ce-2c23-bf5e-fe50-29bedd4833e1@molgen.mpg.de>
- <20180810155511.GA17092@kroah.com>
- <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
- <20180811135021.GA2186@kroah.com>
+        Mon, 13 Aug 2018 02:13:01 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41857 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbeHMGNB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 02:13:01 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z8-v6so6897341pgu.8
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 20:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=622jTiJu+0MRtm9OtT2f2Hf5UrvCZy9t5E5iQFi9qoc=;
+        b=TeiJvmSOyRe3X8One+Rn2MekY0FJr+q/iqbknoMUISpmRGbi9irhuqmYD1gkxn1o5r
+         zNd3wVXzIjxrzKBkLSEviPGTpPwtgjttHg7RY21jUGVKvMfPe9ZfUfWbn3q8plXuEvX+
+         7DqSSoLL+P/CmspC33y5PXQbmy8Ao+3DvodzD1dxcUVj7+4t6rF31CNsJNlbZGyYpt5Z
+         nmoek9yjFEQ8a8Yq073ms++nUOm12l5VA/CEct1uZOOHVI0Mhx8J9sl0X90LJbTjBfbn
+         pz3AzUhp5jVgrIWxDEFXO9EZDKrE11uztecScHN/HIZi+F7EmqzzmLYUt9AyWPWIVfXc
+         UwHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=622jTiJu+0MRtm9OtT2f2Hf5UrvCZy9t5E5iQFi9qoc=;
+        b=Pk7tpQ6gSZiMQdedWvwDwemBEAKg/IMoPwNMfV8KqnVatLE5Ayf/WaoGV8b7xZOq2U
+         ID1/0YbbdVbfWbd0md7U6s1RUbKWADWur20Q6+0n4qsfZe49Bpzmc/lnj2lOBulUwj3F
+         nD7YjjBV2747sm8RQUQHcN4bUd/eVwSic9syFTKUq38S81z2m3pSMJNvcveOPMuy+7aX
+         lRS7FE4NbqVZ/vLYGejMaA2b+s2NqvwcIvLEQxr47v+Fi/HGTw/n9ExGFTwywRa6kZHL
+         +EAM9b2TBWJX1m1C0jTvGGnJKmcTTOoTq/UUMGDmqc2RHMtigadvuCx/CpdrYah5ZLoT
+         Gx7w==
+X-Gm-Message-State: AOUpUlGaU9HwwmAGkn0UDBOVupCk7AsJW1jVoeQkl++cLwDR0IUUyJYg
+        /b2k9UWD587jrrdDfQnvO9wLRaau
+X-Google-Smtp-Source: AA+uWPyoa67+21gznaWyPqhBFEFdUxD/GXfXeeMkcRD4Pebwb1kXNdrBZZrflRnW6BBVcRyIvde51g==
+X-Received: by 2002:a63:161a:: with SMTP id w26-v6mr15715199pgl.257.1534131163211;
+        Sun, 12 Aug 2018 20:32:43 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.57? ([2402:f000:1:1501:200:5efe:a66f:4739])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm22193020pfj.179.2018.08.12.20.32.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 Aug 2018 20:32:42 -0700 (PDT)
+To:     dhowells@redhat.com
+Cc:     linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] fs: jffs2: possible sleep-in-atomic-context bugs in jffs2_iget
+Message-ID: <48808863-2c1e-34bf-5968-8bb88052b556@gmail.com>
+Date:   Mon, 13 Aug 2018 11:32:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180811135021.GA2186@kroah.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 13 Aug 2018 03:32:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 13 Aug 2018 03:32:29 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 11, 2018 at 03:50:21PM +0200, Greg Kroah-Hartman wrote:
-> On Sat, Aug 11, 2018 at 10:14:18AM +0200, Paul Menzel wrote:
-> > Dear Greg,
-> > 
-> > 
-> > Am 10.08.2018 um 17:55 schrieb Greg Kroah-Hartman:
-> > > On Fri, Aug 10, 2018 at 04:11:23PM +0200, Paul Menzel wrote:
-> > 
-> > > > On 08/10/18 15:36, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Aug 10, 2018 at 03:21:52PM +0200, Paul Menzel wrote:
-> > > > > > Dear Greg,
-> > > > > > 
-> > > > > > 
-> > > > > > Commit ef86f3a7 (genirq/affinity: assign vectors to all possible CPUs) added
-> > > > > > for Linux 4.14.56 causes the aacraid module to not detect the attached devices
-> > > > > > anymore on a Dell PowerEdge R720 with two six core 24x E5-2630 @ 2.30GHz.
-> > > > > > 
-> > > > > > ```
-> > > > > > $ dmesg | grep raid
-> > > > > > [    0.269768] raid6: sse2x1   gen()  7179 MB/s
-> > > > > > [    0.290069] raid6: sse2x1   xor()  5636 MB/s
-> > > > > > [    0.311068] raid6: sse2x2   gen()  9160 MB/s
-> > > > > > [    0.332076] raid6: sse2x2   xor()  6375 MB/s
-> > > > > > [    0.353075] raid6: sse2x4   gen() 11164 MB/s
-> > > > > > [    0.374064] raid6: sse2x4   xor()  7429 MB/s
-> > > > > > [    0.379001] raid6: using algorithm sse2x4 gen() 11164 MB/s
-> > > > > > [    0.386001] raid6: .... xor() 7429 MB/s, rmw enabled
-> > > > > > [    0.391008] raid6: using ssse3x2 recovery algorithm
-> > > > > > [    3.559682] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 EST 2006)
-> > > > > > [    3.570061] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 2006)
-> > > > > > [   10.725767] Adaptec aacraid driver 1.2.1[50834]-custom
-> > > > > > [   10.731724] aacraid 0000:04:00.0: can't disable ASPM; OS doesn't have ASPM control
-> > > > > > [   10.743295] aacraid: Comm Interface type3 enabled
-> > > > > > $ lspci -nn | grep Adaptec
-> > > > > > 04:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
-> > > > > > 42:00.0 Serial Attached SCSI controller [0107]: Adaptec Smart Storage PQI 12G SAS/PCIe 3 [9005:028f] (rev 01)
-> > > > > > ```
-> > > > > > 
-> > > > > > But, it still works with a Dell PowerEdge R715 with two eight core AMD
-> > > > > > Opteron 6136, the card below.
-> > > > > > 
-> > > > > > ```
-> > > > > > $ lspci -nn | grep Adaptec
-> > > > > > 22:00.0 Serial Attached SCSI controller [0107]: Adaptec Series 8 12G SAS/PCIe 3 [9005:028d] (rev 01)
-> > > > > > ```
-> > > > > > 
-> > > > > > Reverting the commit fixes the issue.
-> > > > > > 
-> > > > > > commit ef86f3a72adb8a7931f67335560740a7ad696d1d
-> > > > > > Author: Christoph Hellwig <hch@lst.de>
-> > > > > > Date:   Fri Jan 12 10:53:05 2018 +0800
-> > > > > > 
-> > > > > >      genirq/affinity: assign vectors to all possible CPUs
-> > > > > >      commit 84676c1f21e8ff54befe985f4f14dc1edc10046b upstream.
-> > > > > >      Currently we assign managed interrupt vectors to all present CPUs.  This
-> > > > > >      works fine for systems were we only online/offline CPUs.  But in case of
-> > > > > >      systems that support physical CPU hotplug (or the virtualized version of
-> > > > > >      it) this means the additional CPUs covered for in the ACPI tables or on
-> > > > > >      the command line are not catered for.  To fix this we'd either need to
-> > > > > >      introduce new hotplug CPU states just for this case, or we can start
-> > > > > >      assining vectors to possible but not present CPUs.
-> > > > > >      Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > > > > >      Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > > > > >      Tested-by: Stefan Haberland <sth@linux.vnet.ibm.com>
-> > > > > >      Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU")
-> > > > > >      Cc: linux-kernel@vger.kernel.org
-> > > > > >      Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > > >      Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > > > >      Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > > > > >      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > > 
-> > > > > > The problem doesn’t happen with Linux 4.17.11, so there are commits in
-> > > > > > Linux master fixing this. Unfortunately, my attempts to find out failed.
-> > > > > > 
-> > > > > > I was able to cherry-pick the three commits below on top of 4.14.62,
-> > > > > > but the problem persists.
-> > > > > > 
-> > > > > > 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
-> > > > > > 355d7ecdea35 scsi: hpsa: fix selection of reply queue
-> > > > > > e944e9615741 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
-> > > > > > 
-> > > > > > Trying to cherry-pick the commits below, referencing the commit
-> > > > > > in question, gave conflicts.
-> > > > > > 
-> > > > > > 1. adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
-> > > > > > 2. d3056812e7df genirq/affinity: Spread irq vectors among present CPUs as far as possible
-> > > > > > 
-> > > > > > To avoid further trial and error with the server with a slow firmware,
-> > > > > > do you know what commits should fix the issue?
-> > > > > 
-> > > > > Look at the email on the stable mailing list:
-> > > > > 	Subject: Re: Fix for 84676c1f (b5b6e8c8) missing in 4.14.y
-> > > > > it should help you out here.
-> > > > 
-> > > > Ah, I didn’t see that [1] yet. Also I can’t find the original message, and a
-> > > > way to reply to that thread. Therefore, here is my reply.
-> > > > 
-> > > > > Can you try the patches listed there?
-> > > > 
-> > > > I tried some of these already without success.
-> > > > 
-> > > > b5b6e8c8d3b4 scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
-> > > > 2f31115e940c scsi: core: introduce force_blk_mq
-> > > > adbe552349f2 scsi: megaraid_sas: fix selection of reply queue
-> > > > 
-> > > > The commit above is already in v4.14.56.
-> > > > 
-> > > > 8b834bff1b73 scsi: hpsa: fix selection of reply queue
-> > > > 
-> > > > The problem persists.
-> > > > 
-> > > > The problem also persists with the state below.
-> > > > 
-> > > > 3528f73a4e5d scsi: core: introduce force_blk_mq
-> > > > 16dc4d8215f3 scsi: hpsa: fix selection of reply queue
-> > > > f0a7ab12232d scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
-> > > > 6aba81b5a2f5 genirq/affinity: Don't return with empty affinity masks on error
-> > > > 1aa1166eface (tag: v4.14.62, stable/linux-4.14.y) Linux 4.14.62
-> > > > 
-> > > > So, some more commits are necessary.
-> > > 
-> > > Or I revert the original patch here, and the follow-on ones that were
-> > > added to "fix" this issue.  I think that might be the better thing
-> > > overall here, right?  Have you tried that?
-> > 
-> > Yes, reverting the commit fixed the issue for us. If Christoph or Ming do
-> > not have another suggestion for a commit, that would be the way to go.
-> 
-> Christoph or Ming, any ideas here?
-> 
-> In looking at the aacraid code, I don't see anywhere that this is using
-> a specific cpu number for queues or anything, but I could be wrong.
-> Ideally this should also be failing in 4.17 or 4.18-rc right now as well
-> as I don't see anything that would have "fixed" this recently.  Unless
-> I'm missing something here?
+The kernel may sleep with holding a spinlock.
 
-From both aac_fib_vector_assign() and aac_src_deliver_message(), looks
-every msix vector is used inside driver, so causes this trouble.
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-From 84676c1f21e8ff54b (genirq/affinity: assign vectors to all possible CPUs),
-actually it should have been since 9a0ef98e18 (genirq/affinity: Assign vectors
-to all present CPUs), it isn't guaranteed that one vector can be mapped to
-at least one online CPU.
+[FUNC] schedule
+fs/inode.c, 1916: schedule in __wait_on_freeing_inode
+fs/inode.c, 826: __wait_on_freeing_inode in find_inode_fast
+fs/inode.c, 1107: find_inode_fast in iget_locked
+fs/jffs2/fs.c, 263: iget_locked in jffs2_iget
+fs/jffs2/fs.c, 665: jffs2_iget in jffs2_gc_fetch_inode
+fs/jffs2/wbuf.c, 505: jffs2_gc_fetch_inode in jffs2_wbuf_recover
+fs/jffs2/wbuf.c, 462: spin_lock in jffs2_wbuf_recover
 
-So it should be fixed in driver by similar approach taken in the
-following patches:
-	scsi: hpsa: fix selection of reply queue
-	scsi: megaraid_sas: fix selection of reply queue
+[FUNC] mutex_lock_nested
+fs/jffs2/fs.c, 273: mutex_lock_nested in jffs2_iget
+fs/jffs2/fs.c, 665: jffs2_iget in jffs2_gc_fetch_inode
+fs/jffs2/wbuf.c, 505: jffs2_gc_fetch_inode in jffs2_wbuf_recover
+fs/jffs2/wbuf.c, 462: spin_lock in jffs2_wbuf_recover
 
-And the reason this issue won't be observed is that the following
-patches(merged to v4.17) may avoid this issue, but in theory, the issue
-won't be avoided completely by these patches:
+I do not find a good way to fix, so I only report.
+Maybe the spinlock should be released before calling jffs2_iget(), and 
+then be acquired again.
+This is found by my static analysis tool (DSAC).
 
-d3056812e7df genirq/affinity: Spread irq vectors among present CPUs as far as possible
-1a2d0914e23a genirq/affinity: Allow irq spreading from a given starting point
-b3e6aaa8d94d genirq/affinity: Move actual irq vector spreading into a helper function
-47778f33dcba genirq/affinity: Rename *node_to_possible_cpumask as *node_to_cpumask
-0211e12dd0a5 genirq/affinity: Don't return with empty affinity masks on error
-
-In short, this issue should have been fixed in upstream aacraid, and the idea
-is simple, use the current CPU id to retrieve the msix vector offset, this
-way will make sure that the msix vector can be mapped from one online
-CPU.
 
 Thanks,
-Ming
+Jia-Ju Bai
+
