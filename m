@@ -6,69 +6,81 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BE7C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 06:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E634CC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 06:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE29B2177D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 06:48:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE29B2177D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 984EC2177D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 06:49:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984EC2177D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeHMJ2x (ORCPT
+        id S1728450AbeHMJaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 05:28:53 -0400
-Received: from mga14.intel.com ([192.55.52.115]:14040 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726345AbeHMJ2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 05:28:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2018 23:48:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,232,1531810800"; 
-   d="scan'208";a="65678858"
-Received: from anshuma1-pnp-server.iind.intel.com ([10.223.107.119])
-  by orsmga006.jf.intel.com with ESMTP; 12 Aug 2018 23:48:00 -0700
-From:   Anshuman Gupta <anshuman.gupta@intel.com>
-To:     linux-usb@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, anshuman.gupta@intel.com
-Subject: [Query] USB device autosuspend and its runtime usage count.
-Date:   Mon, 13 Aug 2018 12:15:58 +0530
-Message-Id: <1534142758-387-1-git-send-email-anshuman.gupta@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 13 Aug 2018 05:30:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56084 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726345AbeHMJaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 05:30:04 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6E9E4E28EFE2A;
+        Mon, 13 Aug 2018 14:49:07 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Mon, 13 Aug 2018
+ 14:48:59 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ganeshgr@chelsio.com>, <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] cxgb4: remove set but not used variable 'spd'
+Date:   Mon, 13 Aug 2018 14:48:51 +0800
+Message-ID: <20180813064851.912-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi ,
-I need to test a functionality with USB autosuspend with latest kernel          
-Linux 4.18-rc8. I am trying to autosuspend a USB key board, i enabled       
-its autosuspend by doing echo "auto" to its "control" attributes.
-I am expecting USB keyboard to go to autosuspend after autosuspend_delay_ms.
-But USB key board is not going to autosuspend because its runtime usage
-count is not equal to zero.
+Fixes gcc '-Wunused-but-set-variable' warning:
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c: In function 'print_port_info':
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:5147:14: warning:
+ variable 'spd' set but not used [-Wunused-but-set-variable]
 
-Below are the log snippets:
+variable 'spd' is set but not used since
+commit 547fd27241a8 ("cxgb4: Warn if device doesn't have enough PCI bandwidth")
 
-root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_enabled
-enabled
-root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/control
-auto
-root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/autosuspend_delay_ms
-2000
-root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_status
-active
-root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_usage
-1
-root@intel-Kabylake-Client-platform:# sleep 60; cat /sys/bus/usb/devices/1-5/power/runtime_usage
-1
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-My USB keyboard runtime usage reference count is not decreasing to zero.
-Here am i missing something regarding runtime usage count or is it some issue with
-my kernel or OS?
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 69590cf..961e3087 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -5144,17 +5144,9 @@ static void print_port_info(const struct net_device *dev)
+ {
+ 	char buf[80];
+ 	char *bufp = buf;
+-	const char *spd = "";
+ 	const struct port_info *pi = netdev_priv(dev);
+ 	const struct adapter *adap = pi->adapter;
+ 
+-	if (adap->params.pci.speed == PCI_EXP_LNKSTA_CLS_2_5GB)
+-		spd = " 2.5 GT/s";
+-	else if (adap->params.pci.speed == PCI_EXP_LNKSTA_CLS_5_0GB)
+-		spd = " 5 GT/s";
+-	else if (adap->params.pci.speed == PCI_EXP_LNKSTA_CLS_8_0GB)
+-		spd = " 8 GT/s";
+-
+ 	if (pi->link_cfg.pcaps & FW_PORT_CAP32_SPEED_100M)
+ 		bufp += sprintf(bufp, "100M/");
+ 	if (pi->link_cfg.pcaps & FW_PORT_CAP32_SPEED_1G)
+-- 
+2.7.0
 
-Thanks,
-Anshuman Gupta.
+
