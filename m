@@ -2,118 +2,156 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D32C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09372C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8776821746
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:26:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UocgWsUY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8776821746
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9DBE21746
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DBE21746
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbeHMOIQ (ORCPT
+        id S1728817AbeHMOKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:08:16 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:42725 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728370AbeHMOIQ (ORCPT
+        Mon, 13 Aug 2018 10:10:03 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42157 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728310AbeHMOKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:08:16 -0400
-Received: by mail-yw1-f65.google.com with SMTP id y203-v6so13246039ywd.9
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=a7BNQtqU1pD6rElJXpAgFiYEXTd8111gFvtpH6it5Kg=;
-        b=UocgWsUYoejNkDzMkZNNXLiFDgoxrNkoGMxOhGt/s5a1/ObdOhXtAolyLCMw4yUp8K
-         bH0phXSxiIb/PGeMipgsrNHAaWMIvo67SVRBWBKIFoua/cMzagzbo5cxPnjJqrAOSepU
-         mEcAg72cPMgUpZNVENKAKqNt+QyAnRs+pCGjy52zyOK+3q3fJU/JHebwZvUVGI0Rm7Ac
-         YGE9UPOiE9zxVPRo7IMo4HRZW4LMPEBH8LQe5XoJalnncPjblhUYAJOnirZA+e3ilvyd
-         4ixnf5lJIzRpeah6XBGLCmEwLJn+NiFXyIyRuzLZAtR0vPY4H8qtlFYaaX3iJ8GkECJx
-         FZLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=a7BNQtqU1pD6rElJXpAgFiYEXTd8111gFvtpH6it5Kg=;
-        b=sulHn0PBvPTBxDzOj8lKnkv+w1SuKZCNhHm5RsKQd5wM9qmc61tyZ5giq9mSaX2416
-         TsmibqX1gE0xU64LG3AR8pN2aAVWUZz+nZy8L9Kt8/j2oCjmXYhdVng0d44ISuY3yUxr
-         8/3XJQL7JfymPXwyZ8Nd2SRcZ8115bHZ6GMCc9aA0FB5MGf41NZTRcrXb7jPPPw0/RRZ
-         GPg/WByqn9J8wIuzLGXy3YZpV6EyDTzWQQpqsBrXR+gT8KguLRb5euCXesJTPwpCD9bc
-         GlKsGmz5gFOhU4Vl1QS5jvJUtEIU+UCZ74oQ1EuDUpqWcMDB+2JxKD6YoHJ4Xn4h55tt
-         QGAA==
-X-Gm-Message-State: AOUpUlEQq0XQfgpMHVp5dH1ZU7izjp5wdwARfoPaAazNnTYuQ8aQrKMa
-        lb5Y4iQOBwh0aYDXxZ7ojhUk+eRRbQPW1ttxiANiNCLl
-X-Google-Smtp-Source: AA+uWPyk/yHLyEgc4XxPW/QjoPrlgEhfXZxHddZLU2Gi9uQkgU8lmlx+v1aAXVCDs9kGVnDLZPX9nmxZrlbppp2gbuc=
-X-Received: by 2002:a81:128d:: with SMTP id 135-v6mr9025506yws.107.1534159585703;
- Mon, 13 Aug 2018 04:26:25 -0700 (PDT)
+        Mon, 13 Aug 2018 10:10:03 -0400
+Received: from 79.184.254.66.ipv4.supernova.orange.pl (79.184.254.66) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 3c569caa2f956cd0; Mon, 13 Aug 2018 13:28:08 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH v4] cpuidle: menu: Handle stopped tick more aggressively
+Date:   Mon, 13 Aug 2018 13:26:00 +0200
+Message-ID: <1582055.9b67urWYFa@aspire.rjw.lan>
+In-Reply-To: <1754612.IcCR94pSYR@aspire.rjw.lan>
+References: <1951009.1jlQfyrxio@aspire.rjw.lan> <3174357.2tBMdxG3bF@aspire.rjw.lan> <1754612.IcCR94pSYR@aspire.rjw.lan>
 MIME-Version: 1.0
-Received: by 2002:a25:2594:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 04:26:25
- -0700 (PDT)
-In-Reply-To: <1534157699-23637-1-git-send-email-zhongjiang@huawei.com>
-References: <1534157699-23637-1-git-send-email-zhongjiang@huawei.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 13 Aug 2018 13:26:25 +0200
-Message-ID: <CAMhs-H9+FBfjvtYb0ehoAz7hHaaoKiO6-Ypmb+q-aXRO-xYG6Q@mail.gmail.com>
-Subject: Re: [PATCH] staging:pci-mt7621: Use PTR_ERR_OR_ZERO to replace the
- open code
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, NeilBrown <neil@brown.name>,
-        peter.vernia@gmail.com, oliver.huebers@web.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 12:54 PM, zhong jiang <zhongjiang@huawei.com> wrote:
-> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR, So
-> just replace them rather than duplicating its implement.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/staging/mt7621-pci/pci-mt7621.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
-> index a49e279..9a8ff1d 100644
-> --- a/drivers/staging/mt7621-pci/pci-mt7621.c
-> +++ b/drivers/staging/mt7621-pci/pci-mt7621.c
-> @@ -403,10 +403,8 @@ static int mt7621_pcie_parse_dt(struct mt7621_pcie *pcie)
->         }
->
->         pcie->base = devm_ioremap_resource(dev, &regs);
-> -       if (IS_ERR(pcie->base))
-> -               return PTR_ERR(pcie->base);
->
-> -       return 0;
-> +       return PTR_ERR_OR_ZERO(pcie->base);
->  }
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Hi Zhong,
+Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
+with stopped tick) missed the case when the target residencies of
+deep idle states of CPUs are above the tick boundary which may cause
+the CPU to get stuck in a shallow idle state for a long time.
 
-Thanks for this. This driver is in the middle of cleanup and this
-function is not doing all the DT parse
-yet, so this patch looks good but after applying this series (if they
-work and are good enough to be applied)
-has no sense.
+Say there are two CPU idle states available: one shallow, with the
+target residency much below the tick boundary and one deep, with
+the target residency significantly above the tick boundary.  In
+that case, if the tick has been stopped already and the expected
+next timer event is relatively far in the future, the governor will
+assume the idle duration to be equal to TICK_USEC and it will select
+the idle state for the CPU accordingly.  However, that will cause the
+shallow state to be selected even though it would have been more
+energy-efficient to select the deep one.
 
-See: http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-August/124890.html
+To address this issue, modify the governor to always use the time
+till the closest timer event instead of the predicted idle duration
+if the latter is less than the tick period length and the tick has
+been stopped already.  Also make it extend the search for a matching
+idle state if the tick is stopped to avoid settling on a shallow
+state if deep states with target residencies above the tick period
+length are available.
 
-Best regards,
-    Sergio Paracuellos
+In addition, make it always indicate that the tick should be stopped
+if it has been stopped already for consistency.
 
->
->  static int mt7621_pcie_request_resources(struct mt7621_pcie *pcie,
-> --
-> 1.7.12.4
->
+Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
+Reported-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+-> v2: Initialize first_idx properly in the stopped tick case.
+ 
+v2 -> v3: Compute data->bucket before checking whether or not the tick has been
+          stopped already to prevent it from becoming stale.
+
+v3 -> v4: Allow the usual state selection to be carried out if the tick has been
+          stopped in case the predicted idle duration is greater than the tick
+          period length and a matching state can be found without overriding
+          the prediction result.
+---
+ drivers/cpuidle/governors/menu.c |   33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
+
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -349,14 +349,12 @@ static int menu_select(struct cpuidle_dr
+ 		 * If the tick is already stopped, the cost of possible short
+ 		 * idle duration misprediction is much higher, because the CPU
+ 		 * may be stuck in a shallow idle state for a long time as a
+-		 * result of it.  In that case say we might mispredict and try
+-		 * to force the CPU into a state for which we would have stopped
+-		 * the tick, unless a timer is going to expire really soon
+-		 * anyway.
++		 * result of it.  In that case say we might mispredict and use
++		 * the known time till the closest timer event for the idle
++		 * state selection.
+ 		 */
+ 		if (data->predicted_us < TICK_USEC)
+-			data->predicted_us = min_t(unsigned int, TICK_USEC,
+-						   ktime_to_us(delta_next));
++			data->predicted_us = ktime_to_us(delta_next);
+ 	} else {
+ 		/*
+ 		 * Use the performance multiplier and the user-configurable
+@@ -381,8 +379,20 @@ static int menu_select(struct cpuidle_dr
+ 			continue;
+ 		if (idx == -1)
+ 			idx = i; /* first enabled state */
+-		if (s->target_residency > data->predicted_us)
+-			break;
++		if (s->target_residency > data->predicted_us) {
++			if (!tick_nohz_tick_stopped() ||
++			    drv->states[idx].target_residency >= TICK_USEC)
++				break;
++
++			/*
++			 * If the state selected so far is shallow and the time
++			 * till the closest timer event matches this state's
++			 * target residency, select this one to avoid getting
++			 * stuck in the shallow one for too long.
++			 */
++			if (s->target_residency > ktime_to_us(delta_next))
++				break;
++		}
+ 		if (s->exit_latency > latency_req) {
+ 			/*
+ 			 * If we break out of the loop for latency reasons, use
+@@ -403,14 +413,13 @@ static int menu_select(struct cpuidle_dr
+ 	 * Don't stop the tick if the selected state is a polling one or if the
+ 	 * expected idle duration is shorter than the tick period length.
+ 	 */
+-	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+-	    expected_interval < TICK_USEC) {
++	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
++	     expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
+ 		unsigned int delta_next_us = ktime_to_us(delta_next);
+ 
+ 		*stop_tick = false;
+ 
+-		if (!tick_nohz_tick_stopped() && idx > 0 &&
+-		    drv->states[idx].target_residency > delta_next_us) {
++		if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
+ 			/*
+ 			 * The tick is not going to be stopped and the target
+ 			 * residency of the state to be returned is not within
+
