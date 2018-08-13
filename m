@@ -6,76 +6,74 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB71C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D771EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79EB32174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:55:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79EB32174A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7598A21798
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7598A21798
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbeHMVip (ORCPT
+        id S1730119AbeHMVll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 17:38:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41442 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729741AbeHMVip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 17:38:45 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7DC5B40122B8;
-        Mon, 13 Aug 2018 18:55:17 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-5.gru2.redhat.com [10.97.112.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 736101003200;
-        Mon, 13 Aug 2018 18:55:16 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id F1AC6147; Mon, 13 Aug 2018 15:55:11 -0300 (BRT)
-Date:   Mon, 13 Aug 2018 15:55:11 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        Mon, 13 Aug 2018 17:41:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:40073 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729241AbeHMVll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 17:41:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2018 11:58:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,234,1531810800"; 
+   d="scan'208";a="81006376"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Aug 2018 11:58:05 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 2F933301A82; Mon, 13 Aug 2018 11:58:05 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 11:58:05 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: arm-spe: Fix uninitialized record error
- variable
-Message-ID: <20180813185511.GA2146@redhat.com>
-References: <20180810174512.52900813e57cbccf18ce99a2@arm.com>
+        Michael Petlan <mpetlan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [RFC] perf/x86/intel: Export mem events only if there's PEBs
+ support
+Message-ID: <20180813185805.GA10097@tassilo.jf.intel.com>
+References: <20180813154820.16991-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810174512.52900813e57cbccf18ce99a2@arm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 18:55:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 18:55:17 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'acme@redhat.com' RCPT:''
+In-Reply-To: <20180813154820.16991-1-jolsa@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Aug 10, 2018 at 05:45:12PM -0500, Kim Phillips escreveu:
-> The auxtrace init variable 'err' was not being initialized, leading
-> perf to abort early in an SPE record command when there was no explicit
-> error, rather only based whatever memory contents were on the stack.
-> Initialize it explicitly on getting an SPE successfully, the same way
-> cs-etm does.
+On Mon, Aug 13, 2018 at 05:48:20PM +0200, Jiri Olsa wrote:
+> hi,
+> we had some reports that we show mem* events on KVM servers
+> where they are not available, this patch hides them if there's
+> no PEBs available
 > 
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> ---
-> Hi Arnaldo, please apply to perf/urgent / stable series if at all
-> possible.  Thank you.
+> currently on those servers we fail to open mem* events,
+> because we can't access LDLAT msr
+> 
+> however that's not so easy/straight forward to check,
+> so I thought we could use check on PEBs instead, which
+> needs to be there for mem events as well and seems to
+> be enough to check
+> 
+> thoughts? thanks,
+> jirka
 
-In such cases the best thing is to have a "Fixes: ..." so that this gets
-automatically picked by the stabe trees, I'll try to find out what was
-the patch that introduced this problem.
+Acked-by: Andi Kleen <ak@linux.intel.com>
 
-- Arnaldo
+-Andi
