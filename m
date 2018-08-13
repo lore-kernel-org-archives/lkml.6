@@ -6,468 +6,93 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A12AC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9957C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6AAE21470
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:50:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AAE21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A602821758
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A602821758
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbeHNAc5 (ORCPT
+        id S1731951AbeHNAfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:32:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57336 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731231AbeHNAc4 (ORCPT
+        Mon, 13 Aug 2018 20:35:04 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:34901 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731137AbeHNAfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:32:56 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLdFwZ130168
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:52 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kuhmah506-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:52 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Mon, 13 Aug 2018 17:48:50 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Aug 2018 17:48:48 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLmkQJ8716878
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Aug 2018 21:48:46 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7274E124052;
-        Mon, 13 Aug 2018 18:49:44 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5BC52124054;
-        Mon, 13 Aug 2018 18:49:43 -0400 (EDT)
-Received: from localhost.localdomain (unknown [9.85.141.105])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon, 13 Aug 2018 18:49:43 -0400 (EDT)
-From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v9 10/22] s390: vfio-ap: sysfs interfaces to configure adapters
-Date:   Mon, 13 Aug 2018 17:48:07 -0400
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18081321-0040-0000-0000-0000045E55B9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009538; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01073087; UDB=6.00552882; IPR=6.00853043;
- MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:48:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081321-0041-0000-0000-000008655D89
-Message-Id: <1534196899-16987-11-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808130218
+        Mon, 13 Aug 2018 20:35:04 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LlHiI-1gQ2fM161u-00b6or; Mon, 13 Aug 2018 23:50:50 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: stmmac: mark PM functions as __maybe_unused
+Date:   Mon, 13 Aug 2018 23:50:41 +0200
+Message-Id: <20180813215046.3663828-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:yHkYOL42QrgSrFmnm4HKk71DoAHMxD4yJJ0Qm/UdpxzCP7w7VsH
+ oe/YXbXosXJpEQmYMaAZXP1pPdZC/emuQtI1ZCIrLbOkDWT6rRPQ/I1BPjZSU6KWXgsqR+6
+ DG4XEGDdGFlQ3mZ6xTXNcnvtiuD6TgczaZZn0LHpUgwFOPhG/ShwGE6fZw6xHAPTX0FKDlF
+ B1G+7A9T8dYluUwl17saw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:sSWmrTSKnPo=:RabkFznQLGSLpzQLM66n7J
+ 83lyhkVgsA918Ns9BalldcXCqiKoQI3lseeO8ZgYkSlunQAgojRICmgAKsrnYnAxIchG5rwYR
+ JE/6dRDkrZrtPTW5/g5BUwbvwj8TTHNfuawUjY88LCPTp8V0YddwRjgwLmaLt3BZkVvlJK7zd
+ ekZvUSZkniwFfk3SAYCtjvMLxHTCLq1F7dsphY2pH5X9VL460fM69G16JvBsLq8v662B09lEJ
+ xd0jNsqsrrRJT9gIAxF2IhoOi/+HA8uZ4jjpuSh14ISQ46lx4GMCf78edJKlTcH+N5ZuQAYVj
+ p8xnQHm0vEG7fJi2zoUysOkMhXtGR9KxTbHa0664CIZ4iFObRFln2Cog7bByxwrc/iZM8+8d3
+ ATZ3ttF+ta1cNZ+yqBoLk62fR1D/PS5RNlK4xbdL0RDl5Jfca0k64ye1/l/8REB/TkXbKq4xo
+ 91eHo0C2YuQgYOYsvvNcuWr1mnPPcn8nPpuImRGkgwnKAYLsJUZumL8XokupxlFuEWITnyVs+
+ XZ/rAhQ9L6K9G8uR1xdIMyMkFkZxjzC1M0kpqd7sdQL4jPFisrVeWWGvpIkXLRmIDI+FypLtj
+ /E4fcJsObIyVTUpM9Uo3FWA/Pt+dgzw9xNydsMFFKGUuuuyc2C/fburxem6PZnqLP82aolZ04
+ a40f3ps6e9feLZm33WEvqbzIC1SlpZe1zYDq5/nBhUWQZCoLb3PZLa4DIKJcDi52ZF5g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Krowiak <akrowiak@linux.ibm.com>
+The newly added suspend/resume functions cause a build warning
+when CONFIG_PM is disabled:
 
-Introduces two new sysfs attributes for the VFIO mediated
-matrix device for assigning AP adapters to and unassigning
-AP adapters from a mediated matrix device. The IDs of the
-AP adapters assigned to the mediated matrix device will be
-stored in an AP mask (APM).
+drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c:324:12: error: 'stmmac_pci_resume' defined but not used [-Werror=unused-function]
+drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c:306:12: error: 'stmmac_pci_suspend' defined but not used [-Werror=unused-function]
 
-The bits in the APM, from most significant to least significant
-bit, correspond to AP adapter IDs (APID) 0 to 255. On
-some systems, the maximum allowable adapter number may be less
-than 255 - depending upon the host's AP configuration - and
-assignment may be rejected if the input adapter ID exceeds the
-limit.
+Mark them as __maybe_unused so gcc can drop them silently.
 
-When an adapter is assigned, the bit corresponding to the APID
-will be set in the APM. Likewise, when an adapter is
-unassigned, the bit corresponding to the APID will be cleared
-from the APM.
-
-In order to successfully assign an adapter, the APQNs derived from
-the adapter ID being assigned and the queue indexes of all domains
-previously assigned:
-
-1. Must be bound to the vfio_ap device driver.
-
-2. Must not be assigned to any other mediated matrix device
-
-If there are no domains assigned to the mdev, then there must
-be an AP queue bound to the vfio_ap device driver with an
-APQN containing the APID, otherwise all domains
-subsequently assigned will fail because there will be no
-AP queues bound with an APQN containing the adapter ID.
-
-Assigning or un-assigning an AP adapter will be rejected if
-a guest using the mediated matrix device is running.
-
-The relevant sysfs structures are:
-
-/sys/devices/vfio_ap/matrix/
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ [devices]
-...............[$uuid]
-.................. assign_adapter
-.................. unassign_adapter
-
-To assign an adapter to the $uuid mediated matrix device's APM,
-write the APID to the assign_adapter file. To unassign an adapter,
-write the APID to the unassign_adapter file. The APID is specified
-using conventional semantics: If it begins with 0x the number will
-be parsed as a hexadecimal number; if it begins with a 0 the number
-will be parsed as an octal number; otherwise, it will be parsed as a
-decimal number.
-
-For example, to assign adapter 173 (0xad) to the mediated matrix
-device $uuid:
-
-	echo 173 > assign_adapter
-
-	or
-
-	echo 0xad > assign_adapter
-
-	or
-
-	echo 0255 > assign_adapter
-
-To unassign adapter 173 (0xad):
-
-	echo 173 > unassign_adapter
-
-	or
-
-	echo 0xad > unassign_adapter
-
-	or
-
-	echo 0255 > unassign_adapter
-
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-Tested-by: Michael Mueller <mimu@linux.ibm.com>
-Tested-by: Farhan Ali <alifm@linux.ibm.com>
-Tested-by: Pierre Morel <pmorel@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Fixes: b7d0f08e9129 ("net: stmmac: Fix WoL for PCI-based setups")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/s390/crypto/vfio_ap_ops.c |  273 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 273 insertions(+), 0 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 8018c2d..dfb434c 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -106,9 +106,282 @@ static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
- 	NULL,
- };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+index 6a393b16a1fc..c54a50dbd5ac 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+@@ -303,7 +303,7 @@ static void stmmac_pci_remove(struct pci_dev *pdev)
+ 	pci_disable_device(pdev);
+ }
  
-+struct vfio_ap_queue_reserved {
-+	unsigned long *apid;
-+	unsigned long *apqi;
-+	bool reserved;
-+};
-+
-+/**
-+ * vfio_ap_has_queue
-+ *
-+ * @dev: an AP queue device
-+ * @data: a struct vfio_ap_queue_reserved reference
-+ *
-+ * Flags whether the AP queue device (@dev) has a queue ID containing the APQN,
-+ * apid or apqi specified in @data:
-+ *
-+ * - If @data contains both an apid and apqi value, then @data will be flagged
-+ *   as reserved if the APID and APQI fields for the AP queue device matches
-+ *
-+ * - If @data contains only an apid value, @data will be flagged as
-+ *   reserved if the APID field in the AP queue device matches
-+ *
-+ * - If @data contains only an apqi value, @data will be flagged as
-+ *   reserved if the APQI field in the AP queue device matches
-+ *
-+ * Returns 0 to indicate the input to function succeeded. Returns -EINVAL if
-+ * @data does not contain either an apid or apqi.
-+ */
-+static int vfio_ap_has_queue(struct device *dev, void *data)
-+{
-+	struct vfio_ap_queue_reserved *qres = data;
-+	struct ap_queue *ap_queue = to_ap_queue(dev);
-+	ap_qid_t qid;
-+	unsigned long id;
-+
-+	if (qres->apid && qres->apqi) {
-+		qid = AP_MKQID(*qres->apid, *qres->apqi);
-+		if (qid == ap_queue->qid)
-+			qres->reserved = true;
-+	} else if (qres->apid && !qres->apqi) {
-+		id = AP_QID_CARD(ap_queue->qid);
-+		if (id == *qres->apid)
-+			qres->reserved = true;
-+	} else if (!qres->apid && qres->apqi) {
-+		id = AP_QID_QUEUE(ap_queue->qid);
-+		if (id == *qres->apqi)
-+			qres->reserved = true;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * vfio_ap_verify_queue_reserved
-+ *
-+ * @matrix_dev: a mediated matrix device
-+ * @apid: an AP adapter ID
-+ * @apqi: an AP queue index
-+ *
-+ * Verifies that the AP queue with @apid/@apqi is reserved by the VFIO AP device
-+ * driver according to the following rules:
-+ *
-+ * - If both @apid and @apqi are not NULL, then there must be an AP queue
-+ *   device bound to the vfio_ap driver with the APQN identified by @apid and
-+ *   @apqi
-+ *
-+ * - If only @apid is not NULL, then there must be an AP queue device bound
-+ *   to the vfio_ap driver with an APQN containing @apid
-+ *
-+ * - If only @apqi is not NULL, then there must be an AP queue device bound
-+ *   to the vfio_ap driver with an APQN containing @apqi
-+ *
-+ * Returns 0 if the AP queue is reserved; otherwise, returns -EADDRNOTAVAIL.
-+ */
-+static int vfio_ap_verify_queue_reserved(unsigned long *apid,
-+					 unsigned long *apqi)
-+{
-+	int ret;
-+	struct vfio_ap_queue_reserved qres;
-+
-+	qres.apid = apid;
-+	qres.apqi = apqi;
-+	qres.reserved = false;
-+
-+	ret = driver_for_each_device(matrix_dev.device.driver, NULL, &qres,
-+				     vfio_ap_has_queue);
-+	if (ret)
-+		return ret;
-+
-+	if (qres.reserved)
-+		return 0;
-+
-+	return -EADDRNOTAVAIL;
-+}
-+
-+static int
-+vfio_ap_mdev_verify_queues_reserved_for_apid(struct ap_matrix_mdev *matrix_mdev,
-+					     unsigned long apid)
-+{
-+	int ret;
-+	unsigned long apqi;
-+	unsigned long nbits = matrix_mdev->matrix.aqm_max + 1;
-+
-+	if (find_first_bit_inv(matrix_mdev->matrix.aqm, nbits) >= nbits)
-+		return vfio_ap_verify_queue_reserved(&apid, NULL);
-+
-+	for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, nbits) {
-+		ret = vfio_ap_verify_queue_reserved(&apid, &apqi);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * vfio_ap_mdev_verify_no_sharing
-+ *
-+ * Verifies that the APQNs derived from the cross product of the AP adapter IDs
-+ * and AP queue indexes comprising the AP matrix are not configured for another
-+ * mediated device. AP queue sharing is not allowed.
-+ *
-+ * @kvm: the KVM guest
-+ * @matrix: the AP matrix
-+ *
-+ * Returns 0 if the APQNs are not shared, otherwise; returns -EADDRINUSE.
-+ */
-+static int vfio_ap_mdev_verify_no_sharing(struct ap_matrix_mdev *matrix_mdev)
-+{
-+	int nbits;
-+	struct ap_matrix_mdev *lstdev;
-+	unsigned long apm[BITS_TO_LONGS(matrix_mdev->matrix.apm_max + 1)];
-+	unsigned long aqm[BITS_TO_LONGS(matrix_mdev->matrix.aqm_max + 1)];
-+
-+	list_for_each_entry(lstdev, &matrix_dev.mdev_list, list) {
-+		if (matrix_mdev == lstdev)
-+			continue;
-+
-+		memset(apm, 0, sizeof(apm));
-+		memset(aqm, 0, sizeof(aqm));
-+
-+		/*
-+		 * We work on full longs, as we can only exclude the leftover
-+		 * bits in non-inverse order. The leftover is all zeros.
-+		 */
-+		nbits = sizeof(apm) * BITS_PER_BYTE;
-+		if (!bitmap_and(apm, matrix_mdev->matrix.apm,
-+				lstdev->matrix.apm, nbits))
-+			continue;
-+
-+		nbits = sizeof(aqm) * BITS_PER_BYTE;
-+		if (!bitmap_and(aqm, matrix_mdev->matrix.aqm,
-+				lstdev->matrix.aqm, nbits))
-+			continue;
-+
-+		return -EADDRINUSE;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * assign_adapter_store
-+ *
-+ * @dev: the matrix device
-+ * @attr: a mediated matrix device attribute
-+ * @buf: a buffer containing the adapter ID (APID) to be assigned
-+ * @count: the number of bytes in @buf
-+ *
-+ * Parses the APID from @buf and assigns it to the mediated matrix device.
-+ *
-+ * Returns the number of bytes processed if the APID is valid; otherwise returns
-+ * an error.
-+ */
-+static ssize_t assign_adapter_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	int ret = 0;
-+	unsigned long apid;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long max_apid = matrix_mdev->matrix.apm_max;
-+
-+	ret = kstrtoul(buf, 0, &apid);
-+	if (ret)
-+		return ret;
-+	if (apid > max_apid)
-+		return -EINVAL;
-+
-+	/* Set the bit in the AP mask (APM) corresponding to the AP adapter
-+	 * number (APID). The bits in the mask, from most significant to least
-+	 * significant bit, correspond to APIDs 0-255.
-+	 */
-+	mutex_lock(&matrix_dev.lock);
-+
-+	ret = vfio_ap_mdev_verify_queues_reserved_for_apid(matrix_mdev, apid);
-+	if (ret)
-+		goto done;
-+
-+	set_bit_inv(apid, matrix_mdev->matrix.apm);
-+
-+	ret = vfio_ap_mdev_verify_no_sharing(matrix_mdev);
-+	if (ret)
-+		goto share_err;
-+
-+	ret = count;
-+	goto done;
-+
-+share_err:
-+	clear_bit_inv(apid, matrix_mdev->matrix.apm);
-+done:
-+	mutex_unlock(&matrix_dev.lock);
-+
-+	return ret;
-+}
-+static DEVICE_ATTR_WO(assign_adapter);
-+
-+/**
-+ * unassign_adapter_store
-+ *
-+ * @dev: the matrix device
-+ * @attr: a mediated matrix device attribute
-+ * @buf: a buffer containing the adapter ID (APID) to be assigned
-+ * @count: the number of bytes in @buf
-+ *
-+ * Parses the APID from @buf and unassigns it from the mediated matrix device.
-+ * The APID must be a valid value
-+ *
-+ * Returns the number of bytes processed if the APID is valid; otherwise returns
-+ * an error.
-+ */
-+static ssize_t unassign_adapter_store(struct device *dev,
-+				      struct device_attribute *attr,
-+				      const char *buf, size_t count)
-+{
-+	int ret;
-+	unsigned long apid;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+
-+	ret = kstrtoul(buf, 0, &apid);
-+	if (ret)
-+		return ret;
-+
-+	if (apid > matrix_mdev->matrix.apm_max)
-+		return -EINVAL;
-+
-+	mutex_lock(&matrix_dev.lock);
-+	clear_bit_inv((unsigned long)apid, matrix_mdev->matrix.apm);
-+	mutex_unlock(&matrix_dev.lock);
-+
-+	return count;
-+}
-+DEVICE_ATTR_WO(unassign_adapter);
-+
-+static struct attribute *vfio_ap_mdev_attrs[] = {
-+	&dev_attr_assign_adapter.attr,
-+	&dev_attr_unassign_adapter.attr,
-+	NULL
-+};
-+
-+static struct attribute_group vfio_ap_mdev_attr_group = {
-+	.attrs = vfio_ap_mdev_attrs
-+};
-+
-+static const struct attribute_group *vfio_ap_mdev_attr_groups[] = {
-+	&vfio_ap_mdev_attr_group,
-+	NULL
-+};
-+
- static const struct mdev_parent_ops vfio_ap_matrix_ops = {
- 	.owner			= THIS_MODULE,
- 	.supported_type_groups	= vfio_ap_mdev_type_groups,
-+	.mdev_attr_groups	= vfio_ap_mdev_attr_groups,
- 	.create			= vfio_ap_mdev_create,
- 	.remove			= vfio_ap_mdev_remove,
- };
+-static int stmmac_pci_suspend(struct device *dev)
++static int __maybe_unused stmmac_pci_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	int ret;
+@@ -321,7 +321,7 @@ static int stmmac_pci_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int stmmac_pci_resume(struct device *dev)
++static int __maybe_unused stmmac_pci_resume(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	int ret;
 -- 
-1.7.1
+2.18.0
 
