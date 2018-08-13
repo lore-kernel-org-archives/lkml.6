@@ -2,166 +2,124 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF61C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C98C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A95021569
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:49:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OgP3fldW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A95021569
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 44C5D21747
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:50:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C5D21747
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729624AbeHMObp (ORCPT
+        id S1729626AbeHMOcV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:31:45 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53783 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728568AbeHMObp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:31:45 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180813114947euoutp02b707aa0b075f0ec7a6cb591f536bcbae~Kb0o49qoO1909419094euoutp02E
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 11:49:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180813114947euoutp02b707aa0b075f0ec7a6cb591f536bcbae~Kb0o49qoO1909419094euoutp02E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1534160987;
-        bh=9N9j7XXUKooiFn6yPPoa5XxO9DL5bcL4dCIz6tv4UXE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=OgP3fldWUhhkRC1yMNN+6JMNsATuEkZKLcpL6K8pFNrHuyut1ARs/tmHoJmK1HguJ
-         Ftppdg1g3Z9olTc2XwsB4N8Vi246hZLND3IfgfikMwkmCVHTbaj7ADhD4KU+PAESUH
-         tkee6QD30qmDyDsL0VjmaGUrzpretmv27lxRfWRs=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180813114946eucas1p2fc88e1cd1fa73c1cc8d7991f031f3f2a~Kb0oJXvqz1604616046eucas1p24;
-        Mon, 13 Aug 2018 11:49:46 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id D6.0F.04441.A50717B5; Mon, 13
-        Aug 2018 12:49:46 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20180813114945eucas1p1e9d900848b4256341fe93278f4fa6f67~Kb0nDRoKq0841508415eucas1p1p;
-        Mon, 13 Aug 2018 11:49:45 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180813114945eusmtrp23dca75897851ed52ba82772d10db6069~Kb0mzWaZI2192521925eusmtrp2N;
-        Mon, 13 Aug 2018 11:49:45 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-6a-5b71705ac5d6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 63.7D.04128.950717B5; Mon, 13
-        Aug 2018 12:49:45 +0100 (BST)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20180813114944eusmtip283d3bfda3bff00b7b7bbd08f21ac4a1f~Kb0mWteAS0521705217eusmtip2y;
-        Mon, 13 Aug 2018 11:49:44 +0000 (GMT)
-Subject: Re: [PATCH] drm/bridge/synopsys: dw-hdmi: re-run dw_hdmi_setup when
- setting mode
-To:     Icenowy Zheng <icenowy@aosc.io>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Date:   Mon, 13 Aug 2018 13:49:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Mon, 13 Aug 2018 10:32:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55636 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728557AbeHMOcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:32:21 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9C4A940122B3;
+        Mon, 13 Aug 2018 11:50:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 738F52026D66;
+        Mon, 13 Aug 2018 11:50:20 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 13 Aug 2018 13:50:23 +0200 (CEST)
+Date:   Mon, 13 Aug 2018 13:50:19 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     Song Liu <liu.song.a23@gmail.com>, srikar@linux.vnet.ibm.com,
+        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v8 3/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+Message-ID: <20180813115019.GB28360@redhat.com>
+References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
+ <20180809041856.1547-4-ravi.bangoria@linux.ibm.com>
+ <CAPhsuW49+qA7kT7yE4tgbnAuox-iOzssg-jc2abG8XDo6XeX8A@mail.gmail.com>
+ <95a1221e-aecc-42be-5239-a2c2429be176@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180725035627.58223-1-icenowy@aosc.io>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+5+zqzY9Ts2XZbeBhFaaUHHAiAQ/nE8hGBSOrJkntba5dryk
-        EolhzeUls/LSSod5Ibs5zbyQhfeopeYCFW+FRJrDai4z0trxKPntx/M+7/99HviLcGkHXyaK
-        1yTSOo1SJRe48Bq7F9/tidSeV+wtafMlM/U2Pmn6OIaTVsecgLSbxjHyw8I0TmYX3BeSgy1G
-        ATk5/RKR7XmKw2KqYnEZo+aGsoTUvYfp1GBeLka9+FnOo+7oS/jUxLUejHqVW8ij7Oat4eJI
-        l4MxtCo+mdYFHTrlEldsmMG1g64X6ioz8QzUKTYgsQiIffDbmMljWUrUIGjoCud4HsHVNleO
-        7Qhajd5r/u6BL0IDcnHq1QjMo8MCzmRDMODwZ9mTUEBfTRHOmryIxxjk2OwYO8CJUFjKf4az
-        LCD8YameW+YRfmDKMSOWvYnj0DlpWmEJ4QGvS6ZW0omJ/dB0+6aQe2cbPLcZcY59YGSqDOPS
-        jQhhuVzB7SbDp+w8IaeHgdE8usqeMNPTsMq+8Ld5bfcSZJZYV0IDoUfQW1Et4AYh0NEzwDcg
-        kfOYPzxpCeLkULD8WsBYGQg3GLJ5cHHc4EYj252VJaC/IuXcO2DCwjUHZ+LKfofgOpKXritZ
-        uq5Y6bpipf/vliPeA+RDJzHqWJoJ1tApgYxSzSRpYgNPJ6jNyPm13iz3/GhCjvfR7YgQIflG
-        ib5Wq5DylclMqrodgQiXe0n6NzglSYwyNY3WJZzUJaloph1tFvHkPhK3gDMKKRGrTKTP0bSW
-        1q1NMZFYloEi8yO+v20b7tBWodAAw1e/rgJ9cXzd0YJ561j0o2+X0wJtF2W97l19UcLPsxaD
-        9c/O6sFNM3cbntr1ra2uhWHHtt/KCg5MTzSccE1R7bK0Mu7BqhGiNnYLap49YpfXm4rKZBZh
-        akuEOK5KqU6I6hgaZ/rys236/pDkEMOBs7vlPCZOGRyA6xjlP8/bQvRWAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xe7qRBYXRBnO+CVk0dbxltVj48C6z
-        xZWv79ksPi+8x2Rx9ftLZovOiUvYLS7vmsNm8eDlfkaLQ33RDpwei3/+Y/J4f6OV3WPemmqP
-        y329TB57vy1g8ZjdMZPV4373cSaPA72TWTw+b5IL4IzSsynKLy1JVcjILy6xVYo2tDDSM7S0
-        0DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy5jR9Yq54DJ3xcalTcwNjEc4uxg5OSQETCSO
-        XXzB3sXIxSEksJRR4uDM86wQCXGJ3fPfMkPYwhJ/rnWxQRS9ZpT48HMfI0hCWCBa4vyK6cwg
-        CRGBTUwS335dYQFJMAs4Svzt3wrWLSTQwSixcaEkiM0moCnxd/NNNhCbV8BOYsufq0wgNouA
-        qsTCnk1gQ0UFIiRWL3/BClEjKHFy5hOwmZwCphI7pk1hh5ivLvFn3iVmCFteYvvbOVC2uMSt
-        J/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRGK/bjv3c
-        soOx613wIUYBDkYlHt4HawuihVgTy4orcw8xSnAwK4nwXmAACvGmJFZWpRblxxeV5qQWH2I0
-        BXpuIrOUaHI+MJXklcQbmhqaW1gamhubG5tZKInznjeojBISSE8sSc1OTS1ILYLpY+LglGpg
-        nGn6v3K747XEMuW00BUBKX/ijpVKXxCd8901l7U9/vre9JpHd+P196cYC5ze9F/jekjN5fDw
-        AtcJLSvz2z8oqG2aaX1UnLdoefGkyYW5p82+vGEM+KeVVj5To4RrSmKl78TF62rKLeW0Eput
-        GB6fuvGsesHBtefm7t76Q1rEXluu49DriQznlViKMxINtZiLihMBFAAqJe0CAAA=
-Message-Id: <20180813114945eucas1p1e9d900848b4256341fe93278f4fa6f67~Kb0nDRoKq0841508415eucas1p1p@eucas1p1.samsung.com>
-X-CMS-MailID: 20180813114945eucas1p1e9d900848b4256341fe93278f4fa6f67
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180725035712epcas1p25df72b8af38438b7bb66a2729fdff445
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180725035712epcas1p25df72b8af38438b7bb66a2729fdff445
-References: <CGME20180725035712epcas1p25df72b8af38438b7bb66a2729fdff445@epcas1p2.samsung.com>
-        <20180725035627.58223-1-icenowy@aosc.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95a1221e-aecc-42be-5239-a2c2429be176@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 11:50:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 11:50:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.07.2018 05:56, Icenowy Zheng wrote:
-> Currently dw_hdmi_setup is only run when the dw-hdmi bridge is enabled,
-> with the mode set last time.
+On 08/13, Ravi Bangoria wrote:
 >
-> When the bridge is enabled before any mode is set (this may happen when
-> booting), the mode won't be set at all, some setup steps will be
-> skipped or fail, and the HDMI output may not work.
-
-I guess, it should not happen. Could you show the stack-trace.
-
+> On 08/11/2018 01:27 PM, Song Liu wrote:
+> >> +
+> >> +static void delayed_uprobe_delete(struct delayed_uprobe *du)
+> >> +{
+> >> +       if (!du)
+> >> +               return;
+> > Do we really need this check?
 >
-> Re-run dw_hdmi_setup when setting mode, in order to prevent such
-> situation.
+> Not necessary though, but I would still like to keep it for a safety.
 
-mode_set is run with hardware disabled, thus usually it should not touch
-hardware.
+Heh. I tried to ignore all minor problems in this version, but now that Song
+mentioned this unnecessary check...
 
+Personally I really dislike the checks like this one.
 
+	- It can confuse the reader who will try to understand the purpose
+
+	- it can hide a bug if delayed_uprobe_delete(du) is actually called
+	  with du == NULL.
+
+IMO, you should either remove it and let the kernel crash (to notice the
+problem), or turn it into
+
+	if (WARN_ON(!du))
+		return;
+
+which is self-documented and reports the problem without kernel crash.
+
+> >> +       rc_vma = find_ref_ctr_vma(uprobe, mm);
+> >> +
+> >> +       if (rc_vma) {
+> >> +               rc_vaddr = offset_to_vaddr(rc_vma, uprobe->ref_ctr_offset);
+> >> +               ret = __update_ref_ctr(mm, rc_vaddr, is_register ? 1 : -1);
+> >> +
+> >> +               if (is_register)
+> >> +                       return ret;
+> >> +       }
+> > Mixing __update_ref_ctr() here and delayed_uprobe_add() in the same
+> > function is a little confusing (at least for me). How about we always use
+> > delayed uprobe for uprobe_mmap() and use non-delayed in other case(s)?
 >
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
->  1 file changed, 1 insertion(+)
 >
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 5971976284bf..e2f832182afe 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -2007,6 +2007,7 @@ static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
->  
->  	/* Store the display mode for plugin/DKMS poweron events */
->  	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
-> +	dw_hdmi_setup(hdmi, mode);
+> No. delayed_uprobe_add() is needed for uprobe_register() case to handle race
+> between uprobe_register() and process creation.
 
-This hdmi->previous_mode also looks strange, it is current mode and
-moreover it is always available from crtc state, there is no point in
-copying it to private field.
+Yes.
 
-Regards
-Andrzej
->  
->  	mutex_unlock(&hdmi->mutex);
->  }
+But damn, process creation (exec) is trivial. We could add a new uprobe_exec()
+hook and avoid delayed_uprobe_install() in uprobe_mmap().
 
+Afaics, the really problematic case is dlopen() which can race with _register()
+too, right?
+
+Oleg.
 
