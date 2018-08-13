@@ -6,95 +6,94 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2290EC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073E7C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D69DA21781
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69DA21781
+	by mail.kernel.org (Postfix) with ESMTP id A14162171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:27:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14162171F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbeHNAID (ORCPT
+        id S1730526AbeHNALG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:08:03 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:59941 "EHLO
+        Mon, 13 Aug 2018 20:11:06 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:44585 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728772AbeHNAID (ORCPT
+        with ESMTP id S1729245AbeHNALG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:08:03 -0400
+        Mon, 13 Aug 2018 20:11:06 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LrKaC-1g1Bkw20GS-0136zU; Mon, 13 Aug 2018 23:23:58 +0200
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0M16aW-1g8vcM2BFA-00tC3M; Mon, 13 Aug 2018 23:27:02 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>
+To:     Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/msm/gpu: fix building without debugfs
-Date:   Mon, 13 Aug 2018 23:23:44 +0200
-Message-Id: <20180813212351.2555757-2-arnd@arndb.de>
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Andy Gospodarek <gospo@broadcom.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] bnxt_en: avoid string overflow for record->system_name
+Date:   Mon, 13 Aug 2018 23:26:54 +0200
+Message-Id: <20180813212700.2681499-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180813212351.2555757-1-arnd@arndb.de>
-References: <20180813212351.2555757-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:5C9zMnJIm2j7aonRZ0RUaJoxxro5gafvjRhMgH0MCak7wLdTkUa
- zyun0g7K1f1otb2jXQNiADlqmeT57rnDB+VmT6MUZvsvJ4zT8zbYoXQJuBAVsZOyU9LyZ57
- stSrWwmSPiA37Vb5PmRVPxQ3ejBNQND3EPkt4NlwHBcnEBsBHUBV27TxejoWSYklzpkZ+AQ
- Qwy6CcqCidW5tswvVwn6w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7dhPx8wMYqI=:f3Ougk7mbz7qgLOnustbh0
- dejwPbW4f4RM16aI1nylAUyPn/8Y8jdBNrEhhFQoIdb3MUGUhUi1nngO0yguKM1KliTX4A9QA
- H072eOE4bPtyeaRIOV2r33zU7XJhk1/mG8CVgjHAKDlxcGyFcOYeW2ItFoF7sE5zkWlKD7n5Y
- daMcQnn1W3i6A3Detjs3N6gcpn8Ussx5vUbGvS20vCpbltcPEN+bmoTuVcZWc0eIyDYMJHTeH
- vhBqchwiC69ZPiw3O2V/L0R6nYdRhBXo/erH69XHCpeykz2ffyuSV+/6XG/Phi5eHcn3EGrX2
- tL+QSWqq1VUToI56K9fqy35WwUYQeiFjRhiDKeSbK99iKfaCnqqJ6b6WbKNg1pXM0BNLdjvAC
- MgAhh2Xq0tLYz2rEgrvN+45J/QfTceOAM7WFWXkxK9MwNVK4P/Z5kFe3SDmYZ5ySL6AaY4ht6
- CqYfTt7wkeWtiHjekfwAwL/kydyoq2pDFoCZenP/ibrbkIaoPNXqZAha9HgmWzH5HLgiBEybn
- FoFbEs7BVp0zrZRMNCHf46D/HYT4wDkpCA3Tl08nR/feLtLnU+MXKLyJ0LY6cjRXp1eznKgt1
- RV7e2jlBMVVcv/jtcnqF+hOT7YfaKXP6B7ZZ7i7drMwRWWhXtZjeq8g/2V337Nwkjt7HPl0Rh
- QgF3MkPEz++ZsGYwspULobzZPmq5uLe3ry9fkkaXaQxV0KdFfOXzt6UPhfGEpwBI5IFg=
+X-Provags-ID: V03:K1:gH6T27BtgypcwrQwANOFw6VbcUIQ7DkW+PBxph1zc2WO063OYYW
+ 2zQ6k+BKwShTWB76QKb4x1QhTP5aotQ78Q8yWzzLmYic0aD822fwoLepOIkft/Z+lAw9sFB
+ Yf1HogllWYCOk3kv2kItROR5gYmp1/1JvuUc651iarMKKDEaBH/kffc7Rm6WVmtrjd22O6r
+ zkGlZiB+msOSCTp7CeIjQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:UElvnY30Nu8=:EfGJLYWqscyl6H/hyYt81x
+ cjjUqengUYR5b+pKESXvBMt+W0r4ko5f19S9jFQKAPt1dnMiEt4HyRqEiE7FAmGWNb6NpoCdM
+ 9FnZbk7in0Z7gYk56NFWd9/AVFGX0SCYPXJjBu7kCdWjBYg+PxzEfYRfmkEcrc6J4OY3851co
+ 4+2dMkodAdhgrHzVGZMnr7QpaJhx8ozbOKTboAYpE+UEcAiPbRMAs8eQR7yyBcHd5ZcaYf7Wv
+ U35vHG7VTbsnUPbdcDsCydekOivNmWG4vA+gS+RNRJjzRQDHAQOLWbwJ0TUzNc3ouOMYyjV78
+ 4PHdYpxKVhPIZ1r96rbe5afi7+bbVFNkrzLp7syZUEqWIUB2pQaqdikEy247Yv1OqBz2rkgST
+ YByhyc+CVIVPOAO7ZEFJuxgMWAX8uZfqNkpiki30MdkwMhTR9ZPuIs/wWOwPiC0WIYExQebyP
+ jgyuOURmu7KXVQe3FDc+zfZz8PPImy2RjZzt40m4svP4tbqMSLRaWnP1T1+Cgze/t+KOf5oT5
+ xAa4pW6RSHc+1v9+2uB8PDNPPuuQG+xZurZDaBDp0OUL+nmtifhC3SO3faexm3KQLxDBwshyF
+ MauVV+S8jw9fAX1gPMzassRPwLQJvANm9+cJHmFF3g25kIACTvne/c6gJvSQ8Fl+ZR2gQqEgK
+ MlrdYxIsXtac2Vayon2FqeMeelxD93ZmVC8ZPgVdWerrzQdii4NWQhnRtHGinhDEp0/E=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When debugfs is disabled, but coredump is turned on, the adreno driver fails to build:
+The utsname()->nodename string may be 64 bytes long, and it gets
+copied without the trailing nul byte into the shorter record->system_name,
+as gcc now warns:
 
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-   .show = adreno_show,
-    ^~~~
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base')
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: error: initialization of 'void (*)(struct msm_gpu *, struct msm_gem_submit *, struct msm_file_private *)' from incompatible pointer type 'void (*)(struct msm_gpu *, struct msm_gpu_state *, struct drm_printer *)' [-Werror=incompatible-pointer-types]
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base.submit')
-drivers/gpu/drm/msm/adreno/a4xx_gpu.c:546:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:1460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-drivers/gpu/drm/msm/adreno/a6xx_gpu.c:769:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_devcoredump_read':
-drivers/gpu/drm/msm/msm_gpu.c:289:12: error: 'const struct msm_gpu_funcs' has no member named 'show'
+In file included from include/linux/bitmap.h:9,
+                 from include/linux/ethtool.h:16,
+                 from drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c:13:
+In function 'strncpy',
+    inlined from 'bnxt_fill_coredump_record' at drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c:2863:2:
+include/linux/string.h:254:9: error: '__builtin_strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
 
-Adjust the #ifdef to make it build again.
+Using strlcpy() at least avoids overflowing the destination buffer
+and adds proper nul-termination. It may still truncate long names
+though, which probably can't be solved here.
 
-Fixes: c0fec7f562ec ("drm/msm/gpu: Capture the GPU state on a GPU hang")
+Fixes: 6c5657d085ae ("bnxt_en: Add support for ethtool get dump.")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Not sure if this does the right thing, but it does fix the build regression
----
- drivers/gpu/drm/msm/msm_gpu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index 9122ee6e55e4..1fe93920fb25 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -63,7 +63,7 @@ struct msm_gpu_funcs {
- 	struct msm_ringbuffer *(*active_ring)(struct msm_gpu *gpu);
- 	void (*recover)(struct msm_gpu *gpu);
- 	void (*destroy)(struct msm_gpu *gpu);
--#ifdef CONFIG_DEBUG_FS
-+#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_DEV_COREDUMP)
- 	/* show GPU status in debugfs: */
- 	void (*show)(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 			struct drm_printer *p);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index b1602ea64372..e52d7af3ab3e 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -2860,8 +2860,8 @@ bnxt_fill_coredump_record(struct bnxt *bp, struct bnxt_coredump_record *record,
+ 	record->low_version = 0;
+ 	record->high_version = 1;
+ 	record->asic_state = 0;
+-	strncpy(record->system_name, utsname()->nodename,
+-		strlen(utsname()->nodename));
++	strlcpy(record->system_name, utsname()->nodename,
++		sizeof(record->system_name));
+ 	record->year = cpu_to_le16(tm.tm_year);
+ 	record->month = cpu_to_le16(tm.tm_mon);
+ 	record->day = cpu_to_le16(tm.tm_mday);
 -- 
 2.18.0
 
