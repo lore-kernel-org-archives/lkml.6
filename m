@@ -2,319 +2,149 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24899C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBEFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C078A2178C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 824862174C
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlpc+odh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C078A2178C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ExXGgyWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824862174C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730744AbeHMW4h (ORCPT
+        id S1730054AbeHMXCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 18:56:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728540AbeHMW4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 18:56:37 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DEC12174B;
-        Mon, 13 Aug 2018 20:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534191172;
-        bh=yIAzzfjBY9PZlUrd04jSBokQJnj9FW2UlBdURTxmfhE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nlpc+odhWb6gzg45h9Hzga1gaS4O2nmjBF1ozjQh6B4vB3a7oW69/7A9cZGoEWEYe
-         RoSa95OEV983Cv5rs0pecSjHGSlwuJoIA9qsMh4YhdaioyIkaPZRbS+wGrUQGhmnUF
-         4QLnXuKPvt9Smo3KI8CyGkpkloAKkshsv6Lg8YyY=
-Date:   Mon, 13 Aug 2018 13:12:51 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
- f2fs_gc
-Message-ID: <20180813201251.GB27044@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180730013242.15647-1-jaegeuk@kernel.org>
- <f62425be-b378-1e6b-e305-64a61b139dd9@huawei.com>
- <20180730041805.GA20178@jaegeuk-macbookpro.roam.corp.google.com>
- <aa12112e-0ff3-997a-24bd-12db30ad7284@huawei.com>
- <20180730090849.GA22089@jaegeuk-macbookpro.roam.corp.google.com>
- <171084b5-acd5-97fa-205e-202b752baaf0@huawei.com>
- <20180730100039.GA25037@jaegeuk-macbookpro.roam.corp.google.com>
- <5dfbb141-9bd9-f4fe-6250-5ec0baddd0fd@kernel.org>
- <d0cbc6bb-9e92-2803-b84d-729c78b21d5b@kernel.org>
+        Mon, 13 Aug 2018 19:02:11 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40930 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbeHMXCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 19:02:11 -0400
+Received: by mail-yw1-f67.google.com with SMTP id z143-v6so14540805ywa.7
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 13:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4llhmx8dM+NoO6zXFNJEAeJZh3bIqLi9zO1XxXSdFPk=;
+        b=ExXGgyWG9nnbjrWXo3gQYy74eXBDeZQwgp4g385ZcInUpSg2Jw3yM73pXxYK8ufSbF
+         cstbSn/W13iWZGihtcpsqu1O+EE4oTzKlgGb3SzMEh1eAIAynB69LGr2V3xIK+1qxf9L
+         TnCzdsD3k/h1R0YdwYgSs3b0mtCjdg8m1EhY4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4llhmx8dM+NoO6zXFNJEAeJZh3bIqLi9zO1XxXSdFPk=;
+        b=JZtgRsBktCD5mFB7mts6m90RrmxqZfaFKfgNva8svZm/lt7bsRB/4wE6aHkgWPTUvZ
+         ub+G8FbKphU9c0IOPBiJqzMKSILUl7oUIMRzgUYmkvPL0CxHsBbhxfUHa+ufE49EdWD4
+         TCqTzEpP9qO0JdQVkf/5IkGrOXOlEYdZuyNbWayuwSSaV7HPGP3ZmSt0dmFrlq8srj5j
+         U4hjAr2OiF9LrmKBPIphclKsJDo0lxDMcwOoX+pC4zJQQhh1ag8+yfLS/XpFNFu4fxAY
+         NeIxnb8ojdcD0D/ul6j/LJHlPWbuh0K50GZBjHfdG7z2Opw8tIN+biFlcTesVJifm5ox
+         WsXA==
+X-Gm-Message-State: AOUpUlHBZix/rGmKyfZ6jn6/Pnp+gJMwPIndu7PL3M4ttBaenAsAhOLq
+        fXU/VBL9VIJoZzOOvcG70eohwOEFEwE=
+X-Google-Smtp-Source: AA+uWPyA/3KUMrYtxz1VTbZKA5tnMXNFKSzBD+3LwFV0e2wXauoVOdhVZ+QY1wtcnbhdofzTAGtPYQ==
+X-Received: by 2002:a81:9251:: with SMTP id j78-v6mr10897631ywg.5.1534191505531;
+        Mon, 13 Aug 2018 13:18:25 -0700 (PDT)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id 21-v6sm8453894ywf.79.2018.08.13.13.18.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Aug 2018 13:18:24 -0700 (PDT)
+Received: by mail-yw1-f42.google.com with SMTP id r3-v6so14551765ywc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 13:18:23 -0700 (PDT)
+X-Received: by 2002:a25:af4a:: with SMTP id c10-v6mr10728529ybj.463.1534191503289;
+ Mon, 13 Aug 2018 13:18:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0cbc6bb-9e92-2803-b84d-729c78b21d5b@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Received: by 2002:a25:2316:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 13:18:22
+ -0700 (PDT)
+In-Reply-To: <CAGXu5jKHbx-L+n+CCExshtW1uQqkRX6MS5SoEH068DzoB+oKEg@mail.gmail.com>
+References: <20180811094853.32167-1-stefan@agner.ch> <CAK7LNAQ2THEDLB8so3zahGykH_BWaWAU7Tg_2yGEPKo+ApsxHg@mail.gmail.com>
+ <CAGXu5jKHbx-L+n+CCExshtW1uQqkRX6MS5SoEH068DzoB+oKEg@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 13 Aug 2018 13:18:22 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJ_XZ0Rwve_JKsWtPpdVDed4jYT=Qrg-XkmQqMuJZQmgQ@mail.gmail.com>
+Message-ID: <CAGXu5jJ_XZ0Rwve_JKsWtPpdVDed4jYT=Qrg-XkmQqMuJZQmgQ@mail.gmail.com>
+Subject: Re: [PATCH] gcc-plugins: require GCC
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josef Bacik <jbacik@fb.com>, Emese Revfy <re.emese@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/12, Chao Yu wrote:
-> On 2018/8/4 10:31, Chao Yu wrote:
-> > How about keep lock order as:
-> > 
-> > - inode_lock
-> >  - i_mmap_sem
-> >   - lock_all()
-> >   - unlock_all()
-> >   - i_gc_rwsem[WRITE]
-> >    - lock_op()
-> 
-> I got below warning when testing last dev-test:
-> 
-> - f2fs_direct_IO			current lock dependency
->  - i_gc_rwsem[WRITE]
-> 					- i_mmap_sem
->   - do_blockdev_direct_IO
->    - i_mmap_sem
-> 					 - i_gc_rwsem[WRITE]
-> 
+On Mon, Aug 13, 2018 at 1:10 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Mon, Aug 13, 2018 at 12:38 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-08-11 18:48 GMT+09:00 Stefan Agner <stefan@agner.ch>:
+>>> Unsurprisingly GCC plugins require GCC as a compiler. This avoids
+>>> GCC plugins being selectable when using clang.
+>>>
+>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>> ---
+>>>  arch/Kconfig | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/Kconfig b/arch/Kconfig
+>>> index 1aa59063f1fd..8c693a837ed7 100644
+>>> --- a/arch/Kconfig
+>>> +++ b/arch/Kconfig
+>>> @@ -422,7 +422,7 @@ config HAVE_GCC_PLUGINS
+>>>
+>>>  menuconfig GCC_PLUGINS
+>>>         bool "GCC plugins"
+>>> -       depends on HAVE_GCC_PLUGINS
+>>> +       depends on HAVE_GCC_PLUGINS && CC_IS_GCC
+>>>         depends on PLUGIN_HOSTCC != ""
+>>>         help
+>>>           GCC plugins are loadable modules that provide extra features to the
+>>> --
+>>> 2.18.0
+>>>
+>>
+>> I guess the more correct way is to fix
+>> scripts/gcc-plugin.sh
+>>
+>> This shell script should exit 0
+>> only when GCC plugin is supported.
+>
+> I'm of two minds: we already have the gcc test in Kconfig so we might
+> want to avoid redundant checks, but maybe the script should be a
+> "complete" test. I guess the latter. I will send a patch.
 
-Yeah, it seems it's true.
-How about this?
+Actually, how about we do the test in Kconfig, but ahead of the
+script? That will reduce redundancy:
 
----
- fs/f2fs/data.c |  4 ++--
- fs/f2fs/file.c | 43 +++++++++++++++++++++++--------------------
- 2 files changed, 25 insertions(+), 22 deletions(-)
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 1aa59063f1fd..18f518624e41 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -409,7 +409,7 @@ preferred-plugin-hostcc := $(if-success,[
+$(gcc-version) -ge 40800 ],$(HOSTCXX),
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f09231b1cc74..021923dc666b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2208,14 +2208,14 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
- 	loff_t i_size = i_size_read(inode);
- 
- 	if (to > i_size) {
--		down_write(&F2FS_I(inode)->i_mmap_sem);
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 		truncate_pagecache(inode, i_size);
- 		f2fs_truncate_blocks(inode, i_size, true);
- 
--		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		up_write(&F2FS_I(inode)->i_mmap_sem);
-+		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	}
- }
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 560751adba01..8b13afb23734 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -798,8 +798,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (attr->ia_valid & ATTR_SIZE) {
- 		bool to_smaller = (attr->ia_size <= i_size_read(inode));
- 
--		down_write(&F2FS_I(inode)->i_mmap_sem);
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 		truncate_setsize(inode, attr->ia_size);
- 
-@@ -809,8 +809,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 		 * do not trim all blocks after i_size if target size is
- 		 * larger than i_size.
- 		 */
--		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		up_write(&F2FS_I(inode)->i_mmap_sem);
-+		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 		if (err)
- 			return err;
-@@ -963,8 +963,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			blk_start = (loff_t)pg_start << PAGE_SHIFT;
- 			blk_end = (loff_t)pg_end << PAGE_SHIFT;
- 
--			down_write(&F2FS_I(inode)->i_mmap_sem);
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+			down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 			truncate_inode_pages_range(mapping, blk_start,
- 					blk_end - 1);
-@@ -973,8 +973,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			ret = f2fs_truncate_hole(inode, pg_start, pg_end);
- 			f2fs_unlock_op(sbi);
- 
--			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 			up_write(&F2FS_I(inode)->i_mmap_sem);
-+			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		}
- 	}
- 
-@@ -1201,6 +1201,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
- 
- 	/* avoid gc operation during block exchange */
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 	f2fs_lock_op(sbi);
- 	f2fs_drop_extent_tree(inode);
-@@ -1208,6 +1209,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
- 	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
- 	f2fs_unlock_op(sbi);
- 
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	return ret;
- }
-@@ -1228,17 +1230,17 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	if (ret)
- 		return ret;
- 
--	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	/* write out all dirty pages from offset */
- 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
- 	ret = f2fs_do_collapse(inode, offset, len);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
- 	/* write out all moved pages, if possible */
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	truncate_pagecache(inode, offset);
- 
-@@ -1246,10 +1248,9 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	truncate_pagecache(inode, new_size);
- 
- 	ret = f2fs_truncate_blocks(inode, new_size, true);
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
--out_unlock:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	return ret;
- }
- 
-@@ -1315,10 +1316,9 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 	if (ret)
- 		return ret;
- 
--	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
- 	if (ret)
--		goto out_sem;
-+		return ret;
- 
- 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
- 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
-@@ -1330,7 +1330,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 		ret = fill_zero(inode, pg_start, off_start,
- 						off_end - off_start);
- 		if (ret)
--			goto out_sem;
-+			return ret;
- 
- 		new_size = max_t(loff_t, new_size, offset + len);
- 	} else {
-@@ -1338,7 +1338,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			ret = fill_zero(inode, pg_start++, off_start,
- 						PAGE_SIZE - off_start);
- 			if (ret)
--				goto out_sem;
-+				return ret;
- 
- 			new_size = max_t(loff_t, new_size,
- 					(loff_t)pg_start << PAGE_SHIFT);
-@@ -1350,6 +1350,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			pgoff_t end;
- 
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+			down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 			truncate_pagecache_range(inode,
- 				(loff_t)index << PAGE_SHIFT,
-@@ -1361,6 +1362,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			ret = f2fs_get_dnode_of_data(&dn, index, ALLOC_NODE);
- 			if (ret) {
- 				f2fs_unlock_op(sbi);
-+				up_write(&F2FS_I(inode)->i_mmap_sem);
- 				up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 				goto out;
- 			}
-@@ -1372,6 +1374,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			f2fs_put_dnode(&dn);
- 
- 			f2fs_unlock_op(sbi);
-+			up_write(&F2FS_I(inode)->i_mmap_sem);
- 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 			f2fs_balance_fs(sbi, dn.node_changed);
-@@ -1400,9 +1403,6 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 		else
- 			f2fs_i_size_write(inode, new_size);
- 	}
--out_sem:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
--
- 	return ret;
- }
- 
-@@ -1433,13 +1433,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 
- 	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	/* write out all dirty pages from offset */
- 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	pg_start = offset >> PAGE_SHIFT;
- 	pg_end = (offset + len) >> PAGE_SHIFT;
-@@ -1448,6 +1449,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 
- 	/* avoid gc operation during block exchange */
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	truncate_pagecache(inode, offset);
- 
- 	while (!ret && idx > pg_start) {
-@@ -1463,16 +1465,17 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 					idx + delta, nr, false);
- 		f2fs_unlock_op(sbi);
- 	}
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 	/* write out all moved pages, if possible */
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	truncate_pagecache(inode, offset);
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
--out:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	return ret;
- }
- 
+ config PLUGIN_HOSTCC
+        string
+-       default "$(shell,$(srctree)/scripts/gcc-plugin.sh
+"$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")"
++       default "$(shell,$(srctree)/scripts/gcc-plugin.sh
+"$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")" if CC_IS_GCC
+        help
+          Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
+          $(HOSTCC), or a null string if GCC plugin is unsupported.
+
+
+-Kees
+
 -- 
-2.17.0.441.gb46fe60e1d-goog
-
+Kees Cook
+Pixel Security
