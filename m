@@ -2,181 +2,158 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED64C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5022BC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB5D2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:43:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UcZ5whuy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB5D2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 0D85E21756
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D85E21756
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbeHNA1d (ORCPT
+        id S1730806AbeHNA15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:27:33 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34403 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730027AbeHNA1d (ORCPT
+        Mon, 13 Aug 2018 20:27:57 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:45439 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730027AbeHNA15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:27:33 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y5-v6so8136567pgv.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 14:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=AIYhaGiFEdSWf/yXNRouyccJjJb9GLAq+/xWR/TAmIk=;
-        b=UcZ5whuymUBkaSI0jvQDwiznq3LGmsEEDzFzEufSdXZPHbzj/tLLUXHpXc6xvTbbXZ
-         qYn0K/SAj75LJz3v/Lp7t5IeFwWy4m1v8TdWvYL/ocHSV0pXRucWdA3LIrVOg7dwHhqI
-         hZiYR7kMRr9UcEkl8ato+grxH06540kmKiHRE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=AIYhaGiFEdSWf/yXNRouyccJjJb9GLAq+/xWR/TAmIk=;
-        b=DWTaKdPiQSLmFTgBKQAa40ioo4j2IcsY9qfbX+Ak0X7xhgkpKdBkZ0VZa6qZ0gjX9O
-         GFenKYZqeoUDLLirq+DnU15C6ujcXT2ckOGrzBGlmktz4Pr3c5PmCqvz4HZK87iqlzgk
-         xUHG8I4IcQh9+bgteuT0DwIPLupUh0x24oZIJoNAa+dqPbX2SjNjq7IKeDbhBW2iOQUv
-         lTEmJOR21VK3JE2N1RKdo3LlpbhyE7npgaU4OPvRdOmkLFY2CWhvbQ8ZCRuiyIfroyPv
-         JKz2Y4QIlLcy/yKxGydYERJjJ9ZDnmLFUGMFohpfFlsR8GHTr19sQLav1CJljjDC4FNS
-         aAUg==
-X-Gm-Message-State: AOUpUlFsJhB5ZOJwGHylQ+ukguWEQ1SvgVCTIP4HuNYl0eXxZB8usUeO
-        9qvv3ZdBK8WUIXBGLVABe/AoIw==
-X-Google-Smtp-Source: AA+uWPwRIkas58X0fpFiI2dakDhSzWLBdzACB14uwcOqREocrEM4dwAAYk81Yd69gSD1VqqjAtSQfA==
-X-Received: by 2002:a62:569c:: with SMTP id h28-v6mr20730560pfj.201.1534196610532;
-        Mon, 13 Aug 2018 14:43:30 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm21475993pfi.142.2018.08.13.14.43.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Aug 2018 14:43:29 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 14:43:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Popov <alex.popov@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [GIT PULL] gcc-plugin updates for v4.19-rc1
-Message-ID: <20180813214328.GA15137@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Mon, 13 Aug 2018 20:27:57 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MEJGG-1feGwi0UFU-00FQmY; Mon, 13 Aug 2018 23:43:44 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "David S. Miller" <davem@davemloft.net>,
+        James Chapman <jchapman@katalix.com>,
+        Guillaume Nault <g.nault@alphalink.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] l2tp: fix unused function warning
+Date:   Mon, 13 Aug 2018 23:43:05 +0200
+Message-Id: <20180813214341.3333789-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:QUX99iiomjXNkWr3rDLS1PrwtsQ/ME2ixd+StRJ9a/yILXEi2MN
+ IB6QK5Vop6DkAqdKc398hlBNmPAsWvSg4Kq/XkgMbInnhy/n8O3wcxFZ22ICz6p3tpLDhhW
+ WHB3bp6OUcurcXKBOaLxFBXfITlG4scsozh1D0YaHpKRxGsPdGTExpXYiZCEkXegP5DtxNP
+ cygZi8MCSqeXX+fdV3NDA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:n1VdRkNX6nA=:lkAO9MUC4kgcNq49NEp0zR
+ czb7uYaHlMi/dKs0WyxQ+LjS62i7CB+7Mcmkr0y6gzxds8GDK38Vr+QajeI/L39OfvSyN7GXi
+ yFTQt65Qe+ZGqaHz/ralIUeKOMGCgDJ0h5ymZLx1wpk4xIbSubf0CqDDB1UH8eswVhkyQJ1Qj
+ ok/hq4+CzbuFXiouq+Mc4K9vEOD+DWA2eVroQIRqnGHRQjzv+vjfob9YkBegS8q/iGEDjSmSF
+ MMXdSfYchI1nSk7+axNnBBak8buAhw61jh95R2vzUmdNEH1628aa8iy3OEB1l7nlOmkZ4hvg9
+ nY5O15yJgMTYBKzJhQbdG+bHi9Hf5437xEF7vYc+rRXumw/t9JRlBJWNA152se9EVDUrr2dEY
+ ojvU1xI9B+MeaeNj3e7S9y9CcK8Jq1qy3Zylg0UHSAZaB8lSFe8V8OKzw8km+Y2HS68OzO5RC
+ sV4f2tEp9MDZdDeOAFA9EaQkU1r23p0xfgqKpz1TMR7U9gTu2LSo4Wdg5hPsMEDACvjzpFP9N
+ 8ltpzZAfGIMwZD2grOtDSWH4uhSCFSnWpXS7RVu/nPsNK2PVx3VlfEEeFDaVcNVsCFnAZUS4o
+ 5zwCNQMNjzx60X18/wGZBVmw7gzGE1ekapiV6y0fPBauaKQs+comhjhjsvfR9b/FvG/NdO7i5
+ +7gP5wDSlcF3zIrzkKwNcXpTfBGEN29vsGrDaxOMiVujWJJE4K7ikNXreUhCkMZnrVEg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Removing one of the callers of pppol2tp_session_get_sock caused a harmless
+warning in some configurations:
 
-Please pull these gcc-plugin changes for v4.19-rc1. This has some Kconfig
-and Makefile cleanups from Masahiro and myself, but the bulk of this
-is the STACKLEAK plugin ported by Alexander Popov. As discussed in its
-commit logs, it provides efficient stack content poisoning at syscall
-exit. This creates a defense against several classes of flaws:
+net/l2tp/l2tp_ppp.c:142:21: 'pppol2tp_session_get_sock' defined but not used [-Wunused-function]
 
-- uninitialized stack usage (while we continue to work on improving the
-  compiler to do this in other ways: e.g. unconditional zero init was
-  proposed to gcc and clang, and more plugin work has started too)
+Rather than adding another #ifdef here, using a proper IS_ENABLED()
+check makes the code more readable and avoids those warnings while
+letting the compiler figure out for itself which code is needed.
 
-- stack content exposure (by greatly reducing the lifetime of valid stack
-  contents, exposures via either direct read bugs or unknown cache
-  side-channels become much more difficult to exploit. This complements
-  the existing buddy and heap poisoning options, but provides the coverage
-  for stacks)
+This adds one pointer for the unused show() callback in struct
+l2tp_session, but that seems harmless.
 
-- stack exhaustion/guard-page skipping (while we continue to work to
-  remove all VLAs in the kernel: of the ~115 cases found in v4.16, after
-  the v4.19 merge window we should be down to about 13 remaining, most of
-  them in crypto code, all of which have patches under review)
+Fixes: b0e29063dcb3 ("l2tp: remove pppol2tp_session_ioctl()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ net/l2tp/l2tp_core.h | 2 --
+ net/l2tp/l2tp_eth.c  | 7 ++-----
+ net/l2tp/l2tp_ppp.c  | 7 ++-----
+ 3 files changed, 4 insertions(+), 12 deletions(-)
 
-The x86 hooks are included in this series (which have been reviewed by
-Ingo, Dave Hansen, and Thomas Gleixner), and have hopefully addressed
-your concerns with regard to the size of assembly changes which are now
-minimal. The arm64 hooks are expected to be coming through the arm64
-tree during the v4.19 merge window as well (written by Laura Abbott and
-reviewed by Mark Rutland and Will Deacon).
-
-Thanks!
-
--Kees
-
-The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
-
-  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v4.19-rc1
-
-for you to fetch changes up to b1310d137bc578f0032b6b990628a366d5f0910e:
-
-  stackleak: Allow runtime disabling of kernel stack erasing (2018-07-26 09:04:15 -0700)
-
-----------------------------------------------------------------
-- Kconfig and Makefile clean ups (Masahiro Yamada, Kees Cook)
-- Add STACKLEAK plugin, metrics, docs, knob and x86 hooks (Alexander Popov)
-
-----------------------------------------------------------------
-Alexander Popov (7):
-      gcc-plugins: Clean up the cgraph_create_edge* macros
-      x86/entry: Add STACKLEAK erasing the kernel stack at the end of syscalls
-      gcc-plugins: Add STACKLEAK plugin for tracking the kernel stack
-      lkdtm: Add a test for STACKLEAK
-      fs/proc: Show STACKLEAK metrics in the /proc file system
-      doc: self-protection: Add information about STACKLEAK feature
-      stackleak: Allow runtime disabling of kernel stack erasing
-
-Kees Cook (1):
-      gcc-plugins: Regularize Makefile.gcc-plugins
-
-Masahiro Yamada (2):
-      gcc-plugins: remove unused GCC_PLUGIN_SUBDIR
-      gcc-plugins: split out Kconfig entries to scripts/gcc-plugins/Kconfig
-
- Documentation/security/self-protection.rst |  23 +-
- Documentation/sysctl/kernel.txt            |  18 ++
- Documentation/x86/x86_64/mm.txt            |   2 +
- arch/Kconfig                               | 147 +--------
- arch/x86/Kconfig                           |   1 +
- arch/x86/entry/calling.h                   |  14 +
- arch/x86/entry/entry_32.S                  |   7 +
- arch/x86/entry/entry_64.S                  |   3 +
- arch/x86/entry/entry_64_compat.S           |   5 +
- arch/x86/kernel/dumpstack.c                |  31 ++
- drivers/misc/lkdtm/Makefile                |   3 +
- drivers/misc/lkdtm/core.c                  |   3 +
- drivers/misc/lkdtm/lkdtm.h                 |   5 +
- drivers/misc/lkdtm/stackleak.c             | 146 +++++++++
- fs/proc/base.c                             |  18 ++
- include/linux/sched.h                      |   5 +
- include/linux/stackleak.h                  |  35 +++
- kernel/Makefile                            |   4 +
- kernel/fork.c                              |   3 +
- kernel/stackleak.c                         | 132 ++++++++
- kernel/sysctl.c                            |  15 +-
- scripts/Makefile.gcc-plugins               |  47 ++-
- scripts/gcc-plugins/Kconfig                | 196 ++++++++++++
- scripts/gcc-plugins/Makefile               |   5 -
- scripts/gcc-plugins/gcc-common.h           |  26 +-
- scripts/gcc-plugins/stackleak_plugin.c     | 480 +++++++++++++++++++++++++++++
- 26 files changed, 1195 insertions(+), 179 deletions(-)
- create mode 100644 drivers/misc/lkdtm/stackleak.c
- create mode 100644 include/linux/stackleak.h
- create mode 100644 kernel/stackleak.c
- create mode 100644 scripts/gcc-plugins/Kconfig
- create mode 100644 scripts/gcc-plugins/stackleak_plugin.c
-
+diff --git a/net/l2tp/l2tp_core.h b/net/l2tp/l2tp_core.h
+index 8480a0af973e..9c9afe94d389 100644
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -118,9 +118,7 @@ struct l2tp_session {
+ 	int (*build_header)(struct l2tp_session *session, void *buf);
+ 	void (*recv_skb)(struct l2tp_session *session, struct sk_buff *skb, int data_len);
+ 	void (*session_close)(struct l2tp_session *session);
+-#if IS_ENABLED(CONFIG_L2TP_DEBUGFS)
+ 	void (*show)(struct seq_file *m, void *priv);
+-#endif
+ 	uint8_t			priv[0];	/* private data */
+ };
+ 
+diff --git a/net/l2tp/l2tp_eth.c b/net/l2tp/l2tp_eth.c
+index 3728986ec885..8aadc4f3bb9e 100644
+--- a/net/l2tp/l2tp_eth.c
++++ b/net/l2tp/l2tp_eth.c
+@@ -199,7 +199,6 @@ static void l2tp_eth_delete(struct l2tp_session *session)
+ 	}
+ }
+ 
+-#if IS_ENABLED(CONFIG_L2TP_DEBUGFS)
+ static void l2tp_eth_show(struct seq_file *m, void *arg)
+ {
+ 	struct l2tp_session *session = arg;
+@@ -219,7 +218,6 @@ static void l2tp_eth_show(struct seq_file *m, void *arg)
+ 
+ 	dev_put(dev);
+ }
+-#endif
+ 
+ static void l2tp_eth_adjust_mtu(struct l2tp_tunnel *tunnel,
+ 				struct l2tp_session *session,
+@@ -305,9 +303,8 @@ static int l2tp_eth_create(struct net *net, struct l2tp_tunnel *tunnel,
+ 
+ 	session->recv_skb = l2tp_eth_dev_recv;
+ 	session->session_close = l2tp_eth_delete;
+-#if IS_ENABLED(CONFIG_L2TP_DEBUGFS)
+-	session->show = l2tp_eth_show;
+-#endif
++	if (IS_ENABLED(CONFIG_L2TP_DEBUGFS))
++		session->show = l2tp_eth_show;
+ 
+ 	spriv = l2tp_session_priv(session);
+ 
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index 62f2d3f1e431..04d9946dcdba 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -533,7 +533,6 @@ static int pppol2tp_create(struct net *net, struct socket *sock, int kern)
+ 	return error;
+ }
+ 
+-#if IS_ENABLED(CONFIG_L2TP_DEBUGFS)
+ static void pppol2tp_show(struct seq_file *m, void *arg)
+ {
+ 	struct l2tp_session *session = arg;
+@@ -547,16 +546,14 @@ static void pppol2tp_show(struct seq_file *m, void *arg)
+ 		sock_put(sk);
+ 	}
+ }
+-#endif
+ 
+ static void pppol2tp_session_init(struct l2tp_session *session)
+ {
+ 	struct pppol2tp_session *ps;
+ 
+ 	session->recv_skb = pppol2tp_recv;
+-#if IS_ENABLED(CONFIG_L2TP_DEBUGFS)
+-	session->show = pppol2tp_show;
+-#endif
++	if (IS_ENABLED(CONFIG_L2TP_DEBUGFS))
++		session->show = pppol2tp_show;
+ 
+ 	ps = l2tp_session_priv(session);
+ 	mutex_init(&ps->sk_lock);
 -- 
-Kees Cook
-Pixel Security
+2.18.0
+
