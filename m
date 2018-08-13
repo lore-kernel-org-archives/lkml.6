@@ -2,120 +2,116 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8923AC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504B5C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD3821763
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:12:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHtozObl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD3821763
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DCFA204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCFA204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbeHMTzV (ORCPT
+        id S1730255AbeHMT4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:55:21 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:43836 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729070AbeHMTzV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:55:21 -0400
-Received: by mail-qt0-f194.google.com with SMTP id f18-v6so18161088qtp.10
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 10:12:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FyKlPWaqJErS3JIsjdzMmbOqdIKa+Re5E+4OZqAi45g=;
-        b=dHtozOblEv6E+xSqjs4SZTyK3xt/+OMvNEgkHctE+hTBUF4SJQBuJrR2Q0bDMIknrp
-         F/GLqLcXk2xWTEr2d1VyvnWUgLQFYjubc8JRLdVgJfblTV4Jqvz7WCt5m2HfkMB0SeXP
-         ImVp6UGS5+AcXFsySDYzP9iKJGvOAthfvAKS50bNhazvJhFuqtn+ADQvy7RfqtG5BJR8
-         345YxwXlFg99MdjYdRvU/Po3BkHJ8B2k9rzIlmF6blEja37vhARxMCHYWwEQi+OxZqs8
-         o4vmzxgjUK4hqxwWvJ2yfPmbj9wwddNc3oxJIPMaGSk8TGUVHbv4LM4A0i0kMKqlCxd4
-         mOsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FyKlPWaqJErS3JIsjdzMmbOqdIKa+Re5E+4OZqAi45g=;
-        b=PYSJygK3JzWt8AeuZJynlitb5NAeurB1uFM1XXnj13tOXYx0shezKRcemTJXqgHzqx
-         2aYBuqKRPSaLKIrbgBrViXaumPhdQaNrhnUqphUvVsMUwZyY36N9cyp+9AcGULkkj3bK
-         qmvvxu3XJXseyBapoRLCOC8NpBlQ+Ccpv59dIilqy0fgSu/UyqXxQ3N/wkwc0HNWiXBt
-         9uVVGTLr7t+UyzLROrrfxISLyHKyz1dVFXB1pC+FyCs9cJArYu794tD4iALorkxJEPhA
-         ZizeMj43R5/+CCx7Lfkwhws7Am+5/sfEAyn625dNwt9T4CP0t11lLEaX6zNcFMRL1dCK
-         TpRQ==
-X-Gm-Message-State: AOUpUlH5kpzuRSGqz+L1/10QBtlBNekr/sHIG//z8mL9UglKZkCW3QAb
-        wk2Th+HFixVcZ5UM8XAC6UN7E9rteBQrR9IQZ2Q=
-X-Google-Smtp-Source: AA+uWPzJjOtHmMCCepYDBpc2pdj1MWph3b5chrBdcP6xjh26c1ZoInYIUf7zHsxK+8oSqsb0NEBVUaQQpSjvNIO3HE0=
-X-Received: by 2002:a0c:f883:: with SMTP id u3-v6mr15954417qvn.28.1534180335332;
- Mon, 13 Aug 2018 10:12:15 -0700 (PDT)
+        Mon, 13 Aug 2018 15:56:37 -0400
+Received: from mout.gmx.net ([212.227.17.20]:38961 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729070AbeHMT4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:56:37 -0400
+Received: from ls3530.fritz.box ([92.116.162.22]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MIzGn-1frBHe3usj-002Zkr; Mon, 13
+ Aug 2018 19:13:24 +0200
+Date:   Mon, 13 Aug 2018 19:13:19 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture updates for kernel v4.19
+Message-ID: <20180813171319.GA16531@ls3530.fritz.box>
 MIME-Version: 1.0
-Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 10:12:14
- -0700 (PDT)
-In-Reply-To: <20180813131723.GC28360@redhat.com>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
- <20180809041856.1547-4-ravi.bangoria@linux.ibm.com> <CAPhsuW49+qA7kT7yE4tgbnAuox-iOzssg-jc2abG8XDo6XeX8A@mail.gmail.com>
- <95a1221e-aecc-42be-5239-a2c2429be176@linux.ibm.com> <20180813115019.GB28360@redhat.com>
- <fa85d19f-b22c-e09c-b8d2-f68f0c79de15@linux.ibm.com> <20180813131723.GC28360@redhat.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Mon, 13 Aug 2018 10:12:14 -0700
-Message-ID: <CAPhsuW4KT=6vR_0ogTy_+Fwcz7cZ0Rac8sYohLngQmEBCd0HLw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ananth@linux.vnet.ibm.com,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Provags-ID: V03:K1:6SLwahUSUulgy7kl6rKdIgBa5477TpF9AZ8xCpcVZeo2Bd5NydJ
+ gfrZPim5S6oWi1/wGslyvEuYMvciHbTr60o5DcMXlP4wl0LhMKHjsLbeXCoLdu6flfxM0n1
+ lVXfB+VskJ59+5Pv/vDQ0iYUd7y/qEr7Ouhuz8oKgdR4GfrKX25wWpBmndZXQL2Ctmt4Eq5
+ Otdta1LBTUBqPe/dOpihw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Cn5srQvsU/U=:jRzj6Z8TJ+4cLlc4Mrhzy3
+ oACwnfhAw11DAfcF1dW/tpLBlWRItTA80Hy8cqTMA2QIvcFoRw726NL5ZygXiFcmh/Vw9RKed
+ 4ZFH2SojAm++TAIMjqgmvDaDlfhsGu5jN5m6RSxktmOSKgnh8UDnG7pC89iXScfiywOTjT7lC
+ NGmL6qPm22m+3Z4Wuf+FL8itK29vVM+v6eSVcd57/B9m19GJXhEURefKYf1AbHSqDNcqEszox
+ YnoBrTtOpBAitav//PQvOrw7WyF4H2Cxiqk4ZiOMiDY987dJNi/iu4uy6Afg9WOjMEdNaJztD
+ xx1OLISwQ9pzk62m34dQsP+7jK+aCudtqXz9BOTGb/OwwL3OipDB0H7Ur9KbISq33ryIvA17h
+ LME69VyLbn8GjBPJHH6FHeJ2bAa4IDfbT3LIfDPuWJqCQBIBoSCxNTn/0GI7VXY9xRPkqZ4Ho
+ Fnv8HfPhDu54PzuHd1mb2k3MrFQvofnwONkdCfVSYWcneYkgQhZrbp3Iarnh//AMon/qsLJ0W
+ uWwuutA/wnlLjaMtciuozbbQHk5puoizobnuT+pcdaHNLnvlQVcikPZ0odDz2kJ7hkw8Tw84K
+ rxE6jKWhlk1Oe8qqOaImUP2KdmLdvpFFNYx3fUxqIfk1lKrOXtCpF6RqUpb7yevq1683URKaX
+ gyQru5PRNHI33fyeL4KdF8fp4cJV9ReAS27d9L6yFlgVOlFtUalmgvzngcUwf3F/zUtWGU5hB
+ l7LkUZja6FsUS7pW2HmoAAMHzpa3Z+S4lRJNVctas3RfU98lNxbkXI8BaV4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 6:17 AM, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 08/13, Ravi Bangoria wrote:
->>
->> > But damn, process creation (exec) is trivial. We could add a new uprobe_exec()
->> > hook and avoid delayed_uprobe_install() in uprobe_mmap().
->>
->> I'm sorry. I didn't get this.
->
-> Sorry for confusion...
->
-> I meant, if only exec*( could race with _register(), we could add another uprobe
-> hook which updates all (delayed) counters before return to user-mode.
->
->> > Afaics, the really problematic case is dlopen() which can race with _register()
->> > too, right?
->>
->> dlopen() should internally use mmap() right? So what is the problem here? Can
->> you please elaborate.
->
-> What I tried to say is that we can't avoid uprobe_mmap()->delayed_uprobe_install()
-> because dlopen() can race with _register() too, just like exec.
->
-> Oleg.
->
+Hi Linus,
 
-How about we do delayed_uprobe_install() per file? Say we keep a list
-of delayed_uprobe
-in load_elf_binary(). Then we can install delayed_uprobe after loading
-all sections of the
-file.
+please pull fixes and updates for the parisc architecture for kernel 4.19 from:
 
-Song
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.19-1
+
+Changes include:
+- parisc now uses the generic dma_noncoherent_ops implementation, by Christoph Hellwig.
+- further memory barrier and spinlock improvements, by John David Anglin.
+- prepare removal of current_text_addr() functions, by Nick Desaulniers.
+- improve kernel stack unwinding on parisc, by me.
+- drop ENOTSUP which was defined on parisc only, by me.
+
+Thanks,
+Helge
+
+----------------------------------------------------------------
+Christoph Hellwig (3):
+      parisc: merge pcx_dma_ops and pcxl_dma_ops
+      parisc: always use flush_kernel_dcache_range for DMA cache maintainance
+      parisc: use generic dma_noncoherent_ops
+
+Helge Deller (3):
+      parisc: Drop architecture-specific ENOTSUP define
+      parisc: Add HAVE_REGS_AND_STACK_ACCESS_API feature
+      parisc: Fix and improve kernel stack unwinding
+
+John David Anglin (2):
+      parisc: Remove ordered stores from syscall.S
+      parisc: Remove unnecessary barriers from spinlock.h
+
+Nick Desaulniers (1):
+      parisc: prefer _THIS_IP_ and _RET_IP_ statement expressions
+
+ arch/parisc/Kconfig                        |   5 +
+ arch/parisc/include/asm/assembly.h         |   2 +
+ arch/parisc/include/asm/dma-mapping.h      |   5 -
+ arch/parisc/include/asm/linkage.h          |  17 ++-
+ arch/parisc/include/asm/ptrace.h           |  11 ++
+ arch/parisc/include/asm/spinlock.h         |   8 +-
+ arch/parisc/include/asm/unwind.h           |   3 +
+ arch/parisc/include/uapi/asm/errno.h       |   1 -
+ arch/parisc/kernel/entry.S                 |  53 +++-----
+ arch/parisc/kernel/pacache.S               | 125 ------------------
+ arch/parisc/kernel/pci-dma.c               | 199 +++++------------------------
+ arch/parisc/kernel/process.c               |   2 +-
+ arch/parisc/kernel/ptrace.c                | 100 +++++++++++++++
+ arch/parisc/kernel/real2.S                 |   6 -
+ arch/parisc/kernel/setup.c                 |   8 +-
+ arch/parisc/kernel/syscall.S               |  24 ++--
+ arch/parisc/kernel/traps.c                 |   2 +-
+ arch/parisc/kernel/unwind.c                |  93 ++++++++------
+ arch/parisc/lib/lusercopy.S                |  21 ---
+ arch/parisc/mm/init.c                      |  11 +-
+ kernel/time/posix-timers.c                 |  13 +-
+ tools/arch/parisc/include/uapi/asm/errno.h |   1 -
+ 22 files changed, 262 insertions(+), 448 deletions(-)
