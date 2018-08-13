@@ -3,117 +3,381 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE48C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9001C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2FD21470
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2FD21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8613421470
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8613421470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731850AbeHNAdj (ORCPT
+        id S1731885AbeHNAdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:33:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53316 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731690AbeHNAdj (ORCPT
+        Mon, 13 Aug 2018 20:33:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47706 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731680AbeHNAdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:33:39 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MCk22-1fh3Ey1FGE-009Mj7; Mon, 13 Aug 2018 23:49:26 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: hide usb_of_get_companion_dev for CONFIG_USB=n
-Date:   Mon, 13 Aug 2018 23:48:46 +0200
-Message-Id: <20180813214924.3567840-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:+C/AY/FsJPTL/edJ8vjd+U5L1h5y/lkPFRi66nBg2KO9OM5fO0w
- 5aOg8QyirCrauT6HZaXu93C/92Wtsx0OwxCt6b3eePzit7CWh1hRgpIJ9a0m00p+Ryb7pvb
- cc58QsoomZ0vlhFWBDpIq67aGjvf5XbAR8BbeR0F2tfusHZPrtG+XTzQ5oSFI03HlHDTpMZ
- or+54bV9OeLh77PufL0iA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:0JJ1W3OBiY0=:2XToV9Ex8w6bA5UFVZBgLd
- BFF6BMRVyhGsv51b9e1UQ3NGBNGCTBrjuk5SuZ20vBkAT4W3EZ/A4nrXpkn148yhu0y6gqgsM
- 7LwXnq9iIf1uoYEe8SUU90k8hhxlk9RDIxtAMZhTL/d2dAGJcuygwaSaN7cgrh4yNBsRU+yC1
- rlwIiJv9IZvzWosNJrLj1AGX3C1AXDkLPVapZO6FnCzOkje6OF2x/lDoT/XwoxTYj9jFUDg/r
- timyN2wREiATYtj0s28rjwozDO19MwBu8YlYwNFMoUc/HBfMy/AEyqUiT42zjgOvaqsBXfi1O
- 99iKcSV3rzAlqMOaaGnyJ4yeuNxFVtWifldMb1/qlvd8YfTMPRZGEWwCesabLlP1592wPSsKa
- KxJMOZXf2Hnwn4PvvQcDdQFH13+cvnCTtlt9yCax1lfJDSGWH+gACRsrIn+a8GM2yNQ8EbFv7
- hgJYwgZSE5FTTJ7OHCQC7poZaFlmqtYW/7ehbiDNIb+XI9ymQpG02vREZyEo7s3g/R4+QK10w
- 2ALCtowj+tk6IDXY+hAPVs+9Plfr+3IJRVhKVM1e+jSOiIgTU3X1BsiI9KAAoKmJUeeGJmUEO
- +xTvzysovC0s2eSVLRl6VT9LOGwV9Ue+xENrfnO2HweHGDY2zFDZwIwJJtEuTt2vsWEGQVuZz
- m87dnDazi/BTVnb/1/oxhuYWmq8oZ5CjxDOLoBe2SDTyZdExT8z5sOqAxN8J1hZZvftY=
+        Mon, 13 Aug 2018 20:33:20 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLn8f6141774
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:49:15 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kuh1bteeb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:49:14 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Mon, 13 Aug 2018 17:49:14 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Aug 2018 17:49:09 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLn70I6029734
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Aug 2018 21:49:07 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 49F1B124053;
+        Mon, 13 Aug 2018 18:50:06 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 21679124055;
+        Mon, 13 Aug 2018 18:50:05 -0400 (EDT)
+Received: from localhost.localdomain (unknown [9.85.141.105])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 13 Aug 2018 18:50:05 -0400 (EDT)
+From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [PATCH v9 20/22] KVM: s390: Handling of Cypto control block in VSIE
+Date:   Mon, 13 Aug 2018 17:48:17 -0400
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18081321-0064-0000-0000-0000033A5901
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009538; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073088; UDB=6.00552882; IPR=6.00853043;
+ MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:49:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081321-0065-0000-0000-00003A4A2192
+Message-Id: <1534196899-16987-21-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808130219
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The renesas UDC implementation now calls usb_of_get_companion_dev(),
-which is only defined when CONFIG_USB is enabled:
+From: Pierre Morel <pmorel@linux.ibm.com>
 
-drivers/usb/gadget/udc/renesas_usb3.o: In function `renesas_usb3_probe':
-renesas_usb3.c:(.text+0xa34): undefined reference to `usb_of_get_companion_dev'
+Shadowing the crypto control block now supports APCB shadowing.
 
-To avoid the build error, we need two changes:
+AP instruction interpretation for guest 3 through ECA.28 is shadowed when
+guest 2 ECA.28 is set.
 
-- usb_of_get_companion_dev must be stubbed out when CONFIG_USB is
-  disabled, so it the udc driver can be built for a gadget-only
-  mode kernel
-- With CONFIG_USB=m, we must not attempt to have USB_RENESAS_USB3
-  built-in, so we need a soft dependency on USB.
+CRYCB is shadowed for APCB and wrapping keys.
 
-Fixes: 39facfa01c9f ("usb: gadget: udc: renesas_usb3: Add register of usb role switch")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+CRYCB format 0 is now supported for both guests 2 and 3.
+
+Shadow CRYCB always uses the guest 2 CRYCB format and it
+follows that:
+
+* Guest 3 CRYCB format 0 is supported with guest 2 CRYCB format 0,1 or 2
+* Guest 3 CRYCB format 1 is supported with guest 2 CRYCB format 1 or 2
+* Guest 3 CRYCB format 2 is supported with guest 2 CRYCB format 2
+
+Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
+Tested-by: Michael Mueller <mimu@linux.ibm.com>
+Tested-by: Farhan Ali <alifm@linux.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- drivers/usb/gadget/udc/Kconfig | 1 +
- include/linux/usb/of.h         | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ arch/s390/kvm/vsie.c |  222 ++++++++++++++++++++++++++++++++++++++++++++------
+ 1 files changed, 198 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0a16cbd4e528..663a8bd67a7b 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -193,6 +193,7 @@ config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on EXTCON
-+	depends on USB || !USB
- 	select USB_ROLE_SWITCH
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
-diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
-index dba55ccb9b53..733339218466 100644
---- a/include/linux/usb/of.h
-+++ b/include/linux/usb/of.h
-@@ -23,7 +23,6 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1);
- bool usb_of_has_combined_node(struct usb_device *udev);
- struct device_node *usb_of_get_interface_node(struct usb_device *udev,
- 		u8 config, u8 ifnum);
--struct device *usb_of_get_companion_dev(struct device *dev);
- #else
- static inline enum usb_dr_mode
- of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
-@@ -53,6 +52,11 @@ usb_of_get_interface_node(struct usb_device *udev, u8 config, u8 ifnum)
- {
- 	return NULL;
+diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+index aa30b48..e15240e 100644
+--- a/arch/s390/kvm/vsie.c
++++ b/arch/s390/kvm/vsie.c
+@@ -136,17 +136,8 @@ static int prepare_cpuflags(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ 	return 0;
  }
-+#endif
-+
-+#if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB)
-+struct device *usb_of_get_companion_dev(struct device *dev);
-+#else
- static inline struct device *usb_of_get_companion_dev(struct device *dev)
+ 
+-/*
+- * Create a shadow copy of the crycb block and setup key wrapping, if
+- * requested for guest 3 and enabled for guest 2.
+- *
+- * We only accept format-1 (no AP in g2), but convert it into format-2
+- * There is nothing to do for format-0.
+- *
+- * Returns: - 0 if shadowed or nothing to do
+- *          - > 0 if control has to be given to guest 2
+- */
+-static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
++/* Copy keys into shadow crycb, is only called if MSA3 is available.  */
++static int copy_key_masks(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
  {
- 	return NULL;
+ 	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
+ 	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
+@@ -155,30 +146,17 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ 	unsigned long *b1, *b2;
+ 	u8 ecb3_flags;
+ 
+-	scb_s->crycbd = 0;
+-	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
+-		return 0;
+-	/* format-1 is supported with message-security-assist extension 3 */
+-	if (!test_kvm_facility(vcpu->kvm, 76))
+-		return 0;
+ 	/* we may only allow it if enabled for guest 2 */
+ 	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
+ 		     (ECB3_AES | ECB3_DEA);
+ 	if (!ecb3_flags)
+ 		return 0;
+ 
+-	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
+-		return set_validity_icpt(scb_s, 0x003CU);
+-	else if (!crycb_addr)
+-		return set_validity_icpt(scb_s, 0x0039U);
+-
+ 	/* copy only the wrapping keys */
+ 	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
+ 		return set_validity_icpt(scb_s, 0x0035U);
+ 
+ 	scb_s->ecb3 |= ecb3_flags;
+-	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
+-			CRYCB_FORMAT2;
+ 
+ 	/* xor both blocks in one run */
+ 	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
+@@ -189,6 +167,202 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ 	return 0;
+ }
+ 
++/* Copy masks into apcb when g2 and g3 use format 1 */
++static int copy_apcb1(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
++{
++	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
++	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
++	const uint32_t crycbd_o = READ_ONCE(scb_o->crycbd);
++	const u32 crycb_o = crycbd_o & 0x7ffffff8U;
++	struct kvm_s390_crypto_cb *crycb_h = &vcpu->kvm->arch.sie_page2->crycb;
++	struct kvm_s390_crypto_cb *crycb_s = &vsie_page->crycb;
++	unsigned long *apcb_s = (unsigned long *) &crycb_s->apcb1;
++	unsigned long *apcb_h = (unsigned long *) &crycb_h->apcb1;
++	int i;
++	u32 src;
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb1);
++	if (read_guest_real(vcpu, src, apcb_s, sizeof(struct kvm_s390_apcb1)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	for (i = 0; i < sizeof(struct kvm_s390_apcb1); i += sizeof(*apcb_s))
++		*apcb_s &= *apcb_h;
++
++	return 0;
++}
++
++/*
++ * Copy masks into apcb when g2 use format 1 and g3 use format 0
++ * In this case the shadow APCB uses format 1
++ */
++static int copy_apcb01(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
++{
++	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
++	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
++	const uint32_t crycbd_o = READ_ONCE(scb_o->crycbd);
++	const u32 crycb_o = crycbd_o & 0x7ffffff8U;
++	struct kvm_s390_apcb1 *apcb_h = &vcpu->kvm->arch.sie_page2->crycb.apcb1;
++	struct kvm_s390_apcb1 *apcb_s = &vsie_page->crycb.apcb1;
++	u32 src;
++
++	memset(apcb_s, 0, sizeof(*apcb_s));
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb0.apm[0]);
++	if (read_guest_real(vcpu, src, &apcb_s->apm[0], sizeof(__u64)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb0.aqm[0]);
++	if (read_guest_real(vcpu, src, &apcb_s->aqm[0], sizeof(__u64)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb0.adm[0]);
++	if (read_guest_real(vcpu, src, &apcb_s->adm[0], sizeof(__u64)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	apcb_s->apm[0] &= apcb_h->apm[0];
++	apcb_s->aqm[0] &= apcb_h->aqm[0];
++	apcb_s->adm[0] &= apcb_h->adm[0];
++
++	return 0;
++}
++
++/* Copy masks into apcb when g2 and g3 use format 0 */
++static int copy_apcb0(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
++{
++	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
++	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
++	const uint32_t crycbd_o = READ_ONCE(scb_o->crycbd);
++	const u32 crycb_o = crycbd_o & 0x7ffffff8U;
++	struct kvm_s390_apcb0 *apcb_h = &vcpu->kvm->arch.sie_page2->crycb.apcb0;
++	struct kvm_s390_apcb0 *apcb_s = &vsie_page->crycb.apcb0;
++	u32 src;
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb0.apm[0]);
++	if (read_guest_real(vcpu, src, &apcb_s->apm[0], sizeof(__u64)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb0.aqm[0]);
++	if (read_guest_real(vcpu, src, &apcb_s->aqm[0], sizeof(__u64)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	src = crycb_o + offsetof(struct kvm_s390_crypto_cb, apcb0.adm[0]);
++	if (read_guest_real(vcpu, src, &apcb_s->adm[0], sizeof(__u64)))
++		return set_validity_icpt(scb_s, 0x0035U);
++
++	apcb_s->apm[0] &= apcb_h->apm[0];
++	apcb_s->aqm[0] &= apcb_h->aqm[0];
++	apcb_s->adm[0] &= apcb_h->adm[0];
++
++	return 0;
++}
++
++/* Shadowing APCB depends on G2 and G3 CRYCB format */
++static int copy_apcb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page,
++		     int g2_fmt, int g3_fmt)
++{
++	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
++	int ret = 0;
++
++	switch (g2_fmt) {
++	case CRYCB_FORMAT0:
++		switch (g3_fmt) {
++		case  CRYCB_FORMAT0:
++			ret = copy_apcb0(vcpu, vsie_page);
++			break;
++		default:
++			return set_validity_icpt(scb_s, 0x0020U);
++		}
++		break;
++	case CRYCB_FORMAT1:
++		switch (g3_fmt) {
++		case CRYCB_FORMAT1:
++		case CRYCB_FORMAT0:	/* Fall through to copy APCB */
++			ret = copy_apcb0(vcpu, vsie_page);
++			break;
++		default:
++			return set_validity_icpt(scb_s, 0x0020U);
++		}
++		break;
++	case CRYCB_FORMAT2:
++		switch (g3_fmt) {
++		case CRYCB_FORMAT0:
++		case CRYCB_FORMAT1:
++			ret = copy_apcb01(vcpu, vsie_page);
++			break;
++		case CRYCB_FORMAT2:
++			ret = copy_apcb1(vcpu, vsie_page);
++			break;
++		}
++		break;
++	default:
++	/*
++	 * Guest 2 format is valid or we can not get to here.
++	 */
++		break;
++	}
++
++	return ret;
++}
++
++/*
++ * Create a shadow copy of the crycb block.
++ * - Setup key wrapping, if requested for guest 3 and enabled for guest 2.
++ * - Shadow APCB if requested by guest 3 and enabled for guest 2 through
++ *   ECA_APIE.
++ *
++ * We only accept format-1 (no AP in g2), but convert it into format-2
++ * There is nothing to do for format-0.
++ *
++ * Returns: - 0 if shadowed or nothing to do
++ *          - > 0 if control has to be given to guest 2
++ *          - < 0 if something went wrong on copy
++ */
++static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
++{
++	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
++	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
++	const uint32_t crycbd_o = READ_ONCE(scb_o->crycbd);
++	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
++	int g2_fmt = vcpu->arch.sie_block->crycbd & CRYCB_FORMAT_MASK;
++	int g3_fmt = crycbd_o & CRYCB_FORMAT_MASK;
++	int g2_apie, g2_msa3, g3_apie, g3_msa3;
++	int size, ret;
++
++	/* crycb should not cross a page boundary */
++	size = (g3_fmt == CRYCB_FORMAT2) ? 0x100 : 0x80;
++	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + size) & PAGE_MASK))
++		return set_validity_icpt(scb_s, 0x003CU);
++
++	g2_apie = vcpu->arch.sie_block->eca & ECA_APIE;
++	g3_apie = scb_o->eca & g2_apie;
++
++	g2_msa3 = test_kvm_facility(vcpu->kvm, 76);
++	g3_msa3 = (g3_fmt != CRYCB_FORMAT0) & g2_msa3;
++
++	scb_s->crycbd = 0;
++	/* If no AP instructions and no keys we just set crycbd to 0 */
++	if (!(g3_apie || g3_msa3))
++		return 0;
++
++	if (!crycb_addr)
++		return set_validity_icpt(scb_s, 0x0039U);
++
++	if (g3_apie) {
++		ret = copy_apcb(vcpu, vsie_page, g2_fmt, g3_fmt);
++		if (ret)
++			return ret;
++		scb_s->eca |= g3_apie;
++	}
++
++	if (g3_msa3)
++		ret = copy_key_masks(vcpu, vsie_page);
++
++	if (!ret)
++		scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | g2_fmt;
++
++	return ret;
++}
++
+ /* shadow (round up/down) the ibc to avoid validity icpt */
+ static void prepare_ibc(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ {
 -- 
-2.18.0
+1.7.1
 
