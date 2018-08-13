@@ -2,136 +2,233 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E118C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B914C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C38BE217FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:12:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38BE217FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 32648217FE
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:15:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32648217FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbeHMKxu (ORCPT
+        id S1728578AbeHMK5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 06:53:50 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44431 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbeHMKxu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 06:53:50 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fp7xv-0002iX-Dw; Mon, 13 Aug 2018 10:12:39 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fp7xu-0007T6-Ev; Mon, 13 Aug 2018 10:12:38 +0200
-Date:   Mon, 13 Aug 2018 10:12:38 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     linux-mtd@lists.infradead.org, David Gstir <david@sigma-star.at>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH 05/25] ubifs: implement ubifs_lpt_lookup using
- ubifs_pnode_lookup
-Message-ID: <20180813081238.crujoer2qprhn27y@pengutronix.de>
-References: <20180704124137.13396-1-s.hauer@pengutronix.de>
- <20180704124137.13396-6-s.hauer@pengutronix.de>
- <20180813063127.kpxw6d5amna5wpas@pengutronix.de>
- <8387142.nbJ7LYRgBX@blindfold>
+        Mon, 13 Aug 2018 06:57:00 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10662 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726345AbeHMK47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 06:56:59 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8CAFCDD054F73;
+        Mon, 13 Aug 2018 16:15:44 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Mon, 13 Aug 2018
+ 16:15:39 +0800
+Subject: Re: [PATCH 3/8] staging: erofs: add error handling for xattr
+ submodule
+To:     Gao Xiang <gaoxiang25@huawei.com>
+CC:     Chao Yu <chao@kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+References: <20180812140150.13397-1-chao@kernel.org>
+ <20180812140150.13397-4-chao@kernel.org>
+ <11a5b8c0-c3fa-0da9-a41b-a6b33ddcc9bb@huawei.com>
+ <3d6e8cd9-0263-2196-7b45-b60245f0ba7c@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <ffd2748a-273f-792b-d418-2fcf85c3d45f@huawei.com>
+Date:   Mon, 13 Aug 2018 16:15:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8387142.nbJ7LYRgBX@blindfold>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 10:05:21 up 61 days, 17:14, 64 users,  load average: 0.30, 0.13,
- 0.10
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <3d6e8cd9-0263-2196-7b45-b60245f0ba7c@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 08:34:00AM +0200, Richard Weinberger wrote:
-> Am Montag, 13. August 2018, 08:31:27 CEST schrieb Sascha Hauer:
-> > On Wed, Jul 04, 2018 at 02:41:17PM +0200, Sascha Hauer wrote:
-> > > ubifs_lpt_lookup() starts by looking up the nth pnode in the LPT. We
-> > > already have this functionality in ubifs_pnode_lookup(). Use this
-> > > function rather than open coding its functionality.
-> > > 
-> > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > > ---
-> > >  fs/ubifs/lpt.c | 20 ++------------------
-> > >  1 file changed, 2 insertions(+), 18 deletions(-)
-> > > 
-> > > diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
-> > > index 6cd6f23d4512..cde7b9484157 100644
-> > > --- a/fs/ubifs/lpt.c
-> > > +++ b/fs/ubifs/lpt.c
-> > > @@ -1478,27 +1478,11 @@ struct ubifs_pnode *ubifs_pnode_lookup(struct ubifs_info *c, int i)
-> > >   */
-> > >  struct ubifs_lprops *ubifs_lpt_lookup(struct ubifs_info *c, int lnum)
-> > >  {
-> > > -	int err, i, h, iip, shft;
-> > > -	struct ubifs_nnode *nnode;
-> > > +	int i, iip;
-> > >  	struct ubifs_pnode *pnode;
-> > >  
-> > > -	if (!c->nroot) {
-> > > -		err = ubifs_read_nnode(c, NULL, 0);
-> > > -		if (err)
-> > > -			return ERR_PTR(err);
-> > > -	}
-> > > -	nnode = c->nroot;
-> > >  	i = lnum - c->main_first;
-> > > -	shft = c->lpt_hght * UBIFS_LPT_FANOUT_SHIFT;
-> > > -	for (h = 1; h < c->lpt_hght; h++) {
-> > > -		iip = ((i >> shft) & (UBIFS_LPT_FANOUT - 1));
-> > > -		shft -= UBIFS_LPT_FANOUT_SHIFT;
-> > > -		nnode = ubifs_get_nnode(c, nnode, iip);
-> > > -		if (IS_ERR(nnode))
-> > > -			return ERR_CAST(nnode);
-> > > -	}
-> > > -	iip = ((i >> shft) & (UBIFS_LPT_FANOUT - 1));
-> > > -	pnode = ubifs_get_pnode(c, nnode, iip);
-> > > +	pnode = ubifs_pnode_lookup(c, i);
-> > 
-> > This should be
-> > 
-> > 	ubifs_pnode_lookup(c, i >> UBIFS_LPT_FANOUT_SHIFT);
+Hi Xiang,
+
+On 2018/8/13 10:36, Gao Xiang wrote:
+> Hi Chao,
 > 
-> Can you please add a helper function for that? These shift games are
-> always confusing and not easy to spot.
+> On 2018/8/13 10:00, Chao Yu wrote:
+>> On 2018/8/12 22:01, Chao Yu wrote:
+>>> From: Gao Xiang <gaoxiang25@huawei.com>
+>>>
+>>> This patch enhances the missing error handling code for
+>>> xattr submodule, which improves the stability for the rare cases.
+>>>
+>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>> ---
+>>>  drivers/staging/erofs/internal.h |   6 +-
+>>>  drivers/staging/erofs/xattr.c    | 120 ++++++++++++++++++++-----------
+>>>  2 files changed, 83 insertions(+), 43 deletions(-)
+>>>
+>>> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+>>> index a756abeff7e9..8951e01216e3 100644
+>>> --- a/drivers/staging/erofs/internal.h
+>>> +++ b/drivers/staging/erofs/internal.h
+>>> @@ -485,10 +485,10 @@ struct erofs_map_blocks_iter {
+>>>  
+>>>  
+>>>  static inline struct page *
+>>> -erofs_get_inline_page_nofail(struct inode *inode,
+>>> -			     erofs_blk_t blkaddr)
+>>> +erofs_get_inline_page(struct inode *inode,
+>>> +		      erofs_blk_t blkaddr)
+>>>  {
+>>> -	return erofs_get_meta_page_nofail(inode->i_sb,
+>>> +	return erofs_get_meta_page(inode->i_sb,
+>>>  		blkaddr, S_ISDIR(inode->i_mode));
+>>>  }
+>>>  
+>>> diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
+>>> index 2593c856b079..1b5815fc70db 100644
+>>> --- a/drivers/staging/erofs/xattr.c
+>>> +++ b/drivers/staging/erofs/xattr.c
+>>> @@ -24,16 +24,25 @@ struct xattr_iter {
+>>>  
+>>>  static inline void xattr_iter_end(struct xattr_iter *it, bool atomic)
+>>>  {
+>>> -	/* only init_inode_xattrs use non-atomic once */
+>>> +	/* the only user of kunmap() is 'init_inode_xattrs' */
+>>>  	if (unlikely(!atomic))
+>>>  		kunmap(it->page);
+>>>  	else
+>>>  		kunmap_atomic(it->kaddr);
+>>> +
+>>>  	unlock_page(it->page);
+>>>  	put_page(it->page);
+>>>  }
+>>>  
+>>> -static void init_inode_xattrs(struct inode *inode)
+>>> +static inline void xattr_iter_end_final(struct xattr_iter *it)
+>>> +{
+>>> +	if (unlikely(it->page == NULL))
+>>> +		return;
+>>> +
+>>> +	xattr_iter_end(it, true);
+>>> +}
+>>> +
+>>> +static int init_inode_xattrs(struct inode *inode)
+>>>  {
+>>>  	struct xattr_iter it;
+>>>  	unsigned i;
+>>> @@ -44,7 +53,7 @@ static void init_inode_xattrs(struct inode *inode)
+>>>  	bool atomic_map;
+>>>  
+>>>  	if (likely(inode_has_inited_xattr(inode)))
+>>> -		return;
+>>> +		return 0;
+>>>  
+>>>  	vi = EROFS_V(inode);
+>>>  	BUG_ON(!vi->xattr_isize);
+>>> @@ -54,8 +63,9 @@ static void init_inode_xattrs(struct inode *inode)
+>>>  	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
+>>>  	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
+>>>  
+>>> -	it.page = erofs_get_inline_page_nofail(inode, it.blkaddr);
+>>> -	BUG_ON(IS_ERR(it.page));
+>>> +	it.page = erofs_get_inline_page(inode, it.blkaddr);
+>>> +	if (IS_ERR(it.page))
+>>> +		return PTR_ERR(it.page);
+>>>  
+>>>  	/* read in shared xattr array (non-atomic, see kmalloc below) */
+>>>  	it.kaddr = kmap(it.page);
+>>> @@ -64,9 +74,12 @@ static void init_inode_xattrs(struct inode *inode)
+>>>  	ih = (struct erofs_xattr_ibody_header *)(it.kaddr + it.ofs);
+>>>  
+>>>  	vi->xattr_shared_count = ih->h_shared_count;
+>>> -	vi->xattr_shared_xattrs = (unsigned *)kmalloc_array(
+>>> -		vi->xattr_shared_count, sizeof(unsigned),
+>>> -		GFP_KERNEL | __GFP_NOFAIL);
+>>> +	vi->xattr_shared_xattrs = kmalloc_array(vi->xattr_shared_count,
+>>> +						sizeof(unsigned), GFP_KERNEL);
+>>> +	if (unlikely(vi->xattr_shared_xattrs == NULL)) {
+>>> +		xattr_iter_end(&it, atomic_map);
+>>> +		return -ENOMEM;
+>>> +	}
+>>>  
+>>>  	/* let's skip ibody header */
+>>>  	it.ofs += sizeof(struct erofs_xattr_ibody_header);
+>>> @@ -77,9 +90,10 @@ static void init_inode_xattrs(struct inode *inode)
+>>>  			BUG_ON(it.ofs != EROFS_BLKSIZ);
+>>>  			xattr_iter_end(&it, atomic_map);
+>>>  
+>>> -			it.page = erofs_get_meta_page_nofail(sb,
+>>> +			it.page = erofs_get_meta_page(sb,
+>>>  				++it.blkaddr, S_ISDIR(inode->i_mode));
+>>> -			BUG_ON(IS_ERR(it.page));
+>>> +			if (IS_ERR(it.page))
+>>> +				return PTR_ERR(it.page);
+>>>  
+>>>  			it.kaddr = kmap_atomic(it.page);
+>>>  			atomic_map = true;
+>>> @@ -92,6 +106,7 @@ static void init_inode_xattrs(struct inode *inode)
+>>>  	xattr_iter_end(&it, atomic_map);
+>>>  
+>>>  	inode_set_inited_xattr(inode);
+>>> +	return 0;
+>>>  }
+>>>  
+>>>  struct xattr_iter_handlers {
+>>> @@ -101,19 +116,24 @@ struct xattr_iter_handlers {
+>>>  	void (*value)(struct xattr_iter *, unsigned, char *, unsigned);
+>>>  };
+>>>  
+>>> -static void xattr_iter_fixup(struct xattr_iter *it)
+>>> +static inline int xattr_iter_fixup(struct xattr_iter *it)
+>>>  {
+>>> -	if (unlikely(it->ofs >= EROFS_BLKSIZ)) {
+>>> -		xattr_iter_end(it, true);
+>>> +	if (likely(it->ofs < EROFS_BLKSIZ))
+>>> +		return 0;
+>>>  
+>>> -		it->blkaddr += erofs_blknr(it->ofs);
+>>> -		it->page = erofs_get_meta_page_nofail(it->sb,
+>>> -			it->blkaddr, false);
+>>> -		BUG_ON(IS_ERR(it->page));
+>>> +	xattr_iter_end(it, true);
+>>>  
+>>> -		it->kaddr = kmap_atomic(it->page);
+>>> -		it->ofs = erofs_blkoff(it->ofs);
+>>> +	it->blkaddr += erofs_blknr(it->ofs);
+>>> +
+>>> +	it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
+>>> +	if (IS_ERR(it->page)) {
+>>> +		it->page = NULL;
+>>> +		return PTR_ERR(it->page);
+>> As LKP reported, we need to fix this as below:
+>>
+>> err = PTR_ERR(it->page);
+>> it->page = NULL;
+>> return err;
+>>
+>> Thanks,
+>>
+> 
+> I have seen this at
+> https://lists.01.org/pipermail/kbuild-all/2018-August/051187.html
+> 
+> I will fix it soon. Thanks for report.
 
-Do you have a suggestion for a helper function? lpt.c is full of rather
-non obvious arithmetic operations and I couldn't find a helper function
-that could be reused at least once in the code.
+I checked v2 patch, it looks good to me now. I will send v2 patchset later.
 
-I tried with:
+Thanks,
 
-static int lnum_to_pnode_num(struct ubifs_info *c, int lnum)
-{
-	return (lnum - c->main_first) >> UBIFS_LPT_FANOUT_SHIFT;
-}
+> 
+> Thanks,
+> Gao Xiang
+> 
+> .
+> 
 
-But I am not sure this really improves things
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
