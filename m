@@ -2,162 +2,118 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDFBC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D32C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4F621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:25:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4F621738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8776821746
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:26:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UocgWsUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8776821746
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbeHMOHc (ORCPT
+        id S1729129AbeHMOIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:07:32 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10713 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728370AbeHMOHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:07:32 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 673E25227F432;
-        Mon, 13 Aug 2018 19:25:39 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 13 Aug
- 2018 19:25:31 +0800
-Subject: Re: [PATCH 2/8] staging: erofs: separate erofs_get_meta_page
-To:     Dan Carpenter <dan.carpenter@oracle.com>, Chao Yu <chao@kernel.org>
-CC:     <gregkh@linuxfoundation.org>, <devel@driverdev.osuosl.org>,
-        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180812140150.13397-1-chao@kernel.org>
- <20180812140150.13397-3-chao@kernel.org>
- <20180813110405.3qoburir3ds5ux33@mwanda>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <3e77ae86-d417-6632-4894-d257fdb17a21@huawei.com>
-Date:   Mon, 13 Aug 2018 19:23:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 13 Aug 2018 10:08:16 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42725 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbeHMOIQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:08:16 -0400
+Received: by mail-yw1-f65.google.com with SMTP id y203-v6so13246039ywd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=a7BNQtqU1pD6rElJXpAgFiYEXTd8111gFvtpH6it5Kg=;
+        b=UocgWsUYoejNkDzMkZNNXLiFDgoxrNkoGMxOhGt/s5a1/ObdOhXtAolyLCMw4yUp8K
+         bH0phXSxiIb/PGeMipgsrNHAaWMIvo67SVRBWBKIFoua/cMzagzbo5cxPnjJqrAOSepU
+         mEcAg72cPMgUpZNVENKAKqNt+QyAnRs+pCGjy52zyOK+3q3fJU/JHebwZvUVGI0Rm7Ac
+         YGE9UPOiE9zxVPRo7IMo4HRZW4LMPEBH8LQe5XoJalnncPjblhUYAJOnirZA+e3ilvyd
+         4ixnf5lJIzRpeah6XBGLCmEwLJn+NiFXyIyRuzLZAtR0vPY4H8qtlFYaaX3iJ8GkECJx
+         FZLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=a7BNQtqU1pD6rElJXpAgFiYEXTd8111gFvtpH6it5Kg=;
+        b=sulHn0PBvPTBxDzOj8lKnkv+w1SuKZCNhHm5RsKQd5wM9qmc61tyZ5giq9mSaX2416
+         TsmibqX1gE0xU64LG3AR8pN2aAVWUZz+nZy8L9Kt8/j2oCjmXYhdVng0d44ISuY3yUxr
+         8/3XJQL7JfymPXwyZ8Nd2SRcZ8115bHZ6GMCc9aA0FB5MGf41NZTRcrXb7jPPPw0/RRZ
+         GPg/WByqn9J8wIuzLGXy3YZpV6EyDTzWQQpqsBrXR+gT8KguLRb5euCXesJTPwpCD9bc
+         GlKsGmz5gFOhU4Vl1QS5jvJUtEIU+UCZ74oQ1EuDUpqWcMDB+2JxKD6YoHJ4Xn4h55tt
+         QGAA==
+X-Gm-Message-State: AOUpUlEQq0XQfgpMHVp5dH1ZU7izjp5wdwARfoPaAazNnTYuQ8aQrKMa
+        lb5Y4iQOBwh0aYDXxZ7ojhUk+eRRbQPW1ttxiANiNCLl
+X-Google-Smtp-Source: AA+uWPyk/yHLyEgc4XxPW/QjoPrlgEhfXZxHddZLU2Gi9uQkgU8lmlx+v1aAXVCDs9kGVnDLZPX9nmxZrlbppp2gbuc=
+X-Received: by 2002:a81:128d:: with SMTP id 135-v6mr9025506yws.107.1534159585703;
+ Mon, 13 Aug 2018 04:26:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180813110405.3qoburir3ds5ux33@mwanda>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Received: by 2002:a25:2594:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 04:26:25
+ -0700 (PDT)
+In-Reply-To: <1534157699-23637-1-git-send-email-zhongjiang@huawei.com>
+References: <1534157699-23637-1-git-send-email-zhongjiang@huawei.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Mon, 13 Aug 2018 13:26:25 +0200
+Message-ID: <CAMhs-H9+FBfjvtYb0ehoAz7hHaaoKiO6-Ypmb+q-aXRO-xYG6Q@mail.gmail.com>
+Subject: Re: [PATCH] staging:pci-mt7621: Use PTR_ERR_OR_ZERO to replace the
+ open code
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, NeilBrown <neil@brown.name>,
+        peter.vernia@gmail.com, oliver.huebers@web.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-
-On 2018/8/13 19:04, Dan Carpenter wrote:
-> On Sun, Aug 12, 2018 at 10:01:44PM +0800, Chao Yu wrote:
->> --- a/drivers/staging/erofs/data.c
->> +++ b/drivers/staging/erofs/data.c
->> @@ -39,31 +39,44 @@ static inline void read_endio(struct bio *bio)
->>  }
->>  
->>  /* prio -- true is used for dir */
->> -struct page *erofs_get_meta_page(struct super_block *sb,
->> -	erofs_blk_t blkaddr, bool prio)
->> +struct page *__erofs_get_meta_page(struct super_block *sb,
->> +	erofs_blk_t blkaddr, bool prio, bool nofail)
->>  {
->> -	struct inode *bd_inode = sb->s_bdev->bd_inode;
->> -	struct address_space *mapping = bd_inode->i_mapping;
->> +	struct inode *const bd_inode = sb->s_bdev->bd_inode;
->> +	struct address_space *const mapping = bd_inode->i_mapping;
->> +	/* prefer retrying in the allocator to blindly looping below */
->> +	const gfp_t gfp = mapping_gfp_constraint(mapping, ~__GFP_FS) |
->> +		(nofail ? __GFP_NOFAIL : 0);
->> +	unsigned int io_retries = nofail ? EROFS_IO_MAX_RETRIES_NOFAIL : 0;
->>  	struct page *page;
->>  
->>  repeat:
->> -	page = find_or_create_page(mapping, blkaddr,
->> -	/*
->> -	 * Prefer looping in the allocator rather than here,
->> -	 * at least that code knows what it's doing.
->> -	 */
->> -		mapping_gfp_constraint(mapping, ~__GFP_FS) | __GFP_NOFAIL);
->> -
->> -	BUG_ON(!page || !PageLocked(page));
->> +	page = find_or_create_page(mapping, blkaddr, gfp);
->> +	if (unlikely(page == NULL)) {
->> +		DBG_BUGON(nofail);
->> +		return ERR_PTR(-ENOMEM);
->> +	}
->> +	DBG_BUGON(!PageLocked(page));
->>  
->>  	if (!PageUptodate(page)) {
->>  		struct bio *bio;
->>  		int err;
->>  
->> -		bio = erofs_grab_bio(sb, blkaddr, 1, read_endio, true);
->> +		bio = erofs_grab_bio(sb, blkaddr, 1, read_endio, nofail);
->> +		if (unlikely(bio == NULL)) {
->> +			DBG_BUGON(nofail);
->> +			err = -ENOMEM;
->> +err_out:
->> +			unlock_page(page);
->> +			put_page(page);
->> +			return ERR_PTR(err);
-> 
-> Put this err_out stuff at the bottom of the function so that we don't
-> have to do backward hops to get to it.
-> 
->> +		}
->>  
->>  		err = bio_add_page(bio, page, PAGE_SIZE, 0);
->> -		BUG_ON(err != PAGE_SIZE);
->> +		if (unlikely(err != PAGE_SIZE)) {
->> +			err = -EFAULT;
->> +			goto err_out;
->                         ^^^^^^^^^^^^
-> Like this.  Generally avoid backwards hops if you can.
-> 
->> +		}
->>  
->>  		__submit_bio(bio, REQ_OP_READ,
->>  			REQ_META | (prio ? REQ_PRIO : 0));
->> @@ -72,6 +85,7 @@ struct page *erofs_get_meta_page(struct super_block *sb,
->>  
->>  		/* the page has been truncated by others? */
->>  		if (unlikely(page->mapping != mapping)) {
->> +unlock_repeat:
-> The question mark in the "truncated by others?" is a little concerning.
-> It's slightly weird that we don't check "io_retries" on this path.
+On Mon, Aug 13, 2018 at 12:54 PM, zhong jiang <zhongjiang@huawei.com> wrote:
+> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR, So
+> just replace them rather than duplicating its implement.
 >
-Thanks for your reply.
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/staging/mt7621-pci/pci-mt7621.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
+> index a49e279..9a8ff1d 100644
+> --- a/drivers/staging/mt7621-pci/pci-mt7621.c
+> +++ b/drivers/staging/mt7621-pci/pci-mt7621.c
+> @@ -403,10 +403,8 @@ static int mt7621_pcie_parse_dt(struct mt7621_pcie *pcie)
+>         }
+>
+>         pcie->base = devm_ioremap_resource(dev, &regs);
+> -       if (IS_ERR(pcie->base))
+> -               return PTR_ERR(pcie->base);
+>
+> -       return 0;
+> +       return PTR_ERR_OR_ZERO(pcie->base);
+>  }
 
-erofs use the shared block device bd_inode->mapping for its meta use, which is visible
-to other code rather than erofs internally only, so I think it needs to get rid of
-potentially truncating by others, and such comments can also be found at
+Hi Zhong,
 
-- pagecache_get_page
-1557                 /* Has the page been truncated? */
-1558                 if (unlikely(page->mapping != mapping)) {
-1559                         unlock_page(page);
-1560                         put_page(page);
-1561                         goto repeat;
-1562                 }
+Thanks for this. This driver is in the middle of cleanup and this
+function is not doing all the DT parse
+yet, so this patch looks good but after applying this series (if they
+work and are good enough to be applied)
+has no sense.
 
-- filemap_fault
-2535         /* Did it get truncated? */
-2536         if (unlikely(page->mapping != mapping)) {
-2537                 unlock_page(page);
-2538                 put_page(page);
-2539                 goto retry_find;
-2540         }
+See: http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-August/124890.html
 
-I think it is somewhat necessary, and some suggestion about this? thanks in advance.
+Best regards,
+    Sergio Paracuellos
 
-"It's slightly weird that we don't check "io_retries" on this path"
-I think you are right, let me rethink about it and send the next patch...
-
-Thanks,
-Gao Xiang
-
+>
+>  static int mt7621_pcie_request_resources(struct mt7621_pcie *pcie,
+> --
+> 1.7.12.4
+>
