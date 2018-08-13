@@ -2,106 +2,212 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238F4C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA4EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF50C2174B
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:32:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeiJvmSO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF50C2174B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CC33721785
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:36:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC33721785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeHMGNB (ORCPT
+        id S1728215AbeHMGQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 02:13:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41857 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbeHMGNB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 02:13:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z8-v6so6897341pgu.8
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 20:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=622jTiJu+0MRtm9OtT2f2Hf5UrvCZy9t5E5iQFi9qoc=;
-        b=TeiJvmSOyRe3X8One+Rn2MekY0FJr+q/iqbknoMUISpmRGbi9irhuqmYD1gkxn1o5r
-         zNd3wVXzIjxrzKBkLSEviPGTpPwtgjttHg7RY21jUGVKvMfPe9ZfUfWbn3q8plXuEvX+
-         7DqSSoLL+P/CmspC33y5PXQbmy8Ao+3DvodzD1dxcUVj7+4t6rF31CNsJNlbZGyYpt5Z
-         nmoek9yjFEQ8a8Yq073ms++nUOm12l5VA/CEct1uZOOHVI0Mhx8J9sl0X90LJbTjBfbn
-         pz3AzUhp5jVgrIWxDEFXO9EZDKrE11uztecScHN/HIZi+F7EmqzzmLYUt9AyWPWIVfXc
-         UwHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=622jTiJu+0MRtm9OtT2f2Hf5UrvCZy9t5E5iQFi9qoc=;
-        b=Pk7tpQ6gSZiMQdedWvwDwemBEAKg/IMoPwNMfV8KqnVatLE5Ayf/WaoGV8b7xZOq2U
-         ID1/0YbbdVbfWbd0md7U6s1RUbKWADWur20Q6+0n4qsfZe49Bpzmc/lnj2lOBulUwj3F
-         nD7YjjBV2747sm8RQUQHcN4bUd/eVwSic9syFTKUq38S81z2m3pSMJNvcveOPMuy+7aX
-         lRS7FE4NbqVZ/vLYGejMaA2b+s2NqvwcIvLEQxr47v+Fi/HGTw/n9ExGFTwywRa6kZHL
-         +EAM9b2TBWJX1m1C0jTvGGnJKmcTTOoTq/UUMGDmqc2RHMtigadvuCx/CpdrYah5ZLoT
-         Gx7w==
-X-Gm-Message-State: AOUpUlGaU9HwwmAGkn0UDBOVupCk7AsJW1jVoeQkl++cLwDR0IUUyJYg
-        /b2k9UWD587jrrdDfQnvO9wLRaau
-X-Google-Smtp-Source: AA+uWPyoa67+21gznaWyPqhBFEFdUxD/GXfXeeMkcRD4Pebwb1kXNdrBZZrflRnW6BBVcRyIvde51g==
-X-Received: by 2002:a63:161a:: with SMTP id w26-v6mr15715199pgl.257.1534131163211;
-        Sun, 12 Aug 2018 20:32:43 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.57? ([2402:f000:1:1501:200:5efe:a66f:4739])
-        by smtp.gmail.com with ESMTPSA id l10-v6sm22193020pfj.179.2018.08.12.20.32.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 Aug 2018 20:32:42 -0700 (PDT)
-To:     dhowells@redhat.com
-Cc:     linux-afs@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] fs: jffs2: possible sleep-in-atomic-context bugs in jffs2_iget
-Message-ID: <48808863-2c1e-34bf-5968-8bb88052b556@gmail.com>
-Date:   Mon, 13 Aug 2018 11:32:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 13 Aug 2018 02:16:50 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:41317 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725859AbeHMGQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 02:16:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 6BD2C20419A;
+        Mon, 13 Aug 2018 05:36:28 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VaAAg5KP2kkm; Mon, 13 Aug 2018 05:36:21 +0200 (CEST)
+Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
+        by smtp.infotech.no (Postfix) with ESMTPA id 61F1520417A;
+        Mon, 13 Aug 2018 05:36:18 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+To:     Joe Perches <joe@perches.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
+        tim.c.chen@linux.intel.com, martin.petersen@oracle.com,
+        david.darrington@wdc.com, jeff.furlong@wdc.com
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <9b5b906f42dfab78f382c90f66851717d258a15d.camel@perches.com>
+ <nycvar.YSQ.7.76.1808101601110.13885@knanqh.ubzr>
+ <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <b36d5eb6-3ee8-1bcd-0060-a4d4083a0fe6@interlog.com>
+Date:   Sun, 12 Aug 2018 23:36:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <b3c86ddd67a73c09e09f3e51d7fc70036f00fb7b.camel@perches.com>
+Content-Type: multipart/mixed;
+ boundary="------------5694094D72B1F23D082D2112"
+Content-Language: en-CA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel may sleep with holding a spinlock.
+This is a multi-part message in MIME format.
+--------------5694094D72B1F23D082D2112
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+On 2018-08-10 08:11 PM, Joe Perches wrote:
+> On Fri, 2018-08-10 at 16:02 -0400, Nicolas Pitre wrote:
+>> On Fri, 10 Aug 2018, Joe Perches wrote:
+>>
+>>> On Fri, 2018-08-10 at 14:12 -0500, Jeff Lien wrote:
+>>>> This patch provides a performance improvement for the CRC16 calculations done in read/write
+>>>> workloads using the T10 Type 1/2/3 guard field.  For example, today with sequential write
+>>>> workloads (one thread/CPU of IO) we consume 100% of the CPU because of the CRC16 computation
+>>>> bottleneck.  Today's block devices are considerably faster, but the CRC16 calculation prevents
+>>>> folks from utilizing the throughput of such devices.  To speed up this calculation and expose
+>>>> the block device throughput, we slice the old single byte for loop into a 16 byte for loop,
+>>>> with a larger CRC table to match.  The result has shown 5x performance improvements on various
+>>>> big endian and little endian systems running the 4.18.0 kernel version.
+>>>
+>>> Thanks.
+>>>
+>>> This seems a sensible tradeoff for the 4k text size increase.
+>>
+>> More like 7.5KB.  Would be best if this was configurable so the small
+>> version remained available.
+> 
+> Maybe something like: (compiled, untested)
+> ---
+>   crypto/Kconfig            |  10 +
+>   crypto/crct10dif_common.c | 543 +++++++++++++++++++++++++++++++++++++++++++++-
+>   2 files changed, 549 insertions(+), 4 deletions(-)
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index f3e40ac56d93..88d9d17bb18a 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -618,6 +618,16 @@ config CRYPTO_CRCT10DIF
+>   	  a crypto transform.  This allows for faster crc t10 diff
+>   	  transforms to be used if they are available.
+>   
+> +config CRYPTO_CRCT10DIF_TABLE_SIZE
+> +	int "Size of CRCT10DIF crc tables (as a power of 2)"
+> +	depends on CRYPTO_CRCT10DIF
+> +	range 1 5
+> +	default 1 if EMBEDDED
+> +	default 5
+> +	help
+> +	  Set the table size used by the CRYPTO_CRCT10DIF crc calculation
+> +	  Larger values use more memory and are faster.
+> +
+>   config CRYPTO_CRCT10DIF_PCLMUL
+>   	tristate "CRCT10DIF PCLMULQDQ hardware acceleration"
+>   	depends on X86 && 64BIT && CRC_T10DIF
+> diff --git a/crypto/crct10dif_common.c b/crypto/crct10dif_common.c
+> index b2fab366f518..4eb1c50c3688 100644
+> --- a/crypto/crct10dif_common.c
+> +++ b/crypto/crct10dif_common.c
+> @@ -32,7 +32,8 @@
+>    * x^16 + x^15 + x^11 + x^9 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1
+>    * gt: 0x8bb7
+>    */
+> -static const __u16 t10_dif_crc_table[256] = {
+> +static const __u16 t10dif_crc_table[][256] = {
 
-[FUNC] schedule
-fs/inode.c, 1916: schedule in __wait_on_freeing_inode
-fs/inode.c, 826: __wait_on_freeing_inode in find_inode_fast
-fs/inode.c, 1107: find_inode_fast in iget_locked
-fs/jffs2/fs.c, 263: iget_locked in jffs2_iget
-fs/jffs2/fs.c, 665: jffs2_iget in jffs2_gc_fetch_inode
-fs/jffs2/wbuf.c, 505: jffs2_gc_fetch_inode in jffs2_wbuf_recover
-fs/jffs2/wbuf.c, 462: spin_lock in jffs2_wbuf_recover
+<snip table>
 
-[FUNC] mutex_lock_nested
-fs/jffs2/fs.c, 273: mutex_lock_nested in jffs2_iget
-fs/jffs2/fs.c, 665: jffs2_iget in jffs2_gc_fetch_inode
-fs/jffs2/wbuf.c, 505: jffs2_gc_fetch_inode in jffs2_wbuf_recover
-fs/jffs2/wbuf.c, 462: spin_lock in jffs2_wbuf_recover
+>   };
+>   
+>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer, size_t len)
+>   {
+> -	unsigned int i;
+> +	const u8 *ptr = (const __u8 *)buffer;
+> +	const u8 *ptr_end = ptr + len;
+> +#if CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE > 1
+> +	size_t tablesize = 1 << (CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE - 1);
+> +	const u8 *ptr_last = ptr + (len / tablesize * tablesize);
+>   
+> -	for (i = 0 ; i < len ; i++)
+> -		crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
+> +	while (ptr < ptr_last) {
+> +		size_t index = tablesize;
+> +		__u16 t;
+> +
+> +		t = t10dif_crc_table[--index][*ptr++ ^ (u8)(crc >> 8)];
+> +		t ^= t10dif_crc_table[--index][*ptr++ ^ (u8)crc];
+> +		crc = t;
+> +		while (index > 0)
+> +			crc ^= t10dif_crc_table[--index][*ptr++];
+> +	}
+> +#endif
+> +	while (ptr < ptr_end)
+> +		crc = t10dif_crc_table[0][*ptr++ ^ (u8)(crc >> 8)] ^ (crc << 8);
+>   
+>   	return crc;
+>   }
+> 
+> 
 
-I do not find a good way to fix, so I only report.
-Maybe the spinlock should be released before calling jffs2_iget(), and 
-then be acquired again.
-This is found by my static analysis tool (DSAC).
+The attached patch is on top of the one above. I tested it in the user space
+where it is around 20% faster (with a full size table). Also tried swab16 but
+there was no gain from that (perhaps around a 2% loss).
 
+Doug Gilbert
 
-Thanks,
-Jia-Ju Bai
+--------------5694094D72B1F23D082D2112
+Content-Type: text/x-patch;
+ name="crc_t10dif_on_jp.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="crc_t10dif_on_jp.patch"
 
+diff --git a/crypto/crct10dif_common.c b/crypto/crct10dif_common.c
+index 4eb1c50c3688..bf5fab98aebb 100644
+--- a/crypto/crct10dif_common.c
++++ b/crypto/crct10dif_common.c
+@@ -591,23 +591,30 @@ __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer, size_t len)
+ {
+ 	const u8 *ptr = (const __u8 *)buffer;
+ 	const u8 *ptr_end = ptr + len;
++	const u16 *flat_tbl = (const u16 *)t10dif_crc_table;
+ #if CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE > 1
+ 	size_t tablesize = 1 << (CONFIG_CRYPTO_CRCT10DIF_TABLE_SIZE - 1);
+ 	const u8 *ptr_last = ptr + (len / tablesize * tablesize);
+ 
++	/*
++	 * t10dif_crc_table is two dimensional but access as vector via
++	 * flat_tbl for speed. t[k][j] is equivalent to tt[k*num_cols + j].
++	 * num_cols in this case is 256 allowing tt[k<<8 + j]. Perhaps
++	 * there should be a compile time assert that num_cols==256 .
++	 */
+ 	while (ptr < ptr_last) {
+ 		size_t index = tablesize;
+ 		__u16 t;
+ 
+-		t = t10dif_crc_table[--index][*ptr++ ^ (u8)(crc >> 8)];
+-		t ^= t10dif_crc_table[--index][*ptr++ ^ (u8)crc];
++		t = flat_tbl[(--index << 8) + (*ptr++ ^ (u8)(crc >> 8))];
++		t ^= flat_tbl[(--index << 8) + (*ptr++ ^ (u8)crc)];
+ 		crc = t;
+ 		while (index > 0)
+-			crc ^= t10dif_crc_table[--index][*ptr++];
++			crc ^= flat_tbl[(--index << 8) + *ptr++];
+ 	}
+ #endif
+ 	while (ptr < ptr_end)
+-		crc = t10dif_crc_table[0][*ptr++ ^ (u8)(crc >> 8)] ^ (crc << 8);
++		crc = flat_tbl[*ptr++ ^ (u8)(crc >> 8)] ^ (crc << 8);
+ 
+ 	return crc;
+ }
+
+--------------5694094D72B1F23D082D2112--
