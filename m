@@ -2,103 +2,116 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9827BC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39988C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5126F217FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5126F217FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id DAA572170A
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:48:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA572170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbeHMLHA convert rfc822-to-8bit (ORCPT
+        id S1728831AbeHML35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 07:07:00 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:40096 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728582AbeHMLHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 07:07:00 -0400
-Received: from wd0180.dip.tu-dresden.de ([141.76.108.180] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1fp8AX-00013D-Op; Mon, 13 Aug 2018 10:25:41 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Tao Huang <huangtao@rock-chips.com>
-Cc:     Caesar Wang <wxt@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Xing Zheng <zhengxing@rock-chips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        dbasehore@chromium.org, Will Deacon <will.deacon@arm.com>,
-        dianders@chromium.org, Rob Herring <robh+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        tony.xie@rock-chips.com, David Wu <david.wu@rock-chips.com>,
-        cf@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add idle-states to device tree for rk3399
-Date:   Mon, 13 Aug 2018 10:25:41 +0200
-Message-ID: <3578407.YVa0lydFsh@phil>
-In-Reply-To: <ae312dc3-f640-ecf3-049a-c8576bb83330@rock-chips.com>
-References: <1467793254-10808-1-git-send-email-wxt@rock-chips.com> <5620784.b19SH5PkdR@phil> <ae312dc3-f640-ecf3-049a-c8576bb83330@rock-chips.com>
+        Mon, 13 Aug 2018 07:29:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54088 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728369AbeHML34 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 07:29:56 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7D8hl8o077911
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:48:40 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ku3wcekbn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:48:40 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Mon, 13 Aug 2018 09:48:38 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Aug 2018 09:48:33 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7D8mW1645809726
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Aug 2018 08:48:32 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B56294C040;
+        Mon, 13 Aug 2018 11:48:38 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE24F4C04A;
+        Mon, 13 Aug 2018 11:48:35 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Mon, 13 Aug 2018 11:48:35 +0100 (BST)
+Date:   Mon, 13 Aug 2018 01:48:28 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+        liu.song.a23@gmail.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v8 5/6] trace_uprobe/sdt: Prevent multiple reference
+ counter for same uprobe
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
+ <20180809041856.1547-6-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180809041856.1547-6-ravi.bangoria@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18081308-0028-0000-0000-000002E9F4F2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081308-0029-0000-0000-000023A30F2D
+Message-Id: <20180813084828.GA44470@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=964 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808130097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tao,
+* Ravi Bangoria <ravi.bangoria@linux.ibm.com> [2018-08-09 09:48:55]:
 
-Am Sonntag, 12. August 2018, 18:24:45 CEST schrieb Tao Huang:
-> On 2018年08月10日 04:09, Heiko Stuebner wrote:
-> > Am Mittwoch, 6. Juli 2016, 10:20:54 CEST schrieb Caesar Wang:
-> >
-> >>  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 18 ++++++++++++++++++
-> >>  1 file changed, 18 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> >> index a6dd623..12ce265 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> >> @@ -101,6 +101,18 @@
-> >>  			};
-> >>  		};
-> >>  
-> >> +		idle-states {
-> >> +			entry-method = "psci";
-> >> +			cpu_sleep: cpu-sleep-0 {
-> >> +				compatible = "arm,idle-state";
-> >> +				local-timer-stop;
-> >> +				arm,psci-suspend-param = <0x0010000>;
-> >> +				entry-latency-us = <350>;
-> >> +				exit-latency-us = <600>;
-> >> +				min-residency-us = <1150>;
-> > Looking at the chromeos kernel, there are some more patches adapting
-> > this idle-state to use different timings.
-> Yes, we have another values. So the values of this patch are wrong.
-> >
-> > There also was a cluster-idle state added for a while but that seems to
-> > cause audio issues according to the CrOS history.
+> We assume to have only one reference counter for one uprobe.
+> Don't allow user to add multiple trace_uprobe entries having
+> same inode+offset but different reference counter.
 > 
-> DMA or Audio driver should add PM_QOS_CPU_DMA_LATENCY or other methods to avoid the effects of idle.
-> Idle itself is good.
+> Ex,
+>   # echo "p:sdt_tick/loop2 /home/ravi/tick:0x6e4(0x10036)" > uprobe_events
+>   # echo "p:sdt_tick/loop2_1 /home/ravi/tick:0x6e4(0xfffff)" >> uprobe_events
+>   bash: echo: write error: Invalid argument
+> 
+>   # dmesg
+>   trace_kprobe: Reference counter offset mismatch.
+> 
+> There is one exception though:
+> When user is trying to replace the old entry with the new
+> one, we allow this if the new entry does not conflict with
+> any other existing entries.
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
 
-Thanks for the clarification. Do you know if some from Rockchip plans
-on submitting a new version of the patch with changed timings and
-cluster-sleep?
+Looks good to me.
 
-Otherwise I can also just pull the values from the vendor kernel so that
-we get idle states in mainline as well.
-
-
-Thanks
-Heiko
-
+Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
