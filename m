@@ -2,135 +2,57 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0284AC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078D6C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB832217B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:02:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+u2H6J+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB832217B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B4296217C7
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:06:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4296217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbeHMTp5 (ORCPT
+        id S1729759AbeHMTtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:45:57 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45686 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729029AbeHMTp5 (ORCPT
+        Mon, 13 Aug 2018 15:49:49 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54762 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728781AbeHMTtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:45:57 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w16-v6so13123811ljh.12;
-        Mon, 13 Aug 2018 10:02:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=m1sYTE1JFqOmAsuOarEhHma7dxZeGoetvJlo90mO0pw=;
-        b=I+u2H6J+dL5sKVasWiSQWwUSnIpP4W4HC1J8hj9caIBtH6qTuKZ3HArwaklxdrHLul
-         RLK1ZQT5AjMCoujj0q/rXHyYqthkk77TusZ9W7dMhXmDKOw4Pl15zO4KSW9ApSCAlpsT
-         VGfgRTckAZuYSTJCTq4jwV30I6AEOQX4D6UZIg1gfwwclcIdQYXUBM0U1R5KdwcguZWy
-         IQc21+xMDDkErWDXfERsjQxIHSk+PpqbdT3XLjDr+CAQI4dWL0I8a4ILzWhhK1eqZAQF
-         xQEwB0uJUB7degqOYraYwopl7nXSoBWeBY2fNYeLHnEniBidPjtpbDFXbMrSMxae/0QB
-         /p6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=m1sYTE1JFqOmAsuOarEhHma7dxZeGoetvJlo90mO0pw=;
-        b=hGYBDSKv3RGxUHuNRhpc/5wULJkxRk14BJUSr2ZYpJBu8yhXCNKzY8MEvbAOcSCcZX
-         gt5qX0KfB2VS5P8aOXwJ6HKrjHbcWn7YDb+NJ7BHUXSgindHio78Ygwy/loAeG8aEFWu
-         zAgNBcCzmo0cbSWe9adjV1X6Y5pRYlk+mEqqWFQvsIv/dxbIFORm47oZuZ3xM1rQ2PaC
-         u3VI6WAKiothwUWwq3G3fuWTy4RFtCf0S25j7MQeegC2/LXmnk7Qc1m1vEflAee9cpYF
-         AuyAyh75Knx3Y9a6mGF8pnpa8H/2pHNNnC3Gfm/t2CDJFQXtNBj8xzircNwyo8lLGgVR
-         LvOg==
-X-Gm-Message-State: AOUpUlFH6E44+fpPGu86rWyYqN5O9ZLlx/VyYGklrmYnSkQSxg/ybH2Z
-        JOuYv49uF1lDiOR9APKksDM=
-X-Google-Smtp-Source: AA+uWPzWUX2UF3pUbOwoy5OHnmeHHb5XurWKNqIHyU193DK81PIUcsMgtmBQrMTG8QJ68WHDacF9mw==
-X-Received: by 2002:a2e:9ec9:: with SMTP id h9-v6mr11239465ljk.133.1534179772327;
-        Mon, 13 Aug 2018 10:02:52 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id m66-v6sm3438345lfi.17.2018.08.13.10.02.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 10:02:51 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V5] thermal: Add cooling device's statistics in sysfs
-Date:   Mon, 13 Aug 2018 20:02:50 +0300
-Message-ID: <18709513.zahsa7p5Fo@dimapc>
-In-Reply-To: <CAKohpo=BnVJ5uO5+6p6ONhucHkxS893t6d1gtHJZW1kKB0EXOw@mail.gmail.com>
-References: <bab196f91cbddca175c725ae6159c0af639bfe07.1522666398.git.viresh.kumar@linaro.org> <3394204.qE6hlQGZ2Z@dimapc> <CAKohpo=BnVJ5uO5+6p6ONhucHkxS893t6d1gtHJZW1kKB0EXOw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 13 Aug 2018 15:49:49 -0400
+Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4B44B145AF5A9;
+        Mon, 13 Aug 2018 10:06:45 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 10:06:44 -0700 (PDT)
+Message-Id: <20180813.100644.518282420022156164.davem@davemloft.net>
+To:     kvalo@codeaurora.org
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: pull-request: wireless-drivers-next 2018-08-12
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <87wosvxwmc.fsf@kamboji.qca.qualcomm.com>
+References: <87wosvxwmc.fsf@kamboji.qca.qualcomm.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 13 Aug 2018 10:06:45 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, 13 August 2018 19:53:33 MSK Viresh Kumar wrote:
-> On 13 August 2018 at 22:13, Dmitry Osipenko <digetx@gmail.com> wrote:
-> > On Monday, 13 August 2018 19:21:43 MSK Viresh Kumar wrote:
-> >> On 13 August 2018 at 21:36, Dmitry Osipenko <digetx@gmail.com> wrote:
-> >> > I'm working on adding support of OPP and cooling for NVIDIA Tegra20/30
-> >> > CPUFreq driver and stumbled upon a bug that is introduced by this
-> >> > patch.
-> >> > It is triggered on the driver module unload.
-> >> 
-> >> The problem is that device_unregister() will end up freeing the cdev as
-> >> well, so the current sequence is surely wrong.
-> >> 
-> >> > diff --git a/drivers/thermal/thermal_core.c
-> >> > b/drivers/thermal/thermal_core.c index 6ab982309e6a..de53c821a282
-> >> > 100644
-> >> > --- a/drivers/thermal/thermal_core.c
-> >> > +++ b/drivers/thermal/thermal_core.c
-> >> > @@ -1102,8 +1102,8 @@ void thermal_cooling_device_unregister(struct
-> >> > thermal_cooling_device *cdev)>
-> >> > 
-> >> >         mutex_unlock(&thermal_list_lock);
-> >> >         
-> >> >         ida_simple_remove(&thermal_cdev_ida, cdev->id);
-> >> > 
-> >> > -       device_unregister(&cdev->device);
-> >> > 
-> >> >         thermal_cooling_device_destroy_sysfs(cdev);
-> >> > 
-> >> > +       device_unregister(&cdev->device);
-> >> 
-> >> But this looks wrong as well, as the device is still around while
-> >> memory of its sysfs data is gone.
-> > 
-> > Indeed.
-> > 
-> >> Maybe something like this is what we need:
-> >> 
-> >> device_del();
-> >> thermal_cooling_device_destroy_sysfs();
-> >> device_put();
-> > 
-> > [I just realized that thermal_zone and cooling_device are not
-> > interrelated.
-> > I'm not familiar with the thermal/ code]
-> > 
-> > Thank you Viresh, your proposal looks good to me and works fine. Will you
-> > make a proper patch?
-> 
-> Maybe you send a patch for this and take the credit as well :)
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Sun, 12 Aug 2018 21:34:03 +0300
 
-Okay, I'll make the patch. Thank you for the help.
+> one more request to net-next for 4.19. I hope I'm not too late with
+> this. These have been in linux-next since Friday so I'm hoping there are
+> no surprises. Please let me know if you have any problems.
 
-
-
+Pulled, thanks Kalle.
