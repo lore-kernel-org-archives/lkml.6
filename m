@@ -5,42 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C958C46460
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A0DC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC19A21709
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC19A21709
+	by mail.kernel.org (Postfix) with ESMTP id 708832177D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:28:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708832177D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbeHMElM (ORCPT
+        id S1726345AbeHMFAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 00:41:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47058 "EHLO huawei.com"
+        Mon, 13 Aug 2018 01:00:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10660 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725787AbeHMElL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 00:41:11 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1F62158F81F0B;
-        Mon, 13 Aug 2018 10:01:07 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Mon, 13 Aug 2018
- 10:00:58 +0800
-Subject: Re: [PATCH 3/8] staging: erofs: add error handling for xattr
- submodule
-To:     Gao Xiang <gaoxiang25@huawei.com>
-CC:     Chao Yu <chao@kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-References: <20180812140150.13397-1-chao@kernel.org>
- <20180812140150.13397-4-chao@kernel.org>
+        id S1725787AbeHMFAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 01:00:14 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B2F175695375A;
+        Mon, 13 Aug 2018 10:20:05 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Mon, 13 Aug 2018
+ 10:20:04 +0800
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
+ multi-thread sequential read
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <11a5b8c0-c3fa-0da9-a41b-a6b33ddcc9bb@huawei.com>
-Date:   Mon, 13 Aug 2018 10:00:57 +0800
+Message-ID: <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
+Date:   Mon, 13 Aug 2018 10:20:04 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180812140150.13397-4-chao@kernel.org>
+In-Reply-To: <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -51,337 +51,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/12 22:01, Chao Yu wrote:
-> From: Gao Xiang <gaoxiang25@huawei.com>
-> 
-> This patch enhances the missing error handling code for
-> xattr submodule, which improves the stability for the rare cases.
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  drivers/staging/erofs/internal.h |   6 +-
->  drivers/staging/erofs/xattr.c    | 120 ++++++++++++++++++++-----------
->  2 files changed, 83 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-> index a756abeff7e9..8951e01216e3 100644
-> --- a/drivers/staging/erofs/internal.h
-> +++ b/drivers/staging/erofs/internal.h
-> @@ -485,10 +485,10 @@ struct erofs_map_blocks_iter {
->  
->  
->  static inline struct page *
-> -erofs_get_inline_page_nofail(struct inode *inode,
-> -			     erofs_blk_t blkaddr)
-> +erofs_get_inline_page(struct inode *inode,
-> +		      erofs_blk_t blkaddr)
->  {
-> -	return erofs_get_meta_page_nofail(inode->i_sb,
-> +	return erofs_get_meta_page(inode->i_sb,
->  		blkaddr, S_ISDIR(inode->i_mode));
->  }
->  
-> diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
-> index 2593c856b079..1b5815fc70db 100644
-> --- a/drivers/staging/erofs/xattr.c
-> +++ b/drivers/staging/erofs/xattr.c
-> @@ -24,16 +24,25 @@ struct xattr_iter {
->  
->  static inline void xattr_iter_end(struct xattr_iter *it, bool atomic)
->  {
-> -	/* only init_inode_xattrs use non-atomic once */
-> +	/* the only user of kunmap() is 'init_inode_xattrs' */
->  	if (unlikely(!atomic))
->  		kunmap(it->page);
->  	else
->  		kunmap_atomic(it->kaddr);
-> +
->  	unlock_page(it->page);
->  	put_page(it->page);
->  }
->  
-> -static void init_inode_xattrs(struct inode *inode)
-> +static inline void xattr_iter_end_final(struct xattr_iter *it)
-> +{
-> +	if (unlikely(it->page == NULL))
-> +		return;
-> +
-> +	xattr_iter_end(it, true);
-> +}
-> +
-> +static int init_inode_xattrs(struct inode *inode)
->  {
->  	struct xattr_iter it;
->  	unsigned i;
-> @@ -44,7 +53,7 @@ static void init_inode_xattrs(struct inode *inode)
->  	bool atomic_map;
->  
->  	if (likely(inode_has_inited_xattr(inode)))
-> -		return;
-> +		return 0;
->  
->  	vi = EROFS_V(inode);
->  	BUG_ON(!vi->xattr_isize);
-> @@ -54,8 +63,9 @@ static void init_inode_xattrs(struct inode *inode)
->  	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
->  	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
->  
-> -	it.page = erofs_get_inline_page_nofail(inode, it.blkaddr);
-> -	BUG_ON(IS_ERR(it.page));
-> +	it.page = erofs_get_inline_page(inode, it.blkaddr);
-> +	if (IS_ERR(it.page))
-> +		return PTR_ERR(it.page);
->  
->  	/* read in shared xattr array (non-atomic, see kmalloc below) */
->  	it.kaddr = kmap(it.page);
-> @@ -64,9 +74,12 @@ static void init_inode_xattrs(struct inode *inode)
->  	ih = (struct erofs_xattr_ibody_header *)(it.kaddr + it.ofs);
->  
->  	vi->xattr_shared_count = ih->h_shared_count;
-> -	vi->xattr_shared_xattrs = (unsigned *)kmalloc_array(
-> -		vi->xattr_shared_count, sizeof(unsigned),
-> -		GFP_KERNEL | __GFP_NOFAIL);
-> +	vi->xattr_shared_xattrs = kmalloc_array(vi->xattr_shared_count,
-> +						sizeof(unsigned), GFP_KERNEL);
-> +	if (unlikely(vi->xattr_shared_xattrs == NULL)) {
-> +		xattr_iter_end(&it, atomic_map);
-> +		return -ENOMEM;
-> +	}
->  
->  	/* let's skip ibody header */
->  	it.ofs += sizeof(struct erofs_xattr_ibody_header);
-> @@ -77,9 +90,10 @@ static void init_inode_xattrs(struct inode *inode)
->  			BUG_ON(it.ofs != EROFS_BLKSIZ);
->  			xattr_iter_end(&it, atomic_map);
->  
-> -			it.page = erofs_get_meta_page_nofail(sb,
-> +			it.page = erofs_get_meta_page(sb,
->  				++it.blkaddr, S_ISDIR(inode->i_mode));
-> -			BUG_ON(IS_ERR(it.page));
-> +			if (IS_ERR(it.page))
-> +				return PTR_ERR(it.page);
->  
->  			it.kaddr = kmap_atomic(it.page);
->  			atomic_map = true;
-> @@ -92,6 +106,7 @@ static void init_inode_xattrs(struct inode *inode)
->  	xattr_iter_end(&it, atomic_map);
->  
->  	inode_set_inited_xattr(inode);
-> +	return 0;
->  }
->  
->  struct xattr_iter_handlers {
-> @@ -101,19 +116,24 @@ struct xattr_iter_handlers {
->  	void (*value)(struct xattr_iter *, unsigned, char *, unsigned);
->  };
->  
-> -static void xattr_iter_fixup(struct xattr_iter *it)
-> +static inline int xattr_iter_fixup(struct xattr_iter *it)
->  {
-> -	if (unlikely(it->ofs >= EROFS_BLKSIZ)) {
-> -		xattr_iter_end(it, true);
-> +	if (likely(it->ofs < EROFS_BLKSIZ))
-> +		return 0;
->  
-> -		it->blkaddr += erofs_blknr(it->ofs);
-> -		it->page = erofs_get_meta_page_nofail(it->sb,
-> -			it->blkaddr, false);
-> -		BUG_ON(IS_ERR(it->page));
-> +	xattr_iter_end(it, true);
->  
-> -		it->kaddr = kmap_atomic(it->page);
-> -		it->ofs = erofs_blkoff(it->ofs);
-> +	it->blkaddr += erofs_blknr(it->ofs);
-> +
-> +	it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
-> +	if (IS_ERR(it->page)) {
-> +		it->page = NULL;
-> +		return PTR_ERR(it->page);
+Hi Jaegeuk,
 
-As LKP reported, we need to fix this as below:
+On 2018/8/11 2:56, Jaegeuk Kim wrote:
+> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+> to fix the drop in sequential read throughput.
+> 
+> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+> device: UFS
+> 
+> Before -
+> read throughput: 185 MB/s
+> total read requests: 85177 (of these ~80000 are 4KB size requests).
+> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+> 
+> After -
+> read throughput: 758 MB/s
+> total read requests: 2417 (of these ~2042 are 512KB reads).
+> total write requests: 2701 (of these ~2034 requests are written in 512KB).
 
-err = PTR_ERR(it->page);
-it->page = NULL;
-return err;
+IMO, it only impact sequential read performance in a large file which may be
+fragmented during multi-thread writing.
+
+In android environment, mostly, the large file should be cold type, such as apk,
+mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
+data area writer.
+
+So how about adding a mount option to serialize writepage() for different type
+of log, e.g. in android, using serialize=4; by default, using serialize=7
+HOT_DATA	1
+WARM_DATA	2
+COLD_DATA	4
 
 Thanks,
 
->  	}
-> +
-> +	it->kaddr = kmap_atomic(it->page);
-> +	it->ofs = erofs_blkoff(it->ofs);
-> +	return 0;
->  }
->  
->  static int inline_xattr_iter_begin(struct xattr_iter *it,
-> @@ -134,22 +154,25 @@ static int inline_xattr_iter_begin(struct xattr_iter *it,
->  	it->blkaddr = erofs_blknr(iloc(sbi, vi->nid) + inline_xattr_ofs);
->  	it->ofs = erofs_blkoff(iloc(sbi, vi->nid) + inline_xattr_ofs);
->  
-> -	it->page = erofs_get_inline_page_nofail(inode, it->blkaddr);
-> -	BUG_ON(IS_ERR(it->page));
-> -	it->kaddr = kmap_atomic(it->page);
-> +	it->page = erofs_get_inline_page(inode, it->blkaddr);
-> +	if (IS_ERR(it->page))
-> +		return PTR_ERR(it->page);
->  
-> +	it->kaddr = kmap_atomic(it->page);
->  	return vi->xattr_isize - xattr_header_sz;
->  }
->  
->  static int xattr_foreach(struct xattr_iter *it,
-> -	struct xattr_iter_handlers *op, unsigned *tlimit)
-> +	const struct xattr_iter_handlers *op, unsigned *tlimit)
->  {
->  	struct erofs_xattr_entry entry;
->  	unsigned value_sz, processed, slice;
->  	int err;
->  
->  	/* 0. fixup blkaddr, ofs, ipage */
-> -	xattr_iter_fixup(it);
-> +	err = xattr_iter_fixup(it);
-> +	if (unlikely(err))
-> +		return err;
->  
->  	/*
->  	 * 1. read xattr entry to the memory,
-> @@ -181,7 +204,9 @@ static int xattr_foreach(struct xattr_iter *it,
->  		if (it->ofs >= EROFS_BLKSIZ) {
->  			BUG_ON(it->ofs > EROFS_BLKSIZ);
->  
-> -			xattr_iter_fixup(it);
-> +			err = xattr_iter_fixup(it);
-> +			if (unlikely(err))
-> +				goto out;
->  			it->ofs = 0;
->  		}
->  
-> @@ -213,7 +238,10 @@ static int xattr_foreach(struct xattr_iter *it,
->  	while (processed < value_sz) {
->  		if (it->ofs >= EROFS_BLKSIZ) {
->  			BUG_ON(it->ofs > EROFS_BLKSIZ);
-> -			xattr_iter_fixup(it);
-> +
-> +			err = xattr_iter_fixup(it);
-> +			if (unlikely(err))
-> +				goto out;
->  			it->ofs = 0;
->  		}
->  
-> @@ -273,7 +301,7 @@ static void xattr_copyvalue(struct xattr_iter *_it,
->  	memcpy(it->buffer + processed, buf, len);
->  }
->  
-> -static struct xattr_iter_handlers find_xattr_handlers = {
-> +static const struct xattr_iter_handlers find_xattr_handlers = {
->  	.entry = xattr_entrymatch,
->  	.name = xattr_namematch,
->  	.alloc_buffer = xattr_checkbuffer,
-> @@ -294,8 +322,11 @@ static int inline_getxattr(struct inode *inode, struct getxattr_iter *it)
->  		ret = xattr_foreach(&it->it, &find_xattr_handlers, &remaining);
->  		if (ret >= 0)
->  			break;
-> +
-> +		if (unlikely(ret != -ENOATTR))	/* -ENOMEM, -EIO, etc. */
-> +			break;
->  	}
-> -	xattr_iter_end(&it->it, true);
-> +	xattr_iter_end_final(&it->it);
->  
->  	return ret < 0 ? ret : it->buffer_size;
->  }
-> @@ -318,9 +349,10 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
->  			if (i)
->  				xattr_iter_end(&it->it, true);
->  
-> -			it->it.page = erofs_get_meta_page_nofail(sb,
-> -				blkaddr, false);
-> -			BUG_ON(IS_ERR(it->it.page));
-> +			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
-> +			if (IS_ERR(it->it.page))
-> +				return PTR_ERR(it->it.page);
-> +
->  			it->it.kaddr = kmap_atomic(it->it.page);
->  			it->it.blkaddr = blkaddr;
->  		}
-> @@ -328,9 +360,12 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
->  		ret = xattr_foreach(&it->it, &find_xattr_handlers, NULL);
->  		if (ret >= 0)
->  			break;
-> +
-> +		if (unlikely(ret != -ENOATTR))	/* -ENOMEM, -EIO, etc. */
-> +			break;
->  	}
->  	if (vi->xattr_shared_count)
-> -		xattr_iter_end(&it->it, true);
-> +		xattr_iter_end_final(&it->it);
->  
->  	return ret < 0 ? ret : it->buffer_size;
->  }
-> @@ -355,7 +390,9 @@ int erofs_getxattr(struct inode *inode, int index,
->  	if (unlikely(name == NULL))
->  		return -EINVAL;
->  
-> -	init_inode_xattrs(inode);
-> +	ret = init_inode_xattrs(inode);
-> +	if (unlikely(ret < 0))
-> +		return ret;
->  
->  	it.index = index;
->  
-> @@ -498,7 +535,7 @@ static int xattr_skipvalue(struct xattr_iter *_it,
->  	return 1;
->  }
->  
-> -static struct xattr_iter_handlers list_xattr_handlers = {
-> +static const struct xattr_iter_handlers list_xattr_handlers = {
->  	.entry = xattr_entrylist,
->  	.name = xattr_namelist,
->  	.alloc_buffer = xattr_skipvalue,
-> @@ -520,7 +557,7 @@ static int inline_listxattr(struct listxattr_iter *it)
->  		if (ret < 0)
->  			break;
->  	}
-> -	xattr_iter_end(&it->it, true);
-> +	xattr_iter_end_final(&it->it);
->  	return ret < 0 ? ret : it->buffer_ofs;
->  }
->  
-> @@ -542,9 +579,10 @@ static int shared_listxattr(struct listxattr_iter *it)
->  			if (i)
->  				xattr_iter_end(&it->it, true);
->  
-> -			it->it.page = erofs_get_meta_page_nofail(sb,
-> -				blkaddr, false);
-> -			BUG_ON(IS_ERR(it->it.page));
-> +			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
-> +			if (IS_ERR(it->it.page))
-> +				return PTR_ERR(it->it.page);
-> +
->  			it->it.kaddr = kmap_atomic(it->it.page);
->  			it->it.blkaddr = blkaddr;
->  		}
-> @@ -554,7 +592,7 @@ static int shared_listxattr(struct listxattr_iter *it)
->  			break;
->  	}
->  	if (vi->xattr_shared_count)
-> -		xattr_iter_end(&it->it, true);
-> +		xattr_iter_end_final(&it->it);
->  
->  	return ret < 0 ? ret : it->buffer_ofs;
->  }
-> @@ -565,7 +603,9 @@ ssize_t erofs_listxattr(struct dentry *dentry,
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> Changelog from v2:
+>  - fix deadlock in f2fs_gc
+> 
+>  fs/f2fs/data.c  | 9 +++++++++
+>  fs/f2fs/f2fs.h  | 1 +
+>  fs/f2fs/super.c | 1 +
+>  3 files changed, 11 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 45f043ee48bd..9f0149cdeed8 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct blk_plug plug;
 >  	int ret;
->  	struct listxattr_iter it;
+> +	bool locked = false;
 >  
-> -	init_inode_xattrs(d_inode(dentry));
-> +	ret = init_inode_xattrs(d_inode(dentry));
-> +	if (unlikely(ret < 0))
-> +		return ret;
+>  	/* deal with chardevs and other special file */
+>  	if (!mapping->a_ops->writepage)
+> @@ -2162,10 +2163,18 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+>  		goto skip_write;
 >  
->  	it.dentry = dentry;
->  	it.buffer = buffer;
+> +	if (!S_ISDIR(inode->i_mode)) {
+> +		mutex_lock(&sbi->writepages);
+> +		locked = true;
+> +	}
+> +
+>  	blk_start_plug(&plug);
+>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+>  	blk_finish_plug(&plug);
+>  
+> +	if (locked)
+> +		mutex_unlock(&sbi->writepages);
+> +
+>  	if (wbc->sync_mode == WB_SYNC_ALL)
+>  		atomic_dec(&sbi->wb_sync_req[DATA]);
+>  	/*
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index b1c127d8383b..29bbc55cbc0b 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1133,6 +1133,7 @@ struct f2fs_sb_info {
+>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
+>  	int valid_super_block;			/* valid super block no */
+>  	unsigned long s_flag;				/* flags for sbi */
+> +	struct mutex writepages;		/* mutex for writepages() */
+>  
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index be41dbd7b261..53d70b64fea1 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	/* init f2fs-specific super block info */
+>  	sbi->valid_super_block = valid_super_block;
+>  	mutex_init(&sbi->gc_mutex);
+> +	mutex_init(&sbi->writepages);
+>  	mutex_init(&sbi->cp_mutex);
+>  	init_rwsem(&sbi->node_write);
+>  	init_rwsem(&sbi->node_change);
 > 
 
