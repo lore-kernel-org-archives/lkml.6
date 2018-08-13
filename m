@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D74BCC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9AFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9225B217C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:01:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9225B217C5
+	by mail.kernel.org (Postfix) with ESMTP id 8396B217C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:01:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8396B217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbeHMQno (ORCPT
+        id S1729666AbeHMQnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 12:43:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60864 "EHLO mx1.suse.de"
+        Mon, 13 Aug 2018 12:43:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60808 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729638AbeHMQnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 12:43:43 -0400
+        id S1728514AbeHMQno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 12:43:44 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8E085B002;
-        Mon, 13 Aug 2018 14:01:17 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id DFD03AF7E;
+        Mon, 13 Aug 2018 14:01:16 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-block@vger.kernel.org
 Cc:     konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
         boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH v3 4/5] xen/blkback: move persistent grants flags to bool
-Date:   Mon, 13 Aug 2018 16:01:13 +0200
-Message-Id: <20180813140114.20126-5-jgross@suse.com>
+Subject: [PATCH v3 1/5] xen/blkback: don't keep persistent grants too long
+Date:   Mon, 13 Aug 2018 16:01:10 +0200
+Message-Id: <20180813140114.20126-2-jgross@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20180813140114.20126-1-jgross@suse.com>
 References: <20180813140114.20126-1-jgross@suse.com>
@@ -45,92 +45,229 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The struct persistent_gnt flags member is meant to be a bitfield of
-different flags. There is only PERSISTENT_GNT_ACTIVE flag left, so
-convert it to a bool named "active".
+Persistent grants are allocated until a threshold per ring is being
+reached. Those grants won't be freed until the ring is being destroyed
+meaning there will be resources kept busy which might no longer be
+used.
+
+Instead of freeing only persistent grants until the threshold is
+reached add a timestamp and remove all persistent grants not having
+been in use for a minute.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
 ---
- drivers/block/xen-blkback/blkback.c | 13 ++++++-------
- drivers/block/xen-blkback/common.h  |  7 +------
- 2 files changed, 7 insertions(+), 13 deletions(-)
+V3: make timeout parameter static
+---
+ Documentation/ABI/testing/sysfs-driver-xen-blkback | 10 +++
+ drivers/block/xen-blkback/blkback.c                | 88 ++++++++++++----------
+ drivers/block/xen-blkback/common.h                 |  8 +-
+ 3 files changed, 60 insertions(+), 46 deletions(-)
 
+diff --git a/Documentation/ABI/testing/sysfs-driver-xen-blkback b/Documentation/ABI/testing/sysfs-driver-xen-blkback
+index 8bb43b66eb55..4e7babb3ba1f 100644
+--- a/Documentation/ABI/testing/sysfs-driver-xen-blkback
++++ b/Documentation/ABI/testing/sysfs-driver-xen-blkback
+@@ -15,3 +15,13 @@ Description:
+                 blkback. If the frontend tries to use more than
+                 max_persistent_grants, the LRU kicks in and starts
+                 removing 5% of max_persistent_grants every 100ms.
++
++What:           /sys/module/xen_blkback/parameters/persistent_grant_unused_seconds
++Date:           August 2018
++KernelVersion:  4.19
++Contact:        Roger Pau Monné <roger.pau@citrix.com>
++Description:
++                How long a persistent grant is allowed to remain
++                allocated without being in use. The time is in
++                seconds, 0 means indefinitely long.
++                The default is 60 seconds.
 diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index 9eae7b243f68..fd1e19f1a49f 100644
+index b55b245e8052..9eae7b243f68 100644
 --- a/drivers/block/xen-blkback/blkback.c
 +++ b/drivers/block/xen-blkback/blkback.c
-@@ -255,8 +255,7 @@ static int add_persistent_gnt(struct xen_blkif_ring *ring,
- 		}
- 	}
+@@ -84,6 +84,18 @@ MODULE_PARM_DESC(max_persistent_grants,
+                  "Maximum number of grants to map persistently");
  
--	bitmap_zero(persistent_gnt->flags, PERSISTENT_GNT_FLAGS_SIZE);
--	set_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
-+	persistent_gnt->active = true;
- 	/* Add new node and rebalance tree. */
- 	rb_link_node(&(persistent_gnt->node), parent, new);
- 	rb_insert_color(&(persistent_gnt->node), &ring->persistent_gnts);
-@@ -280,11 +279,11 @@ static struct persistent_gnt *get_persistent_gnt(struct xen_blkif_ring *ring,
- 		else if (gref > data->gnt)
- 			node = node->rb_right;
- 		else {
--			if(test_bit(PERSISTENT_GNT_ACTIVE, data->flags)) {
-+			if (data->active) {
- 				pr_alert_ratelimited("requesting a grant already in use\n");
- 				return NULL;
- 			}
--			set_bit(PERSISTENT_GNT_ACTIVE, data->flags);
-+			data->active = true;
- 			atomic_inc(&ring->persistent_gnt_in_use);
- 			return data;
- 		}
-@@ -295,10 +294,10 @@ static struct persistent_gnt *get_persistent_gnt(struct xen_blkif_ring *ring,
- static void put_persistent_gnt(struct xen_blkif_ring *ring,
-                                struct persistent_gnt *persistent_gnt)
+ /*
++ * How long a persistent grant is allowed to remain allocated without being in
++ * use. The time is in seconds, 0 means indefinitely long.
++ */
++
++static unsigned int xen_blkif_pgrant_timeout = 60;
++module_param_named(persistent_grant_unused_seconds, xen_blkif_pgrant_timeout,
++		   uint, 0644);
++MODULE_PARM_DESC(persistent_grant_unused_seconds,
++		 "Time in seconds an unused persistent grant is allowed to "
++		 "remain allocated. Default is 60, 0 means unlimited.");
++
++/*
+  * Maximum number of rings/queues blkback supports, allow as many queues as there
+  * are CPUs if user has not specified a value.
+  */
+@@ -123,6 +135,13 @@ module_param(log_stats, int, 0644);
+ /* Number of free pages to remove on each call to gnttab_free_pages */
+ #define NUM_BATCH_FREE_PAGES 10
+ 
++static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
++{
++	return xen_blkif_pgrant_timeout &&
++	       (jiffies - persistent_gnt->last_used >=
++		HZ * xen_blkif_pgrant_timeout);
++}
++
+ static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
  {
--	if(!test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
-+	if (!persistent_gnt->active)
+ 	unsigned long flags;
+@@ -278,7 +297,7 @@ static void put_persistent_gnt(struct xen_blkif_ring *ring,
+ {
+ 	if(!test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
  		pr_alert_ratelimited("freeing a grant already unused\n");
- 	persistent_gnt->last_used = jiffies;
--	clear_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
-+	persistent_gnt->active = false;
+-	set_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags);
++	persistent_gnt->last_used = jiffies;
+ 	clear_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
  	atomic_dec(&ring->persistent_gnt_in_use);
  }
+@@ -371,26 +390,26 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
+ 	struct persistent_gnt *persistent_gnt;
+ 	struct rb_node *n;
+ 	unsigned int num_clean, total;
+-	bool scan_used = false, clean_used = false;
++	bool scan_used = false;
+ 	struct rb_root *root;
  
-@@ -429,7 +428,7 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
+-	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
+-	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
+-	    !ring->blkif->vbd.overflow_max_grants)) {
+-		goto out;
+-	}
+-
+ 	if (work_busy(&ring->persistent_purge_work)) {
+ 		pr_alert_ratelimited("Scheduled work from previous purge is still busy, cannot purge list\n");
+ 		goto out;
+ 	}
+ 
+-	num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
+-	num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants + num_clean;
+-	num_clean = min(ring->persistent_gnt_c, num_clean);
+-	if ((num_clean == 0) ||
+-	    (num_clean > (ring->persistent_gnt_c - atomic_read(&ring->persistent_gnt_in_use))))
+-		goto out;
++	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
++	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
++	    !ring->blkif->vbd.overflow_max_grants)) {
++		num_clean = 0;
++	} else {
++		num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
++		num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants +
++			    num_clean;
++		num_clean = min(ring->persistent_gnt_c, num_clean);
++		pr_debug("Going to purge at least %u persistent grants\n",
++			 num_clean);
++	}
+ 
+ 	/*
+ 	 * At this point, we can assure that there will be no calls
+@@ -401,9 +420,7 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
+          * number of grants.
+ 	 */
+ 
+-	total = num_clean;
+-
+-	pr_debug("Going to purge %u persistent grants\n", num_clean);
++	total = 0;
+ 
+ 	BUG_ON(!list_empty(&ring->persistent_purge_list));
+ 	root = &ring->persistent_gnts;
+@@ -412,46 +429,37 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
  		BUG_ON(persistent_gnt->handle ==
  			BLKBACK_INVALID_HANDLE);
  
--		if (test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
-+		if (persistent_gnt->active)
+-		if (clean_used) {
+-			clear_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags);
+-			continue;
+-		}
+-
+ 		if (test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
  			continue;
- 		if (!scan_used && !persistent_gnt_timeout(persistent_gnt))
+-		if (!scan_used &&
+-		    (test_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags)))
++		if (!scan_used && !persistent_gnt_timeout(persistent_gnt))
++			continue;
++		if (scan_used && total >= num_clean)
  			continue;
+ 
+ 		rb_erase(&persistent_gnt->node, root);
+ 		list_add(&persistent_gnt->remove_node,
+ 			 &ring->persistent_purge_list);
+-		if (--num_clean == 0)
+-			goto finished;
++		total++;
+ 	}
+ 	/*
+-	 * If we get here it means we also need to start cleaning
++	 * Check whether we also need to start cleaning
+ 	 * grants that were used since last purge in order to cope
+ 	 * with the requested num
+ 	 */
+-	if (!scan_used && !clean_used) {
+-		pr_debug("Still missing %u purged frames\n", num_clean);
++	if (!scan_used && total < num_clean) {
++		pr_debug("Still missing %u purged frames\n", num_clean - total);
+ 		scan_used = true;
+ 		goto purge_list;
+ 	}
+-finished:
+-	if (!clean_used) {
+-		pr_debug("Finished scanning for grants to clean, removing used flag\n");
+-		clean_used = true;
+-		goto purge_list;
+-	}
+ 
+-	ring->persistent_gnt_c -= (total - num_clean);
+-	ring->blkif->vbd.overflow_max_grants = 0;
++	if (total) {
++		ring->persistent_gnt_c -= total;
++		ring->blkif->vbd.overflow_max_grants = 0;
+ 
+-	/* We can defer this work */
+-	schedule_work(&ring->persistent_purge_work);
+-	pr_debug("Purged %u/%u\n", (total - num_clean), total);
++		/* We can defer this work */
++		schedule_work(&ring->persistent_purge_work);
++		pr_debug("Purged %u/%u\n", num_clean, total);
++	}
+ 
+ out:
+ 	return;
 diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
-index 7bff72db3b7e..2339b8d39c5e 100644
+index ecb35fe8ca8d..7bff72db3b7e 100644
 --- a/drivers/block/xen-blkback/common.h
 +++ b/drivers/block/xen-blkback/common.h
-@@ -233,11 +233,6 @@ struct xen_vbd {
- 
+@@ -234,14 +234,9 @@ struct xen_vbd {
  struct backend_info;
  
--/* Number of available flags */
--#define PERSISTENT_GNT_FLAGS_SIZE	1
--/* This persistent grant is currently in use */
--#define PERSISTENT_GNT_ACTIVE		0
--
+ /* Number of available flags */
+-#define PERSISTENT_GNT_FLAGS_SIZE	2
++#define PERSISTENT_GNT_FLAGS_SIZE	1
+ /* This persistent grant is currently in use */
+ #define PERSISTENT_GNT_ACTIVE		0
+-/*
+- * This persistent grant has been used, this flag is set when we remove the
+- * PERSISTENT_GNT_ACTIVE, to know that this grant has been used recently.
+- */
+-#define PERSISTENT_GNT_WAS_ACTIVE	1
+ 
  /* Number of requests that we can fit in a ring */
  #define XEN_BLKIF_REQS_PER_PAGE		32
- 
-@@ -246,7 +241,7 @@ struct persistent_gnt {
+@@ -250,6 +245,7 @@ struct persistent_gnt {
+ 	struct page *page;
  	grant_ref_t gnt;
  	grant_handle_t handle;
- 	unsigned long last_used;
--	DECLARE_BITMAP(flags, PERSISTENT_GNT_FLAGS_SIZE);
-+	bool active;
++	unsigned long last_used;
+ 	DECLARE_BITMAP(flags, PERSISTENT_GNT_FLAGS_SIZE);
  	struct rb_node node;
  	struct list_head remove_node;
- };
 -- 
 2.13.7
 
