@@ -2,84 +2,96 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ED2C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A830BC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF96D21755
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:45:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF96D21755
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F02921755
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:47:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cx4KA3kB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F02921755
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbeHNA3b (ORCPT
+        id S1730811AbeHNAbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:29:31 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:33177 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730027AbeHNA3a (ORCPT
+        Mon, 13 Aug 2018 20:31:55 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:33674 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730027AbeHNAby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:29:30 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LilTh-1gRPYB07Yr-00d0ra; Mon, 13 Aug 2018 23:45:02 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, HS Liao <hs.liao@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] mailbox: mediatek: add module license
-Date:   Mon, 13 Aug 2018 23:44:49 +0200
-Message-Id: <20180813214500.3398337-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:hqHznes4npi04TlPsREEsuj1x6L+B281y2RlEmAWKCHwCY4OBdv
- T2udbAzeXfDl2/UctNu7zLK+OIzLw7+glpdFKJabWSTv277wdOE61uyqAD2mU1Ez6dkWinn
- 6vJq0pvKH7j4aOf+Gg3SxU+nd6mpxbM9MsWOFaM06UMnYhINWOi8D29r8k/coqEAqmt1v5r
- yCnajXnfLk6HHlZ0yhkwg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3ue6j7xZsKQ=:ZMPLm01bkXvnYToRdHZHMb
- tva8oO50rkK4w6O/bBlq1FL3LEg1RAwUcy0YMvAkC9VrcEZPM7AXkoLHbSUN3yadwzW6OUEj5
- P01JtAMVDZavoQBy/UR9amQKY2q/4/l7LlV6U/gJ2E9Vgi7wsBbN0IjOBNVWUmcp8mVKNSK5q
- WcOEALNvJj4GrEKs16AIggWL+kbilAKKqxwylNmlsPuIMrNEXgxEUSgMpdU3dss/NiJXu5/GN
- H2MjkSSd2KSvX+gf/uFF+FI9EtKoCBIlfGv1jrDo9ZN8rpCdhkqhvJGMyH8B0TVeARak31Nyh
- BBWqogwz3kKsew46orKOs5MDlNNdCtBkayq8UCsQ3VaB1YNWe8uPub48eHjHCQo3VS2NtNt9b
- DnHIP3dqhU/OnWdIRXNK7LJnbpUvVs7qgi55ie1POXCa8LKv4xSV5DUw1Vol95Ii0iEhkKtR3
- yLO+kwTMoQH1PwHbO4RYfi1cLNGJW9BHNQU+IjvB+jRY5kzLGgRrlBwLJV6jZS8xc6/5s3mZT
- qXYfi5lk6wyyBIidqrl8QhDwrlwvlr8JmAcC/NceZioTn6kOAlyhU4/2xVm21OR5SU/6ZUTRN
- fNnogwgQKpG/70UvJelMjC26IbRw5dZZjC4q1oMHNnuUnKArRGrVemUiPUK65UKy/AJ6o5gKm
- QZImRZwkbpLkm8OoSsKheJYIyJL/U0mPCHSGzei0zF6mkDYbTi8xmGr6AN7QfHWiAW10=
+        Mon, 13 Aug 2018 20:31:54 -0400
+Received: by mail-yw1-f67.google.com with SMTP id c135-v6so14758396ywa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 14:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2P0RwmOqoSTgFF12VsYF4fhPiPt2ayTCfTvFliwooFE=;
+        b=Cx4KA3kBF7c1ThLa/UauR64e/5+gDPiUN12PunJfMjzosGnSfTIaV1vq5vzjuoTgHP
+         Rm90h8QajVUTyb//uNSOASfG4tY2gSV9a2TH3dZCP1anMr1Ex2hGemDg63dBQAZs0Tzy
+         fALFY+vzGpBwxYPYbmmNngcUEes4GFA6J5Seo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2P0RwmOqoSTgFF12VsYF4fhPiPt2ayTCfTvFliwooFE=;
+        b=beECXnH/X1gORV+f7TZirY0qsfNHOq2/tJEq0w4gWWBwuxuWVit4Irnp0GIOZCjh2V
+         L2pRNspY4Pok8H8Y0yImOE5UpwP9WfWpIKkQR1d5To0G/KEPrk4L8BerfyYp0W+64JAM
+         l4ACtKmcfHb5Q9g0CAY3nOujml+wjQjaRCghB6Vm+EkeaswWVcrljzjUGdBqluAnAxDp
+         8lZ8D0EkCgesHuSLXbCvJoeOApte3+XJv/BsQanGGU4/PJoW2p5GlLef50RM4eIqd/Dg
+         0KFdLE1DI5S1isDi1tR57J86pJZkyILdbsUmDum8qvKsEftnukSQzIpWU4fWLCvw+wIg
+         K7Jg==
+X-Gm-Message-State: AOUpUlE3i4Bszr1Wp3CcAIQ5+pbxCQItdz0p9ZCcQjDTiOFulVFzn44K
+        CHcn8hghQiqs+9mfhxMA0fOUZjrZM1WxHkRQoaSpdQ==
+X-Google-Smtp-Source: AA+uWPxS2924+UEMWpDOCkgGRwBsvu0WG/rFbbxJ3Zp7yTxUqzdQqYqoVGind3EoKTXIbkOA/Kuz0jQyA5xjOIqA//0=
+X-Received: by 2002:a25:cf51:: with SMTP id f78-v6mr3343123ybg.496.1534196871215;
+ Mon, 13 Aug 2018 14:47:51 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:e716:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 14:47:50
+ -0700 (PDT)
+In-Reply-To: <20180813212700.2681499-1-arnd@arndb.de>
+References: <20180813212700.2681499-1-arnd@arndb.de>
+From:   Michael Chan <michael.chan@broadcom.com>
+Date:   Mon, 13 Aug 2018 14:47:50 -0700
+Message-ID: <CACKFLi=6s-mpTiD4KwJPjFexCdVC6aiKSexhY4wr43ouTWKzXg@mail.gmail.com>
+Subject: Re: [PATCH] bnxt_en: avoid string overflow for record->system_name
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Andy Gospodarek <gospo@broadcom.com>,
+        Netdev <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The missing license tag in the new driver causes a compile-time warning,
-and may result in the module being unusable if it calls EXPORT_SYMBOL_GPL()
-functions:
+On Mon, Aug 13, 2018 at 2:26 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> The utsname()->nodename string may be 64 bytes long, and it gets
+> copied without the trailing nul byte into the shorter record->system_name,
+> as gcc now warns:
+>
+> In file included from include/linux/bitmap.h:9,
+>                  from include/linux/ethtool.h:16,
+>                  from drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c:13:
+> In function 'strncpy',
+>     inlined from 'bnxt_fill_coredump_record' at drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c:2863:2:
+> include/linux/string.h:254:9: error: '__builtin_strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+>
+> Using strlcpy() at least avoids overflowing the destination buffer
+> and adds proper nul-termination. It may still truncate long names
+> though, which probably can't be solved here.
+>
+> Fixes: 6c5657d085ae ("bnxt_en: Add support for ethtool get dump.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/mailbox/mtk-cmdq-mailbox.o
+Thanks.
 
-Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/mailbox/mtk-cmdq-mailbox.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 6f92c5ee12f7..aec46d5d3506 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -567,3 +567,5 @@ static void __exit cmdq_drv_exit(void)
- 
- subsys_initcall(cmdq_drv_init);
- module_exit(cmdq_drv_exit);
-+
-+MODULE_LICENSE("GPL v2");
--- 
-2.18.0
-
+Acked-by: Michael Chan <michael.chan@broadcom.com>
