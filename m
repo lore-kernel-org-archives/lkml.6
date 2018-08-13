@@ -3,220 +3,243 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E18C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83DFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9551217C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E51E21709
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACzwmml1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9551217C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGCgqwkM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E51E21709
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeHMQtB (ORCPT
+        id S1729272AbeHMQwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 12:49:01 -0400
-Received: from mail-io0-f176.google.com ([209.85.223.176]:34920 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbeHMQtB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 12:49:01 -0400
-Received: by mail-io0-f176.google.com with SMTP id w11-v6so14926086iob.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 07:06:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EvHG/8+/b5TFB8/1p9i6sISZ2lSMu9cNl1ktZUjWwqQ=;
-        b=ACzwmml1SiPHuVQIO3roxuhG0YGJ3FYEnzWx0iYkIdgKBZYZ6o9+xEKo4Ve7AEO/Wt
-         MDFHjXY+9uRZxUvLD+JGznJ5eTJHIiWs0cWaCxjBlVZ2AP1/0e6UdOrvqKoHjLCbk0LZ
-         VB2RrZ2ekLodPjAAE9CuEO2vTwVxNqcTW6+h8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EvHG/8+/b5TFB8/1p9i6sISZ2lSMu9cNl1ktZUjWwqQ=;
-        b=Fd0zrulV2izc92soWmQ9abQapyA1G10y6d7gCNe7uTZPMxuOKQz/z5bNiTzBG0HP+7
-         gSFGpBcN40QP4wkTcxMfXfEXHSWzqMAH4HAS5RkQKrPmzIztEjmIpcmyNOH0TMy23+OR
-         AR+d97T6deob2GwRRyMc+eLC+qQhI4RlRk+wxipQMumGIMqfnNXPuye2QpwrctSIZr/a
-         t5N9Yt484H4Jr2d5GN2eFsFWzEQA4KQRuDksk9heqzPHFXldpUCYg1l1cCoJOu1a5KmF
-         JVk+iiYVNLrsfD2h7KhGC/pjhcrhroiMpXqoPU5WC2GLiz8wdmDAliabjRJ68IjovIta
-         0dgQ==
-X-Gm-Message-State: AOUpUlEjcB+qpxZ2vdsVBMYMOIFF6kKcxeZh9FiFmgCL2Q5hmGlnEbVB
-        xvltdxH0CZ/78y/TTTZXhF8Hf/OC0cQTAksgMI3smg==
-X-Google-Smtp-Source: AA+uWPxAR9G6nL/jGnomyGCNGXDUbfgjKssWpg7oDi7voYeMkGUwZxbjZIwN4dktcOc0kuilNPddViQ+bTHYHGWXpQM=
-X-Received: by 2002:a6b:fd04:: with SMTP id c4-v6mr14419486ioi.294.1534169194626;
- Mon, 13 Aug 2018 07:06:34 -0700 (PDT)
+        Mon, 13 Aug 2018 12:52:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728370AbeHMQwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 12:52:38 -0400
+Received: from mail-qt0-f173.google.com (mail-qt0-f173.google.com [209.85.216.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF01621782;
+        Mon, 13 Aug 2018 14:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534169410;
+        bh=fZVdoBukmtAmikGC0Cw/ErWramdv7zFTfFk08i6krQA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QGCgqwkMpkFgKhkfuhN/Qfdtr17B2V6mR37il4iT0acymUDYFdVHXxB8AY8BjZxu0
+         k5DoaAGoO8lJlT+U0cvz/tKbB2DUb9aat5+aZ8IDaMxHZ6vshYBGmmdZhcweQG9hnM
+         6g9pwFRFd/4x43kOTPat9ikFUouVVhTqzdLrYZpQ=
+Received: by mail-qt0-f173.google.com with SMTP id t5-v6so17483543qtn.3;
+        Mon, 13 Aug 2018 07:10:10 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGnNz37UxD6Ci1EOCoAUbUHFDLHn3HL+st3qdHdRbQl20/j75tE
+        dIP3+pNqO79Orzbw+wgZuAdBrsPGWsDGx9s/Xg==
+X-Google-Smtp-Source: AA+uWPzL5VgQ51N4+DXQhsPenrtKXaZ8tsEZFAz06kzvnYsnJBmfP0yONpEYepNyI+9KbWC8Pki7GUo+HErFVL0GKug=
+X-Received: by 2002:ac8:96b:: with SMTP id z40-v6mr17009831qth.362.1534169409773;
+ Mon, 13 Aug 2018 07:10:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-7-patrick.bellasi@arm.com> <20180807132630.GB3062@localhost.localdomain>
- <20180809153423.nsoepprhut3dv4u2@darkstar> <CAKfTPtCWcq2bOmaC5EDdhS8ih8Sv7Mwzn=84xerKA2tY6kXLkw@mail.gmail.com>
- <20180813101221.GA2605@e110439-lin> <CAKfTPtBN+K=8fqukZix2k0rdcjG8YiYagxZtzLx7kk3US+9V2Q@mail.gmail.com>
- <20180813124911.GD2605@e110439-lin>
-In-Reply-To: <20180813124911.GD2605@e110439-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 13 Aug 2018 16:06:23 +0200
-Message-ID: <CAKfTPtDgXdQso94DOwJ4+nyRpJwigEwf7JmNZcgFOg3z6iUWyw@mail.gmail.com>
-Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
- for RT tasks
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        "Cc: Steve Muckle" <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
+References: <CAL_JsqLpM=UG_9aL8CquhP8SajVav5in7RJRDk9tDd=QrTdVFw@mail.gmail.com>
+ <mhng-d9abab59-2b3e-48a7-a28f-84f820964baa@palmer-si-x1c4>
+In-Reply-To: <mhng-d9abab59-2b3e-48a7-a28f-84f820964baa@palmer-si-x1c4>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 13 Aug 2018 08:09:57 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKJAguba1YVQUzXRGL2zkPm2dTib5p=gMq6Ea3jpH6RaQ@mail.gmail.com>
+Message-ID: <CAL_JsqKJAguba1YVQUzXRGL2zkPm2dTib5p=gMq6Ea3jpH6RaQ@mail.gmail.com>
+Subject: Re: [PATCH 03/11] dt-bindings: interrupt-controller: RISC-V PLIC documentation
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     atish.patra@wdc.com, Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org, Stafford Horne <shorne@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 at 14:49, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+On Fri, Aug 10, 2018 at 2:09 PM Palmer Dabbelt <palmer@dabbelt.com> wrote:
 >
-> On 13-Aug 14:07, Vincent Guittot wrote:
-> > On Mon, 13 Aug 2018 at 12:12, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > >
-> > > Hi Vincent!
-> > >
-> > > On 09-Aug 18:03, Vincent Guittot wrote:
-> > > > > On 07-Aug 15:26, Juri Lelli wrote:
-> > >
-> > > [...]
-> > >
-> > > > > > > +   util_cfs = cpu_util_cfs(rq);
-> > > > > > > +   util_rt  = cpu_util_rt(rq);
-> > > > > > > +   if (sched_feat(UCLAMP_SCHED_CLASS)) {
-> > > > > > > +           util = 0;
-> > > > > > > +           if (util_cfs)
-> > > > > > > +                   util += uclamp_util(cpu_of(rq), util_cfs);
-> > > > > > > +           if (util_rt)
-> > > > > > > +                   util += uclamp_util(cpu_of(rq), util_rt);
-> > > > > > > +   } else {
-> > > > > > > +           util  = cpu_util_cfs(rq);
-> > > > > > > +           util += cpu_util_rt(rq);
-> > > > > > > +           util  = uclamp_util(cpu_of(rq), util);
-> > > > > > > +   }
-> > > > >
-> > > > > Regarding the two policies, do you have any comment?
-> > > >
-> > > > Does the policy for (sched_feat(UCLAMP_SCHED_CLASS)== true) really
-> > > > make sense as it is ?
-> > > > I mean, uclamp_util doesn't make any difference between rt and cfs
-> > > > tasks when clamping the utilization so why should be add twice the
-> > > > returned value ?
-> > > > IMHO, this policy would make sense if there were something like
-> > > > uclamp_util_rt() and a uclamp_util_cfs()
-> > >
-> > > The idea for the UCLAMP_SCHED_CLASS policy is to improve fairness on
-> > > low-priority classese, especially when we have high RT utilization.
-> > >
-> > > Let say we have:
-> > >
-> > >  util_rt  = 40%, util_min=0%
-> > >  util_cfs = 10%, util_min=50%
-> > >
-> > > the two policies will select:
-> > >
-> > >   UCLAMP_SCHED_CLASS: util = uclamp(40) + uclamp(10) = 50 + 50   = 100%
-> > >  !UCLAMP_SCHED_CLASS: util = uclamp(40 + 10)         = uclmp(50) =  50%
-> > >
-> > > Which means that, despite the CPU's util_min will be set to 50% when
-> > > CFS is running, these tasks will have almost no boost at all, since
-> > > their bandwidth margin is eclipsed by RT tasks.
+> On Fri, 10 Aug 2018 09:57:03 PDT (-0700), robh+dt@kernel.org wrote:
+> > On Thu, Aug 9, 2018 at 12:29 AM Palmer Dabbelt <palmer@dabbelt.com> wrote:
+> >>
+> >> On Wed, 08 Aug 2018 16:32:07 PDT (-0700), robh+dt@kernel.org wrote:
+> >> > On Wed, Aug 8, 2018 at 1:38 PM Palmer Dabbelt <palmer@dabbelt.com> wrote:
+> >> >>
+> >> >> On Wed, 08 Aug 2018 07:16:14 PDT (-0700), robh+dt@kernel.org wrote:
+> >> >> > On Tue, Aug 7, 2018 at 8:17 PM Palmer Dabbelt <palmer@dabbelt.com> wrote:
+> >> >> >>
+> >> >> >> On Mon, 06 Aug 2018 13:59:48 PDT (-0700), robh+dt@kernel.org wrote:
+> >> >> >> > On Thu, Aug 2, 2018 at 4:08 PM Atish Patra <atish.patra@wdc.com> wrote:
+> >> >> >> >>
+> >> >> >> >> On 8/2/18 4:50 AM, Christoph Hellwig wrote:
+> >> >> >> >> > From: Palmer Dabbelt <palmer@dabbelt.com>
+> >> >> >> >> >
+> >> >> >> >> > This patch adds documentation for the platform-level interrupt
+> >> >> >> >> > controller (PLIC) found in all RISC-V systems.  This interrupt
+> >> >> >> >> > controller routes interrupts from all the devices in the system to each
+> >> >> >> >> > hart-local interrupt controller.
+> >> >> >> >> >
+> >> >> >> >> > Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
+> >> >> >> >> > want to change how we're specifying holes in the hart list.
+> >> >> >> >> >
+> >> >> >> >> > Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+> >> >> >> >> > [hch: various fixes and updates]
+> >> >> >> >> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> >> >> >> >> > ---
+> >> >> >> >> >   .../interrupt-controller/sifive,plic0.txt     | 57 +++++++++++++++++++
+> >> >> >> >> >   1 file changed, 57 insertions(+)
+> >> >> >> >> >   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
+> >> >> >> >> >
+> >> >> >> >> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
+> >> >> >> >> > new file mode 100644
+> >> >> >> >> > index 000000000000..c756cd208a93
+> >> >> >> >> > --- /dev/null
+> >> >> >> >> > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
+> >> >> >> >> > @@ -0,0 +1,57 @@
+> >> >> >> >> > +SiFive Platform-Level Interrupt Controller (PLIC)
+> >> >> >> >> > +-------------------------------------------------
+> >> >> >> >> > +
+> >> >> >> >> > +SiFive SOCs include an implementation of the Platform-Level Interrupt Controller
+> >> >> >> >> > +(PLIC) high-level specification in the RISC-V Privileged Architecture
+> >> >> >> >> > +specification.  The PLIC connects all external interrupts in the system to all
+> >> >> >> >> > +hart contexts in the system, via the external interrupt source in each hart.
+> >> >> >> >> > +
+> >> >> >> >> > +A hart context is a privilege mode in a hardware execution thread.  For example,
+> >> >> >> >> > +in an 4 core system with 2-way SMT, you have 8 harts and probably at least two
+> >> >> >> >> > +privilege modes per hart; machine mode and supervisor mode.
+> >> >> >> >> > +
+> >> >> >> >> > +Each interrupt can be enabled on per-context basis. Any context can claim
+> >> >> >> >> > +a pending enabled interrupt and then release it once it has been handled.
+> >> >> >> >> > +
+> >> >> >> >> > +Each interrupt has a configurable priority. Higher priority interrupts are
+> >> >> >> >> > +serviced first. Each context can specify a priority threshold. Interrupts
+> >> >> >> >> > +with priority below this threshold will not cause the PLIC to raise its
+> >> >> >> >> > +interrupt line leading to the context.
+> >> >> >> >> > +
+> >> >> >> >> > +While the PLIC supports both edge-triggered and level-triggered interrupts,
+> >> >> >> >> > +interrupt handlers are oblivious to this distinction and therefore it is not
+> >> >> >> >> > +specified in the PLIC device-tree binding.
+> >> >> >> >> > +
+> >> >> >> >> > +While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
+> >> >> >> >> > +"sifive,plic0" device is a concrete implementation of the PLIC that contains a
+> >> >> >> >> > +specific memory layout, which is documented in chapter 8 of the SiFive U5
+> >> >> >> >> > +Coreplex Series Manual <https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf>.
+> >> >> >> >> > +
+> >> >> >> >> > +Required properties:
+> >> >> >> >> > +- compatible : "sifive,plic0"
+> >> >> >>
+> >> >> >> I think there was a thread bouncing around somewhere where decided to pick the
+> >> >> >> official name of the compatible string to be "sifive,plic-1.0".  The idea here
+> >> >> >> is that the PLIC is compatible across all of SiFive's current implementations,
+> >> >> >> but there's some limitations in the memory map that will probably cause us to
+> >> >> >> spin a version 2 at some point so we want major version number.  The minor
+> >> >> >> number is just in case we find some errata in the PLIC.
+> >> >> >
+> >> >> > Is 1.0 an actual version number corresponding to an exact, revision
+> >> >> > controlled version of the IP or just something you made up? Looks like
+> >> >> > the latter to me and I'm not a fan of s/w folks making up version
+> >> >> > numbers for h/w. Standard naming convention is <vendor>,<soc>-<block>
+> >> >> > unless you have good reason to deviate (IP for FPGAs where version
+> >> >> > numbers are exposed to customers is one example).
+> >> >>
+> >> >> The hardware versioning scheme calls it "riscv,plic0", which is what we were
+> >> >> originally using.  This PLIC isn't actually defined as a RISC-V spec, so we
+> >> >> wanted to change it to a "sifive,*" name instead.  Since we were going to
+> >> >> change the compat string anyway, I thought we'd just introduce a minor number
+> >> >> to be safe.  Since "0.0" is an awkward number, I figured "1.0" would be saner.
+> >> >
+> >> > So I guess to answer my question, you are just making up version
+> >> > numbers. Unless you are doing the IP verilog too, don't do that.
+> >>
+> >> Well, in this case my proposal would be that we change the hardware team's
+> >> versioning scheme to match whatever we decide on the versioning scheme should
+> >> be as a part of this discussion.  I proposed accepting whatever versioning
+> >> scheme is decided upon hereto the hardware team before discussing changing the
+> >> naming scheme and they agreed to do so.
+> >>
+> >> So we're really in the drivers' seat here.
 > >
-> > Hmm ... At the opposite, even if there is no running rt task but only
-> > some remaining blocked rt utilization,
-> > even if util_rt  = 10%, util_min=0%
-> > and  util_cfs = 40%, util_min=50%
-> > the UCLAMP_SCHED_CLASS: util = uclamp(10) + uclamp(40) = 50 + 50   = 100%
+> > Okay. So you could have something like x.y.z versioning where a change
+> > in X is change in register layout and/or major functional change, Y is
+> > backwards compatible changes (i.e. superset of functionality), Z is
+> > not s/w visible changes (though trusting that Z changes are really not
+> > s/w visible makes me nervous). If you have a version register, then
+> > the compatible string only needs to be specific enough to read that
+> > register.
+> >
+> > And if I can have anything I ask for, then any configuration option
+> > needs to be s/w readable too. Things like FIFO sizes, number of
+> > channels, etc. Sometimes these are DT properties, but generally the
+> > preference is to make these implied by the compatible. There's no set
+> > rule though. The problem with properties is they work well if you know
+> > up front to have them, but often something is fixed and implied and
+> > then becomes variable when a new version of the block is created.
+> >
+> > Think of it this way, DT is a work-around for non-discoverable h/w.
+> > The best solution is making the h/w more discoverable. If you look at
+> > the ARM Primecell aka amba_bus drivers, we don't actually match on the
+> > device compatible string (e.g. arm,pl011). Only "arm,primecell" is
+> > used and then we match with standard ID registers from there. We only
+> > need DT to discover where those blocks are, not what they are or what
+> > version they are (and of course other things like clocks, regulators,
+> > etc.).
 >
-> Yes, that's true... since now I clamp util_rt if it's non zero.
-> Perhaps this can be fixed by clamping util_rt only:
->   if (rt_rq_is_runnable(&rq->rt))
-> ?
+> Ya, good, that's generally been my model for it.  In the PLIC there isn't a
+> whole lot in terms of configuration options to probe dynamically, as the
+> register layout is fixed (determined by the device tree compat string) and the
+> interrupt routings are fixed (determined by interrupt-parent and reg).  There's
+> some amount of scheme for probing these, but since the routings aren't
+> discoverable without the device tree they're not really useful in practice.
 >
-> > So cfs task can get double boosted by a small rt task.
+> Our more modern blocks are becoming larger in scope, and these tend to have
+> their options determined by software.  For example, SiFive's CLIC proposal (a
+> proposal for a new RISC-V core-local interrupt controller) has many runtime
+> discoverable properties, with pretty much only the base address being specified
+> in the device tree -- here's an example of a binding
 >
-> Well, in principle we don't know if the 50% clamp was asserted by the
-> RT or the CFS task, since in the current implementation we max
-> aggregate clamp values across all RT and CFS tasks.
+>                 L1: interrupt-controller@2000000 {
+>                         compatible = "riscv,clic0";
+>                         interrupts-extended = <&L2 3 &L2 7 &L2 11>;
+>                         reg = <0x2000000 0x1000000>;
+>                         reg-names = "control";
+>                 };
+>
+> I don't want to go too far down the CLIC path, though, as there's still a lot
+> of work to be done there :)
+>
+> > So what your compatible string(s) need to look like depend on all the
+> > above. It can be very generic if you can identify the block, version,
+> > and capabilities in a standard way.
+>
+> For now I think the best bet is to go with "sifive,plic-1.0.0" as well as
+> "sifive,fu540-c000-plic".  That way we've got plenty of room to avoid painting
+> ourselves into a corner later.  In the interest of getting people a system they
+> can start testing, I'm going to go ahead and bring the PLIC driver into my
+> for-next branch with the "sifive,plic-1.0.0" binding.  I don't want to just
+> unilaterally kill the discussion, but I figure we can always submit a fixup
+> driver patch later if I'm wrong and we're not on the same page now.
 
-Yes it was just the assumption of your example above.
-IMHO, having util = 100% for your use case looks more like a bug than a feature
+Okay.
 
-As you said below: "what utilization clamping aims to do is to defined
-the minimum capacity to run _all_
-the RUNNABLE tasks... not the minimum capacity for _each_ one of them "
-
-
+> I've also gone ahead and opened a PR against the RTL generator, but I'll wait
+> on the bindings to be officially accepted before merging that:
 >
-> > Furthermore, if there is no rt task but 2 cfs tasks of 40% and 10%
-> > the UCLAMP_SCHED_CLASS: util = uclamp(0) + uclamp(40) = 50   = 50%
+>     https://github.com/freechipsproject/rocket-chip/pull/1575
 >
-> True, but here we are within the same class and what utilization
-> clamping aims to do is to defined the minimum capacity to run _all_
-> the RUNNABLE tasks... not the minimum capacity for _each_ one of them.
+> I'm assuming the bindings will go in through your tree?
 
-I fully agree and that's exactly what I want to highlight: With
-UCLAMP_SCHED_CLASS policy, you try (but fail because the clamping is
-not done per class) to distinguish rt and cfs as different kind of
-runnable tasks.
+No, they generally go thru the arch or subsystem trees with the code
+that uses them (unless there isn't any and I'll take them).
 
->
-> > So in this case cfs tasks don't get more boost and have to share the
-> > bandwidth and you don't ensure 50% for each unlike what you try to do
-> > for rt.
->
-> Above I'm not trying to fix a per-task issue. The UCLAMP_SCHED_CLASS
-> policy is just "trying" to fix a cross-class issue... if we agree
-> there can be a cross-class issue worth to be fixed.
-
-But the cross class issue that you are describing can also exists
-between cfs tasks with different uclamp_min
-So I'm not sure that's there is more cross-class issue than in class issue
-
->
-> > You create a difference in the behavior depending of the class of the
-> > others co-schedule tasks which is not sane IMHO
->
-> Yes I agree that the current behavior is not completely clean... still
-> the question is: do you reckon the problem I depicted above, i.e. RT
-> workloads eclipsing the min_util required by lower priority classes?
-
-As said above, I don't think that there is a problem that is specific
-to cross class scheduling that can't also happen in the same class.
-
-Regarding your example:
-task TA util=40% with uclamp_min 50%
-task TB util=10% with uclamp_min 0%
-
-If TA and TB are cfs, util=50% and it doesn't seem to be a problem
-whereas TB will steal some bandwidth to TA and delay it (and i even
-don't speak about the impact of the nice priority of TB)
-If TA is cfs and TB is rt, Why util=50% is now a problem for TA ?
-
->
-> To a certain extend I see this problem similar to the rt/dl/irq pressure
-> in defining cpu_capacity, isn't it?
->
-> Maybe we can make use of (cpu_capacity_orig - cpu_capacity) to factor
-> in a util_min compensation for CFS tasks?
->
-> --
-> #include <best/regards.h>
->
-> Patrick Bellasi
+Rob
