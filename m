@@ -2,65 +2,91 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E503C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34868C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2236216F2
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2236216F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id CF81C217C7
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:09:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vbFOZx0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF81C217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbeHMRss (ORCPT
+        id S1729638AbeHMRv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 13:48:48 -0400
-Received: from ms.lwn.net ([45.79.88.28]:47150 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729025AbeHMRsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 13:48:47 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 08A447DC;
-        Mon, 13 Aug 2018 15:06:08 +0000 (UTC)
-Date:   Mon, 13 Aug 2018 09:06:07 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] docs for 4.19
-Message-ID: <20180813090607.1f1bb27a@lwn.net>
-In-Reply-To: <20180813083309.69575f4c@lwn.net>
-References: <20180813083309.69575f4c@lwn.net>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 13 Aug 2018 13:51:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36364 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728455AbeHMRv6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 13:51:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UuHoBkgKCwo83CTC9xlgwNqIXCvmoQ7Nl3/hp4qpgj8=; b=vbFOZx0FBrn0REKG6ovQIepRCQ
+        6r50OqMQ5yYpp0qpoMKCJ6guOjter0m/Xgoz6M+iaFJqropov82i/0wolkXFHlul4lPnKg95KRpXz
+        +10HudiPkmful+r+56H9DdJ3qu9TTXw/pwQLZ3PC/Xk6XgAQR3abIGaWRLcZ9r26PZFMFNTJSVInz
+        COx8uZ9BG8WP7E6iBr5bC4YXDIbnbX4Y8Xyr412z8LkaA+Ozd6HAZDisKb70+8Od23Y7WCDlJPvqk
+        iw8CY4XzcTkL03Oyp5q/T7PSHRel0PtPLnk6z1n+M4UF1VtTQFovPN8nfgCVvvchWr4vRhTA7jkbH
+        9glcCq/g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fpET7-0004ni-Sj; Mon, 13 Aug 2018 15:09:18 +0000
+Subject: Re: [PATCH v2] docs: provide more details about security bug
+ reporting
+To:     Willy Tarreau <w@1wt.eu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20180812132325.GA1608@1wt.eu>
+ <82b1e47a-07ea-7104-65e2-1964ec325af0@infradead.org>
+ <20180813073801.GA14633@1wt.eu>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9a9d9d12-983a-c795-e22b-e0478e9dc557@infradead.org>
+Date:   Mon, 13 Aug 2018 08:09:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180813073801.GA14633@1wt.eu>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 08:33:09 -0600
-Jonathan Corbet <corbet@lwn.net> wrote:
-
-> This was a moderately busy cycle for docs, with the usual collection of
-> small fixes and updates.  We also have new ktime_get_*() docs from Arnd,
-> some kernel-doc fixes, a new set of Italian translations (non so se vale la
-> pena, ma non fa male - speriamo bene), and some extensive early
-> memory-management documentation improvements from Mike Rapoport.
+On 08/13/2018 12:38 AM, Willy Tarreau wrote:
+> Hi Randy,
 > 
-> There's a certain amount of reaching outside of Documentation/, all fixing
-> kerneldoc comments elsewhere.  I tried a few times to get acks for the 
-> mm/ ones in particular (from Mike's work) but no such luck; nobody could
-> be bothered to complain either so that was good enough for me.
+> On Sun, Aug 12, 2018 at 09:14:29AM -0700, Randy Dunlap wrote:
+>> I have a few corrections/comments below.
+> 
+> Thanks a lot, I've addressed them in the attached version. Linus,
+> please take this one instead.
+> 
+> (...)
+>> +Analysing a report takes a lot of time, and while sometimes it's
+>> +better to conclude to a wrong alert because there is nothing to fix,
+>>
+>>        "to conclude to a wrong alert" needs some fixing, but I don't know what...
+> 
+> I changed this one to :
+> 
+>      "to conclude the report was a false alarm"
 
-I forgot to add that you'll see a small conflict with the ext4 tree on
-Documentation/index.rst.  The linux-next resolution (just poke in the new
-section that ext4 wants to add) is good.
 
-jon
+LGTM.  Thanks.
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+-- 
+~Randy
