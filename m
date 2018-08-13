@@ -6,93 +6,160 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9957C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FD9C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A602821758
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A602821758
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 87862214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87862214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731951AbeHNAfE (ORCPT
+        id S1731105AbeHNAcn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:35:04 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:34901 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731137AbeHNAfE (ORCPT
+        Mon, 13 Aug 2018 20:32:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57242 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731001AbeHNAcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:35:04 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LlHiI-1gQ2fM161u-00b6or; Mon, 13 Aug 2018 23:50:50 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: stmmac: mark PM functions as __maybe_unused
-Date:   Mon, 13 Aug 2018 23:50:41 +0200
-Message-Id: <20180813215046.3663828-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:yHkYOL42QrgSrFmnm4HKk71DoAHMxD4yJJ0Qm/UdpxzCP7w7VsH
- oe/YXbXosXJpEQmYMaAZXP1pPdZC/emuQtI1ZCIrLbOkDWT6rRPQ/I1BPjZSU6KWXgsqR+6
- DG4XEGDdGFlQ3mZ6xTXNcnvtiuD6TgczaZZn0LHpUgwFOPhG/ShwGE6fZw6xHAPTX0FKDlF
- B1G+7A9T8dYluUwl17saw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:sSWmrTSKnPo=:RabkFznQLGSLpzQLM66n7J
- 83lyhkVgsA918Ns9BalldcXCqiKoQI3lseeO8ZgYkSlunQAgojRICmgAKsrnYnAxIchG5rwYR
- JE/6dRDkrZrtPTW5/g5BUwbvwj8TTHNfuawUjY88LCPTp8V0YddwRjgwLmaLt3BZkVvlJK7zd
- ekZvUSZkniwFfk3SAYCtjvMLxHTCLq1F7dsphY2pH5X9VL460fM69G16JvBsLq8v662B09lEJ
- xd0jNsqsrrRJT9gIAxF2IhoOi/+HA8uZ4jjpuSh14ISQ46lx4GMCf78edJKlTcH+N5ZuQAYVj
- p8xnQHm0vEG7fJi2zoUysOkMhXtGR9KxTbHa0664CIZ4iFObRFln2Cog7bByxwrc/iZM8+8d3
- ATZ3ttF+ta1cNZ+yqBoLk62fR1D/PS5RNlK4xbdL0RDl5Jfca0k64ye1/l/8REB/TkXbKq4xo
- 91eHo0C2YuQgYOYsvvNcuWr1mnPPcn8nPpuImRGkgwnKAYLsJUZumL8XokupxlFuEWITnyVs+
- XZ/rAhQ9L6K9G8uR1xdIMyMkFkZxjzC1M0kpqd7sdQL4jPFisrVeWWGvpIkXLRmIDI+FypLtj
- /E4fcJsObIyVTUpM9Uo3FWA/Pt+dgzw9xNydsMFFKGUuuuyc2C/fburxem6PZnqLP82aolZ04
- a40f3ps6e9feLZm33WEvqbzIC1SlpZe1zYDq5/nBhUWQZCoLb3PZLa4DIKJcDi52ZF5g=
+        Mon, 13 Aug 2018 20:32:41 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLdM15058877
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:37 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kuekh0ed5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:37 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Mon, 13 Aug 2018 17:48:36 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Aug 2018 17:48:32 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLmUvq9044718
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Aug 2018 21:48:30 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09BAA124055;
+        Mon, 13 Aug 2018 18:49:29 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1805124052;
+        Mon, 13 Aug 2018 18:49:27 -0400 (EDT)
+Received: from localhost.localdomain (unknown [9.85.141.105])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 13 Aug 2018 18:49:27 -0400 (EDT)
+From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [PATCH v9 03/22] s390/zcrypt: Show load of cards and queues in sysfs
+Date:   Mon, 13 Aug 2018 17:48:00 -0400
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18081321-0052-0000-0000-0000031E7531
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009538; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073087; UDB=6.00552882; IPR=6.00853043;
+ MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:48:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081321-0053-0000-0000-00005DB7374B
+Message-Id: <1534196899-16987-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=904 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808130218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added suspend/resume functions cause a build warning
-when CONFIG_PM is disabled:
+From: Harald Freudenberger <freude@de.ibm.com>
 
-drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c:324:12: error: 'stmmac_pci_resume' defined but not used [-Werror=unused-function]
-drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c:306:12: error: 'stmmac_pci_suspend' defined but not used [-Werror=unused-function]
+Show the current load value of cards and queues in sysfs.
+The load value for each card and queue is maintained by
+the zcrypt device driver for dispatching and load
+balancing requests over the available devices.
 
-Mark them as __maybe_unused so gcc can drop them silently.
+This patch provides the load value to userspace via a
+new read only sysfs attribute 'load' per card and queue.
 
-Fixes: b7d0f08e9129 ("net: stmmac: Fix WoL for PCI-based setups")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/s390/crypto/zcrypt_card.c  |   12 ++++++++++++
+ drivers/s390/crypto/zcrypt_queue.c |   12 ++++++++++++
+ 2 files changed, 24 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 6a393b16a1fc..c54a50dbd5ac 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -303,7 +303,7 @@ static void stmmac_pci_remove(struct pci_dev *pdev)
- 	pci_disable_device(pdev);
- }
+diff --git a/drivers/s390/crypto/zcrypt_card.c b/drivers/s390/crypto/zcrypt_card.c
+index 233e1e6..da2c8df 100644
+--- a/drivers/s390/crypto/zcrypt_card.c
++++ b/drivers/s390/crypto/zcrypt_card.c
+@@ -83,9 +83,21 @@ static ssize_t zcrypt_card_online_store(struct device *dev,
+ static DEVICE_ATTR(online, 0644, zcrypt_card_online_show,
+ 		   zcrypt_card_online_store);
  
--static int stmmac_pci_suspend(struct device *dev)
-+static int __maybe_unused stmmac_pci_suspend(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	int ret;
-@@ -321,7 +321,7 @@ static int stmmac_pci_suspend(struct device *dev)
- 	return 0;
- }
++static ssize_t zcrypt_card_load_show(struct device *dev,
++				     struct device_attribute *attr,
++				     char *buf)
++{
++	struct zcrypt_card *zc = to_ap_card(dev)->private;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", atomic_read(&zc->load));
++}
++
++static DEVICE_ATTR(load, 0444, zcrypt_card_load_show, NULL);
++
+ static struct attribute *zcrypt_card_attrs[] = {
+ 	&dev_attr_type.attr,
+ 	&dev_attr_online.attr,
++	&dev_attr_load.attr,
+ 	NULL,
+ };
  
--static int stmmac_pci_resume(struct device *dev)
-+static int __maybe_unused stmmac_pci_resume(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	int ret;
+diff --git a/drivers/s390/crypto/zcrypt_queue.c b/drivers/s390/crypto/zcrypt_queue.c
+index 720434e..91a52f2 100644
+--- a/drivers/s390/crypto/zcrypt_queue.c
++++ b/drivers/s390/crypto/zcrypt_queue.c
+@@ -75,8 +75,20 @@ static ssize_t zcrypt_queue_online_store(struct device *dev,
+ static DEVICE_ATTR(online, 0644, zcrypt_queue_online_show,
+ 		   zcrypt_queue_online_store);
+ 
++static ssize_t zcrypt_queue_load_show(struct device *dev,
++				      struct device_attribute *attr,
++				      char *buf)
++{
++	struct zcrypt_queue *zq = to_ap_queue(dev)->private;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", atomic_read(&zq->load));
++}
++
++static DEVICE_ATTR(load, 0444, zcrypt_queue_load_show, NULL);
++
+ static struct attribute *zcrypt_queue_attrs[] = {
+ 	&dev_attr_online.attr,
++	&dev_attr_load.attr,
+ 	NULL,
+ };
+ 
 -- 
-2.18.0
+1.7.1
 
