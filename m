@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8381C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D008C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564072175C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564072175C
+	by mail.kernel.org (Postfix) with ESMTP id 3A884217BC
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A884217BC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbeHMTBO (ORCPT
+        id S1730009AbeHMTBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:01:14 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:46324 "EHLO cstnet.cn"
+        Mon, 13 Aug 2018 15:01:39 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:46695 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728763AbeHMTBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:01:14 -0400
+        id S1728455AbeHMTBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:01:39 -0400
 Received: from [192.168.1.7] (unknown [110.184.152.220])
-        by APP-10 (Coremail) with SMTP id tACowACXYu0zr3FbNT4BAQ--.8204S2;
-        Tue, 14 Aug 2018 00:17:56 +0800 (CST)
+        by APP-10 (Coremail) with SMTP id tACowAAnLsZTr3FbrkQBAQ--.8350S2;
+        Tue, 14 Aug 2018 00:18:28 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 Subject: Re: [PATCH v3 16/17] driver/edac: enable Hygon support to AMD64 EDAC
  driver
@@ -37,8 +37,8 @@ Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
 References: <cover.1533989492.git.puwen@hygon.cn>
  <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
  <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
-Message-ID: <68538d23-8880-29a2-decd-f63b48667274@hygon.cn>
-Date:   Tue, 14 Aug 2018 00:17:55 +0800
+Message-ID: <49bec5ba-3a54-a9ee-f965-5f361e9711d2@hygon.cn>
+Date:   Tue, 14 Aug 2018 00:18:27 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -46,23 +46,23 @@ In-Reply-To: <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowACXYu0zr3FbNT4BAQ--.8204S2
+X-CM-TRANSID: tACowAAnLsZTr3FbrkQBAQ--.8350S2
 X-Coremail-Antispam: 1UD129KBjvJXoWxurW5Xw45tr13KFWUWF45ZFb_yoW5ZF43pr
         W5JF4j9rn7JasxJryvvr4UXFyrCw4kJFZrCrsxK3WFqFZ8ZFyrW345tF4fuFyUAF93J3y2
-        vayrWw47Ga1qyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvCb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        vayrWw47Ga1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9Cb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
         0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
         A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
         jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
         A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
         Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-        1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAI
-        cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-        nxnUUI43ZEXa7IU8489tUUUUU==
+        c7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrw
+        CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+        14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+        IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
+        x2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+        0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jUb18UUUUU=
 X-Originating-IP: [110.184.152.220]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
