@@ -2,134 +2,97 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F53C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D55C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38DB92175D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:56:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DB92175D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D22C2177A
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:04:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="rFr4Z+bL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D22C2177A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbeHMUjc convert rfc822-to-8bit (ORCPT
+        id S1730467AbeHMUrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 16:39:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44564 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728661AbeHMUjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 16:39:32 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 13 Aug 2018 16:47:53 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39758 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729835AbeHMUrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 16:47:53 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3836D8EE171;
+        Mon, 13 Aug 2018 11:04:37 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 0sRLQSQJn1jN; Mon, 13 Aug 2018 11:04:37 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B9EF04219DC7;
-        Mon, 13 Aug 2018 17:56:16 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-66.bos.redhat.com [10.18.17.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 95B572166BA0;
-        Mon, 13 Aug 2018 17:56:15 +0000 (UTC)
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <20180719153045.GT72677@devbig577.frc2.facebook.com>
- <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
- <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
- <20180720114549.GY72677@devbig577.frc2.facebook.com>
- <20180720154454.GR2494@hirez.programming.kicks-ass.net>
- <20180720155613.GB1934745@devbig577.frc2.facebook.com>
- <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
- <20180720163712.GU2494@hirez.programming.kicks-ass.net>
- <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
- <20180720174100.GC1934745@devbig577.frc2.facebook.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <446ab203-85cd-32ff-40a9-0ba22d5a2534@redhat.com>
-Date:   Mon, 13 Aug 2018 13:56:15 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180720174100.GC1934745@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 13 Aug 2018 17:56:16 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 13 Aug 2018 17:56:16 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ACC5B8EE0ED;
+        Mon, 13 Aug 2018 11:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1534183476;
+        bh=XKaiUftx+2vnXBzHjIE9ornO5si0asIT6BxbrIMBKWw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rFr4Z+bLZ7L9DUI6mAuayZoAAm2Xq9fsHt1G7bzD3DDbplCowWOirsDJ3a4twmbvD
+         ISTghDyImS4IBzEZ8ZwdvS90mTcAm4m455lLKT5ynUE2x39CvKxX12bIplSrSO9zsi
+         bJTp+m3NJnVHtPQvlgKQnV7P+sAE+C3r4i7rzS9Y=
+Message-ID: <1534183475.7872.14.camel@HansenPartnership.com>
+Subject: Re: [PATCH v1 0/3] WireGuard: Secure Network Tunnel
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, linux-crypto@vger.kernel.org
+Date:   Mon, 13 Aug 2018 11:04:35 -0700
+In-Reply-To: <CAHmME9pn+zm67mmDDrkMLpSAXNEugCT3z2L-QXO2eQw+31V=YQ@mail.gmail.com>
+References: <20180731191102.2434-1-Jason@zx2c4.com>
+         <1534174811.7872.3.camel@HansenPartnership.com>
+         <CAHmME9raa81A_hH_Zykp2r8zOk0ySroFEsk+8384vnVOCuSa=g@mail.gmail.com>
+         <1534181830.7872.10.camel@HansenPartnership.com>
+         <CAHmME9pn+zm67mmDDrkMLpSAXNEugCT3z2L-QXO2eQw+31V=YQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/20/2018 01:41 PM, Tejun Heo wrote:
-> Hello,
->
-> On Fri, Jul 20, 2018 at 01:09:23PM -0400, Waiman Long wrote:
->> On 07/20/2018 12:37 PM, Peter Zijlstra wrote:
->>> On Fri, Jul 20, 2018 at 12:19:29PM -0400, Waiman Long wrote:
->>>> I am not against the idea of making it hierarchical eventually. I am
->>>> just hoping to get thing going by merging the patchset in its current
->>>> form and then we can make it hierarchical in a followup patch.
->>> Where's the rush? Why can't we do this right in one go?
->> For me, the rush comes from RHEL8 as it is a goal to have a fully
->> functioning cgroup v2 in that release.
->>
->> I also believe that most of the use cases of partition can be satisfied
->> with partitions at the first level children. Getting hierarchical
->> partition right may drag on for half a year, maybe, giving our history
->> with cpu v2 controller. No matter what we do to enable hierarchical
->> partition in the future, the current model of using a partition flag is
->> intuitive enough that it won't be changed at least for the first level
->> children.
-> I'm fully with Waiman here.  There are people wanting to use it and
-> the part most people isn't controversial at all.  I don't see what'd
-> be gained by further delaying the whole thing.  If the first level
-> partition thing isn't acceptable to everyone, we can even strip down
-> further.  We can get .cpus and .mems merged first, which is what most
-> people want anyway.
+On Mon, 2018-08-13 at 10:55 -0700, Jason A. Donenfeld wrote:
+> > but it's very hard for a flow classifier because you have to
+> 
+> The construction and identifier strings might not obviously help with
+> the extremely narrow idea you've brought up, but it is very important
+> for safely introducing additional versions. Namely, it prevents
+> against cross-protocol key reuse attacks and type confusion bugs. So
+> don't be too quick to dismiss the importance of these for
+> accomplishing what we're after.
 
-BTW, I am trying to support hierarchical partition. The first thing that
-I want to support is to allow removing CPUs from partition root freely.
-It turns out that the following existing code in validate_change() will
-prevent the removal from happening when it touches any CPUs that are
-used in child cpusets:
+I'm not saying a hash check isn't important for safety; I'm saying that
+if you only have a hash of a dynamic part plus the protocol identifier
+to go on it makes far more work for the flow classifier.  You can see
+this easily if you contemplate the idea that the hash might be the
+algorithm being changed.
 
-        /* Each of our child cpusets must be a subset of us */
-        ret = -EBUSY;
-        cpuset_for_each_child(c, css, cur)
-                if (!is_cpuset_subset(c, trial))
-                        goto out;
+> > so lets pick one of the above and try it out.
+> 
+> We have, multiple times, and it's absolutely trivial to do and works
+> well. The exact thing you're concerned about has already been
+> researched and worked with on live systems quite a bit over the last
+> 3 years, and it works in a pretty straight forward way. I'm not sure
+> there's much more to add here: the thing you want is already there
+> and has been tested extensively. At this point the "pick one and
+> let's try it out!" is an old story, and the focus now is on making
+> sure the code quality and netdev api usage is correct for merging
 
-So this is not a new restriction after all.
+Great, thanks, I'll look forward to seeing it in v2 then.
 
-The following restrictions are still imposed on a partition root wrt
-allowable changes in cpuset.cpus:
-1) cpuset.cpus cannot be set to "". There must be at least 1 cpu there.
-2) Adding cpus that are not in parent's cpuset.cpus (as well as
-cpuset.cpus.effective) or that will take all the parent's effective cpus
-away is not allowed.
-
-So are these limitations acceptable?
-
-The easiest way to remove those restrictions is to forcefully turn off
-the cpuset.sched.partition flag in the cpuset as well as any
-sub-partitions when the user try to do that. With that change, there
-will be no more new restriction on what you can do on cpuset.cpus.
-
-What is your opinion on the best way forward wrt supporting hierarchical
-partitioning?
-
-Thanks,
-Longman
+James
 
