@@ -2,154 +2,82 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E4CC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0504EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3856B2175A
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:23:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3856B2175A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AFE4721779
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:24:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE4721779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbeHMWGl (ORCPT
+        id S1730250AbeHMWIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 18:06:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729245AbeHMWGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 18:06:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4D0A14023461;
-        Mon, 13 Aug 2018 19:23:05 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 20D072156712;
-        Mon, 13 Aug 2018 19:23:03 +0000 (UTC)
-Date:   Mon, 13 Aug 2018 15:23:01 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <liguozhu@hisilicon.com>
-Cc:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Hao Fang <fanghao11@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180813192301.GC3451@redhat.com>
-References: <20180806031252.GG91035@Turing-Arch-b>
- <20180806153257.GB6002@redhat.com>
- <11bace0e-dc14-5d2c-f65c-25b852f4e9ca@gmail.com>
- <20180808151835.GA3429@redhat.com>
- <20180809080352.GI91035@Turing-Arch-b>
- <20180809144613.GB3386@redhat.com>
- <20180810033913.GK91035@Turing-Arch-b>
- <0f6bac9b-8381-1874-9367-46b5f4cef56e@arm.com>
- <6ea4dcfd-d539-93e4-acf1-d09ea35f0ddc@gmail.com>
- <20180813092931.GL91035@Turing-Arch-b>
+        Mon, 13 Aug 2018 18:08:25 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43972 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729025AbeHMWIZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 18:08:25 -0400
+Received: by mail-io0-f193.google.com with SMTP id y10-v6so15876678ioa.10;
+        Mon, 13 Aug 2018 12:24:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P5fSht67JiyreejbCrzEO5+lSEojkAFyMl5iSM417Yc=;
+        b=hqxz3+nUb43outD6kYRQTteLI9Gzc2pv+q7HX+MmIZ4/1o0ri8bSkBWDtXfyhFJaO0
+         5I3KJ0GYpTDGwLd0psCs4Zu/qPOcDMg5HJyZoRKEG8CeJS33x8VMYOG9a6uJ0I4mnL4Q
+         1iIlfiJ8zxVkW9sl8ULzjlLtcTrXboJEqRhZ3IiHbT+xwmh2g0p8ND7LfZMEonpafJAH
+         sXkY5X+MVY1HL2hqpjNi8EsHtqGfLaERca2lvJoszCi3dOJxeAVaZFr8XuIPBooOoWPw
+         cUeQoDHgAppXIFSXDNmqTsd/FlSzqxIhfDrdt20JxYi+7zt9Im4cE702eaVA/NC466rP
+         70EA==
+X-Gm-Message-State: AOUpUlHphSt99ib8d8/yTO7/c5t3Hz0PF1Pdqn26voGWWP3KChohf2dP
+        U3hRbrWRyHDWsApLmrN6Fw==
+X-Google-Smtp-Source: AA+uWPwrt0ohbkWXiKgahxX+YVLw8v5iDNWfF/cxe0clrQLaG49P0iCxuJOekoeel23m9TZZk0W1Cw==
+X-Received: by 2002:a6b:5306:: with SMTP id h6-v6mr16015463iob.2.1534188289793;
+        Mon, 13 Aug 2018 12:24:49 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id z195-v6sm15689249ioe.38.2018.08.13.12.24.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Aug 2018 12:24:49 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 13:24:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Aapo Vienamo <avienamo@nvidia.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v2 03/40] dt-bindings: Add Tegra SDHCI pad pdpu offset
+ bindings
+Message-ID: <20180813192448.GA15903@rob-hp-laptop>
+References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
+ <1533924522-1037-4-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180813092931.GL91035@Turing-Arch-b>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 13 Aug 2018 19:23:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 13 Aug 2018 19:23:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+In-Reply-To: <1533924522-1037-4-git-send-email-avienamo@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 05:29:31PM +0800, Kenneth Lee wrote:
+On Fri, Aug 10, 2018 at 09:08:05PM +0300, Aapo Vienamo wrote:
+> Add bindings documentation for pad pull up and pull down offset values to be
+> programmed before executing automatic pad drive strength calibration.
 > 
-> I made a quick change basing on the RFCv1 here: 
-> 
-> https://github.com/Kenneth-Lee/linux-kernel-warpdrive/commits/warpdrive-v0.6
-> 
-> I just made it compilable and not test it yet. But it shows how the idea is
-> going to be.
-> 
-> The Pros is: most of the virtual device stuff can be removed. Resource
-> management is on the openned files only.
-> 
-> The Cons is: as Jean said, we have to redo something that has been done by VFIO.
-> These mainly are:
-> 
-> 1. Track the dma operation and remove them on resource releasing
-> 2. Pin the memory with gup and do accounting
-> 
-> It not going to be easy to make a decision...
-> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> ---
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 
-Maybe it would be good to list things you want do. Looking at your tree
-it seems you are re-inventing what dma-buf is already doing.
-
-So here is what i understand for SVM/SVA:
-    (1) allow userspace to create a command buffer for a device and bind
-        it to its address space (PASID)
-    (2) allow userspace to directly schedule commands on its command buffer
-
-No need to do tracking here as SVM/SVA which rely on PASID and something
-like PCIE ATS (address translation service). Userspace can shoot itself
-in the foot but nothing harmful can happen.
-
-
-Non SVM/SVA:
-    (3) allow userspace to wrap a region of its memory into an object so
-        that it can be DMA map (ie GUP + dma_map_page())
-    (4) Have userspace schedule command referencing object created in (3)
-        using an ioctl.
-
-We need to keep track of object usage by the hardware so that we know
-when it is safe to release resources (dma_unmap_page()). The dma-buf
-provides everything you want for (3) and (4). With dma-buf you create
-object and each time it is use by a device you associate a fence with
-it. When fence is signaled it means that the hardware is done using
-that object. Fence also allow proper synchronization between multiple
-devices. For instance making sure that the second device wait for the
-first device before starting doing its thing. dma-buf documentations is
-much more thorough explaining all this.
-
-
-Now from implementation point of view, maybe it would be a good idea
-to create something like the virtual gem driver. It is a virtual device
-that allow to create GEM object. So maybe we want a virtual device that
-allow to create dma-buf object from process memory and allow sharing of
-those dma-buf between multiple devices.
-
-Userspace would only have to talk to this virtual device to create
-object and wrap its memory around, then it could use this object against
-many actual devices.
-
-
-This decouples the memory management, that can be share between all
-devices, from the actual device driver, which is obviously specific to
-every single device.
-
-
-Note that dma-buf use file so that once all file reference are gone the
-resource can be free and cleanup can happen (dma_unmap_page() ...). This
-properly handle the resource lifetime issue you seem to worried about.
-
-Cheers,
-Jérôme
+Reviewed-by: Rob Herring <robh@kernel.org>
