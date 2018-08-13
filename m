@@ -2,172 +2,151 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B43C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A9DC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D05217B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:07:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AL1K8Xgg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D05217B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EC583217B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC583217B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeHMOtU (ORCPT
+        id S1729707AbeHMOtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:49:20 -0400
-Received: from mail-it0-f49.google.com ([209.85.214.49]:37692 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729643AbeHMOtT (ORCPT
+        Mon, 13 Aug 2018 10:49:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33266 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729643AbeHMOtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:49:19 -0400
-Received: by mail-it0-f49.google.com with SMTP id h20-v6so13586167itf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 05:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xqN48GJ2CsHyNom/Ak2EBVQTVxfD0KIPkoIw2Bn+Ymk=;
-        b=AL1K8XggGbEO8eP5E5eLD4PISbeYE3dlMI2uoY+mlBwViSo3t+j7Khfcip4l3P9LWd
-         uTEpUdFUrMzruov6KWISo5Bhc1xR34IScDqFrYmPmxNZPtqCPM7zlxdR0VlWIU0JO8R7
-         Eodj0jQ+rhaZpFcWRzR1KK25ldUER3SLugW+k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xqN48GJ2CsHyNom/Ak2EBVQTVxfD0KIPkoIw2Bn+Ymk=;
-        b=n8jDA7QXWJEdah5AsSc/4YCe3OzErSUouB737ZD5JEwtyQ5cSCalSlbOlHPFW2Ox2w
-         SGm+7vSjCGrEGSnqdTOPwzxKbqUBmqMLqr1Rcm9lp6CZHHKPZ5ATbacKz97rW8m8zswU
-         I+UeNDOEXOldR3Zoa2QfqQf8FMjmAx3cebEPvUVDt+dfxJsn6k/jEfU1RGeRZ8Zhdaka
-         L6QGsBl23fAmzI1/B+wdoHF7ZhVmTdLL1C6D3QvCJGY0XCA9vBaiZGTHcUkdbXk+ps6h
-         9QZVKKywn/rPViNjAkbPi7Z/l4MX6SC7kFa9XZd5FsYsfldCQ1IjCss0mmDncKuuXbly
-         hV6A==
-X-Gm-Message-State: AOUpUlETzCDRyvtDlE2cK/OqfcTIbqpd1A4O1DGQAR40wT83F6P0ZqXZ
-        0CAUR0QXOH0CIk7byJL3DvYp+HS5eiXZWlafbX1TUg==
-X-Google-Smtp-Source: AA+uWPyMFLRopNDB5sAPgB9gB1SeZUGOb6MDP4Wx/dpXPo5m0WfGt9JtLrmD0W/Kf8ZhtJzgtQJFsHHMVnZpsZUOuAs=
-X-Received: by 2002:a24:55cd:: with SMTP id e196-v6mr10135563itb.8.1534162038824;
- Mon, 13 Aug 2018 05:07:18 -0700 (PDT)
+        Mon, 13 Aug 2018 10:49:42 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DC11vb087403
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 08:07:42 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ku9541gep-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 08:07:42 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Mon, 13 Aug 2018 06:07:41 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Aug 2018 06:07:37 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DC7aIJ17563698
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Aug 2018 05:07:36 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B869D6A054;
+        Mon, 13 Aug 2018 06:07:36 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F8B56A047;
+        Mon, 13 Aug 2018 06:07:36 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.124.35.106])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Aug 2018 06:07:36 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id E929F2E3075; Mon, 13 Aug 2018 17:37:32 +0530 (IST)
+Date:   Mon, 13 Aug 2018 17:37:32 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] powerpc: Use cpu_smallcore_sibling_mask at SMT
+ level on bigcores
+Reply-To: ego@linux.vnet.ibm.com
+References: <1533792728-6304-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1533792728-6304-3-git-send-email-ego@linux.vnet.ibm.com>
+ <20180809132657.GA42474@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-7-patrick.bellasi@arm.com> <20180807132630.GB3062@localhost.localdomain>
- <20180809153423.nsoepprhut3dv4u2@darkstar> <CAKfTPtCWcq2bOmaC5EDdhS8ih8Sv7Mwzn=84xerKA2tY6kXLkw@mail.gmail.com>
- <20180813101221.GA2605@e110439-lin>
-In-Reply-To: <20180813101221.GA2605@e110439-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 13 Aug 2018 14:07:07 +0200
-Message-ID: <CAKfTPtBN+K=8fqukZix2k0rdcjG8YiYagxZtzLx7kk3US+9V2Q@mail.gmail.com>
-Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
- for RT tasks
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        "Cc: Steve Muckle" <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180809132657.GA42474@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18081312-0004-0000-0000-000014756DCA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009535; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01072897; UDB=6.00552766; IPR=6.00852849;
+ MB=3.00022686; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 12:07:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081312-0005-0000-0000-00008871693B
+Message-Id: <20180813120732.GA13369@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808130130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 at 12:12, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
->
-> Hi Vincent!
->
-> On 09-Aug 18:03, Vincent Guittot wrote:
-> > > On 07-Aug 15:26, Juri Lelli wrote:
->
-> [...]
->
-> > > > > +   util_cfs = cpu_util_cfs(rq);
-> > > > > +   util_rt  = cpu_util_rt(rq);
-> > > > > +   if (sched_feat(UCLAMP_SCHED_CLASS)) {
-> > > > > +           util = 0;
-> > > > > +           if (util_cfs)
-> > > > > +                   util += uclamp_util(cpu_of(rq), util_cfs);
-> > > > > +           if (util_rt)
-> > > > > +                   util += uclamp_util(cpu_of(rq), util_rt);
-> > > > > +   } else {
-> > > > > +           util  = cpu_util_cfs(rq);
-> > > > > +           util += cpu_util_rt(rq);
-> > > > > +           util  = uclamp_util(cpu_of(rq), util);
-> > > > > +   }
-> > >
-> > > Regarding the two policies, do you have any comment?
-> >
-> > Does the policy for (sched_feat(UCLAMP_SCHED_CLASS)== true) really
-> > make sense as it is ?
-> > I mean, uclamp_util doesn't make any difference between rt and cfs
-> > tasks when clamping the utilization so why should be add twice the
-> > returned value ?
-> > IMHO, this policy would make sense if there were something like
-> > uclamp_util_rt() and a uclamp_util_cfs()
->
-> The idea for the UCLAMP_SCHED_CLASS policy is to improve fairness on
-> low-priority classese, especially when we have high RT utilization.
->
-> Let say we have:
->
->  util_rt  = 40%, util_min=0%
->  util_cfs = 10%, util_min=50%
->
-> the two policies will select:
->
->   UCLAMP_SCHED_CLASS: util = uclamp(40) + uclamp(10) = 50 + 50   = 100%
->  !UCLAMP_SCHED_CLASS: util = uclamp(40 + 10)         = uclmp(50) =  50%
->
-> Which means that, despite the CPU's util_min will be set to 50% when
-> CFS is running, these tasks will have almost no boost at all, since
-> their bandwidth margin is eclipsed by RT tasks.
+On Thu, Aug 09, 2018 at 06:26:57AM -0700, Srikar Dronamraju wrote:
+> * Gautham R. Shenoy <ego@linux.vnet.ibm.com> [2018-08-09 11:02:08]:
+> 
+> > 
+> > 3) ppc64_cpu --smt=2
+> >    SMT domain ceases to exist as each domain consists of just one
+> >    group.
+> > 
+> 
+> When seen in isolation, the above looks as if ppc64_cpu --smt=2 o/p says
+> " SMT domain ceases to exist...."
 
-Hmm ... At the opposite, even if there is no running rt task but only
-some remaining blocked rt utilization,
-even if util_rt  = 10%, util_min=0%
-and  util_cfs = 40%, util_min=50%
-the UCLAMP_SCHED_CLASS: util = uclamp(10) + uclamp(40) = 50 + 50   = 100%
+Ok. The intent was to say that one of the sched-domain level
+collapses, thereby leaving only CACHE, DIE and NUMA. Will word it
+better.
 
-So cfs task can get double boosted by a small rt task.
+> 
+> > @@ -999,7 +1012,17 @@ static void add_cpu_to_masks(int cpu)
+> >  {
+> >  	int first_thread = cpu_first_thread_sibling(cpu);
+> >  	int chipid = cpu_to_chip_id(cpu);
+> > -	int i;
+> > +
+> > +	struct thread_groups tg;
+> > +	int i, cpu_group_start = -1;
+> > +
+> > +	if (has_big_cores) {
+> > +		struct device_node *dn = of_get_cpu_node(cpu, NULL);
+> > +
+> 
+> Not checking for validity of dn and no of_node_puts?
 
-Furthermore, if there is no rt task but 2 cfs tasks of 40% and 10%
-the UCLAMP_SCHED_CLASS: util = uclamp(0) + uclamp(40) = 50   = 50%
+Will fix this. Thanks for catching this.
 
-So in this case cfs tasks don't get more boost and have to share the
-bandwidth and you don't ensure 50% for each unlike what you try to do
-for rt.
-You create a difference in the behavior depending of the class of the
-others co-schedule tasks which is not sane IMHO
+> 
+> > +		parse_thread_groups(dn, &tg);
+> > +		cpu_group_start = get_cpu_thread_group_start(cpu, &tg);
+> > +		cpumask_set_cpu(cpu, cpu_smallcore_sibling_mask(cpu));
+> > +	}
+> > 
+> >  	/*
+> >  	 * This CPU will not be in the online mask yet so we need to manually
+> 
+> The rest looks good
+
+Thanks for the review.
 
 
->
-> > > We had an internal discussion and we found pro/cons for both... but
->
-> The UCLAMP_SCHED_CLASS policy is thus less energy efficiency but it
-> should grant a better "isolation" in terms of what is the expected
-> speed-up a task will get at run-time, independently from higher
-> priority classes.
->
-> Does that make sense?
->
-> > > I'm not sure keeping the sched_feat is a good solution on the long
-> > > run, i.e. mainline merge ;)
->
-> This problem still stands...
->
-> --
-> #include <best/regards.h>
->
-> Patrick Bellasi
+> 
+
