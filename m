@@ -2,185 +2,451 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F138C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EC7C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107E421755
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:48:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxtefMSD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107E421755
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C19920870
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:48:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C19920870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeHNAcZ (ORCPT
+        id S1731060AbeHNAci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:32:25 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44368 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730027AbeHNAcY (ORCPT
+        Mon, 13 Aug 2018 20:32:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55720 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730437AbeHNAci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:32:24 -0400
-Received: by mail-pl0-f68.google.com with SMTP id ba4-v6so7434302plb.11;
-        Mon, 13 Aug 2018 14:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eRe8tHpKMfD0sR7WLtln0nbLoir1wj6/XRoyYOrGg0w=;
-        b=IxtefMSDRRABKB/+BHoQ5XJS/mZN9w9nyK6MYrYl3S6JJhkwbXM4hkNTS3w40o+rUb
-         QAogHgDJDiihfIZ19J97UWCnzmWj2WldpHsV+gaE2zppbJ3fg37llELGFaq8jSFMW3LO
-         jRuYFZ2VHea9uPrD0bKXaFIgLP2YAR65Pw+jJDPovBMSybS9GSs4yuIND6/3k+UeZAGQ
-         SRwxYodQ4FA2w0NmnOGAwp1rrmU6a5OlfkLyHwdSIJ3iXuf8N6sIQj/GqCqzw1/4wApJ
-         2qYwCGlQxyU8swcdIs6DDIU9Ju7lVDpAbM/RjzK8uHRaeJ24Kxr/JwLuw9d+w1SpjRWS
-         LbNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eRe8tHpKMfD0sR7WLtln0nbLoir1wj6/XRoyYOrGg0w=;
-        b=VVuB/0GPzmawXgOADlI+2avkvfcPyDdDpoirHJQxrBhsO5bpLLaPWPbtXPGmwxWXXP
-         hoEvUYHaaaS6jne1fHQ9MbSAMf6F10ssAnQhPFa7iVkkUPnjqOcow7uumvXjvMqTkhwC
-         2y9wyyuMiCowydfY7qBuoT6Ayo7R9Ob7p48dsc2B7lwTORbUzAdxto0VcAOz+FfbN3Hv
-         wsmx2FOa+y3d89D8/33i7I+TsAG9lEMrqvt/KeGVJAoDKMRiDz9he5PAOzaNsHeFmpQd
-         jfM1DzyRbov+ct8/vvWoWdaZO/+KPqYN7Ndxqloc7J7UJmfiPT7SesCAHRcs8wozm+4/
-         nMBA==
-X-Gm-Message-State: AOUpUlHdWuDxeSxyNyM8NAQWBtswqcHv34JkB6pYeM7KA5Oe0zObFSkE
-        xWxugnEaRLg3ug28hrJ9H1j3U792
-X-Google-Smtp-Source: AA+uWPxDrTYm1qqBuQkAwK8v+yQzE/S7dXPppjMI5V2IMnfEbS+Otdiw0gKkzSl7zqQ3vX8eYsoAKA==
-X-Received: by 2002:a17:902:b7c6:: with SMTP id v6-v6mr17614238plz.49.1534196900390;
-        Mon, 13 Aug 2018 14:48:20 -0700 (PDT)
-Received: from dsa-mb.local ([2601:282:800:fd80:fc20:f6ce:b02d:5bac])
-        by smtp.googlemail.com with ESMTPSA id y63-v6sm26141867pgd.94.2018.08.13.14.48.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 14:48:19 -0700 (PDT)
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
- per-namespace
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        nikita.leshchenko@oracle.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        linux-wpan@vger.kernel.org,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
- <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
- <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
- <20180718.125938.2271502580775162784.davem@davemloft.net>
- <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
- <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
- <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
- <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
- <87muufze8w.fsf@xmission.com>
- <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
- <87zhyfw70m.fsf@xmission.com>
- <dacc9322-fd5a-dfeb-e4f1-7a288fb79886@gmail.com>
- <87o9evt9a6.fsf@xmission.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <a227d23c-40a1-97a9-d39c-70d16cd470b4@gmail.com>
-Date:   Mon, 13 Aug 2018 15:48:17 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <87o9evt9a6.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Aug 2018 20:32:38 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLdEXP130080
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:32 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kuhmah4pj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:32 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Mon, 13 Aug 2018 17:48:30 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Aug 2018 17:48:26 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLmOEd52494346
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Aug 2018 21:48:24 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C83B124054;
+        Mon, 13 Aug 2018 18:49:22 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 51250124055;
+        Mon, 13 Aug 2018 18:49:21 -0400 (EDT)
+Received: from localhost.localdomain (unknown [9.85.141.105])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 13 Aug 2018 18:49:21 -0400 (EDT)
+From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [PATCH v9 00/22] guest dedicated crypto adapters
+Date:   Mon, 13 Aug 2018 17:47:57 -0400
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+x-cbid: 18081321-0040-0000-0000-0000045E55B2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009538; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073087; UDB=6.00552882; IPR=6.00853043;
+ MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:48:28
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081321-0041-0000-0000-000008655D83
+Message-Id: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808130218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/18 1:17 PM, Eric W. Biederman wrote:
-> David Ahern <dsahern@gmail.com> writes:
-> 
->> On 7/25/18 11:38 AM, Eric W. Biederman wrote:
->>>
->>> Absolutely NOT.  Global thresholds are exactly correct given the fact
->>> you are running on a single kernel.
->>>
->>> Memory is not free (Even though we are swimming in enough of it memory
->>> rarely matters).  One of the few remaining challenges is for containers
->>> is finding was to limit resources in such a way that one application
->>> does not mess things up for another container during ordinary usage.
->>>
->>> It looks like the neighbour tables absolutely are that kind of problem,
->>> because the artificial limits are too strict.   Completely giving up on
->>> limits does not seem right approach either.  We need to fix the limits
->>> we have (perhaps making them go away entirely), not just apply a
->>> band-aid.  Let's get to the bottom of this and make the system better.
->>
->> Eric: yes, they all share the global resource of memory and there should
->> be limits on how many entries a remote entity can create.
->>
->> Network namespaces can provide a separation such that one namespace does
->> not disrupt networking in another. It is absolutely appropriate to do
->> so. Your rigid stance is inconsistent given the basic meaning of a
->> network namespace and the parallels to this same problem -- bridges,
->> vxlans, and ip fragments. Only neighbor tables are not per-device or per
->> namespace; your insistence on global limits is missing the mark and wrong.
-> 
-> That is not what I said.  Let me rephrase and see if you understand.
-> 
-> The problem appears to be of lots of devices.  Fundamentally if you use
-> lots of network devices today unless you adjust gc_thresh3 you will run
-> out of neighbour table entries.
-> 
-> The problem has a bigger scope than what you are looking at.
-> 
-> If you fix the core problem you won't see the problem in the context
-> of network namespaces either.
-> 
-> Default limits should be something that will never be hit unless
-> something goes crazy.  We are hitting them.  Therefore by definition
-> there is a bug in these limits.
+From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-I disagree that the problem is a global limit. It is trivial for users
-to increase gc_thresh3. That does not solve the fundamental problem.
+Notes:
+=====
 
-> 
-> 
-> And yes there is absolutely a place for global limits on things like
-> inodes, file descriptors etc, that does not care about which part of the
-> kernel you are in.  However hitting those limits in normal operation is
-> a bug.
-> 
-> We have ourselves a bug.
+Patches 1-4 (by Harald) posted with this series are forthcoming via
+Martins tree and are based on changes in the ap driver/bus that we use as a
+foundation. They have been included here because some of the functions
+in this patch series are dependent upon them.
 
-I agree we have a bug; we disagree on what that bug is.
+Patches 5-6 (by David) are posted with this series because they are not
+currently in our master branch. Patches 19 and 20 of this series are
+dependent upon them. I believe David's patches are available in the 
+mainline now.
 
-I am just back from vacation and re-read your responses. No where do you
-acknowledge the fundamental point of this patch set - that adding a new
-neighbor entry in one namespace can evict an entry in another namespace
-or worse networking in one namespace can fail due to table overflow
-because of entries from another. That is a real problem.
+This patch series works with the v6 QEMU patches. There is no new QEMU
+patchset version yet because there have been no review comments worthy of
+creating a new series; only a couple of extremely minor nits.
 
-It is not a matter of increasing the default gc_thresh3 to some number
-N; it is ensuring that regardless of the value of gc_thresh3 one
-namespace is not affected by another.
+Abstract:
+========
 
-You created network namespaces and it provides isolation -- separate
-tables essentially -- for devices, FIB entries, sockets, etc, but you
-argue against completing the task with separate neighbor tables which is
-very strange given the impact (completely broken networking).
+On s390, we have cryptographic coprocessor cards, which are modeled on
+Linux as devices on the AP bus. Each card can be partitioned into domains
+which can be thought of as a set of hardware registers for processing 
+crypto commands. Crypto commands are sent to a specific domain within a
+card is via a queue which is identified as a (card,domain) tuple. We model 
+this something like the following (assuming we have access to cards 3 and 
+4 and domains 1 and 2):
 
-> 
-> Eric
-> 
-> p.s. I wrote the definition of network namespaces and it absolutely does
-> have room for global limits.   One of the things Linus has periodically
-> yelled at me about is that there are not enough of them.
-> 
+AP -> card3 -> queue (3,1)
+            -> queue (3,2)
+   -> card4 -> queue (4,1)
+            -> queue (4,2)
+
+If we want to virtualize this, we can use a feature provided by the
+hardware. We basically attach a satellite control block to our main
+hardware virtualization control block and the hardware takes care of
+most of the rest.
+
+For this control block, we don't specify explicit tuples, but a list of
+cards and a list of domains. The guest will get access to the cross
+product.
+
+Because of this, we need to take care that the lists provided to
+different guests don't overlap; i.e., we need to enforce sane
+configurations. Otherwise, one guest may get access to things like
+secret keys for another guest.
+
+The idea of this patch set is to introduce a new device, the matrix
+device. This matrix device hangs off a different root and acts as the
+parent node for mdev devices.
+
+If you now want to give the tuples (4,1) and (4,2), you need to do the
+following:
+
+- Make sure the queues (4,1) and (4,2) belong to vfio_ap (see patches
+  #5 and #6)
+- Create the mediated device.
+- Assign card 4 and domains 1 and 2 to the mediated device
+- Optionally activate the mediated device.
+
+QEMU will now simply consume the mediated device and things should work.
+
+For a complete description of the architecture and concepts underlying
+the design, see the Documentation/s390/vfio-ap.txt file included with this
+patch set.
+
+v7 => v9 Change log:
+===================
+* Removed /sys/devices/virtual/misc/vfio_ap device and restored 
+  /sys/devices/vfio_ap/matrix device as parent of mediated matrix devices
+* Return boolean from ap_configuration_available() in ap.h instead of 0 or
+  an error.
+* Miscellaneous changes due to review comments 
+
+v7 => v8 Change log:
+===================
+* Removed the AP bus gained the ability to designate queues as 'used by
+  host' or as 'used by alternate driver(s)'. 
+* Removed 'activate' attribute from mediated device.
+* Do consistency checking during device assignment:
+  1. Verify that APQNs assigned to the mediated device are bound to the 
+     VFIO AP device driver
+  2. Verify that no APQN assigned to the mediated matrix device is assigned
+     to any other mediated matrix device.
+* The attributes of a mediated matrix device that is in use by a guest can
+  not be changed - i.e., no device assignment/unassignment allowed
+* A mediated matrix device that is in use by a guest can not be removed.
+* Removed all printk logging from VFIO AP driver; allowing return codes
+  from interfaces to describe the error.
+* Reworked the handling of the CRYCB in vSIE based upon patches introduced
+  by David in the mainline. 
+
+v6 => v7 Change log:
+===================
+* The AP bus gained the ability to designate queues as 'used by host'
+  or as 'used by alternate driver(s)'. This allows us to authorise access
+  (via the CRYCB) to queues that are not currently bound to the vfio_ap
+  driver. If a  vfio_ap owned queue diss- and reapears it's guaranteed
+  to get bound back to the vfio_ap driver.
+* The mediated device gained an 'activate' attribute. Sharing conflicts are
+  checked on activation now. If the device was not activated, the mdev
+  open still implies activation. An active ap_matrix_mdev device claims
+  it's resources -- an inactive does not.
+* An active ap_matrix_mdev device can not be removed. An ap_matrix_mdev
+  that is hooked up with a guest can not be deactivated.
+* An active ap_matrix_mdev device rejects assign_* and deassign_*
+  operations. Thus changing the CRYCB masks of a guest in order to
+  accomplys certain hotplug scenarios is planned, but not supported yet. In
+  previous versions it was possible to do those operations on a ap_matrix_mdev
+  that is hooked up to a guest, but the changes would take effect on the next
+  mdev_open. 
+* Synchronisation was reworked.
+* The sysfs path of the parent device changed from /sys/devices/vfio_ap/matrix/
+  to /sys/devices/virtual/misc/vfio_ap/. The parent device is a misc
+  device now.
+* The severity for most of the messages were reduced form error to
+  warning.
+*  We are not as thick headed about the zapq as we used to be in v6.
+
+v5 => v6 Change log:
+===================
+* Added VSIE support - thanks to Pierre Morel
+* Added VFIO_DEVICE_RESET ioctl
+* Zeroizing AP queues when mediated device released and when 
+  VFIO_DEVICE_RESET ioctl is invoked
+* Removed /arch/s390/kvm/kvm-ap.c and arch/s390/include/asm/kvm-ap.h and
+  moved guest matrix configuration into vfio driver
+* Removed temporary interfaces to be supplied by AP bus
+* Made the variable that keeps track of mdev instance count an atomic_t
+  type
+* Removed code iterating through vm_list to determine if another guest has
+  a queue .... not keep a list of matrix_mdev devices and verify against
+  that list. Removes the need for the kvm_lock.
+* Added a sysfs attribute for the mediated matrix device to display the
+  matrix contained in the guest's CRYCB if a guest is using the mdev.
+
+
+v4 => v5 Change log:
+===================
+* Verify AP queues bound to driver in mediated device open callback, prior
+  to configuring the matrix in the CRYCB
+* Implement VFIO_DEVICE_RESET ioctl
+* Zeroize queues on guest entry and exit
+* Removed vnet from all email IBM email addresses referenced
+* Add synchronization in mdev create/remove and open/release.
+
+v4 => v5 Change log:
+===================
+* Added code to mdev open callback to ensure not more than one vfio-ap
+  device can be opened by a guest.
+* Interpret AP instructions by default
+* Removed patch implementing interface to enable/disable AP interpretation,
+  since that will now be done by default
+* Removed patch to reset crypto attributes for ALL vcpus. That will be 
+  submitted as a single patch since it will not be needed in this series - 
+  i.e., it was called from the interface to enable/disable AP instructions
+* All code for initializing crypto for a guest has been moved back to 
+  kvm-s390.c, kvm_s390_crypto_init(kvm) function
+* Maintaining a module reference count for the vfio_ap module so it is not
+  removed while a guest with AP devices is running.
+  
+
+
+v3 => v4 Change log:
+===================
+* Resolved issue with enabling ZCRYPT when KVM is enabled by using
+  #ifdef ZCRYPT in relevant functions
+* Added patch with a new function for resetting the crypto attributes
+  for all vcpus to resolve the issue raised with running vcpus getting out 
+  of sync.
+* Removed KVM_S390_VM_CRYPTO_INTERPRET_AP: Setting interpretive exec mode
+  from vfio_ap driver when mdev device is opened.
+
+
+v2 => v3 Change log:
+===================
+* Set APIE in VCPU setup function
+* Renamed patch 13/15:
+    KVM: s390: Configure the guest's CRYCB
+    KVM: s390: Configure the guest's AP devices
+* Fixed problem with building arch/s390/kvm/kvm-ap.c when CONFIG_ZCRYPT
+  not selected 
+* Removed patch introducing VSIE support for AP pending further 
+  investigation
+* Initialized AP maximum mask sizes - i.e., APM, AQM and ADM - from info
+  returned from PQAP(QCI) function
+* Introduced a new device attribute to the KVM_S390_VM_CRYPTO attribute
+  group for setting a flag via the KVM_SET_DEVICE_ATTR ioctl to indicate
+  whether ECA_APIE should be set or not. The flag is used in the 
+  kvm_s390_vcpu_crypto_setup() function to set ECA_APIE in the SIE block. 
+  
+
+v1 => v2 Change log:
+===================
+* Added documentation vfio-ap.txt
+* Renamed vfio_ap_matrix module and device driver to vfio_ap
+* Use device core device list instead of maintaining list of matrix
+  devices in driver
+* Added VSIE support for AP
+* Create matrix device before registering VFIO AP device driver with the
+  AP bus
+* Renamed the following files in drivers/s390/crypto:
+  * vfio_ap_matrix.drv -> vfio_ap_drv
+  * vfio_ap_matrix_private.h -> vfio_ap_private.h
+  * vfio_ap_matrix_ops.c -> vfio_ap_ops.c
+* arch/s390/include/asm/kvm/ap-matrix-config.h
+  * Renamed to kvm-ap.h
+  * Changed the data type of the bit mask fields for the matrix structure
+    to unsigned long and create them with DECLARE_BITMAP 
+  * Changed #define prefixes from AP_MATRIX to KVM_AP
+  * Changed function and structure prefixes from ap_matrix to kvm_ap
+  * Added function interface to check if AP Extended Addressing (APXA)
+    facility is installedCRYCB_FORMAT_MASK
+  * Added function interface to get the maximum ID for AP mask type
+  * Added function interface to set the AP execution mode
+* arch/s390/kvm/ap-matrix-config.c
+  * Renamed to kvm-ap.c
+  * Changed function prefixes from ap_matrix to kvm_ap
+  * Added function to check if AP Extended Addressing (APXA) facility is
+    installed
+  * Added function to get the maximum ID for AP mask type
+  * Added function to set the AP execution mode
+  * Added a boolean parameter to the functions that retrieve the APM, AQM
+    and ADM bit mask fields from the CRYCB. If true, then the function
+    will clear the bits in the mask before returning a reference to it
+  * Added validation to verify that APM, AQM and ADM bits that are set do
+    not exceed the maximum ID value allowed
+  * 
+* arch/s390/include/asm/kvm_host.h
+  * Changed defined for ECA_AP to ECA_APIE - interpretive execution mode
+  * Added a flag to struct kvm_s390_crypto to indicate whether the 
+    KVM_S390_VM_CPU_FEAT_AP CPU model feature for AP facilities is set
+  * Added two CPU facilities features to set STFLE.12 and STFLE.15
+* arch/s390/kvm/kvm-s390.c
+  * Added initialization for new KVM_S390_VM_CPU_FEAT_AP CPU model feature
+  * Removed kvm_s390_apxa_installed() function
+  * Changed call to kvm_s390_apxa_installed() which has been removed to a
+    call to new kvm_ap_apxa_installed() function.
+  * Added code to kvm_s390_vcpu_crypto_setup() to set the new CPU model 
+    feature flag in the kvm_s390_crypto structure 
+  * Added CRYCB_FORMAT_MASK to mask CRYCBD
+* arch/s390/tools/gen_facilities.c
+  * Added STFLE.12 and STFLE.15 to struct facility _def
+* drivers/s390/crypto/vfio_ap_matrix_private.h
+  * Changed name of file to vfio_ap.private.h
+  * Changed #define prefixes from VFIO_AP_MATRIX to VFIO_AP
+  * struct ap_matrix: removed list fields and locks
+  * struct vfio_ap_queue: removed list field
+  * Renamed functions ap_matrix_mdev_register and ap_matrix_mdev_unregister
+    to vfio_ap_mdev_register and vfio_ap_mdev_unregister respectively
+* drivers/s390/crypto/vfio_ap_matrix_drv.c
+  * Renamed file to drivers/s390/crypto/vfio_ap_drv.c
+  * Changed all #define, structure and function prefixes to vfio_ap
+  * probe function
+    * Changed root device name for the matrix device to vfio_ap:
+      i.e., /sys/devices/vfio_ap/matrix
+    * No longer storing the AP queue device in a list, it is retrievable via
+      the device core
+    * Removed unnecessary check whether matrix device exists
+    * Store the vfio_ap_queue structure in the private field of the ap_queue
+      structure rather than using list interface
+  * remove function
+    * Retrieve vfio_ap_queue structure from the struct ap_queue private 
+      data rather than from a list
+  * Removed unnecesary check 
+* drivers/s390/crypto/vfio_ap_matrix_ops.c
+  * Renamed file to vfio_ap_ops.c
+  * Changed #define prefixes from AP_MATRIX to VFIO_AP
+  * Changed function name prefixes from ap_matrix to vfio_ap
+  * Removed ioctl to configure the CRYCB
+  * create function
+    * Removed ap_matrix_mdev_find_by_uuid() function - function is provided
+      by mdev core
+    * Removed available_instances verification, provided by mdev core
+    * Removed check to see if mediated device exists, handled by mdev core
+  * notifier function
+    * Configuring matrix here instead of via ioctl
+    * Set interpretive execution mode for all VCPUs
+   * Removed R/O attributes to display adapters and domains
+   * Added an R/O attribute to display the matrix
+  * assign_control_domain mdev attribute:
+    * Removed check to see if the domain is installed on the linux host
+    * Added check to verify the control domain ID does not exceed the max 
+      value
+  * assign_adapter mdev attribute:
+    * Added check to verify the adapter ID does not exceed the max 
+      value
+    * If any APQNs configured for the mediated matrix device that
+      have an APID matching the adapter ID being assigned are not
+      bound to the vfio_ap device driver then it is assumed that the APQN is 
+      bound to another driver and assignment will fail
+  * assign_domain mdev attribute:
+    * Added check to verify the domain ID does not exceed the max 
+      value
+    * If any APQNs configured for the mediated matrix device that
+      have an APQI matching the domain ID being assigned are not
+      bound to the vfio_ap device driver then it is assumed that the APQN is 
+      bound to another driver and assignment will fail
+* tools/arch/s390/include/uapi/asm/kvm.h
+  * removed  KVM_S390_VM_CPU_FEAT_AP feature definition
+
+David Hildenbrand (2):
+  KVM: s390: vsie: simulate VCPU SIE entry/exit
+  KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
+
+Harald Freudenberger (4):
+  s390/zcrypt: Add ZAPQ inline function.
+  s390/zcrypt: Review inline assembler constraints.
+  s390/zcrypt: Show load of cards and queues in sysfs
+  s390/zcrypt: Integrate ap_asm.h into include/asm/ap.h.
+
+Pierre Morel (2):
+  KVM: s390: Clear Crypto Control Block when using vSIE
+  KVM: s390: Handling of Cypto control block in VSIE
+
+Tony Krowiak (14):
+  KVM: s390: refactor crypto initialization
+  s390: vfio-ap: base implementation of VFIO AP device driver
+  s390: vfio-ap: register matrix device with VFIO mdev framework
+  s390: vfio-ap: sysfs interfaces to configure adapters
+  s390: vfio-ap: sysfs interfaces to configure domains
+  s390: vfio-ap: sysfs interfaces to configure control domains
+  s390: vfio-ap: sysfs interface to view matrix mdev matrix
+  KVM: s390: interfaces to clear CRYCB masks
+  s390: vfio-ap: implement mediated device open callback
+  s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
+  s390: vfio-ap: zeroize the AP queues.
+  s390: vfio-ap: implement VFIO_DEVICE_RESET ioctl
+  KVM: s390: CPU model support for AP virtualization
+  s390: doc: detailed specifications for AP virtualization
+
+ Documentation/s390/vfio-ap.txt        |  615 +++++++++++++++++++++++
+ MAINTAINERS                           |   12 +
+ arch/s390/Kconfig                     |   11 +
+ arch/s390/include/asm/ap.h            |  284 ++++++++++-
+ arch/s390/include/asm/kvm_host.h      |    6 +
+ arch/s390/include/uapi/asm/kvm.h      |    1 +
+ arch/s390/kvm/kvm-s390.c              |  119 +++--
+ arch/s390/kvm/kvm-s390.h              |    1 +
+ arch/s390/kvm/vsie.c                  |  242 ++++++++-
+ arch/s390/tools/gen_facilities.c      |    2 +
+ drivers/s390/crypto/Makefile          |    4 +
+ drivers/s390/crypto/ap_asm.h          |   59 ++-
+ drivers/s390/crypto/ap_bus.c          |   23 +-
+ drivers/s390/crypto/ap_bus.h          |    1 +
+ drivers/s390/crypto/ap_card.c         |    1 -
+ drivers/s390/crypto/ap_queue.c        |    1 -
+ drivers/s390/crypto/vfio_ap_drv.c     |  141 ++++++
+ drivers/s390/crypto/vfio_ap_ops.c     |  881 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h |  102 ++++
+ drivers/s390/crypto/zcrypt_card.c     |   12 +
+ drivers/s390/crypto/zcrypt_queue.c    |   12 +
+ include/uapi/linux/vfio.h             |    2 +
+ 22 files changed, 2397 insertions(+), 135 deletions(-)
+ create mode 100644 Documentation/s390/vfio-ap.txt
+ create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_private.h
+
