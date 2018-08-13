@@ -3,40 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09372C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B68C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9DBE21746
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DBE21746
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 320472174E
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320472174E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbeHMOKD (ORCPT
+        id S1728926AbeHMOMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:10:03 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42157 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728310AbeHMOKD (ORCPT
+        Mon, 13 Aug 2018 10:12:07 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:50998 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbeHMOMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:10:03 -0400
-Received: from 79.184.254.66.ipv4.supernova.orange.pl (79.184.254.66) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 3c569caa2f956cd0; Mon, 13 Aug 2018 13:28:08 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v4] cpuidle: menu: Handle stopped tick more aggressively
-Date:   Mon, 13 Aug 2018 13:26:00 +0200
-Message-ID: <1582055.9b67urWYFa@aspire.rjw.lan>
-In-Reply-To: <1754612.IcCR94pSYR@aspire.rjw.lan>
-References: <1951009.1jlQfyrxio@aspire.rjw.lan> <3174357.2tBMdxG3bF@aspire.rjw.lan> <1754612.IcCR94pSYR@aspire.rjw.lan>
+        Mon, 13 Aug 2018 10:12:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 323FC6088978;
+        Mon, 13 Aug 2018 13:30:14 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id vV0K9XRPpUNM; Mon, 13 Aug 2018 13:30:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id DE4936088980;
+        Mon, 13 Aug 2018 13:30:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id gC7G4ax4TNfU; Mon, 13 Aug 2018 13:30:13 +0200 (CEST)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id A22556088978;
+        Mon, 13 Aug 2018 13:30:13 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-mtd@lists.infradead.org, David Gstir <david@sigma-star.at>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH 05/25] ubifs: implement ubifs_lpt_lookup using ubifs_pnode_lookup
+Date:   Mon, 13 Aug 2018 13:30:13 +0200
+Message-ID: <3522568.rp1UpMI3Wl@blindfold>
+In-Reply-To: <20180813081238.crujoer2qprhn27y@pengutronix.de>
+References: <20180704124137.13396-1-s.hauer@pengutronix.de> <8387142.nbJ7LYRgBX@blindfold> <20180813081238.crujoer2qprhn27y@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -45,113 +54,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Am Montag, 13. August 2018, 10:12:38 CEST schrieb Sascha Hauer:
+> > Can you please add a helper function for that? These shift games are
+> > always confusing and not easy to spot.
+> 
+> Do you have a suggestion for a helper function? lpt.c is full of rather
+> non obvious arithmetic operations and I couldn't find a helper function
+> that could be reused at least once in the code.
+> 
+> I tried with:
+> 
+> static int lnum_to_pnode_num(struct ubifs_info *c, int lnum)
+> {
+> 	return (lnum - c->main_first) >> UBIFS_LPT_FANOUT_SHIFT;
+> }
+> 
+> But I am not sure this really improves things
 
-Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
-with stopped tick) missed the case when the target residencies of
-deep idle states of CPUs are above the tick boundary which may cause
-the CPU to get stuck in a shallow idle state for a long time.
+I had exactly such helpers in mind.
+The lpt code translates often LEB numbers in both direction.
+So, the helpers should have more than one user.
 
-Say there are two CPU idle states available: one shallow, with the
-target residency much below the tick boundary and one deep, with
-the target residency significantly above the tick boundary.  In
-that case, if the tick has been stopped already and the expected
-next timer event is relatively far in the future, the governor will
-assume the idle duration to be equal to TICK_USEC and it will select
-the idle state for the CPU accordingly.  However, that will cause the
-shallow state to be selected even though it would have been more
-energy-efficient to select the deep one.
+Long story short, I don't force you to add such helper and such.
+Just thought while you are here you can try to make the code more
+readable.
 
-To address this issue, modify the governor to always use the time
-till the closest timer event instead of the predicted idle duration
-if the latter is less than the tick period length and the tick has
-been stopped already.  Also make it extend the search for a matching
-idle state if the tick is stopped to avoid settling on a shallow
-state if deep states with target residencies above the tick period
-length are available.
+I think we both agree that lpt.c is not really review friendly. ;)
 
-In addition, make it always indicate that the tick should be stopped
-if it has been stopped already for consistency.
+Thanks,
+//richard
 
-Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
-Reported-by: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
--> v2: Initialize first_idx properly in the stopped tick case.
- 
-v2 -> v3: Compute data->bucket before checking whether or not the tick has been
-          stopped already to prevent it from becoming stale.
 
-v3 -> v4: Allow the usual state selection to be carried out if the tick has been
-          stopped in case the predicted idle duration is greater than the tick
-          period length and a matching state can be found without overriding
-          the prediction result.
----
- drivers/cpuidle/governors/menu.c |   33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
 
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -349,14 +349,12 @@ static int menu_select(struct cpuidle_dr
- 		 * If the tick is already stopped, the cost of possible short
- 		 * idle duration misprediction is much higher, because the CPU
- 		 * may be stuck in a shallow idle state for a long time as a
--		 * result of it.  In that case say we might mispredict and try
--		 * to force the CPU into a state for which we would have stopped
--		 * the tick, unless a timer is going to expire really soon
--		 * anyway.
-+		 * result of it.  In that case say we might mispredict and use
-+		 * the known time till the closest timer event for the idle
-+		 * state selection.
- 		 */
- 		if (data->predicted_us < TICK_USEC)
--			data->predicted_us = min_t(unsigned int, TICK_USEC,
--						   ktime_to_us(delta_next));
-+			data->predicted_us = ktime_to_us(delta_next);
- 	} else {
- 		/*
- 		 * Use the performance multiplier and the user-configurable
-@@ -381,8 +379,20 @@ static int menu_select(struct cpuidle_dr
- 			continue;
- 		if (idx == -1)
- 			idx = i; /* first enabled state */
--		if (s->target_residency > data->predicted_us)
--			break;
-+		if (s->target_residency > data->predicted_us) {
-+			if (!tick_nohz_tick_stopped() ||
-+			    drv->states[idx].target_residency >= TICK_USEC)
-+				break;
-+
-+			/*
-+			 * If the state selected so far is shallow and the time
-+			 * till the closest timer event matches this state's
-+			 * target residency, select this one to avoid getting
-+			 * stuck in the shallow one for too long.
-+			 */
-+			if (s->target_residency > ktime_to_us(delta_next))
-+				break;
-+		}
- 		if (s->exit_latency > latency_req) {
- 			/*
- 			 * If we break out of the loop for latency reasons, use
-@@ -403,14 +413,13 @@ static int menu_select(struct cpuidle_dr
- 	 * Don't stop the tick if the selected state is a polling one or if the
- 	 * expected idle duration is shorter than the tick period length.
- 	 */
--	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
--	    expected_interval < TICK_USEC) {
-+	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-+	     expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
- 		unsigned int delta_next_us = ktime_to_us(delta_next);
- 
- 		*stop_tick = false;
- 
--		if (!tick_nohz_tick_stopped() && idx > 0 &&
--		    drv->states[idx].target_residency > delta_next_us) {
-+		if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
- 			/*
- 			 * The tick is not going to be stopped and the target
- 			 * residency of the state to be returned is not within
 
