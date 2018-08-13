@@ -2,127 +2,97 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E119AC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ADDC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4402175C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:37:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqfVxsbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4402175C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 863C921781
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863C921781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730767AbeHMWVV (ORCPT
+        id S1730745AbeHMWYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 18:21:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38852 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730016AbeHMWVU (ORCPT
+        Mon, 13 Aug 2018 18:24:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54140 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730219AbeHMWYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 18:21:20 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k3-v6so7986358pgq.5;
-        Mon, 13 Aug 2018 12:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oKz8/gmPrXrpmm/bWENiCqQQdiRVmhnGcR/mYjc8to8=;
-        b=jqfVxsbdlFg6JzQqiUPRvjxiW5fu3AOdSs44ravFNweP8lI6T2FzZ6jm1c8uQMK6UF
-         BFKHDydiN91Y4g2R+cjyLmZDjK+rEoXRpvnGm3LMIJlFjQs6tE9WAQxtGInm0eJ0txVW
-         MB9dBv2T2L4yUerEEnH8wP/wE7ZTXbjm/BneYsC1ngCiWD5duByvYpYgM1EorU8ZPX0A
-         TgnOiDzDawV3AgsEC77Pc7vYNrBYLDajq4GBBHzj8kdMzvU625uCKtiDSwjVzd1+csOT
-         YXSI+f9CzpPMgbB4nTO/jYsKlKJvIXuhR28xmjX94q0K3GvP1qQ7IkUBNql1B6YNEr2f
-         cAkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oKz8/gmPrXrpmm/bWENiCqQQdiRVmhnGcR/mYjc8to8=;
-        b=bzOmlkkfpLx97lg7EhWZFp+8sl29eQrfctPAb3L093djmXGf3GlfgMgPNLiLmXO8mn
-         QgZ5g8djvjhBYRdDayBqfie+D0QUK0jET2M/yQZQN4tWI1GeRcMIyp/OYgtUo0NrLmux
-         xwrAWj71xBHBRYg8FLWYUGkruEBraSaJ6ol5Eu1H4bwhvefiZXLkmck6z+4F+dDi2awj
-         qQ7tjW0wKYfXD73+rD7ITOX55q4bsdmqjM8UaQ/tstgBub3y8QTWEygMSucvDtdj8HWU
-         RwnlAA96vWHu/2ZF0Y00AlgXX85yOhowvTVr7ul1jeeUe4uk1uh91CzD+tK5EY027DyE
-         3wPw==
-X-Gm-Message-State: AOUpUlE7vI4udK6iIRyIH7fJq7Nkg+dCpyWEYlf5IW0voFsjLG7eBrPq
-        kfwFLZqIpY6P4j+ST/IjZZo=
-X-Google-Smtp-Source: AA+uWPzNm44bdeBBtPTJj//KwWVIEMK+Z5RQFnRaZvK9vQUX0iNuj8etxMamAt/KJuHWfmV5vIqxiQ==
-X-Received: by 2002:a62:1756:: with SMTP id 83-v6mr20492348pfx.217.1534189062787;
-        Mon, 13 Aug 2018 12:37:42 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:200::7:6f2])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm49123529pfj.105.2018.08.13.12.37.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 12:37:41 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 12:37:40 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Tobin C. Harding" <me@tobin.cc>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, linux-doc@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 0/4] Convert filter.txt to RST
-Message-ID: <20180813193738.od5k2wwc7dtrxyqp@ast-mbp>
-References: <20180809052328.27942-1-me@tobin.cc>
- <20180809060734.rtqqu4sexbwzuqmm@ast-mbp>
- <20180809072753.GF32374@eros>
- <80bdc251-9f57-602f-6536-b34651684bb7@iogearbox.net>
- <20180810014636.GJ32374@eros>
- <20180810065752.2ab5473d@lwn.net>
- <CAADnVQL-ekJXQoP+Peuh1uBJ1RGxMJ0G0DVp-UoGcWOY9BATeQ@mail.gmail.com>
- <20180811115058.GN32374@eros>
+        Mon, 13 Aug 2018 18:24:33 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61391CE7;
+        Mon, 13 Aug 2018 19:40:54 +0000 (UTC)
+Date:   Mon, 13 Aug 2018 21:40:51 +0200
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+Subject: Re: [PATCH 2/5] vmbus: add driver_override support
+Message-ID: <20180813194051.GA11620@kroah.com>
+References: <20180810230520.2055-1-kys@linuxonhyperv.com>
+ <20180810230611.2114-1-kys@linuxonhyperv.com>
+ <20180810230611.2114-2-kys@linuxonhyperv.com>
+ <CY4PR21MB07739595C31B9B9349604C0ADC390@CY4PR21MB0773.namprd21.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180811115058.GN32374@eros>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <CY4PR21MB07739595C31B9B9349604C0ADC390@CY4PR21MB0773.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 11, 2018 at 09:50:58PM +1000, Tobin C. Harding wrote:
-> On Fri, Aug 10, 2018 at 10:51:28AM -0700, Alexei Starovoitov wrote:
-> > On Fri, Aug 10, 2018 at 5:57 AM Jonathan Corbet <corbet@lwn.net> wrote:
-> > >
-> > > The objective actually is to have SPDX tags in all files in the kernel.
-> > > That includes documentation, even though people, as always, care less
-> > > about the docs than they do the code.
+On Mon, Aug 13, 2018 at 07:30:50PM +0000, Michael Kelley (EOSG) wrote:
+> From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>  Sent: Friday, August 10, 2018 4:06 PM
+> 
+> > From: Stephen Hemminger <stephen@networkplumber.org>
 > > 
-> > right, but let's do that as a separate patch set.
-> > In the current set I'd focus on reviewing the actual doc changes.
-> > In particular completely removing
-> > Documentation/networking/filter.txt
-> > feels wrong, since lots of websites point directly there.
-> > Can we have at least few words there pointing to new location?
+> > Add support for overriding the default driver for a VMBus device
+> > in the same way that it can be done for PCI devices. This patch
+> > adds the /sys/bus/vmbus/devices/.../driver_override file
+> > and the logic for matching.
+> > 
+> > This is used by driverctl tool to do driver override.
+> > https://gitlab.com/driverctl/driverctl
+> > 
+> > Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+> > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+> > ---
+> > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> > index b1b548a21f91..e6d8fdac6d8b 100644
+> > --- a/drivers/hv/vmbus_drv.c
+> > +++ b/drivers/hv/vmbus_drv.c
+> > @@ -498,6 +498,54 @@ static ssize_t device_show(struct device *dev,
+> >  }
+> >  static DEVICE_ATTR_RO(device);
+> > 
+> > +static ssize_t driver_override_store(struct device *dev,
+> > +				     struct device_attribute *attr,
+> > +				     const char *buf, size_t count)
+> > +{
+> > +	struct hv_device *hv_dev = device_to_hv_device(dev);
+> > +	char *driver_override, *old, *cp;
+> > +
+> > +	/* We need to keep extra room for a newline */
+> > +	if (count >= (PAGE_SIZE - 1))
+> > +		return -EINVAL;
 > 
-> Something like ...
-> 
-> 
-> ------------ filter.txt
-> 
-> BPF documentation can now be found in the following places:
-> 
-> - Introduction to BPF (Linux Socket Filter) - Documentation/userspace-api/socket-filter.rst
-> - Classic BPF (cBPF) - Documentation/userspace-api/cBPF.rst
-> - Internal BPF (eBPF) - Documentation/userspace-api/eBPF.rst
+> Does 'count' actually have a relationship to PAGE_SIZE, or
+> is PAGE_SIZE just used as an arbitrary size limit?  I'm
+> wondering what happens on ARM64 with a 64K page size,
+> for example.  If it's just arbitrary, coding such a constant
+> would be better.
 
-Internal ?
-that was the name we used for may be a month many years ago.
-Please use 'extended BPF' in new filter.txt and all other places.
-
-since merge window is open the patches would need to wait until
-bpf-next opens up in few weeks.
-
-Thanks
+sysfs buffers are PAGE_SIZE big.
 
