@@ -2,207 +2,335 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE38C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F40C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9C721754
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31A132172D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:29:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="JLG8z7pC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E9C721754
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EtKD6mJ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A132172D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbeHMXGT (ORCPT
+        id S1730129AbeHMXNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 19:06:19 -0400
-Received: from imap.thunk.org ([74.207.234.97]:38588 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728772AbeHMXGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 19:06:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=eB+Gr79J1bw5IAwETHKD2JUuPKaspUPXDl15gkvWCoY=; b=JLG8z7pCzlH9R5KZrbNslPwS0C
-        rGFRwEPN5fdCfPofsVGFslxtfhn92LgP+7uO4GvC+O+GZIAf05IdLa7dhkQ+GpiVNXTM5Jyts2s+s
-        0S55H/GN0eiHH9Dk0ooRLAAXWTCOYBsLmhhNsj45Ij2S/C2xxGg1yls3Gc5KW6GliyI4=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fpJMG-00045l-3z; Mon, 13 Aug 2018 20:22:32 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 5CEAE7A0391; Mon, 13 Aug 2018 16:22:31 -0400 (EDT)
-Date:   Mon, 13 Aug 2018 16:22:31 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     torvalds@linux-foundation.org
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ext4 updates for 4.19
-Message-ID: <20180813202231.GA15230@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        torvalds@linux-foundation.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Mon, 13 Aug 2018 19:13:38 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:37494 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbeHMXNh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 19:13:37 -0400
+Received: by mail-yw1-f68.google.com with SMTP id w76-v6so14577841ywg.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 13:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=npeB27vPBcPeMvjHIpuLMz5J+dYAUUGtA8DV27XHrQo=;
+        b=EtKD6mJ1EMrV0ceSfoTa/XXYftVBYnEMuqXglFTkrjHF80nXci3GEHNryOxmwtMHcv
+         /SkL55zUaENWbIAXCxJb2egIuavX4+uaGXb00NrnxKkFyw1BIaMUlEr0EADQ+Hz3iUw/
+         VITzq+/mZ9oO6QfyVvBQ7ei1v5Zfn2YAbN7K7cb9M6bXoiUCk4vIvxRRoya2LHYUysWY
+         6hzaEtOCmP0KiOI4ZAI5JHvWoyWdOGjoZ51AJuUoKOzhFIDIlT8/fPHyJxTmDpRCCHg/
+         QLlK7xsm2+DEfDHzQ3oJvd6exKkb6w5wIxOI1b0nIiJNWxskv6EbJ+KQtUajFEgsiV/K
+         igSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=npeB27vPBcPeMvjHIpuLMz5J+dYAUUGtA8DV27XHrQo=;
+        b=tnRsoLdNbOny9ETzVn/Seh26pRoa5yiYo/aNpUX8r9goQNBaUdTTPPscJImPJ3TXz5
+         cfwXi8wLLMCZkjCnsBxCnhh6PPmDeABbRAya4uCcwL98H5JrtvyaCizY6azciC2264L6
+         qM8rNqlh2oiU+saaffD0yJzSrhooqmVvb9frbmE6e+DsYIloAowH1H1Q2g8X0orLumhW
+         M5tYhfwf0P0MRM+378dAaGLKyFJ1iSFOZmTDK2JNQOtPiBwqPmiWVyKc6nW3DVdCFB5X
+         6XB+MtFDNcNrp/rmatIwx3pUnNoAGRPy+BJzJmVAx05b50ZiQuE6AmgL+B6/Eti6iyhP
+         498g==
+X-Gm-Message-State: AOUpUlGn5A1oOByhRM+UhGmllt9nfTd2MhKHhpehDi7F1MBvfWqZn08i
+        2acCYvlsNBRH0MOZWI0qWLkBis/7CIP0NG7GC/wCbg==
+X-Google-Smtp-Source: AA+uWPziDL4xYf4GjS4U90ya6wFtZHOV/t6PiGkS1lQGrgSlu+x1KOftPUeYJnf+P1K2ifrHL7FL7NTx7GCiJIRnq3I=
+X-Received: by 2002:a81:7d43:: with SMTP id y64-v6mr9766929ywc.371.1534192189157;
+ Mon, 13 Aug 2018 13:29:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20180813155002.GC22820@altlinux.org>
+In-Reply-To: <20180813155002.GC22820@altlinux.org>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 13 Aug 2018 13:29:37 -0700
+Message-ID: <CABXOdTdzS35diT=bMsrrGiZgSF5D4t+aYfc7RtHe_5XeT0sFzg@mail.gmail.com>
+Subject: Re: [PATCH] uapi: fix sound/skl-tplg-interface.h userspace
+ compilation errors
+To:     Guenter Roeck <groeck@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 5012284700775a4e6e3fbe7eac4c543c4874b559:
+On Mon, Aug 13, 2018 at 8:50 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
+>
+> Include <linux/types.h> and consistently use types it provides
+> to fix the following sound/skl-tplg-interface.h userspace compilation errors:
+>
+> /usr/include/sound/skl-tplg-interface.h:146:2: error: unknown type name 'u32'
+>   u32 set_params:2;
+> /usr/include/sound/skl-tplg-interface.h:147:2: error: unknown type name 'u32'
+>   u32 rsvd:30;
+> /usr/include/sound/skl-tplg-interface.h:148:2: error: unknown type name 'u32'
+>   u32 param_id;
+> /usr/include/sound/skl-tplg-interface.h:149:2: error: unknown type name 'u32'
+>   u32 max;
+> /usr/include/sound/skl-tplg-interface.h:166:2: error: unknown type name 'u16'
+>   u16 module_id;
+> /usr/include/sound/skl-tplg-interface.h:167:2: error: unknown type name 'u16'
+>   u16 instance_id;
+> /usr/include/sound/skl-tplg-interface.h:171:2: error: unknown type name 'u32'
+>   u32 channels;
+> /usr/include/sound/skl-tplg-interface.h:172:2: error: unknown type name 'u32'
+>   u32 freq;
+> /usr/include/sound/skl-tplg-interface.h:173:2: error: unknown type name 'u32'
+>   u32 bit_depth;
+> /usr/include/sound/skl-tplg-interface.h:174:2: error: unknown type name 'u32'
+>   u32 valid_bit_depth;
+> /usr/include/sound/skl-tplg-interface.h:175:2: error: unknown type name 'u32'
+>   u32 ch_cfg;
+> /usr/include/sound/skl-tplg-interface.h:176:2: error: unknown type name 'u32'
+>   u32 interleaving_style;
+> /usr/include/sound/skl-tplg-interface.h:177:2: error: unknown type name 'u32'
+>   u32 sample_type;
+> /usr/include/sound/skl-tplg-interface.h:178:2: error: unknown type name 'u32'
+>   u32 ch_map;
+> /usr/include/sound/skl-tplg-interface.h:182:2: error: unknown type name 'u32'
+>   u32 set_params:2;
+> /usr/include/sound/skl-tplg-interface.h:183:2: error: unknown type name 'u32'
+>   u32 rsvd:30;
+> /usr/include/sound/skl-tplg-interface.h:184:2: error: unknown type name 'u32'
+>   u32 param_id;
+> /usr/include/sound/skl-tplg-interface.h:185:2: error: unknown type name 'u32'
+>   u32 caps_size;
+> /usr/include/sound/skl-tplg-interface.h:186:2: error: unknown type name 'u32'
+>   u32 caps[HDA_SST_CFG_MAX];
+> /usr/include/sound/skl-tplg-interface.h:190:2: error: unknown type name 'u8'
+>   u8 pipe_id;
+> /usr/include/sound/skl-tplg-interface.h:191:2: error: unknown type name 'u8'
+>   u8 pipe_priority;
+> /usr/include/sound/skl-tplg-interface.h:192:2: error: unknown type name 'u16'
+>   u16 conn_type:4;
+> /usr/include/sound/skl-tplg-interface.h:193:2: error: unknown type name 'u16'
+>   u16 rsvd:4;
+> /usr/include/sound/skl-tplg-interface.h:194:2: error: unknown type name 'u16'
+>   u16 memory_pages:8;
+> /usr/include/sound/skl-tplg-interface.h:200:2: error: unknown type name 'u16'
+>   u16 module_id;
+> /usr/include/sound/skl-tplg-interface.h:201:2: error: unknown type name 'u16'
+>   u16 instance_id;
+> /usr/include/sound/skl-tplg-interface.h:202:2: error: unknown type name 'u32'
+>   u32 max_mcps;
+> /usr/include/sound/skl-tplg-interface.h:203:2: error: unknown type name 'u32'
+>   u32 mem_pages;
+> /usr/include/sound/skl-tplg-interface.h:204:2: error: unknown type name 'u32'
+>   u32 obs;
+> /usr/include/sound/skl-tplg-interface.h:205:2: error: unknown type name 'u32'
+>   u32 ibs;
+> /usr/include/sound/skl-tplg-interface.h:206:2: error: unknown type name 'u32'
+>   u32 vbus_id;
+> /usr/include/sound/skl-tplg-interface.h:208:2: error: unknown type name 'u32'
+>   u32 max_in_queue:8;
+> /usr/include/sound/skl-tplg-interface.h:209:2: error: unknown type name 'u32'
+>   u32 max_out_queue:8;
+> /usr/include/sound/skl-tplg-interface.h:210:2: error: unknown type name 'u32'
+>   u32 time_slot:8;
+> /usr/include/sound/skl-tplg-interface.h:211:2: error: unknown type name 'u32'
+>   u32 core_id:4;
+> /usr/include/sound/skl-tplg-interface.h:212:2: error: unknown type name 'u32'
+>   u32 rsvd1:4;
+> /usr/include/sound/skl-tplg-interface.h:214:2: error: unknown type name 'u32'
+>   u32 module_type:8;
+> /usr/include/sound/skl-tplg-interface.h:215:2: error: unknown type name 'u32'
+>   u32 conn_type:4;
+> /usr/include/sound/skl-tplg-interface.h:216:2: error: unknown type name 'u32'
+>   u32 dev_type:4;
+> /usr/include/sound/skl-tplg-interface.h:217:2: error: unknown type name 'u32'
+>   u32 hw_conn_type:4;
+> /usr/include/sound/skl-tplg-interface.h:218:2: error: unknown type name 'u32'
+>   u32 rsvd2:12;
+> /usr/include/sound/skl-tplg-interface.h:220:2: error: unknown type name 'u32'
+>   u32 params_fixup:8;
+> /usr/include/sound/skl-tplg-interface.h:221:2: error: unknown type name 'u32'
+>   u32 converter:8;
+> /usr/include/sound/skl-tplg-interface.h:222:2: error: unknown type name 'u32'
+>   u32 input_pin_type:1;
+> /usr/include/sound/skl-tplg-interface.h:223:2: error: unknown type name 'u32'
+>   u32 output_pin_type:1;
+> /usr/include/sound/skl-tplg-interface.h:224:2: error: unknown type name 'u32'
+>   u32 is_dynamic_in_pin:1;
+> /usr/include/sound/skl-tplg-interface.h:225:2: error: unknown type name 'u32'
+>   u32 is_dynamic_out_pin:1;
+> /usr/include/sound/skl-tplg-interface.h:226:2: error: unknown type name 'u32'
+>   u32 is_loadable:1;
+> /usr/include/sound/skl-tplg-interface.h:227:2: error: unknown type name 'u32'
+>   u32 rsvd3:11;
+>
+> Fixes: 0c24fdc00244 ("ASoC: topology: Move skl-tplg-interface.h to uapi")
+> Cc: <stable@vger.kernel.org> # v4.18
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 
-  ext4: fix check to prevent initializing reserved inodes (2018-07-29 15:34:00 -0400)
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus
-
-for you to fetch changes up to 863c37fcb14f8b66ea831b45fb35a53ac4a8d69e:
-
-  ext4: remove unneeded variable "err" in ext4_mb_release_inode_pa() (2018-08-04 17:34:07 -0400)
-
-----------------------------------------------------------------
-Convert content from the ext4 wiki to Documentation rst files so it is
-more likely to be updated as we add new features to ext4.  Add 64-bit
-timestamp support to ext4's superblock fields.  And the usual bug
-fixes and cleanups, including a Spectre gadget fixup and some
-hardening against maliciously corrupted file systems.
-
-----------------------------------------------------------------
-Arnd Bergmann (6):
-      ext4: sysfs: print ext4_super_block fields as little-endian
-      ext4: use 64-bit timestamps for mmp_time
-      ext4: use ktime_get_real_seconds for i_dtime
-      ext4: use timespec64 for all inode times
-      jbd2: replace current_kernel_time64 with ktime equivalent
-      ext4: super: extend timestamps to 40 bits
-
-Chengguang Xu (1):
-      ext4: check allocation failure when duplicating "data" in ext4_remount()
-
-Darrick J. Wong (15):
-      ext4: move ext4.txt into its own directory
-      ext4: convert ext4.rst to restructuredtext format
-      ext4: import on-disk layout book from wiki page
-      ext4: import high level design chapter from wiki page
-      ext4: import superblocks chapter from wiki page
-      ext4: import group descriptors chapter from wiki page
-      ext4: import bitmaps chapter from wiki page
-      ext4: import multi-mount protection chapter from wiki page
-      ext4: import journal chapter from wiki page
-      ext4: import inodes chapter from wiki page
-      ext4: import inode data fork chapter from wiki page
-      ext4: import directory layout chapter from wiki page
-      ext4: import extended attributes chapter from wiki page
-      docs: create filesystem internal section
-      docs: add new ext4 superblock time extension fields
-
-Eric Sandeen (1):
-      ext4: reset error code in ext4_find_entry in fallback
-
-Gustavo A. R. Silva (1):
-      ext4: use swap macro in mext_page_double_lock
-
-Jeremy Cline (1):
-      ext4: fix spectre gadget in ext4_mb_regular_allocator()
-
-Junichi Uekawa (1):
-      ext4: fix warning message in ext4_enable_quotas()
-
-Liu Song (1):
-      ext4: improve code readability in ext4_iget()
-
-Ross Zwisler (2):
-      dax: dax_layout_busy_page() warn on !exceptional
-      ext4: handle layout changes to pinned DAX mappings
-
-Theodore Ts'o (2):
-      docs: fix up the obviously obsolete bits in the new ext4 documentation
-      ext4: check for NUL characters in extended attribute's name
-
-Wang Shilong (2):
-      ext4: fix race when setting the bitmap corrupted flag
-      ext4: use ext4_warning() for sb_getblk failure
-
-zhong jiang (1):
-      ext4: remove unneeded variable "err" in ext4_mb_release_inode_pa()
-
- Documentation/conf.py                                    |   2 +-
- Documentation/filesystems/{ext4.txt => ext4/ext4.rst}    | 142 ++++++------
- Documentation/filesystems/ext4/index.rst                 |  17 ++
- Documentation/filesystems/ext4/ondisk/about.rst          |  44 ++++
- Documentation/filesystems/ext4/ondisk/allocators.rst     |  56 +++++
- Documentation/filesystems/ext4/ondisk/attributes.rst     | 191 ++++++++++++++++
- Documentation/filesystems/ext4/ondisk/bigalloc.rst       |  22 ++
- Documentation/filesystems/ext4/ondisk/bitmaps.rst        |  28 +++
- Documentation/filesystems/ext4/ondisk/blockgroup.rst     | 135 +++++++++++
- Documentation/filesystems/ext4/ondisk/blockmap.rst       |  49 ++++
- Documentation/filesystems/ext4/ondisk/blocks.rst         | 142 ++++++++++++
- Documentation/filesystems/ext4/ondisk/checksums.rst      |  73 ++++++
- Documentation/filesystems/ext4/ondisk/directory.rst      | 426 +++++++++++++++++++++++++++++++++++
- Documentation/filesystems/ext4/ondisk/dynamic.rst        |  12 +
- Documentation/filesystems/ext4/ondisk/eainode.rst        |  18 ++
- Documentation/filesystems/ext4/ondisk/globals.rst        |  13 ++
- Documentation/filesystems/ext4/ondisk/group_descr.rst    | 170 ++++++++++++++
- Documentation/filesystems/ext4/ondisk/ifork.rst          | 194 ++++++++++++++++
- Documentation/filesystems/ext4/ondisk/index.rst          |   9 +
- Documentation/filesystems/ext4/ondisk/inlinedata.rst     |  37 ++++
- Documentation/filesystems/ext4/ondisk/inodes.rst         | 575 +++++++++++++++++++++++++++++++++++++++++++++++
- Documentation/filesystems/ext4/ondisk/journal.rst        | 611 ++++++++++++++++++++++++++++++++++++++++++++++++++
- Documentation/filesystems/ext4/ondisk/mmp.rst            |  77 +++++++
- Documentation/filesystems/ext4/ondisk/overview.rst       |  26 +++
- Documentation/filesystems/ext4/ondisk/special_inodes.rst |  38 ++++
- Documentation/filesystems/ext4/ondisk/super.rst          | 801 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- Documentation/index.rst                                  |  11 +
- fs/dax.c                                                 |  10 +-
- fs/ext4/balloc.c                                         |   6 +-
- fs/ext4/ext4.h                                           |  32 +--
- fs/ext4/extents.c                                        |  17 ++
- fs/ext4/ialloc.c                                         |   8 +-
- fs/ext4/inode.c                                          |  65 +++++-
- fs/ext4/mballoc.c                                        |   7 +-
- fs/ext4/mmp.c                                            |   6 +-
- fs/ext4/move_extent.c                                    |   4 +-
- fs/ext4/namei.c                                          |   1 +
- fs/ext4/super.c                                          |  70 ++++--
- fs/ext4/sysfs.c                                          |  32 ++-
- fs/ext4/truncate.h                                       |   4 +
- fs/ext4/xattr.c                                          |   2 +
- fs/jbd2/commit.c                                         |   3 +-
- 42 files changed, 4036 insertions(+), 150 deletions(-)
- rename Documentation/filesystems/{ext4.txt => ext4/ext4.rst} (86%)
- create mode 100644 Documentation/filesystems/ext4/index.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/about.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/allocators.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/attributes.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/bigalloc.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/bitmaps.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/blockgroup.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/blockmap.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/blocks.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/checksums.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/directory.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/dynamic.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/eainode.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/globals.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/group_descr.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/ifork.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/index.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/inlinedata.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/inodes.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/journal.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/mmp.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/overview.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/special_inodes.rst
- create mode 100644 Documentation/filesystems/ext4/ondisk/super.rst
+> ---
+>  include/uapi/sound/skl-tplg-interface.h | 106 ++++++++++++------------
+>  1 file changed, 54 insertions(+), 52 deletions(-)
+>
+> diff --git a/include/uapi/sound/skl-tplg-interface.h b/include/uapi/sound/skl-tplg-interface.h
+> index f58cafa42f18..f39352cef382 100644
+> --- a/include/uapi/sound/skl-tplg-interface.h
+> +++ b/include/uapi/sound/skl-tplg-interface.h
+> @@ -10,6 +10,8 @@
+>  #ifndef __HDA_TPLG_INTERFACE_H__
+>  #define __HDA_TPLG_INTERFACE_H__
+>
+> +#include <linux/types.h>
+> +
+>  /*
+>   * Default types range from 0~12. type can range from 0 to 0xff
+>   * SST types start at higher to avoid any overlapping in future
+> @@ -143,10 +145,10 @@ enum skl_module_param_type {
+>  };
+>
+>  struct skl_dfw_algo_data {
+> -       u32 set_params:2;
+> -       u32 rsvd:30;
+> -       u32 param_id;
+> -       u32 max;
+> +       __u32 set_params:2;
+> +       __u32 rsvd:30;
+> +       __u32 param_id;
+> +       __u32 max;
+>         char params[0];
+>  } __packed;
+>
+> @@ -163,68 +165,68 @@ enum skl_tuple_type {
+>  /* v4 configuration data */
+>
+>  struct skl_dfw_v4_module_pin {
+> -       u16 module_id;
+> -       u16 instance_id;
+> +       __u16 module_id;
+> +       __u16 instance_id;
+>  } __packed;
+>
+>  struct skl_dfw_v4_module_fmt {
+> -       u32 channels;
+> -       u32 freq;
+> -       u32 bit_depth;
+> -       u32 valid_bit_depth;
+> -       u32 ch_cfg;
+> -       u32 interleaving_style;
+> -       u32 sample_type;
+> -       u32 ch_map;
+> +       __u32 channels;
+> +       __u32 freq;
+> +       __u32 bit_depth;
+> +       __u32 valid_bit_depth;
+> +       __u32 ch_cfg;
+> +       __u32 interleaving_style;
+> +       __u32 sample_type;
+> +       __u32 ch_map;
+>  } __packed;
+>
+>  struct skl_dfw_v4_module_caps {
+> -       u32 set_params:2;
+> -       u32 rsvd:30;
+> -       u32 param_id;
+> -       u32 caps_size;
+> -       u32 caps[HDA_SST_CFG_MAX];
+> +       __u32 set_params:2;
+> +       __u32 rsvd:30;
+> +       __u32 param_id;
+> +       __u32 caps_size;
+> +       __u32 caps[HDA_SST_CFG_MAX];
+>  } __packed;
+>
+>  struct skl_dfw_v4_pipe {
+> -       u8 pipe_id;
+> -       u8 pipe_priority;
+> -       u16 conn_type:4;
+> -       u16 rsvd:4;
+> -       u16 memory_pages:8;
+> +       __u8 pipe_id;
+> +       __u8 pipe_priority;
+> +       __u16 conn_type:4;
+> +       __u16 rsvd:4;
+> +       __u16 memory_pages:8;
+>  } __packed;
+>
+>  struct skl_dfw_v4_module {
+>         char uuid[SKL_UUID_STR_SZ];
+>
+> -       u16 module_id;
+> -       u16 instance_id;
+> -       u32 max_mcps;
+> -       u32 mem_pages;
+> -       u32 obs;
+> -       u32 ibs;
+> -       u32 vbus_id;
+> -
+> -       u32 max_in_queue:8;
+> -       u32 max_out_queue:8;
+> -       u32 time_slot:8;
+> -       u32 core_id:4;
+> -       u32 rsvd1:4;
+> -
+> -       u32 module_type:8;
+> -       u32 conn_type:4;
+> -       u32 dev_type:4;
+> -       u32 hw_conn_type:4;
+> -       u32 rsvd2:12;
+> -
+> -       u32 params_fixup:8;
+> -       u32 converter:8;
+> -       u32 input_pin_type:1;
+> -       u32 output_pin_type:1;
+> -       u32 is_dynamic_in_pin:1;
+> -       u32 is_dynamic_out_pin:1;
+> -       u32 is_loadable:1;
+> -       u32 rsvd3:11;
+> +       __u16 module_id;
+> +       __u16 instance_id;
+> +       __u32 max_mcps;
+> +       __u32 mem_pages;
+> +       __u32 obs;
+> +       __u32 ibs;
+> +       __u32 vbus_id;
+> +
+> +       __u32 max_in_queue:8;
+> +       __u32 max_out_queue:8;
+> +       __u32 time_slot:8;
+> +       __u32 core_id:4;
+> +       __u32 rsvd1:4;
+> +
+> +       __u32 module_type:8;
+> +       __u32 conn_type:4;
+> +       __u32 dev_type:4;
+> +       __u32 hw_conn_type:4;
+> +       __u32 rsvd2:12;
+> +
+> +       __u32 params_fixup:8;
+> +       __u32 converter:8;
+> +       __u32 input_pin_type:1;
+> +       __u32 output_pin_type:1;
+> +       __u32 is_dynamic_in_pin:1;
+> +       __u32 is_dynamic_out_pin:1;
+> +       __u32 is_loadable:1;
+> +       __u32 rsvd3:11;
+>
+>         struct skl_dfw_v4_pipe pipe;
+>         struct skl_dfw_v4_module_fmt in_fmt[MAX_IN_QUEUE];
+> --
+> ldv
