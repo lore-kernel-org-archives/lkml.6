@@ -2,153 +2,399 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD47BC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 720D4C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9495921756
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:54:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9495921756
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1864B21756
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:54:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1864B21756
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbeHMPgN (ORCPT
+        id S1729874AbeHMPgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 11:36:13 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:43530 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728966AbeHMPgN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 11:36:13 -0400
-Received: by mail-io0-f198.google.com with SMTP id w19-v6so13703013ioa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 05:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=I2COuKOF6iflk6AxlWpmh8cCPIgdeSrsXgs0Ac4MA1g=;
-        b=Lht41a7/3nB7K8LSO5k4UYWpGTyMzhzdBm+ZLGwjUSEkZShc+nmTQUoYYh8qjhsuJU
-         zR+cV054Yw5kFJqYtXuT+IsICiRtZOV/kMNALSA3FZtOMEhKrm+KqYSx03ZJTn+AyVnK
-         IhUjMLkr2YjLTC7UwdxJjrIvwblZmVegNb8sNELD7G5bBzf+ymv/SIFDkScD4k7bGcDx
-         2dyNRlK95ZpmqxItKrP15sn32cK4WOsRKjiN/78D817EFlvZEBsXrq1wWFFmxUVhkN8X
-         tlNWErFYlc9dblnqruNMX7z/uRLQhaCrh6Wk9uJHRFVM/iCsNTooPACelDGO+yeDSP85
-         n5vw==
-X-Gm-Message-State: AOUpUlG7cbtoJuzEvhKdmEA0R+1fS4aFhfecENNVVECIEQ0v2x5isadx
-        XtFs5YoEEWeT0IMOOVrfkUeHsr3dV4GTe6qIWqd3OqP2MdmD
-X-Google-Smtp-Source: AA+uWPylY9YRLDvyRpQsCX2FsiaJWLPJdseVfrgv3RrMMGCPsq/jaiJyFuPDco80dmn7im1x5xdS82qrxnMpCeJMRwjql7NP8AYw
+        Mon, 13 Aug 2018 11:36:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47792 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729804AbeHMPgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 11:36:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3FC59AD57;
+        Mon, 13 Aug 2018 12:54:19 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 7C0B7DAC8A; Mon, 13 Aug 2018 14:54:11 +0200 (CEST)
+From:   David Sterba <dsterba@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     David Sterba <dsterba@suse.com>, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs updates for 4.19
+Date:   Mon, 13 Aug 2018 14:54:07 +0200
+Message-Id: <cover.1534161966.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-X-Received: by 2002:a24:391:: with SMTP id e139-v6mr6337997ite.29.1534164843057;
- Mon, 13 Aug 2018 05:54:03 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 05:54:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f59610573509684@google.com>
-Subject: general protection fault in send_sigurg_to_task
-From:   syzbot <syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot found the following crash on:
+there are mostly fixes and cleanups, nothing big, though the notable
+thing is the inserted/deleted lines delta -1124.
 
-HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c2a63c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18edf0289d1b5ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f371ca19b341a276761
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 19114 Comm: syz-executor6 Not tainted 4.18.0-next-20180813+ #37
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:sigio_perm fs/fcntl.c:715 [inline]
-RIP: 0010:send_sigurg_to_task+0xf5/0x4d0 fs/fcntl.c:810
-Code: 61 af b1 ff 45 84 f6 0f 84 52 03 00 00 e8 83 ae b1 ff 49 8d bf 58 06  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 91 03 00 00 48 8d 43 c0 4d 8b b7 58 06 00 00 48
-RSP: 0018:ffff88019afc74a8 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff88019afc7518 RCX: ffffc9000643f000
-RDX: 00000000000000cb RSI: ffffffff81cadf6d RDI: 0000000000000658
-RBP: ffff88019afc7540 R08: ffff8801b16ae5c0 R09: ffffed003b6046d6
-R10: ffffed003b6046d6 R11: ffff8801db0236b3 R12: 1ffff100335f8e97
-R13: ffff8801cb8ddb48 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f2e92a99700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa4f3c16e18 CR3: 00000001b2e21000 CR4: 00000000001406f0
-Call Trace:
-  send_sigurg+0x342/0x480 fs/fcntl.c:833
-  sk_send_sigurg+0xd2/0x3d0 net/core/sock.c:2731
-  tcp_check_urg net/ipv4/tcp_input.c:5266 [inline]
-  tcp_urg+0x3c3/0xba0 net/ipv4/tcp_input.c:5307
-  tcp_rcv_established+0xd45/0x2130 net/ipv4/tcp_input.c:5637
-  tcp_v4_do_rcv+0x635/0x8f0 net/ipv4/tcp_ipv4.c:1532
-  sk_backlog_rcv include/net/sock.h:931 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-  release_sock+0xad/0x2c0 net/core/sock.c:2849
-  tcp_sendmsg+0x3a/0x50 net/ipv4/tcp.c:1444
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:622 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:632
-  __sys_sendto+0x3d7/0x670 net/socket.c:1787
-  __do_sys_sendto net/socket.c:1799 [inline]
-  __se_sys_sendto net/socket.c:1795 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1795
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2e92a98c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f2e92a996d4 RCX: 0000000000457089
-RDX: fffffffffffffd43 RSI: 0000000020de1fff RDI: 0000000000000004
-RBP: 00000000009300a0 R08: 0000000020db4ff0 R09: 0000000000000010
-R10: 0000000020008005 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d3d08 R14: 00000000004c898d R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace dc729739ab19eafd ]---
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:sigio_perm fs/fcntl.c:715 [inline]
-RIP: 0010:send_sigurg_to_task+0xf5/0x4d0 fs/fcntl.c:810
-Code: 61 af b1 ff 45 84 f6 0f 84 52 03 00 00 e8 83 ae b1 ff 49 8d bf 58 06  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 91 03 00 00 48 8d 43 c0 4d 8b b7 58 06 00 00 48
-RSP: 0018:ffff88019afc74a8 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff88019afc7518 RCX: ffffc9000643f000
-RDX: 00000000000000cb RSI: ffffffff81cadf6d RDI: 0000000000000658
-RBP: ffff88019afc7540 R08: ffff8801b16ae5c0 R09: ffffed003b6046d6
-R10: ffffed003b6046d6 R11: ffff8801db0236b3 R12: 1ffff100335f8e97
-R13: ffff8801cb8ddb48 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f2e92a99700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa4f3c16e18 CR3: 00000001b2e21000 CR4: 00000000001406f0
+There are no known pending merge conflicts with other trees. Please
+pull, thanks.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+User visible changes:
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+* allow defrag on opened read-only files that have rw permissions; similar
+  to what dedupe will allow on such files
+
+
+Core changes:
+
+* tree checker improvements, reported by fuzzing:
+  * more checks for: block group items, essential trees
+  * chunk type validation
+  * mount time cross-checks that physical and logical chunks match
+  * switch more error codes to EUCLEAN aka. EFSCORRUPTED
+
+
+Fixes:
+
+* fsync corner case fixes
+
+* fix send failure when root has deleted files still open
+
+* send, fix incorrect file layout after hole punching beyond eof
+
+* fix races between mount and deice scan ioctl, found by fuzzing
+
+* fix deadlock when delayed iput is called from writeback on the same
+  inode; rare but has been observed in practice, also removes code
+
+* fix pinned byte accounting, using the right percpu helpers; this should
+  avoid some write IO inefficiency during low space conditions
+
+* don't remove block group that still has pinned bytes
+
+* reset on-disk device stats value after replace, otherwise this would
+  report stale values for the new device
+
+
+Cleanups:
+
+* time64_t/timespec64 cleanups
+
+* remove remaining dead code in scrub handling NOCOW extents after
+  disabling it in previous cycle
+
+* simplify fsync regarding ordered extents logic and remove all the
+  related code
+
+* remove redundant arguments in order to reduce stack space consumption
+
+* remove support for V0 type of extents, not in use since 2.6.30
+
+* remove several unused structure members
+
+* fewer indirect function calls by inlining some callbacks
+
+* qgroup rescan timing fixes
+
+* vfs: iget cleanups
+
+----------------------------------------------------------------
+The following changes since commit 1ffaddd029c867d134a1dde39f540dcc8c52e274:
+
+  Linux 4.18-rc8 (2018-08-05 12:37:41 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.19-tag
+
+for you to fetch changes up to 39379faaad79e3cf403a6904a08676b7850043ae:
+
+  btrfs: revert fs_devices state on error of btrfs_init_new_device (2018-08-06 13:13:04 +0200)
+
+----------------------------------------------------------------
+Adam Borowski (1):
+      btrfs: allow defrag on a file opened read-only that has rw permissions
+
+Al Viro (4):
+      btrfs: btrfs_iget never returns an is_bad_inode inode
+      btrfs: simplify IS_ERR/PTR_ERR checks
+      btrfs: lift make_bad_inode into btrfs_iget
+      btrfs: simplify btrfs_iget
+
+Allen Pais (1):
+      btrfs: replace get_seconds with new 64bit time API
+
+Anand Jain (9):
+      btrfs: use a temporary variable for fs_devices in btrfs_init_new_device
+      btrfs: drop unnecessary variable in btrfs_init_new_device
+      btrfs: fix in-memory value of total_devices after seed device deletion
+      btrfs: do btrfs_free_stale_devices outside of device_list_add
+      btrfs: extend locked section when adding a new device in device_list_add
+      btrfs: rename local devices for fs_devices in btrfs_free_stale_devices(
+      btrfs: use device_list_mutex when removing stale devices
+      btrfs: rename btrfs_parse_early_options
+      btrfs: use the assigned fs_devices instead of the dereference
+
+Arnd Bergmann (2):
+      btrfs: use monotonic time for transaction handling
+      btrfs: use timespec64 for i_otime
+
+Bart Van Assche (3):
+      btrfs: Fix misleading indentation reported by smatch
+      btrfs: Annotate fall-through when parsing mount option
+      btrfs: Fix a C compliance issue
+
+Chengguang Xu (5):
+      btrfs: return error instead of crash when detecting unexpected type in btrfs_get_acl
+      btrfs: replace empty string with NULL when getting attribute length in btrfs_get_acl
+      btrfs: remove unnecessary -ERANGE check in btrfs_get_acl
+      btrfs: avoid error code override in btrfs_get_acl
+      btrfs: remove unnecessary curly braces in btrfs_get_acl
+
+David Sterba (34):
+      btrfs: remove remaing full_sync logic from btrfs_sync_file
+      btrfs: annotate unlikely branches after V0 extent type removal
+      btrfs: simplify some assignments of inode numbers
+      btrfs: simplify pointer chasing of local fs_info variables
+      btrfs: use copy_page for copying pages instead of memcpy
+      btrfs: prune unused includes
+      btrfs: pass only eb to num_extent_pages
+      btrfs: use round_up wrapper in num_extent_pages
+      btrfs: switch types to int when counting eb pages
+      btrfs: open-code bio_set_op_attrs
+      btrfs: raid56: add new helper for starting async work
+      btrfs: raid56: use new helper for async_rmw_stripe
+      btrfs: raid56: use new helper for async_read_rebuild
+      btrfs: raid56: use new helper for async_scrub_parity
+      btrfs: raid56: merge rbio_is_full helpers
+      btrfs: raid56: catch errors from full_stripe_write
+      btrfs: lift uuid_mutex to callers of btrfs_scan_one_device
+      btrfs: lift uuid_mutex to callers of btrfs_open_devices
+      btrfs: lift uuid_mutex to callers of btrfs_parse_early_options
+      btrfs: reorder initialization before the mount locks uuid_mutex
+      btrfs: fix mount and ioctl device scan ioctl race
+      btrfs: refactor block group replication factor calculation to a helper
+      btrfs: rename btrfs_release_extent_buffer_page
+      btrfs: remove unused member async_submit_bio::fs_info
+      btrfs: remove unused member async_submit_bio::bio_flags
+      btrfs: unify end_io callbacks of async_submit_bio
+      btrfs: drop extent_io_ops::tree_fs_info callback
+      btrfs: drop extent_io_ops::merge_bio_hook callback
+      btrfs: drop extent_io_ops::set_range_writeback callback
+      btrfs: remove unused member btrfs_root::name
+      btrfs: dev-replace: remove unused members of btrfs_dev_replace
+      btrfs: constify strings passed to assertion helper
+      btrfs: merge free_fs_root helpers
+      btrfs: extent-tree: remove unused member walk_control::for_reloc
+
+Ethan Lien (2):
+      btrfs: use correct compare function of dirty_metadata_bytes
+      btrfs: use customized batch size for total_bytes_pinned
+
+Filipe Manana (4):
+      Btrfs: remove unused key assignment when doing a full send
+      Btrfs: fix mount failure after fsync due to hard link recreation
+      Btrfs: fix send failure when root has deleted files still open
+      Btrfs: send, fix incorrect file layout after hole punching beyond eof
+
+Geert Uytterhoeven (1):
+      btrfs: Refactor count handling in btrfs_unpin_free_ino
+
+Goldwyn Rodrigues (1):
+      btrfs: Use iocb to derive pos instead of passing a separate parameter
+
+Gu Jinxiang (4):
+      btrfs: remove unused parameter from btrfs_parse_subvol_options
+      btrfs: make fs_devices a local variable in btrfs_parse_early_options
+      btrfs: return device pointer from btrfs_scan_one_device
+      btrfs: validate type when reading a chunk
+
+Josef Bacik (6):
+      btrfs: always wait on ordered extents at fsync time
+      btrfs: remove the wait ordered logic in the log_one_extent path
+      btrfs: clean up the left over logged_list usage
+      btrfs: remove the logged extents infrastructure
+      Btrfs: fix btrfs_write_inode vs delayed iput deadlock
+      btrfs: don't leak ret from do_chunk_alloc
+
+Lu Fengqi (27):
+      btrfs: qgroup: cleanup the unused srcroot from btrfs_qgroup_inherit
+      btrfs: qgroup: Drop quota_root parameter from add_qgroup_relation_item
+      btrfs: qgroup: Drop quota_root parameter from del_qgroup_relation_item
+      btrfs: qgroup: Drop quota_root parameter from del_qgroup_item
+      btrfs: qgroup: Drop root parameter from update_qgroup_limit_item
+      btrfs: qgroup: Drop root parameter from update_qgroup_info_item
+      btrfs: qgroup: Drop quota_root and fs_info parameters from update_qgroup_status_item
+      btrfs: qgroup: Drop fs_info parameter from btrfs_add_qgroup_relation
+      btrfs: qgroup: Drop fs_info parameter from __del_qgroup_relation
+      btrfs: qgroup: Drop fs_info parameter from btrfs_del_qgroup_relation
+      btrfs: qgroup: Drop fs_info parameter from btrfs_create_qgroup
+      btrfs: qgroup: Drop fs_info parameter from btrfs_remove_qgroup
+      btrfs: qgroup: Drop fs_info parameter from btrfs_limit_qgroup
+      btrfs: qgroup: Drop fs_info parameter from btrfs_qgroup_trace_extent
+      btrfs: qgroup: Drop fs_info parameter from btrfs_qgroup_trace_leaf_items
+      btrfs: qgroup: Drop root parameter from btrfs_qgroup_trace_subtree
+      btrfs: qgroup: Drop fs_info parameter from btrfs_qgroup_account_extent
+      btrfs: qgroup: Drop fs_info parameter from btrfs_run_qgroups
+      btrfs: qgroup: Drop fs_info parameter from btrfs_qgroup_inherit
+      btrfs: qgroup: Drop fs_info parameter from qgroup_rescan_leaf
+      btrfs: Remove fs_info from btrfs_insert_delayed_dir_index
+      btrfs: Remove fs_info from btrfs_delete_delayed_dir_index
+      btrfs: Remove fs_info from btrfs_del_root
+      btrfs: Remove fs_info from btrfs_del_root_ref
+      btrfs: Remove fs_info from btrfs_add_root_ref
+      btrfs: Remove root parameter from btrfs_unlink_subvol
+      btrfs: Remove redundant btrfs_release_path from btrfs_unlink_subvol
+
+Misono Tomohiro (4):
+      btrfs: backref: Use ERR_CAST to return error code
+      btrfs: extent-tree: Remove unused __btrfs_free_block_rsv
+      btrfs: replace: Reset on-disk dev stats value after replace
+      btrfs: Use wrapper macro for rcu string to remove duplicate code
+
+Naohiro Aota (1):
+      btrfs: revert fs_devices state on error of btrfs_init_new_device
+
+Nikolay Borisov (55):
+      btrfs: Document __btrfs_inc_extent_ref
+      btrfs: Fix comment in lookup_inline_extent_backref
+      btrfs: Streamline log_extent_csums a bit
+      btrfs: Remove fs_info from insert_tree_block_ref
+      btrfs: Remove fs_info from insert_extent_data_ref
+      btrfs: Remove fs_info argument from insert_extent_backref
+      btrfs: Remove fs_info from remove_extent_data_ref
+      btrfs: Remove fs_info from fixup_low_keys
+      btrfs: Remove fs_info from lookup_inline_extent_backref
+      btrfs: Remove fs_info argument from update_inline_extent_backref
+      btrfs: Remove fs_info argument from lookup_tree_block_ref
+      btrfs: Remove fs_info argument from lookup_extent_data_ref
+      btrfs: Remove fs_info from lookup_extent_backref
+      btrfs: Remove fs_info from btrfs_add_delayed_tree_ref
+      btrfs: Remove fs_info from btrfs_add_delayed_data_ref
+      btrfs: Remove fs_info from btrfs_make_block_group
+      btrfs: Remove fs_info from btrfs_remove_block_group
+      btrfs: Remove fs_info from __btrfs_free_extent
+      btrfs: Remove fs_info from alloc_reserved_file_extent
+      btrfs: Remove fs_info argument from __btrfs_inc_extent_ref
+      btrfs: Remove fs_info from run_delayed_data_ref
+      btrfs: Remove fs_info from run_delayed_extent_op
+      btrfs: Remove unused fs_info from cleanup_extent_op
+      btrfs: Remove fs_info from cleanup_ref_head
+      btrfs: Remove fs_info from run_delayed_tree_ref
+      btrfs: Remove fs_info from do_chunk_alloc
+      btrfs: Remove fs_info from btrfs_alloc_chunk
+      btrfs: Remove fs_info from check_system_chunk
+      btrfs: Remove fs_info from free_excluded_extents
+      btrfs: Remove fs_info from exclude_super_stripes
+      btrfs: Remove fs_info from insert_inline_extent_backref
+      btrfs: Remove fs_info from run_one_delayed_ref
+      btrfs: Remove fs_info from remove_extent_backref
+      btrfs: Remove fs_info from btrfs_alloc_logged_file_extent
+      btrfs: Remove fs_info from btrfs_inc_block_group_ro
+      btrfs: Remove fs_info from btrfs_force_chunk_alloc
+      btrfs: Deduplicate extent_buffer init code
+      btrfs: Streamline memory allocation failure handling in btrfs_add_delayed_tree_ref
+      btrfs: Remove V0 extent support
+      btrfs: Add graceful handling of V0 extents
+      btrfs: qgroups: Move transaction management inside btrfs_quota_enable/disable
+      btrfs: close devices without offloading to a temporary list
+      btrfs: Rewrite retry logic in do_chunk_alloc
+      btrfs: Simplify page unlocking in alloc_extent_buffer
+      btrfs: Reword dodgy comments in alloc_extent_buffer
+      btrfs: Refactor loop in btrfs_release_extent_buffer_page
+      btrfs: Document locking requirement via lockdep_assert_held
+      btrfs: Rename EXTENT_BUFFER_DUMMY to EXTENT_BUFFER_UNMAPPED
+      btrfs: Remove fs_info argument from btrfs_add_dev_item
+      btrfs: Remove fs_info from btrfs_rm_dev_replace_remove_srcdev
+      btrfs: remove fs_info argument from update_dev_stat_item
+      btrfs: Remove fs_info from btrfs_assign_next_active_device
+      btrfs: Remove fs_info from btrfs_destroy_dev_replace_tgtdev
+      btrfs: Remove fs_info form btrfs_free_chunk
+      btrfs: Remove fs_info from btrfs_finish_chunk_alloc
+
+Qu Wenruo (15):
+      btrfs: scrub: Remove unused copy_nocow_pages and its callchain
+      btrfs: check-integrity: Fix NULL pointer dereference for degraded mount
+      btrfs: Get rid of the confusing btrfs_file_extent_inline_len
+      btrfs: Don't remove block group that still has pinned down bytes
+      btrfs: tree-checker: Verify block_group_item
+      btrfs: tree-checker: Detect invalid and empty essential trees
+      btrfs: relocation: Only remove reloc rb_trees if reloc control has been initialized
+      btrfs: Remove unused function btrfs_account_dev_extents_size
+      btrfs: Use btrfs_mark_bg_unused to replace open code
+      btrfs: scrub: cleanup the remaining nodatasum fixup code
+      btrfs: extent-tree: Remove dead alignment check
+      btrfs: Check that each block group has corresponding chunk at mount time
+      btrfs: Verify that every chunk has corresponding block group at mount time
+      btrfs: Introduce mount time chunk <-> dev extent mapping check
+      btrfs: Exit gracefully when chunk map cannot be inserted to the tree
+
+Su Yue (2):
+      btrfs: print more details when checking tree block finds a problem
+      btrfs: return EUCLEAN if extent_inline_ref type is invalid
+
+Zhihui Zhang (1):
+      Btrfs: free space cache: make sure there is always room for generation number
+
+ fs/btrfs/acl.c                |  13 +-
+ fs/btrfs/backref.c            |   6 +-
+ fs/btrfs/btrfs_inode.h        |   2 +-
+ fs/btrfs/check-integrity.c    |   9 +-
+ fs/btrfs/compression.c        |  18 +-
+ fs/btrfs/ctree.c              |  53 +--
+ fs/btrfs/ctree.h              |  89 ++---
+ fs/btrfs/delayed-inode.c      |  14 +-
+ fs/btrfs/delayed-inode.h      |   2 -
+ fs/btrfs/delayed-ref.c        |  43 +-
+ fs/btrfs/delayed-ref.h        |   6 +-
+ fs/btrfs/dev-replace.c        |  29 +-
+ fs/btrfs/dir-item.c           |   4 +-
+ fs/btrfs/disk-io.c            | 113 ++----
+ fs/btrfs/disk-io.h            |   5 +-
+ fs/btrfs/extent-tree.c        | 883 +++++++++++++++++++-----------------------
+ fs/btrfs/extent_io.c          | 156 ++++----
+ fs/btrfs/extent_io.h          |  16 +-
+ fs/btrfs/file-item.c          |   4 +-
+ fs/btrfs/file.c               | 128 +-----
+ fs/btrfs/free-space-cache.c   |  19 +-
+ fs/btrfs/free-space-tree.c    |   2 +-
+ fs/btrfs/inode-map.c          |  12 +-
+ fs/btrfs/inode.c              | 161 +++-----
+ fs/btrfs/ioctl.c              |  69 ++--
+ fs/btrfs/ordered-data.c       | 138 -------
+ fs/btrfs/ordered-data.h       |  23 +-
+ fs/btrfs/print-tree.c         |  39 +-
+ fs/btrfs/qgroup.c             | 270 +++++++------
+ fs/btrfs/qgroup.h             |  46 +--
+ fs/btrfs/raid56.c             | 109 ++----
+ fs/btrfs/reada.c              |   3 +-
+ fs/btrfs/relocation.c         | 216 ++---------
+ fs/btrfs/root-tree.c          |  22 +-
+ fs/btrfs/scrub.c              | 679 +-------------------------------
+ fs/btrfs/send.c               | 172 ++++++--
+ fs/btrfs/struct-funcs.c       |   1 -
+ fs/btrfs/super.c              | 115 +++---
+ fs/btrfs/sysfs.c              |   2 -
+ fs/btrfs/tests/qgroup-tests.c |  24 +-
+ fs/btrfs/transaction.c        |  11 +-
+ fs/btrfs/transaction.h        |   2 +-
+ fs/btrfs/tree-checker.c       | 115 +++++-
+ fs/btrfs/tree-log.c           | 270 +++++--------
+ fs/btrfs/volumes.c            | 611 ++++++++++++++++++-----------
+ fs/btrfs/volumes.h            |  31 +-
+ include/trace/events/btrfs.h  |   3 +-
+ 47 files changed, 1817 insertions(+), 2941 deletions(-)
