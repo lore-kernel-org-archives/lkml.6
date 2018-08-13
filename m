@@ -2,149 +2,207 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBEFC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE38C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824862174C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:18:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E9C721754
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 20:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ExXGgyWG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824862174C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="JLG8z7pC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E9C721754
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbeHMXCL (ORCPT
+        id S1730162AbeHMXGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 19:02:11 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40930 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728540AbeHMXCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 19:02:11 -0400
-Received: by mail-yw1-f67.google.com with SMTP id z143-v6so14540805ywa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 13:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4llhmx8dM+NoO6zXFNJEAeJZh3bIqLi9zO1XxXSdFPk=;
-        b=ExXGgyWG9nnbjrWXo3gQYy74eXBDeZQwgp4g385ZcInUpSg2Jw3yM73pXxYK8ufSbF
-         cstbSn/W13iWZGihtcpsqu1O+EE4oTzKlgGb3SzMEh1eAIAynB69LGr2V3xIK+1qxf9L
-         TnCzdsD3k/h1R0YdwYgSs3b0mtCjdg8m1EhY4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4llhmx8dM+NoO6zXFNJEAeJZh3bIqLi9zO1XxXSdFPk=;
-        b=JZtgRsBktCD5mFB7mts6m90RrmxqZfaFKfgNva8svZm/lt7bsRB/4wE6aHkgWPTUvZ
-         ub+G8FbKphU9c0IOPBiJqzMKSILUl7oUIMRzgUYmkvPL0CxHsBbhxfUHa+ufE49EdWD4
-         TCqTzEpP9qO0JdQVkf/5IkGrOXOlEYdZuyNbWayuwSSaV7HPGP3ZmSt0dmFrlq8srj5j
-         U4hjAr2OiF9LrmKBPIphclKsJDo0lxDMcwOoX+pC4zJQQhh1ag8+yfLS/XpFNFu4fxAY
-         NeIxnb8ojdcD0D/ul6j/LJHlPWbuh0K50GZBjHfdG7z2Opw8tIN+biFlcTesVJifm5ox
-         WsXA==
-X-Gm-Message-State: AOUpUlHBZix/rGmKyfZ6jn6/Pnp+gJMwPIndu7PL3M4ttBaenAsAhOLq
-        fXU/VBL9VIJoZzOOvcG70eohwOEFEwE=
-X-Google-Smtp-Source: AA+uWPyA/3KUMrYtxz1VTbZKA5tnMXNFKSzBD+3LwFV0e2wXauoVOdhVZ+QY1wtcnbhdofzTAGtPYQ==
-X-Received: by 2002:a81:9251:: with SMTP id j78-v6mr10897631ywg.5.1534191505531;
-        Mon, 13 Aug 2018 13:18:25 -0700 (PDT)
-Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
-        by smtp.gmail.com with ESMTPSA id 21-v6sm8453894ywf.79.2018.08.13.13.18.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 13:18:24 -0700 (PDT)
-Received: by mail-yw1-f42.google.com with SMTP id r3-v6so14551765ywc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 13:18:23 -0700 (PDT)
-X-Received: by 2002:a25:af4a:: with SMTP id c10-v6mr10728529ybj.463.1534191503289;
- Mon, 13 Aug 2018 13:18:23 -0700 (PDT)
+        Mon, 13 Aug 2018 19:06:19 -0400
+Received: from imap.thunk.org ([74.207.234.97]:38588 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728772AbeHMXGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 19:06:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=eB+Gr79J1bw5IAwETHKD2JUuPKaspUPXDl15gkvWCoY=; b=JLG8z7pCzlH9R5KZrbNslPwS0C
+        rGFRwEPN5fdCfPofsVGFslxtfhn92LgP+7uO4GvC+O+GZIAf05IdLa7dhkQ+GpiVNXTM5Jyts2s+s
+        0S55H/GN0eiHH9Dk0ooRLAAXWTCOYBsLmhhNsj45Ij2S/C2xxGg1yls3Gc5KW6GliyI4=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fpJMG-00045l-3z; Mon, 13 Aug 2018 20:22:32 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5CEAE7A0391; Mon, 13 Aug 2018 16:22:31 -0400 (EDT)
+Date:   Mon, 13 Aug 2018 16:22:31 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     torvalds@linux-foundation.org
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ext4 updates for 4.19
+Message-ID: <20180813202231.GA15230@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        torvalds@linux-foundation.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Received: by 2002:a25:2316:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 13:18:22
- -0700 (PDT)
-In-Reply-To: <CAGXu5jKHbx-L+n+CCExshtW1uQqkRX6MS5SoEH068DzoB+oKEg@mail.gmail.com>
-References: <20180811094853.32167-1-stefan@agner.ch> <CAK7LNAQ2THEDLB8so3zahGykH_BWaWAU7Tg_2yGEPKo+ApsxHg@mail.gmail.com>
- <CAGXu5jKHbx-L+n+CCExshtW1uQqkRX6MS5SoEH068DzoB+oKEg@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 13 Aug 2018 13:18:22 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJ_XZ0Rwve_JKsWtPpdVDed4jYT=Qrg-XkmQqMuJZQmgQ@mail.gmail.com>
-Message-ID: <CAGXu5jJ_XZ0Rwve_JKsWtPpdVDed4jYT=Qrg-XkmQqMuJZQmgQ@mail.gmail.com>
-Subject: Re: [PATCH] gcc-plugins: require GCC
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josef Bacik <jbacik@fb.com>, Emese Revfy <re.emese@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 1:10 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Mon, Aug 13, 2018 at 12:38 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-08-11 18:48 GMT+09:00 Stefan Agner <stefan@agner.ch>:
->>> Unsurprisingly GCC plugins require GCC as a compiler. This avoids
->>> GCC plugins being selectable when using clang.
->>>
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>> ---
->>>  arch/Kconfig | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/Kconfig b/arch/Kconfig
->>> index 1aa59063f1fd..8c693a837ed7 100644
->>> --- a/arch/Kconfig
->>> +++ b/arch/Kconfig
->>> @@ -422,7 +422,7 @@ config HAVE_GCC_PLUGINS
->>>
->>>  menuconfig GCC_PLUGINS
->>>         bool "GCC plugins"
->>> -       depends on HAVE_GCC_PLUGINS
->>> +       depends on HAVE_GCC_PLUGINS && CC_IS_GCC
->>>         depends on PLUGIN_HOSTCC != ""
->>>         help
->>>           GCC plugins are loadable modules that provide extra features to the
->>> --
->>> 2.18.0
->>>
->>
->> I guess the more correct way is to fix
->> scripts/gcc-plugin.sh
->>
->> This shell script should exit 0
->> only when GCC plugin is supported.
->
-> I'm of two minds: we already have the gcc test in Kconfig so we might
-> want to avoid redundant checks, but maybe the script should be a
-> "complete" test. I guess the latter. I will send a patch.
+The following changes since commit 5012284700775a4e6e3fbe7eac4c543c4874b559:
 
-Actually, how about we do the test in Kconfig, but ahead of the
-script? That will reduce redundancy:
+  ext4: fix check to prevent initializing reserved inodes (2018-07-29 15:34:00 -0400)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 1aa59063f1fd..18f518624e41 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -409,7 +409,7 @@ preferred-plugin-hostcc := $(if-success,[
-$(gcc-version) -ge 40800 ],$(HOSTCXX),
+are available in the Git repository at:
 
- config PLUGIN_HOSTCC
-        string
--       default "$(shell,$(srctree)/scripts/gcc-plugin.sh
-"$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")"
-+       default "$(shell,$(srctree)/scripts/gcc-plugin.sh
-"$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")" if CC_IS_GCC
-        help
-          Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
-          $(HOSTCC), or a null string if GCC plugin is unsupported.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus
 
+for you to fetch changes up to 863c37fcb14f8b66ea831b45fb35a53ac4a8d69e:
 
--Kees
+  ext4: remove unneeded variable "err" in ext4_mb_release_inode_pa() (2018-08-04 17:34:07 -0400)
 
--- 
-Kees Cook
-Pixel Security
+----------------------------------------------------------------
+Convert content from the ext4 wiki to Documentation rst files so it is
+more likely to be updated as we add new features to ext4.  Add 64-bit
+timestamp support to ext4's superblock fields.  And the usual bug
+fixes and cleanups, including a Spectre gadget fixup and some
+hardening against maliciously corrupted file systems.
+
+----------------------------------------------------------------
+Arnd Bergmann (6):
+      ext4: sysfs: print ext4_super_block fields as little-endian
+      ext4: use 64-bit timestamps for mmp_time
+      ext4: use ktime_get_real_seconds for i_dtime
+      ext4: use timespec64 for all inode times
+      jbd2: replace current_kernel_time64 with ktime equivalent
+      ext4: super: extend timestamps to 40 bits
+
+Chengguang Xu (1):
+      ext4: check allocation failure when duplicating "data" in ext4_remount()
+
+Darrick J. Wong (15):
+      ext4: move ext4.txt into its own directory
+      ext4: convert ext4.rst to restructuredtext format
+      ext4: import on-disk layout book from wiki page
+      ext4: import high level design chapter from wiki page
+      ext4: import superblocks chapter from wiki page
+      ext4: import group descriptors chapter from wiki page
+      ext4: import bitmaps chapter from wiki page
+      ext4: import multi-mount protection chapter from wiki page
+      ext4: import journal chapter from wiki page
+      ext4: import inodes chapter from wiki page
+      ext4: import inode data fork chapter from wiki page
+      ext4: import directory layout chapter from wiki page
+      ext4: import extended attributes chapter from wiki page
+      docs: create filesystem internal section
+      docs: add new ext4 superblock time extension fields
+
+Eric Sandeen (1):
+      ext4: reset error code in ext4_find_entry in fallback
+
+Gustavo A. R. Silva (1):
+      ext4: use swap macro in mext_page_double_lock
+
+Jeremy Cline (1):
+      ext4: fix spectre gadget in ext4_mb_regular_allocator()
+
+Junichi Uekawa (1):
+      ext4: fix warning message in ext4_enable_quotas()
+
+Liu Song (1):
+      ext4: improve code readability in ext4_iget()
+
+Ross Zwisler (2):
+      dax: dax_layout_busy_page() warn on !exceptional
+      ext4: handle layout changes to pinned DAX mappings
+
+Theodore Ts'o (2):
+      docs: fix up the obviously obsolete bits in the new ext4 documentation
+      ext4: check for NUL characters in extended attribute's name
+
+Wang Shilong (2):
+      ext4: fix race when setting the bitmap corrupted flag
+      ext4: use ext4_warning() for sb_getblk failure
+
+zhong jiang (1):
+      ext4: remove unneeded variable "err" in ext4_mb_release_inode_pa()
+
+ Documentation/conf.py                                    |   2 +-
+ Documentation/filesystems/{ext4.txt => ext4/ext4.rst}    | 142 ++++++------
+ Documentation/filesystems/ext4/index.rst                 |  17 ++
+ Documentation/filesystems/ext4/ondisk/about.rst          |  44 ++++
+ Documentation/filesystems/ext4/ondisk/allocators.rst     |  56 +++++
+ Documentation/filesystems/ext4/ondisk/attributes.rst     | 191 ++++++++++++++++
+ Documentation/filesystems/ext4/ondisk/bigalloc.rst       |  22 ++
+ Documentation/filesystems/ext4/ondisk/bitmaps.rst        |  28 +++
+ Documentation/filesystems/ext4/ondisk/blockgroup.rst     | 135 +++++++++++
+ Documentation/filesystems/ext4/ondisk/blockmap.rst       |  49 ++++
+ Documentation/filesystems/ext4/ondisk/blocks.rst         | 142 ++++++++++++
+ Documentation/filesystems/ext4/ondisk/checksums.rst      |  73 ++++++
+ Documentation/filesystems/ext4/ondisk/directory.rst      | 426 +++++++++++++++++++++++++++++++++++
+ Documentation/filesystems/ext4/ondisk/dynamic.rst        |  12 +
+ Documentation/filesystems/ext4/ondisk/eainode.rst        |  18 ++
+ Documentation/filesystems/ext4/ondisk/globals.rst        |  13 ++
+ Documentation/filesystems/ext4/ondisk/group_descr.rst    | 170 ++++++++++++++
+ Documentation/filesystems/ext4/ondisk/ifork.rst          | 194 ++++++++++++++++
+ Documentation/filesystems/ext4/ondisk/index.rst          |   9 +
+ Documentation/filesystems/ext4/ondisk/inlinedata.rst     |  37 ++++
+ Documentation/filesystems/ext4/ondisk/inodes.rst         | 575 +++++++++++++++++++++++++++++++++++++++++++++++
+ Documentation/filesystems/ext4/ondisk/journal.rst        | 611 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ Documentation/filesystems/ext4/ondisk/mmp.rst            |  77 +++++++
+ Documentation/filesystems/ext4/ondisk/overview.rst       |  26 +++
+ Documentation/filesystems/ext4/ondisk/special_inodes.rst |  38 ++++
+ Documentation/filesystems/ext4/ondisk/super.rst          | 801 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Documentation/index.rst                                  |  11 +
+ fs/dax.c                                                 |  10 +-
+ fs/ext4/balloc.c                                         |   6 +-
+ fs/ext4/ext4.h                                           |  32 +--
+ fs/ext4/extents.c                                        |  17 ++
+ fs/ext4/ialloc.c                                         |   8 +-
+ fs/ext4/inode.c                                          |  65 +++++-
+ fs/ext4/mballoc.c                                        |   7 +-
+ fs/ext4/mmp.c                                            |   6 +-
+ fs/ext4/move_extent.c                                    |   4 +-
+ fs/ext4/namei.c                                          |   1 +
+ fs/ext4/super.c                                          |  70 ++++--
+ fs/ext4/sysfs.c                                          |  32 ++-
+ fs/ext4/truncate.h                                       |   4 +
+ fs/ext4/xattr.c                                          |   2 +
+ fs/jbd2/commit.c                                         |   3 +-
+ 42 files changed, 4036 insertions(+), 150 deletions(-)
+ rename Documentation/filesystems/{ext4.txt => ext4/ext4.rst} (86%)
+ create mode 100644 Documentation/filesystems/ext4/index.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/about.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/allocators.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/attributes.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/bigalloc.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/bitmaps.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/blockgroup.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/blockmap.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/blocks.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/checksums.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/directory.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/dynamic.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/eainode.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/globals.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/group_descr.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/ifork.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/index.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/inlinedata.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/inodes.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/journal.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/mmp.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/overview.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/special_inodes.rst
+ create mode 100644 Documentation/filesystems/ext4/ondisk/super.rst
