@@ -2,124 +2,124 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C98C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7166CC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C5D21747
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:50:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C5D21747
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1967621569
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:52:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="L5JMCz6l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1967621569
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbeHMOcV (ORCPT
+        id S1729638AbeHMOe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:32:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55636 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728557AbeHMOcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:32:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C4A940122B3;
-        Mon, 13 Aug 2018 11:50:23 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 738F52026D66;
-        Mon, 13 Aug 2018 11:50:20 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 13 Aug 2018 13:50:23 +0200 (CEST)
-Date:   Mon, 13 Aug 2018 13:50:19 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Song Liu <liu.song.a23@gmail.com>, srikar@linux.vnet.ibm.com,
-        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ananth@linux.vnet.ibm.com,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v8 3/6] Uprobes: Support SDT markers having reference
- count (semaphore)
-Message-ID: <20180813115019.GB28360@redhat.com>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
- <20180809041856.1547-4-ravi.bangoria@linux.ibm.com>
- <CAPhsuW49+qA7kT7yE4tgbnAuox-iOzssg-jc2abG8XDo6XeX8A@mail.gmail.com>
- <95a1221e-aecc-42be-5239-a2c2429be176@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95a1221e-aecc-42be-5239-a2c2429be176@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 11:50:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 11:50:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+        Mon, 13 Aug 2018 10:34:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36793 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729333AbeHMOe2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:34:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h9-v6so14029177wro.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=p3COwGjfR8XQD7gxUJeWVI5dLZaMoxYPQU7DwzhzqQM=;
+        b=L5JMCz6lPlv7TWtqon6CqFXizVMIYB14lQlWCoGtUvCvnkJLw1rI2C2mac7Ur3XU7i
+         3XpWEVdWS8CJbZHpHxIotVC6I2+53TLNwLD5BeX2RcdeFMU7bI+ZOiyeNLXdhOUf3Rna
+         KIOKEqge66tMU2J8eilR+dMjpcAPLjUKixk6DaR4hgWuwGe5W/NHCmCPw328vR1GPeAh
+         YtFggeVyotpX0SJVKwnuOWtBKNI0/RdxxW0aKqees9T7DFYPWB9GmvuU+rPQfHeZYlLW
+         OSjNecdrnARChghAJLepN+s/+DX2UKTmMHV4DKOFsu3u30c+miD6RKivGApJGhA+T29U
+         Uq9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=p3COwGjfR8XQD7gxUJeWVI5dLZaMoxYPQU7DwzhzqQM=;
+        b=h04pH8N/FseOigM6RC03MfjeAr9YuiULhm9P8zKCcfqE35+yseAXR5936ME7GFODGv
+         6wBmNDEWgL+Ib7u9Lc33FvZm8f5LMlL+uLXEyOrBr+ngq2IJ96hQFp3u41kc+Jy5IARp
+         KZGDIF1yW/k4Tc7jZeeWLpaNJMmQPEGvKkpOvevNtB3E1SZmTfxLmwuDvhpVH0Bu7IGO
+         732UM98c5WmzxtYeqHHZOefna7g3EWzyuZe8XpeH1BMUpj8+ZckRD2/yNHiZpNQoAIy8
+         tLa23UvBjKCr02JbxeVoBB5rFrB9Gushx+VX2KDTowGj+8n7cynZVVZimedebD283DNy
+         lorQ==
+X-Gm-Message-State: AOUpUlELZNaftssdAOStbQ4JivTxspOSnbBVmFDgoHuySjcZQciVnPQd
+        KePH3I+EvhdNT3VV/tm1jPmVDw==
+X-Google-Smtp-Source: AA+uWPyIwY7cOq9T/vAZxi7wJfeHL3vW6ye7qy65MIyn3IwNNM/sNFLIn0t08lYLiVxkwJTyp7BYbQ==
+X-Received: by 2002:adf:f8c7:: with SMTP id f7-v6mr10849232wrq.237.1534161149959;
+        Mon, 13 Aug 2018 04:52:29 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f132-v6sm11359495wme.24.2018.08.13.04.52.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Aug 2018 04:52:29 -0700 (PDT)
+Message-ID: <97a8213c1dd3a22b4f98c959d4a2c2bfbd432e9d.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: meson-g12a: add initial g12a s905d2
+ SoC DT support
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 13 Aug 2018 13:52:27 +0200
+In-Reply-To: <1534160901-22889-3-git-send-email-jianxin.pan@amlogic.com>
+References: <1534160901-22889-1-git-send-email-jianxin.pan@amlogic.com>
+         <1534160901-22889-3-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/13, Ravi Bangoria wrote:
->
-> On 08/11/2018 01:27 PM, Song Liu wrote:
-> >> +
-> >> +static void delayed_uprobe_delete(struct delayed_uprobe *du)
-> >> +{
-> >> +       if (!du)
-> >> +               return;
-> > Do we really need this check?
->
-> Not necessary though, but I would still like to keep it for a safety.
+On Mon, 2018-08-13 at 19:48 +0800, Jianxin Pan wrote:
+> Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
+> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
+> Timer, UART. It's capable of booting up into the serial console.
+> 
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/Makefile            |   1 +
+>  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
+>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 172 ++++++++++++++++++++++++
+>  3 files changed, 195 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+> 
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10
+> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
+> +	};
 
-Heh. I tried to ignore all minor problems in this version, but now that Song
-mentioned this unnecessary check...
+t* should be after s*
 
-Personally I really dislike the checks like this one.
-
-	- It can confuse the reader who will try to understand the purpose
-
-	- it can hide a bug if delayed_uprobe_delete(du) is actually called
-	  with du == NULL.
-
-IMO, you should either remove it and let the kernel crash (to notice the
-problem), or turn it into
-
-	if (WARN_ON(!du))
-		return;
-
-which is self-documented and reports the problem without kernel crash.
-
-> >> +       rc_vma = find_ref_ctr_vma(uprobe, mm);
-> >> +
-> >> +       if (rc_vma) {
-> >> +               rc_vaddr = offset_to_vaddr(rc_vma, uprobe->ref_ctr_offset);
-> >> +               ret = __update_ref_ctr(mm, rc_vaddr, is_register ? 1 : -1);
-> >> +
-> >> +               if (is_register)
-> >> +                       return ret;
-> >> +       }
-> > Mixing __update_ref_ctr() here and delayed_uprobe_add() in the same
-> > function is a little confusing (at least for me). How about we always use
-> > delayed uprobe for uprobe_mmap() and use non-delayed in other case(s)?
->
->
-> No. delayed_uprobe_add() is needed for uprobe_register() case to handle race
-> between uprobe_register() and process creation.
-
-Yes.
-
-But damn, process creation (exec) is trivial. We could add a new uprobe_exec()
-hook and avoid delayed_uprobe_install() in uprobe_mmap().
-
-Afaics, the really problematic case is dlopen() which can race with _register()
-too, right?
-
-Oleg.
+> +
+> +	soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
 
