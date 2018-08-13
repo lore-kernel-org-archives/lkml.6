@@ -2,90 +2,108 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9839C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94E6C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFB5217BC
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:06:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mgYTDIpL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DFB5217BC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id AA782217FE
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:07:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA782217FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbeHMPs2 (ORCPT
+        id S1729687AbeHMPuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 11:48:28 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39246 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728838AbeHMPs2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 11:48:28 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7DCxQOo159583;
-        Mon, 13 Aug 2018 13:05:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=yBPlPezc2OFCFgbxIk1Ps/CJanz6K9+AT7GQyM/TfEs=;
- b=mgYTDIpLzKjYH4fB0MN+Mk9stNG0SZJg4CtE+JiEwrsPjuBdkzK+Z90pY4rXmy+Z+SR4
- mh4d5Wj/XAUjlr1xptNLXON6ypXGC7OXUwzlZds1shaCPUuABiWUJ6kvoXNQsTLkwJ54
- Gncjt++cF1kdR0u7DF9TjWVt54ZPxpZ9t7d/brZ1DeQfTxablHnpf2RSXwwtDV1nUOsK
- CaYtt/+7PqD2ZRdfpL9JZ+JGUFCR4EZzpyzrlXXaAlFjuHo0Ag/2YXTqEZvDfLAk9e8W
- 1y7+pXSwD2X85NsXlqniWOQwNb8gylmCjaiViBzB0xpdnYnIl+aRQqjQpkind8CHQGKK pA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ksqrp43f6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Aug 2018 13:05:52 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7DD5qYt026632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Aug 2018 13:05:52 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7DD5plt024414;
-        Mon, 13 Aug 2018 13:05:51 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 Aug 2018 13:05:51 +0000
-Date:   Mon, 13 Aug 2018 16:05:41 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, Chao Yu <yuchao0@huawei.com>,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] staging: erofs: cleanup z_erofs_vle_work_{lookup,
- register}
-Message-ID: <20180813130541.hzjgb6wznkxcnajg@mwanda>
-References: <20180812140150.13397-1-chao@kernel.org>
- <20180812140150.13397-5-chao@kernel.org>
- <20180813120057.6grkpue6h7dtmpt2@mwanda>
- <f162748e-cc02-8578-2a0b-af16d982e0b3@huawei.com>
+        Mon, 13 Aug 2018 11:50:01 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40742 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728610AbeHMPuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 11:50:01 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2ECFBF5132114;
+        Mon, 13 Aug 2018 21:07:35 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Mon, 13 Aug 2018
+ 21:07:31 +0800
+Message-ID: <5B718290.4010302@huawei.com>
+Date:   Mon, 13 Aug 2018 21:07:28 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f162748e-cc02-8578-2a0b-af16d982e0b3@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8983 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=402
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808130142
+To:     Vladimir Zapolskiy <vz@mleia.com>
+CC:     <linux@armlinux.org.uk>, <slemieux.tyco@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm:pm: Use kmemdup to replace duplicating its implementation
+References: <1533868851-316-1-git-send-email-zhongjiang@huawei.com> <37f8ff09-b0c2-5cc6-87d4-8138e7b66b32@mleia.com>
+In-Reply-To: <37f8ff09-b0c2-5cc6-87d4-8138e7b66b32@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yeah.  You'd have to remove the const.
+On 2018/8/13 20:28, Vladimir Zapolskiy wrote:
+> Hi zhong jiang,
+>
+> On 08/10/2018 05:40 AM, zhong jiang wrote:
+>> kmemdup is better than kmalloc() + memcpy(), and we do not like
+>> open code. So just use kmemdup instead.
+>>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> ---
+>>  arch/arm/mach-lpc32xx/pm.c | 7 ++-----
+>>  1 file changed, 2 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-lpc32xx/pm.c b/arch/arm/mach-lpc32xx/pm.c
+>> index 6247157..6eefff8 100644
+>> --- a/arch/arm/mach-lpc32xx/pm.c
+>> +++ b/arch/arm/mach-lpc32xx/pm.c
+>> @@ -86,7 +86,8 @@ static int lpc32xx_pm_enter(suspend_state_t state)
+>>  	void *iram_swap_area;
+>>  
+>>  	/* Allocate some space for temporary IRAM storage */
+>> -	iram_swap_area = kmalloc(lpc32xx_sys_suspend_sz, GFP_KERNEL);
+>> +	iram_swap_area = kmemdup((void *)TEMP_IRAM_AREA,
+>> +				lpc32xx_sys_suspend_sz, GFP_KERNEL);
+> there is a minor coding style issue, which is reported by checkpatch:
+>
+> CHECK: Alignment should match open parenthesis
+> #53: FILE: arch/arm/mach-lpc32xx/pm.c:90:
+>
+> Other than that the change is valid, I'll fix the indentation issue
+> myself and apply the change for v4.19.
+ Thank you for doing this. I will notice that for next time.
 
-Anyway, on looking at it more, I guess this patch is fine for now.  We
-will probably end up changing z_erofs_vle_work_lookup() and
-z_erofs_vle_work_register() some more in the future.
+ Sincerely,
+ zhong jiang
+> --
+> Best wishes,
+> Vladimir
+>
+>>  	if (!iram_swap_area) {
+>>  		printk(KERN_ERR
+>>  		       "PM Suspend: cannot allocate memory to save portion "
+>> @@ -94,10 +95,6 @@ static int lpc32xx_pm_enter(suspend_state_t state)
+>>  		return -ENOMEM;
+>>  	}
+>>  
+>> -	/* Backup a small area of IRAM used for the suspend code */
+>> -	memcpy(iram_swap_area, (void *) TEMP_IRAM_AREA,
+>> -		lpc32xx_sys_suspend_sz);
+>> -
+>>  	/*
+>>  	 * Copy code to suspend system into IRAM. The suspend code
+>>  	 * needs to run from IRAM as DRAM may no longer be available
+>>
+>
+> .
+>
 
-regards,
-dan carpenter
 
