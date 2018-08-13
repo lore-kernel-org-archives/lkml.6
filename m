@@ -2,110 +2,139 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC43FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FF4C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFDB21834
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFDB21834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3841621834
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:22:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YeINWPjq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3841621834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbeHMLBJ (ORCPT
+        id S1728762AbeHMLDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 07:01:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726345AbeHMLBJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 07:01:09 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7D8EHDb031371
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:19:58 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ku1ebst0a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:19:57 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 13 Aug 2018 09:19:55 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Aug 2018 09:19:50 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7D8JmgR38273224
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Aug 2018 08:19:49 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04D7C4204F;
-        Mon, 13 Aug 2018 11:19:55 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A345342042;
-        Mon, 13 Aug 2018 11:19:51 +0100 (BST)
-Received: from [9.124.35.193] (unknown [9.124.35.193])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 13 Aug 2018 11:19:51 +0100 (BST)
-Subject: Re: [PATCH v8 5/6] trace_uprobe/sdt: Prevent multiple reference
- counter for same uprobe
-To:     Song Liu <liu.song.a23@gmail.com>, srikar@linux.vnet.ibm.com,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ananth@linux.vnet.ibm.com,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
- <20180809041856.1547-6-ravi.bangoria@linux.ibm.com>
- <CAPhsuW5g1dOnceA=kqfpC+rR6EguJaR+wPwY9nSWLbGSSj5XjQ@mail.gmail.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Mon, 13 Aug 2018 13:49:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 13 Aug 2018 07:03:37 -0400
+Received: from ozlabs.org ([203.11.71.1]:44665 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726345AbeHMLDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 07:03:36 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41ppcX10sFz9s7Q;
+        Mon, 13 Aug 2018 18:22:20 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534148543;
+        bh=wqgWaP4E5W3HovJ6tbm+oVAE7r3X09bADk495VCvt2c=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YeINWPjqZIgBK/91ajnQOamdCmrpwuRqfBGaoAnhVhcAGO9fvisvTpv+nABDqw2X3
+         QiOcP2yg/QVkvApKaH9aBUAfSBCS7YpzfTbTzdevu60N1YF0Qj+fYXZ1tswZ4sLZGb
+         6wg4EQNsyPGUPri8/bzLVeCIVbCZZ1KkwnOlpIc1sEGaRq3qVjdF94m7YZugQq6U4D
+         xn95RBDeKxGXcy0WQHw1+C86ZBEwN/7RtiVs5Ha5RcCTsX/fmZNnUaP0bHCORC+84i
+         H4NIn/QZJ7ddCdKHD8AbLYsBD3GQJrHaFQKhx9pMIrhajbOLtmZlQVoziFNm/0BJiz
+         5qsBcLPe5JEjw==
+Date:   Mon, 13 Aug 2018 18:22:18 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?SsO8cmc=?= Billeter <j@bitron.ch>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20180813182218.595fe0bc@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW5g1dOnceA=kqfpC+rR6EguJaR+wPwY9nSWLbGSSj5XjQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18081308-0012-0000-0000-00000298EF56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081308-0013-0000-0000-000020CC0A0F
-Message-Id: <66f84261-aa3e-4692-a124-09537fda4312@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808130092
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/i8v81v0_6pKOT5ElPwG24Y9"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Song,
+--Sig_/i8v81v0_6pKOT5ElPwG24Y9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 08/11/2018 01:42 PM, Song Liu wrote:
-> Do we really need this given we already have PATCH 4/6?
-> uprobe_regsiter() can be called
-> out of trace_uprobe, this patch won't catch all conflicts anyway.
+Hi all,
 
-Right but it, at least, catch all conflicts happening via trace_uprobe.
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-I don't mind in removing this patch but I would like to get an opinion of
-Oleg/Srikar/Steven/Masami.
+kernel/exit.c: In function 'reparent_leader':
+kernel/exit.c:640:3: error: too few arguments to function 'group_send_sig_i=
+nfo'
+   group_send_sig_info(p->signal->pdeath_signal_proc,
+   ^~~~~~~~~~~~~~~~~~~
+In file included from include/linux/sched/signal.h:6:0,
+                 from include/linux/sched/cputime.h:5,
+                 from kernel/exit.c:14:
+include/linux/signal.h:262:12: note: declared here
+ extern int group_send_sig_info(int sig, struct siginfo *info,
+            ^~~~~~~~~~~~~~~~~~~
 
-Thanks,
-Ravi
+Caused by commit
 
+  b04bd4d0117c ("prctl: add PR_[GS]ET_PDEATHSIG_PROC")
+
+interacting with commit
+
+  0102498083d5 ("signal: Pass pid type into group_send_sig_info")
+
+from the uerns tree.
+
+I have applied the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 13 Aug 2018 18:07:07 +1000
+Subject: [PATCH] merge fix up for "signal: Pass pid type into
+ group_send_sig_info"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/exit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 7b72bed283d4..066c66448258 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -638,7 +638,7 @@ static void reparent_leader(struct task_struct *father,=
+ struct task_struct *p,
+=20
+ 	if (p->signal->pdeath_signal_proc)
+ 		group_send_sig_info(p->signal->pdeath_signal_proc,
+-				    SEND_SIG_NOINFO, p);
++				    SEND_SIG_NOINFO, p, PIDTYPE_TGID);
+=20
+ 	/* We don't want people slaying init. */
+ 	p->exit_signal =3D SIGCHLD;
+--=20
+2.18.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/i8v81v0_6pKOT5ElPwG24Y9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltxP7oACgkQAVBC80lX
+0GzdwQf9EmRTqtPBceXGFGX3rfkOvFom64t3bUMsLuP/zhBdpD51TLCa1mjg6h/b
+S6+aVAOihJlbxGygtbIeR6lU+S3+5gYkDy29mXji8KWD1cspYr8FhW1q7SQ5n8kK
+s8LvQEZE2IXJFyxNkejhGYmDIuKY/y/JVK3rSKkb3D6YZ6F2U1UW2kpRMr7IMhHu
+fnXZfRBdTTFiEKPhFEk4kS3MxLEWAnVonWdkeP4dd8q9qP0S0+5oRCpddwlBwodp
+jnn+dWsXxt3BucWzdyMG8fTEqKXVrJICSeABIRrtdPngV/AEhdygQ8rMTDmLgU0I
+AtAJnJ+zxs2+zVwdeN6Nlw0VWGAeXg==
+=L4bW
+-----END PGP SIGNATURE-----
+
+--Sig_/i8v81v0_6pKOT5ElPwG24Y9--
