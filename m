@@ -2,129 +2,90 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43401C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396D7C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E894521733
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99C721736
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:33:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CHk10lO3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E894521733
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tTFt15K1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99C721736
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbeHNARI (ORCPT
+        id S1730621AbeHNARr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:17:08 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43589 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730043AbeHNARI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:17:08 -0400
-Received: by mail-pl0-f66.google.com with SMTP id x6-v6so7422527plv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 14:33:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZxzbflCOQY382fh9rSSSZCozTZ/r3oM+f3UblpRfGkI=;
-        b=CHk10lO365yB7TV/5/ymoCSbLvd24teU+5g4xxZE7Btgd+U/OvVkpgOjdQGhxZu0hD
-         BZcOqwhPQLsfHVZgC7dxZmlS3BeEl6+jcp9uCJ6QLr/9UfKmUNwBsn0Y4FcWNgYgQNXl
-         YJEMhMBOlv5N/Isn/DyqD1lsZP6dhzlamabsJ1R3aBaje3hEixx0P4o42S7GBzuu4QtM
-         Lx1VyLbN0iv0WZXalmeHeF2DgiQaulYOAL7T7sbUP+PUUQSEEbFg44Y6TjxvlUUMqAqY
-         6dtrmIkjYsUplqJUtZpaoXLNZGxIkZ9JctgfJibhLIGPS6Vizazv0Hzp1a9a2G6LXna+
-         GFrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZxzbflCOQY382fh9rSSSZCozTZ/r3oM+f3UblpRfGkI=;
-        b=gon9alAZxDuWdc8ePQZcmKzFCBhbyzw8FW0TjkfTBVRet3nYeS8XuNNdq9ER0SeFyE
-         nBOYILxePTeHhua1unBousWwMJl/CFp4uHxJ7FzpI8zUBy6MCn6acYvnn22SHvSi8sHq
-         A4G1UVBcnR2lqzhMw6GECwYCQTTi+tjEEIyW0YAW3MfwFLpb9npGCW+Z6XlWT5nu9K8v
-         5oOhOBJheh50psvuRL5XQabtTRGVFnMlj1pj/Wth6x7968SXiVJEA4HOuVL8jWDYoJwa
-         CCVUhts1BPXsovhYqey6iQNOBJo45+co9NZ8Rte90Fq1CsD/J3t1hCkcYTjipWJ5ZtWG
-         i/0g==
-X-Gm-Message-State: AOUpUlFXiL4Un6LsLhruaZYF3Olu/napi1v6GIzk35FUkbxH5ZnAQe+H
-        VbZbOmYimAZSgSUTjr/Xgz2TKT3mK7dnGks+5D+JOA==
-X-Google-Smtp-Source: AA+uWPz8JRp4CUzLbGQM++kxBmkGVk2MEI7a3LG8J2sd4GRj7HEfBp/RsW87ccD4TrdS0J1mo7vtq3IBBOUeDr/uEQQ=
-X-Received: by 2002:a17:902:6b0b:: with SMTP id o11-v6mr17836259plk.214.1534195987728;
- Mon, 13 Aug 2018 14:33:07 -0700 (PDT)
+        Mon, 13 Aug 2018 20:17:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:58805 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729835AbeHNARq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 20:17:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41q89h5KlWz9rxx;
+        Tue, 14 Aug 2018 07:33:44 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534196024;
+        bh=TOzcFkvHYyir7A60H3TNPGuWFS93WJ2fCbJikDp0Ft0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tTFt15K1KhtBzSNWMcnClYNjQw7nRwEHcS2gSaNZ97F7QXFn0FqtBYEwE7iKZsj9V
+         F6edYateM9Ad0wKXh7/JEROMAYNkNYwWgSekvnKOvd+RFRTYvF2htrwsoawiI3udq5
+         XpOFBdWN66P+B4wk8cDPHqqG3qiWoXLni54CamLm/dWCrILD45R3Urfe9Z1Ymsg8QM
+         G3m/+e5TfXJEmKCYuXQ1iDz/uBmVxYklD09o0qTlaKt9IAdNTx1CGwn0j/i2C043Kz
+         gytwr0mZnfLago8uL8orDdu0IC1otRPnjhnHS03rhejn7p+AriyHhfGcQNGEde7plP
+         w6SqtyC5vw9UA==
+Date:   Tue, 14 Aug 2018 07:33:37 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the kbuild tree
+Message-ID: <20180814073337.15250fe1@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20180801210804.175176-1-ndesaulniers@google.com> <CAKwvOd=WZB=x86zqu=vFDoJgpWnfCj0K3qXv14vtysfv3ioi1w@mail.gmail.com>
-In-Reply-To: <CAKwvOd=WZB=x86zqu=vFDoJgpWnfCj0K3qXv14vtysfv3ioi1w@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 13 Aug 2018 14:32:56 -0700
-Message-ID: <CAKwvOd=qGTv1F3CsEeNjuJ93BD9zTnUekUHgvw4Ttpx7us5JdA@mail.gmail.com>
-Subject: Re: [PATCH] x86/kexec: prefer _THIS_IP_ to current_text_addr
-To:     Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        hpa@zytor.com, "Eric W . Biederman" <ebiederm@xmission.com>,
-        horms@verge.net.au
-Cc:     Nathan Chancellor <natechancellor@gmail.com>, x86@kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.lGtxtyPEfxaqThHp77/Z2t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Simon (kexec)
+--Sig_/.lGtxtyPEfxaqThHp77/Z2t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-bumping for review.
-On Wed, Aug 8, 2018 at 4:06 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
->
-> bumping for review
-> On Wed, Aug 1, 2018 at 2:08 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >
-> > As part of the effort to reduce the code duplication between _THIS_IP_
-> > and current_text_addr(), let's consolidate callers of
-> > current_text_addr() to use _THIS_IP_.
-> >
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > ---
-> >  arch/x86/include/asm/kexec.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-> > index f327236f0fa7..86924d594ecd 100644
-> > --- a/arch/x86/include/asm/kexec.h
-> > +++ b/arch/x86/include/asm/kexec.h
-> > @@ -21,6 +21,7 @@
-> >  #ifndef __ASSEMBLY__
-> >
-> >  #include <linux/string.h>
-> > +#include <linux/kernel.h>
-> >
-> >  #include <asm/page.h>
-> >  #include <asm/ptrace.h>
-> > @@ -132,7 +133,7 @@ static inline void crash_setup_regs(struct pt_regs *newregs,
-> >                 asm volatile("movl %%cs, %%eax;" :"=a"(newregs->cs));
-> >                 asm volatile("pushfq; popq %0" :"=m"(newregs->flags));
-> >  #endif
-> > -               newregs->ip = (unsigned long)current_text_addr();
-> > +               newregs->ip = _THIS_IP_;
-> >         }
-> >  }
-> >
-> > --
-> > 2.18.0.597.ga71716f1ad-goog
-> >
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
+Hi Masahiro,
 
+Commit
 
+  bd714f5f14e0 ("Coccinelle: doubletest: reduce side effect false positives=
+")
 
--- 
-Thanks,
-~Nick Desaulniers
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.lGtxtyPEfxaqThHp77/Z2t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltx+TEACgkQAVBC80lX
+0GwYoAf+NoIJUlnNHKPkTK7BiaiMd4HqHUYo57J7EoX9ReH1Lh43a7AzslL2u599
+rY5FmWP4HuyxEF7Tt/UWesh3TkR8qSbGDI3OyjdMM5RP2F06K7ru1TN0UWYV3ub5
+4ewzQIjUQM8go1yUORAEqL5WO2hF0MPzcPCMswcw0iDuBEhLNE7QJRpsrvYB4GSD
+pxzuLvl2LKG7BKRS4Ww5vVU0LzLfCMo7knlFLfIxJtUpXamjQKMSuImO2aMgrjc8
+W3kF1ZhRUzbhbnJbJb2av9D6CKXpPQytKjSK/F1a6v5OJYpNBfvEh+ySup+jbrBY
+GeWVNMgx2nKQbpyxT0fkL6o1XMvOLA==
+=YGT+
+-----END PGP SIGNATURE-----
+
+--Sig_/.lGtxtyPEfxaqThHp77/Z2t--
