@@ -2,136 +2,156 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CFEC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541C6C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6252020BEC
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:03:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6252020BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 08DD82175F
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:11:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08DD82175F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbeHMMpN (ORCPT
+        id S1728757AbeHMMxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 08:45:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33488 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728660AbeHMMpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 08:45:12 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7D9whp6090180
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 06:03:38 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ku5we52ck-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 06:03:38 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Mon, 13 Aug 2018 11:03:36 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Aug 2018 11:03:32 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DA3Vf036503634
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Aug 2018 10:03:31 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C06BE11C064;
-        Mon, 13 Aug 2018 13:03:35 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE89611C05B;
-        Mon, 13 Aug 2018 13:03:32 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Mon, 13 Aug 2018 13:03:32 +0100 (BST)
-Date:   Mon, 13 Aug 2018 03:03:27 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-        liu.song.a23@gmail.com, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v8 3/6] Uprobes: Support SDT markers having reference
- count (semaphore)
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
- <20180809041856.1547-4-ravi.bangoria@linux.ibm.com>
+        Mon, 13 Aug 2018 08:53:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:56416 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728055AbeHMMxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 08:53:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C16267A9;
+        Mon, 13 Aug 2018 03:11:33 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7DA8C3F5D0;
+        Mon, 13 Aug 2018 03:11:32 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] KVM: arm/arm64: Skip updating PMD entry if no
+ change
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, christoffer.dall@arm.com,
+        stable@vger.kernel.org
+References: <20180813094049.3726-1-punit.agrawal@arm.com>
+ <20180813094049.3726-2-punit.agrawal@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <e265fe94-aa14-00c5-b144-4eff77413f5a@arm.com>
+Date:   Mon, 13 Aug 2018 11:11:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180809041856.1547-4-ravi.bangoria@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18081310-4275-0000-0000-000002A90299
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081310-4276-0000-0000-000037B21A10
-Message-Id: <20180813100327.GF44470@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=965 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808130110
+In-Reply-To: <20180813094049.3726-2-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +
-> +static int delayed_uprobe_add(struct uprobe *uprobe, struct mm_struct *mm)
-> +{
-> +	struct delayed_uprobe *du;
-> +
-> +	if (delayed_uprobe_check(uprobe, mm))
-> +		return 0;
-> +
-> +	du = kzalloc(sizeof(*du), GFP_KERNEL);
-> +	if (!du)
-> +		return -ENOMEM;
-> +
-> +	du->uprobe = uprobe;
-> +	du->mm = mm;
-> +	list_add(&du->list, &delayed_uprobe_list);
-> +	return 0;
-> +}
-> +
+Hi Punit,
 
-Should we keep the delayed uprobe list per mm?
-That way we could avoid the global mutex lock.
-And the list to traverse would also be small.
-
-
+On 13/08/18 10:40, Punit Agrawal wrote:
+> Contention on updating a PMD entry by a large number of vcpus can lead
+> to duplicate work when handling stage 2 page faults. As the page table
+> update follows the break-before-make requirement of the architecture,
+> it can lead to repeated refaults due to clearing the entry and
+> flushing the tlbs.
 > 
-> @@ -378,8 +557,15 @@ static struct uprobe *get_uprobe(struct uprobe *uprobe)
+> This problem is more likely when -
 > 
->  static void put_uprobe(struct uprobe *uprobe)
->  {
-> -	if (atomic_dec_and_test(&uprobe->ref))
-> +	if (atomic_dec_and_test(&uprobe->ref)) {
+> * there are large number of vcpus
+> * the mapping is large block mapping
+> 
+> such as when using PMD hugepages (512MB) with 64k pages.
+> 
+> Fix this by skipping the page table update if there is no change in
+> the entry being updated.
+> 
+> Fixes: ad361f093c1e ("KVM: ARM: Support hugetlbfs backed huge pages")
+> Change-Id: Ib417957c842ef67a6f4b786f68df62048d202c24
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Suzuki Poulose <suzuki.poulose@arm.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  virt/kvm/arm/mmu.c | 40 +++++++++++++++++++++++++++++-----------
+>  1 file changed, 29 insertions(+), 11 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 1d90d79706bd..2ab977edc63c 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1015,19 +1015,36 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>  	pmd = stage2_get_pmd(kvm, cache, addr);
+>  	VM_BUG_ON(!pmd);
+>  
+> -	/*
+> -	 * Mapping in huge pages should only happen through a fault.  If a
+> -	 * page is merged into a transparent huge page, the individual
+> -	 * subpages of that huge page should be unmapped through MMU
+> -	 * notifiers before we get here.
+> -	 *
+> -	 * Merging of CompoundPages is not supported; they should become
+> -	 * splitting first, unmapped, merged, and mapped back in on-demand.
+> -	 */
+> -	VM_BUG_ON(pmd_present(*pmd) && pmd_pfn(*pmd) != pmd_pfn(*new_pmd));
+> -
+>  	old_pmd = *pmd;
+> +
+>  	if (pmd_present(old_pmd)) {
 > +		/*
-> +		 * If application munmap(exec_vma) before uprobe_unregister()
-> +		 * gets called, we don't get a chance to remove uprobe from
-> +		 * delayed_uprobe_list in remove_breakpoint(). Do it here.
+> +		 * Mapping in huge pages should only happen through a
+> +		 * fault.  If a page is merged into a transparent huge
+> +		 * page, the individual subpages of that huge page
+> +		 * should be unmapped through MMU notifiers before we
+> +		 * get here.
+> +		 *
+> +		 * Merging of CompoundPages is not supported; they
+> +		 * should become splitting first, unmapped, merged,
+> +		 * and mapped back in on-demand.
 > +		 */
-> +		delayed_uprobe_remove(uprobe, NULL);
+> +		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
+> +
+> +		/*
+> +		 * Multiple vcpus faulting on the same PMD entry, can
+> +		 * lead to them sequentially updating the PMD with the
+> +		 * same value. Following the break-before-make
+> +		 * (pmd_clear() followed by tlb_flush()) process can
+> +		 * hinder forward progress due to refaults generated
+> +		 * on missing translations.
+> +		 *
+> +		 * Skip updating the page table if the entry is
+> +		 * unchanged.
+> +		 */
+> +		if (pmd_val(old_pmd) == pmd_val(*new_pmd))
+> +			goto out;
 
-I am not getting this part. If unmap happens before unregister,
-why cant we use uprobe_munmap? what am I missing.
+I think the order of these two checks should be reversed: the first one
+is clearly a subset of the second one, so it'd make sense to have the
+global comparison before having the more specific one. Not that it
+matter much in practice, but I just find it easier to reason about.
 
->  		kfree(uprobe);
-> +	}
+> +
+>  		pmd_clear(pmd);
+>  		kvm_tlb_flush_vmid_ipa(kvm, addr);
+>  	} else {
+> @@ -1035,6 +1052,7 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>  	}
+>  
+>  	kvm_set_pmd(pmd, *new_pmd);
+> +out:
+>  	return 0;
 >  }
+>  
 > 
 
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
