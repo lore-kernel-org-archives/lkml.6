@@ -5,58 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B799C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A1BC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A10821746
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:22:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A10821746
+	by mail.kernel.org (Postfix) with ESMTP id 3A21E217AC
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:22:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A21E217AC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbeHMOEn (ORCPT
+        id S1729315AbeHMOEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:04:43 -0400
-Received: from ozlabs.org ([203.11.71.1]:54143 "EHLO ozlabs.org"
+        Mon, 13 Aug 2018 10:04:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:47043 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbeHMOEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:04:42 -0400
+        id S1728356AbeHMOEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:04:45 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 41ptcr1qmxz9sBD; Mon, 13 Aug 2018 21:22:52 +1000 (AEST)
+        id 41ptct30gwz9ryt; Mon, 13 Aug 2018 21:22:54 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 302c7b0c4ff5aed585419603f835dee30207e5d5
-In-Reply-To: <20161122092033.7869-1-boqun.feng@gmail.com>
-To:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
+X-powerpc-patch-commit: 2fff0f07b8441a481eb5fc0bfcd0e46d6dbd90db
+In-Reply-To: <20180322202007.23088-17-malat@debian.org>
+To:     Mathieu Malaterre <malat@debian.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Douglas Miller <dougmill@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Rashmica Gupta <rashmicy@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Subject: Re: [RFC,v2] powerpc: xmon: Add address lookup for percpu symbols
-Message-Id: <41ptcr1qmxz9sBD@ozlabs.org>
-Date:   Mon, 13 Aug 2018 21:22:52 +1000 (AEST)
+Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [16/19] powerpc/powermac: Add missing include of header pmac.h
+Message-Id: <41ptct30gwz9ryt@ozlabs.org>
+Date:   Mon, 13 Aug 2018 21:22:54 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2016-11-22 at 09:20:09 UTC, Boqun Feng wrote:
-> Currently, in xmon, there is no obvious way to get an address for a
-> percpu symbol for a particular cpu. Having such an ability would be good
-> for debugging the system when percpu variables got involved.
+On Thu, 2018-03-22 at 20:20:02 UTC, Mathieu Malaterre wrote:
+> The header `pmac.h` was not included, leading to the following warnings,
+> treated as error with W=1:
 > 
-> Therefore, this patch introduces a new xmon command "lp" to lookup the
-> address for percpu symbols. Usage of "lp" is similar to "ls", except
-> that we could add a cpu number to choose the variable of which cpu we
-> want to lookup. If no cpu number is given, lookup for current cpu.
+>   arch/powerpc/platforms/powermac/time.c:69:13: error: no previous prototype for ‘pmac_time_init’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:207:15: error: no previous prototype for ‘pmac_get_boot_time’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:222:6: error: no previous prototype for ‘pmac_get_rtc_time’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:240:5: error: no previous prototype for ‘pmac_set_rtc_time’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:259:12: error: no previous prototype for ‘via_calibrate_decr’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:311:13: error: no previous prototype for ‘pmac_calibrate_decr’ [-Werror=missing-prototypes]
 > 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> The function `via_calibrate_decr` was made static to silence a warning.
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/302c7b0c4ff5aed585419603f835de
+https://git.kernel.org/powerpc/c/2fff0f07b8441a481eb5fc0bfcd0e4
 
 cheers
