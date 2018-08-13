@@ -3,62 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7434AC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C77AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6B721887
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:52:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B6B721887
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 503CA218CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503CA218CD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbeHMSev (ORCPT
+        id S1729920AbeHMSfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 14:34:51 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:52882 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728540AbeHMSev (ORCPT
+        Mon, 13 Aug 2018 14:35:17 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:37802 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbeHMSfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 14:34:51 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 89B071458045A;
-        Mon, 13 Aug 2018 08:52:02 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 08:52:01 -0700 (PDT)
-Message-Id: <20180813.085201.1107715561650084682.davem@davemloft.net>
-To:     xiliang@redhat.com
-Cc:     netdev@vger.kernel.org, xen-devel@lists.xenproject.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com,
+        Mon, 13 Aug 2018 14:35:16 -0400
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id B3E1F72D1A8;
+        Mon, 13 Aug 2018 18:46:51 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id A519C7CC7A1; Mon, 13 Aug 2018 18:46:51 +0300 (MSK)
+Date:   Mon, 13 Aug 2018 18:46:51 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] xen-netfront: fix warn message as irq device name
- has '/'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180811152137.3627-1-xiliang@redhat.com>
-References: <20180811152137.3627-1-xiliang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 13 Aug 2018 08:52:02 -0700 (PDT)
+Subject: [PATCH] uapi: fix linux/usb/audio.h userspace compilation error
+Message-ID: <20180813154651.GB22820@altlinux.org>
+Mail-Followup-To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogWGlhbyBMaWFuZyA8eGlsaWFuZ0ByZWRoYXQuY29tPg0KRGF0ZTogU2F0LCAxMSBBdWcg
-MjAxOCAyMzoyMTozNyArMDgwMA0KDQo+IFRoZXJlIGlzIGEgY2FsbCB0cmFjZSBnZW5lcmF0ZWQg
-YWZ0ZXIgY29tbWl0IDJkNDA4YzBkNDU3NGIwMWI5ZWQ0NWUwMjUxNjg4OGJmOTI1ZTExYTkoDQo+
-IHhlbi1uZXRmcm9udDogZml4IHF1ZXVlIG5hbWUgc2V0dGluZykuIFRoZXJlIGlzIG5vICdkZXZp
-Y2UvdmlmL3h4LXEwLXR4JyBmaWxlIGZvdW5kDQo+IHVuZGVyIC9wcm9jL2lycS94eC8uDQo+IA0K
-PiBUaGlzIHBhdGNoIG9ubHkgcGlja3MgdXAgZGV2aWNlIHR5cGUgYW5kIGlkIGFzIGl0cyBuYW1l
-Lg0KDQpUaGlzIGFkZHMgYSBjb21waWxlIHdhcm5pbmc6DQoNCmRyaXZlcnMvbmV0L3hlbi1uZXRm
-cm9udC5jOiBJbiBmdW5jdGlvbiCheGVubmV0X2luaXRfcXVldWWiOg0KZHJpdmVycy9uZXQveGVu
-LW5ldGZyb250LmM6MTYxNDoyOiB3YXJuaW5nOiBpZ25vcmluZyByZXR1cm4gdmFsdWUgb2YgoWtz
-dHJ0b2ludKIsIGRlY2xhcmVkIHdpdGggYXR0cmlidXRlIHdhcm5fdW51c2VkX3Jlc3VsdCBbLVd1
-bnVzZWQtcmVzdWx0XQ0KICBrc3RydG9pbnQoc3RycmNocihxdWV1ZS0+aW5mby0+eGJkZXYtPm5v
-ZGVuYW1lLCAnLycpICsgMSwgMTAsICZkZXZpZCk7DQogIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0K
+Replace NULL with 0 in uac_mixer_unit_bmControls() to fix the following
+linux/usb/audio.h userspace compilation error:
+
+/usr/include/linux/usb/audio.h: In function 'uac_mixer_unit_bmControls':
+/usr/include/linux/usb/audio.h:304:10: error: 'NULL' undeclared (first use in this function)
+   return NULL;
+
+Fixes: 6cfd839ae78e ("ALSA: usb-audio: UAC3. Add support for mixer unit.")
+Cc: <stable@vger.kernel.org> # v4.18
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+ include/uapi/linux/usb/audio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/usb/audio.h b/include/uapi/linux/usb/audio.h
+index 74e520fb944f..2b61fe34b2ca 100644
+--- a/include/uapi/linux/usb/audio.h
++++ b/include/uapi/linux/usb/audio.h
+@@ -301,7 +301,7 @@ static inline __u8 *uac_mixer_unit_bmControls(struct uac_mixer_unit_descriptor *
+ 	case UAC_VERSION_3:
+ 		return &desc->baSourceID[desc->bNrInPins + 2];
+ 	default:
+-		return NULL;
++		return 0;
+ 	}
+ }
+ 
+-- 
+ldv
