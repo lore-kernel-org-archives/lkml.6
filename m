@@ -2,100 +2,95 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709EAC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E751C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2369A217C7
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:51:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kkb7d4G9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2369A217C7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 326612186B
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:55:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326612186B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbeHMReR (ORCPT
+        id S1729106AbeHMRht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 13:34:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57552 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728540AbeHMReR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 13:34:17 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59FD421761;
-        Mon, 13 Aug 2018 14:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534171901;
-        bh=P3MuWMPMH1cRVg4bkmWEQw/GIIU/PpSixzAe7RU+Qj0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Kkb7d4G99gnzD7rs7bGJqckYpfC214Ij07WvA+I4jgklrF0Ry9PmkKo3yB1EkcT0i
-         gDtHn0PjsKQXQ8Al32ltkfsKQApL+4oeH7EeI+IP6+y/h/uNo5M/xMUeElHe3exZAV
-         m2ZEm2LZ8dJkb5+VjFKV8UKjKFDkNnBAvkQJCBUU=
-Date:   Mon, 13 Aug 2018 07:51:40 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>, agruenba@redhat.com,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [GIT PULL] xfs: 4.19 merge, part 1
-Message-ID: <20180813145140.GD11750@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 13 Aug 2018 13:37:49 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:33292 "EHLO
+        slow2.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727367AbeHMRht (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 13:37:49 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by slow2.mail.gandi.net (Postfix) with ESMTP id 8A85C3A58FD
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 16:52:45 +0200 (CEST)
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 6B696FF805;
+        Mon, 13 Aug 2018 14:52:41 +0000 (UTC)
+Message-ID: <2923ec52f5f977f9213607b46c3618fd2a4c4a15.camel@hadess.net>
+Subject: Re: [PATCH] hid: microsoft: Add rumble support for Xbox One S
+ controller
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Juha Kuikka <juha.kuikka@gmail.com>
+Date:   Mon, 13 Aug 2018 16:52:40 +0200
+In-Reply-To: <CAHQ1cqEMJFCD8GU9o194EUPfUV9TTswW-jE2MPhoEzrg3cshYQ@mail.gmail.com>
+References: <20180810001714.14659-1-andrew.smirnov@gmail.com>
+         <ad932296a864b13134c5af6efe7754e5e588314e.camel@hadess.net>
+         <CAHQ1cqEMJFCD8GU9o194EUPfUV9TTswW-jE2MPhoEzrg3cshYQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, 2018-08-13 at 07:37 -0700, Andrey Smirnov wrote:
+> On Fri, Aug 10, 2018 at 4:38 AM Bastien Nocera <hadess@hadess.net>
+> wrote:
+> > 
+> > On Thu, 2018-08-09 at 17:17 -0700, Andrey Smirnov wrote:
+> > > Add HID quirk driver for Xbox One S controller over bluetooth.
+> > > 
+> > > This driver only adds support for rumble. Standard controller
+> > > functionality is exposed by default HID driver.
+> > 
+> > Did you manage to make the joypad work without hacks in the
+> > Bluetooth
+> > stack[1]?
+> 
+> I was not aware this hack actually existed, but now that I see it I
+> think it explains why doing
+> 
+> echo 1 > /sys/module/bluetooth/parameters/disable_ertm
+> 
+> was necessary to make the controller connect over Bluetooth on my
+> machine. It looks like disabling ERTM just happens to have the same
+> effect as the hack that you mention. I'd like/plan to look into
+> finding a proper solution to replace that hack, but that'd probably
+> be
+> a separate patch.
 
-This is the first part of the XFS changes for 4.19.  Christoph and
-Andreas coordinated some refactoring work on the iomap code in
-preparation for removing buffer heads from XFS and porting gfs2 to
-iomap.  I'm sending this small pull request ahead of the main XFS merge
-to avoid holding up gfs2 unnecessarily.
+I gave it a try a couple of months back, but without much success.
+L2CAP is unfortunately a bit too low-level to know anything about the
+device which requested this. I think that some level of "STREAMING"
+support is needed for the Bluetooth audio portion of the device.
 
---D
+Marcel was also interested in looking into the problem, but didn't get
+to it. Let me know if you manage to get anything working without the
+big hammer of disabling ERTM support for everything.
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+Cheers
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git iomap-4.19-merge
-
-for you to fetch changes up to 806a1477b10a153cd01ee7ccba8ca2492df3e0b2:
-
-  iomap: add inline data support to iomap_readpage_actor (2018-07-03 09:07:47 -0700)
-
-----------------------------------------------------------------
-Andreas Gruenbacher (6):
-      iomap: mark newly allocated buffer heads as new
-      iomap: complete partial direct I/O writes synchronously
-      iomap: generic inline data handling
-      iomap: add private pointer to struct iomap
-      iomap: support direct I/O to inline data
-      iomap: add inline data support to iomap_readpage_actor
-
-Christoph Hellwig (5):
-      fs: factor out a __generic_write_end helper
-      iomap: add a page_done callback
-      iomap: add an iomap-based readpage and readpages implementation
-      iomap: add initial support for writes without buffer heads
-      iomap: refactor iomap_dio_actor
-
- fs/buffer.c           |  76 ++++----
- fs/internal.h         |   2 +
- fs/iomap.c            | 532 ++++++++++++++++++++++++++++++++++++++++++++------
- fs/xfs/xfs_iomap.c    |   6 +-
- include/linux/iomap.h |  16 ++
- 5 files changed, 536 insertions(+), 96 deletions(-)
