@@ -2,262 +2,163 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CCDC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8381C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E292175C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:14:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JdiGzH5l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E292175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 564072175C
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:18:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564072175C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbeHMS4v (ORCPT
+        id S1729803AbeHMTBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 14:56:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43320 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728533AbeHMS4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 14:56:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=DoKuzsw7j0x1oqT4rudzsX+GWmwE5i3gPeN56CkhOWk=; b=JdiGzH5ljitx/ZdK1dCUiVwiEX
-        rF6KPMEYMIg0Rebzfb4oLNJXvF0hiw24nX+NuaagnqYBiMgoH+3sCRTw9IYTycmpHyONLA6HiNI7o
-        L/n/We11fCRSwIJ2KtQjKgFLEZiYhUmVJGKzMxiUSF3slqnfis/lrjh4ON5ZDsnLLyBuhxujHCfnC
-        UO2b3i0LuR96tzwMBd2uCGFVLxWmHmeRJ3wYfBcFAK+sWPqYKcbSB8xoB3sPp4PVmX03n5xkB0Gh7
-        +/NR5CIzdXJc8EOyiotEVpRNVCsghCUbzZOjycONrlOvbs0LlGViF3NaSMpuxHIBB4mrSRIjxn28Y
-        /TFieh8w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fpFTh-0005QG-NR; Mon, 13 Aug 2018 16:13:57 +0000
-Date:   Mon, 13 Aug 2018 09:13:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] XArray for 4.19
-Message-ID: <20180813161357.GB1199@bombadil.infradead.org>
+        Mon, 13 Aug 2018 15:01:14 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:46324 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728763AbeHMTBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:01:14 -0400
+Received: from [192.168.1.7] (unknown [110.184.152.220])
+        by APP-10 (Coremail) with SMTP id tACowACXYu0zr3FbNT4BAQ--.8204S2;
+        Tue, 14 Aug 2018 00:17:56 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v3 16/17] driver/edac: enable Hygon support to AMD64 EDAC
+ driver
+To:     Michael Jin <mikhail.jin@gmail.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-edac@vger.kernel.org
+References: <cover.1533989492.git.puwen@hygon.cn>
+ <cb1a56c95bbcc4d65a98378274ae34d826704a16.1533989493.git.puwen@hygon.cn>
+ <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
+Message-ID: <68538d23-8880-29a2-decd-f63b48667274@hygon.cn>
+Date:   Tue, 14 Aug 2018 00:17:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAO6F7DkdV1p59igFY3atTCRK62KH3_J-874oQw1v6ighaHOTXA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: tACowACXYu0zr3FbNT4BAQ--.8204S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurW5Xw45tr13KFWUWF45ZFb_yoW5ZF43pr
+        W5JF4j9rn7JasxJryvvr4UXFyrCw4kJFZrCrsxK3WFqFZ8ZFyrW345tF4fuFyUAF93J3y2
+        vayrWw47Ga1qyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvCb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+        1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAI
+        cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+        nxnUUI43ZEXa7IU8489tUUUUU==
+X-Originating-IP: [110.184.152.220]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 2018/8/12 3:56, Michael Jin wrote:
+> On Sat, Aug 11, 2018 at 9:30 AM, Pu Wen <puwen@hygon.cn> wrote:
+>> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+>> index 18aeabb..fb81354 100644
+>> --- a/drivers/edac/amd64_edac.c
+>> +++ b/drivers/edac/amd64_edac.c
+>> @@ -211,7 +211,7 @@ static int __set_scrub_rate(struct amd64_pvt *pvt, u32 new_bw, u32 min_rate)
+>>
+>>          scrubval = scrubrates[i].scrubval;
+>>
+>> -       if (pvt->fam == 0x17) {
+>> +       if (pvt->fam == 0x17 || pvt->vendor == X86_VENDOR_HYGON) {
+>>                  __f17h_set_scrubval(pvt, scrubval);
+> 
+> Separating the vendor check as an "else if (pvt->vendor ==
+> X86_VENDOR_HYGON)" block would make architectural changes (future
+> hygon models, i.e. 19h, 20h, etc) less confusing.
 
-Please consider pulling the XArray patch set.  The XArray provides an
-improved interface to the radix tree data structure, providing locking
-as part of the API, specifying GFP flags at allocation time, eliminating
-preloading, less re-walking the tree, more efficient iterations and not
-exposing RCU-protected pointers to its users.
+Your suggestion is reasonable, but that might make the branch a little
+complicated.If we explicitly testing Hygon family in condition case,
+will that be ok?
++    if (pvt->fam == 0x17 ||
++       (pvt->vendor == X86_VENDOR_HYGON && pvt->fam == 0x18))
 
-This patch set introduces the XArray implementation and converts the
-pagecache over to use it.  The page cache is the most complex and
-important user of the radix tree, so converting it was most important.
-I have followup patches to convert the other users of the radix tree
-over to the XArray, but that'll be another hundred or so patches and I
-want to get this part in first.
+> 
+>> +                       amd64_read_pci_cfg(pvt->F6,
+>> +                               F17H_SCR_BASE_ADDR, &scrubval);
+>> +                       if (scrubval & BIT(0)) {
+>> +                               amd64_read_pci_cfg(pvt->F6,
+> 
+> The new lines after "amd64_read_pci_cfg(pvt->F6," can be removed.
 
-There are two conflicts I wanted to flag; the first is against the
-linux-nvdimm tree.  I rebased on top of one of the branches that went
-into that tree, so if you pull my tree before linux-nvdimm, you'll get
-fifteen commits I've had no involvement with.
+To fix the warning "line over 80 characters" reported by running the
+checking script checkpatch.pl, I added the new line.
+But your sugesstion is reasonable, remove the new line will make the
+codes much easier to read.
 
-The other is a fairly trivial one with ext4.  I've incorporated the
-change from Ross that Ted merged into that tree into my tree, so please
-take the resolution in my tree.
+>> @@ -1051,6 +1065,16 @@ static void determine_memory_type(struct amd64_pvt *pvt)
+>>                  else
+>>                          pvt->dram_type = MEM_DDR4;
+>>                  return;
+>> +       case 0x18:
+>> +               if (pvt->vendor == X86_VENDOR_HYGON) {
+> 
+> This vendor checking is not necessary as there are no other known
+> family 18h processors.
+> 
+> 
+>>          switch (pvt->fam) {
+>> @@ -3192,6 +3227,13 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
+>>                  pvt->ops        = &family_types[F17_CPUS].ops;
+>>                  break;
+>>
+>> +       case 0x18:
+>> +               if (pvt->vendor == X86_VENDOR_HYGON) {
+>> +                       fam_type        = &family_types[HYGON_F18_CPUS];
+>> +                       pvt->ops        = &family_types[HYGON_F18_CPUS].ops;
+>> +                       break;
+>> +               }
+> 
+> There is a missing second 'break' statement after the "if (pvt->vendor
+> == X86_VENDOR_HYGON)" block for case 0x18, see case 0x15 and case 0x16
+> for comparison.
 
-----------------------------------------------------------------
-The following changes since commit 0c3a2a2ae2d76df077cf5a3c36ab8ac700058447:
+The missed second 'break' is on purpose. Thinking that if BIOS report
+a vendor AMD and family 18h processor(which is not in case now),
+the code will fall through and print out "Unsupported family".
 
-  libnvdimm, pmem: Restore page attributes when clearing errors (2018-07-24 08:53:37 -0700)
+> 
+>> diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+>> index 2ab4d61..f7adc47 100644
+>> +       case 0x18:
+>> +               if (c->x86_vendor == X86_VENDOR_HYGON) {
+>> +                       xec_mask = 0x3f;
+>> +                       if (!boot_cpu_has(X86_FEATURE_SMCA)) {
+>> +                               pr_warn("Decoding supported only on Scalable MCA processors.\n");
+>> +                               goto err_out;
+>> +                       }
+>> +                       break;
+>> +               }
+> 
+> The 'break' statement could be moved outside of the "if (c->x86_vendor
+> == X86_VENDOR_HYGON)" block, this is to allow case 0x18 to reach the
+> 'break' statement if the vendor is not X86_VENDOR_HYGON.
 
-are available in the Git repository at:
+For the same reason as previous, if the vendor is not X86_VENDOR_HYGON,
+it's not a valid vendor by now, and should fall through to the default
+case and print out error message.
 
-  git://git.infradead.org/users/willy/linux-dax.git xarray
+Thanks,
+Pu Wen
 
-for you to fetch changes up to 8d7cf3e16ed4a12ab6bfc05ccb60d70cb6200ffb:
-
-  radix tree: Remove radix_tree_clear_tags (2018-08-10 00:49:25 -0400)
-
-----------------------------------------------------------------
-Matthew Wilcox (75):
-      Update email address
-      radix tree test suite: Enable ubsan
-      dax: Fix use of zero page
-      idr: Permit any valid kernel pointer to be stored
-      xarray: Replace exceptional entries
-      xarray: Change definition of sibling entries
-      xarray: Add definition of struct xarray
-      xarray: Define struct xa_node
-      xarray: Add documentation
-      xarray: Add XArray load operation
-      xarray: Add XArray tags
-      xarray: Add XArray unconditional store operations
-      xarray: Add XArray conditional store operations
-      xarray: Add XArray iterators
-      xarray: Extract entries from an XArray
-      xarray: Destroy an XArray
-      xarray: Step through an XArray
-      xarray: Add xas_for_each_conflict
-      xarray: Add xas_create_range
-      xarray: Add MAINTAINERS entry
-      page cache: Rearrange address_space
-      page cache: Convert hole search to XArray
-      page cache: Add and replace pages using the XArray
-      page cache: Convert page deletion to XArray
-      page cache: Convert find_get_entry to XArray
-      page cache: Convert find_get_entries to XArray
-      page cache: Convert find_get_pages_range to XArray
-      page cache: Convert find_get_pages_contig to XArray
-      page cache; Convert find_get_pages_range_tag to XArray
-      page cache: Convert find_get_entries_tag to XArray
-      page cache: Convert filemap_map_pages to XArray
-      radix tree test suite: Convert regression1 to XArray
-      page cache: Convert delete_batch to XArray
-      page cache: Remove stray radix comment
-      page cache: Convert filemap_range_has_page to XArray
-      mm: Convert page-writeback to XArray
-      mm: Convert workingset to XArray
-      mm: Convert truncate to XArray
-      mm: Convert add_to_swap_cache to XArray
-      mm: Convert delete_from_swap_cache to XArray
-      mm: Convert __do_page_cache_readahead to XArray
-      mm: Convert page migration to XArray
-      mm: Convert huge_memory to XArray
-      mm: Convert collapse_shmem to XArray
-      mm: Convert khugepaged_scan_shmem to XArray
-      mm: Convert is_page_cache_freeable to XArray
-      pagevec: Use xa_tag_t
-      shmem: Convert shmem_radix_tree_replace to XArray
-      shmem: Convert shmem_confirm_swap to XArray
-      shmem: Convert find_swap_entry to XArray
-      shmem: Convert shmem_add_to_page_cache to XArray
-      shmem: Convert shmem_alloc_hugepage to XArray
-      shmem: Convert shmem_free_swap to XArray
-      shmem: Convert shmem_partial_swap_usage to XArray
-      memfd: Convert memfd_wait_for_pins to XArray
-      memfd: Convert memfd_tag_pins to XArray
-      shmem: Comment fixups
-      btrfs: Convert page cache to XArray
-      fs: Convert buffer to XArray
-      fs: Convert writeback to XArray
-      nilfs2: Convert to XArray
-      f2fs: Convert to XArray
-      dax: Rename some functions
-      dax: Hash on XArray instead of mapping
-      dax: Convert dax_insert_pfn_mkwrite to XArray
-      dax: Convert dax_layout_busy_page to XArray
-      dax: Convert __dax_invalidate_entry to XArray
-      dax: Convert dax writeback to XArray
-      dax: Convert dax_lock_mapping_entry to XArray
-      dax: Convert page fault handlers to XArray
-      page cache: Finish XArray conversion
-      radix tree: Remove radix_tree_update_node_t
-      radix tree: Remove split/join code
-      radix tree: Remove radix_tree_maybe_preload_order
-      radix tree: Remove radix_tree_clear_tags
-
- .clang-format                                 |    1 -
- .mailmap                                      |    7 +
- Documentation/core-api/index.rst              |    1 +
- Documentation/core-api/xarray.rst             |  392 ++++++
- MAINTAINERS                                   |   17 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h  |    4 +-
- arch/powerpc/include/asm/nohash/64/pgtable.h  |    4 +-
- drivers/gpu/drm/i915/i915_gem.c               |   17 +-
- fs/btrfs/compression.c                        |    6 +-
- fs/btrfs/extent_io.c                          |   12 +-
- fs/buffer.c                                   |   14 +-
- fs/dax.c                                      |  910 ++++++-------
- fs/ext4/inode.c                               |    2 +-
- fs/f2fs/data.c                                |    6 +-
- fs/f2fs/dir.c                                 |    2 +-
- fs/f2fs/f2fs.h                                |    2 +-
- fs/f2fs/inline.c                              |    2 +-
- fs/f2fs/node.c                                |    6 +-
- fs/fs-writeback.c                             |   25 +-
- fs/gfs2/aops.c                                |    2 +-
- fs/inode.c                                    |    2 +-
- fs/nfs/blocklayout/blocklayout.c              |    2 +-
- fs/nilfs2/btnode.c                            |   26 +-
- fs/nilfs2/page.c                              |   29 +-
- fs/proc/task_mmu.c                            |    2 +-
- include/linux/fs.h                            |   63 +-
- include/linux/pagemap.h                       |   10 +-
- include/linux/pagevec.h                       |    8 +-
- include/linux/radix-tree.h                    |  136 +-
- include/linux/swap.h                          |   22 +-
- include/linux/swapops.h                       |   19 +-
- include/linux/xarray.h                        | 1054 ++++++++++++++-
- lib/Kconfig                                   |    7 +
- lib/Kconfig.debug                             |    3 +
- lib/Makefile                                  |    3 +-
- lib/idr.c                                     |   70 +-
- lib/radix-tree.c                              |  592 ++------
- lib/test_xarray.c                             |  837 ++++++++++++
- lib/xarray.c                                  | 1784 +++++++++++++++++++++++++
- mm/filemap.c                                  |  724 +++++-----
- mm/huge_memory.c                              |   17 +-
- mm/khugepaged.c                               |  178 +--
- mm/madvise.c                                  |    2 +-
- mm/memcontrol.c                               |    2 +-
- mm/memfd.c                                    |  105 +-
- mm/migrate.c                                  |   48 +-
- mm/mincore.c                                  |    2 +-
- mm/page-writeback.c                           |   72 +-
- mm/readahead.c                                |   10 +-
- mm/shmem.c                                    |  193 +--
- mm/swap.c                                     |    6 +-
- mm/swap_state.c                               |  119 +-
- mm/truncate.c                                 |   27 +-
- mm/vmscan.c                                   |   10 +-
- mm/workingset.c                               |   70 +-
- tools/include/asm-generic/bitops.h            |    1 +
- tools/include/asm-generic/bitops/atomic.h     |    9 -
- tools/include/asm-generic/bitops/non-atomic.h |  109 ++
- tools/include/linux/bitmap.h                  |    1 +
- tools/include/linux/kernel.h                  |    1 +
- tools/include/linux/spinlock.h                |   12 +-
- tools/testing/radix-tree/.gitignore           |    1 +
- tools/testing/radix-tree/Makefile             |   16 +-
- tools/testing/radix-tree/benchmark.c          |   91 --
- tools/testing/radix-tree/bitmap.c             |   23 +
- tools/testing/radix-tree/generated/autoconf.h |    1 +
- tools/testing/radix-tree/idr-test.c           |   69 +-
- tools/testing/radix-tree/linux/bug.h          |    1 +
- tools/testing/radix-tree/linux/kconfig.h      |    1 +
- tools/testing/radix-tree/linux/kernel.h       |    5 +
- tools/testing/radix-tree/linux/lockdep.h      |   11 +
- tools/testing/radix-tree/linux/radix-tree.h   |    1 -
- tools/testing/radix-tree/linux/rcupdate.h     |    2 +
- tools/testing/radix-tree/linux/xarray.h       |    2 +
- tools/testing/radix-tree/main.c               |   21 +-
- tools/testing/radix-tree/multiorder.c         |  272 +---
- tools/testing/radix-tree/regression1.c        |   58 +-
- tools/testing/radix-tree/regression3.c        |   23 -
- tools/testing/radix-tree/tag_check.c          |   29 -
- tools/testing/radix-tree/test.c               |    8 +-
- tools/testing/radix-tree/test.h               |    1 +
- tools/testing/radix-tree/xarray.c             |   35 +
- 82 files changed, 5749 insertions(+), 2741 deletions(-)
- create mode 100644 Documentation/core-api/xarray.rst
- create mode 100644 lib/test_xarray.c
- create mode 100644 lib/xarray.c
- create mode 100644 tools/include/asm-generic/bitops/non-atomic.h
- create mode 100644 tools/testing/radix-tree/bitmap.c
- create mode 100644 tools/testing/radix-tree/linux/kconfig.h
- create mode 100644 tools/testing/radix-tree/linux/lockdep.h
- create mode 100644 tools/testing/radix-tree/linux/xarray.h
- create mode 100644 tools/testing/radix-tree/xarray.c
