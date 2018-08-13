@@ -2,126 +2,125 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B1DC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF1AC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F041921762
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC1752152C
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:00:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="y3gnxh+n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F041921762
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDAxTR4o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1752152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbeHMNkL (ORCPT
+        id S1728737AbeHMNmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 09:40:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39728 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729087AbeHMNkL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 09:40:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a11-v6so7344494pgw.6
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 03:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QZuxAIN/3RwIR+KPVodlSMQ+5/sOizY5WeQimLTvJSc=;
-        b=y3gnxh+nTElj6u8tizhWztHxMXfXlMytSm1Kc2LrMacJDeqlZW4T1Z20yhKGkyTQqW
-         ulTy5rDRO5XVnO/L8H8FpB0QmX2Y9A19+/T3XxNr4bc0MYx1EHT4q1BvIAjdlJsnPCDc
-         fLaG0jQDLUZx+vIpCYaoFheYoJ6UW9iFV6toPGJz+htwyoDoCWvEJQIK2rZRfwY8uHuo
-         1PlAkadZHdUYXOYHtRxw9T2PsOc2QTPmbdv4p/7McTIa8Mt5jiF6oBppv4GF0Yso38IC
-         vt0AHSjWpmrvxM1+WhTBPnztVwusEWMbI34ODvqQtwHFvyA123oUeo1zrONYdyKct7SI
-         DeEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QZuxAIN/3RwIR+KPVodlSMQ+5/sOizY5WeQimLTvJSc=;
-        b=ZBkh5nirMG0D/h2TbgNyU4Vk85pl8XCZUSRGDg2pzZpbvwdnY4+bTAIFI5GOB4Dhy+
-         Mngd1ZAkFz+uC91O4hTbIYoqS13z301q0Pa4w1a11rPQuce+Ehu/JvVFVTTVOB4v0t5U
-         zklLoEIlBmw8egSOl/flewnJD8oVAdps0c9UtwIDsSFNupSdWXu6RexZUxC9Z097e59O
-         Hc/eKlggL/rrFB7vvCM2u2JScEHbCDpGl6Y71IYiZ7ermfZq7QQJuU8+o2oSRihvi5Z1
-         Ny+BxoIgNYlzT38NrXRenulr1KxOikixWPvGwshpTqL7Z1+UuyDVT9l29lZQwvAvJ76f
-         JA1A==
-X-Gm-Message-State: AOUpUlFVo/dHb1kej4J+Q0tZfZZIUAM+cWLdihDcgMzGIZKdZEc6oxYw
-        mIZ2IwIcxhgIeSsVofT6CFYxvw==
-X-Google-Smtp-Source: AA+uWPzWbfK35togUaoB3tKcMrstBDDRXp5lFuAjRIqB3l4yyFy7UA2qS17n90y/f2gJXSTSCqPIJQ==
-X-Received: by 2002:a63:5106:: with SMTP id f6-v6mr16188568pgb.95.1534157906361;
-        Mon, 13 Aug 2018 03:58:26 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id p73-v6sm34511626pfk.186.2018.08.13.03.58.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 03:58:25 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 5417E3000A7; Mon, 13 Aug 2018 13:58:21 +0300 (+03)
-Date:   Mon, 13 Aug 2018 13:58:21 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: migration: fix migration of huge PMD shared pages
-Message-ID: <20180813105821.j4tg6iyrdxgwyr3y@kshutemo-mobl1>
-References: <20180813034108.27269-1-mike.kravetz@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180813034108.27269-1-mike.kravetz@oracle.com>
-User-Agent: NeoMutt/20180716
+        Mon, 13 Aug 2018 09:42:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728310AbeHMNmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 09:42:16 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 403402152C;
+        Mon, 13 Aug 2018 11:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534158030;
+        bh=pghY/dmGO1l8koea/Uvpa0p4Jrmugo33rYrxD4K9dYk=;
+        h=Subject:From:To:Cc:Date:From;
+        b=BDAxTR4o9gZBL/4644eZuWc6d50tKUsV9hnbfQWUtXGyajwnFUM+RBNModTBpCF4+
+         nRTBStzPse7CtCK8MT9vFhegnJ/BeSrJ5yXigVbRxfuklmO/lpemrmPF2ffQr1f50u
+         wZpSl05gfXezs5I5fQHcsAW6zsumSV/RsrqjmTgk=
+Message-ID: <a7bddd53bf70f7aeb2c761ab84411bd2a285d7af.camel@kernel.org>
+Subject: [GIT PULL] file locking updates for 4.19
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Bruce Fields <bfields@fieldses.org>
+Date:   Mon, 13 Aug 2018 07:00:23 -0400
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-/Ty7EMG8IRYuKkwIglNe"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 12, 2018 at 08:41:08PM -0700, Mike Kravetz wrote:
-> The page migration code employs try_to_unmap() to try and unmap the
-> source page.  This is accomplished by using rmap_walk to find all
-> vmas where the page is mapped.  This search stops when page mapcount
-> is zero.  For shared PMD huge pages, the page map count is always 1
-> not matter the number of mappings.  Shared mappings are tracked via
-> the reference count of the PMD page.  Therefore, try_to_unmap stops
-> prematurely and does not completely unmap all mappings of the source
-> page.
-> 
-> This problem can result is data corruption as writes to the original
-> source page can happen after contents of the page are copied to the
-> target page.  Hence, data is lost.
-> 
-> This problem was originally seen as DB corruption of shared global
-> areas after a huge page was soft offlined.  DB developers noticed
-> they could reproduce the issue by (hotplug) offlining memory used
-> to back huge pages.  A simple testcase can reproduce the problem by
-> creating a shared PMD mapping (note that this must be at least
-> PUD_SIZE in size and PUD_SIZE aligned (1GB on x86)), and using
-> migrate_pages() to migrate process pages between nodes.
-> 
-> To fix, have the try_to_unmap_one routine check for huge PMD sharing
-> by calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a
-> shared mapping it will be 'unshared' which removes the page table
-> entry and drops reference on PMD page.  After this, flush caches and
-> TLB.
-> 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> ---
-> I am not %100 sure on the required flushing, so suggestions would be
-> appreciated.  This also should go to stable.  It has been around for
-> a long time so still looking for an appropriate 'fixes:'.
 
-I believe we need flushing. And huge_pmd_unshare() usage in
-__unmap_hugepage_range() looks suspicious: I don't see how we flush TLB in
-that case.
+--=-/Ty7EMG8IRYuKkwIglNe
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
- Kirill A. Shutemov
+The following changes since commit 2837461dbe6f4a9acc0d86f88825888109211c99=
+:
+
+  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/j=
+ejb/scsi (2018-06-14 16:35:32 +0900)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/lock=
+s-v4.19-1
+
+for you to fetch changes up to da33a871ba178dbe81da7d755818d3c2088cae32:
+
+  locks: remove misleading obsolete comment (2018-08-08 12:59:06 -0400)
+
+----------------------------------------------------------------
+
+Just a couple of patches from Konstantin to fix /proc/locks when the
+process that set the lock has exited, and a new tracepoint for the
+flock() codepath. Also threw in mailmap entries for my addresses and a
+comment cleanup.
+
+----------------------------------------------------------------
+Jeff Layton (3):
+      locks: add tracepoint in flock codepath
+      mailmap: remap some of my email addresses to kernel.org address
+      locks: remove misleading obsolete comment
+
+Konstantin Khorenko (2):
+      fs/lock: skip lock owner pid translation in case we are in init_pid_n=
+s
+      fs/lock: show locks taken by processes from another pidns
+
+ .mailmap                        |  3 +++
+ fs/locks.c                      | 20 +++++++++++---------
+ include/trace/events/filelock.h |  5 ++++-
+ 3 files changed, 18 insertions(+), 10 deletions(-)
+--=20
+Jeff Layton <jlayton@kernel.org>
+
+--=-/Ty7EMG8IRYuKkwIglNe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAABCAAxFiEES8DXskRxsqGE6vXTAA5oQRlWghUFAltxZMcTHGpsYXl0b25A
+a2VybmVsLm9yZwAKCRAADmhBGVaCFYq+D/9y4xNLel4vXcLmZIyWA+a+s+kxAqao
+PiTMbmRa/4FwE7QIc3g82kWDkioSJ5sadE1j+GozH1Lp0mEOGbS7LHxOdQiMoSwN
+sqrH3cC1144SRAGZm2Ryn0KuFWdWHWs513QmWg5T7M1iHs6Peb2kDlp+rpvVUPpH
+pmRgPWn6EChMsCJNoeQPNb9aoU0om1CCSnAalb6nJ4gTwunewH0t5FgSOP30mV6q
+lHPAeFrJ6CVVuZzvBFAUc18+EkY/QQjlCjYIOdF4dj28IovADpu/9YcNBoVA3Pex
+wM//5yGwn94JeLaetNicYWMjVVRuesS/JyRU948eDepUBhDoW6Kw4aK1u7Au9tpM
+4xSZx4H3spDCDFzteDF3oXxeq2Xga53UsLz2YYECcoqo1EoRnjuy72c2KVErA9hJ
+KVmcAE29zseWVXQVAK7IOPuagP/IsGukGifAq2WBX2YRGLGFVpXJ4u/qrMLS8cJd
+0QHEkaUP1HjYtE7witkfGqMSEEpOFKhHwYAxPw9u+dEnFMhLmra7pcIvevto0mrK
+CO7DGcP4wB9gCKB5HIkA2x7WaVwaKJEzuME2gV6hRUAVbSuIwdWOjms7UljJQm3z
+aCWo2cY3Tv6AWVWJw8EGSMT+MHL0nYRYngt/Dm5h00+aciZBVWuEjIle3nMq+Jm3
+jONK19/hS0OSYA==
+=X8Ts
+-----END PGP SIGNATURE-----
+
+--=-/Ty7EMG8IRYuKkwIglNe--
+
