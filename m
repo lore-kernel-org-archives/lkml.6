@@ -2,132 +2,204 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0168C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D399C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A52B21829
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:02:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A52B21829
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 37E882175F
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:11:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ntc3csj0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E882175F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbeHMJnW (ORCPT
+        id S1728450AbeHMJwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 05:43:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37330 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728240AbeHMJnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 05:43:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53A06AE02;
-        Mon, 13 Aug 2018 07:02:25 +0000 (UTC)
-Subject: Re: [PATCH] btrfs:free-space-cache: remove unneeded NULL check before
- kfree
-To:     zhong jiang <zhongjiang@huawei.com>, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1534140369-11578-1-git-send-email-zhongjiang@huawei.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <50a4185c-5276-e33a-afff-102ed32171f2@suse.com>
-Date:   Mon, 13 Aug 2018 10:02:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 13 Aug 2018 05:52:20 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33575 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728237AbeHMJwU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 05:52:20 -0400
+Received: by mail-yw1-f66.google.com with SMTP id c135-v6so12898041ywa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 00:11:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5pCo+BFgJOTsIvnxxdnozrefLH4vLCu7jOheTHlHAWg=;
+        b=Ntc3csj0JwIDangHGSFsgd4gOgBDdzT3oKdzfh0bRAhp5g9kkq2CfierECLlO3B9sC
+         CLnumCk+C8ansE0q1MsI7HYEUts6fQZSz99bfK06tMJunLeTO2e7AM0u63JUVqvyHmYE
+         NgUpBXCTG580zHhj1sCfaZpAvz11/hJxcYFME=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5pCo+BFgJOTsIvnxxdnozrefLH4vLCu7jOheTHlHAWg=;
+        b=UUrqa8KqOzpPgYP5qvB2z/fCrExGJs54ipexND8LjYOCfvw2oYM8paMJ1WLS+iRvKi
+         R7ZhNQQi70hoADJmzatVSrffb9WMO4gL/oltlyA8c68Zv3BFl4x0RPpgkiZgu+0YkCSP
+         x1gn+BJisB4kf6ROUmg8aZjkQOZ3GfeVusPYpSX/MLXrald+cwjMWbcp9e/Z92UkpmGD
+         jG3hO+aPiIfb9XhTZchH/mVmwEf29rkGTvc0RdtUW8mVdC6e8QGxTujEYJp7BDS1Eb5g
+         vUwXGwpxacc1gqYhwQ29VlaY8LIXD4bWbetxdQUIre6NXR5F8HKYSaA0sBCBoH4u9w6l
+         ne6w==
+X-Gm-Message-State: AOUpUlGOLPCUWMVhUW8Irz2WGNes+8zrJ4ntZvhMeP7fmzXJYFdfkke2
+        NM6aWa4/z+ZmSHTs1cCwW69lsAAoTUo=
+X-Google-Smtp-Source: AA+uWPyDH1+OLVvhQ88RDzAiBvAkKZUVRBdqkxCNiiCo4JHesW2m36r7zvsV+HDAzwK4quhMg13UOQ==
+X-Received: by 2002:a81:150d:: with SMTP id 13-v6mr9252284ywv.319.1534144282134;
+        Mon, 13 Aug 2018 00:11:22 -0700 (PDT)
+Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
+        by smtp.gmail.com with ESMTPSA id g203-v6sm9091470ywb.69.2018.08.13.00.11.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Aug 2018 00:11:19 -0700 (PDT)
+Received: by mail-yw1-f50.google.com with SMTP id l9-v6so12875352ywc.11
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 00:11:18 -0700 (PDT)
+X-Received: by 2002:a0d:e7c1:: with SMTP id q184-v6mr8421932ywe.435.1534144278167;
+ Mon, 13 Aug 2018 00:11:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1534140369-11578-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180806155339.9473-1-enric.balletbo@collabora.com>
+In-Reply-To: <20180806155339.9473-1-enric.balletbo@collabora.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 13 Aug 2018 16:11:07 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CGhkfTRzSdTqtFh4zuQuFH0H5SVyKWtk98Ceh_izo4=A@mail.gmail.com>
+Message-ID: <CAAFQd5CGhkfTRzSdTqtFh4zuQuFH0H5SVyKWtk98Ceh_izo4=A@mail.gmail.com>
+Subject: Re: [PATCH] drm/rockchip: update cursors asynchronously through atomic.
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Enric,
 
-
-On 13.08.2018 09:06, zhong jiang wrote:
-> Kfree has taken the null pointer into account. So remove the check
-> before kfree.
-> 
-> The issue is detected with the help of Coccinelle.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-
+On Tue, Aug 7, 2018 at 12:53 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Add support to async updates of cursors by using the new atomic
+> interface for that.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
->  fs/btrfs/free-space-cache.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-> index c3888c1..69d639f 100644
-> --- a/fs/btrfs/free-space-cache.c
-> +++ b/fs/btrfs/free-space-cache.c
-> @@ -2110,8 +2110,7 @@ static int insert_into_bitmap(struct btrfs_free_space_ctl *ctl,
->  
->  out:
->  	if (info) {
-> -		if (info->bitmap)
-> -			kfree(info->bitmap);
-> +		kfree(info->bitmap);
->  		kmem_cache_free(btrfs_free_space_cachep, info);
->  	}
->  
-> @@ -3605,8 +3604,7 @@ int test_add_free_space_entry(struct btrfs_block_group_cache *cache,
->  
->  	if (info)
->  		kmem_cache_free(btrfs_free_space_cachep, info);
-> -	if (map)
-> -		kfree(map);
-> +	kfree(map);
->  	return 0;
+> Hi,
+>
+> This first version is slightly different from the RFC, note that I did
+> not maintain the Sean reviewed tag for that reason. With this version I
+> don't touch the atomic_update function and all is implemented in the
+> async_check/update functions. See the changelog for a list of changes.
+>
+> The patch was tested on a Samsung Chromebook Plus in two ways.
+>
+>  1. Running all igt kms_cursor_legacy and kms_atomic@plane_cursor_legacy
+>     tests and see that there is no regression after the patch.
+>
+>  2. Running weston using the atomic API.
+
+Thanks for the patch. This feature might look like a really minor
+thing, but we really had hard time dealing with users complaints, so
+having this in upstream would be a really useful thing.
+
+Let me post some comments inline.
+
+>
+> Best regards,
+>   Enric
+>
+> Changes in v1:
+> - Rebased on top of drm-misc
+> - In async_check call drm_atomic_helper_check_plane_state to check that
+>   the desired plane is valid and update various bits of derived state
+>   (clipped coordinates etc.)
+> - In async_check allow to configure new scaling in the fast path.
+> - In async_update force to flush all registered PSR encoders.
+> - In async_update call atomic_update directly.
+> - In async_update call vop_cfg_done needed to set the vop registers and take effect.
+>
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 53 +++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index e9f91278137d..dab70056ee73 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -811,10 +811,63 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+>         spin_unlock(&vop->reg_lock);
 >  }
->  
-> 
+>
+> +static int vop_plane_atomic_async_check(struct drm_plane *plane,
+> +                                       struct drm_plane_state *state)
+> +{
+> +       struct vop_win *vop_win = to_vop_win(plane);
+> +       const struct vop_win_data *win = vop_win->data;
+> +       int min_scale = win->phy->scl ? FRAC_16_16(1, 8) :
+> +                                       DRM_PLANE_HELPER_NO_SCALING;
+> +       int max_scale = win->phy->scl ? FRAC_16_16(8, 1) :
+> +                                       DRM_PLANE_HELPER_NO_SCALING;
+> +       int ret;
+> +
+> +       if (plane != state->crtc->cursor)
+> +               return -EINVAL;
+> +
+> +       if (!plane->state)
+> +               return -EINVAL;
+> +
+> +       if (!plane->state->fb ||
+> +           plane->state->fb != state->fb)
+> +               return -EINVAL;
+
+While it covers for quite a big part of cursor movements, you may
+still expect jumpy cursor when hoovering text boxes or hyperlinks,
+since it changes the cursor image. Our downstream patch [1] actually
+took care of changing the framebuffer as well, although with the added
+complexity of referencing the old buffer at update time and releasing
+it in a flip work.
+
+[1] https://chromium.git.corp.google.com/chromiumos/third_party/kernel/+/1ad887e1a1349991c9e137b48cb32086e65347fc%5E%21/
+
+> +
+> +       ret = drm_atomic_helper_check_plane_state(plane->state,
+> +                                                 plane->crtc->state,
+> +                                                 min_scale, max_scale,
+> +                                                 true, true);
+> +       return ret;
+> +}
+> +
+> +static void vop_plane_atomic_async_update(struct drm_plane *plane,
+> +                                         struct drm_plane_state *new_state)
+> +{
+> +       struct vop *vop = to_vop(plane->state->crtc);
+> +
+> +       plane->state->crtc_x = new_state->crtc_x;
+> +       plane->state->crtc_y = new_state->crtc_y;
+> +       plane->state->crtc_h = new_state->crtc_h;
+> +       plane->state->crtc_w = new_state->crtc_w;
+> +       plane->state->src_x = new_state->src_x;
+> +       plane->state->src_y = new_state->src_y;
+> +       plane->state->src_h = new_state->src_h;
+> +       plane->state->src_w = new_state->src_w;
+> +
+> +       if (vop->is_enabled) {
+> +               rockchip_drm_psr_flush_all(plane->dev);
+
+We should use the inhibit mechanism when accessing VOP hardware. While
+the flush is expected to keep the PSR disabled for at least 100 ms,
+we're not in any atomic (pun not intended) context here and might get
+preempted for some unspecified time in very high load conditions.
+
+Best regards,
+Tomasz
