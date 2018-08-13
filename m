@@ -2,174 +2,381 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC062C46460
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA76C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F26215F1
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:53:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=LenovoBeijing.onmicrosoft.com header.i=@LenovoBeijing.onmicrosoft.com header.b="HnA6vuM6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F26215F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=lenovo.com
+	by mail.kernel.org (Postfix) with ESMTP id 67450217BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 02:57:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67450217BE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbeHMFdx (ORCPT
+        id S1727790AbeHMFhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 01:33:53 -0400
-Received: from mail1.bemta24.messagelabs.com ([67.219.250.212]:21721 "EHLO
-        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725849AbeHMFdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 01:33:53 -0400
-Received: from [67.219.251.54] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-5.bemta.az-c.us-west-2.aws.symcld.net id 58/BB-01612-5B2F07B5; Mon, 13 Aug 2018 02:53:41 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfUwTdxjH97t3CbcdLdpniOgayBRzXVuNuc0
-  luv1Vs8zoYmKCLu4KN9rQlqZXIrgYO9HUURuEgXOdFCOIWDRigyiELFtNZL7EMYYhvBglaJSK
-  L0MJW2Rmd73qtvvjl8/v+T4v37s8x+C6P6kcRqr0Sz6P6DJSGURpXtLEd814t5mH+1YJ3zUOI
-  OGXka8poWfiESWc/LEWCb/3HqWE6roxWjjyOIiE69cGSaHu/gtCGD10GVufYeuJ3KJtLX1TmC
-  0e+4ayRa9stoV+eEnYum4GCduzeN4muoh0euzllV+Qjn3Rdsz73FB5arCfDqDrhhqUwei4KQR
-  7G2bIGrRAuVxG0DnlV5ng2nE4PM1rSXUY3AveIbTLLQRP6k/SahbFFcBIR5JUhWwugcFkeIBQ
-  BZy7gCDU/aHKes4Os79FkcrZXDG0tHXSGlthJh5D2rgCGIoEUnGW2w6JgWpMs+SEF61zqZ4LO
-  At01vycYsQtgrmrpzFtlgFG7zanGDgOWvt+xTVeCFOTL0mNl0JtR5jQeAkMNoeQahq4MA4Pxh
-  +mk3h42tiYLv4ULjQdoLWkfgSzzfuQJhTC5MEGWnPxGYz+9ZTW4mUQeXyc0ngXzA6fTzfNg1h
-  4gtAaxXEYq+5KF+TCpche8hB6L/Kft4ggRuEVcLY3HX4HGkITdCT1YbLgyvd3iWOIiCHB7nOW
-  Ovxu0eniLWYzb7FYecuqNbzVbDaJu/hiU4XM75RkP281iTtlk1zlLnaVmDySP46UzXtDeS6i2
-  URJAr3NYMaF7KImzzbdm/bykiqHKDt2+CpckpxAuQxjBPYtZUN1WT6pVKr80ulS1veVDEymMZ
-  tt+kORWdkrumVnqSZdRe8z0VP19Tgz/6RROcdDh+txHeEp90g5Blan9uPUAkeF53W7Vz/EIFq
-  So2eRYlCX6ZV8bqf//3oSGRhk1LPT6thMp8f/empSMYQphspWuFVDfvFfKSeAzlUsju/Z3zcG
-  Fz//+6OyrmpBvP38zE8U2X5s046CEzf2ez8YGVr9lcFETs/ppSNbN8Rr226uqwpah4ralgO5d
-  rj1rH5l7u5z5g2Fify87nlcDhs3Lz2/OBoWhgLdW8ZbksFlz9Zt/Nb+7p1AvPfjrPCyS/nz1M
-  i1T5pj/flsz/KAkZAdoqUQ98niP9dRH4ILBAAA
-X-Env-Sender: hehy1@lenovo.com
-X-Msg-Ref: server-3.tower-366.messagelabs.com!1534128812!1991374!1
-X-Originating-IP: [103.30.234.46]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 11980 invoked from network); 13 Aug 2018 02:53:40 -0000
-Received: from unknown (HELO apsmtp03.lenovo.com) (103.30.234.46)
-  by server-3.tower-366.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 13 Aug 2018 02:53:40 -0000
-Received: from HKGWPEXCH01.lenovo.com (unknown [10.128.62.30]) by apsmtp03.lenovo.com with smtp
-        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-SHA384)
-         id 496f_ab2b_f82ec8ed_d19d_4f99_b112_6a93d68da6ae;
-        Mon, 13 Aug 2018 10:53:27 +0800
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (65.55.88.242) by
- HKGWPEXCH01.lenovo.com (10.128.62.30) with Microsoft SMTP Server (TLS) id
- 14.3.389.1; Mon, 13 Aug 2018 10:53:26 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=LenovoBeijing.onmicrosoft.com; s=selector1-lenovo-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sWt7GoALK3m6UjbKkZPQZT3Ug6s9iu0RsBYAsmubAk4=;
- b=HnA6vuM6U7RICqVCzNPtRnCX+vd/Ea1ZKffW/NpaNHJfA8bFiWNfdF9qcRcf/bJDBaiboY14j7+GzoyVvu9YPB07EMwP49CS+hb8TpirUy27+6ixsFOfGctdUuHzuO1HNGS4CiYuLwHPSOdSUNdTeFpy7mIzn0Gy9LlXwT7FcGE=
-Received: from HK0PR03MB3170.apcprd03.prod.outlook.com (52.133.151.140) by
- HK0PR03MB2788.apcprd03.prod.outlook.com (52.133.210.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1038.14; Mon, 13 Aug 2018 02:53:24 +0000
-Received: from HK0PR03MB3170.apcprd03.prod.outlook.com
- ([fe80::31fa:fa7:383b:2c63]) by HK0PR03MB3170.apcprd03.prod.outlook.com
- ([fe80::31fa:fa7:383b:2c63%5]) with mapi id 15.20.1059.013; Mon, 13 Aug 2018
- 02:53:24 +0000
-From:   Ocean HY1 He <hehy1@lenovo.com>
-To:     "Verma, Vishal L" <vishal.l.verma@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
-        "oceanhehy@gmail.com" <oceanhehy@gmail.com>,
-        "Jiang, Dave" <dave.jiang@intel.com>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: RE: [External]  Re: [PATCH v2] ACPI: nfit: remove redundant
- assignment if nfit_mem found
-Thread-Topic: [External]  Re: [PATCH v2] ACPI: nfit: remove redundant
- assignment if nfit_mem found
-Thread-Index: AQHUMQRNzeyQdSQkyk6K+DfVvnpfV6S8/e9w
-Date:   Mon, 13 Aug 2018 02:53:24 +0000
-Message-ID: <HK0PR03MB31708EFDDA3F29C4A697956889390@HK0PR03MB3170.apcprd03.prod.outlook.com>
-References: <1533199444-29607-1-git-send-email-oceanhehy@gmail.com>
- <1533944734.6054.38.camel@intel.com>
-In-Reply-To: <1533944734.6054.38.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [57.197.58.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK0PR03MB2788;20:obhgRhmEdovULSpprJhuqoRz17JQ2NohFr5g+ZClKTAdMUhtygVRQswiPwfTGD29/yDznbaOZQ3eN1EQrpAawc4Kjw4/qQ0pciVeZqFL/WTtXSH8FdvfJHwDLaVljnGWyiJLKrFyflhNGzSSbxsGEGM1CoNuP35ZRSK69UGAwoWB4JFZAF+Fun/60qL+DEoNSt6AcL/dPr2FBba3cKUF83/pD8NLeZdMD9qQd5SQN8wuw4qCfzT+3qP3m/2uSkxq2QBNGF5CML7757BcSXSr3JHvqmHtpGxWU8r1QCOF5huHNG5+/ZUPnuw57UDgioF632KVFbgcv46zSKXOU69STQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3070a64d-0610-47b8-c429-08d600c7f02b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HK0PR03MB2788;
-x-ms-traffictypediagnostic: HK0PR03MB2788:
-x-microsoft-antispam-prvs: <HK0PR03MB27882A41680B4CEA1D66619E89390@HK0PR03MB2788.apcprd03.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(3940261145250)(9452136761055)(85827821059158)(162533806227266)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HK0PR03MB2788;BCL:0;PCL:0;RULEID:;SRVR:HK0PR03MB2788;
-x-forefront-prvs: 07630F72AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(136003)(376002)(39840400004)(13464003)(199004)(189003)(26005)(76176011)(2501003)(5250100002)(99286004)(4326008)(7696005)(105586002)(81166006)(8676002)(81156014)(106356001)(86362001)(39060400002)(102836004)(2201001)(6306002)(7416002)(55016002)(476003)(229853002)(316002)(33656002)(25786009)(110136005)(54906003)(6436002)(446003)(186003)(486006)(9686003)(11346002)(256004)(97736004)(2906002)(2900100001)(478600001)(966005)(14454004)(8936002)(66066001)(6116002)(6506007)(5660300001)(6246003)(53936002)(7736002)(68736007)(74316002)(3846002)(53546011)(305945005)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0PR03MB2788;H:HK0PR03MB3170.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (HKGWPEXCH01.lenovo.com: hehy1@lenovo.com does not
- designate permitted sender hosts)
-received-spf: None (protection.outlook.com: lenovo.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: AZewS+JUHDQ+JKDfO3CaRDOcGrrSrBxYYD9yknoLfZ02aEjAIYyjGfAdHVlKWUD+9oPGEifi4W50CQHV/7AjaAffnj51D4LbT9sEFC39OIgnYmyT35eFPEqLm//tDywygbS1IQBaQPHixuqZSmPESSqdi4yzvaxVZ7WiFQL4mS1eRvkzrbSOxrpZIMc4EB4hSsWHGoCmAgGBMBXo3LgCOwZFjkuODCQFZILec1Fa6zlyDxx20OoKUcrXmgUP/LQcbaqK5ujyRz0bhymU8v/rFdBlLP6e22bCL9cYIMOyYgZ8Fj9sVaEg4i7Hvj+gEVRhdfR6ibcTGKbI88xrzO0O+ex/IrjPhb0xBY5DU09JJfY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 13 Aug 2018 01:37:20 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37620 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725849AbeHMFhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 01:37:20 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2742B6D12F8CE;
+        Mon, 13 Aug 2018 10:57:02 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 13 Aug
+ 2018 10:56:57 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 3/8] staging: erofs: add error handling for xattr submodule
+Date:   Mon, 13 Aug 2018 10:56:34 +0800
+Message-ID: <1534128994-91336-1-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <3d6e8cd9-0263-2196-7b45-b60245f0ba7c@huawei.com>
+References: <3d6e8cd9-0263-2196-7b45-b60245f0ba7c@huawei.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3070a64d-0610-47b8-c429-08d600c7f02b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2018 02:53:24.5694
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR03MB2788
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVmVybWEsIFZpc2hhbCBM
-IDx2aXNoYWwubC52ZXJtYUBpbnRlbC5jb20+DQo+IFNlbnQ6IFNhdHVyZGF5LCBBdWd1c3QgMTEs
-IDIwMTggNzo0NiBBTQ0KPiBUbzogV2lsbGlhbXMsIERhbiBKIDxkYW4uai53aWxsaWFtc0BpbnRl
-bC5jb20+OyByb3NzLnp3aXNsZXJAbGludXguaW50ZWwuY29tOw0KPiBvY2VhbmhlaHlAZ21haWwu
-Y29tOyBKaWFuZywgRGF2ZSA8ZGF2ZS5qaWFuZ0BpbnRlbC5jb20+OyBsZW5iQGtlcm5lbC5vcmc7
-DQo+IHJqd0Byand5c29ja2kubmV0DQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1udmRpbW1AbGlzdHMuMDEub3JnOyBsaW51eC0NCj4gYWNwaUB2Z2VyLmtlcm5lbC5v
-cmc7IE9jZWFuIEhZMSBIZSA8aGVoeTFAbGVub3ZvLmNvbT4NCj4gU3ViamVjdDogW0V4dGVybmFs
-XSBSZTogW1BBVENIIHYyXSBBQ1BJOiBuZml0OiByZW1vdmUgcmVkdW5kYW50IGFzc2lnbm1lbnQg
-aWYNCj4gbmZpdF9tZW0gZm91bmQNCj4gDQo+IA0KPiBPbiBUaHUsIDIwMTgtMDgtMDIgYXQgMDQ6
-NDQgLTA0MDAsIG9jZWFuaGVoeUBnbWFpbC5jb20gd3JvdGU6DQo+ID4gRnJvbTogT2NlYW4gSGUg
-PGhlaHkxQGxlbm92by5jb20+DQo+ID4NCj4gPiBXaGVuIG5maXRfbWVtIGlzIGZvdW5kIHZpYSBs
-aXN0X2Zvcl9lYWNoX2VudHJ5LCBpdCBoYXMgYWxyZWFkeSBiZWVuDQo+ID4gYXNzaWduZWQgdmFs
-aWQgdmFsdWUuIFRoZXJlIGlzIG5vIG5lZWQgdG8gYXNzaWduIGl0IGFnYWluIGluIHRoZQ0KPiA+
-IGZvbGxvd2luZw0KPiA+IGNvZGVzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogT2NlYW4gSGUg
-PGhlaHkxQGxlbm92by5jb20+DQo+ID4gLS0tDQo+ID4gdjE6IGh0dHBzOi8vcGF0Y2h3b3JrLmtl
-cm5lbC5vcmcvcGF0Y2gvMTA1NTMyNzcvDQo+ID4gdjI6IFNvcnJ5IGZvciBub2lzZS4gSSBnb3Qg
-YW4gZW1haWwgcHJvYmxlbSwgc28gSSBoYXZlIHRvIHJlc2VuZCB0bw0KPiA+IGxvb3ANCj4gPiBs
-aW51eC1udmRpbW1AbGlzdHMuMDEub3JnLg0KPiA+DQo+ID4gIGRyaXZlcnMvYWNwaS9uZml0L2Nv
-cmUuYyB8IDQgKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDMgZGVs
-ZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hY3BpL25maXQvY29yZS5j
-IGIvZHJpdmVycy9hY3BpL25maXQvY29yZS5jDQo+ID4gaW5kZXggN2M0NzkwMC4uODVkZGU1NCAx
-MDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMNCj4gPiArKysgYi9kcml2
-ZXJzL2FjcGkvbmZpdC9jb3JlLmMNCj4gPiBAQCAtMTA0OCw5ICsxMDQ4LDcgQEAgc3RhdGljIGlu
-dCBfX25maXRfbWVtX2luaXQoc3RydWN0DQo+ID4gYWNwaV9uZml0X2Rlc2MgKmFjcGlfZGVzYywN
-Cj4gPiAgCQkJCWJyZWFrOw0KPiA+ICAJCQl9DQo+ID4NCj4gPiAtCQlpZiAoZm91bmQpDQo+ID4g
-LQkJCW5maXRfbWVtID0gZm91bmQ7DQo+ID4gLQkJZWxzZSB7DQo+ID4gKwkJaWYgKCFmb3VuZCkg
-ew0KPiANCj4gSGkgT2NlYW4sDQo+IA0KPiBXaGlsZSB0aGlzIGlzIHRlY2huaWNhbGx5IGNvcnJl
-Y3QsIHRoZSBvbGQgd2F5IHdhcyBlYXNpZXIgdG8gcmVhZC4gV2UNCj4gbG9vcCB0aHJvdWdoIGFu
-ZCBmaW5kIHRoZSBtYXRjaGluZyBoYW5kbGUuIElmIHdlIGZvdW5kIG9uZSwgdGhlbg0KPiBuZml0
-X21lbSB3YXMgd2hhdGV2ZXIgd2FzIGZvdW5kLiBJZiBub3QsIHdlIGFsbG9jYXRlIGl0Lg0KPiAN
-Cj4gV2l0aCB0aGlzIGNoYW5nZSwgb25lIGhhcyB0byBnbyBncm9rIHRoZSBsaXN0X2Zvcl8uLiBs
-b29wIHRvIGZpZ3VyZSBvdXQNCj4gd2hlcmUgbmZpdF9tZW0gaXMgY29taW5nIGZyb20uIEknZCBw
-ZXJzb25hbGx5IHByZWZlciB0byBrZWVwIHRoZQ0KPiBleGlzdGluZyB3YXkuLg0KPiANCkhpIFZl
-cm1hLA0KDQpZb3UncmUgcmlnaHQgdGhhdCBpdCB0b29rIG1lIHNvbWUgdGltZSB0byBmaW5kIG91
-dCB3aGVyZSBuZml0X21lbQ0Kd2FzIGZvdW5kLCB3aGVuIEkgbG9vayB0aGVzZSBjb2RlcyBhdCBm
-aXJzdC4NCg0KSXQncyByZWFzb25hYmxlIHRvIGtlZXAgdGhlIGV4aXN0aW5nIHdheSBmb3Igd2Vs
-bCByZWFkYWJpbGl0eS4NCg0KVGhhbmtzLA0KT2NlYW4uDQo+ID4gIAkJCW5maXRfbWVtID0gZGV2
-bV9remFsbG9jKGFjcGlfZGVzYy0+ZGV2LA0KPiA+ICAJCQkJCXNpemVvZigqbmZpdF9tZW0pLA0K
-PiA+IEdGUF9LRVJORUwpOw0KPiA+ICAJCQlpZiAoIW5maXRfbWVtKQ0K
+This patch enhances the missing error handling code for
+xattr submodule, which improves the stability for the rare cases.
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+change log v2:
+ - fix `PTR_ERR applied after initialization to constant' reported by
+     kbuild test robot <lkp@intel.com>
+   Link: https://lists.01.org/pipermail/kbuild-all/2018-August/051187.html
+
+ drivers/staging/erofs/internal.h |   6 +-
+ drivers/staging/erofs/xattr.c    | 122 ++++++++++++++++++++++++++-------------
+ 2 files changed, 85 insertions(+), 43 deletions(-)
+
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index a756abe..8951e01 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -485,10 +485,10 @@ struct erofs_map_blocks_iter {
+ 
+ 
+ static inline struct page *
+-erofs_get_inline_page_nofail(struct inode *inode,
+-			     erofs_blk_t blkaddr)
++erofs_get_inline_page(struct inode *inode,
++		      erofs_blk_t blkaddr)
+ {
+-	return erofs_get_meta_page_nofail(inode->i_sb,
++	return erofs_get_meta_page(inode->i_sb,
+ 		blkaddr, S_ISDIR(inode->i_mode));
+ }
+ 
+diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
+index 2593c85..2a846cf 100644
+--- a/drivers/staging/erofs/xattr.c
++++ b/drivers/staging/erofs/xattr.c
+@@ -24,16 +24,25 @@ struct xattr_iter {
+ 
+ static inline void xattr_iter_end(struct xattr_iter *it, bool atomic)
+ {
+-	/* only init_inode_xattrs use non-atomic once */
++	/* the only user of kunmap() is 'init_inode_xattrs' */
+ 	if (unlikely(!atomic))
+ 		kunmap(it->page);
+ 	else
+ 		kunmap_atomic(it->kaddr);
++
+ 	unlock_page(it->page);
+ 	put_page(it->page);
+ }
+ 
+-static void init_inode_xattrs(struct inode *inode)
++static inline void xattr_iter_end_final(struct xattr_iter *it)
++{
++	if (unlikely(it->page == NULL))
++		return;
++
++	xattr_iter_end(it, true);
++}
++
++static int init_inode_xattrs(struct inode *inode)
+ {
+ 	struct xattr_iter it;
+ 	unsigned i;
+@@ -44,7 +53,7 @@ static void init_inode_xattrs(struct inode *inode)
+ 	bool atomic_map;
+ 
+ 	if (likely(inode_has_inited_xattr(inode)))
+-		return;
++		return 0;
+ 
+ 	vi = EROFS_V(inode);
+ 	BUG_ON(!vi->xattr_isize);
+@@ -54,8 +63,9 @@ static void init_inode_xattrs(struct inode *inode)
+ 	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
+ 	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
+ 
+-	it.page = erofs_get_inline_page_nofail(inode, it.blkaddr);
+-	BUG_ON(IS_ERR(it.page));
++	it.page = erofs_get_inline_page(inode, it.blkaddr);
++	if (IS_ERR(it.page))
++		return PTR_ERR(it.page);
+ 
+ 	/* read in shared xattr array (non-atomic, see kmalloc below) */
+ 	it.kaddr = kmap(it.page);
+@@ -64,9 +74,12 @@ static void init_inode_xattrs(struct inode *inode)
+ 	ih = (struct erofs_xattr_ibody_header *)(it.kaddr + it.ofs);
+ 
+ 	vi->xattr_shared_count = ih->h_shared_count;
+-	vi->xattr_shared_xattrs = (unsigned *)kmalloc_array(
+-		vi->xattr_shared_count, sizeof(unsigned),
+-		GFP_KERNEL | __GFP_NOFAIL);
++	vi->xattr_shared_xattrs = kmalloc_array(vi->xattr_shared_count,
++						sizeof(unsigned), GFP_KERNEL);
++	if (unlikely(vi->xattr_shared_xattrs == NULL)) {
++		xattr_iter_end(&it, atomic_map);
++		return -ENOMEM;
++	}
+ 
+ 	/* let's skip ibody header */
+ 	it.ofs += sizeof(struct erofs_xattr_ibody_header);
+@@ -77,9 +90,10 @@ static void init_inode_xattrs(struct inode *inode)
+ 			BUG_ON(it.ofs != EROFS_BLKSIZ);
+ 			xattr_iter_end(&it, atomic_map);
+ 
+-			it.page = erofs_get_meta_page_nofail(sb,
++			it.page = erofs_get_meta_page(sb,
+ 				++it.blkaddr, S_ISDIR(inode->i_mode));
+-			BUG_ON(IS_ERR(it.page));
++			if (IS_ERR(it.page))
++				return PTR_ERR(it.page);
+ 
+ 			it.kaddr = kmap_atomic(it.page);
+ 			atomic_map = true;
+@@ -92,6 +106,7 @@ static void init_inode_xattrs(struct inode *inode)
+ 	xattr_iter_end(&it, atomic_map);
+ 
+ 	inode_set_inited_xattr(inode);
++	return 0;
+ }
+ 
+ struct xattr_iter_handlers {
+@@ -101,19 +116,26 @@ struct xattr_iter_handlers {
+ 	void (*value)(struct xattr_iter *, unsigned, char *, unsigned);
+ };
+ 
+-static void xattr_iter_fixup(struct xattr_iter *it)
++static inline int xattr_iter_fixup(struct xattr_iter *it)
+ {
+-	if (unlikely(it->ofs >= EROFS_BLKSIZ)) {
+-		xattr_iter_end(it, true);
++	if (likely(it->ofs < EROFS_BLKSIZ))
++		return 0;
++
++	xattr_iter_end(it, true);
+ 
+-		it->blkaddr += erofs_blknr(it->ofs);
+-		it->page = erofs_get_meta_page_nofail(it->sb,
+-			it->blkaddr, false);
+-		BUG_ON(IS_ERR(it->page));
++	it->blkaddr += erofs_blknr(it->ofs);
+ 
+-		it->kaddr = kmap_atomic(it->page);
+-		it->ofs = erofs_blkoff(it->ofs);
++	it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
++	if (IS_ERR(it->page)) {
++		int err = PTR_ERR(it->page);
++
++		it->page = NULL;
++		return err;
+ 	}
++
++	it->kaddr = kmap_atomic(it->page);
++	it->ofs = erofs_blkoff(it->ofs);
++	return 0;
+ }
+ 
+ static int inline_xattr_iter_begin(struct xattr_iter *it,
+@@ -134,22 +156,25 @@ static int inline_xattr_iter_begin(struct xattr_iter *it,
+ 	it->blkaddr = erofs_blknr(iloc(sbi, vi->nid) + inline_xattr_ofs);
+ 	it->ofs = erofs_blkoff(iloc(sbi, vi->nid) + inline_xattr_ofs);
+ 
+-	it->page = erofs_get_inline_page_nofail(inode, it->blkaddr);
+-	BUG_ON(IS_ERR(it->page));
+-	it->kaddr = kmap_atomic(it->page);
++	it->page = erofs_get_inline_page(inode, it->blkaddr);
++	if (IS_ERR(it->page))
++		return PTR_ERR(it->page);
+ 
++	it->kaddr = kmap_atomic(it->page);
+ 	return vi->xattr_isize - xattr_header_sz;
+ }
+ 
+ static int xattr_foreach(struct xattr_iter *it,
+-	struct xattr_iter_handlers *op, unsigned *tlimit)
++	const struct xattr_iter_handlers *op, unsigned *tlimit)
+ {
+ 	struct erofs_xattr_entry entry;
+ 	unsigned value_sz, processed, slice;
+ 	int err;
+ 
+ 	/* 0. fixup blkaddr, ofs, ipage */
+-	xattr_iter_fixup(it);
++	err = xattr_iter_fixup(it);
++	if (unlikely(err))
++		return err;
+ 
+ 	/*
+ 	 * 1. read xattr entry to the memory,
+@@ -181,7 +206,9 @@ static int xattr_foreach(struct xattr_iter *it,
+ 		if (it->ofs >= EROFS_BLKSIZ) {
+ 			BUG_ON(it->ofs > EROFS_BLKSIZ);
+ 
+-			xattr_iter_fixup(it);
++			err = xattr_iter_fixup(it);
++			if (unlikely(err))
++				goto out;
+ 			it->ofs = 0;
+ 		}
+ 
+@@ -213,7 +240,10 @@ static int xattr_foreach(struct xattr_iter *it,
+ 	while (processed < value_sz) {
+ 		if (it->ofs >= EROFS_BLKSIZ) {
+ 			BUG_ON(it->ofs > EROFS_BLKSIZ);
+-			xattr_iter_fixup(it);
++
++			err = xattr_iter_fixup(it);
++			if (unlikely(err))
++				goto out;
+ 			it->ofs = 0;
+ 		}
+ 
+@@ -273,7 +303,7 @@ static void xattr_copyvalue(struct xattr_iter *_it,
+ 	memcpy(it->buffer + processed, buf, len);
+ }
+ 
+-static struct xattr_iter_handlers find_xattr_handlers = {
++static const struct xattr_iter_handlers find_xattr_handlers = {
+ 	.entry = xattr_entrymatch,
+ 	.name = xattr_namematch,
+ 	.alloc_buffer = xattr_checkbuffer,
+@@ -294,8 +324,11 @@ static int inline_getxattr(struct inode *inode, struct getxattr_iter *it)
+ 		ret = xattr_foreach(&it->it, &find_xattr_handlers, &remaining);
+ 		if (ret >= 0)
+ 			break;
++
++		if (unlikely(ret != -ENOATTR))	/* -ENOMEM, -EIO, etc. */
++			break;
+ 	}
+-	xattr_iter_end(&it->it, true);
++	xattr_iter_end_final(&it->it);
+ 
+ 	return ret < 0 ? ret : it->buffer_size;
+ }
+@@ -318,9 +351,10 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
+ 			if (i)
+ 				xattr_iter_end(&it->it, true);
+ 
+-			it->it.page = erofs_get_meta_page_nofail(sb,
+-				blkaddr, false);
+-			BUG_ON(IS_ERR(it->it.page));
++			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
++			if (IS_ERR(it->it.page))
++				return PTR_ERR(it->it.page);
++
+ 			it->it.kaddr = kmap_atomic(it->it.page);
+ 			it->it.blkaddr = blkaddr;
+ 		}
+@@ -328,9 +362,12 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
+ 		ret = xattr_foreach(&it->it, &find_xattr_handlers, NULL);
+ 		if (ret >= 0)
+ 			break;
++
++		if (unlikely(ret != -ENOATTR))	/* -ENOMEM, -EIO, etc. */
++			break;
+ 	}
+ 	if (vi->xattr_shared_count)
+-		xattr_iter_end(&it->it, true);
++		xattr_iter_end_final(&it->it);
+ 
+ 	return ret < 0 ? ret : it->buffer_size;
+ }
+@@ -355,7 +392,9 @@ int erofs_getxattr(struct inode *inode, int index,
+ 	if (unlikely(name == NULL))
+ 		return -EINVAL;
+ 
+-	init_inode_xattrs(inode);
++	ret = init_inode_xattrs(inode);
++	if (unlikely(ret < 0))
++		return ret;
+ 
+ 	it.index = index;
+ 
+@@ -498,7 +537,7 @@ static int xattr_skipvalue(struct xattr_iter *_it,
+ 	return 1;
+ }
+ 
+-static struct xattr_iter_handlers list_xattr_handlers = {
++static const struct xattr_iter_handlers list_xattr_handlers = {
+ 	.entry = xattr_entrylist,
+ 	.name = xattr_namelist,
+ 	.alloc_buffer = xattr_skipvalue,
+@@ -520,7 +559,7 @@ static int inline_listxattr(struct listxattr_iter *it)
+ 		if (ret < 0)
+ 			break;
+ 	}
+-	xattr_iter_end(&it->it, true);
++	xattr_iter_end_final(&it->it);
+ 	return ret < 0 ? ret : it->buffer_ofs;
+ }
+ 
+@@ -542,9 +581,10 @@ static int shared_listxattr(struct listxattr_iter *it)
+ 			if (i)
+ 				xattr_iter_end(&it->it, true);
+ 
+-			it->it.page = erofs_get_meta_page_nofail(sb,
+-				blkaddr, false);
+-			BUG_ON(IS_ERR(it->it.page));
++			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
++			if (IS_ERR(it->it.page))
++				return PTR_ERR(it->it.page);
++
+ 			it->it.kaddr = kmap_atomic(it->it.page);
+ 			it->it.blkaddr = blkaddr;
+ 		}
+@@ -554,7 +594,7 @@ static int shared_listxattr(struct listxattr_iter *it)
+ 			break;
+ 	}
+ 	if (vi->xattr_shared_count)
+-		xattr_iter_end(&it->it, true);
++		xattr_iter_end_final(&it->it);
+ 
+ 	return ret < 0 ? ret : it->buffer_ofs;
+ }
+@@ -565,7 +605,9 @@ ssize_t erofs_listxattr(struct dentry *dentry,
+ 	int ret;
+ 	struct listxattr_iter it;
+ 
+-	init_inode_xattrs(d_inode(dentry));
++	ret = init_inode_xattrs(d_inode(dentry));
++	if (unlikely(ret < 0))
++		return ret;
+ 
+ 	it.dentry = dentry;
+ 	it.buffer = buffer;
+-- 
+1.9.1
+
