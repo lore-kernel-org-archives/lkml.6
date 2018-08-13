@@ -2,114 +2,109 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C1CC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDC3C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A82B52175D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:51:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A82B52175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 62D052174D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62D052174D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731520AbeHNBgL (ORCPT
+        id S1731853AbeHNBix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 21:36:11 -0400
-Received: from namei.org ([65.99.196.166]:43056 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730203AbeHNBgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 21:36:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w7DMpqXU003050;
-        Mon, 13 Aug 2018 22:51:52 GMT
-Date:   Tue, 14 Aug 2018 08:51:52 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] security subsystem: general update for v4.19
-Message-ID: <alpine.LRH.2.21.1808140835030.2526@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 13 Aug 2018 21:38:53 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33486 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730203AbeHNBix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 21:38:53 -0400
+Received: by mail-it0-f68.google.com with SMTP id d16-v6so12919901itj.0;
+        Mon, 13 Aug 2018 15:54:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o4BqkkNGuBqDv2OcE+XTgaBXOVMATOrkE0XdxZQWwNI=;
+        b=AG7jkmmIr13sxGb4t53U4vykR2xrRdxQE2SyVuJA18I/6syEYdFr1hRplR923FqMrx
+         NMXeFszx0MiEKBdIzXK5ciMTVJPxo98HmrpWkl1GdXyt13Nz8IrbtZ1Rw8D8yzLP0mlP
+         72SfJORHIe3WfiWnymXV0UyFfOXR40LFDABlJ8PeF+jQq/Cu+cuXRW3gpub2JjbB0CtA
+         ZwncqcaPWvTaZSqTN7YjJmot+6FL224c9zJPEiFyGirSKQW38TE/hDy85ADwkbnIvfiv
+         BH4pn92lhKxr+xu8UT68OJ0BE4TlQwQmKuRLVUHRv8lWPCy36wtlBPvugMqm0e4jENt8
+         VxAw==
+X-Gm-Message-State: AOUpUlEicnKk/E8mKR8P8H6I1WgbrCYq372KtaQgM70fLOHfoxWrG9jE
+        xUjQHlgpM/6ji6QHZGyRjg==
+X-Google-Smtp-Source: AA+uWPxfRaOl+qbGdnqOiLvoTmbct4G3Oa7te2tf4FQ3FLTA5smLMATLJj9mMvWuwrn43LfLpSgk1Q==
+X-Received: by 2002:a24:b101:: with SMTP id o1-v6mr12020528itf.121.1534200874681;
+        Mon, 13 Aug 2018 15:54:34 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id z1-v6sm6981981itb.7.2018.08.13.15.54.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Aug 2018 15:54:34 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 16:54:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 3/4] dt-bindings: net: phy: mscc: vsc8531: fix missing
+ "/bits/ 8" in example
+Message-ID: <20180813225433.GA13768@rob-hp-laptop>
+References: <20180730130236.3837-1-quentin.schulz@bootlin.com>
+ <20180730130236.3837-3-quentin.schulz@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730130236.3837-3-quentin.schulz@bootlin.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull these general updates for v4.19.
+On Mon, Jul 30, 2018 at 03:02:35PM +0200, Quentin Schulz wrote:
+> The "vsc8531,led-N-mode" property is read as a u8 in the driver and
+> there aren't a lot of modes anyway.
+> 
+> Without the "/bits/ 8" in front of the value of the property, the
+> value is stored as an u32 resulting in of_read_property_u8 to always
+> return 0.
 
-Summary:
+Humm, I thought this would return an error if the size was wrong, but 
+there must have been some reason otherwise.
 
-- kstrdup() return value fix from Eric Biggers
+> Fix the example so that people using the property can actually use it.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-- Add new security_load_data hook to differentiate security checking of 
-kernel-loaded binaries in the case of there being no associated file 
-descriptor, from Mimi Zohar.
+Really, the driver should be changed to use u32 if that's what's already 
+in use.
 
-- Add ability to IMA to specify a policy at build-time, rather than just 
-via command line params or by loading a custom policy, from Mimi.
+Either way,
 
-- Allow IMA and LSMs to prevent sysfs firmware load fallback (e.g. if 
-using signed firmware), from Mimi.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-- Allow IMA to deny loading of kexec kernel images, as they cannot be 
-measured by IMA, from Mimi.
-
-
-I'll followup with updates for Smack and TPM once this is merged.
-
-
----
-
-The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
-
-  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-
-for you to fetch changes up to 87ea58433208d17295e200d56be5e2a4fe4ce7d6:
-
-  security: check for kstrdup() failure in lsm_append() (2018-07-17 21:27:06 -0700)
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      security: export security_kernel_load_data function
-
-Eric Biggers (1):
-      security: check for kstrdup() failure in lsm_append()
-
-James Morris (1):
-      Merge tag 'v4.18-rc2' into next-general
-
-Mimi Zohar (8):
-      security: define new LSM hook named security_kernel_load_data
-      kexec: add call to LSM hook in original kexec_load syscall
-      ima: based on policy require signed kexec kernel images
-      firmware: add call to LSM hook before firmware sysfs fallback
-      ima: based on policy require signed firmware (sysfs fallback)
-      ima: add build time policy
-      module: replace the existing LSM hook in init_module
-      ima: based on policy warn about loading firmware (pre-allocated buffer)
-
-Paul Moore (1):
-      MAINTAINERS: remove the outdated "LINUX SECURITY MODULE (LSM) FRAMEWORK" entry
-
- MAINTAINERS                             |  5 ---
- drivers/base/firmware_loader/fallback.c |  7 ++++
- include/linux/ima.h                     |  7 ++++
- include/linux/lsm_hooks.h               |  6 +++
- include/linux/security.h                | 27 +++++++++++++
- kernel/kexec.c                          |  8 ++++
- kernel/module.c                         |  2 +-
- security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++++++
- security/integrity/ima/ima.h            |  1 +
- security/integrity/ima/ima_main.c       | 68 ++++++++++++++++++++++++++-------
- security/integrity/ima/ima_policy.c     | 48 +++++++++++++++++++++--
- security/loadpin/loadpin.c              |  6 +++
- security/security.c                     | 13 +++++++
- security/selinux/hooks.c                | 15 ++++++++
- 14 files changed, 248 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+> index 664d9d0543fc..4c7d1d384df0 100644
+> --- a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+> +++ b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+> @@ -63,6 +63,6 @@ Example:
+>                  compatible = "ethernet-phy-id0007.0570";
+>                  vsc8531,vddmac		= <3300>;
+>                  vsc8531,edge-slowdown	= <7>;
+> -                vsc8531,led-0-mode	= <LINK_1000_ACTIVITY>;
+> -                vsc8531,led-1-mode	= <LINK_100_ACTIVITY>;
+> +                vsc8531,led-0-mode	= /bits/ 8 <LINK_1000_ACTIVITY>;
+> +                vsc8531,led-1-mode	= /bits/ 8 <LINK_100_ACTIVITY>;
+>          };
+> -- 
+> 2.17.1
+> 
