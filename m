@@ -2,158 +2,133 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A851FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 09:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F958C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 09:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5439121545
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 09:12:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5439121545
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 4177121715
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 09:16:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PdhHN8ql"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4177121715
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbeHMLxc (ORCPT
+        id S1728642AbeHML5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 07:53:32 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:10470 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728226AbeHMLxc (ORCPT
+        Mon, 13 Aug 2018 07:57:20 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46303 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbeHML5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 07:53:32 -0400
-X-UUID: 15d5483acb0b4dc68d0bb473a64c0612-20180813
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <owen.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 893402320; Mon, 13 Aug 2018 17:12:05 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 13 Aug 2018 17:12:03 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 13 Aug 2018 17:12:03 +0800
-Message-ID: <1534151523.17494.48.camel@mtkswgap22>
-Subject: Re: [PATCH v5 01/11] dt-bindings: clock: mediatek: document clk
- bindings for Mediatek MT6765 SoC
-From:   Owen Chen <owen.chen@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Mars Cheng <mars.cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Date:   Mon, 13 Aug 2018 17:12:03 +0800
-In-Reply-To: <20180720174331.GA26945@rob-hp-laptop>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-         <1531817552-17221-2-git-send-email-mars.cheng@mediatek.com>
-         <20180720174331.GA26945@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Aug 2018 07:57:20 -0400
+Received: by mail-pl0-f65.google.com with SMTP id t17-v6so6640107ply.13
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 02:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lIvBvkAVZ0SXYTkc194Qdv+vdu6sjb9S4BnY1Zs4Qro=;
+        b=PdhHN8ql8q3RdqnYmPcN/DwMAbTdJLO5ZE0mXEAO4zMOk4CyPUOnGloXNQ3wk/T8mx
+         dXOhqJiPHeOZEdRTHXpBrDyJbMz6h+eNL0ay1Zo1iivtwCKzMqvZqVJMvQinAolpW5s6
+         /czJaQyKXdy4znMfg31uhbXWxWjDHCaxIKvCY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lIvBvkAVZ0SXYTkc194Qdv+vdu6sjb9S4BnY1Zs4Qro=;
+        b=Sza/it+OjOpmhJYyYZo5Bf/6qAocWY1YVVlFhS63hf8r6FHEySElQHUp0+CW/YjA/9
+         sbKBOLh0Ke+Nhi4rD/Omq2UfKrwjkLcTSwAEKUprvOyJev7bcVac1a7Dhv8WatrjviBI
+         tT+QMWlFruwWqjvctbd9fzbeZ+0esQSSFQD68hV/2KmOyeQjJectHGHdPuIwOsC3il5v
+         3TjZSlPo7oR76BLkE02kcKzwe1ptpNaHmcfe80cyzzDfpEST+pEkbaiXtl+L6dmB6YvL
+         bw+NTdskCBw3tCBtj1anhi72K5dPvdXGmwKi5klfeHtST9j6ZSbh42tDKZPWf51DY4zx
+         7Kew==
+X-Gm-Message-State: AOUpUlHuTeWxFiHu3IiD83m8kf8nMkqX8919c76jymtsA2I4/jedF/cg
+        Nlc2D6rWpuweniyfbb7CDazy
+X-Google-Smtp-Source: AA+uWPx+RJGf6AWwNFGaFuU7krg1FFWiKj/BeMqUequD/eUigzORi0+CYz1/0c6FH+3p3BSlWOz+iA==
+X-Received: by 2002:a17:902:28a6:: with SMTP id f35-v6mr15568702plb.240.1534151758000;
+        Mon, 13 Aug 2018 02:15:58 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id h18-v6sm55432462pfa.173.2018.08.13.02.15.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Aug 2018 02:15:57 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 14:45:47 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Parthiban Nallathambi <pn@denx.de>, tglx@linutronix.de,
+        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, sravanhome@gmail.com,
+        thomas.liau@actions-semi.com, mp-cs@actions-semi.com,
+        linux@cubietech.com, edgar.righi@lsitec.org.br,
+        laisa.costa@lsitec.org.br, guilherme.simoes@lsitec.org.br,
+        mkzuffo@lsi.usp.br
+Subject: Re: [PATCH v2 1/3] dt-bindings: interrupt-controller: Actions
+ external interrupt controller
+Message-ID: <20180813091547.GA22149@mani>
+References: <20180812122215.1079590-1-pn@denx.de>
+ <20180812122215.1079590-2-pn@denx.de>
+ <20180813043406.GA16275@Mani-XPS-13-9360>
+ <f1043a48-6c8d-cf08-d6a1-582d84ea2530@arm.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1043a48-6c8d-cf08-d6a1-582d84ea2530@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-20 at 11:43 -0600, Rob Herring wrote:
-> On Tue, Jul 17, 2018 at 04:52:22PM +0800, Mars Cheng wrote:
-> > This patch adds the binding documentation for apmixedsys, audsys, camsys,
-> > imgsys, infracfg, mipi0a, topckgen, vcodecsys
+On Mon, Aug 13, 2018 at 08:51:54AM +0100, Marc Zyngier wrote:
+> On 13/08/18 05:34, Manivannan Sadhasivam wrote:
+> > Hi Parthiban,
 > > 
-> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
-> >  .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
-> >  .../bindings/arm/mediatek/mediatek,camsys.txt      |   27 ++++++++++++++++++++
-> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
-> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
-> >  .../bindings/arm/mediatek/mediatek,mipi0a.txt      |   23 +++++++++++++++++
-> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
-> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
-> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
-> >  .../bindings/arm/mediatek/mediatek,vcodecsys.txt   |   22 ++++++++++++++++
-> >  10 files changed, 79 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+> > On Sun, Aug 12, 2018 at 02:22:13PM +0200, Parthiban Nallathambi wrote:
+> >> Actions Semi OWL family SoC's provides support for external interrupt
+> >> controller to be connected and controlled using SIRQ pins. S500, S700
+> >> and S900 provides 3 SIRQ lines and works independently for 3 external
+> >> interrupt controllers.
+> >>
+> >> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> >> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> >> ---
+> >>  .../interrupt-controller/actions,owl-sirq.txt      | 46 ++++++++++++++++++++++
+> >>  1 file changed, 46 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+> >> new file mode 100644
+> >> index 000000000000..4b8437751331
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+> >> @@ -0,0 +1,46 @@
+> >> +Actions Semi Owl SoCs SIRQ interrupt controller
+> >> +
+> >> +S500, S700 and S900 SoC's from Actions provides 3 SPI's from GIC,
+> >> +in which external interrupt controller can be connected. 3 SPI's
+> >> +45, 46, 47 from GIC are directly exposed as SIRQ. It has
+> >> +the following properties:
 > > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> > index b404d59..44eaeac 100644
-> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> > @@ -8,6 +8,7 @@ Required Properties:
-> >  - compatible: Should be one of:
-> >  	- "mediatek,mt2701-apmixedsys"
-> >  	- "mediatek,mt2712-apmixedsys", "syscon"
-> > +	- "mediatek,mt6765-apmixedsys", "syscon"
-> >  	- "mediatek,mt6797-apmixedsys"
-> >  	- "mediatek,mt7622-apmixedsys"
-> >  	- "mediatek,mt8135-apmixedsys"
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > index 34a69ba..9a8672a 100644
-> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > @@ -7,6 +7,7 @@ Required Properties:
-> >  
-> >  - compatible: Should be one of:
-> >  	- "mediatek,mt2701-audsys", "syscon"
-> > +	- "mediatek,mt6765-audsys", "syscon"
-> >  	- "mediatek,mt7622-audsys", "syscon"
-> >  - #clock-cells: Must be 1
-> >  
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-> > new file mode 100644
-> > index 0000000..dc75783
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-> > @@ -0,0 +1,27 @@
-> > +MediaTek CAMSYS controller
-> > +============================
-> > +
-> > +The MediaTek CAMSYS controller provides various clocks to the system.
+> > We should really document the driver here. What it does? and how the
+> > hierarchy is handled with GIC? etc...
 > 
-> Only clocks? If so, then this should be moved to bindings/clocks/.
-> 
+> Absolutely not. This should document the binding, irrespective of the
+> operating system. The word "driver" is completely out of place here.
+>
 
-camsys conclude not only clks but also mtcmos, so it's better to put
-this node in this path.
+Oops, my bad. I meant to say that we should add it as a description in the
+commit message.
 
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: Should be one of:
-> > +	- "mediatek,mt6765-camsys", "syscon"
-> > +- #clock-cells: Must be 1
-> > +
-> > +The AUDSYS controller uses the common clk binding from
-> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-> > +
-> > +Required sub-nodes:
-> > +-------
-> > +For common binding part and usage, refer to
-> > +../sonud/mt2701-afe-pcm.txt.
-> > +
-> > +Example:
-> > +
-> > +camsys: camsys@1a000000  {
-> 
-> clock-controller@...
-> 
-> if the above answer is yes.
-> 
-> Same comments on the other docs.
+Thanks,
+Mani
 
-
+> Thanks,
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny...
