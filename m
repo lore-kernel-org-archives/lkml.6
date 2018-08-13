@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52174C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2DBC46470
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B542175D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3B542175D
+	by mail.kernel.org (Postfix) with ESMTP id 0EF4C2175D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:46:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF4C2175D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbeHMS3i (ORCPT
+        id S1729708AbeHMS3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 14:29:38 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46139 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbeHMS3h (ORCPT
+        Mon, 13 Aug 2018 14:29:39 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:40641 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbeHMS3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 14:29:37 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h14-v6so14665249wrw.13
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 08:46:50 -0700 (PDT)
+        Mon, 13 Aug 2018 14:29:39 -0400
+Received: by mail-wm0-f43.google.com with SMTP id y9-v6so9340985wma.5
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 08:46:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tpxF+YCVx4pcXSjK6cOMV8Pg/1LfPISLwZpVtg2lpn4=;
-        b=UY4pevrw+uKxHwg8OtJjmLbGOFnXQGiaFMjS7o+mNkz3/z26sdlkwm9fTu8ko8H4Ml
-         BVm+iWmpAaVMBMIGkrTkisEWw8dL8qdO4uidSeJufJkloiOqAKlf/fi9iUr74aPN0YIW
-         5z6QiQ46MYuXqABZBAHLnDkX43iFhfAkoIKfNxwXWZsZyqlR+tbHYnWugkphYzcRlC5W
-         aQ8fm6W65PXHDjjhYV9MG+sRvnpfgbuG6GJpIaR0NKa3IP2aA4LjVD0w/ycOsChqWGAi
-         R0jEo0JyzZSoEQuOKnoLXODew517XvhpUJ0JA/gSy3W4sXJAtkj6CENsJDVoJMUIh+w3
-         Y4FQ==
-X-Gm-Message-State: AOUpUlEaRgY3KF3fpgSX61RYpQskTrB9ePZ+X9/pYGFrolaSN4tBhijv
-        eGTtuHnLzQSC/yqtEJ67vEY=
-X-Google-Smtp-Source: AA+uWPweBoTo/kk1R8beOp7se6dQ5xmP0YhGVxa/8Hy4djRYt+F2EpqMfgImwAfYDxUT2KUj5Yvsbg==
-X-Received: by 2002:adf:8466:: with SMTP id 93-v6mr10845221wrf.274.1534175209913;
-        Mon, 13 Aug 2018 08:46:49 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=t8JI55qiiScE0tExHnbnQS/eE8NCPsrYaAtEdiJRMhc=;
+        b=INklvrrYBiXO7p5m45dimPil8c0MYo2Uv9PpKBTBSawJX9Ygkfu/ka6TCghqAoT07I
+         WkOLQtMasFp9hz1FV4rifCDhtaV1VADrgmqVIt9LUTBpmE4uZx9aZxL+1wpI1YcKCOuX
+         WdPLZi0b6d+gITtK0C/gKOOUvsuGZtvcKr1wz6gcjUwx71zI9yKdxlJ5SmLbgf3VVzpR
+         20x1KBw1jU5p4A9htuGR2g881EaLmV8yKLdELQWX9kZy7915J2PXir4gztr4z0Q5/k5Z
+         IO8GuWt2ISnuzh6QaB494xeLEINwKghfu0hqg3xti+MBr8RGLPz8vnAJficHgEPQ3oHA
+         u5pQ==
+X-Gm-Message-State: AOUpUlHPfQe7zk2c6GWRmOpUUl4HSoRGaAMWm9YILM+24F2ts8NvCFge
+        7gsmmqP+/kl8QOvCyjUFZuI=
+X-Google-Smtp-Source: AA+uWPwYVyNyN9KpmIV0w/2O1uBSTnfW8Aubyv0bOtU1GjAt4i2I3YYV0pZniJifvPTY7/Zf6LNDFQ==
+X-Received: by 2002:a1c:37cd:: with SMTP id e196-v6mr8134789wma.84.1534175211194;
+        Mon, 13 Aug 2018 08:46:51 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm17674737wrs.8.2018.08.13.08.46.48
+        by smtp.gmail.com with ESMTPSA id y11-v6sm17891575wrt.4.2018.08.13.08.46.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 08:46:49 -0700 (PDT)
+        Mon, 13 Aug 2018 08:46:50 -0700 (PDT)
 Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 03D0512482A;
-        Mon, 13 Aug 2018 17:46:47 +0200 (CEST)
+        by techadventures.net (Postfix) with ESMTPA id A790A12485E;
+        Mon, 13 Aug 2018 17:46:48 +0200 (CEST)
 From:   osalvador@techadventures.net
 To:     akpm@linux-foundation.org
 Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
@@ -54,10 +55,12 @@ Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
         logang@deltatee.com, dave.jiang@intel.com,
         Jonathan.Cameron@huawei.com, vbabka@suse.cz, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 0/3] Refactoring for remove_memory_section/unregister_mem_sect_under_nodes
-Date:   Mon, 13 Aug 2018 17:46:36 +0200
-Message-Id: <20180813154639.19454-1-osalvador@techadventures.net>
+Subject: [PATCH v2 2/3] mm/memory_hotplug: Drop mem_blk check from unregister_mem_sect_under_nodes
+Date:   Mon, 13 Aug 2018 17:46:38 +0200
+Message-Id: <20180813154639.19454-3-osalvador@techadventures.net>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180813154639.19454-1-osalvador@techadventures.net>
+References: <20180813154639.19454-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,26 +68,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oscar Salvador <osalvador@suse.de>
 
-This patchset does some cleanups and refactoring in the memory-hotplug code.
+Before calling to unregister_mem_sect_under_nodes(),
+remove_memory_section() already checks if we got a valid
+memory_block.
 
-The first and the second patch are pretty straightforward, as they
-only remove unused arguments/checks.
+No need to check that again in unregister_mem_sect_under_nodes().
 
-The third one refactors unregister_mem_sect_under_nodes.
-This is needed to have a proper fallback in case we could not allocate
-memory. (details can be seen in patch3).
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ drivers/base/node.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Oscar Salvador (3):
-  mm/memory-hotplug: Drop unused args from remove_memory_section
-  mm/memory_hotplug: Drop mem_blk check from
-    unregister_mem_sect_under_nodes
-  mm/memory_hotplug: Refactor unregister_mem_sect_under_nodes
-
- drivers/base/memory.c |  5 ++---
- drivers/base/node.c   | 30 +++++++++++++++---------------
- include/linux/node.h  |  5 ++---
- 3 files changed, 19 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 1ac4c36e13bb..dd3bdab230b2 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -455,10 +455,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+ 	NODEMASK_ALLOC(nodemask_t, unlinked_nodes, GFP_KERNEL);
+ 	unsigned long pfn, sect_start_pfn, sect_end_pfn;
+ 
+-	if (!mem_blk) {
+-		NODEMASK_FREE(unlinked_nodes);
+-		return -EFAULT;
+-	}
+ 	if (!unlinked_nodes)
+ 		return -ENOMEM;
+ 	nodes_clear(*unlinked_nodes);
 -- 
 2.13.6
 
