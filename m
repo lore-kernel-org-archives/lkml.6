@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C168C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D3BC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC58321709
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42EF421709
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:35:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIHvDjch"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC58321709
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPe45A5S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42EF421709
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732400AbeHNBTE (ORCPT
+        id S1732420AbeHNBTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 21:19:04 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34015 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732383AbeHNBTD (ORCPT
+        Mon, 13 Aug 2018 21:19:14 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39769 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732285AbeHNBTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 21:19:03 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n96-v6so12402430lfi.1;
-        Mon, 13 Aug 2018 15:34:47 -0700 (PDT)
+        Mon, 13 Aug 2018 21:19:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a134-v6so12397599lfe.6;
+        Mon, 13 Aug 2018 15:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EM2ZsNGUnxUWdXWL+p9/kHNDMcMEp8SsKXGGE2JxC54=;
-        b=CIHvDjchQn2g/jvU/KoCLHHAEu7t9yFgxCCketGgKY8H6jCqR3KoJDCVTvU1/TnNM7
-         5k41uZ2oRlUpNg3zEnn+9QclFgaUroNBkfnBw6BCPcPJCTIiClQzxFSebJkRm2cy6yWp
-         V/IM+ICjT9Ekeb3E6z9EvdFdjgF7EPg/IT1K47s/a9OaT7zrYTtGHzRJFG899lkG/Nje
-         Oc06K2r22v1BDeHEdoyOj9xUrsylVsVyfPSeV/7TUJjztRlX1HUGVXxM7MWXtEzon36Y
-         dUaDodgi74oXTGsJyNMJ7CqnsaW1SnoCn3kf7gGWCu8jQDrorWWiFtcbDJ+P3y1SVNL5
-         jCUw==
+        bh=z7PaRe0Kcvcx7hiv+aZ/0LG6vJqsdKc6trNkBzyVvLs=;
+        b=gPe45A5SUYgSodBEwXYxl4cY6QCuG9T1pS4kZoMPmUX7HhqEw+TaCNXmA0Q8dEIAWk
+         1QJEDVSuGJjSYTNDXF9uxrf4IUE9RRLR40M8x8GIa3iVpy+0cDxzisccxsztC0wJkJvB
+         cVjrhHA1ndYm/JZHNYaq2Nb9vdSA0ksIJc151Lqi3hoSJiet+sFDTzqMTvYybywgogjx
+         3EmcNhoCDCIXCSNVu944uGYBAU151rNOkiGxQfRhvKB9Gsd1QzcZnia34iMN3wr1aQHn
+         nntPOTRVm27UhrOhzG+JZId9wb5eQTb8xThnhkgTLUFbEoGaSJ/LJoVB2pEsbPAJX+xQ
+         MsmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EM2ZsNGUnxUWdXWL+p9/kHNDMcMEp8SsKXGGE2JxC54=;
-        b=fhC2Mnb1tiG6jR7nUBkWMg6c8YU0Ym97LLzyp+R0ep6KcfCeLYzxWBvJb8oZAOtQoq
-         O5wI5WoL+wUhj3O650zuDVux1maKGYDr+4eMxhMAL+pKgKHTTkIqxydeKl90+R5/78RF
-         +qDZUdXgX938ncaIOY5lHt7x4ACAsEWA4Gv8HElhC2w3fM2mH1V4JpZKvUfs7sN4xSO9
-         iGDhMFLyUgoq/MLFR6uK1h1ukAnuwgLnPoqsJn0iC+oMDXqJqen/s5rxCrMDnuf6AUdr
-         t4qx/2cskRhpIY+aApQ9+1As1mk/8AhHtaIMvYTQkgoBSykF2RHwBDYAOJ5R2IHOyemO
-         dOVQ==
-X-Gm-Message-State: AOUpUlEm675AzI7/q7GWHdP9VjlD/Pha0OZALAbK5CRZow9jDkHmTFUp
-        /NbDhLBqZYsmtrJEVqq4upDLqjxE4C6uwA==
-X-Google-Smtp-Source: AA+uWPxxt4LIrmiKmlfyb//rqtd/PNqsXvJ96FZ5YV81tCqu+u2GE5NB+6b1vcf6NofWx+q2eOMrLg==
-X-Received: by 2002:a19:169f:: with SMTP id 31-v6mr11642723lfw.72.1534199686795;
-        Mon, 13 Aug 2018 15:34:46 -0700 (PDT)
+        bh=z7PaRe0Kcvcx7hiv+aZ/0LG6vJqsdKc6trNkBzyVvLs=;
+        b=EGzHPkYC04Tjaz4qoi/Z1j2FHQkYhYecEQBiw6wthNB1SmflDaynAVyxpNR5QWxG4O
+         s1+l/4FXXx1ae1bD75oyv6poZ2Kb2GRhis45PWjxZDpOPo/vpGXf/PixND4M3ERR7Aj0
+         KIvwoZUVOKeCabJqkbTpFAsa7MFmsF3vteEy/ncRlhIrA3p3v5cXf0egHk/3OhvwLPM+
+         iXOBOixF8v1K4/WTyZ6fltArgBf8gxRqmed1XSp1r/LWKQV3TYsaQx1vqq385ppGJiKJ
+         ZKhfXMMgxS3DwDFxUTRxyTfn5yYiYX/GYl/cyjAgfhNaIQbCMP2kDEfJvxoqt3kWeWZn
+         w9gQ==
+X-Gm-Message-State: AOUpUlHlexUJv5hVjWeyCOdwZF1qA7lqDu0ie5FqWVrqkHuSedWQoWnJ
+        mVKotgcVqstaFWKNNYn9yfM=
+X-Google-Smtp-Source: AA+uWPwavSaEse9bsLkIUaVrmEhHcahOk3am45tTQUsit/zyaY4SG1CIhgEph8o17Upefkm8zjFMJg==
+X-Received: by 2002:a19:e546:: with SMTP id c67-v6mr12608411lfh.135.1534199685420;
+        Mon, 13 Aug 2018 15:34:45 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id f136-v6sm3572702lfe.71.2018.08.13.15.34.45
+        by smtp.gmail.com with ESMTPSA id f136-v6sm3572702lfe.71.2018.08.13.15.34.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 15:34:46 -0700 (PDT)
+        Mon, 13 Aug 2018 15:34:44 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
@@ -72,9 +72,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v3 7/7] mtd: rawnand: ams-delta: use GPIO API for data I/O
-Date:   Tue, 14 Aug 2018 00:34:48 +0200
-Message-Id: <20180813223448.21316-8-jmkrzyszt@gmail.com>
+Subject: [PATCH v3 6/7] mtd: rawnand: ams-delta: Simplify pointer resolution on read/write
+Date:   Tue, 14 Aug 2018 00:34:47 +0200
+Message-Id: <20180813223448.21316-7-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180813223448.21316-1-jmkrzyszt@gmail.com>
 References: <20180806222918.12644-1-jmkrzyszt@gmail.com>
@@ -84,407 +84,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't readw()/writew() data directly from/to GPIO port which is under
-control of gpio-omap driver, use GPIO API instead.
-
-Degrade of performance on Amstrad Delta is significant, can be
-recognized as a regression, that's why I'm still submitting this patch
-as RFC.
-
-The driver should work with any 8+-bit bidirectional GPIO port, not
-only OMAP.
+Simplify data read/write sub-functions by making them accept private
+structure pointer instead of resolving it again from mtd_info.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 ---
-Exceprts fro timestamped boot logs showing performance degrade.
-Before the change:
-[    5.469426] Creating 6 MTD partitions on "ams-delta-nand":
-[    5.480909] 0x000000000000-0x000000380000 : "Kernel"
-[    5.502659] 0x000000380000-0x0000003c0000 : "u-boot"
-[    5.523055] 0x0000003c0000-0x000000400000 : "u-boot params"
-[    5.543612] 0x000000400000-0x000000440000 : "Amstrad LDR"
-[    5.564607] 0x000000440000-0x000001f40000 : "File system"
-[    5.601760] 0x000001f40000-0x000002000000 : "PBL reserved"
-[    5.624369] usbcore: registered new interface driver dm9601
-[    5.636233] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-[    5.649191] ohci-omap: OHCI OMAP driver
-[    5.660713] ohci ohci: OMAP OHCI
-[    5.671299] ohci ohci: new USB bus registered, assigned bus number 1
-[    5.686862] ohci ohci: irq 54, io mem 0xfffba000
-[    5.785897] hub 1-0:1.0: USB hub found
-[    5.797856] hub 1-0:1.0: 3 ports detected
-[    5.817576] usbcore: registered new interface driver usb-storage
-[    5.832551] ams-delta-serio ams-delta-serio: incomplete constraints, dummy supplies not allowed
-[    5.858588] ams-delta-serio ams-delta-serio: regulator request failed (-19)
-[    5.879312] input: omap-keypad as /devices/platform/omap-keypad/input/input0
-[    5.902490] omap_rtc omap_rtc: already running
-[    5.922929] omap_rtc omap_rtc: registered as rtc0
-[    5.945570] softdog: initialized. soft_noboot=0 soft_margin=60 sec soft_panic=0 (nowayout=0)
-[    5.976712] usbcore: registered new interface driver btusb
-[    6.007348] cx20442-codec cx20442-codec: incomplete constraints, dummy supplies not allowed
-[    6.040575] cx20442-codec cx20442-codec: failed to get POR supply (-19)
-[    6.060916] cx20442-codec cx20442-codec: ASoC: failed to probe component -517
-[    6.083486] ams-delta-audio ams-delta-audio: ASoC: failed to instantiate card -517
-[    6.121850] ams-delta-audio ams-delta-audio: snd_soc_register_card failed (-517)
-[    6.163047] NET: Registered protocol family 17
-[    6.182770] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-[    6.203517] Bluetooth: BNEP socket layer initialized
-[    6.283017] serial8250 serial8250.1: Linked as a consumer to regulator.1
-[    6.306113] usb 1-1: new full-speed USB device number 2 using ohci
-[    6.328825] clock: disabling unused clocks to save power
-[    6.350426] Skipping reset check for DSP domain clock "dsptim_ck"
-[    6.372272] Skipping reset check for DSP domain clock "dspxor_ck"
-[    6.393712] Skipping reset check for DSP domain clock "dspper_ck"
-[    6.428311] ams-delta-serio ams-delta-serio: Linked as a consumer to regulator.2
-[    6.467801] serio serio0: AMS DELTA keyboard adapter
-[    6.492511] cx20442-codec cx20442-codec: Linked as a consumer to regulator.1
-[    6.527382] ams-delta-audio ams-delta-audio: cx20442-voice <-> omap-mcbsp.1 mapping ok
-[    6.577387] input: AMS_DELTA hook_switch as /devices/platform/ams-delta-audio/sound/card0/input1
-[    6.627497] input: AT Raw Set 2 keyboard as /devices/platform/ams-delta-serio/serio0/input/input2
-[    6.673663] omap_rtc omap_rtc: setting system clock to 2013-02-09 07:22:13 UTC (1360394533)
-[    6.715895] modem_nreset: incomplete constraints, leaving on
-[    6.738677] ALSA device list:
-[    6.758398]   #0: AMS_DELTA
-[    7.036234] dm9601 1-1:1.0 eth0: register 'dm9601' at usb-ohci-1, Davicom DM96xx USB 10/100 Ethernet, 00:60:6e:00:00:11
-[  133.860599] random: crng init done
-[  138.275853] VFS: Mounted root (jffs2 filesystem) on device 31:4.
-
-After the change:
-[    6.261107] Creating 6 MTD partitions on "ams-delta-nand":
-[    6.272046] 0x000000000000-0x000000380000 : "Kernel"
-[    6.294436] 0x000000380000-0x0000003c0000 : "u-boot"
-[    6.314454] 0x0000003c0000-0x000000400000 : "u-boot params"
-[    6.335353] 0x000000400000-0x000000440000 : "Amstrad LDR"
-[    6.356669] 0x000000440000-0x000001f40000 : "File system"
-[    6.393713] 0x000001f40000-0x000002000000 : "PBL reserved"
-[    6.416771] usbcore: registered new interface driver dm9601
-[    6.428631] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-[    6.441533] ohci-omap: OHCI OMAP driver
-[    6.452758] ohci ohci: OMAP OHCI
-[    6.463300] ohci ohci: new USB bus registered, assigned bus number 1
-[    6.478817] ohci ohci: irq 54, io mem 0xfffba000
-[    6.580520] hub 1-0:1.0: USB hub found
-[    6.592424] hub 1-0:1.0: 3 ports detected
-[    6.612363] usbcore: registered new interface driver usb-storage
-[    6.627358] ams-delta-serio ams-delta-serio: incomplete constraints, dummy supplies not allowed
-[    6.653296] ams-delta-serio ams-delta-serio: regulator request failed (-19)
-[    6.674219] input: omap-keypad as /devices/platform/omap-keypad/input/input0
-[    6.697910] omap_rtc omap_rtc: already running
-[    6.718376] omap_rtc omap_rtc: registered as rtc0
-[    6.740942] softdog: initialized. soft_noboot=0 soft_margin=60 sec soft_panic=0 (nowayout=0)
-[    6.772085] usbcore: registered new interface driver btusb
-[    6.803187] cx20442-codec cx20442-codec: incomplete constraints, dummy supplies not allowed
-[    6.836386] cx20442-codec cx20442-codec: failed to get POR supply (-19)
-[    6.856730] cx20442-codec cx20442-codec: ASoC: failed to probe component -517
-[    6.879234] ams-delta-audio ams-delta-audio: ASoC: failed to instantiate card -517
-[    6.917325] ams-delta-audio ams-delta-audio: snd_soc_register_card failed (-517)
-[    6.958519] NET: Registered protocol family 17
-[    6.978224] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-[    6.998989] Bluetooth: BNEP socket layer initialized
-[    7.077593] serial8250 serial8250.1: Linked as a consumer to regulator.1
-[    7.100678] usb 1-1: new full-speed USB device number 2 using ohci
-[    7.123429] clock: disabling unused clocks to save power
-[    7.145074] Skipping reset check for DSP domain clock "dsptim_ck"
-[    7.166983] Skipping reset check for DSP domain clock "dspxor_ck"
-[    7.188434] Skipping reset check for DSP domain clock "dspper_ck"
-[    7.223321] ams-delta-serio ams-delta-serio: Linked as a consumer to regulator.2
-[    7.262882] serio serio0: AMS DELTA keyboard adapter
-[    7.287656] cx20442-codec cx20442-codec: Linked as a consumer to regulator.1
-[    7.322824] ams-delta-audio ams-delta-audio: cx20442-voice <-> omap-mcbsp.1 mapping ok
-[    7.373165] input: AMS_DELTA hook_switch as /devices/platform/ams-delta-audio/sound/card0/input1
-[    7.423520] input: AT Raw Set 2 keyboard as /devices/platform/ams-delta-serio/serio0/input/input2
-[    7.469578] omap_rtc omap_rtc: setting system clock to 2013-02-09 07:34:10 UTC (1360395250)
-[    7.511830] modem_nreset: incomplete constraints, leaving on
-[    7.534812] ALSA device list:
-[    7.554541]   #0: AMS_DELTA
-[    7.971899] dm9601 1-1:1.0 eth0: register 'dm9601' at usb-ohci-1, Davicom DM96xx USB 10/100 Ethernet, 00:60:6e:00:00:11
-[  133.935226] random: crng init done
-[  320.764645] VFS: Mounted root (jffs2 filesystem) on device 31:4.
-
-I think most of the overhead is in iterations performed both inside and
- outside get/set array functions:
-- building a mask for get_multiple() and transfering results to value array
- in gpiod_get_array_value_complex(), then again from the array by a caller, 
-- building a value array by the caller, the building a mask and tranferiing
- values from array to bitmap for .set_multiple() in
- gpiod_set_array_value_comples().
-
-Thanks,
-Janusz
-
- drivers/mtd/nand/raw/ams-delta.c | 126 ++++++++++++++++++---------------------
- 1 file changed, 59 insertions(+), 67 deletions(-)
+ drivers/mtd/nand/raw/ams-delta.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-index 59fc417e8fa9..8bedcd7c7928 100644
+index 5f9180fe4f8b..59fc417e8fa9 100644
 --- a/drivers/mtd/nand/raw/ams-delta.c
 +++ b/drivers/mtd/nand/raw/ams-delta.c
-@@ -24,13 +24,10 @@
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
--#include <linux/platform_data/gpio-omap.h>
-+#include <linux/platform_device.h>
- 
--#include <asm/io.h>
- #include <asm/sizes.h>
- 
--#include <mach/hardware.h>
--
- /*
-  * MTD structure for E3 (Delta)
-  */
-@@ -44,7 +41,7 @@ struct ams_delta_nand {
- 	struct gpio_desc	*gpiod_nwe;
- 	struct gpio_desc	*gpiod_ale;
- 	struct gpio_desc	*gpiod_cle;
--	void __iomem		*io_base;
-+	struct gpio_descs	*data_gpiods;
- 	bool			data_in;
- };
- 
-@@ -73,52 +70,79 @@ static const struct mtd_partition partition_info[] = {
+@@ -73,10 +73,9 @@ static const struct mtd_partition partition_info[] = {
  	  .size		=  3 * SZ_256K },
  };
  
--static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
-+static void ams_delta_write_commit(struct ams_delta_nand *priv)
+-static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
++static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
  {
--	struct nand_chip *this = &priv->nand_chip;
--
--	writew(byte, this->IO_ADDR_W);
--
- 	gpiod_set_value(priv->gpiod_nwe, 0);
- 	ndelay(40);
+-	struct nand_chip *this = mtd_to_nand(mtd);
+-	struct ams_delta_nand *priv = nand_get_controller_data(this);
++	struct nand_chip *this = &priv->nand_chip;
+ 
+ 	writew(byte, this->IO_ADDR_W);
+ 
+@@ -85,10 +84,8 @@ static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
  	gpiod_set_value(priv->gpiod_nwe, 1);
  }
  
--static void ams_delta_write_byte(struct ams_delta_nand *priv, u_char byte)
-+static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
- {
--	void __iomem *io_base = priv->io_base;
-+	struct gpio_descs *data_gpiods = priv->data_gpiods;
-+	unsigned long bits = byte;
-+	int i, value_array[data_gpiods->ndescs];
- 
-+	for (i = 0; i < data_gpiods->ndescs; i++)
-+		value_array[i] = test_bit(i, &bits);
-+
-+	gpiod_set_raw_array_value(data_gpiods->ndescs, data_gpiods->desc,
-+				  value_array);
-+
-+	ams_delta_write_commit(priv);
-+}
-+
+-static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
 +static void ams_delta_write_byte(struct ams_delta_nand *priv, u_char byte)
-+{
- 	if (priv->data_in) {
--		writew(0, io_base + OMAP_MPUIO_IO_CNTL);
-+		struct gpio_descs *data_gpiods = priv->data_gpiods;
-+		unsigned long bits = byte;
-+		int i;
-+
-+		for (i = 0; i < data_gpiods->ndescs; i++)
-+			gpiod_direction_output_raw(data_gpiods->desc[i],
-+						   test_bit(i, &bits));
- 		priv->data_in = false;
--	}
+ {
+-	struct nand_chip *this = mtd_to_nand(mtd);
+-	struct ams_delta_nand *priv = nand_get_controller_data(this);
+ 	void __iomem *io_base = priv->io_base;
  
--	ams_delta_write_next_byte(priv, byte);
-+		ams_delta_write_commit(priv);
-+	} else {
-+		ams_delta_write_next_byte(priv, byte);
-+	}
+ 	if (priv->data_in) {
+@@ -96,13 +93,12 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+ 		priv->data_in = false;
+ 	}
+ 
+-	ams_delta_write_next_byte(mtd, byte);
++	ams_delta_write_next_byte(priv, byte);
  }
  
- static u_char ams_delta_read_next_byte(struct ams_delta_nand *priv)
+-static u_char ams_delta_read_next_byte(struct mtd_info *mtd)
++static u_char ams_delta_read_next_byte(struct ams_delta_nand *priv)
  {
--	struct nand_chip *this = &priv->nand_chip;
--	u_char res;
-+	struct gpio_descs *data_gpiods = priv->data_gpiods;
-+	unsigned long bits = 0;
-+	int i, value_array[data_gpiods->ndescs];
+-	struct nand_chip *this = mtd_to_nand(mtd);
+-	struct ams_delta_nand *priv = nand_get_controller_data(this);
++	struct nand_chip *this = &priv->nand_chip;
+ 	u_char res;
  
  	gpiod_set_value(priv->gpiod_nre, 0);
- 	ndelay(40);
- 
--	res = readw(this->IO_ADDR_R);
-+	gpiod_get_raw_array_value(data_gpiods->ndescs, data_gpiods->desc,
-+				  value_array);
- 
- 	gpiod_set_value(priv->gpiod_nre, 1);
- 
--	return res;
-+	for (i = 0; i < data_gpiods->ndescs; i++)
-+		if (value_array[i])
-+			__set_bit(i, &bits);
-+
-+	return bits;
- }
- 
- static u_char ams_delta_read_byte(struct mtd_info *mtd)
- {
- 	struct nand_chip *this = mtd_to_nand(mtd);
- 	struct ams_delta_nand *priv = nand_get_controller_data(this);
--	void __iomem *io_base = priv->io_base;
- 
- 	if (!priv->data_in) {
--		writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
-+		struct gpio_descs *data_gpiods = priv->data_gpiods;
-+		int i;
-+
-+		for (i = 0; i < data_gpiods->ndescs; i++)
-+			gpiod_direction_input(data_gpiods->desc[i]);
-+
+@@ -126,30 +122,34 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
  		priv->data_in = true;
  	}
  
-@@ -193,14 +217,8 @@ static int ams_delta_init(struct platform_device *pdev)
- 	struct ams_delta_nand *priv;
- 	struct nand_chip *this;
- 	struct mtd_info *mtd;
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	void __iomem *io_base;
--	struct gpio_descs *data_gpiods;
- 	int err = 0;
+-	return ams_delta_read_next_byte(mtd);
++	return ams_delta_read_next_byte(priv);
+ }
  
--	if (!res)
--		return -ENXIO;
--
- 	/* Allocate memory for MTD device structure and private data */
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct ams_delta_nand),
- 			    GFP_KERNEL);
-@@ -213,25 +231,8 @@ static int ams_delta_init(struct platform_device *pdev)
- 	mtd = nand_to_mtd(this);
- 	mtd->dev.parent = &pdev->dev;
+ static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
+ 				int len)
+ {
++	struct nand_chip *this = mtd_to_nand(mtd);
++	struct ams_delta_nand *priv = nand_get_controller_data(this);
+ 	int i = 0;
  
--	/*
--	 * Don't try to request the memory region from here,
--	 * it should have been already requested from the
--	 * gpio-omap driver and requesting it again would fail.
--	 */
--
--	io_base = ioremap(res->start, resource_size(res));
--	if (io_base == NULL) {
--		dev_err(&pdev->dev, "ioremap failed\n");
--		err = -EIO;
--		goto out_free;
--	}
--
--	priv->io_base = io_base;
- 	nand_set_controller_data(this, priv);
+ 	if (len > 0)
+-		ams_delta_write_byte(mtd, buf[i++]);
++		ams_delta_write_byte(priv, buf[i++]);
  
--	/* Set address of NAND IO lines */
--	this->IO_ADDR_R = io_base + OMAP_MPUIO_INPUT_LATCH;
--	this->IO_ADDR_W = io_base + OMAP_MPUIO_OUTPUT;
- 	this->read_byte = ams_delta_read_byte;
- 	this->write_buf = ams_delta_write_buf;
- 	this->read_buf = ams_delta_read_buf;
-@@ -241,7 +242,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 	if (IS_ERR(priv->gpiod_rdy)) {
- 		err = PTR_ERR(priv->gpiod_rdy);
- 		dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
+ 	while (i < len)
+-		ams_delta_write_next_byte(mtd, buf[i++]);
++		ams_delta_write_next_byte(priv, buf[i++]);
+ }
  
- 	if (priv->gpiod_rdy)
-@@ -259,67 +260,61 @@ static int ams_delta_init(struct platform_device *pdev)
- 	if (IS_ERR(priv->gpiod_nwp)) {
- 		err = PTR_ERR(priv->gpiod_nwp);
- 		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
+ static void ams_delta_read_buf(struct mtd_info *mtd, u_char *buf, int len)
+ {
++	struct nand_chip *this = mtd_to_nand(mtd);
++	struct ams_delta_nand *priv = nand_get_controller_data(this);
+ 	int i = 0;
  
- 	priv->gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpiod_nce)) {
- 		err = PTR_ERR(priv->gpiod_nce);
- 		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
+ 	if (len > 0)
+ 		buf[i++] = ams_delta_read_byte(mtd);
  
- 	priv->gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpiod_nre)) {
- 		err = PTR_ERR(priv->gpiod_nre);
- 		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpiod_nwe)) {
- 		err = PTR_ERR(priv->gpiod_nwe);
- 		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
- 	if (IS_ERR(priv->gpiod_ale)) {
- 		err = PTR_ERR(priv->gpiod_ale);
- 		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
- 	if (IS_ERR(priv->gpiod_cle)) {
- 		err = PTR_ERR(priv->gpiod_cle);
- 		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 	/* Request array of data pins, initialize them as input */
--	data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_IN);
--	if (IS_ERR(data_gpiods)) {
--		err = PTR_ERR(data_gpiods);
-+	priv->data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_IN);
-+	if (IS_ERR(priv->data_gpiods)) {
-+		err = PTR_ERR(priv->data_gpiods);
- 		dev_err(&pdev->dev, "data GPIO request failed: %d\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 	priv->data_in = true;
- 
- 	/* Scan to find existence of the device */
- 	err = nand_scan(mtd, 1);
- 	if (err)
--		goto out_mtd;
-+		return err;
- 
- 	/* Register the partitions */
- 	mtd_device_register(mtd, partition_info, ARRAY_SIZE(partition_info));
- 
--	goto out;
--
-- out_mtd:
--	iounmap(io_base);
--out_free:
-- out:
--	return err;
-+	return 0;
+ 	while (i < len)
+-		buf[i++] = ams_delta_read_next_byte(mtd);
++		buf[i++] = ams_delta_read_next_byte(priv);
  }
  
  /*
-@@ -329,13 +324,10 @@ static int ams_delta_cleanup(struct platform_device *pdev)
- {
- 	struct ams_delta_nand *priv = platform_get_drvdata(pdev);
- 	struct mtd_info *mtd = nand_to_mtd(&priv->nand_chip);
--	void __iomem *io_base = priv->io_base;
+@@ -173,7 +173,7 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+ 	}
  
--	/* Release resources, unregister device */
-+	/* Unregister device */
- 	nand_release(mtd);
- 
--	iounmap(io_base);
--
- 	return 0;
+ 	if (cmd != NAND_CMD_NONE)
+-		ams_delta_write_byte(mtd, cmd);
++		ams_delta_write_byte(priv, cmd);
  }
  
+ static int ams_delta_nand_ready(struct mtd_info *mtd)
 -- 
 2.16.4
 
