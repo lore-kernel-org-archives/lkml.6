@@ -2,155 +2,106 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2BDC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBF7C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5673C21898
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D412189B
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="dx4Gr8F2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5673C21898
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="h3ii49Dk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D412189B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbeHMTvT (ORCPT
+        id S1730093AbeHMTy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:51:19 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:53434 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728772AbeHMTvT (ORCPT
+        Mon, 13 Aug 2018 15:54:27 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42639 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729070AbeHMTy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:51:19 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 8779F10C05D1;
-        Mon, 13 Aug 2018 10:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1534180094; bh=01UXpHDC/sI7ACYMqm26faiVOlD821YVsGHlbMIt7Tg=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=dx4Gr8F2F9Twu4tpWKEb9cDIYsnD4V95x7rYdTVVt07Ru6u8JYTmoTrKyRlBllaQ0
-         r/UQgZ7JD8edC0l6QLvOngxEhop24K2HiyjCmhw9FDRz94+LRrd4jlEZmp3wA7eacB
-         XTAlAqp2561FewtMVo96V7Poz5eDT0dDuOL9KMQE9LF7yNmvdJWWaIfRVU2Ln3tXCi
-         Xemwofu3sCdKz+KUx0vdYkBC50Z18dd8nX+4rW8NiqTJndbe5baY97Z2ba4YlNTXEQ
-         YshdwmkyHAyWWuWpY6cgsKgYxRJtC6g9dY4y4SaZuuJ4dWqwxw8S+9AO07sW9wuO8s
-         9i7h9BZF858JA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7A55C384C;
-        Mon, 13 Aug 2018 10:08:14 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 13 Aug 2018 10:08:14 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 13 Aug 2018 19:08:11 +0200
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "Vineet Gupta" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH v2 2/4] ARC: allow to use IOC and non-IOC DMA devices
- simultaneously
-Thread-Topic: [PATCH v2 2/4] ARC: allow to use IOC and non-IOC DMA devices
- simultaneously
-Thread-Index: AQHUKCIdYG/CsJzRCEqtaR4z1gy7YaS93p+A
-Date:   Mon, 13 Aug 2018 17:08:10 +0000
-Message-ID: <1534180089.3962.68.camel@synopsys.com>
-References: <20180730162636.3556-1-Eugeniy.Paltsev@synopsys.com>
-         <20180730162636.3556-3-Eugeniy.Paltsev@synopsys.com>
-         <C2D7FE5348E1B147BCA15975FBA23075012B08C83D@us01wembx1.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B08C83D@us01wembx1.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.86]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5A3D85E4A242D94C9FF74AF83992F416@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Mon, 13 Aug 2018 15:54:27 -0400
+Received: by mail-yw1-f67.google.com with SMTP id y203-v6so14084804ywd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 10:11:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d7YjYfmhzgSP6FwYdHeRdy7ygate4wqD0+xYgcOY848=;
+        b=h3ii49DkXCYBxMWjDOjLkNUHcRkxvzX7g8v8B1vR5ncGMn4rx39oY5UI1yGt7q643L
+         KqrAyfgs1dFJpyzwdax15D/unLLJs3CiFfQRXJmYa3c93oAkM1JrPOK2yoLNDlINuKGU
+         na86chzgMKukDlUPQs29PdIE7HcJY5k4cZlyz1MEeTf8TsqnTciOP5kWNdTY0iljAFPd
+         o3BT2Da4lCFEkcdaQyshsf3VTLuVoydqNwQomrnqm3lPjB3PYcIHz53huWekqXDoNwvd
+         328P9w/zlMpiLumwUZfvsk/Nuqpbeyp9maJj+W4nOTrq8BH27QiUOv8TgdWrwmQCvBk3
+         HIAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d7YjYfmhzgSP6FwYdHeRdy7ygate4wqD0+xYgcOY848=;
+        b=TmA+0qYFI1w//ZgHLud2gX789mePpHKGL8WzwKkwIGLoHpPg6rVwqMxL1Le94qimrz
+         s2+ieVeOXNYMAmsApTh7BBzvzZhA9OX212SuJqUtsGw1sEyrO4Dfrudy+8w2cQfL+pWQ
+         KutaspbtVhJV1eJM3pJYaiGJkitI9spbFxl6IEJHCYfUBwFYWOGXJ+7Bbo21OGx/IyxV
+         WwHFXSmOn3sOvP37wDuO0cEgvEwhRUNnkR56dINKt1KtBDQOmX8M6ubXbU8rf+itVpy9
+         a3O+syfUcalI9M7ktjfo1DpgQdGyk7zEanJGpjkN9o1RrlWA8pbwqNLgEAWnGL54Rrm0
+         45wA==
+X-Gm-Message-State: AOUpUlHc8D9pj8GOe5ItfNLWIF2qzFZ/rtuku0Mry76xnMusgCAC33V3
+        mupk+U1DnkRYeqGThupI0jLtQw==
+X-Google-Smtp-Source: AA+uWPx+jIn9KwZMzp44xRXlmyueo4pusE0x8fwJ6bcGhDFK48mI/zvyy+gbySSv45gtxdB0dt9zVA==
+X-Received: by 2002:a0d:fec2:: with SMTP id o185-v6mr10480546ywf.195.1534180281077;
+        Mon, 13 Aug 2018 10:11:21 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::3:b26f])
+        by smtp.gmail.com with ESMTPSA id b135-v6sm16319888ywh.24.2018.08.13.10.11.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Aug 2018 10:11:20 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 13:11:19 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH RFC 1/3] cgroup: list all subsystem states in debugfs
+ files
+Message-ID: <20180813171119.GA24658@cmpxchg.org>
+References: <153414348591.737150.14229960913953276515.stgit@buzz>
+ <20180813134842.GF3978217@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180813134842.GF3978217@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA4LTEzIGF0IDE2OjI0ICswMDAwLCBWaW5lZXQgR3VwdGEgd3JvdGU6DQo+
-IE9uIDA3LzMwLzIwMTggMDk6MjYgQU0sIEV1Z2VuaXkgUGFsdHNldiB3cm90ZToNCj4gPiBAQCAt
-MTI2MywxMSArMTI1NCw3IEBAIHZvaWQgX19pbml0IGFyY19jYWNoZV9pbml0X21hc3Rlcih2b2lk
-KQ0KPiA+ICAJaWYgKGlzX2lzYV9hcmN2MigpICYmIGlvY19lbmFibGUpDQo+ID4gIAkJYXJjX2lv
-Y19zZXR1cCgpOw0KPiA+ICANCj4gPiAtCWlmIChpc19pc2FfYXJjdjIoKSAmJiBpb2NfZW5hYmxl
-KSB7DQo+ID4gLQkJX19kbWFfY2FjaGVfd2JhY2tfaW52ID0gX19kbWFfY2FjaGVfd2JhY2tfaW52
-X2lvYzsNCj4gPiAtCQlfX2RtYV9jYWNoZV9pbnYgPSBfX2RtYV9jYWNoZV9pbnZfaW9jOw0KPiA+
-IC0JCV9fZG1hX2NhY2hlX3diYWNrID0gX19kbWFfY2FjaGVfd2JhY2tfaW9jOw0KPiA+IC0JfSBl
-bHNlIGlmIChpc19pc2FfYXJjdjIoKSAmJiBsMl9saW5lX3N6ICYmIHNsY19lbmFibGUpIHsNCj4g
-PiArCWlmIChpc19pc2FfYXJjdjIoKSAmJiBsMl9saW5lX3N6ICYmIHNsY19lbmFibGUpIHsNCj4g
-PiAgCQlfX2RtYV9jYWNoZV93YmFja19pbnYgPSBfX2RtYV9jYWNoZV93YmFja19pbnZfc2xjOw0K
-PiA+ICAJCV9fZG1hX2NhY2hlX2ludiA9IF9fZG1hX2NhY2hlX2ludl9zbGM7DQo+ID4gIAkJX19k
-bWFfY2FjaGVfd2JhY2sgPSBfX2RtYV9jYWNoZV93YmFja19zbGM7DQo+ID4gZGlmZiAtLWdpdCBh
-L2FyY2gvYXJjL21tL2RtYS5jIGIvYXJjaC9hcmMvbW0vZG1hLmMNCj4gPiBpbmRleCBjZWZiNzc2
-YTk5ZmYuLjRkMTQ2NjkwNWU0OCAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FyYy9tbS9kbWEuYw0K
-PiA+ICsrKyBiL2FyY2gvYXJjL21tL2RtYS5jDQo+ID4gQEAgLTMzLDE5ICszMyw3IEBAIHZvaWQg
-KmFyY2hfZG1hX2FsbG9jKHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHNpemUsIGRtYV9hZGRy
-X3QgKmRtYV9oYW5kbGUsDQo+ID4gIAlpZiAoIXBhZ2UpDQo+ID4gIAkJcmV0dXJuIE5VTEw7DQo+
-ID4gIA0KPiA+IC0JLyoNCj4gPiAtCSAqIElPQyByZWxpZXMgb24gYWxsIGRhdGEgKGV2ZW4gY29o
-ZXJlbnQgRE1BIGRhdGEpIGJlaW5nIGluIGNhY2hlDQo+ID4gLQkgKiBUaHVzIGFsbG9jYXRlIG5v
-cm1hbCBjYWNoZWQgbWVtb3J5DQo+ID4gLQkgKg0KPiA+IC0JICogVGhlIGdhaW5zIHdpdGggSU9D
-IGFyZSB0d28gcHJvbmdlZDoNCj4gPiAtCSAqICAgLUZvciBzdHJlYW1pbmcgZGF0YSwgZWxpZGVz
-IG5lZWQgZm9yIGNhY2hlIG1haW50ZW5hbmNlLCBzYXZpbmcNCj4gPiAtCSAqICAgIGN5Y2xlcyBp
-biBmbHVzaCBjb2RlLCBhbmQgYnVzIGJhbmR3aWR0aCBhcyBhbGwgdGhlIGxpbmVzIG9mIGENCj4g
-PiAtCSAqICAgIGJ1ZmZlciBuZWVkIHRvIGJlIGZsdXNoZWQgb3V0IHRvIG1lbW9yeQ0KPiA+IC0J
-ICogICAtRm9yIGNvaGVyZW50IGRhdGEsIFJlYWQvV3JpdGUgdG8gYnVmZmVycyB0ZXJtaW5hdGUg
-ZWFybHkgaW4gY2FjaGUNCj4gPiAtCSAqICAgKHZzLiBhbHdheXMgZ29pbmcgdG8gbWVtb3J5IC0g
-dGh1cyBhcmUgZmFzdGVyKQ0KPiA+IC0JICovDQo+ID4gLQlpZiAoKGlzX2lzYV9hcmN2MigpICYm
-IGlvY19lbmFibGUpIHx8DQo+ID4gLQkgICAgKGF0dHJzICYgRE1BX0FUVFJfTk9OX0NPTlNJU1RF
-TlQpKQ0KPiA+ICsJaWYgKGF0dHJzICYgRE1BX0FUVFJfTk9OX0NPTlNJU1RFTlQpDQo+ID4gIAkJ
-bmVlZF9jb2ggPSAwOw0KPiA+ICANCj4gPiAgCS8qDQo+ID4gQEAgLTk1LDggKzgzLDcgQEAgdm9p
-ZCBhcmNoX2RtYV9mcmVlKHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHNpemUsIHZvaWQgKnZh
-ZGRyLA0KPiA+ICAJc3RydWN0IHBhZ2UgKnBhZ2UgPSB2aXJ0X3RvX3BhZ2UocGFkZHIpOw0KPiA+
-ICAJaW50IGlzX25vbl9jb2ggPSAxOw0KPiA+ICANCj4gPiAtCWlzX25vbl9jb2ggPSAoYXR0cnMg
-JiBETUFfQVRUUl9OT05fQ09OU0lTVEVOVCkgfHwNCj4gPiAtCQkJKGlzX2lzYV9hcmN2MigpICYm
-IGlvY19lbmFibGUpOw0KPiA+ICsJaXNfbm9uX2NvaCA9IChhdHRycyAmIERNQV9BVFRSX05PTl9D
-T05TSVNURU5UKTsNCj4gPiAgDQo+ID4gIAlpZiAoUGFnZUhpZ2hNZW0ocGFnZSkgfHwgIWlzX25v
-bl9jb2gpDQo+ID4gIAkJaW91bm1hcCgodm9pZCBfX2ZvcmNlIF9faW9tZW0gKil2YWRkcik7DQo+
-ID4gQEAgLTE4MiwzICsxNjksMjAgQEAgdm9pZCBhcmNoX3N5bmNfZG1hX2Zvcl9jcHUoc3RydWN0
-IGRldmljZSAqZGV2LCBwaHlzX2FkZHJfdCBwYWRkciwNCj4gPiAgCQlicmVhazsNCj4gPiAgCX0N
-Cj4gPiAgfQ0KPiANCj4gSSB0aGluayB3ZSBoYXZlIHNvbWUgc2hlbmFuaWdhbnMgd2l0aCBAaW9j
-X2VuYWJsZSBub3cuDQo+IERvIG5vdGUgdGhhdCBpdCB3YXMgbW9yZSBvZiBhIGRlYnVnIGhhY2sg
-dXNpbmcgd2hlbiB0aGUgaHcgZmVhdHVyZSB3YXMgaW50cm9kdWNlZA0KPiB0byBiZSBhYmxlIHRv
-IHJ1biBzYW1lIGtlcm5lbCBvbiB2YXJpb3VzIEZQR0EgYml0ZmlsZXMgYnV0IGp1c3QgZmxpY2tp
-bmcgYSBnbG9iYWwNCj4gdmFyaWFibGUgdmlhIHRoZSBkZWJ1Z2dlci4NCj4gDQo+IFNvIHBlciBj
-b2RlIGJlbG93LCBpZiBAaW9jX2VuYWJsZSBpcyBOT1Qgc2V0LCB3ZSBzdGlsbCB1c2Ugc29mdHdh
-cmUgYXNzaXN0ZWQgY2FjaGUNCj4gbWFpbnRlbmFuY2UsIGJ1dCBkbWFfe2FsbG9jLGZyZWV9IGRv
-bid0IGRvIHVzZSB0aGF0IHZhcmlhYmxlLiBIYXZlIHlvdSB0cmllZA0KPiB0ZXN0aW5nIHRoZSBj
-b21iaW5hdGlvbiB3aGVuIEBpb2NfZW5hYmxlIGlzIHNldCB0byAwIGJlZm9yZSBib290ID8gQW5k
-IGlzIHRoYXQgd29ya3MgPw0KDQpZZXAsIEkgdGVzdGVkIHRoYXQuDQpBbmQgaXQgd29ya3MgZmlu
-ZSB3aXRoIGJvdGggQGlvY19lbmFibGUgPT0gMCBhbmQgQGlvY19lbmFibGUgPT0gMQ0KTm90ZSB0
-aGF0IHdlIGNoZWNrIHRoaXMgdmFyaWFibGUgaW4gYXJjaF9zZXR1cF9kbWFfb3BzKCkgZnVuY3Rp
-b24gbm93Lg0KDQpTbyB0aGlzIGFyY2hfZG1hX3thbGxvYyxmcmVlfSBhcmUgdXNlZCBPTkxZIGlu
-IGNhc2Ugb2Ygc29mdHdhcmUgYXNzaXN0ZWQgY2FjaGUgbWFpbnRlbmFuY2UuDQpUaGF0J3Mgd2h5
-IHdlIGhhZCB0byBkbyBNTVUgbWFwcGluZyB0byBlbmZvcmNlIG5vbi1jYWNoYWJpbGl0eSByZWdh
-cmRsZXNzIG9mIEBpb2NfZW5hYmxlLg0KDQoNClByZXZpb3VzbHkgW2JlZm9yZSB0aGlzIHBhdGNo
-XSB3ZSB1c2VkIHRoaXMgb3BzIGZvciBib3RoIEhXL1NXIGFzc2lzdGVkIGNhY2hlIG1haW50ZW5h
-bmNlDQp0aGF0J3Mgd2h5IHdlIGNoZWNrZWQgQGlvY19lbmFibGUgaW4gYXJjaF9kbWFfe2FsbG9j
-LGZyZWV9LiAoaW4gY2FzZSBvZiBIVyBhc3Npc3RlZCBjYWNoZQ0KbWFpbnRlbmFuY2Ugd2Ugb25s
-eSBhbGxvY2F0ZSBtZW1vcnksIGFuZCBpbiBjYXNlIG9mIFNXIGFzc2lzdGVkIGNhY2hlIG1haW50
-ZW5hbmNlIHdlIA0KYWxsb2NhdGUgbWVtb3J5IGFuZCBkbyBNTVUgbWFwcGluZyB0byBlbmZvcmNl
-IG5vbi1jYWNoYWJpbGl0eSkNCg0KPiA+ICsNCj4gPiArdm9pZCBhcmNoX3NldHVwX2RtYV9vcHMo
-c3RydWN0IGRldmljZSAqZGV2LCB1NjQgZG1hX2Jhc2UsIHU2NCBzaXplLA0KPiA+ICsJCQljb25z
-dCBzdHJ1Y3QgaW9tbXVfb3BzICppb21tdSwgYm9vbCBjb2hlcmVudCkNCj4gPiArew0KPiA+ICsJ
-LyoNCj4gPiArCSAqIElPQyBoYXJkd2FyZSBzbm9vcHMgYWxsIERNQSB0cmFmZmljIGtlZXBpbmcg
-dGhlIGNhY2hlcyBjb25zaXN0ZW50DQo+ID4gKwkgKiB3aXRoIG1lbW9yeSAtIGVsaWRpbmcgbmVl
-ZCBmb3IgYW55IGV4cGxpY2l0IGNhY2hlIG1haW50ZW5hbmNlIG9mDQo+ID4gKwkgKiBETUEgYnVm
-ZmVycyAtIHNvIHdlIGNhbiB1c2UgZG1hX2RpcmVjdCBjYWNoZSBvcHMuDQo+ID4gKwkgKi8NCj4g
-PiArCWlmIChpc19pc2FfYXJjdjIoKSAmJiBpb2NfZW5hYmxlICYmIGNvaGVyZW50KSB7DQo+ID4g
-KwkJc2V0X2RtYV9vcHMoZGV2LCAmZG1hX2RpcmVjdF9vcHMpOw0KPiA+ICsJCWRldl9pbmZvKGRl
-diwgInVzZSBkbWFfZGlyZWN0X29wcyBjYWNoZSBvcHNcbiIpOw0KPiA+ICsJfSBlbHNlIHsNCj4g
-PiArCQlzZXRfZG1hX29wcyhkZXYsICZkbWFfbm9uY29oZXJlbnRfb3BzKTsNCj4gPiArCQlkZXZf
-aW5mbyhkZXYsICJ1c2UgZG1hX25vbmNvaGVyZW50X29wcyBjYWNoZSBvcHNcbiIpOw0KPiA+ICsJ
-fQ0KPiA+ICt9DQo+IA0KPiANCi0tIA0KIEV1Z2VuaXkgUGFsdHNldg==
+On Mon, Aug 13, 2018 at 06:48:42AM -0700, Tejun Heo wrote:
+> Hello, Konstantin.
+> 
+> On Mon, Aug 13, 2018 at 09:58:05AM +0300, Konstantin Khlebnikov wrote:
+> > After removing cgroup subsystem state could leak or live in background
+> > forever because it is pinned by some reference. For example memory cgroup
+> > could be pinned by pages in cache or tmpfs.
+> > 
+> > This patch adds common debugfs interface for listing basic state for each
+> > controller. Controller could define callback for dumping own attributes.
+> > 
+> > In file /sys/kernel/debug/cgroup/<controller> each line shows state in
+> > format: <common_attr>=<value>... [-- <controller_attr>=<value>... ]
+> 
+> Seems pretty useful to me.  Roman, Johannes, what do you guys think?
+
+Generally I like the idea of having more introspection into offlined
+cgroups, but I wonder if having only memory= and swap= could be a
+little too terse to track down what exactly is pinning the groups.
+
+Roman has more experience debugging these pileups, but it seems to me
+that unless we add a breakdown off memory, and maybe make slabinfo
+available for these groups, that in practice this might not provide
+that much more insight than per-cgroup stat counters of dead children.
