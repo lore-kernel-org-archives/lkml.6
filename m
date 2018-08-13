@@ -3,128 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2829FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0284AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11EB217B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB832217B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:02:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iTpPgZrX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A11EB217B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+u2H6J+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB832217B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbeHMTpl (ORCPT
+        id S1730362AbeHMTp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:45:41 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:48769 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729029AbeHMTpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:45:41 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 335be67d;
-        Mon, 13 Aug 2018 16:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :in-reply-to:references:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=OuB3aLv7uwiV4HV3KpoGgZgMBQU=; b=iTpPgZ
-        rXaJhxrBk+AGJV6nmuCIhwQX7EJGUmqpOeg8oYHcPz8aucnZM96DtgmQLSbjSEjs
-        auTAX9ovK3qYhj93IiqEfki/QhU2LtmYm0f3Qgzn0RB5Apj+e3qYhZ+F/0DhmsmK
-        aN/lPW7DMQ6FcuF1gVLBg9cQuU+h0X5wdarbinKsVMsHHA6Cca1Rz8GEexlyN7MD
-        UR8WOCOgD+usjDhuzau8kpwYMfQdwlJgKZPngKcP6W/St64wRfYcePY6y7oOKv9a
-        jD/0jLnqsSFqhjmWzGr26K7ET+qbHKev1I10BCcVffaeiqH4AqyV0TelVBio1A13
-        5U94mo7jY9dqTOXg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0efba98b (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Mon, 13 Aug 2018 16:49:34 +0000 (UTC)
-Received: by mail-oi0-f53.google.com with SMTP id j205-v6so28536189oib.4;
-        Mon, 13 Aug 2018 10:02:34 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFcHSL61B5K5N3QBbBUqE542ux265VpKbwQIvuzK9F3HZ2QmCzl
-        SYOVTYt5kzzgVBWWT262ylG7jywKyMShGxtrlLk=
-X-Google-Smtp-Source: AA+uWPz2Vzf/YLzaL/Jm6WeYsudnxrLZhIn/ppsryIXHmmhxv8Z+XwwW3V8fjfj0YmoitnVrizwddX8kGStXoT4HYqY=
-X-Received: by 2002:aca:bec2:: with SMTP id o185-v6mr19801656oif.22.1534179753641;
- Mon, 13 Aug 2018 10:02:33 -0700 (PDT)
+        Mon, 13 Aug 2018 15:45:57 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45686 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729029AbeHMTp5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:45:57 -0400
+Received: by mail-lj1-f196.google.com with SMTP id w16-v6so13123811ljh.12;
+        Mon, 13 Aug 2018 10:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=m1sYTE1JFqOmAsuOarEhHma7dxZeGoetvJlo90mO0pw=;
+        b=I+u2H6J+dL5sKVasWiSQWwUSnIpP4W4HC1J8hj9caIBtH6qTuKZ3HArwaklxdrHLul
+         RLK1ZQT5AjMCoujj0q/rXHyYqthkk77TusZ9W7dMhXmDKOw4Pl15zO4KSW9ApSCAlpsT
+         VGfgRTckAZuYSTJCTq4jwV30I6AEOQX4D6UZIg1gfwwclcIdQYXUBM0U1R5KdwcguZWy
+         IQc21+xMDDkErWDXfERsjQxIHSk+PpqbdT3XLjDr+CAQI4dWL0I8a4ILzWhhK1eqZAQF
+         xQEwB0uJUB7degqOYraYwopl7nXSoBWeBY2fNYeLHnEniBidPjtpbDFXbMrSMxae/0QB
+         /p6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=m1sYTE1JFqOmAsuOarEhHma7dxZeGoetvJlo90mO0pw=;
+        b=hGYBDSKv3RGxUHuNRhpc/5wULJkxRk14BJUSr2ZYpJBu8yhXCNKzY8MEvbAOcSCcZX
+         gt5qX0KfB2VS5P8aOXwJ6HKrjHbcWn7YDb+NJ7BHUXSgindHio78Ygwy/loAeG8aEFWu
+         zAgNBcCzmo0cbSWe9adjV1X6Y5pRYlk+mEqqWFQvsIv/dxbIFORm47oZuZ3xM1rQ2PaC
+         u3VI6WAKiothwUWwq3G3fuWTy4RFtCf0S25j7MQeegC2/LXmnk7Qc1m1vEflAee9cpYF
+         AuyAyh75Knx3Y9a6mGF8pnpa8H/2pHNNnC3Gfm/t2CDJFQXtNBj8xzircNwyo8lLGgVR
+         LvOg==
+X-Gm-Message-State: AOUpUlFH6E44+fpPGu86rWyYqN5O9ZLlx/VyYGklrmYnSkQSxg/ybH2Z
+        JOuYv49uF1lDiOR9APKksDM=
+X-Google-Smtp-Source: AA+uWPzWUX2UF3pUbOwoy5OHnmeHHb5XurWKNqIHyU193DK81PIUcsMgtmBQrMTG8QJ68WHDacF9mw==
+X-Received: by 2002:a2e:9ec9:: with SMTP id h9-v6mr11239465ljk.133.1534179772327;
+        Mon, 13 Aug 2018 10:02:52 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id m66-v6sm3438345lfi.17.2018.08.13.10.02.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Aug 2018 10:02:51 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH V5] thermal: Add cooling device's statistics in sysfs
+Date:   Mon, 13 Aug 2018 20:02:50 +0300
+Message-ID: <18709513.zahsa7p5Fo@dimapc>
+In-Reply-To: <CAKohpo=BnVJ5uO5+6p6ONhucHkxS893t6d1gtHJZW1kKB0EXOw@mail.gmail.com>
+References: <bab196f91cbddca175c725ae6159c0af639bfe07.1522666398.git.viresh.kumar@linaro.org> <3394204.qE6hlQGZ2Z@dimapc> <CAKohpo=BnVJ5uO5+6p6ONhucHkxS893t6d1gtHJZW1kKB0EXOw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4a:a025:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 10:02:32
- -0700 (PDT)
-In-Reply-To: <1534174811.7872.3.camel@HansenPartnership.com>
-References: <20180731191102.2434-1-Jason@zx2c4.com> <1534174811.7872.3.camel@HansenPartnership.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 13 Aug 2018 10:02:32 -0700
-X-Gmail-Original-Message-ID: <CAHmME9raa81A_hH_Zykp2r8zOk0ySroFEsk+8384vnVOCuSa=g@mail.gmail.com>
-Message-ID: <CAHmME9raa81A_hH_Zykp2r8zOk0ySroFEsk+8384vnVOCuSa=g@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] WireGuard: Secure Network Tunnel
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Monday, 13 August 2018 19:53:33 MSK Viresh Kumar wrote:
+> On 13 August 2018 at 22:13, Dmitry Osipenko <digetx@gmail.com> wrote:
+> > On Monday, 13 August 2018 19:21:43 MSK Viresh Kumar wrote:
+> >> On 13 August 2018 at 21:36, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >> > I'm working on adding support of OPP and cooling for NVIDIA Tegra20/30
+> >> > CPUFreq driver and stumbled upon a bug that is introduced by this
+> >> > patch.
+> >> > It is triggered on the driver module unload.
+> >> 
+> >> The problem is that device_unregister() will end up freeing the cdev as
+> >> well, so the current sequence is surely wrong.
+> >> 
+> >> > diff --git a/drivers/thermal/thermal_core.c
+> >> > b/drivers/thermal/thermal_core.c index 6ab982309e6a..de53c821a282
+> >> > 100644
+> >> > --- a/drivers/thermal/thermal_core.c
+> >> > +++ b/drivers/thermal/thermal_core.c
+> >> > @@ -1102,8 +1102,8 @@ void thermal_cooling_device_unregister(struct
+> >> > thermal_cooling_device *cdev)>
+> >> > 
+> >> >         mutex_unlock(&thermal_list_lock);
+> >> >         
+> >> >         ida_simple_remove(&thermal_cdev_ida, cdev->id);
+> >> > 
+> >> > -       device_unregister(&cdev->device);
+> >> > 
+> >> >         thermal_cooling_device_destroy_sysfs(cdev);
+> >> > 
+> >> > +       device_unregister(&cdev->device);
+> >> 
+> >> But this looks wrong as well, as the device is still around while
+> >> memory of its sysfs data is gone.
+> > 
+> > Indeed.
+> > 
+> >> Maybe something like this is what we need:
+> >> 
+> >> device_del();
+> >> thermal_cooling_device_destroy_sysfs();
+> >> device_put();
+> > 
+> > [I just realized that thermal_zone and cooling_device are not
+> > interrelated.
+> > I'm not familiar with the thermal/ code]
+> > 
+> > Thank you Viresh, your proposal looks good to me and works fine. Will you
+> > make a proper patch?
+> 
+> Maybe you send a patch for this and take the credit as well :)
 
-On 8/13/18, James Bottomley <James.Bottomley@hansenpartnership.com> wrote:
->> Ample information, including documentation, installation
->> instructions,
->> and project details, is available at:
->>
->>   * https://www.wireguard.com/
->>   * https://www.wireguard.com/papers/wireguard.pdf
->
-> In your paper you say this:
->
->> Finally, WireGuard is cryptographically opinionated. It intentionally
->> lacks cipher and protocol agility. If
->> holes are found in the underlying primitives, all endpoints will be
->> required to update.
->
-> The only thing that's certain (beyond death and taxes) is that your
-> crypto choice will one day need updating; either in response to an
-> urgent CVE because an algorithm is compromised or in response to a less
-> urgent one because it is deprecated.  Assuming wireguard is reasonably
-> successful we'll have a large ecosystem dependent on it.  On this day,
-> we're going to have the choice of either breaking the entire ecosystem
-> by rolling out a change that can't connect to lower protocol versions
-> or trying to wedge version agility into wireguard in a hurry.  The
-> former is too awful to contemplate because of the almost universal
-> ecosystem breakage it would cause and the latter is going to lead to
-> additional bugs because people in a hurry aren't as careful as they
-> should be.
->
-> Could we please build planning for this crypto failure day into
-> wireguard now rather than have to do it later?  It doesn't need to be
-> full cipher agility, it just needs to be the ability to handle multiple
-> protocol versions ... two should do it because that gives a template to
-> follow (and test version to try to find bugs in the implementation).
-> It looks like the protocol could simply be updated to put the version
-> into one (or more) of the three reserved bytes in the handshake
-> headers, so perhaps doing this before they get used for something else
-> would be a good first step?
->
-> James
->
->
+Okay, I'll make the patch. Thank you for the help.
 
-Indeed the answer is in fact along the lines of what you've suggested
-in your question: the protocol is very strictly versioned. This means
-that while there intentionally isn't negotiation of ciphers --
-something historically very bug-prone -- there is ample room for
-updating the protocol. This is enabled via 4 aspects of the protocol:
 
-- An explicit "identifier" string is hashed in as part of the first
-step of cryptographic operations, containing a "v1" as well as the
-protocol designer's email.
-- An explicit "construction" string is hashed in as part of the first
-step of cryptographic operations, containing the Noise handshake
-pattern and a list of the cryptographic primitives used.
-- A type field at the beginning of each message. Newer message types
-(corresponding with newer versions) can easily be introduced via this
-field, and they can even coexist with older ones need be.
-- Three unused reserved fields ready to be utilised in the event they're needed.
 
-In other words, there's ample room for such contingency measures
-within the protocol.
-
-Jason
