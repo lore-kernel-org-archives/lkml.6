@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91025C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235EEC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C8521738
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:36:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C8521738
+	by mail.kernel.org (Postfix) with ESMTP id C51FD21765
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:43:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51FD21765
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbeHMOSf (ORCPT
+        id S1729007AbeHMOZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:18:35 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10714 "EHLO huawei.com"
+        Mon, 13 Aug 2018 10:25:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44475 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729256AbeHMOSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:18:34 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8DEE156DCAF18;
-        Mon, 13 Aug 2018 19:36:37 +0800 (CST)
+        id S1728661AbeHMOZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:25:13 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C8EBEE4F81942;
+        Mon, 13 Aug 2018 19:43:14 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 13 Aug 2018 19:36:33 +0800
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 13 Aug 2018 19:43:12 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
-To:     <alcooperx@gmail.com>, <kishon@ti.com>, <robh@kernel.org>,
-        <hauke@hauke-m.de>, <ralf@linux-mips.org>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] phy:phy-brcm-us: Use PTR_ERR_OR_ZERO to replace the open code
-Date:   Mon, 13 Aug 2018 19:24:45 +0800
-Message-ID: <1534159486-25008-2-git-send-email-zhongjiang@huawei.com>
+To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <baruch@tkos.co.il>, <linux-rtc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] rtc:rtc-digicolor: Use PTR_ERR_OR_ZERO to replace the open code
+Date:   Mon, 13 Aug 2018 19:31:24 +0800
+Message-ID: <1534159885-25364-2-git-send-email-zhongjiang@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1534159486-25008-1-git-send-email-zhongjiang@huawei.com>
-References: <1534159486-25008-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1534159885-25364-1-git-send-email-zhongjiang@huawei.com>
+References: <1534159885-25364-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.175.102.37]
@@ -52,25 +52,25 @@ just replace them rather than duplicating its implement.
 
 Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- drivers/phy/broadcom/phy-brcm-usb.c | 4 +---
+ drivers/rtc/rtc-digicolor.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
-index d1dab36..f59b1dc 100644
---- a/drivers/phy/broadcom/phy-brcm-usb.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb.c
-@@ -372,10 +372,8 @@ static int brcm_usb_phy_probe(struct platform_device *pdev)
- 	clk_disable(priv->usb_30_clk);
- 
- 	phy_provider = devm_of_phy_provider_register(dev, brcm_usb_phy_xlate);
--	if (IS_ERR(phy_provider))
--		return PTR_ERR(phy_provider);
+diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
+index b253bf1..fd6850c 100644
+--- a/drivers/rtc/rtc-digicolor.c
++++ b/drivers/rtc/rtc-digicolor.c
+@@ -202,10 +202,8 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, rtc);
+ 	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+ 						&dc_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(rtc->rtc_dev))
+-		return PTR_ERR(rtc->rtc_dev);
  
 -	return 0;
-+	return PTR_ERR_OR_ZERO(phy_provider);
++	return PTR_ERR_OR_ZERO(rtc->rtc_dev);
  }
  
- #ifdef CONFIG_PM_SLEEP
+ static const struct of_device_id dc_dt_ids[] = {
 -- 
 1.7.12.4
 
