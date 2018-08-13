@@ -2,91 +2,136 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB09C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 269D3C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756692171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:46:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756692171F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CC9B12171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 17:48:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixOBjCEx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9B12171F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730505AbeHMU35 (ORCPT
+        id S1730534AbeHMUbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 16:29:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:34566 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730439AbeHMU35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 16:29:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 995407A9;
-        Mon, 13 Aug 2018 10:46:44 -0700 (PDT)
-Received: from dupont (dupont.austin.arm.com [10.118.16.87])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFBCE3F73C;
-        Mon, 13 Aug 2018 10:46:43 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 12:46:42 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
-        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, jolsa@redhat.com,
-        namhyung@kernel.org, adrian.hunter@intel.com, ast@kernel.org,
-        gregkh@linuxfoundation.org, hpa@zytor.com, suzuki.poulosi@arm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
-Message-Id: <20180813124642.3d49c082a95fc294d926016e@arm.com>
-In-Reply-To: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Aug 2018 16:31:43 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40108 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729025AbeHMUbm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 16:31:42 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y200-v6so11858657lfd.7;
+        Mon, 13 Aug 2018 10:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=r4kMegHIvfAupDnWu8kE21Vr289uNCmkzuhqqIqA8aM=;
+        b=ixOBjCExp+/4K52AJ+i5NKh9I7n/GUpP2XZ0NfWUq8Fb6DAiClC4XY9BMu7SsoiyzS
+         PBVMdh76ffbuV0xStfzKKioLbBnrw93Leu0ilWMtaqFYFOEv2CAoJjRIWIdBHQln1Fj/
+         F45+i1A9j4TjwCWnotVYzw9VJQWzpvQnvuXFUpLlgWvXkFIOb2QpwuMfCtjuszzDBc0a
+         ol5xlVyIo+zxdV8OeivVJML2tZzgxq3eVdYjZcngxf3pZI8dSExeGrJt3crY7SJwRWo1
+         b/gQova1Ri0TEmNFtEPIdKVshu90aQo5n5w/VDq+PxVJJ37a+f63XkaZD9K9uhXoc0J2
+         qFkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=r4kMegHIvfAupDnWu8kE21Vr289uNCmkzuhqqIqA8aM=;
+        b=gIBxcc7JHW+X+dmkEAwHqWa8LQKnW00KAzJMH8TQfsb/tysPRDXO29Q5gFxHo54Dy2
+         Mmzb3fTsB/y4ucbOTTZ3Z/D1G5qTahT7oz+ztJGGUUuEA7B0rRAbk905bFIxbNjPqFpl
+         OGNo74GCnLGn4WlrIcRTXEdxB7B+msahp2dXxE9L9eNFXjAuMiVVlmBSr5kWL/x12gWo
+         R+2uqLYNXzIxN0qnGh6Z6eCtRMOKMpBYyGxapopyvkE6Eu+RL/8j/ggkdIMNSZq8PP4W
+         FCIzrqy54Z1Jxc69Kv1d6TvXyowrWv6yaTGZqKWzCjt4P6zUDZSxQskcQOAJ/zguqJ37
+         12qg==
+X-Gm-Message-State: AOUpUlHC88lgEH3CcH4Kw7Ip8Xw1AHO0GQkaauYUAoTCwmvknG2slOAQ
+        XktQoNlHHO40VLlAW+WFpQY=
+X-Google-Smtp-Source: AA+uWPy+tCnXhj80TwQzl3ILKxtnbVZroek32BE7GPFBC0CBMNJHGB1J5dpafITifv3S1tzlv+RlRg==
+X-Received: by 2002:a19:9403:: with SMTP id w3-v6mr11395834lfd.29.1534182507760;
+        Mon, 13 Aug 2018 10:48:27 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id z10-v6sm3122584ljh.57.2018.08.13.10.48.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Aug 2018 10:48:27 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] gpu: host1x: Ignore clients initialization failure
+Date:   Mon, 13 Aug 2018 20:48:25 +0300
+Message-ID: <2093022.0kn10W7Lqi@dimapc>
+In-Reply-To: <20180809231211.26182-1-digetx@gmail.com>
+References: <20180809231211.26182-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018 15:48:00 -0600
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-
-> This set adds the capability to communiate event specific configuration
-> to the PMU kernel driver using an ioctl().  The functionatlity is made
-> generic enough for anyone to use but is targeted at the identification
-> of CoreSight sinks when operating in CPU-wide trace scenarios.
+On Friday, 10 August 2018 02:12:11 MSK Dmitry Osipenko wrote:
+> From time to time new bugs are popping up, causing some host1x client to
+> fail its initialization. Currently a single clients initialization failure
+> causes whole host1x device registration to fail, as a result a single DRM
+> sub-device initialization failure makes whole DRM initialization to fail.
+> Let's ignore clients initialization failure, as a result display panel
+> lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
+> Actually VIC fails if initramfs misses the firmware file, so with this
+> change a serial console isn't needed anymore to figure out why display
+> isn't working.
 > 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> Changes for V3:
-> . Return an error for CPU-wide scenarios while the feature is being
->   implemented (Kim)
+> 
+> Changelog:
+> 
+> v2: Added WARN_ON() that should get more attention than just a error
+> message. Made clients_lock to lock around the lists modification, that is
+> in line with the rest of the code.
+> 
+>  drivers/gpu/host1x/bus.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+> index 815bdb42e3f0..07bb6b6c1260 100644
+> --- a/drivers/gpu/host1x/bus.c
+> +++ b/drivers/gpu/host1x/bus.c
+> @@ -199,19 +199,23 @@ static void host1x_subdev_unregister(struct
+> host1x_device *device, */
+>  int host1x_device_init(struct host1x_device *device)
+>  {
+> -	struct host1x_client *client;
+> +	struct host1x_client *client, *cl;
+>  	int err;
+> 
+>  	mutex_lock(&device->clients_lock);
+> 
+> -	list_for_each_entry(client, &device->clients, list) {
+> +	list_for_each_entry_safe(client, cl, &device->clients, list) {
+>  		if (client->ops && client->ops->init) {
+>  			err = client->ops->init(client);
+> -			if (err < 0) {
+> +			if (WARN_ON(err < 0)) {
+>  				dev_err(&device->dev,
+>  					"failed to initialize %s: %d\n",
+>  					dev_name(client->dev), err);
+> -				goto teardown;
+> +
+> +				/* add the client to the list of idle clients */
+> +				mutex_lock(&clients_lock);
+> +				list_add_tail(&client->list, &clients);
 
-Hi, I'm giving this series a short test-drive on Juno.
+This shall be list_move_tail(), v3 is coming.
 
-It yields success for the --per-thread case..:
+> +				mutex_unlock(&clients_lock);
 
-$ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ --per-thread uname -a
-Linux juno 4.18.0-rc8-00011-gb82af52c4b35-dirty #147 SMP PREEMPT Thu Aug 9 11:20:37 CDT 2018 aarch64 GNU/Linux
-[ perf record: Woken up 0 times to write data ]
-Warning:
-AUX data lost 1 times out of 2!
 
-[ perf record: Captured and wrote 0.067 MB perf.data ]
-$ 
 
-..but not for CPU-wide?:
 
-$ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ uname -a
-failed to mmap with 12 (Cannot allocate memory)
-$ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ -C 0 uname -a
-failed to mmap with 12 (Cannot allocate memory)
-$ 
-
-Thanks,
-
-Kim
