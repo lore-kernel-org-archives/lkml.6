@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EF0C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31968C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF55621785
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C92BF21785
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:46:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWxGyOPG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF55621785
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqmTnlrS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92BF21785
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeHMGX2 (ORCPT
+        id S1728127AbeHMG0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 02:23:28 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38017 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbeHMGX2 (ORCPT
+        Mon, 13 Aug 2018 02:26:53 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39957 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbeHMG0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 02:23:28 -0400
-Received: by mail-pl0-f66.google.com with SMTP id u11-v6so6347194plq.5;
-        Sun, 12 Aug 2018 20:43:08 -0700 (PDT)
+        Mon, 13 Aug 2018 02:26:53 -0400
+Received: by mail-pl0-f67.google.com with SMTP id s17-v6so6341547plp.7;
+        Sun, 12 Aug 2018 20:46:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:from:subject:message-id:date:user-agent:mime-version
          :content-transfer-encoding:content-language;
-        bh=L+T3hRbA3G+EAVL45olDMU1Uft90dhRV3PfkXKItexE=;
-        b=lWxGyOPGXH8YKAHyhWAWcAtTFJOn0r2iVTm+kaNOfWaCxl6omvGs2o3GWgv3ny4OpZ
-         BZrcbJncjwh6grYtTVSjpNE97MlW4u9QMBFQHkfWyMRTXU0MxfDM1ABoNDGn++sPXVn/
-         VE3ZlS1B6mDKR6JLgzKIUhE6ZMDQquG2o44Td7eo9s2pq6LnYOIV64P91S1brygaxLjo
-         s39EQbWZ2XSuIC2MaTjsaNNaykaC9JJtMOKs01k7+ZqdSytTjkuCtb96F8SqS4xuOnpD
-         D5yYfGknKItX3gu4AexraRKa8uj4nGvtCJ13QUfuY28wzKr2KPkKVofUj/1fDv+njeHi
-         JVvQ==
+        bh=mZ13BgQ7A+fMK8pLrAYHdApld+51Qh8czR212ar1lx4=;
+        b=lqmTnlrShqJx86C0UQL3ncE+/YFf88dPYrQzZC/xwvLfvI4M/KCUZtpfDZ0P2/UJWy
+         m62bwMEhAlwgvXnNoau9l2bzAXOFFgGMZ1egXWSbosmCqBCgKxI5J+OAlTKGmXmyL0jm
+         fS9ZpRcziPrz3CtqLLiDvzWfmvxtwnHZqX7BK9iU/Bz3EVsCEkY5zH9m8Of879OgooJh
+         NXBniUCYnPg45EYN70AH+zkFPha76Ipy6u3R/q5mN2Bc1qg+g165JqcB6++pNzHEjpCr
+         LFVoZzPv2cPxNlPxKp2mRN0E2lgWaaBDX0B9pGNopgJT1tZMuPGRCxS88pCBLOasLwqp
+         fbfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
          :mime-version:content-transfer-encoding:content-language;
-        bh=L+T3hRbA3G+EAVL45olDMU1Uft90dhRV3PfkXKItexE=;
-        b=oHQn/1e9Kr72MtHWW47YaLDaoJRLYFdW2+Y93ojoWdkRg8BAuy2xpkdL53+dLT9WUo
-         yDlTaU0KU2cyMM83Cjh2sCM9t88iVETKX9I96YsIkaWfB5QbLdohrgd9vSPQ8quXkTZb
-         xo2FPATdZ9xfTwNtMF7FR8tviThKFLalaZQboGX5leIkKNuf0ela2hc1kj6+FI9wrJVX
-         kNNtqEbv0bonK6nNPaxaIqsDi2hYwoqkKCeS9G9ik8hBJqM9tbD1xRcaHgxqEdPPr9oq
-         LIzWB4GfRzX2iKjtmrpKJY7/j12KMNmXjZKRmywoIPBaL64sOHg+pK6nzaJErqKMgIqX
-         QKMg==
-X-Gm-Message-State: AOUpUlGvFKT4/UweFCflkUt8LJL3p2Exg/ivORyjejhq1Ks7PvBauF5q
-        sSZUvAdaleUdubcNM2P/fxv5knUF
-X-Google-Smtp-Source: AA+uWPwSM1BR7jYVAQ9W3PgEoPBmV2ra8/2JjjFzysNPI8i6YZEMrRBvVHxG7ZvNPBeUbPbOnmdmvw==
-X-Received: by 2002:a17:902:820a:: with SMTP id x10-v6mr15167355pln.261.1534131788174;
-        Sun, 12 Aug 2018 20:43:08 -0700 (PDT)
+        bh=mZ13BgQ7A+fMK8pLrAYHdApld+51Qh8czR212ar1lx4=;
+        b=qFgjrvwlyVf0osFudeVTQL35QDD+LUsM0cZ+ZruLcH5yXsAsoaA5CrnJ0KLLP/TWz2
+         gv4Fm8Y9tyjJ6hSI2PK/0SXreM8oCzOIgETMuH+n1wKrFDNcO6TsdXEzBu6SdSxlmhbV
+         9hXsMFh1KumJLf7Q0Ugpm6SoNtipj15Hyy8WW7Cq0RttaSDEKW0g3kG+wJkGEco7yC+l
+         hM0+QSP1ADg+hbnLTe0/bnNXTGlH2XwahncRwN9j6vnPPGeiyj3fXRbyqBfqJIEA2NEY
+         xA7pfNGwhHE04sRdmECDAHvrWVmC8+yMGu+H2ZVcMKPUp3VGGwyD3wUIAFYNcGLhhjQ4
+         fHAA==
+X-Gm-Message-State: AOUpUlG6W39H9VNtSrvhlIOOUhNawAl7/Oncbwx92DanhXcpck/HdBUw
+        Judq4Z9BcVpjkxgmWK6361xvtYl2
+X-Google-Smtp-Source: AA+uWPyWMCE7HNxg80AlgpJOsVMLTMoG7816Nhda1xSNhYCIdI2CELazrmPtRtREEwRNTiv+E1+s8w==
+X-Received: by 2002:a17:902:9a8b:: with SMTP id w11-v6mr15051295plp.333.1534131992631;
+        Sun, 12 Aug 2018 20:46:32 -0700 (PDT)
 Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.57? ([2402:f000:1:1501:200:5efe:a66f:4739])
-        by smtp.gmail.com with ESMTPSA id z2-v6sm15008669pgv.12.2018.08.12.20.43.06
+        by smtp.gmail.com with ESMTPSA id w72-v6sm30333112pfa.26.2018.08.12.20.46.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 Aug 2018 20:43:07 -0700 (PDT)
+        Sun, 12 Aug 2018 20:46:32 -0700 (PDT)
 To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
 Cc:     linux-nfs@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] fs: nfs: callback_proc: a possible sleep-in-atomic-context bug
- in nfs4_callback_sequence()
-Message-ID: <d2edd56f-782e-737b-b6a8-ca0b5be94f00@gmail.com>
-Date:   Mon, 13 Aug 2018 11:43:04 +0800
+Subject: [BUG] fs: nfs: pnfs_nfs: a possible sleep-in-atomic-context bug in
+ pnfs_generic_recover_commit_reqs()
+Message-ID: <6e0b1c99-bfe5-29a9-51b1-1c71fe0b91b4@gmail.com>
+Date:   Mon, 13 Aug 2018 11:46:28 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
@@ -82,12 +82,11 @@ The kernel may sleep with holding a spinlock.
 
 The function call paths (from bottom to top) in Linux-4.16 are:
 
-[FUNC] schedule_timeout
-fs/nfs/nfs4session.c, 223: schedule_timeout in nfs4_slot_wait_on_seqid
-fs/nfs/callback_proc.c, 466: nfs4_slot_wait_on_seqid in 
-referring_call_exists
-fs/nfs/callback_proc.c, 544: referring_call_exists in nfs4_callback_sequence
-fs/nfs/callback_proc.c, 504: spin_lock in nfs4_callback_sequence
+[FUNC] mutex_lock_nested
+fs/nfs/write.c, 1045: mutex_lock_nested in nfs_scan_commit_list
+fs/nfs/pnfs_nfs.c, 145: nfs_scan_commit_list in 
+pnfs_generic_recover_commit_reqs
+fs/nfs/pnfs_nfs.c, 154: spin_lock in pnfs_generic_recover_commit_reqs
 
 I do not find a good way to fix, so I only report.
 This is found by my static analysis tool (DSAC).
