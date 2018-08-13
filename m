@@ -2,162 +2,106 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A83C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3818EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75AAE2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AAE2089F
+	by mail.kernel.org (Postfix) with ESMTP id E24AB21798
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:58:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntxq0Tz3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24AB21798
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730392AbeHMVmB (ORCPT
+        id S1730480AbeHMVmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 17:42:01 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35144 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729241AbeHMVmB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 17:42:01 -0400
-Received: by mail-it0-f65.google.com with SMTP id 139-v6so15716014itf.0;
-        Mon, 13 Aug 2018 11:58:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kXFZPFsQxi2b90JOi4z4hcsFfMnZ/H6g/J1Zgk0O934=;
-        b=GmQzIMvJ1txqT/Y7j1E2d+16EDrj21BqT7JxoVN2/pS6nXmhodbJJav1yxYWQJ6A2i
-         8Jzs2hg+06yIYr3CjgJN5P/Hw2oQWpJnly3affBZu9CDWox4soq7z0d5q+y5bk/xcPJv
-         lLX6A3XUkgwl6ijv54mgN95R1iaAnNMyNYBmabEKMyuR1TtNxm25EqOTAM2mkSQD4EYd
-         IRTWPd+3KqLsBLl5IXPDiydoB5I85nyGYGyrzlEP7k8U/yJtdE15XkNbPvX7Ge5GyiAv
-         fW6OJFisXqivgRH4BOsZdmAL/lYQ/rqfc352YI3hdGlF6zUKPv7P3INZuWmn0ntdDcLr
-         rIuw==
-X-Gm-Message-State: AOUpUlHO0SZ6w3iaLABfUm4RsrCbgGEzaIlLZ2B4Z8hijrOcKTcg0UTF
-        YqvSZnlIG3SDIvXa7CjmGA==
-X-Google-Smtp-Source: AA+uWPzAzIgi+EimhacLpyqlKzDjI6U0kcfS6CTg/AVtxCan3RZOWq2X830PmKJbL5UIZRybm7T3mg==
-X-Received: by 2002:a02:b4a4:: with SMTP id k33-v6mr15644308jaj.53.1534186712110;
-        Mon, 13 Aug 2018 11:58:32 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id w64-v6sm2164032ita.7.2018.08.13.11.58.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Aug 2018 11:58:31 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 12:58:30 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tali Perry <tali.perry1@gmail.com>
-Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com, mark.rutland@arm.com,
-        davem@davemloft.net, mchehab+samsung@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        arnd@arndb.de, wsa@the-dreams.de,
-        andriy.shevchenko@linux.intel.com, pierre-yves.mordret@st.com,
-        cedric.madianga@gmail.com, baolin.wang@spreadtrum.com,
-        jarkko.nikula@linux.intel.com, hdegoede@redhat.com,
-        rmk+kernel@armlinux.org.uk, ard.biesheuvel@linaro.org,
-        thor.thayer@linux.intel.com, geert@linux-m68k.org,
-        heikki.krogerus@linux.intel.com, tglx@linutronix.de,
-        linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-binding: i2c: npcm7xx: add binding for i2c
- controller
-Message-ID: <20180813185830.GA18453@rob-hp-laptop>
-References: <20180807110709.31847-1-tali.perry1@gmail.com>
- <20180807110709.31847-2-tali.perry1@gmail.com>
+        Mon, 13 Aug 2018 17:42:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729241AbeHMVmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 17:42:21 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B10E7215A5;
+        Mon, 13 Aug 2018 18:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534186732;
+        bh=LU6sth4Gn1VmM72851mWGjiUsLAZ4FokH1PPSe8dnRo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ntxq0Tz3T964I0Tner8JlWIh3c4IONG8wcoRltiqFhsjMClsyYpzbZ6+dxGeGp81K
+         0iEQ4ijuq25Fa9kKwSa1AQuNWSbtKxCKxo8QdWgbyAH1cgZuRwFnoAX5ybWUQo3FIR
+         Qn4LeaK/i53TFUcTtEYtuBaSBIMwhHZ7Qj7hiFMY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 3576D140A1C; Mon, 13 Aug 2018 15:58:50 -0300 (-03)
+Date:   Mon, 13 Aug 2018 15:58:50 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, jolsa@kernel.org, mingo@kernel.org,
+        namhyung@kernel.org, David Ahern <dsahern@gmail.com>,
+        alexander.shishkin@linux.intel.com, a.p.zijlstra@chello.nl,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf tools: Fix check-headers.sh AND list path of
+ execution
+Message-ID: <20180813185850.GC4499@kernel.org>
+References: <20180723070145.GB7523@krava>
+ <20180811083915.17471-1-alexander.kapshuk@gmail.com>
+ <20180813111631.GA718@krava>
+ <CAJ1xhMUfQ9GDEXgL-+R_vs1aoidbwj5LRsyb9K32MMUnR23whQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180807110709.31847-2-tali.perry1@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAJ1xhMUfQ9GDEXgL-+R_vs1aoidbwj5LRsyb9K32MMUnR23whQ@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 02:07:08PM +0300, Tali Perry wrote:
-> Nuvoton NPCM7XX I2C Controller
-> NPCM7xx includes 16 I2C contollers. THis driver operates the controller.
-> This module also includes a slave mode, which will be submitted later on.
+Em Mon, Aug 13, 2018 at 02:19:10PM +0300, Alexander Kapshuk escreveu:
+> On Mon, Aug 13, 2018 at 2:16 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Sat, Aug 11, 2018 at 11:39:15AM +0300, Alexander Kapshuk wrote:
+> > > The '||' path of execution in the 'test' block of the check_2() function
+> > > may also be taken if file2 does not exist, in which case the warning
+> > > message about the ABI headers being different would still be printed
+> > > where it should not be.  See below.
+> > >
+> > > % file1=file1; file2=file2
+> > > % cmd="echo diff $file1 $file2"
+> > > % test -f $file2 &&
+> > > eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file1'
+> > > differs from latest version at '$file2'" >&2
+> > > Warning: Kernel ABI header at 'tools/file1' differs from latest
+> > > version at 'file2'
+> > >
+> > > The proposed patch converts the code following the '&&' operator into a
+> > > compound list to be executed in the current process environment only if
+> > > file2 does exist. Should the files being compared differ, a diff command
+> > > to compare the files concerned is printed on standard output. E.g.
+> > >
+> > > diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
+> > >
+> > > Signed-off-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+> >
+> > I posted follow up patches based on this one
+> > as a reply on this patch
+> >
+> > for this one:
+> >
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> >
+> > thanks,
+> > jirka
 > 
-> Any feedback would be appreciated.  
-> 
-> v2 -> v1:
-> 	- run check patch in strict mode.
-> 	- use linux crc.
-> 	- define regs in constant offset without base.
-> 	- remove debug prints.
-> 	- no declerations for local functions.
-> 	
-> v1: initial version
-> 
-> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-> 
-> ---
->  .../devicetree/bindings/i2c/i2c-npcm7xx.txt        | 27 ++++++++++++++++++++++
->  MAINTAINERS                                        |  8 +++++++
->  2 files changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-> new file mode 100644
-> index 000000000000..e2ee45d7a41e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-> @@ -0,0 +1,27 @@
-> +Nuvoton NPCM7XX I2C bus
-> +
-> +The NPCM750x includes sixteen I2C busses
-> +
-> +Required properties:
-> +- compatible      : must be "nuvoton,npcm750-i2c-bus"
+> Noted.
+> Thanks.
 
-Is 'bus' how the datasheet calls it? If not, I'd drop the '-bus' part as 
-it is really a controller.
+Thanks, applied the three patches to acme/perf/core.
 
-> +- reg             : Offset and length of the register set for the device.
-> +- interrupts      : Contain the I2C interrupt with flags for falling edge.
-> +- clocks          : phandle of I2C reference clock.
-> +
-> +Optional:
-> +- bus-frequency   : Contain the I2C bus frequency,
-> +			the default I2C bus frequency is 100000.
-> +- pinctrl-0       : must be <&smbX_pins>, X is module number
-> +			(on NPCM7XX it's 0 to 15)
-> +- pinctrl-names   : should be set to "default"
-> +Example:
-> +
-> +	i2c0: i2c-bus@80000 {
-
-Should be 'i2c@80000'
-
-> +		compatible = "nuvoton,npcm750-i2c-bus";
-> +		reg = <0x80000 0x1000>;
-> +		clocks = <&clk NPCM7XX_CLK_APB2>;
-> +		bus-frequency = <100000>;
-> +		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&smb0_pins>;
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 192d7f73fd01..13bac916d21d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1244,6 +1244,14 @@ F:	drivers/i2c/busses/i2c-aspeed.c
->  F:	Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-i2c-ic.txt
->  F:	Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
->  
-> +ARM/NUVOTON I2C DRIVER
-> +M:	Tali Perry <tali.perry1@gmail.com>
-> +L:	linux-i2c@vger.kernel.org
-> +L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/i2c/busses/i2c-npcm7xx.c
-> +F:	Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-> +
->  ARM/ASPEED MACHINE SUPPORT
->  M:	Joel Stanley <joel@jms.id.au>
->  R:	Andrew Jeffery <andrew@aj.id.au>
-> -- 
-> 2.14.1
-> 
+- Arnaldo
