@@ -5,230 +5,107 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B914C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC43FC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32648217FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32648217FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DFDB21834
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:20:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFDB21834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbeHMK5A (ORCPT
+        id S1728612AbeHMLBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 06:57:00 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10662 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726345AbeHMK47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 06:56:59 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8CAFCDD054F73;
-        Mon, 13 Aug 2018 16:15:44 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Mon, 13 Aug 2018
- 16:15:39 +0800
-Subject: Re: [PATCH 3/8] staging: erofs: add error handling for xattr
- submodule
-To:     Gao Xiang <gaoxiang25@huawei.com>
-CC:     Chao Yu <chao@kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-References: <20180812140150.13397-1-chao@kernel.org>
- <20180812140150.13397-4-chao@kernel.org>
- <11a5b8c0-c3fa-0da9-a41b-a6b33ddcc9bb@huawei.com>
- <3d6e8cd9-0263-2196-7b45-b60245f0ba7c@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <ffd2748a-273f-792b-d418-2fcf85c3d45f@huawei.com>
-Date:   Mon, 13 Aug 2018 16:15:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 13 Aug 2018 07:01:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726345AbeHMLBJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 07:01:09 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7D8EHDb031371
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:19:58 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ku1ebst0a-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:19:57 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Mon, 13 Aug 2018 09:19:55 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Aug 2018 09:19:50 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7D8JmgR38273224
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Aug 2018 08:19:49 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04D7C4204F;
+        Mon, 13 Aug 2018 11:19:55 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A345342042;
+        Mon, 13 Aug 2018 11:19:51 +0100 (BST)
+Received: from [9.124.35.193] (unknown [9.124.35.193])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Aug 2018 11:19:51 +0100 (BST)
+Subject: Re: [PATCH v8 5/6] trace_uprobe/sdt: Prevent multiple reference
+ counter for same uprobe
+To:     Song Liu <liu.song.a23@gmail.com>, srikar@linux.vnet.ibm.com,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
+ <20180809041856.1547-6-ravi.bangoria@linux.ibm.com>
+ <CAPhsuW5g1dOnceA=kqfpC+rR6EguJaR+wPwY9nSWLbGSSj5XjQ@mail.gmail.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Mon, 13 Aug 2018 13:49:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <3d6e8cd9-0263-2196-7b45-b60245f0ba7c@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <CAPhsuW5g1dOnceA=kqfpC+rR6EguJaR+wPwY9nSWLbGSSj5XjQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-TM-AS-GCONF: 00
+x-cbid: 18081308-0012-0000-0000-00000298EF56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081308-0013-0000-0000-000020CC0A0F
+Message-Id: <66f84261-aa3e-4692-a124-09537fda4312@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808130092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiang,
+Hi Song,
 
-On 2018/8/13 10:36, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2018/8/13 10:00, Chao Yu wrote:
->> On 2018/8/12 22:01, Chao Yu wrote:
->>> From: Gao Xiang <gaoxiang25@huawei.com>
->>>
->>> This patch enhances the missing error handling code for
->>> xattr submodule, which improves the stability for the rare cases.
->>>
->>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>  drivers/staging/erofs/internal.h |   6 +-
->>>  drivers/staging/erofs/xattr.c    | 120 ++++++++++++++++++++-----------
->>>  2 files changed, 83 insertions(+), 43 deletions(-)
->>>
->>> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
->>> index a756abeff7e9..8951e01216e3 100644
->>> --- a/drivers/staging/erofs/internal.h
->>> +++ b/drivers/staging/erofs/internal.h
->>> @@ -485,10 +485,10 @@ struct erofs_map_blocks_iter {
->>>  
->>>  
->>>  static inline struct page *
->>> -erofs_get_inline_page_nofail(struct inode *inode,
->>> -			     erofs_blk_t blkaddr)
->>> +erofs_get_inline_page(struct inode *inode,
->>> +		      erofs_blk_t blkaddr)
->>>  {
->>> -	return erofs_get_meta_page_nofail(inode->i_sb,
->>> +	return erofs_get_meta_page(inode->i_sb,
->>>  		blkaddr, S_ISDIR(inode->i_mode));
->>>  }
->>>  
->>> diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
->>> index 2593c856b079..1b5815fc70db 100644
->>> --- a/drivers/staging/erofs/xattr.c
->>> +++ b/drivers/staging/erofs/xattr.c
->>> @@ -24,16 +24,25 @@ struct xattr_iter {
->>>  
->>>  static inline void xattr_iter_end(struct xattr_iter *it, bool atomic)
->>>  {
->>> -	/* only init_inode_xattrs use non-atomic once */
->>> +	/* the only user of kunmap() is 'init_inode_xattrs' */
->>>  	if (unlikely(!atomic))
->>>  		kunmap(it->page);
->>>  	else
->>>  		kunmap_atomic(it->kaddr);
->>> +
->>>  	unlock_page(it->page);
->>>  	put_page(it->page);
->>>  }
->>>  
->>> -static void init_inode_xattrs(struct inode *inode)
->>> +static inline void xattr_iter_end_final(struct xattr_iter *it)
->>> +{
->>> +	if (unlikely(it->page == NULL))
->>> +		return;
->>> +
->>> +	xattr_iter_end(it, true);
->>> +}
->>> +
->>> +static int init_inode_xattrs(struct inode *inode)
->>>  {
->>>  	struct xattr_iter it;
->>>  	unsigned i;
->>> @@ -44,7 +53,7 @@ static void init_inode_xattrs(struct inode *inode)
->>>  	bool atomic_map;
->>>  
->>>  	if (likely(inode_has_inited_xattr(inode)))
->>> -		return;
->>> +		return 0;
->>>  
->>>  	vi = EROFS_V(inode);
->>>  	BUG_ON(!vi->xattr_isize);
->>> @@ -54,8 +63,9 @@ static void init_inode_xattrs(struct inode *inode)
->>>  	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
->>>  	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
->>>  
->>> -	it.page = erofs_get_inline_page_nofail(inode, it.blkaddr);
->>> -	BUG_ON(IS_ERR(it.page));
->>> +	it.page = erofs_get_inline_page(inode, it.blkaddr);
->>> +	if (IS_ERR(it.page))
->>> +		return PTR_ERR(it.page);
->>>  
->>>  	/* read in shared xattr array (non-atomic, see kmalloc below) */
->>>  	it.kaddr = kmap(it.page);
->>> @@ -64,9 +74,12 @@ static void init_inode_xattrs(struct inode *inode)
->>>  	ih = (struct erofs_xattr_ibody_header *)(it.kaddr + it.ofs);
->>>  
->>>  	vi->xattr_shared_count = ih->h_shared_count;
->>> -	vi->xattr_shared_xattrs = (unsigned *)kmalloc_array(
->>> -		vi->xattr_shared_count, sizeof(unsigned),
->>> -		GFP_KERNEL | __GFP_NOFAIL);
->>> +	vi->xattr_shared_xattrs = kmalloc_array(vi->xattr_shared_count,
->>> +						sizeof(unsigned), GFP_KERNEL);
->>> +	if (unlikely(vi->xattr_shared_xattrs == NULL)) {
->>> +		xattr_iter_end(&it, atomic_map);
->>> +		return -ENOMEM;
->>> +	}
->>>  
->>>  	/* let's skip ibody header */
->>>  	it.ofs += sizeof(struct erofs_xattr_ibody_header);
->>> @@ -77,9 +90,10 @@ static void init_inode_xattrs(struct inode *inode)
->>>  			BUG_ON(it.ofs != EROFS_BLKSIZ);
->>>  			xattr_iter_end(&it, atomic_map);
->>>  
->>> -			it.page = erofs_get_meta_page_nofail(sb,
->>> +			it.page = erofs_get_meta_page(sb,
->>>  				++it.blkaddr, S_ISDIR(inode->i_mode));
->>> -			BUG_ON(IS_ERR(it.page));
->>> +			if (IS_ERR(it.page))
->>> +				return PTR_ERR(it.page);
->>>  
->>>  			it.kaddr = kmap_atomic(it.page);
->>>  			atomic_map = true;
->>> @@ -92,6 +106,7 @@ static void init_inode_xattrs(struct inode *inode)
->>>  	xattr_iter_end(&it, atomic_map);
->>>  
->>>  	inode_set_inited_xattr(inode);
->>> +	return 0;
->>>  }
->>>  
->>>  struct xattr_iter_handlers {
->>> @@ -101,19 +116,24 @@ struct xattr_iter_handlers {
->>>  	void (*value)(struct xattr_iter *, unsigned, char *, unsigned);
->>>  };
->>>  
->>> -static void xattr_iter_fixup(struct xattr_iter *it)
->>> +static inline int xattr_iter_fixup(struct xattr_iter *it)
->>>  {
->>> -	if (unlikely(it->ofs >= EROFS_BLKSIZ)) {
->>> -		xattr_iter_end(it, true);
->>> +	if (likely(it->ofs < EROFS_BLKSIZ))
->>> +		return 0;
->>>  
->>> -		it->blkaddr += erofs_blknr(it->ofs);
->>> -		it->page = erofs_get_meta_page_nofail(it->sb,
->>> -			it->blkaddr, false);
->>> -		BUG_ON(IS_ERR(it->page));
->>> +	xattr_iter_end(it, true);
->>>  
->>> -		it->kaddr = kmap_atomic(it->page);
->>> -		it->ofs = erofs_blkoff(it->ofs);
->>> +	it->blkaddr += erofs_blknr(it->ofs);
->>> +
->>> +	it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
->>> +	if (IS_ERR(it->page)) {
->>> +		it->page = NULL;
->>> +		return PTR_ERR(it->page);
->> As LKP reported, we need to fix this as below:
->>
->> err = PTR_ERR(it->page);
->> it->page = NULL;
->> return err;
->>
->> Thanks,
->>
-> 
-> I have seen this at
-> https://lists.01.org/pipermail/kbuild-all/2018-August/051187.html
-> 
-> I will fix it soon. Thanks for report.
+On 08/11/2018 01:42 PM, Song Liu wrote:
+> Do we really need this given we already have PATCH 4/6?
+> uprobe_regsiter() can be called
+> out of trace_uprobe, this patch won't catch all conflicts anyway.
 
-I checked v2 patch, it looks good to me now. I will send v2 patchset later.
+Right but it, at least, catch all conflicts happening via trace_uprobe.
+
+I don't mind in removing this patch but I would like to get an opinion of
+Oleg/Srikar/Steven/Masami.
 
 Thanks,
-
-> 
-> Thanks,
-> Gao Xiang
-> 
-> .
-> 
+Ravi
 
