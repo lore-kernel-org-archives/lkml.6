@@ -2,97 +2,135 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D40C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF790C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C506217C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:26:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Mckfq9YK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C506217C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CA6C2178F
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 12:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA6C2178F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbeHMPIf (ORCPT
+        id S1729657AbeHMPJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 11:08:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41948 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728410AbeHMPIe (ORCPT
+        Mon, 13 Aug 2018 11:09:23 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33050 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728410AbeHMPJW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 11:08:34 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7DCO3dT133725;
-        Mon, 13 Aug 2018 12:26:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=MsiRFVcm/jFlkP2Z37NKv7Rn3HJ7wA0NobHDKy5NR6k=;
- b=Mckfq9YKXLwMWtNZvtlwI3wAT8N9M3RFlcNLTPXZyNRbtcl+tKYdaCW4iHnRtHy43j5/
- z3p0kAZ9n9ADTstyyQpe9AjDdOOAlP+LuGJToaWKCAdYZViwHE9sGrmkIcutiFDmiucm
- 6sF3uD87mODrN19Q/L/0vyEfGj0o/AcXTQA9yVPQqbAhFBGhiGa3WkqEr+yVQWxIvCdM
- 627WXgMJujvUTkNuQJkaeG2il6YlHjvy5ZKWOrD6M6PqkWkkOXRrO0+yE3ccj9XdthRN
- L1K4OP5+mdLDwPW+Pc5Sx7yyGoDzKcYUhqT67E3BoGqhRZfA0x82Co2fjDJeDTH82pGc jA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2ksqrp3y3j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Aug 2018 12:26:03 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7DCQ2GL013138
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Aug 2018 12:26:02 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7DCQ237029570;
-        Mon, 13 Aug 2018 12:26:02 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 Aug 2018 05:26:01 -0700
-Date:   Mon, 13 Aug 2018 15:25:54 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, Chao Yu <yuchao0@huawei.com>,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] staging: erofs: add error handling for xattr
- submodule
-Message-ID: <20180813122553.jlavb6inwz3qad6x@mwanda>
-References: <20180812140150.13397-1-chao@kernel.org>
- <20180812140150.13397-4-chao@kernel.org>
- <20180813114725.kgoupvppcwsw2vyj@mwanda>
- <c14184af-6378-fd96-3b9b-52c9a7da8463@huawei.com>
+        Mon, 13 Aug 2018 11:09:22 -0400
+Received: by mail-wm0-f66.google.com with SMTP id i134-v6so281554wmf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 05:27:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JlIseKsdGdj6x6itYZiSC/IkLSPgz/oVcCsDK3QOYMs=;
+        b=sUrr/2TSIXcVgdWCjgZrsg6GegZxq8PWA/XskjnV0JtMOPsp2GAPHPAve4HagqFGCu
+         k/jABGUpI7v4X41e3skRWtNZFWx9F+JLKuI5d3L2RoBavUOJ6d2EQwqu1vUCBpW5dMt2
+         GPS5SDUvQ7992vWqhYC35FS6qQE8cIDNEKJqlREd4YNAl8ty2GfK3gOZ4Q4PR5Xm1x1D
+         E9nP++lBNJTIFfh0fVEho6E7it+4J82k0lbhPFgdp0K1tIBy6SMEx7yllOA2iG3mm/aI
+         LeZDHfGqqDTKcZBRCgCHfwofR3Ht3tmLnUzhK5tjlNOsZy/MfVPCFthw2KQyJHxupPCF
+         Bi+w==
+X-Gm-Message-State: AOUpUlG8QF002cjwaeHSkvET9vbzuAO1B0UKCJ7kmy6mff2jXSsQlt4y
+        8YVM5ARrPQkkVHwdf1HJa/umvw==
+X-Google-Smtp-Source: AA+uWPyvc6ZFmJqaovDvrN5STDMw2Y+s+taU618sFdeiEPJgZ0g/m7lCrhEO9CSl7KoUUy+8amk3uA==
+X-Received: by 2002:a1c:790b:: with SMTP id l11-v6mr7687799wme.66.1534163237855;
+        Mon, 13 Aug 2018 05:27:17 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BCE7D88DAEEE59932720558.dip0.t-ipconnect.de. [2003:ef:2bce:7d88:daee:e599:3272:558])
+        by smtp.gmail.com with ESMTPSA id h14-v6sm20890333wro.15.2018.08.13.05.27.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Aug 2018 05:27:17 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 14:27:14 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
+ support utilization clamping
+Message-ID: <20180813122714.GC9851@localhost.localdomain>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-2-patrick.bellasi@arm.com>
+ <20180807095905.GB2288@localhost.localdomain>
+ <20180813121441.GC2605@e110439-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c14184af-6378-fd96-3b9b-52c9a7da8463@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8983 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=579
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808130135
+In-Reply-To: <20180813121441.GC2605@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 08:17:27PM +0800, Gao Xiang wrote:
-> > 	/* we assume that ofs is aligned with 4 bytes */
-> > 	it->ofs = EROFS_XATTR_ALIGN(it->ofs);
-> > 	return err;
+On 13/08/18 13:14, Patrick Bellasi wrote:
+> On 07-Aug 11:59, Juri Lelli wrote:
+> > Hi,
 > > 
+> > Minor comments below.
+> > 
+> > On 06/08/18 17:39, Patrick Bellasi wrote:
+> > 
+> > [...]
+> > 
+> > > + *
+> > > + * Task Utilization Attributes
+> > > + * ===========================
+> > > + *
+> > > + * A subset of sched_attr attributes allows to specify the utilization which
+> > > + * should be expected by a task. These attributes allows to inform the
+> >                                                        ^
+> > 						     allow
+> > 
+> > > + * scheduler about the utilization boundaries within which is safe to schedule
+> > 
+> > Isn't all this more about providing hints than safety?
+> 
+> Yes, it's "just" hints... will rephrase to make it more clear.
+> 
+> > > + * the task. These utilization boundaries are valuable information to support
+> > > + * scheduler decisions on both task placement and frequencies selection.
+> > > + *
+> > > + *  @sched_util_min	represents the minimum utilization
+> > > + *  @sched_util_max	represents the maximum utilization
+> > > + *
+> > > + * Utilization is a value in the range [0..SCHED_CAPACITY_SCALE] which
+> > > + * represents the percentage of CPU time used by a task when running at the
+> > > + * maximum frequency on the highest capacity CPU of the system. Thus, for
+> > > + * example, a 20% utilization task is a task running for 2ms every 10ms.
+> > > + *
+> > > + * A task with a min utilization value bigger then 0 is more likely to be
+> > > + * scheduled on a CPU which can provide that bandwidth.
+> > > + * A task with a max utilization value smaller then 1024 is more likely to be
+> > > + * scheduled on a CPU which do not provide more then the required bandwidth.
+> > 
+> > Isn't s/bandwidth/capacity/ here, above, and in general where you use
+> > the term "bandwidth" more appropriate? I wonder if overloading this term
+> > (w.r.t. how is used with DEADLINE) might create confusion. In this case
+> > we are not providing any sort of guarantees, it's a hint.
+> 
+> Yes, you right... here we are not really granting any bandwidth but
+> just "improving" the bandwidth provisioning by hinting the scheduler
+> about a certain min/max capacity required.
+> 
+> The problem related to using capacity is that, from kernel space,
+> capacity is defined as a static quantity/property of CPUs. Still, I
 
-This might be cleaner if we wrote:
-
-	return (err < 0) ? error : 0;
-
-The callers all treate zero and one the same so there isn't any reason
-to propogate the 1 back.
-
-regards,
-dan carpenter
-
+Looks like it's also more inline with EAS terminology (i.e., capacity
+states).
