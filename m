@@ -2,127 +2,132 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2D5C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C86C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99CA20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FA71217FF
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:16:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQUxk0rd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99CA20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t6VfmOlU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA71217FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbeHMJy3 (ORCPT
+        id S1728406AbeHMJ5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 05:54:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbeHMJy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 05:54:29 -0400
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B36921834;
-        Mon, 13 Aug 2018 07:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534144411;
-        bh=TK1/mfdmnFRbnq1msxDHxVDyTJhU7I5h2Az6/V2GkWc=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=bQUxk0rdogg9HNcGUuPSzRfNWaaC0j7HGNjA6gM2hc6/3bh0TQwjEOaFenGqxGQqn
-         aN5tCfeWPLBgtBmxwxhFXTxyCVbnrfG6/bzAH5CTJdKJx3hreExTsJrZcA5yJXhy4N
-         38NTZ7jBBHrntkOX83wH/AJT8eY9pHgSqfnUwTH4=
-Received: by mail-wm0-f46.google.com with SMTP id t25-v6so7712578wmi.3;
-        Mon, 13 Aug 2018 00:13:31 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEW+m9cBR39pNEEYaky0jhsiVf+fowUKiAQcCdSTDdVsO3uObtk
-        6eBLZmGdcwNWvx0qpNUd6oILLGQ/LBO2HORn5r0=
-X-Google-Smtp-Source: AA+uWPwjeTnxaQWWycI4Jebj3o1XDyCrbpi0ewZL+jluSu1XzcSEbfonDfEMvaPi+ASdNK3Z+1tktmzRnHJPhZ8htHM=
-X-Received: by 2002:a1c:9c56:: with SMTP id f83-v6mr6820845wme.135.1534144409782;
- Mon, 13 Aug 2018 00:13:29 -0700 (PDT)
+        Mon, 13 Aug 2018 05:57:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59114 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbeHMJ5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 05:57:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=2f+swPmeeunK1AN6IRwDcRfWD7lYlN/i+g8efpfxtGs=; b=t6VfmOlUxg2XWt8Q80tG+RCdq+
+        bdkrPxADgEiASKmv7xusd5VRr54YeMzZyCKW9+8NmJZlsiUePoKS/VQuLuvsKmoZHkFBVRxgojJbZ
+        J7pqxFhiodqTvdUgDx7mqlDNQdORv4ggZt+Wz7pmNgVnycNTML5tCcYuHx7P7QbVd3VQ3GBcg2LGw
+        /etyZXrxY/M6yDIPFbSj3mJk7RjwTbQNDBio251fQUBOtf34H3A2zMIb+3Jhmr7b3kzwnYhRQ0hnH
+        kZXgYOhXhjl6QurdS+tz6SpkLKX6W50lYOCdznk97IH3XntipXNPbb9TZ/cA2Wy8agsNhMzKBftNv
+        IJ780XHw==;
+Received: from [62.169.200.78] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fp758-0005LS-64; Mon, 13 Aug 2018 07:16:03 +0000
+Date:   Mon, 13 Aug 2018 10:15:20 +0300
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] dma mapping updates for 4.19
+Message-ID: <20180813071520.GA25481@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 00:13:29
- -0700 (PDT)
-In-Reply-To: <CANAwSgQBthsKMKBBnKBnCJdKwKOMm0XKRn5r=gnpdbC6Eu9=ag@mail.gmail.com>
-References: <20180806160933.6578-1-krzk@kernel.org> <CANAwSgTYviRnLjVU50w_o5k6=iMjxqU5qQ+7RW9K43KrrqRKPA@mail.gmail.com>
- <CAJKOXPds5s8omeR7UOB4u4HrYCZBTJX3t4YU4PSWBGb-9MG7iw@mail.gmail.com> <CANAwSgQBthsKMKBBnKBnCJdKwKOMm0XKRn5r=gnpdbC6Eu9=ag@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 13 Aug 2018 09:13:29 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdcyRavWHEowbg3Ob=55F5ta6xRUb9_A_e7sG_MFy-k7w@mail.gmail.com>
-Message-ID: <CAJKOXPdcyRavWHEowbg3Ob=55F5ta6xRUb9_A_e7sG_MFy-k7w@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: exynos: Add missing used PMIC regulators on
- Exynos5422 Odroid boards
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 August 2018 at 08:37, Anand Moon <linux.amoon@gmail.com> wrote:
-> Hi Krzysztof,
->
-> On Sun, 12 Aug 2018 at 18:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 11 August 2018 at 08:39, Anand Moon <linux.amoon@gmail.com> wrote:
->> > Hi Krzysztof,
->> >
->> > These patches should also be ported to u-boot to enable PMIC.
->> >
->> > I was just looking into S2MPS11B data sheet
->> > According to the 1.2 Key Features of  S2MPS11
->> >
->> > BUCK1, BUCK2, BUCK3, BUCK4, BUCK6 have (0.65 V to 1.6 V) min /max range.
->> > BUCK5 have (0.65 V to 2.0 V) min /max range.
->> > BUCK7 have (1.2 V to 1.5 V) min / max range.
->> > BUCK8 have (1.8 V to 2.1 V) min / max range.
->> > BUCK10 have (0.75 V to 1.4 V) min / max range.
->> >
->> > BUCKBOST9 (3.0 V to 3.75 V) min / max range.
->> >
->> > LDO1, LDO6, LDO11, LDO22, LDO23, LDO27, LDO35 (0.8 V to 2.375 V) min / max range
->> >
->> > LDO2, LDO3, LDO5, LDO7, LDO9, LDO10, LD012, LDO13, LDO14, LDO15,
->> > LDO16, LDO17, LDO18, LDO19, LDO20, LD021, LDO24, LDO25, LDO26,
->> > LDO28, LDO29, LDO30, LDO31, LDO32, LDO33, LDO34, LDO36, LDO37, LDO38
->> > (0.8 V to 3.95 V) min / max range
->> >
->> > I am aware off we have configures the min/max range as per board schematics.
->> > but each regulator support dynamic voltage scale and have different
->> > turn on/off voltage and current rating.
->> >
->> > So why are we not setting the regulator-min-microvolt /
->> > regulator-max-microvolt as per datasheets.
->> > Please correct me if I am wrong.
->>
->> Which regulators are not configured as in datasheet?
->>
->> Best regards,
->> Krzysztof
->
-> Almost all the regulator have some miss default match of min/max setting.
-> I have tried to adjust the setting on top your above patches.
->
-> I am attaching my patch diff for testing.
-> I have have perform some stress testing and found no issue at my end.
+The following changes since commit d72e90f33aa4709ebecc5005562f52335e106a60:
 
-All the regulators you touched in this patch have proper setting of
-min and max values. They are configured to the values required by
-hardware, as in schematics.
+  Linux 4.18-rc6 (2018-07-22 14:12:20 -0700)
 
-Best regards,
-Krzysztof
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.19
+
+for you to fetch changes up to 6fa1d28e38cfa0c90f8d64c0cab37769e5337b85:
+
+  sh: use generic dma_noncoherent_ops (2018-08-02 13:54:20 +0200)
+
+----------------------------------------------------------------
+dma-mapping updates for 4.19
+
+ - a series from Robin to fix bus imposed dma limits by adding a separate
+   mask for them to struct device instead of trying to squeeze a second
+   meaning out of the existing dma mask as we did before.  This has ACKs
+   from the various other subsystems touched
+ - a small swiotlb cleanup from Kees (acked by Konrad)
+ - conversion of nios2 and sh to the new generic dma-noncoherent code.
+   Various other architecture conversions will come through the
+   architectures maintainers trees.
+
+----------------------------------------------------------------
+Christoph Hellwig (6):
+      nios2: use generic dma_noncoherent_ops
+      sh: simplify get_arch_dma_ops
+      sh: introduce a sh_cacheop_vaddr helper
+      sh: use dma_direct_ops for the CONFIG_DMA_COHERENT case
+      sh: split arch/sh/mm/consistent.c
+      sh: use generic dma_noncoherent_ops
+
+Kees Cook (1):
+      swiotlb: clean up reporting
+
+Robin Murphy (9):
+      dma-mapping: relax warning for per-device areas
+      of/platform: Initialise default DMA masks
+      ACPI/IORT: Support address size limit for root complexes
+      dma-mapping: Generalise dma_32bit_limit flag
+      ACPI/IORT: Set bus DMA mask as appropriate
+      of/device: Set bus DMA mask as appropriate
+      iommu/dma: Respect bus DMA limit for IOVAs
+      ACPI/IORT: Don't set default coherent DMA mask
+      OF: Don't set default coherent DMA mask
+
+ arch/nios2/Kconfig                   |   3 +
+ arch/nios2/include/asm/Kbuild        |   1 +
+ arch/nios2/include/asm/dma-mapping.h |  20 -----
+ arch/nios2/mm/dma-mapping.c          | 139 ++++-------------------------------
+ arch/sh/Kconfig                      |   4 +-
+ arch/sh/include/asm/Kbuild           |   1 +
+ arch/sh/include/asm/cacheflush.h     |   7 ++
+ arch/sh/include/asm/dma-mapping.h    |  23 ------
+ arch/sh/kernel/Makefile              |   4 +-
+ arch/sh/kernel/dma-coherent.c        |  83 +++++++++++++++++++++
+ arch/sh/kernel/dma-nommu.c           |  88 ----------------------
+ arch/sh/mm/consistent.c              |  87 ----------------------
+ arch/sh/mm/init.c                    |  10 ---
+ arch/x86/kernel/pci-dma.c            |   2 +-
+ drivers/acpi/arm64/iort.c            |  48 ++++++++----
+ drivers/iommu/dma-iommu.c            |   3 +
+ drivers/of/device.c                  |  21 +++---
+ drivers/of/platform.c                |   3 +
+ drivers/sh/maple/maple.c             |   7 +-
+ include/linux/device.h               |   6 +-
+ include/linux/dma-mapping.h          |   9 ++-
+ kernel/dma/direct.c                  |   6 +-
+ kernel/dma/swiotlb.c                 |  18 ++---
+ 23 files changed, 192 insertions(+), 401 deletions(-)
+ delete mode 100644 arch/nios2/include/asm/dma-mapping.h
+ delete mode 100644 arch/sh/include/asm/dma-mapping.h
+ create mode 100644 arch/sh/kernel/dma-coherent.c
+ delete mode 100644 arch/sh/kernel/dma-nommu.c
