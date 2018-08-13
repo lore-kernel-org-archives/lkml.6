@@ -2,115 +2,100 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC75C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B28C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE6D321798
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:07:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6D321798
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A0762177A
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 19:11:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFef4/I6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0762177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alum.mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbeHMVup (ORCPT
+        id S1730679AbeHMVzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 17:50:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34248 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730362AbeHMVuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 17:50:44 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 618A487A79;
-        Mon, 13 Aug 2018 19:07:13 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ABE9E1007094;
-        Mon, 13 Aug 2018 19:07:12 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, stable@vger.kernel.org,
+        Mon, 13 Aug 2018 17:55:01 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:44464 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730371AbeHMVzA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 17:55:00 -0400
+Received: by mail-ua1-f66.google.com with SMTP id k25-v6so10436789uao.11;
+        Mon, 13 Aug 2018 12:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=hlts2vVqRNc+1czg7+T2beLKaIz2Lb2dXUkZ9YYcsHs=;
+        b=PFef4/I69VNiMRNq7FExxPF6wxWh3TkXLAVll1oJb4uUV6i7DNQfNuIzy40/g1JqGC
+         GveRpxheiG6Y8NninwBwQjqQeKVUZvCuEiBCKuU1thBx0hNcSvgWZCMDuR0ZeFz8m+PW
+         G9jtWqRkXmyOHLr1JfWddKOBIZzeVP9FSI3ywFws4+QQ/0ZOUiyAF0BhebN1ENK/01Qw
+         JMDghsFZnywn5AJF4WTQoPCDM0H4uK9/L8umwjXyARHwHRy/D0d1+RT3Z4BWp7+FRhEr
+         mbN63Wkgw13Cl/r836+RSMrwe0+SJdYa0fu0wt6eTdIK6LKvl0yl9E42nlGPufoTYR8I
+         6+xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=hlts2vVqRNc+1czg7+T2beLKaIz2Lb2dXUkZ9YYcsHs=;
+        b=AlscDt/unb+6davnC0jC1jh/uKZU0KhxGSLbw4Tki227Rb7JfV1Pqf05BpcjooO7hW
+         ynlXJH6t45kPvZLRownA13qoUsoCMw2fCScrxu9NA+8qs9K3pdwFBPXZ28LJUsv4mENr
+         YNR3tlPBWIcq0452zM/FemYCHdpuF8G0eKPC1dkN8XEQHcjgvDysyL1mdeCgMikC0k/Q
+         RLmkxeW4UlSC9XUP3pMbtmxvA31KTWs5buoyrtzv7/L9OCnVTtCVBWrFXAuYF9uc7dM6
+         Fd4bUHc61cejwK+6FGekbzlpXvER+E8wZq1o/7ShlDlrX2D8iV5t7VwOZUs5ixJ1uvOW
+         kaSg==
+X-Gm-Message-State: AOUpUlEBLSPTRNYgPRPuHcfQjullJaVTc5+TffbDVSu8Hg6oOVyfeldF
+        al4bk39p6lmqwlSM8WZ/rQL0gsZQ6AZdepT4/WNQWA==
+X-Google-Smtp-Source: AA+uWPynFdWONBMUmmUmDiNM0SNOWNrygt7Zjz/n9avL/0SG4raVAsSiqMgVIjSB8iYYRnB2keRP7mq1mVEsffufYBE=
+X-Received: by 2002:a1f:a94b:: with SMTP id s72-v6mr11917783vke.122.1534187489096;
+ Mon, 13 Aug 2018 12:11:29 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:2358:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 12:11:28
+ -0700 (PDT)
+In-Reply-To: <20180813190706.24172-4-lyude@redhat.com>
+References: <20180813190706.24172-1-lyude@redhat.com> <20180813190706.24172-4-lyude@redhat.com>
+From:   Ilia Mirkin <imirkin@alum.mit.edu>
+Date:   Mon, 13 Aug 2018 15:11:28 -0400
+X-Google-Sender-Auth: BHiGKIGx4vsG4gudum513JTiFG0
+Message-ID: <CAKb7UvjqVC5w4PDaVLtZqKs94bo22d4BGYgsQj9K-2_rksoqvg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] drm/nouveau: Fix deadlock with fb_helper with
+ async RPM requests
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     nouveau <nouveau@lists.freedesktop.org>,
+        "# 3.9+" <stable@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Karol Herbst <karolherbst@gmail.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/5] drm/nouveau: Fix bogus drm_kms_helper_poll_enable() placement
-Date:   Mon, 13 Aug 2018 15:06:59 -0400
-Message-Id: <20180813190706.24172-2-lyude@redhat.com>
-In-Reply-To: <20180813190706.24172-1-lyude@redhat.com>
-References: <20180813190706.24172-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 13 Aug 2018 19:07:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 13 Aug 2018 19:07:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Thierry Reding <treding@nvidia.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turns out this part is my fault for not noticing when reviewing
-9a2eba337cace ("drm/nouveau: Fix drm poll_helper handling"). Currently
-we call drm_kms_helper_poll_enable() from nouveau_display_hpd_work().
-This makes basically no sense however, because that means we're calling
-drm_kms_helper_poll_enable() every time we schedule the hotplug
-detection work. This is also against the advice mentioned in
-drm_kms_helper_poll_enable()'s documentation:
+On Mon, Aug 13, 2018 at 3:07 PM, Lyude Paul <lyude@redhat.com> wrote:
+> +bool
+> +nouveau_fbcon_hotplugged_in_suspend(struct nouveau_fbdev *fbcon)
+> +{
+> +       bool hotplug;
+> +
+> +       if (!fbcon)
+> +               return false;
+> +
+> +       mutex_lock(&fbcon->hotplug_lock);
+> +       hotplug = fbcon->hotplug_waiting;
+> +       mutex_unlock(&fbcon->hotplug_lock);
+> +
+> +       return hotplug;
+> +}
 
- Note that calls to enable and disable polling must be strictly ordered,
- which is automatically the case when they're only call from
- suspend/resume callbacks.
-
-Of course, hotplugs can't really be ordered. They could even happen
-immediately after we called drm_kms_helper_poll_disable() in
-nouveau_display_fini(), which can lead to all sorts of issues.
-
-Additionally; enabling polling /after/ we call
-drm_helper_hpd_irq_event() could also mean that we'd miss a hotplug
-event anyway, since drm_helper_hpd_irq_event() wouldn't bother trying to
-probe connectors so long as polling is disabled.
-
-So; simply move this back into nouveau_display_init() again. The race
-condition that both of these patches attempted to work around has
-already been fixed properly in
-
-  d61a5c106351 ("drm/nouveau: Fix deadlock on runtime suspend")
-
-Fixes: 9a2eba337cace ("drm/nouveau: Fix drm poll_helper handling")
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: stable@vger.kernel.org
----
- drivers/gpu/drm/nouveau/nouveau_display.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index ec7861457b84..1d36ab5d4796 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -355,8 +355,6 @@ nouveau_display_hpd_work(struct work_struct *work)
- 	pm_runtime_get_sync(drm->dev->dev);
- 
- 	drm_helper_hpd_irq_event(drm->dev);
--	/* enable polling for external displays */
--	drm_kms_helper_poll_enable(drm->dev);
- 
- 	pm_runtime_mark_last_busy(drm->dev->dev);
- 	pm_runtime_put_sync(drm->dev->dev);
-@@ -411,6 +409,11 @@ nouveau_display_init(struct drm_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	/* enable connector detection and polling for connectors without HPD
-+	 * support
-+	 */
-+	drm_kms_helper_poll_enable(dev);
-+
- 	/* enable hotplug interrupts */
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
--- 
-2.17.1
-
+I'm probably missing it, but where is this function used?
