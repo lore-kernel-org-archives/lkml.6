@@ -5,391 +5,771 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BEDC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAB2C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0AE621829
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:59:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0AE621829
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1170A21834
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 08:00:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1170A21834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbeHMKku convert rfc822-to-8bit (ORCPT
+        id S1728693AbeHMKld convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 06:40:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59586 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726704AbeHMKku (ORCPT
+        Mon, 13 Aug 2018 06:41:33 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:51928 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbeHMKld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 06:40:50 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7D7xGsK080933
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 03:59:40 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ku0wjsnmq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 03:59:39 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Mon, 13 Aug 2018 08:59:38 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Aug 2018 08:59:35 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7D7xYs836634750
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Aug 2018 07:59:34 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 892925204E;
-        Mon, 13 Aug 2018 10:59:39 +0100 (BST)
-Received: from osiris (unknown [9.152.212.24])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 5DE5B52057;
-        Mon, 13 Aug 2018 10:59:39 +0100 (BST)
-Date:   Mon, 13 Aug 2018 09:59:33 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [GIT PULL] s390 updates for 4.19
-X-TM-AS-GCONF: 00
-x-cbid: 18081307-0008-0000-0000-00000260F1E4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081307-0009-0000-0000-000021C90C8E
-Message-Id: <20180813075933.GA3790@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Mon, 13 Aug 2018 06:41:33 -0400
+Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 1ED12CEEB7;
+        Mon, 13 Aug 2018 10:07:26 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v1 1/2] Bluetooth: mediatek: Add protocol support for
+ MediaTek MT7668U USB devices
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <d976d455588eb0e3007cee1c3447e0455a06573e.1534062988.git.sean.wang@mediatek.com>
+Date:   Mon, 13 Aug 2018 10:00:22 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808130089
+Message-Id: <8425C80B-7F83-45A0-96FB-9E6968F17C7A@holtmann.org>
+References: <cover.1534062988.git.sean.wang@mediatek.com>
+ <d976d455588eb0e3007cee1c3447e0455a06573e.1534062988.git.sean.wang@mediatek.com>
+To:     sean.wang@mediatek.com
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+Hi Sean,
 
-since Martin is on vacation you get the s390 pull request from me:
+> This adds the support of enabling MT7668U Bluetooth function running
+> on the top of btusb driver. The patch also adds a newly created file
+> mtkbt.c able to be reused independently from the transport type such
+> as UART, USB and SDIO.
 
-please pull from the 'for-linus' branch of
+Include /sys/kernel/debug/usb/device portion in the commit message.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+> drivers/bluetooth/Kconfig  |  16 +++
+> drivers/bluetooth/Makefile |   1 +
+> drivers/bluetooth/btmtk.c  | 308 +++++++++++++++++++++++++++++++++++++++++++++
+> drivers/bluetooth/btmtk.h  |  99 +++++++++++++++
+> drivers/bluetooth/btusb.c  | 174 +++++++++++++++++++++++++
+> 5 files changed, 598 insertions(+)
+> create mode 100644 drivers/bluetooth/btmtk.c
+> create mode 100644 drivers/bluetooth/btmtk.h
+> 
+> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> index 07e55cd..2788498 100644
+> --- a/drivers/bluetooth/Kconfig
+> +++ b/drivers/bluetooth/Kconfig
+> @@ -11,6 +11,10 @@ config BT_BCM
+> 	tristate
+> 	select FW_LOADER
+> 
+> +config BT_MTK
+> +	tristate
+> +	select FW_LOADER
+> +
+> config BT_RTL
+> 	tristate
+> 	select FW_LOADER
+> @@ -52,6 +56,18 @@ config BT_HCIBTUSB_BCM
+> 
+> 	  Say Y here to compile support for Broadcom protocol.
+> 
+> +config BT_HCIBTUSB_MTK
+> +	bool "MediaTek protocol support"
+> +	depends on BT_HCIBTUSB
+> +	select BT_MTK
+> +	default y
 
-to receive the following updates:
+This one has to be n since MediaTek hardware was never supported in the first place. The existing y here are only for legacy hardware that was somehow supported in a generic fashion.
 
- - Host large page support for KVM guests. As the patches have large
-   impact on arch/s390/mm/ this series goes out via both the KVM and
-   the s390 tree.
+> +	help
+> +	  The MediaTek protocol support enables firmware download
+> +	  support and chip initialization for MediaTek Bluetooth
+> +	  USB controllers.
+> +
+> +	  Say Y here to compile support for MediaTek protocol.
+> +
+> config BT_HCIBTUSB_RTL
+> 	bool "Realtek protocol support"
+> 	depends on BT_HCIBTUSB
+> diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
+> index 4e4e44d..bc23724 100644
+> --- a/drivers/bluetooth/Makefile
+> +++ b/drivers/bluetooth/Makefile
+> @@ -23,6 +23,7 @@ obj-$(CONFIG_BT_MRVL_SDIO)	+= btmrvl_sdio.o
+> obj-$(CONFIG_BT_WILINK)		+= btwilink.o
+> obj-$(CONFIG_BT_QCOMSMD)	+= btqcomsmd.o
+> obj-$(CONFIG_BT_BCM)		+= btbcm.o
+> +obj-$(CONFIG_BT_MTK)		+= btmtk.o
+> obj-$(CONFIG_BT_RTL)		+= btrtl.o
+> obj-$(CONFIG_BT_QCA)		+= btqca.o
+> 
+> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+> new file mode 100644
+> index 0000000..9e39a0a
+> --- /dev/null
+> +++ b/drivers/bluetooth/btmtk.c
+> @@ -0,0 +1,308 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018 MediaTek Inc.
+> +
+> +/*
+> + * Common operations for MediaTek Bluetooth devices
+> + * with the UART, USB and SDIO transport
+> + *
+> + * Author: Sean Wang <sean.wang at mediatek.com>
+> + *
+> + */
+> +#include <asm/unaligned.h>
+> +#include <linux/firmware.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +
+> +#include <net/bluetooth/bluetooth.h>
+> +#include <net/bluetooth/hci_core.h>
+> +
+> +#include "btmtk.h"
+> +
+> +#define VERSION "0.1"
+> +
+> +int
+> +btmtk_hci_wmt_sync(struct hci_dev *hdev, struct btmtk_hci_wmt_params *params)
+> +{
+> +	struct btmtk_hci_wmt_evt_funcc *evt_funcc;
+> +	u32 hlen, status = BTMTK_WMT_INVALID;
+> +	struct btmtk_wmt_hdr *hdr, *ehdr;
+> +	struct btmtk_hci_wmt_cmd wc;
+> +	struct sk_buff *skb;
+> +	int err = 0;
+> +
+> +	hlen = sizeof(*hdr) + params->dlen;
+> +	if (hlen > 255)
+> +		return -EINVAL;
+> +
+> +	hdr = (struct btmtk_wmt_hdr *)&wc;
+> +	hdr->dir = 1;
+> +	hdr->op = params->op;
+> +	hdr->dlen = cpu_to_le16(params->dlen + 1);
+> +	hdr->flag = params->flag;
+> +	memcpy(wc.data, params->data, params->dlen);
+> +
+> +	/* TODO: Add a fixup with __hci_raw_sync_ev that uses the hdev->raw_q
+> +	 * instead of the hack with __hci_cmd_sync_ev + atomic_inc on cmd_cnt.
+> +	 */
+> +	atomic_inc(&hdev->cmd_cnt);
+> +
+> +	skb =  __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+> +				 HCI_INIT_TIMEOUT);
 
- - Add an option for no compression to the "Kernel compression mode" menu,
-   this will come in handy with the rework of the early boot code.
+So first of all HCI_VENDOR_PKT is for H:4 pkt_type 0xff and not a vendor event. Use HCI_EV_VENDOR instead. Second __hci_cmd_sync_ev is not the right way doing this. Use __hci_cmd_send and handle the vendor event. See how we do it for the Intel firmware loading.
 
- - A large rework of the early boot code that will make life easier for
-   KASAN and KASLR. With the rework the bootable uncompressed image is
-   not generated anymore, only the bzImage is available. For debuggung
-   purposes the new "no compression" option is used.
+> +	if (IS_ERR(skb)) {
+> +		err = PTR_ERR(skb);
+> +
+> +		bt_dev_err(hdev, "Failed to send wmt cmd (%d)\n", err);
+> +
+> +		print_hex_dump(KERN_ERR, "failed cmd: ",
+> +			       DUMP_PREFIX_ADDRESS, 16, 1, &wc,
+> +			       hlen > 16 ? 16 : hlen, true);
 
- - Re-enable the gcc plugins as the issue with the latent entropy plugin
-   is solved with the early boot code rework.
+Scrap this.
 
- - More spectre relates changes:
-   + Detect the etoken facility and remove expolines automatically.
-   + Add expolines to a few more indirect branches.
+> +		return err;
+> +	}
+> +
+> +	ehdr = (struct btmtk_wmt_hdr *)skb->data;
+> +	if (ehdr->op != hdr->op) {
+> +		bt_dev_err(hdev, "Wrong op received %d expected %d",
+> +			   ehdr->op, hdr->op);
+> +		err = -EIO;
+> +		goto err_free_skb;
+> +	}
+> +
+> +	switch (ehdr->op) {
+> +	case BTMTK_WMT_SEMAPHORE:
+> +		if (ehdr->flag == 2)
+> +			status = BTMTK_WMT_PATCH_UNDONE;
+> +		else
+> +			status = BTMTK_WMT_PATCH_DONE;
+> +		break;
+> +	case BTMTK_WMT_FUNC_CTRL:
+> +		evt_funcc = (struct btmtk_hci_wmt_evt_funcc *)ehdr;
+> +		if (be16_to_cpu(evt_funcc->status) == 4)
+> +			status = BTMTK_WMT_ON_DONE;
+> +		else if (be16_to_cpu(evt_funcc->status) == 32)
+> +			status = BTMTK_WMT_ON_PROGRESS;
+> +		else
+> +			status = BTMTK_WMT_ON_UNDONE;
+> +		break;
+> +	};
+> +
+> +	if (params->status)
+> +		*params->status = status;
+> +
+> +err_free_skb:
+> +	kfree_skb(skb);
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL_GPL(btmtk_hci_wmt_sync);
+> +
+> +static int
+> +btmtk_setup_firmware(struct hci_dev *hdev, const char *fwname,
+> +		     int (*cmd_sync)(struct hci_dev *,
+> +				     struct btmtk_hci_wmt_params *))
+> +{
+> +	struct btmtk_hci_wmt_params wmt_params;
+> +	const struct firmware *fw;
+> +	const u8 *fw_ptr;
+> +	size_t fw_size;
+> +	int err, dlen;
+> +	u8 flag;
+> +
+> +	if (!cmd_sync)
+> +		return -EINVAL;
+> +
+> +	err = request_firmware(&fw, fwname, &hdev->dev);
+> +	if (err < 0) {
+> +		bt_dev_err(hdev, "Failed to load firmware file (%d)", err);
+> +		return err;
+> +	}
+> +
+> +	fw_ptr = fw->data;
+> +	fw_size = fw->size;
+> +
+> +	/* The size of patch header is 30 bytes, should be skip */
+> +	if (fw_size < 30)
+> +		return -EINVAL;
+> +
+> +	fw_size -= 30;
+> +	fw_ptr += 30;
+> +	flag = 1;
+> +
+> +	wmt_params.op = BTMTK_WMT_PATCH_DWNLD;
+> +	wmt_params.status = NULL;
+> +
+> +	while (fw_size > 0) {
+> +		dlen = min_t(int, 250, fw_size);
+> +
+> +		/* Tell deivice the position in sequence */
+> +		if (fw_size - dlen <= 0)
+> +			flag = 3;
+> +		else if (fw_size < fw->size - 30)
+> +			flag = 2;
+> +
+> +		wmt_params.flag = flag;
+> +		wmt_params.dlen = dlen;
+> +		wmt_params.data = fw_ptr;
+> +
+> +		err = cmd_sync(hdev, &wmt_params);
+> +		if (err < 0) {
+> +			bt_dev_err(hdev, "Failed to send wmt patch dwnld (%d)",
+> +				   err);
+> +			goto err_release_fw;
+> +		}
+> +
+> +		fw_size -= dlen;
+> +		fw_ptr += dlen;
+> +	}
+> +
+> +	wmt_params.op = BTMTK_WMT_RST;
+> +	wmt_params.flag = 4;
+> +	wmt_params.dlen = 0;
+> +	wmt_params.data = NULL;
+> +	wmt_params.status = NULL;
+> +
+> +	/* Activate funciton the firmware providing to */
+> +	err = cmd_sync(hdev, &wmt_params);
+> +	if (err < 0) {
+> +		bt_dev_err(hdev, "Failed to send wmt rst (%d)", err);
+> +		return err;
+> +	}
+> +
+> +err_release_fw:
+> +	release_firmware(fw);
+> +
+> +	return err;
+> +}
+> +
+> +static int
+> +btmtk_func_query(struct btmtk_func_query *fq)
+> +{
+> +	struct btmtk_hci_wmt_params wmt_params;
+> +	int status, err;
+> +	u8 param = 0;
+> +
+> +	if (!fq || !fq->hdev || !fq->cmd_sync)
+> +		return -EINVAL;
+> +
+> +	/* Query whether the function is enabled */
+> +	wmt_params.op = BTMTK_WMT_FUNC_CTRL;
+> +	wmt_params.flag = 4;
+> +	wmt_params.dlen = sizeof(param);
+> +	wmt_params.data = &param;
+> +	wmt_params.status = &status;
+> +
+> +	err = fq->cmd_sync(fq->hdev, &wmt_params);
+> +	if (err < 0) {
+> +		bt_dev_err(fq->hdev, "Failed to query function status (%d)",
+> +			   err);
+> +		return err;
+> +	}
+> +
+> +	return status;
+> +}
+> +
+> +int btmtk_enable(struct hci_dev *hdev, const char *fwname,
+> +		 int (*cmd_sync)(struct hci_dev *hdev,
+> +				 struct btmtk_hci_wmt_params *))
+> +{
+> +	struct btmtk_hci_wmt_params wmt_params;
+> +	struct btmtk_func_query func_query;
+> +	int status, err;
+> +	u8 param;
+> +
+> +	if (!cmd_sync)
+> +		return -EINVAL;
+> +
+> +	/* Query whether the firmware is already download */
+> +	wmt_params.op = BTMTK_WMT_SEMAPHORE;
+> +	wmt_params.flag = 1;
+> +	wmt_params.dlen = 0;
+> +	wmt_params.data = NULL;
+> +	wmt_params.status = &status;
+> +
+> +	err = cmd_sync(hdev, &wmt_params);
+> +	if (err < 0) {
+> +		bt_dev_err(hdev, "Failed to query firmware status (%d)", err);
+> +		return err;
+> +	}
+> +
+> +	if (status == BTMTK_WMT_PATCH_DONE) {
+> +		bt_dev_info(hdev, "firmware already downloaded");
+> +		goto ignore_setup_fw;
+> +	}
+> +
+> +	/* Setup a firmware which the device definitely requires */
+> +	err = btmtk_setup_firmware(hdev, fwname, cmd_sync);
+> +	if (err < 0)
+> +		return err;
+> +
+> +ignore_setup_fw:
+> +	func_query.hdev = hdev;
+> +	func_query.cmd_sync = cmd_sync;
+> +	err = readx_poll_timeout(btmtk_func_query, &func_query, status,
+> +				 status < 0 || status != BTMTK_WMT_ON_PROGRESS,
+> +				 2000, 5000000);
+> +	/* -ETIMEDOUT happens */
+> +	if (err < 0)
+> +		return err;
+> +
+> +	/* The other errors happen internally inside btmtk_func_query */
+> +	if (status < 0)
+> +		return status;
+> +
+> +	if (status == BTMTK_WMT_ON_DONE) {
+> +		bt_dev_info(hdev, "function already on");
+> +		goto ignore_func_on;
+> +	}
+> +
+> +	/* Enable Bluetooth protocol */
+> +	param = 1;
+> +	wmt_params.op = BTMTK_WMT_FUNC_CTRL;
+> +	wmt_params.flag = 0;
+> +	wmt_params.dlen = sizeof(param);
+> +	wmt_params.data = &param;
+> +	wmt_params.status = NULL;
+> +
+> +	err = cmd_sync(hdev, &wmt_params);
+> +	if (err < 0) {
+> +		bt_dev_err(hdev, "Failed to send wmt func ctrl (%d)", err);
+> +		return err;
+> +	}
+> +
+> +ignore_func_on:
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(btmtk_enable);
+> +
+> +int btmtk_disable(struct hci_dev *hdev,
+> +		  int (*cmd_sync)(struct hci_dev *hdev,
+> +				  struct btmtk_hci_wmt_params *))
+> +{
+> +	struct btmtk_hci_wmt_params wmt_params;
+> +	u8 param = 0;
+> +	int err;
+> +
+> +	if (!cmd_sync)
+> +		return -EINVAL;
+> +
+> +	/* Disable the device */
+> +	wmt_params.op = BTMTK_WMT_FUNC_CTRL;
+> +	wmt_params.flag = 0;
+> +	wmt_params.dlen = sizeof(param);
+> +	wmt_params.data = &param;
+> +	wmt_params.status = NULL;
+> +
+> +	err = cmd_sync(hdev, &wmt_params);
+> +	if (err < 0) {
+> +		bt_dev_err(hdev, "Failed to send wmt func ctrl (%d)", err);
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(btmtk_disable);
+> +
+> +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+> +MODULE_DESCRIPTION("MediaTek Bluetooth device driver ver " VERSION);
+> +MODULE_VERSION(VERSION);
+> +MODULE_LICENSE("GPL");
+> +MODULE_FIRMWARE(FIRMWARE_MT7668);
+> diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+> new file mode 100644
+> index 0000000..64fc395
+> --- /dev/null
+> +++ b/drivers/bluetooth/btmtk.h
+> @@ -0,0 +1,99 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + *
+> + * Common operations for MediaTek Bluetooth devices
+> + * with the UART, USB and SDIO transport
+> + *
+> + * Author: Sean Wang <sean.wang@mediatek.com>
+> + *
+> + */
+> +
+> +#define FIRMWARE_MT7668		"mt7668pr2h.bin"
+> +
+> +enum {
+> +	BTMTK_WMT_PATCH_DWNLD = 0x1,
+> +	BTMTK_WMT_FUNC_CTRL = 0x6,
+> +	BTMTK_WMT_RST = 0x7,
+> +	BTMTK_WMT_SEMAPHORE = 0x17,
+> +};
+> +
+> +enum {
+> +	BTMTK_WMT_INVALID,
+> +	BTMTK_WMT_PATCH_UNDONE,
+> +	BTMTK_WMT_PATCH_DONE,
+> +	BTMTK_WMT_ON_UNDONE,
+> +	BTMTK_WMT_ON_DONE,
+> +	BTMTK_WMT_ON_PROGRESS,
+> +};
+> +
+> +struct btmtk_wmt_hdr {
+> +	u8	dir;
+> +	u8	op;
+> +	__le16	dlen;
+> +	u8	flag;
+> +} __packed;
+> +
+> +struct btmtk_hci_wmt_cmd {
+> +	struct btmtk_wmt_hdr hdr;
+> +	u8 data[256];
+> +} __packed;
+> +
+> +struct btmtk_hci_wmt_evt_funcc {
+> +	struct btmtk_wmt_hdr hdr;
+> +	__be16 status;
+> +} __packed;
+> +
+> +struct btmtk_hci_wmt_params {
+> +	u8 op;
+> +	u8 flag;
+> +	u16 dlen;
+> +	const void *data;
+> +	u32 *status;
+> +};
+> +
+> +struct btmtk_func_query {
+> +	struct hci_dev *hdev;
+> +	int (*cmd_sync)(struct hci_dev *hdev,
+> +			struct btmtk_hci_wmt_params *wmt_params);
+> +};
+> +
+> +#if IS_ENABLED(CONFIG_BT_MTK)
+> +
+> +int
+> +btmtk_hci_wmt_sync(struct hci_dev *hdev, struct btmtk_hci_wmt_params *params);
+> +
+> +int
+> +btmtk_enable(struct hci_dev *hdev, const char *fn,
+> +	     int (*cmd_sync)(struct hci_dev *,
+> +			     struct btmtk_hci_wmt_params *));
+> +
+> +int
+> +btmtk_disable(struct hci_dev *hdev,
+> +	      int (*cmd_sync)(struct hci_dev *,
+> +			      struct btmtk_hci_wmt_params *));
+> +#else
+> +
+> +static int
+> +btmtk_hci_wmt_sync(struct hci_dev *hdev, struct btmtk_hci_wmt_params *params)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static int
+> +btmtk_enable(struct hci_dev *hdev, const char *fn,
+> +	     int (*cmd_sync)(struct hci_dev *,
+> +			     struct btmtk_hci_wmt_params *))
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static int
+> +btmtk_disable(struct hci_dev *hdev,
+> +	      int (*cmd_sync)(struct hci_dev *,
+> +			      struct btmtk_hci_wmt_params *))
+> +{
+> +	return -EOPNOTSUPP;
+> +}
 
- - A rewrite of the common I/O layer trace points to make them
-   consumable by 'perf stat'.
+I dislike this callback parameter to execute. It it convoluted. My suggestion is that first add MediaTek support to btusb.c and then lets try to see how we unify USB transport and UART transport.
 
- - Add support for format-3 PCI function measurement blocks.
+> +
+> +#endif
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 60bf04b..773238b 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -26,6 +26,7 @@
+> #include <linux/usb.h>
+> #include <linux/usb/quirks.h>
+> #include <linux/firmware.h>
+> +#include <linux/iopoll.h>
+> #include <linux/of_device.h>
+> #include <linux/of_irq.h>
+> #include <linux/suspend.h>
+> @@ -36,6 +37,7 @@
+> 
+> #include "btintel.h"
+> #include "btbcm.h"
+> +#include "btmtk.h"
+> #include "btrtl.h"
+> 
+> #define VERSION "0.8"
+> @@ -69,6 +71,7 @@ static struct usb_driver btusb_driver;
+> #define BTUSB_BCM2045		0x40000
+> #define BTUSB_IFNUM_2		0x80000
+> #define BTUSB_CW6622		0x100000
+> +#define BTUSB_MEDIATEK		0x200000
+> 
+> static const struct usb_device_id btusb_table[] = {
+> 	/* Generic Bluetooth USB device */
+> @@ -355,6 +358,10 @@ static const struct usb_device_id blacklist_table[] = {
+> 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0bda, 0xe0, 0x01, 0x01),
+> 	  .driver_info = BTUSB_REALTEK },
+> 
+> +	/* MediaTek Bluetooth devices */
+> +	{ USB_VENDOR_AND_INTERFACE_INFO(0x0e8d, 0xe0, 0x01, 0x01),
+> +	  .driver_info = BTUSB_MEDIATEK },
+> +
+> 	/* Additional Realtek 8723AE Bluetooth devices */
+> 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+> 	{ USB_DEVICE(0x13d3, 0x3394), .driver_info = BTUSB_REALTEK },
+> @@ -2347,6 +2354,164 @@ static int btusb_shutdown_intel(struct hci_dev *hdev)
+> 	return 0;
+> }
+> 
+> +#ifdef CONFIG_BT_HCIBTUSB_MTK
+> +
+> +struct btusb_mtk_poll {
+> +	struct btusb_data *udata;
+> +	void *buf;
+> +	size_t len;
+> +	size_t actual_len;
+> +};
+> +
+> +struct btusb_mtk_wmt_poll {
+> +	struct btusb_data *udata;
+> +	struct work_struct work;
+> +};
+> +
+> +static int btusb_mtk_reg_read(struct btusb_data *data, u32 reg, u32 *val)
+> +{
+> +	int pipe, err, size = sizeof(u32);
+> +	void *buf;
+> +
+> +	buf = kzalloc(size, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	pipe = usb_rcvctrlpipe(data->udev, 0);
+> +	err = usb_control_msg(data->udev, pipe, 0x63,
+> +			      USB_TYPE_VENDOR | USB_DIR_IN,
+> +			      reg >> 16, reg & 0xffff,
+> +			      buf, size, USB_CTRL_SET_TIMEOUT);
+> +	if (err < 0)
+> +		goto err_free_buf;
+> +
+> +	*val = get_unaligned_le32(buf);
+> +
+> +err_free_buf:
+> +	kfree(buf);
+> +
+> +	return err;
+> +}
+> +
+> +static int btusb_mtk_id_get(struct btusb_data *data, u32 *id)
+> +{
+> +	return btusb_mtk_reg_read(data, 0x80000008, id);
+> +}
+> +
+> +static int btusb_mtk_wmt_event_poll(struct btusb_mtk_poll *p)
+> +{
+> +	int pipe, actual_len;
+> +
+> +	pipe = usb_rcvctrlpipe(p->udata->udev, 0);
+> +
+> +	actual_len = usb_control_msg(p->udata->udev, pipe, 1,
+> +				     USB_TYPE_VENDOR | USB_DIR_IN, 0x30, 0,
+> +				     p->buf, p->len, USB_CTRL_SET_TIMEOUT);
+> +
+> +	p->actual_len = actual_len;
+> +
+> +	return actual_len;
+> +}
+> +
+> +static void btusb_mtk_wmt_event_polls(struct work_struct *work)
+> +{
+> +	struct btusb_mtk_wmt_poll *wmt_event_polling;
+> +	struct btusb_mtk_poll p;
+> +	int polled_dlen, err;
+> +	const int len = 64;
+> +	void *buf;
+> +	char *evt;
+> +
+> +	wmt_event_polling = container_of(work, typeof(*wmt_event_polling),
+> +					 work);
+> +	buf = kzalloc(len, GFP_KERNEL);
+> +	if (!buf)
+> +		return;
+> +
+> +	p.udata = wmt_event_polling->udata;
+> +	p.buf = buf;
+> +	p.len = len;
+> +	p.actual_len = 0;
+> +
+> +	/* Polling WMT event via control endpoint until the event returns or
+> +	 * the timeout happens.
+> +	 */
+> +	err = readx_poll_timeout(btusb_mtk_wmt_event_poll, &p, polled_dlen,
+> +				 polled_dlen > 0, 200, 1000000);
+> +	if (err < 0)
+> +		goto err_free_buf;
+> +
+> +	evt = p.buf;
+> +
+> +	/* Fix up the vendor event id with 0xff for vendor specific instead
+> +	 * of 0xe4 so that event send via monitoring socket can be parsed
+> +	 * properly.
+> +	 */
+> +	if (*evt == 0xe4)
+> +		*evt = 0xff;
+> +
+> +	/* The WMT event is actually a HCI event so that the WMT event should go
+> +	 * to the code flow a HCI event should go to.
+> +	 */
+> +	btusb_recv_intr(p.udata, p.buf, p.actual_len);
+> +
+> +err_free_buf:
+> +	kfree(buf);
+> +}
 
- - Changes for the zcrypt driver:
-   + Add attributes to indicate the load of cards and queues.
-   + Restructure some code for the upcoming AP device support in KVM.
+So can we not just submit the URB like we do with all others. Can control endpoint IN URBs return early without any data.
 
- - Build flags improvements in various Makefiles.
+> +
+> +static int btusb_mtk_hci_wmt_sync(struct hci_dev *hdev,
+> +				  struct btmtk_hci_wmt_params *wmt_params)
+> +{
+> +	struct btusb_mtk_wmt_poll wmt_event_polling;
+> +	int err;
+> +
+> +	/* MediaTek WMT HCI vendor event is coming through the control endpoint,
+> +	 * not through the interrupt endpoint so that we have to schedule a
+> +	 * work to poll the event.
+> +	 */
+> +	INIT_WORK_ONSTACK(&wmt_event_polling.work, btusb_mtk_wmt_event_polls);
+> +	wmt_event_polling.udata = hci_get_drvdata(hdev);
+> +	schedule_work(&wmt_event_polling.work);
+> +
+> +	err = btmtk_hci_wmt_sync(hdev, wmt_params);
+> +
+> +	cancel_work_sync(&wmt_event_polling.work);
+> +
+> +	return err;
+> +}
+> +
+> +static int btusb_mtk_setup(struct hci_dev *hdev)
+> +{
+> +	struct btusb_data *data = hci_get_drvdata(hdev);
+> +	const char *fwname;
+> +	int err = 0;
+> +	u32 dev_id;
+> +
+> +	err = btusb_mtk_id_get(data, &dev_id);
+> +	if (err < 0) {
+> +		bt_dev_err(hdev, "Failed to get device id (%d)", err);
+> +		return err;
+> +	}
+> +
+> +	switch (dev_id) {
+> +	case 0x7668:
+> +		fwname = FIRMWARE_MT7668;
+> +		break;
+> +	default:
+> +		bt_dev_err(hdev, "Unsupported support hardware variant (%08x)",
+> +			   dev_id);
+> +		return -ENODEV;
+> +	}
+> +
+> +	return btmtk_enable(hdev, fwname, btusb_mtk_hci_wmt_sync);
+> +}
+> +
+> +static int btusb_mtk_shutdown(struct hci_dev *hdev)
+> +{
+> +	return btmtk_disable(hdev, btusb_mtk_hci_wmt_sync);
+> +}
+> +#endif
+> +
+> #ifdef CONFIG_PM
+> /* Configure an out-of-band gpio as wake-up pin, if specified in device tree */
+> static int marvell_config_oob_wake(struct hci_dev *hdev)
+> @@ -3031,6 +3196,15 @@ static int btusb_probe(struct usb_interface *intf,
+> 	if (id->driver_info & BTUSB_MARVELL)
+> 		hdev->set_bdaddr = btusb_set_bdaddr_marvell;
+> 
+> +#ifdef CONFIG_BT_HCIBTUSB_MTK
+> +	if (id->driver_info & BTUSB_MEDIATEK) {
+> +		hdev->setup = btusb_mtk_setup;
+> +		hdev->shutdown = btusb_mtk_shutdown;
+> +		hdev->manufacturer = 70;
+> +		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+> +	}
+> +#endif
+> +
+> 	if (id->driver_info & BTUSB_SWAVE) {
+> 		set_bit(HCI_QUIRK_FIXUP_INQUIRY_MODE, &hdev->quirks);
+> 		set_bit(HCI_QUIRK_BROKEN_LOCAL_COMMANDS, &hdev->quirks);
 
- - A few fixes for the kdump support.
+Regards
 
- - A couple of patches for gcc 8 compile warning cleanup.
-
- - Cleanup s390 specific proc handlers.
-
- - Add s390 support to the restartable sequence self tests.
-
- - Some PTR_RET vs PTR_ERR_OR_ZERO cleanup.
-
- - Lots of bug fixes.
-
-Shortlog:
-
-Arnd Bergmann (1):
-      s390: hypfs: use ktime_get_seconds() instead of get_seconds()
-
-Claudio Imbrenda (1):
-      s390/kvm: fix deadlock when killed by oom
-
-Dominik Dingel (2):
-      s390/mm: Clear huge page storage keys on enable_skey
-      s390/mm: hugetlb pages within a gmap can not be freed
-
-Dong Jia Shi (1):
-      MAINTAINERS: Remove myself as maintainer
-
-Gerald Schaefer (1):
-      s390/mm: fix addressing exception after suspend/resume
-
-Gustavo A. R. Silva (4):
-      s390/ap_bus: replace PTR_RET with PTR_ERR_OR_ZERO
-      s390/dasd: replace PTR_RET with PTR_ERR_OR_ZERO
-      s390/hypfs: Replace PTR_RET with PTR_ERR_OR_ZERO
-      s390/tape: replace PTR_RET with PTR_ERR_OR_ZERO
-
-Harald Freudenberger (5):
-      s390/zcrypt: Add ZAPQ inline function.
-      s390/zcrypt: Review inline assembler constraints.
-      s390/zcrypt: Show load of cards and queues in sysfs
-      s390/zcrypt: Integrate ap_asm.h into include/asm/ap.h.
-      s390/zcrypt: add copy_from_user length plausibility checks
-
-Heiko Carstens (1):
-      s390/sysinfo: add missing #ifdef CONFIG_PROC_FS
-
-Hendrik Brueckner (1):
-      s390/cpum_sf: save TOD clock base in SDBs for time conversion
-
-Janosch Frank (11):
-      s390/mm: Make gmap_protect_range more modular
-      s390/mm: Abstract gmap notify bit setting
-      s390/mm: Add gmap pmd linking
-      s390/mm: Add gmap pmd notification bit setting
-      s390/mm: Add gmap pmd invalidation and clearing
-      s390/mm: Add huge page dirty sync support
-      s390/mm: Clear skeys for newly mapped huge guest pmds
-      s390/mm: Add huge pmd storage key handling
-      KVM: s390: Add skey emulation fault handling
-      s390/mm: Add huge page gmap linking support
-      KVM: s390: Add huge page enablement control
-
-Julian Wiedmann (1):
-      s390/qdio: reset old sbal_state flags
-
-Kees Cook (1):
-      RAID/s390: Remove VLA usage
-
-Martin Schwidefsky (9):
-      Merge branch 'zcrypt' into features
-      s390: detect etoken facility
-      s390/keyboard: sanitize array index in do_kdsk_ioctl
-      s390: disable gcc plugins
-      s390: reenable gcc plugins
-      Merge tag 'hlp_stage1' of git://git.kernel.org/.../kvms390/linux into features
-      s390/numa: move initial setup of node_to_cpumask_map
-      s390/lib: use expoline for all bcr instructions
-      s390: fix br_r1_trampoline for machines without exrl
-
-Philipp Rudo (4):
-      s390/purgatory: Fix crash with expoline enabled
-      s390/purgatory: Add missing FORCE to Makefile targets
-      s390/purgatory: Remove duplicate variable definitions
-      s390/kdump: Fix elfcorehdr size calculation
-
-Sebastian Ott (7):
-      s390/pci: add fmt3 fmb
-      s390/dasd: fix cast-function-type warnings
-      s390/cio: ensure that a chpid is registered only once
-      s390/css: start the subchannel evaluation earlier
-      s390/css: validate subchannel prior to allocation
-      s390/css: reduce stsch calls
-      s390/chsc: fix packed-not-aligned warnings
-
-Souptick Joarder (1):
-      s390: vdso_fault return type
-
-Stefan Haberland (2):
-      s390/dasd: fix panic for failed online processing
-      s390/dasd: fix hanging offline processing due to canceled worker
-
-Thomas Richter (6):
-      s390 cio: Rewrite trace point in s390_cio_interrupt
-      s390 cio: Rewrite trace point in s390_cio_tpi
-      s390 cio: Rewrite trace point in s390_cio_stcrw
-      s390 cio: Rewrite trace point in s390_cio_adapter_int
-      s390 cio: Rewrite trace point in s390_cio_tsch
-      s390 cio: Rewrite trace point class s390_class_schib
-
-Vasily Gorbik (50):
-      s390: disable asm code expolines if cc does not support it
-      s390/build: remove obsolete -mkernel-backchain flag
-      s390/decompressor: correct build flags
-      s390: remove uncompressed kernel image build
-      s390/decompressor: trim the kernel image up to 1M
-      s390/boot: make head.S and als.c be part of the decompressor only
-      s390/decompressor: rename entry point to startup_decompressor
-      s390/als: avoid .init.* sections usage
-      s390/decompressor: avoid reusing uncompressed image objects
-      s390/decompressor: reuse lib/mem.S for mem functions
-      s390/decompressor: avoid repeating objects list in Makefile
-      s390: add custom target and make path extension optional for .bss check
-      s390/decompressor: extend .bss check for early code
-      s390/decompressor: allow preprocessor in piggy.o linker script
-      s390/decompressor: allow to pack uncompressed vmlinux.bin into piggy.o
-      init/Kconfig: add an option for uncompressed kernel
-      s390/decompressor: support uncompressed kernel
-      s390/setup: do not reserve the decompressor code
-      s390/dasd: correct numa_node in dasd_alloc_queue
-      s390/scm_blk: correct numa_node in scm_blk_dev_setup
-      s390/extmem: fix gcc 8 stringop-overflow warning
-      s390/dasd,zfcp: fix gcc 8 stringop-truncation warnings
-      s390/dasd: fix gcc 8 stringop-truncation warning
-      s390: fix gcc 8 stringop-truncation warnings in proc handlers
-      s390/perf: fix gcc 8 array-bounds warning
-      s390/decompressor: discard ___kcrctab section
-      s390: put expoline execute-trampolines into .text section
-      s390: remove unused _ehead symbol
-      s390: get rid of the first mb of uncompressed image
-      s390: correct _stext offset
-      s390: move _text to an actual .text start
-      s390/decompressor: correct EXCLUDE_FILE construct
-      s390: align struct lowcore to double page size
-      s390/tape: fix stringop-truncation gcc 8 warnings
-      s390/tape: fix gcc 8 stringop-truncation warning
-      s390/monwriter: fix gcc 8 stringop-truncation warning
-      s390/boot: block uncompressed vmlinux booting attempts
-      s390/tools: fix gcc 8 stringop-truncation warnings
-      s390/decompressor: avoid constant startup.a rebuilds
-      s390/decompressor: avoid packing *.o.chkbss files into startup.a
-      s390/build: add *.o.chkbss files to targets list
-      s390/decompressor: support extra debug flags
-      s390/mm: correct allocate_pgste proc_handler callback
-      s390/sclp_async: replace callhome proc handler with generic one
-      s390/topology: correct topology mode proc handler
-      s390/cmm: split and simplify cmm pages proc handler
-      s390/appldata: reuse generic proc handler functions
-      s390/crypto: fix gcc 8 stringop-truncation warning
-      s390/cmm: avoid add_timer on concurrently used timer
-      rseq/selftests: add s390 support
-
- Documentation/virtual/kvm/api.txt                  |  16 +
- MAINTAINERS                                        |   1 -
- arch/s390/Kconfig                                  |   1 +
- arch/s390/Makefile                                 |  42 +-
- arch/s390/appldata/appldata_base.c                 | 122 ++---
- arch/s390/boot/Makefile                            |  45 +-
- arch/s390/{kernel => boot}/als.c                   |  20 +-
- arch/s390/boot/compressed/.gitignore               |   1 +
- arch/s390/boot/compressed/Makefile                 |  55 +--
- arch/s390/boot/compressed/head.S                   |   8 +-
- arch/s390/boot/compressed/misc.c                   |  37 --
- arch/s390/boot/compressed/vmlinux.lds.S            |  15 +-
- .../compressed/{vmlinux.scr => vmlinux.scr.lds.S}  |   4 +
- arch/s390/boot/ebcdic.c                            |   2 +
- arch/s390/{kernel => boot}/head.S                  |  11 +-
- arch/s390/{kernel => boot}/head_kdump.S            |   0
- arch/s390/boot/mem.S                               |   2 +
- arch/s390/boot/sclp_early_core.c                   |   2 +
- arch/s390/hypfs/hypfs_diag.c                       |   4 +-
- arch/s390/hypfs/inode.c                            |   6 +-
- arch/s390/include/asm/ap.h                         | 284 ++++++++++--
- arch/s390/include/asm/cpu_mf.h                     |  12 +-
- arch/s390/include/asm/gmap.h                       |  10 +
- arch/s390/include/asm/hugetlb.h                    |   5 +-
- arch/s390/include/asm/lowcore.h                    |   2 +-
- arch/s390/include/asm/mmu.h                        |   2 +
- arch/s390/include/asm/mmu_context.h                |   1 +
- arch/s390/include/asm/nospec-insn.h                |   4 +-
- arch/s390/include/asm/pci.h                        |   5 +
- arch/s390/include/asm/pgtable.h                    |  13 +-
- arch/s390/include/asm/purgatory.h                  |   6 -
- arch/s390/include/asm/qdio.h                       |   1 -
- arch/s390/include/asm/sections.h                   |   2 -
- arch/s390/include/asm/setup.h                      |   4 +-
- arch/s390/include/uapi/asm/chsc.h                  |  10 +-
- arch/s390/kernel/Makefile                          |  24 +-
- arch/s390/kernel/crash_dump.c                      | 104 ++++-
- arch/s390/kernel/early.c                           |  12 +
- arch/s390/kernel/entry.h                           |   1 -
- arch/s390/kernel/head64.S                          |  43 +-
- arch/s390/kernel/nospec-branch.c                   |  12 +-
- arch/s390/kernel/nospec-sysfs.c                    |   2 +
- arch/s390/kernel/perf_cpum_sf.c                    |  14 +-
- arch/s390/kernel/perf_regs.c                       |   6 +-
- arch/s390/kernel/setup.c                           |   4 +-
- arch/s390/kernel/sysinfo.c                         |   4 +
- arch/s390/kernel/topology.c                        |  44 +-
- arch/s390/kernel/vdso.c                            |   2 +-
- arch/s390/kernel/vmlinux.lds.S                     |  13 +-
- arch/s390/kvm/kvm-s390.c                           |  82 +++-
- arch/s390/kvm/priv.c                               | 105 +++--
- arch/s390/lib/mem.S                                |  16 +-
- arch/s390/mm/cmm.c                                 |  74 ++-
- arch/s390/mm/extmem.c                              |   4 +-
- arch/s390/mm/fault.c                               |   2 +
- arch/s390/mm/gmap.c                                | 454 +++++++++++++++++-
- arch/s390/mm/hugetlbpage.c                         |  24 +
- arch/s390/mm/page-states.c                         |   2 +-
- arch/s390/mm/pageattr.c                            |   6 +-
- arch/s390/mm/pgalloc.c                             |   2 +-
- arch/s390/mm/pgtable.c                             | 159 +++++--
- arch/s390/net/bpf_jit_comp.c                       |   2 -
- arch/s390/numa/numa.c                              |  16 +-
- arch/s390/pci/pci_debug.c                          |   8 +
- arch/s390/purgatory/Makefile                       |   9 +-
- arch/s390/purgatory/head.S                         |  45 +-
- arch/s390/purgatory/purgatory.c                    |   9 -
- arch/s390/scripts/Makefile.chkbss                  |  11 +-
- arch/s390/tools/gen_opcode_table.c                 |   4 +-
- drivers/s390/block/dasd.c                          |  17 +-
- drivers/s390/block/dasd_alias.c                    |   2 +-
- drivers/s390/block/dasd_devmap.c                   |   2 +-
- drivers/s390/block/dasd_eckd.c                     |  12 +-
- drivers/s390/block/dasd_eer.c                      |   4 +-
- drivers/s390/block/scm_blk.c                       |   1 +
- drivers/s390/char/Makefile                         |   5 -
- drivers/s390/char/keyboard.c                       |  28 +-
- drivers/s390/char/monwriter.c                      |   2 +-
- drivers/s390/char/sclp_async.c                     |  38 +-
- drivers/s390/char/tape_3590.c                      |   8 +-
- drivers/s390/char/tape_class.c                     |   6 +-
- drivers/s390/cio/chp.c                             |  21 +-
- drivers/s390/cio/chsc.c                            |  18 +-
- drivers/s390/cio/chsc.h                            |  18 +-
- drivers/s390/cio/cio.c                             |  77 +---
- drivers/s390/cio/cio.h                             |   1 -
- drivers/s390/cio/css.c                             |  82 +++-
- drivers/s390/cio/css.h                             |   3 +-
- drivers/s390/cio/qdio_main.c                       |   5 +-
- drivers/s390/cio/trace.h                           | 102 +++-
- drivers/s390/crypto/ap_asm.h                       | 236 ----------
- drivers/s390/crypto/ap_bus.c                       |  25 +-
- drivers/s390/crypto/ap_bus.h                       |   1 +
- drivers/s390/crypto/ap_card.c                      |   1 -
- drivers/s390/crypto/ap_queue.c                     |  20 -
- drivers/s390/crypto/pkey_api.c                     |   2 +-
- drivers/s390/crypto/zcrypt_card.c                  |  12 +
- drivers/s390/crypto/zcrypt_cca_key.h               |  20 +-
- drivers/s390/crypto/zcrypt_msgtype6.c              |  20 +-
- drivers/s390/crypto/zcrypt_queue.c                 |  12 +
- drivers/s390/scsi/zfcp_aux.c                       |   2 +-
- include/uapi/linux/kvm.h                           |   1 +
- init/Kconfig                                       |  15 +-
- lib/raid6/s390vx.uc                                |  34 +-
- tools/testing/selftests/rseq/param_test.c          |  24 +
- tools/testing/selftests/rseq/rseq-s390.h           | 513 +++++++++++++++++++++
- tools/testing/selftests/rseq/rseq.h                |   2 +
- 107 files changed, 2372 insertions(+), 1094 deletions(-)
- rename arch/s390/{kernel => boot}/als.c (83%)
- rename arch/s390/boot/compressed/{vmlinux.scr => vmlinux.scr.lds.S} (70%)
- create mode 100644 arch/s390/boot/ebcdic.c
- rename arch/s390/{kernel => boot}/head.S (98%)
- rename arch/s390/{kernel => boot}/head_kdump.S (100%)
- create mode 100644 arch/s390/boot/mem.S
- create mode 100644 arch/s390/boot/sclp_early_core.c
- delete mode 100644 drivers/s390/crypto/ap_asm.h
- create mode 100644 tools/testing/selftests/rseq/rseq-s390.h
+Marcel
 
