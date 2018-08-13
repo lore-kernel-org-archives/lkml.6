@@ -3,138 +3,222 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986A4C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE2AC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58F0321798
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:36:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F0321798
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 16903217B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 18:39:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16903217B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbeHMVTb (ORCPT
+        id S1730210AbeHMVWp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 17:19:31 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36999 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729748AbeHMVTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 17:19:31 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 00EE61BF204;
-        Mon, 13 Aug 2018 18:35:54 +0000 (UTC)
-Subject: Re: [PATCH v6 00/11] hugetlb: Factorize hugetlb architecture
- primitives
-To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-References: <20180806175711.24438-1-alex@ghiti.fr>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <55833b7d-3c29-d7ac-41f1-82f1ac228e4a@ghiti.fr>
-Date:   Mon, 13 Aug 2018 18:35:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 13 Aug 2018 17:22:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60636 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729988AbeHMVWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 17:22:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3F745AE0B;
+        Mon, 13 Aug 2018 18:39:18 +0000 (UTC)
+Subject: Re: [PATCH] reiserfs: fix broken xattr handling (heap corruption, bad
+ retval)
+To:     Jann Horn <jannh@google.com>, reiserfs-devel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20180802151539.5373-1-jannh@google.com>
+From:   Jeff Mahoney <jeffm@suse.com>
+Message-ID: <29083095-5e67-1b1e-f891-143ccd8a2bf2@suse.com>
+Date:   Mon, 13 Aug 2018 14:39:10 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:63.0)
+ Gecko/20100101 Thunderbird/63.0a1
 MIME-Version: 1.0
-In-Reply-To: <20180806175711.24438-1-alex@ghiti.fr>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: fr
+In-Reply-To: <20180802151539.5373-1-jannh@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="SroCWJhD4VSE7A9OkimW7U2HS75fGAzXM"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--SroCWJhD4VSE7A9OkimW7U2HS75fGAzXM
+Content-Type: multipart/mixed; boundary="w1F5p7mxh9Z0KEEIw5KfqLi6jRY4SGWHm";
+ protected-headers="v1"
+From: Jeff Mahoney <jeffm@suse.com>
+To: Jann Horn <jannh@google.com>, reiserfs-devel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Message-ID: <29083095-5e67-1b1e-f891-143ccd8a2bf2@suse.com>
+Subject: Re: [PATCH] reiserfs: fix broken xattr handling (heap corruption, bad
+ retval)
+References: <20180802151539.5373-1-jannh@google.com>
+In-Reply-To: <20180802151539.5373-1-jannh@google.com>
 
-Does someone need anything more to be done regarding this series ?
+--w1F5p7mxh9Z0KEEIw5KfqLi6jRY4SGWHm
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+On 8/2/18 11:15 AM, Jann Horn wrote:
+> This fixes the following issues:
+>=20
+>  - When a buffer size is supplied to reiserfs_listxattr() such that eac=
+h
+>    individual name fits, but the concatenation of all names doesn't
+>    fit, reiserfs_listxattr() overflows the supplied buffer. This leads =
+to
+>    a kernel heap overflow (verified using KASAN) followed by an
+>    out-of-bounds usercopy and is therefore a security bug.
+>  - When a buffer size is supplied to reiserfs_listxattr() such that a n=
+ame
+>    doesn't fit, -ERANGE should be returned. But reiserfs instead just
+>    truncates the list of names; I have verified that if the only xattr =
+on
+>    a file has a longer name than the supplied buffer length, listxattr(=
+)
+>    incorrectly returns zero.
+>=20
+> With my patch applied, -ERANGE is returned in both cases and the memory=
+
+> corruption doesn't happen anymore.
+>=20
+> Credit for making me clean this code up a bit goes to Al Viro, who poin=
+ted
+> out that the ->actor calling convention is suboptimal and should be
+> changed.
+>=20
+> Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
 
 Thanks,
 
-Alex
+-Jeff
+
+> ---
+> Triggering the bug:
+>=20
+> root@debian:/home/user# mount -o user_xattr reiserimg reisermount/
+> root@debian:/home/user# cd reisermount/
+> root@debian:/home/user/reisermount# touch test_file
+> root@debian:/home/user/reisermount# setfattr -n user.foo1 -v A test_fil=
+e
+> root@debian:/home/user/reisermount# setfattr -n user.foo2 -v A test_fil=
+e
+> root@debian:/home/user/reisermount# setfattr -n user.foo3 -v A test_fil=
+e
+> root@debian:/home/user/reisermount# setfattr -n user.foo4 -v A test_fil=
+e
+> root@debian:/home/user/reisermount# setfattr -n user.foo5 -v A test_fil=
+e
+> root@debian:/home/user/reisermount# setfattr -n user.foo6 -v A test_fil=
+e
+> root@debian:/home/user/reisermount# cat xattr_test.c
+> #include <sys/types.h>
+> #include <attr/xattr.h>
+> #include <err.h>
+> #include <stdio.h>
+> #include <string.h>
+> int main(int argc, char **argv) {
+>   if (argc !=3D 2) errx(1, "bad invocation");
+>   char list[10];
+>   int res =3D listxattr(argv[1], list, sizeof(list));
+>   if (res =3D=3D -1)
+>     err(1, "listxattr failed");
+>   printf("listxattr returned %d\n", res);
+>   for (char *p =3D list; p < list+res-1; p =3D p + strlen(p) + 1) {
+>     printf("list entry: %s\n", p);
+>   }
+> }
+> root@debian:/home/user/reisermount# gcc -o xattr_test xattr_test.c
+> root@debian:/home/user/reisermount# ./xattr_test test_file
+> Segmentation fault
+> root@debian:/home/user/reisermount#
+>=20
+> Result:
+>=20
+> [  122.071318] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [  122.072334] BUG: KASAN: slab-out-of-bounds in listxattr_filler+0x170=
+/0x1b0
+> [  122.073173] Write of size 9 at addr ffff8801c43b474a by task xattr_t=
+est/923
+> [  122.074030]
+> [  122.074223] CPU: 1 PID: 923 Comm: xattr_test Not tainted 4.18.0-rc7+=
+ #67
+> [  122.075050] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), B=
+IOS 1.10.2-1 04/01/2014
+> [  122.076107] Call Trace:
+> [  122.076453]  dump_stack+0x71/0xab
+> [  122.076900]  print_address_description+0x6a/0x250
+> [  122.077514]  kasan_report+0x258/0x380
+> [  122.077961]  ? listxattr_filler+0x170/0x1b0
+> [  122.078469]  memcpy+0x34/0x50
+> [  122.078894]  listxattr_filler+0x170/0x1b0
+> [...]
+>=20
+>  fs/reiserfs/xattr.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+> index ff94fad477e4..48cdfc81fe10 100644
+> --- a/fs/reiserfs/xattr.c
+> +++ b/fs/reiserfs/xattr.c
+> @@ -792,8 +792,10 @@ static int listxattr_filler(struct dir_context *ct=
+x, const char *name,
+>  			return 0;
+>  		size =3D namelen + 1;
+>  		if (b->buf) {
+> -			if (size > b->size)
+> +			if (b->pos + size > b->size) {
+> +				b->pos =3D -ERANGE;
+>  				return -ERANGE;
+> +			}
+>  			memcpy(b->buf + b->pos, name, namelen);
+>  			b->buf[b->pos + namelen] =3D 0;
+>  		}
+>=20
+
+--=20
+Jeff Mahoney
+SUSE Labs
 
 
-On 08/06/2018 05:57 PM, Alexandre Ghiti wrote:
-> [CC linux-mm for inclusion in -mm tree]
->                                                                                   
-> In order to reduce copy/paste of functions across architectures and then
-> make riscv hugetlb port (and future ports) simpler and smaller, this
-> patchset intends to factorize the numerous hugetlb primitives that are
-> defined across all the architectures.
->                                                                                   
-> Except for prepare_hugepage_range, this patchset moves the versions that
-> are just pass-through to standard pte primitives into
-> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
-> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
->                                                                                   
-> s390 architecture has not been tackled in this serie since it does not
-> use asm-generic/hugetlb.h at all.
->                                                                                   
-> This patchset has been compiled on all addressed architectures with
-> success (except for parisc, but the problem does not come from this
-> series).
->                                                                                   
-> v6:
->    - Remove nohash/32 and book3s/32 powerpc specific implementations in
->      order to use the generic ones.
->    - Add all the Reviewed-by, Acked-by and Tested-by in the commits,
->      thanks to everyone.
->                                                                                   
-> v5:
->    As suggested by Mike Kravetz, no need to move the #include
->    <asm-generic/hugetlb.h> for arm and x86 architectures, let it live at
->    the top of the file.
->                                                                                   
-> v4:
->    Fix powerpc build error due to misplacing of #include
->    <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
->    pointed by Christophe Leroy.
->                                                                                   
-> v1, v2, v3:
->    Same version, just problems with email provider and misuse of
->    --batch-size option of git send-email
->
-> Alexandre Ghiti (11):
->    hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
->    hugetlb: Introduce generic version of hugetlb_free_pgd_range
->    hugetlb: Introduce generic version of set_huge_pte_at
->    hugetlb: Introduce generic version of huge_ptep_get_and_clear
->    hugetlb: Introduce generic version of huge_ptep_clear_flush
->    hugetlb: Introduce generic version of huge_pte_none
->    hugetlb: Introduce generic version of huge_pte_wrprotect
->    hugetlb: Introduce generic version of prepare_hugepage_range
->    hugetlb: Introduce generic version of huge_ptep_set_wrprotect
->    hugetlb: Introduce generic version of huge_ptep_set_access_flags
->    hugetlb: Introduce generic version of huge_ptep_get
->
->   arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
->   arch/arm/include/asm/hugetlb.h               | 30 ----------
->   arch/arm64/include/asm/hugetlb.h             | 39 +++---------
->   arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
->   arch/mips/include/asm/hugetlb.h              | 40 +++----------
->   arch/parisc/include/asm/hugetlb.h            | 33 +++--------
->   arch/powerpc/include/asm/book3s/32/pgtable.h |  6 --
->   arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
->   arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
->   arch/powerpc/include/asm/nohash/32/pgtable.h |  6 --
->   arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
->   arch/sh/include/asm/hugetlb.h                | 54 ++---------------
->   arch/sparc/include/asm/hugetlb.h             | 40 +++----------
->   arch/x86/include/asm/hugetlb.h               | 69 ----------------------
->   include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
->   15 files changed, 135 insertions(+), 394 deletions(-)
->
 
+--w1F5p7mxh9Z0KEEIw5KfqLi6jRY4SGWHm--
+
+--SroCWJhD4VSE7A9OkimW7U2HS75fGAzXM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAltx0FAACgkQHntLYyF5
+5bKA5g//VSQFckvKvMJtpPENxz3fbpTgjVnYbB84IZqnm+FIVOFzb1KAJ0quzsny
+r+JpXuGNKph8vfZBu8H7fAuexdD1x3BL9bUwiCyyW8GgC4ozCXCsvdaNnrQ/M/by
+v5cbz9/PXA3Hug0KIMchBruykOOI3JwZc0MDZZkSbBqDE3Ci6Dzfra1G7KPYlNlB
+9W+exsLWoevNdoZOJx0z9sNQM1SvI+c21fNpgJUEzzddc1hB7J2CFk4P060/6Aio
+VLp5i/Q5oA+yAWBLgivSrwfAKfrBst/ZLc0JqYEL4ylnFcgdSZbmZdx20dZ8JwTb
+c8t2qM243CjYk7jyOHvJHtuNj0AAc06xQxFC+0AhdMsnPMuKhR4jVnVEamKJNi2e
+BRTIvsDOl2ntqdUBi29yZ/AVkIL03iokj1OqBKUxCoPtjXjXFw7Ua0MmGKwFcYPm
+lFh8HaPaUsmB03+rtDs2u9XSMxDJSF5J6V5AhnTW4J0Gl49ij5VkukcTTKmQEhS/
+W4pQoMKhqK44PR+QyQKidgJnh25H82163saG2Pfnbm4MeoQCgjgoN0ZvyvPQ7wli
+oAhTC+rKrRRrrxbrQMEyZCqvmxx25BNZkhS2y2ThITDSE5KsPy62haHB5lEo33JX
+cJcNGlfrCEHer0hMIp2+oo8DevLqRoKH4P0cVKB4NiWr94uLKgE=
+=j8Qr
+-----END PGP SIGNATURE-----
+
+--SroCWJhD4VSE7A9OkimW7U2HS75fGAzXM--
