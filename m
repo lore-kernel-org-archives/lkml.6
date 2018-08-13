@@ -2,100 +2,80 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9B8C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D5AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7582921742
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:48:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUYQkC3/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7582921742
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D631321749
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D631321749
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbeHMQbH (ORCPT
+        id S1729633AbeHMQbh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 12:31:07 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:41737 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728846AbeHMQbH (ORCPT
+        Mon, 13 Aug 2018 12:31:37 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:28209 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729031AbeHMQbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 12:31:07 -0400
-Received: by mail-yw1-f66.google.com with SMTP id q129-v6so13563002ywg.8;
-        Mon, 13 Aug 2018 06:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3fY520pK3MVFPuA8Ln4OHGZP00waF5d15Pwyeg+Ytn8=;
-        b=hUYQkC3/S6+l5kvwBkMQDaPxUkwku2LiPeZqhpuv27PCvmRd/HvWPkoNCPx3mlaaRn
-         7kkcZ6y1BMtfKlLGxjbJhKkpMwMio50GAcDr1K6lVdYStKqRCeLBG37psUDU++4ukXaY
-         aF0nvgCvh42hC5SQQlzl8p7SdSQdTflDV73lrNI1MnFK0pJHgHNI0ob3MPjkozhatKgG
-         pMg6KmmuveUEn91JRzGLcyocX7JG8rGRf9PDNup5E+FedYFigwatgPook4jRvRNCiZff
-         lPYSZSLEIOAiDgD1x2nunW59dJPmnnh9NO54bEnEO5aYaaBiXzVyu0Z4Qo0P3j81eaiN
-         UzcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3fY520pK3MVFPuA8Ln4OHGZP00waF5d15Pwyeg+Ytn8=;
-        b=fVSwIBxfYAM0BadNssxKWtYieP9PwL8Ta2gstrBuKxFv0EGCQCsiZ4gZh/yGKqOc/9
-         G61JwNWAVHwhYnUT9x3YPhqRqktsViEZ6aVOkHu0VSXZU+L/gQp29GAseCK0cYJ/4nWC
-         vfmYKdXXX0WId9kuK4dL4ldbsL34V+Kt6AFduYqR3Mo7DrzJIv1ayFykAE5zjr8HCXoi
-         ouQafYh1t28Qo52PgOblCRk1VBe6NBckl0WBn+zH1verT4DjfyQl40srqTtPPjz3Ic5b
-         tIUnWdOPwr1jx/08f0SYEWYWrXEuMNbDboKeacNb6xOP+oX9MByE+oufnZDE+974toi1
-         Jg3Q==
-X-Gm-Message-State: AOUpUlE1kxoyLWHDYINQMLkYu5I4E/ekjJ3pq+pS/uH+wvfg/RG8yKDd
-        hNGtxVdRI3n9rMv8fjmC8NY=
-X-Google-Smtp-Source: AA+uWPyNFMFX7TrAGbLsQwU/9p6gpyQGiRNZFREbhbEMiVPqvgTOtzny5iqp/1ZCKHDbeaC9I1REIQ==
-X-Received: by 2002:a0d:f443:: with SMTP id d64-v6mr8913189ywf.461.1534168125285;
-        Mon, 13 Aug 2018 06:48:45 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1:6555])
-        by smtp.gmail.com with ESMTPSA id b6-v6sm8662533ywb.78.2018.08.13.06.48.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 06:48:44 -0700 (PDT)
-Date:   Mon, 13 Aug 2018 06:48:42 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH RFC 1/3] cgroup: list all subsystem states in debugfs
- files
-Message-ID: <20180813134842.GF3978217@devbig004.ftw2.facebook.com>
-References: <153414348591.737150.14229960913953276515.stgit@buzz>
+        Mon, 13 Aug 2018 12:31:36 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-3-9DGzGHwIPAaxmVITDc-rAQ-1; Mon, 13 Aug 2018 14:49:11 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 13 Aug 2018 14:50:50 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 13 Aug 2018 14:50:50 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Jeff Lien' <jeff.lien@wdc.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'linux-crypto@vger.kernel.org'" <linux-crypto@vger.kernel.org>,
+        "'linux-block@vger.kernel.org'" <linux-block@vger.kernel.org>,
+        "'linux-scsi@vger.kernel.org'" <linux-scsi@vger.kernel.org>
+CC:     "'herbert@gondor.apana.org.au'" <herbert@gondor.apana.org.au>,
+        "'tim.c.chen@linux.intel.com'" <tim.c.chen@linux.intel.com>,
+        "'martin.petersen@oracle.com'" <martin.petersen@oracle.com>,
+        "'david.darrington@wdc.com'" <david.darrington@wdc.com>,
+        "'jeff.furlong@wdc.com'" <jeff.furlong@wdc.com>
+Subject: RE: [PATCH] Performance Improvement in CRC16 Calculations.
+Thread-Topic: [PATCH] Performance Improvement in CRC16 Calculations.
+Thread-Index: AQHUMN5vktn+vtPDWUaxGdn9R1jbpaS9kfkwgAAla0A=
+Date:   Mon, 13 Aug 2018 13:50:50 +0000
+Message-ID: <73795193e598470188953bab268e7af6@AcuMS.aculab.com>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <8508c92d70dc41ffb66557e13c988dca@AcuMS.aculab.com>
+In-Reply-To: <8508c92d70dc41ffb66557e13c988dca@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153414348591.737150.14229960913953276515.stgit@buzz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MC-Unique: 9DGzGHwIPAaxmVITDc-rAQ-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Konstantin.
+> A more interesting version would be to generate the lookup table
+> for a byte followed by 3 zero bytes.
+> You could then run four separate register dependency chains using the
+> same 256 entry lookup table.
 
-On Mon, Aug 13, 2018 at 09:58:05AM +0300, Konstantin Khlebnikov wrote:
-> After removing cgroup subsystem state could leak or live in background
-> forever because it is pinned by some reference. For example memory cgroup
-> could be pinned by pages in cache or tmpfs.
-> 
-> This patch adds common debugfs interface for listing basic state for each
-> controller. Controller could define callback for dumping own attributes.
-> 
-> In file /sys/kernel/debug/cgroup/<controller> each line shows state in
-> format: <common_attr>=<value>... [-- <controller_attr>=<value>... ]
+Not sure that works with a table lookup :-(
 
-Seems pretty useful to me.  Roman, Johannes, what do you guys think?
+	David
 
-Thanks.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
--- 
-tejun
