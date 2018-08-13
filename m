@@ -2,95 +2,124 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E751C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671D4C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326612186B
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 14:55:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326612186B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
+	by mail.kernel.org (Postfix) with ESMTP id 22E282186B
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E282186B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbeHMRht (ORCPT
+        id S1730054AbeHMRn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 13:37:49 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:33292 "EHLO
-        slow2.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727367AbeHMRht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 13:37:49 -0400
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by slow2.mail.gandi.net (Postfix) with ESMTP id 8A85C3A58FD
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 16:52:45 +0200 (CEST)
-X-Originating-IP: 83.155.44.161
-Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
-        (Authenticated sender: hadess@hadess.net)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 6B696FF805;
-        Mon, 13 Aug 2018 14:52:41 +0000 (UTC)
-Message-ID: <2923ec52f5f977f9213607b46c3618fd2a4c4a15.camel@hadess.net>
-Subject: Re: [PATCH] hid: microsoft: Add rumble support for Xbox One S
- controller
-From:   Bastien Nocera <hadess@hadess.net>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org,
+        Mon, 13 Aug 2018 13:43:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60794 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729931AbeHMRnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 13:43:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19F8380D;
+        Mon, 13 Aug 2018 08:01:18 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F7F43F5D0;
+        Mon, 13 Aug 2018 08:01:15 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 16:01:12 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        Juha Kuikka <juha.kuikka@gmail.com>
-Date:   Mon, 13 Aug 2018 16:52:40 +0200
-In-Reply-To: <CAHQ1cqEMJFCD8GU9o194EUPfUV9TTswW-jE2MPhoEzrg3cshYQ@mail.gmail.com>
-References: <20180810001714.14659-1-andrew.smirnov@gmail.com>
-         <ad932296a864b13134c5af6efe7754e5e588314e.camel@hadess.net>
-         <CAHQ1cqEMJFCD8GU9o194EUPfUV9TTswW-jE2MPhoEzrg3cshYQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-pm <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
+ for RT tasks
+Message-ID: <20180813150112.GE2605@e110439-lin>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-7-patrick.bellasi@arm.com>
+ <20180807132630.GB3062@localhost.localdomain>
+ <20180809153423.nsoepprhut3dv4u2@darkstar>
+ <CAKfTPtCWcq2bOmaC5EDdhS8ih8Sv7Mwzn=84xerKA2tY6kXLkw@mail.gmail.com>
+ <20180813101221.GA2605@e110439-lin>
+ <CAKfTPtBN+K=8fqukZix2k0rdcjG8YiYagxZtzLx7kk3US+9V2Q@mail.gmail.com>
+ <20180813124911.GD2605@e110439-lin>
+ <CAKfTPtDgXdQso94DOwJ4+nyRpJwigEwf7JmNZcgFOg3z6iUWyw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDgXdQso94DOwJ4+nyRpJwigEwf7JmNZcgFOg3z6iUWyw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-13 at 07:37 -0700, Andrey Smirnov wrote:
-> On Fri, Aug 10, 2018 at 4:38 AM Bastien Nocera <hadess@hadess.net>
-> wrote:
-> > 
-> > On Thu, 2018-08-09 at 17:17 -0700, Andrey Smirnov wrote:
-> > > Add HID quirk driver for Xbox One S controller over bluetooth.
-> > > 
-> > > This driver only adds support for rumble. Standard controller
-> > > functionality is exposed by default HID driver.
-> > 
-> > Did you manage to make the joypad work without hacks in the
-> > Bluetooth
-> > stack[1]?
+On 13-Aug 16:06, Vincent Guittot wrote:
+> On Mon, 13 Aug 2018 at 14:49, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > On 13-Aug 14:07, Vincent Guittot wrote:
+> > > On Mon, 13 Aug 2018 at 12:12, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+
+[...]
+
+> > Yes I agree that the current behavior is not completely clean... still
+> > the question is: do you reckon the problem I depicted above, i.e. RT
+> > workloads eclipsing the min_util required by lower priority classes?
 > 
-> I was not aware this hack actually existed, but now that I see it I
-> think it explains why doing
+> As said above, I don't think that there is a problem that is specific
+> to cross class scheduling that can't also happen in the same class.
 > 
-> echo 1 > /sys/module/bluetooth/parameters/disable_ertm
+> Regarding your example:
+> task TA util=40% with uclamp_min 50%
+> task TB util=10% with uclamp_min 0%
 > 
-> was necessary to make the controller connect over Bluetooth on my
-> machine. It looks like disabling ERTM just happens to have the same
-> effect as the hack that you mention. I'd like/plan to look into
-> finding a proper solution to replace that hack, but that'd probably
-> be
-> a separate patch.
+> If TA and TB are cfs, util=50% and it doesn't seem to be a problem
+> whereas TB will steal some bandwidth to TA and delay it (and i even
+> don't speak about the impact of the nice priority of TB)
+> If TA is cfs and TB is rt, Why util=50% is now a problem for TA ?
 
-I gave it a try a couple of months back, but without much success.
-L2CAP is unfortunately a bit too low-level to know anything about the
-device which requested this. I think that some level of "STREAMING"
-support is needed for the Bluetooth audio portion of the device.
+You right, in the current implementation, where we _do not_
+distinguish among scheduling classes it's not possible to get a
+reasonable implementation of a per sched class clamping.
 
-Marcel was also interested in looking into the problem, but didn't get
-to it. Let me know if you manage to get anything working without the
-big hammer of disabling ERTM support for everything.
+> > To a certain extend I see this problem similar to the rt/dl/irq pressure
+> > in defining cpu_capacity, isn't it?
 
-Cheers
+However, I still think that higher priority classes eclipsing the
+clamping of lower priority classes can still be a problem.
 
+In your example above, the main difference between TA and TB being on
+the same class or different classes is that in the second case TB
+is granted to always preempt TA. We can end up with a non boosted RT
+task consuming all the boosted bandwidth required by a CFS task.
+
+This does not happen, apart maybe for the corner case of really
+different nice values, if the tasks are both CFS, since the fair
+scheduler will grant some progress for both of them.
+
+Thus, given the current implementation, I think it makes sense to drop
+the UCLAMP_SCHED_CLASS policy and stick with a more clean and
+consistent design.
+
+I'll then see if it makes sense to add a dedicated patch on top of the
+series to add a proper per-class clamp tracking.
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
