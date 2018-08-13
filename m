@@ -2,62 +2,104 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A4AC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC8AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1FD12183C
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:36:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FD12183C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chelsio.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A7A221888
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 07:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A7A221888
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeHMKRk (ORCPT
+        id S1728370AbeHMKSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 06:17:40 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:17682 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728055AbeHMKRk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 06:17:40 -0400
-Received: from localhost (victim.blr.asicdesigners.com [10.193.185.129])
-        by stargate.chelsio.com (8.13.8/8.13.8) with ESMTP id w7D7aP8S007518;
-        Mon, 13 Aug 2018 00:36:25 -0700
-Date:   Mon, 13 Aug 2018 13:06:29 +0530
-From:   Ganesh Goudar <ganeshgr@chelsio.com>
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        dt@chelsio.com
-Subject: Re: [PATCH net-next] cxgb4: remove set but not used variable 'spd'
-Message-ID: <20180813073628.GA15679@chelsio.com>
-References: <20180813065902.5504-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180813065902.5504-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 13 Aug 2018 06:18:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41878 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727070AbeHMKSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 06:18:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 245B3AE55;
+        Mon, 13 Aug 2018 07:37:44 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org
+Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
+        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH v2 01/11] x86/paravirt: make paravirt_patch_call() and paravirt_patch_jmp() static
+Date:   Mon, 13 Aug 2018 09:37:29 +0200
+Message-Id: <20180813073739.26108-2-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
+In-Reply-To: <20180813073739.26108-1-jgross@suse.com>
+References: <20180813073739.26108-1-jgross@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, August 08/13/18, 2018 at 14:59:02 +0800, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c: In function 'print_port_info':
-> drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:5147:14: warning:
->  variable 'spd' set but not used [-Wunused-but-set-variable]
-> 
-> variable 'spd' is set but not used since
-> commit 547fd27241a8 ("cxgb4: Warn if device doesn't have enough PCI bandwidth")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-Thanks, YueHaibing.
+paravirt_patch_call() and paravirt_patch_jmp() are used in paravirt.c
+only. Convert them to static.
 
-Acked-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/include/asm/paravirt_types.h |  6 ------
+ arch/x86/kernel/paravirt.c            | 12 ++++++------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..036b2f88f105 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -370,12 +370,6 @@ extern struct pv_lock_ops pv_lock_ops;
+ 
+ unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len);
+ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len);
+-unsigned paravirt_patch_call(void *insnbuf,
+-			     const void *target, u16 tgt_clobbers,
+-			     unsigned long addr, u16 site_clobbers,
+-			     unsigned len);
+-unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+-			    unsigned long addr, unsigned len);
+ unsigned paravirt_patch_default(u8 type, u16 clobbers, void *insnbuf,
+ 				unsigned long addr, unsigned len);
+ 
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 930c88341e4e..ce560b916b1f 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -80,10 +80,10 @@ struct branch {
+ 	u32 delta;
+ } __attribute__((packed));
+ 
+-unsigned paravirt_patch_call(void *insnbuf,
+-			     const void *target, u16 tgt_clobbers,
+-			     unsigned long addr, u16 site_clobbers,
+-			     unsigned len)
++static unsigned paravirt_patch_call(void *insnbuf,
++				    const void *target, u16 tgt_clobbers,
++				    unsigned long addr, u16 site_clobbers,
++				    unsigned len)
+ {
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
+@@ -102,8 +102,8 @@ unsigned paravirt_patch_call(void *insnbuf,
+ 	return 5;
+ }
+ 
+-unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+-			    unsigned long addr, unsigned len)
++static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
++				   unsigned long addr, unsigned len)
+ {
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
+-- 
+2.13.7
+
