@@ -2,105 +2,137 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A66CC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E08CC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6512217DF
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:21:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZzF/U6VH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6512217DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6342F21655
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 16:22:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6342F21655
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbeHMTEj (ORCPT
+        id S1730058AbeHMTFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 15:04:39 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54483 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728772AbeHMTEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 15:04:39 -0400
-Received: by mail-it0-f65.google.com with SMTP id s7-v6so13871688itb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 09:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XkxG4sUqfnRENo/ZahLSmFgjYTdqFJhXsTUwuoXJyaA=;
-        b=ZzF/U6VHfIErs8MtCPZaBfz2OTYXEqFA/StM4lqETrbXd8p+pbgecX+FIcGz0n1eCW
-         ZX4m/992KTvWGXIIbV76DxoH1ja3rHe7iHVkxmHNf0UHlMCwKnm/xPoNsBshCzylVyze
-         w83oX4XaCnvknhezLOHjJNAQQmI27zLFZsyqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XkxG4sUqfnRENo/ZahLSmFgjYTdqFJhXsTUwuoXJyaA=;
-        b=VTLT0XVOUgqylWwCFFkGVRE5KiKHar/vYhIIp1oww4YgLtOvCLlJwqOoDIHhfUTy2R
-         srecf+U1eUF/B0JzUdTb5CY9eW2QzpVWev4zriNGNkYxSQT/z4sDgbo6jgMdsDYpjWYi
-         4n551p/UjwZ5KCPf/LKU48UkoCuk+C3YIWgVcl3UalmMi+pHMJXjXP4AQSx8Q2kBY5wh
-         OVaHrtutXmnpDkUb5k8fBAObsgSjklGShTSd1/1UiXhGanqLLVKBb9ylE6EPEulXjKXf
-         BMWisvYkm4SUzcxwRZ0vL+8dc/lJ1rVbXlBI8gMFhn7ogPr3rnX0XkEXMaZ6K1eXbou3
-         qt8A==
-X-Gm-Message-State: AOUpUlHp8YbOpXij7J3BA3Ygk+ps45r+jDaTKNdUpC7fzNOg/Wk7sHoP
-        cZy2nPM4iVg75gQTUzmOOHgbfO5iH2mZmZ0lXDtqvg==
-X-Google-Smtp-Source: AA+uWPxvvifpXkxFY1dUxoGROnH6nupR4hIZf1j3V5eUE3QJBhK+QYZvQ/ZvIQ6+gmdV6ImG9EtKp+cTljsbUfrbSaw=
-X-Received: by 2002:a02:8952:: with SMTP id u18-v6mr15898265jaj.13.1534177304114;
- Mon, 13 Aug 2018 09:21:44 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:4441:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 09:21:43
- -0700 (PDT)
-In-Reply-To: <d78a41e0-6602-e0f2-c00c-30b4766bb82c@gmail.com>
-References: <bab196f91cbddca175c725ae6159c0af639bfe07.1522666398.git.viresh.kumar@linaro.org>
- <d78a41e0-6602-e0f2-c00c-30b4766bb82c@gmail.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Mon, 13 Aug 2018 21:51:43 +0530
-Message-ID: <CAKohpomCns5EepTGdqbpxcpE3sSj=TqZHy0Hf29nP7vWk0tfYg@mail.gmail.com>
-Subject: Re: [PATCH V5] thermal: Add cooling device's statistics in sysfs
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Mon, 13 Aug 2018 15:05:34 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:50199 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728763AbeHMTFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 15:05:33 -0400
+Received: from [192.168.1.7] (unknown [110.184.152.220])
+        by APP-10 (Coremail) with SMTP id tACowAAnL8c4sHFbVnMBAQ--.5355S2;
+        Tue, 14 Aug 2018 00:22:17 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v3 15/17] driver/cpufreq: enable Hygon support to cpufreq
+ driver
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        thomas.lendacky@amd.com, Borislav Petkov <bp@alien8.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <cover.1533989492.git.puwen@hygon.cn>
+ <36b1edf4bd9e203f8e14fa5b90a5a197fdf13898.1533989493.git.puwen@hygon.cn>
+ <CAJZ5v0izyq2SoUspLPDRM9U7W+-bZPCcQ4C5Zu1hVFDoUj=w1g@mail.gmail.com>
+Message-ID: <04744a9f-5865-bbc8-7735-e92c6cf6472d@hygon.cn>
+Date:   Tue, 14 Aug 2018 00:22:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0izyq2SoUspLPDRM9U7W+-bZPCcQ4C5Zu1hVFDoUj=w1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: tACowAAnL8c4sHFbVnMBAQ--.5355S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur4fArykKrWDuF45KF4fAFb_yoW8ZFW7pF
+        W5WFWjyF4UXFs3C342yw4UJFyY9Fn2ya4UKryUK3sYvF45uFW5WryqkF45Wr98Xrn5Gr42
+        y3WDXw1Igw4Yyw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+        1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY
+        6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+        73UjIFyTuYvjxU7CJmUUUUU
+X-Originating-IP: [110.184.152.220]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 August 2018 at 21:36, Dmitry Osipenko <digetx@gmail.com> wrote:
+On 2018/8/12 17:55, Rafael J. Wysocki wrote:
+> On Sat, Aug 11, 2018 at 3:36 PM Pu Wen <puwen@hygon.cn> wrote:
+>>
+>> Enable ACPI cpufreq driver support for Hygon by adding family ID check
+>> along with AMD.
+>>
+>> As Hygon platforms have SMBus device(PCI device ID 0x790b), enable Hygon
+>> support to function amd_freq_sensitivity_init().
+>>
+>> Signed-off-by: Pu Wen <puwen@hygon.cn>
+> 
+> Is there any technical difference between HYGON and AMD?
 
-> I'm working on adding support of OPP and cooling for NVIDIA Tegra20/30 CPUFreq driver and stumbled upon a bug that is introduced by this patch. It is triggered on the driver module unload.
+For ACPI cpufreq patch, you are right. But for the whole point of view,
+there has some technical difference between Hygon Dhyana and AMD Family
+17h.
+For cpufreq if not added X86_VENDOR_HYGON codes, this driver will not
+work functionally on Hygon platforms.
 
-The problem is that device_unregister() will end up freeing the cdev as well, so
-the current sequence is surely wrong.
+> 
+> You seem to be mechanically adding X86_VENDOR_HYGON wherever
+> X86_VENDOR_AMD is used.
 
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 6ab982309e6a..de53c821a282 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -1102,8 +1102,8 @@ void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
->         mutex_unlock(&thermal_list_lock);
->
->         ida_simple_remove(&thermal_cdev_ida, cdev->id);
-> -       device_unregister(&cdev->device);
->         thermal_cooling_device_destroy_sysfs(cdev);
-> +       device_unregister(&cdev->device);
+X86_VENDOR_HYGON is not mechanically added wherever X86_VENDOR_AMD is
+used, we have reviewed and tested the features wherever X86_VENDOR_HYGON
+is needed.
 
-But this looks wrong as well, as the device is still around while
-memory of its sysfs data is gone.
+As Hygon Dhyana can share code path with AMD family 17h, to minimize the
+code duplication, we choose to reuse the AMD's codes here.
 
-Maybe something like this is what we need:
+Thanks,
+Pu Wen
 
-device_del();
-thermal_cooling_device_destroy_sysfs();
-device_put();
+> 
+>> ---
+>>   drivers/cpufreq/acpi-cpufreq.c         | 5 +++++
+>>   drivers/cpufreq/amd_freq_sensitivity.c | 9 +++++++--
+>>   2 files changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
+>> index b61f4ec..d62fd37 100644
+>> --- a/drivers/cpufreq/acpi-cpufreq.c
+>> +++ b/drivers/cpufreq/acpi-cpufreq.c
+>> @@ -61,6 +61,7 @@ enum {
+>>
+>>   #define INTEL_MSR_RANGE                (0xffff)
+>>   #define AMD_MSR_RANGE          (0x7)
+>> +#define HYGON_MSR_RANGE                (0x7)
+>>
+>>   #define MSR_K7_HWCR_CPB_DIS    (1ULL << 25)
+>>
+>> @@ -95,6 +96,7 @@ static bool boost_state(unsigned int cpu)
+>>                  rdmsr_on_cpu(cpu, MSR_IA32_MISC_ENABLE, &lo, &hi);
+>>                  msr = lo | ((u64)hi << 32);
+>>                  return !(msr & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
+>> +       case X86_VENDOR_HYGON:
+>>          case X86_VENDOR_AMD:
+>>                  rdmsr_on_cpu(cpu, MSR_K7_HWCR, &lo, &hi);
+>>                  msr = lo | ((u64)hi << 32);
 
---
-viresh
