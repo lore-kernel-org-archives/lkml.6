@@ -5,57 +5,50 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7F0C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54E6C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 569C621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:23:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 569C621738
+	by mail.kernel.org (Postfix) with ESMTP id 6568921738
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:24:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6568921738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbeHMOFA (ORCPT
+        id S1729801AbeHMOFr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:05:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:54661 "EHLO ozlabs.org"
+        Mon, 13 Aug 2018 10:05:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:51935 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729602AbeHMOE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:04:58 -0400
+        id S1729461AbeHMOEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 10:04:54 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 41ptd71wjhz9sBJ; Mon, 13 Aug 2018 21:23:07 +1000 (AEST)
+        id 41ptd34Q5zz9sC7; Mon, 13 Aug 2018 21:23:03 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: f2c6d0d1092e3da2bd36c768777e883fa3908548
-In-Reply-To: <20180622192655.23464-1-malat@debian.org>
-To:     Mathieu Malaterre <malat@debian.org>
+X-powerpc-patch-commit: 550ddadcc7580ec2a6c22d4ed04291bc6e2428fb
+In-Reply-To: <20180430145558.4308-14-npiggin@gmail.com>
+To:     Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: powerpc: include setup.h header file to fix warnings
-Message-Id: <41ptd71wjhz9sBJ@ozlabs.org>
-Date:   Mon, 13 Aug 2018 21:23:07 +1000 (AEST)
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [13/15] tty: hvc: hvc_write may sleep
+Message-Id: <41ptd34Q5zz9sC7@ozlabs.org>
+Date:   Mon, 13 Aug 2018 21:23:03 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-22 at 19:26:53 UTC, Mathieu Malaterre wrote:
-> Make sure to include setup.h to provide the following prototypes:
+On Mon, 2018-04-30 at 14:55:56 UTC, Nicholas Piggin wrote:
+> Rework the hvc_write loop to drop and re-take the spinlock on each
+> iteration, add a cond_resched. Don't bother with an initial hvc_push
+> initially, which makes the logic simpler -- just do a hvc_push on
+> each time around the loop.
 > 
-> - irqstack_early_init
-> - setup_power_save
-> - initialize_cache_info
-> 
-> Fix the following warnings (treated as error in W=1):
-> 
->   arch/powerpc/kernel/setup_32.c:198:13: error: no previous prototype for ‘irqstack_early_init’ [-Werror=missing-prototypes]
->   arch/powerpc/kernel/setup_32.c:238:13: error: no previous prototype for ‘setup_power_save’ [-Werror=missing-prototypes]
->   arch/powerpc/kernel/setup_32.c:253:13: error: no previous prototype for ‘initialize_cache_info’ [-Werror=missing-prototypes]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/f2c6d0d1092e3da2bd36c768777e88
+https://git.kernel.org/powerpc/c/550ddadcc7580ec2a6c22d4ed04291
 
 cheers
