@@ -2,112 +2,112 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DF9C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B401C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A9F217B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:24:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A9F217B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 471FE217B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 03:26:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+FAA2Bz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 471FE217B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeHMGE0 (ORCPT
+        id S1728191AbeHMGGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 02:04:26 -0400
-Received: from mga11.intel.com ([192.55.52.93]:52940 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726435AbeHMGE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 02:04:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2018 20:24:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,231,1531810800"; 
-   d="scan'208";a="74856396"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 12 Aug 2018 20:24:09 -0700
-Received: from dazhang1-ssd.sh.intel.com (dazhang1-ssd.sh.intel.com [10.239.48.78])
-        by linux.intel.com (Postfix) with ESMTP id D776258019B;
-        Sun, 12 Aug 2018 20:24:07 -0700 (PDT)
-From:   Zhang Yi <yi.z.zhang@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, jack@suse.cz, zwisler@kernel.org,
-        dave.jiang@intel.com, yu.c.zhang@intel.com
-Cc:     yi.z.zhang@intel.com, Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V2 1/1] device-dax: check for vma range while dax_mmap.
-Date:   Mon, 13 Aug 2018 20:02:56 +0800
-Message-Id: <46441800c43f029757c70d8386e3112701081503.1534160958.git.yi.z.zhang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 13 Aug 2018 02:06:13 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39396 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbeHMGGN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 02:06:13 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w14-v6so6327766plp.6
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Aug 2018 20:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=smitzV2APopDrlajmqrNET5vu+gR4RtdSjeAu12yHZ8=;
+        b=Q+FAA2BznbSVjbKuhlI6m2Tv9lg27KIaviPRpavR6VECH4kZL1mhKmdUOJ567xay8y
+         GBh84Va/Pkjgpfl8XOMTbYvhoLIK1gbuzYExzqnIj7NmbO7MO6muOSYI3M43d3UMcYF6
+         TLGaPDBmoaqcd/dJcjn5ydkZNTsG4ffLhrNHzi/dLuqQ/XSaBkKQdnLMoJf0njH8dWU+
+         obvY9sdWhxr2xHWCv6lEXr+qeSrtV5KfMP2De/fu6PolzS4Ip2Y2ZiHQerDjg3bWs476
+         43eg64opNM4UeyQMRLAAz8Jp5SYQLJRVllMn+0aYKjftgt8RWIUOGt06mWxQ1UAgvBFp
+         0uAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=smitzV2APopDrlajmqrNET5vu+gR4RtdSjeAu12yHZ8=;
+        b=o201cDrXnhs8RGx8sfY+RUi1adnLLaYwOFH3DI7t5UvzzvvpMVcToGLpFBo8siyiye
+         whq2PrW6zadpUcgqis2RLdd1pYoQ1OaPpKck0vHQTh9Qq5yKSsdAvb1wp7x+IZQgCwjl
+         rvX0CfYatvoWJ5HZlhVAb13WlNN4Lic81hvBgvZL4/ns6dElTgxnZPQEYI2cx9MWTvUO
+         HYCrHMrvchFuCwebBixslGNhoiwtbu2LANWjrSeLE7P3DV5w4Q8BT6wNWyVxs7Uts98l
+         9oe8aeE5AHBCtsf34J2djmH4T4gczHneE3SoBZXh2kMGMu1w3cA2CrdUQu4D/jlxZLZh
+         hozg==
+X-Gm-Message-State: AOUpUlG0UYZCejhdmLV+wQMUP8ajVamLzfOd1fA2EF6kjlnnG/iTNV4C
+        dGyq0kupFera0tcNeUqyhV8=
+X-Google-Smtp-Source: AA+uWPxcT2jG+CI7L7ud/sCftKw3nFZcD288JSUvELZW8gUPZBd881H4R+Ehy26/XFpdgYecKyL4aQ==
+X-Received: by 2002:a17:902:988a:: with SMTP id s10-v6mr14848345plp.200.1534130756582;
+        Sun, 12 Aug 2018 20:25:56 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:1c12:d766:6865:caf9])
+        by smtp.gmail.com with ESMTPSA id v30-v6sm27095721pgn.80.2018.08.12.20.25.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 Aug 2018 20:25:56 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     dwmw2@infradead.org
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] fs: jffs2: fix a sleep-in-atomic-context bug in jffs2_alloc_refblock()
+Date:   Mon, 13 Aug 2018 11:25:47 +0800
+Message-Id: <20180813032547.3156-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch prevents a user mapping an illegal vma range that is larger
-than a dax device physical resource.
+The kernel may sleep with holding a spin lock.
 
-When qemu maps the dax device for virtual nvdimm's backend device, the
-v-nvdimm label area is defined at the end of mapped range. By using an
-illegal size that exceeds the range of the device dax, it will trigger a
-fault with qemu.
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+[FUNC] kmem_cache_alloc(GFP_KERNEL)
+fs/jffs2/malloc.c, 188: 
+	kmem_cache_alloc in jffs2_alloc_refblock
+fs/jffs2/malloc.c, 221: 
+	jffs2_alloc_refblock in jffs2_prealloc_raw_node_refs
+fs/jffs2/wbuf.c, 164: 
+	jffs2_prealloc_raw_node_refs in jffs2_block_refile
+fs/jffs2/wbuf.c, 927: 
+	jffs2_block_refile in jffs2_flash_writev
+fs/jffs2/wbuf.c, 924: 
+	spin_lock in jffs2_flash_writev
+
+To fix it, GFP_KERNEL in kmem_cache_alloc() is replaced with GFP_ATOMIC.
+	
+This is found by my static analysis tool (DSAC).
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/dax/device.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ fs/jffs2/malloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 108c37f..6fe8c30 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -177,6 +177,33 @@ static const struct attribute_group *dax_attribute_groups[] = {
- 	NULL,
- };
- 
-+static int check_vma_range(struct dev_dax *dev_dax, struct vm_area_struct *vma,
-+		const char *func)
-+{
-+	struct device *dev = &dev_dax->dev;
-+	struct resource *res;
-+	unsigned long size;
-+	int ret, i;
-+
-+	if (!dax_alive(dev_dax->dax_dev))
-+		return -ENXIO;
-+
-+	size = vma->vm_end - vma->vm_start + (vma->vm_pgoff << PAGE_SHIFT);
-+	ret = -EINVAL;
-+	for (i = 0; i < dev_dax->num_resources; i++) {
-+		res = &dev_dax->res[i];
-+		if (size > resource_size(res)) {
-+			dev_info_ratelimited(dev,
-+				"%s: %s: fail, vma range overflow\n",
-+				current->comm, func);
-+			ret = -EINVAL;
-+			continue;
-+		} else
-+			return 0;
-+	}
-+	return ret;
-+}
-+
- static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
- 		const char *func)
+diff --git a/fs/jffs2/malloc.c b/fs/jffs2/malloc.c
+index ce1189793288..66496ef09716 100644
+--- a/fs/jffs2/malloc.c
++++ b/fs/jffs2/malloc.c
+@@ -185,7 +185,7 @@ static struct jffs2_raw_node_ref *jffs2_alloc_refblock(void)
  {
-@@ -469,6 +496,8 @@ static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
- 	 */
- 	id = dax_read_lock();
- 	rc = check_vma(dev_dax, vma, __func__);
-+	if (!rc)
-+		rc = check_vma_range(dev_dax, vma, __func__);
- 	dax_read_unlock(id);
- 	if (rc)
- 		return rc;
+ 	struct jffs2_raw_node_ref *ret;
+ 
+-	ret = kmem_cache_alloc(raw_node_ref_slab, GFP_KERNEL);
++	ret = kmem_cache_alloc(raw_node_ref_slab, GFP_ATOMIC);
+ 	if (ret) {
+ 		int i = 0;
+ 		for (i=0; i < REFS_PER_BLOCK; i++) {
 -- 
-2.7.4
+2.17.0
 
