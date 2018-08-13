@@ -2,95 +2,130 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FA9C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E94BC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86E5421776
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeR8b7Bq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E5421776
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D83721781
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:13:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D83721781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730334AbeHMX4k (ORCPT
+        id S1730432AbeHMX5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 19:56:40 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41022 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729126AbeHMX4j (ORCPT
+        Mon, 13 Aug 2018 19:57:09 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34815 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729126AbeHMX5J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 19:56:39 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j5-v6so15414604wrr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 14:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=9Fru04mQ9gE0He6W4Qg1uqiP2bCdRM/xy7AsxN17xl8=;
-        b=WeR8b7Bqkyq2mqxVFe3sWMb1KUYKJGLvI9+UZSK9ZKQqgPXXz3mPzFYKX9hXf2A5ir
-         FNiG8XePyBKLsZ78P9zWLaDvnAYpKifcIPshccMNaBPn8Grx2hrohN837V7C7cKAbUbd
-         qNYJ54GBOUEu+QLMV679RXQEVk0q2t0Wdi+qw8GuJHReY3i53APE2YbCLK+iD2WkwFpA
-         eoM6+RtWu1jySI7LarchXHRdUuxqtNoJgrP0wEAOBfT638F0hyct7yP6fbrxWixABlnm
-         oMSulW6b9GCy6XxN/x2PoVX3pzIlI+h/3zu0EdixlEgJ19yJffvjlJH1LjGTjdgM84mR
-         /lqw==
+        Mon, 13 Aug 2018 19:57:09 -0400
+Received: by mail-qk0-f196.google.com with SMTP id b66-v6so12056881qkj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 14:13:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9Fru04mQ9gE0He6W4Qg1uqiP2bCdRM/xy7AsxN17xl8=;
-        b=tCJXN0iARoQu2rYC7NCVy/2NdEJ7VgZYemeZNEQlt3fv+DUYN46jCRmx/eVnYaUeE0
-         9bA+Nc9a2j6kyF+EZMzoI1nE/a7ljTdaBQA06j28YdBXiCX5iV76eqx7/DLkczGYr8cv
-         7Eg/VjXA+HdaUn0rqjgDQVVcVjJVafVwQoXOHZW5w7ZxQv+Piaom5FQYCvMcFnDwMdd7
-         aWrGOaAis2BiFbR5KLE8NrUPw9SkzNx+JsHTzfFS0Vrb3kq6FlcNrA0A9ZC/BTu4D+9o
-         sjp6knTt67MbPW8IIQ09SHH6eNgmzGp/puCK3MRrJQ62Fzk9WuH4OvYPZ37KB7E/FyUm
-         XAgw==
-X-Gm-Message-State: AOUpUlEO7qT2GLcwf0YdJOxTu1Dpa0HxRmwgxki+T+H4E+1h77ja3GNO
-        G0lHweKoOHjKFe+H6TQEcEQ=
-X-Google-Smtp-Source: AA+uWPzwlcyYrJ9gLsYuuSy/yyw0ZoP/om+5hk68nqyd8kgeX/EyRKZXfaeB5AbZukTYaXXgSdmJOw==
-X-Received: by 2002:adf:fdcd:: with SMTP id i13-v6mr11868885wrs.276.1534194762649;
-        Mon, 13 Aug 2018 14:12:42 -0700 (PDT)
-Received: from terrence.localdomain (cpc96818-rdng27-2-0-cust102.15-3.cable.virginm.net. [86.30.200.103])
-        by smtp.gmail.com with ESMTPSA id n14-v6sm6620629wmc.14.2018.08.13.14.12.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 14:12:41 -0700 (PDT)
-From:   Tom Todd <thomas.m.a.todd@gmail.com>
-To:     gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
-Cc:     thomas.m.a.todd@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Staging: rtlwifi: efuse: fixed a line length coding style issue
-Date:   Mon, 13 Aug 2018 22:11:21 +0100
-Message-Id: <20180813211120.17015-1-thomas.m.a.todd@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KcgaH03XTLwDDCE00jQnELxS4ukMAIjrnT45GxO3VNM=;
+        b=iIL4U7qJCbIyjxI2re53beLvx0/Qy0ltnoU1RgcJXnEw+/atA+e5IrV9FBLAfkrTti
+         UiU7i4u28VHV1YFldROhpZP158vOOu4bf2zws40dhZWeEvTu60hnH3lI57jQRrPLacRj
+         ud2dbZyR4jUYz/UCyTPcy6YKpe1ta1nx/O/TZiPe+A1YQ0I40L7TKOwya7qPssppwusA
+         h5Jhkl+8lhxBDcycuw/7FvaEdB+oAqtR9JlNQ9gCM3HP3Y2IfzmmOAAQWL0m96SNu7rq
+         ntyot93n/xHIGspU2ALSwfs9nkBKCrDG7KbxuVPWNsZVVA4cO39Mvr8SKZtYCqdtaYnO
+         xg2A==
+X-Gm-Message-State: AOUpUlHTkOpw5Zzr43aSDNCsn+ZhIatFUlUb9zw1P+eEC5/XH9g0O6R7
+        fYweGs0+V/p4GPdyocxpBOR8rN8XZ2y4hJdbdG0=
+X-Google-Smtp-Source: AA+uWPxDsOI2s6LgTWPcgxL8ojTAGX3tbJ7p43HAqyQFPRKqvyXM9GgXGE7AuAruB6+2SezBmfPasS4dlVpD9IeNRl4=
+X-Received: by 2002:a37:6ac3:: with SMTP id f186-v6mr18257816qkc.224.1534194792347;
+ Mon, 13 Aug 2018 14:13:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180811095235.1938-1-stefan@agner.ch>
+In-Reply-To: <20180811095235.1938-1-stefan@agner.ch>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 13 Aug 2018 23:12:55 +0200
+Message-ID: <CAK8P3a1SOAYkbMV-YvQ9pVhAk7J6jt9Sc23gc1idj8u5ftyp=A@mail.gmail.com>
+Subject: Re: [PATCH] ARM: require GCC for FRAME_POINTER
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed a code style issue. Line length over 80 characters.
+On Sat, Aug 11, 2018 at 11:52 AM Stefan Agner <stefan@agner.ch> wrote:
+>
 
-Signed-off-by: Tom Todd <thomas.m.a.todd@gmail.com>
----
- drivers/staging/rtlwifi/efuse.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 693f84392f1b..cb65cf67dfa2 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -54,7 +54,7 @@ config DEBUG_WX
+>  # n, but then RMK will have to kill you ;).
+>  config FRAME_POINTER
+>         bool
+> -       depends on !THUMB2_KERNEL
+> +       depends on !THUMB2_KERNEL && CC_IS_GCC
+>         default y if !ARM_UNWIND || FUNCTION_GRAPH_TRACER
+>         help
+>           If you say N here, the resulting kernel will be slightly smaller and
 
-diff --git a/drivers/staging/rtlwifi/efuse.c b/drivers/staging/rtlwifi/efuse.c
-index 1dc71455f270..49ec9728fb04 100644
---- a/drivers/staging/rtlwifi/efuse.c
-+++ b/drivers/staging/rtlwifi/efuse.c
-@@ -245,7 +245,8 @@ void read_efuse(struct ieee80211_hw *hw, u16 _offset, u16 _size_byte, u8 *pbuf)
- 	if (!efuse_word)
- 		goto out;
- 	for (i = 0; i < EFUSE_MAX_WORD_UNIT; i++) {
--		efuse_word[i] = kcalloc(efuse_max_section, sizeof(u16), GFP_ATOMIC);
-+		efuse_word[i] =
-+			kcalloc(efuse_max_section, sizeof(u16), GFP_ATOMIC);
- 		if (!efuse_word[i])
- 			goto done;
- 	}
--- 
-2.18.0
+I suspect we actually need a bit more complexity here, as we have a couple
+of options that do something like:
 
+       select FRAME_POINTER if !MIPS && !PPC && !ARM_UNWIND && !S390
+&& !MICROBLAZE && !ARC && !X86
+
+This means that in configurations without ARM_UNWIND, we still
+fail to build with clang. Maybe something like x86 would work, this currently
+has
+
+choice
+        prompt "Choose kernel unwinder"
+        default UNWINDER_ORC if X86_64
+        default UNWINDER_FRAME_POINTER if X86_32
+
+config UNWINDER_ORC
+        bool "ORC unwinder"
+        depends on X86_64
+        select STACK_VALIDATION
+
+config UNWINDER_FRAME_POINTER
+        bool "Frame pointer unwinder"
+        select FRAME_POINTER
+
+config UNWINDER_GUESS
+        bool "Guess unwinder"
+        depends on EXPERT
+        depends on !STACKDEPOT
+
+endchoice
+
+so we always get some form of unwinding, but have different levels of
+functionality in them. Implementing ORC on ARM might be nice, but
+that's a lot of work, so I'm not expecting you to do that.
+
+The simplest approach would be to always force ARM_UNWIND=y
+when not building with gcc:
+
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 43d598c9b1f9..b390ac99ba20 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -60,7 +60,7 @@ config FRAME_POINTER
+          reported is severely limited.
+
+ config ARM_UNWIND
+-       bool "Enable stack unwinding support (EXPERIMENTAL)"
++       bool "Enable stack unwinding support (EXPERIMENTAL)" if CC_IS_GCC
+        depends on AEABI
+        default y
+        help
+
+      Arnd
