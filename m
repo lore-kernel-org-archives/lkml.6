@@ -2,96 +2,63 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51D5C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A0FC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DDB217C7
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:52:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DDB217C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 72F3621774
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F3621774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbeHMSfV (ORCPT
+        id S1729984AbeHMSgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 14:35:21 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:37800 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728509AbeHMSfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 14:35:17 -0400
-X-Greylist: delayed 533 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Aug 2018 14:35:16 EDT
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 4856D72CCFD;
-        Mon, 13 Aug 2018 18:43:36 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 38FB37CC7A1; Mon, 13 Aug 2018 18:43:36 +0300 (MSK)
-Date:   Mon, 13 Aug 2018 18:43:36 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] uapi: fix linux/netfilter/nf_osf.h userspace compilation
- errors
-Message-ID: <20180813154335.GA22820@altlinux.org>
-Mail-Followup-To: Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        Mon, 13 Aug 2018 14:36:54 -0400
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:32827 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729191AbeHMSgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 14:36:54 -0400
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id w7DFrwh7014771;
+        Mon, 13 Aug 2018 17:53:58 +0200
+Date:   Mon, 13 Aug 2018 17:53:58 +0200
+From:   Willy Tarreau <w@1wt.eu>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] WireGuard: Secure Network Tunnel
+Message-ID: <20180813155358.GK14633@1wt.eu>
+References: <20180731191102.2434-1-Jason@zx2c4.com>
+ <1534174811.7872.3.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1534174811.7872.3.camel@HansenPartnership.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move inclusion of <linux/ip.h> and <linux/tcp.h> from
-linux/netfilter/xt_osf.h to linux/netfilter/nf_osf.h to fix
-the following linux/netfilter/nf_osf.h userspace compilation errors:
+On Mon, Aug 13, 2018 at 08:40:11AM -0700, James Bottomley wrote:
+> Could we please build planning for this crypto failure day into
+> wireguard now rather than have to do it later?  It doesn't need to be
+> full cipher agility, it just needs to be the ability to handle multiple
+> protocol versions ... two should do it because that gives a template to
+> follow (and test version to try to find bugs in the implementation). 
 
-/usr/include/linux/netfilter/nf_osf.h:59:24: error: 'MAX_IPOPTLEN' undeclared here (not in a function)
-  struct nf_osf_opt opt[MAX_IPOPTLEN];
-/usr/include/linux/netfilter/nf_osf.h:64:17: error: field 'ip' has incomplete type
-  struct iphdr   ip;
-/usr/include/linux/netfilter/nf_osf.h:65:18: error: field 'tcp' has incomplete type
-  struct tcphdr   tcp;
+It's also what provides a *real* upgrade path to future versions :
+before deploying you need something which works, and the only way to
+get something working at a large scale is to have early adopters. Those
+willing to deploy a beta version will not do it if it requires to lose
+all their users and possibly to make rollbacks impossible. At least for
+this it's important to support an optionnal new version on top of the
+existing one (i.e. prod + beta together).
 
-Fixes: bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
-Cc: <stable@vger.kernel.org> # v4.18
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
- include/uapi/linux/netfilter/nf_osf.h | 2 ++
- include/uapi/linux/netfilter/xt_osf.h | 2 --
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/uapi/linux/netfilter/nf_osf.h b/include/uapi/linux/netfilter/nf_osf.h
-index 8f2f2f403183..eb5c4e20bec0 100644
---- a/include/uapi/linux/netfilter/nf_osf.h
-+++ b/include/uapi/linux/netfilter/nf_osf.h
-@@ -2,6 +2,8 @@
- #define _NF_OSF_H
- 
- #include <linux/types.h>
-+#include <linux/ip.h>
-+#include <linux/tcp.h>
- 
- #define MAXGENRELEN	32
- 
-diff --git a/include/uapi/linux/netfilter/xt_osf.h b/include/uapi/linux/netfilter/xt_osf.h
-index 72956eceeb09..f1abe4c6f59d 100644
---- a/include/uapi/linux/netfilter/xt_osf.h
-+++ b/include/uapi/linux/netfilter/xt_osf.h
-@@ -21,8 +21,6 @@
- #define _XT_OSF_H
- 
- #include <linux/types.h>
--#include <linux/ip.h>
--#include <linux/tcp.h>
- #include <linux/netfilter/nf_osf.h>
- 
- #define XT_OSF_GENRE		NF_OSF_GENRE
--- 
-ldv
+Cheers,
+Willy
