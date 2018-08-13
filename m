@@ -2,98 +2,99 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B763C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCD6C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F097217D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F097217D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 245F721745
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 13:28:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sSQjA8f5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 245F721745
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeHMQJs (ORCPT
+        id S1729855AbeHMQKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 12:09:48 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:20144 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728370AbeHMQJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 12:09:47 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41pxNb5m1gz9tvRN;
-        Mon, 13 Aug 2018 15:27:27 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id JJRkFmYE9l8F; Mon, 13 Aug 2018 15:27:27 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41pxNb5C8Yz9tvRJ;
-        Mon, 13 Aug 2018 15:27:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 07BEC8B7A8;
-        Mon, 13 Aug 2018 15:27:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id qVMoKMyv41oM; Mon, 13 Aug 2018 15:27:27 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.4])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D21208B752;
-        Mon, 13 Aug 2018 15:27:27 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id DE4977125F; Mon, 13 Aug 2018 13:27:27 +0000 (UTC)
-Message-Id: <6a7381f371d17bef13c704055079525955c44beb.1534166756.git.christophe.leroy@c-s.fr>
-In-Reply-To: <1cbc8dba537393edbb6384b67cbb123431ba6a32.1534166756.git.christophe.leroy@c-s.fr>
-References: <1cbc8dba537393edbb6384b67cbb123431ba6a32.1534166756.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 3/3] powerpc/mm: remove unneccessary test in
- pgtable_cache_init()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 13 Aug 2018 13:27:27 +0000 (UTC)
+        Mon, 13 Aug 2018 12:10:43 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37852 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbeHMQKm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 12:10:42 -0400
+Received: by mail-pl0-f68.google.com with SMTP id d5-v6so6897542pll.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 06:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DDw/ngD3LqNIF0g2XtCCp00AjuPU6Vq5WuRbE5V0aE8=;
+        b=sSQjA8f5k43ihVVm34RhMLc/G5107hg3IqIV4wKzcAb4bo9mrdFsf1rUUMcGigwbR3
+         BIIa6GbptLSeq06F4bgbL4i0ifwL79N9nHJLY/qudQMzoOF9dSMv/OwDfuf4lGgiLmtu
+         X6M6zsNmiZLSBw+u/C08p7dNSMEbXKpAQ4ExvrHEJ0OsAGejMhquUTnUwrGCVfl/cvnh
+         SUYoOh264I2Vi3gqPO1LxEue8fOXP0gnAvCJJTBDNPBzQA2++GrFMAYtTO6polIw9JpN
+         glf7RMM43XI6EokMK3JvfjaEvSG2ag44XebYNaAQPLmpfUMjZihl1cQk872KPQmQcIXO
+         F8lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DDw/ngD3LqNIF0g2XtCCp00AjuPU6Vq5WuRbE5V0aE8=;
+        b=jqCUzgoSUEPbDslGzlsC5NETWP/56GWKeqdfomO5gCGuQbC7dNqkBm7Yyod4F/idcg
+         OLjawxk1/DCN81K4DVgG/D44us/jm6Qa+r1U9EMrpXHIKPW7aDmIWBesSFx9ZRyazSto
+         j/TPpBfQHfWXhiMTTsVA0s778lDJekIax5YWhFiwe+aIk+/uhCk0UksZJR3UqToglB/t
+         LXPGA/OVKfoLgozdqmlFQrxmlPH4+Fjeyb9QCnbKEsqVlFpkX1ZUY72mmck7xMYWEiLb
+         dS0OHlJfO8Pz9xoAwaNzR1RGRdchC2/2TWimXWcg7bFjhauIuUHUEF8+vEUpQ3Sx7sC7
+         iNnQ==
+X-Gm-Message-State: AOUpUlG3I4vOiOlZo+euUcOFk0jAIDoeDv4/R5yDS7CNNsnNyHFbADN4
+        owb5LFyAhZdxJ6/cktXw78I=
+X-Google-Smtp-Source: AA+uWPxIlT1fglDVq2DBXQBXEBeVmfb+WdrDFO0QM1Kb+qSfmP3nKUh5AtifZPcXv6wTVAm12UVtVw==
+X-Received: by 2002:a17:902:599b:: with SMTP id p27-v6mr16380803pli.191.1534166905807;
+        Mon, 13 Aug 2018 06:28:25 -0700 (PDT)
+Received: from linux-zmni.DHCP ([59.63.206.215])
+        by smtp.gmail.com with ESMTPSA id n12-v6sm38631952pfh.146.2018.08.13.06.28.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 13 Aug 2018 06:28:25 -0700 (PDT)
+From:   Sean Fu <fxinrong@gmail.com>
+To:     ccaulfie@redhat.com
+Cc:     teigland@redhat.com, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, Sean Fu <fxinrong@gmail.com>
+Subject: [PATCH] fs/dlm: Remove NULL check.
+Date:   Mon, 13 Aug 2018 21:28:15 +0800
+Message-Id: <1534166895-7185-1-git-send-email-fxinrong@gmail.com>
+X-Mailer: git-send-email 2.6.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pgtable_cache_add() gracefully handles the case when a cache that
-size already exists by returning early with the following test:
+Remove unnessesary NULL check before kmem_cache_destroy() in
+fs/dlm/memory.c
 
-	if (PGT_CACHE(shift))
-		return; /* Already have a cache of this size */
-
-It is then not needed to test the existance of the cache before.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Sean Fu <fxinrong@gmail.com>
 ---
- arch/powerpc/mm/init-common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/dlm/memory.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
-index 8fb182aaf87d..ebdb76cbb468 100644
---- a/arch/powerpc/mm/init-common.c
-+++ b/arch/powerpc/mm/init-common.c
-@@ -78,13 +78,13 @@ void pgtable_cache_init(void)
- {
- 	pgtable_cache_add(PGD_INDEX_SIZE);
+diff --git a/fs/dlm/memory.c b/fs/dlm/memory.c
+index 7cd24bc..0349c89 100644
+--- a/fs/dlm/memory.c
++++ b/fs/dlm/memory.c
+@@ -38,10 +38,8 @@ int __init dlm_memory_init(void)
  
--	if (PMD_CACHE_INDEX && !PGT_CACHE(PMD_CACHE_INDEX))
-+	if (PMD_CACHE_INDEX)
- 		pgtable_cache_add(PMD_CACHE_INDEX);
- 	/*
- 	 * In all current configs, when the PUD index exists it's the
- 	 * same size as either the pgd or pmd index except with THP enabled
- 	 * on book3s 64
- 	 */
--	if (PUD_CACHE_INDEX && !PGT_CACHE(PUD_CACHE_INDEX))
-+	if (PUD_CACHE_INDEX)
- 		pgtable_cache_add(PUD_CACHE_INDEX);
+ void dlm_memory_exit(void)
+ {
+-	if (lkb_cache)
+-		kmem_cache_destroy(lkb_cache);
+-	if (rsb_cache)
+-		kmem_cache_destroy(rsb_cache);
++	kmem_cache_destroy(lkb_cache);
++	kmem_cache_destroy(rsb_cache);
  }
+ 
+ char *dlm_allocate_lvb(struct dlm_ls *ls)
 -- 
-2.13.3
+2.6.2
 
