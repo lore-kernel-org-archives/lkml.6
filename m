@@ -2,132 +2,95 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0586C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12823C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DF0F216B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:57:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DF0F216B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 9B35421763
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 22:02:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IlzermPp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B35421763
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731036AbeHNAlc (ORCPT
+        id S1731526AbeHNAqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:41:32 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:33283 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729380AbeHNAlc (ORCPT
+        Mon, 13 Aug 2018 20:46:07 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39092 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730480AbeHNAqH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:41:32 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MbgsX-1fYUPL1amT-00J4E4; Mon, 13 Aug 2018 23:57:18 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Johan Hovold <johan@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Shawn Guo <shawn.guo@linaro.org>, linux-usb@vger.kernel.org,
+        Mon, 13 Aug 2018 20:46:07 -0400
+Received: by mail-oi0-f65.google.com with SMTP id d189-v6so30061240oib.6
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 15:01:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xXfPvfvYZ8m+krL6lE5RoFKOurLpQMv3nkdS+YlRUfo=;
+        b=IlzermPp5ZHJp5RU0XTEo3OFZ7jECBqG9GhbCAnxyDWt+cvRCLB3raoqH9FmFqHBgS
+         dtfahTl+cSzPZs1NaABVwnK1oETWr17W+ISIN2tWIswVyzicj7eKtmxr+15wdU35H50f
+         PmAjMEiCe9y+eWzlysHuEnQ+jkD3CRzw9aI9lMgNTJLPQosgqvf2S1t0rP/XRdL1zyLD
+         BMaee0nyLLreI4p0tf9rOQA+JX32fFHXW57Eou/jLc9P2Thed6+Pl7Z8Z9zTX7+y/RZ/
+         8JuzJNd+J0bvYyfBk5ETPXsP04GlFhORBi9aDCJZEUHCsrlw+XbMyZpTQNgF5/Ak8YcI
+         5JqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xXfPvfvYZ8m+krL6lE5RoFKOurLpQMv3nkdS+YlRUfo=;
+        b=SB6N8CwlmYs7odqmhK0OSE+jTu709sNEVd+KE6h8fLImGSjX6m7j9mUp2ko/QqJSis
+         5OK3I8W0pV2/WTey3Id82OMikS7QxxATmdSLyaXyb6KDEZ6RQAk7U0nCHXya6VaBFVJA
+         d8VKMc8wPatSWG1hv87omBb15RV/XNsLbXIylTLPCRSHXnq3WxU4HsYgt5NXlJU/nhMc
+         0jSEDkj2RujBQxdgUe66X6vwbnktiZM0L5YEBhp8CphN+Lj37/IREuSPuBQDx+7NQk1R
+         crsDmS+5e4hfGB3dEzQ2Z6AdWGCAkRlcQZfEkhFiWJPVXgdI76XzABQRng45Tr6Fpu4Z
+         x1CQ==
+X-Gm-Message-State: AOUpUlHC3G4XaCZ3KUxeab7L5jpjhfN+4OkVhaJiweuy0vSpuzi6z/PB
+        H9DvD5dpSvfcw9/WmlH4QLdwakUi4/frUzBtSNZC+A==
+X-Google-Smtp-Source: AA+uWPwqVEwX0xaf0UZLzFGFCvlGelY6WT3oTDFcGfHbdS5J52sgTjieq+hhi4YyGFFJ5+9PRwKWTmJAT349yjKzDmQ=
+X-Received: by 2002:a54:4010:: with SMTP id x16-v6mr21310818oie.228.1534197719053;
+ Mon, 13 Aug 2018 15:01:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180813215546.3828228-1-arnd@arndb.de>
+In-Reply-To: <20180813215546.3828228-1-arnd@arndb.de>
+From:   Caleb Raitto <caraitto@google.com>
+Date:   Mon, 13 Aug 2018 15:01:48 -0700
+Message-ID: <CA+7y87rkaP5CAd4ionPLvOuoJDbnzbUL-C=E-FaSj7yjde8Lmw@mail.gmail.com>
+Subject: Re: [PATCH] cpumask: provide a dummy cpumask_next_wrap
+To:     arnd@arndb.de
+Cc:     akpm@linux-foundation.org, peterz@infradead.org,
+        Willem de Bruijn <willemb@google.com>, davem@davemloft.net,
+        adobriyan@gmail.com, mingo@kernel.org, rakib.mullick@gmail.com,
+        amritha.nambiar@intel.com, mhkelley@outlook.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc3: of-simple: avoid unused function warnings
-Date:   Mon, 13 Aug 2018 23:56:55 +0200
-Message-Id: <20180813215717.3903813-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:wUqf3N0ydJl8a7zthaPEY1pduLfA65wwDT27xaM8sIVLncnOX8b
- 1iUEL4gi9dDlBkVM1xY2jR2qgrezsMmUYE1vlbptu0HzIFW9O4iHYzSSQss9KirnvthnzQw
- lnO4xlbdvYs3gMigfhZ4RKc/cBTU3M22+mTCO8vv9GgrJNZT5CsMwdrf3b8EFrtyriKEYAI
- fw/tDJ5tsHYEZcXE7Zuvg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zFFLfxh5b9Y=:Oh3DV5+/h264TY2IeYfGZR
- kV3KcBBtAFMoxajYiao0+gyp9HcbAHP83p+qOoOTB9RpvX4dIdCA5fKxq8BMKJbUapr38+mLF
- SUeQQ3iAGGBUWA1Jnq3KCkB9yoGcZHZEyqwbsBD7ePE76zzIpmmvvWoQvVQdJGkiS3o1P95a1
- PmKAGseIrfFIMaZtKogkZlCMsZ1TLXArHuzzjoixO2Hr8DX/iMvXoLzEUKsnQobvSzYRQzOTI
- xrBgSMMPaBXkPfQ+i04rojVKp26oKlT04R7L+wAN+hTuleM7tJaNWR6b7GXcMRiUwb+tFmgPd
- 8U1flLrH+HSneLfVepB40mHZQDOp2Fy+JmCxuaVBdMsIVpt1bDwx3YSxUeLifYU1eKrkACzks
- IS67CE/E951rphLB70UoSw8mmndvyVxZZCcnlt4W1kNSu8Y/XOZp+cgcW+JZ7OrwKagq3b6MH
- FuM6oh7d/mVJCqBCD1AXONwggH2/HR3wLvOdhlv0HDfIweD94dfB6hz7T3hQCNbrIUxu+xUyd
- +pbf85S1dl72IR+IXBKXG71ybq8AsfyJh6g3KN3kN+DT2/2xIWb2o8cMJx+H314uMnTFjLHHS
- GawyyT1miyjKqgRbbe696K/gaMZLJ/xPpy/z7WVeuiZYjZF+K0JxirD4076ece2+IODJGpsdO
- P16g0Fg/OxBrTEVJgAsqYo47IYXuu5CsCVSvWDoIL3QKAXNB9pHJiq5k3zdrWvr0yaSA=
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An incorrect #ifdef caused a pair of harmless warnings when CONFIG_PM_SLEEP
-is disabled:
+On Mon, Aug 13, 2018 at 2:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The virtio_net driver has become the first one to call cpumask_next_wrap()
+> even if CONFIG_SMP is disabled, leading to a build error:
+>
+> drivers/net/virtio_net.c: In function 'virtnet_set_affinity':
+> drivers/net/virtio_net.c:1916:10: error: implicit declaration of function 'cpumask_next_wrap'; did you mean 'cpumask_next_and'? [-Werror=implicit-function-declaration]
+>     cpu = cpumask_next_wrap(cpu, cpu_online_mask,
+>
+> Add a stub function along the lines of cpumask_first(), cpumask_next() etc.
+> I'm not entirely sure what should be returned in this case, but at
+> least for virtio_net, anything should work.
 
-drivers/usb/dwc3/dwc3-of-simple.c:223:12: error: 'dwc3_of_simple_resume' defined but not used [-Werror=unused-function]
- static int dwc3_of_simple_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~~~
-drivers/usb/dwc3/dwc3-of-simple.c:213:12: error: 'dwc3_of_simple_suspend' defined but not used [-Werror=unused-function]
- static int dwc3_of_simple_suspend(struct device *dev)
+Sorry about the build break, I think this patch with a fix was already merged:
 
-Since the #ifdef method is generally hard to get right, use
-a simpler __maybe_unused annotation here to let the compiler
-drop the unused functions silently. This also improves
-compile-time coverage.
+cpumask: make cpumask_next_wrap available without smp
+https://patchwork.ozlabs.org/patch/956670/
 
-Fixes: 76251db86561 ("usb: dwc3: of-simple: reset host controller at suspend/resume")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/usb/dwc3/dwc3-of-simple.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index 40bf9e0bbc59..4c2771c5e727 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -180,8 +180,7 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--static int dwc3_of_simple_runtime_suspend(struct device *dev)
-+static int __maybe_unused dwc3_of_simple_runtime_suspend(struct device *dev)
- {
- 	struct dwc3_of_simple	*simple = dev_get_drvdata(dev);
- 	int			i;
-@@ -192,7 +191,7 @@ static int dwc3_of_simple_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int dwc3_of_simple_runtime_resume(struct device *dev)
-+static int __maybe_unused dwc3_of_simple_runtime_resume(struct device *dev)
- {
- 	struct dwc3_of_simple	*simple = dev_get_drvdata(dev);
- 	int			ret;
-@@ -210,7 +209,7 @@ static int dwc3_of_simple_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static int dwc3_of_simple_suspend(struct device *dev)
-+static int __maybe_unused dwc3_of_simple_suspend(struct device *dev)
- {
- 	struct dwc3_of_simple *simple = dev_get_drvdata(dev);
- 
-@@ -220,7 +219,7 @@ static int dwc3_of_simple_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int dwc3_of_simple_resume(struct device *dev)
-+static int __maybe_unused dwc3_of_simple_resume(struct device *dev)
- {
- 	struct dwc3_of_simple *simple = dev_get_drvdata(dev);
- 
-@@ -229,7 +228,6 @@ static int dwc3_of_simple_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static const struct dev_pm_ops dwc3_of_simple_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(dwc3_of_simple_suspend, dwc3_of_simple_resume)
--- 
-2.18.0
-
+Thanks,
+-Caleb
