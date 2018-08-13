@@ -2,149 +2,117 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70381C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15002C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18DD021721
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:46:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/7DruTC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DD021721
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C7F6921721
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 10:47:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F6921721
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbeHMN2g (ORCPT
+        id S1729075AbeHMN2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 09:28:36 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35354 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbeHMN2f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 09:28:35 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p12-v6so7493185pfh.2;
-        Mon, 13 Aug 2018 03:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+cYf1ibBNjgTTmHaFpUj0T02TGwf9GaBeRtX61j8pdU=;
-        b=g/7DruTCRsUr2FhzL/mHec7CX94W/DyOzW+wpwIhAbBu//letu7QIpz/i7bBZhjZQ2
-         RRnA/5ljSo/L+ZOPR7/Yu67VJKMaDLTRMiGV0aYchOQjBKlKSSjtwha3d+ooIzR+2aYl
-         5PfqP3vNh5UnzEiohxAs67mdmDa79ei6NNp4Z9+/4OA/TUIX60dle8iLZrvGVnxfMlbm
-         mVVia5sPV107hAKE8565c7DDFOIdHgj9jdC8RriVv+V+30l3e0Pwsascoupm+8UhOAXK
-         /2MciNJJvMEOvwyjCMO7MJ2Eg7LXH6h/WwRn/2T8rucRskmJqzZxZy0vONvgMORO5poC
-         uSNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+cYf1ibBNjgTTmHaFpUj0T02TGwf9GaBeRtX61j8pdU=;
-        b=IVK45mnpKtMz5JPxO9hWZR664RTV4B4tt5FZPXnXS+TP8G6vLt7EhDr2VbcwBKDgYo
-         VgUtMn3iUOE1uD/OV3T2RsKSzexaF/7XUUtMBVx5JvHQ18fWUmnLvKdqSs/U1rPOEor8
-         vLjrgDBF/FNDCNb1PJzZdWx4AUHcfPXfykj9bSPOdofda7asBWccu5uGDzXKPudB1utJ
-         KdGCXlLHal5RgzOafs3Hkup8UHwb4a49y3XKQ1V6vWGglbkrd6tBQ7854vjzefAueTnZ
-         6pP044ZdZY8t1URYmxHdzttJjBvVkjcsxN6O1mpcNk5iQGuUghcaGbGfbzS/WuoPoUf4
-         aQ/g==
-X-Gm-Message-State: AOUpUlGQ0xp8i96O+KOKQreCZV9JgXx7eTflELkeUKgSsB1f81pE3rr/
-        pDc/gYpd7AJSgEtCsZ6T+TI=
-X-Google-Smtp-Source: AA+uWPyfNtz6tZr4ZeqQp0SflKiL3+4FhrRDPe579m7r4ASFnqnIiP/AbcGaoYkxt0N4wOLRRLvhAQ==
-X-Received: by 2002:a62:c0a:: with SMTP id u10-v6mr18394288pfi.43.1534157212932;
-        Mon, 13 Aug 2018 03:46:52 -0700 (PDT)
-Received: from localhost.localdomain ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id p19-v6sm30186335pgk.28.2018.08.13.03.46.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 03:46:52 -0700 (PDT)
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     corbet@lwn.net
-Cc:     Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
-        cocci@systeme.lip6.fr, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Himanshu Jha <himanshujha199640@gmail.com>
-Subject: [PATCH v2] docs: dev-tools: coccinelle: Update documentation
-Date:   Mon, 13 Aug 2018 16:16:38 +0530
-Message-Id: <20180813104638.7935-1-himanshujha199640@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 13 Aug 2018 09:28:49 -0400
+Received: from mga09.intel.com ([134.134.136.24]:35357 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728356AbeHMN2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 09:28:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2018 03:47:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,233,1531810800"; 
+   d="scan'208";a="65726335"
+Received: from anshuma1-pnp-server.iind.intel.com ([10.223.107.119])
+  by orsmga006.jf.intel.com with ESMTP; 13 Aug 2018 03:47:04 -0700
+From:   Anshuman Gupta <anshuman.gupta@intel.com>
+To:     oneukum@suse.com, linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, anshuman.gupta@intel.com
+Subject: Re: [Query] USB device autosuspend and its runtime usage count.
+Date:   Mon, 13 Aug 2018 16:15:02 +0530
+Message-Id: <1534157102-29526-1-git-send-email-anshuman.gupta@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534146566.10070.5.camel@suse.com>
+References: <1534146566.10070.5.camel@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Fix install instruction by adding `./autogen` command
-  before `./configure`.
-* Add link to a more detailed installation instruction.
-* Add link to SmPL grammar documentation.
-* Add single space after ',' to slightly improve readability.
+On Mon, Aug 13, 2018 at 01:19:26PM +0530, Oliver Neukum wrote:
+> On Mo, 2018-08-13 at 12:15 +0530, Anshuman Gupta wrote:
+> > Hi ,
+> > I need to test a functionality with USB autosuspend with latest kernel          
+> > Linux 4.18-rc8. I am trying to autosuspend a USB key board, i enabled       
+> > its autosuspend by doing echo "auto" to its "control" attributes.
+> > I am expecting USB keyboard to go to autosuspend after autosuspend_delay_ms.
+> > But USB key board is not going to autosuspend because its runtime usage
+> > count is not equal to zero.
+> > 
+> > Below are the log snippets:
+> > 
+> > root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_enabled
+> > enabled
+> > root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/control
+> > auto
+> > root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/autosuspend_delay_ms
+> > 2000
+> > root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_status
+> > active
+> > root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_usage
+> > 1
+> > root@intel-Kabylake-Client-platform:# sleep 60; cat /sys/bus/usb/devices/1-5/power/runtime_usage
+> > 1
+> > 
+> > My USB keyboard runtime usage reference count is not decreasing to zero.
+> > Here am i missing something regarding runtime usage count or is it some issue with
+> > my kernel or OS?
+> 
+> Very hard to say without further information. Is the HID device the
+> only interface of the whole device?
+yes, HID device is only the interface for given device, below here lsusb -t log for usb dev 1-5.
 
-Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
----
+root@intel-Kabylake-Client-platform:# lsusb -t
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/12p, 480M
+    |__ Port 5: Dev 3, If 1, Class=Human Interface Device, Driver=usbhid, 1.5M
+    |__ Port 5: Dev 3, If 0, Class=Human Interface Device, Driver=usbhid, 1.5M
 
-v2:
-   - instruction -> instructions
-   - Or Github at: -> Or from Github at:
+> Does the device support remote wakeup?
+yes, from lsusb logs it seems, it is supporting remote wakeup.
 
- Documentation/dev-tools/coccinelle.rst | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+root@intel-Kabylake-Client-platform:# lsusb 
+Bus 001 Device 003: ID 04d9:1702 Holtek Semiconductor, Inc. Keyboard LKS02
 
-diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
-index 94f41c290bfc..aa14f05cabb1 100644
---- a/Documentation/dev-tools/coccinelle.rst
-+++ b/Documentation/dev-tools/coccinelle.rst
-@@ -30,18 +30,29 @@ of many distributions, e.g. :
-  - NetBSD
-  - FreeBSD
- 
--You can get the latest version released from the Coccinelle homepage at
-+Some distribution packages are obsolete and it is recommended
-+to use the latest version released from the Coccinelle homepage at
- http://coccinelle.lip6.fr/
- 
--Once you have it, run the following command::
-+Or from Github at:
- 
--     	./configure
-+https://github.com/coccinelle/coccinelle
-+
-+Once you have it, run the following commands::
-+
-+        ./autogen
-+        ./configure
-         make
- 
- as a regular user, and install it with::
- 
-         sudo make install
- 
-+More detailed installation instructions to build from source can be
-+found at:
-+
-+https://github.com/coccinelle/coccinelle/blob/master/install.txt
-+
- Supplemental documentation
- ---------------------------
- 
-@@ -51,6 +62,10 @@ https://bottest.wiki.kernel.org/coccicheck
- 
- The wiki documentation always refers to the linux-next version of the script.
- 
-+For Semantic Patch Language(SmPL) grammar documentation refer to:
-+
-+http://coccinelle.lip6.fr/documentation.php
-+
- Using Coccinelle on the Linux kernel
- ------------------------------------
- 
-@@ -223,7 +238,7 @@ Since coccicheck runs through make, it naturally runs from the kernel
- proper dir, as such the second rule above would be implied for picking up a
- .cocciconfig when using ``make coccicheck``.
- 
--``make coccicheck`` also supports using M= targets.If you do not supply
-+``make coccicheck`` also supports using M= targets. If you do not supply
- any M= target, it is assumed you want to target the entire kernel.
- The kernel coccicheck script has::
- 
+root@intel-Kabylake-Client-platform:# lsusb -v -d 04d9:1702 | grep Remote
+      Remote Wakeup
+
+> Is an LED on?
+Num lock led was on, but switching it off also does not help.
+> 
+> Usbhid does support autosuspend, but its criteria must be met.
+> And all interface drivers must call the device idle.
+All of its interfaces are in runtime suspend
+
+root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5\:1.0/power/runtime_status 
+suspended
+root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5\:1.1/power/runtime_status 
+suspended
+root@intel-Kabylake-Client-platform:# cat /sys/bus/usb/devices/1-5/power/runtime_active_kids 
+0
+
+> Or you have discovered a kernel bug.
+> 
+>       Regards
+>               Oliver
+> 
+
 -- 
-2.17.1
+Thanks,
+Anshuman
 
