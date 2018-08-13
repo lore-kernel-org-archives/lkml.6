@@ -2,124 +2,104 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7166CC46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5046C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1967621569
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:52:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="L5JMCz6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1967621569
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C3342174E
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 11:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3342174E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbeHMOe2 (ORCPT
+        id S1729461AbeHMOjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 10:34:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36793 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729333AbeHMOe2 (ORCPT
+        Mon, 13 Aug 2018 10:39:36 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:23875 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728712AbeHMOjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 10:34:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h9-v6so14029177wro.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 04:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=p3COwGjfR8XQD7gxUJeWVI5dLZaMoxYPQU7DwzhzqQM=;
-        b=L5JMCz6lPlv7TWtqon6CqFXizVMIYB14lQlWCoGtUvCvnkJLw1rI2C2mac7Ur3XU7i
-         3XpWEVdWS8CJbZHpHxIotVC6I2+53TLNwLD5BeX2RcdeFMU7bI+ZOiyeNLXdhOUf3Rna
-         KIOKEqge66tMU2J8eilR+dMjpcAPLjUKixk6DaR4hgWuwGe5W/NHCmCPw328vR1GPeAh
-         YtFggeVyotpX0SJVKwnuOWtBKNI0/RdxxW0aKqees9T7DFYPWB9GmvuU+rPQfHeZYlLW
-         OSjNecdrnARChghAJLepN+s/+DX2UKTmMHV4DKOFsu3u30c+miD6RKivGApJGhA+T29U
-         Uq9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=p3COwGjfR8XQD7gxUJeWVI5dLZaMoxYPQU7DwzhzqQM=;
-        b=h04pH8N/FseOigM6RC03MfjeAr9YuiULhm9P8zKCcfqE35+yseAXR5936ME7GFODGv
-         6wBmNDEWgL+Ib7u9Lc33FvZm8f5LMlL+uLXEyOrBr+ngq2IJ96hQFp3u41kc+Jy5IARp
-         KZGDIF1yW/k4Tc7jZeeWLpaNJMmQPEGvKkpOvevNtB3E1SZmTfxLmwuDvhpVH0Bu7IGO
-         732UM98c5WmzxtYeqHHZOefna7g3EWzyuZe8XpeH1BMUpj8+ZckRD2/yNHiZpNQoAIy8
-         tLa23UvBjKCr02JbxeVoBB5rFrB9Gushx+VX2KDTowGj+8n7cynZVVZimedebD283DNy
-         lorQ==
-X-Gm-Message-State: AOUpUlELZNaftssdAOStbQ4JivTxspOSnbBVmFDgoHuySjcZQciVnPQd
-        KePH3I+EvhdNT3VV/tm1jPmVDw==
-X-Google-Smtp-Source: AA+uWPyIwY7cOq9T/vAZxi7wJfeHL3vW6ye7qy65MIyn3IwNNM/sNFLIn0t08lYLiVxkwJTyp7BYbQ==
-X-Received: by 2002:adf:f8c7:: with SMTP id f7-v6mr10849232wrq.237.1534161149959;
-        Mon, 13 Aug 2018 04:52:29 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f132-v6sm11359495wme.24.2018.08.13.04.52.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Aug 2018 04:52:29 -0700 (PDT)
-Message-ID: <97a8213c1dd3a22b4f98c959d4a2c2bfbd432e9d.camel@baylibre.com>
+        Mon, 13 Aug 2018 10:39:36 -0400
+Received: from [10.18.19.215] (10.18.19.215) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 13 Aug
+ 2018 19:57:54 +0800
 Subject: Re: [PATCH v2 2/2] arm64: dts: meson-g12a: add initial g12a s905d2
  SoC DT support
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+To:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
         Yixun Lan <yixun.lan@amlogic.com>,
         Hanjie Lin <hanjie.lin@amlogic.com>,
         Qiufang Dai <qiufang.dai@amlogic.com>,
         Victor Wan <victor.wan@amlogic.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 13 Aug 2018 13:52:27 +0200
-In-Reply-To: <1534160901-22889-3-git-send-email-jianxin.pan@amlogic.com>
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
 References: <1534160901-22889-1-git-send-email-jianxin.pan@amlogic.com>
-         <1534160901-22889-3-git-send-email-jianxin.pan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+ <1534160901-22889-3-git-send-email-jianxin.pan@amlogic.com>
+ <97a8213c1dd3a22b4f98c959d4a2c2bfbd432e9d.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <5f35952e-38de-4c4f-0a3f-42ff0ffab46f@amlogic.com>
+Date:   Mon, 13 Aug 2018 19:57:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <97a8213c1dd3a22b4f98c959d4a2c2bfbd432e9d.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.19.215]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-13 at 19:48 +0800, Jianxin Pan wrote:
-> Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
-> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-> Timer, UART. It's capable of booting up into the serial console.
+On 8/13/2018 7:52 PM, Jerome Brunet wrote:
+> On Mon, 2018-08-13 at 19:48 +0800, Jianxin Pan wrote:
+>> Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
+>> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
+>> Timer, UART. It's capable of booting up into the serial console.
+>>
+>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>> ---
+>>  arch/arm64/boot/dts/amlogic/Makefile            |   1 +
+>>  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
+>>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 172 ++++++++++++++++++++++++
+>>  3 files changed, 195 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+>>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+>>
+>> +
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupts = <GIC_PPI 13
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 14
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 11
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 10
+>> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
+>> +	};
 > 
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> ---
->  arch/arm64/boot/dts/amlogic/Makefile            |   1 +
->  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 172 ++++++++++++++++++++++++
->  3 files changed, 195 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+> t* should be after s*
+OK, I will fix it. Thanks for your review
 > 
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-
-t* should be after s*
-
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
+>> +
+>> +	soc {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+> 
+> .
+> 
 
