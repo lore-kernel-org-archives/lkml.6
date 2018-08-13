@@ -2,110 +2,288 @@ Return-Path: <SRS0=852P=K4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E9FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23929C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAF002175D
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:47:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF002175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id CCF742189A
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 15:48:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF742189A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbeHMS3j (ORCPT
+        id S1729741AbeHMSbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 14:29:39 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52093 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728639AbeHMS3i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 14:29:38 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y2-v6so9363121wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 08:46:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=u8/RQnqvKaB52sUTxj99rxlBwtcgMKNF8ab+i1Lq2fw=;
-        b=XOvKYFtmpMEZ1nlWVCOuViV3JQWoFZNMZ6CR5UN4qcT7gxTJTWD6LalKj5IzA1O6+6
-         2MV5p5wG/RIzchOoAX7GjRBHzj5hMq1bZRzhukM+ezRDwJ3pbnCANDCIlUa+m5DqrZeG
-         YvOYnQeTeRq+d9yD9tTiPdTCMDWOlSgj9p4WeRlJwvLp8dFSOmTnVjUilNhDk451ZeR/
-         q/ZbUGo+up0vwni1rXZoA2vp0YwnySGnW24qKvHFKg2jOT518tsnNKAnDZuKpJCY0XLq
-         U5lf/b61LIV9IsaW/qSRROnTnVbViRxcjtBjV0Lods/LmNM+fWAjDyqVrsyVDUri3ZIK
-         UoOg==
-X-Gm-Message-State: AOUpUlGcH1eLhlJaWFEiPgfGZ6AU1XdrQsEjwKRQSE5UW9ePah+7zkgQ
-        lLth/JQ6kVuyJNsqDY/019g=
-X-Google-Smtp-Source: AA+uWPzOfyAJfKFcSVM7PWZ/919D7tsBXQmsa0ftfxohKtspqdwbjunV/BfCEzSQ8FqdwsCbsTcS9g==
-X-Received: by 2002:a1c:64c:: with SMTP id 73-v6mr7992915wmg.7.1534175210325;
-        Mon, 13 Aug 2018 08:46:50 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id t186-v6sm11773743wmf.14.2018.08.13.08.46.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 08:46:49 -0700 (PDT)
-Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 56CFB12485D;
-        Mon, 13 Aug 2018 17:46:48 +0200 (CEST)
-From:   osalvador@techadventures.net
-To:     akpm@linux-foundation.org
-Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
-        rafael@kernel.org, david@redhat.com, yasu.isimatu@gmail.com,
-        logang@deltatee.com, dave.jiang@intel.com,
-        Jonathan.Cameron@huawei.com, vbabka@suse.cz, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 1/3] mm/memory-hotplug: Drop unused args from remove_memory_section
-Date:   Mon, 13 Aug 2018 17:46:37 +0200
-Message-Id: <20180813154639.19454-2-osalvador@techadventures.net>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180813154639.19454-1-osalvador@techadventures.net>
-References: <20180813154639.19454-1-osalvador@techadventures.net>
+        Mon, 13 Aug 2018 14:31:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728661AbeHMSbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 14:31:11 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 65B0A40216E6;
+        Mon, 13 Aug 2018 15:48:23 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.217])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF6682142F20;
+        Mon, 13 Aug 2018 15:48:21 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [RFC] perf/x86/intel: Export mem events only if there's PEBs support
+Date:   Mon, 13 Aug 2018 17:48:20 +0200
+Message-Id: <20180813154820.16991-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 15:48:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 13 Aug 2018 15:48:23 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Salvador <osalvador@suse.de>
+hi,
+we had some reports that we show mem* events on KVM servers
+where they are not available, this patch hides them if there's
+no PEBs available
 
-unregister_memory_section() calls remove_memory_section()
-with three arguments:
+currently on those servers we fail to open mem* events,
+because we can't access LDLAT msr
 
-* node_id
-* section
-* phys_device
+however that's not so easy/straight forward to check,
+so I thought we could use check on PEBs instead, which
+needs to be there for mem events as well and seems to
+be enough to check
 
-Neither node_id nor phys_device are used.
-Let us drop them from the function.
+thoughts? thanks,
+jirka
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
+
 ---
- drivers/base/memory.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Memory events depends on PEBs support and access to LDLAT msr,
+but we display them in /sys/devices/cpu/events even if the cpu
+does not provide those, like for KVM guests.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index c8a1cb0b6136..2c622a9a7490 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -752,8 +752,7 @@ unregister_memory(struct memory_block *memory)
- 	device_unregister(&memory->dev);
- }
+That brings the false assumption that those events should
+be available, while they fail event to open.
+
+Separating the mem-* events attributes and merging them
+with cpu_events only if there's PEBs support detected.
+
+We could also check if LDLAT msr is available, but the
+PEBs check seems to cover the need now.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ arch/x86/events/core.c       |  8 +++---
+ arch/x86/events/intel/core.c | 54 ++++++++++++++++++++++++++----------
+ 2 files changed, 44 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 5f4829f10129..1a17004f6559 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1631,9 +1631,9 @@ __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
+ 	struct attribute **new;
+ 	int j, i;
  
--static int remove_memory_section(unsigned long node_id,
--			       struct mem_section *section, int phys_device)
-+static int remove_memory_section(struct mem_section *section)
+-	for (j = 0; a[j]; j++)
++	for (j = 0; a && a[j]; j++)
+ 		;
+-	for (i = 0; b[i]; i++)
++	for (i = 0; b && b[i]; i++)
+ 		j++;
+ 	j++;
+ 
+@@ -1642,9 +1642,9 @@ __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
+ 		return NULL;
+ 
+ 	j = 0;
+-	for (i = 0; a[i]; i++)
++	for (i = 0; a && a[i]; i++)
+ 		new[j++] = a[i];
+-	for (i = 0; b[i]; i++)
++	for (i = 0; b && b[i]; i++)
+ 		new[j++] = b[i];
+ 	new[j] = NULL;
+ 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 035c37481f57..04d077177e3c 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -242,7 +242,7 @@ EVENT_ATTR_STR(mem-loads,	mem_ld_nhm,	"event=0x0b,umask=0x10,ldlat=3");
+ EVENT_ATTR_STR(mem-loads,	mem_ld_snb,	"event=0xcd,umask=0x1,ldlat=3");
+ EVENT_ATTR_STR(mem-stores,	mem_st_snb,	"event=0xcd,umask=0x2");
+ 
+-static struct attribute *nhm_events_attrs[] = {
++static struct attribute *nhm_mem_events_attrs[] = {
+ 	EVENT_PTR(mem_ld_nhm),
+ 	NULL,
+ };
+@@ -278,8 +278,6 @@ EVENT_ATTR_STR_HT(topdown-recovery-bubbles.scale, td_recovery_bubbles_scale,
+ 	"4", "2");
+ 
+ static struct attribute *snb_events_attrs[] = {
+-	EVENT_PTR(mem_ld_snb),
+-	EVENT_PTR(mem_st_snb),
+ 	EVENT_PTR(td_slots_issued),
+ 	EVENT_PTR(td_slots_retired),
+ 	EVENT_PTR(td_fetch_bubbles),
+@@ -290,6 +288,12 @@ static struct attribute *snb_events_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute *snb_mem_events_attrs[] = {
++	EVENT_PTR(mem_ld_snb),
++	EVENT_PTR(mem_st_snb),
++	NULL,
++};
++
+ static struct event_constraint intel_hsw_event_constraints[] = {
+ 	FIXED_EVENT_CONSTRAINT(0x00c0, 0), /* INST_RETIRED.ANY */
+ 	FIXED_EVENT_CONSTRAINT(0x003c, 1), /* CPU_CLK_UNHALTED.CORE */
+@@ -3764,8 +3768,6 @@ EVENT_ATTR_STR(cycles-t,	cycles_t,	"event=0x3c,in_tx=1");
+ EVENT_ATTR_STR(cycles-ct,	cycles_ct,	"event=0x3c,in_tx=1,in_tx_cp=1");
+ 
+ static struct attribute *hsw_events_attrs[] = {
+-	EVENT_PTR(mem_ld_hsw),
+-	EVENT_PTR(mem_st_hsw),
+ 	EVENT_PTR(td_slots_issued),
+ 	EVENT_PTR(td_slots_retired),
+ 	EVENT_PTR(td_fetch_bubbles),
+@@ -3776,6 +3778,12 @@ static struct attribute *hsw_events_attrs[] = {
+ 	NULL
+ };
+ 
++static struct attribute *hsw_mem_events_attrs[] = {
++	EVENT_PTR(mem_ld_hsw),
++	EVENT_PTR(mem_st_hsw),
++	NULL,
++};
++
+ static struct attribute *hsw_tsx_events_attrs[] = {
+ 	EVENT_PTR(tx_start),
+ 	EVENT_PTR(tx_commit),
+@@ -3792,11 +3800,13 @@ static struct attribute *hsw_tsx_events_attrs[] = {
+ 	NULL
+ };
+ 
+-static __init struct attribute **get_hsw_events_attrs(void)
++static __init struct attribute **get_hsw_events_attrs(bool *alloc)
  {
- 	struct memory_block *mem;
- 
-@@ -785,7 +784,7 @@ int unregister_memory_section(struct mem_section *section)
- 	if (!present_section(section))
- 		return -EINVAL;
- 
--	return remove_memory_section(0, section, 0);
-+	return remove_memory_section(section);
+-	return boot_cpu_has(X86_FEATURE_RTM) ?
+-		merge_attr(hsw_events_attrs, hsw_tsx_events_attrs) :
+-		hsw_events_attrs;
++	if (boot_cpu_has(X86_FEATURE_RTM)) {
++		*alloc = true;
++		return merge_attr(hsw_events_attrs, hsw_tsx_events_attrs);
++	}
++	return hsw_events_attrs;
  }
- #endif /* CONFIG_MEMORY_HOTREMOVE */
  
+ static ssize_t freeze_on_smi_show(struct device *cdev,
+@@ -3878,7 +3888,9 @@ static struct attribute *intel_pmu_attrs[] = {
+ __init int intel_pmu_init(void)
+ {
+ 	struct attribute **extra_attr = NULL;
++	struct attribute **mem_attr = NULL;
+ 	struct attribute **to_free = NULL;
++	bool alloc_events = false;
+ 	union cpuid10_edx edx;
+ 	union cpuid10_eax eax;
+ 	union cpuid10_ebx ebx;
+@@ -3986,7 +3998,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.enable_all = intel_pmu_nhm_enable_all;
+ 		x86_pmu.extra_regs = intel_nehalem_extra_regs;
+ 
+-		x86_pmu.cpu_events = nhm_events_attrs;
++		mem_attr = nhm_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.STALLED_CYCLES */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4112,7 +4124,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.extra_regs = intel_westmere_extra_regs;
+ 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
+ 
+-		x86_pmu.cpu_events = nhm_events_attrs;
++		mem_attr = nhm_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.STALLED_CYCLES */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4152,6 +4164,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
+ 
+ 		x86_pmu.cpu_events = snb_events_attrs;
++		mem_attr = snb_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4192,6 +4205,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
+ 
+ 		x86_pmu.cpu_events = snb_events_attrs;
++		mem_attr = snb_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4226,10 +4240,11 @@ __init int intel_pmu_init(void)
+ 
+ 		x86_pmu.hw_config = hsw_hw_config;
+ 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
+-		x86_pmu.cpu_events = get_hsw_events_attrs();
++		x86_pmu.cpu_events = get_hsw_events_attrs(&alloc_events);
+ 		x86_pmu.lbr_double_abort = true;
+ 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
+ 			hsw_format_attr : nhm_format_attr;
++		mem_attr = hsw_mem_events_attrs;
+ 		pr_cont("Haswell events, ");
+ 		name = "haswell";
+ 		break;
+@@ -4265,10 +4280,11 @@ __init int intel_pmu_init(void)
+ 
+ 		x86_pmu.hw_config = hsw_hw_config;
+ 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
+-		x86_pmu.cpu_events = get_hsw_events_attrs();
++		x86_pmu.cpu_events = get_hsw_events_attrs(&alloc_events);
+ 		x86_pmu.limit_period = bdw_limit_period;
+ 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
+ 			hsw_format_attr : nhm_format_attr;
++		mem_attr = hsw_mem_events_attrs;
+ 		pr_cont("Broadwell events, ");
+ 		name = "broadwell";
+ 		break;
+@@ -4324,7 +4340,8 @@ __init int intel_pmu_init(void)
+ 			hsw_format_attr : nhm_format_attr;
+ 		extra_attr = merge_attr(extra_attr, skl_format_attr);
+ 		to_free = extra_attr;
+-		x86_pmu.cpu_events = get_hsw_events_attrs();
++		x86_pmu.cpu_events = get_hsw_events_attrs(&alloc_events);
++		mem_attr = hsw_mem_events_attrs;
+ 		intel_pmu_pebs_data_source_skl(
+ 			boot_cpu_data.x86_model == INTEL_FAM6_SKYLAKE_X);
+ 		pr_cont("Skylake events, ");
+@@ -4357,6 +4374,15 @@ __init int intel_pmu_init(void)
+ 		WARN_ON(!x86_pmu.format_attrs);
+ 	}
+ 
++	if (x86_pmu.pebs && mem_attr) {
++		struct attribute **attr = x86_pmu.cpu_events;
++
++		x86_pmu.cpu_events = merge_attr(x86_pmu.cpu_events, mem_attr);
++
++		if (alloc_events)
++			kfree(attr);
++	}
++
+ 	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
+ 		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
+ 		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
 -- 
-2.13.6
+2.17.1
 
