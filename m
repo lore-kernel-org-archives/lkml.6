@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1223C46464
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C57C46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A865421470
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A865421470
+	by mail.kernel.org (Postfix) with ESMTP id E0DFA21470
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0DFA21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbeHNAdd (ORCPT
+        id S1731875AbeHNAdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:33:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60624 "EHLO
+        Mon, 13 Aug 2018 20:33:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59598 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731732AbeHNAdX (ORCPT
+        by vger.kernel.org with ESMTP id S1731223AbeHNAdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:33:23 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLn5qL021942
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:49:17 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kufpy5ppf-1
+        Mon, 13 Aug 2018 20:33:38 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLn7E9081885
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:49:09 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kuekh0esx-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:49:17 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:49:08 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Mon, 13 Aug 2018 17:49:16 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 13 Aug 2018 17:49:02 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Aug 2018 17:49:12 -0400
+        Mon, 13 Aug 2018 17:48:58 -0400
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLnAtb9437500
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLmuL352494380
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Aug 2018 21:49:10 GMT
+        Mon, 13 Aug 2018 21:48:56 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73EB3124053;
-        Mon, 13 Aug 2018 18:50:08 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 4C619124053;
+        Mon, 13 Aug 2018 18:49:55 -0400 (EDT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E79C124052;
-        Mon, 13 Aug 2018 18:50:07 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 36CBF124054;
+        Mon, 13 Aug 2018 18:49:54 -0400 (EDT)
 Received: from localhost.localdomain (unknown [9.85.141.105])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon, 13 Aug 2018 18:50:07 -0400 (EDT)
+        Mon, 13 Aug 2018 18:49:54 -0400 (EDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -65,20 +65,20 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
         Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v9 21/22] KVM: s390: CPU model support for AP virtualization
-Date:   Mon, 13 Aug 2018 17:48:18 -0400
+Subject: [PATCH v9 15/22] s390: vfio-ap: implement mediated device open callback
+Date:   Mon, 13 Aug 2018 17:48:12 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18081321-2213-0000-0000-000002DA6316
+x-cbid: 18081321-0040-0000-0000-0000045E55BF
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009538; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01073087; UDB=6.00552883; IPR=6.00853043;
- MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:49:14
+ PH=3.00000004; SC=3.00000266; SDB=6.01073087; UDB=6.00552882; IPR=6.00853043;
+ MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:49:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081321-2214-0000-0000-00005B30D1E0
-Message-Id: <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18081321-0041-0000-0000-000008655D8D
+Message-Id: <1534196899-16987-16-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -93,83 +93,292 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-Introduces a new CPU model feature and two CPU model
-facilities to support AP virtualization for KVM guests.
-
-CPU model feature:
-
-The KVM_S390_VM_CPU_FEAT_AP feature indicates that
-AP instructions are available on the guest. This
-feature will be enabled by the kernel only if the AP
-instructions are installed on the linux host. This feature
-must be specifically turned on for the KVM guest from
-userspace to use the VFIO AP device driver for guest
-access to AP devices.
-
-CPU model facilities:
-
-1. AP Query Configuration Information (QCI) facility is installed.
-
-   This is indicated by setting facilities bit 12 for
-   the guest. The kernel will not enable this facility
-   for the guest if it is not set on the host.
-
-   If this facility is not set for the KVM guest, then only
-   APQNs with an APQI less than 16 will be used by a Linux
-   guest regardless of the matrix configuration for the virtual
-   machine. This is a limitation of the Linux AP bus.
-
-2. AP Facilities Test facility (APFT) is installed.
-
-   This is indicated by setting facilities bit 15 for
-   the guest. The kernel will not enable this facility for
-   the guest if it is not set on the host.
-
-   If this facility is not set for the KVM guest, then no
-   AP devices will be available to the guest regardless of
-   the guest's matrix configuration for the virtual
-   machine. This is a limitation of the Linux AP bus.
+Implements the open callback on the mediated matrix device.
+The function registers a group notifier to receive notification
+of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
+the vfio_ap device driver will get access to the guest's
+kvm structure. The open callback must ensure that only one
+mediated device shall be opened per guest.
 
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
 Tested-by: Michael Mueller <mimu@linux.ibm.com>
 Tested-by: Farhan Ali <alifm@linux.ibm.com>
+Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+Acked-by: Pierre Morel <pmorel@linux.ibm.com>
 Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- arch/s390/kvm/kvm-s390.c         |    5 +++++
- arch/s390/tools/gen_facilities.c |    2 ++
- 2 files changed, 7 insertions(+), 0 deletions(-)
+ drivers/s390/crypto/vfio_ap_ops.c     |  174 ++++++++++++++++++++++++++++++++-
+ drivers/s390/crypto/vfio_ap_private.h |    2 +
+ 2 files changed, 175 insertions(+), 1 deletions(-)
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 1e8cb67..d5e04d2 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
+diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+index af3b55f..280bd17 100644
+--- a/drivers/s390/crypto/vfio_ap_ops.c
++++ b/drivers/s390/crypto/vfio_ap_ops.c
+@@ -13,6 +13,10 @@
+ #include <linux/device.h>
+ #include <linux/list.h>
+ #include <linux/ctype.h>
++#include <linux/bitops.h>
++#include <linux/kvm_host.h>
++#include <linux/module.h>
++#include <asm/kvm.h>
  
- 	if (MACHINE_HAS_ESOP)
- 		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
-+
-+	/* Check if AP instructions installed on host */
-+	if (ap_instructions_available())
-+		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
-+
- 	/*
- 	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
- 	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
-diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
-index 90a8c9e..a52290b 100644
---- a/arch/s390/tools/gen_facilities.c
-+++ b/arch/s390/tools/gen_facilities.c
-@@ -106,6 +106,8 @@ struct facility_def {
+ #include "vfio_ap_private.h"
  
- 		.name = "FACILITIES_KVM_CPUMODEL",
- 		.bits = (int[]){
-+			12, /* AP Query Configuration Information */
-+			15, /* AP Facilities Test */
- 			-1  /* END */
- 		}
- 	},
+@@ -55,6 +59,9 @@ static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+ {
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	mutex_lock(&matrix_dev.lock);
+ 	list_del(&matrix_mdev->list);
+ 	mutex_unlock(&matrix_dev.lock);
+@@ -291,6 +298,10 @@ static ssize_t assign_adapter_store(struct device *dev,
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 	unsigned long max_apid = matrix_mdev->matrix.apm_max;
+ 
++	/* If the guest is running, disallow assignment of adapter */
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	ret = kstrtoul(buf, 0, &apid);
+ 	if (ret)
+ 		return ret;
+@@ -348,6 +359,10 @@ static ssize_t unassign_adapter_store(struct device *dev,
+ 	struct mdev_device *mdev = mdev_from_dev(dev);
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 
++	/* If the guest is running, disallow un-assignment of adapter */
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	ret = kstrtoul(buf, 0, &apid);
+ 	if (ret)
+ 		return ret;
+@@ -393,6 +408,10 @@ static ssize_t assign_domain_store(struct device *dev,
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 	unsigned long max_apqi = matrix_mdev->matrix.aqm_max;
+ 
++	/* If the guest is running, disallow assignment of domain */
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	ret = kstrtoul(buf, 0, &apqi);
+ 	if (ret)
+ 		return ret;
+@@ -432,6 +451,10 @@ static ssize_t unassign_domain_store(struct device *dev,
+ 	struct mdev_device *mdev = mdev_from_dev(dev);
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 
++	/* If the guest is running, disallow un-assignment of domain */
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	ret = kstrtoul(buf, 0, &apqi);
+ 	if (ret)
+ 		return ret;
+@@ -470,6 +493,10 @@ static ssize_t assign_control_domain_store(struct device *dev,
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 	unsigned long maxid = matrix_mdev->matrix.adm_max;
+ 
++	/* If the guest is running, disallow assignment of control domain */
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	ret = kstrtoul(buf, 0, &id);
+ 	if (ret)
+ 		return ret;
+@@ -514,6 +541,10 @@ static ssize_t unassign_control_domain_store(struct device *dev,
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 	unsigned long max_domid =  matrix_mdev->matrix.adm_max;
+ 
++	/* If the guest is running, disallow un-assignment of control domain */
++	if (matrix_mdev->kvm)
++		return -EBUSY;
++
+ 	ret = kstrtoul(buf, 0, &domid);
+ 	if (ret)
+ 		return ret;
+@@ -602,7 +633,6 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+ }
+ DEVICE_ATTR_RO(matrix);
+ 
+-
+ static struct attribute *vfio_ap_mdev_attrs[] = {
+ 	&dev_attr_assign_adapter.attr,
+ 	&dev_attr_unassign_adapter.attr,
+@@ -624,12 +654,154 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+ 	NULL
+ };
+ 
++/**
++ * Verify that the AP instructions are available on the guest. This is indicated
++ * via the  KVM_S390_VM_CPU_FEAT_AP CPU model feature.
++ */
++static int kvm_ap_validate_crypto_setup(struct kvm *kvm)
++{
++	if (test_bit_inv(KVM_S390_VM_CPU_FEAT_AP, kvm->arch.cpu_feat))
++		return 0;
++
++	return -EOPNOTSUPP;
++}
++
++static void kvm_ap_merge_bitmasks(unsigned long *dst, unsigned long *mask1,
++				  unsigned long *mask2, unsigned long nbits)
++{
++	int i;
++
++	for (i = 0; i < BITS_TO_LONGS(nbits); i++)
++		dst[i] = mask1[i] | mask2[i];
++}
++
++static void vfio_ap_mdev_copy_masks(struct ap_matrix_mdev *matrix_mdev)
++{
++	int nbytes;
++	unsigned long *apm, *aqm, *adm;
++	struct kvm_s390_crypto_cb *crycb = matrix_mdev->kvm->arch.crypto.crycb;
++
++	switch (matrix_mdev->kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK) {
++	case CRYCB_FORMAT2:
++		apm = (unsigned long *)crycb->apcb1.apm;
++		aqm = (unsigned long *)crycb->apcb1.aqm;
++		adm = (unsigned long *)crycb->apcb1.adm;
++		break;
++	case CRYCB_FORMAT1:
++	case CRYCB_FORMAT0:
++	default:
++		apm = (unsigned long *)crycb->apcb0.apm;
++		aqm = (unsigned long *)crycb->apcb0.aqm;
++		adm = (unsigned long *)crycb->apcb0.adm;
++		break;
++	}
++
++	nbytes = DIV_ROUND_UP(matrix_mdev->matrix.apm_max + 1, BITS_PER_BYTE);
++	memcpy(apm, matrix_mdev->matrix.apm, nbytes);
++	nbytes = DIV_ROUND_UP(matrix_mdev->matrix.aqm_max + 1, BITS_PER_BYTE);
++	memcpy(aqm, matrix_mdev->matrix.aqm, nbytes);
++	kvm_ap_merge_bitmasks(adm, aqm, adm, matrix_mdev->matrix.adm_max + 1);
++}
++
++/**
++ * vfio_ap_mdev_open_once
++ *
++ * @matrix_mdev: a mediated matrix device
++ *
++ * Return 0 if no other mediated matrix device has been opened for the
++ * KVM guest assigned to @matrix_mdev; otherwise, returns an error.
++ */
++static int vfio_ap_mdev_open_once(struct ap_matrix_mdev *matrix_mdev,
++				  struct kvm *kvm)
++{
++	struct ap_matrix_mdev *m;
++
++	mutex_lock(&matrix_dev.lock);
++
++	list_for_each_entry(m, &matrix_dev.mdev_list, list) {
++		if ((m != matrix_mdev) && (m->kvm == matrix_mdev->kvm)) {
++			mutex_unlock(&matrix_dev.lock);
++			return -EPERM;
++		}
++	}
++
++	mutex_unlock(&matrix_dev.lock);
++
++	return 0;
++}
++
++static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
++				       unsigned long action, void *data)
++{
++	int ret;
++	struct ap_matrix_mdev *matrix_mdev;
++
++	if (action != VFIO_GROUP_NOTIFY_SET_KVM)
++		return NOTIFY_OK;
++
++	matrix_mdev = container_of(nb, struct ap_matrix_mdev, group_notifier);
++
++	matrix_mdev->kvm = data;
++	if (data == NULL)
++		return NOTIFY_OK;
++
++	ret = vfio_ap_mdev_open_once(matrix_mdev, data);
++	if (ret)
++		return ret;
++
++	ret = kvm_ap_validate_crypto_setup(matrix_mdev->kvm);
++	if (ret)
++		return ret;
++
++	vfio_ap_mdev_copy_masks(matrix_mdev);
++
++	return NOTIFY_OK;
++}
++
++static int vfio_ap_mdev_open(struct mdev_device *mdev)
++{
++	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
++	unsigned long events;
++	int ret;
++
++
++	if (!try_module_get(THIS_MODULE))
++		return -ENODEV;
++
++	matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
++	events = VFIO_GROUP_NOTIFY_SET_KVM;
++
++	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
++				     &events, &matrix_mdev->group_notifier);
++	if (ret) {
++		module_put(THIS_MODULE);
++		return ret;
++	}
++
++	return 0;
++}
++
++static void vfio_ap_mdev_release(struct mdev_device *mdev)
++{
++	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
++
++	if (matrix_mdev->kvm)
++		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
++
++	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
++				 &matrix_mdev->group_notifier);
++	matrix_mdev->kvm = NULL;
++	module_put(THIS_MODULE);
++}
++
+ static const struct mdev_parent_ops vfio_ap_matrix_ops = {
+ 	.owner			= THIS_MODULE,
+ 	.supported_type_groups	= vfio_ap_mdev_type_groups,
+ 	.mdev_attr_groups	= vfio_ap_mdev_attr_groups,
+ 	.create			= vfio_ap_mdev_create,
+ 	.remove			= vfio_ap_mdev_remove,
++	.open			= vfio_ap_mdev_open,
++	.release		= vfio_ap_mdev_release,
+ };
+ 
+ int vfio_ap_mdev_register(void)
+diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+index aa0d195..3e8534b 100644
+--- a/drivers/s390/crypto/vfio_ap_private.h
++++ b/drivers/s390/crypto/vfio_ap_private.h
+@@ -67,6 +67,8 @@ struct ap_matrix_mdev {
+ 	const char *name;
+ 	struct list_head list;
+ 	struct ap_matrix matrix;
++	struct notifier_block group_notifier;
++	struct kvm *kvm;
+ };
+ 
+ extern int vfio_ap_mdev_register(void);
 -- 
 1.7.1
 
