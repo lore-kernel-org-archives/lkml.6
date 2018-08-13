@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA5FC46470
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F6FC46464
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A5A921470
-	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A5A921470
+	by mail.kernel.org (Postfix) with ESMTP id 53C33214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 13 Aug 2018 21:51:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C33214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731814AbeHNAfW (ORCPT
+        id S1731029AbeHNAci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 20:35:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54072 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731074AbeHNAcn (ORCPT
+        Mon, 13 Aug 2018 20:32:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60510 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730602AbeHNAci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 20:32:43 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLcgnm132357
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:38 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kuhm9h6hc-1
+        Mon, 13 Aug 2018 20:32:38 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7DLcm3F124334
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:34 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kue4uh9j3-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:38 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:33 -0400
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Mon, 13 Aug 2018 17:48:37 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 13 Aug 2018 17:48:32 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Aug 2018 17:48:35 -0400
+        Mon, 13 Aug 2018 17:48:28 -0400
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLmW2k10617314
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7DLmQT85767594
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Aug 2018 21:48:32 GMT
+        Mon, 13 Aug 2018 21:48:26 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46A9B124054;
-        Mon, 13 Aug 2018 18:49:31 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id A4354124055;
+        Mon, 13 Aug 2018 18:49:24 -0400 (EDT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D90C124052;
-        Mon, 13 Aug 2018 18:49:30 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 8EC77124053;
+        Mon, 13 Aug 2018 18:49:23 -0400 (EDT)
 Received: from localhost.localdomain (unknown [9.85.141.105])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon, 13 Aug 2018 18:49:30 -0400 (EDT)
+        Mon, 13 Aug 2018 18:49:23 -0400 (EDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -65,26 +65,26 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
         Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v9 04/22] s390/zcrypt: Integrate ap_asm.h into include/asm/ap.h.
-Date:   Mon, 13 Aug 2018 17:48:01 -0400
+Subject: [PATCH v9 01/22] s390/zcrypt: Add ZAPQ inline function.
+Date:   Mon, 13 Aug 2018 17:47:58 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18081321-0064-0000-0000-0000033A58F2
+x-cbid: 18081321-0040-0000-0000-0000045E55B3
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009538; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01073087; UDB=6.00552882; IPR=6.00853043;
- MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:48:37
+ MB=3.00022698; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-13 21:48:30
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081321-0065-0000-0000-00003A4A215E
-Message-Id: <1534196899-16987-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18081321-0041-0000-0000-000008655D84
+Message-Id: <1534196899-16987-2-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-13_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=848 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808130218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -93,113 +93,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Harald Freudenberger <freude@de.ibm.com>
 
-Move all the inline functions from the ap bus header
-file ap_asm.h into the in-kernel api header file
-arch/s390/include/asm/ap.h so that KVM can make use
-of all the low level AP functions.
+Added new inline function ap_pqap_zapq()
+which is a C inline function wrapper for
+the AP PQAP(ZAPQ) instruction.
 
 Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
 Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
 ---
- arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
- drivers/s390/crypto/ap_bus.c   |   23 +---
- drivers/s390/crypto/ap_bus.h   |    1 +
- drivers/s390/crypto/ap_card.c  |    1 -
- drivers/s390/crypto/ap_queue.c |    1 -
- 5 files changed, 260 insertions(+), 50 deletions(-)
+ drivers/s390/crypto/ap_asm.h |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-index c1bedb4..887494a 100644
---- a/arch/s390/include/asm/ap.h
-+++ b/arch/s390/include/asm/ap.h
-@@ -47,6 +47,50 @@ struct ap_queue_status {
- };
+diff --git a/drivers/s390/crypto/ap_asm.h b/drivers/s390/crypto/ap_asm.h
+index 16b59ce..b22d30a 100644
+--- a/drivers/s390/crypto/ap_asm.h
++++ b/drivers/s390/crypto/ap_asm.h
+@@ -70,6 +70,25 @@ static inline struct ap_queue_status ap_rapq(ap_qid_t qid)
+ }
  
  /**
-+ * ap_intructions_available() - Test if AP instructions are available.
-+ *
-+ * Returns 1 if the AP instructions are installed, otherwise 0.
-+ */
-+static inline int ap_instructions_available(void)
-+{
-+	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
-+	register unsigned long reg1 asm ("1") = 0;
-+	register unsigned long reg2 asm ("2") = 0;
-+
-+	asm volatile(
-+		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
-+		"0: la    %0,1\n"
-+		"1:\n"
-+		EX_TABLE(0b, 1b)
-+		: "+d" (reg1), "+d" (reg2)
-+		: "d" (reg0)
-+		: "cc");
-+	return reg1;
-+}
-+
-+/**
-+ * ap_tapq(): Test adjunct processor queue.
-+ * @qid: The AP queue number
-+ * @info: Pointer to queue descriptor
-+ *
-+ * Returns AP queue status structure.
-+ */
-+static inline struct ap_queue_status ap_tapq(ap_qid_t qid, unsigned long *info)
-+{
-+	register unsigned long reg0 asm ("0") = qid;
-+	register struct ap_queue_status reg1 asm ("1");
-+	register unsigned long reg2 asm ("2");
-+
-+	asm volatile(".long 0xb2af0000"		/* PQAP(TAPQ) */
-+		     : "=d" (reg1), "=d" (reg2)
-+		     : "d" (reg0)
-+		     : "cc");
-+	if (info)
-+		*info = reg2;
-+	return reg1;
-+}
-+
-+/**
-  * ap_test_queue(): Test adjunct processor queue.
-  * @qid: The AP queue number
-  * @tbit: Test facilities bit
-@@ -54,10 +98,57 @@ struct ap_queue_status {
-  *
-  * Returns AP queue status structure.
-  */
--struct ap_queue_status ap_test_queue(ap_qid_t qid,
--				     int tbit,
--				     unsigned long *info);
-+static inline struct ap_queue_status ap_test_queue(ap_qid_t qid,
-+						   int tbit,
-+						   unsigned long *info)
-+{
-+	if (tbit)
-+		qid |= 1UL << 23; /* set T bit*/
-+	return ap_tapq(qid, info);
-+}
- 
-+/**
-+ * ap_pqap_rapq(): Reset adjunct processor queue.
-+ * @qid: The AP queue number
-+ *
-+ * Returns AP queue status structure.
-+ */
-+static inline struct ap_queue_status ap_rapq(ap_qid_t qid)
-+{
-+	register unsigned long reg0 asm ("0") = qid | (1UL << 24);
-+	register struct ap_queue_status reg1 asm ("1");
-+
-+	asm volatile(
-+		".long 0xb2af0000"		/* PQAP(RAPQ) */
-+		: "=d" (reg1)
-+		: "d" (reg0)
-+		: "cc");
-+	return reg1;
-+}
-+
-+/**
 + * ap_pqap_zapq(): Reset and zeroize adjunct processor queue.
 + * @qid: The AP queue number
 + *
@@ -219,317 +131,9 @@ index c1bedb4..887494a 100644
 +}
 +
 +/**
-+ * struct ap_config_info - convenience struct for AP crypto
-+ * config info as returned by the ap_qci() function.
-+ */
- struct ap_config_info {
- 	unsigned int apsc	 : 1;	/* S bit */
- 	unsigned int apxa	 : 1;	/* N bit */
-@@ -74,50 +165,189 @@ struct ap_config_info {
- 	unsigned char _reserved4[16];
- } __aligned(8);
- 
--/*
-- * ap_query_configuration(): Fetch cryptographic config info
-+/**
-+ * ap_qci(): Get AP configuration data
-  *
-- * Returns the ap configuration info fetched via PQAP(QCI).
-- * On success 0 is returned, on failure a negative errno
-- * is returned, e.g. if the PQAP(QCI) instruction is not
-- * available, the return value will be -EOPNOTSUPP.
-+ * Returns 0 on success, or -EOPNOTSUPP.
-  */
--int ap_query_configuration(struct ap_config_info *info);
-+static inline int ap_qci(struct ap_config_info *config)
-+{
-+	register unsigned long reg0 asm ("0") = 4UL << 24;
-+	register unsigned long reg1 asm ("1") = -EOPNOTSUPP;
-+	register struct ap_config_info *reg2 asm ("2") = config;
-+
-+	asm volatile(
-+		".long 0xb2af0000\n"		/* PQAP(QCI) */
-+		"0: la    %0,0\n"
-+		"1:\n"
-+		EX_TABLE(0b, 1b)
-+		: "+d" (reg1)
-+		: "d" (reg0), "d" (reg2)
-+		: "cc", "memory");
-+
-+	return reg1;
-+}
- 
- /*
-  * struct ap_qirq_ctrl - convenient struct for easy invocation
-- * of the ap_queue_irq_ctrl() function. This struct is passed
-- * as GR1 parameter to the PQAP(AQIC) instruction. For details
-- * please see the AR documentation.
-+ * of the ap_aqic() function. This struct is passed as GR1
-+ * parameter to the PQAP(AQIC) instruction. For details please
-+ * see the AR documentation.
-  */
- struct ap_qirq_ctrl {
- 	unsigned int _res1 : 8;
--	unsigned int zone  : 8;  /* zone info */
--	unsigned int ir    : 1;  /* ir flag: enable (1) or disable (0) irq */
-+	unsigned int zone  : 8;	/* zone info */
-+	unsigned int ir    : 1;	/* ir flag: enable (1) or disable (0) irq */
- 	unsigned int _res2 : 4;
--	unsigned int gisc  : 3;  /* guest isc field */
-+	unsigned int gisc  : 3;	/* guest isc field */
- 	unsigned int _res3 : 6;
--	unsigned int gf    : 2;  /* gisa format */
-+	unsigned int gf    : 2;	/* gisa format */
- 	unsigned int _res4 : 1;
--	unsigned int gisa  : 27; /* gisa origin */
-+	unsigned int gisa  : 27;	/* gisa origin */
- 	unsigned int _res5 : 1;
--	unsigned int isc   : 3;  /* irq sub class */
-+	unsigned int isc   : 3;	/* irq sub class */
- };
- 
- /**
-- * ap_queue_irq_ctrl(): Control interruption on a AP queue.
-+ * ap_aqic(): Control interruption for a specific AP.
+  * ap_aqic(): Control interruption for a specific AP.
   * @qid: The AP queue number
-- * @qirqctrl: struct ap_qirq_ctrl, see above
-+ * @qirqctrl: struct ap_qirq_ctrl (64 bit value)
-  * @ind: The notification indicator byte
-  *
-  * Returns AP queue status.
-+ */
-+static inline struct ap_queue_status ap_aqic(ap_qid_t qid,
-+					     struct ap_qirq_ctrl qirqctrl,
-+					     void *ind)
-+{
-+	register unsigned long reg0 asm ("0") = qid | (3UL << 24);
-+	register struct ap_qirq_ctrl reg1_in asm ("1") = qirqctrl;
-+	register struct ap_queue_status reg1_out asm ("1");
-+	register void *reg2 asm ("2") = ind;
-+
-+	asm volatile(
-+		".long 0xb2af0000"		/* PQAP(AQIC) */
-+		: "=d" (reg1_out)
-+		: "d" (reg0), "d" (reg1_in), "d" (reg2)
-+		: "cc");
-+	return reg1_out;
-+}
-+
-+/*
-+ * union ap_qact_ap_info - used together with the
-+ * ap_aqic() function to provide a convenient way
-+ * to handle the ap info needed by the qact function.
-+ */
-+union ap_qact_ap_info {
-+	unsigned long val;
-+	struct {
-+		unsigned int	  : 3;
-+		unsigned int mode : 3;
-+		unsigned int	  : 26;
-+		unsigned int cat  : 8;
-+		unsigned int	  : 8;
-+		unsigned char ver[2];
-+	};
-+};
-+
-+/**
-+ * ap_qact(): Query AP combatibility type.
-+ * @qid: The AP queue number
-+ * @apinfo: On input the info about the AP queue. On output the
-+ *	    alternate AP queue info provided by the qact function
-+ *	    in GR2 is stored in.
-  *
-- * Control interruption on the given AP queue.
-- * Just a simple wrapper function for the low level PQAP(AQIC)
-- * instruction available for other kernel modules.
-+ * Returns AP queue status. Check response_code field for failures.
-  */
--struct ap_queue_status ap_queue_irq_ctrl(ap_qid_t qid,
--					 struct ap_qirq_ctrl qirqctrl,
--					 void *ind);
-+static inline struct ap_queue_status ap_qact(ap_qid_t qid, int ifbit,
-+					     union ap_qact_ap_info *apinfo)
-+{
-+	register unsigned long reg0 asm ("0") = qid | (5UL << 24)
-+		| ((ifbit & 0x01) << 22);
-+	register unsigned long reg1_in asm ("1") = apinfo->val;
-+	register struct ap_queue_status reg1_out asm ("1");
-+	register unsigned long reg2 asm ("2");
-+
-+	asm volatile(
-+		".long 0xb2af0000"		/* PQAP(QACT) */
-+		: "+d" (reg1_in), "=d" (reg1_out), "=d" (reg2)
-+		: "d" (reg0)
-+		: "cc");
-+	apinfo->val = reg2;
-+	return reg1_out;
-+}
-+
-+/**
-+ * ap_nqap(): Send message to adjunct processor queue.
-+ * @qid: The AP queue number
-+ * @psmid: The program supplied message identifier
-+ * @msg: The message text
-+ * @length: The message length
-+ *
-+ * Returns AP queue status structure.
-+ * Condition code 1 on NQAP can't happen because the L bit is 1.
-+ * Condition code 2 on NQAP also means the send is incomplete,
-+ * because a segment boundary was reached. The NQAP is repeated.
-+ */
-+static inline struct ap_queue_status ap_nqap(ap_qid_t qid,
-+					     unsigned long long psmid,
-+					     void *msg, size_t length)
-+{
-+	register unsigned long reg0 asm ("0") = qid | 0x40000000UL;
-+	register struct ap_queue_status reg1 asm ("1");
-+	register unsigned long reg2 asm ("2") = (unsigned long) msg;
-+	register unsigned long reg3 asm ("3") = (unsigned long) length;
-+	register unsigned long reg4 asm ("4") = (unsigned int) (psmid >> 32);
-+	register unsigned long reg5 asm ("5") = psmid & 0xffffffff;
-+
-+	asm volatile (
-+		"0: .long 0xb2ad0042\n"		/* NQAP */
-+		"   brc   2,0b"
-+		: "+d" (reg0), "=d" (reg1), "+d" (reg2), "+d" (reg3)
-+		: "d" (reg4), "d" (reg5)
-+		: "cc", "memory");
-+	return reg1;
-+}
-+
-+/**
-+ * ap_dqap(): Receive message from adjunct processor queue.
-+ * @qid: The AP queue number
-+ * @psmid: Pointer to program supplied message identifier
-+ * @msg: The message text
-+ * @length: The message length
-+ *
-+ * Returns AP queue status structure.
-+ * Condition code 1 on DQAP means the receive has taken place
-+ * but only partially.	The response is incomplete, hence the
-+ * DQAP is repeated.
-+ * Condition code 2 on DQAP also means the receive is incomplete,
-+ * this time because a segment boundary was reached. Again, the
-+ * DQAP is repeated.
-+ * Note that gpr2 is used by the DQAP instruction to keep track of
-+ * any 'residual' length, in case the instruction gets interrupted.
-+ * Hence it gets zeroed before the instruction.
-+ */
-+static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
-+					     unsigned long long *psmid,
-+					     void *msg, size_t length)
-+{
-+	register unsigned long reg0 asm("0") = qid | 0x80000000UL;
-+	register struct ap_queue_status reg1 asm ("1");
-+	register unsigned long reg2 asm("2") = 0UL;
-+	register unsigned long reg4 asm("4") = (unsigned long) msg;
-+	register unsigned long reg5 asm("5") = (unsigned long) length;
-+	register unsigned long reg6 asm("6") = 0UL;
-+	register unsigned long reg7 asm("7") = 0UL;
-+
-+
-+	asm volatile(
-+		"0: .long 0xb2ae0064\n"		/* DQAP */
-+		"   brc   6,0b\n"
-+		: "+d" (reg0), "=d" (reg1), "+d" (reg2),
-+		  "+d" (reg4), "+d" (reg5), "+d" (reg6), "+d" (reg7)
-+		: : "cc", "memory");
-+	*psmid = (((unsigned long long) reg6) << 32) + reg7;
-+	return reg1;
-+}
- 
- #endif /* _ASM_S390_AP_H_ */
-diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-index 35a0c2b..aa1bbe6 100644
---- a/drivers/s390/crypto/ap_bus.c
-+++ b/drivers/s390/crypto/ap_bus.c
-@@ -36,7 +36,6 @@
- #include <linux/debugfs.h>
- 
- #include "ap_bus.h"
--#include "ap_asm.h"
- #include "ap_debug.h"
- 
- /*
-@@ -174,24 +173,6 @@ static inline int ap_qact_available(void)
- 	return 0;
- }
- 
--/**
-- * ap_test_queue(): Test adjunct processor queue.
-- * @qid: The AP queue number
-- * @tbit: Test facilities bit
-- * @info: Pointer to queue descriptor
-- *
-- * Returns AP queue status structure.
-- */
--struct ap_queue_status ap_test_queue(ap_qid_t qid,
--				     int tbit,
--				     unsigned long *info)
--{
--	if (tbit)
--		qid |= 1UL << 23; /* set T bit*/
--	return ap_tapq(qid, info);
--}
--EXPORT_SYMBOL(ap_test_queue);
--
- /*
-  * ap_query_configuration(): Fetch cryptographic config info
-  *
-@@ -200,7 +181,7 @@ struct ap_queue_status ap_test_queue(ap_qid_t qid,
-  * is returned, e.g. if the PQAP(QCI) instruction is not
-  * available, the return value will be -EOPNOTSUPP.
-  */
--int ap_query_configuration(struct ap_config_info *info)
-+static inline int ap_query_configuration(struct ap_config_info *info)
- {
- 	if (!ap_configuration_available())
- 		return -EOPNOTSUPP;
-@@ -1220,7 +1201,7 @@ static int __init ap_module_init(void)
- 	if (rc)
- 		return rc;
- 
--	if (ap_instructions_available() != 0) {
-+	if (!ap_instructions_available()) {
- 		pr_warn("The hardware system does not support AP instructions\n");
- 		return -ENODEV;
- 	}
-diff --git a/drivers/s390/crypto/ap_bus.h b/drivers/s390/crypto/ap_bus.h
-index 6a273c5..9365419 100644
---- a/drivers/s390/crypto/ap_bus.h
-+++ b/drivers/s390/crypto/ap_bus.h
-@@ -15,6 +15,7 @@
- 
- #include <linux/device.h>
- #include <linux/types.h>
-+#include <asm/isc.h>
- #include <asm/ap.h>
- 
- #define AP_DEVICES 256		/* Number of AP devices. */
-diff --git a/drivers/s390/crypto/ap_card.c b/drivers/s390/crypto/ap_card.c
-index 2c726df..c13e432 100644
---- a/drivers/s390/crypto/ap_card.c
-+++ b/drivers/s390/crypto/ap_card.c
-@@ -14,7 +14,6 @@
- #include <asm/facility.h>
- 
- #include "ap_bus.h"
--#include "ap_asm.h"
- 
- /*
-  * AP card related attributes.
-diff --git a/drivers/s390/crypto/ap_queue.c b/drivers/s390/crypto/ap_queue.c
-index ba3a2e1..d83c1fa 100644
---- a/drivers/s390/crypto/ap_queue.c
-+++ b/drivers/s390/crypto/ap_queue.c
-@@ -14,7 +14,6 @@
- #include <asm/facility.h>
- 
- #include "ap_bus.h"
--#include "ap_asm.h"
- 
- /**
-  * ap_queue_irq_ctrl(): Control interruption on a AP queue.
+  * @qirqctrl: struct ap_qirq_ctrl (64 bit value)
 -- 
 1.7.1
 
