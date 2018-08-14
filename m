@@ -2,207 +2,327 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E290AC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D9AC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F10E216F2
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34E5F218E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:03:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rkjDHlk9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F10E216F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="MSqVRvFg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E5F218E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbeHNLq1 (ORCPT
+        id S1731127AbeHNLt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 07:46:27 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50904 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbeHNLq1 (ORCPT
+        Tue, 14 Aug 2018 07:49:58 -0400
+Received: from mail-ed1-f41.google.com ([209.85.208.41]:34306 "EHLO
+        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeHNLt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 07:46:27 -0400
-Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 32E01CE;
-        Tue, 14 Aug 2018 11:00:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1534237210;
-        bh=wrweXNCwdGLxGHuJHfCipEUPZM3orge6HMlEqudbt/o=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=rkjDHlk95+u2H5Zsk2pIsEjrNMYZ5WeTcxpQE6H1h0qnFNRaSaHNb/+6Pd5ZsqcsD
-         REXnXLfNvMrQ4cawn9AthmC/eXoMZLt/dtlYC0Elo406Fe+fxcNSuxeOU6D6ZF0L1X
-         kXmPZUvZ9HaJ4zJV9cS0NFXNfaCA8hDDFmo76EuQ=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v3] dt-bindings: media: adv748x: Document re-mappable
- addresses
-To:     Rob Herring <robh@kernel.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180809192944.7371-1-kieran.bingham@ideasonboard.com>
- <20180813174544.GA11379@rob-hp-laptop>
- <dedade62-91ed-2c92-dac7-fe4a8f9d9452@ideasonboard.com>
- <CAL_JsqJQNtRNq+b3sJ4eEse1pzWy3F-WgbDF7=t-TrvFx6WcUQ@mail.gmail.com>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <e5f252b8-3188-b7a6-71fe-3c88be08d809@ideasonboard.com>
-Date:   Tue, 14 Aug 2018 10:00:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJQNtRNq+b3sJ4eEse1pzWy3F-WgbDF7=t-TrvFx6WcUQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Tue, 14 Aug 2018 07:49:58 -0400
+Received: by mail-ed1-f41.google.com with SMTP id h1-v6so9720062eds.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 02:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=macxT4f4i7/rGR0kacmzWCsMuPlAQWB705JcFdVUGTM=;
+        b=MSqVRvFg2uRYPF38DeGGvbPZXuseCNxPq0MB/2Lxs0ignJ3IKrm6GzgOOEFkmr8qdh
+         TIEarlWAEAQeNx8SxQjXnG086OLaVx4DmmCvfM74lMiT+Z9uU7AE5YiRiEKtDKjiYjDd
+         G50TSuap7M/CmsKWGoOmcfDb+MxmOeRf63VV4UO6/FL1nVvI7rOV9kn2KsKJf2J4s8Kx
+         pOPUtJ++C+weo9E9ulYczz5BCxHzxBqljdzJ0Tehvzcqe6Zx05BZY75gqxlWIE0PcTf1
+         PjADciUOcpXFZ1hYFak2pbZxfbLo+vR2pTjpRxN8aNxZ5z+7DSXdxvh6WqyjIc4iw5fk
+         jWag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=macxT4f4i7/rGR0kacmzWCsMuPlAQWB705JcFdVUGTM=;
+        b=Zs5rynknMrjDchzb11vsyTEao1jhF8LLrPcwdt2BcDw8knRykHUExtqZWehi/cpH5E
+         vAKsj3xlkZi+qi/QujTUZT4U/GmFnemVeszkZKpdgcoqHDJ4jOAXoJWQj+Oc68zagziJ
+         adOSsVA8LSCXNxz3CjV6A/ajkz+VU7cxQrrKZ7st0tMI0nXFBAy0lFrioQqNjdt1Q3eO
+         2AoJs8Kobpeb7Hw+7oWRGPet6JqU8pWGPd+Qbj930Xm1IlRKLJInbXfvbnuXI3IF366o
+         XhXpodAwSiom2eMEN2eG+dihfQGl7ubMSALVXvB7kMoLT2vGcJOXhTb7++eS3RKRxkMO
+         RP2Q==
+X-Gm-Message-State: AOUpUlG3CS4zn1Tc667jNL3q5Qh3gmaxoDsMYQ1lUEbQUP8cRwzcejWY
+        naUcK7FTnk6MDvX0v8gVI3s0VA==
+X-Google-Smtp-Source: AA+uWPwj0jzVxSnNF/RqdqQJBj1YmDRVUiRXrfoQpd9QpqHyezbkSrRnYS/uDJ1f6EJyhKn6bkSQ2A==
+X-Received: by 2002:a50:abc2:: with SMTP id u60-v6mr26218533edc.43.1534237421606;
+        Tue, 14 Aug 2018 02:03:41 -0700 (PDT)
+Received: from mac-halley13.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id i3-v6sm7617984edt.42.2018.08.14.02.03.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 02:03:41 -0700 (PDT)
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Message-Id: <7DC1C517-A47E-4DB3-9D17-9EFB94073887@javigon.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_B8D00315-E04C-4A11-B708-6F16DE93EAF3";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH 2/5] nvme: register ns_id attributes as default sysfs
+ groups
+Date:   Tue, 14 Aug 2018 11:03:37 +0200
+In-Reply-To: <20180814073305.87255-3-hare@suse.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Hannes Reinecke <hare@suse.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>,
+        Bart van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+To:     Hannes Reinecke <hare@suse.de>
+References: <20180814073305.87255-1-hare@suse.de>
+ <20180814073305.87255-3-hare@suse.de>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
 
-On 13/08/18 23:48, Rob Herring wrote:
-> On Mon, Aug 13, 2018 at 1:17 PM Kieran Bingham
-> <kieran.bingham@ideasonboard.com> wrote:
->>
->> On 13/08/18 18:45, Rob Herring wrote:
->>> On Thu, Aug 09, 2018 at 08:29:44PM +0100, Kieran Bingham wrote:
->>>> The ADV748x supports configurable slave addresses for its I2C pages.
->>>> Document the page names, and provide an example for setting each of the
->>>> pages explicitly.
->>>
->>> It would be good to say why you need this.
->>
->> In fact - I should probably have added a fixes tag here, which would
->> have added more context:
->>
->> Fixes: 67537fe960e5 ("media: i2c: adv748x: Add support for
->> i2c_new_secondary_device")
-> 
-> That doesn't really explain things from a DT perspective.
-> 
->> Should I repost with this fixes tag?
->> Or can it be collected with the RB tag?
-> 
-> I'll leave that to Hans.
-> 
->>> The only use I can think of
->>> is if there are other devices on the bus and you need to make sure the
->>> addresses don't conflict.
->>
->> Yes, precisely. This driver has 'slave pages' which are created and
->> mapped by the driver. The device has default addresses which are used by
->> the driver - but it's very easy for these to conflict with other devices
->> on the same I2C bus.
->>
->> Because the mappings are simply a software construct, we have a means to
->> specify the desired mappings through DT at the board level - which
->> allows the boards to ensure that conflicts do not appear.
->>
->>
->>> Arguably, that information could be figured out without this in DT.
->>
->> How so ?
->>
->> Scanning the bus is error prone, and dependant upon driver state (and
->> presence), and we have no means currently of requesting 'free/unused'
->> addresses from the I2C core framework.
-> 
-> True. But assuming all devices are in DT, then you just need to scan
-> the child nodes of the bus and get a map of the used addresses. Though
-> if you had 2 or more devices like this, then you'd need to maintain
-> s/w allocated addresses too. It could all be maintained with a bitmap
-> which you initialize with addresses in DT.
+--Apple-Mail=_B8D00315-E04C-4A11-B708-6F16DE93EAF3
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-We do indeed have cases with platforms which use the same device
-populated twice:
+>=20
+> On 14 Aug 2018, at 09.33, Hannes Reinecke <hare@suse.de> wrote:
+>=20
+> We should be registering the ns_id attribute as default sysfs
+> attribute groups, otherwise we have a race condition between
+> the uevent and the attributes appearing in sysfs.
+>=20
+> Signed-off-by: Hannes Reinecke <hare@suse.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+> drivers/nvme/host/core.c      | 21 +++++++++------------
+> drivers/nvme/host/lightnvm.c  | 27 ++++-----------------------
+> drivers/nvme/host/multipath.c | 15 ++++-----------
+> drivers/nvme/host/nvme.h      | 11 +++--------
+> 4 files changed, 20 insertions(+), 54 deletions(-)
+>=20
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 0e824e8c8fd7..8e26d98e9a8f 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -2734,6 +2734,12 @@ const struct attribute_group =
+nvme_ns_id_attr_group =3D {
+> 	.is_visible	=3D nvme_ns_id_attrs_are_visible,
+> };
+>=20
+> +const struct attribute_group *nvme_ns_id_attr_groups[] =3D {
+> +	&nvme_ns_id_attr_group,
+> +	NULL, /* Will be filled in by lightnvm if present */
+> +	NULL,
+> +};
+> +
+> #define nvme_show_str_function(field)						=
+\
+> static ssize_t  field##_show(struct device *dev,				=
+\
+> 			    struct device_attribute *attr, char *buf)		=
+\
+> @@ -3099,14 +3105,9 @@ static void nvme_alloc_ns(struct nvme_ctrl =
+*ctrl, unsigned nsid)
+>=20
+> 	nvme_get_ctrl(ctrl);
+>=20
+> -	device_add_disk(ctrl->device, ns->disk, NULL);
+> -	if (sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+> -					&nvme_ns_id_attr_group))
+> -		pr_warn("%s: failed to create sysfs group for =
+identification\n",
+> -			ns->disk->disk_name);
+> -	if (ns->ndev && nvme_nvm_register_sysfs(ns))
+> -		pr_warn("%s: failed to register lightnvm sysfs group for =
+identification\n",
+> -			ns->disk->disk_name);
+> +	if (ns->ndev)
+> +		nvme_nvm_register_sysfs(ns);
+> +	device_add_disk(ctrl->device, ns->disk, nvme_ns_id_attr_groups);
+>=20
+> 	nvme_mpath_add_disk(ns, id);
+> 	nvme_fault_inject_init(ns);
+> @@ -3132,10 +3133,6 @@ static void nvme_ns_remove(struct nvme_ns *ns)
+>=20
+> 	nvme_fault_inject_fini(ns);
+> 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
+> -		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+> -					&nvme_ns_id_attr_group);
+> -		if (ns->ndev)
+> -			nvme_nvm_unregister_sysfs(ns);
+> 		del_gendisk(ns->disk);
+> 		blk_cleanup_queue(ns->queue);
+> 		if (blk_get_integrity(ns->disk))
+> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+> index 6fe5923c95d4..7bf2f9da6293 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -1270,39 +1270,20 @@ static const struct attribute_group =
+nvm_dev_attr_group_20 =3D {
+> 	.attrs		=3D nvm_dev_attrs_20,
+> };
+>=20
+> -int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+> +void nvme_nvm_register_sysfs(struct nvme_ns *ns)
+> {
+> 	struct nvm_dev *ndev =3D ns->ndev;
+> 	struct nvm_geo *geo =3D &ndev->geo;
+>=20
+> 	if (!ndev)
+> -		return -EINVAL;
+> -
+> -	switch (geo->major_ver_id) {
+> -	case 1:
+> -		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+> -					&nvm_dev_attr_group_12);
+> -	case 2:
+> -		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+> -					&nvm_dev_attr_group_20);
+> -	}
+> -
+> -	return -EINVAL;
+> -}
+> -
+> -void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
+> -{
+> -	struct nvm_dev *ndev =3D ns->ndev;
+> -	struct nvm_geo *geo =3D &ndev->geo;
+> +		return;
+>=20
+> 	switch (geo->major_ver_id) {
+> 	case 1:
+> -		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+> -					&nvm_dev_attr_group_12);
+> +		nvme_ns_id_attr_groups[1] =3D &nvm_dev_attr_group_12;
+> 		break;
+> 	case 2:
+> -		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+> -					&nvm_dev_attr_group_20);
+> +		nvme_ns_id_attr_groups[1] =3D &nvm_dev_attr_group_20;
+> 		break;
+> 	}
+> }
+> diff --git a/drivers/nvme/host/multipath.c =
+b/drivers/nvme/host/multipath.c
+> index 477af51d01e8..8e846095c42d 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -282,13 +282,9 @@ static void nvme_mpath_set_live(struct nvme_ns =
+*ns)
+> 	if (!head->disk)
+> 		return;
+>=20
+> -	if (!(head->disk->flags & GENHD_FL_UP)) {
+> -		device_add_disk(&head->subsys->dev, head->disk, NULL);
+> -		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
+> -				&nvme_ns_id_attr_group))
+> -			dev_warn(&head->subsys->dev,
+> -				 "failed to create id group.\n");
+> -	}
+> +	if (!(head->disk->flags & GENHD_FL_UP))
+> +		device_add_disk(&head->subsys->dev, head->disk,
+> +				nvme_ns_id_attr_groups);
+>=20
+> 	kblockd_schedule_work(&ns->head->requeue_work);
+> }
+> @@ -494,11 +490,8 @@ void nvme_mpath_remove_disk(struct nvme_ns_head =
+*head)
+> {
+> 	if (!head->disk)
+> 		return;
+> -	if (head->disk->flags & GENHD_FL_UP) {
+> -		sysfs_remove_group(&disk_to_dev(head->disk)->kobj,
+> -				   &nvme_ns_id_attr_group);
+> +	if (head->disk->flags & GENHD_FL_UP)
+> 		del_gendisk(head->disk);
+> -	}
+> 	blk_set_queue_dying(head->disk->queue);
+> 	/* make sure all pending bios are cleaned up */
+> 	kblockd_schedule_work(&head->requeue_work);
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index bb4a2003c097..9ba6d67d8e0a 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -459,7 +459,7 @@ int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
+> int nvme_get_log(struct nvme_ctrl *ctrl, u32 nsid, u8 log_page, u8 =
+lsp,
+> 		void *log, size_t size, u64 offset);
+>=20
+> -extern const struct attribute_group nvme_ns_id_attr_group;
+> +extern const struct attribute_group *nvme_ns_id_attr_groups[];
+> extern const struct block_device_operations nvme_ns_head_ops;
+>=20
+> #ifdef CONFIG_NVME_MULTIPATH
+> @@ -551,8 +551,7 @@ static inline void nvme_mpath_stop(struct =
+nvme_ctrl *ctrl)
+> void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
+> int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
+> void nvme_nvm_unregister(struct nvme_ns *ns);
+> -int nvme_nvm_register_sysfs(struct nvme_ns *ns);
+> -void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
+> +void nvme_nvm_register_sysfs(struct nvme_ns *ns);
+> int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long =
+arg);
+> #else
+> static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
+> @@ -563,11 +562,7 @@ static inline int nvme_nvm_register(struct =
+nvme_ns *ns, char *disk_name,
+> }
+>=20
+> static inline void nvme_nvm_unregister(struct nvme_ns *ns) {};
+> -static inline int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+> -{
+> -	return 0;
+> -}
+> -static inline void nvme_nvm_unregister_sysfs(struct nvme_ns *ns) {};
+> +static inline void nvme_nvm_register_sysfs(struct nvme_ns *ns) {};
+> static inline int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd,
+> 							unsigned long =
+arg)
+> {
+> --
+> 2.12.3
+>=20
+>=20
 
-See 1d26a5217187 ("ARM: dts: wheat: Fix ADV7513 address usage")
-
-In that instance, a hardware bug means that if one of the two instances
-of the ADV7513 goes into standby, it will respond to it's default
-hardware slave map addresses. So because of this we must map *both*
-instances to be non defaults. (and ideally, we'd want to mark the actual
-defaults as unused - but - unusable; alas we don't have a means to do
-that yet)
+The lightnvm part you added to V2 looks good. Thanks!
 
 
-In the instance of this device (the adv748x) it has a default mapping at
-address 0x30 for the CBUS page. We have an expansion board, which adds
-GMSL cameras to the same board - of which reside on the same I2C bus -
-and are fixed to use 0x30 as the base address for one of the components.
-(Which even that then gets re-mapped - but it must be available to
-perform the remap in the first place)
-
-So we even have this concept of an address which is 'mostly' unused, but
-must be available for use at certain stages of the probe sequences.
-(There are 8 cameras attached, all with that same 0x30 address)
+Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
 
 
-The GMSL expansion is an 'overlay' (it's actually just an include file
-currently, but it /should/ be a DTO), and so I use this functionality to
-remap the ADV748x maps to a 'free' block of address space.
+--Apple-Mail=_B8D00315-E04C-4A11-B708-6F16DE93EAF3
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-Adding that patch [0] ([PATCH] arm64: dts: renesas: salvator-common:
-adv748x: Override secondary addresses) was what led me to notice that I
-had not updated the DT documentation for the feature, leading to this
-patch :)
+-----BEGIN PGP SIGNATURE-----
 
-[0] https://www.spinics.net/lists/linux-renesas-soc/msg31194.html
+iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAltymukACgkQPEYBfS0l
+eOCuTg/+Nuxs7egM/BBgWINqasHbnU1BuXabqZHgSjtsb2ip4VOgKK8rTxxknVEx
+1dC565aMzA6o1muS6DBP6GFYxEGg5ksnGXWnv18Ik8ba6fmOficR0FPB9CGZiiV2
+oXM4Vd5ljMckqPaMqTcowmhHDlVL15eM8O6FbtERiDwVSKweT7sdHdcGXX4UpsAW
+TsUomg17u5nJvdmDbbw7SZkLH5ucqbDZD63277MhmFwnZ9Cb+uH0HKukvNS2g+rt
+Tflz7NpAl1ZsXGRidxk55/ACHAMQx4fpU1j4XijCZYnhDpKxrLkk9coZ6Lu5sRpM
+2im33ue3J3LTE0q1mggfcczEVX7wj20JhZAEOAVC5aT0rnkf8a6vAVYpByJYYkJo
+8CGTX5wjK0Hd+UVjVe4FPcdKrASpuyjD0m/lRHHkkmzu8s4eHE/dkzdsOme6dAnq
+HKL4XJe98WcnRBIBRzqN3y7tt6D28TvKzRy8sYT10Iwf4joj8/obyWLETuYJR0zI
+/LGOmsQYNw36iN3osnOet/KuEgPr4+BhKQjXTW0sd02nFRhwx9oMh6SSeElQE1mL
+8/I9MlHdypoNpOWnI4AimHxy5zCc2E++rA5NxaaKucczVQb0lTvkZ5x3MRGsXWdI
+1CABafwehtqx9PqZLvjR6DctT5IiwvbGLsPdCuqngWfysOCoUwQ=
+=HH1P
+-----END PGP SIGNATURE-----
 
--- 
-Regards
---
-Kieran
+--Apple-Mail=_B8D00315-E04C-4A11-B708-6F16DE93EAF3--
