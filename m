@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C4CC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E07C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97DEC208C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97DEC208C1
+	by mail.kernel.org (Postfix) with ESMTP id C88DA2154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88DA2154F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732124AbeHNU1X (ORCPT
+        id S2388324AbeHNU11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:27:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58430 "EHLO
+        Tue, 14 Aug 2018 16:27:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58438 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729285AbeHNU1X (ORCPT
+        with ESMTP id S1732287AbeHNU10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:27:23 -0400
+        Tue, 14 Aug 2018 16:27:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F992CBA;
-        Tue, 14 Aug 2018 17:39:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85513D20;
+        Tue, 14 Aug 2018 17:39:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 083/104] x86/KVM/VMX: Move the l1tf_flush_l1d test to vmx_l1d_flush()
-Date:   Tue, 14 Aug 2018 19:17:37 +0200
-Message-Id: <20180814171520.602432947@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 4.14 074/104] cpu/hotplug: Expose SMT control init function
+Date:   Tue, 14 Aug 2018 19:17:28 +0200
+Message-Id: <20180814171520.067695672@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -50,62 +51,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolai Stange <nstange@suse.de>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit 5b6ccc6c3b1a477fbac9ec97a0b4c1c48e765209 upstream
+commit 8e1b706b6e819bed215c0db16345568864660393 upstream
 
-Currently, vmx_vcpu_run() checks if l1tf_flush_l1d is set and invokes
-vmx_l1d_flush() if so.
+The L1TF mitigation will gain a commend line parameter which allows to set
+a combination of hypervisor mitigation and SMT control.
 
-This test is unncessary for the "always flush L1D" mode.
+Expose cpu_smt_disable() so the command line parser can tweak SMT settings.
 
-Move the check to vmx_l1d_flush()'s conditional mode code path.
+[ tglx: Split out of larger patch and made it preserve an already existing
+  	force off state ]
 
-Notes:
-- vmx_l1d_flush() is likely to get inlined anyway and thus, there's no
-  extra function call.
-
-- This inverts the (static) branch prediction, but there hadn't been any
-  explicit likely()/unlikely() annotations before and so it stays as is.
-
-Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jiri Kosina <jkosina@suse.cz>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20180713142323.039715135@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ include/linux/cpu.h |    2 ++
+ kernel/cpu.c        |   16 +++++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9168,12 +9168,16 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
-+		bool flush_l1d = vcpu->arch.l1tf_flush_l1d;
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -187,8 +187,10 @@ enum cpuhp_smt_control {
+ 
+ #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+ extern enum cpuhp_smt_control cpu_smt_control;
++extern void cpu_smt_disable(bool force);
+ #else
+ # define cpu_smt_control		(CPU_SMT_ENABLED)
++static inline void cpu_smt_disable(bool force) { }
+ #endif
+ 
+ #endif /* _LINUX_CPU_H_ */
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -351,13 +351,23 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+ EXPORT_SYMBOL_GPL(cpu_smt_control);
+ 
+-static int __init smt_cmdline_disable(char *str)
++void __init cpu_smt_disable(bool force)
+ {
+-	cpu_smt_control = CPU_SMT_DISABLED;
+-	if (str && !strcmp(str, "force")) {
++	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
++		cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
++		return;
 +
- 		/*
- 		 * Clear the flush bit, it gets set again either from
- 		 * vcpu_run() or from one of the unsafe VMEXIT
- 		 * handlers.
- 		 */
- 		vcpu->arch.l1tf_flush_l1d = false;
-+		if (!flush_l1d)
-+			return;
++	if (force) {
+ 		pr_info("SMT: Force disabled\n");
+ 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
++	} else {
++		cpu_smt_control = CPU_SMT_DISABLED;
  	}
- 
- 	vcpu->stat.l1d_flush++;
-@@ -9703,10 +9707,8 @@ static void __noclone vmx_vcpu_run(struc
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
- 
--	if (static_branch_unlikely(&vmx_l1d_should_flush)) {
--		if (vcpu->arch.l1tf_flush_l1d)
--			vmx_l1d_flush(vcpu);
--	}
-+	if (static_branch_unlikely(&vmx_l1d_should_flush))
-+		vmx_l1d_flush(vcpu);
- 
- 	asm(
- 		/* Store host registers */
++}
++
++static int __init smt_cmdline_disable(char *str)
++{
++	cpu_smt_disable(str && !strcmp(str, "force"));
+ 	return 0;
+ }
+ early_param("nosmt", smt_cmdline_disable);
 
 
