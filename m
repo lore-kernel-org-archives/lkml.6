@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E180C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF28C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDDD921727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDDD921727
+	by mail.kernel.org (Postfix) with ESMTP id E494F21727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E494F21727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389435AbeHNUSX (ORCPT
+        id S2389450AbeHNUS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53104 "EHLO
+        Tue, 14 Aug 2018 16:18:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53116 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388543AbeHNUSW (ORCPT
+        with ESMTP id S2388543AbeHNUS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:22 -0400
+        Tue, 14 Aug 2018 16:18:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A2B6D1A;
-        Tue, 14 Aug 2018 17:30:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 674B240B;
+        Tue, 14 Aug 2018 17:30:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 41/97] x86/cpu/intel: Evaluate smp_num_siblings early
-Date:   Tue, 14 Aug 2018 19:16:53 +0200
-Message-Id: <20180814171434.731052387@linuxfoundation.org>
+Subject: [PATCH 4.17 42/97] x86/CPU/AMD: Do not check CPUID max ext level before parsing SMP info
+Date:   Tue, 14 Aug 2018 19:16:54 +0200
+Message-Id: <20180814171434.765417232@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -51,37 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit 1910ad5624968f93be48e8e265513c54d66b897c upstream
+commit 119bff8a9c9bb00116a844ec68be7bc4b1c768f5 upstream
 
-Make use of the new early detection function to initialize smp_num_siblings
-on the boot cpu before the MP-Table or ACPI/MADT scan happens. That's
-required for force disabling SMT.
+Old code used to check whether CPUID ext max level is >= 0x80000008 because
+that last leaf contains the number of cores of the physical CPU.  The three
+functions called there now do not depend on that leaf anymore so the check
+can go.
 
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/intel.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/cpu/amd.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -301,6 +301,13 @@ static void early_init_intel(struct cpui
- 	}
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -861,11 +861,8 @@ static void init_amd(struct cpuinfo_x86
  
- 	check_mpx_erratum(c);
-+
-+	/*
-+	 * Get the number of SMT siblings early from the extended topology
-+	 * leaf, if available. Otherwise try the legacy SMT detection.
-+	 */
-+	if (detect_extended_topology_early(c) < 0)
-+		detect_ht_early(c);
- }
+ 	cpu_detect_cache_sizes(c);
  
- #ifdef CONFIG_X86_32
+-	/* Multi core CPU? */
+-	if (c->extended_cpuid_level >= 0x80000008) {
+-		amd_detect_cmp(c);
+-		srat_detect_node(c);
+-	}
++	amd_detect_cmp(c);
++	srat_detect_node(c);
+ 
+ 	init_amd_cacheinfo(c);
+ 
 
 
