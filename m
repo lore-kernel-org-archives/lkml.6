@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF00C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67695C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04CF62150F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CF62150F
+	by mail.kernel.org (Postfix) with ESMTP id 26C6E2150F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C6E2150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390779AbeHNUcv (ORCPT
+        id S2390793AbeHNUcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:32:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60068 "EHLO
+        Tue, 14 Aug 2018 16:32:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUcu (ORCPT
+        with ESMTP id S1728642AbeHNUcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:32:50 -0400
+        Tue, 14 Aug 2018 16:32:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3590F40B;
-        Tue, 14 Aug 2018 17:44:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C59ABAF3;
+        Tue, 14 Aug 2018 17:44:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 057/107] x86/KVM: Warn user if KVM is loaded SMT and L1TF CPU bug being present
-Date:   Tue, 14 Aug 2018 19:17:20 +0200
-Message-Id: <20180814171524.572304091@linuxfoundation.org>
+Subject: [PATCH 4.9 058/107] x86/KVM/VMX: Add module argument for L1TF mitigation
+Date:   Tue, 14 Aug 2018 19:17:21 +0200
+Message-Id: <20180814171524.613353356@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,100 +54,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 26acfb666a473d960f0fd971fe68f3e3ad16c70b upstream
+commit a399477e52c17e148746d3ce9a483f681c2aa9a0 upstream
 
-If the L1TF CPU bug is present we allow the KVM module to be loaded as the
-major of users that use Linux and KVM have trusted guests and do not want a
-broken setup.
+Add a mitigation mode parameter "vmentry_l1d_flush" for CVE-2018-3620, aka
+L1 terminal fault. The valid arguments are:
 
-Cloud vendors are the ones that are uncomfortable with CVE 2018-3620 and as
-such they are the ones that should set nosmt to one.
+ - "always" 	L1D cache flush on every VMENTER.
+ - "cond"	Conditional L1D cache flush, explained below
+ - "never"	Disable the L1D cache flush mitigation
 
-Setting 'nosmt' means that the system administrator also needs to disable
-SMT (Hyper-threading) in the BIOS, or via the 'nosmt' command line
-parameter, or via the /sys/devices/system/cpu/smt/control. See commit
-05736e4ac13c ("cpu/hotplug: Provide knobs to control SMT").
+"cond" is trying to avoid L1D cache flushes on VMENTER if the code executed
+between VMEXIT and VMENTER is considered safe, i.e. is not bringing any
+interesting information into L1D which might exploited.
 
-Other mitigations are to use task affinity, cpu sets, interrupt binding,
-etc - anything to make sure that _only_ the same guests vCPUs are running
-on sibling threads.
+[ tglx: Split out from a larger patch ]
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/kernel-parameters.txt |    6 ++++++
- arch/x86/kvm/vmx.c                  |   19 +++++++++++++++++++
- kernel/cpu.c                        |    1 +
- 3 files changed, 26 insertions(+)
+ Documentation/kernel-parameters.txt |   12 ++++++
+ arch/x86/kvm/vmx.c                  |   65 ++++++++++++++++++++++++++++++++++--
+ 2 files changed, 75 insertions(+), 2 deletions(-)
 
 --- a/Documentation/kernel-parameters.txt
 +++ b/Documentation/kernel-parameters.txt
-@@ -1989,6 +1989,12 @@ bytes respectively. Such letter suffixes
- 			for all guests.
- 			Default is 1 (enabled) if in 64-bit or 32-bit PAE mode.
+@@ -2016,6 +2016,18 @@ bytes respectively. Such letter suffixes
+ 			(virtualized real and unpaged mode) on capable
+ 			Intel chips. Default is 1 (enabled)
  
-+	kvm-intel.nosmt=[KVM,Intel] If the L1TF CPU bug is present (CVE-2018-3620)
-+			and the system has SMT (aka Hyper-Threading) enabled then
-+			don't allow guests to be created.
++	kvm-intel.vmentry_l1d_flush=[KVM,Intel] Mitigation for L1 Terminal Fault
++			CVE-2018-3620.
 +
-+			Default is 0 (allow guests to be created).
++			Valid arguments: never, cond, always
 +
- 	kvm-intel.ept=	[KVM,Intel] Disable extended page tables
- 			(virtualized MMU) support on capable Intel chips.
++			always: L1D cache flush on every VMENTER.
++			cond:	Flush L1D on VMENTER only when the code between
++				VMEXIT and VMENTER can leak host memory.
++			never:	Disables the mitigation
++
++			Default is cond (do L1 cache flush in specific instances)
++
+ 	kvm-intel.vpid=	[KVM,Intel] Disable Virtual Processor Identification
+ 			feature (tagged TLBs) on capable Intel chips.
  			Default is 1 (enabled)
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -69,6 +69,9 @@ static const struct x86_cpu_id vmx_cpu_i
- };
- MODULE_DEVICE_TABLE(x86cpu, vmx_cpu_id);
+@@ -192,6 +192,54 @@ module_param(ple_window_max, int, S_IRUG
  
-+static bool __read_mostly nosmt;
-+module_param(nosmt, bool, S_IRUGO);
+ extern const ulong vmx_return;
+ 
++static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
 +
- static bool __read_mostly enable_vpid = 1;
- module_param_named(vpid, enable_vpid, bool, 0444);
- 
-@@ -9298,6 +9301,20 @@ free_vcpu:
- 	return ERR_PTR(err);
- }
- 
-+#define L1TF_MSG "SMT enabled with L1TF CPU bug present. Refer to CVE-2018-3620 for details.\n"
++/* These MUST be in sync with vmentry_l1d_param order. */
++enum vmx_l1d_flush_state {
++	VMENTER_L1D_FLUSH_NEVER,
++	VMENTER_L1D_FLUSH_COND,
++	VMENTER_L1D_FLUSH_ALWAYS,
++};
 +
-+static int vmx_vm_init(struct kvm *kvm)
++static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush = VMENTER_L1D_FLUSH_COND;
++
++static const struct {
++	const char *option;
++	enum vmx_l1d_flush_state cmd;
++} vmentry_l1d_param[] = {
++	{"never",	VMENTER_L1D_FLUSH_NEVER},
++	{"cond",	VMENTER_L1D_FLUSH_COND},
++	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
++};
++
++static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
 +{
-+	if (boot_cpu_has(X86_BUG_L1TF) && cpu_smt_control == CPU_SMT_ENABLED) {
-+		if (nosmt) {
-+			pr_err(L1TF_MSG);
-+			return -EOPNOTSUPP;
++	unsigned int i;
++
++	if (!s)
++		return -EINVAL;
++
++	for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
++		if (!strcmp(s, vmentry_l1d_param[i].option)) {
++			vmentry_l1d_flush = vmentry_l1d_param[i].cmd;
++			return 0;
 +		}
-+		pr_warn(L1TF_MSG);
 +	}
-+	return 0;
++
++	return -EINVAL;
 +}
 +
- static void __init vmx_check_processor_compat(void *rtn)
- {
- 	struct vmcs_config vmcs_conf;
-@@ -11367,6 +11384,8 @@ static struct kvm_x86_ops vmx_x86_ops __
- 	.cpu_has_accelerated_tpr = report_flexpriority,
- 	.has_emulated_msr = vmx_has_emulated_msr,
- 
-+	.vm_init = vmx_vm_init,
++static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
++{
++	return sprintf(s, "%s\n", vmentry_l1d_param[vmentry_l1d_flush].option);
++}
 +
- 	.vcpu_create = vmx_create_vcpu,
- 	.vcpu_free = vmx_free_vcpu,
- 	.vcpu_reset = vmx_vcpu_reset,
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -358,6 +358,7 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
++static const struct kernel_param_ops vmentry_l1d_flush_ops = {
++	.set = vmentry_l1d_flush_set,
++	.get = vmentry_l1d_flush_get,
++};
++module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, &vmentry_l1d_flush, S_IRUGO);
++
+ #define NR_AUTOLOAD_MSRS 8
  
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
-+EXPORT_SYMBOL_GPL(cpu_smt_control);
+ struct vmcs {
+@@ -11505,10 +11553,23 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.setup_mce = vmx_setup_mce,
+ };
  
- static int __init smt_cmdline_disable(char *str)
++static void __init vmx_setup_l1d_flush(void)
++{
++	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
++	    !boot_cpu_has_bug(X86_BUG_L1TF))
++		return;
++
++	static_branch_enable(&vmx_l1d_should_flush);
++}
++
+ static int __init vmx_init(void)
  {
+-	int r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+-                     __alignof__(struct vcpu_vmx), THIS_MODULE);
++	int r;
++
++	vmx_setup_l1d_flush();
++
++	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
++		     __alignof__(struct vcpu_vmx), THIS_MODULE);
+ 	if (r)
+ 		return r;
+ 
 
 
