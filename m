@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,WEIRD_QUOTING
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE45DC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2034BC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF1521728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF1521728
+	by mail.kernel.org (Postfix) with ESMTP id D635F21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D635F21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388777AbeHNUPp (ORCPT
+        id S2388786AbeHNUPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:15:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52498 "EHLO
+        Tue, 14 Aug 2018 16:15:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52508 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387825AbeHNUPo (ORCPT
+        with ESMTP id S2387825AbeHNUPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:15:44 -0400
+        Tue, 14 Aug 2018 16:15:47 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F9F140B;
-        Tue, 14 Aug 2018 17:27:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F874BDB;
+        Tue, 14 Aug 2018 17:27:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 72/79] KVM: VMX: Tell the nested hypervisor to skip L1D flush on vmentry
-Date:   Tue, 14 Aug 2018 19:17:31 +0200
-Message-Id: <20180814171340.902763484@linuxfoundation.org>
+Subject: [PATCH 4.18 36/79] x86/KVM/VMX: Add module argument for L1TF mitigation
+Date:   Tue, 14 Aug 2018 19:16:55 +0200
+Message-Id: <20180814171338.185487973@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -50,116 +51,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-When nested virtualization is in use, VMENTER operations from the nested
-hypervisor into the nested guest will always be processed by the bare metal
-hypervisor, and KVM's "conditional cache flushes" mode in particular does a
-flush on nested vmentry.  Therefore, include the "skip L1D flush on
-vmentry" bit in KVM's suggested ARCH_CAPABILITIES setting.
+Add a mitigation mode parameter "vmentry_l1d_flush" for CVE-2018-3620, aka
+L1 terminal fault. The valid arguments are:
 
-Add the relevant Documentation.
+ - "always" 	L1D cache flush on every VMENTER.
+ - "cond"	Conditional L1D cache flush, explained below
+ - "never"	Disable the L1D cache flush mitigation
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+"cond" is trying to avoid L1D cache flushes on VMENTER if the code executed
+between VMEXIT and VMENTER is considered safe, i.e. is not bringing any
+interesting information into L1D which might exploited.
+
+[ tglx: Split out from a larger patch ]
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/admin-guide/l1tf.rst |   21 +++++++++++++++++++++
- arch/x86/include/asm/kvm_host.h    |    1 +
- arch/x86/kvm/vmx.c                 |    3 +--
- arch/x86/kvm/x86.c                 |   26 +++++++++++++++++++++++++-
- 4 files changed, 48 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |   12 ++++
+ arch/x86/kvm/vmx.c                              |   59 ++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
 
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -546,6 +546,27 @@ available:
-     EPT can be disabled in the hypervisor via the 'kvm-intel.ept'
-     parameter.
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1973,6 +1973,18 @@
+ 			(virtualized real and unpaged mode) on capable
+ 			Intel chips. Default is 1 (enabled)
  
-+3.4. Nested virtual machines
-+""""""""""""""""""""""""""""
++	kvm-intel.vmentry_l1d_flush=[KVM,Intel] Mitigation for L1 Terminal Fault
++			CVE-2018-3620.
 +
-+When nested virtualization is in use, three operating systems are involved:
-+the bare metal hypervisor, the nested hypervisor and the nested virtual
-+machine.  VMENTER operations from the nested hypervisor into the nested
-+guest will always be processed by the bare metal hypervisor. If KVM is the
-+bare metal hypervisor it wiil:
++			Valid arguments: never, cond, always
 +
-+ - Flush the L1D cache on every switch from the nested hypervisor to the
-+   nested virtual machine, so that the nested hypervisor's secrets are not
-+   exposed to the nested virtual machine;
++			always: L1D cache flush on every VMENTER.
++			cond:	Flush L1D on VMENTER only when the code between
++				VMEXIT and VMENTER can leak host memory.
++			never:	Disables the mitigation
 +
-+ - Flush the L1D cache on every switch from the nested virtual machine to
-+   the nested hypervisor; this is a complex operation, and flushing the L1D
-+   cache avoids that the bare metal hypervisor's secrets are exposed to the
-+   nested virtual machine;
++			Default is cond (do L1 cache flush in specific instances)
 +
-+ - Instruct the nested hypervisor to not perform any L1D cache flush. This
-+   is an optimization to avoid double L1D flushing.
-+
- 
- .. _default_mitigations:
- 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1418,6 +1418,7 @@ int kvm_cpu_get_interrupt(struct kvm_vcp
- void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
- void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu);
- 
-+u64 kvm_get_arch_capabilities(void);
- void kvm_define_shared_msr(unsigned index, u32 msr);
- int kvm_set_shared_msr(unsigned index, u64 val, u64 mask);
- 
+ 	kvm-intel.vpid=	[KVM,Intel] Disable Virtual Processor Identification
+ 			feature (tagged TLBs) on capable Intel chips.
+ 			Default is 1 (enabled)
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -6465,8 +6465,7 @@ static void vmx_vcpu_setup(struct vcpu_v
- 		++vmx->nmsrs;
- 	}
+@@ -191,6 +191,54 @@ module_param(ple_window_max, uint, 0444)
  
--	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
--		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
-+	vmx->arch_capabilities = kvm_get_arch_capabilities();
+ extern const ulong vmx_return;
  
- 	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
- 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1103,11 +1103,35 @@ static u32 msr_based_features[] = {
- 
- static unsigned int num_msr_based_features;
- 
-+u64 kvm_get_arch_capabilities(void)
++static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
++
++/* These MUST be in sync with vmentry_l1d_param order. */
++enum vmx_l1d_flush_state {
++	VMENTER_L1D_FLUSH_NEVER,
++	VMENTER_L1D_FLUSH_COND,
++	VMENTER_L1D_FLUSH_ALWAYS,
++};
++
++static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush = VMENTER_L1D_FLUSH_COND;
++
++static const struct {
++	const char *option;
++	enum vmx_l1d_flush_state cmd;
++} vmentry_l1d_param[] = {
++	{"never",	VMENTER_L1D_FLUSH_NEVER},
++	{"cond",	VMENTER_L1D_FLUSH_COND},
++	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
++};
++
++static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
 +{
-+	u64 data;
++	unsigned int i;
 +
-+	rdmsrl_safe(MSR_IA32_ARCH_CAPABILITIES, &data);
++	if (!s)
++		return -EINVAL;
 +
-+	/*
-+	 * If we're doing cache flushes (either "always" or "cond")
-+	 * we will do one whenever the guest does a vmlaunch/vmresume.
-+	 * If an outer hypervisor is doing the cache flush for us
-+	 * (VMENTER_L1D_FLUSH_NESTED_VM), we can safely pass that
-+	 * capability to the guest too, and if EPT is disabled we're not
-+	 * vulnerable.  Overall, only VMENTER_L1D_FLUSH_NEVER will
-+	 * require a nested hypervisor to do a flush of its own.
-+	 */
-+	if (l1tf_vmx_mitigation != VMENTER_L1D_FLUSH_NEVER)
-+		data |= ARCH_CAP_SKIP_VMENTRY_L1DFLUSH;
++	for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
++		if (!strcmp(s, vmentry_l1d_param[i].option)) {
++			vmentry_l1d_flush = vmentry_l1d_param[i].cmd;
++			return 0;
++		}
++	}
 +
-+	return data;
++	return -EINVAL;
 +}
-+EXPORT_SYMBOL_GPL(kvm_get_arch_capabilities);
 +
- static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
++static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
++{
++	return sprintf(s, "%s\n", vmentry_l1d_param[vmentry_l1d_flush].option);
++}
++
++static const struct kernel_param_ops vmentry_l1d_flush_ops = {
++	.set = vmentry_l1d_flush_set,
++	.get = vmentry_l1d_flush_get,
++};
++module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, &vmentry_l1d_flush, S_IRUGO);
++
+ struct kvm_vmx {
+ 	struct kvm kvm;
+ 
+@@ -13150,6 +13198,15 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.enable_smi_window = enable_smi_window,
+ };
+ 
++static void __init vmx_setup_l1d_flush(void)
++{
++	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
++	    !boot_cpu_has_bug(X86_BUG_L1TF))
++		return;
++
++	static_branch_enable(&vmx_l1d_should_flush);
++}
++
+ static int __init vmx_init(void)
  {
- 	switch (msr->index) {
--	case MSR_IA32_UCODE_REV:
- 	case MSR_IA32_ARCH_CAPABILITIES:
-+		msr->data = kvm_get_arch_capabilities();
-+		break;
-+	case MSR_IA32_UCODE_REV:
- 		rdmsrl_safe(msr->index, &msr->data);
- 		break;
- 	default:
+ 	int r;
+@@ -13183,6 +13240,8 @@ static int __init vmx_init(void)
+ 	}
+ #endif
+ 
++	vmx_setup_l1d_flush();
++
+ 	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+                      __alignof__(struct vcpu_vmx), THIS_MODULE);
+ 	if (r)
 
 
