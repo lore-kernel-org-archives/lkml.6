@@ -6,39 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CA3C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1E8C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFC321727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFC321727
+	by mail.kernel.org (Postfix) with ESMTP id E1A4821727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A4821727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeHNUWd (ORCPT
+        id S1728399AbeHNUWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:22:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56886 "EHLO
+        Tue, 14 Aug 2018 16:22:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeHNUWd (ORCPT
+        with ESMTP id S1725873AbeHNUWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:22:33 -0400
+        Tue, 14 Aug 2018 16:22:36 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60A6DDF2;
-        Tue, 14 Aug 2018 17:34:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 469E2DDE;
+        Tue, 14 Aug 2018 17:34:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH 4.14 022/104] x86/paravirt: Fix spectre-v2 mitigations for paravirt guests
-Date:   Tue, 14 Aug 2018 19:16:36 +0200
-Message-Id: <20180814171516.649302689@linuxfoundation.org>
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 023/104] x86/speculation: Protect against userspace-userspace spectreRSB
+Date:   Tue, 14 Aug 2018 19:16:37 +0200
+Message-Id: <20180814171516.722295468@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -55,161 +57,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit 5800dc5c19f34e6e03b5adab1282535cb102fafd upstream.
+commit fdf82a7856b32d905c39afc85e34364491e46346 upstream.
 
-Nadav reported that on guests we're failing to rewrite the indirect
-calls to CALLEE_SAVE paravirt functions. In particular the
-pv_queued_spin_unlock() call is left unpatched and that is all over the
-place. This obviously wrecks Spectre-v2 mitigation (for paravirt
-guests) which relies on not actually having indirect calls around.
+The article "Spectre Returns! Speculation Attacks using the Return Stack
+Buffer" [1] describes two new (sub-)variants of spectrev2-like attacks,
+making use solely of the RSB contents even on CPUs that don't fallback to
+BTB on RSB underflow (Skylake+).
 
-The reason is an incorrect clobber test in paravirt_patch_call(); this
-function rewrites an indirect call with a direct call to the _SAME_
-function, there is no possible way the clobbers can be different
-because of this.
+Mitigate userspace-userspace attacks by always unconditionally filling RSB on
+context switch when the generic spectrev2 mitigation has been enabled.
 
-Therefore remove this clobber check. Also put WARNs on the other patch
-failure case (not enough room for the instruction) which I've not seen
-trigger in my (limited) testing.
+[1] https://arxiv.org/pdf/1807.07940.pdf
 
-Three live kernel image disassemblies for lock_sock_nested (as a small
-function that illustrates the problem nicely). PRE is the current
-situation for guests, POST is with this patch applied and NATIVE is with
-or without the patch for !guests.
-
-PRE:
-
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    callq  *0xffffffff822299e8
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-POST:
-
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    callq  0xffffffff810a0c20 <__raw_callee_save___pv_queued_spin_unlock>
-   0xffffffff817be9a5 <+53>:    xchg   %ax,%ax
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063aa0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-NATIVE:
-
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    movb   $0x0,(%rdi)
-   0xffffffff817be9a3 <+51>:    nopl   0x0(%rax)
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-
-Fixes: 63f70270ccd9 ("[PATCH] i386: PARAVIRT: add common patching machinery")
-Fixes: 3010a0663fd9 ("x86/paravirt, objtool: Annotate indirect calls")
-Reported-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1807261308190.997@cbobk.fhfr.pm
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/paravirt.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   38 +++++++-------------------------------
+ 1 file changed, 7 insertions(+), 31 deletions(-)
 
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -88,10 +88,12 @@ unsigned paravirt_patch_call(void *insnb
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -311,23 +311,6 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
+ }
  
--	if (tgt_clobbers & ~site_clobbers)
--		return len;	/* target would clobber too much for this site */
--	if (len < 5)
-+	if (len < 5) {
-+#ifdef CONFIG_RETPOLINE
-+		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+#endif
- 		return len;	/* call too long for patch site */
-+	}
+-/* Check for Skylake-like CPUs (for RSB handling) */
+-static bool __init is_skylake_era(void)
+-{
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
+-	    boot_cpu_data.x86 == 6) {
+-		switch (boot_cpu_data.x86_model) {
+-		case INTEL_FAM6_SKYLAKE_MOBILE:
+-		case INTEL_FAM6_SKYLAKE_DESKTOP:
+-		case INTEL_FAM6_SKYLAKE_X:
+-		case INTEL_FAM6_KABYLAKE_MOBILE:
+-		case INTEL_FAM6_KABYLAKE_DESKTOP:
+-			return true;
+-		}
+-	}
+-	return false;
+-}
+-
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -388,22 +371,15 @@ retpoline_auto:
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
  
- 	b->opcode = 0xe8; /* call */
- 	b->delta = delta;
-@@ -106,8 +108,12 @@ unsigned paravirt_patch_jmp(void *insnbu
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
+ 	/*
+-	 * If neither SMEP nor PTI are available, there is a risk of
+-	 * hitting userspace addresses in the RSB after a context switch
+-	 * from a shallow call stack to a deeper one. To prevent this fill
+-	 * the entire RSB, even when using IBRS.
++	 * If spectre v2 protection has been enabled, unconditionally fill
++	 * RSB during a context switch; this protects against two independent
++	 * issues:
+ 	 *
+-	 * Skylake era CPUs have a separate issue with *underflow* of the
+-	 * RSB, when they will predict 'ret' targets from the generic BTB.
+-	 * The proper mitigation for this is IBRS. If IBRS is not supported
+-	 * or deactivated in favour of retpolines the RSB fill on context
+-	 * switch is required.
++	 *	- RSB underflow (and switch to BTB) on Skylake+
++	 *	- SpectreRSB variant of spectre v2 on X86_BUG_SPECTRE_V2 CPUs
+ 	 */
+-	if ((!boot_cpu_has(X86_FEATURE_PTI) &&
+-	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
+-		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+-		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
+-	}
++	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
++	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
  
--	if (len < 5)
-+	if (len < 5) {
-+#ifdef CONFIG_RETPOLINE
-+		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+#endif
- 		return len;	/* call too long for patch site */
-+	}
- 
- 	b->opcode = 0xe9;	/* jmp */
- 	b->delta = delta;
+ 	/* Initialize Indirect Branch Prediction Barrier if supported */
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
 
 
