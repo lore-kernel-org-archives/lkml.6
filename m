@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FF4C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B295C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC21521728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC21521728
+	by mail.kernel.org (Postfix) with ESMTP id C1F4921730
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F4921730
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388549AbeHNUOy (ORCPT
+        id S2388564AbeHNUO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:14:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52088 "EHLO
+        Tue, 14 Aug 2018 16:14:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52098 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387702AbeHNUOx (ORCPT
+        with ESMTP id S2387702AbeHNUO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:14:53 -0400
+        Tue, 14 Aug 2018 16:14:57 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65948CD8;
-        Tue, 14 Aug 2018 17:26:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1517DCEA;
+        Tue, 14 Aug 2018 17:26:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 58/79] x86/KVM/VMX: Initialize the vmx_l1d_flush_pages content
-Date:   Tue, 14 Aug 2018 19:17:17 +0200
-Message-Id: <20180814171340.100860318@linuxfoundation.org>
+Subject: [PATCH 4.18 59/79] Documentation/l1tf: Fix typos
+Date:   Tue, 14 Aug 2018 19:17:18 +0200
+Message-Id: <20180814171340.138687926@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -50,82 +50,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolai Stange <nstange@suse.de>
+From: Tony Luck <tony.luck@intel.com>
 
-The slow path in vmx_l1d_flush() reads from vmx_l1d_flush_pages in order
-to evict the L1d cache.
+Fix spelling and other typos
 
-However, these pages are never cleared and, in theory, their data could be
-leaked.
-
-More importantly, KSM could merge a nested hypervisor's vmx_l1d_flush_pages
-to fewer than 1 << L1D_CACHE_ORDER host physical pages and this would break
-the L1d flushing algorithm: L1D on x86_64 is tagged by physical addresses.
-
-Fix this by initializing the individual vmx_l1d_flush_pages with a
-different pattern each.
-
-Rename the "empty_zp" asm constraint identifier in vmx_l1d_flush() to
-"flush_pages" to reflect this change.
-
-Fixes: a47dd5f06714 ("x86/KVM/VMX: Add L1D flush algorithm")
-Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/l1tf.rst |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -211,6 +211,7 @@ static void *vmx_l1d_flush_pages;
- static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
- {
- 	struct page *page;
-+	unsigned int i;
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -17,7 +17,7 @@ vulnerability is not present on:
+    - Older processor models, where the CPU family is < 6
  
- 	if (!enable_ept) {
- 		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
-@@ -243,6 +244,16 @@ static int vmx_setup_l1d_flush(enum vmx_
- 		if (!page)
- 			return -ENOMEM;
- 		vmx_l1d_flush_pages = page_address(page);
-+
-+		/*
-+		 * Initialize each page with a different pattern in
-+		 * order to protect against KSM in the nested
-+		 * virtualization case.
-+		 */
-+		for (i = 0; i < 1u << L1D_CACHE_ORDER; ++i) {
-+			memset(vmx_l1d_flush_pages + i * PAGE_SIZE, i + 1,
-+			       PAGE_SIZE);
-+		}
- 	}
+    - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
+-     Penwell, Pineview, Slivermont, Airmont, Merrifield)
++     Penwell, Pineview, Silvermont, Airmont, Merrifield)
  
- 	l1tf_vmx_mitigation = l1tf;
-@@ -9737,7 +9748,7 @@ static void vmx_l1d_flush(struct kvm_vcp
- 		/* First ensure the pages are in the TLB */
- 		"xorl	%%eax, %%eax\n"
- 		".Lpopulate_tlb:\n\t"
--		"movzbl	(%[empty_zp], %%" _ASM_AX "), %%ecx\n\t"
-+		"movzbl	(%[flush_pages], %%" _ASM_AX "), %%ecx\n\t"
- 		"addl	$4096, %%eax\n\t"
- 		"cmpl	%%eax, %[size]\n\t"
- 		"jne	.Lpopulate_tlb\n\t"
-@@ -9746,12 +9757,12 @@ static void vmx_l1d_flush(struct kvm_vcp
- 		/* Now fill the cache */
- 		"xorl	%%eax, %%eax\n"
- 		".Lfill_cache:\n"
--		"movzbl	(%[empty_zp], %%" _ASM_AX "), %%ecx\n\t"
-+		"movzbl	(%[flush_pages], %%" _ASM_AX "), %%ecx\n\t"
- 		"addl	$64, %%eax\n\t"
- 		"cmpl	%%eax, %[size]\n\t"
- 		"jne	.Lfill_cache\n\t"
- 		"lfence\n"
--		:: [empty_zp] "r" (vmx_l1d_flush_pages),
-+		:: [flush_pages] "r" (vmx_l1d_flush_pages),
- 		    [size] "r" (size)
- 		: "eax", "ebx", "ecx", "edx");
- }
+    - The Intel Core Duo Yonah variants (2006 - 2008)
+ 
+@@ -113,7 +113,7 @@ Attack scenarios
+    deployment scenario. The mitigations, their protection scope and impact
+    are described in the next sections.
+ 
+-   The default mitigations and the rationale for chosing them are explained
++   The default mitigations and the rationale for choosing them are explained
+    at the end of this document. See :ref:`default_mitigations`.
+ 
+ .. _l1tf_sys_info:
+@@ -191,15 +191,15 @@ Guest mitigation mechanisms
+     - unconditional ('always')
+ 
+    The conditional mode avoids L1D flushing after VMEXITs which execute
+-   only audited code pathes before the corresponding VMENTER. These code
+-   pathes have beed verified that they cannot expose secrets or other
++   only audited code paths before the corresponding VMENTER. These code
++   paths have been verified that they cannot expose secrets or other
+    interesting data to an attacker, but they can leak information about the
+    address space layout of the hypervisor.
+ 
+    Unconditional mode flushes L1D on all VMENTER invocations and provides
+    maximum protection. It has a higher overhead than the conditional
+    mode. The overhead cannot be quantified correctly as it depends on the
+-   work load scenario and the resulting number of VMEXITs.
++   workload scenario and the resulting number of VMEXITs.
+ 
+    The general recommendation is to enable L1D flush on VMENTER. The kernel
+    defaults to conditional mode on affected processors.
+@@ -262,7 +262,7 @@ Guest mitigation mechanisms
+    Whether the interrupts with are affine to CPUs, which run untrusted
+    guests, provide interesting data for an attacker depends on the system
+    configuration and the scenarios which run on the system. While for some
+-   of the interrupts it can be assumed that they wont expose interesting
++   of the interrupts it can be assumed that they won't expose interesting
+    information beyond exposing hints about the host OS memory layout, there
+    is no way to make general assumptions.
+ 
+@@ -299,7 +299,7 @@ Guest mitigation mechanisms
+ 		 to be brought up at least partially and are then shut down
+ 		 again.  "nosmt" can be undone via the sysfs interface.
+ 
+-     nosmt=force Has the same effect as "nosmt' but it does not allow to
++     nosmt=force Has the same effect as "nosmt" but it does not allow to
+ 		 undo the SMT disable via the sysfs interface.
+      =========== ==========================================================
+ 
 
 
