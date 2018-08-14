@@ -3,137 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E99C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4A3C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF5621715
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56F5721723
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Hqgmc9k4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF5621715
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dYyff9To"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F5721723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732544AbeHOCGU (ORCPT
+        id S1732573AbeHOCJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:06:20 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:50316 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729705AbeHOCGU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:06:20 -0400
-Received: by mail-it0-f68.google.com with SMTP id j81-v6so20912663ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=24jK8A7jkNIu2WgqU9zP0yRp+02coOoQHaoLJQ7Q6O0=;
-        b=Hqgmc9k47hrE4UoBhiZSh9KyXSgZ6f1L221vCvMqO1pRK2BXopaH2ox0thUqjonmYO
-         w4kHOi0yZjLKjSmhaQ0FvvwmrFumBKqtmv89A84m3uABXVqechxEj6q3M8IA8tLfF18m
-         HWQe2Uz6WXRqKzbc7Yq0/+J7Pl7DEFXkr2ozU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=24jK8A7jkNIu2WgqU9zP0yRp+02coOoQHaoLJQ7Q6O0=;
-        b=CmPT0evOpotl+MQFNThjWpvsOmWi9Efhnpp/Bd8AdLsgv1VPRaiTVHZ/wWJ4gLNu3t
-         Wexvi7bxYvEYjAqfYh7/4JqlAIm7N3gMWjP6jV0H0AGEMn54UHmXhT65qbAS/obGsBGG
-         d+GKQffbl1XPM8T808V6Cl2dTmLEII59UQvmVVRnj/akc0Dv6frKo6SCH3LgmFkrpVgT
-         49fdoyj/iKyc0UWctQZ1kJjMl3SR1blrcW/LKpR9hB6ECj8n9NIxezm86gP1J/YF9sKM
-         CyDItDMKPjJXXhTfL4yIEjSsEkOiCGZ1vBkPb/oNrMIf4cbIeUvfGrDbsjTcXCIADK/5
-         456A==
-X-Gm-Message-State: AOUpUlGplUam0dJE7AuWmD4CoS1u+p3MdTB4wqhGmi+zNxx83kgCexdF
-        0WwmuzD9MHZY7piOFDy189bO/BJngv78iiqqecw=
-X-Google-Smtp-Source: AA+uWPxsXNeAxKUvxsOk4Yk2pH/lwWpG20AWcIr0v131rPE1khYsahL84GbTqy3O2ZntK2SCovXgHtqIzegw7YXWxFA=
-X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr20505299jas.72.1534288613120;
- Tue, 14 Aug 2018 16:16:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180814221735.62804-1-wnukowski@google.com> <20180814225716.GA3224@localhost.localdomain>
-In-Reply-To: <20180814225716.GA3224@localhost.localdomain>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 14 Aug 2018 16:16:41 -0700
-Message-ID: <CA+55aFw-Fed2QJCYBosGby71AsXAVKGq8mG-HYR13rEnD9V2Lg@mail.gmail.com>
-Subject: Re: [PATCH] Bugfix for handling of shadow doorbell buffer.
-To:     keith.busch@linux.intel.com
-Cc:     wnukowski@google.com, Jens Axboe <axboe@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        Tue, 14 Aug 2018 22:09:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:39183 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729705AbeHOCJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 22:09:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41qpV42WqPz9s0n;
+        Wed, 15 Aug 2018 09:20:12 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534288812;
+        bh=HXnFjj2q27PQj5Ulfg/11snEeUEzGIQ0WYCeZ5ofm/Q=;
+        h=Date:From:To:Cc:Subject:From;
+        b=dYyff9To4uFEFF0L1uNE5IhP5uir/ho5aiyiQpWaYcEA4qODJ1kSHbjrZaMgmCMFT
+         rPYeD1v7siAeIXTFFZ9hkULHLoZoAwtmUez/TeHgY2GYEd7SU3OKH+Ddrkry8SzBuo
+         tKQsXTGt9IxswtCpco3vLS9e2Yb9oF4pXGb2fL9hDNk7Ne2i7+hJ8ffo18sppkz0+n
+         W9CiX7XxdeQ4nFkIY/813MbiKdcaETbkkXoFLm2ZQOUk9C3xZIBg1jWH76oaLUZkCB
+         FFgCzrOxcOaeWAqUOkXfNlaFHIQTQp8SaO12I7LMZhZlpMHaEcZJVjejht9YG+tVzD
+         AH1kWXfRceH9g==
+Date:   Wed, 15 Aug 2018 09:19:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Keith Busch <keith.busch@intel.com>, yigitfiliz@google.com,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        Diana Craciun <diana.craciun@nxp.com>
+Subject: linux-next: manual merge of the powerpc tree with Linus' tree
+Message-ID: <20180815091945.16b2ead9@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eOa9bvzEeNV/i6qES_KhouF"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guys, you're both wrong.
+--Sig_/eOa9bvzEeNV/i6qES_KhouF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 14, 2018 at 03:17:35PM -0700, Michal Wnukowski wrote:
->
-> With memory barrier in place, the volatile keyword around *dbbuf_ei is
-> redundant.
+Hi all,
 
-No. The memory barrier enforces _ordering_, but it doesn't enforce
-that the accesses are only done once. So when you do
+Today's linux-next merge of the powerpc tree got a conflict in:
 
->              *dbbuf_db = value;
+  Documentation/admin-guide/kernel-parameters.txt
 
-to write to dbbuf_db, and
+between commits:
 
->    *dbbuf_ei
+  05736e4ac13c ("cpu/hotplug: Provide knobs to control SMT")
+  506a66f37489 ("Revert "x86/apic: Ignore secondary threads if nosmt=3Dforc=
+e"")
 
-to read from dbbuf_ei, without the volatile the write (or the read)
-could be done multiple times, which can cause serious confusion.
+from Linus' tree and commit:
 
-So the "mb()" enforces ordering, and the volatile means that the
-accesses will each be done as one single access.
+  26cb1f36c43e ("Documentation: Add nospectre_v1 parameter")
 
-Two different issues entirely.
+from the powerpc tree.
 
-However, there's a more serious problem with your patch:
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-> +             /*
-> +              * Ensure that the doorbell is updated before reading
-> +              * the EventIdx from memory
-> +              */
-> +             mb();
+--=20
+Cheers,
+Stephen Rothwell
 
-Good comment. Except what about the other side?
+diff --cc Documentation/admin-guide/kernel-parameters.txt
+index 5a67e409d370,4167bbea51e1..000000000000
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@@ -2761,10 -2687,10 +2761,14 @@@
+  	nosmt		[KNL,S390] Disable symmetric multithreading (SMT).
+  			Equivalent to smt=3D1.
+ =20
+ +			[KNL,x86] Disable symmetric multithreading (SMT).
+ +			nosmt=3Dforce: Force disable SMT, cannot be undone
+ +				     via the sysfs control file.
+ +
++ 	nospectre_v1	[PPC] Disable mitigations for Spectre Variant 1 (bounds
++ 			check bypass). With this option data leaks are possible
++ 			in the system.
++=20
+  	nospectre_v2	[X86] Disable all mitigations for the Spectre variant 2
+  			(indirect branch prediction) vulnerability. System may
+  			allow data leaks with this option, which is equivalent
 
-When you use memory ordering rules, as opposed to locking, there's
-always *two* sides to any access order. There's this "write dbbuf_db"
-vs "read dbbuf_ei" ordering.
+--Sig_/eOa9bvzEeNV/i6qES_KhouF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-But there's the other side: what about the side that writes dbbuf_ei,
-and reads dbbuf_db?
+-----BEGIN PGP SIGNATURE-----
 
-I'm assuming that's the actual controller hardware, but it needs a
-comment about *that* access being ordered too, because if it isn't,
-then ordering this side is pointless.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzY5EACgkQAVBC80lX
+0GxLoAf+ICsDkgWQEtbkv5uSmmzKHAuvyGjRsEdxd6t4UEHyhqH17jOxVNALCnSS
+yFf6xCAqDe08T006mSRKtji48cJAwTTzSvidQVlm6+QA0rQMmyzKprxtFQunAYyx
+HUl5KhFzL8ZuuASDZcdlRfayt5/Ve4p+Wp5N4YknUpagHQ9XQzoizQUVp+UwSErb
+2lyaebPZP4A2SZc4gxndxvlO/pLLpEnzrESzrIb4p1fD3NB0hYvnA7QcSoUmR4v4
+KC9gHzcJoFEyqbywZUSxLzEk2qRsjhkfNdUCoJdkwQ9YPM3/ows8g01DgDi/sk49
+3dxwTZLuLOGopdzA6SIK6GUdaNrsjA==
+=Cpuw
+-----END PGP SIGNATURE-----
 
-On Tue, Aug 14, 2018 at 3:56 PM Keith Busch <keith.busch@linux.intel.com> wrote:
->
-> You just want to ensure the '*dbbuf_db = value' isn't reordered, right?
-> The order dependency might be more obvious if done as:
->
->         WRITE_ONCE(*dbbuf_db, value);
->
->         if (!nvme_dbbuf_need_event(READ_ONCE(*dbbuf_ei), value, old_value))
->                 return false;
->
-> And 'volatile' is again redundant.
-
-Yes, using READ_ONCE/WRITE_ONCE obviates the need for volatile, but it
-does *not* impose a memory ordering.
-
-It imposes an ordering on the compiler, but not on the CPU, so you
-still want the "mb()" there (or the accesses need to be to uncached
-memory or something, but then you should be using "readl()/writel()",
-so that's not the case here).
-
-                 Linus
+--Sig_/eOa9bvzEeNV/i6qES_KhouF--
