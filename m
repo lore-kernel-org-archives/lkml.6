@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F351C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28E6C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50DC32154F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:41:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50DC32154F
+	by mail.kernel.org (Postfix) with ESMTP id 830E82150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:41:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830E82150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389963AbeHNU3Y (ORCPT
+        id S2389973AbeHNU31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:29:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58982 "EHLO
+        Tue, 14 Aug 2018 16:29:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58996 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730892AbeHNU3X (ORCPT
+        with ESMTP id S1730587AbeHNU30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:29:23 -0400
+        Tue, 14 Aug 2018 16:29:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF0D0D83;
-        Tue, 14 Aug 2018 17:41:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4206DD20;
+        Tue, 14 Aug 2018 17:41:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Ingo Molnar <mingo@kernel.org>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 042/107] x86/cpu: Remove the pointless CPU printout
-Date:   Tue, 14 Aug 2018 19:17:05 +0200
-Message-Id: <20180814171523.414483900@linuxfoundation.org>
+Subject: [PATCH 4.9 043/107] x86/cpu/AMD: Remove the pointless detect_ht() call
+Date:   Tue, 14 Aug 2018 19:17:06 +0200
+Message-Id: <20180814171523.504366235@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,12 +54,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 55e6d279abd92cfd7576bba031e7589be8475edb upstream
+commit 44ca36de56d1bf196dca2eb67cd753a46961ffe6 upstream
 
-The value of this printout is dubious at best and there is no point in
-having it in two different places along with convoluted ways to reach it.
-
-Remove it completely.
+Real 32bit AMD CPUs do not have SMT and the only value of the call was to
+reach the magic printout which got removed.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
@@ -67,87 +65,21 @@ Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/common.c   |   20 +++++---------------
- arch/x86/kernel/cpu/topology.c |   11 -----------
- 2 files changed, 5 insertions(+), 26 deletions(-)
+ arch/x86/kernel/cpu/amd.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -611,13 +611,12 @@ void detect_ht(struct cpuinfo_x86 *c)
- #ifdef CONFIG_SMP
- 	u32 eax, ebx, ecx, edx;
- 	int index_msb, core_bits;
--	static bool printed;
- 
- 	if (!cpu_has(c, X86_FEATURE_HT))
- 		return;
- 
- 	if (cpu_has(c, X86_FEATURE_CMP_LEGACY))
--		goto out;
-+		return;
- 
- 	if (cpu_has(c, X86_FEATURE_XTOPOLOGY))
- 		return;
-@@ -626,14 +625,14 @@ void detect_ht(struct cpuinfo_x86 *c)
- 
- 	smp_num_siblings = (ebx & 0xff0000) >> 16;
- 
-+	if (!smp_num_siblings)
-+		smp_num_siblings = 1;
-+
- 	if (smp_num_siblings == 1) {
- 		pr_info_once("CPU0: Hyper-Threading is disabled\n");
--		goto out;
-+		return;
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -805,10 +805,6 @@ static void init_amd(struct cpuinfo_x86
+ 		srat_detect_node(c);
  	}
  
--	if (smp_num_siblings <= 1)
--		goto out;
+-#ifdef CONFIG_X86_32
+-	detect_ht(c);
+-#endif
 -
- 	index_msb = get_count_order(smp_num_siblings);
- 	c->phys_proc_id = apic->phys_pkg_id(c->initial_apicid, index_msb);
+ 	init_amd_cacheinfo(c);
  
-@@ -645,15 +644,6 @@ void detect_ht(struct cpuinfo_x86 *c)
- 
- 	c->cpu_core_id = apic->phys_pkg_id(c->initial_apicid, index_msb) &
- 				       ((1 << core_bits) - 1);
--
--out:
--	if (!printed && (c->x86_max_cores * smp_num_siblings) > 1) {
--		pr_info("CPU: Physical Processor ID: %d\n",
--			c->phys_proc_id);
--		pr_info("CPU: Processor Core ID: %d\n",
--			c->cpu_core_id);
--		printed = 1;
--	}
- #endif
- }
- 
---- a/arch/x86/kernel/cpu/topology.c
-+++ b/arch/x86/kernel/cpu/topology.c
-@@ -32,7 +32,6 @@ void detect_extended_topology(struct cpu
- 	unsigned int eax, ebx, ecx, edx, sub_index;
- 	unsigned int ht_mask_width, core_plus_mask_width;
- 	unsigned int core_select_mask, core_level_siblings;
--	static bool printed;
- 
- 	if (c->cpuid_level < 0xb)
- 		return;
-@@ -85,15 +84,5 @@ void detect_extended_topology(struct cpu
- 	c->apicid = apic->phys_pkg_id(c->initial_apicid, 0);
- 
- 	c->x86_max_cores = (core_level_siblings / smp_num_siblings);
--
--	if (!printed) {
--		pr_info("CPU: Physical Processor ID: %d\n",
--		       c->phys_proc_id);
--		if (c->x86_max_cores > 1)
--			pr_info("CPU: Processor Core ID: %d\n",
--			       c->cpu_core_id);
--		printed = 1;
--	}
--	return;
- #endif
- }
+ 	if (c->x86 >= 0xf)
 
 
