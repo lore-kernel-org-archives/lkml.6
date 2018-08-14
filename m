@@ -2,105 +2,179 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348DBC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB2DC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D483821756
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:48:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9UPjvF5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D483821756
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EA6A021747
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:55:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6A021747
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeHNDda (ORCPT
+        id S1730796AbeHNDjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 23:33:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42429 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729230AbeHNDda (ORCPT
+        Mon, 13 Aug 2018 23:39:45 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:54068 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729230AbeHNDjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 23:33:30 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y4-v6so8293285pgp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v4x+awJpcGt37jhsUaOOrXBFpBvOgKEiGhJa6jfwFcE=;
-        b=T9UPjvF5yWKgPrcFvp+GmmfanO2Am4lhaQGzc/gvJ1Vm7Lc3h7YTioi0qyGfTPbpqu
-         H0PeUj61myJlh0vTeKzFMQZbSyTkw9euDrfO5L98tkkWgmfxkKc3vM5AkJko9raOVh+w
-         1XVpMsYvSB8VoOgc9t76M4BM6IEbwiXS4kxP/l3SCKRRQft6VVT3x3IXyW3PbGXOBjNA
-         SAPo+UfLJpjebhqQamnGFCKqxfvo+FRr8AN4PT9aH3TDwfrCUxwGadsxMXhJ/xz4RkXd
-         XxzqM4CwvS/ZurU6W7GqkSpiV7uZpttERHx8LhH6Z/HL/B0nKqe1iHjVusd7gIYXBxCn
-         LfEA==
+        Mon, 13 Aug 2018 23:39:44 -0400
+Received: by mail-it0-f69.google.com with SMTP id 22-v6so11274337ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:55:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v4x+awJpcGt37jhsUaOOrXBFpBvOgKEiGhJa6jfwFcE=;
-        b=sTMWAI+lAT7yoMhwbSusu6+xc1jIZsQCMAY8eeGuXRjvdMjswwqv+8qLYJqP3pzVjb
-         ay4MEX+B015NRTKWlnuH0uKI5aqeATmWxotG78Ky8GwrfwH8RRR8VlTD8wh+z+Qy++cP
-         Di34pNBeaPWGWie1SeZW9uSGJmB47xDfrQDdhSEQ2r+zHTwqCtZhAsLVW8aOgEtThzX2
-         UVY3DDwLV+heMAaYfx1765tkGN79tug4vpppvNO6OC9l2buMb1J3My75GcH9K/XF0RRG
-         xL7ildJCIZYxeH/+100FhUxXPtUctVktSLd5qTk/2kj29N+Wk9o65hUyGRV8jCDNHBA5
-         3iNA==
-X-Gm-Message-State: AOUpUlGeW1JNIMGTwUEKqSfxyERTENOqlfm9GEXQbaGlLKy1GSig1g1d
-        J9pZy03fRtz6qW8/pT4TrB/b/bM0
-X-Google-Smtp-Source: AA+uWPw9LKe9FNF0fdYGH0J/eDEfZqtY0dcrZU9bsn0qjS6rNKa6e18x/IooqwWr+F6pJ2D5lCQJyA==
-X-Received: by 2002:a65:4b87:: with SMTP id t7-v6mr18530342pgq.391.1534207729586;
-        Mon, 13 Aug 2018 17:48:49 -0700 (PDT)
-Received: from localhost ([110.70.26.52])
-        by smtp.gmail.com with ESMTPSA id c3-v6sm18941626pgw.79.2018.08.13.17.48.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Aug 2018 17:48:48 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 09:51:55 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        zhouxianrong <zhouxianrong@tom.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ngupta@vflare.org,
-        zhouxianrong <zhouxianrong@huawei.com>
-Subject: Re: [PATCH] zsmalloc: fix linking bug in init_zspage
-Message-ID: <20180814005155.GB20631@jagdpanzerIV>
-References: <20180810002817.2667-1-zhouxianrong@tom.com>
- <20180813060549.GB64836@rodete-desktop-imager.corp.google.com>
- <20180813105536.GA435@jagdpanzerIV>
- <20180814002416.GA34280@rodete-desktop-imager.corp.google.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Sh1sOuXnsFV/2pqiMnbKtnLRhpIaWrH9rLhycad/WEE=;
+        b=hgYerZyJFw0XEvl/ggG9lThJpp0AgFLX0sPrb8C1hLm/tNH0O4ROdw7noNKKKqAcbT
+         mGRN+wSusIJzf4sHGDWE7VB7RxI2GpTAmKCYl9DlaO/N78h0kwProgTeOLiVstGWSReO
+         EExQk9ab3BkmfSgSFRKKghgVaUkLQlwFTFdd62GIBqVSThyR4hsWDDFRir5TCM8RczjP
+         4xss8OsxdIoP3ZPxmmfOijWbHp7NhaSwePlt7AS9M7oLKPIZPS6kweoIYhRcoDp8XVvT
+         MzoK/yAMjI0Ms19TfrECZs2AIH9PPibjSPPqGHOB8aDdN80b66bDPOGn7UQMPorqUXAn
+         j1qg==
+X-Gm-Message-State: AOUpUlENSXMx+FnE+y5OlVxnmtmRloKr3RwvuqqTiZOUXB0lw84p6euA
+        gMkKtyCtlXzAvS6ww9G+Jkj5B1Awus2wOa1iPCfJEtq3LAhv
+X-Google-Smtp-Source: AA+uWPxkZUd9JD255Kxd2pWuvH3dBTorKhtigYBMEP/UW+LAooKiZ5gFa1+mfx8YYNhAuBB4JDCbAGbP0qhP+FOhk4b8Vbiajx1q
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814002416.GA34280@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a6b:b251:: with SMTP id b78-v6mr9008249iof.128.1534208102837;
+ Mon, 13 Aug 2018 17:55:02 -0700 (PDT)
+Date:   Mon, 13 Aug 2018 17:55:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fb3b1605735aa815@google.com>
+Subject: WARNING: refcount bug in sctp_transport_put
+From:   syzbot <syzbot+6a15c8ad0f0632ccd7f3@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Minchan,
+Hello,
 
-On (08/14/18 09:24), Minchan Kim wrote:
-> > Any thoughts?
->
-> If we want a refactoring, I'm not against but description said it tiggered
-> BUG_ON on zs_map_object rarely. That means it should be stable material
-> and need more description to understand. Please be more specific with
-> some example.
+syzbot found the following crash on:
 
-I don't have any BUG_ON on hands. Would be great if zhouxianrong could
-post some backtraces or more info/explanation.
+HEAD commit:    112cbae26d18 Merge branch 'linus' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12401622400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=152cb8ccd35b1f70
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a15c8ad0f0632ccd7f3
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-> The reason I'm hesitating is zsmalloc moves ZS_FULL group
-> when the zspage->inuse is equal to class->objs_per_zspage so I thought
-> it shouldn't allocate last partial object.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Maybe, allocating last partial object does look a bit hacky - it's not a
-valid object anyway, but I'm not suggesting that we need to change it.
-Let's hear from zhouxianrong.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6a15c8ad0f0632ccd7f3@syzkaller.appspotmail.com
 
-	-ss
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 1 PID: 7203 at lib/refcount.c:187  
+refcount_sub_and_test+0x2e7/0x350 lib/refcount.c:187
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 7203 Comm: udevd Not tainted 4.18.0-rc8+ #182
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:refcount_sub_and_test+0x2e7/0x350 lib/refcount.c:187
+Code: 89 de e8 fc b4 1c fe 84 db 74 07 31 db e9 46 ff ff ff e8 1c b4 1c fe  
+48 c7 c7 80 48 3a 87 c6 05 82 f2 25 05 01 e8 f9 cc e7 fd <0f> 0b 31 db e9  
+25 ff ff ff 48 8b bd 28 ff ff ff 89 85 34 ff ff ff
+RSP: 0018:ffff8801db107598 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000100 RSI: ffffffff81632481 RDI: ffff8801db107270
+RBP: ffff8801db107680 R08: ffff8801b9a22780 R09: 0000000000000002
+R10: ffff8801b9a22780 R11: 0000000000000000 R12: 00000000ffffffff
+R13: ffff8801db107658 R14: 0000000000000001 R15: ffff8801aefee088
+  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
+  sctp_transport_put+0x76/0x200 net/sctp/transport.c:331
+  sctp_generate_heartbeat_event+0x2d7/0x450 net/sctp/sm_sideeffect.c:416
+  call_timer_fn+0x242/0x970 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x7a6/0xc70 kernel/time/timer.c:1666
+  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:372 [inline]
+  irq_exit+0x1d4/0x210 kernel/softirq.c:412
+  exiting_irq arch/x86/include/asm/apic.h:527 [inline]
+  smp_apic_timer_interrupt+0x186/0x730 arch/x86/kernel/apic/apic.c:1055
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:update_stack_state+0xcc/0x690 arch/x86/kernel/unwind_frame.c:215
+Code: 06 49 8d 7e 50 48 89 fa 89 85 24 ff ff ff 48 c1 ea 03 48 b8 00 00 00  
+00 00 fc ff df 80 3c 02 00 0f 85 04 05 00 00 49 8b 46 50 <48> 85 c0 0f 84  
+66 03 00 00 48 05 a8 00 00 00 48 89 85 10 ff ff ff
+RSP: 0018:ffff88018d816a60 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffff88018d816cc8 RCX: ffff88018d816c40
+RDX: 1ffff10031b02da3 RSI: ffff88018d816d48 RDI: ffff88018d816d18
+RBP: ffff88018d816b68 R08: ffff88018d816d00 R09: ffff8801b9a22780
+R10: ffffed0031b02da3 R11: ffff88018d816d1f R12: 1ffff10031b02d54
+R13: ffff88018d816d48 R14: ffff88018d816cc8 R15: ffff88018d816d18
+  unwind_next_frame.part.7+0x1ae/0x9e0 arch/x86/kernel/unwind_frame.c:329
+  unwind_next_frame arch/x86/include/asm/unwind.h:40 [inline]
+  __unwind_start+0x166/0x330 arch/x86/kernel/unwind_frame.c:414
+  unwind_start arch/x86/include/asm/unwind.h:54 [inline]
+  __save_stack_trace+0x59/0xf0 arch/x86/kernel/stacktrace.c:43
+  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  slab_post_alloc_hook mm/slab.h:444 [inline]
+  slab_alloc mm/slab.c:3392 [inline]
+  kmem_cache_alloc+0x11b/0x760 mm/slab.c:3552
+  anon_vma_chain_alloc mm/rmap.c:129 [inline]
+  anon_vma_clone+0x140/0x740 mm/rmap.c:269
+  anon_vma_fork+0xf0/0x960 mm/rmap.c:332
+  dup_mmap kernel/fork.c:498 [inline]
+  dup_mm kernel/fork.c:1266 [inline]
+  copy_mm kernel/fork.c:1320 [inline]
+  copy_process.part.39+0x4e53/0x70b0 kernel/fork.c:1826
+  copy_process kernel/fork.c:1639 [inline]
+  _do_fork+0x291/0x12a0 kernel/fork.c:2122
+  __do_sys_clone kernel/fork.c:2229 [inline]
+  __se_sys_clone kernel/fork.c:2223 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2223
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f1b0bf66f46
+Code: f7 d8 64 89 04 25 d4 02 00 00 64 4c 8b 14 25 10 00 00 00 31 d2 49 81  
+c2 d0 02 00 00 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff  
+ff 0f 87 31 01 00 00 85 c0 41 89 c4 0f 85 3b 01 00
+RSP: 002b:00007ffc9eb9ddb0 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffc9eb9ddb0 RCX: 00007f1b0bf66f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffc9eb9de10 R08: 0000000000001c23 R09: 0000000000001c23
+R10: 00007f1b0c883a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffc9eb9ddd0 R14: 0000000000000005 R15: 0000000000000005
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
