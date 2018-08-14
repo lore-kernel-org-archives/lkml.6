@@ -2,87 +2,86 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9029AC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C435C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A14621742
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:14:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="09jeifqB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A14621742
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E4EB20834
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:18:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4EB20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tkos.co.il
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731257AbeHNG6t (ORCPT
+        id S1731341AbeHNHD3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 02:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbeHNG6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 02:58:49 -0400
-Received: from localhost (unknown [104.132.1.88])
+        Tue, 14 Aug 2018 03:03:29 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:38309 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729443AbeHNHD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 03:03:29 -0400
+Received: from sapphire.tkos.co.il (unknown [10.0.4.3])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 801F821742;
-        Tue, 14 Aug 2018 04:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534220010;
-        bh=TVIKhfsg3TbXJ5NRPPMa9KgwZ2YcqtRLU3/qcHpEEHI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=09jeifqBJBixYZFqd92bb41yS5GHKD0Q09/mkjcr1f1vmh+kF269XZX4Qr9+QMam2
-         hKQt4Y33XYiJ87lnc9QLvhuRji3UG7Uu1QPoc3a6nVteRWTS0G3zki76CnDV5kLbE3
-         imAmvkhJwfLszlfS2UZzdkjJYbBV3ldDW/5t4KF8=
-Date:   Mon, 13 Aug 2018 21:13:29 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH 1/2] f2fs: set 4KB discard granularity by default
-Message-ID: <20180814041329.GB52730@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810100806.9298-1-yuchao0@huawei.com>
+        by mx.tkos.co.il (Postfix) with ESMTPS id CE823440524;
+        Tue, 14 Aug 2018 07:18:06 +0300 (IDT)
+Date:   Tue, 14 Aug 2018 07:18:05 +0300
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rtc:rtc-digicolor: Use PTR_ERR_OR_ZERO to replace
+ the open code
+Message-ID: <20180814041805.666uaxe2gf75r3wr@sapphire.tkos.co.il>
+References: <1534159885-25364-1-git-send-email-zhongjiang@huawei.com>
+ <1534159885-25364-2-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810100806.9298-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <1534159885-25364-2-git-send-email-zhongjiang@huawei.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10, Chao Yu wrote:
-> Small granularity (size < 64K) fragmentation will cause f2fs suspending
-> all pending discards, result in performance regression, so let's set
-> 4KB discard granularity by default.
-> 
-> So that without fstrim, we also have the ability to avoid any performance
-> regression caused by non-alignment mapping between fs and flash device.
+Hi zhong,
 
-This is why we added a sysfs entry. Why do we need to change the default
-value every time?
-
+On Mon, Aug 13, 2018 at 07:31:24PM +0800, zhong jiang wrote:
+> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR, So
+> just replace them rather than duplicating its implement.
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+
+Acked-by: Baruch Siach <baruch@tkos.co.il>
+
+Thanks,
+baruch
+
 > ---
->  fs/f2fs/f2fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/rtc/rtc-digicolor.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 58431b9bfd8f..273ffdaf4891 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -248,7 +248,7 @@ struct discard_entry {
->  };
+> diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
+> index b253bf1..fd6850c 100644
+> --- a/drivers/rtc/rtc-digicolor.c
+> +++ b/drivers/rtc/rtc-digicolor.c
+> @@ -202,10 +202,8 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, rtc);
+>  	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+>  						&dc_rtc_ops, THIS_MODULE);
+> -	if (IS_ERR(rtc->rtc_dev))
+> -		return PTR_ERR(rtc->rtc_dev);
 >  
->  /* default discard granularity of inner discard thread, unit: block count */
-> -#define DEFAULT_DISCARD_GRANULARITY		16
-> +#define DEFAULT_DISCARD_GRANULARITY		1
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(rtc->rtc_dev);
+>  }
 >  
->  /* max discard pend list number */
->  #define MAX_PLIST_NUM		512
-> -- 
-> 2.18.0.rc1
+>  static const struct of_device_id dc_dt_ids[] = {
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
