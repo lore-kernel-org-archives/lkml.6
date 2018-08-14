@@ -6,101 +6,68 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA99C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04941C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD5C21653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:58:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD5C21653
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id A5FCA2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5FCA2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732458AbeHNRpb (ORCPT
+        id S1732495AbeHNRqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:45:31 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:52709 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbeHNRpa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:45:30 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w7EEvhlX017576
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 14 Aug 2018 07:57:43 -0700 (PDT)
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 14 Aug 2018 07:57:42 -0700
-From:   <zhe.he@windriver.com>
-To:     <jason.wessel@windriver.com>, <daniel.thompson@linaro.org>,
-        <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <kgdb-bugreport@lists.sourceforge.net>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/2] kgdboc: Passing ekgdboc to command line causes panic
-Date:   Tue, 14 Aug 2018 22:57:39 +0800
-Message-ID: <1534258660-80070-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 14 Aug 2018 13:46:08 -0400
+Received: from mga05.intel.com ([192.55.52.43]:28132 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728880AbeHNRqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:46:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2018 07:58:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,238,1531810800"; 
+   d="scan'208";a="62332412"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.90])
+  by fmsmga007.fm.intel.com with ESMTP; 14 Aug 2018 07:58:32 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] MAINTAINERS: Add me as a keys/trusted maintainer
+Date:   Tue, 14 Aug 2018 17:57:48 +0300
+Message-Id: <20180814145759.11581-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+As a TPM maintainer I have to review all these commits. This commit is
+just to make that documented.
 
-kgdboc_option_setup does not check input argument before passing it
-to strlen. The argument would be a NULL pointer if "ekgdboc", without
-its value, is set in command line and thus cause the following panic.
-
-PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
-[    0.000000] RIP: 0010:strlen+0x0/0x20
-...
-[    0.000000] Call Trace
-[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
-[    0.000000]  ? kgdboc_early_init+0x6/0x1b
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
-
-This patch adds a check to prevent the panic.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-v2:
-- Split out printk cleanups
-- Add cc to stable@vger.kernel.org
-v3:
-- Use more meaningful error message
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/tty/serial/kgdboc.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-index b4ba2b1..f4d0ef6 100644
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -130,6 +130,11 @@ static void kgdboc_unregister_kbd(void)
- 
- static int kgdboc_option_setup(char *opt)
- {
-+	if (!opt) {
-+		pr_err("kgdboc: config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	if (strlen(opt) >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdboc: config string too long\n");
- 		return -ENOSPC;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3119bba7971c..4b51c13ae2d8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7928,6 +7928,7 @@ F:	security/keys/encrypted-keys/
+ KEYS-TRUSTED
+ M:	James Bottomley <jejb@linux.vnet.ibm.com>
+ M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
++M:	Jarkko Sakkkinen <jarkko.sakkinen@linux.intel.com>
+ L:	linux-integrity@vger.kernel.org
+ L:	keyrings@vger.kernel.org
+ S:	Supported
 -- 
-2.7.4
+2.17.1
 
