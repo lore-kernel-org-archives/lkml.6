@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,WEIRD_QUOTING
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8184C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3928FC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACAE721738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACAE721738
+	by mail.kernel.org (Postfix) with ESMTP id F13982154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F13982154F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390148AbeHNUaJ (ORCPT
+        id S2390197AbeHNUaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59228 "EHLO
+        Tue, 14 Aug 2018 16:30:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390078AbeHNUaH (ORCPT
+        with ESMTP id S2390105AbeHNUaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:07 -0400
+        Tue, 14 Aug 2018 16:30:09 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4544DC2;
-        Tue, 14 Aug 2018 17:33:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10C37DBC;
+        Tue, 14 Aug 2018 17:33:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 91/97] x86/speculation/l1tf: Invert all not present mappings
-Date:   Tue, 14 Aug 2018 19:17:43 +0200
-Message-Id: <20180814171436.712319335@linuxfoundation.org>
+Subject: [PATCH 4.17 89/97] KVM: VMX: Tell the nested hypervisor to skip L1D flush on vmentry
+Date:   Tue, 14 Aug 2018 19:17:41 +0200
+Message-Id: <20180814171436.569237492@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,34 +50,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit f22cc87f6c1f771b57c407555cfefd811cdd9507 upstream
+commit 5b76a3cff011df2dcb6186c965a2e4d809a05ad4 upstream
 
-For kernel mappings PAGE_PROTNONE is not necessarily set for a non present
-mapping, but the inversion logic explicitely checks for !PRESENT and
-PROT_NONE.
+When nested virtualization is in use, VMENTER operations from the nested
+hypervisor into the nested guest will always be processed by the bare metal
+hypervisor, and KVM's "conditional cache flushes" mode in particular does a
+flush on nested vmentry.  Therefore, include the "skip L1D flush on
+vmentry" bit in KVM's suggested ARCH_CAPABILITIES setting.
 
-Remove the PROT_NONE check and make the inversion unconditional for all not
-present mappings.
+Add the relevant Documentation.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable-invert.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/admin-guide/l1tf.rst |   21 +++++++++++++++++++++
+ arch/x86/include/asm/kvm_host.h    |    1 +
+ arch/x86/kvm/vmx.c                 |    3 +--
+ arch/x86/kvm/x86.c                 |   26 +++++++++++++++++++++++++-
+ 4 files changed, 48 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/pgtable-invert.h
-+++ b/arch/x86/include/asm/pgtable-invert.h
-@@ -6,7 +6,7 @@
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -546,6 +546,27 @@ available:
+     EPT can be disabled in the hypervisor via the 'kvm-intel.ept'
+     parameter.
  
- static inline bool __pte_needs_invert(u64 val)
++3.4. Nested virtual machines
++""""""""""""""""""""""""""""
++
++When nested virtualization is in use, three operating systems are involved:
++the bare metal hypervisor, the nested hypervisor and the nested virtual
++machine.  VMENTER operations from the nested hypervisor into the nested
++guest will always be processed by the bare metal hypervisor. If KVM is the
++bare metal hypervisor it wiil:
++
++ - Flush the L1D cache on every switch from the nested hypervisor to the
++   nested virtual machine, so that the nested hypervisor's secrets are not
++   exposed to the nested virtual machine;
++
++ - Flush the L1D cache on every switch from the nested virtual machine to
++   the nested hypervisor; this is a complex operation, and flushing the L1D
++   cache avoids that the bare metal hypervisor's secrets are exposed to the
++   nested virtual machine;
++
++ - Instruct the nested hypervisor to not perform any L1D cache flush. This
++   is an optimization to avoid double L1D flushing.
++
+ 
+ .. _default_mitigations:
+ 
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1415,6 +1415,7 @@ int kvm_cpu_get_interrupt(struct kvm_vcp
+ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
+ void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu);
+ 
++u64 kvm_get_arch_capabilities(void);
+ void kvm_define_shared_msr(unsigned index, u32 msr);
+ int kvm_set_shared_msr(unsigned index, u64 val, u64 mask);
+ 
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6232,8 +6232,7 @@ static void vmx_vcpu_setup(struct vcpu_v
+ 		++vmx->nmsrs;
+ 	}
+ 
+-	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
+-		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
++	vmx->arch_capabilities = kvm_get_arch_capabilities();
+ 
+ 	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
+ 
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1098,11 +1098,35 @@ static u32 msr_based_features[] = {
+ 
+ static unsigned int num_msr_based_features;
+ 
++u64 kvm_get_arch_capabilities(void)
++{
++	u64 data;
++
++	rdmsrl_safe(MSR_IA32_ARCH_CAPABILITIES, &data);
++
++	/*
++	 * If we're doing cache flushes (either "always" or "cond")
++	 * we will do one whenever the guest does a vmlaunch/vmresume.
++	 * If an outer hypervisor is doing the cache flush for us
++	 * (VMENTER_L1D_FLUSH_NESTED_VM), we can safely pass that
++	 * capability to the guest too, and if EPT is disabled we're not
++	 * vulnerable.  Overall, only VMENTER_L1D_FLUSH_NEVER will
++	 * require a nested hypervisor to do a flush of its own.
++	 */
++	if (l1tf_vmx_mitigation != VMENTER_L1D_FLUSH_NEVER)
++		data |= ARCH_CAP_SKIP_VMENTRY_L1DFLUSH;
++
++	return data;
++}
++EXPORT_SYMBOL_GPL(kvm_get_arch_capabilities);
++
+ static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
  {
--	return (val & (_PAGE_PRESENT|_PAGE_PROTNONE)) == _PAGE_PROTNONE;
-+	return !(val & _PAGE_PRESENT);
- }
- 
- /* Get a mask to xor with the page table entry to get the correct pfn. */
+ 	switch (msr->index) {
+-	case MSR_IA32_UCODE_REV:
+ 	case MSR_IA32_ARCH_CAPABILITIES:
++		msr->data = kvm_get_arch_capabilities();
++		break;
++	case MSR_IA32_UCODE_REV:
+ 		rdmsrl_safe(msr->index, &msr->data);
+ 		break;
+ 	default:
 
 
