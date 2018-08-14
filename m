@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FAEC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781DDC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C810D2150F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C810D2150F
+	by mail.kernel.org (Postfix) with ESMTP id 2933621471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2933621471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390714AbeHNUcU (ORCPT
+        id S2390722AbeHNUcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:32:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59962 "EHLO
+        Tue, 14 Aug 2018 16:32:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59974 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUcU (ORCPT
+        with ESMTP id S1728642AbeHNUcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:32:20 -0400
+        Tue, 14 Aug 2018 16:32:24 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 075F5AF3;
-        Tue, 14 Aug 2018 17:44:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0642C7B;
+        Tue, 14 Aug 2018 17:44:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 087/107] x86/KVM/VMX: Introduce per-host-cpu analogue of l1tf_flush_l1d
-Date:   Tue, 14 Aug 2018 19:17:50 +0200
-Message-Id: <20180814171526.119684380@linuxfoundation.org>
+Subject: [PATCH 4.9 088/107] x86: Dont include linux/irq.h from asm/hardirq.h
+Date:   Tue, 14 Aug 2018 19:17:51 +0200
+Message-Id: <20180814171526.200092621@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -55,123 +53,392 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nicolai Stange <nstange@suse.de>
 
-commit 45b575c00d8e72d69d75dd8c112f044b7b01b069 upstream
+commit 447ae316670230d7d29430e2cbf1f5db4f49d14c upstream
 
-Part of the L1TF mitigation for vmx includes flushing the L1D cache upon
-VMENTRY.
+The next patch in this series will have to make the definition of
+irq_cpustat_t available to entering_irq().
 
-L1D flushes are costly and two modes of operations are provided to users:
-"always" and the more selective "conditional" mode.
+Inclusion of asm/hardirq.h into asm/apic.h would cause circular header
+dependencies like
 
-If operating in the latter, the cache would get flushed only if a host side
-code path considered unconfined had been traversed. "Unconfined" in this
-context means that it might have pulled in sensitive data like user data
-or kernel crypto keys.
+  asm/smp.h
+    asm/apic.h
+      asm/hardirq.h
+        linux/irq.h
+          linux/topology.h
+            linux/smp.h
+              asm/smp.h
 
-The need for L1D flushes is tracked by means of the per-vcpu flag
-l1tf_flush_l1d. KVM exit handlers considered unconfined set it. A
-vmx_l1d_flush() subsequently invoked before the next VMENTER will conduct a
-L1d flush based on its value and reset that flag again.
+or
 
-Currently, interrupts delivered "normally" while in root operation between
-VMEXIT and VMENTER are not taken into account. Part of the reason is that
-these don't leave any traces and thus, the vmx code is unable to tell if
-any such has happened.
+  linux/gfp.h
+    linux/mmzone.h
+      asm/mmzone.h
+        asm/mmzone_64.h
+          asm/smp.h
+            asm/apic.h
+              asm/hardirq.h
+                linux/irq.h
+                  linux/irqdesc.h
+                    linux/kobject.h
+                      linux/sysfs.h
+                        linux/kernfs.h
+                          linux/idr.h
+                            linux/gfp.h
 
-As proposed by Paolo Bonzini, prepare for tracking all interrupts by
-introducing a new per-cpu flag, "kvm_cpu_l1tf_flush_l1d". It will be in
-strong analogy to the per-vcpu ->l1tf_flush_l1d.
+and others.
 
-A later patch will make interrupt handlers set it.
+This causes compilation errors because of the header guards becoming
+effective in the second inclusion: symbols/macros that had been defined
+before wouldn't be available to intermediate headers in the #include chain
+anymore.
 
-For the sake of cache locality, group kvm_cpu_l1tf_flush_l1d into x86'
-per-cpu irq_cpustat_t as suggested by Peter Zijlstra.
+A possible workaround would be to move the definition of irq_cpustat_t
+into its own header and include that from both, asm/hardirq.h and
+asm/apic.h.
 
-Provide the helpers kvm_set_cpu_l1tf_flush_l1d(),
-kvm_clear_cpu_l1tf_flush_l1d() and kvm_get_cpu_l1tf_flush_l1d(). Make them
-trivial resp. non-existent for !CONFIG_KVM_INTEL as appropriate.
+However, this wouldn't solve the real problem, namely asm/harirq.h
+unnecessarily pulling in all the linux/irq.h cruft: nothing in
+asm/hardirq.h itself requires it. Also, note that there are some other
+archs, like e.g. arm64, which don't have that #include in their
+asm/hardirq.h.
 
-Let vmx_l1d_flush() handle kvm_cpu_l1tf_flush_l1d in the same way as
-l1tf_flush_l1d.
+Remove the linux/irq.h #include from x86' asm/hardirq.h.
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Fix resulting compilation errors by adding appropriate #includes to *.c
+files as needed.
+
+Note that some of these *.c files could be cleaned up a bit wrt. to their
+set of #includes, but that should better be done from separate patches, if
+at all.
+
 Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+[dwmw2: More fixes for EFI and Xen in 4.9]
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/hardirq.h |   23 +++++++++++++++++++++++
- arch/x86/kvm/vmx.c             |   17 +++++++++++++----
- 2 files changed, 36 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/dmi.h                                   |    2 +-
+ arch/x86/include/asm/hardirq.h                               |    1 -
+ arch/x86/include/asm/kvm_host.h                              |    1 +
+ arch/x86/kernel/apic/apic.c                                  |    2 ++
+ arch/x86/kernel/apic/htirq.c                                 |    2 ++
+ arch/x86/kernel/apic/io_apic.c                               |    1 +
+ arch/x86/kernel/apic/msi.c                                   |    1 +
+ arch/x86/kernel/apic/vector.c                                |    1 +
+ arch/x86/kernel/fpu/core.c                                   |    1 +
+ arch/x86/kernel/ftrace.c                                     |    1 +
+ arch/x86/kernel/hpet.c                                       |    1 +
+ arch/x86/kernel/i8259.c                                      |    1 +
+ arch/x86/kernel/irq.c                                        |    1 +
+ arch/x86/kernel/irq_32.c                                     |    1 +
+ arch/x86/kernel/irq_64.c                                     |    1 +
+ arch/x86/kernel/irqinit.c                                    |    1 +
+ arch/x86/kernel/kprobes/core.c                               |    1 +
+ arch/x86/kernel/kprobes/opt.c                                |    1 +
+ arch/x86/kernel/smpboot.c                                    |    1 +
+ arch/x86/kernel/time.c                                       |    1 +
+ arch/x86/mm/fault.c                                          |    1 +
+ arch/x86/mm/kaiser.c                                         |    1 +
+ arch/x86/platform/efi/efi_64.c                               |    1 +
+ arch/x86/platform/efi/quirks.c                               |    1 +
+ arch/x86/platform/intel-mid/device_libs/platform_mrfld_wdt.c |    1 +
+ arch/x86/xen/enlighten.c                                     |    1 +
+ arch/x86/xen/setup.c                                         |    1 +
+ drivers/pci/host/pci-hyperv.c                                |    2 ++
+ 28 files changed, 30 insertions(+), 2 deletions(-)
 
+--- a/arch/x86/include/asm/dmi.h
++++ b/arch/x86/include/asm/dmi.h
+@@ -3,8 +3,8 @@
+ 
+ #include <linux/compiler.h>
+ #include <linux/init.h>
++#include <linux/io.h>
+ 
+-#include <asm/io.h>
+ #include <asm/setup.h>
+ 
+ static __always_inline __init void *dmi_alloc(unsigned len)
 --- a/arch/x86/include/asm/hardirq.h
 +++ b/arch/x86/include/asm/hardirq.h
-@@ -6,6 +6,9 @@
+@@ -2,7 +2,6 @@
+ #define _ASM_X86_HARDIRQ_H
+ 
+ #include <linux/threads.h>
+-#include <linux/irq.h>
  
  typedef struct {
  	u16	     __softirq_pending;
-+#if IS_ENABLED(CONFIG_KVM_INTEL)
-+	u8	     kvm_cpu_l1tf_flush_l1d;
-+#endif
- 	unsigned int __nmi_count;	/* arch dependent */
- #ifdef CONFIG_X86_LOCAL_APIC
- 	unsigned int apic_timer_irqs;	/* arch dependent */
-@@ -60,4 +63,24 @@ extern u64 arch_irq_stat_cpu(unsigned in
- extern u64 arch_irq_stat(void);
- #define arch_irq_stat		arch_irq_stat
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -17,6 +17,7 @@
+ #include <linux/tracepoint.h>
+ #include <linux/cpumask.h>
+ #include <linux/irq_work.h>
++#include <linux/irq.h>
  
-+
-+#if IS_ENABLED(CONFIG_KVM_INTEL)
-+static inline void kvm_set_cpu_l1tf_flush_l1d(void)
-+{
-+	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-+}
-+
-+static inline void kvm_clear_cpu_l1tf_flush_l1d(void)
-+{
-+	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 0);
-+}
-+
-+static inline bool kvm_get_cpu_l1tf_flush_l1d(void)
-+{
-+	return __this_cpu_read(irq_stat.kvm_cpu_l1tf_flush_l1d);
-+}
-+#else /* !IS_ENABLED(CONFIG_KVM_INTEL) */
-+static inline void kvm_set_cpu_l1tf_flush_l1d(void) { }
-+#endif /* IS_ENABLED(CONFIG_KVM_INTEL) */
-+
- #endif /* _ASM_X86_HARDIRQ_H */
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8667,14 +8667,23 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
--		bool flush_l1d = vcpu->arch.l1tf_flush_l1d;
-+		bool flush_l1d;
+ #include <linux/kvm.h>
+ #include <linux/kvm_para.h>
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -34,6 +34,7 @@
+ #include <linux/dmi.h>
+ #include <linux/smp.h>
+ #include <linux/mm.h>
++#include <linux/irq.h>
  
- 		/*
--		 * Clear the flush bit, it gets set again either from
--		 * vcpu_run() or from one of the unsafe VMEXIT
--		 * handlers.
-+		 * Clear the per-vcpu flush bit, it gets set again
-+		 * either from vcpu_run() or from one of the unsafe
-+		 * VMEXIT handlers.
- 		 */
-+		flush_l1d = vcpu->arch.l1tf_flush_l1d;
- 		vcpu->arch.l1tf_flush_l1d = false;
+ #include <asm/trace/irq_vectors.h>
+ #include <asm/irq_remapping.h>
+@@ -55,6 +56,7 @@
+ #include <asm/mce.h>
+ #include <asm/tsc.h>
+ #include <asm/hypervisor.h>
++#include <asm/irq_regs.h>
+ 
+ unsigned int num_processors;
+ 
+--- a/arch/x86/kernel/apic/htirq.c
++++ b/arch/x86/kernel/apic/htirq.c
+@@ -16,6 +16,8 @@
+ #include <linux/device.h>
+ #include <linux/pci.h>
+ #include <linux/htirq.h>
++#include <linux/irq.h>
 +
-+		/*
-+		 * Clear the per-cpu flush bit, it gets set again from
-+		 * the interrupt handlers.
-+		 */
-+		flush_l1d |= kvm_get_cpu_l1tf_flush_l1d();
-+		kvm_clear_cpu_l1tf_flush_l1d();
+ #include <asm/irqdomain.h>
+ #include <asm/hw_irq.h>
+ #include <asm/apic.h>
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -32,6 +32,7 @@
+ 
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
+ #include <linux/sched.h>
+--- a/arch/x86/kernel/apic/msi.c
++++ b/arch/x86/kernel/apic/msi.c
+@@ -12,6 +12,7 @@
+  */
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/pci.h>
+ #include <linux/dmar.h>
+ #include <linux/hpet.h>
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -11,6 +11,7 @@
+  * published by the Free Software Foundation.
+  */
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/init.h>
+ #include <linux/compiler.h>
+ #include <linux/slab.h>
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -10,6 +10,7 @@
+ #include <asm/fpu/signal.h>
+ #include <asm/fpu/types.h>
+ #include <asm/traps.h>
++#include <asm/irq_regs.h>
+ 
+ #include <linux/hardirq.h>
+ #include <linux/pkeys.h>
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -26,6 +26,7 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/kprobes.h>
++#include <asm/sections.h>
+ #include <asm/ftrace.h>
+ #include <asm/nops.h>
+ 
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -1,6 +1,7 @@
+ #include <linux/clocksource.h>
+ #include <linux/clockchips.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/export.h>
+ #include <linux/delay.h>
+ #include <linux/errno.h>
+--- a/arch/x86/kernel/i8259.c
++++ b/arch/x86/kernel/i8259.c
+@@ -4,6 +4,7 @@
+ #include <linux/sched.h>
+ #include <linux/ioport.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/timex.h>
+ #include <linux/random.h>
+ #include <linux/init.h>
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -10,6 +10,7 @@
+ #include <linux/ftrace.h>
+ #include <linux/delay.h>
+ #include <linux/export.h>
++#include <linux/irq.h>
+ 
+ #include <asm/apic.h>
+ #include <asm/io_apic.h>
+--- a/arch/x86/kernel/irq_32.c
++++ b/arch/x86/kernel/irq_32.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/seq_file.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/kernel_stat.h>
+ #include <linux/notifier.h>
+ #include <linux/cpu.h>
+--- a/arch/x86/kernel/irq_64.c
++++ b/arch/x86/kernel/irq_64.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/kernel_stat.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/seq_file.h>
+ #include <linux/delay.h>
+ #include <linux/ftrace.h>
+--- a/arch/x86/kernel/irqinit.c
++++ b/arch/x86/kernel/irqinit.c
+@@ -4,6 +4,7 @@
+ #include <linux/sched.h>
+ #include <linux/ioport.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/timex.h>
+ #include <linux/random.h>
+ #include <linux/kprobes.h>
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -61,6 +61,7 @@
+ #include <asm/alternative.h>
+ #include <asm/insn.h>
+ #include <asm/debugreg.h>
++#include <asm/sections.h>
+ 
+ #include "common.h"
+ 
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -39,6 +39,7 @@
+ #include <asm/insn.h>
+ #include <asm/debugreg.h>
+ #include <asm/nospec-branch.h>
++#include <asm/sections.h>
+ 
+ #include "common.h"
+ 
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -76,6 +76,7 @@
+ #include <asm/realmode.h>
+ #include <asm/misc.h>
+ #include <asm/spec-ctrl.h>
++#include <asm/hw_irq.h>
+ 
+ /* Number of siblings per CPU package */
+ int smp_num_siblings = 1;
+--- a/arch/x86/kernel/time.c
++++ b/arch/x86/kernel/time.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/clockchips.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/i8253.h>
+ #include <linux/time.h>
+ #include <linux/export.h>
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -23,6 +23,7 @@
+ #include <asm/vsyscall.h>		/* emulate_vsyscall		*/
+ #include <asm/vm86.h>			/* struct vm86			*/
+ #include <asm/mmu_context.h>		/* vma_pkey()			*/
++#include <asm/sections.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <asm/trace/exceptions.h>
+--- a/arch/x86/mm/kaiser.c
++++ b/arch/x86/mm/kaiser.c
+@@ -20,6 +20,7 @@
+ #include <asm/desc.h>
+ #include <asm/cmdline.h>
+ #include <asm/vsyscall.h>
++#include <asm/sections.h>
+ 
+ int kaiser_enabled __read_mostly = 1;
+ EXPORT_SYMBOL(kaiser_enabled);	/* for inlined TLB flush functions */
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -45,6 +45,7 @@
+ #include <asm/realmode.h>
+ #include <asm/time.h>
+ #include <asm/pgalloc.h>
++#include <asm/sections.h>
+ 
+ /*
+  * We allocate runtime services regions bottom-up, starting from -4G, i.e.
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -13,6 +13,7 @@
+ #include <linux/dmi.h>
+ #include <asm/efi.h>
+ #include <asm/uv/uv.h>
++#include <asm/sections.h>
+ 
+ #define EFI_MIN_RESERVE 5120
+ 
+--- a/arch/x86/platform/intel-mid/device_libs/platform_mrfld_wdt.c
++++ b/arch/x86/platform/intel-mid/device_libs/platform_mrfld_wdt.c
+@@ -18,6 +18,7 @@
+ #include <asm/intel-mid.h>
+ #include <asm/intel_scu_ipc.h>
+ #include <asm/io_apic.h>
++#include <asm/hw_irq.h>
+ 
+ #define TANGIER_EXT_TIMER0_MSI 12
+ 
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -35,6 +35,7 @@
+ #include <linux/frame.h>
+ 
+ #include <linux/kexec.h>
++#include <linux/slab.h>
+ 
+ #include <xen/xen.h>
+ #include <xen/events.h>
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -18,6 +18,7 @@
+ #include <asm/setup.h>
+ #include <asm/acpi.h>
+ #include <asm/numa.h>
++#include <asm/sections.h>
+ #include <asm/xen/hypervisor.h>
+ #include <asm/xen/hypercall.h>
+ 
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -52,6 +52,8 @@
+ #include <linux/pci.h>
+ #include <linux/semaphore.h>
+ #include <linux/irqdomain.h>
++#include <linux/irq.h>
 +
- 		if (!flush_l1d)
- 			return;
- 	}
+ #include <asm/irqdomain.h>
+ #include <asm/apic.h>
+ #include <linux/msi.h>
 
 
