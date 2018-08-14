@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4E2C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8585C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 562A92154F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 562A92154F
+	by mail.kernel.org (Postfix) with ESMTP id 9CBE62150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CBE62150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390422AbeHNUar (ORCPT
+        id S2390430AbeHNUav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59672 "EHLO
+        Tue, 14 Aug 2018 16:30:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59680 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388923AbeHNUaq (ORCPT
+        with ESMTP id S1728642AbeHNUau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:46 -0400
+        Tue, 14 Aug 2018 16:30:50 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63D02AF3;
-        Tue, 14 Aug 2018 17:42:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C26C40B;
+        Tue, 14 Aug 2018 17:42:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 064/107] x86/KVM/VMX: Add find_msr() helper function
-Date:   Tue, 14 Aug 2018 19:17:27 +0200
-Message-Id: <20180814171524.876043377@linuxfoundation.org>
+Subject: [PATCH 4.9 065/107] x86/KVM/VMX: Separate the VMX AUTOLOAD guest/host number accounting
+Date:   Tue, 14 Aug 2018 19:17:28 +0200
+Message-Id: <20180814171524.913332962@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,84 +54,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit ca83b4a7f2d068da79a029d323024aa45decb250 upstream
+commit 3190709335dd31fe1aeeebfe4ffb6c7624ef971f upstream
 
-.. to help find the MSR on either the guest or host MSR list.
+This allows to load a different number of MSRs depending on the context:
+VMEXIT or VMENTER.
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   31 ++++++++++++++++++-------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
+ arch/x86/kvm/vmx.c |   29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -1975,9 +1975,20 @@ static void clear_atomic_switch_msr_spec
- 	vm_exit_controls_clearbit(vmx, exit);
+@@ -2011,12 +2011,18 @@ static void clear_atomic_switch_msr(stru
+ 	}
+ 	i = find_msr(&m->guest, msr);
+ 	if (i < 0)
+-		return;
++		goto skip_guest;
+ 	--m->guest.nr;
+-	--m->host.nr;
+ 	m->guest.val[i] = m->guest.val[m->guest.nr];
+-	m->host.val[i] = m->host.val[m->host.nr];
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++
++skip_guest:
++	i = find_msr(&m->host, msr);
++	if (i < 0)
++		return;
++
++	--m->host.nr;
++	m->host.val[i] = m->host.val[m->host.nr];
+ 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
  }
  
-+static int find_msr(struct vmx_msrs *m, unsigned int msr)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < m->nr; ++i) {
-+		if (m->val[i].index == msr)
-+			return i;
-+	}
-+	return -ENOENT;
-+}
-+
- static void clear_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr)
- {
--	unsigned i;
-+	int i;
- 	struct msr_autoload *m = &vmx->msr_autoload;
- 
- 	switch (msr) {
-@@ -1998,11 +2009,8 @@ static void clear_atomic_switch_msr(stru
- 		}
- 		break;
- 	}
--	for (i = 0; i < m->guest.nr; ++i)
--		if (m->guest.val[i].index == msr)
--			break;
--
--	if (i == m->guest.nr)
-+	i = find_msr(&m->guest, msr);
-+	if (i < 0)
- 		return;
- 	--m->guest.nr;
- 	--m->host.nr;
-@@ -2026,7 +2034,7 @@ static void add_atomic_switch_msr_specia
+@@ -2034,7 +2040,7 @@ static void add_atomic_switch_msr_specia
  static void add_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr,
  				  u64 guest_val, u64 host_val)
  {
--	unsigned i;
-+	int i;
+-	int i;
++	int i, j;
  	struct msr_autoload *m = &vmx->msr_autoload;
  
  	switch (msr) {
-@@ -2061,16 +2069,13 @@ static void add_atomic_switch_msr(struct
- 		wrmsrl(MSR_IA32_PEBS_ENABLE, 0);
+@@ -2070,21 +2076,24 @@ static void add_atomic_switch_msr(struct
  	}
  
--	for (i = 0; i < m->guest.nr; ++i)
--		if (m->guest.val[i].index == msr)
--			break;
--
-+	i = find_msr(&m->guest, msr);
- 	if (i == NR_AUTOLOAD_MSRS) {
+ 	i = find_msr(&m->guest, msr);
+-	if (i == NR_AUTOLOAD_MSRS) {
++	j = find_msr(&m->host, msr);
++	if (i == NR_AUTOLOAD_MSRS || j == NR_AUTOLOAD_MSRS) {
  		printk_once(KERN_WARNING "Not enough msr switch entries. "
  				"Can't add msr %x\n", msr);
  		return;
--	} else if (i == m->guest.nr) {
--		++m->guest.nr;
-+	} else if (i < 0) {
-+		i = m->guest.nr++;
- 		++m->host.nr;
+-	} else if (i < 0) {
++	}
++	if (i < 0) {
+ 		i = m->guest.nr++;
+-		++m->host.nr;
  		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++	}
++	if (j < 0) {
++		j = m->host.nr++;
  		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
+ 	}
+-
+ 	m->guest.val[i].index = msr;
+ 	m->guest.val[i].value = guest_val;
+-	m->host.val[i].index = msr;
+-	m->host.val[i].value = host_val;
++	m->host.val[j].index = msr;
++	m->host.val[j].value = host_val;
+ }
+ 
+ static void reload_tss(void)
 
 
