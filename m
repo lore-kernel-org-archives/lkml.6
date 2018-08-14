@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3B1C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 427B7C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F79321736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F79321736
+	by mail.kernel.org (Postfix) with ESMTP id EA82C21727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA82C21727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389305AbeHNURw (ORCPT
+        id S2389320AbeHNURz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:17:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53006 "EHLO
+        Tue, 14 Aug 2018 16:17:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53020 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388383AbeHNURv (ORCPT
+        with ESMTP id S2388383AbeHNURz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:17:51 -0400
+        Tue, 14 Aug 2018 16:17:55 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE5C540B;
-        Tue, 14 Aug 2018 17:29:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5999840B;
+        Tue, 14 Aug 2018 17:29:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
-        Tino Lehnig <tino.lehnig@contabo.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 06/97] zram: remove BD_CAP_SYNCHRONOUS_IO with writeback feature
-Date:   Tue, 14 Aug 2018 19:16:18 +0200
-Message-Id: <20180814171433.418421345@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.17 33/97] x86/topology: Provide topology_smt_supported()
+Date:   Tue, 14 Aug 2018 19:16:45 +0200
+Message-Id: <20180814171434.436951422@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -54,108 +51,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Minchan Kim <minchan@kernel.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 4f7a7beaee77275671654f7b9f3f9e73ca16ec65 upstream.
+commit f048c399e0f7490ab7296bc2c255d37eb14a9675 upstream
 
-If zram supports writeback feature, it's no longer a
-BD_CAP_SYNCHRONOUS_IO device beause zram does asynchronous IO operations
-for incompressible pages.
+Provide information whether SMT is supoorted by the CPUs. Preparatory patch
+for SMT control mechanism.
 
-Do not pretend to be synchronous IO device.  It makes the system very
-sluggish due to waiting for IO completion from upper layers.
-
-Furthermore, it causes a user-after-free problem because swap thinks the
-opearion is done when the IO functions returns so it can free the page
-(e.g., lock_page_or_retry and goto out_release in do_swap_page) but in
-fact, IO is asynchronous so the driver could access a just freed page
-afterward.
-
-This patch fixes the problem.
-
-  BUG: Bad page state in process qemu-system-x86  pfn:3dfab21
-  page:ffffdfb137eac840 count:0 mapcount:0 mapping:0000000000000000 index:0x1
-  flags: 0x17fffc000000008(uptodate)
-  raw: 017fffc000000008 dead000000000100 dead000000000200 0000000000000000
-  raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
-  page dumped because: PAGE_FLAGS_CHECK_AT_PREP flag set
-  bad because of flags: 0x8(uptodate)
-  CPU: 4 PID: 1039 Comm: qemu-system-x86 Tainted: G    B 4.18.0-rc5+ #1
-  Hardware name: Supermicro Super Server/X10SRL-F, BIOS 2.0b 05/02/2017
-  Call Trace:
-    dump_stack+0x5c/0x7b
-    bad_page+0xba/0x120
-    get_page_from_freelist+0x1016/0x1250
-    __alloc_pages_nodemask+0xfa/0x250
-    alloc_pages_vma+0x7c/0x1c0
-    do_swap_page+0x347/0x920
-    __handle_mm_fault+0x7b4/0x1110
-    handle_mm_fault+0xfc/0x1f0
-    __get_user_pages+0x12f/0x690
-    get_user_pages_unlocked+0x148/0x1f0
-    __gfn_to_pfn_memslot+0xff/0x3c0 [kvm]
-    try_async_pf+0x87/0x230 [kvm]
-    tdp_page_fault+0x132/0x290 [kvm]
-    kvm_mmu_page_fault+0x74/0x570 [kvm]
-    kvm_arch_vcpu_ioctl_run+0x9b3/0x1990 [kvm]
-    kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
-    do_vfs_ioctl+0xa2/0x630
-    ksys_ioctl+0x70/0x80
-    __x64_sys_ioctl+0x16/0x20
-    do_syscall_64+0x55/0x100
-    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Link: https://lore.kernel.org/lkml/0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de/
-Link: http://lkml.kernel.org/r/20180802051112.86174-1-minchan@kernel.org
-[minchan@kernel.org: fix changelog, add comment]
- Link: https://lore.kernel.org/lkml/0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de/
- Link: http://lkml.kernel.org/r/20180802051112.86174-1-minchan@kernel.org
- Link: http://lkml.kernel.org/r/20180805233722.217347-1-minchan@kernel.org
-[akpm@linux-foundation.org: coding-style fixes]
-Signed-off-by: Minchan Kim <minchan@kernel.org>
-Reported-by: Tino Lehnig <tino.lehnig@contabo.de>
-Tested-by: Tino Lehnig <tino.lehnig@contabo.de>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: <stable@vger.kernel.org>	[4.15+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/zram/zram_drv.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/topology.h |    2 ++
+ arch/x86/kernel/smpboot.c       |    8 ++++++++
+ 2 files changed, 10 insertions(+)
 
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -280,7 +280,8 @@ static void reset_bdev(struct zram *zram
- 	zram->backing_dev = NULL;
- 	zram->old_block_size = 0;
- 	zram->bdev = NULL;
--
-+	zram->disk->queue->backing_dev_info->capabilities |=
-+				BDI_CAP_SYNCHRONOUS_IO;
- 	kvfree(zram->bitmap);
- 	zram->bitmap = NULL;
- }
-@@ -382,6 +383,18 @@ static ssize_t backing_dev_store(struct
- 	zram->backing_dev = backing_dev;
- 	zram->bitmap = bitmap;
- 	zram->nr_pages = nr_pages;
-+	/*
-+	 * With writeback feature, zram does asynchronous IO so it's no longer
-+	 * synchronous device so let's remove synchronous io flag. Othewise,
-+	 * upper layer(e.g., swap) could wait IO completion rather than
-+	 * (submit and return), which will cause system sluggish.
-+	 * Furthermore, when the IO function returns(e.g., swap_readpage),
-+	 * upper layer expects IO was done so it could deallocate the page
-+	 * freely but in fact, IO is going on so finally could cause
-+	 * use-after-free when the IO is really done.
-+	 */
-+	zram->disk->queue->backing_dev_info->capabilities &=
-+			~BDI_CAP_SYNCHRONOUS_IO;
- 	up_write(&zram->init_lock);
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -125,6 +125,7 @@ static inline int topology_max_smt_threa
+ int topology_update_package_map(unsigned int apicid, unsigned int cpu);
+ int topology_phys_to_logical_pkg(unsigned int pkg);
+ bool topology_is_primary_thread(unsigned int cpu);
++bool topology_smt_supported(void);
+ #else
+ #define topology_max_packages()			(1)
+ static inline int
+@@ -132,6 +133,7 @@ topology_update_package_map(unsigned int
+ static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
+ static inline int topology_max_smt_threads(void) { return 1; }
+ static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
++static inline bool topology_smt_supported(void) { return false; }
+ #endif
  
- 	pr_info("setup backing device %s\n", file_name);
+ static inline void arch_fix_phys_package_id(int num, u32 slot)
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -282,6 +282,14 @@ bool topology_is_primary_thread(unsigned
+ }
+ 
+ /**
++ * topology_smt_supported - Check whether SMT is supported by the CPUs
++ */
++bool topology_smt_supported(void)
++{
++	return smp_num_siblings > 1;
++}
++
++/**
+  * topology_phys_to_logical_pkg - Map a physical package id to a logical
+  *
+  * Returns logical package id or -1 if not found
 
 
