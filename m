@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F275EC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10983C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A922921727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A922921727
+	by mail.kernel.org (Postfix) with ESMTP id C60192168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60192168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbeHNUYb (ORCPT
+        id S1730907AbeHNUYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57458 "EHLO
+        Tue, 14 Aug 2018 16:24:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730337AbeHNUYb (ORCPT
+        with ESMTP id S1730771AbeHNUYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:31 -0400
+        Tue, 14 Aug 2018 16:24:33 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13263DF2;
-        Tue, 14 Aug 2018 17:36:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23D3FDDE;
+        Tue, 14 Aug 2018 17:36:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 060/104] x86/KVM/VMX: Add L1D flush logic
-Date:   Tue, 14 Aug 2018 19:17:14 +0200
-Message-Id: <20180814171519.206329294@linuxfoundation.org>
+Subject: [PATCH 4.14 034/104] x86/bugs: Move the l1tf function and define pr_fmt properly
+Date:   Tue, 14 Aug 2018 19:16:48 +0200
+Message-Id: <20180814171517.484345770@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -51,177 +51,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit c595ceee45707f00f64f61c54fb64ef0cc0b4e85 upstream
+commit 56563f53d3066afa9e63d6c997bf67e76a8b05c0 upstream
 
-Add the logic for flushing L1D on VMENTER. The flush depends on the static
-key being enabled and the new l1tf_flush_l1d flag being set.
+The pr_warn in l1tf_select_mitigation would have used the prior pr_fmt
+which was defined as "Spectre V2 : ".
 
-The flags is set:
- - Always, if the flush module parameter is 'always'
+Move the function to be past SSBD and also define the pr_fmt.
 
- - Conditionally at:
-   - Entry to vcpu_run(), i.e. after executing user space
-
-   - From the sched_in notifier, i.e. when switching to a vCPU thread.
-
-   - From vmexit handlers which are considered unsafe, i.e. where
-     sensitive data can be brought into L1D:
-
-     - The emulator, which could be a good target for other speculative
-       execution-based threats,
-
-     - The MMU, which can bring host page tables in the L1 cache.
-
-     - External interrupts
-
-     - Nested operations that require the MMU (see above). That is
-       vmptrld, vmptrst, vmclear,vmwrite,vmread.
-
-     - When handling invept,invvpid
-
-[ tglx: Split out from combo patch and reduced to a single flag ]
-
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/kvm_host.h |    4 ++++
- arch/x86/kvm/mmu.c              |    1 +
- arch/x86/kvm/vmx.c              |   22 +++++++++++++++++++++-
- arch/x86/kvm/x86.c              |    8 ++++++++
- 4 files changed, 34 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |   55 +++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 26 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -693,6 +693,9 @@ struct kvm_vcpu_arch {
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -209,32 +209,6 @@ static void x86_amd_ssb_disable(void)
+ 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+ }
  
- 	/* be preempted when it's in kernel-mode(cpl=0) */
- 	bool preempted_in_kernel;
+-static void __init l1tf_select_mitigation(void)
+-{
+-	u64 half_pa;
+-
+-	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+-		return;
+-
+-#if CONFIG_PGTABLE_LEVELS == 2
+-	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
+-	return;
+-#endif
+-
+-	/*
+-	 * This is extremely unlikely to happen because almost all
+-	 * systems have far more MAX_PA/2 than RAM can be fit into
+-	 * DIMM slots.
+-	 */
+-	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+-	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
+-		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+-		return;
+-	}
+-
+-	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
+-}
+-
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+@@ -660,6 +634,35 @@ void x86_spec_ctrl_setup_ap(void)
+ 		x86_amd_ssb_disable();
+ }
+ 
++#undef pr_fmt
++#define pr_fmt(fmt)	"L1TF: " fmt
++static void __init l1tf_select_mitigation(void)
++{
++	u64 half_pa;
 +
-+	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
-+	bool l1tf_flush_l1d;
- };
- 
- struct kvm_lpage_info {
-@@ -862,6 +865,7 @@ struct kvm_vcpu_stat {
- 	u64 signal_exits;
- 	u64 irq_window_exits;
- 	u64 nmi_window_exits;
-+	u64 l1d_flush;
- 	u64 halt_exits;
- 	u64 halt_successful_poll;
- 	u64 halt_attempted_poll;
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3825,6 +3825,7 @@ int kvm_handle_page_fault(struct kvm_vcp
- {
- 	int r = 1;
- 
-+	vcpu->arch.l1tf_flush_l1d = true;
- 	switch (vcpu->arch.apf.host_apf_reason) {
- 	default:
- 		trace_kvm_page_fault(fault_address, error_code);
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9051,9 +9051,20 @@ static int vmx_handle_exit(struct kvm_vc
- #define L1D_CACHE_ORDER 4
- static void *vmx_l1d_flush_pages;
- 
--static void __maybe_unused vmx_l1d_flush(void)
-+static void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- {
- 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
-+	bool always;
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return;
++
++#if CONFIG_PGTABLE_LEVELS == 2
++	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
++	return;
++#endif
 +
 +	/*
-+	 * If the mitigation mode is 'flush always', keep the flush bit
-+	 * set, otherwise clear it. It gets set again either from
-+	 * vcpu_run() or from one of the unsafe VMEXIT handlers.
++	 * This is extremely unlikely to happen because almost all
++	 * systems have far more MAX_PA/2 than RAM can be fit into
++	 * DIMM slots.
 +	 */
-+	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
-+	vcpu->arch.l1tf_flush_l1d = always;
-+
-+	vcpu->stat.l1d_flush++;
- 
- 	if (static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
- 		wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
-@@ -9324,6 +9335,7 @@ static void vmx_handle_external_intr(str
- 			[ss]"i"(__KERNEL_DS),
- 			[cs]"i"(__KERNEL_CS)
- 			);
-+		vcpu->arch.l1tf_flush_l1d = true;
- 	}
- }
- STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
-@@ -9579,6 +9591,11 @@ static void __noclone vmx_vcpu_run(struc
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
- 
-+	if (static_branch_unlikely(&vmx_l1d_should_flush)) {
-+		if (vcpu->arch.l1tf_flush_l1d)
-+			vmx_l1d_flush(vcpu);
++	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
++	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
++		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
++		return;
 +	}
 +
- 	asm(
- 		/* Store host registers */
- 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
-@@ -11312,6 +11329,9 @@ static int nested_vmx_run(struct kvm_vcp
- 	if (ret)
- 		return ret;
- 
-+	/* Hide L1D cache contents from the nested guest.  */
-+	vmx->vcpu.arch.l1tf_flush_l1d = true;
++	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
++}
++#undef pr_fmt
 +
- 	/*
- 	 * If we're entering a halted L2 vcpu and the L2 vcpu won't be woken
- 	 * by event injection, halt vcpu.
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -181,6 +181,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "irq_injections", VCPU_STAT(irq_injections) },
- 	{ "nmi_injections", VCPU_STAT(nmi_injections) },
- 	{ "req_event", VCPU_STAT(req_event) },
-+	{ "l1d_flush", VCPU_STAT(l1d_flush) },
- 	{ "mmu_shadow_zapped", VM_STAT(mmu_shadow_zapped) },
- 	{ "mmu_pte_write", VM_STAT(mmu_pte_write) },
- 	{ "mmu_pte_updated", VM_STAT(mmu_pte_updated) },
-@@ -4573,6 +4574,9 @@ static int emulator_write_std(struct x86
- int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
- 				unsigned int bytes, struct x86_exception *exception)
- {
-+	/* kvm_write_guest_virt_system can pull in tons of pages. */
-+	vcpu->arch.l1tf_flush_l1d = true;
-+
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
- 					   PFERR_WRITE_MASK, exception);
- }
-@@ -5701,6 +5705,8 @@ int x86_emulate_instruction(struct kvm_v
- 	bool writeback = true;
- 	bool write_fault_to_spt = vcpu->arch.write_fault_to_shadow_pgtable;
+ #ifdef CONFIG_SYSFS
  
-+	vcpu->arch.l1tf_flush_l1d = true;
-+
- 	/*
- 	 * Clear write_fault_to_shadow_pgtable here to ensure it is
- 	 * never reused.
-@@ -7146,6 +7152,7 @@ static int vcpu_run(struct kvm_vcpu *vcp
- 	struct kvm *kvm = vcpu->kvm;
- 
- 	vcpu->srcu_idx = srcu_read_lock(&kvm->srcu);
-+	vcpu->arch.l1tf_flush_l1d = true;
- 
- 	for (;;) {
- 		if (kvm_vcpu_running(vcpu)) {
-@@ -8153,6 +8160,7 @@ void kvm_arch_vcpu_uninit(struct kvm_vcp
- 
- void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
- {
-+	vcpu->arch.l1tf_flush_l1d = true;
- 	kvm_x86_ops->sched_in(vcpu, cpu);
- }
- 
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
 
 
