@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C0BC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56F3C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96EE021471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96EE021471
+	by mail.kernel.org (Postfix) with ESMTP id 96C7821471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C7821471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390749AbeHNUcg (ORCPT
+        id S2390760AbeHNUcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:32:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60026 "EHLO
+        Tue, 14 Aug 2018 16:32:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUcf (ORCPT
+        with ESMTP id S1728642AbeHNUcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:32:35 -0400
+        Tue, 14 Aug 2018 16:32:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C2322AF3;
-        Tue, 14 Aug 2018 17:44:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5AC3B40B;
+        Tue, 14 Aug 2018 17:44:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        stable@vger.kernel.org, ave Hansen <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 055/107] Revert "x86/apic: Ignore secondary threads if nosmt=force"
-Date:   Tue, 14 Aug 2018 19:17:18 +0200
-Message-Id: <20180814171524.476062565@linuxfoundation.org>
+Subject: [PATCH 4.9 091/107] Documentation/l1tf: Remove Yonah processors from not vulnerable list
+Date:   Tue, 14 Aug 2018 19:17:54 +0200
+Message-Id: <20180814171526.459231966@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,146 +53,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 506a66f374891ff08e064a058c446b336c5ac760 upstream
+commit 58331136136935c631c2b5f06daf4c3006416e91 upstream
 
-Dave Hansen reported, that it's outright dangerous to keep SMT siblings
-disabled completely so they are stuck in the BIOS and wait for SIPI.
+Dave reported, that it's not confirmed that Yonah processors are
+unaffected. Remove them from the list.
 
-The reason is that Machine Check Exceptions are broadcasted to siblings and
-the soft disabled sibling has CR4.MCE = 0. If a MCE is delivered to a
-logical core with CR4.MCE = 0, it asserts IERR#, which shuts down or
-reboots the machine. The MCE chapter in the SDM contains the following
-blurb:
-
-    Because the logical processors within a physical package are tightly
-    coupled with respect to shared hardware resources, both logical
-    processors are notified of machine check errors that occur within a
-    given physical processor. If machine-check exceptions are enabled when
-    a fatal error is reported, all the logical processors within a physical
-    package are dispatched to the machine-check exception handler. If
-    machine-check exceptions are disabled, the logical processors enter the
-    shutdown state and assert the IERR# signal. When enabling machine-check
-    exceptions, the MCE flag in control register CR4 should be set for each
-    logical processor.
-
-Reverting the commit which ignores siblings at enumeration time solves only
-half of the problem. The core cpuhotplug logic needs to be adjusted as
-well.
-
-This thoughtful engineered mechanism also turns the boot process on all
-Intel HT enabled systems into a MCE lottery. MCE is enabled on the boot CPU
-before the secondary CPUs are brought up. Depending on the number of
-physical cores the window in which this situation can happen is smaller or
-larger. On a HSW-EX it's about 750ms:
-
-MCE is enabled on the boot CPU:
-
-[    0.244017] mce: CPU supports 22 MCE banks
-
-The corresponding sibling #72 boots:
-
-[    1.008005] .... node  #0, CPUs:    #72
-
-That means if an MCE hits on physical core 0 (logical CPUs 0 and 72)
-between these two points the machine is going to shutdown. At least it's a
-known safe state.
-
-It's obvious that the early boot can be hit by an MCE as well and then runs
-into the same situation because MCEs are not yet enabled on the boot CPU.
-But after enabling them on the boot CPU, it does not make any sense to
-prevent the kernel from recovering.
-
-Adjust the nosmt kernel parameter documentation as well.
-
-Reverts: 2207def700f9 ("x86/apic: Ignore secondary threads if nosmt=force")
-Reported-by: Dave Hansen <dave.hansen@intel.com>
+Reported-by: ave Hansen <dave.hansen@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/kernel-parameters.txt |    8 ++------
- arch/x86/include/asm/apic.h         |    2 --
- arch/x86/kernel/acpi/boot.c         |    3 +--
- arch/x86/kernel/apic/apic.c         |   19 -------------------
- 4 files changed, 3 insertions(+), 29 deletions(-)
+ Documentation/l1tf.rst |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -2695,12 +2695,8 @@ bytes respectively. Such letter suffixes
- 			Equivalent to smt=1.
+--- a/Documentation/l1tf.rst
++++ b/Documentation/l1tf.rst
+@@ -19,8 +19,6 @@ vulnerability is not present on:
+    - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
+      Penwell, Pineview, Silvermont, Airmont, Merrifield)
  
- 			[KNL,x86] Disable symmetric multithreading (SMT).
--			nosmt=force: Force disable SMT, similar to disabling
--				     it in the BIOS except that some of the
--				     resource partitioning effects which are
--				     caused by having SMT enabled in the BIOS
--				     cannot be undone. Depending on the CPU
--				     type this might have a performance impact.
-+			nosmt=force: Force disable SMT, cannot be undone
-+				     via the sysfs control file.
- 
- 	nospectre_v2	[X86] Disable all mitigations for the Spectre variant 2
- 			(indirect branch prediction) vulnerability. System may
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -636,10 +636,8 @@ extern int default_check_phys_apicid_pre
- 
- #ifdef CONFIG_SMP
- bool apic_id_is_primary_thread(unsigned int id);
--bool apic_id_disabled(unsigned int id);
- #else
- static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
--static inline bool apic_id_disabled(unsigned int id) { return false; }
- #endif
- 
- extern void irq_enter(void);
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -177,8 +177,7 @@ static int acpi_register_lapic(int id, u
- 	}
- 
- 	if (!enabled) {
--		if (!apic_id_disabled(id))
--			++disabled_cpus;
-+		++disabled_cpus;
- 		return -EINVAL;
- 	}
- 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -2056,16 +2056,6 @@ bool apic_id_is_primary_thread(unsigned
- 	return !(apicid & mask);
- }
- 
--/**
-- * apic_id_disabled - Check whether APIC ID is disabled via SMT control
-- * @id:	APIC ID to check
-- */
--bool apic_id_disabled(unsigned int id)
--{
--	return (cpu_smt_control == CPU_SMT_FORCE_DISABLED &&
--		!apic_id_is_primary_thread(id));
--}
+-   - The Intel Core Duo Yonah variants (2006 - 2008)
 -
- /*
-  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
-  * and cpuid_to_apicid[] synchronized.
-@@ -2161,15 +2151,6 @@ int generic_processor_info(int apicid, i
- 		return -EINVAL;
- 	}
+    - The Intel XEON PHI family
  
--	/*
--	 * If SMT is force disabled and the APIC ID belongs to
--	 * a secondary thread, ignore it.
--	 */
--	if (apic_id_disabled(apicid)) {
--		pr_info_once("Ignoring secondary SMT threads\n");
--		return -EINVAL;
--	}
--
- 	if (apicid == boot_cpu_physical_apicid) {
- 		/*
- 		 * x86_bios_cpu_apicid is required to have processors listed
+    - Intel processors which have the ARCH_CAP_RDCL_NO bit set in the
 
 
