@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FE1C46471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2267CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033522173B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033522173B
+	by mail.kernel.org (Postfix) with ESMTP id D8F3621736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F3621736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391250AbeHNUgK (ORCPT
+        id S2391263AbeHNUgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:36:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32888 "EHLO
+        Tue, 14 Aug 2018 16:36:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32906 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390875AbeHNUgJ (ORCPT
+        with ESMTP id S2390875AbeHNUgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:36:09 -0400
+        Tue, 14 Aug 2018 16:36:14 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3068C9A;
-        Tue, 14 Aug 2018 17:47:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9F96CAE;
+        Tue, 14 Aug 2018 17:48:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 36/43] x86/cpufeatures: Add detection of L1D cache flush support.
-Date:   Tue, 14 Aug 2018 19:18:12 +0200
-Message-Id: <20180814171519.475908467@linuxfoundation.org>
+Subject: [PATCH 4.4 37/43] x86/speculation/l1tf: Protect PAE swap entries against L1TF
+Date:   Tue, 14 Aug 2018 19:18:13 +0200
+Message-Id: <20180814171519.516547838@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -53,37 +53,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 11e34e64e4103955fc4568750914c75d65ea87ee upstream
+commit 0d0f6249058834ffe1ceaad0bb31464af66f6e7a upstream
 
-336996-Speculative-Execution-Side-Channel-Mitigations.pdf defines a new MSR
-(IA32_FLUSH_CMD) which is detected by CPUID.7.EDX[28]=1 bit being set.
+The PAE 3-level paging code currently doesn't mitigate L1TF by flipping the
+offset bits, and uses the high PTE word, thus bits 32-36 for type, 37-63 for
+offset. The lower word is zeroed, thus systems with less than 4GB memory are
+safe. With 4GB to 128GB the swap type selects the memory locations vulnerable
+to L1TF; with even more memory, also the swap offfset influences the address.
+This might be a problem with 32bit PAE guests running on large 64bit hosts.
 
-This new MSR "gives software a way to invalidate structures with finer
-granularity than other architectual methods like WBINVD."
+By continuing to keep the whole swap entry in either high or low 32bit word of
+PTE we would limit the swap size too much. Thus this patch uses the whole PAE
+PTE with the same layout as the 64bit version does. The macros just become a
+bit tricky since they assume the arch-dependent swp_entry_t to be 32bit.
 
-A copy of this document is available at
-  https://bugzilla.kernel.org/show_bug.cgi?id=199511
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/pgtable-3level.h |   35 ++++++++++++++++++++++++++++++++--
+ arch/x86/mm/init.c                    |    2 -
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -310,6 +310,7 @@
- #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -177,12 +177,43 @@ static inline pmd_t native_pmdp_get_and_
+ #endif
  
+ /* Encode and de-code a swap entry */
++#define SWP_TYPE_BITS		5
++
++#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
++
++/* We always extract/encode the offset by shifting it all the way up, and then down again */
++#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT + SWP_TYPE_BITS)
++
+ #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > 5)
+ #define __swp_type(x)			(((x).val) & 0x1f)
+ #define __swp_offset(x)			((x).val >> 5)
+ #define __swp_entry(type, offset)	((swp_entry_t){(type) | (offset) << 5})
+-#define __pte_to_swp_entry(pte)		((swp_entry_t){ (pte).pte_high })
+-#define __swp_entry_to_pte(x)		((pte_t){ { .pte_high = (x).val } })
++
++/*
++ * Normally, __swp_entry() converts from arch-independent swp_entry_t to
++ * arch-dependent swp_entry_t, and __swp_entry_to_pte() just stores the result
++ * to pte. But here we have 32bit swp_entry_t and 64bit pte, and need to use the
++ * whole 64 bits. Thus, we shift the "real" arch-dependent conversion to
++ * __swp_entry_to_pte() through the following helper macro based on 64bit
++ * __swp_entry().
++ */
++#define __swp_pteval_entry(type, offset) ((pteval_t) { \
++	(~(pteval_t)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	| ((pteval_t)(type) << (64 - SWP_TYPE_BITS)) })
++
++#define __swp_entry_to_pte(x)	((pte_t){ .pte = \
++		__swp_pteval_entry(__swp_type(x), __swp_offset(x)) })
++/*
++ * Analogically, __pte_to_swp_entry() doesn't just extract the arch-dependent
++ * swp_entry_t, but also has to convert it from 64bit to the 32bit
++ * intermediate representation, using the following macros based on 64bit
++ * __swp_type() and __swp_offset().
++ */
++#define __pteval_swp_type(x) ((unsigned long)((x).pte >> (64 - SWP_TYPE_BITS)))
++#define __pteval_swp_offset(x) ((unsigned long)(~((x).pte) << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT))
++
++#define __pte_to_swp_entry(pte)	(__swp_entry(__pteval_swp_type(pte), \
++					     __pteval_swp_offset(pte)))
+ 
+ #include <asm/pgtable-invert.h>
+ 
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -783,7 +783,7 @@ unsigned long max_swapfile_size(void)
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+ 		 */
+-#ifdef CONFIG_X86_64
++#if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+ 		pages = min_t(unsigned long, l1tf_limit, pages);
 
 
