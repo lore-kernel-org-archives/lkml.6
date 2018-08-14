@@ -6,40 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C71DC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2927FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C27A52083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27A52083D
+	by mail.kernel.org (Postfix) with ESMTP id D59E32083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59E32083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388971AbeHNUQi (ORCPT
+        id S2388983AbeHNUQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:16:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52666 "EHLO
+        Tue, 14 Aug 2018 16:16:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388101AbeHNUQi (ORCPT
+        with ESMTP id S2388101AbeHNUQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:16:38 -0400
+        Tue, 14 Aug 2018 16:16:41 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84617BDB;
-        Tue, 14 Aug 2018 17:28:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9B31D06;
+        Tue, 14 Aug 2018 17:28:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bigeasy@linutronix.de,
-        matt@codeblueprint.co.uk, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 04/97] stop_machine: Disable preemption after queueing stopper threads
-Date:   Tue, 14 Aug 2018 19:16:16 +0200
-Message-Id: <20180814171433.339769420@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.17 13/97] root dentries need RCU-delayed freeing
+Date:   Tue, 14 Aug 2018 19:16:25 +0200
+Message-Id: <20180814171433.700736076@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -56,91 +49,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Isaac J. Manjarres <isaacm@codeaurora.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 2610e88946632afb78aa58e61f11368ac4c0af7b upstream.
+commit 90bad5e05bcdb0308cfa3d3a60f5c0b9c8e2efb3 upstream.
 
-This commit:
+Since mountpoint crossing can happen without leaving lazy mode,
+root dentries do need the same protection against having their
+memory freed without RCU delay as everything else in the tree.
 
-  9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two stopper threads")
+It's partially hidden by RCU delay between detaching from the
+mount tree and dropping the vfsmount reference, but the starting
+point of pathwalk can be on an already detached mount, in which
+case umount-caused RCU delay has already passed by the time the
+lazy pathwalk grabs rcu_read_lock().  If the starting point
+happens to be at the root of that vfsmount *and* that vfsmount
+covers the entire filesystem, we get trouble.
 
-does not fully address the race condition that can occur
-as follows:
-
-On one CPU, call it CPU 3, thread 1 invokes
-cpu_stop_queue_two_works(2, 3,...), and the execution is such
-that thread 1 queues the works for migration/2 and migration/3,
-and is preempted after releasing the locks for migration/2 and
-migration/3, but before waking the threads.
-
-Then, On CPU 2, a kworker, call it thread 2, is running,
-and it invokes cpu_stop_queue_two_works(1, 2,...), such that
-thread 2 queues the works for migration/1 and migration/2.
-Meanwhile, on CPU 3, thread 1 resumes execution, and wakes
-migration/2 and migration/3. This means that when CPU 2
-releases the locks for migration/1 and migration/2, but before
-it wakes those threads, it can be preempted by migration/2.
-
-If thread 2 is preempted by migration/2, then migration/2 will
-execute the first work item successfully, since migration/3
-was woken up by CPU 3, but when it goes to execute the second
-work item, it disables preemption, calls multi_cpu_stop(),
-and thus, CPU 2 will wait forever for migration/1, which should
-have been woken up by thread 2. However migration/1 cannot be
-woken up by thread 2, since it is a kworker, so it is affine to
-CPU 2, but CPU 2 is running migration/2 with preemption
-disabled, so thread 2 will never run.
-
-Disable preemption after queueing works for stopper threads
-to ensure that the operation of queueing the works and waking
-the stopper threads is atomic.
-
-Co-Developed-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Co-Developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bigeasy@linutronix.de
-Cc: gregkh@linuxfoundation.org
-Cc: matt@codeblueprint.co.uk
-Fixes: 9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two stopper threads")
-Link: http://lkml.kernel.org/r/1531856129-9871-1-git-send-email-isaacm@codeaurora.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 48a066e72d97 ("RCU'd vsfmounts")
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/stop_machine.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/dcache.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -260,6 +260,15 @@ retry:
- 	err = 0;
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
-+	/*
-+	 * The waking up of stopper threads has to happen
-+	 * in the same scheduling context as the queueing.
-+	 * Otherwise, there is a possibility of one of the
-+	 * above stoppers being woken up by another CPU,
-+	 * and preempting us. This will cause us to n ot
-+	 * wake up the other stopper forever.
-+	 */
-+	preempt_disable();
- unlock:
- 	raw_spin_unlock(&stopper2->lock);
- 	raw_spin_unlock_irq(&stopper1->lock);
-@@ -271,7 +280,6 @@ unlock:
- 	}
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1954,10 +1954,12 @@ struct dentry *d_make_root(struct inode
  
- 	if (!err) {
--		preempt_disable();
- 		wake_up_q(&wakeq);
- 		preempt_enable();
+ 	if (root_inode) {
+ 		res = d_alloc_anon(root_inode->i_sb);
+-		if (res)
++		if (res) {
++			res->d_flags |= DCACHE_RCUACCESS;
+ 			d_instantiate(res, root_inode);
+-		else
++		} else {
+ 			iput(root_inode);
++		}
  	}
+ 	return res;
+ }
 
 
