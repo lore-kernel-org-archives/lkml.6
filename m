@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0CDC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDB8C46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C302150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C302150B
+	by mail.kernel.org (Postfix) with ESMTP id 91F1E2150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F1E2150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390561AbeHNUbg (ORCPT
+        id S2390574AbeHNUbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:31:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59822 "EHLO
+        Tue, 14 Aug 2018 16:31:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUbf (ORCPT
+        with ESMTP id S1728642AbeHNUbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:31:35 -0400
+        Tue, 14 Aug 2018 16:31:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06672C8D;
-        Tue, 14 Aug 2018 17:43:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE407AF3;
+        Tue, 14 Aug 2018 17:43:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 076/107] cpu/hotplug: Expose SMT control init function
-Date:   Tue, 14 Aug 2018 19:17:39 +0200
-Message-Id: <20180814171525.419139971@linuxfoundation.org>
+Subject: [PATCH 4.9 077/107] cpu/hotplug: Set CPU_SMT_NOT_SUPPORTED early
+Date:   Tue, 14 Aug 2018 19:17:40 +0200
+Message-Id: <20180814171525.478448255@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -52,72 +52,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 8e1b706b6e819bed215c0db16345568864660393 upstream
+commit fee0aede6f4739c87179eca76136f83210953b86 upstream
 
-The L1TF mitigation will gain a commend line parameter which allows to set
-a combination of hypervisor mitigation and SMT control.
+The CPU_SMT_NOT_SUPPORTED state is set (if the processor does not support
+SMT) when the sysfs SMT control file is initialized.
 
-Expose cpu_smt_disable() so the command line parser can tweak SMT settings.
+That was fine so far as this was only required to make the output of the
+control file correct and to prevent writes in that case.
 
-[ tglx: Split out of larger patch and made it preserve an already existing
-  	force off state ]
+With the upcoming l1tf command line parameter, this needs to be set up
+before the L1TF mitigation selection and command line parsing happens.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Jiri Kosina <jkosina@suse.cz>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142323.039715135@linutronix.de
+Link: https://lkml.kernel.org/r/20180713142323.121795971@linutronix.de
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/cpu.h |    2 ++
- kernel/cpu.c        |   16 +++++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    6 ++++++
+ include/linux/cpu.h        |    2 ++
+ kernel/cpu.c               |   13 ++++++++++---
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -57,6 +57,12 @@ void __init check_bugs(void)
+ {
+ 	identify_boot_cpu();
+ 
++	/*
++	 * identify_boot_cpu() initialized SMT support information, let the
++	 * core code know.
++	 */
++	cpu_smt_check_topology();
++
+ 	if (!IS_ENABLED(CONFIG_SMP)) {
+ 		pr_info("CPU: ");
+ 		print_cpu_info(&boot_cpu_data);
 --- a/include/linux/cpu.h
 +++ b/include/linux/cpu.h
-@@ -266,8 +266,10 @@ enum cpuhp_smt_control {
- 
+@@ -267,9 +267,11 @@ enum cpuhp_smt_control {
  #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
  extern enum cpuhp_smt_control cpu_smt_control;
-+extern void cpu_smt_disable(bool force);
+ extern void cpu_smt_disable(bool force);
++extern void cpu_smt_check_topology(void);
  #else
  # define cpu_smt_control		(CPU_SMT_ENABLED)
-+static inline void cpu_smt_disable(bool force) { }
+ static inline void cpu_smt_disable(bool force) { }
++static inline void cpu_smt_check_topology(void) { }
  #endif
  
  #endif /* _LINUX_CPU_H_ */
 --- a/kernel/cpu.c
 +++ b/kernel/cpu.c
-@@ -360,13 +360,23 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
- 
--static int __init smt_cmdline_disable(char *str)
-+void __init cpu_smt_disable(bool force)
- {
--	cpu_smt_control = CPU_SMT_DISABLED;
--	if (str && !strcmp(str, "force")) {
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
-+		cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		return;
-+
-+	if (force) {
- 		pr_info("SMT: Force disabled\n");
- 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
-+	} else {
-+		cpu_smt_control = CPU_SMT_DISABLED;
+@@ -374,6 +374,16 @@ void __init cpu_smt_disable(bool force)
  	}
+ }
+ 
++/*
++ * The decision whether SMT is supported can only be done after the full
++ * CPU identification. Called from architecture code.
++ */
++void __init cpu_smt_check_topology(void)
++{
++	if (!topology_smt_supported())
++		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
 +}
 +
-+static int __init smt_cmdline_disable(char *str)
-+{
-+	cpu_smt_disable(str && !strcmp(str, "force"));
- 	return 0;
+ static int __init smt_cmdline_disable(char *str)
+ {
+ 	cpu_smt_disable(str && !strcmp(str, "force"));
+@@ -2053,9 +2063,6 @@ static const struct attribute_group cpuh
+ 
+ static int __init cpu_smt_state_init(void)
+ {
+-	if (!topology_smt_supported())
+-		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+-
+ 	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
+ 				  &cpuhp_smt_attr_group);
  }
- early_param("nosmt", smt_cmdline_disable);
 
 
