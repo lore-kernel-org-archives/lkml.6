@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C8C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C695EC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD94C216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD94C216E5
+	by mail.kernel.org (Postfix) with ESMTP id 7500F216E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7500F216E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeHNUWX (ORCPT
+        id S1727842AbeHNUWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 14 Aug 2018 16:22:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56300 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53596 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbeHNUWU (ORCPT
+        with ESMTP id S2388943AbeHNUUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:22:20 -0400
+        Tue, 14 Aug 2018 16:20:01 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA174E25;
-        Tue, 14 Aug 2018 17:33:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6572FD1A;
+        Tue, 14 Aug 2018 17:31:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Mian Yousaf Kaukab <yousaf.kaukab@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 012/104] init: rename and re-order boot_cpu_state_init()
-Date:   Tue, 14 Aug 2018 19:16:26 +0200
-Message-Id: <20180814171516.019355637@linuxfoundation.org>
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 4.17 72/97] x86/bugs, kvm: Introduce boot-time control of L1TF mitigations
+Date:   Tue, 14 Aug 2018 19:17:24 +0200
+Message-Id: <20180814171435.886575625@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
-References: <20180814171515.270692185@linuxfoundation.org>
+In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
+References: <20180814171433.160434170@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -50,96 +47,375 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit b5b1404d0815894de0690de8a1ab58269e56eae6 upstream.
+commit d90a7a0ec83fb86622cd7dae23255d3c50a99ec8 upstream
 
-This is purely a preparatory patch for upcoming changes during the 4.19
-merge window.
+Introduce the 'l1tf=' kernel command line option to allow for boot-time
+switching of mitigation that is used on processors affected by L1TF.
 
-We have a function called "boot_cpu_state_init()" that isn't really
-about the bootup cpu state: that is done much earlier by the similarly
-named "boot_cpu_init()" (note lack of "state" in name).
+The possible values are:
 
-This function initializes some hotplug CPU state, and needs to run after
-the percpu data has been properly initialized.  It even has a comment to
-that effect.
+  full
+	Provides all available mitigations for the L1TF vulnerability. Disables
+	SMT and enables all mitigations in the hypervisors. SMT control via
+	/sys/devices/system/cpu/smt/control is still possible after boot.
+	Hypervisors will issue a warning when the first VM is started in
+	a potentially insecure configuration, i.e. SMT enabled or L1D flush
+	disabled.
 
-Except it _doesn't_ actually run after the percpu data has been properly
-initialized.  On x86 it happens to do that, but on at least arm and
-arm64, the percpu base pointers are initialized by the arch-specific
-'smp_prepare_boot_cpu()' hook, which ran _after_ boot_cpu_state_init().
+  full,force
+	Same as 'full', but disables SMT control. Implies the 'nosmt=force'
+	command line option. sysfs control of SMT and the hypervisor flush
+	control is disabled.
 
-This had some unexpected results, and in particular we have a patch
-pending for the merge window that did the obvious cleanup of using
-'this_cpu_write()' in the cpu hotplug init code:
+  flush
+	Leaves SMT enabled and enables the conditional hypervisor mitigation.
+	Hypervisors will issue a warning when the first VM is started in a
+	potentially insecure configuration, i.e. SMT enabled or L1D flush
+	disabled.
 
-  -       per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
-  +       this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
+  flush,nosmt
+	Disables SMT and enables the conditional hypervisor mitigation. SMT
+	control via /sys/devices/system/cpu/smt/control is still possible
+	after boot. If SMT is reenabled or flushing disabled at runtime
+	hypervisors will issue a warning.
 
-which is obviously the right thing to do.  Except because of the
-ordering issue, it actually failed miserably and unexpectedly on arm64.
+  flush,nowarn
+	Same as 'flush', but hypervisors will not warn when
+	a VM is started in a potentially insecure configuration.
 
-So this just fixes the ordering, and changes the name of the function to
-be 'boot_cpu_hotplug_init()' to make it obvious that it's about cpu
-hotplug state, because the core CPU state was supposed to have already
-been done earlier.
+  off
+	Disables hypervisor mitigations and doesn't emit any warnings.
 
-Marked for stable, since the (not yet merged) patch that will show this
-problem is marked for stable.
+Default is 'flush'.
 
-Reported-by: Vlastimil Babka <vbabka@suse.cz>
-Reported-by: Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Let KVM adhere to these semantics, which means:
+
+  - 'lt1f=full,force'	: Performe L1D flushes. No runtime control
+    			  possible.
+
+  - 'l1tf=full'
+  - 'l1tf-flush'
+  - 'l1tf=flush,nosmt'	: Perform L1D flushes and warn on VM start if
+			  SMT has been runtime enabled or L1D flushing
+			  has been run-time enabled
+
+  - 'l1tf=flush,nowarn'	: Perform L1D flushes and no warnings are emitted.
+
+  - 'l1tf=off'		: L1D flushes are not performed and no warnings
+			  are emitted.
+
+KVM can always override the L1D flushing behavior using its 'vmentry_l1d_flush'
+module parameter except when lt1f=full,force is set.
+
+This makes KVM's private 'nosmt' option redundant, and as it is a bit
+non-systematic anyway (this is something to control globally, not on
+hypervisor level), remove that option.
+
+Add the missing Documentation entry for the l1tf vulnerability sysfs file
+while at it.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jiri Kosina <jkosina@suse.cz>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20180713142323.202758176@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/cpu.h |    2 +-
- init/main.c         |    2 +-
- kernel/cpu.c        |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/sysfs-devices-system-cpu |    4 +
+ Documentation/admin-guide/kernel-parameters.txt    |   68 +++++++++++++++++++--
+ arch/x86/include/asm/processor.h                   |   12 +++
+ arch/x86/kernel/cpu/bugs.c                         |   44 +++++++++++++
+ arch/x86/kvm/vmx.c                                 |   56 +++++++++++++----
+ 5 files changed, 165 insertions(+), 19 deletions(-)
 
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -30,7 +30,7 @@ struct cpu {
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -479,6 +479,7 @@ What:		/sys/devices/system/cpu/vulnerabi
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
+ 		/sys/devices/system/cpu/vulnerabilities/spec_store_bypass
++		/sys/devices/system/cpu/vulnerabilities/l1tf
+ Date:		January 2018
+ Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+ Description:	Information about CPU vulnerabilities
+@@ -491,6 +492,9 @@ Description:	Information about CPU vulne
+ 		"Vulnerable"	  CPU is affected and no mitigation in effect
+ 		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
+ 
++		Details about the l1tf file can be found in
++		Documentation/admin-guide/l1tf.rst
++
+ What:		/sys/devices/system/cpu/smt
+ 		/sys/devices/system/cpu/smt/active
+ 		/sys/devices/system/cpu/smt/control
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1937,12 +1937,6 @@
+ 			[KVM,ARM] Allow use of GICv4 for direct injection of
+ 			LPIs.
+ 
+-	kvm-intel.nosmt=[KVM,Intel] If the L1TF CPU bug is present (CVE-2018-3620)
+-			and the system has SMT (aka Hyper-Threading) enabled then
+-			don't allow guests to be created.
+-
+-			Default is 0 (allow guests to be created).
+-
+ 	kvm-intel.ept=	[KVM,Intel] Disable extended page tables
+ 			(virtualized MMU) support on capable Intel chips.
+ 			Default is 1 (enabled)
+@@ -1980,6 +1974,68 @@
+ 			feature (tagged TLBs) on capable Intel chips.
+ 			Default is 1 (enabled)
+ 
++	l1tf=           [X86] Control mitigation of the L1TF vulnerability on
++			      affected CPUs
++
++			The kernel PTE inversion protection is unconditionally
++			enabled and cannot be disabled.
++
++			full
++				Provides all available mitigations for the
++				L1TF vulnerability. Disables SMT and
++				enables all mitigations in the
++				hypervisors, i.e. unconditional L1D flush.
++
++				SMT control and L1D flush control via the
++				sysfs interface is still possible after
++				boot.  Hypervisors will issue a warning
++				when the first VM is started in a
++				potentially insecure configuration,
++				i.e. SMT enabled or L1D flush disabled.
++
++			full,force
++				Same as 'full', but disables SMT and L1D
++				flush runtime control. Implies the
++				'nosmt=force' command line option.
++				(i.e. sysfs control of SMT is disabled.)
++
++			flush
++				Leaves SMT enabled and enables the default
++				hypervisor mitigation, i.e. conditional
++				L1D flush.
++
++				SMT control and L1D flush control via the
++				sysfs interface is still possible after
++				boot.  Hypervisors will issue a warning
++				when the first VM is started in a
++				potentially insecure configuration,
++				i.e. SMT enabled or L1D flush disabled.
++
++			flush,nosmt
++
++				Disables SMT and enables the default
++				hypervisor mitigation.
++
++				SMT control and L1D flush control via the
++				sysfs interface is still possible after
++				boot.  Hypervisors will issue a warning
++				when the first VM is started in a
++				potentially insecure configuration,
++				i.e. SMT enabled or L1D flush disabled.
++
++			flush,nowarn
++				Same as 'flush', but hypervisors will not
++				warn when a VM is started in a potentially
++				insecure configuration.
++
++			off
++				Disables hypervisor mitigations and doesn't
++				emit any warnings.
++
++			Default is 'flush'.
++
++			For details see: Documentation/admin-guide/l1tf.rst
++
+ 	l2cr=		[PPC]
+ 
+ 	l3cr=		[PPC]
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -991,4 +991,16 @@ bool xen_set_default_idle(void);
+ void stop_this_cpu(void *dummy);
+ void df_debug(struct pt_regs *regs, long error_code);
+ void microcode_check(void);
++
++enum l1tf_mitigations {
++	L1TF_MITIGATION_OFF,
++	L1TF_MITIGATION_FLUSH_NOWARN,
++	L1TF_MITIGATION_FLUSH,
++	L1TF_MITIGATION_FLUSH_NOSMT,
++	L1TF_MITIGATION_FULL,
++	L1TF_MITIGATION_FULL_FORCE
++};
++
++extern enum l1tf_mitigations l1tf_mitigation;
++
+ #endif /* _ASM_X86_PROCESSOR_H */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -644,7 +644,11 @@ void x86_spec_ctrl_setup_ap(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"L1TF: " fmt
+ 
++/* Default mitigation for L1TF-affected CPUs */
++enum l1tf_mitigations l1tf_mitigation __ro_after_init = L1TF_MITIGATION_FLUSH;
+ #if IS_ENABLED(CONFIG_KVM_INTEL)
++EXPORT_SYMBOL_GPL(l1tf_mitigation);
++
+ enum vmx_l1d_flush_state l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
+ EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
+ #endif
+@@ -656,6 +660,20 @@ static void __init l1tf_select_mitigatio
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+ 		return;
+ 
++	switch (l1tf_mitigation) {
++	case L1TF_MITIGATION_OFF:
++	case L1TF_MITIGATION_FLUSH_NOWARN:
++	case L1TF_MITIGATION_FLUSH:
++		break;
++	case L1TF_MITIGATION_FLUSH_NOSMT:
++	case L1TF_MITIGATION_FULL:
++		cpu_smt_disable(false);
++		break;
++	case L1TF_MITIGATION_FULL_FORCE:
++		cpu_smt_disable(true);
++		break;
++	}
++
+ #if CONFIG_PGTABLE_LEVELS == 2
+ 	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
+ 	return;
+@@ -674,6 +692,32 @@ static void __init l1tf_select_mitigatio
+ 
+ 	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
+ }
++
++static int __init l1tf_cmdline(char *str)
++{
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return 0;
++
++	if (!str)
++		return -EINVAL;
++
++	if (!strcmp(str, "off"))
++		l1tf_mitigation = L1TF_MITIGATION_OFF;
++	else if (!strcmp(str, "flush,nowarn"))
++		l1tf_mitigation = L1TF_MITIGATION_FLUSH_NOWARN;
++	else if (!strcmp(str, "flush"))
++		l1tf_mitigation = L1TF_MITIGATION_FLUSH;
++	else if (!strcmp(str, "flush,nosmt"))
++		l1tf_mitigation = L1TF_MITIGATION_FLUSH_NOSMT;
++	else if (!strcmp(str, "full"))
++		l1tf_mitigation = L1TF_MITIGATION_FULL;
++	else if (!strcmp(str, "full,force"))
++		l1tf_mitigation = L1TF_MITIGATION_FULL_FORCE;
++
++	return 0;
++}
++early_param("l1tf", l1tf_cmdline);
++
+ #undef pr_fmt
+ 
+ #ifdef CONFIG_SYSFS
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -71,9 +71,6 @@ static const struct x86_cpu_id vmx_cpu_i
  };
+ MODULE_DEVICE_TABLE(x86cpu, vmx_cpu_id);
  
- extern void boot_cpu_init(void);
--extern void boot_cpu_state_init(void);
-+extern void boot_cpu_hotplug_init(void);
- extern void cpu_init(void);
- extern void trap_init(void);
+-static bool __read_mostly nosmt;
+-module_param(nosmt, bool, S_IRUGO);
+-
+ static bool __read_mostly enable_vpid = 1;
+ module_param_named(vpid, enable_vpid, bool, 0444);
  
---- a/init/main.c
-+++ b/init/main.c
-@@ -543,8 +543,8 @@ asmlinkage __visible void __init start_k
- 	setup_command_line(command_line);
- 	setup_nr_cpu_ids();
- 	setup_per_cpu_areas();
--	boot_cpu_state_init();
- 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
-+	boot_cpu_hotplug_init();
- 
- 	build_all_zonelists(NULL);
- 	page_alloc_init();
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2022,7 +2022,7 @@ void __init boot_cpu_init(void)
- /*
-  * Must be called _AFTER_ setting up the per_cpu areas
-  */
--void __init boot_cpu_state_init(void)
-+void __init boot_cpu_hotplug_init(void)
+@@ -215,15 +212,31 @@ static int vmx_setup_l1d_flush(enum vmx_
  {
- 	per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
+ 	struct page *page;
+ 
+-	/* If set to 'auto' select 'cond' */
+-	if (l1tf == VMENTER_L1D_FLUSH_AUTO)
+-		l1tf = VMENTER_L1D_FLUSH_COND;
+-
+ 	if (!enable_ept) {
+ 		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
+ 		return 0;
+ 	}
+ 
++	/* If set to auto use the default l1tf mitigation method */
++	if (l1tf == VMENTER_L1D_FLUSH_AUTO) {
++		switch (l1tf_mitigation) {
++		case L1TF_MITIGATION_OFF:
++			l1tf = VMENTER_L1D_FLUSH_NEVER;
++			break;
++		case L1TF_MITIGATION_FLUSH_NOWARN:
++		case L1TF_MITIGATION_FLUSH:
++		case L1TF_MITIGATION_FLUSH_NOSMT:
++			l1tf = VMENTER_L1D_FLUSH_COND;
++			break;
++		case L1TF_MITIGATION_FULL:
++		case L1TF_MITIGATION_FULL_FORCE:
++			l1tf = VMENTER_L1D_FLUSH_ALWAYS;
++			break;
++		}
++	} else if (l1tf_mitigation == L1TF_MITIGATION_FULL_FORCE) {
++		l1tf = VMENTER_L1D_FLUSH_ALWAYS;
++	}
++
+ 	if (l1tf != VMENTER_L1D_FLUSH_NEVER && !vmx_l1d_flush_pages &&
+ 	    !boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+ 		page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
+@@ -10343,19 +10356,36 @@ free_vcpu:
+ 	return ERR_PTR(err);
+ }
+ 
+-#define L1TF_MSG "SMT enabled with L1TF CPU bug present. Refer to CVE-2018-3620 for details.\n"
++#define L1TF_MSG_SMT "L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.\n"
++#define L1TF_MSG_L1D "L1TF CPU bug present and virtualization mitigation disabled, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.\n"
+ 
+ static int vmx_vm_init(struct kvm *kvm)
+ {
+ 	if (!ple_gap)
+ 		kvm->arch.pause_in_guest = true;
+ 
+-	if (boot_cpu_has(X86_BUG_L1TF) && cpu_smt_control == CPU_SMT_ENABLED) {
+-		if (nosmt) {
+-			pr_err(L1TF_MSG);
+-			return -EOPNOTSUPP;
++	if (boot_cpu_has(X86_BUG_L1TF) && enable_ept) {
++		switch (l1tf_mitigation) {
++		case L1TF_MITIGATION_OFF:
++		case L1TF_MITIGATION_FLUSH_NOWARN:
++			/* 'I explicitly don't care' is set */
++			break;
++		case L1TF_MITIGATION_FLUSH:
++		case L1TF_MITIGATION_FLUSH_NOSMT:
++		case L1TF_MITIGATION_FULL:
++			/*
++			 * Warn upon starting the first VM in a potentially
++			 * insecure environment.
++			 */
++			if (cpu_smt_control == CPU_SMT_ENABLED)
++				pr_warn_once(L1TF_MSG_SMT);
++			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
++				pr_warn_once(L1TF_MSG_L1D);
++			break;
++		case L1TF_MITIGATION_FULL_FORCE:
++			/* Flush is enforced */
++			break;
+ 		}
+-		pr_warn(L1TF_MSG);
+ 	}
+ 	return 0;
  }
 
 
