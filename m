@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA12BC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95405C46474
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D84721728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D84721728
+	by mail.kernel.org (Postfix) with ESMTP id 5A2BD2168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2BD2168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731892AbeHNUZO (ORCPT
+        id S1731975AbeHNUZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:25:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58040 "EHLO
+        Tue, 14 Aug 2018 16:25:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731654AbeHNUZO (ORCPT
+        with ESMTP id S1731654AbeHNUZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:25:14 -0400
+        Tue, 14 Aug 2018 16:25:17 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0276CD4A;
-        Tue, 14 Aug 2018 17:37:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 231E3D65;
+        Tue, 14 Aug 2018 17:37:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 072/104] x86/kvm: Serialize L1D flush parameter setter
-Date:   Tue, 14 Aug 2018 19:17:26 +0200
-Message-Id: <20180814171519.959169136@linuxfoundation.org>
+Subject: [PATCH 4.14 073/104] x86/kvm: Allow runtime control of L1D flush
+Date:   Tue, 14 Aug 2018 19:17:27 +0200
+Message-Id: <20180814171520.019571177@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,51 +53,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit dd4bfa739a72508b75760b393d129ed7b431daab upstream
+commit 895ae47f9918833c3a880fbccd41e0692b37e7d9 upstream
 
-Writes to the parameter files are not serialized at the sysfs core
-level, so local serialization is required.
+All mitigation modes can be switched at run time with a static key now:
+
+ - Use sysfs_streq() instead of strcmp() to handle the trailing new line
+   from sysfs writes correctly.
+ - Make the static key management handle multiple invocations properly.
+ - Set the module parameter file to RW
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Jiri Kosina <jkosina@suse.cz>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.873642605@linutronix.de
+Link: https://lkml.kernel.org/r/20180713142322.954525119@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ arch/x86/kvm/vmx.c         |   13 ++++++++-----
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -639,7 +639,7 @@ void x86_spec_ctrl_setup_ap(void)
+ #define pr_fmt(fmt)	"L1TF: " fmt
+ 
+ #if IS_ENABLED(CONFIG_KVM_INTEL)
+-enum vmx_l1d_flush_state l1tf_vmx_mitigation __ro_after_init = VMENTER_L1D_FLUSH_AUTO;
++enum vmx_l1d_flush_state l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
+ EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
+ #endif
+ 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -196,6 +196,7 @@ extern const ulong vmx_return;
+@@ -237,12 +237,15 @@ static int vmx_setup_l1d_flush(enum vmx_
  
- static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
- static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_always);
-+static DEFINE_MUTEX(vmx_l1d_flush_mutex);
+ 	l1tf_vmx_mitigation = l1tf;
  
- /* Storage for pre module init parameter parsing */
- static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush_param = VMENTER_L1D_FLUSH_AUTO;
-@@ -260,7 +261,7 @@ static int vmentry_l1d_flush_parse(const
+-	if (l1tf == VMENTER_L1D_FLUSH_NEVER)
+-		return 0;
++	if (l1tf != VMENTER_L1D_FLUSH_NEVER)
++		static_branch_enable(&vmx_l1d_should_flush);
++	else
++		static_branch_disable(&vmx_l1d_should_flush);
  
- static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
- {
--	int l1tf;
-+	int l1tf, ret;
- 
- 	if (!boot_cpu_has(X86_BUG_L1TF))
- 		return 0;
-@@ -280,7 +281,10 @@ static int vmentry_l1d_flush_set(const c
- 		return 0;
- 	}
- 
--	return vmx_setup_l1d_flush(l1tf);
-+	mutex_lock(&vmx_l1d_flush_mutex);
-+	ret = vmx_setup_l1d_flush(l1tf);
-+	mutex_unlock(&vmx_l1d_flush_mutex);
-+	return ret;
+-	static_branch_enable(&vmx_l1d_should_flush);
+ 	if (l1tf == VMENTER_L1D_FLUSH_ALWAYS)
+ 		static_branch_enable(&vmx_l1d_flush_always);
++	else
++		static_branch_disable(&vmx_l1d_flush_always);
+ 	return 0;
  }
  
- static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
+@@ -252,7 +255,7 @@ static int vmentry_l1d_flush_parse(const
+ 
+ 	if (s) {
+ 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
+-			if (!strcmp(s, vmentry_l1d_param[i].option))
++			if (sysfs_streq(s, vmentry_l1d_param[i].option))
+ 				return vmentry_l1d_param[i].cmd;
+ 		}
+ 	}
+@@ -296,7 +299,7 @@ static const struct kernel_param_ops vme
+ 	.set = vmentry_l1d_flush_set,
+ 	.get = vmentry_l1d_flush_get,
+ };
+-module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, S_IRUGO);
++module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, 0644);
+ 
+ #define NR_AUTOLOAD_MSRS 8
+ 
 
 
