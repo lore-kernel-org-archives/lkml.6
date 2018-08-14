@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23281C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C7CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2AA21728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2AA21728
+	by mail.kernel.org (Postfix) with ESMTP id 9D8EC2172B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8EC2172B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387982AbeHNUMp (ORCPT
+        id S2387997AbeHNUMs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:12:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51392 "EHLO
+        Tue, 14 Aug 2018 16:12:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51422 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387747AbeHNUMo (ORCPT
+        with ESMTP id S2387747AbeHNUMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:12:44 -0400
+        Tue, 14 Aug 2018 16:12:48 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4805DC5C;
-        Tue, 14 Aug 2018 17:24:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 300ABCBA;
+        Tue, 14 Aug 2018 17:24:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.18 19/79] cpu/hotplug: Provide knobs to control SMT
-Date:   Tue, 14 Aug 2018 19:16:38 +0200
-Message-Id: <20180814171337.541934514@linuxfoundation.org>
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 02/79] x86/speculation: Protect against userspace-userspace spectreRSB
+Date:   Tue, 14 Aug 2018 19:16:21 +0200
+Message-Id: <20180814171336.888584491@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -51,341 +57,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Jiri Kosina <jkosina@suse.cz>
 
-Provide a command line and a sysfs knob to control SMT.
+commit fdf82a7856b32d905c39afc85e34364491e46346 upstream.
 
-The command line options are:
+The article "Spectre Returns! Speculation Attacks using the Return Stack
+Buffer" [1] describes two new (sub-)variants of spectrev2-like attacks,
+making use solely of the RSB contents even on CPUs that don't fallback to
+BTB on RSB underflow (Skylake+).
 
- 'nosmt':	Enumerate secondary threads, but do not online them
+Mitigate userspace-userspace attacks by always unconditionally filling RSB on
+context switch when the generic spectrev2 mitigation has been enabled.
 
- 'nosmt=force': Ignore secondary threads completely during enumeration
- 		via MP table and ACPI/MADT.
+[1] https://arxiv.org/pdf/1807.07940.pdf
 
-The sysfs control file has the following states (read/write):
-
- 'on':		 SMT is enabled. Secondary threads can be freely onlined
- 'off':		 SMT is disabled. Secondary threads, even if enumerated
- 		 cannot be onlined
- 'forceoff':	 SMT is permanentely disabled. Writes to the control
- 		 file are rejected.
- 'notsupported': SMT is not supported by the CPU
-
-The command line option 'nosmt' sets the sysfs control to 'off'. This
-can be changed to 'on' to reenable SMT during runtime.
-
-The command line option 'nosmt=force' sets the sysfs control to
-'forceoff'. This cannot be changed during runtime.
-
-When SMT is 'on' and the control file is changed to 'off' then all online
-secondary threads are offlined and attempts to online a secondary thread
-later on are rejected.
-
-When SMT is 'off' and the control file is changed to 'on' then secondary
-threads can be onlined again. The 'off' -> 'on' transition does not
-automatically online the secondary threads.
-
-When the control file is set to 'forceoff', the behaviour is the same as
-setting it to 'off', but the operation is irreversible and later writes to
-the control file are rejected.
-
-When the control status is 'notsupported' then writes to the control file
-are rejected.
-
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1807261308190.997@cbobk.fhfr.pm
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/ABI/testing/sysfs-devices-system-cpu |   20 ++
- Documentation/admin-guide/kernel-parameters.txt    |    8 
- arch/Kconfig                                       |    3 
- arch/x86/Kconfig                                   |    1 
- include/linux/cpu.h                                |   13 +
- kernel/cpu.c                                       |  170 +++++++++++++++++++++
- 6 files changed, 215 insertions(+)
 
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -487,3 +487,23 @@ Description:	Information about CPU vulne
- 		"Not affected"	  CPU is not affected by the vulnerability
- 		"Vulnerable"	  CPU is affected and no mitigation in effect
- 		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
-+
-+What:		/sys/devices/system/cpu/smt
-+		/sys/devices/system/cpu/smt/active
-+		/sys/devices/system/cpu/smt/control
-+Date:		June 2018
-+Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-+Description:	Control Symetric Multi Threading (SMT)
-+
-+		active:  Tells whether SMT is active (enabled and siblings online)
-+
-+		control: Read/write interface to control SMT. Possible
-+			 values:
-+
-+			 "on"		SMT is enabled
-+			 "off"		SMT is disabled
-+			 "forceoff"	SMT is force disabled. Cannot be changed.
-+			 "notsupported" SMT is not supported by the CPU
-+
-+			 If control status is "forceoff" or "notsupported" writes
-+			 are rejected.
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2687,6 +2687,14 @@
- 	nosmt		[KNL,S390] Disable symmetric multithreading (SMT).
- 			Equivalent to smt=1.
+---
+ arch/x86/kernel/cpu/bugs.c |   38 +++++++-------------------------------
+ 1 file changed, 7 insertions(+), 31 deletions(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -313,23 +313,6 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
+ }
  
-+			[KNL,x86] Disable symmetric multithreading (SMT).
-+			nosmt=force: Force disable SMT, similar to disabling
-+				     it in the BIOS except that some of the
-+				     resource partitioning effects which are
-+				     caused by having SMT enabled in the BIOS
-+				     cannot be undone. Depending on the CPU
-+				     type this might have a performance impact.
-+
- 	nospectre_v2	[X86] Disable all mitigations for the Spectre variant 2
- 			(indirect branch prediction) vulnerability. System may
- 			allow data leaks with this option, which is equivalent
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -13,6 +13,9 @@ config KEXEC_CORE
- config HAVE_IMA_KEXEC
- 	bool
- 
-+config HOTPLUG_SMT
-+	bool
-+
- config OPROFILE
- 	tristate "OProfile system profiling"
- 	depends on PROFILING
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -187,6 +187,7 @@ config X86
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_USER_RETURN_NOTIFIER
-+	select HOTPLUG_SMT			if SMP
- 	select IRQ_FORCED_THREADING
- 	select NEED_SG_DMA_LENGTH
- 	select PCI_LOCKLESS_CONFIG
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -168,4 +168,17 @@ void cpuhp_report_idle_dead(void);
- static inline void cpuhp_report_idle_dead(void) { }
- #endif /* #ifdef CONFIG_HOTPLUG_CPU */
- 
-+enum cpuhp_smt_control {
-+	CPU_SMT_ENABLED,
-+	CPU_SMT_DISABLED,
-+	CPU_SMT_FORCE_DISABLED,
-+	CPU_SMT_NOT_SUPPORTED,
-+};
-+
-+#if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
-+extern enum cpuhp_smt_control cpu_smt_control;
-+#else
-+# define cpu_smt_control		(CPU_SMT_ENABLED)
-+#endif
-+
- #endif /* _LINUX_CPU_H_ */
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -933,6 +933,29 @@ EXPORT_SYMBOL(cpu_down);
- #define takedown_cpu		NULL
- #endif /*CONFIG_HOTPLUG_CPU*/
- 
-+#ifdef CONFIG_HOTPLUG_SMT
-+enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
-+
-+static int __init smt_cmdline_disable(char *str)
-+{
-+	cpu_smt_control = CPU_SMT_DISABLED;
-+	if (str && !strcmp(str, "force")) {
-+		pr_info("SMT: Force disabled\n");
-+		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
-+	}
-+	return 0;
-+}
-+early_param("nosmt", smt_cmdline_disable);
-+
-+static inline bool cpu_smt_allowed(unsigned int cpu)
-+{
-+	return cpu_smt_control == CPU_SMT_ENABLED ||
-+		topology_is_primary_thread(cpu);
-+}
-+#else
-+static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
-+#endif
-+
- /**
-  * notify_cpu_starting(cpu) - Invoke the callbacks on the starting CPU
-  * @cpu: cpu that just started
-@@ -1056,6 +1079,10 @@ static int do_cpu_up(unsigned int cpu, e
- 		err = -EBUSY;
- 		goto out;
- 	}
-+	if (!cpu_smt_allowed(cpu)) {
-+		err = -EPERM;
-+		goto out;
-+	}
- 
- 	err = _cpu_up(cpu, 0, target);
- out:
-@@ -1904,10 +1931,153 @@ static const struct attribute_group cpuh
- 	NULL
- };
- 
-+#ifdef CONFIG_HOTPLUG_SMT
-+
-+static const char *smt_states[] = {
-+	[CPU_SMT_ENABLED]		= "on",
-+	[CPU_SMT_DISABLED]		= "off",
-+	[CPU_SMT_FORCE_DISABLED]	= "forceoff",
-+	[CPU_SMT_NOT_SUPPORTED]		= "notsupported",
-+};
-+
-+static ssize_t
-+show_smt_control(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE - 2, "%s\n", smt_states[cpu_smt_control]);
-+}
-+
-+static void cpuhp_offline_cpu_device(unsigned int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+
-+	dev->offline = true;
-+	/* Tell user space about the state change */
-+	kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
-+}
-+
-+static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
-+{
-+	int cpu, ret = 0;
-+
-+	cpu_maps_update_begin();
-+	for_each_online_cpu(cpu) {
-+		if (topology_is_primary_thread(cpu))
-+			continue;
-+		ret = cpu_down_maps_locked(cpu, CPUHP_OFFLINE);
-+		if (ret)
-+			break;
-+		/*
-+		 * As this needs to hold the cpu maps lock it's impossible
-+		 * to call device_offline() because that ends up calling
-+		 * cpu_down() which takes cpu maps lock. cpu maps lock
-+		 * needs to be held as this might race against in kernel
-+		 * abusers of the hotplug machinery (thermal management).
-+		 *
-+		 * So nothing would update device:offline state. That would
-+		 * leave the sysfs entry stale and prevent onlining after
-+		 * smt control has been changed to 'off' again. This is
-+		 * called under the sysfs hotplug lock, so it is properly
-+		 * serialized against the regular offline usage.
-+		 */
-+		cpuhp_offline_cpu_device(cpu);
-+	}
-+	if (!ret)
-+		cpu_smt_control = ctrlval;
-+	cpu_maps_update_done();
-+	return ret;
-+}
-+
-+static void cpuhp_smt_enable(void)
-+{
-+	cpu_maps_update_begin();
-+	cpu_smt_control = CPU_SMT_ENABLED;
-+	cpu_maps_update_done();
-+}
-+
-+static ssize_t
-+store_smt_control(struct device *dev, struct device_attribute *attr,
-+		  const char *buf, size_t count)
-+{
-+	int ctrlval, ret;
-+
-+	if (sysfs_streq(buf, "on"))
-+		ctrlval = CPU_SMT_ENABLED;
-+	else if (sysfs_streq(buf, "off"))
-+		ctrlval = CPU_SMT_DISABLED;
-+	else if (sysfs_streq(buf, "forceoff"))
-+		ctrlval = CPU_SMT_FORCE_DISABLED;
-+	else
-+		return -EINVAL;
-+
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED)
-+		return -EPERM;
-+
-+	if (cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		return -ENODEV;
-+
-+	ret = lock_device_hotplug_sysfs();
-+	if (ret)
-+		return ret;
-+
-+	if (ctrlval != cpu_smt_control) {
-+		switch (ctrlval) {
-+		case CPU_SMT_ENABLED:
-+			cpuhp_smt_enable();
-+			break;
-+		case CPU_SMT_DISABLED:
-+		case CPU_SMT_FORCE_DISABLED:
-+			ret = cpuhp_smt_disable(ctrlval);
-+			break;
-+		}
-+	}
-+
-+	unlock_device_hotplug();
-+	return ret ? ret : count;
-+}
-+static DEVICE_ATTR(control, 0644, show_smt_control, store_smt_control);
-+
-+static ssize_t
-+show_smt_active(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	bool active = topology_max_smt_threads() > 1;
-+
-+	return snprintf(buf, PAGE_SIZE - 2, "%d\n", active);
-+}
-+static DEVICE_ATTR(active, 0444, show_smt_active, NULL);
-+
-+static struct attribute *cpuhp_smt_attrs[] = {
-+	&dev_attr_control.attr,
-+	&dev_attr_active.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group cpuhp_smt_attr_group = {
-+	.attrs = cpuhp_smt_attrs,
-+	.name = "smt",
-+	NULL
-+};
-+
-+static int __init cpu_smt_state_init(void)
-+{
-+	if (!topology_smt_supported())
-+		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+
-+	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
-+				  &cpuhp_smt_attr_group);
-+}
-+
-+#else
-+static inline int cpu_smt_state_init(void) { return 0; }
-+#endif
-+
- static int __init cpuhp_sysfs_init(void)
+-/* Check for Skylake-like CPUs (for RSB handling) */
+-static bool __init is_skylake_era(void)
+-{
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
+-	    boot_cpu_data.x86 == 6) {
+-		switch (boot_cpu_data.x86_model) {
+-		case INTEL_FAM6_SKYLAKE_MOBILE:
+-		case INTEL_FAM6_SKYLAKE_DESKTOP:
+-		case INTEL_FAM6_SKYLAKE_X:
+-		case INTEL_FAM6_KABYLAKE_MOBILE:
+-		case INTEL_FAM6_KABYLAKE_DESKTOP:
+-			return true;
+-		}
+-	}
+-	return false;
+-}
+-
+ static void __init spectre_v2_select_mitigation(void)
  {
- 	int cpu, ret;
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -390,22 +373,15 @@ retpoline_auto:
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
  
-+	ret = cpu_smt_state_init();
-+	if (ret)
-+		return ret;
-+
- 	ret = sysfs_create_group(&cpu_subsys.dev_root->kobj,
- 				 &cpuhp_cpu_root_attr_group);
- 	if (ret)
+ 	/*
+-	 * If neither SMEP nor PTI are available, there is a risk of
+-	 * hitting userspace addresses in the RSB after a context switch
+-	 * from a shallow call stack to a deeper one. To prevent this fill
+-	 * the entire RSB, even when using IBRS.
++	 * If spectre v2 protection has been enabled, unconditionally fill
++	 * RSB during a context switch; this protects against two independent
++	 * issues:
+ 	 *
+-	 * Skylake era CPUs have a separate issue with *underflow* of the
+-	 * RSB, when they will predict 'ret' targets from the generic BTB.
+-	 * The proper mitigation for this is IBRS. If IBRS is not supported
+-	 * or deactivated in favour of retpolines the RSB fill on context
+-	 * switch is required.
++	 *	- RSB underflow (and switch to BTB) on Skylake+
++	 *	- SpectreRSB variant of spectre v2 on X86_BUG_SPECTRE_V2 CPUs
+ 	 */
+-	if ((!boot_cpu_has(X86_FEATURE_PTI) &&
+-	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
+-		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+-		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
+-	}
++	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
++	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier if supported */
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
 
 
