@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2899DC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40533C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E3021653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E3021653
+	by mail.kernel.org (Postfix) with ESMTP id F066721653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F066721653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390183AbeHNUaK (ORCPT
+        id S2390167AbeHNUaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 14 Aug 2018 16:30:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59170 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390138AbeHNUaJ (ORCPT
+        with ESMTP id S2390078AbeHNUaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 16:30:09 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13263DA3;
-        Tue, 14 Aug 2018 17:32:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F32FAD88;
+        Tue, 14 Aug 2018 17:32:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Nicolai Stange <nstange@suse.de>,
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 84/97] x86/irq: Let interrupt handlers set kvm_cpu_l1tf_flush_l1d
-Date:   Tue, 14 Aug 2018 19:17:36 +0200
-Message-Id: <20180814171436.334761661@linuxfoundation.org>
+Subject: [PATCH 4.17 76/97] Documentation/l1tf: Fix typos
+Date:   Tue, 14 Aug 2018 19:17:28 +0200
+Message-Id: <20180814171436.042443518@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -51,73 +50,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolai Stange <nstange@suse.de>
+From: Tony Luck <tony.luck@intel.com>
 
-commit ffcba43ff66c7dab34ec700debd491d2a4d319b4 upstream
+commit 1949f9f49792d65dba2090edddbe36a5f02e3ba3 upstream
 
-The last missing piece to having vmx_l1d_flush() take interrupts after
-VMEXIT into account is to set the kvm_cpu_l1tf_flush_l1d per-cpu flag on
-irq entry.
+Fix spelling and other typos
 
-Issue calls to kvm_set_cpu_l1tf_flush_l1d() from entering_irq(),
-ipi_entering_ack_irq(), smp_reschedule_interrupt() and
-uv_bau_message_interrupt().
-
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/apic.h   |    3 +++
- arch/x86/kernel/smp.c         |    1 +
- arch/x86/platform/uv/tlb_uv.c |    1 +
- 3 files changed, 5 insertions(+)
+ Documentation/admin-guide/l1tf.rst |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -10,6 +10,7 @@
- #include <asm/fixmap.h>
- #include <asm/mpspec.h>
- #include <asm/msr.h>
-+#include <asm/hardirq.h>
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -17,7 +17,7 @@ vulnerability is not present on:
+    - Older processor models, where the CPU family is < 6
  
- #define ARCH_APICTIMER_STOPS_ON_C3	1
+    - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
+-     Penwell, Pineview, Slivermont, Airmont, Merrifield)
++     Penwell, Pineview, Silvermont, Airmont, Merrifield)
  
-@@ -514,6 +515,7 @@ extern void irq_exit(void);
- static inline void entering_irq(void)
- {
- 	irq_enter();
-+	kvm_set_cpu_l1tf_flush_l1d();
- }
+    - The Intel Core Duo Yonah variants (2006 - 2008)
  
- static inline void entering_ack_irq(void)
-@@ -526,6 +528,7 @@ static inline void ipi_entering_ack_irq(
- {
- 	irq_enter();
- 	ack_APIC_irq();
-+	kvm_set_cpu_l1tf_flush_l1d();
- }
+@@ -113,7 +113,7 @@ Attack scenarios
+    deployment scenario. The mitigations, their protection scope and impact
+    are described in the next sections.
  
- static inline void exiting_irq(void)
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -261,6 +261,7 @@ __visible void __irq_entry smp_reschedul
- {
- 	ack_APIC_irq();
- 	inc_irq_stat(irq_resched_count);
-+	kvm_set_cpu_l1tf_flush_l1d();
+-   The default mitigations and the rationale for chosing them are explained
++   The default mitigations and the rationale for choosing them are explained
+    at the end of this document. See :ref:`default_mitigations`.
  
- 	if (trace_resched_ipi_enabled()) {
- 		/*
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -1285,6 +1285,7 @@ void uv_bau_message_interrupt(struct pt_
- 	struct msg_desc msgdesc;
+ .. _l1tf_sys_info:
+@@ -191,15 +191,15 @@ Guest mitigation mechanisms
+     - unconditional ('always')
  
- 	ack_APIC_irq();
-+	kvm_set_cpu_l1tf_flush_l1d();
- 	time_start = get_cycles();
+    The conditional mode avoids L1D flushing after VMEXITs which execute
+-   only audited code pathes before the corresponding VMENTER. These code
+-   pathes have beed verified that they cannot expose secrets or other
++   only audited code paths before the corresponding VMENTER. These code
++   paths have been verified that they cannot expose secrets or other
+    interesting data to an attacker, but they can leak information about the
+    address space layout of the hypervisor.
  
- 	bcp = &per_cpu(bau_control, smp_processor_id());
+    Unconditional mode flushes L1D on all VMENTER invocations and provides
+    maximum protection. It has a higher overhead than the conditional
+    mode. The overhead cannot be quantified correctly as it depends on the
+-   work load scenario and the resulting number of VMEXITs.
++   workload scenario and the resulting number of VMEXITs.
+ 
+    The general recommendation is to enable L1D flush on VMENTER. The kernel
+    defaults to conditional mode on affected processors.
+@@ -262,7 +262,7 @@ Guest mitigation mechanisms
+    Whether the interrupts with are affine to CPUs, which run untrusted
+    guests, provide interesting data for an attacker depends on the system
+    configuration and the scenarios which run on the system. While for some
+-   of the interrupts it can be assumed that they wont expose interesting
++   of the interrupts it can be assumed that they won't expose interesting
+    information beyond exposing hints about the host OS memory layout, there
+    is no way to make general assumptions.
+ 
+@@ -299,7 +299,7 @@ Guest mitigation mechanisms
+ 		 to be brought up at least partially and are then shut down
+ 		 again.  "nosmt" can be undone via the sysfs interface.
+ 
+-     nosmt=force Has the same effect as "nosmt' but it does not allow to
++     nosmt=force Has the same effect as "nosmt" but it does not allow to
+ 		 undo the SMT disable via the sysfs interface.
+      =========== ==========================================================
+ 
 
 
