@@ -2,113 +2,87 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D879C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA30CC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D73B62152F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:21:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTHS5TSw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73B62152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7EF4A215E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:26:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF4A215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbeHOAKM (ORCPT
+        id S1732469AbeHOAPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 20:10:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727807AbeHOAKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 20:10:12 -0400
-Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE5E3215EA
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 21:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534281668;
-        bh=PuY4qKSdNkcCDqFgQjKzPQ/keyA7vyJTftCvH+qoPhg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=rTHS5TSwl2ZepNTe8hIQk9xuRJ1eNkER34Z0hUwiB491L2k8z7qFyF0aQhiXQTeZ4
-         jhHRT+TiySLAXaFkFxI4ajTPZvknqT9yHFvGuNOm6mcxPDrQs+hRrorveB9/F5S0wi
-         fM1bk+7GTTj+QZ6lzQsbu1n6kNdHK18zyiQ9/JAY=
-Received: by mail-wm0-f42.google.com with SMTP id n11-v6so13529002wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:21:07 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHD6vQRLVy6BJbZN0IUi6xOpgg0mcpAUmqx8X/bRRwq2386pFzU
-        B/xnOqonJUlaUbSvFAAWwyXLYPuYE8KfOfbvVoI3Ag==
-X-Google-Smtp-Source: AA+uWPz1GZh2adgqGnRfMdYRYNyZ6Hd7WOt0WBC7ZJP9ULFTxWJNVzv8iQMoB2yZC2j6FysAbSoHBlHA5xTlb91uTA4=
-X-Received: by 2002:a1c:f30d:: with SMTP id q13-v6mr11406646wmq.36.1534281666149;
- Tue, 14 Aug 2018 14:21:06 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 14:20:45 -0700 (PDT)
-In-Reply-To: <1534264248.6862.23.camel@infradead.org>
-References: <20180814011732.075EA6E0251@virtux32.softrans.com.au>
- <CALCETrWP41MRGVT7oYoP5_f3jdh5nEvKmDrYuHWwsRgUZCGf=w@mail.gmail.com> <1534264248.6862.23.camel@infradead.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 14 Aug 2018 14:20:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrX2tPRGfyzLgnT_usWGZ-3PA_dzx_i85t7M-0S9cKYZrg@mail.gmail.com>
-Message-ID: <CALCETrX2tPRGfyzLgnT_usWGZ-3PA_dzx_i85t7M-0S9cKYZrg@mail.gmail.com>
-Subject: Re: [PATCH] Handle clock_gettime(CLOCK_TAI) in VDSO
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 14 Aug 2018 20:15:09 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41327 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727870AbeHOAPJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 20:15:09 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j5-v6so18379158wrr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:26:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9OFpwz5ByVNmnzo9Fc9nHt9E0byxgQtgO41mybWsZ0s=;
+        b=bbFUbIbO2D2gxw2lx8RgoNWykD44CAkUPtMeis4sJ3k2WfdVgw2d1eIa47fJQgT6Nr
+         tbMR/i+9EzxxgfditbYR8EqHWP9X5SPcyJ8YJWHLWyU2Elyh+eriCOZRtyRtrjqAQoFT
+         oyOIKbaP8XLWZsbM3J0GvkaCZsQdB0z/T8sr9rTISf9Go7GWgYm9INvwtC462TJvTXMn
+         fBhBVPc4TD3dlUPjCr2RuYJOdEbT/THrAyscP5TcI79Lc1uc5X/T5v1UqEwofc9Bc3H5
+         nFGXWmkSaGCmoGcN783/9pruCtGvBcPIbXsn4mQ2skwUPdiyziwbmYfi7b1wokEdSmgZ
+         z5/g==
+X-Gm-Message-State: AOUpUlG+emrgS9Vm+FkXxBvmWFpxvWLlIRo1Ib0gIhhfzFjnFvCpU3bd
+        tdTmFu0NcC8VMvK+IVprv4s=
+X-Google-Smtp-Source: AA+uWPx2igb2pzQGnmQF9TUpnZ5Nlb68VBcZeYVZtvAChv6l70ztV/qq4bzH9pf6HYBq6tBm24WNXg==
+X-Received: by 2002:adf:fc45:: with SMTP id e5-v6mr15011841wrs.157.1534281963162;
+        Tue, 14 Aug 2018 14:26:03 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:2f01:510a:2300:e740:c455:eab6:4e69])
+        by smtp.gmail.com with ESMTPSA id r8-v6sm95888wmh.37.2018.08.14.14.26.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Aug 2018 14:26:02 -0700 (PDT)
+From:   Abel Vesa <abelvesa@linux.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpu/hotplug: Non-SMP machines do not make use of booted_once
+Date:   Wed, 15 Aug 2018 00:26:00 +0300
+Message-Id: <20180814212600.19132-1-abelvesa@linux.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 9:30 AM, David Woodhouse <dwmw2@infradead.org> wrote:
-> On Tue, 2018-08-14 at 07:20 -0700, Andy Lutomirski wrote:
->> > +       /* Doubled switch statement to work around kernel Makefile error */
->> > +       /* See: https://www.mail-archive.com/gcc-bugs@gcc.gnu.org/msg567499.html */
->>
->> NAK.
->>
->> The issue here (after reading that thread) is that, with our current
->> compile options, gcc generates a jump table once the switch statement
->> hits five entries.  And it uses retpolines for it, and somehow it
->> generates the relocations in such a way that the vDSO build fails.
->> We
->> need to address this so that the vDSO build is reliable, but there's
->> an important question here:
->>
->> Should the vDSO be built with retpolines, or should it be built with
->> indirect branches?  Or should we go out of our way to make sure that
->> the vDSO contains neither retpolines nor indirect branches?
->>
->> We could accomplish the latter (sort of) by manually converting the
->> switch into the appropriate if statements, but that's rather ugly.
->>
->> (Hmm.  We should add exports to directly read each clock source.
->> They'll be noticeably faster, especially when
->> cache-and-predictor-code.)
->
-> Surely it's kind of expected that the vDSO can't find an externally
-> provided __x86_indirect_thunk_rax symbol, since we only provide one as
-> part of the kernel image.
->
-> Building the vDSO with -mindirect-branch=thunk(|-inline) should fix
-> that, if we want retpolines in the vDSO.
+Following commit breaks the non-SMP builds.
 
-I think that, if we want retpolines in the kernel, we probably want
-them in the vDSO as well.  Although there's an argument to be made
-that IBPB gives enough protection, at least against most targets.
+[0cc3cd21657be04cb0] cpu/hotplug: Boot HT siblings at least once
 
->
-> There's also -fno-jump-tables.
+Signed-off-by: Abel Vesa <abelvesa@linux.com>
+---
+ kernel/cpu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I'll probably do this, conditioned on CONFIG_RETPOLINE.  Or we should
-do it kernel-wide.
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 099fb20cd7be..f06c513c5c42 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2272,6 +2272,8 @@ void __init boot_cpu_init(void)
+  */
+ void __init boot_cpu_hotplug_init(void)
+ {
++#ifdef CONFIG_SMP
+ 	this_cpu_write(cpuhp_state.booted_once, true);
++#endif
+ 	this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
+ }
+-- 
+2.18.0
 
-hjl filed https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86952 based on
-my comment in the other bug report.  gcc seems to be generating jump
-tables when it shouldn't be doing so.
