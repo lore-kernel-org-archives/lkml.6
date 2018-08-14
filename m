@@ -2,172 +2,173 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA5EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF66C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46934213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:42:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46934213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C93FE216E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:45:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="nudQ106j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93FE216E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732407AbeHNN3G (ORCPT
+        id S1732246AbeHNNbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 09:29:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729567AbeHNN3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 09:29:06 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0B078197003;
-        Tue, 14 Aug 2018 10:42:28 +0000 (UTC)
-Received: from gondolin (ovpn-117-136.ams2.redhat.com [10.36.117.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C74E1003208;
-        Tue, 14 Aug 2018 10:42:23 +0000 (UTC)
-Date:   Tue, 14 Aug 2018 12:42:20 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v9 08/22] s390: vfio-ap: base implementation of VFIO AP
- device driver
-Message-ID: <20180814124220.355f2ffa.cohuck@redhat.com>
-In-Reply-To: <1534196899-16987-9-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-9-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        Tue, 14 Aug 2018 09:31:49 -0400
+Received: from services.gouders.net ([141.101.32.176]:53328 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731957AbeHNNbt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 09:31:49 -0400
+Received: from localhost ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w7EAcQsX023477
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Aug 2018 12:38:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1534243107; bh=9cewOiH228aYA4iUl+nAWdJpjpkPj/m5j02YWXqGfMI=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=nudQ106jO/e6GGEJ4oWAzL1mylQIPtteAJuEufBeJSK6nFE12QU1VUv+Ft7bN/RZr
+         6AqxO1uVX+J79Asl0UfaFO//aeOYJhsZIN63kyiwmFyHw8YNN/SIxUb3xpMNky0qFf
+         E+NQHMxmBgCcqD8LCwc4fU/zt6bcpU/5JgNh07sY=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] kconfig: report recursive dependency involving 'imply'
+In-Reply-To: <1534229021-8056-1-git-send-email-yamada.masahiro@socionext.com>
+        (Masahiro Yamada's message of "Tue, 14 Aug 2018 15:43:40 +0900")
+References: <1534229021-8056-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Date:   Tue, 14 Aug 2018 12:38:25 +0200
+Message-ID: <gh8t59utb2.fsf@lena.gouders.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 14 Aug 2018 10:42:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 14 Aug 2018 10:42:29 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 17:48:05 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+Masahiro Yamada <yamada.masahiro@socionext.com> writes:
 
+> Currently, Kconfig does not report anything about the recursive
+> dependency where 'imply' keywords are involved.
+>
+> [Test Code]
+>
+>   config A
+>           bool "a"
+>
+>   config B
+>           bool "b"
+>           imply A
+>           depends on A
 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> new file mode 100644
-> index 0000000..5069580
-> --- /dev/null
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -0,0 +1,118 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * VFIO based AP device driver
-> + *
-> + * Copyright IBM Corp. 2018
-> + *
-> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +#include "vfio_ap_private.h"
-> +
-> +#define VFIO_AP_ROOT_NAME "vfio_ap"
-> +#define VFIO_AP_DEV_TYPE_NAME "ap_matrix"
-> +#define VFIO_AP_DEV_NAME "matrix"
-> +
-> +MODULE_AUTHOR("IBM Corporation");
-> +MODULE_DESCRIPTION("VFIO AP device driver, Copyright IBM Corp. 2018");
-> +MODULE_LICENSE("GPL v2");
-> +
-> +static struct ap_driver vfio_ap_drv;
-> +
-> +static struct device_type vfio_ap_dev_type = {
-> +	.name = VFIO_AP_DEV_TYPE_NAME,
-> +};
-> +
-> +struct ap_matrix_dev matrix_dev;
+Hello Masahiro,
 
-Please don't add new statically allocated devices, but allocate it
-dynamically (see the comment in device_add()).
+obviously, it is hard to find a reason why one wants to use dependencies
+like above but I also wonder how e.g. menuconfig handles this case:
 
-> +
-> +/* Only type 10 adapters (CEX4 and later) are supported
-> + * by the AP matrix device driver
-> + */
-> +static struct ap_device_id ap_queue_ids[] = {
-> +	{ .dev_type = AP_DEVICE_TYPE_CEX4,
-> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
-> +	{ .dev_type = AP_DEVICE_TYPE_CEX5,
-> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
-> +	{ .dev_type = AP_DEVICE_TYPE_CEX6,
-> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
-> +	{ /* end of sibling */ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
-> +
-> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void vfio_ap_queue_dev_remove(struct ap_device *apdev)
-> +{
-> +	/* Nothing to do yet */
-> +}
+First, only "a" is visible, if I then select "a", "b" does not become
+visible but when I then reset "a" to "n", "b" becomes visible.  If I then
+try to select "b", it becomes invisible...
 
-You need a release callback as well.
+Perhaps it would be better to just error out instead of giving users the
+impression, Kconfig thinks such questionable behavior is OK.
 
-> +
-> +static int vfio_ap_matrix_dev_init(void)
-> +{
-> +	int ret;
-> +	struct device *root_device;
-> +
-> +	root_device = root_device_register(VFIO_AP_ROOT_NAME);
-> +	if (IS_ERR(root_device)) {
-> +		ret = PTR_ERR(root_device);
-> +		return ret;
-> +	}
-> +
-> +	matrix_dev.device.type = &vfio_ap_dev_type;
-> +	dev_set_name(&matrix_dev.device, "%s", VFIO_AP_DEV_NAME);
-> +	matrix_dev.device.type = &vfio_ap_dev_type;
-> +	matrix_dev.device.parent = root_device;
-> +	matrix_dev.device.driver = &vfio_ap_drv.driver;
-> +
-> +	ret = device_register(&matrix_dev.device);
-> +	if (ret) {
-> +		root_device_unregister(root_device);
+Side note: perhaps, the documentation could be better when it comes to
+           recursive dependencies.  The documentation says "select" and
+           "imply" can be used to specify lower limits whereas direct
+           dependencies specify upper limits for symbol values and with
+           this in mind, one might wonder why it is a problem to work
+           with both limits in a recursive way.
 
-And this needs a put_device() for the matrix device. (It is getting
-ugly with a statically allocated device.)
+           Not very unlikely that it is just me who still has to
+           understand recursive dependencies or problems with reading
+           English text, though.
 
-> +		return ret;
-> +	}
+What definitely seems to get void with your patches is item c) in
+"Practical solutions to kconfig recursive issue" in
+Documentation/kbuild/kconfig-language:
+
+        c) Consider the use of "imply" instead of "select"
+
+Dirk
+
+> In the code above, Kconfig cannot calculate the symbol values correctly
+> due to the circular dependency.  For example, allyesconfig followed by
+> syncconfig results in an odd behavior because CONFIG_B becomes visible
+> in syncconfig.
+>
+>   $ make allyesconfig
+>   scripts/kconfig/conf  --allyesconfig Kconfig
+>   #
+>   # configuration written to .config
+>   #
+>   $ cat .config
+>   #
+>   # Automatically generated file; DO NOT EDIT.
+>   # Main menu
+>   #
+>   CONFIG_A=y
+>   $ make syncconfig
+>   scripts/kconfig/conf  --syncconfig Kconfig
+>   *
+>   * Restart config...
+>   *
+>   *
+>   * Main menu
+>   *
+>   a (A) [Y/n/?] y
+>     b (B) [N/y/?] (NEW)
+>
+> To report this correctly, sym_check_expr_deps() should recurse to
+> not only sym->rev_dep.expr but also sym->implied.expr .
+>
+> At this moment, sym_check_print_recursive() cannot distinguish
+> 'select' and 'imply' since it does not know the precise context
+> where the recursive dependency is hit.  This will be solved by
+> the next commit.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  scripts/kconfig/symbol.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> index 4ec8b1f..7de7463a 100644
+> --- a/scripts/kconfig/symbol.c
+> +++ b/scripts/kconfig/symbol.c
+> @@ -1098,7 +1098,7 @@ static void sym_check_print_recursive(struct symbol *last_sym)
+>  				sym->name ? sym->name : "<choice>",
+>  				next_sym->name ? next_sym->name : "<choice>");
+>  		} else {
+> -			fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
+> +			fprintf(stderr, "%s:%d:\tsymbol %s is selected or implied by %s\n",
+>  				prop->file->name, prop->lineno,
+>  				sym->name ? sym->name : "<choice>",
+>  				next_sym->name ? next_sym->name : "<choice>");
+> @@ -1161,8 +1161,13 @@ static struct symbol *sym_check_sym_deps(struct symbol *sym)
+>  	if (sym2)
+>  		goto out;
+>  
+> +	sym2 = sym_check_expr_deps(sym->implied.expr);
+> +	if (sym2)
+> +		goto out;
 > +
-> +	return 0;
-> +}
-> +
-> +static void vfio_ap_matrix_dev_destroy(void)
-> +{
-> +	device_unregister(&matrix_dev.device);
-
-This one already does a put_device(). Didn't the driver core complain?
-
-> +	root_device_unregister(matrix_dev.device.parent);
-> +}
+>  	for (prop = sym->prop; prop; prop = prop->next) {
+> -		if (prop->type == P_CHOICE || prop->type == P_SELECT)
+> +		if (prop->type == P_CHOICE || prop->type == P_SELECT ||
+> +		    prop->type == P_IMPLY)
+>  			continue;
+>  		stack.prop = prop;
+>  		sym2 = sym_check_expr_deps(prop->visible.expr);
