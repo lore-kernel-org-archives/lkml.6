@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28459C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874E4C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA3A62150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA3A62150B
+	by mail.kernel.org (Postfix) with ESMTP id 41CF821736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41CF821736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390359AbeHNUaX (ORCPT
+        id S2390373AbeHNUa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59594 "EHLO
+        Tue, 14 Aug 2018 16:30:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59606 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388923AbeHNUaX (ORCPT
+        with ESMTP id S2388923AbeHNUa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:23 -0400
+        Tue, 14 Aug 2018 16:30:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7DE9DC8D;
-        Tue, 14 Aug 2018 17:42:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D903C8D;
+        Tue, 14 Aug 2018 17:42:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 019/107] IB/mlx4: Mark user MR as writable if actual virtual memory is writable
-Date:   Tue, 14 Aug 2018 19:16:42 +0200
-Message-Id: <20180814171521.880554894@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Mian Yousaf Kaukab <yousaf.kaukab@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 010/107] init: rename and re-order boot_cpu_state_init()
+Date:   Tue, 14 Aug 2018 19:16:33 +0200
+Message-Id: <20180814171521.425971727@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -52,121 +54,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit d8f9cc328c8888369880e2527e9186d745f2bbf6 upstream.
+commit b5b1404d0815894de0690de8a1ab58269e56eae6 upstream.
 
-To allow rereg_user_mr to modify the MR from read-only to writable without
-using get_user_pages again, we needed to define the initial MR as writable.
-However, this was originally done unconditionally, without taking into
-account the writability of the underlying virtual memory.
+This is purely a preparatory patch for upcoming changes during the 4.19
+merge window.
 
-As a result, any attempt to register a read-only MR over read-only
-virtual memory failed.
+We have a function called "boot_cpu_state_init()" that isn't really
+about the bootup cpu state: that is done much earlier by the similarly
+named "boot_cpu_init()" (note lack of "state" in name).
 
-To fix this, do not add the writable flag bit when the user virtual memory
-is not writable (e.g. const memory).
+This function initializes some hotplug CPU state, and needs to run after
+the percpu data has been properly initialized.  It even has a comment to
+that effect.
 
-However, when the underlying memory is NOT writable (and we therefore
-do not define the initial MR as writable), the IB core adds a
-"force writable" flag to its user-pages request. If this succeeds,
-the reg_user_mr caller gets a writable copy of the original pages.
+Except it _doesn't_ actually run after the percpu data has been properly
+initialized.  On x86 it happens to do that, but on at least arm and
+arm64, the percpu base pointers are initialized by the arch-specific
+'smp_prepare_boot_cpu()' hook, which ran _after_ boot_cpu_state_init().
 
-If the user-space caller then does a rereg_user_mr operation to enable
-writability, this will succeed. This should not be allowed, since
-the original virtual memory was not writable.
+This had some unexpected results, and in particular we have a patch
+pending for the merge window that did the obvious cleanup of using
+'this_cpu_write()' in the cpu hotplug init code:
 
-Cc: <stable@vger.kernel.org>
-Fixes: 9376932d0c26 ("IB/mlx4_ib: Add support for user MR re-registration")
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+  -       per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
+  +       this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
+
+which is obviously the right thing to do.  Except because of the
+ordering issue, it actually failed miserably and unexpectedly on arm64.
+
+So this just fixes the ordering, and changes the name of the function to
+be 'boot_cpu_hotplug_init()' to make it obvious that it's about cpu
+hotplug state, because the core CPU state was supposed to have already
+been done earlier.
+
+Marked for stable, since the (not yet merged) patch that will show this
+problem is marked for stable.
+
+Reported-by: Vlastimil Babka <vbabka@suse.cz>
+Reported-by: Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
+Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx4/mr.c |   50 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 42 insertions(+), 8 deletions(-)
+ include/linux/cpu.h |    2 +-
+ init/main.c         |    2 +-
+ kernel/cpu.c        |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -131,6 +131,40 @@ out:
- 	return err;
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -29,7 +29,7 @@ struct cpu {
+ };
+ 
+ extern void boot_cpu_init(void);
+-extern void boot_cpu_state_init(void);
++extern void boot_cpu_hotplug_init(void);
+ 
+ extern int register_cpu(struct cpu *cpu, int num);
+ extern struct device *get_cpu_device(unsigned cpu);
+--- a/init/main.c
++++ b/init/main.c
+@@ -509,8 +509,8 @@ asmlinkage __visible void __init start_k
+ 	setup_command_line(command_line);
+ 	setup_nr_cpu_ids();
+ 	setup_per_cpu_areas();
+-	boot_cpu_state_init();
+ 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
++	boot_cpu_hotplug_init();
+ 
+ 	build_all_zonelists(NULL, NULL);
+ 	page_alloc_init();
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1944,7 +1944,7 @@ void __init boot_cpu_init(void)
+ /*
+  * Must be called _AFTER_ setting up the per_cpu areas
+  */
+-void __init boot_cpu_state_init(void)
++void __init boot_cpu_hotplug_init(void)
+ {
+ 	per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
  }
- 
-+static struct ib_umem *mlx4_get_umem_mr(struct ib_ucontext *context, u64 start,
-+					u64 length, u64 virt_addr,
-+					int access_flags)
-+{
-+	/*
-+	 * Force registering the memory as writable if the underlying pages
-+	 * are writable.  This is so rereg can change the access permissions
-+	 * from readable to writable without having to run through ib_umem_get
-+	 * again
-+	 */
-+	if (!ib_access_writable(access_flags)) {
-+		struct vm_area_struct *vma;
-+
-+		down_read(&current->mm->mmap_sem);
-+		/*
-+		 * FIXME: Ideally this would iterate over all the vmas that
-+		 * cover the memory, but for now it requires a single vma to
-+		 * entirely cover the MR to support RO mappings.
-+		 */
-+		vma = find_vma(current->mm, start);
-+		if (vma && vma->vm_end >= start + length &&
-+		    vma->vm_start <= start) {
-+			if (vma->vm_flags & VM_WRITE)
-+				access_flags |= IB_ACCESS_LOCAL_WRITE;
-+		} else {
-+			access_flags |= IB_ACCESS_LOCAL_WRITE;
-+		}
-+
-+		up_read(&current->mm->mmap_sem);
-+	}
-+
-+	return ib_umem_get(context, start, length, access_flags, 0);
-+}
-+
- struct ib_mr *mlx4_ib_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
- 				  u64 virt_addr, int access_flags,
- 				  struct ib_udata *udata)
-@@ -145,10 +179,8 @@ struct ib_mr *mlx4_ib_reg_user_mr(struct
- 	if (!mr)
- 		return ERR_PTR(-ENOMEM);
- 
--	/* Force registering the memory as writable. */
--	/* Used for memory re-registeration. HCA protects the access */
--	mr->umem = ib_umem_get(pd->uobject->context, start, length,
--			       access_flags | IB_ACCESS_LOCAL_WRITE, 0);
-+	mr->umem = mlx4_get_umem_mr(pd->uobject->context, start, length,
-+				    virt_addr, access_flags);
- 	if (IS_ERR(mr->umem)) {
- 		err = PTR_ERR(mr->umem);
- 		goto err_free;
-@@ -215,6 +247,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 	}
- 
- 	if (flags & IB_MR_REREG_ACCESS) {
-+		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
-+			return -EPERM;
-+
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
- 
-@@ -228,10 +263,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 
- 		mlx4_mr_rereg_mem_cleanup(dev->dev, &mmr->mmr);
- 		ib_umem_release(mmr->umem);
--		mmr->umem = ib_umem_get(mr->uobject->context, start, length,
--					mr_access_flags |
--					IB_ACCESS_LOCAL_WRITE,
--					0);
-+		mmr->umem =
-+			mlx4_get_umem_mr(mr->uobject->context, start, length,
-+					 virt_addr, mr_access_flags);
- 		if (IS_ERR(mmr->umem)) {
- 			err = PTR_ERR(mmr->umem);
- 			/* Prevent mlx4_ib_dereg_mr from free'ing invalid pointer */
 
 
