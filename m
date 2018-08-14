@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F13C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD1FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7A121728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7A121728
+	by mail.kernel.org (Postfix) with ESMTP id 5E38A21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E38A21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388912AbeHNUQU (ORCPT
+        id S2388926AbeHNUQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:16:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52598 "EHLO
+        Tue, 14 Aug 2018 16:16:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52608 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388227AbeHNUQT (ORCPT
+        with ESMTP id S2388227AbeHNUQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:16:19 -0400
+        Tue, 14 Aug 2018 16:16:22 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 545DEC5C;
-        Tue, 14 Aug 2018 17:28:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7152FC5C;
+        Tue, 14 Aug 2018 17:28:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.18 78/79] tools headers: Synchronise x86 cpufeatures.h for L1TF additions
-Date:   Tue, 14 Aug 2018 19:17:37 +0200
-Message-Id: <20180814171341.128562645@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.18 79/79] x86/microcode: Allow late microcode loading with SMT disabled
+Date:   Tue, 14 Aug 2018 19:17:38 +0200
+Message-Id: <20180814171341.170088732@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -49,38 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
+The kernel unnecessarily prevents late microcode loading when SMT is
+disabled.  It should be safe to allow it if all the primary threads are
+online.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/arch/x86/include/asm/cpufeatures.h |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/cpu/microcode/core.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -219,6 +219,7 @@
- #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
-+#define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -509,12 +509,20 @@ static struct platform_device	*microcode
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-@@ -341,6 +342,7 @@
- #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+ static int check_online_cpus(void)
+ {
+-	if (num_online_cpus() == num_present_cpus())
+-		return 0;
++	unsigned int cpu;
  
-@@ -373,5 +375,6 @@
- #define X86_BUG_SPECTRE_V1		X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
- #define X86_BUG_SPECTRE_V2		X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
- #define X86_BUG_SPEC_STORE_BYPASS	X86_BUG(17) /* CPU is affected by speculative store bypass attack */
-+#define X86_BUG_L1TF			X86_BUG(18) /* CPU is affected by L1 Terminal Fault */
+-	pr_err("Not all CPUs online, aborting microcode update.\n");
++	/*
++	 * Make sure all CPUs are online.  It's fine for SMT to be disabled if
++	 * all the primary threads are still online.
++	 */
++	for_each_present_cpu(cpu) {
++		if (topology_is_primary_thread(cpu) && !cpu_online(cpu)) {
++			pr_err("Not all CPUs online, aborting microcode update.\n");
++			return -EINVAL;
++		}
++	}
  
- #endif /* _ASM_X86_CPUFEATURES_H */
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static atomic_t late_cpus_in;
 
 
