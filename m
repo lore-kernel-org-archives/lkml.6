@@ -2,116 +2,397 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BBDC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB33CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB9BC21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 384B321738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ou4xRxSd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9BC21736
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dry/AzJN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384B321738
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732723AbeHNRWc (ORCPT
+        id S1732637AbeHNRZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:22:32 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:49538 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732119AbeHNRWc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:22:32 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id D7D4524E121E;
-        Tue, 14 Aug 2018 07:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1534257306; bh=0MJQb5iNXt4hQz3uLgiHhuZzqUufFGDPoPlBD2zegbE=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Ou4xRxSdWhWWR1jB0JW0UJH5bD+64WURSrv9ebIL4EoeokFgYGhpuQ8kMTlzwo2VH
-         ppBmu17IDY/afJJtcnNJ9BxoBwSwRwWuJxvw/AUuCuxtrVwOCYoYywz1E6uiYT4jGI
-         nN9Dmw2Ye3f4ZTt7KPWe+O8Gh98hHxb1IeaOcAuljCXaC+1AOEPQOGQy/7UgnBvYJp
-         rV9YXJsatbDm0+mMK4PASbaVB1Dv1lpalr9H7cDhr26OdpF5XRzTl0+u3r7u+YO5Ho
-         PESVVvlUAoImfymWqHsctzsXEeDnzEdXhoKKBP1ArF4/GJIDvJxh4pd3qG6ZEO+9UD
-         kqIXePLUt3KCQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C47673748;
-        Tue, 14 Aug 2018 07:35:05 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 14 Aug 2018 07:35:05 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
- 14 Aug 2018 16:35:03 +0200
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "Vineet Gupta" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>
-Subject: Re: [PATCH] ARC: atomic64: fix atomic64_add_unless function
-Thread-Topic: [PATCH] ARC: atomic64: fix atomic64_add_unless function
-Thread-Index: AQHUMY2lhSLajPX2o0m683Cq9/FBEKS/M1SA
-Date:   Tue, 14 Aug 2018 14:35:02 +0000
-Message-ID: <1534257301.3962.79.camel@synopsys.com>
-References: <20180811160856.24936-1-Eugeniy.Paltsev@synopsys.com>
-         <C2D7FE5348E1B147BCA15975FBA23075012B08CB78@us01wembx1.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B08CB78@us01wembx1.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.86]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <883CB8865F89B841B8764B2D88E4B1F3@internal.synopsys.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 14 Aug 2018 13:25:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732188AbeHNRZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:25:21 -0400
+Received: from localhost.localdomain (unknown [49.77.216.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C921D21736;
+        Tue, 14 Aug 2018 14:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534257473;
+        bh=hRX/C6KdIctiRA8huIa3jiUop1o1bJxAHpdSAubM3IM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dry/AzJNHN2GP0EWgZAse/KyqtLFD+WTSL8uNbVHYVG8ap1vxRflIyF7juDIYLuhQ
+         j6cLgt0d/wPbhhbCUL9ChkfHbxJg2MzmBTrEWuBbi5mTrRj3VwGnAJ5aJxgCDpgPng
+         KKYedeww0D6ejZgbWyRFNwqtPgwGvlLk7fEfCFAg=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: readahead encrypted block during GC
+Date:   Tue, 14 Aug 2018 22:37:25 +0800
+Message-Id: <20180814143725.7599-1-chao@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA4LTE0IGF0IDEzOjQyICswMDAwLCBWaW5lZXQgR3VwdGEgd3JvdGU6DQo+
-IE9uIDA4LzExLzIwMTggMDk6MDkgQU0sIEV1Z2VuaXkgUGFsdHNldiB3cm90ZToNCj4gPiBDdXJy
-ZW50IGltcGxlbWVudGF0aW9uIG9mICdhdG9taWM2NF9hZGRfdW5sZXNzJyBmdW5jdGlvbg0KPiA+
-IChhbmQgaGVuY2UgJ2F0b21pYzY0X2luY19ub3RfemVybycpIHJldHVybiBpbmNvcnJlY3QgdmFs
-dWUNCj4gPiBpZiBsb3ZlciAzMiBiaXRzIG9mIGNvbXBhcmVkIDY0LWJpdCBudW1iZXIgYXJlIGVx
-dWFsIGFuZA0KPiA+IGhpZ2hlciAzMiBiaXRzIGFyZW4ndC4NCj4gPiANCj4gPiBGb3IgaW4gZm9s
-bG93aW5nIGV4YW1wbGUgYXRvbWljNjRfYWRkX3VubGVzcyBtdXN0IHJldHVybiAnMScNCj4gPiBi
-dXQgaXQgYWN0dWFsbHkgcmV0dXJucyAnMCc6DQo+ID4gLS0tLS0tLS0tPjgtLS0tLS0tLS0NCj4g
-PiBhdG9taWM2NF90IHZhbCA9IEFUT01JQzY0X0lOSVQoMHg0NDQ0MDAwMDAwMDAwMDAwTEwpOw0K
-PiA+IGludCByZXQgPSBhdG9taWM2NF9hZGRfdW5sZXNzKCZ2YWwsIDFMTCwgMExMKQ0KPiA+IC0t
-LS0tLS0tLT44LS0tLS0tLS0tDQo+ID4gDQo+ID4gVGhpcyBoYXBwZW5zIGJlY2F1c2Ugd2Ugd3Jp
-dGUgJzAnIHRvIHJldHVybmVkIHZhcmlhYmxlIHJlZ2FyZGxlc3MNCj4gPiBvZiBoaWdoZXIgMzIg
-Yml0cyBjb21wYXJpc29uIHJlc3VsdC4NCj4gPiANCj4gPiBTbyBmaXggaXQuDQo+ID4gDQo+ID4g
-Tk9URToNCj4gPiAgdGhpcyBjaGFuZ2Ugd2FzIHRlc3RlZCB3aXRoIGF0b21pYzY0X3Rlc3QuDQo+
-ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZA
-c3lub3BzeXMuY29tPg0KPiANCj4gTEdUTS4gQ3VyaW91cywgd2FzIHRoaXMgZnJvbSBjb2RlIHJl
-dmlldyBvciBkaWQgdSBhY3R1YWxseSBydW4gaW50byB0aGlzID8NCg0KSSd2ZSBhY2NpZGVudGFs
-bHkgcnVuIGludG8gdGhpcyB3aGVuIEkgcGxheWVkIHdpdGggYXRvbWljNjRfKiBmdW5jdGlvbnMN
-CnRyeWluZyB0byBpbXBsZW1lbnQgaGFjayB0byBhdXRvbWF0aWNhbGx5IGFsaWduIExMNjQvU0M2
-NCBkYXRhIGZvciBhdG9taWMgNjQtYml0DQpvcGVyYXRpb25zIG9uIEFSQyB0byBhdm9pZCBwcm9i
-bGVtcyBsaWtlOg0KaHR0cHM6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1zbnBzLWFyY0Bs
-aXN0cy5pbmZyYWRlYWQub3JnL21zZzAzNzkxLmh0bWwNCg0KPiBUaHgsDQo+IC1WaW5lZXQNCj4g
-DQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJjL2luY2x1ZGUvYXNtL2F0b21pYy5oIHwgMiArLQ0KPiA+
-ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4g
-PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcmMvaW5jbHVkZS9hc20vYXRvbWljLmggYi9hcmNoL2FyYy9p
-bmNsdWRlL2FzbS9hdG9taWMuaA0KPiA+IGluZGV4IDExODU5Mjg3YzUyYS4uZTg0MGNiMTc2M2Iy
-IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJjL2luY2x1ZGUvYXNtL2F0b21pYy5oDQo+ID4gKysr
-IGIvYXJjaC9hcmMvaW5jbHVkZS9hc20vYXRvbWljLmgNCj4gPiBAQCAtNTc4LDExICs1NzgsMTEg
-QEAgc3RhdGljIGlubGluZSBpbnQgYXRvbWljNjRfYWRkX3VubGVzcyhhdG9taWM2NF90ICp2LCBs
-b25nIGxvbmcgYSwgbG9uZyBsb25nIHUpDQo+ID4gIA0KPiA+ICAJX19hc21fXyBfX3ZvbGF0aWxl
-X18oDQo+ID4gIAkiMToJbGxvY2tkICAlMCwgWyUyXQlcbiINCj4gPiAtCSIJbW92CSUxLCAxCQlc
-biINCj4gPiAgCSIJYnJuZQklTDAsICVMNCwgMmYJIyBjb250aW51ZSB0byBhZGQgc2luY2UgdiAh
-PSB1IFxuIg0KPiA+ICAJIglicmVxLmQJJUgwLCAlSDQsIDNmCSMgcmV0dXJuIHNpbmNlIHYgPT0g
-dSBcbiINCj4gPiAgCSIJbW92CSUxLCAwCQlcbiINCj4gPiAgCSIyOgkJCQlcbiINCj4gPiArCSIJ
-bW92CSUxLCAxCQlcbiINCj4gPiAgCSIJYWRkLmYgICAlTDAsICVMMCwgJUwzCVxuIg0KPiA+ICAJ
-IglhZGMgICAgICVIMCwgJUgwLCAlSDMJXG4iDQo+ID4gIAkiCXNjb25kZCAgJTAsIFslMl0JXG4i
-DQo+IA0KPiANCi0tIA0KIEV1Z2VuaXkgUGFsdHNldg==
+From: Chao Yu <yuchao0@huawei.com>
+
+During GC, for each encrypted block, we will read block synchronously
+into meta page, and then submit it into current cold data log area.
+
+So this block read model with 4k granularity can make poor performance,
+like migrating non-encrypted block, let's readahead encrypted block
+as well to improve migration performance.
+
+To implement this, we choose meta page that its index is old block
+address of the encrypted block, and readahead ciphertext into this
+page, later, if readaheaded page is still updated, we will load its
+data into target meta page, and submit the write IO.
+
+Note that for OPU, truncation, deletion, we need to invalid meta
+page after we invalid old block address, to make sure we won't load
+invalid data from target meta page during encrypted block migration.
+
+for ((i = 0; i < 1000; i++))
+do {
+        xfs_io -f /mnt/f2fs/dir/$i -c "pwrite 0 128k" -c "fsync";
+} done
+
+for ((i = 0; i < 1000; i+=2))
+do {
+        rm /mnt/f2fs/dir/$i;
+} done
+
+ret = ioctl(fd, F2FS_IOC_GARBAGE_COLLECT, 0);
+
+Before:
+              gc-6549  [001] d..1 214682.212797: block_rq_insert: 8,32 RA 32768 () 786400 + 64 [gc]
+              gc-6549  [001] d..1 214682.212802: block_unplug: [gc] 1
+              gc-6549  [001] .... 214682.213892: block_bio_queue: 8,32 R 67494144 + 8 [gc]
+              gc-6549  [001] .... 214682.213899: block_getrq: 8,32 R 67494144 + 8 [gc]
+              gc-6549  [001] .... 214682.213902: block_plug: [gc]
+              gc-6549  [001] d..1 214682.213905: block_rq_insert: 8,32 R 4096 () 67494144 + 8 [gc]
+              gc-6549  [001] d..1 214682.213908: block_unplug: [gc] 1
+              gc-6549  [001] .... 214682.226405: block_bio_queue: 8,32 R 67494152 + 8 [gc]
+              gc-6549  [001] .... 214682.226412: block_getrq: 8,32 R 67494152 + 8 [gc]
+              gc-6549  [001] .... 214682.226414: block_plug: [gc]
+              gc-6549  [001] d..1 214682.226417: block_rq_insert: 8,32 R 4096 () 67494152 + 8 [gc]
+              gc-6549  [001] d..1 214682.226420: block_unplug: [gc] 1
+              gc-6549  [001] .... 214682.226904: block_bio_queue: 8,32 R 67494160 + 8 [gc]
+              gc-6549  [001] .... 214682.226910: block_getrq: 8,32 R 67494160 + 8 [gc]
+              gc-6549  [001] .... 214682.226911: block_plug: [gc]
+              gc-6549  [001] d..1 214682.226914: block_rq_insert: 8,32 R 4096 () 67494160 + 8 [gc]
+              gc-6549  [001] d..1 214682.226916: block_unplug: [gc] 1
+
+After:
+              gc-5678  [003] .... 214327.025906: block_bio_queue: 8,32 R 67493824 + 8 [gc]
+              gc-5678  [003] .... 214327.025908: block_bio_backmerge: 8,32 R 67493824 + 8 [gc]
+              gc-5678  [003] .... 214327.025915: block_bio_queue: 8,32 R 67493832 + 8 [gc]
+              gc-5678  [003] .... 214327.025917: block_bio_backmerge: 8,32 R 67493832 + 8 [gc]
+              gc-5678  [003] .... 214327.025923: block_bio_queue: 8,32 R 67493840 + 8 [gc]
+              gc-5678  [003] .... 214327.025925: block_bio_backmerge: 8,32 R 67493840 + 8 [gc]
+              gc-5678  [003] .... 214327.025932: block_bio_queue: 8,32 R 67493848 + 8 [gc]
+              gc-5678  [003] .... 214327.025934: block_bio_backmerge: 8,32 R 67493848 + 8 [gc]
+              gc-5678  [003] .... 214327.025941: block_bio_queue: 8,32 R 67493856 + 8 [gc]
+              gc-5678  [003] .... 214327.025943: block_bio_backmerge: 8,32 R 67493856 + 8 [gc]
+              gc-5678  [003] .... 214327.025953: block_bio_queue: 8,32 R 67493864 + 8 [gc]
+              gc-5678  [003] .... 214327.025955: block_bio_backmerge: 8,32 R 67493864 + 8 [gc]
+              gc-5678  [003] .... 214327.025962: block_bio_queue: 8,32 R 67493872 + 8 [gc]
+              gc-5678  [003] .... 214327.025964: block_bio_backmerge: 8,32 R 67493872 + 8 [gc]
+              gc-5678  [003] .... 214327.025970: block_bio_queue: 8,32 R 67493880 + 8 [gc]
+              gc-5678  [003] .... 214327.025972: block_bio_backmerge: 8,32 R 67493880 + 8 [gc]
+              gc-5678  [003] .... 214327.026000: block_bio_queue: 8,32 WS 34123776 + 2048 [gc]
+              gc-5678  [003] .... 214327.026019: block_getrq: 8,32 WS 34123776 + 2048 [gc]
+              gc-5678  [003] d..1 214327.026021: block_rq_insert: 8,32 R 131072 () 67493632 + 256 [gc]
+              gc-5678  [003] d..1 214327.026023: block_unplug: [gc] 1
+              gc-5678  [003] d..1 214327.026026: block_rq_issue: 8,32 R 131072 () 67493632 + 256 [gc]
+              gc-5678  [003] .... 214327.026046: block_plug: [gc]
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c    |  35 ++++++++++-----
+ fs/f2fs/gc.c      | 111 +++++++++++++++++++++++++++++++++++++++++-----
+ fs/f2fs/segment.c |  10 ++++-
+ 3 files changed, 134 insertions(+), 22 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 339b26838f9b..fbed8d59d10a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -877,6 +877,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+ 	struct f2fs_summary sum;
+ 	struct node_info ni;
++	block_t old_blkaddr;
+ 	pgoff_t fofs;
+ 	blkcnt_t count = 1;
+ 	int err;
+@@ -898,9 +899,12 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 
+ alloc:
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+-
+-	f2fs_allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
++	old_blkaddr = dn->data_blkaddr;
++	f2fs_allocate_data_block(sbi, NULL, old_blkaddr, &dn->data_blkaddr,
+ 					&sum, seg_type, NULL, false);
++	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
++		invalidate_mapping_pages(META_MAPPING(sbi),
++					old_blkaddr, old_blkaddr);
+ 	f2fs_set_data_blkaddr(dn);
+ 
+ 	/* update i_size */
+@@ -1616,6 +1620,7 @@ static int f2fs_read_data_pages(struct file *file,
+ static int encrypt_one_page(struct f2fs_io_info *fio)
+ {
+ 	struct inode *inode = fio->page->mapping->host;
++	struct page *mpage;
+ 	gfp_t gfp_flags = GFP_NOFS;
+ 
+ 	if (!f2fs_encrypted_file(inode))
+@@ -1627,17 +1632,25 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
+ retry_encrypt:
+ 	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
+ 			PAGE_SIZE, 0, fio->page->index, gfp_flags);
+-	if (!IS_ERR(fio->encrypted_page))
+-		return 0;
++	if (IS_ERR(fio->encrypted_page)) {
++		/* flush pending IOs and wait for a while in the ENOMEM case */
++		if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
++			f2fs_flush_merged_writes(fio->sbi);
++			congestion_wait(BLK_RW_ASYNC, HZ/50);
++			gfp_flags |= __GFP_NOFAIL;
++			goto retry_encrypt;
++		}
++		return PTR_ERR(fio->encrypted_page);
++	}
+ 
+-	/* flush pending IOs and wait for a while in the ENOMEM case */
+-	if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
+-		f2fs_flush_merged_writes(fio->sbi);
+-		congestion_wait(BLK_RW_ASYNC, HZ/50);
+-		gfp_flags |= __GFP_NOFAIL;
+-		goto retry_encrypt;
++	mpage = find_lock_page(META_MAPPING(fio->sbi), fio->old_blkaddr);
++	if (mpage) {
++		if (PageUptodate(mpage))
++			memcpy(page_address(mpage),
++				page_address(fio->encrypted_page), PAGE_SIZE);
++		f2fs_put_page(mpage, 1);
+ 	}
+-	return PTR_ERR(fio->encrypted_page);
++	return 0;
+ }
+ 
+ static inline bool check_inplace_update_policy(struct inode *inode,
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index f85b97dd3e2d..d1ef4d3681d2 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -605,6 +605,72 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	return true;
+ }
+ 
++static int ra_data_block(struct inode *inode, pgoff_t index)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct address_space *mapping = inode->i_mapping;
++	struct dnode_of_data dn;
++	struct page *page;
++	struct extent_info ei = {0, 0, 0};
++	struct f2fs_io_info fio = {
++		.sbi = sbi,
++		.ino = inode->i_ino,
++		.type = DATA,
++		.temp = COLD,
++		.op = REQ_OP_READ,
++		.op_flags = 0,
++		.encrypted_page = NULL,
++		.in_list = false,
++		.retry = false,
++	};
++	int err;
++
++	page = f2fs_grab_cache_page(mapping, index, true);
++	if (!page)
++		return -ENOMEM;
++
++	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
++		dn.data_blkaddr = ei.blk + index - ei.fofs;
++		goto got_it;
++	}
++
++	set_new_dnode(&dn, inode, NULL, NULL, 0);
++	err = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
++	if (err)
++		goto put_page;
++	f2fs_put_dnode(&dn);
++
++	if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
++						DATA_GENERIC))) {
++		err = -EFAULT;
++		goto put_page;
++	}
++got_it:
++	/* read page */
++	fio.page = page;
++	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
++
++	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
++					dn.data_blkaddr,
++					FGP_LOCK | FGP_CREAT, GFP_NOFS);
++	if (!fio.encrypted_page) {
++		err = -ENOMEM;
++		goto put_page;
++	}
++
++	err = f2fs_submit_page_bio(&fio);
++	if (err)
++		goto put_encrypted_page;
++	f2fs_put_page(fio.encrypted_page, 0);
++	f2fs_put_page(page, 1);
++	return 0;
++put_encrypted_page:
++	f2fs_put_page(fio.encrypted_page, 1);
++put_page:
++	f2fs_put_page(page, 1);
++	return err;
++}
++
+ /*
+  * Move data block via META_MAPPING while keeping locked data page.
+  * This can be used to move blocks, aka LBAs, directly on disk.
+@@ -626,7 +692,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	struct dnode_of_data dn;
+ 	struct f2fs_summary sum;
+ 	struct node_info ni;
+-	struct page *page;
++	struct page *page, *mpage;
+ 	block_t newaddr;
+ 	int err;
+ 	bool lfs_mode = test_opt(fio.sbi, LFS);
+@@ -689,6 +755,23 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 		goto recover_block;
+ 	}
+ 
++	mpage = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
++					fio.old_blkaddr, FGP_LOCK, GFP_NOFS);
++	if (mpage) {
++		bool updated = false;
++
++		if (PageUptodate(mpage)) {
++			memcpy(page_address(fio.encrypted_page),
++					page_address(mpage), PAGE_SIZE);
++			updated = true;
++		}
++		f2fs_put_page(mpage, 1);
++		invalidate_mapping_pages(META_MAPPING(fio.sbi),
++					fio.old_blkaddr, fio.old_blkaddr);
++		if (updated)
++			goto write_page;
++	}
++
+ 	err = f2fs_submit_page_bio(&fio);
+ 	if (err)
+ 		goto put_page_out;
+@@ -705,6 +788,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 		goto put_page_out;
+ 	}
+ 
++write_page:
+ 	set_page_dirty(fio.encrypted_page);
+ 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+@@ -879,12 +963,6 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			if (IS_ERR(inode) || is_bad_inode(inode))
+ 				continue;
+ 
+-			/* if inode uses special I/O path, let's go phase 3 */
+-			if (f2fs_post_read_required(inode)) {
+-				add_gc_inode(gc_list, inode);
+-				continue;
+-			}
+-
+ 			if (!down_write_trylock(
+ 				&F2FS_I(inode)->i_gc_rwsem[WRITE])) {
+ 				iput(inode);
+@@ -892,10 +970,23 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 				continue;
+ 			}
+ 
+-			start_bidx = f2fs_start_bidx_of_node(nofs, inode);
++			start_bidx = f2fs_start_bidx_of_node(nofs, inode) +
++								ofs_in_node;
++
++			if (f2fs_post_read_required(inode)) {
++				int err = ra_data_block(inode, start_bidx);
++
++				up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++				if (err) {
++					iput(inode);
++					continue;
++				}
++				add_gc_inode(gc_list, inode);
++				continue;
++			}
++
+ 			data_page = f2fs_get_read_data_page(inode,
+-					start_bidx + ofs_in_node, REQ_RAHEAD,
+-					true);
++						start_bidx, REQ_RAHEAD, true);
+ 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 			if (IS_ERR(data_page)) {
+ 				iput(inode);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6ba5137ac498..85ff5d7893c1 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2152,6 +2152,8 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+ 	if (addr == NEW_ADDR)
+ 		return;
+ 
++	invalidate_mapping_pages(META_MAPPING(sbi), addr, addr);
++
+ 	/* add it into sit main buffer */
+ 	down_write(&sit_i->sentry_lock);
+ 
+@@ -3053,6 +3055,9 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ reallocate:
+ 	f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+ 			&fio->new_blkaddr, sum, type, fio, true);
++	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO)
++		invalidate_mapping_pages(META_MAPPING(fio->sbi),
++					fio->old_blkaddr, fio->old_blkaddr);
+ 
+ 	/* writeout dirty page into bdev */
+ 	f2fs_submit_page_write(fio);
+@@ -3207,8 +3212,11 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 
+ 	if (!recover_curseg || recover_newaddr)
+ 		update_sit_entry(sbi, new_blkaddr, 1);
+-	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
++	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO) {
++		invalidate_mapping_pages(META_MAPPING(sbi),
++					old_blkaddr, old_blkaddr);
+ 		update_sit_entry(sbi, old_blkaddr, -1);
++	}
+ 
+ 	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+ 	locate_dirty_segment(sbi, GET_SEGNO(sbi, new_blkaddr));
+-- 
+2.18.0
+
