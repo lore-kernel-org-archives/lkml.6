@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE334C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1C4C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E0921727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E0921727
+	by mail.kernel.org (Postfix) with ESMTP id 92F0E21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F0E21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389814AbeHNUT4 (ORCPT
+        id S1728209AbeHNUWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:19:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53576 "EHLO
+        Tue, 14 Aug 2018 16:22:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56338 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388943AbeHNUTz (ORCPT
+        with ESMTP id S1725873AbeHNUWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:19:55 -0400
+        Tue, 14 Aug 2018 16:22:22 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45703D06;
-        Tue, 14 Aug 2018 17:31:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E02E5E4E;
+        Tue, 14 Aug 2018 17:33:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.17 70/97] cpu/hotplug: Expose SMT control init function
-Date:   Tue, 14 Aug 2018 19:17:22 +0200
-Message-Id: <20180814171435.812362168@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 015/104] fix mntput/mntput race
+Date:   Tue, 14 Aug 2018 19:16:29 +0200
+Message-Id: <20180814171516.194553568@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
-References: <20180814171433.160434170@linuxfoundation.org>
+In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
+References: <20180814171515.270692185@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,75 +46,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 8e1b706b6e819bed215c0db16345568864660393 upstream
+commit 9ea0a46ca2c318fcc449c1e6b62a7230a17888f1 upstream.
 
-The L1TF mitigation will gain a commend line parameter which allows to set
-a combination of hypervisor mitigation and SMT control.
+mntput_no_expire() does the calculation of total refcount under mount_lock;
+unfortunately, the decrement (as well as all increments) are done outside
+of it, leading to false positives in the "are we dropping the last reference"
+test.  Consider the following situation:
+	* mnt is a lazy-umounted mount, kept alive by two opened files.  One
+of those files gets closed.  Total refcount of mnt is 2.  On CPU 42
+mntput(mnt) (called from __fput()) drops one reference, decrementing component
+	* After it has looked at component #0, the process on CPU 0 does
+mntget(), incrementing component #0, gets preempted and gets to run again -
+on CPU 69.  There it does mntput(), which drops the reference (component #69)
+and proceeds to spin on mount_lock.
+	* On CPU 42 our first mntput() finishes counting.  It observes the
+decrement of component #69, but not the increment of component #0.  As the
+result, the total it gets is not 1 as it should've been - it's 0.  At which
+point we decide that vfsmount needs to be killed and proceed to free it and
+shut the filesystem down.  However, there's still another opened file
+on that filesystem, with reference to (now freed) vfsmount, etc. and we are
+screwed.
 
-Expose cpu_smt_disable() so the command line parser can tweak SMT settings.
+It's not a wide race, but it can be reproduced with artificial slowdown of
+the mnt_get_count() loop, and it should be easier to hit on SMP KVM setups.
 
-[ tglx: Split out of larger patch and made it preserve an already existing
-  	force off state ]
+Fix consists of moving the refcount decrement under mount_lock; the tricky
+part is that we want (and can) keep the fast case (i.e. mount that still
+has non-NULL ->mnt_ns) entirely out of mount_lock.  All places that zero
+mnt->mnt_ns are dropping some reference to mnt and they call synchronize_rcu()
+before that mntput().  IOW, if mntput() observes (under rcu_read_lock())
+a non-NULL ->mnt_ns, it is guaranteed that there is another reference yet to
+be dropped.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142323.039715135@linutronix.de
+Reported-by: Jann Horn <jannh@google.com>
+Tested-by: Jann Horn <jannh@google.com>
+Fixes: 48a066e72d97 ("RCU'd vsfmounts")
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/cpu.h |    2 ++
- kernel/cpu.c        |   16 +++++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
 
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -177,8 +177,10 @@ enum cpuhp_smt_control {
- 
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
-+extern void cpu_smt_disable(bool force);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
-+static inline void cpu_smt_disable(bool force) { }
- #endif
- 
- #endif /* _LINUX_CPU_H_ */
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -347,13 +347,23 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
- 
--static int __init smt_cmdline_disable(char *str)
-+void __init cpu_smt_disable(bool force)
+---
+ fs/namespace.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1195,12 +1195,22 @@ static DECLARE_DELAYED_WORK(delayed_mntp
+ static void mntput_no_expire(struct mount *mnt)
  {
--	cpu_smt_control = CPU_SMT_DISABLED;
--	if (str && !strcmp(str, "force")) {
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
-+		cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		return;
-+
-+	if (force) {
- 		pr_info("SMT: Force disabled\n");
- 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
-+	} else {
-+		cpu_smt_control = CPU_SMT_DISABLED;
+ 	rcu_read_lock();
+-	mnt_add_count(mnt, -1);
+-	if (likely(mnt->mnt_ns)) { /* shouldn't be the last one */
++	if (likely(READ_ONCE(mnt->mnt_ns))) {
++		/*
++		 * Since we don't do lock_mount_hash() here,
++		 * ->mnt_ns can change under us.  However, if it's
++		 * non-NULL, then there's a reference that won't
++		 * be dropped until after an RCU delay done after
++		 * turning ->mnt_ns NULL.  So if we observe it
++		 * non-NULL under rcu_read_lock(), the reference
++		 * we are dropping is not the final one.
++		 */
++		mnt_add_count(mnt, -1);
+ 		rcu_read_unlock();
+ 		return;
  	}
-+}
-+
-+static int __init smt_cmdline_disable(char *str)
-+{
-+	cpu_smt_disable(str && !strcmp(str, "force"));
- 	return 0;
- }
- early_param("nosmt", smt_cmdline_disable);
+ 	lock_mount_hash();
++	mnt_add_count(mnt, -1);
+ 	if (mnt_get_count(mnt)) {
+ 		rcu_read_unlock();
+ 		unlock_mount_hash();
 
 
