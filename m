@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB66C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C40C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A7BC2172A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:40:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7BC2172A
+	by mail.kernel.org (Postfix) with ESMTP id 4969B2174A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:40:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4969B2174A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731540AbeHNHZ2 (ORCPT
+        id S1731711AbeHNHZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 03:25:28 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:52060 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731242AbeHNHZ1 (ORCPT
+        Tue, 14 Aug 2018 03:25:30 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:34809 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731205AbeHNHZ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 03:25:27 -0400
-Received: by mail-io0-f200.google.com with SMTP id w23-v6so15546137iob.18
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 21:40:04 -0700 (PDT)
+Received: by mail-it0-f71.google.com with SMTP id k204-v6so9458336ite.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 21:40:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Bvn7gcXgApUzSChS/gqTDuUKo7yHlrjZzuy5y0QZ1m0=;
-        b=a62scRdsI2gRhuN6hZ4pwcIM9c9XdvHr/pJ35l1zA5muHMX0WC1hI4VhLdBDJLu9jm
-         LlmRPlJLzgVlAmcV3Hj3UGyUe5YrqxayofsivlB/ryBvcMor9VHFBcnKexEu87/7W8/s
-         EfuNga2+btEZHcesf//ap7ZA5C1ah0MdBLfX/mUs0zioCdF8suShQDS1FL2RCo5oExWw
-         wDCrD3LaxOnF2rXn8Y+fLRCCYkvZfxCZzpRcHgG3SXh7nTa9fKHfK6YZW1A9Z6H9lgoX
-         1WbCBOkTEUN33NlkZtqKe35zwplqh5xYeCnpuXrpFOuZvflKNHZYao/RToNgp7aChKx4
-         Xudg==
-X-Gm-Message-State: AOUpUlH0hYRnKbhuIHa6pM7Vb5yG9QHjMDHvo9jIpe9m83GqwDxIwMyZ
-        ixqpNsInyENJ1Hwa1lqyhPMmtg2vCtY+noOaiYHApJSrSPYd
-X-Google-Smtp-Source: AA+uWPx5qgcBTnX3mkHiUcc/Vf3YB69jcjQsW1StYu7UzeVNCzo96vQu9E7p4O8LWusywtNBfeDdFUhWQlUg1OVpKAEOLCw/EhZn
+        bh=kLoNNPfAKv6zbM4cOu2yPFMRYZUi+e1ZlqR6UuDqPzc=;
+        b=UJxRW5n7kxZ21Rv/bhPcrqd/KqWu5uBA/HpYYCZFPAEpEx4sk7cGijnQXXv2Qk1k62
+         mb2+Ozz/m10mv54qehYZ8AJRFCI3NmolOjKwHMNZcrPpPrHKQFequYXv4CvXxxnRjHnE
+         CzKzp4ZSXtpYvZg8TAAstkp8c6nIPzX1JGXp9U25HOpxo5FwPkRgExxUMJAKV9Fdszaq
+         SZCATvgcCgRf27L3pbM2WbE02K2kOZG3/bIUK4b8+oSu626AzDeDrEWoN1wBnC0RIanB
+         KygVQenZ+qDQ2h3C48WSlMF2sf/FfUrbugJyR8DW3UirE0JiBxNxxQFR9ekctsT270Tb
+         zU/w==
+X-Gm-Message-State: AOUpUlG6JwQuP1KymcW2aKR4unUZcIpxXbuNx+xEqO3YO7YGNAOlUzXK
+        pvv1OYkTnVF1KP98V2n8tOn2nOhSqw2QeHQ/tDVlOvvXTv6U
+X-Google-Smtp-Source: AA+uWPy5+lX+9KyW8hUwjhHTCLRNfNriBeell5B3vFEgPa3j/nljQJapYcbkJvn6GWz999fE5VHQEUEpU6eRl3R7DnQLAE9YSWad
 MIME-Version: 1.0
-X-Received: by 2002:a6b:1647:: with SMTP id 68-v6mr9593757iow.65.1534221603651;
+X-Received: by 2002:a6b:b0c2:: with SMTP id z185-v6mr9049853ioe.99.1534221603452;
  Mon, 13 Aug 2018 21:40:03 -0700 (PDT)
 Date:   Mon, 13 Aug 2018 21:40:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b14d8c05735dcdf8@google.com>
-Subject: inconsistent lock state in ila_xlat_nl_cmd_add_mapping
-From:   syzbot <syzbot+eaaf6c4a6a8cb1869d86@syzkaller.appspotmail.com>
+Message-ID: <000000000000ae453e05735dcdb8@google.com>
+Subject: inconsistent lock state in ila_xlat_nl_cmd_del_mapping
+From:   syzbot <syzbot+3db64bd48b29a825d2db@syzkaller.appspotmail.com>
 To:     davem@davemloft.net, gregkh@linuxfoundation.org,
         keescook@chromium.org, ktkhai@virtuozzo.com, kuznet@ms2.inr.ac.ru,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
@@ -63,33 +63,34 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    78cbac647e61 Merge branch 'ip-faster-in-order-IP-fragments'
+HEAD commit:    36d2f761b5aa cxgb4: update 1.20.8.0 as the latest firmware..
 git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14df4828400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9100338df26ab75
-dashboard link: https://syzkaller.appspot.com/bug?extid=eaaf6c4a6a8cb1869d86
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f429c8400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dbf55ebfa6bfd517
+dashboard link: https://syzkaller.appspot.com/bug?extid=3db64bd48b29a825d2db
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13069ad2400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=14ed8a3c400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a4c622400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+eaaf6c4a6a8cb1869d86@syzkaller.appspotmail.com
+Reported-by: syzbot+3db64bd48b29a825d2db@syzkaller.appspotmail.com
 
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
 8021q: adding VLAN 0 to HW filter on device team0
 
 ================================
 WARNING: inconsistent lock state
-4.18.0-rc8+ #183 Not tainted
+4.18.0-rc8+ #179 Not tainted
 --------------------------------
 inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
-syz-executor2/6403 [HC0[0]:SC0[0]:HE1:SE1] takes:
+syz-executor551/4387 [HC0[0]:SC0[0]:HE1:SE1] takes:
 (____ptrval____) (&(&tlocks[i])->rlock){+.?.}, at: spin_lock  
 include/linux/spinlock.h:310 [inline]
-(____ptrval____) (&(&tlocks[i])->rlock){+.?.}, at: ila_add_mapping  
-net/ipv6/ila/ila_xlat.c:233 [inline]
+(____ptrval____) (&(&tlocks[i])->rlock){+.?.}, at: ila_del_mapping  
+net/ipv6/ila/ila_xlat.c:290 [inline]
 (____ptrval____) (&(&tlocks[i])->rlock){+.?.}, at:  
-ila_xlat_nl_cmd_add_mapping+0x6bb/0x17e0 net/ipv6/ila/ila_xlat.c:355
+ila_xlat_nl_cmd_del_mapping+0x46b/0xb00 net/ipv6/ila/ila_xlat.c:368
 {IN-SOFTIRQ-W} state was registered at:
    lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
    __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
@@ -118,41 +119,33 @@ net/bridge/br_netfilter_ipv6.c:209
    napi_poll net/core/dev.c:6228 [inline]
    net_rx_action+0x7a5/0x1920 net/core/dev.c:6294
    __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
-   do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
-   do_softirq.part.18+0x155/0x1a0 kernel/softirq.c:336
-   do_softirq arch/x86/include/asm/preempt.h:23 [inline]
-   __local_bh_enable_ip+0x1ec/0x230 kernel/softirq.c:189
-   local_bh_enable include/linux/bottom_half.h:32 [inline]
-   rcu_read_unlock_bh include/linux/rcupdate.h:725 [inline]
-   ip6_finish_output2+0xce8/0x2820 net/ipv6/ip6_output.c:121
-   ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
-   NF_HOOK_COND include/linux/netfilter.h:276 [inline]
-   ip6_output+0x234/0x9d0 net/ipv6/ip6_output.c:171
-   dst_output include/net/dst.h:444 [inline]
-   NF_HOOK include/linux/netfilter.h:287 [inline]
-   ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
-   ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
-   addrconf_dad_work+0xbf2/0x1310 net/ipv6/addrconf.c:4060
-   process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
-   worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-   kthread+0x345/0x410 kernel/kthread.c:246
-   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-irq event stamp: 113
-hardirqs last  enabled at (113): [<ffffffff86b11fe4>]  
-__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-hardirqs last  enabled at (113): [<ffffffff86b11fe4>]  
-_raw_spin_unlock_irqrestore+0x74/0xc0 kernel/locking/spinlock.c:184
-hardirqs last disabled at (112): [<ffffffff86b120a4>]  
-__raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (112): [<ffffffff86b120a4>]  
-_raw_spin_lock_irqsave+0x74/0xc0 kernel/locking/spinlock.c:152
-softirqs last  enabled at (64): [<ffffffff85079b7c>] spin_unlock_bh  
+   invoke_softirq kernel/softirq.c:372 [inline]
+   irq_exit+0x1d4/0x210 kernel/softirq.c:412
+   exiting_irq arch/x86/include/asm/apic.h:527 [inline]
+   smp_apic_timer_interrupt+0x186/0x730 arch/x86/kernel/apic/apic.c:1055
+   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+   native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
+   arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+   default_idle+0xc7/0x450 arch/x86/kernel/process.c:500
+   arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:491
+   default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+   cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+   do_idle+0x3aa/0x570 kernel/sched/idle.c:262
+   cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
+   start_secondary+0x433/0x5d0 arch/x86/kernel/smpboot.c:270
+   secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+irq event stamp: 51111
+hardirqs last  enabled at (51111): [<ffffffff814fca78>]  
+queue_work_on+0xe8/0x1e0 kernel/workqueue.c:1490
+hardirqs last disabled at (51110): [<ffffffff814fca2f>]  
+queue_work_on+0x9f/0x1e0 kernel/workqueue.c:1483
+softirqs last  enabled at (51088): [<ffffffff85079b7c>] spin_unlock_bh  
 include/linux/spinlock.h:355 [inline]
-softirqs last  enabled at (64): [<ffffffff85079b7c>]  
+softirqs last  enabled at (51088): [<ffffffff85079b7c>]  
 release_sock+0x1ec/0x2c0 net/core/sock.c:2860
-softirqs last disabled at (62): [<ffffffff85079a0d>] spin_lock_bh  
+softirqs last disabled at (51086): [<ffffffff85079a0d>] spin_lock_bh  
 include/linux/spinlock.h:315 [inline]
-softirqs last disabled at (62): [<ffffffff85079a0d>]  
+softirqs last disabled at (51086): [<ffffffff85079a0d>]  
 release_sock+0x7d/0x2c0 net/core/sock.c:2847
 
 other info that might help us debug this:
@@ -166,12 +159,12 @@ other info that might help us debug this:
 
   *** DEADLOCK ***
 
-1 lock held by syz-executor2/6403:
+1 lock held by syz-executor551/4387:
   #0: (____ptrval____) (cb_lock){++++}, at: genl_rcv+0x19/0x40  
 net/netlink/genetlink.c:636
 
 stack backtrace:
-CPU: 0 PID: 6403 Comm: syz-executor2 Not tainted 4.18.0-rc8+ #183
+CPU: 0 PID: 4387 Comm: syz-executor551 Not tainted 4.18.0-rc8+ #179
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -187,8 +180,8 @@ Call Trace:
   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
   _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
   spin_lock include/linux/spinlock.h:310 [inline]
-  ila_add_mapping net/ipv6/ila/ila_xlat.c:233 [inline]
-  ila_xlat_nl_cmd_add_mapping+0x6bb/0x17e0 net/ipv6/ila/ila_xlat.c:355
+  ila_del_mapping net/ipv6/ila/ila_xlat.c:290 [inline]
+  ila_xlat_nl_cmd_del_mapping+0x46b/0xb00 net/ipv6/ila/ila_xlat.c:368
   genl_family_rcv_msg+0x8a3/0x1140 net/netlink/genetlink.c:601
   genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
   netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
@@ -205,16 +198,14 @@ Call Trace:
   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2178
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+RIP: 0033:0x441109
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fcc9357bc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fcc9357c6d4 RCX: 0000000000457089
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d3c18 R14: 00000000004c88f5 R15: 0000000000000000
+ff 0f 83 db 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd2c44eb68 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441109
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 00000000000001
 
 
 ---
