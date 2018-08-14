@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2BAC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A00EFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F6C21728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:35:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F6C21728
+	by mail.kernel.org (Postfix) with ESMTP id 5D04F21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:35:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D04F21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbeHNUX5 (ORCPT
+        id S1730099AbeHNUYB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:23:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57332 "EHLO
+        Tue, 14 Aug 2018 16:24:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57344 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729803AbeHNUX4 (ORCPT
+        with ESMTP id S1729803AbeHNUYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:23:56 -0400
+        Tue, 14 Aug 2018 16:24:00 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95B1FDDE;
-        Tue, 14 Aug 2018 17:35:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1D30DE0;
+        Tue, 14 Aug 2018 17:35:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 050/104] x86/cpufeatures: Add detection of L1D cache flush support.
-Date:   Tue, 14 Aug 2018 19:17:04 +0200
-Message-Id: <20180814171518.574266150@linuxfoundation.org>
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH 4.14 033/104] x86/speculation/l1tf: Limit swap file size to MAX_PA/2
+Date:   Tue, 14 Aug 2018 19:16:47 +0200
+Message-Id: <20180814171517.426182550@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -51,35 +53,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 11e34e64e4103955fc4568750914c75d65ea87ee upstream
+commit 377eeaa8e11fe815b1d07c81c4a0e2843a8c15eb upstream
 
-336996-Speculative-Execution-Side-Channel-Mitigations.pdf defines a new MSR
-(IA32_FLUSH_CMD) which is detected by CPUID.7.EDX[28]=1 bit being set.
+For the L1TF workaround its necessary to limit the swap file size to below
+MAX_PA/2, so that the higher bits of the swap offset inverted never point
+to valid memory.
 
-This new MSR "gives software a way to invalidate structures with finer
-granularity than other architectual methods like WBINVD."
+Add a mechanism for the architecture to override the swap file size check
+in swapfile.c and add a x86 specific max swapfile check function that
+enforces that limit.
 
-A copy of this document is available at
-  https://bugzilla.kernel.org/show_bug.cgi?id=199511
+The check is only enabled if the CPU is vulnerable to L1TF.
 
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+In VMs with 42bit MAX_PA the typical limit is 2TB now, on a native system
+with 46bit PA it is 32TB. The limit is only per individual swap file, so
+it's always possible to exceed these limits with multiple swap files or
+partitions.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/mm/init.c       |   15 +++++++++++++++
+ include/linux/swapfile.h |    2 ++
+ mm/swapfile.c            |   46 ++++++++++++++++++++++++++++++----------------
+ 3 files changed, 47 insertions(+), 16 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -339,6 +339,7 @@
- #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -4,6 +4,8 @@
+ #include <linux/swap.h>
+ #include <linux/memblock.h>
+ #include <linux/bootmem.h>	/* for max_low_pfn */
++#include <linux/swapfile.h>
++#include <linux/swapops.h>
  
+ #include <asm/set_memory.h>
+ #include <asm/e820/api.h>
+@@ -880,3 +882,16 @@ void update_cache_mode_entry(unsigned en
+ 	__cachemode2pte_tbl[cache] = __cm_idx2pte(entry);
+ 	__pte2cachemode_tbl[entry] = cache;
+ }
++
++unsigned long max_swapfile_size(void)
++{
++	unsigned long pages;
++
++	pages = generic_max_swapfile_size();
++
++	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
++		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
++		pages = min_t(unsigned long, l1tf_pfn_limit() + 1, pages);
++	}
++	return pages;
++}
+--- a/include/linux/swapfile.h
++++ b/include/linux/swapfile.h
+@@ -10,5 +10,7 @@ extern spinlock_t swap_lock;
+ extern struct plist_head swap_active_head;
+ extern struct swap_info_struct *swap_info[];
+ extern int try_to_unuse(unsigned int, bool, unsigned long);
++extern unsigned long generic_max_swapfile_size(void);
++extern unsigned long max_swapfile_size(void);
+ 
+ #endif /* _LINUX_SWAPFILE_H */
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2902,6 +2902,35 @@ static int claim_swapfile(struct swap_in
+ 	return 0;
+ }
+ 
++
++/*
++ * Find out how many pages are allowed for a single swap device. There
++ * are two limiting factors:
++ * 1) the number of bits for the swap offset in the swp_entry_t type, and
++ * 2) the number of bits in the swap pte, as defined by the different
++ * architectures.
++ *
++ * In order to find the largest possible bit mask, a swap entry with
++ * swap type 0 and swap offset ~0UL is created, encoded to a swap pte,
++ * decoded to a swp_entry_t again, and finally the swap offset is
++ * extracted.
++ *
++ * This will mask all the bits from the initial ~0UL mask that can't
++ * be encoded in either the swp_entry_t or the architecture definition
++ * of a swap pte.
++ */
++unsigned long generic_max_swapfile_size(void)
++{
++	return swp_offset(pte_to_swp_entry(
++			swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;
++}
++
++/* Can be overridden by an architecture for additional checks. */
++__weak unsigned long max_swapfile_size(void)
++{
++	return generic_max_swapfile_size();
++}
++
+ static unsigned long read_swap_header(struct swap_info_struct *p,
+ 					union swap_header *swap_header,
+ 					struct inode *inode)
+@@ -2937,22 +2966,7 @@ static unsigned long read_swap_header(st
+ 	p->cluster_next = 1;
+ 	p->cluster_nr = 0;
+ 
+-	/*
+-	 * Find out how many pages are allowed for a single swap
+-	 * device. There are two limiting factors: 1) the number
+-	 * of bits for the swap offset in the swp_entry_t type, and
+-	 * 2) the number of bits in the swap pte as defined by the
+-	 * different architectures. In order to find the
+-	 * largest possible bit mask, a swap entry with swap type 0
+-	 * and swap offset ~0UL is created, encoded to a swap pte,
+-	 * decoded to a swp_entry_t again, and finally the swap
+-	 * offset is extracted. This will mask all the bits from
+-	 * the initial ~0UL mask that can't be encoded in either
+-	 * the swp_entry_t or the architecture definition of a
+-	 * swap pte.
+-	 */
+-	maxpages = swp_offset(pte_to_swp_entry(
+-			swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;
++	maxpages = max_swapfile_size();
+ 	last_page = swap_header->info.last_page;
+ 	if (!last_page) {
+ 		pr_warn("Empty swap-file\n");
 
 
