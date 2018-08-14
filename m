@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B189EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEA2C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D26620837
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D26620837
+	by mail.kernel.org (Postfix) with ESMTP id 7C3B121706
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3B121706
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbeHNKTK (ORCPT
+        id S1731994AbeHNKTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 06:19:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54286 "EHLO mx1.suse.de"
+        Tue, 14 Aug 2018 06:19:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54236 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731341AbeHNKTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:19:09 -0400
+        id S1727689AbeHNKTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:19:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 29981AF5C;
+        by mx1.suse.de (Postfix) with ESMTP id 18DF3AF52;
         Tue, 14 Aug 2018 07:33:10 +0000 (UTC)
 From:   Hannes Reinecke <hare@suse.de>
 To:     Jens Axboe <axboe@kernel.dk>
@@ -33,10 +33,12 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Bart van Assche <bart.vanassche@wdc.com>,
         linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
         Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>
-Subject: [PATCH 5/5] virtio-blk: modernize sysfs attribute creation
-Date:   Tue, 14 Aug 2018 09:33:05 +0200
-Message-Id: <20180814073305.87255-6-hare@suse.de>
+        Hannes Reinecke <hare@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        "Ed L . Cachin" <ed.cashin@acm.org>
+Subject: [PATCH 3/5] aoe: use device_add_disk_with_groups()
+Date:   Tue, 14 Aug 2018 09:33:03 +0200
+Message-Id: <20180814073305.87255-4-hare@suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180814073305.87255-1-hare@suse.de>
 References: <20180814073305.87255-1-hare@suse.de>
@@ -45,132 +47,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new-style DEVICE_ATTR_RO/DEVICE_ATTR_RW to create the sysfs attributes
-and register the disk with default sysfs attribute groups.
+Use device_add_disk_with_groups() to avoid a race condition with
+udev during startup.
 
 Signed-off-by: Hannes Reinecke <hare@suse.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: Ed L. Cachin <ed.cashin@acm.org>
 ---
- drivers/block/virtio_blk.c | 68 ++++++++++++++++++++++++++--------------------
- 1 file changed, 39 insertions(+), 29 deletions(-)
+ drivers/block/aoe/aoe.h    |  1 -
+ drivers/block/aoe/aoeblk.c | 21 +++++++--------------
+ drivers/block/aoe/aoedev.c |  1 -
+ 3 files changed, 7 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index fe80560000a1..086c6bb12baa 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -351,8 +351,8 @@ static int minor_to_index(int minor)
- 	return minor >> PART_BITS;
- }
+diff --git a/drivers/block/aoe/aoe.h b/drivers/block/aoe/aoe.h
+index c0ebda1283cc..015c68017a1c 100644
+--- a/drivers/block/aoe/aoe.h
++++ b/drivers/block/aoe/aoe.h
+@@ -201,7 +201,6 @@ int aoeblk_init(void);
+ void aoeblk_exit(void);
+ void aoeblk_gdalloc(void *);
+ void aoedisk_rm_debugfs(struct aoedev *d);
+-void aoedisk_rm_sysfs(struct aoedev *d);
  
--static ssize_t virtblk_serial_show(struct device *dev,
--				struct device_attribute *attr, char *buf)
-+static ssize_t serial_show(struct device *dev,
-+			   struct device_attribute *attr, char *buf)
- {
- 	struct gendisk *disk = dev_to_disk(dev);
- 	int err;
-@@ -371,7 +371,7 @@ static ssize_t virtblk_serial_show(struct device *dev,
- 	return err;
- }
- 
--static DEVICE_ATTR(serial, 0444, virtblk_serial_show, NULL);
-+static DEVICE_ATTR_RO(serial);
- 
- /* The queue's logical block size must be set before calling this */
- static void virtblk_update_capacity(struct virtio_blk *vblk, bool resize)
-@@ -545,8 +545,8 @@ static const char *const virtblk_cache_types[] = {
+ int aoechr_init(void);
+ void aoechr_exit(void);
+diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
+index 429ebb84b592..ff770e7d9e52 100644
+--- a/drivers/block/aoe/aoeblk.c
++++ b/drivers/block/aoe/aoeblk.c
+@@ -177,10 +177,15 @@ static struct attribute *aoe_attrs[] = {
+ 	NULL,
  };
  
- static ssize_t
--virtblk_cache_type_store(struct device *dev, struct device_attribute *attr,
--			 const char *buf, size_t count)
-+cache_type_store(struct device *dev, struct device_attribute *attr,
-+		 const char *buf, size_t count)
- {
- 	struct gendisk *disk = dev_to_disk(dev);
- 	struct virtio_blk *vblk = disk->private_data;
-@@ -564,8 +564,7 @@ virtblk_cache_type_store(struct device *dev, struct device_attribute *attr,
- }
+-static const struct attribute_group attr_group = {
++static const struct attribute_group aoe_attr_group = {
+ 	.attrs = aoe_attrs,
+ };
  
- static ssize_t
--virtblk_cache_type_show(struct device *dev, struct device_attribute *attr,
--			 char *buf)
-+cache_type_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct gendisk *disk = dev_to_disk(dev);
- 	struct virtio_blk *vblk = disk->private_data;
-@@ -575,12 +574,38 @@ virtblk_cache_type_show(struct device *dev, struct device_attribute *attr,
- 	return snprintf(buf, 40, "%s\n", virtblk_cache_types[writeback]);
- }
- 
--static const struct device_attribute dev_attr_cache_type_ro =
--	__ATTR(cache_type, 0444,
--	       virtblk_cache_type_show, NULL);
--static const struct device_attribute dev_attr_cache_type_rw =
--	__ATTR(cache_type, 0644,
--	       virtblk_cache_type_show, virtblk_cache_type_store);
-+static DEVICE_ATTR_RW(cache_type);
-+
-+static struct attribute *virtblk_attrs[] = {
-+	&dev_attr_serial.attr,
-+	&dev_attr_cache_type.attr,
++static const struct attribute_group *aoe_attr_groups[] = {
++	&aoe_attr_group,
 +	NULL,
 +};
 +
-+static umode_t virtblk_attrs_are_visible(struct kobject *kobj,
-+		struct attribute *a, int n)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct gendisk *disk = dev_to_disk(dev);
-+	struct virtio_blk *vblk = disk->private_data;
-+	struct virtio_device *vdev = vblk->vdev;
-+
-+	if (a == &dev_attr_cache_type.attr &&
-+	    !virtio_has_feature(vdev, VIRTIO_BLK_F_CONFIG_WCE))
-+		return S_IRUGO;
-+
-+	return a->mode;
-+}
-+
-+static const struct attribute_group virtblk_attr_group = {
-+	.attrs = virtblk_attrs,
-+	.is_visible = virtblk_attrs_are_visible,
-+};
-+
-+static const struct attribute_group *virtblk_attr_groups[] = {
-+	&virtblk_attr_group,
-+	NULL,
-+};
+ static const struct file_operations aoe_debugfs_fops = {
+ 	.open = aoe_debugfs_open,
+ 	.read = seq_read,
+@@ -220,17 +225,6 @@ aoedisk_rm_debugfs(struct aoedev *d)
+ }
  
- static int virtblk_init_request(struct blk_mq_tag_set *set, struct request *rq,
- 		unsigned int hctx_idx, unsigned int numa_node)
-@@ -780,24 +805,9 @@ static int virtblk_probe(struct virtio_device *vdev)
- 	virtblk_update_capacity(vblk, false);
- 	virtio_device_ready(vdev);
- 
--	device_add_disk(&vdev->dev, vblk->disk, NULL);
--	err = device_create_file(disk_to_dev(vblk->disk), &dev_attr_serial);
--	if (err)
--		goto out_del_disk;
+ static int
+-aoedisk_add_sysfs(struct aoedev *d)
+-{
+-	return sysfs_create_group(&disk_to_dev(d->gd)->kobj, &attr_group);
+-}
+-void
+-aoedisk_rm_sysfs(struct aoedev *d)
+-{
+-	sysfs_remove_group(&disk_to_dev(d->gd)->kobj, &attr_group);
+-}
 -
--	if (virtio_has_feature(vdev, VIRTIO_BLK_F_CONFIG_WCE))
--		err = device_create_file(disk_to_dev(vblk->disk),
--					 &dev_attr_cache_type_rw);
--	else
--		err = device_create_file(disk_to_dev(vblk->disk),
--					 &dev_attr_cache_type_ro);
--	if (err)
--		goto out_del_disk;
-+	device_add_disk(&vdev->dev, vblk->disk, virtblk_attr_groups);
- 	return 0;
+-static int
+ aoeblk_open(struct block_device *bdev, fmode_t mode)
+ {
+ 	struct aoedev *d = bdev->bd_disk->private_data;
+@@ -417,8 +411,7 @@ aoeblk_gdalloc(void *vp)
  
--out_del_disk:
--	del_gendisk(vblk->disk);
--	blk_cleanup_queue(vblk->disk->queue);
- out_free_tags:
- 	blk_mq_free_tag_set(&vblk->tag_set);
- out_put_disk:
+ 	spin_unlock_irqrestore(&d->lock, flags);
+ 
+-	add_disk(gd);
+-	aoedisk_add_sysfs(d);
++	device_add_disk(NULL, gd, aoe_attr_groups);
+ 	aoedisk_add_debugfs(d);
+ 
+ 	spin_lock_irqsave(&d->lock, flags);
+diff --git a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
+index 697f735b07a4..d92fa1fe3580 100644
+--- a/drivers/block/aoe/aoedev.c
++++ b/drivers/block/aoe/aoedev.c
+@@ -275,7 +275,6 @@ freedev(struct aoedev *d)
+ 	del_timer_sync(&d->timer);
+ 	if (d->gd) {
+ 		aoedisk_rm_debugfs(d);
+-		aoedisk_rm_sysfs(d);
+ 		del_gendisk(d->gd);
+ 		put_disk(d->gd);
+ 		blk_cleanup_queue(d->blkq);
 -- 
 2.12.3
 
