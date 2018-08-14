@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC6FC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C46C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65EFE2064E
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65EFE2064E
+	by mail.kernel.org (Postfix) with ESMTP id 56C5E20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C5E20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732971AbeHNU0m (ORCPT
+        id S1733048AbeHNU0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:26:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58344 "EHLO
+        Tue, 14 Aug 2018 16:26:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58352 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbeHNU0l (ORCPT
+        with ESMTP id S1728596AbeHNU0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:26:41 -0400
+        Tue, 14 Aug 2018 16:26:44 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DE1BD20;
-        Tue, 14 Aug 2018 17:38:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91CF2DDE;
+        Tue, 14 Aug 2018 17:38:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 102/104] x86/mm/kmmio: Make the tracer robust against L1TF
-Date:   Tue, 14 Aug 2018 19:17:56 +0200
-Message-Id: <20180814171521.627418245@linuxfoundation.org>
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.14 103/104] tools headers: Synchronise x86 cpufeatures.h for L1TF additions
+Date:   Tue, 14 Aug 2018 19:17:57 +0200
+Message-Id: <20180814171521.686311557@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -50,69 +49,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 1063711b57393c1999248cccb57bebfaf16739e7 upstream
+commit e24f14b0ff985f3e09e573ba1134bfdf42987e05 upstream
 
-The mmio tracer sets io mapping PTEs and PMDs to non present when enabled
-without inverting the address bits, which makes the PTE entry vulnerable
-for L1TF.
-
-Make it use the right low level macros to actually invert the address bits
-to protect against L1TF.
-
-In principle this could be avoided because MMIO tracing is not likely to be
-enabled on production machines, but the fix is straigt forward and for
-consistency sake it's better to get rid of the open coded PTE manipulation.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/kmmio.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ tools/arch/x86/include/asm/cpufeatures.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -126,24 +126,29 @@ static struct kmmio_fault_page *get_kmmi
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -219,6 +219,7 @@
+ #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
++#define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
  
- static void clear_pmd_presence(pmd_t *pmd, bool clear, pmdval_t *old)
- {
-+	pmd_t new_pmd;
- 	pmdval_t v = pmd_val(*pmd);
- 	if (clear) {
--		*old = v & _PAGE_PRESENT;
--		v &= ~_PAGE_PRESENT;
--	} else	/* presume this has been called with clear==true previously */
--		v |= *old;
--	set_pmd(pmd, __pmd(v));
-+		*old = v;
-+		new_pmd = pmd_mknotpresent(*pmd);
-+	} else {
-+		/* Presume this has been called with clear==true previously */
-+		new_pmd = __pmd(*old);
-+	}
-+	set_pmd(pmd, new_pmd);
- }
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+@@ -338,6 +339,7 @@
+ #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
+ #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+ #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
  
- static void clear_pte_presence(pte_t *pte, bool clear, pteval_t *old)
- {
- 	pteval_t v = pte_val(*pte);
- 	if (clear) {
--		*old = v & _PAGE_PRESENT;
--		v &= ~_PAGE_PRESENT;
--	} else	/* presume this has been called with clear==true previously */
--		v |= *old;
--	set_pte_atomic(pte, __pte(v));
-+		*old = v;
-+		/* Nothing should care about address */
-+		pte_clear(&init_mm, 0, pte);
-+	} else {
-+		/* Presume this has been called with clear==true previously */
-+		set_pte_atomic(pte, __pte(*old));
-+	}
- }
+@@ -370,5 +372,6 @@
+ #define X86_BUG_SPECTRE_V1		X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
+ #define X86_BUG_SPECTRE_V2		X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
+ #define X86_BUG_SPEC_STORE_BYPASS	X86_BUG(17) /* CPU is affected by speculative store bypass attack */
++#define X86_BUG_L1TF			X86_BUG(18) /* CPU is affected by L1 Terminal Fault */
  
- static int clear_page_presence(struct kmmio_fault_page *f, bool clear)
+ #endif /* _ASM_X86_CPUFEATURES_H */
 
 
