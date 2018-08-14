@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14313C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07732C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB07221727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB07221727
+	by mail.kernel.org (Postfix) with ESMTP id BD83521727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD83521727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389738AbeHNUTg (ORCPT
+        id S2389751AbeHNUTj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:19:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53428 "EHLO
+        Tue, 14 Aug 2018 16:19:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53442 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388320AbeHNUTg (ORCPT
+        with ESMTP id S2388320AbeHNUTj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:19:36 -0400
+        Tue, 14 Aug 2018 16:19:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAD4BD06;
-        Tue, 14 Aug 2018 17:31:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03C9240B;
+        Tue, 14 Aug 2018 17:31:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 47/97] x86/CPU/AMD: Move TOPOEXT reenablement before reading smp_num_siblings
-Date:   Tue, 14 Aug 2018 19:16:59 +0200
-Message-Id: <20180814171434.943092732@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 4.17 65/97] x86/l1tf: Handle EPT disabled state proper
+Date:   Tue, 14 Aug 2018 19:17:17 +0200
+Message-Id: <20180814171435.619459192@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,98 +51,177 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 7ce2f0393ea2396142b7faf6ee9b1f3676d08a5f upstream
+commit a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7 upstream
 
-The TOPOEXT reenablement is a workaround for broken BIOSen which didn't
-enable the CPUID bit. amd_get_topology_early(), however, relies on
-that bit being set so that it can read out the CPUID leaf and set
-smp_num_siblings properly.
+If Extended Page Tables (EPT) are disabled or not supported, no L1D
+flushing is required. The setup function can just avoid setting up the L1D
+flush for the EPT=n case.
 
-Move the reenablement up to early_init_amd(). While at it, simplify
-amd_get_topology_early().
+Invoke it after the hardware setup has be done and enable_ept has the
+correct state and expose the EPT disabled state in the mitigation status as
+well.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jiri Kosina <jkosina@suse.cz>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20180713142322.612160168@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/amd.c |   37 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/vmx.h |    1 
+ arch/x86/kernel/cpu/bugs.c |    9 ++--
+ arch/x86/kvm/vmx.c         |   89 ++++++++++++++++++++++++---------------------
+ 3 files changed, 54 insertions(+), 45 deletions(-)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -318,12 +318,8 @@ static void legacy_fixup_core_id(struct
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -579,6 +579,7 @@ enum vmx_l1d_flush_state {
+ 	VMENTER_L1D_FLUSH_NEVER,
+ 	VMENTER_L1D_FLUSH_COND,
+ 	VMENTER_L1D_FLUSH_ALWAYS,
++	VMENTER_L1D_FLUSH_EPT_DISABLED,
+ };
  
- static void amd_get_topology_early(struct cpuinfo_x86 *c)
- {
--	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
--		u32 eax, ebx, ecx, edx;
--
--		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
--		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
--	}
-+	if (cpu_has(c, X86_FEATURE_TOPOEXT))
-+		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
- }
+ extern enum vmx_l1d_flush_state l1tf_vmx_mitigation;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -676,10 +676,11 @@ static void __init l1tf_select_mitigatio
  
- /*
-@@ -344,7 +340,6 @@ static void amd_get_topology(struct cpui
- 		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
+ #if IS_ENABLED(CONFIG_KVM_INTEL)
+ static const char *l1tf_vmx_states[] = {
+-	[VMENTER_L1D_FLUSH_AUTO]	= "auto",
+-	[VMENTER_L1D_FLUSH_NEVER]	= "vulnerable",
+-	[VMENTER_L1D_FLUSH_COND]	= "conditional cache flushes",
+-	[VMENTER_L1D_FLUSH_ALWAYS]	= "cache flushes",
++	[VMENTER_L1D_FLUSH_AUTO]		= "auto",
++	[VMENTER_L1D_FLUSH_NEVER]		= "vulnerable",
++	[VMENTER_L1D_FLUSH_COND]		= "conditional cache flushes",
++	[VMENTER_L1D_FLUSH_ALWAYS]		= "cache flushes",
++	[VMENTER_L1D_FLUSH_EPT_DISABLED]	= "EPT disabled",
+ };
  
- 		node_id  = ecx & 0xff;
--		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
+ static ssize_t l1tf_show_state(char *buf)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -13023,6 +13023,11 @@ static int __init vmx_setup_l1d_flush(vo
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+ 		return 0;
  
- 		if (c->x86 == 0x15)
- 			c->cu_id = ebx & 0xff;
-@@ -635,6 +630,7 @@ clear_sev:
- 
- static void early_init_amd(struct cpuinfo_x86 *c)
- {
-+	u64 value;
- 	u32 dummy;
- 
- 	early_init_amd_mc(c);
-@@ -706,6 +702,20 @@ static void early_init_amd(struct cpuinf
- 
- 	early_detect_mem_encrypt(c);
- 
-+	/* Re-enable TopologyExtensions if switched off by BIOS */
-+	if (c->x86 == 0x15 &&
-+	    (c->x86_model >= 0x10 && c->x86_model <= 0x6f) &&
-+	    !cpu_has(c, X86_FEATURE_TOPOEXT)) {
-+
-+		if (msr_set_bit(0xc0011005, 54) > 0) {
-+			rdmsrl(0xc0011005, value);
-+			if (value & BIT_64(54)) {
-+				set_cpu_cap(c, X86_FEATURE_TOPOEXT);
-+				pr_info_once(FW_INFO "CPU: Re-enabling disabled Topology Extensions Support.\n");
-+			}
-+		}
++	if (!enable_ept) {
++		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
++		return 0;
 +	}
 +
- 	amd_get_topology_early(c);
+ 	l1tf_vmx_mitigation = vmentry_l1d_flush;
+ 
+ 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
+@@ -13049,6 +13054,41 @@ static void vmx_cleanup_l1d_flush(void)
+ 	l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
  }
  
-@@ -798,19 +808,6 @@ static void init_amd_bd(struct cpuinfo_x
++static void vmx_exit(void)
++{
++#ifdef CONFIG_KEXEC_CORE
++	RCU_INIT_POINTER(crash_vmclear_loaded_vmcss, NULL);
++	synchronize_rcu();
++#endif
++
++	kvm_exit();
++
++#if IS_ENABLED(CONFIG_HYPERV)
++	if (static_branch_unlikely(&enable_evmcs)) {
++		int cpu;
++		struct hv_vp_assist_page *vp_ap;
++		/*
++		 * Reset everything to support using non-enlightened VMCS
++		 * access later (e.g. when we reload the module with
++		 * enlightened_vmcs=0)
++		 */
++		for_each_online_cpu(cpu) {
++			vp_ap =	hv_get_vp_assist_page(cpu);
++
++			if (!vp_ap)
++				continue;
++
++			vp_ap->current_nested_vmcs = 0;
++			vp_ap->enlighten_vmentry = 0;
++		}
++
++		static_branch_disable(&enable_evmcs);
++	}
++#endif
++	vmx_cleanup_l1d_flush();
++}
++module_exit(vmx_exit);
++
+ static int __init vmx_init(void)
  {
- 	u64 value;
+ 	int r;
+@@ -13082,14 +13122,17 @@ static int __init vmx_init(void)
+ 	}
+ #endif
  
--	/* re-enable TopologyExtensions if switched off by BIOS */
--	if ((c->x86_model >= 0x10) && (c->x86_model <= 0x6f) &&
--	    !cpu_has(c, X86_FEATURE_TOPOEXT)) {
+-	r = vmx_setup_l1d_flush();
++	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
++		     __alignof__(struct vcpu_vmx), THIS_MODULE);
+ 	if (r)
+ 		return r;
+ 
+-	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+-		     __alignof__(struct vcpu_vmx), THIS_MODULE);
++	/*
++	 * Must be called after kvm_init() so enable_ept is properly set up
++	 */
++	r = vmx_setup_l1d_flush();
+ 	if (r) {
+-		vmx_cleanup_l1d_flush();
++		vmx_exit();
+ 		return r;
+ 	}
+ 
+@@ -13100,40 +13143,4 @@ static int __init vmx_init(void)
+ 
+ 	return 0;
+ }
 -
--		if (msr_set_bit(0xc0011005, 54) > 0) {
--			rdmsrl(0xc0011005, value);
--			if (value & BIT_64(54)) {
--				set_cpu_cap(c, X86_FEATURE_TOPOEXT);
--				pr_info_once(FW_INFO "CPU: Re-enabling disabled Topology Extensions Support.\n");
--			}
+-static void __exit vmx_exit(void)
+-{
+-#ifdef CONFIG_KEXEC_CORE
+-	RCU_INIT_POINTER(crash_vmclear_loaded_vmcss, NULL);
+-	synchronize_rcu();
+-#endif
+-
+-	kvm_exit();
+-
+-#if IS_ENABLED(CONFIG_HYPERV)
+-	if (static_branch_unlikely(&enable_evmcs)) {
+-		int cpu;
+-		struct hv_vp_assist_page *vp_ap;
+-		/*
+-		 * Reset everything to support using non-enlightened VMCS
+-		 * access later (e.g. when we reload the module with
+-		 * enlightened_vmcs=0)
+-		 */
+-		for_each_online_cpu(cpu) {
+-			vp_ap =	hv_get_vp_assist_page(cpu);
+-
+-			if (!vp_ap)
+-				continue;
+-
+-			vp_ap->current_nested_vmcs = 0;
+-			vp_ap->enlighten_vmentry = 0;
 -		}
--	}
 -
- 	/*
- 	 * The way access filter has a performance penalty on some workloads.
- 	 * Disable it on the affected CPUs.
+-		static_branch_disable(&enable_evmcs);
+-	}
+-#endif
+-	vmx_cleanup_l1d_flush();
+-}
+-
+-module_init(vmx_init)
+-module_exit(vmx_exit)
++module_init(vmx_init);
 
 
