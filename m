@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB72EC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC92C46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975882168D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975882168D
+	by mail.kernel.org (Postfix) with ESMTP id 924772168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924772168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbeHNUYN (ORCPT
+        id S1730389AbeHNUYS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57390 "EHLO
+        Tue, 14 Aug 2018 16:24:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57406 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730215AbeHNUYM (ORCPT
+        with ESMTP id S1730215AbeHNUYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:12 -0400
+        Tue, 14 Aug 2018 16:24:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D250FDF2;
-        Tue, 14 Aug 2018 17:36:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2794DDE;
+        Tue, 14 Aug 2018 17:36:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 4.14 054/104] Revert "x86/apic: Ignore secondary threads if nosmt=force"
-Date:   Tue, 14 Aug 2018 19:17:08 +0200
-Message-Id: <20180814171518.839642395@linuxfoundation.org>
+Subject: [PATCH 4.14 055/104] cpu/hotplug: Boot HT siblings at least once
+Date:   Tue, 14 Aug 2018 19:17:09 +0200
+Message-Id: <20180814171518.896066209@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,145 +53,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 506a66f374891ff08e064a058c446b336c5ac760 upstream
+commit 0cc3cd21657be04cb0559fe8063f2130493f92cf upstream
 
-Dave Hansen reported, that it's outright dangerous to keep SMT siblings
-disabled completely so they are stuck in the BIOS and wait for SIPI.
+Due to the way Machine Check Exceptions work on X86 hyperthreads it's
+required to boot up _all_ logical cores at least once in order to set the
+CR4.MCE bit.
 
-The reason is that Machine Check Exceptions are broadcasted to siblings and
-the soft disabled sibling has CR4.MCE = 0. If a MCE is delivered to a
-logical core with CR4.MCE = 0, it asserts IERR#, which shuts down or
-reboots the machine. The MCE chapter in the SDM contains the following
-blurb:
+So instead of ignoring the sibling threads right away, let them boot up
+once so they can configure themselves. After they came out of the initial
+boot stage check whether its a "secondary" sibling and cancel the operation
+which puts the CPU back into offline state.
 
-    Because the logical processors within a physical package are tightly
-    coupled with respect to shared hardware resources, both logical
-    processors are notified of machine check errors that occur within a
-    given physical processor. If machine-check exceptions are enabled when
-    a fatal error is reported, all the logical processors within a physical
-    package are dispatched to the machine-check exception handler. If
-    machine-check exceptions are disabled, the logical processors enter the
-    shutdown state and assert the IERR# signal. When enabling machine-check
-    exceptions, the MCE flag in control register CR4 should be set for each
-    logical processor.
-
-Reverting the commit which ignores siblings at enumeration time solves only
-half of the problem. The core cpuhotplug logic needs to be adjusted as
-well.
-
-This thoughtful engineered mechanism also turns the boot process on all
-Intel HT enabled systems into a MCE lottery. MCE is enabled on the boot CPU
-before the secondary CPUs are brought up. Depending on the number of
-physical cores the window in which this situation can happen is smaller or
-larger. On a HSW-EX it's about 750ms:
-
-MCE is enabled on the boot CPU:
-
-[    0.244017] mce: CPU supports 22 MCE banks
-
-The corresponding sibling #72 boots:
-
-[    1.008005] .... node  #0, CPUs:    #72
-
-That means if an MCE hits on physical core 0 (logical CPUs 0 and 72)
-between these two points the machine is going to shutdown. At least it's a
-known safe state.
-
-It's obvious that the early boot can be hit by an MCE as well and then runs
-into the same situation because MCEs are not yet enabled on the boot CPU.
-But after enabling them on the boot CPU, it does not make any sense to
-prevent the kernel from recovering.
-
-Adjust the nosmt kernel parameter documentation as well.
-
-Reverts: 2207def700f9 ("x86/apic: Ignore secondary threads if nosmt=force")
 Reported-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |    8 ++------
- arch/x86/include/asm/apic.h                     |    2 --
- arch/x86/kernel/acpi/boot.c                     |    3 +--
- arch/x86/kernel/apic/apic.c                     |   19 -------------------
- 4 files changed, 3 insertions(+), 29 deletions(-)
+ kernel/cpu.c |   72 +++++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 48 insertions(+), 24 deletions(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2596,12 +2596,8 @@
- 			Equivalent to smt=1.
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -60,6 +60,7 @@ struct cpuhp_cpu_state {
+ 	bool			rollback;
+ 	bool			single;
+ 	bool			bringup;
++	bool			booted_once;
+ 	struct hlist_node	*node;
+ 	struct hlist_node	*last;
+ 	enum cpuhp_state	cb_state;
+@@ -346,6 +347,40 @@ void cpu_hotplug_enable(void)
+ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
+ #endif	/* CONFIG_HOTPLUG_CPU */
  
- 			[KNL,x86] Disable symmetric multithreading (SMT).
--			nosmt=force: Force disable SMT, similar to disabling
--				     it in the BIOS except that some of the
--				     resource partitioning effects which are
--				     caused by having SMT enabled in the BIOS
--				     cannot be undone. Depending on the CPU
--				     type this might have a performance impact.
-+			nosmt=force: Force disable SMT, cannot be undone
-+				     via the sysfs control file.
++#ifdef CONFIG_HOTPLUG_SMT
++enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
++
++static int __init smt_cmdline_disable(char *str)
++{
++	cpu_smt_control = CPU_SMT_DISABLED;
++	if (str && !strcmp(str, "force")) {
++		pr_info("SMT: Force disabled\n");
++		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
++	}
++	return 0;
++}
++early_param("nosmt", smt_cmdline_disable);
++
++static inline bool cpu_smt_allowed(unsigned int cpu)
++{
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		return true;
++
++	if (topology_is_primary_thread(cpu))
++		return true;
++
++	/*
++	 * On x86 it's required to boot all logical CPUs at least once so
++	 * that the init code can get a chance to set CR4.MCE on each
++	 * CPU. Otherwise, a broadacasted MCE observing CR4.MCE=0b on any
++	 * core will shutdown the machine.
++	 */
++	return !per_cpu(cpuhp_state, cpu).booted_once;
++}
++#else
++static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
++#endif
++
+ static inline enum cpuhp_state
+ cpuhp_set_state(struct cpuhp_cpu_state *st, enum cpuhp_state target)
+ {
+@@ -426,6 +461,16 @@ static int bringup_wait_for_ap(unsigned
+ 	stop_machine_unpark(cpu);
+ 	kthread_unpark(st->thread);
  
- 	nospectre_v2	[X86] Disable all mitigations for the Spectre variant 2
- 			(indirect branch prediction) vulnerability. System may
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -616,10 +616,8 @@ extern int default_check_phys_apicid_pre
++	/*
++	 * SMT soft disabling on X86 requires to bring the CPU out of the
++	 * BIOS 'wait for SIPI' state in order to set the CR4.MCE bit.  The
++	 * CPU marked itself as booted_once in cpu_notify_starting() so the
++	 * cpu_smt_allowed() check will now return false if this is not the
++	 * primary sibling.
++	 */
++	if (!cpu_smt_allowed(cpu))
++		return -ECANCELED;
++
+ 	if (st->target <= CPUHP_AP_ONLINE_IDLE)
+ 		return 0;
  
- #ifdef CONFIG_SMP
- bool apic_id_is_primary_thread(unsigned int id);
--bool apic_id_disabled(unsigned int id);
- #else
- static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
--static inline bool apic_id_disabled(unsigned int id) { return false; }
- #endif
+@@ -937,29 +982,6 @@ EXPORT_SYMBOL(cpu_down);
+ #define takedown_cpu		NULL
+ #endif /*CONFIG_HOTPLUG_CPU*/
  
- extern void irq_enter(void);
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -181,8 +181,7 @@ static int acpi_register_lapic(int id, u
- 	}
- 
- 	if (!enabled) {
--		if (!apic_id_disabled(id))
--			++disabled_cpus;
-+		++disabled_cpus;
- 		return -EINVAL;
- 	}
- 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -2107,16 +2107,6 @@ bool apic_id_is_primary_thread(unsigned
- 	return !(apicid & mask);
- }
- 
--/**
-- * apic_id_disabled - Check whether APIC ID is disabled via SMT control
-- * @id:	APIC ID to check
-- */
--bool apic_id_disabled(unsigned int id)
+-#ifdef CONFIG_HOTPLUG_SMT
+-enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+-
+-static int __init smt_cmdline_disable(char *str)
 -{
--	return (cpu_smt_control == CPU_SMT_FORCE_DISABLED &&
--		!apic_id_is_primary_thread(id));
--}
--
- /*
-  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
-  * and cpuid_to_apicid[] synchronized.
-@@ -2212,15 +2202,6 @@ int generic_processor_info(int apicid, i
- 		return -EINVAL;
- 	}
- 
--	/*
--	 * If SMT is force disabled and the APIC ID belongs to
--	 * a secondary thread, ignore it.
--	 */
--	if (apic_id_disabled(apicid)) {
--		pr_info_once("Ignoring secondary SMT threads\n");
--		return -EINVAL;
+-	cpu_smt_control = CPU_SMT_DISABLED;
+-	if (str && !strcmp(str, "force")) {
+-		pr_info("SMT: Force disabled\n");
+-		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
 -	}
+-	return 0;
+-}
+-early_param("nosmt", smt_cmdline_disable);
 -
- 	if (apicid == boot_cpu_physical_apicid) {
- 		/*
- 		 * x86_bios_cpu_apicid is required to have processors listed
+-static inline bool cpu_smt_allowed(unsigned int cpu)
+-{
+-	return cpu_smt_control == CPU_SMT_ENABLED ||
+-		topology_is_primary_thread(cpu);
+-}
+-#else
+-static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
+-#endif
+-
+ /**
+  * notify_cpu_starting(cpu) - Invoke the callbacks on the starting CPU
+  * @cpu: cpu that just started
+@@ -974,6 +996,7 @@ void notify_cpu_starting(unsigned int cp
+ 	int ret;
+ 
+ 	rcu_cpu_starting(cpu);	/* Enables RCU usage on this CPU. */
++	st->booted_once = true;
+ 	while (st->state < target) {
+ 		st->state++;
+ 		ret = cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
+@@ -2192,5 +2215,6 @@ void __init boot_cpu_init(void)
+  */
+ void __init boot_cpu_hotplug_init(void)
+ {
+-	per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
++	this_cpu_write(cpuhp_state.booted_once, true);
++	this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
+ }
 
 
