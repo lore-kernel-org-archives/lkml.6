@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0845EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5549EC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF9121727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF9121727
+	by mail.kernel.org (Postfix) with ESMTP id 15B2A21727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15B2A21727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389531AbeHNUSs (ORCPT
+        id S2389552AbeHNUSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53186 "EHLO
+        Tue, 14 Aug 2018 16:18:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387619AbeHNUSs (ORCPT
+        with ESMTP id S2387619AbeHNUSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:48 -0400
+        Tue, 14 Aug 2018 16:18:51 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 519FBBDB;
-        Tue, 14 Aug 2018 17:30:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59D23BDB;
+        Tue, 14 Aug 2018 17:30:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 11/97] scsi: qla2xxx: Fix memory leak for allocating abort IOCB
-Date:   Tue, 14 Aug 2018 19:16:23 +0200
-Message-Id: <20180814171433.623402081@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Mian Yousaf Kaukab <yousaf.kaukab@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 12/97] init: rename and re-order boot_cpu_state_init()
+Date:   Tue, 14 Aug 2018 19:16:24 +0200
+Message-Id: <20180814171433.658774950@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -51,101 +54,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 5e53be8e476a3397ed5383c23376f299555a2b43 upstream.
+commit b5b1404d0815894de0690de8a1ab58269e56eae6 upstream.
 
-In the case of IOCB QFull, Initiator code can leave behind a stale pointer
-to an SRB structure on the outstanding command array.
+This is purely a preparatory patch for upcoming changes during the 4.19
+merge window.
 
-Fixes: 82de802ad46e ("scsi: qla2xxx: Preparation for Target MQ.")
-Cc: stable@vger.kernel.org #v4.16+
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+We have a function called "boot_cpu_state_init()" that isn't really
+about the bootup cpu state: that is done much earlier by the similarly
+named "boot_cpu_init()" (note lack of "state" in name).
+
+This function initializes some hotplug CPU state, and needs to run after
+the percpu data has been properly initialized.  It even has a comment to
+that effect.
+
+Except it _doesn't_ actually run after the percpu data has been properly
+initialized.  On x86 it happens to do that, but on at least arm and
+arm64, the percpu base pointers are initialized by the arch-specific
+'smp_prepare_boot_cpu()' hook, which ran _after_ boot_cpu_state_init().
+
+This had some unexpected results, and in particular we have a patch
+pending for the merge window that did the obvious cleanup of using
+'this_cpu_write()' in the cpu hotplug init code:
+
+  -       per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
+  +       this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
+
+which is obviously the right thing to do.  Except because of the
+ordering issue, it actually failed miserably and unexpectedly on arm64.
+
+So this just fixes the ordering, and changes the name of the function to
+be 'boot_cpu_hotplug_init()' to make it obvious that it's about cpu
+hotplug state, because the core CPU state was supposed to have already
+been done earlier.
+
+Marked for stable, since the (not yet merged) patch that will show this
+problem is marked for stable.
+
+Reported-by: Vlastimil Babka <vbabka@suse.cz>
+Reported-by: Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
+Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_iocb.c |   53 ++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 26 deletions(-)
+ include/linux/cpu.h |    2 +-
+ init/main.c         |    2 +-
+ kernel/cpu.c        |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_iocb.c
-+++ b/drivers/scsi/qla2xxx/qla_iocb.c
-@@ -2130,34 +2130,11 @@ __qla2x00_alloc_iocbs(struct qla_qpair *
- 	req_cnt = 1;
- 	handle = 0;
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -30,7 +30,7 @@ struct cpu {
+ };
  
--	if (!sp)
--		goto skip_cmd_array;
--
--	/* Check for room in outstanding command list. */
--	handle = req->current_outstanding_cmd;
--	for (index = 1; index < req->num_outstanding_cmds; index++) {
--		handle++;
--		if (handle == req->num_outstanding_cmds)
--			handle = 1;
--		if (!req->outstanding_cmds[handle])
--			break;
--	}
--	if (index == req->num_outstanding_cmds) {
--		ql_log(ql_log_warn, vha, 0x700b,
--		    "No room on outstanding cmd array.\n");
--		goto queuing_error;
--	}
--
--	/* Prep command array. */
--	req->current_outstanding_cmd = handle;
--	req->outstanding_cmds[handle] = sp;
--	sp->handle = handle;
--
--	/* Adjust entry-counts as needed. */
--	if (sp->type != SRB_SCSI_CMD)
-+	if (sp && (sp->type != SRB_SCSI_CMD)) {
-+		/* Adjust entry-counts as needed. */
- 		req_cnt = sp->iocbs;
-+	}
+ extern void boot_cpu_init(void);
+-extern void boot_cpu_state_init(void);
++extern void boot_cpu_hotplug_init(void);
+ extern void cpu_init(void);
+ extern void trap_init(void);
  
--skip_cmd_array:
- 	/* Check for room on request queue. */
- 	if (req->cnt < req_cnt + 2) {
- 		if (qpair->use_shadow_reg)
-@@ -2183,6 +2160,28 @@ skip_cmd_array:
- 	if (req->cnt < req_cnt + 2)
- 		goto queuing_error;
+--- a/init/main.c
++++ b/init/main.c
+@@ -561,8 +561,8 @@ asmlinkage __visible void __init start_k
+ 	setup_command_line(command_line);
+ 	setup_nr_cpu_ids();
+ 	setup_per_cpu_areas();
+-	boot_cpu_state_init();
+ 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
++	boot_cpu_hotplug_init();
  
-+	if (sp) {
-+		/* Check for room in outstanding command list. */
-+		handle = req->current_outstanding_cmd;
-+		for (index = 1; index < req->num_outstanding_cmds; index++) {
-+			handle++;
-+			if (handle == req->num_outstanding_cmds)
-+				handle = 1;
-+			if (!req->outstanding_cmds[handle])
-+				break;
-+		}
-+		if (index == req->num_outstanding_cmds) {
-+			ql_log(ql_log_warn, vha, 0x700b,
-+			    "No room on outstanding cmd array.\n");
-+			goto queuing_error;
-+		}
-+
-+		/* Prep command array. */
-+		req->current_outstanding_cmd = handle;
-+		req->outstanding_cmds[handle] = sp;
-+		sp->handle = handle;
-+	}
-+
- 	/* Prep packet */
- 	req->cnt -= req_cnt;
- 	pkt = req->ring_ptr;
-@@ -2195,6 +2194,8 @@ skip_cmd_array:
- 		pkt->handle = handle;
- 	}
- 
-+	return pkt;
-+
- queuing_error:
- 	qpair->tgt_counters.num_alloc_iocb_failed++;
- 	return pkt;
+ 	build_all_zonelists(NULL);
+ 	page_alloc_init();
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2010,7 +2010,7 @@ void __init boot_cpu_init(void)
+ /*
+  * Must be called _AFTER_ setting up the per_cpu areas
+  */
+-void __init boot_cpu_state_init(void)
++void __init boot_cpu_hotplug_init(void)
+ {
+ 	per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
+ }
 
 
