@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C8C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C27FC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD7D21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3CC2170D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="elBf+27l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD7D21738
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAarWZpR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB3CC2170D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732650AbeHNSej (ORCPT
+        id S1732614AbeHNSgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:34:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57258 "EHLO mail.kernel.org"
+        Tue, 14 Aug 2018 14:36:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbeHNSej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:34:39 -0400
+        id S1729536AbeHNSgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 14:36:22 -0400
 Received: from [192.168.1.25] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A96121736;
-        Tue, 14 Aug 2018 15:46:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ECB1208C2;
+        Tue, 14 Aug 2018 15:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534261617;
-        bh=lJqYidR1J7AZMwnvTwZETxPUkr55eRIOH8ugy0HG1gM=;
+        s=default; t=1534261719;
+        bh=FdFqKvX1kv/GHrGBeXzJhH61l9JiZ57yd35oXkBINSI=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=elBf+27lJh2NULtGcFX9tKMTAdeEMy5RYCH5y5ZfEDzht6ZevuLKAs66fgC+WpHM4
-         ZHK8nt6Vvr+NnADAlVOk8dxtYPzDWNRmV41tt2YqTrDAXfHmp8OcYPuoEDRWA3MiPO
-         I6lY9TodueyEfMRgpIZQADP7elbv30+am/0cl8E8=
-Subject: Re: [PATCH10 3/3] ARM:drm ivip Intel FPGA Video and Image Processing
- Suite
+        b=LAarWZpRbGBsCPE2kCj/d6RkK3KJvv3+dpA00uXvncm3Z9cPmRJkB2UtkNXSKU4i2
+         pXIpLdTSuNx/VGXbac7dkhvqogr1nCN15mA/IekRbkm1Cpm2lzdtBr3uRJlQ3IWGhX
+         1AVwyUtZoXfXKXKhOFMeILb8kQm33gkPQujXGDKw=
+Subject: Re: [PATCH10 0/3] Intel FPGA Video and Image Processing Suite
 To:     "Hean-Loong, Ong" <hean.loong.ong@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
         David Airlie <airlied@linux.ie>
@@ -46,7 +45,6 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, yves.vandervennet@intel.com,
         chin.liang.see@intel.com
 References: <1534237029-2648-1-git-send-email-hean.loong.ong@intel.com>
- <1534237029-2648-4-git-send-email-hean.loong.ong@intel.com>
 From:   Dinh Nguyen <dinguyen@kernel.org>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
@@ -91,15 +89,15 @@ Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
  cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
  Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
  JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <4c9770ce-999f-2ec3-60fb-397c4cec23a2@kernel.org>
-Date:   Tue, 14 Aug 2018 10:46:54 -0500
+Message-ID: <3720ba74-947a-1b5d-5f5b-1ef03d5941aa@kernel.org>
+Date:   Tue, 14 Aug 2018 10:48:37 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534237029-2648-4-git-send-email-hean.loong.ong@intel.com>
+In-Reply-To: <1534237029-2648-1-git-send-email-hean.loong.ong@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -108,13 +106,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 08/14/2018 03:57 AM, Hean-Loong, Ong wrote:
-> From: Ong Hean Loong <hean.loong.ong@intel.com>
+> From: Ong, Hean Loong <hean.loong.ong@intel.com>
 > 
-> Driver for Intel FPGA Video and Image Processing Suite Frame Buffer II.
-> The driver only supports the Intel Arria10 devkit and its variants.
+> The FPGA FrameBuffer Soft IP could be seen  as the GPU and the DRM driver patch 
+> here is allocating memory for information to be streamed from the ARM/Linux 
+> to the display port. Basically the driver just wraps the information such as 
+> the pixels to be drawn by the FPGA FrameBuffer 2.
+> 
+> The piece of hardware in discussion is the SoC FPGA where Linux runs on the 
+> ARM chip and the FGPA is driven by its NIOS soft core with its own proprietary firmware.
 
-Why only Arria10? That's not true is it? I remember running a version of
-this on the Cyclone5 SoCKit.
+This driver doesn't have to ARM specific does it?
+
+> 
+> For example the application from the ARM Linux would have to write information 
+> on the /dev/fb0 with the information stored in the SDRAM to be fetched by the 
+> FPGA framebuffer IP and displayed on the Display Port Monitor.
+> 
+> 
+> Ong Hean Loong (2):
+>   ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
+>   ARM:drm ivip Intel FPGA Video and Image Processing Suite
+> 
+> Ong, Hean Loong (1):
+>   ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
+> 
+>  .../devicetree/bindings/display/altr,vip-fb2.txt   |   63 +++++++
+>  arch/arm/configs/socfpga_defconfig                 |    5 +
+>  drivers/gpu/drm/Kconfig                            |    2 +
+>  drivers/gpu/drm/Makefile                           |    1 +
+>  drivers/gpu/drm/ivip/Kconfig                       |   14 ++
+>  drivers/gpu/drm/ivip/Makefile                      |    9 +
+>  drivers/gpu/drm/ivip/intel_vip_conn.c              |   95 ++++++++++
+>  drivers/gpu/drm/ivip/intel_vip_core.c              |  161 ++++++++++++++++
+>  drivers/gpu/drm/ivip/intel_vip_drv.h               |   52 ++++++
+>  drivers/gpu/drm/ivip/intel_vip_of.c                |  193 ++++++++++++++++++++
+>  10 files changed, 595 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
+>  create mode 100644 drivers/gpu/drm/ivip/Kconfig
+>  create mode 100644 drivers/gpu/drm/ivip/Makefile
+>  create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
+>  create mode 100644 drivers/gpu/drm/ivip/intel_vip_core.c
+>  create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
+>  create mode 100644 drivers/gpu/drm/ivip/intel_vip_of.c
+> 
+
+Can you clarify your commit header? What is "PATCH10", is it version 10?
+If so, it should be "PATCHv10".
+
+You're also missing a few other maintainers in your CC list, the "DRM
+DRIVERS AND MISC GPU PATCHES" people.
 
 Dinh
-
