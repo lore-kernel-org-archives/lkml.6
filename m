@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A401EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE91C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 653BF21730
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653BF21730
+	by mail.kernel.org (Postfix) with ESMTP id CFC4821728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC4821728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388351AbeHNUOG (ORCPT
+        id S2388360AbeHNUOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:14:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51868 "EHLO
+        Tue, 14 Aug 2018 16:14:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51878 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387440AbeHNUOG (ORCPT
+        with ESMTP id S2387440AbeHNUOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:14:06 -0400
+        Tue, 14 Aug 2018 16:14:09 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEAE3CD8;
-        Tue, 14 Aug 2018 17:25:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF65FD1D;
+        Tue, 14 Aug 2018 17:26:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 44/79] x86/KVM/VMX: Use MSR save list for IA32_FLUSH_CMD if required
-Date:   Tue, 14 Aug 2018 19:17:03 +0200
-Message-Id: <20180814171338.562682710@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.18 45/79] cpu/hotplug: Online siblings when SMT control is turned on
+Date:   Tue, 14 Aug 2018 19:17:04 +0200
+Message-Id: <20180814171338.612867224@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -51,90 +49,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-If the L1D flush module parameter is set to 'always' and the IA32_FLUSH_CMD
-MSR is available, optimize the VMENTER code with the MSR save list.
+Writing 'off' to /sys/devices/system/cpu/smt/control offlines all SMT
+siblings. Writing 'on' merily enables the abilify to online them, but does
+not online them automatically.
 
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Make 'on' more useful by onlining all offline siblings.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   42 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 5 deletions(-)
+ kernel/cpu.c |   26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6272,6 +6272,16 @@ static void ept_set_mmio_spte_mask(void)
- 				   VMX_EPT_MISCONFIG_WX_VALUE);
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1979,6 +1979,15 @@ static void cpuhp_offline_cpu_device(uns
+ 	kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
  }
  
-+static bool vmx_l1d_use_msr_save_list(void)
++static void cpuhp_online_cpu_device(unsigned int cpu)
 +{
-+	if (!enable_ept || !boot_cpu_has_bug(X86_BUG_L1TF) ||
-+	    static_cpu_has(X86_FEATURE_HYPERVISOR) ||
-+	    !static_cpu_has(X86_FEATURE_FLUSH_L1D))
-+		return false;
++	struct device *dev = get_cpu_device(cpu);
 +
-+	return vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
++	dev->offline = false;
++	/* Tell user space about the state change */
++	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
 +}
 +
- #define VMX_XSS_EXIT_BITMAP 0
- /*
-  * Sets up the vmcs for emulated real mode.
-@@ -6393,6 +6403,12 @@ static void vmx_vcpu_setup(struct vcpu_v
- 		vmcs_write64(PML_ADDRESS, page_to_phys(vmx->pml_pg));
- 		vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
- 	}
-+	/*
-+	 * If flushing the L1D cache on every VMENTER is enforced and the
-+	 * MSR is available, use the MSR save list.
-+	 */
-+	if (vmx_l1d_use_msr_save_list())
-+		add_atomic_switch_msr(vmx, MSR_IA32_FLUSH_CMD, L1D_FLUSH, 0, true);
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2011,11 +2020,24 @@ static int cpuhp_smt_disable(enum cpuhp_
+ 	return ret;
  }
  
- static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-@@ -9643,11 +9659,26 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	bool always;
- 
- 	/*
--	 * If the mitigation mode is 'flush always', keep the flush bit
--	 * set, otherwise clear it. It gets set again either from
--	 * vcpu_run() or from one of the unsafe VMEXIT handlers.
-+	 * This code is only executed when:
-+	 * - the flush mode is 'cond'
-+	 * - the flush mode is 'always' and the flush MSR is not
-+	 *   available
-+	 *
-+	 * If the CPU has the flush MSR then clear the flush bit because
-+	 * 'always' mode is handled via the MSR save list.
-+	 *
-+	 * If the MSR is not avaibable then act depending on the mitigation
-+	 * mode: If 'flush always', keep the flush bit set, otherwise clear
-+	 * it.
-+	 *
-+	 * The flush bit gets set again either from vcpu_run() or from one
-+	 * of the unsafe VMEXIT handlers.
- 	 */
--	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
-+	if (static_cpu_has(X86_FEATURE_FLUSH_L1D))
-+		always = false;
-+	else
-+		always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
+-static void cpuhp_smt_enable(void)
++static int cpuhp_smt_enable(void)
+ {
++	int cpu, ret = 0;
 +
- 	vcpu->arch.l1tf_flush_l1d = always;
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	for_each_present_cpu(cpu) {
++		/* Skip online CPUs and CPUs on offline nodes */
++		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
++			continue;
++		ret = _cpu_up(cpu, 0, CPUHP_ONLINE);
++		if (ret)
++			break;
++		/* See comment in cpuhp_smt_disable() */
++		cpuhp_online_cpu_device(cpu);
++	}
+ 	cpu_maps_update_done();
++	return ret;
+ }
  
- 	vcpu->stat.l1d_flush++;
-@@ -13293,7 +13324,8 @@ static int __init vmx_setup_l1d_flush(vo
- 	struct page *page;
- 
- 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
--	    !boot_cpu_has_bug(X86_BUG_L1TF))
-+	    !boot_cpu_has_bug(X86_BUG_L1TF) ||
-+	    vmx_l1d_use_msr_save_list())
- 		return 0;
- 
- 	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+ static ssize_t
+@@ -2046,7 +2068,7 @@ store_smt_control(struct device *dev, st
+ 	if (ctrlval != cpu_smt_control) {
+ 		switch (ctrlval) {
+ 		case CPU_SMT_ENABLED:
+-			cpuhp_smt_enable();
++			ret = cpuhp_smt_enable();
+ 			break;
+ 		case CPU_SMT_DISABLED:
+ 		case CPU_SMT_FORCE_DISABLED:
 
 
