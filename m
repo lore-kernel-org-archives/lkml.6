@@ -2,224 +2,97 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F0CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706B0C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B39321580
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B39321580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2432B21580
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:06:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZMOl1JoF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2432B21580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733064AbeHNTyX (ORCPT
+        id S2387510AbeHNTyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:54:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40998 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733265AbeHNTyW (ORCPT
+        Tue, 14 Aug 2018 15:54:52 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41394 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733141AbeHNTyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:54:22 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EH53mP050361
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:06:22 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kv298t7uu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:06:21 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 14 Aug 2018 13:06:20 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 14 Aug 2018 13:06:19 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7EH6I8v9175426
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 14 Aug 2018 17:06:18 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 14DE8B2068;
-        Tue, 14 Aug 2018 13:05:34 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D877BB2064;
-        Tue, 14 Aug 2018 13:05:33 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Aug 2018 13:05:33 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0573716CA182; Tue, 14 Aug 2018 10:06:19 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 10:06:18 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        peterz@infradead.org, tj@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] Make call_srcu() available during very early boot
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180814162448.GA20414@linux.vnet.ibm.com>
- <20180814124945.5cf1753f@gandalf.local.home>
+        Tue, 14 Aug 2018 15:54:52 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y10-v6so9515098pfn.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 10:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lYNyxDGRcAM39zp8KUtMlIUKrI6lSh43IdRhuAwGMwI=;
+        b=ZMOl1JoFVT0uxFk92u5K9js1WUCJRCIhSL5G4A4TXnbAKGZfRRXdVTsCDTS/yXp07k
+         rUSOGWMYQTnXY+vH3QwKgP4h+Z+pc5f3CnoAb3Z3Frgf6shz88MKTNeVQ+vukl23UD9s
+         B+AQtDUNXTmoDiROVR8xWb8VI+0WplLzZ/eYc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lYNyxDGRcAM39zp8KUtMlIUKrI6lSh43IdRhuAwGMwI=;
+        b=iP5XKfvcGbcZZiWUuI31abM6xDmGvYFBh7OtW2e/OB+BWp2jy7rVs1LbLfsMnaiDNb
+         bz7EcrMP5usNrk4cJpq/6z5Sx+yt1hStqZkHnDs/q5zLmlE657IENpHNKnkt/G/Syx2+
+         0f1h/HHnIJXewRbzGvfiLP+7fN96Qnkht9zrk06Sz4sdW21kUAac2z3INI1anH+w0FkL
+         AwlZRQ7UYjalrr59S/FWIi5ewMAg9uj5Ae8tFqxcJ4YwCPYeiZpg6HeeoxUCG5HDCJbZ
+         hDne/tZbm+/oZTW9hvZune3GwUkFE7CzB8bAtMAG4NIoDMolv25T5ZV9if7ekVbtdpIq
+         x00Q==
+X-Gm-Message-State: AOUpUlHgv4Qec3lGWQAZtjzYrBZVb+kyCRwEdxkZvR29VeAK3SxupEaY
+        7ZjF/PVe0cAl0Ue6B7DIpB9dPQ==
+X-Google-Smtp-Source: AA+uWPykDcYmPa2sGFSW0D6YfYLEhInjrwkZPsz4n0Vnc/+bIWPC++eN1aLD2f7KFlOOi8qwNP9MpQ==
+X-Received: by 2002:a63:9f0a:: with SMTP id g10-v6mr21926716pge.324.1534266412536;
+        Tue, 14 Aug 2018 10:06:52 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id d19-v6sm67940763pfe.42.2018.08.14.10.06.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 10:06:51 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     broonie@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        collinsd@codeaurora.org, swboyd@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] regulator: core: A few useful patches for regulators that need load set
+Date:   Tue, 14 Aug 2018 10:06:13 -0700
+Message-Id: <20180814170617.100087-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814124945.5cf1753f@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18081417-0052-0000-0000-0000031EEB76
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009544; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01073470; UDB=6.00553114; IPR=6.00853428;
- MB=3.00022715; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-14 17:06:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081417-0053-0000-0000-00005DB98347
-Message-Id: <20180814170618.GA24813@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-14_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808140175
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 12:49:45PM -0400, Steven Rostedt wrote:
-> On Tue, 14 Aug 2018 09:24:48 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > Event tracing is moving to SRCU in order to take advantage of the fact
-> > that SRCU may be safely used from idle and even offline CPUs.  However,
-> > event tracing can invoke call_srcu() very early in the boot process,
-> > even before workqueue_init_early() is invoked (let alone rcu_init()).
-> > Therefore, call_srcu()'s attempts to queue work fail miserably.
-> > 
-> > This commit therefore detects this situation, and refrains from attempting
-> > to queue work before rcu_init() time, but does everything else that it
-> > would have done, and in addition, adds the srcu_struct to a global list.
-> > The rcu_init() function now invokes a new srcu_init() function, which
-> > is empty if CONFIG_SRCU=n.  Otherwise, srcu_init() queues work for
-> > each srcu_struct on the list.  This all happens early enough in boot
-> > that there is but a single CPU with interrupts disabled, which allows
-> > synchronization to be dispensed with.
-> > 
-> > Of course, the queued work won't actually be invoked until after
-> > workqueue_init() is invoked, which happens shortly after the scheduler
-> > is up and running.  This means that although call_srcu() may be invoked
-> > any time after per-CPU variables have been set up, there is still a very
-> > narrow window when synchronize_srcu() won't work, and this window
-> > extends from the time that the scheduler starts until the time that
-> > workqueue_init() returns.  This can be fixed in a manner similar to
-> > the fix for synchronize_rcu_expedited() and friends, but until someone
-> > actually needs to use synchronize_srcu() during this window, this fix
-> > is added churn for no benefit.
-> > 
-> > Finally, note that Tree SRCU's new srcu_init() function invokes
-> > queue_work() rather than the queue_delayed_work() function that is invoked
-> > post-boot.  The reason is that queue_delayed_work() will (as you would
-> > expect) post a timer, and timers have not yet been initialized.  So use
-> > of queue_delayed_work() avoids the complaints about use of uninitialized
-> 
-> You mean "So use of queue_work() avoids .." ?
+These patches ought to be useful for those people who need to work
+with regulator drivers where regulator_set_load() is important.  The
+first patch in this series actually implements real functionality.
+After that patch then devices whose drivers don't know to call
+regulator_set_load() are more likely to work.  The rest of the patches
+just work on regulator_summary to try to make it so we can confirm
+that the first patch works.
 
-Indeed I do!  Fixed.
 
-> > spinlocks that would otherwise result.  Besides, delay is in any case
-> > provide by the aforementioned fact that the queued work won't actually
-> > be invoked until after the scheduler is up and running.
-> > 
-> > Requested-by: Steven Rostedt <rostedt@goodmis.org>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > 
-> > diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-> > index f41d2fb09f87..2b5c0822e683 100644
-> > --- a/include/linux/srcutiny.h
-> > +++ b/include/linux/srcutiny.h
-> > @@ -36,6 +36,7 @@ struct srcu_struct {
-> >  	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
-> >  	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
-> >  	struct work_struct srcu_work;	/* For driving grace periods. */
-> > +	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
-> 
-> I really don't like increasing the size of a structure for a field that
-> is hardly ever used.
-> 
-> Is there a way we could make a union, or reuse one of the other fields,
-> as we know that synchronize_srcu() can't be used yet (and if it is,
-> either warn, or just make it a nop). And when we call srcu_init() and
-> remove the srcu_struct from the list, we can then initialize whatever
-> we used as the temporary boot up list field.
+Douglas Anderson (4):
+  regulator: core: If consumers don't call regulator_set_load() assume
+    max
+  regulator: core: Add the opmode to regulator_summary
+  regulator: core: Add consumer-requested load in regulator_summary
+  regulator: core: Add locking to debugfs regulator_summary
 
-I will take a look.  If nothing else, I could union it with the
-struct work_struct, since it cannot be used that early anyway.  ;-)
+ drivers/regulator/core.c     | 98 ++++++++++++++++++++++++------------
+ drivers/regulator/internal.h |  1 +
+ 2 files changed, 66 insertions(+), 33 deletions(-)
 
-Or I could just use the work_struct that is already inside the struct
-work_struct.  Tejun, would you be OK with that?
-
-For whatever it is worth, synchronize_srcu() is perfectly legal way
-early in boot, at least as early as call_srcu().  The reason is that
-until the scheduler starts, synchronize_srcu() is a no-op.
-
-> srcu_init is called when we are still running only one CPU correct?
-
-Yes, single CPU interrupts disabled.
-
-> >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> >  	struct lockdep_map dep_map;
-> >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > @@ -48,6 +49,7 @@ void srcu_drive_gp(struct work_struct *wp);
-> >  	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
-> >  	.srcu_cb_tail = &name.srcu_cb_head,				\
-> >  	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
-> > +	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> >  	__SRCU_DEP_MAP_INIT(name)					\
-> >  }
-> >  
-> > diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> > index 745d4ca4dd50..86ad97111315 100644
-> > --- a/include/linux/srcutree.h
-> > +++ b/include/linux/srcutree.h
-> > @@ -94,6 +94,7 @@ struct srcu_struct {
-> >  						/*  callback for the barrier */
-> >  						/*  operation. */
-> >  	struct delayed_work work;
-> > +	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
-> >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> >  	struct lockdep_map dep_map;
-> >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > @@ -105,12 +106,13 @@ struct srcu_struct {
-> >  #define SRCU_STATE_SCAN2	2
-> >  
-> >  #define __SRCU_STRUCT_INIT(name, pcpu_name)				\
-> > -	{								\
-> > -		.sda = &pcpu_name,					\
-> > -		.lock = __SPIN_LOCK_UNLOCKED(name.lock),		\
-> > -		.srcu_gp_seq_needed = 0 - 1,				\
-> > -		__SRCU_DEP_MAP_INIT(name)				\
-> > -	}
-> > +{									\
-> > +	.sda = &pcpu_name,						\
-> > +	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
-> > +	.srcu_gp_seq_needed = 0 - 1,					\
-> 
-> Interesting initialization of -1. This was there before, but still
-> interesting none the less.
-
-If I recall correctly, this subterfuge suppresses compiler complaints
-about initializing an unsigned long with a negative number.  :-/
-
-							Thanx, Paul
-
-> > +	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> > +	__SRCU_DEP_MAP_INIT(name)					\
-> > +}
-> >  
-> >
-> 
-> -- Steve
-> 
+-- 
+2.18.0.865.gffc8e1a3cd6-goog
 
