@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D21C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21623C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6C921727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6C921727
+	by mail.kernel.org (Postfix) with ESMTP id D9B612168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9B612168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732827AbeHNU0g (ORCPT
+        id S1732890AbeHNU0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:26:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58328 "EHLO
+        Tue, 14 Aug 2018 16:26:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728520AbeHNU0f (ORCPT
+        with ESMTP id S1728520AbeHNU0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:26:35 -0400
+        Tue, 14 Aug 2018 16:26:38 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A72CD7D;
-        Tue, 14 Aug 2018 17:38:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9383AD83;
+        Tue, 14 Aug 2018 17:38:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 100/104] x86/speculation/l1tf: Make pmd/pud_mknotpresent() invert
-Date:   Tue, 14 Aug 2018 19:17:54 +0200
-Message-Id: <20180814171521.535930667@linuxfoundation.org>
+Subject: [PATCH 4.14 101/104] x86/mm/pat: Make set_memory_np() L1TF safe
+Date:   Tue, 14 Aug 2018 19:17:55 +0200
+Message-Id: <20180814171521.577195394@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -52,71 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-commit 0768f91530ff46683e0b372df14fd79fe8d156e5 upstream
+commit 958f79b9ee55dfaf00c8106ed1c22a2919e0028b upstream
 
-Some cases in THP like:
-  - MADV_FREE
-  - mprotect
-  - split
+set_memory_np() is used to mark kernel mappings not present, but it has
+it's own open coded mechanism which does not have the L1TF protection of
+inverting the address bits.
 
-mark the PMD non present for temporarily to prevent races. The window for
-an L1TF attack in these contexts is very small, but it wants to be fixed
-for correctness sake.
+Replace the open coded PTE manipulation with the L1TF protecting low level
+PTE routines.
 
-Use the proper low level functions for pmd/pud_mknotpresent() to address
-this.
+Passes the CPA self test.
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable.h |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ arch/x86/mm/pageattr.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -410,11 +410,6 @@ static inline pmd_t pmd_mkwrite(pmd_t pm
- 	return pmd_set_flags(pmd, _PAGE_RW);
- }
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -1006,8 +1006,8 @@ static long populate_pmd(struct cpa_data
  
--static inline pmd_t pmd_mknotpresent(pmd_t pmd)
--{
--	return pmd_clear_flags(pmd, _PAGE_PRESENT | _PAGE_PROTNONE);
--}
--
- static inline pud_t pud_set_flags(pud_t pud, pudval_t set)
- {
- 	pudval_t v = native_pud_val(pud);
-@@ -469,11 +464,6 @@ static inline pud_t pud_mkwrite(pud_t pu
- 	return pud_set_flags(pud, _PAGE_RW);
- }
+ 		pmd = pmd_offset(pud, start);
  
--static inline pud_t pud_mknotpresent(pud_t pud)
--{
--	return pud_clear_flags(pud, _PAGE_PRESENT | _PAGE_PROTNONE);
--}
--
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline int pte_soft_dirty(pte_t pte)
- {
-@@ -560,6 +550,18 @@ static inline pud_t pfn_pud(unsigned lon
- 	return __pud(pfn | massage_pgprot(pgprot));
- }
+-		set_pmd(pmd, __pmd(cpa->pfn << PAGE_SHIFT | _PAGE_PSE |
+-				   massage_pgprot(pmd_pgprot)));
++		set_pmd(pmd, pmd_mkhuge(pfn_pmd(cpa->pfn,
++					canon_pgprot(pmd_pgprot))));
  
-+static inline pmd_t pmd_mknotpresent(pmd_t pmd)
-+{
-+	return pfn_pmd(pmd_pfn(pmd),
-+		      __pgprot(pmd_flags(pmd) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
-+}
-+
-+static inline pud_t pud_mknotpresent(pud_t pud)
-+{
-+	return pfn_pud(pud_pfn(pud),
-+	      __pgprot(pud_flags(pud) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
-+}
-+
- static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
+ 		start	  += PMD_SIZE;
+ 		cpa->pfn  += PMD_SIZE >> PAGE_SHIFT;
+@@ -1079,8 +1079,8 @@ static int populate_pud(struct cpa_data
+ 	 * Map everything starting from the Gb boundary, possibly with 1G pages
+ 	 */
+ 	while (boot_cpu_has(X86_FEATURE_GBPAGES) && end - start >= PUD_SIZE) {
+-		set_pud(pud, __pud(cpa->pfn << PAGE_SHIFT | _PAGE_PSE |
+-				   massage_pgprot(pud_pgprot)));
++		set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
++				   canon_pgprot(pud_pgprot))));
  
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ 		start	  += PUD_SIZE;
+ 		cpa->pfn  += PUD_SIZE >> PAGE_SHIFT;
 
 
