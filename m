@@ -4,205 +4,165 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8027C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09ADFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C282174B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:29:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A95132174B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:31:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="O3Q43lm1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C282174B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dQPvt9U9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95132174B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731081AbeHNDNy (ORCPT
+        id S1730860AbeHNDP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 23:13:54 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44347 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730178AbeHNDNy (ORCPT
+        Mon, 13 Aug 2018 23:15:56 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53040 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729230AbeHNDP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 23:13:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so8412861pff.11
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 17:29:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2OO14lwqoc4McfzUj1Payzd2TjB/L1x/XYYQ9yi3FXQ=;
-        b=O3Q43lm1U2RYTL8Ulb2mFVKGkthhfJSSa90X+sTchCA59aoiD9d8NQNfdudgIoqk0/
-         8mHz/Y0dejxn9joRTRvsvDr4nxaUktIDzW/l8KByQG9e+kzH2DK0HstSmpNPKXBA8Acy
-         Cep2vPE6hkidMgPXVHg9GsITPwZ+YuvkyI/B/b6t2NNpimnm7cw2kIvAhDo0Ix/EmDVD
-         2G7Zk6eRAx3M9NXrIWk3E3mG/m6xMhiW4JYfGV5lluYCacAi0gDrKw71Lc9P5C2G91Dr
-         Ahr/gjmz6oscmxp+TReq37IBdrK5eybi5cILoa9aChD/Gdyyf1O+3IKnMPoPL/gg6z+x
-         kxfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2OO14lwqoc4McfzUj1Payzd2TjB/L1x/XYYQ9yi3FXQ=;
-        b=sQu04Sdwwtzeh+JInFwufFfIJ4V37P5d+7Zur4ROoaeLsNIgLgaXs9bU+KXd0sFD2h
-         Vz1KHXEXkkWUAKGdbR0m3shPBy4sikYndUbUO774xwNQFDzfT/p+TAl9Pr7GETtPwSrY
-         zNNivPFGan66GZgx4+fYt0KUBqYAWnUpZ01VU8AlL6+4Wx2W6XyHVhAb+OjREDT4BrKd
-         eAC0AV8X2IXLwqBwNv2v2DYEm4IYCCtOzdkDlmLHtL/5fwNuYwrvUoOjwJ6RYPuaYdYH
-         Fzd+MPPF5BFqFlazHnN3GxyjwJmhMR09OE1P6LDTeLpLjZpjFk9z6HSgBOn+k0cMUmr8
-         VtdA==
-X-Gm-Message-State: AOUpUlHucCZmiJ+Jdh4kIlRbq7IobKlzL3CvVatNCeqBdsPNRfuOap53
-        nsE4peWZsdvxGiNgw+KmVbrLH0x3xCknvg==
-X-Google-Smtp-Source: AA+uWPxCsfjAbEVFzwRvChMHTFAzBnumueUIA5e+KlH9U/9yTwkVPmXWaaTi2gcLmqKRpRdcPE2uIA==
-X-Received: by 2002:a63:714a:: with SMTP id b10-v6mr18356606pgn.73.1534206555525;
-        Mon, 13 Aug 2018 17:29:15 -0700 (PDT)
-Received: from sherryy.mtv.corp.google.com ([2620:0:1000:1410:cb60:7ce4:78f:ebbc])
-        by smtp.gmail.com with ESMTPSA id i1-v6sm25472914pgj.38.2018.08.13.17.29.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Aug 2018 17:29:14 -0700 (PDT)
-From:   Sherry Yang <sherryy@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tkjos@google.com, maco@google.com,
-        Sherry Yang <sherryy@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        devel@driverdev.osuosl.org (open list:ANDROID DRIVERS)
-Subject: [PATCH] android: binder: no outgoing transaction when thread todo has transaction
-Date:   Mon, 13 Aug 2018 17:28:53 -0700
-Message-Id: <20180814002853.53690-1-sherryy@android.com>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 13 Aug 2018 23:15:56 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7E0T3fo079954;
+        Tue, 14 Aug 2018 00:31:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=mFNNuSRJx4KqAm0biANJWhUhWPT2qL5b9JLLxxfT67w=;
+ b=dQPvt9U9vXb0orE+Ap1ijVaWHJX3OTK2WBPivSN/TilIj6BlukVbVbKsqc4rcyhtZhfw
+ CcporJ5GyIkIBIKnX4jjZvFD9D/+O+wtscgEpHGD7MP7eQt8SoYyZI+O36GrTFcb5nLM
+ yRsJhNW4vTPbiD6oDyGKC6ytWD0+hKg30r5A5+ihhxw1jBm5TARpFQGjZXnfqTeQwKyR
+ jgjdPRT0NIqFSY+30wW2GQR1Icx62MJg+E3M1xDk0v58Bpuhcr7oMI9gwdA3V7kbAgoC
+ 0zK75AfKpsMkK4XEBE1TAwyU22GR2Qm4NdQBwQ5YKk7wM9/NyoP15HCQuJldFHnrMlhf Ig== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2ksqrp6e1n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Aug 2018 00:31:04 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7E0V2db005135
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Aug 2018 00:31:03 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7E0V1NY011837;
+        Tue, 14 Aug 2018 00:31:01 GMT
+Received: from monkey.oracle.com (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 Aug 2018 17:31:01 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH v2] mm: migration: fix migration of huge PMD shared pages
+Date:   Mon, 13 Aug 2018 17:30:58 -0700
+Message-Id: <20180814003058.19732-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <201808131221.zDDttbc8%fengguang.wu@intel.com>
+References: <201808131221.zDDttbc8%fengguang.wu@intel.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8984 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=878
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808140003
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a process dies, failed reply is sent to the sender of any transaction
-queued on a dead thread's todo list. The sender asserts that the
-received failed reply corresponds to the head of the transaction stack.
-This assert can fail if the dead thread is allowed to send outgoing
-transactions when there is already a transaction on its todo list,
-because this new transaction can end up on the transaction stack of the
-original sender. The following steps illustrate how this assertion can
-fail.
+The page migration code employs try_to_unmap() to try and unmap the
+source page.  This is accomplished by using rmap_walk to find all
+vmas where the page is mapped.  This search stops when page mapcount
+is zero.  For shared PMD huge pages, the page map count is always 1
+no matter the number of mappings.  Shared mappings are tracked via
+the reference count of the PMD page.  Therefore, try_to_unmap stops
+prematurely and does not completely unmap all mappings of the source
+page.
 
-1. Thread1 sends txn19 to Thread2
-   (T1->transaction_stack=txn19, T2->todo+=txn19)
-2. Without processing todo list, Thread2 sends txn20 to Thread1
-   (T1->todo+=txn20, T2->transaction_stack=txn20)
-3. T1 processes txn20 on its todo list
-   (T1->transaction_stack=txn20->txn19, T1->todo=<empty>)
-4. T2 dies, T2->todo cleanup attempts to send failed reply for txn19, but
-   T1->transaction_stack points to txn20 -- assertion failes
+This problem can result is data corruption as writes to the original
+source page can happen after contents of the page are copied to the
+target page.  Hence, data is lost.
 
-Step 2. is the incorrect behavior. When there is a transaction on a
-thread's todo list, this thread should not be able to send any outgoing
-synchronous transactions. Only the head of the todo list needs to be
-checked because only threads that are waiting for proc work can directly
-receive work from another thread, and no work is allowed to be queued
-on such a thread without waking up the thread. This patch also enforces
-that a thread is not waiting for proc work when a work is directly
-enqueued to its todo list.
+This problem was originally seen as DB corruption of shared global
+areas after a huge page was soft offlined due to ECC memory errors.
+DB developers noticed they could reproduce the issue by (hotplug)
+offlining memory used to back huge pages.  A simple testcase can
+reproduce the problem by creating a shared PMD mapping (note that
+this must be at least PUD_SIZE in size and PUD_SIZE aligned (1GB on
+x86)), and using migrate_pages() to migrate process pages between
+nodes while continually writing to the huge pages being migrated.
 
-Acked-by: Arve Hjønnevåg <arve@android.com>
-Signed-off-by: Sherry Yang <sherryy@android.com>
+To fix, have the try_to_unmap_one routine check for huge PMD sharing
+by calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a
+shared mapping it will be 'unshared' which removes the page table
+entry and drops the reference on the PMD page.  After this, flush
+caches and TLB.
+
+Fixes: 39dde65c9940 ("shared page table for hugetlb page")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- drivers/android/binder.c | 44 +++++++++++++++++++++++++++++-----------
- 1 file changed, 32 insertions(+), 12 deletions(-)
+v2: Fixed build issue for !CONFIG_HUGETLB_PAGE and typos in comment
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index d58763b6b009..f2081934eb8b 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -822,6 +822,7 @@ static void
- binder_enqueue_deferred_thread_work_ilocked(struct binder_thread *thread,
- 					    struct binder_work *work)
- {
-+	WARN_ON(!list_empty(&thread->waiting_thread_node));
- 	binder_enqueue_work_ilocked(work, &thread->todo);
+ include/linux/hugetlb.h |  6 ++++++
+ mm/rmap.c               | 21 +++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 36fa6a2a82e3..7524663028ec 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -170,6 +170,12 @@ static inline unsigned long hugetlb_total_pages(void)
+ 	return 0;
  }
  
-@@ -839,6 +840,7 @@ static void
- binder_enqueue_thread_work_ilocked(struct binder_thread *thread,
- 				   struct binder_work *work)
- {
-+	WARN_ON(!list_empty(&thread->waiting_thread_node));
- 	binder_enqueue_work_ilocked(work, &thread->todo);
- 	thread->process_todo = true;
- }
-@@ -1270,19 +1272,12 @@ static int binder_inc_node_nilocked(struct binder_node *node, int strong,
- 		} else
- 			node->local_strong_refs++;
- 		if (!node->has_strong_ref && target_list) {
-+			struct binder_thread *thread = container_of(target_list,
-+						    struct binder_thread, todo);
- 			binder_dequeue_work_ilocked(&node->work);
--			/*
--			 * Note: this function is the only place where we queue
--			 * directly to a thread->todo without using the
--			 * corresponding binder_enqueue_thread_work() helper
--			 * functions; in this case it's ok to not set the
--			 * process_todo flag, since we know this node work will
--			 * always be followed by other work that starts queue
--			 * processing: in case of synchronous transactions, a
--			 * BR_REPLY or BR_ERROR; in case of oneway
--			 * transactions, a BR_TRANSACTION_COMPLETE.
--			 */
--			binder_enqueue_work_ilocked(&node->work, target_list);
-+			BUG_ON(&thread->todo != target_list);
-+			binder_enqueue_deferred_thread_work_ilocked(thread,
-+								   &node->work);
- 		}
- 	} else {
- 		if (!internal)
-@@ -2723,6 +2718,7 @@ static void binder_transaction(struct binder_proc *proc,
- {
- 	int ret;
- 	struct binder_transaction *t;
-+	struct binder_work *w;
- 	struct binder_work *tcomplete;
- 	binder_size_t *offp, *off_end, *off_start;
- 	binder_size_t off_min;
-@@ -2864,6 +2860,29 @@ static void binder_transaction(struct binder_proc *proc,
- 			goto err_invalid_target_handle;
- 		}
- 		binder_inner_proc_lock(proc);
++static inline int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr,
++					pte_t *ptep)
++{
++	return 0;
++}
 +
-+		w = list_first_entry_or_null(&thread->todo,
-+					     struct binder_work, entry);
-+		if (!(tr->flags & TF_ONE_WAY) && w &&
-+		    w->type == BINDER_WORK_TRANSACTION) {
-+			/*
-+			 * Do not allow new outgoing transaction from a
-+			 * thread that has a transaction at the head of
-+			 * its todo list. Only need to check the head
-+			 * because binder_select_thread_ilocked picks a
-+			 * thread from proc->waiting_threads to enqueue
-+			 * the transaction, and nothing is queued to the
-+			 * todo list while the thread is on waiting_threads.
-+			 */
-+			binder_user_error("%d:%d new transaction not allowed when there is a transaction on thread todo\n",
-+					  proc->pid, thread->pid);
-+			binder_inner_proc_unlock(proc);
-+			return_error = BR_FAILED_REPLY;
-+			return_error_param = -EPROTO;
-+			return_error_line = __LINE__;
-+			goto err_bad_todo_list;
+ #define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
+ #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
+ #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 09a799c9aebd..cf2340adad10 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1409,6 +1409,27 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
+ 		address = pvmw.address;
+ 
++		/*
++		 * PMDs for hugetlbfs pages could be shared.  In this case,
++		 * pages with shared PMDs will have a mapcount of 1 no matter
++		 * how many times they are actually mapped.  Map counting for
++		 * PMD sharing is mostly done via the reference count on the
++		 * PMD page itself.  If the page we are trying to unmap is a
++		 * hugetlbfs page, attempt to 'unshare' at the PMD level.
++		 * huge_pmd_unshare clears the PUD and adjusts reference
++		 * counting on the PMD page which effectively unmaps the page.
++		 * Take care of flushing cache and TLB for page in this
++		 * specific mapping here.
++		 */
++		if (PageHuge(page) &&
++		    huge_pmd_unshare(mm, &address, pvmw.pte)) {
++			unsigned long end_add = address + vma_mmu_pagesize(vma);
++
++			flush_cache_range(vma, address, end_add);
++			flush_tlb_range(vma, address, end_add);
++			mmu_notifier_invalidate_range(mm, address, end_add);
++			continue;
 +		}
-+
- 		if (!(tr->flags & TF_ONE_WAY) && thread->transaction_stack) {
- 			struct binder_transaction *tmp;
  
-@@ -3247,6 +3266,7 @@ static void binder_transaction(struct binder_proc *proc,
- 	kfree(t);
- 	binder_stats_deleted(BINDER_STAT_TRANSACTION);
- err_alloc_t_failed:
-+err_bad_todo_list:
- err_bad_call_stack:
- err_empty_call_stack:
- err_dead_binder:
+ 		if (IS_ENABLED(CONFIG_MIGRATION) &&
+ 		    (flags & TTU_MIGRATION) &&
 -- 
-2.18.0.597.ga71716f1ad-goog
+2.17.1
 
