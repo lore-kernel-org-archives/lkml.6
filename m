@@ -6,39 +6,37 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF3AC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8404C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8374B21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8374B21736
+	by mail.kernel.org (Postfix) with ESMTP id 9755821736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9755821736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403828AbeHNUfj (ORCPT
+        id S2403836AbeHNUfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60994 "EHLO
+        Tue, 14 Aug 2018 16:35:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32780 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfi (ORCPT
+        with ESMTP id S2390379AbeHNUfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:38 -0400
+        Tue, 14 Aug 2018 16:35:42 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA5B1D08;
-        Tue, 14 Aug 2018 17:47:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 525B9CAE;
+        Tue, 14 Aug 2018 17:47:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@intel.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 33/43] x86/speculation/l1tf: Limit swap file size to MAX_PA/2
-Date:   Tue, 14 Aug 2018 19:18:09 +0200
-Message-Id: <20180814171519.273142378@linuxfoundation.org>
+Subject: [PATCH 4.4 34/43] x86/bugs: Move the l1tf function and define pr_fmt properly
+Date:   Tue, 14 Aug 2018 19:18:10 +0200
+Message-Id: <20180814171519.341265676@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -55,138 +53,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 377eeaa8e11fe815b1d07c81c4a0e2843a8c15eb upstream
+commit 56563f53d3066afa9e63d6c997bf67e76a8b05c0 upstream
 
-For the L1TF workaround its necessary to limit the swap file size to below
-MAX_PA/2, so that the higher bits of the swap offset inverted never point
-to valid memory.
+The pr_warn in l1tf_select_mitigation would have used the prior pr_fmt
+which was defined as "Spectre V2 : ".
 
-Add a mechanism for the architecture to override the swap file size check
-in swapfile.c and add a x86 specific max swapfile check function that
-enforces that limit.
+Move the function to be past SSBD and also define the pr_fmt.
 
-The check is only enabled if the CPU is vulnerable to L1TF.
-
-In VMs with 42bit MAX_PA the typical limit is 2TB now, on a native system
-with 46bit PA it is 32TB. The limit is only per individual swap file, so
-it's always possible to exceed these limits with multiple swap files or
-partitions.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/init.c       |   15 +++++++++++++++
- include/linux/swapfile.h |    2 ++
- mm/swapfile.c            |   46 ++++++++++++++++++++++++++++++----------------
- 3 files changed, 47 insertions(+), 16 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   55 +++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 26 deletions(-)
 
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -4,6 +4,8 @@
- #include <linux/swap.h>
- #include <linux/memblock.h>
- #include <linux/bootmem.h>	/* for max_low_pfn */
-+#include <linux/swapfile.h>
-+#include <linux/swapops.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/e820.h>
-@@ -767,3 +769,16 @@ void update_cache_mode_entry(unsigned en
- 	__cachemode2pte_tbl[cache] = __cm_idx2pte(entry);
- 	__pte2cachemode_tbl[entry] = cache;
- }
-+
-+unsigned long max_swapfile_size(void)
-+{
-+	unsigned long pages;
-+
-+	pages = generic_max_swapfile_size();
-+
-+	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
-+		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
-+		pages = min_t(unsigned long, l1tf_pfn_limit() + 1, pages);
-+	}
-+	return pages;
-+}
---- a/include/linux/swapfile.h
-+++ b/include/linux/swapfile.h
-@@ -9,5 +9,7 @@ extern spinlock_t swap_lock;
- extern struct plist_head swap_active_head;
- extern struct swap_info_struct *swap_info[];
- extern int try_to_unuse(unsigned int, bool, unsigned long);
-+extern unsigned long generic_max_swapfile_size(void);
-+extern unsigned long max_swapfile_size(void);
- 
- #endif /* _LINUX_SWAPFILE_H */
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2206,6 +2206,35 @@ static int claim_swapfile(struct swap_in
- 	return 0;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -207,32 +207,6 @@ static void x86_amd_ssb_disable(void)
+ 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
  }
  
-+
-+/*
-+ * Find out how many pages are allowed for a single swap device. There
-+ * are two limiting factors:
-+ * 1) the number of bits for the swap offset in the swp_entry_t type, and
-+ * 2) the number of bits in the swap pte, as defined by the different
-+ * architectures.
-+ *
-+ * In order to find the largest possible bit mask, a swap entry with
-+ * swap type 0 and swap offset ~0UL is created, encoded to a swap pte,
-+ * decoded to a swp_entry_t again, and finally the swap offset is
-+ * extracted.
-+ *
-+ * This will mask all the bits from the initial ~0UL mask that can't
-+ * be encoded in either the swp_entry_t or the architecture definition
-+ * of a swap pte.
-+ */
-+unsigned long generic_max_swapfile_size(void)
-+{
-+	return swp_offset(pte_to_swp_entry(
-+			swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;
-+}
-+
-+/* Can be overridden by an architecture for additional checks. */
-+__weak unsigned long max_swapfile_size(void)
-+{
-+	return generic_max_swapfile_size();
-+}
-+
- static unsigned long read_swap_header(struct swap_info_struct *p,
- 					union swap_header *swap_header,
- 					struct inode *inode)
-@@ -2241,22 +2270,7 @@ static unsigned long read_swap_header(st
- 	p->cluster_next = 1;
- 	p->cluster_nr = 0;
- 
+-static void __init l1tf_select_mitigation(void)
+-{
+-	u64 half_pa;
+-
+-	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+-		return;
+-
+-#if CONFIG_PGTABLE_LEVELS == 2
+-	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
+-	return;
+-#endif
+-
 -	/*
--	 * Find out how many pages are allowed for a single swap
--	 * device. There are two limiting factors: 1) the number
--	 * of bits for the swap offset in the swp_entry_t type, and
--	 * 2) the number of bits in the swap pte as defined by the
--	 * different architectures. In order to find the
--	 * largest possible bit mask, a swap entry with swap type 0
--	 * and swap offset ~0UL is created, encoded to a swap pte,
--	 * decoded to a swp_entry_t again, and finally the swap
--	 * offset is extracted. This will mask all the bits from
--	 * the initial ~0UL mask that can't be encoded in either
--	 * the swp_entry_t or the architecture definition of a
--	 * swap pte.
+-	 * This is extremely unlikely to happen because almost all
+-	 * systems have far more MAX_PA/2 than RAM can be fit into
+-	 * DIMM slots.
 -	 */
--	maxpages = swp_offset(pte_to_swp_entry(
--			swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;
-+	maxpages = max_swapfile_size();
- 	last_page = swap_header->info.last_page;
- 	if (!last_page) {
- 		pr_warn("Empty swap-file\n");
+-	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+-	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
+-		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+-		return;
+-	}
+-
+-	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
+-}
+-
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+@@ -658,6 +632,35 @@ void x86_spec_ctrl_setup_ap(void)
+ 		x86_amd_ssb_disable();
+ }
+ 
++#undef pr_fmt
++#define pr_fmt(fmt)	"L1TF: " fmt
++static void __init l1tf_select_mitigation(void)
++{
++	u64 half_pa;
++
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return;
++
++#if CONFIG_PGTABLE_LEVELS == 2
++	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
++	return;
++#endif
++
++	/*
++	 * This is extremely unlikely to happen because almost all
++	 * systems have far more MAX_PA/2 than RAM can be fit into
++	 * DIMM slots.
++	 */
++	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
++	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
++		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
++		return;
++	}
++
++	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
++}
++#undef pr_fmt
++
+ #ifdef CONFIG_SYSFS
+ 
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
 
 
