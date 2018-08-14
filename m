@@ -2,226 +2,119 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763C1C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A51C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25638216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25638216E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 40301216E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40301216E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732154AbeHNKTL (ORCPT
+        id S1732124AbeHNKTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 14 Aug 2018 06:19:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54322 "EHLO mx1.suse.de"
+Received: from szxga01-in.huawei.com ([45.249.212.187]:6405 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731213AbeHNKTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:19:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11833AF66;
-        Tue, 14 Aug 2018 07:33:11 +0000 (UTC)
-From:   Hannes Reinecke <hare@suse.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <keith.busch@intel.com>,
-        Bart van Assche <bart.vanassche@wdc.com>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>
-Subject: [PATCH 2/5] nvme: register ns_id attributes as default sysfs groups
-Date:   Tue, 14 Aug 2018 09:33:02 +0200
-Message-Id: <20180814073305.87255-3-hare@suse.de>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20180814073305.87255-1-hare@suse.de>
-References: <20180814073305.87255-1-hare@suse.de>
+        id S1731231AbeHNKTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:19:09 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 066A844F0B10F;
+        Tue, 14 Aug 2018 15:33:06 +0800 (CST)
+Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.26]) by
+ DGGEMM405-HUB.china.huawei.com ([10.3.20.213]) with mapi id 14.03.0399.000;
+ Tue, 14 Aug 2018 15:33:02 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Roger Quadros <rogerq@ti.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>,
+        "drinkcat@chromium.org" <drinkcat@chromium.org>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "drake@endlessm.com" <drake@endlessm.com>,
+        "mike.looijmans@topic.nl" <mike.looijmans@topic.nl>,
+        "joe@perches.com" <joe@perches.com>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] usb: hub: try old enumeration scheme first for high
+ speed devices
+Thread-Topic: [PATCH] usb: hub: try old enumeration scheme first for high
+ speed devices
+Thread-Index: AQHUMHhu69J7qZINb0WTPExaubbbVKS4SOuAgAaUR1A=
+Date:   Tue, 14 Aug 2018 07:33:01 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C9B129B@dggemm526-mbx.china.huawei.com>
+References: <1533913304-15737-1-git-send-email-prime.zeng@hisilicon.com>
+ <a29afa26-22b4-3188-f9ee-993e44df7703@ti.com>
+In-Reply-To: <a29afa26-22b4-3188-f9ee-993e44df7703@ti.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.222.15]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should be registering the ns_id attribute as default sysfs
-attribute groups, otherwise we have a race condition between
-the uevent and the attributes appearing in sysfs.
-
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- drivers/nvme/host/core.c      | 21 +++++++++------------
- drivers/nvme/host/lightnvm.c  | 27 ++++-----------------------
- drivers/nvme/host/multipath.c | 15 ++++-----------
- drivers/nvme/host/nvme.h      | 11 +++--------
- 4 files changed, 20 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0e824e8c8fd7..8e26d98e9a8f 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2734,6 +2734,12 @@ const struct attribute_group nvme_ns_id_attr_group = {
- 	.is_visible	= nvme_ns_id_attrs_are_visible,
- };
- 
-+const struct attribute_group *nvme_ns_id_attr_groups[] = {
-+	&nvme_ns_id_attr_group,
-+	NULL, /* Will be filled in by lightnvm if present */
-+	NULL,
-+};
-+
- #define nvme_show_str_function(field)						\
- static ssize_t  field##_show(struct device *dev,				\
- 			    struct device_attribute *attr, char *buf)		\
-@@ -3099,14 +3105,9 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 
- 	nvme_get_ctrl(ctrl);
- 
--	device_add_disk(ctrl->device, ns->disk, NULL);
--	if (sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
--					&nvme_ns_id_attr_group))
--		pr_warn("%s: failed to create sysfs group for identification\n",
--			ns->disk->disk_name);
--	if (ns->ndev && nvme_nvm_register_sysfs(ns))
--		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
--			ns->disk->disk_name);
-+	if (ns->ndev)
-+		nvme_nvm_register_sysfs(ns);
-+	device_add_disk(ctrl->device, ns->disk, nvme_ns_id_attr_groups);
- 
- 	nvme_mpath_add_disk(ns, id);
- 	nvme_fault_inject_init(ns);
-@@ -3132,10 +3133,6 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 
- 	nvme_fault_inject_fini(ns);
- 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
--		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
--					&nvme_ns_id_attr_group);
--		if (ns->ndev)
--			nvme_nvm_unregister_sysfs(ns);
- 		del_gendisk(ns->disk);
- 		blk_cleanup_queue(ns->queue);
- 		if (blk_get_integrity(ns->disk))
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index 6fe5923c95d4..7bf2f9da6293 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -1270,39 +1270,20 @@ static const struct attribute_group nvm_dev_attr_group_20 = {
- 	.attrs		= nvm_dev_attrs_20,
- };
- 
--int nvme_nvm_register_sysfs(struct nvme_ns *ns)
-+void nvme_nvm_register_sysfs(struct nvme_ns *ns)
- {
- 	struct nvm_dev *ndev = ns->ndev;
- 	struct nvm_geo *geo = &ndev->geo;
- 
- 	if (!ndev)
--		return -EINVAL;
--
--	switch (geo->major_ver_id) {
--	case 1:
--		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
--					&nvm_dev_attr_group_12);
--	case 2:
--		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
--					&nvm_dev_attr_group_20);
--	}
--
--	return -EINVAL;
--}
--
--void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
--{
--	struct nvm_dev *ndev = ns->ndev;
--	struct nvm_geo *geo = &ndev->geo;
-+		return;
- 
- 	switch (geo->major_ver_id) {
- 	case 1:
--		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
--					&nvm_dev_attr_group_12);
-+		nvme_ns_id_attr_groups[1] = &nvm_dev_attr_group_12;
- 		break;
- 	case 2:
--		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
--					&nvm_dev_attr_group_20);
-+		nvme_ns_id_attr_groups[1] = &nvm_dev_attr_group_20;
- 		break;
- 	}
- }
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 477af51d01e8..8e846095c42d 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -282,13 +282,9 @@ static void nvme_mpath_set_live(struct nvme_ns *ns)
- 	if (!head->disk)
- 		return;
- 
--	if (!(head->disk->flags & GENHD_FL_UP)) {
--		device_add_disk(&head->subsys->dev, head->disk, NULL);
--		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
--				&nvme_ns_id_attr_group))
--			dev_warn(&head->subsys->dev,
--				 "failed to create id group.\n");
--	}
-+	if (!(head->disk->flags & GENHD_FL_UP))
-+		device_add_disk(&head->subsys->dev, head->disk,
-+				nvme_ns_id_attr_groups);
- 
- 	kblockd_schedule_work(&ns->head->requeue_work);
- }
-@@ -494,11 +490,8 @@ void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- {
- 	if (!head->disk)
- 		return;
--	if (head->disk->flags & GENHD_FL_UP) {
--		sysfs_remove_group(&disk_to_dev(head->disk)->kobj,
--				   &nvme_ns_id_attr_group);
-+	if (head->disk->flags & GENHD_FL_UP)
- 		del_gendisk(head->disk);
--	}
- 	blk_set_queue_dying(head->disk->queue);
- 	/* make sure all pending bios are cleaned up */
- 	kblockd_schedule_work(&head->requeue_work);
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index bb4a2003c097..9ba6d67d8e0a 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -459,7 +459,7 @@ int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
- int nvme_get_log(struct nvme_ctrl *ctrl, u32 nsid, u8 log_page, u8 lsp,
- 		void *log, size_t size, u64 offset);
- 
--extern const struct attribute_group nvme_ns_id_attr_group;
-+extern const struct attribute_group *nvme_ns_id_attr_groups[];
- extern const struct block_device_operations nvme_ns_head_ops;
- 
- #ifdef CONFIG_NVME_MULTIPATH
-@@ -551,8 +551,7 @@ static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
- void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
- int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
- void nvme_nvm_unregister(struct nvme_ns *ns);
--int nvme_nvm_register_sysfs(struct nvme_ns *ns);
--void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
-+void nvme_nvm_register_sysfs(struct nvme_ns *ns);
- int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
- #else
- static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
-@@ -563,11 +562,7 @@ static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
- }
- 
- static inline void nvme_nvm_unregister(struct nvme_ns *ns) {};
--static inline int nvme_nvm_register_sysfs(struct nvme_ns *ns)
--{
--	return 0;
--}
--static inline void nvme_nvm_unregister_sysfs(struct nvme_ns *ns) {};
-+static inline void nvme_nvm_register_sysfs(struct nvme_ns *ns) {};
- static inline int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd,
- 							unsigned long arg)
- {
--- 
-2.12.3
-
+SGkgUm9nZXI6DQoNClRoYW5rIHlvdSBmb3IgcmV2aWV3DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPkZyb206IFJvZ2VyIFF1YWRyb3MgW21haWx0bzpyb2dlcnFAdGkuY29tXQ0KPlNl
+bnQ6IEZyaWRheSwgQXVndXN0IDEwLCAyMDE4IDY6NTEgUE0NCj5UbzogWmVuZ3RhbyAoQikgPHBy
+aW1lLnplbmdAaGlzaWxpY29uLmNvbT47IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOw0KPnN0
+ZXJuQHJvd2xhbmQuaGFydmFyZC5lZHU7IG1hdGhpYXMubnltYW5AbGludXguaW50ZWwuY29tOw0K
+PmRyaW5rY2F0QGNocm9taXVtLm9yZzsgZmVsaXBlLmJhbGJpQGxpbnV4LmludGVsLmNvbTsgZHJh
+a2VAZW5kbGVzc20uY29tOw0KPm1pa2UubG9vaWptYW5zQHRvcGljLm5sOyBqb2VAcGVyY2hlcy5j
+b20NCj5DYzogbGludXgtdXNiQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0KPlN1YmplY3Q6IFJlOiBbUEFUQ0hdIHVzYjogaHViOiB0cnkgb2xkIGVudW1lcmF0
+aW9uIHNjaGVtZSBmaXJzdCBmb3IgaGlnaCBzcGVlZA0KPmRldmljZXMNCj4NCj5IaSwNCj4NCj5P
+biAxMC8wOC8xOCAxODowMSwgWmVuZyBUYW8gd3JvdGU6DQo+PiBUaGUgbmV3IHNjaGVtZSBpcyBy
+ZXF1aXJlZCBqdXN0IHRvIHN1cHBvcnQgbGVnYWN5IGxvdyBhbmQgZnVsbC1zcGVlZA0KPj4gZGV2
+aWNlcy4gRm9yIGhpZ2ggc3BlZWQgZGV2aWNlcywgaXQgd2lsbCBzbG93ZXIgdGhlIGVudW1lcmF0
+aW9uIHNwZWVkLg0KPj4gU28gaW4gdGhpcyBwYXRjaCB3ZSB0cnkgdGhlICJvbGQiIGVudW1lcmF0
+aW9uIHNjaGVtZSBmaXJzdCBmb3IgaGlnaA0KPj4gc3BlZWQgZGV2aWNlcy4NCj4NCj5Ib3cgc2xv
+dyBkb2VzIGl0IGdldD8gSXMgaXQgc2lnbmlmaWNhbnQ/DQo+RG8gd2UgcmlzayBicmVha2luZyBl
+eGlzdGluZyBIUyBkZXZpY2VzIHRoYXQgd29yaz8gSSBkb24ndCB0aGluayB3ZSBjYW4gYmUgc3Vy
+ZQ0KPnRpbGwgd2UgcnVuIHRoaXMgdGhyb3VnaCB0ZXN0aW5nLg0KPg0KDQpXZSBhZGRlZCB0aGUg
+bmV3IHNjaGVtZSBiZWNhdXNlIHRoaXMgaXMgd2hhdCB0aGUgd2luZG93cyBkaWQgLCBhbmQgbWFp
+bmx5IGZvciANCmxlZ2FjeSBsb3cgYW5kIGZ1bGwgc3BlZWQgZGV2aWNlcy4NCk5vdyBmb3IgbmV3
+IHdpbmRvd3MgdmVyc2lvbig4LjEgYW5kIGxhdGVyKSwgdGhlIHNlY29uZCBwb3J0IHJlc2V0IGhh
+cyBhbHJlYWR5IGJlZW4NCnJlbW92ZWQgZm9yIGhpZ2ggc3BlZWQgZGV2aWNlcyBmb3IgYmV0dGVy
+IGVudW1lcmF0aW9uIHNwZWVkLg0KQW5kIEluIHRoaXMgcGF0Y2ggaWYgdXNlX2JvdGhfc2NoZW1l
+cyBpcyB0cnVlLCBpdCB3aWxsIGZhbGxiYWNrIHRvIG5ldyBzY2hlbWUgaWYgdGhlIG9sZA0Kc2No
+ZW1lIGZhaWxzLg0KDQpTbyBJIHRoaW5rIGl0J3MgcmVhc29uYWJsZSB0byBmb2xsb3cgdGhlIHdp
+bmRvd3MgYmVoYXZpb3IgYWdhaW4uDQoNCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBaZW5nIFRhbyA8
+cHJpbWUuemVuZ0BoaXNpbGljb24uY29tPg0KPj4gLS0tDQo+PiAgZHJpdmVycy91c2IvY29yZS9o
+dWIuYyB8IDUgKysrKy0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRl
+bGV0aW9uKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2NvcmUvaHViLmMgYi9k
+cml2ZXJzL3VzYi9jb3JlL2h1Yi5jIGluZGV4DQo+PiAxZmIyNjY4Li5kMjY1YjE5IDEwMDY0NA0K
+Pj4gLS0tIGEvZHJpdmVycy91c2IvY29yZS9odWIuYw0KPj4gKysrIGIvZHJpdmVycy91c2IvY29y
+ZS9odWIuYw0KPj4gQEAgLTI2NjEsMTAgKzI2NjEsMTMgQEAgc3RhdGljIGJvb2wgdXNlX25ld19z
+Y2hlbWUoc3RydWN0IHVzYl9kZXZpY2UNCj4qdWRldiwgaW50IHJldHJ5LA0KPj4gIAlpbnQgb2xk
+X3NjaGVtZV9maXJzdF9wb3J0ID0NCj4+ICAJCXBvcnRfZGV2LT5xdWlya3MgJiBVU0JfUE9SVF9R
+VUlSS19PTERfU0NIRU1FOw0KPj4NCj4+ICsJaW50IHF1aWNrX2VudW1lcmF0aW9uID0gKHVkZXYt
+PnNwZWVkID09IFVTQl9TUEVFRF9ISUdIKTsNCj4+ICsNCj4+ICAJaWYgKHVkZXYtPnNwZWVkID49
+IFVTQl9TUEVFRF9TVVBFUikNCj4+ICAJCXJldHVybiBmYWxzZTsNCj4NCj5ob3cgYWJvdXQgcmVw
+bGFjaW5nIHRoZSBhYm92ZSBpZiB3aXRoDQo+DQo+CWlmICh1ZGV2LT5zcGVlZCA+PSBVU0JfU1BF
+RURfSElHSCkNCj4JCXJldHVybiBmYWxzZTsNCg0KTm8sIGZvciBTUyBkZXZpY2UsIG9ubHkgdXNl
+IG9sZCBzY2hlbWUsIGJ1dCBmb3Igc3BlZWQgZGV2aWNlLCB3ZSBjYW4gZmFsbGJhY2sgdG8gbmV3
+IA0Kc2NoZW1lIGlmIHRoZSBvbGQgZmFpbHMuDQoNCj4+DQo+PiAtCXJldHVybiBVU0VfTkVXX1ND
+SEVNRShyZXRyeSwgb2xkX3NjaGVtZV9maXJzdF9wb3J0IHx8DQo+b2xkX3NjaGVtZV9maXJzdCk7
+DQo+PiArCXJldHVybiBVU0VfTkVXX1NDSEVNRShyZXRyeSwgb2xkX3NjaGVtZV9maXJzdF9wb3J0
+IHx8DQo+b2xkX3NjaGVtZV9maXJzdA0KPj4gKwkJCSAgICAgIHx8IHF1aWNrX2VudW1lcmF0aW9u
+KTsNCj4+ICB9DQo+DQo+Tm93IHdlIG5vIGxvbmdlciByZXNwZWN0IHRoZSAib2xkX3NjaGVtZV9m
+aXJzdCIgcGFyYW1ldGVyIGZvciBtb3N0IG9mIHRoZQ0KPmRldmljZXMuDQo+DQo+SXQgc2hvdWxk
+IGJlIGNsYXJpZmllZCBpbiBEb2N1bWVudGF0aW9uL2FkbWluL2tlcm5lbC1wYXJhbWV0ZXJzLnR4
+dCB0aGF0DQo+Im9sZF9zY2hlbWVfZmlyc3QiIGlzIG9ubHkgYXBwbGljYWJsZSB0byBMT1cvRlVM
+TCBzcGVlZCBkZXZpY2VzLg0KPg0KDQpPbiB0aGUgY29udHJhcnksIG5ldyBzY2hlbWUgaXMgb25s
+eSBhcHBsaWNhYmxlIGZvciBMT1cvRlVMTCBzcGVlZCBkZXZpY2VzPyANCg0KPj4NCj4+ICAvKiBJ
+cyBhIFVTQiAzLjAgcG9ydCBpbiB0aGUgSW5hY3RpdmUgb3IgQ29tcGxpYW5jZSBNb2RlIHN0YXRl
+Pw0KPj4NCj4NCj4tLQ0KPlRleGFzIEluc3RydW1lbnRzIEZpbmxhbmQgT3ksIFBvcmtrYWxhbmth
+dHUgMjIsIDAwMTgwIEhlbHNpbmtpLg0KPlktdHVubnVzL0J1c2luZXNzIElEOiAwNjE1NTIxLTQu
+IEtvdGlwYWlra2EvRG9taWNpbGU6IEhlbHNpbmtpDQo=
