@@ -2,142 +2,110 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2ECC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FC6C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065CE2171F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAEE021728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:12:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="xs+VyK6I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065CE2171F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucs7vjer"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAEE021728
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbeHNX4S (ORCPT
+        id S1728642AbeHOABf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 19:56:18 -0400
-Received: from mail-lf1-f47.google.com ([209.85.167.47]:33209 "EHLO
-        mail-lf1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725915AbeHNX4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 19:56:17 -0400
-Received: by mail-lf1-f47.google.com with SMTP id u14-v6so14837223lfu.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=UY5ssDU7kVTHFhIwvhQ6hKKMcao3Ty+RYxCvRgkoaNE=;
-        b=xs+VyK6I7Anqs6bmdVScPgt0wowDZ3Eo5sgfntH1WupxIBY+8PMmWlDpm4aSEQCFcp
-         JcUbsw5RaIkCwFUpZpkVz8iRi0EjTk0dpTupX2K8D8wYkp51QoCC5QCwUG+6in4lKlKa
-         T8NPWVxMMIdMdY03DGekEMbdaa1hkm7yfZm/tP9mnlz4huWwKVDTWe2EJ5GMKnzmx29Y
-         9qVePHW4+DomyogeQVbo/mW8q4lrllVMsoP921LyBzVnR1wwaSXNSG484gjpoHZCLzKH
-         m3Sp48zQseInaM2fKiAJU8Aio3uf+Na6+PVNZjCvjdkVSXucUkje5/XtdXF+f4AtKFUT
-         UuMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=UY5ssDU7kVTHFhIwvhQ6hKKMcao3Ty+RYxCvRgkoaNE=;
-        b=rI8XZoerFeIRVvDvYX4i+DqV+qoiDzOol1O+VdyaVZNrgc4BQWKURKeLO9WYnivyXt
-         /2sdnqROCCFwohu1jK23sFtr4tk5Cxn9qVSX8xPOzHF6MmYFOghm7JpZf3d+kOh/0QAF
-         zCBuGJ2s7MB2BTxd9TXwnXEvcU29bLRdibU/Qsb6m8T+Zl1LihYVGkPIeCZvo5+AImeE
-         Desnk7Cr+x5SpYt4n42AQqBzyDtCLJy1XYT6BnisIPZIAdHyjd5embrcjIknTyeQrBT2
-         /qCZ0HulSxGgPS1nzS7qDrCHewEl4BnWjtsIzDDSVRxhB5UIRo4L6CTq3r47r3bJqkl0
-         Sp1w==
-X-Gm-Message-State: AOUpUlGlzb4ZV4GX/+Z7TKmNkwbS74dJb3l5q5JIkLY0s4L3frjm5ing
-        SyNvkGYHAKpIDMsZUNoYvWfuFHhilL/8GHrjlKviQuJlgQ==
-X-Google-Smtp-Source: AA+uWPwPOvT9Xqj/zGzXrxHahjz3xlUUja5UIfpbo5GHd1t28TjrI0wqm4uaxNPf5t8Fauyk5jBDHYw2OoP7u1y/VzE=
-X-Received: by 2002:a19:ea5c:: with SMTP id i89-v6mr14365677lfh.19.1534280835672;
- Tue, 14 Aug 2018 14:07:15 -0700 (PDT)
+        Tue, 14 Aug 2018 20:01:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726648AbeHOABe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 20:01:34 -0400
+Received: from gmail.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1BF321723;
+        Tue, 14 Aug 2018 21:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534281152;
+        bh=ZVuNt8pYAOOXAKJRwGDv1EKA/T/jmYLHc7N/KOkYK58=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ucs7vjerpBqsdkEzMZ4trLZW1oGZgjWntrJeAiDwlvhZ5tFlqgBRWqY3kWe14K4JQ
+         JtWCBF7DcMFUlqKUSla1p7ygtOoOT2FuNUV8TKFrqp0EwI4cWKiuw4Y5duz7gUXYoL
+         cQ5OoZ/m53wfovJKpgAOY0zHa02ykZbEYRnxsB6A=
+Date:   Tue, 14 Aug 2018 14:12:31 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        "Daniel J . Bernstein" <djb@cr.yp.to>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+Message-ID: <20180814211229.GB24575@gmail.com>
+References: <20180801072246.GA15677@sol.localdomain>
+ <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 14 Aug 2018 17:07:04 -0400
-Message-ID: <CAHC9VhTC_xMSNq0ZOMN9eJjyfuYSk7_Q0Me2h2=DFJAxQEJpEA@mail.gmail.com>
-Subject: [GIT PULL] Audit patches for v4.19
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1+60 (20b17ca5) (2018-08-02)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Aug 03, 2018 at 04:33:50AM +0200, Jason A. Donenfeld wrote:
+> 
+> > Also, earlier when I tested OpenSSL's ChaCha NEON implementation on ARM
+> > Cortex-A7 it was actually quite a bit slower than the one in the Linux
+> > kernel written by Ard Biesheuvel... I trust that when claiming the
+> > performance of all implementations you're adding is "state-of-the-art
+> > and unrivaled", you actually compared them to the ones already in the
+> > Linux kernel which you're advocating replacing, right? :-)
+> 
+> Yes, I have, and my results don't corroborate your findings. It will
+> be interesting to get out a wider variety of hardware for comparisons.
+> I suspect, also, that if the snarky emoticons subside, AndyP would be
+> very interested in whatever we find and could have interest in
+> improving implementations, should we actually find performance
+> differences.
+> 
 
-Twelve audit patches for v4.19 and they run the full gamut from fixes
-to features.  Notable changes include the ability to use the "exe"
-audit filter field in a wider variety of filter types, a fix for our
-comparison of GID/EGID in audit filter rules, better association of
-related audit records (connecting related audit records together into
-one audit event), and a fix for a potential use-after-free in
-audit_add_watch().
+On ARM Cortex-A7, OpenSSL's ChaCha20 implementation is 13.9 cpb (cycles per
+byte), whereas Linux's is faster: 11.9 cpb.  I've also recently improved the
+Linux implementation to 11.3 cpb and would like to send out a patch soon...
+I've also written a scalar ChaCha20 implementation (no NEON instructions!) that
+is 12.2 cpb on one block at a time on Cortex-A7, taking advantage of the free
+rotates; that would be useful for the single permutation used to compute
+XChaCha's subkey, and also for the ends of messages.
 
-All the patches pass the audit-testsuite and merge cleanly on your
-current master branch.
+The reason Linux's ChaCha20 NEON implementation is faster than OpenSSL's is that
+Linux's does 4 blocks at once using NEON instructions, and the words are
+de-interleaved so the rows don't need to be shifted between each round.
+OpenSSL's implementation, on the other hand, only does 3 blocks at once with
+NEON instructions and has to shift the rows between each round.  OpenSSL's
+implementation also does a 4th block at the same time using regular ARM
+instructions, but that doesn't help on Cortex-A7; it just makes it slower.
 
-Please pull, thanks.
--Paul
---
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40=
-:
+I understand there are tradeoffs, and different implementations can be faster on
+different CPUs.  Just know that from my point of view, switching to the OpenSSL
+implementation actually introduces a performance regression, and we care a *lot*
+about this since we need ChaCha to be absolutely as fast as possible for HPolyC
+disk encryption.  So if your proposal goes in, I'd likely need to write a patch
+to get the old performance back, at least on Cortex-A7...
 
- Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+Also, I don't know whether Andy P. considered the 4xNEON implementation
+technique.  It could even be fastest on other ARM CPUs too, I don't know.
 
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
-   tags/audit-pr-20180814
-
-for you to fetch changes up to baa2a4fdd525c8c4b0f704d20457195b29437839:
-
- audit: fix use-after-free in audit_add_watch (2018-07-18 11:43:36 -0400)
-
-----------------------------------------------------------------
-audit/stable-4.18 PR 20180814
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-     audit: use ktime_get_coarse_ts64() for time access
-
-Ondrej Mosn=C3=A1=C4=8Dek (3):
-     audit: allow other filter list types for AUDIT_EXE
-     audit: Fix extended comparison of GID/EGID
-     cred: conditionally declare groups-related functions
-
-Paul Moore (1):
-     audit: use ktime_get_coarse_real_ts64() for timestamps
-
-Richard Guy Briggs (6):
-     audit: tie SECCOMP records to syscall
-     audit: tie ANOM_ABEND records to syscall
-     audit: rename FILTER_TYPE to FILTER_EXCLUDE
-     audit: eliminate audit_enabled magic number comparison
-     audit: check audit_enabled in audit_tree_log_remove_rule()
-     audit: simplify audit_enabled check in audit_watch_log_rule_change()
-
-Ronny Chevalier (1):
-     audit: fix use-after-free in audit_add_watch
-
-drivers/tty/tty_audit.c      |  2 +-
-include/linux/audit.h        |  5 ++++-
-include/linux/cred.h         | 15 ++++++++++-----
-include/net/xfrm.h           |  2 +-
-include/uapi/linux/audit.h   |  3 ++-
-kernel/audit.c               |  7 ++-----
-kernel/audit_tree.c          |  2 ++
-kernel/audit_watch.c         | 41 ++++++++++++++++++++++++--------------
-kernel/auditfilter.c         | 17 ++++++++++-------
-kernel/auditsc.c             | 14 +++++++-------
-net/netfilter/xt_AUDIT.c     |  2 +-
-net/netlabel/netlabel_user.c |  2 +-
-12 files changed, 67 insertions(+), 45 deletions(-)
-
---
-paul moore
-www.paul-moore.com
+- Eric
