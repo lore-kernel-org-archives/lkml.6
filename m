@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE15C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EB4C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC64216F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:38:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3636321725
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:38:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuajaJvr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC64216F9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHFb8C4v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3636321725
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732564AbeHOB1r (ORCPT
+        id S1732614AbeHOB1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 21:27:47 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42095 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732444AbeHOB1q (ORCPT
+        Tue, 14 Aug 2018 21:27:49 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36285 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732444AbeHOB1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 21:27:46 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so9878258pff.9;
-        Tue, 14 Aug 2018 15:38:26 -0700 (PDT)
+        Tue, 14 Aug 2018 21:27:48 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b11-v6so9886038pfo.3;
+        Tue, 14 Aug 2018 15:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sQyQ6AmHQWYN4xS2QhlHOblSHuntwiGA/VJq5hmO1sM=;
-        b=HuajaJvrbVe2EwHow/DMfUlWQLEJJVDmroJiuNnKiWNC7mPezXpjhXArVar1BULACK
-         2qjF6VGCmZdES0rKPvNwGKniJVa3UkUg69G7l0/3DsLLEexR7/H+JYtMEjw3FOg40ceF
-         afrMuLSIdYX7iEhVOQndo1xjMJBAT4bTQSKONrObvc+3J7DIwtS8QtpEJJ8dXij5NiLr
-         Eop+Md0DisDBYFlCHU4WCs1m544CfOGHGg/pE3QAXVls3IrAowC9CIhSJVERGK2euFb/
-         KOY34wTfH04pB70zOGbKQqZ61bg+hKa06crAjg+s9zod4TyjggvNM01BXNhfcprFI1FB
-         6JZw==
+        bh=1S3Q2HduRfgv16zyLwtzecCilYYeGDNY+o6QuvkJX4s=;
+        b=QHFb8C4vevmx6fPUoAyBRI4FrK9DXpK875J2C94qZbXDd4I2EbkyM9SMmjxNMttOnx
+         dodAzsGoBx3DY3StiMBX2/cfvQSYah2P/6MZYtFFYJ0ScB+1NBZvPa172LGTPDc+ITEf
+         +ScaEnrvZ8ZQBQS3rFK/Cx/FGB5nl8eZyUnV+asNYVz89xj3V63Mf3hJdRY6LgYTc9dW
+         5IgEjXNL08P+SMoUlmT8eScNf0shNoOm1IJeI5wwT5bB4VfYdRxGWrlcyOHphgJNJXGB
+         LtADp25a3SV7d3xhiSGbx2Ie7FnAyJaScxZQDzIBKQiNZBrj2NZMvrT9HNprvjJCAmmt
+         b7jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sQyQ6AmHQWYN4xS2QhlHOblSHuntwiGA/VJq5hmO1sM=;
-        b=jGxgfYZKJ2iJlQ9RqH8ON+rC2MV9w1q4x/cnYdbr1WnZWJYatRtw3Bs7cCc9M7t5rl
-         t30sqMjU7MwyR36mAr0HkZ9/8nn4t0EB8+UUyf75/p+YyjqUxLPBWldpXUiXVNrYILNh
-         +MGO/Ho3bSbA/7m5G0MOKTPh4/Dt1VB/cKkhnezFBcrMmeSfPjVpc+jREyFgVgqJSWib
-         Zh1WBvCuYMdDfuI5JEQ8vEoHOfjcuVASZQG1vG4wBzQZ8Lk+MllBn8UAHPsWqkK1FGl9
-         Iel2CjEl9VzVPE0Glzyu/TNMs5BcFVmxlqPetndxpHHCw8CnUqNmEZlDp3uL15sLVO6j
-         /AEA==
-X-Gm-Message-State: AOUpUlG2U5qAx6iQRCpUXuiJ/a1psMUixMysEtBDcZcYvgdt7fRmwQ4y
-        CllGJzgDBAAzWdkiLe+U/6qdNNbz
-X-Google-Smtp-Source: AA+uWPyHr6woUqZXbqKthDGa7nhpt+XyB4C5H1T1stEObgyk5OnIJBk9MfqK32F5iRmixMvWNcNeSw==
-X-Received: by 2002:a63:9e0a:: with SMTP id s10-v6mr22609662pgd.326.1534286306345;
-        Tue, 14 Aug 2018 15:38:26 -0700 (PDT)
+        bh=1S3Q2HduRfgv16zyLwtzecCilYYeGDNY+o6QuvkJX4s=;
+        b=kLrv9vx0bB3yfwKWS3/aNnobv5cX52ZcqPe8oHKKf5AJadbqlDaIg0KWxnu/eCme+3
+         c8JkUQYRnY8gwRXrqQm/h4ZMicw5J4jSZwXX9ggZ4xa63dotQJurtEACC00Ke8rKPEd8
+         Mo2jfBJ57jGiRk8JZliv5OfVxxu2uoMxwMjE4v9bV2OK9Hj8O1uSeGoeWjbrGp5A9lKH
+         iTaVq1JYLqGGQYUBRI/QyYFMxA/wJMa39fekUTD+4bLUCGFznXa3IVgyfRCDJHzUyb9/
+         Ka3QAX9SKJmM/2lQCDNeJdDpaTExi7TvoKV1HhVf+n6Q6GiRrLTisIOuaLtUdz2M/8w6
+         rnRg==
+X-Gm-Message-State: AOUpUlEyf/XfJQPvXgT4tH44QxB0md5UwSlSrYdmeukAx8zx2/5kncmW
+        ppawlgVk3eQdoRoCAMYvHVA=
+X-Google-Smtp-Source: AA+uWPyNX/dXbFi0dVSDKZRiXjBozvAy3M2NEqSf1lprGR6PPwF/jZZkBhQ6iBsyoC8B1Rty7ODbng==
+X-Received: by 2002:a63:1c13:: with SMTP id c19-v6mr22898720pgc.332.1534286308205;
+        Tue, 14 Aug 2018 15:38:28 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id e126-v6sm48420948pfg.31.2018.08.14.15.38.24
+        by smtp.gmail.com with ESMTPSA id e126-v6sm48420948pfg.31.2018.08.14.15.38.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 15:38:25 -0700 (PDT)
+        Tue, 14 Aug 2018 15:38:26 -0700 (PDT)
 From:   Brian Norris <computersforpeace@gmail.com>
 X-Google-Original-From: Brian Norris <briannorris@chromium.org>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -72,9 +72,9 @@ Cc:     Andrew Lunn <andrew@lunn.ch>,
         Julius Werner <jwerner@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Brian Norris <briannorris@chromium.org>
-Subject: [RFC PATCH v1 1/3] dt-bindings: net: Add 'mac-address-lookup' property
-Date:   Tue, 14 Aug 2018 15:37:56 -0700
-Message-Id: <20180814223758.117433-2-briannorris@chromium.org>
+Subject: [RFC PATCH v1 2/3] device property: Support complex MAC address lookup
+Date:   Tue, 14 Aug 2018 15:37:57 -0700
+Message-Id: <20180814223758.117433-3-briannorris@chromium.org>
 X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
 In-Reply-To: <20180814223758.117433-1-briannorris@chromium.org>
 References: <20180814223758.117433-1-briannorris@chromium.org>
@@ -85,58 +85,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some firmwares present data tables that can be parsed to retrieve
-device-specific details, like MAC addresses. While in some cases, one
-could teach the firmware to understand the device tree format and insert
-a 'mac-address'/'local-mac-address' property into the FDT on its own,
-this method can be brittle (e.g., involving memorizing expected FDT
-structure), and it's not strictly necessary -- especially when parsers
-for such firmware formats are already needed in the OS for other
-reasons.
+Some firmwares include data tables that can be used to derive a MAC
+address for devices on the system, but those firmwares don't directly
+stash the MAC address in a device property. Support having other drivers
+register lookup functions, where the device property contains
+"<format>:<key>" strings; a lookup driver can register support for
+handling "<format>", and "<key>" can be used by the format parser to
+identify which MAC address is being requested.
 
-One such format: the Vital Product Data (VPD) [1] used by Coreboot. It
-supports a table of key/value pairs, and some systems keep MAC addresses
-there in a well-known format. Allow a device tree to specify
-  (1) that the MAC address for a given device is stored in the VPD table
-      and
-  (2) what key should be used to retrieve the MAC address for said
-      device (e.g., "ethernet_mac0" or "wifi_mac1").
+This is particularly useful for the Google Vital Product Data (VPD)
+format [1], which holds various product-specific key/value pairs, often
+stashed in the boot flash.
 
 [1] Ref:
 https://chromium.googlesource.com/chromiumos/platform/vpd/+/master/README.md
-TL;DR: VPD consists of a TLV-like table, with key/value pairs of
-strings. This is often stored persistently on the boot flash and
-presented via in-memory Coreboot tables, for the operating system to
-read.
 
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- Documentation/devicetree/bindings/net/ethernet.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/base/property.c  | 83 +++++++++++++++++++++++++++++++++++++++-
+ include/linux/property.h | 23 +++++++++++
+ 2 files changed, 104 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
-index cfc376bc977a..d3fd1da18bf4 100644
---- a/Documentation/devicetree/bindings/net/ethernet.txt
-+++ b/Documentation/devicetree/bindings/net/ethernet.txt
-@@ -4,6 +4,18 @@ NOTE: All 'phy*' properties documented below are Ethernet specific. For the
- generic PHY 'phys' property, see
- Documentation/devicetree/bindings/phy/phy-bindings.txt.
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index 240ab5230ff6..fae3390fc56c 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -10,6 +10,7 @@
+ #include <linux/acpi.h>
+ #include <linux/export.h>
+ #include <linux/kernel.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_graph.h>
+@@ -1264,6 +1265,78 @@ static void *fwnode_get_mac_addr(struct fwnode_handle *fwnode,
+ 	return NULL;
+ }
  
-+- mac-address-lookup: string, indicating a method by which a MAC address may be
-+  discovered for this device. Methods may be parameterized by some value, such
-+  that the method can determine the device's MAC address using that parameter.
-+  For example, a firmware might store MAC addresses in a table, keyed by some
-+  predetermined string, and baked in read-only flash. A lookup method "foo"
-+  with a parameter "bar" should be written "foo:bar".
-+  Supported values for method:
-+    "google-vpd" - Google's Vital Product Data (VPD), as used in the Coreboot
-+      project. Documentation for VPD can be found at:
-+        https://chromium.googlesource.com/chromiumos/platform/vpd/+/master/README.md
-+  Example:
-+    mac-address-lookup = "google-vpd:ethernet_mac0"
- - local-mac-address: array of 6 bytes, specifies the MAC address that was
-   assigned to the network device;
- - mac-address: array of 6 bytes, specifies the MAC address that was last used by
++static LIST_HEAD(mac_addr_providers);
++static DEFINE_MUTEX(mac_addr_providers_mutex);
++
++void device_register_mac_addr_provider(struct device_mac_addr_provider *prov)
++{
++	mutex_lock(&mac_addr_providers_mutex);
++	list_add(&prov->entry, &mac_addr_providers);
++	mutex_unlock(&mac_addr_providers_mutex);
++}
++EXPORT_SYMBOL(device_register_mac_addr_provider);
++
++void device_unregister_mac_addr_provider(struct device_mac_addr_provider *prov)
++{
++	struct device_mac_addr_provider *p;
++
++	mutex_lock(&mac_addr_providers_mutex);
++	list_for_each_entry(p, &mac_addr_providers, entry) {
++		if (p == prov) {
++			list_del(&p->entry);
++			goto out;
++		}
++	}
++
++out:
++	mutex_unlock(&mac_addr_providers_mutex);
++}
++EXPORT_SYMBOL(device_unregister_mac_addr_provider);
++
++static void *fwnode_lookup_mac_addr(struct fwnode_handle *fwnode,
++				    char *addr, int alen)
++{
++	struct device_mac_addr_provider *prov;
++	const char *prop, *sep;
++	u8 mac[ETH_ALEN];
++	int ret;
++
++	ret = fwnode_property_read_string(fwnode, "mac-address-lookup", &prop);
++	if (ret)
++		return NULL;
++
++	sep = strchr(prop, ':');
++	if (!sep)
++		return NULL;
++
++	if (alen != ETH_ALEN)
++		return NULL;
++
++	mutex_lock(&mac_addr_providers_mutex);
++	list_for_each_entry(prov, &mac_addr_providers, entry) {
++		if (strncmp(prov->prefix, prop, strlen(prov->prefix)))
++			continue;
++
++		if (prop + strlen(prov->prefix) != sep)
++			continue;
++
++		ret = prov->lookup(sep + 1, mac);
++		if (ret)
++			continue;
++
++		if (!is_valid_ether_addr(mac))
++			continue;
++
++		ether_addr_copy(addr, mac);
++
++		mutex_unlock(&mac_addr_providers_mutex);
++		return addr;
++	}
++	mutex_unlock(&mac_addr_providers_mutex);
++
++	return NULL;
++}
++
+ /**
+  * fwnode_get_mac_address - Get the MAC from the firmware node
+  * @fwnode:	Pointer to the firmware node
+@@ -1274,7 +1347,9 @@ static void *fwnode_get_mac_addr(struct fwnode_handle *fwnode,
+  * checked first, because that is supposed to contain to "most recent" MAC
+  * address. If that isn't set, then 'local-mac-address' is checked next,
+  * because that is the default address.  If that isn't set, then the obsolete
+- * 'address' is checked, just in case we're using an old device tree.
++ * 'address' is checked, just in case we're using an old device tree.  And
++ * finally, we check for a method of indirect MAC address lookup, via
++ * 'mac-address-lookup'.
+  *
+  * Note that the 'address' property is supposed to contain a virtual address of
+  * the register set, but some DTS files have redefined that property to be the
+@@ -1299,7 +1374,11 @@ void *fwnode_get_mac_address(struct fwnode_handle *fwnode, char *addr, int alen)
+ 	if (res)
+ 		return res;
+ 
+-	return fwnode_get_mac_addr(fwnode, "address", addr, alen);
++	res = fwnode_get_mac_addr(fwnode, "address", addr, alen);
++	if (res)
++		return res;
++
++	return fwnode_lookup_mac_addr(fwnode, addr, alen);
+ }
+ EXPORT_SYMBOL(fwnode_get_mac_address);
+ 
+diff --git a/include/linux/property.h b/include/linux/property.h
+index ac8a1ebc4c1b..aca5dbb51e19 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -14,6 +14,7 @@
+ #define _LINUX_PROPERTY_H_
+ 
+ #include <linux/fwnode.h>
++#include <linux/list.h>
+ #include <linux/types.h>
+ 
+ struct device;
+@@ -285,6 +286,28 @@ const void *device_get_match_data(struct device *dev);
+ 
+ int device_get_phy_mode(struct device *dev);
+ 
++/**
++ * struct device_mac_addr_provider - MAC address provider
++ *
++ * Provide methods by which the rest of the kernel can retrieve MAC addresses,
++ * e.g., from a firmware table.
++ *
++ * @entry: list head, for keeping track of all providers
++ * @prefix: string which uniquely identifies the provider
++ * @lookup: Look up a MAC address by key. The provider may associate this @key
++ *	with a stored MAC address; if a match is found, the provider copies the
++ *	associated MAC address to @mac. If not found, a non-zero error code is
++ *	returned.
++ */
++struct device_mac_addr_provider {
++	struct list_head entry;
++	const char *prefix;
++	int (*lookup)(const char *key, u8 *mac);
++};
++
++void device_register_mac_addr_provider(struct device_mac_addr_provider *prov);
++void device_unregister_mac_addr_provider(struct device_mac_addr_provider *prov);
++
+ void *device_get_mac_address(struct device *dev, char *addr, int alen);
+ 
+ int fwnode_get_phy_mode(struct fwnode_handle *fwnode);
 -- 
 2.18.0.865.gffc8e1a3cd6-goog
 
