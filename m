@@ -2,117 +2,227 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D431C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E03C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F021216FE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 045602170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:56:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NwYADPIr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F021216FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ct3+BZww"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045602170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbeHOCju (ORCPT
+        id S1727881AbeHOCqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:39:50 -0400
-Received: from sonic303-29.consmr.mail.gq1.yahoo.com ([98.137.64.210]:35767
-        "EHLO sonic303-29.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727854AbeHOCju (ORCPT
+        Tue, 14 Aug 2018 22:46:21 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36400 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbeHOCqV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:39:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1534290616; bh=Q5ueiMz8B20u2Ep3Bb8PK52De67dhT4pLva/afp2GIs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=NwYADPIrb40i3Wl1OzYqXHb7FXfDKCi2KX1G6eb6H1Kgl9JyqWknfqXvSA6K/6IQ+7vcmJAA1T0Vso9PXeBlzMB1mT5Pavmvz5eHXRgvXSfUgpXHfWChgf31Mje1o4MO6DWgS5Gf1oTrHBhVlPgpStH9W68L8b4g0JDrc6TNRGWPRlRmIljR30Gj7bpZs9i8qRu+TVGGJnLA1v+pZR+PjLJmZ/o6RVIC/gOVkJI1Hl/w+Sf4F2vEVR6OaD8Ea1wBQnPj+x/founQSOmhCFAOpySAyr30WnsrpLU0tLWfCx9pcWbN9AB5S2giNr9XrU8atPNfp4g0s6G8P0griE2d2A==
-X-YMail-OSG: lkeuAUoVM1lw.oZzTtX7r2bZszenz6AswDKbEE2A4ffUXkSJsYUJOUUJMKE0WFo
- LMLFbVWR50oRVzEi8agqw4_VhSz9Xrt_VFY4Hxmkoi9Ah1OAuYHbK.WzV4cBryATQFGhMki_zHPG
- 5KOsvZv1tB5lnRKFCgNTmXiE2v8INGkMW9vuoc4OyoiwTsicGyETv7Zqim1LogYxAsyKY4V_AwWI
- JCsMv4oFRdk6Ylh66sFxl3jQHxEjm32n79Rt4Csn6ILVqNoZXqWtlq7B2ig7QdAWWennwMvUA15n
- 4DNdQUzJ7dwALtu7Rt.RiT4LCReLpJmVSse_ftThT2sBekd1nOqryI1Ngy.E0JnnFxBIeaCuor5i
- t9nlfgcjZEBZIJr3qBq92l_lt7pSyVqSl_KaBWSnn.xcfmPPsPWncp5EJGA1gRoIVtCB6Ue26Mvp
- 1ZSAU6HKoEcLrRq2HRpinI4mElq1f7FE1hduItCiKzF_oMjyt5raEcg2RrYzdqmHBgseIxrOGlhB
- 8SM_iKSsmxYHaH6OR.YUVEZl.JPdYitTyab4pvPCipKB1C8oXYVfFgbWF16OsJK1yb00fd0htCxG
- ij5eXHwY_JRSCh08MPEe6crBcTxQ7WqsKUE6OnrKV2EuFyoy5lMhMoFcp3KwgKYBgZR7RAOiMRjc
- ugl2SIUuZUlqPaz3MRuwcBT6lMb4UiiaCkLtQW42fOy1QQVcEjy0G8WsGXGVOd5HLKkUIk65bGYP
- XcsOXB56hB_euJ1eBm_YOm4p_XXsFZ8YfI7VCoP.KtL_y_rY5dlV38QrAH8a2VHrSoDpAuiy2Uvx
- Pt5QCUiKNnv83kw.GWgt1Fqp3absQ_9TqxmGdfvNaZtvYqFOHv4yj090lFnklQsS8j40jE7xwytR
- Ex8rt9ASmDbIqCR6O1N4pKVtSGtyTz38DlBUjEeCYo8sh_MKN_3PdWb2kqo.Q0SDlH41MMbmwrd5
- tUfE62fZGq8fLzUgEKMED86sv4Idl2QsdfUq_H.10J.DR0OI9aC9zkTfHojvmR_HlPhi60qBvLiD
- UMuNRfs3ZEJx1P0fDCZvGGWpxs2z6hA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.gq1.yahoo.com with HTTP; Tue, 14 Aug 2018 23:50:16 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp427.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 254696bb2964527cfb3116650c9b2a8a;
-          Tue, 14 Aug 2018 23:50:13 +0000 (UTC)
-Subject: Re: [PATCH v1 00/22] LSM: Full security module stacking
-To:     Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
- <CAMp4zn94SzqK_Q=de2E+Fpv5yeAhYv62XW-KU3=ghRma9d7Jvw@mail.gmail.com>
- <a287800e-bd4d-2b99-8c4c-bd61ba87fab1@schaufler-ca.com>
- <kubjHWMWfFDu8Rk19x79iMDKVbewTUMWwSjOA7vFGIbYsWYcGb50jb-Z-PSXxmcby3ZFMZWi0HCeuFgo3F8BRskxo_JUdSHFhdIsIlBxHyQ=@protonmail.ch>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8e2bdc10-3142-9e8d-ff05-70fa4d862dd5@schaufler-ca.com>
-Date:   Tue, 14 Aug 2018 16:50:11 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 14 Aug 2018 22:46:21 -0400
+Received: by mail-ua1-f66.google.com with SMTP id c12-v6so15140293uan.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=UwJfCvGdbdWxYL3wU4DcmdEjvgZoWaRoeF6+kLsy9iY=;
+        b=ct3+BZwwAQr2glyteG4aBUAdpv5VfgPsugOf2g/8zU4D3OHH8xayFD7j6CScHomDM/
+         4xtJBfiWmQ0r1S63uadp3LOjKK21s9XR3Kr9CQwFYzYQY2S2r0OQg60F3v9W0ir0tOA9
+         kgCe+/D+Jhen8pHn8lsy0/GulS953CdngVYOM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=UwJfCvGdbdWxYL3wU4DcmdEjvgZoWaRoeF6+kLsy9iY=;
+        b=JniOmOKROdHX1aMYDXCiYXF9/+43A6yEbjE/Gpw+6VZjsg3g4QysGsg35UxwP4hEp9
+         TqzndPMUQSOMrRi5y7c6oHDetaHh/UOp4Y5rWzBvE37VbTJE6CQ2mXdeLsR+ASwFC+jQ
+         qheSthyrOPqR7Gdo3E4Rd1L+WvN+ss1rit4fnVYtmlzpe9bajWcpJG/4brC6MwzrZ8ni
+         9zpG9lCfgdvFZ/LyZP+8Z+R4pntjpYcWGCe2IwiU73dvy6kkF9nXnuk2Ubo8h2gr8CEu
+         7PaSkt35SMqDyIdl2E73dq5KqVF1ZFs7EMO6ZojtUML0qwrz+WR1cqlIA8S/KVgQbqvF
+         PYNw==
+X-Gm-Message-State: AOUpUlG9R1wJhrnUGXhvtuNg/9UIMIgW6R/MJRjTSwWCC7go3mrIhE0U
+        2kpJka2r58dV8U9BLilg9nMlWKxdXYM=
+X-Google-Smtp-Source: AA+uWPzRRagfo7hb82o+CeJWM2+QPkWipI8U2954XB4Pk79cfrQwIGFdRRQdKdB0jpmxQN43aDouMg==
+X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr15657567uae.72.1534291005043;
+        Tue, 14 Aug 2018 16:56:45 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id b132-v6sm4428368vke.10.2018.08.14.16.56.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 16:56:43 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id f4-v6so15167453uao.10
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:56:43 -0700 (PDT)
+X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr15638743uac.191.1534291003197;
+ Tue, 14 Aug 2018 16:56:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <kubjHWMWfFDu8Rk19x79iMDKVbewTUMWwSjOA7vFGIbYsWYcGb50jb-Z-PSXxmcby3ZFMZWi0HCeuFgo3F8BRskxo_JUdSHFhdIsIlBxHyQ=@protonmail.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 16:56:42 -0700 (PDT)
+In-Reply-To: <aa2bd1f6-74b4-a63b-d115-88d6e16ed95d@codeaurora.org>
+References: <20180814170617.100087-1-dianders@chromium.org>
+ <20180814170617.100087-2-dianders@chromium.org> <bf70f01d-41ac-dcdc-b503-5e0eb1e70329@codeaurora.org>
+ <CAD=FV=VNCOyyq5+xvSudTmtBgPm4-s7gj7GRCvuL5vSmA6yDVA@mail.gmail.com> <aa2bd1f6-74b4-a63b-d115-88d6e16ed95d@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 14 Aug 2018 16:56:42 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WBw2SKgPq8Atb+SkziUku8p7N4GWemHYZZvoMSE0bK9g@mail.gmail.com>
+Message-ID: <CAD=FV=WBw2SKgPq8Atb+SkziUku8p7N4GWemHYZZvoMSE0bK9g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] regulator: core: If consumers don't call
+ regulator_set_load() assume max
+To:     David Collins <collinsd@codeaurora.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/2018 4:22 PM, Jordan Glover wrote:
-> On August 14, 2018 8:28 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+Hi,
+
+On Tue, Aug 14, 2018 at 2:59 PM, David Collins <collinsd@codeaurora.org> wrote:
+> Hi,
 >
+> On 08/14/2018 01:03 PM, Doug Anderson wrote:
+>> On Tue, Aug 14, 2018 at 11:30 AM, David Collins <collinsd@codeaurora.org> wrote:>>> --- a/drivers/regulator/core.c
+>>>> +++ b/drivers/regulator/core.c
+>>>> @@ -732,6 +732,7 @@ static int drms_uA_update(struct regulator_dev *rdev)
+>>>>       struct regulator *sibling;
+>>>>       int current_uA = 0, output_uV, input_uV, err;
+>>>>       unsigned int mode;
+>>>> +     bool any_unset = false;
+>>>>
+>>>>       lockdep_assert_held_once(&rdev->mutex);
+>>>>
+>>>> @@ -751,11 +752,17 @@ static int drms_uA_update(struct regulator_dev *rdev)
+>>>>               return -EINVAL;
+>>>>
+>>>>       /* calc total requested load */
+>>>> -     list_for_each_entry(sibling, &rdev->consumer_list, list)
+>>>> +     list_for_each_entry(sibling, &rdev->consumer_list, list) {
+>>>>               current_uA += sibling->uA_load;
+>>>> +             if (!sibling->uA_load_set)
+>>>> +                     any_unset = true;
+>>>> +     }
+>>>>
+>>>>       current_uA += rdev->constraints->system_load;
+>>>>
+>>>> +     if (any_unset)
+>>>> +             current_uA = INT_MAX;
+>>>> +
+>>>
+>>> This check will incorrectly result in a constant load request of INT_MAX
+>>> for all regulators that have at least one child regulator.  This is the
+>>> case because such child regulators are present in rdev->consumer_list and
+>>> because regulator_set_load() requests are not propagated up to parent
+>>> regulators.  Thus, the regulator structs for child regulators will always
+>>> have uA_load==0 and uA_load_set==false.
 >>
->>>> The blob management part (through "LSM: Sharing of security blobs")
->>>> is ready for prime-time. These changes move the management of
->>>> security blobs out of the security modules and into the security
->>>> module infrastructure. With this change the proposed S.A.R.A,
->>>> LandLock and PTAGS security modules could co-exist with any of
->>>> the existing "major" security modules. The changes reduce some
->>>> code duplication.
->>>> Beyond the blob management there's a bit of clean-up.
->>>> Mounting filesystems had to be changed so that options
->>>> a security module doesn't recognize won't be considered
->>>> a fatal error. The mount infrastructure is somewhat
->>>> more complex than one might assume.
->>> Casey,
->>> Do you think you can break out 1 into its own patch? It seems like
->>> that'd be valuable to everyone.
->> Yes, I think that is a good idea. Landlock, S.A.R.A. and a couple
->> other security modules could be added upstream if this part of the
->> work was available. It would not provide everything needed to stack
->> all the existing modules. I believe there is concern that if this
->> much went upstream the work on finishing what's required to make
->> everything work might be abandoned.
+>> Ah, interesting.
 >>
-> On the other hand there is concern that those security modules might
-> be abandoned if they have to wait until everything is finished :)
+>> ...but doesn't this same bug exist anyway, just in the opposite
+>> direction?  Without my patch we'll try to request a 0 mA load in this
+>> case which seems just as wrong (or perhaps worse?).  I guess on RPMh
+>> regulator you're "saved" because the RPMh hardware itself knows the
+>> parent/child relationship and knows to ignore this 0 mA load, but it's
+>> still a bug in the overall Linux framework...
+>
+> I'm not sure what existing bug you are referring to here.  Where is a 0 mA
+> load being requested?  Could you list the consumer function calls and the
+> behavior on the framework side that you're envisioning?
 
-There is some truth to that. If we can get commitment from the developers
-of those security module to push for getting upstream, a statement of
-intent to support additional modules (e.g. Landlock, S.A.R.A.) from a
-significant distribution (e.g. Fedora, Ubuntu, SuSE) and ACKs from the
-maintainers of the existing modules we should be able to breeze right in.
+Imagine you've got a tree like this:
 
-Yeah, I think that's about all it would take.
+- regulatorParent (1.8 V)
+  - regulatorChildA (1.7 V)
+  - regulatorChildB (1.2 V)
+  - regulatorChildC (1.5 V)
 
+...and this set of calls:
+
+regulator_set_load(regulatorChildA, 1000);
+regulator_set_load(regulatorChildB, 2000);
+regulator_set_load(regulatorChildC, 3000);
+
+regulator_enable(regulatorChildA);
+regulator_enable(regulatorChildB);
+regulator_enable(regulatorChildC);
+
+
+With the existing code in Mark's tree then ChildA / ChildB / ChildC
+will presumably have a load high enough to be in high power mode.
+However, as you said, loads aren't propagated.  ...so "Parent" will
+see no load requested (which translates to a load request of 0 mA).
+
+The "bug" is that when you did the
+"regulator_enable(regulatorChildA);" then that will propagate up and
+cause a "regulator_enable(regulatorParent)".  In _regulator_enable()
+you can see drms_uA_update().  That will cause it to set the mode of
+regulatorParent based on a load of 0 mA.  That is the bug.  You may
+respond "but REGULATOR_CHANGE_DRMS isn't set for the parent!  See
+below and for now imagine that REGULATOR_CHANGE_DRMS _is_ set for the
+parent.
+
+With my code in the same situation the parent will end up with a load
+of "MAX_INT" mA which I think is the bug you pointed out.  ...while it
+would be good to fix this it does seem to be better to set the parent
+to a mode based on MAX_INT mA rather than 0 mA?
+
+
+> The RPMh hardware never sees requests with units of mA (though its
+> predecessor RPM SMD did).  Instead, mode requests sent to RPMh are raw
+> PMIC MODE_CTL register values.  RPMh then applies max aggregation of these
+> register values across masters (APPS, modem, etc).  Also note that the
+> RPMh knowledge of parent/child relationships is only utilized in enable
+> control and voltage headroom management.  It does not apply to mode control.
+
+Yeah, I know RPMh only sees modes.  I was sorta assuming that perhaps
+RPMh would use its parent/child relationship knowledge to say that if
+a child is in HPM then the parent should automatically go to HPM.
+
+...but as I dug further I figured out why we're not running into this
+bug (at least with the regulator setup I have in my tree).  All of the
+"parent" regulators are always configured such that
+"REGULATOR_CHANGE_DRMS" is not valid.  Thus we never end up calling
+into drms_uA_update() and never update the mode.
+
+
+So tl;dr: your original comment was that my patch had problems
+whenever one regulator is the supply for another regulator if parent
+has REGULATOR_CHANGE_DRMS set.  I believe I have shown that even
+without my patch we have problems in this exact same case.
+
+
+>> I have no idea how we ought to propagate regulator_set_load() to
+>> parents though.  That seems like a tough thing to try to handle
+>> automagically.
+>
+> I attempted it seven years ago with two revisions of a patch series [1]
+> and [2].  The feature wasn't completed though.  Perhaps something along
+> the same lines could be reintroduced now that child regulators are handled
+> the same way as ordinary consumers within the regulator framework.
+>
+> Thanks,
+> David
+>
+> [1]: https://lkml.org/lkml/2011/3/28/246
+> [2]: https://lkml.org/lkml/2011/3/28/530
+
+Thanks for the links.  My first instinct is just what Mark said there:
+you can't really take the child load and map it accurately to a parent
+load without loads of per-device complexity and even then you'd
+probably get nothing more than an approximation.
+
+IMO about the best we could hope to do would be to map "mode" from
+children to parent.  AKA: perhaps you could assume that if a child is
+in a higher power mode that perhaps a parent should be too?
+
+
+-Doug
