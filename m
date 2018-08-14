@@ -2,100 +2,109 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEFFC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CE2C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C78421580
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:09:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gpp+iCxs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C78421580
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 0217F2172F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:09:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0217F2172F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbeHNT5H (ORCPT
+        id S2387407AbeHNT5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:57:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36186 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732943AbeHNT5H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:57:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b11-v6so9524620pfo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 10:09:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jbRiNxZkbIrZ/z7fZTlRssSrruv1bogmFLMZIy3U9gA=;
-        b=Gpp+iCxsvLRVUgOKbQzRfm1z64z3T4I3+36TKI8EoxoP8z1LX+yXHvgkmXijuuUC/G
-         yXJOyW+m8vJP2bgKXZ6qZFiO1hJETXKR0bP2s+9dPPqG4Wht+Jaz97QltReraDTWifjJ
-         qa1xz/aN/yjTvOoWqIbBdOUYk+6aezFT0skrYHbaOcrYk4V9GODLmDRUUfv9k0c64jBb
-         DyNVrrC8eQqqW9RjjrO7o3v62MVqwLbG1lVwFfxI1CTByFz33eG5KITyrX8Y+gLg72DZ
-         svQrQ0tNwjFOP+oc13TD3eFb5thavpDCC8a3fL1OD4iUyjQm1B/vK5av555WF3QkHgwE
-         2a7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=jbRiNxZkbIrZ/z7fZTlRssSrruv1bogmFLMZIy3U9gA=;
-        b=IoDr+a8FwgsSfoxc6PSfh5INkt+Cgo9ehUVUOAllOB9RbvEXNeFNhqNdVLSsGN+ssO
-         EN6o2dHgp9d4x0X0bNKKAgvI4CZJUuGF1mMzCa847/MA4/S3adCp2pOJ5zQCcOLjaK6n
-         Z/ndF+TTUphmT9O2JMs3YGRMRgdU/L+4EidCXBWayFDVH6M/bVIwPRFrLXMwEeHBuiRE
-         CjV8onQTxYbQFDuRKL+yDfRyuSRsS60u/PCswaw0h9xP48UK4u2qAYanMt+M6c+s2Ifg
-         FQLZlGeq7FKNAf6XJ7YId3X75PVze99ENFB9ZEYHfAAGKRjNQ64LrFzTGcMBZ0+2+tls
-         hToA==
-X-Gm-Message-State: AOUpUlF6kBN+mPqiovuv7xprTsohAQck+pSFKMA5/T9GtoUw3WUwPKWc
-        CllbCJFKFHfw14jhpfdGYYRNefLh
-X-Google-Smtp-Source: AA+uWPxaUCrPO3AjHd6g2Colfzg/BHrxFWWw7wWXfZKRAqpKkMN3s84J3m5DcOYdMDCshCQUVMH5Uw==
-X-Received: by 2002:a63:ef10:: with SMTP id u16-v6mr22249385pgh.269.1534266546448;
-        Tue, 14 Aug 2018 10:09:06 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm69685282pfa.173.2018.08.14.10.09.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 10:09:05 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 10:09:04 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     Rik van Riel <riel@surriel.com>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Build failures with gcc 4.5 and older
-Message-ID: <20180814170904.GA12768@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 14 Aug 2018 15:57:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46340 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732943AbeHNT5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:57:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B98A18A;
+        Tue, 14 Aug 2018 10:09:12 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C1233F5BD;
+        Tue, 14 Aug 2018 10:09:11 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 12:09:10 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
+        linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+Message-Id: <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+In-Reply-To: <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+        <20180813124642.3d49c082a95fc294d926016e@arm.com>
+        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 14 Aug 2018 10:15:56 -0600
+Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
 
-Since commit c1a2f7f0c0645 ("mm: Allocate the mm_cpumask
-(mm->cpu_bitmap[]) dynamically based on nr_cpu_ids"), building
-the Linux kernel with gcc version 4.5 and older fails as follows.
+> On Mon, 13 Aug 2018 at 11:46, Kim Phillips <kim.phillips@arm.com> wrote:
+> > It yields success for the --per-thread case..:
+> >
+> > $ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ --per-thread uname -a
+> > Linux juno 4.18.0-rc8-00011-gb82af52c4b35-dirty #147 SMP PREEMPT Thu Aug 9 11:20:37 CDT 2018 aarch64 GNU/Linux
+> > [ perf record: Woken up 0 times to write data ]
+> > Warning:
+> > AUX data lost 1 times out of 2!
+> >
+> > [ perf record: Captured and wrote 0.067 MB perf.data ]
+> > $
+> >
+> > ..but not for CPU-wide?:
+> >
+> > $ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ uname -a
+> > failed to mmap with 12 (Cannot allocate memory)
+> > $ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ -C 0 uname -a
+> > failed to mmap with 12 (Cannot allocate memory)
+> > $
+> 
+> This patchset is getting very old and a fair amount of things have
+> changed since then.  I'm hoping to be coming out with a new one
+> shortly.  Nonetheless the above is returning an error in CPU-wide
+> scenarios while the feature is being implemented.  Isn't what you
+> requested or have I misunderstood your comment?
 
-In file included from ./include/linux/mm.h:17:0,
-                 from ./include/linux/pid_namespace.h:7,
-		 from ./include/linux/ptrace.h:10,
-		 from arch/openrisc/kernel/asm-offsets.c:32:
-./include/linux/mm_types.h:497:16: error: flexible array member in otherwise empty struct
+No, sigh, I just automatically assumed the patchset would include
+CPU-wide support again.  If it were being done that way, we'd all know
+that the feature(s) this patchset adds would be doing the right thing
+for that purpose, guaranteed.
 
-This is just an example with gcc 4.5.1 for or32. I have seen the problem
-with gcc 4.4 (for unicore32) as well.
-
-Does that mean that gcc 4.5 and older are now officially no longer
-supported for compiling the kernel ?
-
-If so, would it make sense to update include/linux/compiler-gcc.h
-accordingly ?
+The other thing that's going on here is that I'm becoming numb to the
+loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+returned no matter what the error is/was.  E.g., an error that would
+indicate a sense of non-implementation would be much better
+appreciated than presumably what the above is doing, i.e., returning
+-ENOMEM.  That, backed up with specific details in the form of human
+readable text in dmesg would be *most* welcome.
 
 Thanks,
-Guenter
+
+Kim
