@@ -6,37 +6,44 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89F1C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA85C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD1821733
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AD1821733
+	by mail.kernel.org (Postfix) with ESMTP id 3770521727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3770521727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389120AbeHNURK (ORCPT
+        id S2389136AbeHNURO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:17:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52826 "EHLO
+        Tue, 14 Aug 2018 16:17:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387930AbeHNURJ (ORCPT
+        with ESMTP id S2387930AbeHNURM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:17:09 -0400
+        Tue, 14 Aug 2018 16:17:12 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D241140B;
-        Tue, 14 Aug 2018 17:29:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE546C5C;
+        Tue, 14 Aug 2018 17:29:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        stable@vger.kernel.org,
+        Daniel Casini <daniel.casini@santannapisa.it>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 4.17 22/97] x86/speculation/l1tf: Increase 32bit PAE __PHYSICAL_PAGE_SHIFT
-Date:   Tue, 14 Aug 2018 19:16:34 +0200
-Message-Id: <20180814171434.034318596@linuxfoundation.org>
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.17 05/97] sched/deadline: Update rq_clock of later_rq when pushing a task
+Date:   Tue, 14 Aug 2018 19:16:17 +0200
+Message-Id: <20180814171433.378826795@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -53,80 +60,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Daniel Bristot de Oliveira <bristot@redhat.com>
 
-commit 50896e180c6aa3a9c61a26ced99e15d602666a4c upstream
+commit 840d719604b0925ca23dde95f1767e4528668369 upstream.
 
-L1 Terminal Fault (L1TF) is a speculation related vulnerability. The CPU
-speculates on PTE entries which do not have the PRESENT bit set, if the
-content of the resulting physical address is available in the L1D cache.
+Daniel Casini got this warn while running a DL task here at RetisLab:
 
-The OS side mitigation makes sure that a !PRESENT PTE entry points to a
-physical address outside the actually existing and cachable memory
-space. This is achieved by inverting the upper bits of the PTE. Due to the
-address space limitations this only works for 64bit and 32bit PAE kernels,
-but not for 32bit non PAE.
+  [  461.137582] ------------[ cut here ]------------
+  [  461.137583] rq->clock_update_flags < RQCF_ACT_SKIP
+  [  461.137599] WARNING: CPU: 4 PID: 2354 at kernel/sched/sched.h:967 assert_clock_updated.isra.32.part.33+0x17/0x20
+      [a ton of modules]
+  [  461.137646] CPU: 4 PID: 2354 Comm: label_image Not tainted 4.18.0-rc4+ #3
+  [  461.137647] Hardware name: ASUS All Series/Z87-K, BIOS 0801 09/02/2013
+  [  461.137649] RIP: 0010:assert_clock_updated.isra.32.part.33+0x17/0x20
+  [  461.137649] Code: ff 48 89 83 08 09 00 00 eb c6 66 0f 1f 84 00 00 00 00 00 55 48 c7 c7 98 7a 6c a5 c6 05 bc 0d 54 01 01 48 89 e5 e8 a9 84 fb ff <0f> 0b 5d c3 0f 1f 44 00 00 0f 1f 44 00 00 83 7e 60 01 74 0a 48 3b
+  [  461.137673] RSP: 0018:ffffa77e08cafc68 EFLAGS: 00010082
+  [  461.137674] RAX: 0000000000000000 RBX: ffff8b3fc1702d80 RCX: 0000000000000006
+  [  461.137674] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff8b3fded164b0
+  [  461.137675] RBP: ffffa77e08cafc68 R08: 0000000000000026 R09: 0000000000000339
+  [  461.137676] R10: ffff8b3fd060d410 R11: 0000000000000026 R12: ffffffffa4e14e20
+  [  461.137677] R13: ffff8b3fdec22940 R14: ffff8b3fc1702da0 R15: ffff8b3fdec22940
+  [  461.137678] FS:  00007efe43ee5700(0000) GS:ffff8b3fded00000(0000) knlGS:0000000000000000
+  [  461.137679] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [  461.137680] CR2: 00007efe30000010 CR3: 0000000301744003 CR4: 00000000001606e0
+  [  461.137680] Call Trace:
+  [  461.137684]  push_dl_task.part.46+0x3bc/0x460
+  [  461.137686]  task_woken_dl+0x60/0x80
+  [  461.137689]  ttwu_do_wakeup+0x4f/0x150
+  [  461.137690]  ttwu_do_activate+0x77/0x80
+  [  461.137692]  try_to_wake_up+0x1d6/0x4c0
+  [  461.137693]  wake_up_q+0x32/0x70
+  [  461.137696]  do_futex+0x7e7/0xb50
+  [  461.137698]  __x64_sys_futex+0x8b/0x180
+  [  461.137701]  do_syscall_64+0x5a/0x110
+  [  461.137703]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  [  461.137705] RIP: 0033:0x7efe4918ca26
+  [  461.137705] Code: 00 00 00 74 17 49 8b 48 20 44 8b 59 10 41 83 e3 30 41 83 fb 20 74 1e be 85 00 00 00 41 ba 01 00 00 00 41 b9 01 00 00 04 0f 05 <48> 3d 01 f0 ff ff 73 1f 31 c0 c3 be 8c 00 00 00 49 89 c8 4d 31 d2
+  [  461.137738] RSP: 002b:00007efe43ee4928 EFLAGS: 00000283 ORIG_RAX: 00000000000000ca
+  [  461.137739] RAX: ffffffffffffffda RBX: 0000000005094df0 RCX: 00007efe4918ca26
+  [  461.137740] RDX: 0000000000000001 RSI: 0000000000000085 RDI: 0000000005094e24
+  [  461.137741] RBP: 00007efe43ee49c0 R08: 0000000005094e20 R09: 0000000004000001
+  [  461.137741] R10: 0000000000000001 R11: 0000000000000283 R12: 0000000000000000
+  [  461.137742] R13: 0000000005094df8 R14: 0000000000000001 R15: 0000000000448a10
+  [  461.137743] ---[ end trace 187df4cad2bf7649 ]---
 
-This mitigation applies to both host and guest kernels, but in case of a
-64bit host (hypervisor) and a 32bit PAE guest, inverting the upper bits of
-the PAE address space (44bit) is not enough if the host has more than 43
-bits of populated memory address space, because the speculation treats the
-PTE content as a physical host address bypassing EPT.
+This warning happened in the push_dl_task(), because
+__add_running_bw()->cpufreq_update_util() is getting the rq_clock of
+the later_rq before its update, which takes place at activate_task().
+The fix then is to update the rq_clock before calling add_running_bw().
 
-The host (hypervisor) protects itself against the guest by flushing L1D as
-needed, but pages inside the guest are not protected against attacks from
-other processes inside the same guest.
+To avoid double rq_clock_update() call, we set ENQUEUE_NOCLOCK flag to
+activate_task().
 
-For the guest the inverted PTE mask has to match the host to provide the
-full protection for all pages the host could possibly map into the
-guest. The hosts populated address space is not known to the guest, so the
-mask must cover the possible maximal host address space, i.e. 52 bit.
-
-On 32bit PAE the maximum PTE mask is currently set to 44 bit because that
-is the limit imposed by 32bit unsigned long PFNs in the VMs. This limits
-the mask to be below what the host could possible use for physical pages.
-
-The L1TF PROT_NONE protection code uses the PTE masks to determine which
-bits to invert to make sure the higher bits are set for unmapped entries to
-prevent L1TF speculation attacks against EPT inside guests.
-
-In order to invert all bits that could be used by the host, increase
-__PHYSICAL_PAGE_SHIFT to 52 to match 64bit.
-
-The real limit for a 32bit PAE kernel is still 44 bits because all Linux
-PTEs are created from unsigned long PFNs, so they cannot be higher than 44
-bits on a 32bit kernel. So these extra PFN bits should be never set. The
-only users of this macro are using it to look at PTEs, so it's safe.
-
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+Reported-by: Daniel Casini <daniel.casini@santannapisa.it>
+Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luca Abeni <luca.abeni@santannapisa.it>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Fixes: e0367b12674b sched/deadline: Move CPU frequency selection triggering points
+Link: http://lkml.kernel.org/r/ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/page_32_types.h |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/page_32_types.h
-+++ b/arch/x86/include/asm/page_32_types.h
-@@ -29,8 +29,13 @@
- #define N_EXCEPTION_STACKS 1
+---
+ kernel/sched/deadline.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2090,8 +2090,14 @@ retry:
+ 	sub_rq_bw(&next_task->dl, &rq->dl);
+ 	set_task_cpu(next_task, later_rq->cpu);
+ 	add_rq_bw(&next_task->dl, &later_rq->dl);
++
++	/*
++	 * Update the later_rq clock here, because the clock is used
++	 * by the cpufreq_update_util() inside __add_running_bw().
++	 */
++	update_rq_clock(later_rq);
+ 	add_running_bw(&next_task->dl, &later_rq->dl);
+-	activate_task(later_rq, next_task, 0);
++	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
+ 	ret = 1;
  
- #ifdef CONFIG_X86_PAE
--/* 44=32+12, the limit we can fit into an unsigned long pfn */
--#define __PHYSICAL_MASK_SHIFT	44
-+/*
-+ * This is beyond the 44 bit limit imposed by the 32bit long pfns,
-+ * but we need the full mask to make sure inverted PROT_NONE
-+ * entries have all the host bits set in a guest.
-+ * The real limit is still 44 bits.
-+ */
-+#define __PHYSICAL_MASK_SHIFT	52
- #define __VIRTUAL_MASK_SHIFT	32
- 
- #else  /* !CONFIG_X86_PAE */
+ 	resched_curr(later_rq);
 
 
