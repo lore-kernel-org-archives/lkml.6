@@ -2,131 +2,127 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97622C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB3BC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF3A20C0D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:21:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF3A20C0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1570921736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ns0d41i2";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="WynHRRiK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1570921736
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732716AbeHNSJQ (ORCPT
+        id S1732784AbeHNSJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:09:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45980 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730759AbeHNSJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:09:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A028A77156;
-        Tue, 14 Aug 2018 15:21:39 +0000 (UTC)
-Received: from localhost.redhat.com (ovpn-12-134.pek2.redhat.com [10.72.12.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C8A262026D7E;
-        Tue, 14 Aug 2018 15:21:34 +0000 (UTC)
-From:   Xiao Liang <xiliang@redhat.com>
-To:     netdev@vger.kernel.org, xen-devel@lists.xenproject.org,
-        davem@davemloft.net, jgross@suse.com, boris.ostrovsky@oracle.com
-Cc:     linux-kernel@vger.kernel.org, Xiao Liang <xiliang@redhat.com>
-Subject: [PATCH net-next v3] xen-netfront: fix warn message as irq device name has '/'
-Date:   Tue, 14 Aug 2018 23:21:28 +0800
-Message-Id: <20180814152128.5477-1-xiliang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 14 Aug 2018 15:21:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 14 Aug 2018 15:21:39 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiliang@redhat.com' RCPT:''
+        Tue, 14 Aug 2018 14:09:28 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43557 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730759AbeHNSJ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 14:09:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1534260113; x=1565796113;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=44PcqxpkVBHeclsf1kdXiEEnyjCvMnPYbzJerak7rQ8=;
+  b=ns0d41i28ze6z7Px1rD/7ekbAdAZhv6q9W4HJGPJmZAYrtcDqHQRHhYQ
+   T+wQqk7EPU26nDO+NH238IH6WBBlSMvdQUEnpM/NDoZsLZEK0RGqBCyo+
+   E3Sw8J540X8glpYzVHqAxraFnVX0UCaV/djpk5/oC++ncBUdLIHj6CwVK
+   NPmaQojfb3j6o4IdKEs1zC43KyHuRekOrwAGafNSNLUmLUhiVJs+9QdTa
+   kLUeaIDIjYTdhYE6Db3MwMJQbRfz2A4UHOprgpoi4uF3Eve9vYQQlTJp/
+   9uFRm2e7+Jtf2XU/fa2w3H/VHgQvFrI/vJCtsvkOxM0snd3xEkdlb1Bij
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,238,1531756800"; 
+   d="scan'208";a="91325429"
+Received: from mail-dm3nam05lp0111.outbound.protection.outlook.com (HELO NAM05-DM3-obe.outbound.protection.outlook.com) ([216.32.181.111])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Aug 2018 23:21:25 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=44PcqxpkVBHeclsf1kdXiEEnyjCvMnPYbzJerak7rQ8=;
+ b=WynHRRiKsRRpc0q5rDWiKhWwuItCgWLXa7rkau6Lmt7z1lcc7bEA/ZoNEMxQwxKbWnljR0ZYoNfkutetOmSpgctAHeiqDVGSNCVRMUTdm2rddHfLq91nnjTLinPITXiWXoYHij67mdPwQlQrE6e5mqvzIJLYfhXZ0LK6uGCdonI=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB1217.namprd04.prod.outlook.com (10.173.53.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1038.20; Tue, 14 Aug 2018 15:21:21 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee%9]) with mapi id 15.20.1038.023; Tue, 14 Aug 2018
+ 15:21:21 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "hare@suse.de" <hare@suse.de>, "axboe@kernel.dk" <axboe@kernel.dk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>, "hch@lst.de" <hch@lst.de>,
+        "ed.cashin@acm.org" <ed.cashin@acm.org>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "keith.busch@intel.com" <keith.busch@intel.com>
+Subject: Re: [PATCH 3/5] aoe: use device_add_disk_with_groups()
+Thread-Topic: [PATCH 3/5] aoe: use device_add_disk_with_groups()
+Thread-Index: AQHUM6EQw6RfMpjmakGFUel2vF4gU6S/XaUA
+Date:   Tue, 14 Aug 2018 15:21:21 +0000
+Message-ID: <047cdc676b8068aa8599f9646cf52bc578facade.camel@wdc.com>
+References: <20180814073305.87255-1-hare@suse.de>
+         <20180814073305.87255-4-hare@suse.de>
+In-Reply-To: <20180814073305.87255-4-hare@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.174]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB1217;20:PWh2wYCK0EHYB42l/3PFucPygNFyY+ROqWicww1pBTor1HeDQrXQJXPBJErjLKCpQ8doZnxKnwgCsSFGxGcQvilDpIBYxUWP+Sh4vrm02CDAmhXO1SZo4a+9fJ3Dmukdxm4JaR29Knkh/K7Zn7R3hNwD2ozW7uW/JNn88qjQaRA=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8184a099-cc25-41f6-3da1-08d601f9974f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1217;
+x-ms-traffictypediagnostic: MWHPR04MB1217:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB1217FB72833044B6F422562C98380@MWHPR04MB1217.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(213716511872227);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB1217;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1217;
+x-forefront-prvs: 0764C4A8CD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(396003)(136003)(346002)(199004)(189003)(118296001)(6486002)(97736004)(36756003)(106356001)(14454004)(5250100002)(478600001)(305945005)(7736002)(316002)(8936002)(72206003)(54906003)(6512007)(68736007)(105586002)(2900100001)(110136005)(5660300001)(6436002)(7416002)(8676002)(4326008)(66066001)(81166006)(25786009)(3846002)(2906002)(53936002)(6246003)(76176011)(81156014)(11346002)(2501003)(446003)(99286004)(2616005)(86362001)(558084003)(26005)(486006)(476003)(186003)(6506007)(102836004)(256004)(6116002)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1217;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 56v60VEcFKrWsmd6Klf+IKliDbRzQVV99LmGFwE/uK2Q/En1vMlMph/EG/UX7ZlDFX2S/5FoePdhaLi7TwK8eV+QJG+OLbCofjNMfxn1gc9lRz9PAjejC2H7uB5+r6D8nLqdTU/3uFwZnpqfpkv3moV3lWAm7i/tOHLC+sQh7bSReLG7IPyEqqMKd93FrNt8xA8nFiFxomBFErjz+KPLpVaX0uAx9FTAEqG7pncfh8x0+rrUWHkncLYxlmOzSraZCBycV0DxpCmgcCtedtqyvPMEID7Dw7HvmhLSGVAqz9gy4nbInsQFhX4GPvnStIepZSycVEgrpC0Hd1RvWaR0arhWXtYnjPKDX9YLpqGndrg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <099A810AD2E8E848ADBE3EC2BAA23E51@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8184a099-cc25-41f6-3da1-08d601f9974f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2018 15:21:21.5540
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1217
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a call trace generated after commit 2d408c0d4574b01b9ed45e02516888bf925e11a9(
-xen-netfront: fix queue name setting). There is no 'device/vif/xx-q0-tx' file found
-under /proc/irq/xx/.
+On Tue, 2018-08-14 at 09:33 +-0200, Hannes Reinecke wrote:
++AD4- Use device+AF8-add+AF8-disk+AF8-with+AF8-groups() to avoid a race con=
+dition with
++AD4- udev during startup.
++AD4-=20
++AD4- Signed-off-by: Hannes Reinecke +ADw-hare+AEA-suse.com+AD4-
++AD4- Reviewed-by: Christoph Hellwig +ADw-hch+AEA-lst.de+AD4-
++AD4- Cc: Ed L. Cachin +ADw-ed.cashin+AEA-acm.org+AD4-
 
-This patch only picks up device type and id as its name.
+Reviewed-by: Bart Van Assche +ADw-bart.vanassche+AEA-wdc.com+AD4-
 
-With the patch, now /proc/interrupts looks like below and the warning message gone:
- 70:         21          0          0          0   xen-dyn    -event     vif0-q0-tx
- 71:         15          0          0          0   xen-dyn    -event     vif0-q0-rx
- 72:         14          0          0          0   xen-dyn    -event     vif0-q1-tx
- 73:         33          0          0          0   xen-dyn    -event     vif0-q1-rx
- 74:         12          0          0          0   xen-dyn    -event     vif0-q2-tx
- 75:         24          0          0          0   xen-dyn    -event     vif0-q2-rx
- 76:         19          0          0          0   xen-dyn    -event     vif0-q3-tx
- 77:         21          0          0          0   xen-dyn    -event     vif0-q3-rx
-
-Below is call trace information without this patch:
-
-name 'device/vif/0-q0-tx'
-WARNING: CPU: 2 PID: 37 at fs/proc/generic.c:174 __xlate_proc_name+0x85/0xa0
-RIP: 0010:__xlate_proc_name+0x85/0xa0
-RSP: 0018:ffffb85c40473c18 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000000006
-RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff984c7f516930
-RBP: ffffb85c40473cb8 R08: 000000000000002c R09: 0000000000000229
-R10: 0000000000000000 R11: 0000000000000001 R12: ffffb85c40473c98
-R13: ffffb85c40473cb8 R14: ffffb85c40473c50 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff984c7f500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f69b6899038 CR3: 000000001c20a006 CR4: 00000000001606e0
-Call Trace:
-__proc_create+0x45/0x230
-? snprintf+0x49/0x60
-proc_mkdir_data+0x35/0x90
-register_handler_proc+0xef/0x110
-? proc_register+0xfc/0x110
-? proc_create_data+0x70/0xb0
-__setup_irq+0x39b/0x660
-? request_threaded_irq+0xad/0x160
-request_threaded_irq+0xf5/0x160
-? xennet_tx_buf_gc+0x1d0/0x1d0 [xen_netfront]
-bind_evtchn_to_irqhandler+0x3d/0x70
-? xenbus_alloc_evtchn+0x41/0xa0
-netback_changed+0xa46/0xcda [xen_netfront]
-? find_watch+0x40/0x40
-xenwatch_thread+0xc5/0x160
-? finish_wait+0x80/0x80
-kthread+0x112/0x130
-? kthread_create_worker_on_cpu+0x70/0x70
-ret_from_fork+0x35/0x40
-Code: 81 5c 00 48 85 c0 75 cc 5b 49 89 2e 31 c0 5d 4d 89 3c 24 41 5c 41 5d 41 5e 41 5f c3 4c 89 ee 48 c7 c7 40 4f 0e b4 e8 65 ea d8 ff <0f> 0b b8 fe ff ff ff 5b 5d 41 5c 41 5d 41 5e 41 5f c3 66 0f 1f
----[ end trace 650e5561b0caab3a ]---
-
-Signed-off-by: Xiao Liang <xiliang@redhat.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
----
- drivers/net/xen-netfront.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 799cba4624a5..c4955bd303bb 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1604,14 +1604,16 @@ static int xennet_init_queue(struct netfront_queue *queue)
- {
- 	unsigned short i;
- 	int err = 0;
-+	char *devid;
- 
- 	spin_lock_init(&queue->tx_lock);
- 	spin_lock_init(&queue->rx_lock);
- 
- 	timer_setup(&queue->rx_refill_timer, rx_refill_timeout, 0);
- 
--	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
--		 queue->info->xbdev->nodename, queue->id);
-+	devid = strrchr(queue->info->xbdev->nodename, '/') + 1;
-+	snprintf(queue->name, sizeof(queue->name), "vif%s-q%u",
-+		 devid, queue->id);
- 
- 	/* Initialise tx_skbs as a free chain containing every entry. */
- 	queue->tx_skb_freelist = 0;
--- 
-2.17.1
 
