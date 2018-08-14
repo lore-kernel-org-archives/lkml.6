@@ -2,289 +2,376 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9D6C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 207D8C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95F021733
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95F021733
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id A71242150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:38:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="b5HOZEW7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71242150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732252AbeHNNZD (ORCPT
+        id S1732316AbeHNNZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 09:25:03 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:26604 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbeHNNZC (ORCPT
+        Tue, 14 Aug 2018 09:25:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40730 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732190AbeHNNZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 09:25:02 -0400
-Received: from droid02.amlogic.com (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 14 Aug 2018
- 18:38:34 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Tue, 14 Aug 2018 09:25:14 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e19-v6so9847194edq.7
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 03:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=52nL/tQDNqCAtXoLF1coyvAokmAoL6Vab6PKvpTSUdg=;
+        b=b5HOZEW7zwFF0LD73eEDJHbxGoUAOY56KLRTA7l3kz3DLEFRVqHNz/wDLcibK+1PP7
+         i/ho8SBg1Hh9/MiNZx3csfCLxt8aOhNcmJ5IBEh9d64oTyIGzb0D6+NJHmW8rdfs4R7G
+         QTlpZSp2wl8/oUCiXOq1z90zbWeIJd313L1+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=52nL/tQDNqCAtXoLF1coyvAokmAoL6Vab6PKvpTSUdg=;
+        b=rR6MLSmUXqKLGfWJu0970ee7kCwbWnNuacExVpzsRTlYpCvC04LAeusbpQ/yvabPAg
+         T7McgnnKztepadQsxwLVg1alzCznK4y+uV6xLh9YvZxvTxLMjFbsO5/76S2oiW1FW1DF
+         1SwtgJdTlKNgGQz7DHTzkp2T6yplQHcR/cSu9DagWluSsVfGyYSI+/tJ7r5qSqc7+nJ3
+         hJu93WPiNo54hiByyq1H6x1wIhwH63WxegiPoXJxyU1/iy9gZI4xR9tWAi5h+wfoXFB4
+         f8ptsYnEeENZxbtLVvERHMqljfFcg9/MNc/gzmBj2TrdjUl60t8jsRMiv7zcvv61yHln
+         Pp2A==
+X-Gm-Message-State: AOUpUlFMO1Unox/yNCB1F6v9IK+lbzS8vEJUFBexqNC+Mb+kVcflXadT
+        /kqgN2V8YCCbKCNbMAqpYpNb6A==
+X-Google-Smtp-Source: AA+uWPx48pzuOsLEl9CC7T0mxiLzdIRQ/bKeWAte3NS7jfM0GMkWUyMdmXZOy4SCV0rC8WpUoCYHRw==
+X-Received: by 2002:a50:955e:: with SMTP id v30-v6mr27038934eda.268.1534243116807;
+        Tue, 14 Aug 2018 03:38:36 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
+        by smtp.gmail.com with ESMTPSA id r11-v6sm6961274edh.32.2018.08.14.03.38.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Aug 2018 03:38:36 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 12:38:33 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 2/2] arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support
-Date:   Tue, 14 Aug 2018 18:38:40 +0800
-Message-ID: <1534243121-33589-3-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1534243121-33589-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1534243121-33589-1-git-send-email-jianxin.pan@amlogic.com>
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-media@vger.kernel.org
+Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for
+ display planes
+Message-ID: <20180814103833.GN21634@phenom.ffwll.local>
+Mail-Followup-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-media@vger.kernel.org
+References: <20180807172202.1961-1-digetx@gmail.com>
+ <20180807172202.1961-2-digetx@gmail.com>
+ <7041537.TPdt8DIvGD@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7041537.TPdt8DIvGD@avalon>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
-which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-Timer, UART. It's capable of booting up into the serial console.
+On Tue, Aug 14, 2018 at 12:48:08PM +0300, Laurent Pinchart wrote:
+> Hi Dmitry,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 7 August 2018 20:22:01 EEST Dmitry Osipenko wrote:
+> > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > 
+> > Color keying is the action of replacing pixels matching a given color
+> > (or range of colors) with transparent pixels in an overlay when
+> > performing blitting. Depending on the hardware capabilities, the
+> > matching pixel can either become fully transparent or gain adjustment
+> > of the pixels component values.
+> > 
+> > Color keying is found in a large number of devices whose capabilities
+> > often differ, but they still have enough common features in range to
+> > standardize color key properties. This commit adds new generic DRM plane
+> > properties related to the color keying, providing initial color keying
+> > support.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  drivers/gpu/drm/drm_atomic.c |  20 +++++
+> >  drivers/gpu/drm/drm_blend.c  | 150 +++++++++++++++++++++++++++++++++++
+> >  include/drm/drm_blend.h      |   3 +
+> >  include/drm/drm_plane.h      |  91 +++++++++++++++++++++
+> >  4 files changed, 264 insertions(+)
+> 
+> [snip]
+> 
+> > diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> > index a16a74d7e15e..13c61dd0d9b7 100644
+> > --- a/drivers/gpu/drm/drm_blend.c
+> > +++ b/drivers/gpu/drm/drm_blend.c
+> > @@ -107,6 +107,11 @@
+> >   *	planes. Without this property the primary plane is always below the
+> > cursor *	plane, and ordering between all other planes is undefined.
+> >   *
+> > + * colorkey:
+> > + *	Color keying is set up with drm_plane_create_colorkey_properties().
+> > + *	It adds support for actions like replacing a range of colors with a
+> > + *	transparent color in the plane. Color keying is disabled by default.
+> > + *
+> >   * Note that all the property extensions described here apply either to the
+> > * plane or the CRTC (e.g. for the background color, which currently is not
+> > * exposed and assumed to be black).
+> > @@ -448,3 +453,148 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+> > +
+> > +static const char * const plane_colorkey_mode_name[] = {
+> > +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+> > +	[DRM_PLANE_COLORKEY_MODE_TRANSPARENT] = "transparent",
+> > +};
+> > +
+> > +/**
+> > + * drm_plane_create_colorkey_properties - create colorkey properties
+> > + * @plane: drm plane
+> > + * @supported_modes: bitmask of supported color keying modes
+> > + *
+> > + * This function creates the generic color keying properties and attaches
+> > them
+> > + * to the @plane to enable color keying control for blending operations.
+> > + *
+> > + * Glossary:
+> > + *
+> > + * Destination plane:
+> > + *	Plane to which color keying properties are applied, this planes takes
+> > + *	the effect of color keying operation. The effect is determined by a
+> > + *	given color keying mode.
+> > + *
+> > + * Source plane:
+> > + *	Pixels of this plane are the source for color key matching operation.
+> > + *
+> > + * Color keying is controlled by these properties:
+> > + *
+> > + * colorkey.plane_mask:
+> > + *	The mask property specifies which planes participate in color key
+> > + *	matching process, these planes are the color key sources.
+> > + *
+> > + *	Drivers return an error from their plane atomic check if plane can't be
+> > + *	handled.
+> 
+> This seems fragile to me. We don't document how userspace determines which 
+> planes need to be specified here, and we don't document what happens if a 
+> plane underneath the destination plane is not specified in the mask. More 
+> precise documentation is needed if we want to use such a property.
+> 
+> It also seems quite complex. Is an explicit plane mask really the best option 
+> ? What's the reason why planes couldn't be handled ? How do drivers determine 
+> that ?
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/Makefile            |   1 +
- arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 172 ++++++++++++++++++++++++
- 3 files changed, 195 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+General comment: This is why we need the reference userspace. I also
+think that any feature throwing up so many tricky questions should come
+with a full set of igt testcases. Since the reference userspace cannot
+answer how the new uapi should work in all corner-cases (failures and
+stuff like that).
+-Daniel
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index a97c0e2..c31f29d6 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nexbox-a95x.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-odroidc2.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-new file mode 100644
-index 0000000..d267a37
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-g12a.dtsi"
-+
-+/ {
-+	compatible = "amlogic,u200", "amlogic,g12a";
-+	model = "Amlogic Meson G12A U200 Development Board";
-+
-+	aliases {
-+		serial0 = &uart_AO;
-+	};
-+};
-+
-+&uart_AO {
-+	status = "okay";
-+};
-+
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-new file mode 100644
-index 0000000..3b82a97
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "amlogic,g12a";
-+
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <0x2>;
-+		#size-cells = <0x0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x2>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x3>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		l2: l2-cache0 {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* 3 MiB reserved for ARM Trusted Firmware (BL31) */
-+		secmon_reserved: secmon@5000000 {
-+			reg = <0x0 0x05000000 0x0 0x300000>;
-+			no-map;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		periphs: periphs@ff634000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff634000 0x0 0x2000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff634000 0x0 0x2000>;
-+		};
-+
-+		hiubus: bus@ff63c000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff63c000 0x0 0x1c00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
-+		};
-+
-+		aobus: bus@ff800000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff800000 0x0 0x100000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
-+
-+			uart_AO: serial@3000 {
-+				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
-+				reg = <0x0 0x3000 0x0 0x18>;
-+				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>, <&xtal>, <&xtal>;
-+				clock-names = "xtal", "pclk", "baud";
-+				status = "disabled";
-+			};
-+
-+			uart_AO_B: serial@4000 {
-+				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
-+				reg = <0x0 0x4000 0x0 0x18>;
-+				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>, <&xtal>, <&xtal>;
-+				clock-names = "xtal", "pclk", "baud";
-+				status = "disabled";
-+			};
-+		};
-+
-+		gic: interrupt-controller@ffc01000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x0 0xffc01000 0 0x1000>,
-+			      <0x0 0xffc02000 0 0x2000>,
-+			      <0x0 0xffc04000 0 0x2000>,
-+			      <0x0 0xffc06000 0 0x2000>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 9
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+		};
-+
-+		cbus: bus@ffd00000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xffd00000 0x0 0x25000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xffd00000 0x0 0x25000>;
-+		};
-+
-+		apb: apb@ffe00000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xffe00000 0x0 0x200000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x200000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	xtal: xtal-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "xtal";
-+		#clock-cells = <0>;
-+	};
-+
-+};
+> 
+> > + * colorkey.mode:
+> > + *	The mode is an enumerated property that controls how color keying
+> > + *	operates.
+> 
+> A link to the drm_plane_colorkey_mode enum documentation would be useful.
+> 
+> > + * colorkey.mask:
+> > + *	This property specifies the pixel components mask. Unmasked pixel
+> > + *	components are not participating in the matching. This mask value is
+> > + *	applied to colorkey.min / max values. The mask value is given in a
+> > + *	64-bit integer in ARGB16161616 format, where A is the alpha value and
+> > + *	R, G and B correspond to the color components. Drivers shall convert
+> > + *	ARGB16161616 value into appropriate format within planes atomic check.
+> > + *
+> > + *	Drivers return an error from their plane atomic check if mask can't be
+> > + *	handled.
+> > + *
+> > + * colorkey.min, colorkey.max:
+> > + *	These two properties specify the colors that are treated as the color
+> > + *	key. Pixel whose value is in the [min, max] range is the color key
+> > + *	matching pixel. The minimum and maximum values are expressed as a
+> > + *	64-bit integer in ARGB16161616 format, where A is the alpha value and
+> > + *	R, G and B correspond to the color components. Drivers shall convert
+> > + *	ARGB16161616 value into appropriate format within planes atomic check.
+> > + *	The converted value shall be *rounded up* to the nearest value.
+> > + *
+> > + *	When a single color key is desired instead of a range, userspace shall
+> > + *	set the min and max properties to the same value.
+> > + *
+> > + *	Drivers return an error from their plane atomic check if range can't be
+> > + *	handled.
+> > + *
+> > + * Returns:
+> > + * Zero on success, negative errno on failure.
+> > + */
+> 
+> While you're defining the concept of source and destination planes, it's not 
+> clear from the documentation how all this maps to the usual source and 
+> destination color keying concepts. I think that should be documented as well 
+> or users will be confused. Examples could help in this area.
+> 
+> [snip]
+> 
+> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> > index 8a152dc16ea5..ab6a91e6b54e 100644
+> > --- a/include/drm/drm_plane.h
+> > +++ b/include/drm/drm_plane.h
+> 
+> [snip]
+> 
+> > @@ -32,6 +33,52 @@ struct drm_crtc;
+> >  struct drm_printer;
+> >  struct drm_modeset_acquire_ctx;
+> > 
+> > +/**
+> > + * enum drm_plane_colorkey_mode - uapi plane colorkey mode enumeration
+> > + */
+> 
+> If it's uAPI, should it be moved to include/uapi/drm/ ?
+> 
+> > +enum drm_plane_colorkey_mode {
+> > +	/**
+> > +	 * @DRM_PLANE_COLORKEY_MODE_DISABLED:
+> > +	 *
+> > +	 * No color matching performed in this mode.
+> 
+> Do you mean "No color keying" ?
+> 
+> > +	 */
+> > +	DRM_PLANE_COLORKEY_MODE_DISABLED,
+> > +
+> > +	/**
+> > +	 * @DRM_PLANE_COLORKEY_MODE_TRANSPARENT:
+> > +	 *
+> > +	 * Destination plane pixels are completely transparent in areas
+> > +	 * where pixels of a source plane are matching a given color key
+> > +	 * range, in other cases pixels of a destination plane are unaffected.
+> 
+> How do we handle hardware that performs configurable color replacement instead 
+> of a fixed fully transparency ? That was included in my original proposal and 
+> available in R-Car hardware.
+> 
+> > +	 * In areas where two or more source planes overlap, the topmost
+> > +	 * plane takes precedence.
+> > +	 */
+> > +	DRM_PLANE_COLORKEY_MODE_TRANSPARENT,
+> > +
+> > +	/**
+> > +	 * @DRM_PLANE_COLORKEY_MODES_NUM:
+> > +	 *
+> > +	 * Total number of color keying modes.
+> > +	 */
+> > +	DRM_PLANE_COLORKEY_MODES_NUM,
+> 
+> This one, however, shouldn't be part of the uAPI as it will change when we 
+> will add new modes.
+> 
+> > +};
+> 
+> [snip]
+> 
+> > @@ -779,5 +846,29 @@ static inline struct drm_plane *drm_plane_find(struct
+> > drm_device *dev, #define drm_for_each_plane(plane, dev) \
+> >  	list_for_each_entry(plane, &(dev)->mode_config.plane_list, head)
+> > 
+> > +/**
+> > + * drm_colorkey_extract_component - get color key component value
+> > + * @ckey64: 64bit color key value
+> > + * @comp_name: name of 16bit color component to extract
+> > + * @nbits: size in bits of extracted component value
+> > + *
+> > + * Extract 16bit color component of @ckey64 given by @comp_name (alpha,
+> > red,
+> > + * green or blue) and convert it to an unsigned integer that has bit-width
+> > + * of @nbits (result is rounded-up).
+> > + */
+> > +#define drm_colorkey_extract_component(ckey64, comp_name, nbits) \
+> > +	__DRM_CKEY_CLAMP(__DRM_CKEY_CONV(ckey64, comp_name, nbits), nbits)
+> > +
+> > +#define __drm_ckey_alpha_shift	48
+> > +#define __drm_ckey_red_shift	32
+> > +#define __drm_ckey_green_shift	16
+> > +#define __drm_ckey_blue_shift	0
+> > +
+> > +#define __DRM_CKEY_CONV(ckey64, comp_name, nbits) \
+> > +	DIV_ROUND_UP((u16)((ckey64) >> __drm_ckey_ ## comp_name ## _shift), \
+> > +		     1 << (16 - (nbits)))
+> 
+> As the divisor is a power of two, could we use masking instead of a division ? 
+> Or do you expect the compiler to optimize it properly ?
+> 
+> > +#define __DRM_CKEY_CLAMP(value, nbits) \
+> > +	min_t(u16, (value), (1 << (nbits)) - 1)
+> 
+> Would the following be simpler to read and a bit more efficient as it avoids 
+> the division ?
+> 
+> static inline u16 __drm_colorkey_extract_component(u64 ckey64, 
+>                                                    unsigned int shift, 
+>                                                    unsigned int nbits)
+> {       
+>         u16 mask = (1 << (16 - nbits)) - 1;
+>         
+>         return ((u16)(ckey >> shift) + mask) >> (16 - nbits);
+> }
+> 
+> #define drm_colorkey_extract_component(ckey64, comp_name, nbits) \
+>         __drm_colorkey_extract_component(ckey64, __drm_ckey_ ## comp_name ## 
+> _shift, nbits)
+> 
+> >  #endif
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+> 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-1.9.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
