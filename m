@@ -2,117 +2,108 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B1FC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0259C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F81C2157F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:06:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="haEI2Hks"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F81C2157F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 54CE520836
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54CE520836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbeHNUzH (ORCPT
+        id S2388627AbeHNUPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:55:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbeHNUzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:55:06 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 554D62157F;
-        Tue, 14 Aug 2018 18:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534270007;
-        bh=ZDChWXNDEmknlaibdZkHzRVKasqzPge9+K9pSk/QJHw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=haEI2HkslfC7VTPF4akCD+5GlZKor0qTPv2Q3GIgcfAr4rtEyECCt+MQZU0b85v6h
-         gDULXBgsXEfLyWrbgVW9NIasT0K6D7KOxanrnSc+TStgR5bAv6HCQ7xVsdkD72zU0y
-         Rcf3nGrG3DKs87s/9hLNhdpZYQSXOib5nQgxuURc=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 778F0140A1C; Tue, 14 Aug 2018 15:06:44 -0300 (-03)
-Date:   Tue, 14 Aug 2018 15:06:44 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, namhyung@kernel.org,
-        dsahern@gmail.com, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, alexander.kapshuk@gmail.com
-Subject: Re: [PATCH 1/2] perf tools: Make check-headers.sh check based on
- kernel dir
-Message-ID: <20180814180644.GA24338@kernel.org>
-References: <20180811083915.17471-1-alexander.kapshuk@gmail.com>
- <20180813111504.3568-1-jolsa@kernel.org>
- <87mutplnwk.fsf@concordia.ellerman.id.au>
- <20180814072726.GA13931@krava>
+        Tue, 14 Aug 2018 16:15:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52386 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388613AbeHNUPJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 16:15:09 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4F58BDB;
+        Tue, 14 Aug 2018 17:27:02 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.18 62/79] x86/KVM/VMX: Replace vmx_l1d_flush_always with vmx_l1d_flush_cond
+Date:   Tue, 14 Aug 2018 19:17:21 +0200
+Message-Id: <20180814171340.267002075@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
+References: <20180814171336.799314117@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814072726.GA13931@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Aug 14, 2018 at 09:27:26AM +0200, Jiri Olsa escreveu:
-> On Tue, Aug 14, 2018 at 11:47:39AM +1000, Michael Ellerman wrote:
-> > Jiri Olsa <jolsa@kernel.org> writes:
-> > > diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-> > > index ea48aa6f8d19..9d466e853aec 100755
-> > > --- a/tools/perf/check-headers.sh
-> > > +++ b/tools/perf/check-headers.sh
-> > > @@ -88,6 +88,8 @@ check () {
-> > >  # differences.
-> > >  test -d ../../include || exit 0
-> > >  
-> > > +pushd ../.. > /dev/null
-> > > +
-> > >  # simple diff check
-> > >  for i in $HEADERS; do
-> > >    check $i -B
-> > 
-> > This breaks the build when sh is not bash:
-> > 
-> >   ./check-headers.sh: 91: ./check-headers.sh: pushd: not found
-> >   ./check-headers.sh: 107: ./check-headers.sh: popd: not found
-> >   Makefile.perf:205: recipe for target 'sub-make' failed
-> 
-> sry.. Arnaldo, would you change it for simple cd (attached below)
-> or should I send the fix?
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-Nah, I'm folding this in, to keep it bisectable.
+------------------
+
+From: Nicolai Stange <nstange@suse.de>
+
+The vmx_l1d_flush_always static key is only ever evaluated if
+vmx_l1d_should_flush is enabled. In that case however, there are only two
+L1d flushing modes possible: "always" and "conditional".
+
+The "conditional" mode's implementation tends to require more sophisticated
+logic than the "always" mode.
+
+Avoid inverted logic by replacing the 'vmx_l1d_flush_always' static key
+with a 'vmx_l1d_flush_cond' one.
+
+There is no change in functionality.
+
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/kvm/vmx.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -189,7 +189,7 @@ module_param(ple_window_max, uint, 0444)
+ extern const ulong vmx_return;
  
-> thanks,
-> jirka
-> 
-> 
-> ---
-> diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-> index 80bf84803677..466540ee8ea7 100755
-> --- a/tools/perf/check-headers.sh
-> +++ b/tools/perf/check-headers.sh
-> @@ -88,7 +88,7 @@ check () {
->  # differences.
->  test -d ../../include || exit 0
->  
-> -pushd ../.. > /dev/null
-> +cd ../..
->  
->  # simple diff check
->  for i in $HEADERS; do
-> @@ -104,4 +104,4 @@ check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
->  # diff non-symmetric files
->  check_2 tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
->  
-> -popd > /dev/null
-> +cd tools/perf
+ static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
+-static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_always);
++static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_cond);
+ static DEFINE_MUTEX(vmx_l1d_flush_mutex);
+ 
+ /* Storage for pre module init parameter parsing */
+@@ -263,10 +263,10 @@ static int vmx_setup_l1d_flush(enum vmx_
+ 	else
+ 		static_branch_disable(&vmx_l1d_should_flush);
+ 
+-	if (l1tf == VMENTER_L1D_FLUSH_ALWAYS)
+-		static_branch_enable(&vmx_l1d_flush_always);
++	if (l1tf == VMENTER_L1D_FLUSH_COND)
++		static_branch_enable(&vmx_l1d_flush_cond);
+ 	else
+-		static_branch_disable(&vmx_l1d_flush_always);
++		static_branch_disable(&vmx_l1d_flush_cond);
+ 	return 0;
+ }
+ 
+@@ -9728,7 +9728,7 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 	 * This code is only executed when the the flush mode is 'cond' or
+ 	 * 'always'
+ 	 */
+-	if (!static_branch_unlikely(&vmx_l1d_flush_always)) {
++	if (static_branch_likely(&vmx_l1d_flush_cond)) {
+ 		/*
+ 		 * Clear the flush bit, it gets set again either from
+ 		 * vcpu_run() or from one of the unsafe VMEXIT
+
+
