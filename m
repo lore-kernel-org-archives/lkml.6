@@ -6,261 +6,166 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41209C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7297C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E65112173F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65112173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 581CD2173D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:29:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581CD2173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730483AbeHNIIR (ORCPT
+        id S1730326AbeHNIOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 04:08:17 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:45097 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeHNIIR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 04:08:17 -0400
-X-IronPort-AV: E=Sophos;i="5.53,237,1531810800"; 
-   d="scan'208";a="18013644"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Aug 2018 22:22:45 -0700
-Received: from ajaysk-VirtualBox (10.10.76.4) by chn-sv-exch04.mchp-main.com
- (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Mon, 13 Aug 2018
- 22:22:43 -0700
-Date:   Tue, 14 Aug 2018 10:52:37 +0530
-From:   Ajay Singh <ajay.kathat@microchip.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Aditya Shankar <aditya.shankar@microchip.com>,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: wilc1000: revert "fix TODO to compile spi and
- sdio components in single module"
-Message-ID: <20180814105237.64b01528@ajaysk-VirtualBox>
-In-Reply-To: <20180813212108.2442868-1-arnd@arndb.de>
-References: <20180813212108.2442868-1-arnd@arndb.de>
-Organization: Microchip Technology
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+        Tue, 14 Aug 2018 04:14:06 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:47400 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728521AbeHNIOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 04:14:06 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 2BB0A5DAF9;
+        Tue, 14 Aug 2018 05:28:28 +0000 (UTC)
+Message-ID: <ddd86a558977fc9942f5f1fa8cefc813ad80f614.camel@aosc.io>
+Subject: Re: [PATCH] drm/bridge/synopsys: dw-hdmi: re-run dw_hdmi_setup when
+ setting mode
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date:   Tue, 14 Aug 2018 13:28:18 +0800
+In-Reply-To: <20180813114945eucas1p1e9d900848b4256341fe93278f4fa6f67~Kb0nDRoKq0841508415eucas1p1p@eucas1p1.samsung.com>
+References: <CGME20180725035712epcas1p25df72b8af38438b7bb66a2729fdff445@epcas1p2.samsung.com>
+         <20180725035627.58223-1-icenowy@aosc.io>
+         <20180813114945eucas1p1e9d900848b4256341fe93278f4fa6f67~Kb0nDRoKq0841508415eucas1p1p@eucas1p1.samsung.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+在 2018-08-13一的 13:49 +0200，Andrzej Hajda写道：
+> On 25.07.2018 05:56, Icenowy Zheng wrote:
+> > Currently dw_hdmi_setup is only run when the dw-hdmi bridge is
+> > enabled,
+> > with the mode set last time.
+> > 
+> > When the bridge is enabled before any mode is set (this may happen
+> > when
+> > booting), the mode won't be set at all, some setup steps will be
+> > skipped or fail, and the HDMI output may not work.
+> 
+> I guess, it should not happen. Could you show the stack-trace.
 
-On Mon, 13 Aug 2018 23:20:33 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+Mysteriously dw_hdmi_setup isn't called at all currently when booting
+in thie situation. I added dump_stack() at the head of the function,
+and it's only triggered when I re-plug the monitor.
 
-> The TODO item named "make spi and sdio components coexist in one
-> build" was apparently addressed a long time ago, but never removed
-> from the TODO file. However, the new patch that tries to address it
-> actually makes it worse again by duplicating the common parts of the
-> driver into two separate modules rather than sharing them. This also
-> introduces a build regression when one of the two is built-in while
-> the other is a loadable module:
-
-Thanks for sharing your inputs and submitting patch.
-I have also submitted a patch to address the compilation error[1].
-We can ignore my patch and proceed with your changes.
-
-[1].https://patchwork.kernel.org/patch/10563873/
-
-In my understanding, even when the common part is compiled separately,
-the wilc1000-sdio/wilc1000-spi module still expects separate instance of
-common part for each of them because of use of static variables.
-
-Shouldn't it be correct to compile the components required for SDIO and
-SPI separately and then get rid of use of global variables to support
-running of SDIO/SPI module at same time?
+In this case I got:
+```
+[   46.891513] CPU: 0 PID: 73 Comm: irq/34-1ee0000. Not tainted 4.18.0+
+#152
+[   46.898290] Hardware name: Allwinner sun8i Family
+[   46.903008] [<c010efac>] (unwind_backtrace) from [<c010bfd0>]
+(show_stack+0x10/0x14)
+[   46.910746] [<c010bfd0>] (show_stack) from [<c06f59c4>]
+(dump_stack+0x88/0x9c)
+[   46.917966] [<c06f59c4>] (dump_stack) from [<c04444d8>]
+(dw_hdmi_update_power+0xb8/0x12cc)
+[   46.926225] [<c04444d8>] (dw_hdmi_update_power) from [<c044593c>]
+(dw_hdmi_bridge_enable+0x2c/0x70)
+[   46.935262] [<c044593c>] (dw_hdmi_bridge_enable) from [<c04261f0>]
+(drm_bridge_enable+0x24/0x34)
+[   46.944040] [<c04261f0>] (drm_bridge_enable) from [<c0404fd0>]
+(drm_atomic_helper_commit_modeset_enables+0x9c/0x180)
+[   46.954552] [<c0404fd0>] (drm_atomic_helper_commit_modeset_enables)
+from [<c040879c>] (drm_atomic_helper_commit_tail_rpm+0x24/0x64)
+[   46.966361] [<c040879c>] (drm_atomic_helper_commit_tail_rpm) from
+[<c040861c>] (commit_tail+0x40/0x6c)
+[   46.975657] [<c040861c>] (commit_tail) from [<c040870c>]
+(drm_atomic_helper_commit+0xbc/0x128)
+[   46.984259] [<c040870c>] (drm_atomic_helper_commit) from
+[<c040ac70>] (restore_fbdev_mode_atomic+0x1cc/0x220)
+[   46.994164] [<c040ac70>] (restore_fbdev_mode_atomic) from
+[<c040df90>] (drm_fb_helper_restore_fbdev_mode_unlocked+0x54/0xa0)
+[   47.005369] [<c040df90>] (drm_fb_helper_restore_fbdev_mode_unlocked)
+from [<c040e00c>] (drm_fb_helper_set_par+0x30/0x54)
+[   47.016226] [<c040e00c>] (drm_fb_helper_set_par) from [<c040df08>]
+(drm_fb_helper_hotplug_event.part.11+0xa0/0xa8)
+[   47.026563] [<c040df08>] (drm_fb_helper_hotplug_event.part.11) from
+[<c03fee0c>] (drm_helper_hpd_irq_event+0x110/0x118)
+[   47.037334] [<c03fee0c>] (drm_helper_hpd_irq_event) from
+[<c0445888>] (dw_hdmi_irq+0x10c/0x194)
+[   47.046025] [<c0445888>] (dw_hdmi_irq) from [<c01626a8>]
+(irq_thread_fn+0x1c/0x54)
+[   47.053589] [<c01626a8>] (irq_thread_fn) from [<c01629c4>]
+(irq_thread+0x158/0x21c)
+[   47.061241] [<c01629c4>] (irq_thread) from [<c013a324>]
+(kthread+0x148/0x150)
+[   47.068373] [<c013a324>] (kthread) from [<c01010e8>]
+(ret_from_fork+0x14/0x2c)
+[   47.075584] Exception stack(0xee8bbfb0 to 0xee8bbff8)
+[   47.080630] bfa0:                                     00000000
+00000000 00000000 00000000
+[   47.088797] bfc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[   47.096964] bfe0: 00000000 00000000 00000000 00000000 00000013
+00000000
+```
 
 > 
-> drivers/staging/wilc1000/wilc_debugfs.o:(.data+0x10): undefined
-> reference to `__this_module'
+> > 
+> > Re-run dw_hdmi_setup when setting mode, in order to prevent such
+> > situation.
 > 
-> Reverting the patch makes it build again. I'm leaving the TODO file
-> modification though, as there is nothing left to do for this item.
-> 
-> A related problem however still seems to exist: one still cannot have
-> multiple concurrent instances of wilc1000 devices present in the
-> system, as there are lots of shared global variables such as
-> 
-> host_interface.c:static struct wilc_vif *periodic_rssi_vif;
-> wilc_sdio.c:static struct wilc_sdio g_sdio;
-> wilc_wlan.c:static enum chip_ps_states chip_ps_state = CHIP_WAKEDUP;
-> wilc_wlan.c:static u32 pending_acks;
-> wilc_wfi_cfgoperations.c:int wilc_connecting;
-> 
-> In order to have multiple instances working (sdio, spi, or mixed),
-> all such variables need to be dynamically allocated per instance and
-> stored in 'struct wilc' or one of the structures referenced by it.
-> 
+> mode_set is run with hardware disabled, thus usually it should not
+> touch
+> hardware.
 
-Actually, I have been locally working on this patch for a while now
-and I will submit a patch to avoid use of most of global and static
-variable soon. 
+However I think there's many instances now where some hardware setup is
+performed in mode_set.
 
-> Fixes: 9abc44ba4e2f ("staging: wilc1000: fix TODO to compile spi and
-> sdio components in single module") Signed-off-by: Arnd Bergmann
-> <arnd@arndb.de> ---
->  drivers/staging/wilc1000/Makefile       | 3 +--
->  drivers/staging/wilc1000/linux_wlan.c   | 6 ++++--
->  drivers/staging/wilc1000/wilc_debugfs.c | 7 +++++--
->  drivers/staging/wilc1000/wilc_wlan.c    | 6 ++++++
->  drivers/staging/wilc1000/wilc_wlan_if.h | 2 --
->  5 files changed, 16 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/staging/wilc1000/Makefile
-> b/drivers/staging/wilc1000/Makefile index f7b07c0b5ce2..ee7e26b886a5
-> 100644 --- a/drivers/staging/wilc1000/Makefile
-> +++ b/drivers/staging/wilc1000/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_WILC1000) += wilc1000.o
->  
->  ccflags-y += -DFIRMWARE_1002=\"atmel/wilc1002_firmware.bin\" \
->  		-DFIRMWARE_1003=\"atmel/wilc1003_firmware.bin\"
-> @@ -11,9 +12,7 @@ wilc1000-objs := wilc_wfi_cfgoperations.o
-> linux_wlan.o linux_mon.o \ wilc_wlan.o
->  
->  obj-$(CONFIG_WILC1000_SDIO) += wilc1000-sdio.o
-> -wilc1000-sdio-objs += $(wilc1000-objs)
->  wilc1000-sdio-objs += wilc_sdio.o
->  
->  obj-$(CONFIG_WILC1000_SPI) += wilc1000-spi.o
-> -wilc1000-spi-objs += $(wilc1000-objs)
->  wilc1000-spi-objs += wilc_spi.o
-> diff --git a/drivers/staging/wilc1000/linux_wlan.c
-> b/drivers/staging/wilc1000/linux_wlan.c index
-> 01cf4bd2e192..3b8d237decbf 100644 ---
-> a/drivers/staging/wilc1000/linux_wlan.c +++
-> b/drivers/staging/wilc1000/linux_wlan.c @@ -1038,8 +1038,8 @@ void
-> wilc_netdev_cleanup(struct wilc *wilc) }
->  
->  	kfree(wilc);
-> -	wilc_debugfs_remove();
->  }
-> +EXPORT_SYMBOL_GPL(wilc_netdev_cleanup);
->  
->  static const struct net_device_ops wilc_netdev_ops = {
->  	.ndo_init = mac_init_fn,
-> @@ -1062,7 +1062,6 @@ int wilc_netdev_init(struct wilc **wilc, struct
-> device *dev, int io_type, if (!wl)
->  		return -ENOMEM;
->  
-> -	wilc_debugfs_init();
->  	*wilc = wl;
->  	wl->io_type = io_type;
->  	wl->hif_func = ops;
-> @@ -1124,3 +1123,6 @@ int wilc_netdev_init(struct wilc **wilc, struct
-> device *dev, int io_type, 
->  	return 0;
->  }
-> +EXPORT_SYMBOL_GPL(wilc_netdev_init);
-> +
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/staging/wilc1000/wilc_debugfs.c
-> b/drivers/staging/wilc1000/wilc_debugfs.c index
-> edc72876458d..8001df66b8c2 100644 ---
-> a/drivers/staging/wilc1000/wilc_debugfs.c +++
-> b/drivers/staging/wilc1000/wilc_debugfs.c @@ -19,6 +19,7 @@ static
-> struct dentry *wilc_dir; 
->  #define DBG_LEVEL_ALL	(DEBUG | INFO | WRN | ERR)
->  static atomic_t WILC_DEBUG_LEVEL = ATOMIC_INIT(ERR);
-> +EXPORT_SYMBOL_GPL(WILC_DEBUG_LEVEL);
->  
->  static ssize_t wilc_debug_level_read(struct file *file, char __user
-> *userbuf, size_t count, loff_t *ppos)
-> @@ -87,7 +88,7 @@ static struct wilc_debugfs_info_t debugfs_info[] = {
->  	},
->  };
->  
-> -int wilc_debugfs_init(void)
-> +static int __init wilc_debugfs_init(void)
->  {
->  	int i;
->  	struct wilc_debugfs_info_t *info;
-> @@ -103,10 +104,12 @@ int wilc_debugfs_init(void)
->  	}
->  	return 0;
->  }
-> +module_init(wilc_debugfs_init);
->  
-> -void wilc_debugfs_remove(void)
-> +static void __exit wilc_debugfs_remove(void)
->  {
->  	debugfs_remove_recursive(wilc_dir);
->  }
-> +module_exit(wilc_debugfs_remove);
->  
->  #endif
-> diff --git a/drivers/staging/wilc1000/wilc_wlan.c
-> b/drivers/staging/wilc1000/wilc_wlan.c index
-> 6787b6e9f124..8b184aa30d25 100644 ---
-> a/drivers/staging/wilc1000/wilc_wlan.c +++
-> b/drivers/staging/wilc1000/wilc_wlan.c @@ -417,6 +417,7 @@ void
-> chip_allow_sleep(struct wilc *wilc)
-> wilc->hif_func->hif_write_reg(wilc, 0xf0, reg & ~BIT(0));
-> wilc->hif_func->hif_write_reg(wilc, 0xfa, 0); }
-> +EXPORT_SYMBOL_GPL(chip_allow_sleep);
->  
->  void chip_wakeup(struct wilc *wilc)
->  {
-> @@ -471,6 +472,7 @@ void chip_wakeup(struct wilc *wilc)
->  	}
->  	chip_ps_state = CHIP_WAKEDUP;
->  }
-> +EXPORT_SYMBOL_GPL(chip_wakeup);
->  
->  void wilc_chip_sleep_manually(struct wilc *wilc)
->  {
-> @@ -484,6 +486,7 @@ void wilc_chip_sleep_manually(struct wilc *wilc)
->  	chip_ps_state = CHIP_SLEEPING_MANUAL;
->  	release_bus(wilc, RELEASE_ONLY);
->  }
-> +EXPORT_SYMBOL_GPL(wilc_chip_sleep_manually);
->  
->  void host_wakeup_notify(struct wilc *wilc)
->  {
-> @@ -491,6 +494,7 @@ void host_wakeup_notify(struct wilc *wilc)
->  	wilc->hif_func->hif_write_reg(wilc, 0x10b0, 1);
->  	release_bus(wilc, RELEASE_ONLY);
->  }
-> +EXPORT_SYMBOL_GPL(host_wakeup_notify);
->  
->  void host_sleep_notify(struct wilc *wilc)
->  {
-> @@ -498,6 +502,7 @@ void host_sleep_notify(struct wilc *wilc)
->  	wilc->hif_func->hif_write_reg(wilc, 0x10ac, 1);
->  	release_bus(wilc, RELEASE_ONLY);
->  }
-> +EXPORT_SYMBOL_GPL(host_sleep_notify);
->  
->  int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
->  {
-> @@ -871,6 +876,7 @@ void wilc_handle_isr(struct wilc *wilc)
->  
->  	release_bus(wilc, RELEASE_ALLOW_SLEEP);
->  }
-> +EXPORT_SYMBOL_GPL(wilc_handle_isr);
->  
->  int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
->  				u32 buffer_size)
-> diff --git a/drivers/staging/wilc1000/wilc_wlan_if.h
-> b/drivers/staging/wilc1000/wilc_wlan_if.h index
-> 00d13b153f80..b81a73b9bd67 100644 ---
-> a/drivers/staging/wilc1000/wilc_wlan_if.h +++
-> b/drivers/staging/wilc1000/wilc_wlan_if.h @@ -831,6 +831,4 @@ struct
-> wilc; int wilc_wlan_init(struct net_device *dev);
->  u32 wilc_get_chipid(struct wilc *wilc, bool update);
->  
-> -int wilc_debugfs_init(void);
-> -void wilc_debugfs_remove(void);
->  #endif
+> 
+> > 
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > ---
+> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > index 5971976284bf..e2f832182afe 100644
+> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > @@ -2007,6 +2007,7 @@ static void dw_hdmi_bridge_mode_set(struct
+> > drm_bridge *bridge,
+> >  
+> >  	/* Store the display mode for plugin/DKMS poweron events */
+> >  	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi-
+> > >previous_mode));
+> > +	dw_hdmi_setup(hdmi, mode);
+> 
+> This hdmi->previous_mode also looks strange, it is current mode and
+> moreover it is always available from crtc state, there is no point in
+> copying it to private field.
+
+Sorry I don't know about this. Maybe you should ask the original author
+of dw-hdmi?
+
+> 
+> Regards
+> Andrzej
+> >  
+> >  	mutex_unlock(&hdmi->mutex);
+> >  }
+> 
+> 
 
