@@ -6,47 +6,39 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC0DC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE536C46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE8A72150F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE8A72150F
+	by mail.kernel.org (Postfix) with ESMTP id 91F5C21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F5C21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391180AbeHNUf2 (ORCPT
+        id S2403807AbeHNUfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60914 "EHLO
+        Tue, 14 Aug 2018 16:35:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUf2 (ORCPT
+        with ESMTP id S2390379AbeHNUfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:28 -0400
+        Tue, 14 Aug 2018 16:35:31 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C71A540B;
-        Tue, 14 Aug 2018 17:47:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78BD3C74;
+        Tue, 14 Aug 2018 17:47:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 30/43] mm: Add vm_insert_pfn_prot()
-Date:   Tue, 14 Aug 2018 19:18:06 +0200
-Message-Id: <20180814171519.080414264@linuxfoundation.org>
+Subject: [PATCH 4.4 31/43] mm: fix cache mode tracking in vm_insert_mixed()
+Date:   Tue, 14 Aug 2018 19:18:07 +0200
+Message-Id: <20180814171519.142204859@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -63,101 +55,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 1745cbc5d0dee0749a6bc0ea8e872c5db0074061 upstream
+commit 87744ab3832b83ba71b931f86f9cfdb000d07da5 upstream
 
-The x86 vvar vma contains pages with differing cacheability
-flags.  x86 currently implements this by manually inserting all
-the ptes using (io_)remap_pfn_range when the vma is set up.
+vm_insert_mixed() unlike vm_insert_pfn_prot() and vmf_insert_pfn_pmd(),
+fails to check the pgprot_t it uses for the mapping against the one
+recorded in the memtype tracking tree.  Add the missing call to
+track_pfn_insert() to preclude cases where incompatible aliased mappings
+are established for a given physical address range.
 
-x86 wants to move to using .fault with VM_FAULT_NOPAGE to set up
-the mappings as needed.  The correct API to use to insert a pfn
-in .fault is vm_insert_pfn(), but vm_insert_pfn() can't override the
-vma's cache mode, and the HPET page in particular needs to be
-uncached despite the fact that the rest of the VMA is cached.
+[groeck: Backport to v4.4.y]
 
-Add vm_insert_pfn_prot() to support varying cacheability within
-the same non-COW VMA in a more sane manner.
-
-x86 could alternatively use multiple VMAs, but that's messy,
-would break CRIU, and would create unnecessary VMAs that would
-waste memory.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Acked-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/d2938d1eb37be7a5e4f86182db646551f11e45aa.1451446564.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: http://lkml.kernel.org/r/147328717909.35069.14256589123570653697.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/mm.h |    2 ++
- mm/memory.c        |   25 +++++++++++++++++++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
+ mm/memory.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2083,6 +2083,8 @@ int remap_pfn_range(struct vm_area_struc
- int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
- int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
- 			unsigned long pfn);
-+int vm_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
-+			unsigned long pfn, pgprot_t pgprot);
- int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 			unsigned long pfn);
- int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -1605,8 +1605,29 @@ out:
- int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
- 			unsigned long pfn)
- {
-+	return vm_insert_pfn_prot(vma, addr, pfn, vma->vm_page_prot);
-+}
-+EXPORT_SYMBOL(vm_insert_pfn);
-+
-+/**
-+ * vm_insert_pfn_prot - insert single pfn into user vma with specified pgprot
-+ * @vma: user vma to map to
-+ * @addr: target user address of this page
-+ * @pfn: source kernel pfn
-+ * @pgprot: pgprot flags for the inserted page
-+ *
-+ * This is exactly like vm_insert_pfn, except that it allows drivers to
-+ * to override pgprot on a per-page basis.
-+ *
-+ * This only makes sense for IO mappings, and it makes no sense for
-+ * cow mappings.  In general, using multiple vmas is preferable;
-+ * vm_insert_pfn_prot should only be used if using multiple VMAs is
-+ * impractical.
-+ */
-+int vm_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
-+			unsigned long pfn, pgprot_t pgprot)
-+{
- 	int ret;
--	pgprot_t pgprot = vma->vm_page_prot;
- 	/*
- 	 * Technically, architectures with pte_special can avoid all these
- 	 * restrictions (same for remap_pfn_range).  However we would like
-@@ -1628,7 +1649,7 @@ int vm_insert_pfn(struct vm_area_struct
- 
- 	return ret;
- }
--EXPORT_SYMBOL(vm_insert_pfn);
-+EXPORT_SYMBOL(vm_insert_pfn_prot);
- 
+@@ -1654,10 +1654,14 @@ EXPORT_SYMBOL(vm_insert_pfn_prot);
  int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
  			unsigned long pfn)
+ {
++	pgprot_t pgprot = vma->vm_page_prot;
++
+ 	BUG_ON(!(vma->vm_flags & VM_MIXEDMAP));
+ 
+ 	if (addr < vma->vm_start || addr >= vma->vm_end)
+ 		return -EFAULT;
++	if (track_pfn_insert(vma, &pgprot, pfn))
++		return -EINVAL;
+ 
+ 	/*
+ 	 * If we don't have pte special, then we have to use the pfn_valid()
+@@ -1670,9 +1674,9 @@ int vm_insert_mixed(struct vm_area_struc
+ 		struct page *page;
+ 
+ 		page = pfn_to_page(pfn);
+-		return insert_page(vma, addr, page, vma->vm_page_prot);
++		return insert_page(vma, addr, page, pgprot);
+ 	}
+-	return insert_pfn(vma, addr, pfn, vma->vm_page_prot);
++	return insert_pfn(vma, addr, pfn, pgprot);
+ }
+ EXPORT_SYMBOL(vm_insert_mixed);
+ 
 
 
