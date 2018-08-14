@@ -6,84 +6,85 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCF8C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB0AC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A09F4216FE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09F4216FE
+	by mail.kernel.org (Postfix) with ESMTP id D852F216FE
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D852F216FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732611AbeHNPUp (ORCPT
+        id S1732628AbeHNPUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 11:20:45 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:54203 "EHLO
+        Tue, 14 Aug 2018 11:20:55 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:41340 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729560AbeHNPUp (ORCPT
+        by vger.kernel.org with ESMTP id S1731909AbeHNPUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 11:20:45 -0400
+        Tue, 14 Aug 2018 11:20:54 -0400
 Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:45 +0900
+  by relmlie3.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:54 +0900
 Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 8972071D3D;
-        Tue, 14 Aug 2018 21:33:45 +0900 (JST)
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 9BCE171D50;
+        Tue, 14 Aug 2018 21:33:54 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.53,238,1531753200"; 
-   d="scan'208";a="288116170"
+   d="scan'208";a="288116176"
 Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii1.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:41 +0900
+  by relmlii1.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:51 +0900
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH] dt-bindings: net: ravb: Add support for r8a774a1 SoC
-Date:   Tue, 14 Aug 2018 13:33:37 +0100
-Message-Id: <1534250017-15725-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a774a1 support
+Date:   Tue, 14 Aug 2018 13:33:48 +0100
+Message-Id: <1534250028-15770-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+RZ/G2M (R8A774A1) watchdog implementation is compatible with R-Car
+Gen3, therefore add relevant documentation.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index 19740d0..da249b7 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -16,6 +16,7 @@ Required properties:
-       - "renesas,etheravb-rcar-gen2" as a fallback for the above
- 		R-Car Gen2 and RZ/G1 devices.
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+index 5d47a26..9407212 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 	       Examples with soctypes are:
+ 		 - "renesas,r8a7743-wdt" (RZ/G1M)
+ 		 - "renesas,r8a7745-wdt" (RZ/G1E)
++		 - "renesas,r8a774a1-wdt" (RZ/G2M)
+ 	         - "renesas,r8a7790-wdt" (R-Car H2)
+ 	         - "renesas,r8a7791-wdt" (R-Car M2-W)
+ 	         - "renesas,r8a7792-wdt" (R-Car V2H)
+@@ -21,8 +22,8 @@ Required properties:
+ 	         - "renesas,r7s72100-wdt" (RZ/A1)
+ 		The generic compatible string must be:
+ 		 - "renesas,rza-wdt" for RZ/A
+-		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
+-		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
++		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G1
++		 - "renesas,rcar-gen3-wdt" for R-Car Gen3 and RZ/G2
  
-+      - "renesas,etheravb-r8a774a1" for the R8A774A1 SoC.
-       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
-       - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
-       - "renesas,etheravb-r8a77965" for the R8A77965 SoC.
-@@ -24,7 +25,7 @@ Required properties:
-       - "renesas,etheravb-r8a77990" for the R8A77990 SoC.
-       - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
-       - "renesas,etheravb-rcar-gen3" as a fallback for the above
--		R-Car Gen3 devices.
-+		R-Car Gen3 and RZ/G2 devices.
- 
- 	When compatible with the generic version, nodes must list the
- 	SoC-specific version corresponding to the platform first followed by
+ - reg : Should contain WDT registers location and length
+ - clocks : the clock feeding the watchdog timer.
 -- 
 2.7.4
 
