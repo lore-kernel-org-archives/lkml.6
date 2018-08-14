@@ -2,101 +2,265 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7648C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41209C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38EED2173F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:22:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hxkrzHLi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EED2173F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E65112173F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 05:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65112173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbeHNIGs (ORCPT
+        id S1730483AbeHNIIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 04:06:48 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:60662 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeHNIGs (ORCPT
+        Tue, 14 Aug 2018 04:08:17 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:45097 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbeHNIIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 04:06:48 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7E5L0Jb063919;
-        Tue, 14 Aug 2018 00:21:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1534224060;
-        bh=zL8uW+2v4vezwygo5hDXLtQB6H1rbJz/qx66AvbSGIE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hxkrzHLi8ZAx48TRQbpPAHQEiac2/u/3J7LMx9aNPQOYyWoXf+dHFY44o68TWGopM
-         FpgW+NDE+v2ujQuaumucI65AkE6eC7V/jff8qq5sFZWc5b+wSnxawzRFszV1Z2vcDg
-         A6kCKS7hx5FYT6hEhVClXWSETWCV16AfbXKyO9m8=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7E5L0Hh024445;
-        Tue, 14 Aug 2018 00:21:00 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 14
- Aug 2018 00:20:59 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 14 Aug 2018 00:20:59 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7E5Ktjm003486;
-        Tue, 14 Aug 2018 00:20:56 -0500
-Subject: Re: [PATCH] remoteproc/davinci: Mark error recovery as disabled
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Suman Anna <s-anna@ti.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+        Tue, 14 Aug 2018 04:08:17 -0400
+X-IronPort-AV: E=Sophos;i="5.53,237,1531810800"; 
+   d="scan'208";a="18013644"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Aug 2018 22:22:45 -0700
+Received: from ajaysk-VirtualBox (10.10.76.4) by chn-sv-exch04.mchp-main.com
+ (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Mon, 13 Aug 2018
+ 22:22:43 -0700
+Date:   Tue, 14 Aug 2018 10:52:37 +0530
+From:   Ajay Singh <ajay.kathat@microchip.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-wireless@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-References: <20180723232757.9147-1-s-anna@ti.com>
- <0550997f-8e32-fb56-2a70-74235b969ce2@ti.com> <20180813185224.GG5090@builder>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <5a6e69f7-7da1-1b8e-d082-18f39d5139dc@ti.com>
-Date:   Tue, 14 Aug 2018 10:50:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Subject: Re: [PATCH] staging: wilc1000: revert "fix TODO to compile spi and
+ sdio components in single module"
+Message-ID: <20180814105237.64b01528@ajaysk-VirtualBox>
+In-Reply-To: <20180813212108.2442868-1-arnd@arndb.de>
+References: <20180813212108.2442868-1-arnd@arndb.de>
+Organization: Microchip Technology
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180813185224.GG5090@builder>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hi Arnd,
 
-On Tuesday 14 August 2018 12:22 AM, Bjorn Andersson wrote:
-> On Mon 13 Aug 08:11 PDT 2018, Suman Anna wrote:
+On Mon, 13 Aug 2018 23:20:33 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
+
+> The TODO item named "make spi and sdio components coexist in one
+> build" was apparently addressed a long time ago, but never removed
+> from the TODO file. However, the new patch that tries to address it
+> actually makes it worse again by duplicating the common parts of the
+> driver into two separate modules rather than sharing them. This also
+> introduces a build regression when one of the two is built-in while
+> the other is a loadable module:
+
+Thanks for sharing your inputs and submitting patch.
+I have also submitted a patch to address the compilation error[1].
+We can ignore my patch and proceed with your changes.
+
+[1].https://patchwork.kernel.org/patch/10563873/
+
+In my understanding, even when the common part is compiled separately,
+the wilc1000-sdio/wilc1000-spi module still expects separate instance of
+common part for each of them because of use of static variables.
+
+Shouldn't it be correct to compile the components required for SDIO and
+SPI separately and then get rid of use of global variables to support
+running of SDIO/SPI module at same time?
+
 > 
->> Hi Bjorn,
->>
->> On 07/23/2018 06:27 PM, Suman Anna wrote:
->>> The Davinci remoteproc driver does not support error recovery at
->>> present, so mark the corresponding remoteproc flag appropriately
->>> so that the debugfs flag shows the value as 'disabled' by default.
->>>
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>
->> Can you pick up this minor patch for 4.19 please, I do not see this in
->> your rproc-next branch?
->>
+> drivers/staging/wilc1000/wilc_debugfs.o:(.data+0x10): undefined
+> reference to `__this_module'
 > 
-> Of course, the patch is applied now, will send my pull request in a few
-> days.
+> Reverting the patch makes it build again. I'm leaving the TODO file
+> modification though, as there is nothing left to do for this item.
+> 
+> A related problem however still seems to exist: one still cannot have
+> multiple concurrent instances of wilc1000 devices present in the
+> system, as there are lots of shared global variables such as
+> 
+> host_interface.c:static struct wilc_vif *periodic_rssi_vif;
+> wilc_sdio.c:static struct wilc_sdio g_sdio;
+> wilc_wlan.c:static enum chip_ps_states chip_ps_state = CHIP_WAKEDUP;
+> wilc_wlan.c:static u32 pending_acks;
+> wilc_wfi_cfgoperations.c:int wilc_connecting;
+> 
+> In order to have multiple instances working (sdio, spi, or mixed),
+> all such variables need to be dynamically allocated per instance and
+> stored in 'struct wilc' or one of the structures referenced by it.
+> 
 
-Can you also please pick patch 1/4 here:
+Actually, I have been locally working on this patch for a while now
+and I will submit a patch to avoid use of most of global and static
+variable soon. 
 
-https://patchwork.kernel.org/patch/10479365/
+> Fixes: 9abc44ba4e2f ("staging: wilc1000: fix TODO to compile spi and
+> sdio components in single module") Signed-off-by: Arnd Bergmann
+> <arnd@arndb.de> ---
+>  drivers/staging/wilc1000/Makefile       | 3 +--
+>  drivers/staging/wilc1000/linux_wlan.c   | 6 ++++--
+>  drivers/staging/wilc1000/wilc_debugfs.c | 7 +++++--
+>  drivers/staging/wilc1000/wilc_wlan.c    | 6 ++++++
+>  drivers/staging/wilc1000/wilc_wlan_if.h | 2 --
+>  5 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/staging/wilc1000/Makefile
+> b/drivers/staging/wilc1000/Makefile index f7b07c0b5ce2..ee7e26b886a5
+> 100644 --- a/drivers/staging/wilc1000/Makefile
+> +++ b/drivers/staging/wilc1000/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_WILC1000) += wilc1000.o
+>  
+>  ccflags-y += -DFIRMWARE_1002=\"atmel/wilc1002_firmware.bin\" \
+>  		-DFIRMWARE_1003=\"atmel/wilc1003_firmware.bin\"
+> @@ -11,9 +12,7 @@ wilc1000-objs := wilc_wfi_cfgoperations.o
+> linux_wlan.o linux_mon.o \ wilc_wlan.o
+>  
+>  obj-$(CONFIG_WILC1000_SDIO) += wilc1000-sdio.o
+> -wilc1000-sdio-objs += $(wilc1000-objs)
+>  wilc1000-sdio-objs += wilc_sdio.o
+>  
+>  obj-$(CONFIG_WILC1000_SPI) += wilc1000-spi.o
+> -wilc1000-spi-objs += $(wilc1000-objs)
+>  wilc1000-spi-objs += wilc_spi.o
+> diff --git a/drivers/staging/wilc1000/linux_wlan.c
+> b/drivers/staging/wilc1000/linux_wlan.c index
+> 01cf4bd2e192..3b8d237decbf 100644 ---
+> a/drivers/staging/wilc1000/linux_wlan.c +++
+> b/drivers/staging/wilc1000/linux_wlan.c @@ -1038,8 +1038,8 @@ void
+> wilc_netdev_cleanup(struct wilc *wilc) }
+>  
+>  	kfree(wilc);
+> -	wilc_debugfs_remove();
+>  }
+> +EXPORT_SYMBOL_GPL(wilc_netdev_cleanup);
+>  
+>  static const struct net_device_ops wilc_netdev_ops = {
+>  	.ndo_init = mac_init_fn,
+> @@ -1062,7 +1062,6 @@ int wilc_netdev_init(struct wilc **wilc, struct
+> device *dev, int io_type, if (!wl)
+>  		return -ENOMEM;
+>  
+> -	wilc_debugfs_init();
+>  	*wilc = wl;
+>  	wl->io_type = io_type;
+>  	wl->hif_func = ops;
+> @@ -1124,3 +1123,6 @@ int wilc_netdev_init(struct wilc **wilc, struct
+> device *dev, int io_type, 
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(wilc_netdev_init);
+> +
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/staging/wilc1000/wilc_debugfs.c
+> b/drivers/staging/wilc1000/wilc_debugfs.c index
+> edc72876458d..8001df66b8c2 100644 ---
+> a/drivers/staging/wilc1000/wilc_debugfs.c +++
+> b/drivers/staging/wilc1000/wilc_debugfs.c @@ -19,6 +19,7 @@ static
+> struct dentry *wilc_dir; 
+>  #define DBG_LEVEL_ALL	(DEBUG | INFO | WRN | ERR)
+>  static atomic_t WILC_DEBUG_LEVEL = ATOMIC_INIT(ERR);
+> +EXPORT_SYMBOL_GPL(WILC_DEBUG_LEVEL);
+>  
+>  static ssize_t wilc_debug_level_read(struct file *file, char __user
+> *userbuf, size_t count, loff_t *ppos)
+> @@ -87,7 +88,7 @@ static struct wilc_debugfs_info_t debugfs_info[] = {
+>  	},
+>  };
+>  
+> -int wilc_debugfs_init(void)
+> +static int __init wilc_debugfs_init(void)
+>  {
+>  	int i;
+>  	struct wilc_debugfs_info_t *info;
+> @@ -103,10 +104,12 @@ int wilc_debugfs_init(void)
+>  	}
+>  	return 0;
+>  }
+> +module_init(wilc_debugfs_init);
+>  
+> -void wilc_debugfs_remove(void)
+> +static void __exit wilc_debugfs_remove(void)
+>  {
+>  	debugfs_remove_recursive(wilc_dir);
+>  }
+> +module_exit(wilc_debugfs_remove);
+>  
+>  #endif
+> diff --git a/drivers/staging/wilc1000/wilc_wlan.c
+> b/drivers/staging/wilc1000/wilc_wlan.c index
+> 6787b6e9f124..8b184aa30d25 100644 ---
+> a/drivers/staging/wilc1000/wilc_wlan.c +++
+> b/drivers/staging/wilc1000/wilc_wlan.c @@ -417,6 +417,7 @@ void
+> chip_allow_sleep(struct wilc *wilc)
+> wilc->hif_func->hif_write_reg(wilc, 0xf0, reg & ~BIT(0));
+> wilc->hif_func->hif_write_reg(wilc, 0xfa, 0); }
+> +EXPORT_SYMBOL_GPL(chip_allow_sleep);
+>  
+>  void chip_wakeup(struct wilc *wilc)
+>  {
+> @@ -471,6 +472,7 @@ void chip_wakeup(struct wilc *wilc)
+>  	}
+>  	chip_ps_state = CHIP_WAKEDUP;
+>  }
+> +EXPORT_SYMBOL_GPL(chip_wakeup);
+>  
+>  void wilc_chip_sleep_manually(struct wilc *wilc)
+>  {
+> @@ -484,6 +486,7 @@ void wilc_chip_sleep_manually(struct wilc *wilc)
+>  	chip_ps_state = CHIP_SLEEPING_MANUAL;
+>  	release_bus(wilc, RELEASE_ONLY);
+>  }
+> +EXPORT_SYMBOL_GPL(wilc_chip_sleep_manually);
+>  
+>  void host_wakeup_notify(struct wilc *wilc)
+>  {
+> @@ -491,6 +494,7 @@ void host_wakeup_notify(struct wilc *wilc)
+>  	wilc->hif_func->hif_write_reg(wilc, 0x10b0, 1);
+>  	release_bus(wilc, RELEASE_ONLY);
+>  }
+> +EXPORT_SYMBOL_GPL(host_wakeup_notify);
+>  
+>  void host_sleep_notify(struct wilc *wilc)
+>  {
+> @@ -498,6 +502,7 @@ void host_sleep_notify(struct wilc *wilc)
+>  	wilc->hif_func->hif_write_reg(wilc, 0x10ac, 1);
+>  	release_bus(wilc, RELEASE_ONLY);
+>  }
+> +EXPORT_SYMBOL_GPL(host_sleep_notify);
+>  
+>  int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+>  {
+> @@ -871,6 +876,7 @@ void wilc_handle_isr(struct wilc *wilc)
+>  
+>  	release_bus(wilc, RELEASE_ALLOW_SLEEP);
+>  }
+> +EXPORT_SYMBOL_GPL(wilc_handle_isr);
+>  
+>  int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+>  				u32 buffer_size)
+> diff --git a/drivers/staging/wilc1000/wilc_wlan_if.h
+> b/drivers/staging/wilc1000/wilc_wlan_if.h index
+> 00d13b153f80..b81a73b9bd67 100644 ---
+> a/drivers/staging/wilc1000/wilc_wlan_if.h +++
+> b/drivers/staging/wilc1000/wilc_wlan_if.h @@ -831,6 +831,4 @@ struct
+> wilc; int wilc_wlan_init(struct net_device *dev);
+>  u32 wilc_get_chipid(struct wilc *wilc, bool update);
+>  
+> -int wilc_debugfs_init(void);
+> -void wilc_debugfs_remove(void);
+>  #endif
 
-Thanks,
-Sekhar
