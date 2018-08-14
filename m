@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532E0C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6557EC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182F221653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:54:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182F221653
+	by mail.kernel.org (Postfix) with ESMTP id 2906621653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2906621653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389221AbeHNUnC (ORCPT
+        id S2389953AbeHNUnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:43:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59200 "EHLO
+        Tue, 14 Aug 2018 16:43:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390199AbeHNUaM (ORCPT
+        with ESMTP id S2390166AbeHNUaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:12 -0400
+        Tue, 14 Aug 2018 16:30:11 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07B52DC4;
-        Tue, 14 Aug 2018 17:33:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 064D8D9C;
+        Tue, 14 Aug 2018 17:32:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 92/97] x86/speculation/l1tf: Make pmd/pud_mknotpresent() invert
-Date:   Tue, 14 Aug 2018 19:17:44 +0200
-Message-Id: <20180814171436.791386862@linuxfoundation.org>
+Subject: [PATCH 4.17 80/97] x86/KVM/VMX: Move the l1tf_flush_l1d test to vmx_l1d_flush()
+Date:   Tue, 14 Aug 2018 19:17:32 +0200
+Message-Id: <20180814171436.191686790@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,73 +50,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Nicolai Stange <nstange@suse.de>
 
-commit 0768f91530ff46683e0b372df14fd79fe8d156e5 upstream
+commit 5b6ccc6c3b1a477fbac9ec97a0b4c1c48e765209 upstream
 
-Some cases in THP like:
-  - MADV_FREE
-  - mprotect
-  - split
+Currently, vmx_vcpu_run() checks if l1tf_flush_l1d is set and invokes
+vmx_l1d_flush() if so.
 
-mark the PMD non present for temporarily to prevent races. The window for
-an L1TF attack in these contexts is very small, but it wants to be fixed
-for correctness sake.
+This test is unncessary for the "always flush L1D" mode.
 
-Use the proper low level functions for pmd/pud_mknotpresent() to address
-this.
+Move the check to vmx_l1d_flush()'s conditional mode code path.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Notes:
+- vmx_l1d_flush() is likely to get inlined anyway and thus, there's no
+  extra function call.
+
+- This inverts the (static) branch prediction, but there hadn't been any
+  explicit likely()/unlikely() annotations before and so it stays as is.
+
+Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable.h |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ arch/x86/kvm/vmx.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -410,11 +410,6 @@ static inline pmd_t pmd_mkwrite(pmd_t pm
- 	return pmd_set_flags(pmd, _PAGE_RW);
- }
- 
--static inline pmd_t pmd_mknotpresent(pmd_t pmd)
--{
--	return pmd_clear_flags(pmd, _PAGE_PRESENT | _PAGE_PROTNONE);
--}
--
- static inline pud_t pud_set_flags(pud_t pud, pudval_t set)
- {
- 	pudval_t v = native_pud_val(pud);
-@@ -469,11 +464,6 @@ static inline pud_t pud_mkwrite(pud_t pu
- 	return pud_set_flags(pud, _PAGE_RW);
- }
- 
--static inline pud_t pud_mknotpresent(pud_t pud)
--{
--	return pud_clear_flags(pud, _PAGE_PRESENT | _PAGE_PROTNONE);
--}
--
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline int pte_soft_dirty(pte_t pte)
- {
-@@ -577,6 +567,18 @@ static inline pud_t pfn_pud(unsigned lon
- 	return __pud(pfn | check_pgprot(pgprot));
- }
- 
-+static inline pmd_t pmd_mknotpresent(pmd_t pmd)
-+{
-+	return pfn_pmd(pmd_pfn(pmd),
-+		      __pgprot(pmd_flags(pmd) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
-+}
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9463,12 +9463,16 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 	 * 'always'
+ 	 */
+ 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
++		bool flush_l1d = vcpu->arch.l1tf_flush_l1d;
 +
-+static inline pud_t pud_mknotpresent(pud_t pud)
-+{
-+	return pfn_pud(pud_pfn(pud),
-+	      __pgprot(pud_flags(pud) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
-+}
-+
- static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
+ 		/*
+ 		 * Clear the flush bit, it gets set again either from
+ 		 * vcpu_run() or from one of the unsafe VMEXIT
+ 		 * handlers.
+ 		 */
+ 		vcpu->arch.l1tf_flush_l1d = false;
++		if (!flush_l1d)
++			return;
+ 	}
  
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ 	vcpu->stat.l1d_flush++;
+@@ -10003,10 +10007,8 @@ static void __noclone vmx_vcpu_run(struc
+ 	evmcs_rsp = static_branch_unlikely(&enable_evmcs) ?
+ 		(unsigned long)&current_evmcs->host_rsp : 0;
+ 
+-	if (static_branch_unlikely(&vmx_l1d_should_flush)) {
+-		if (vcpu->arch.l1tf_flush_l1d)
+-			vmx_l1d_flush(vcpu);
+-	}
++	if (static_branch_unlikely(&vmx_l1d_should_flush))
++		vmx_l1d_flush(vcpu);
+ 
+ 	asm(
+ 		/* Store host registers */
 
 
