@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F35C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCF8C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 689472087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689472087A
+	by mail.kernel.org (Postfix) with ESMTP id A09F4216FE
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:33:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09F4216FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732576AbeHNPUf (ORCPT
+        id S1732611AbeHNPUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 11:20:35 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:17586 "EHLO
+        Tue, 14 Aug 2018 11:20:45 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:54203 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729560AbeHNPUe (ORCPT
+        by vger.kernel.org with ESMTP id S1729560AbeHNPUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 11:20:34 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie3.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:35 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 2B8E468D81;
-        Tue, 14 Aug 2018 21:33:35 +0900 (JST)
+        Tue, 14 Aug 2018 11:20:45 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:45 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 8972071D3D;
+        Tue, 14 Aug 2018 21:33:45 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.53,238,1531753200"; 
-   d="scan'208";a="289646677"
+   d="scan'208";a="288116170"
 Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii2.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:31 +0900
+  by relmlii1.idc.renesas.com with ESMTP; 14 Aug 2018 21:33:41 +0900
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774a1 support
-Date:   Tue, 14 Aug 2018 13:33:28 +0100
-Message-Id: <1534250008-15680-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH] dt-bindings: net: ravb: Add support for r8a774a1 SoC
+Date:   Tue, 14 Aug 2018 13:33:37 +0100
+Message-Id: <1534250017-15725-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,21 +60,30 @@ Document RZ/G2M (R8A774A1) SoC bindings.
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index 697ca2f2..a046ed3 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -13,6 +13,7 @@ Required properties:
-     - "renesas,irqc-r8a7792" (R-Car V2H)
-     - "renesas,irqc-r8a7793" (R-Car M2-N)
-     - "renesas,irqc-r8a7794" (R-Car E2)
-+    - "renesas,intc-ex-r8a774a1" (RZ/G2M)
-     - "renesas,intc-ex-r8a7795" (R-Car H3)
-     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
-     - "renesas,intc-ex-r8a77965" (R-Car M3-N)
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 19740d0..da249b7 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -16,6 +16,7 @@ Required properties:
+       - "renesas,etheravb-rcar-gen2" as a fallback for the above
+ 		R-Car Gen2 and RZ/G1 devices.
+ 
++      - "renesas,etheravb-r8a774a1" for the R8A774A1 SoC.
+       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+       - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+       - "renesas,etheravb-r8a77965" for the R8A77965 SoC.
+@@ -24,7 +25,7 @@ Required properties:
+       - "renesas,etheravb-r8a77990" for the R8A77990 SoC.
+       - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
+       - "renesas,etheravb-rcar-gen3" as a fallback for the above
+-		R-Car Gen3 devices.
++		R-Car Gen3 and RZ/G2 devices.
+ 
+ 	When compatible with the generic version, nodes must list the
+ 	SoC-specific version corresponding to the platform first followed by
 -- 
 2.7.4
 
