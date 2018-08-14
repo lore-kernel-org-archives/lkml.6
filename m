@@ -2,101 +2,104 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A12C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C379FC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 537E121725
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CA521711
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:19:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cml3jO42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 537E121725
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qRlx5lWV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CA521711
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbeHNXEz (ORCPT
+        id S1728642AbeHNXIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 19:04:55 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34150 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeHNXEz (ORCPT
+        Tue, 14 Aug 2018 19:08:05 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:32831 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbeHNXIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 19:04:55 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k19-v6so9753051pfi.1;
-        Tue, 14 Aug 2018 13:16:06 -0700 (PDT)
+        Tue, 14 Aug 2018 19:08:05 -0400
+Received: by mail-qk0-f194.google.com with SMTP id 27-v6so14352703qkv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:19:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=W+GXHSzprWuz6Yv7XZ6xoEa1vEMnXZW7V89V1vT1Qpo=;
-        b=Cml3jO42+Pg+BVB+cjKX3d3SgqcoqxUE1SbR7VFdZYNcroetjqI7UjDub1WN2FVLRB
-         RLM+1mIKLBtJZ9kdPirHr5B3zw6NhGdnDWw1qIwDVrk9o5Q5mEI7/TObXhF5X8paYVv2
-         4xqF6UmkPzUmrE2nHAkhmJnDB7ZjoBnKAggsODH3XTgFRILh4W/yuAtyujMTP/A5G+06
-         mJeLLY5qNTuiuhS1ONZ/6nYxmoKb9zxbijHplZKOCq21lMMpGq1dU/pIuzg2oYH7e+2n
-         RfXvGNpI4t1GmBy/BZQeVOFd+lnAyBqf7VQgRfOqPwWI5pI1Xbr7yn4/zPIJ84NG09s9
-         oVdg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gYiRpzod1eU+LsUlb4ElxIu4GJ5HT1AJFTgJkdkYw3I=;
+        b=qRlx5lWVNBFiaZRPiBdcTfBsOU02Uqxk0OyWP5QWTn+dHRY9f6t9wwTsejOUoAZg3d
+         BpUaTgw4CxR3mY+Zbf9nqkVW9XJAPtHUsK51/jYloaKLajE4gscY50f//fkEXetmhQlW
+         6/ScMJB3m+D9jrJGuUTmpTr/ARYuHqEBSzvXL3MQFnxGeF/n1Od/Vm4JAgbBOw5hGmsV
+         kZlZ+BmL4SgoDVx8Wz+yqmvUHeUI18i4VbyrGbYqQxNNZdkPBOOX1bNG1mASTG18IPCI
+         iqGBJ1o8xGMw8zngeuS9D+sPZPZAIJcKxBuUPmZ7pD0O7+txuQGLFHZKNezFYFl+syqd
+         gk0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W+GXHSzprWuz6Yv7XZ6xoEa1vEMnXZW7V89V1vT1Qpo=;
-        b=AfrVkssIYJd2DOXLufjMMSHlfDC77fv8GNdA5jbHlSl0Pr4q1Do6RVPLiEeQMDrW4B
-         EKgP2boInZgGvTco1PBfLfVu55bSRiReGnWo7J3RJzNEhq2IsCKUoe+S7Xrxkuu3J3sP
-         pPoAzfa8RyeqJiPmHqrjv9pO2Kat+r/x96/ITS6kKi7em++wanbOKWuaiM3sX2gFiKgZ
-         fqJ6AfIVLmqgbtAP+yMEIS06uLpMTw7AMEm9cioVUhYQ1sT9CG3EVVVxYvdvUR6TTQWc
-         NWNtcaeB+teJE0od2N0BcD1BLPSsgWzFuergaCxc1W7itj9BNBEm9UMRe2CdPEYxY3GN
-         yQeA==
-X-Gm-Message-State: AOUpUlFZNWBVIS3gyEJbhHOSkXT26UFu29hsQrjSTAG3rDXmEPrD4A+c
-        Q1Ao5hbOWR/Cg9sWKceUKZs=
-X-Google-Smtp-Source: AA+uWPwEgVMXXdqzB1amv6YFfa0quKnX2JxdgeOf/aSEBRX1+jcuw01xSNB8yBX904EqdM+soZ3rLQ==
-X-Received: by 2002:a62:cd82:: with SMTP id o124-v6mr24684293pfg.206.1534277765564;
-        Tue, 14 Aug 2018 13:16:05 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id n22-v6sm45323373pfj.68.2018.08.14.13.16.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 13:16:04 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 13:16:02 -0700
-From:   Brian Norris <computersforpeace@gmail.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        AL Yu-Chen Cho <acho@suse.com>
-Subject: Re: [PATCH] bluetooth/{bnep,cmtp,hidp}: Remove unnecessary
- smp_mb__{before,after}_atomic
-Message-ID: <20180814201602.GA159642@ban.mtv.corp.google.com>
-References: <1534272066-9366-1-git-send-email-andrea.parri@amarulasolutions.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gYiRpzod1eU+LsUlb4ElxIu4GJ5HT1AJFTgJkdkYw3I=;
+        b=ep1QMBJD3f/0SrQIRXc6NG22IBKy7B32/tyIsvX0q0M2WpIQRDXKbZ8DEcR1gO6g4w
+         qzqTCOPVMHq1O3yG0A7K5AydB8toYm1nk9BrR6fhYsPp0C3bOIap5tau4jA7a2m3lWMc
+         S75FHrZxidEoq+8I/wEZnuTFOKpm+jyyhwH1ia0hSBaILwYPNJY+CPmP7Cdn01Jd8W6O
+         SMnjKIjnHLL8scZqJP41+6qQVybVf/Bzqt9JF44U47Sd3NIfDeHf/J8BQ6yUsYXtopwS
+         gjCkAAjFQf6mckhTOUp+u7CQbThAT6M+XX1nvghHbSdeY7sNhGrmWJxldEKV3ZPUYcWs
+         tqGw==
+X-Gm-Message-State: AOUpUlEGrpkFi3pLpwuL+BF4vQOSjzO3JGr2hyoK78vdEjnLQmwjWIe/
+        bxBkeSvTtxTfXdX55i+rRg9Jyo/anFAqztedwDs=
+X-Google-Smtp-Source: AA+uWPxYjwYDBr6CbWIP6B+p+bTF27SwBlgqGlMMPO/z/CVN6fITmVgfErsYILurFYDRcpFgGJVpTjsl8p/E+jm4Dqk=
+X-Received: by 2002:a37:6812:: with SMTP id d18-v6mr20837479qkc.215.1534277954427;
+ Tue, 14 Aug 2018 13:19:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534272066-9366-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+References: <20180814170904.GA12768@roeck-us.net> <CA+55aFy0SFGaNmzCcpwMCeY_f3ZTG54NmV3SosbK6=QdE20=5A@mail.gmail.com>
+ <20180814173623.GA5117@roeck-us.net>
+In-Reply-To: <20180814173623.GA5117@roeck-us.net>
+From:   Tony Luck <tony.luck@gmail.com>
+Date:   Tue, 14 Aug 2018 13:19:01 -0700
+Message-ID: <CA+8MBbJ=09jAHNZTFrwMFFGbUSWEMYCDxKTMvM2XE+daVa599g@mail.gmail.com>
+Subject: Re: Build failures with gcc 4.5 and older
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        riel@surriel.com, Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 08:41:06PM +0200, Andrea Parri wrote:
-> The barriers are unneeded; wait_woken() and woken_wake_function()
-> already provide us with the required synchronization: remove them
-> and document that we're relying on the (implicit) synchronization
-> provided by wait_woken() and woken_wake_function().
-> 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> ---
->  net/bluetooth/bnep/core.c |  7 ++++---
->  net/bluetooth/cmtp/core.c | 14 ++++++++------
->  net/bluetooth/hidp/core.c | 13 ++++++++-----
->  3 files changed, 20 insertions(+), 14 deletions(-)
+On Tue, Aug 14, 2018 at 11:02 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Tue, Aug 14, 2018 at 10:20:32AM -0700, Linus Torvalds wrote:
+> > On Tue, Aug 14, 2018 at 10:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
+> > >
+> > > Does that mean that gcc 4.5 and older are now officially no longer
+> > > supported for compiling the kernel ?
+> >
+> > I guess we might as well make this the excuse for making that official.
+> >
+> > Maybe it's trivially fixable, but I don't even want to look at it,
+> > since we've talked about updating the minimum gcc version so long.
+> >
+> > > If so, would it make sense to update include/linux/compiler-gcc.h
+> > > accordingly ?
+> >
+> > Unless somebody cares, and comes with a trivial fix to make old
+> > compilers happy, let's just do that.
+> >
+>
+> Only implication is that it is the death warrant for unicore32,
+> since the only compiler available for it is gcc 4.4.2.
 
-Seems good to me:
+My ia64 test box only has 4.3.4.  I seem to remember some pain points
+with newer versions of gcc on ia64. I need to poke around and find one
+new enough to get past this problem, but that still works for kernel building.
 
-Reviewed-by: Brian Norris <computersforpeace@gmail.com>
+-Tony
