@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDA2C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CA0C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5840021471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5840021471
+	by mail.kernel.org (Postfix) with ESMTP id AA90E21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA90E21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391035AbeHNUe1 (ORCPT
+        id S2391048AbeHNUea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:34:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60360 "EHLO
+        Tue, 14 Aug 2018 16:34:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60372 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390473AbeHNUe0 (ORCPT
+        with ESMTP id S2390473AbeHNUea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:34:26 -0400
+        Tue, 14 Aug 2018 16:34:30 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3524CCAE;
-        Tue, 14 Aug 2018 17:46:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA616CBA;
+        Tue, 14 Aug 2018 17:46:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Mera <dev@michaelmera.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 15/43] IB/ocrdma: fix out of bounds access to local buffer
-Date:   Tue, 14 Aug 2018 19:17:51 +0200
-Message-Id: <20180814171518.106262417@linuxfoundation.org>
+Subject: [PATCH 4.4 16/43] ARM: dts: imx6sx: fix irq for pcie bridge
+Date:   Tue, 14 Aug 2018 19:17:52 +0200
+Message-Id: <20180814171518.179726517@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -52,37 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Mera <dev@michaelmera.com>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
 
-commit 062d0f22a30c39840ea49b72cfcfc1aa4cc538fa upstream.
+commit 1bcfe0564044be578841744faea1c2f46adc8178 upstream.
 
-In write to debugfs file 'resource_stats' the local buffer 'tmp_str' is
-written at index 'count-1' where 'count' is the size of the write, so
-potentially 0.
+Use the correct IRQ line for the MSI controller in the PCIe host
+controller. Apparently a different IRQ line is used compared to other
+i.MX6 variants. Without this change MSI IRQs aren't properly propagated
+to the upstream interrupt controller.
 
-This patch filters odd values for the write size/position to avoid this
-type of problem.
-
-Signed-off-by: Michael Mera <dev@michaelmera.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Fixes: b1d17f68e5c5 ("ARM: dts: imx: add initial imx6sx device tree source")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c |    2 +-
+ arch/arm/boot/dts/imx6sx.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-@@ -643,7 +643,7 @@ static ssize_t ocrdma_dbgfs_ops_write(st
- 	struct ocrdma_stats *pstats = filp->private_data;
- 	struct ocrdma_dev *dev = pstats->dev;
- 
--	if (count > 32)
-+	if (*ppos != 0 || count == 0 || count > sizeof(tmp_str))
- 		goto err;
- 
- 	if (copy_from_user(tmp_str, buffer, count))
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -1250,7 +1250,7 @@
+ 				  /* non-prefetchable memory */
+ 				  0x82000000 0 0x08000000 0x08000000 0 0x00f00000>;
+ 			num-lanes = <1>;
+-			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clks IMX6SX_CLK_PCIE_REF_125M>,
+ 				 <&clks IMX6SX_CLK_PCIE_AXI>,
+ 				 <&clks IMX6SX_CLK_LVDS1_OUT>,
 
 
