@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E9AC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF00C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE30921471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE30921471
+	by mail.kernel.org (Postfix) with ESMTP id 04CF62150F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CF62150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390769AbeHNUcr (ORCPT
+        id S2390779AbeHNUcv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:32:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60058 "EHLO
+        Tue, 14 Aug 2018 16:32:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUcr (ORCPT
+        with ESMTP id S1728642AbeHNUcu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:32:47 -0400
+        Tue, 14 Aug 2018 16:32:50 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D000C8D;
-        Tue, 14 Aug 2018 17:44:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3590F40B;
+        Tue, 14 Aug 2018 17:44:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 056/107] cpu/hotplug: Boot HT siblings at least once
-Date:   Tue, 14 Aug 2018 19:17:19 +0200
-Message-Id: <20180814171524.517633215@linuxfoundation.org>
+Subject: [PATCH 4.9 057/107] x86/KVM: Warn user if KVM is loaded SMT and L1TF CPU bug being present
+Date:   Tue, 14 Aug 2018 19:17:20 +0200
+Message-Id: <20180814171524.572304091@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -52,143 +52,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 0cc3cd21657be04cb0559fe8063f2130493f92cf upstream
+commit 26acfb666a473d960f0fd971fe68f3e3ad16c70b upstream
 
-Due to the way Machine Check Exceptions work on X86 hyperthreads it's
-required to boot up _all_ logical cores at least once in order to set the
-CR4.MCE bit.
+If the L1TF CPU bug is present we allow the KVM module to be loaded as the
+major of users that use Linux and KVM have trusted guests and do not want a
+broken setup.
 
-So instead of ignoring the sibling threads right away, let them boot up
-once so they can configure themselves. After they came out of the initial
-boot stage check whether its a "secondary" sibling and cancel the operation
-which puts the CPU back into offline state.
+Cloud vendors are the ones that are uncomfortable with CVE 2018-3620 and as
+such they are the ones that should set nosmt to one.
 
-[dwmw2: Backport to 4.9]
+Setting 'nosmt' means that the system administrator also needs to disable
+SMT (Hyper-threading) in the BIOS, or via the 'nosmt' command line
+parameter, or via the /sys/devices/system/cpu/smt/control. See commit
+05736e4ac13c ("cpu/hotplug: Provide knobs to control SMT").
 
-Reported-by: Dave Hansen <dave.hansen@intel.com>
+Other mitigations are to use task affinity, cpu sets, interrupt binding,
+etc - anything to make sure that _only_ the same guests vCPUs are running
+on sibling threads.
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/cpu.c |   72 +++++++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 48 insertions(+), 24 deletions(-)
+ Documentation/kernel-parameters.txt |    6 ++++++
+ arch/x86/kvm/vmx.c                  |   19 +++++++++++++++++++
+ kernel/cpu.c                        |    1 +
+ 3 files changed, 26 insertions(+)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -54,6 +54,7 @@ struct cpuhp_cpu_state {
- 	bool			rollback;
- 	bool			single;
- 	bool			bringup;
-+	bool			booted_once;
- 	struct hlist_node	*node;
- 	enum cpuhp_state	cb_state;
- 	int			result;
-@@ -355,6 +356,40 @@ void cpu_hotplug_enable(void)
- EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
- #endif	/* CONFIG_HOTPLUG_CPU */
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -1989,6 +1989,12 @@ bytes respectively. Such letter suffixes
+ 			for all guests.
+ 			Default is 1 (enabled) if in 64-bit or 32-bit PAE mode.
  
-+#ifdef CONFIG_HOTPLUG_SMT
-+enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
++	kvm-intel.nosmt=[KVM,Intel] If the L1TF CPU bug is present (CVE-2018-3620)
++			and the system has SMT (aka Hyper-Threading) enabled then
++			don't allow guests to be created.
 +
-+static int __init smt_cmdline_disable(char *str)
++			Default is 0 (allow guests to be created).
++
+ 	kvm-intel.ept=	[KVM,Intel] Disable extended page tables
+ 			(virtualized MMU) support on capable Intel chips.
+ 			Default is 1 (enabled)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -69,6 +69,9 @@ static const struct x86_cpu_id vmx_cpu_i
+ };
+ MODULE_DEVICE_TABLE(x86cpu, vmx_cpu_id);
+ 
++static bool __read_mostly nosmt;
++module_param(nosmt, bool, S_IRUGO);
++
+ static bool __read_mostly enable_vpid = 1;
+ module_param_named(vpid, enable_vpid, bool, 0444);
+ 
+@@ -9298,6 +9301,20 @@ free_vcpu:
+ 	return ERR_PTR(err);
+ }
+ 
++#define L1TF_MSG "SMT enabled with L1TF CPU bug present. Refer to CVE-2018-3620 for details.\n"
++
++static int vmx_vm_init(struct kvm *kvm)
 +{
-+	cpu_smt_control = CPU_SMT_DISABLED;
-+	if (str && !strcmp(str, "force")) {
-+		pr_info("SMT: Force disabled\n");
-+		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
++	if (boot_cpu_has(X86_BUG_L1TF) && cpu_smt_control == CPU_SMT_ENABLED) {
++		if (nosmt) {
++			pr_err(L1TF_MSG);
++			return -EOPNOTSUPP;
++		}
++		pr_warn(L1TF_MSG);
 +	}
 +	return 0;
 +}
-+early_param("nosmt", smt_cmdline_disable);
 +
-+static inline bool cpu_smt_allowed(unsigned int cpu)
-+{
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
-+		return true;
-+
-+	if (topology_is_primary_thread(cpu))
-+		return true;
-+
-+	/*
-+	 * On x86 it's required to boot all logical CPUs at least once so
-+	 * that the init code can get a chance to set CR4.MCE on each
-+	 * CPU. Otherwise, a broadacasted MCE observing CR4.MCE=0b on any
-+	 * core will shutdown the machine.
-+	 */
-+	return !per_cpu(cpuhp_state, cpu).booted_once;
-+}
-+#else
-+static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
-+#endif
-+
- /* Need to know about CPUs going up/down? */
- int register_cpu_notifier(struct notifier_block *nb)
+ static void __init vmx_check_processor_compat(void *rtn)
  {
-@@ -431,6 +466,16 @@ static int bringup_wait_for_ap(unsigned
- 	stop_machine_unpark(cpu);
- 	kthread_unpark(st->thread);
+ 	struct vmcs_config vmcs_conf;
+@@ -11367,6 +11384,8 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.cpu_has_accelerated_tpr = report_flexpriority,
+ 	.has_emulated_msr = vmx_has_emulated_msr,
  
-+	/*
-+	 * SMT soft disabling on X86 requires to bring the CPU out of the
-+	 * BIOS 'wait for SIPI' state in order to set the CR4.MCE bit.  The
-+	 * CPU marked itself as booted_once in cpu_notify_starting() so the
-+	 * cpu_smt_allowed() check will now return false if this is not the
-+	 * primary sibling.
-+	 */
-+	if (!cpu_smt_allowed(cpu))
-+		return -ECANCELED;
++	.vm_init = vmx_vm_init,
 +
- 	/* Should we go further up ? */
- 	if (st->target > CPUHP_AP_ONLINE_IDLE) {
- 		__cpuhp_kick_ap_work(st);
-@@ -978,29 +1023,6 @@ int cpu_down(unsigned int cpu)
- EXPORT_SYMBOL(cpu_down);
- #endif /*CONFIG_HOTPLUG_CPU*/
+ 	.vcpu_create = vmx_create_vcpu,
+ 	.vcpu_free = vmx_free_vcpu,
+ 	.vcpu_reset = vmx_vcpu_reset,
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -358,6 +358,7 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
  
--#ifdef CONFIG_HOTPLUG_SMT
--enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
--
--static int __init smt_cmdline_disable(char *str)
--{
--	cpu_smt_control = CPU_SMT_DISABLED;
--	if (str && !strcmp(str, "force")) {
--		pr_info("SMT: Force disabled\n");
--		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
--	}
--	return 0;
--}
--early_param("nosmt", smt_cmdline_disable);
--
--static inline bool cpu_smt_allowed(unsigned int cpu)
--{
--	return cpu_smt_control == CPU_SMT_ENABLED ||
--		topology_is_primary_thread(cpu);
--}
--#else
--static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
--#endif
--
- /**
-  * notify_cpu_starting(cpu) - Invoke the callbacks on the starting CPU
-  * @cpu: cpu that just started
-@@ -1014,6 +1036,7 @@ void notify_cpu_starting(unsigned int cp
- 	enum cpuhp_state target = min((int)st->target, CPUHP_AP_ONLINE);
+ #ifdef CONFIG_HOTPLUG_SMT
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
++EXPORT_SYMBOL_GPL(cpu_smt_control);
  
- 	rcu_cpu_starting(cpu);	/* Enables RCU usage on this CPU. */
-+	st->booted_once = true;
- 	while (st->state < target) {
- 		st->state++;
- 		cpuhp_invoke_callback(cpu, st->state, true, NULL);
-@@ -2114,5 +2137,6 @@ void __init boot_cpu_init(void)
-  */
- void __init boot_cpu_hotplug_init(void)
+ static int __init smt_cmdline_disable(char *str)
  {
--	per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
-+	this_cpu_write(cpuhp_state.booted_once, true);
-+	this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
- }
 
 
