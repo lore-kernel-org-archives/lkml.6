@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE9DC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDCDC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF5221471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF5221471
+	by mail.kernel.org (Postfix) with ESMTP id 9152E21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9152E21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390943AbeHNUdu (ORCPT
+        id S2390957AbeHNUdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:33:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60266 "EHLO
+        Tue, 14 Aug 2018 16:33:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60276 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388101AbeHNUdu (ORCPT
+        with ESMTP id S2388101AbeHNUdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:33:50 -0400
+        Tue, 14 Aug 2018 16:33:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15D82CA5;
-        Tue, 14 Aug 2018 17:45:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 931FFCAE;
+        Tue, 14 Aug 2018 17:45:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 100/107] cpu/hotplug: Fix SMT supported evaluation
-Date:   Tue, 14 Aug 2018 19:18:03 +0200
-Message-Id: <20180814171526.839719608@linuxfoundation.org>
+Subject: [PATCH 4.9 101/107] x86/speculation/l1tf: Invert all not present mappings
+Date:   Tue, 14 Aug 2018 19:18:04 +0200
+Message-Id: <20180814171526.880435156@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -51,152 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit bc2d8d262cba5736332cbc866acb11b1c5748aa9 upstream
+commit f22cc87f6c1f771b57c407555cfefd811cdd9507 upstream
 
-Josh reported that the late SMT evaluation in cpu_smt_state_init() sets
-cpu_smt_control to CPU_SMT_NOT_SUPPORTED in case that 'nosmt' was supplied
-on the kernel command line as it cannot differentiate between SMT disabled
-by BIOS and SMT soft disable via 'nosmt'. That wreckages the state and
-makes the sysfs interface unusable.
+For kernel mappings PAGE_PROTNONE is not necessarily set for a non present
+mapping, but the inversion logic explicitely checks for !PRESENT and
+PROT_NONE.
 
-Rework this so that during bringup of the non boot CPUs the availability of
-SMT is determined in cpu_smt_allowed(). If a newly booted CPU is not a
-'primary' thread then set the local cpu_smt_available marker and evaluate
-this explicitely right after the initial SMP bringup has finished.
+Remove the PROT_NONE check and make the inversion unconditional for all not
+present mappings.
 
-SMT evaulation on x86 is a trainwreck as the firmware has all the
-information _before_ booting the kernel, but there is no interface to query
-it.
-
-Fixes: 73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
-Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- include/linux/cpu.h        |    2 ++
- kernel/cpu.c               |   41 ++++++++++++++++++++++++++++-------------
- kernel/smp.c               |    2 ++
- 4 files changed, 33 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/pgtable-invert.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -61,7 +61,7 @@ void __init check_bugs(void)
- 	 * identify_boot_cpu() initialized SMT support information, let the
- 	 * core code know.
- 	 */
--	cpu_smt_check_topology();
-+	cpu_smt_check_topology_early();
+--- a/arch/x86/include/asm/pgtable-invert.h
++++ b/arch/x86/include/asm/pgtable-invert.h
+@@ -6,7 +6,7 @@
  
- 	if (!IS_ENABLED(CONFIG_SMP)) {
- 		pr_info("CPU: ");
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -267,10 +267,12 @@ enum cpuhp_smt_control {
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
- extern void cpu_smt_disable(bool force);
-+extern void cpu_smt_check_topology_early(void);
- extern void cpu_smt_check_topology(void);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
- static inline void cpu_smt_disable(bool force) { }
-+static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
- 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -360,6 +360,8 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
- 
-+static bool cpu_smt_available __read_mostly;
-+
- void __init cpu_smt_disable(bool force)
+ static inline bool __pte_needs_invert(u64 val)
  {
- 	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
-@@ -376,14 +378,28 @@ void __init cpu_smt_disable(bool force)
- 
- /*
-  * The decision whether SMT is supported can only be done after the full
-- * CPU identification. Called from architecture code.
-+ * CPU identification. Called from architecture code before non boot CPUs
-+ * are brought up.
-  */
--void __init cpu_smt_check_topology(void)
-+void __init cpu_smt_check_topology_early(void)
- {
- 	if (!topology_smt_supported())
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+-	return (val & (_PAGE_PRESENT|_PAGE_PROTNONE)) == _PAGE_PROTNONE;
++	return !(val & _PAGE_PRESENT);
  }
  
-+/*
-+ * If SMT was disabled by BIOS, detect it here, after the CPUs have been
-+ * brought online. This ensures the smt/l1tf sysfs entries are consistent
-+ * with reality. cpu_smt_available is set to true during the bringup of non
-+ * boot CPUs when a SMT sibling is detected. Note, this may overwrite
-+ * cpu_smt_control's previous setting.
-+ */
-+void __init cpu_smt_check_topology(void)
-+{
-+	if (!cpu_smt_available)
-+		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+}
-+
- static int __init smt_cmdline_disable(char *str)
- {
- 	cpu_smt_disable(str && !strcmp(str, "force"));
-@@ -393,10 +409,18 @@ early_param("nosmt", smt_cmdline_disable
- 
- static inline bool cpu_smt_allowed(unsigned int cpu)
- {
--	if (cpu_smt_control == CPU_SMT_ENABLED)
-+	if (topology_is_primary_thread(cpu))
- 		return true;
- 
--	if (topology_is_primary_thread(cpu))
-+	/*
-+	 * If the CPU is not a 'primary' thread and the booted_once bit is
-+	 * set then the processor has SMT support. Store this information
-+	 * for the late check of SMT support in cpu_smt_check_topology().
-+	 */
-+	if (per_cpu(cpuhp_state, cpu).booted_once)
-+		cpu_smt_available = true;
-+
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
- 		return true;
- 
- 	/*
-@@ -2063,15 +2087,6 @@ static const struct attribute_group cpuh
- 
- static int __init cpu_smt_state_init(void)
- {
--	/*
--	 * If SMT was disabled by BIOS, detect it here, after the CPUs have
--	 * been brought online.  This ensures the smt/l1tf sysfs entries are
--	 * consistent with reality.  Note this may overwrite cpu_smt_control's
--	 * previous setting.
--	 */
--	if (topology_max_smt_threads() == 1)
--		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
--
- 	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
- 				  &cpuhp_smt_attr_group);
- }
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -564,6 +564,8 @@ void __init smp_init(void)
- 			cpu_up(cpu);
- 	}
- 
-+	/* Final decision about SMT support */
-+	cpu_smt_check_topology();
- 	/* Any cleanup work */
- 	smp_announce();
- 	smp_cpus_done(setup_max_cpus);
+ /* Get a mask to xor with the page table entry to get the correct pfn. */
 
 
