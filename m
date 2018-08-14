@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF27DC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C819DC46471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871B921728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:35:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871B921728
+	by mail.kernel.org (Postfix) with ESMTP id 8BE4621747
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE4621747
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbeHNUYD (ORCPT
+        id S1730210AbeHNUYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57356 "EHLO
+        Tue, 14 Aug 2018 16:24:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57364 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729803AbeHNUYC (ORCPT
+        with ESMTP id S1729803AbeHNUYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:02 -0400
+        Tue, 14 Aug 2018 16:24:06 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C292CDF2;
-        Tue, 14 Aug 2018 17:35:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCF63DDE;
+        Tue, 14 Aug 2018 17:35:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 051/104] x86/CPU/AMD: Move TOPOEXT reenablement before reading smp_num_siblings
-Date:   Tue, 14 Aug 2018 19:17:05 +0200
-Message-Id: <20180814171518.642638007@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [PATCH 4.14 052/104] x86/speculation/l1tf: Protect PAE swap entries against L1TF
+Date:   Tue, 14 Aug 2018 19:17:06 +0200
+Message-Id: <20180814171518.710914649@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -50,98 +51,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 7ce2f0393ea2396142b7faf6ee9b1f3676d08a5f upstream
+commit 0d0f6249058834ffe1ceaad0bb31464af66f6e7a upstream
 
-The TOPOEXT reenablement is a workaround for broken BIOSen which didn't
-enable the CPUID bit. amd_get_topology_early(), however, relies on
-that bit being set so that it can read out the CPUID leaf and set
-smp_num_siblings properly.
+The PAE 3-level paging code currently doesn't mitigate L1TF by flipping the
+offset bits, and uses the high PTE word, thus bits 32-36 for type, 37-63 for
+offset. The lower word is zeroed, thus systems with less than 4GB memory are
+safe. With 4GB to 128GB the swap type selects the memory locations vulnerable
+to L1TF; with even more memory, also the swap offfset influences the address.
+This might be a problem with 32bit PAE guests running on large 64bit hosts.
 
-Move the reenablement up to early_init_amd(). While at it, simplify
-amd_get_topology_early().
+By continuing to keep the whole swap entry in either high or low 32bit word of
+PTE we would limit the swap size too much. Thus this patch uses the whole PAE
+PTE with the same layout as the 64bit version does. The macros just become a
+bit tricky since they assume the arch-dependent swp_entry_t to be 32bit.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/amd.c |   37 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h |   35 ++++++++++++++++++++++++++++++++--
+ arch/x86/mm/init.c                    |    2 -
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -318,12 +318,8 @@ static void legacy_fixup_core_id(struct
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -206,12 +206,43 @@ static inline pud_t native_pudp_get_and_
+ #endif
  
- static void amd_get_topology_early(struct cpuinfo_x86 *c)
- {
--	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
--		u32 eax, ebx, ecx, edx;
--
--		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
--		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
--	}
-+	if (cpu_has(c, X86_FEATURE_TOPOEXT))
-+		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
- }
+ /* Encode and de-code a swap entry */
++#define SWP_TYPE_BITS		5
++
++#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
++
++/* We always extract/encode the offset by shifting it all the way up, and then down again */
++#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT + SWP_TYPE_BITS)
++
+ #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > 5)
+ #define __swp_type(x)			(((x).val) & 0x1f)
+ #define __swp_offset(x)			((x).val >> 5)
+ #define __swp_entry(type, offset)	((swp_entry_t){(type) | (offset) << 5})
+-#define __pte_to_swp_entry(pte)		((swp_entry_t){ (pte).pte_high })
+-#define __swp_entry_to_pte(x)		((pte_t){ { .pte_high = (x).val } })
++
++/*
++ * Normally, __swp_entry() converts from arch-independent swp_entry_t to
++ * arch-dependent swp_entry_t, and __swp_entry_to_pte() just stores the result
++ * to pte. But here we have 32bit swp_entry_t and 64bit pte, and need to use the
++ * whole 64 bits. Thus, we shift the "real" arch-dependent conversion to
++ * __swp_entry_to_pte() through the following helper macro based on 64bit
++ * __swp_entry().
++ */
++#define __swp_pteval_entry(type, offset) ((pteval_t) { \
++	(~(pteval_t)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	| ((pteval_t)(type) << (64 - SWP_TYPE_BITS)) })
++
++#define __swp_entry_to_pte(x)	((pte_t){ .pte = \
++		__swp_pteval_entry(__swp_type(x), __swp_offset(x)) })
++/*
++ * Analogically, __pte_to_swp_entry() doesn't just extract the arch-dependent
++ * swp_entry_t, but also has to convert it from 64bit to the 32bit
++ * intermediate representation, using the following macros based on 64bit
++ * __swp_type() and __swp_offset().
++ */
++#define __pteval_swp_type(x) ((unsigned long)((x).pte >> (64 - SWP_TYPE_BITS)))
++#define __pteval_swp_offset(x) ((unsigned long)(~((x).pte) << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT))
++
++#define __pte_to_swp_entry(pte)	(__swp_entry(__pteval_swp_type(pte), \
++					     __pteval_swp_offset(pte)))
  
+ #define gup_get_pte gup_get_pte
  /*
-@@ -344,7 +340,6 @@ static void amd_get_topology(struct cpui
- 		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
- 
- 		node_id  = ecx & 0xff;
--		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
- 
- 		if (c->x86 == 0x15)
- 			c->cu_id = ebx & 0xff;
-@@ -590,6 +585,7 @@ static void bsp_init_amd(struct cpuinfo_
- 
- static void early_init_amd(struct cpuinfo_x86 *c)
- {
-+	u64 value;
- 	u32 dummy;
- 
- 	early_init_amd_mc(c);
-@@ -680,6 +676,20 @@ static void early_init_amd(struct cpuinf
- 		}
- 	}
- 
-+	/* Re-enable TopologyExtensions if switched off by BIOS */
-+	if (c->x86 == 0x15 &&
-+	    (c->x86_model >= 0x10 && c->x86_model <= 0x6f) &&
-+	    !cpu_has(c, X86_FEATURE_TOPOEXT)) {
-+
-+		if (msr_set_bit(0xc0011005, 54) > 0) {
-+			rdmsrl(0xc0011005, value);
-+			if (value & BIT_64(54)) {
-+				set_cpu_cap(c, X86_FEATURE_TOPOEXT);
-+				pr_info_once(FW_INFO "CPU: Re-enabling disabled Topology Extensions Support.\n");
-+			}
-+		}
-+	}
-+
- 	amd_get_topology_early(c);
- }
- 
-@@ -772,19 +782,6 @@ static void init_amd_bd(struct cpuinfo_x
- {
- 	u64 value;
- 
--	/* re-enable TopologyExtensions if switched off by BIOS */
--	if ((c->x86_model >= 0x10) && (c->x86_model <= 0x6f) &&
--	    !cpu_has(c, X86_FEATURE_TOPOEXT)) {
--
--		if (msr_set_bit(0xc0011005, 54) > 0) {
--			rdmsrl(0xc0011005, value);
--			if (value & BIT_64(54)) {
--				set_cpu_cap(c, X86_FEATURE_TOPOEXT);
--				pr_info_once(FW_INFO "CPU: Re-enabling disabled Topology Extensions Support.\n");
--			}
--		}
--	}
--
- 	/*
- 	 * The way access filter has a performance penalty on some workloads.
- 	 * Disable it on the affected CPUs.
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -896,7 +896,7 @@ unsigned long max_swapfile_size(void)
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+ 		 */
+-#ifdef CONFIG_X86_64
++#if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+ 		pages = min_t(unsigned long, l1tf_limit, pages);
 
 
