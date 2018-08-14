@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DDEC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DECC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5842021728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5842021728
+	by mail.kernel.org (Postfix) with ESMTP id 269282168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269282168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731227AbeHNUYw (ORCPT
+        id S1731293AbeHNUY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57516 "EHLO
+        Tue, 14 Aug 2018 16:24:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57522 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730771AbeHNUYw (ORCPT
+        with ESMTP id S1730771AbeHNUYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:52 -0400
+        Tue, 14 Aug 2018 16:24:55 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88C2BDDE;
-        Tue, 14 Aug 2018 17:36:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E491DE0;
+        Tue, 14 Aug 2018 17:36:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 066/104] cpu/hotplug: Online siblings when SMT control is turned on
-Date:   Tue, 14 Aug 2018 19:17:20 +0200
-Message-Id: <20180814171519.595515714@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 4.14 067/104] x86/litf: Introduce vmx status variable
+Date:   Tue, 14 Aug 2018 19:17:21 +0200
+Message-Id: <20180814171519.661991661@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -51,72 +53,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 215af5499d9e2b55f111d2431ea20218115f29b3 upstream
+commit 72c6d2db64fa18c996ece8f06e499509e6c9a37e upstream
 
-Writing 'off' to /sys/devices/system/cpu/smt/control offlines all SMT
-siblings. Writing 'on' merily enables the abilify to online them, but does
-not online them automatically.
-
-Make 'on' more useful by onlining all offline siblings.
+Store the effective mitigation of VMX in a status variable and use it to
+report the VMX state in the l1tf sysfs file.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jiri Kosina <jkosina@suse.cz>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20180713142322.433098358@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/cpu.c |   26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/vmx.h |    9 +++++++++
+ arch/x86/kernel/cpu/bugs.c |   36 ++++++++++++++++++++++++++++++++++--
+ arch/x86/kvm/vmx.c         |   22 +++++++++++-----------
+ 3 files changed, 54 insertions(+), 13 deletions(-)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1991,6 +1991,15 @@ static void cpuhp_offline_cpu_device(uns
- 	kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
- }
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -571,4 +571,13 @@ enum vm_instruction_error_number {
+ 	VMXERR_INVALID_OPERAND_TO_INVEPT_INVVPID = 28,
+ };
  
-+static void cpuhp_online_cpu_device(unsigned int cpu)
++enum vmx_l1d_flush_state {
++	VMENTER_L1D_FLUSH_AUTO,
++	VMENTER_L1D_FLUSH_NEVER,
++	VMENTER_L1D_FLUSH_COND,
++	VMENTER_L1D_FLUSH_ALWAYS,
++};
++
++extern enum vmx_l1d_flush_state l1tf_vmx_mitigation;
++
+ #endif
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -22,6 +22,7 @@
+ #include <asm/processor-flags.h>
+ #include <asm/fpu/internal.h>
+ #include <asm/msr.h>
++#include <asm/vmx.h>
+ #include <asm/paravirt.h>
+ #include <asm/alternative.h>
+ #include <asm/pgtable.h>
+@@ -636,6 +637,12 @@ void x86_spec_ctrl_setup_ap(void)
+ 
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"L1TF: " fmt
++
++#if IS_ENABLED(CONFIG_KVM_INTEL)
++enum vmx_l1d_flush_state l1tf_vmx_mitigation __ro_after_init = VMENTER_L1D_FLUSH_AUTO;
++EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
++#endif
++
+ static void __init l1tf_select_mitigation(void)
+ {
+ 	u64 half_pa;
+@@ -665,6 +672,32 @@ static void __init l1tf_select_mitigatio
+ 
+ #ifdef CONFIG_SYSFS
+ 
++#define L1TF_DEFAULT_MSG "Mitigation: PTE Inversion"
++
++#if IS_ENABLED(CONFIG_KVM_INTEL)
++static const char *l1tf_vmx_states[] = {
++	[VMENTER_L1D_FLUSH_AUTO]	= "auto",
++	[VMENTER_L1D_FLUSH_NEVER]	= "vulnerable",
++	[VMENTER_L1D_FLUSH_COND]	= "conditional cache flushes",
++	[VMENTER_L1D_FLUSH_ALWAYS]	= "cache flushes",
++};
++
++static ssize_t l1tf_show_state(char *buf)
 +{
-+	struct device *dev = get_cpu_device(cpu);
++	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_AUTO)
++		return sprintf(buf, "%s\n", L1TF_DEFAULT_MSG);
 +
-+	dev->offline = false;
-+	/* Tell user space about the state change */
-+	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
++	return sprintf(buf, "%s; VMX: SMT %s, L1D %s\n", L1TF_DEFAULT_MSG,
++		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled",
++		       l1tf_vmx_states[l1tf_vmx_mitigation]);
 +}
++#else
++static ssize_t l1tf_show_state(char *buf)
++{
++	return sprintf(buf, "%s\n", L1TF_DEFAULT_MSG);
++}
++#endif
 +
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
  {
- 	int cpu, ret = 0;
-@@ -2023,11 +2032,24 @@ static int cpuhp_smt_disable(enum cpuhp_
- 	return ret;
+@@ -692,9 +725,8 @@ static ssize_t cpu_show_common(struct de
+ 
+ 	case X86_BUG_L1TF:
+ 		if (boot_cpu_has(X86_FEATURE_L1TF_PTEINV))
+-			return sprintf(buf, "Mitigation: Page Table Inversion\n");
++			return l1tf_show_state(buf);
+ 		break;
+-
+ 	default:
+ 		break;
+ 	}
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -196,19 +196,13 @@ extern const ulong vmx_return;
+ 
+ static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
+ 
+-/* These MUST be in sync with vmentry_l1d_param order. */
+-enum vmx_l1d_flush_state {
+-	VMENTER_L1D_FLUSH_NEVER,
+-	VMENTER_L1D_FLUSH_COND,
+-	VMENTER_L1D_FLUSH_ALWAYS,
+-};
+-
+ static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush = VMENTER_L1D_FLUSH_COND;
+ 
+ static const struct {
+ 	const char *option;
+ 	enum vmx_l1d_flush_state cmd;
+ } vmentry_l1d_param[] = {
++	{"auto",	VMENTER_L1D_FLUSH_AUTO},
+ 	{"never",	VMENTER_L1D_FLUSH_NEVER},
+ 	{"cond",	VMENTER_L1D_FLUSH_COND},
+ 	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
+@@ -12533,8 +12527,12 @@ static int __init vmx_setup_l1d_flush(vo
+ {
+ 	struct page *page;
+ 
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return 0;
++
++	l1tf_vmx_mitigation = vmentry_l1d_flush;
++
+ 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
+-	    !boot_cpu_has_bug(X86_BUG_L1TF) ||
+ 	    vmx_l1d_use_msr_save_list())
+ 		return 0;
+ 
+@@ -12549,12 +12547,14 @@ static int __init vmx_setup_l1d_flush(vo
+ 	return 0;
  }
  
--static void cpuhp_smt_enable(void)
-+static int cpuhp_smt_enable(void)
+-static void vmx_free_l1d_flush_pages(void)
++static void vmx_cleanup_l1d_flush(void)
  {
-+	int cpu, ret = 0;
-+
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
-+	for_each_present_cpu(cpu) {
-+		/* Skip online CPUs and CPUs on offline nodes */
-+		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
-+			continue;
-+		ret = _cpu_up(cpu, 0, CPUHP_ONLINE);
-+		if (ret)
-+			break;
-+		/* See comment in cpuhp_smt_disable() */
-+		cpuhp_online_cpu_device(cpu);
-+	}
- 	cpu_maps_update_done();
-+	return ret;
+ 	if (vmx_l1d_flush_pages) {
+ 		free_pages((unsigned long)vmx_l1d_flush_pages, L1D_CACHE_ORDER);
+ 		vmx_l1d_flush_pages = NULL;
+ 	}
++	/* Restore state so sysfs ignores VMX */
++	l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
  }
  
- static ssize_t
-@@ -2058,7 +2080,7 @@ store_smt_control(struct device *dev, st
- 	if (ctrlval != cpu_smt_control) {
- 		switch (ctrlval) {
- 		case CPU_SMT_ENABLED:
--			cpuhp_smt_enable();
-+			ret = cpuhp_smt_enable();
- 			break;
- 		case CPU_SMT_DISABLED:
- 		case CPU_SMT_FORCE_DISABLED:
+ static int __init vmx_init(void)
+@@ -12568,7 +12568,7 @@ static int __init vmx_init(void)
+ 	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+ 		     __alignof__(struct vcpu_vmx), THIS_MODULE);
+ 	if (r) {
+-		vmx_free_l1d_flush_pages();
++		vmx_cleanup_l1d_flush();
+ 		return r;
+ 	}
+ 
+@@ -12589,7 +12589,7 @@ static void __exit vmx_exit(void)
+ 
+ 	kvm_exit();
+ 
+-	vmx_free_l1d_flush_pages();
++	vmx_cleanup_l1d_flush();
+ }
+ 
+ module_init(vmx_init)
 
 
