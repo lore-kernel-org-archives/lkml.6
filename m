@@ -6,41 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63C3C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7187C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0B22154F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0B22154F
+	by mail.kernel.org (Postfix) with ESMTP id 784772154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 784772154F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389707AbeHNU2f (ORCPT
+        id S2389748AbeHNU2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:28:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58766 "EHLO
+        Tue, 14 Aug 2018 16:28:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729758AbeHNU2e (ORCPT
+        with ESMTP id S1729758AbeHNU2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:28:34 -0400
+        Tue, 14 Aug 2018 16:28:36 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 105EFDE0;
-        Tue, 14 Aug 2018 17:40:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49112DF2;
+        Tue, 14 Aug 2018 17:40:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 029/107] x86/speculation/l1tf: Change order of offset/type in swap entry
-Date:   Tue, 14 Aug 2018 19:16:52 +0200
-Message-Id: <20180814171522.580664637@linuxfoundation.org>
+        stable@vger.kernel.org, "Dae R. Jeong" <threeearcat@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 012/107] make sure that __dentry_kill() always invalidates d_seq, unhashed or not
+Date:   Tue, 14 Aug 2018 19:16:35 +0200
+Message-Id: <20180814171521.521706424@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -57,105 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit bcd11afa7adad8d720e7ba5ef58bdcd9775cf45f upstream
+commit 4c0d7cd5c8416b1ef41534d19163cb07ffaa03ab upstream.
 
-If pages are swapped out, the swap entry is stored in the corresponding
-PTE, which has the Present bit cleared. CPUs vulnerable to L1TF speculate
-on PTE entries which have the present bit set and would treat the swap
-entry as phsyical address (PFN). To mitigate that the upper bits of the PTE
-must be set so the PTE points to non existent memory.
+RCU pathwalk relies upon the assumption that anything that changes
+->d_inode of a dentry will invalidate its ->d_seq.  That's almost
+true - the one exception is that the final dput() of already unhashed
+dentry does *not* touch ->d_seq at all.  Unhashing does, though,
+so for anything we'd found by RCU dcache lookup we are fine.
+Unfortunately, we can *start* with an unhashed dentry or jump into
+it.
 
-The swap entry stores the type and the offset of a swapped out page in the
-PTE. type is stored in bit 9-13 and offset in bit 14-63. The hardware
-ignores the bits beyond the phsyical address space limit, so to make the
-mitigation effective its required to start 'offset' at the lowest possible
-bit so that even large swap offsets do not reach into the physical address
-space limit bits.
+We could try and be careful in the (few) places where that could
+happen.  Or we could just make the final dput() invalidate the damn
+thing, unhashed or not.  The latter is much simpler and easier to
+backport, so let's do it that way.
 
-Move offset to bit 9-58 and type to bit 59-63 which are the bits that
-hardware generally doesn't care about.
-
-That, in turn, means that if you on desktop chip with only 40 bits of
-physical addressing, now that the offset starts at bit 9, there needs to be
-30 bits of offset actually *in use* until bit 39 ends up being set, which
-means when inverted it will again point into existing memory.
-
-So that's 4 terabyte of swap space (because the offset is counted in pages,
-so 30 bits of offset is 42 bits of actual coverage). With bigger physical
-addressing, that obviously grows further, until the limit of the offset is
-hit (at 50 bits of offset - 62 bits of actual swap file coverage).
-
-This is a preparatory change for the actual swap entry inversion to protect
-against L1TF.
-
-[ AK: Updated description and minor tweaks. Split into two parts ]
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Andi Kleen <ak@linux.intel.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reported-by: "Dae R. Jeong" <threeearcat@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/pgtable_64.h |   31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -168,7 +168,7 @@ static inline int pgd_large(pgd_t pgd) {
-  *
-  * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
-  * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
-- * | OFFSET (14->63) | TYPE (9-13)  |0|0|X|X| X| X|X|SD|0| <- swp entry
-+ * | TYPE (59-63) |  OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
-  *
-  * G (8) is aliased and used as a PROT_NONE indicator for
-  * !present ptes.  We need to start storing swap entries above
-@@ -182,19 +182,28 @@ static inline int pgd_large(pgd_t pgd) {
-  * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
-  * but also L and G.
-  */
--#define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
--#define SWP_TYPE_BITS 5
--/* Place the offset above the type: */
--#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS)
-+#define SWP_TYPE_BITS		5
-+
-+#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
-+
-+/* We always extract/encode the offset by shifting it all the way up, and then down again */
-+#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT+SWP_TYPE_BITS)
+---
+ fs/dcache.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -352,14 +352,11 @@ static void dentry_unlink_inode(struct d
+ 	__releases(dentry->d_inode->i_lock)
+ {
+ 	struct inode *inode = dentry->d_inode;
+-	bool hashed = !d_unhashed(dentry);
  
- #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS)
- 
--#define __swp_type(x)			(((x).val >> (SWP_TYPE_FIRST_BIT)) \
--					 & ((1U << SWP_TYPE_BITS) - 1))
--#define __swp_offset(x)			((x).val >> SWP_OFFSET_FIRST_BIT)
--#define __swp_entry(type, offset)	((swp_entry_t) { \
--					 ((type) << (SWP_TYPE_FIRST_BIT)) \
--					 | ((offset) << SWP_OFFSET_FIRST_BIT) })
-+/* Extract the high bits for type */
-+#define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
-+
-+/* Shift up (to get rid of type), then down to get value */
-+#define __swp_offset(x) ((x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
-+
-+/*
-+ * Shift the offset up "too far" by TYPE bits, then down again
-+ */
-+#define __swp_entry(type, offset) ((swp_entry_t) { \
-+	((unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
-+	| ((unsigned long)(type) << (64-SWP_TYPE_BITS)) })
-+
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val((pte)) })
- #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
- 
+-	if (hashed)
+-		raw_write_seqcount_begin(&dentry->d_seq);
++	raw_write_seqcount_begin(&dentry->d_seq);
+ 	__d_clear_type_and_inode(dentry);
+ 	hlist_del_init(&dentry->d_u.d_alias);
+-	if (hashed)
+-		raw_write_seqcount_end(&dentry->d_seq);
++	raw_write_seqcount_end(&dentry->d_seq);
+ 	spin_unlock(&dentry->d_lock);
+ 	spin_unlock(&inode->i_lock);
+ 	if (!inode->i_nlink)
 
 
