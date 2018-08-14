@@ -2,124 +2,114 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31900C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13010C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E98D2170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:20:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E98D2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BCA2D2170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:20:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Os22xq/C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA2D2170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbeHNRHZ (ORCPT
+        id S1732721AbeHNRIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:07:25 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:55148 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729560AbeHNRHZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:07:25 -0400
-Received: by mail-it0-f72.google.com with SMTP id c191-v6so5776495itb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 07:20:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=tx6+QPmZzxS1hn54G7lT6STYG5Q68423ZgCpDsQMEow=;
-        b=OsS5D4T3HA4CHWASvPR5CLLxfH5TsWfZNskI71a2AAdD3H3k/Bno+QXo+KydRV6Fsn
-         Q9xyy7MbOqZQboka50srIGWgh2Kjoa1WfAuuajRF86kVEaKOPRiQdgXosvGr4DuuXEAj
-         I1m9iydqIGcFNphTKG59595p2uXvGW/8gN1siv08fs9mMbXhRpK+Vs22wugb/8NnXVpx
-         7i+I7BJKE4EbPmTznmL14xAPoDSsXmZ7t5Oukb+PzoNQyClBmJR5+rqEgM+FNKjbgvVZ
-         01oiUikhcr5HzADrn4lDh1r1ZqUGRXEgWteA1m1qJCQ0ylrbJtgYkylS0d3XbeK8YN8Z
-         WjIw==
-X-Gm-Message-State: AOUpUlHRuSNfIKER59Y/Q/rXnuOkutu+lvz3AibnESWpmEDzQwlPS8sG
-        mb0YQFF0qfGdn/ss+0iOWqQogbIlo8wqR6vEG6AIwKOw8rLk
-X-Google-Smtp-Source: AA+uWPxkByTHvnaf+KE2VFPQPCeSeyOoJrGDTzjLR53RuYfZXNGI5G+TsZxUU9oyKS3vspqx3Hf1oEeYw+1TnMm2kQPvMTpMyLEB
+        Tue, 14 Aug 2018 13:08:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729560AbeHNRIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:08:07 -0400
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3C282170E
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:20:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534256443;
+        bh=f2loqOJwSQjH8jS8t1kKbLuFIlAx56YU92UfBIRQX4A=;
+        h=In-Reply-To:References:From:Date:Subject:To:From;
+        b=Os22xq/CjONRaJjuTK9sJfom1m5E3j8RqlXTgJdsQVnJYZyhAp7/3oc7VXJTsbnKC
+         cdOIlTiUeFUkuIsrfoZyYgDJ7UVfa6P2OKIrT6QZ4RynfFThklYSvoBC0ItRtUhlI6
+         QsFyOO4Pf67s4217nVtNeAO3YGqpJ7rDnKbh/Ens=
+Received: by mail-wr1-f54.google.com with SMTP id j5-v6so17359790wrr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 07:20:43 -0700 (PDT)
+X-Gm-Message-State: AOUpUlH8i8GZeaPLxmxczgwq/6opKMfbk2x7xpGmUXaIpPRoDjEnSYmc
+        HhI2j45AZQ6rxZMxqXtd+VapZHGTx7jYtX5WOx4RYg==
+X-Google-Smtp-Source: AA+uWPzJD5BlnlHp9Awrpm/CHb6adFOyRa72FJ8bhCGQ7hIFC8IUEoPdJOQBMU2rH5YHBZLdmOW2UIluY6cRcI1xJAU=
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr2948992wrh.148.1534256442224;
+ Tue, 14 Aug 2018 07:20:42 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:ba04:: with SMTP id z4-v6mr480295jan.61.1534256402733;
- Tue, 14 Aug 2018 07:20:02 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 07:20:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e1226c057365e75d@google.com>
-Subject: WARNING in __snd_rawmidi_transmit_ack (2)
-From:   syzbot <syzbot+ec5f605c91812d200367@syzkaller.appspotmail.com>
-To:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 07:20:20 -0700 (PDT)
+In-Reply-To: <20180814011732.075EA6E0251@virtux32.softrans.com.au>
+References: <20180814011732.075EA6E0251@virtux32.softrans.com.au>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 14 Aug 2018 07:20:20 -0700
+X-Gmail-Original-Message-ID: <CALCETrWP41MRGVT7oYoP5_f3jdh5nEvKmDrYuHWwsRgUZCGf=w@mail.gmail.com>
+Message-ID: <CALCETrWP41MRGVT7oYoP5_f3jdh5nEvKmDrYuHWwsRgUZCGf=w@mail.gmail.com>
+Subject: Re: [PATCH] Handle clock_gettime(CLOCK_TAI) in VDSO
+To:     Matt Rickard <matt@softrans.com.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, X86 ML <x86@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+[Added a whole bunch of ccs]
 
-syzbot found the following crash on:
+On Mon, Aug 13, 2018 at 6:17 PM, Matt Rickard <matt@softrans.com.au> wrote:
+> Process clock_gettime(CLOCK_TAI) in VDSO. This makes the call about as fast as
+> CLOCK_REALTIME instead of taking about four times as long.
+>
+> Signed-off-by: Matt Rickard <matt@softrans.com.au>
+> ---
+>  arch/x86/entry/vdso/vclock_gettime.c    | 30 ++++++++++++++++++++++++++++++
+>  arch/x86/entry/vsyscall/vsyscall_gtod.c |  2 ++
+>  arch/x86/include/asm/vgtod.h            |  1 +
+>  3 files changed, 33 insertions(+)
+>
+> diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+> index f19856d95c60..bc8d8f086721 100644
+> --- a/arch/x86/entry/vdso/vclock_gettime.c
+> +++ b/arch/x86/entry/vdso/vclock_gettime.c
 
-HEAD commit:    4e8b38549b50 Add linux-next specific files for 20180814
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f5e78c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18edf0289d1b5ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec5f605c91812d200367
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12f8c6d2400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16976b72400000
+...
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ec5f605c91812d200367@syzkaller.appspotmail.com
+>  notrace static void do_realtime_coarse(struct timespec *ts)
+>  {
+>         unsigned long seq;
+> @@ -284,8 +305,17 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
+>                 do_monotonic_coarse(ts);
+>                 break;
+>         default:
+> +       /* Doubled switch statement to work around kernel Makefile error */
+> +       /* See: https://www.mail-archive.com/gcc-bugs@gcc.gnu.org/msg567499.html */
 
-WARNING: CPU: 1 PID: 1691 at sound/core/rawmidi.c:1170  
-__snd_rawmidi_transmit_ack+0x263/0x2f0 sound/core/rawmidi.c:1170
-Kernel panic - not syncing: panic_on_warn set ...
+NAK.
 
-CPU: 1 PID: 1691 Comm: kworker/1:1H Not tainted 4.18.0-next-20180814+ #38
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events_highpri snd_vmidi_output_work
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
-RIP: 0010:__snd_rawmidi_transmit_ack+0x263/0x2f0 sound/core/rawmidi.c:1170
-Code: ba 01 00 00 00 be 03 00 00 00 e8 18 3a 66 fc e8 e3 44 86 fc 89 d8 48  
-83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 cd 44 86 fc <0f> 0b e9 72 fe  
-ff ff e8 21 5a c5 fc e9 1b ff ff ff bb ea ff ff ff
-RSP: 0018:ffff8801d2a6f5a8 EFLAGS: 00010093
-RAX: ffff8801d2a52300 RBX: 0000000000000001 RCX: ffffffff84f64792
-RDX: 0000000000000000 RSI: ffffffff84f64923 RDI: 0000000000000006
-RBP: ffff8801d2a6f5e8 R08: ffff8801d2a52300 R09: ffffed003607acc1
-R10: ffffed003607acc1 R11: ffff8801b03d660b R12: ffff8801ce2479c0
-R13: 0000000000001001 R14: 0000000000000001 R15: ffff8801b03d65c0
-  snd_rawmidi_transmit_ack+0x51/0x80 sound/core/rawmidi.c:1201
-  snd_vmidi_output_work+0x3f4/0x4e0 sound/core/seq/seq_virmidi.c:153
-  process_one_work+0xc73/0x1aa0 kernel/workqueue.c:2153
-  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-Shutting down cpus with NMI
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+The issue here (after reading that thread) is that, with our current
+compile options, gcc generates a jump table once the switch statement
+hits five entries.  And it uses retpolines for it, and somehow it
+generates the relocations in such a way that the vDSO build fails.  We
+need to address this so that the vDSO build is reliable, but there's
+an important question here:
 
+Should the vDSO be built with retpolines, or should it be built with
+indirect branches?  Or should we go out of our way to make sure that
+the vDSO contains neither retpolines nor indirect branches?
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+We could accomplish the latter (sort of) by manually converting the
+switch into the appropriate if statements, but that's rather ugly.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+(Hmm.  We should add exports to directly read each clock source.
+They'll be noticeably faster, especially when
+cache-and-predictor-code.)
