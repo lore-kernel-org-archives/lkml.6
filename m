@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662A3C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52BBC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C39B21728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C39B21728
+	by mail.kernel.org (Postfix) with ESMTP id 9830A21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9830A21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388312AbeHNUNy (ORCPT
+        id S2388326AbeHNUN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:13:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51822 "EHLO
+        Tue, 14 Aug 2018 16:13:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51838 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388233AbeHNUNx (ORCPT
+        with ESMTP id S2387869AbeHNUN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:13:53 -0400
+        Tue, 14 Aug 2018 16:13:56 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24528D67;
-        Tue, 14 Aug 2018 17:25:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30037CD8;
+        Tue, 14 Aug 2018 17:25:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 41/79] x86/KVM/VMX: Add find_msr() helper function
-Date:   Tue, 14 Aug 2018 19:17:00 +0200
-Message-Id: <20180814171338.381794965@linuxfoundation.org>
+Subject: [PATCH 4.18 42/79] x86/KVM/VMX: Separate the VMX AUTOLOAD guest/host number accounting
+Date:   Tue, 14 Aug 2018 19:17:01 +0200
+Message-Id: <20180814171338.416773843@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -53,81 +53,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-.. to help find the MSR on either the guest or host MSR list.
+This allows to load a different number of MSRs depending on the context:
+VMEXIT or VMENTER.
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   31 ++++++++++++++++++-------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
+ arch/x86/kvm/vmx.c |   29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -2432,9 +2432,20 @@ static void clear_atomic_switch_msr_spec
- 	vm_exit_controls_clearbit(vmx, exit);
+@@ -2468,12 +2468,18 @@ static void clear_atomic_switch_msr(stru
+ 	}
+ 	i = find_msr(&m->guest, msr);
+ 	if (i < 0)
+-		return;
++		goto skip_guest;
+ 	--m->guest.nr;
+-	--m->host.nr;
+ 	m->guest.val[i] = m->guest.val[m->guest.nr];
+-	m->host.val[i] = m->host.val[m->host.nr];
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++
++skip_guest:
++	i = find_msr(&m->host, msr);
++	if (i < 0)
++		return;
++
++	--m->host.nr;
++	m->host.val[i] = m->host.val[m->host.nr];
+ 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
  }
  
-+static int find_msr(struct vmx_msrs *m, unsigned int msr)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < m->nr; ++i) {
-+		if (m->val[i].index == msr)
-+			return i;
-+	}
-+	return -ENOENT;
-+}
-+
- static void clear_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr)
- {
--	unsigned i;
-+	int i;
- 	struct msr_autoload *m = &vmx->msr_autoload;
- 
- 	switch (msr) {
-@@ -2455,11 +2466,8 @@ static void clear_atomic_switch_msr(stru
- 		}
- 		break;
- 	}
--	for (i = 0; i < m->guest.nr; ++i)
--		if (m->guest.val[i].index == msr)
--			break;
--
--	if (i == m->guest.nr)
-+	i = find_msr(&m->guest, msr);
-+	if (i < 0)
- 		return;
- 	--m->guest.nr;
- 	--m->host.nr;
-@@ -2483,7 +2491,7 @@ static void add_atomic_switch_msr_specia
+@@ -2491,7 +2497,7 @@ static void add_atomic_switch_msr_specia
  static void add_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr,
  				  u64 guest_val, u64 host_val)
  {
--	unsigned i;
-+	int i;
+-	int i;
++	int i, j;
  	struct msr_autoload *m = &vmx->msr_autoload;
  
  	switch (msr) {
-@@ -2518,16 +2526,13 @@ static void add_atomic_switch_msr(struct
- 		wrmsrl(MSR_IA32_PEBS_ENABLE, 0);
+@@ -2527,21 +2533,24 @@ static void add_atomic_switch_msr(struct
  	}
  
--	for (i = 0; i < m->guest.nr; ++i)
--		if (m->guest.val[i].index == msr)
--			break;
--
-+	i = find_msr(&m->guest, msr);
- 	if (i == NR_AUTOLOAD_MSRS) {
+ 	i = find_msr(&m->guest, msr);
+-	if (i == NR_AUTOLOAD_MSRS) {
++	j = find_msr(&m->host, msr);
++	if (i == NR_AUTOLOAD_MSRS || j == NR_AUTOLOAD_MSRS) {
  		printk_once(KERN_WARNING "Not enough msr switch entries. "
  				"Can't add msr %x\n", msr);
  		return;
--	} else if (i == m->guest.nr) {
--		++m->guest.nr;
-+	} else if (i < 0) {
-+		i = m->guest.nr++;
- 		++m->host.nr;
+-	} else if (i < 0) {
++	}
++	if (i < 0) {
+ 		i = m->guest.nr++;
+-		++m->host.nr;
  		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++	}
++	if (j < 0) {
++		j = m->host.nr++;
  		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
+ 	}
+-
+ 	m->guest.val[i].index = msr;
+ 	m->guest.val[i].value = guest_val;
+-	m->host.val[i].index = msr;
+-	m->host.val[i].value = host_val;
++	m->host.val[j].index = msr;
++	m->host.val[j].value = host_val;
+ }
+ 
+ static bool update_transition_efer(struct vcpu_vmx *vmx, int efer_offset)
 
 
