@@ -2,360 +2,142 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F04EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C124BC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB2D214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:24:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB2D214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AC8F214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:25:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC8F214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732930AbeHNTMq (ORCPT
+        id S1732940AbeHNTN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:12:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42510 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728978AbeHNTMp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:12:45 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EGOIBC049670
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 12:24:54 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kv18k3mw1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 12:24:53 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 14 Aug 2018 12:24:52 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 14 Aug 2018 12:24:48 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7EGOl5316712188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 14 Aug 2018 16:24:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6EFFB205F;
-        Tue, 14 Aug 2018 12:24:03 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 95F0DB2065;
-        Tue, 14 Aug 2018 12:24:03 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Aug 2018 12:24:03 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A222116C8794; Tue, 14 Aug 2018 09:24:48 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 09:24:48 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     rostedt@goodmis.org, joel@joelfernandes.org,
-        mathieu.desnoyers@efficios.com, peterz@infradead.org, tj@kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] Make call_srcu() available during very early boot
-Reply-To: paulmck@linux.vnet.ibm.com
+        Tue, 14 Aug 2018 15:13:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59656 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728978AbeHNTN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:13:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BD786ACCF;
+        Tue, 14 Aug 2018 16:25:36 +0000 (UTC)
+Subject: Re: [PATCH 2/2] bcache: add undef for macro in function
+To:     "cdbdyx@163.com" <cdbdyx@163.com>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        kent.overstreet@gmail.com
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a223a080-6fbe-36cb-8085-361294a89c96@suse.de>
+Date:   Wed, 15 Aug 2018 00:25:25 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18081416-0040-0000-0000-0000045EC451
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009544; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01073456; UDB=6.00553106; IPR=6.00853414;
- MB=3.00022715; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-14 16:24:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081416-0041-0000-0000-00000865CD2E
-Message-Id: <20180814162448.GA20414@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808140168
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Event tracing is moving to SRCU in order to take advantage of the fact
-that SRCU may be safely used from idle and even offline CPUs.  However,
-event tracing can invoke call_srcu() very early in the boot process,
-even before workqueue_init_early() is invoked (let alone rcu_init()).
-Therefore, call_srcu()'s attempts to queue work fail miserably.
+On 2018/8/14 10:59 PM, cdbdyx@163.com wrote:
+> Hi Coly，
+> The three macros is only locally used in func "__cached_dev"，I think
+> they should be undefined before leaving the func.
+> 
 
-This commit therefore detects this situation, and refrains from attempting
-to queue work before rcu_init() time, but does everything else that it
-would have done, and in addition, adds the srcu_struct to a global list.
-The rcu_init() function now invokes a new srcu_init() function, which
-is empty if CONFIG_SRCU=n.  Otherwise, srcu_init() queues work for
-each srcu_struct on the list.  This all happens early enough in boot
-that there is but a single CPU with interrupts disabled, which allows
-synchronization to be dispensed with.
+Hi Dongbo,
 
-Of course, the queued work won't actually be invoked until after
-workqueue_init() is invoked, which happens shortly after the scheduler
-is up and running.  This means that although call_srcu() may be invoked
-any time after per-CPU variables have been set up, there is still a very
-narrow window when synchronize_srcu() won't work, and this window
-extends from the time that the scheduler starts until the time that
-workqueue_init() returns.  This can be fixed in a manner similar to
-the fix for synchronize_rcu_expedited() and friends, but until someone
-actually needs to use synchronize_srcu() during this window, this fix
-is added churn for no benefit.
+It is worthy to do this if there is a potential conflict. But they are
+defined in sysfs.c and not exported to anywhere else, I guess there
+won't be any symbol conflict. Then we don't need to worry about this.
 
-Finally, note that Tree SRCU's new srcu_init() function invokes
-queue_work() rather than the queue_delayed_work() function that is invoked
-post-boot.  The reason is that queue_delayed_work() will (as you would
-expect) post a timer, and timers have not yet been initialized.  So use
-of queue_delayed_work() avoids the complaints about use of uninitialized
-spinlocks that would otherwise result.  Besides, delay is in any case
-provide by the aforementioned fact that the queued work won't actually
-be invoked until after the scheduler is up and running.
+Coly Li
 
-Requested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-index f41d2fb09f87..2b5c0822e683 100644
---- a/include/linux/srcutiny.h
-+++ b/include/linux/srcutiny.h
-@@ -36,6 +36,7 @@ struct srcu_struct {
- 	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
- 	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
- 	struct work_struct srcu_work;	/* For driving grace periods. */
-+	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 	struct lockdep_map dep_map;
- #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-@@ -48,6 +49,7 @@ void srcu_drive_gp(struct work_struct *wp);
- 	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
- 	.srcu_cb_tail = &name.srcu_cb_head,				\
- 	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
-+	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
- 	__SRCU_DEP_MAP_INIT(name)					\
- }
- 
-diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-index 745d4ca4dd50..86ad97111315 100644
---- a/include/linux/srcutree.h
-+++ b/include/linux/srcutree.h
-@@ -94,6 +94,7 @@ struct srcu_struct {
- 						/*  callback for the barrier */
- 						/*  operation. */
- 	struct delayed_work work;
-+	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 	struct lockdep_map dep_map;
- #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-@@ -105,12 +106,13 @@ struct srcu_struct {
- #define SRCU_STATE_SCAN2	2
- 
- #define __SRCU_STRUCT_INIT(name, pcpu_name)				\
--	{								\
--		.sda = &pcpu_name,					\
--		.lock = __SPIN_LOCK_UNLOCKED(name.lock),		\
--		.srcu_gp_seq_needed = 0 - 1,				\
--		__SRCU_DEP_MAP_INIT(name)				\
--	}
-+{									\
-+	.sda = &pcpu_name,						\
-+	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
-+	.srcu_gp_seq_needed = 0 - 1,					\
-+	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-+	__SRCU_DEP_MAP_INIT(name)					\
-+}
- 
- /*
-  * Define and initialize a srcu struct at build time.
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index 4c56c1d98fb3..8e92ecdf3e9f 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -434,6 +434,12 @@ do {									\
- 
- #endif /* #if defined(SRCU) || !defined(TINY_RCU) */
- 
-+#ifdef CONFIG_SRCU
-+void srcu_init(void);
-+#else /* #ifdef CONFIG_SRCU */
-+static inline void void srcu_init(void) { }
-+#endif /* #else #ifdef CONFIG_SRCU */
-+
- #ifdef CONFIG_TINY_RCU
- /* Tiny RCU doesn't expedite, as its purpose in life is instead to be tiny. */
- static inline bool rcu_gp_is_normal(void) { return true; }
-diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-index 622792abe41a..d4042fe1bedd 100644
---- a/kernel/rcu/srcutiny.c
-+++ b/kernel/rcu/srcutiny.c
-@@ -34,6 +34,8 @@
- #include "rcu.h"
- 
- int rcu_scheduler_active __read_mostly;
-+static LIST_HEAD(srcu_boot_list);
-+static bool srcu_init_done;
- 
- static int init_srcu_struct_fields(struct srcu_struct *sp)
- {
-@@ -46,6 +48,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp)
- 	sp->srcu_gp_waiting = false;
- 	sp->srcu_idx = 0;
- 	INIT_WORK(&sp->srcu_work, srcu_drive_gp);
-+	INIT_LIST_HEAD(&sp->srcu_boot_entry);
- 	return 0;
- }
- 
-@@ -179,8 +182,12 @@ void call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
- 	*sp->srcu_cb_tail = rhp;
- 	sp->srcu_cb_tail = &rhp->next;
- 	local_irq_restore(flags);
--	if (!READ_ONCE(sp->srcu_gp_running))
--		schedule_work(&sp->srcu_work);
-+	if (!READ_ONCE(sp->srcu_gp_running)) {
-+		if (likely(srcu_init_done))
-+			schedule_work(&sp->srcu_work);
-+		else if (list_empty(&sp->srcu_boot_entry))
-+			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-+	}
- }
- EXPORT_SYMBOL_GPL(call_srcu);
- 
-@@ -204,3 +211,21 @@ void __init rcu_scheduler_starting(void)
- {
- 	rcu_scheduler_active = RCU_SCHEDULER_RUNNING;
- }
-+
-+/*
-+ * Queue work for srcu_struct structures with early boot callbacks.
-+ * The work won't actually execute until the workqueue initialization
-+ * phase that takes place after the scheduler starts.
-+ */
-+void __init srcu_init(void)
-+{
-+	struct srcu_struct *sp;
-+
-+	srcu_init_done = true;
-+	while (!list_empty(&srcu_boot_list)) {
-+		sp = list_first_entry(&srcu_boot_list,
-+				      struct srcu_struct, srcu_boot_entry);
-+		list_del_init(&sp->srcu_boot_entry);
-+		schedule_work(&sp->srcu_work);
-+	}
-+}
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 7f266b0f9832..60d4fd66905c 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -51,6 +51,10 @@ module_param(exp_holdoff, ulong, 0444);
- static ulong counter_wrap_check = (ULONG_MAX >> 2);
- module_param(counter_wrap_check, ulong, 0444);
- 
-+/* Early-boot callback-management, so early that no lock is required! */
-+static LIST_HEAD(srcu_boot_list);
-+static bool __read_mostly srcu_init_done;
-+
- static void srcu_invoke_callbacks(struct work_struct *work);
- static void srcu_reschedule(struct srcu_struct *sp, unsigned long delay);
- static void process_srcu(struct work_struct *work);
-@@ -182,6 +186,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp, bool is_static)
- 	mutex_init(&sp->srcu_barrier_mutex);
- 	atomic_set(&sp->srcu_barrier_cpu_cnt, 0);
- 	INIT_DELAYED_WORK(&sp->work, process_srcu);
-+	INIT_LIST_HEAD(&sp->srcu_boot_entry);
- 	if (!is_static)
- 		sp->sda = alloc_percpu(struct srcu_data);
- 	init_srcu_struct_nodes(sp, is_static);
-@@ -701,7 +706,11 @@ static void srcu_funnel_gp_start(struct srcu_struct *sp, struct srcu_data *sdp,
- 	    rcu_seq_state(sp->srcu_gp_seq) == SRCU_STATE_IDLE) {
- 		WARN_ON_ONCE(ULONG_CMP_GE(sp->srcu_gp_seq, sp->srcu_gp_seq_needed));
- 		srcu_gp_start(sp);
--		queue_delayed_work(rcu_gp_wq, &sp->work, srcu_get_delay(sp));
-+		if (likely(srcu_init_done))
-+			queue_delayed_work(rcu_gp_wq, &sp->work,
-+					   srcu_get_delay(sp));
-+		else if (list_empty(&sp->srcu_boot_entry))
-+			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
- 	}
- 	spin_unlock_irqrestore_rcu_node(sp, flags);
- }
-@@ -1308,3 +1317,17 @@ static int __init srcu_bootup_announce(void)
- 	return 0;
- }
- early_initcall(srcu_bootup_announce);
-+
-+void __init srcu_init(void)
-+{
-+	struct srcu_struct *sp;
-+
-+	srcu_init_done = true;
-+	while (!list_empty(&srcu_boot_list)) {
-+		sp = list_first_entry(&srcu_boot_list,
-+				      struct srcu_struct, srcu_boot_entry);
-+		check_init_srcu_struct(sp);
-+		list_del_init(&sp->srcu_boot_entry);
-+		queue_work(rcu_gp_wq, &sp->work.work);
-+	}
-+}
-diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
-index 1745d30e170e..5f5963ba313e 100644
---- a/kernel/rcu/tiny.c
-+++ b/kernel/rcu/tiny.c
-@@ -167,4 +167,5 @@ void __init rcu_init(void)
- {
- 	open_softirq(RCU_SOFTIRQ, rcu_process_callbacks);
- 	rcu_early_boot_tests();
-+	srcu_init();
- }
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 821a665cc76d..bf016ff9f873 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3737,6 +3737,7 @@ void __init rcu_init(void)
- 	WARN_ON(!rcu_gp_wq);
- 	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM, 0);
- 	WARN_ON(!rcu_par_gp_wq);
-+	srcu_init();
- }
- 
- #include "tree_exp.h"
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index f6de0ba1d149..f203b94f6b5b 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -880,11 +880,16 @@ static void test_callback(struct rcu_head *r)
- 	pr_info("RCU test callback executed %d\n", rcu_self_test_counter);
- }
- 
-+DEFINE_STATIC_SRCU(early_srcu);
-+
- static void early_boot_test_call_rcu(void)
- {
- 	static struct rcu_head head;
-+	static struct rcu_head shead;
- 
- 	call_rcu(&head, test_callback);
-+	if (IS_ENABLED(CONFIG_SRCU))
-+		call_srcu(&early_srcu, &shead, test_callback);
- }
- 
- void rcu_early_boot_tests(void)
-@@ -904,6 +909,10 @@ static int rcu_verify_early_boot_tests(void)
- 	if (rcu_self_test) {
- 		early_boot_test_counter++;
- 		rcu_barrier();
-+		if (IS_ENABLED(CONFIG_SRCU)) {
-+			early_boot_test_counter++;
-+			srcu_barrier(&early_srcu);
-+		}
- 	}
- 	if (rcu_self_test_counter != early_boot_test_counter) {
- 		WARN_ON(1);
+> ---Original---
+> *From:* "Coly Li"<colyli@suse.de>
+> *Date:* Tue, Aug 14, 2018 20:16 PM
+> *To:* "Dongbo Cao"<cdbdyx@163.com>;
+> *Cc:*
+> "linux-kernel"<linux-kernel@vger.kernel.org>;"linux-bcache"<linux-bcache@vger.kernel.org>;"kent.overstreet"<kent.overstreet@gmail.com>;
+> *Subject:* Re: [PATCH 2/2] bcache: add undef for macro in function
+> 
+> On 2018/8/14 4:16 PM, Dongbo Cao wrote:
+>> add undef for macro d_strtoul,d_strtoul_nonzero and d_strtoi_h
+>> 
+>> Signed-off-by: Dongbo Cao 
+>> ---
+>>  drivers/md/bcache/sysfs.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>> 
+>> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+>> index 225b15aa..ed67a290 100644
+>> --- a/drivers/md/bcache/sysfs.c
+>> +++ b/drivers/md/bcache/sysfs.c
+>> @@ -349,6 +349,9 @@ STORE(__cached_dev)
+>>   if (attr == &sysfs_stop)
+>>   bcache_device_stop(&dc->disk);
+>>  
+>> +#undef d_strtoul
+>> +#undef d_strtoul_nonzero
+>> +#undef d_strtoi_h
+>>   return size;
+>>  }
+>>  
+>> 
+> 
+> Hi Dongbo,
+> 
+> Could you please to provide the motivation why you make this change ?
+> 
+> Thanks.
+> 
+> Coly Li
 
