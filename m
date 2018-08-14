@@ -6,91 +6,110 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22424C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB9DC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D505B217BC
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D505B217BC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 775B0217BC
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 775B0217BC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbeHNLUE (ORCPT
+        id S1731117AbeHNLUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 07:20:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39910 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728483AbeHNLUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 07:20:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 075A180D;
-        Tue, 14 Aug 2018 01:33:56 -0700 (PDT)
-Received: from [10.4.13.92] (e112298-lin.emea.arm.com [10.4.13.92])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37ED93F5D0;
-        Tue, 14 Aug 2018 01:33:54 -0700 (PDT)
-Subject: Re: [PATCH 1/3] arm64: implement ftrace with regs
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-References: <20180810160043.9E45568C76@newverein.lst.de>
- <20180810160223.D360D68C76@newverein.lst.de>
- <2b5c1092-2cc0-00ec-ba3d-341dc61452b4@arm.com>
- <20180813220315.6e8dfc9c@vmware.local.home>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <a19d9e23-3dfa-ba9b-a177-cdc0d1035964@arm.com>
-Date:   Tue, 14 Aug 2018 09:33:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 14 Aug 2018 07:20:53 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44821 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727986AbeHNLUx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 07:20:53 -0400
+Received: by mail-qk0-f193.google.com with SMTP id v17-v6so12820912qkb.11;
+        Tue, 14 Aug 2018 01:34:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RZUIzkYPG2ljFmU6mNBTyY4zyg8uB0bo9CyuX0+3OMw=;
+        b=QxoMQJwCepiL/kSOrteAiNvKJXG6CBomnT3vKKohVwyyCM0gFnPATyettpaaZoKqPH
+         Qrios9HgnfSwaY0FME4ixj5higPFGMOVP72SRafOKhFwrYf70FQWqPotSsW50YBUfHe+
+         WtJjgl3h9vXkVBqjFVDRJkO4CTj4IjkXMx1YShQMrLUkcjl7pxCf3IImK3QGlqRW6xZa
+         ci9XfSXrY5IkNqwjbBne4P3z8+wvcGC7pMLYxr5/bFezScMpI2AG9ZKjTOwN3L+KFzgJ
+         hxdjJWkA3ihy6mxoOU6qHmlw7Gl10wIKrx+qKkpZqULSU+rTSgnk4sM/2yJDV7q03GxJ
+         Joaw==
+X-Gm-Message-State: AOUpUlFPrdYwQc8TO0Te7sOFxtShDO0w7k0gU3jomFJ2WntuoWior+vR
+        12+/3NxMWGcTjpKOsLozxfp5CKfLA078HsJxqKE=
+X-Google-Smtp-Source: AA+uWPw56AvfVA0kFj3SUeTHaKLhZUyJjgE/Ln1dVYH0j8Iyb2a4fJn95WwH/EtRUtcg0vLH+lrIe8FZP3yV8cC0V40=
+X-Received: by 2002:a37:8786:: with SMTP id j128-v6mr18133049qkd.32.1534235683910;
+ Tue, 14 Aug 2018 01:34:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180813220315.6e8dfc9c@vmware.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180813212108.2442868-1-arnd@arndb.de> <20180814105237.64b01528@ajaysk-VirtualBox>
+In-Reply-To: <20180814105237.64b01528@ajaysk-VirtualBox>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 14 Aug 2018 10:34:27 +0200
+Message-ID: <CAK8P3a3bk7urG9zO=F1NtH8hTnGQQ_Hk0qq=o8fmeYY_nEyy5w@mail.gmail.com>
+Subject: Re: [PATCH] staging: wilc1000: revert "fix TODO to compile spi and
+ sdio components in single module"
+To:     ajay.kathat@microchip.com
+Cc:     aditya.shankar@microchip.com, ganesh.krishna@microchip.com,
+        gregkh <gregkh@linuxfoundation.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 14, 2018 at 7:22 AM Ajay Singh <ajay.kathat@microchip.com> wrote:
+>
+> Hi Arnd,
+>
+> On Mon, 13 Aug 2018 23:20:33 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> > The TODO item named "make spi and sdio components coexist in one
+> > build" was apparently addressed a long time ago, but never removed
+> > from the TODO file. However, the new patch that tries to address it
+> > actually makes it worse again by duplicating the common parts of the
+> > driver into two separate modules rather than sharing them. This also
+> > introduces a build regression when one of the two is built-in while
+> > the other is a loadable module:
+>
+> Thanks for sharing your inputs and submitting patch.
+> I have also submitted a patch to address the compilation error[1].
+> We can ignore my patch and proceed with your changes.
+>
+> [1].https://patchwork.kernel.org/patch/10563873/
 
+That patch seems useful regardless, as it removes dead code,
+but I'd still prefer to revert the 9abc44ba4e2f ("staging: wilc1000:
+fix TODO to compile spi and sdio components in single module")
+commit for the other reasons I explained.
 
-On 14/08/18 03:03, Steven Rostedt wrote:
-> On Mon, 13 Aug 2018 11:54:06 +0100
-> Julien Thierry <julien.thierry@arm.com> wrote:
-> 
->>> --- a/arch/arm64/Makefile
->>> +++ b/arch/arm64/Makefile
->>> @@ -78,6 +78,15 @@ ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
->>>    KBUILD_LDFLAGS_MODULE	+= -T $(srctree)/arch/arm64/kernel/module.lds
->>>    endif
->>>    
->>> +ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
->>> +  CC_FLAGS_FTRACE := -fpatchable-function-entry=2
->>> +  KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
->>> +  ifeq ($(call cc-option,-fpatchable-function-entry=2),)
->>> +    $(warning Cannot use CONFIG_DYNAMIC_FTRACE_WITH_REGS: \
->>> +             -fpatchable-function-entry not supported by compiler)
->>
->> Shouldn't this be an error? The option -fpatchable-function-entry has
->> been added to the CC_FLAGS_FTRACE, so any call to the compiler is gonna
->> break anyway. Or am I missing something?
-> 
-> I'm guessing this adds a more informative message on that error. One
-> will know why -fpatchable-function-entry was added to the CFLAGS. I'm
-> for more informative error messages being a victim of poor error
-> messages causing me to dig deep into the guts of the build
-> infrastructure to figure out simple issues.
-> 
+> In my understanding, even when the common part is compiled separately,
+> the wilc1000-sdio/wilc1000-spi module still expects separate instance of
+> common part for each of them because of use of static variables.
+>
+> Shouldn't it be correct to compile the components required for SDIO and
+> SPI separately and then get rid of use of global variables to support
+> running of SDIO/SPI module at same time?
 
-Yes, I agree it is better to have this message. My point was that we 
-could have "$error" instead of "$warning" to stop the compilation right 
-away since we know everything is gonna break (and on parallel builds 
-this warning is gonna be drowned in compiler errors).
+What your patch does is to change the behavior so that for loadable
+modules, you get two copies of each global variable and function,
+but for built-in drivers, you still only get one. The old behavior was
+arguably better here because at least it was consistent and always
+shared the common part.
 
--- 
-Julien Thierry
+> > In order to have multiple instances working (sdio, spi, or mixed),
+> > all such variables need to be dynamically allocated per instance and
+> > stored in 'struct wilc' or one of the structures referenced by it.
+> >
+>
+> Actually, I have been locally working on this patch for a while now
+> and I will submit a patch to avoid use of most of global and static
+> variable soon.
+
+Ok, very nice!
+
+      Arnd
