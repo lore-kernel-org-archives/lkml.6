@@ -3,152 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A23AC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDCBC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8ECA21727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 181882154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 20:06:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XROU9wnQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8ECA21727
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7Pp59DN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181882154F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729309AbeHNWv6 (ORCPT
+        id S1729157AbeHNWzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 18:51:58 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46591 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbeHNWv6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 18:51:58 -0400
-Received: by mail-ua1-f66.google.com with SMTP id u11-v6so14560078uan.13
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+NQ1WSG8jaiHTeVKMmtoDbxDA6s3RtBEaDUiEmvyqKQ=;
-        b=XROU9wnQRQFtyL5qQnqPcmR+9aAP+/2/VnYre2WKONbnctBOyvmOfxAaEAg/6u3E/5
-         Upeut3rO5yt6Wvx8/cxWxi7T6HWO0YuKrMXwotOnGD68cJ1ZdAvZVxKb0uK9GP328T8G
-         C34vYI/66okEmYyZtqfmPlBqFB3EL6jXcxhZU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+NQ1WSG8jaiHTeVKMmtoDbxDA6s3RtBEaDUiEmvyqKQ=;
-        b=MLVr3pMdkRnkLINm6JsiD8fx6VdSrh2MBbExbG4yHtqmaYeUjVNNPVo6qEv5fvf5aD
-         DYP4J8QaGTiwxqRu0gUgaR5rdDWYuO3ymhBqaBejvSCdDijWvtYUq951tIjeGNCouvsU
-         gqvTlTKzBqOzaMRXUESpXR62krYxNI7JyGdrvl6bitR5FKydX+hZh4/UgKVA2XTap2XY
-         +Xrd8bOmlseHYAPlk4zfCed5grGeL01Z9QvQDBs28v49/1+pGlnQCmg/6UAcRXw2rgXX
-         iv0MMGou8TnJAUhWrTCQhsilJi9ktEFM/TCGs1LrNsDMcydPCe8GlagPNVOua88VPZQF
-         kNFQ==
-X-Gm-Message-State: AOUpUlEdCyBlZIyL1Wzs4wbL0R9ukLUD95b+YMym++jb3/0iTa9imMP3
-        x9OhuqusTK+XghodGB8+FLaGhqEt4tg=
-X-Google-Smtp-Source: AA+uWPy0eOe9vf6Ilxfz47DGMWSjw3a9OuJhTIAnZhefotZYHXILklJbGbZMmmD9MRWlXawVeRZjbQ==
-X-Received: by 2002:a9f:3613:: with SMTP id r19-v6mr15241860uad.73.1534276990042;
-        Tue, 14 Aug 2018 13:03:10 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id m133-v6sm6205546vka.52.2018.08.14.13.03.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 13:03:09 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id k25-v6so14554906uao.11
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:03:09 -0700 (PDT)
-X-Received: by 2002:ab0:4364:: with SMTP id k91-v6mr3278628uak.46.1534276988384;
- Tue, 14 Aug 2018 13:03:08 -0700 (PDT)
+        Tue, 14 Aug 2018 18:55:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728034AbeHNWzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 18:55:25 -0400
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com [209.85.161.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D873321732;
+        Tue, 14 Aug 2018 20:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534277196;
+        bh=llUhC2Q3Xmjgdce6sDBHyN9Kr+GHhvlze3CG88si/uc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=i7Pp59DNk1u7hhcGrDIKgw6lzyU0aaWFmGwY+ihrZ4fWZFqiG6rgZ8gVZ/areCIZL
+         UAd0cpHuRbSgXq++ISLKtBPq32so9ipyb118W56+yzon64uinEaqbibJxswAumjCv1
+         1s30aEuxxeTYcQVq3WXj7K++tINlyiKxMyIXjGcA=
+Received: by mail-yw1-f44.google.com with SMTP id l189-v6so17156780ywb.10;
+        Tue, 14 Aug 2018 13:06:35 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGGaH197Ddo9f1RqrE1GOkFObgrueEj6OuCtv/rdP19yomYthIp
+        G9M/XX6UNI7ZNewIu7fStf6Dndk/FsQJTjyB3gY=
+X-Google-Smtp-Source: AA+uWPxbg1FLhZCesDlXAmN9g5jsheooSOwDROyxrgpW8pNP7goDWPrnim5pf3rqzqRhHCpivq3y/qqnsV2eGshaoUw=
+X-Received: by 2002:a25:f817:: with SMTP id u23-v6mr12248047ybd.62.1534277195039;
+ Tue, 14 Aug 2018 13:06:35 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 13:03:07 -0700 (PDT)
-In-Reply-To: <bf70f01d-41ac-dcdc-b503-5e0eb1e70329@codeaurora.org>
-References: <20180814170617.100087-1-dianders@chromium.org>
- <20180814170617.100087-2-dianders@chromium.org> <bf70f01d-41ac-dcdc-b503-5e0eb1e70329@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 14 Aug 2018 13:03:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VNCOyyq5+xvSudTmtBgPm4-s7gj7GRCvuL5vSmA6yDVA@mail.gmail.com>
-Message-ID: <CAD=FV=VNCOyyq5+xvSudTmtBgPm4-s7gj7GRCvuL5vSmA6yDVA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] regulator: core: If consumers don't call
- regulator_set_load() assume max
-To:     David Collins <collinsd@codeaurora.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:81cc:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 13:05:54
+ -0700 (PDT)
+In-Reply-To: <20180814161917.GA26926@rob-hp-laptop>
+References: <20180801100457.25614-1-nava.manne@xilinx.com> <20180814161917.GA26926@rob-hp-laptop>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 14 Aug 2018 15:05:54 -0500
+X-Gmail-Original-Message-ID: <CANk1AXT6RkuFhWoFBy127j2Q=h9P-1S=0Mhyh9=PMJyC72sciQ@mail.gmail.com>
+Message-ID: <CANk1AXT6RkuFhWoFBy127j2Q=h9P-1S=0Mhyh9=PMJyC72sciQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] ARM: dt: fpga: Added binding docs for Xilinx
+ zynqmp FPGA manager
+To:     Rob Herring <robh@kernel.org>
+Cc:     Nava kishore Manne <nava.manne@xilinx.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+        Moritz Fischer <moritz.fischer@ettus.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        kishore m <chinnikishore369@gmail.com>,
+        Nava kishore Manne <navam@xilinx.com>,
+        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Aug 14, 2018 at 11:19 AM, Rob Herring <robh@kernel.org> wrote:
 
-On Tue, Aug 14, 2018 at 11:30 AM, David Collins <collinsd@codeaurora.org> wrote:
-> The behavior introduced by this patch seems like an undesirable hack to
-> me.  It goes against the general philosophy within the regulator framework
-> of taking no action unless directed to do so by an explicit consumer
-> request (or special device tree property).  We should assume that
-> consumers make requests to meet their needs instead of assuming that they
-> are missing important votes required by their hardware.
+Hi Nava,
 
-I don't agree so I guess it will be up to Mark to decide.
+I didn't see this posting because it wasn't sent to my current email
+address or to the linux-fpga mailing list.  People's email address
+change at random times, so the easiest way to keep up is to always
+check out the linux-next repo's master branch and look at the latest
+MAINTAINERS file there.  Also there's a handy
+./scripts/get_maintainer.pl script to make sure you include the right
+people.
 
-Specifically I will note that there are boatloads of drivers out there
-that use the regulator framework but don't have a call to
-regulator_set_load() in them.  Are these drivers all broken?  I don't
-think so.  IMO the regulator_set_load() API is an optional call for
-drivers that they can use to optimize power usage, not a required API.
+Alan
 
-
->> --- a/drivers/regulator/core.c
->> +++ b/drivers/regulator/core.c
->> @@ -732,6 +732,7 @@ static int drms_uA_update(struct regulator_dev *rdev)
->>       struct regulator *sibling;
->>       int current_uA = 0, output_uV, input_uV, err;
->>       unsigned int mode;
->> +     bool any_unset = false;
+> On Wed, Aug 01, 2018 at 03:34:56PM +0530, Nava kishore Manne wrote:
+>> New bindings document for zynqmp fpga manager.
 >>
->>       lockdep_assert_held_once(&rdev->mutex);
+>> Signed-off-by: Nava kishore Manne <navam@xilinx.com>
+>> ---
+>>  .../devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt   | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
 >>
->> @@ -751,11 +752,17 @@ static int drms_uA_update(struct regulator_dev *rdev)
->>               return -EINVAL;
->>
->>       /* calc total requested load */
->> -     list_for_each_entry(sibling, &rdev->consumer_list, list)
->> +     list_for_each_entry(sibling, &rdev->consumer_list, list) {
->>               current_uA += sibling->uA_load;
->> +             if (!sibling->uA_load_set)
->> +                     any_unset = true;
->> +     }
->>
->>       current_uA += rdev->constraints->system_load;
->>
->> +     if (any_unset)
->> +             current_uA = INT_MAX;
+>> diff --git a/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt b/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+>> new file mode 100644
+>> index 000000000000..0eac747747f5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+>> @@ -0,0 +1,9 @@
+>> +Xilinx Zynqmp FPGA Manager
 >> +
+>> +Required properties:
+>> +- compatible:                should contain "xlnx,zynqmp-pcap-fpga"
+>> +
+>> +Example:
+>> +     pcap: pcap@00 {
+>> +             compatible = "xlnx,zynqmp-pcap-fpga";
 >
-> This check will incorrectly result in a constant load request of INT_MAX
-> for all regulators that have at least one child regulator.  This is the
-> case because such child regulators are present in rdev->consumer_list and
-> because regulator_set_load() requests are not propagated up to parent
-> regulators.  Thus, the regulator structs for child regulators will always
-> have uA_load==0 and uA_load_set==false.
-
-Ah, interesting.
-
-...but doesn't this same bug exist anyway, just in the opposite
-direction?  Without my patch we'll try to request a 0 mA load in this
-case which seems just as wrong (or perhaps worse?).  I guess on RPMh
-regulator you're "saved" because the RPMh hardware itself knows the
-parent/child relationship and knows to ignore this 0 mA load, but it's
-still a bug in the overall Linux framework...
-
-I have no idea how we ought to propagate regulator_set_load() to
-parents though.  That seems like a tough thing to try to handle
-automagically.
-
-
--Doug
+> How is this accessed? Via firmware interface? If so, need to define it
+> is a child of the firmware node.
+>
+>> +     };
+>> --
+>> 2.18.0
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
