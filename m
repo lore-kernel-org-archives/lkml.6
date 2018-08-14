@@ -2,42 +2,40 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C74C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D24C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9EE21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9EE21471
+	by mail.kernel.org (Postfix) with ESMTP id 5E09A21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E09A21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403788AbeHNUfV (ORCPT
+        id S2403799AbeHNUfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60882 "EHLO
+        Tue, 14 Aug 2018 16:35:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfV (ORCPT
+        with ESMTP id S2390379AbeHNUfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:21 -0400
+        Tue, 14 Aug 2018 16:35:23 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE2DCCBA;
-        Tue, 14 Aug 2018 17:47:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 614ECD08;
+        Tue, 14 Aug 2018 17:47:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 29/43] x86/speculation/l1tf: Add sysfs reporting for l1tf
-Date:   Tue, 14 Aug 2018 19:18:05 +0200
-Message-Id: <20180814171519.031428045@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Egerer <hakke_007@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yongqin Liu <yongqin.liu@linaro.org>
+Subject: [PATCH 4.4 03/43] ipv4+ipv6: Make INET*_ESP select CRYPTO_ECHAINIV
+Date:   Tue, 14 Aug 2018 19:17:39 +0200
+Message-Id: <20180814171517.268645279@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -54,232 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Thomas Egerer <hakke_007@gmx.de>
 
-commit 17dbca119312b4e8173d4e25ff64262119fcef38 upstream
+commit 32b6170ca59ccf07d0e394561e54b2cd9726038c upstream.
 
-L1TF core kernel workarounds are cheap and normally always enabled, However
-they still should be reported in sysfs if the system is vulnerable or
-mitigated. Add the necessary CPU feature/bug bits.
+The ESP algorithms using CBC mode require echainiv. Hence INET*_ESP have
+to select CRYPTO_ECHAINIV in order to work properly. This solves the
+issues caused by a misconfiguration as described in [1].
+The original approach, patching crypto/Kconfig was turned down by
+Herbert Xu [2].
 
-- Extend the existing checks for Meltdowns to determine if the system is
-  vulnerable. All CPUs which are not vulnerable to Meltdown are also not
-  vulnerable to L1TF
+[1] https://lists.strongswan.org/pipermail/users/2015-December/009074.html
+[2] http://marc.info/?l=linux-crypto-vger&m=145224655809562&w=2
 
-- Check for 32bit non PAE and emit a warning as there is no practical way
-  for mitigation due to the limited physical address bits
-
-- If the system has more than MAX_PA/2 physical memory the invert page
-  workarounds don't protect the system against the L1TF attack anymore,
-  because an inverted physical address will also point to valid
-  memory. Print a warning in this case and report that the system is
-  vulnerable.
-
-Add a function which returns the PFN limit for the L1TF mitigation, which
-will be used in follow up patches for sanity and range checks.
-
-[ tglx: Renamed the CPU feature bit to L1TF_PTEINV ]
-[ dwmw2: Backport to 4.9 (cpufeatures.h, E820) ]
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Thomas Egerer <hakke_007@gmx.de>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Yongqin Liu <yongqin.liu@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/cpufeatures.h |    3 +-
- arch/x86/include/asm/processor.h   |    5 ++++
- arch/x86/kernel/cpu/bugs.c         |   40 +++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/common.c       |   20 ++++++++++++++++++
- drivers/base/cpu.c                 |    8 +++++++
- include/linux/cpu.h                |    2 +
- 6 files changed, 77 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -214,7 +214,7 @@
- #define X86_FEATURE_IBPB	( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP	( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN		( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
--
-+#define X86_FEATURE_L1TF_PTEINV	( 7*32+29) /* "" L1TF workaround PTE inversion */
+---
+ net/ipv4/Kconfig |    1 +
+ net/ipv6/Kconfig |    1 +
+ 2 files changed, 2 insertions(+)
+
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -354,6 +354,7 @@ config INET_ESP
+ 	select CRYPTO_CBC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_DES
++	select CRYPTO_ECHAINIV
+ 	---help---
+ 	  Support for IPsec ESP.
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
-@@ -331,5 +331,6 @@
- #define X86_BUG_SPECTRE_V1	X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
- #define X86_BUG_SPECTRE_V2	X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
- #define X86_BUG_SPEC_STORE_BYPASS X86_BUG(17) /* CPU is affected by speculative store bypass attack */
-+#define X86_BUG_L1TF		X86_BUG(18) /* CPU is affected by L1 Terminal Fault */
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -69,6 +69,7 @@ config INET6_ESP
+ 	select CRYPTO_CBC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_DES
++	select CRYPTO_ECHAINIV
+ 	---help---
+ 	  Support for IPsec ESP.
  
- #endif /* _ASM_X86_CPUFEATURES_H */
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -172,6 +172,11 @@ extern const struct seq_operations cpuin
- 
- extern void cpu_detect(struct cpuinfo_x86 *c);
- 
-+static inline unsigned long l1tf_pfn_limit(void)
-+{
-+	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
-+}
-+
- extern void early_cpu_init(void);
- extern void identify_boot_cpu(void);
- extern void identify_secondary_cpu(struct cpuinfo_x86 *);
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -26,9 +26,11 @@
- #include <asm/pgtable.h>
- #include <asm/cacheflush.h>
- #include <asm/intel-family.h>
-+#include <asm/e820.h>
- 
- static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
-+static void __init l1tf_select_mitigation(void);
- 
- /*
-  * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-@@ -80,6 +82,8 @@ void __init check_bugs(void)
- 	 */
- 	ssb_select_mitigation();
- 
-+	l1tf_select_mitigation();
-+
- #ifdef CONFIG_X86_32
- 	/*
- 	 * Check whether we are able to run this kernel safely on SMP.
-@@ -203,6 +207,32 @@ static void x86_amd_ssb_disable(void)
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
- }
- 
-+static void __init l1tf_select_mitigation(void)
-+{
-+	u64 half_pa;
-+
-+	if (!boot_cpu_has_bug(X86_BUG_L1TF))
-+		return;
-+
-+#if CONFIG_PGTABLE_LEVELS == 2
-+	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
-+	return;
-+#endif
-+
-+	/*
-+	 * This is extremely unlikely to happen because almost all
-+	 * systems have far more MAX_PA/2 than RAM can be fit into
-+	 * DIMM slots.
-+	 */
-+	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
-+	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
-+		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-+		return;
-+	}
-+
-+	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
-+}
-+
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
- 
-@@ -655,6 +685,11 @@ static ssize_t cpu_show_common(struct de
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
- 
-+	case X86_BUG_L1TF:
-+		if (boot_cpu_has(X86_FEATURE_L1TF_PTEINV))
-+			return sprintf(buf, "Mitigation: Page Table Inversion\n");
-+		break;
-+
- 	default:
- 		break;
- 	}
-@@ -681,4 +716,9 @@ ssize_t cpu_show_spec_store_bypass(struc
- {
- 	return cpu_show_common(dev, attr, buf, X86_BUG_SPEC_STORE_BYPASS);
- }
-+
-+ssize_t cpu_show_l1tf(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return cpu_show_common(dev, attr, buf, X86_BUG_L1TF);
-+}
- #endif
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -880,6 +880,21 @@ static const __initconst struct x86_cpu_
- 	{}
- };
- 
-+static const __initconst struct x86_cpu_id cpu_no_l1tf[] = {
-+	/* in addition to cpu_no_speculation */
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_MERRIFIELD	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_MOOREFIELD	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_GOLDMONT	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_DENVERTON	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_GEMINI_LAKE	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
-+	{}
-+};
-+
- static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- {
- 	u64 ia32_cap = 0;
-@@ -905,6 +920,11 @@ static void __init cpu_set_bug_bits(stru
- 		return;
- 
- 	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
-+
-+	if (x86_match_cpu(cpu_no_l1tf))
-+		return;
-+
-+	setup_force_cpu_bug(X86_BUG_L1TF);
- }
- 
- /*
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -524,16 +524,24 @@ ssize_t __weak cpu_show_spec_store_bypas
- 	return sprintf(buf, "Not affected\n");
- }
- 
-+ssize_t __weak cpu_show_l1tf(struct device *dev,
-+			     struct device_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "Not affected\n");
-+}
-+
- static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
- static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
- static DEVICE_ATTR(spectre_v2, 0444, cpu_show_spectre_v2, NULL);
- static DEVICE_ATTR(spec_store_bypass, 0444, cpu_show_spec_store_bypass, NULL);
-+static DEVICE_ATTR(l1tf, 0444, cpu_show_l1tf, NULL);
- 
- static struct attribute *cpu_root_vulnerabilities_attrs[] = {
- 	&dev_attr_meltdown.attr,
- 	&dev_attr_spectre_v1.attr,
- 	&dev_attr_spectre_v2.attr,
- 	&dev_attr_spec_store_bypass.attr,
-+	&dev_attr_l1tf.attr,
- 	NULL
- };
- 
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -48,6 +48,8 @@ extern ssize_t cpu_show_spectre_v2(struc
- 				   struct device_attribute *attr, char *buf);
- extern ssize_t cpu_show_spec_store_bypass(struct device *dev,
- 					  struct device_attribute *attr, char *buf);
-+extern ssize_t cpu_show_l1tf(struct device *dev,
-+			     struct device_attribute *attr, char *buf);
- 
- extern __printf(4, 5)
- struct device *cpu_device_create(struct device *parent, void *drvdata,
 
 
