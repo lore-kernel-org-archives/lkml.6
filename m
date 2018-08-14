@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04653C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E70C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6E712150F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6E712150F
+	by mail.kernel.org (Postfix) with ESMTP id 256D821471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256D821471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390893AbeHNUdX (ORCPT
+        id S2390902AbeHNUd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:33:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60178 "EHLO
+        Tue, 14 Aug 2018 16:33:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389912AbeHNUdX (ORCPT
+        with ESMTP id S2389912AbeHNUd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:33:23 -0400
+        Tue, 14 Aug 2018 16:33:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43938C9A;
-        Tue, 14 Aug 2018 17:45:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAB40C8D;
+        Tue, 14 Aug 2018 17:45:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
         Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 106/107] x86/microcode: Do not upload microcode if CPUs are offline
-Date:   Tue, 14 Aug 2018 19:18:09 +0200
-Message-Id: <20180814171527.076515934@linuxfoundation.org>
+Subject: [PATCH 4.9 107/107] x86/microcode: Allow late microcode loading with SMT disabled
+Date:   Tue, 14 Aug 2018 19:18:10 +0200
+Message-Id: <20180814171527.116006902@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,73 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ashok Raj <ashok.raj@intel.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 30ec26da9967d0d785abc24073129a34c3211777 upstream.
+commit 07d981ad4cf1e78361c6db1c28ee5ba105f96cc1 upstream
 
-Avoid loading microcode if any of the CPUs are offline, and issue a
-warning. Having different microcode revisions on the system at any time
-is outright dangerous.
+The kernel unnecessarily prevents late microcode loading when SMT is
+disabled.  It should be safe to allow it if all the primary threads are
+online.
 
-[ Borislav: Massage changelog. ]
-
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: http://lkml.kernel.org/r/1519352533-15992-4-git-send-email-ashok.raj@intel.com
-Link: https://lkml.kernel.org/r/20180228102846.13447-5-bp@alien8.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/x86/kernel/cpu/microcode/core.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
 --- a/arch/x86/kernel/cpu/microcode/core.c
 +++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -384,6 +384,16 @@ static void __exit microcode_dev_exit(vo
- /* fake device for request_firmware */
- static struct platform_device	*microcode_pdev;
+@@ -386,12 +386,20 @@ static struct platform_device	*microcode
  
-+static int check_online_cpus(void)
-+{
-+	if (num_online_cpus() == num_present_cpus())
-+		return 0;
-+
-+	pr_err("Not all CPUs online, aborting microcode update.\n");
-+
-+	return -EINVAL;
-+}
-+
- static int reload_for_cpu(int cpu)
+ static int check_online_cpus(void)
  {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
-@@ -418,7 +428,13 @@ static ssize_t reload_store(struct devic
- 		return size;
+-	if (num_online_cpus() == num_present_cpus())
+-		return 0;
++	unsigned int cpu;
  
- 	get_online_cpus();
-+
-+	ret = check_online_cpus();
-+	if (ret)
-+		goto put;
-+
- 	mutex_lock(&microcode_mutex);
-+
- 	for_each_online_cpu(cpu) {
- 		tmp_ret = reload_for_cpu(cpu);
- 		if (tmp_ret != 0)
-@@ -431,6 +447,8 @@ static ssize_t reload_store(struct devic
- 	if (!ret)
- 		perf_check_microcode();
- 	mutex_unlock(&microcode_mutex);
-+
-+put:
- 	put_online_cpus();
+-	pr_err("Not all CPUs online, aborting microcode update.\n");
++	/*
++	 * Make sure all CPUs are online.  It's fine for SMT to be disabled if
++	 * all the primary threads are still online.
++	 */
++	for_each_present_cpu(cpu) {
++		if (topology_is_primary_thread(cpu) && !cpu_online(cpu)) {
++			pr_err("Not all CPUs online, aborting microcode update.\n");
++			return -EINVAL;
++		}
++	}
  
- 	if (!ret)
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int reload_for_cpu(int cpu)
 
 
