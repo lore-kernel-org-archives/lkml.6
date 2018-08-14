@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4774C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1BFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64AD521736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64AD521736
+	by mail.kernel.org (Postfix) with ESMTP id E15CC21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15CC21736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391205AbeHNUft (ORCPT
+        id S2391212AbeHNUf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32816 "EHLO
+        Tue, 14 Aug 2018 16:35:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32830 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfs (ORCPT
+        with ESMTP id S2390379AbeHNUfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:48 -0400
+        Tue, 14 Aug 2018 16:35:55 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16A79C74;
-        Tue, 14 Aug 2018 17:47:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5AA0C74;
+        Tue, 14 Aug 2018 17:47:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.4 05/43] parisc: Enable CONFIG_MLONGCALLS by default
-Date:   Tue, 14 Aug 2018 19:17:41 +0200
-Message-Id: <20180814171517.431411225@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Wei Liu <wei.liu2@citrix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 07/43] xen/netfront: dont cache skb_shinfo()
+Date:   Tue, 14 Aug 2018 19:17:43 +0200
+Message-Id: <20180814171517.579117176@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -49,32 +51,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Juergen Gross <jgross@suse.com>
 
-commit 66509a276c8c1d19ee3f661a41b418d101c57d29 upstream.
+commit d472b3a6cf63cd31cae1ed61930f07e6cd6671b5 upstream.
 
-Enable the -mlong-calls compiler option by default, because otherwise in most
-cases linking the vmlinux binary fails due to truncations of R_PARISC_PCREL22F
-relocations. This fixes building the 64-bit defconfig.
+skb_shinfo() can change when calling __pskb_pull_tail(): Don't cache
+its return value.
 
-Cc: stable@vger.kernel.org # 4.0+
-Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/xen-netfront.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -177,7 +177,7 @@ config PREFETCH
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -879,7 +879,6 @@ static RING_IDX xennet_fill_frags(struct
+ 				  struct sk_buff *skb,
+ 				  struct sk_buff_head *list)
+ {
+-	struct skb_shared_info *shinfo = skb_shinfo(skb);
+ 	RING_IDX cons = queue->rx.rsp_cons;
+ 	struct sk_buff *nskb;
  
- config MLONGCALLS
- 	bool "Enable the -mlong-calls compiler option for big kernels"
--	def_bool y if (!MODULES)
-+	default y
- 	depends on PA8X00
- 	help
- 	  If you configure the kernel to include many drivers built-in instead
+@@ -888,15 +887,16 @@ static RING_IDX xennet_fill_frags(struct
+ 			RING_GET_RESPONSE(&queue->rx, ++cons);
+ 		skb_frag_t *nfrag = &skb_shinfo(nskb)->frags[0];
+ 
+-		if (shinfo->nr_frags == MAX_SKB_FRAGS) {
++		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
+ 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+ 
+ 			BUG_ON(pull_to <= skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+-		BUG_ON(shinfo->nr_frags >= MAX_SKB_FRAGS);
++		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
+ 
+-		skb_add_rx_frag(skb, shinfo->nr_frags, skb_frag_page(nfrag),
++		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
++				skb_frag_page(nfrag),
+ 				rx->offset, rx->status, PAGE_SIZE);
+ 
+ 		skb_shinfo(nskb)->nr_frags = 0;
 
 
