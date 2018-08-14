@@ -2,98 +2,160 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0A9C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4B1C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDDA218DE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:15:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BDDA218DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id C3715214F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:16:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CKei5ZO7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3715214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731552AbeHNMCN convert rfc822-to-8bit (ORCPT
+        id S1731713AbeHNMCX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:02:13 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45757 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbeHNMCN (ORCPT
+        Tue, 14 Aug 2018 08:02:23 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36989 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeHNMCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:02:13 -0400
-Received: by mail-qk0-f196.google.com with SMTP id c192-v6so12862114qkg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 02:15:55 -0700 (PDT)
+        Tue, 14 Aug 2018 08:02:23 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n11-v6so11446019wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 02:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v7V5uCt35QisFwnN5/setQHaBhEh3UzqeRj0Y1d7B3M=;
+        b=CKei5ZO7s4IyagMlOt2+JwGuzRa+aXBulHEJUlZxBcKj3rdzjOi3rp1SoRQuwymojJ
+         MR+526HC7a4r7ClJiWdQbggjjR2SYxC0kYlUSswn/4oSuxPRzh5herDDFtbDC+GzkIp3
+         NzZ5HkQ6p+3nt+A/gR02GHwDBzC73JUPRToCo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ULfL4kbohmOjWTbYP6ucBju0X8ppaJUlTN1+LV408a0=;
-        b=NePzeovjcg4uRcInBRHrr2FoUmBG4tBJfa48gHBdFwcrM0BnHzmJTrcJy95fXyliJP
-         ZIvIiZoaIkz8B2SERjftaQo6B46XFKeXOktKlNT9M7KORtZZR9EEHLufegWQ3AFFZtr/
-         /1REzKrcKezerCS5I1OXR3pfKj6vENV7/GKJJfPT4a1PRm6/OZhQpkIz4NAmnh6LTyPV
-         aaYLWnc/RzxxXxVJPbJEyRPy07IlycpO7XJXWtdlV7t/tqe6IUQ6NH+IBrFduQ2VRTKe
-         +qShJ01F8RzcekIa6mutGRRZfCP7HIVQZU0hNYZr1YGMTE+PJnlPIvkfWnEbDsFRWqiU
-         H8ZQ==
-X-Gm-Message-State: AOUpUlFa6xBSVayijyOJviDGmyhjj1qHfpuYVpRMaVBm3GhhpyjdPN7x
-        EaDOH0Jw3M5LeEwtpB2pGSm3R817W7iDC1XhzWU=
-X-Google-Smtp-Source: AA+uWPxumEdwpErWJwo04Bq+kWPRUKEDZ/KihzALiGX0xGYJlwGuzH3x9XIVId/4UBl9PrVsizvUogXFi/YEpQus9kw=
-X-Received: by 2002:a37:8786:: with SMTP id j128-v6mr18226690qkd.32.1534238154645;
- Tue, 14 Aug 2018 02:15:54 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v7V5uCt35QisFwnN5/setQHaBhEh3UzqeRj0Y1d7B3M=;
+        b=qlljEiS1zppetoVcR6UBC9qxVubDzP29I98NapZOc7Yp/+PNhKvdtW5nMJGKApUMhe
+         J7wJZ58Bve9nyyUhxTCWE/hva9S4KEA/CvDXG64lTFsyCImy+eQxyeU3HQEafuvY6F3g
+         96vRVOPnF0sFkLezAowvRxtYKw0Gmg0fGpJNd1ORoMvizk+rp4rUbwC+XP79blgHrSoq
+         9+sr8WR3a3bU/jn0ngeaewM5ijEORtfYD01k/xWdHgq7tC9NM6ang2HAW15io79v6GeR
+         x2P126NWEbpbFlS7WtzriGdfYYw4hDTf5uTHNjcgm873xNDDeLxfK7kH+8izIFXFo9hp
+         lJaw==
+X-Gm-Message-State: AOUpUlFY/jtwzdmr0VYbX1fp5qAI5vBYcIOt8jpnmTe+m4nvC3C6p+jK
+        RmncPCxQviXRYgjbfb66ILpa+Q==
+X-Google-Smtp-Source: AA+uWPy34HpSM/HWVqWDu6l3uFnebRasdcXj7itk0A5ibQgxyKBng/okhGCwwTjp66INxCBvQJKirA==
+X-Received: by 2002:a1c:eb03:: with SMTP id j3-v6mr10072555wmh.150.1534238163597;
+        Tue, 14 Aug 2018 02:16:03 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id 185-v6sm21121332wmy.38.2018.08.14.02.16.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Aug 2018 02:16:02 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 10:16:00 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     zhe.he@windriver.com
+Cc:     jason.wessel@windriver.com, gregkh@linuxfoundation.org,
+        jslaby@suse.com, kgdb-bugreport@lists.sourceforge.net,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kgdboc: Passing ekgdboc to command line causes panic
+Message-ID: <20180814091600.md6v2dj53wco7lgn@holly.lan>
+References: <1533743984-426660-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
-References: <20180811155554.3382650-1-arnd@arndb.de> <593dd8e1-fa23-3216-3550-274401d88bcb@gmail.com>
- <CADnq5_PCyKb72-BjFG3B4p_+bctNKoswAibw8C687_fpystSJA@mail.gmail.com>
- <CAK8P3a1AGC4fFYSSDQn2snkvf5htZVffCwRLV1NBm5YeZgw+CA@mail.gmail.com> <632dceb6-27e5-869b-46a9-6b11944204fc@daenzer.net>
-In-Reply-To: <632dceb6-27e5-869b-46a9-6b11944204fc@daenzer.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 14 Aug 2018 11:15:38 +0200
-Message-ID: <CAK8P3a3fDOeNWsmtXRHOF5cAMit7AMt7fS_54m7NXN0AjZYbPw@mail.gmail.com>
-Subject: Re: [PATCH] [v3] drm: amd: dc: don't use FP math when Kcov is enabled
-To:     michel@daenzer.net
-Cc:     Alex Deucher <alexdeucher@gmail.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, Shirish S <shirish.s@amd.com>,
-        Jerry.Zuo@amd.com, dri-devel <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533743984-426660-1-git-send-email-zhe.he@windriver.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 10:54 AM Michel Dänzer <michel@daenzer.net> wrote:
->
-> On 2018-08-13 05:23 PM, Arnd Bergmann wrote:
-> > On Mon, Aug 13, 2018 at 4:49 PM Alex Deucher <alexdeucher@gmail.com> wrote:
-> >>
-> >> On Sun, Aug 12, 2018 at 3:55 AM Christian König
-> >> <ckoenig.leichtzumerken@gmail.com> wrote:
-> >>> Adding Harry as well.
-> >>> Am 11.08.2018 um 17:54 schrieb Arnd Bergmann:
-> >>>>
-> >>>> Fixes: bf2e2e2e0ea9 ("drm/amd/display: Limit DCN to x86 arch")
-> >>>> Fixes: 4841203102a3 ("drm/amdgpu/display: Replace CONFIG_DRM_AMD_DC_DCN1_0 with CONFIG_X86")
-> >>
-> >> Maybe it would be better to revert 4841203102a3 so we can limit the
-> >> scope of this to DCN support.
-> >
-> > That would help, but we would still require the patch at
-> > https://patchwork.kernel.org/patch/10090227/ or something else to avoid
-> > broken randconfig builds.
->
-> FWIW, please don't revert 4841203102a3 in a way which allows
-> CONFIG_DRM_AMD_DC_DCN1_0 to be accidentally disabled on X86 again. If it
-> is reinstated, it should be strictly derived from other options, not
-> changeable by the user.
+On Wed, Aug 08, 2018 at 11:59:44PM +0800, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+> 
+> kgdboc_option_setup does not check input argument before passing it
+> to strlen. The argument would be a NULL pointer if "ekgdboc", without
+> its value, is set in command line and thus cause the following panic.
+> 
+> PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
+> [    0.000000] RIP: 0010:strlen+0x0/0x20
+> ...
+> [    0.000000] Call Trace
+> [    0.000000]  ? kgdboc_option_setup+0x9/0xa0
+> [    0.000000]  ? kgdboc_early_init+0x6/0x1b
+> [    0.000000]  ? do_early_param+0x4d/0x82
+> [    0.000000]  ? parse_args+0x212/0x330
+> [    0.000000]  ? rdinit_setup+0x26/0x26
+> [    0.000000]  ? parse_early_options+0x20/0x23
+> [    0.000000]  ? rdinit_setup+0x26/0x26
+> [    0.000000]  ? parse_early_param+0x2d/0x39
+> [    0.000000]  ? setup_arch+0x2f7/0xbf4
+> [    0.000000]  ? start_kernel+0x5e/0x4c2
+> [    0.000000]  ? load_ucode_bsp+0x113/0x12f
+> [    0.000000]  ? secondary_startup_64+0xa5/0xb0
+> 
+> This patch adds a check to prevent the panic and changes some printk
+> to right fashion.
+> 
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
 
-How about making all of AMDGPU depend on
-" !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS) || BROKEN"
-then?
+For the bug fix portions of this patch you should add the stable kernel
+ML to the Cc: of the sign off area: See:
+https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html#option-1
 
-     Arnd
+> ---
+>  drivers/tty/serial/kgdboc.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
+> index b4ba2b1..0003d6c 100644
+> --- a/drivers/tty/serial/kgdboc.c
+> +++ b/drivers/tty/serial/kgdboc.c
+> @@ -130,8 +130,13 @@ static void kgdboc_unregister_kbd(void)
+>  
+>  static int kgdboc_option_setup(char *opt)
+>  {
+> +	if (!opt) {
+> +		pr_err("kgdboc: null option\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	if (strlen(opt) >= MAX_CONFIG_LEN) {
+> -		printk(KERN_ERR "kgdboc: config string too long\n");
+> +		pr_err("kgdboc: config string too long\n");
+
+These changes are not bug fixes and are not normally candidates for
+backporting. It would therefore be better to put the s/printk KERN_ERR /pr_err(/
+changes into a separate patch.
+
+
+>  		return -ENOSPC;
+>  	}
+>  	strcpy(config, opt);
+> @@ -248,7 +253,7 @@ static int param_set_kgdboc_var(const char *kmessage,
+>  	int len = strlen(kmessage);
+>  
+>  	if (len >= MAX_CONFIG_LEN) {
+> -		printk(KERN_ERR "kgdboc: config string too long\n");
+> +		pr_err("kgdboc: config string too long\n");
+>  		return -ENOSPC;
+>  	}
+>  
+> @@ -259,8 +264,7 @@ static int param_set_kgdboc_var(const char *kmessage,
+>  	}
+>  
+>  	if (kgdb_connected) {
+> -		printk(KERN_ERR
+> -		       "kgdboc: Cannot reconfigure while KGDB is connected.\n");
+> +		pr_err("kgdboc: Cannot reconfigure while KGDB is connected.\n");
+>  
+>  		return -EBUSY;
+>  	}
+> -- 
+> 2.7.4
+> 
