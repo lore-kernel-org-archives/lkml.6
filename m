@@ -3,149 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1029C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACD0C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79C9E2171F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:46:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BA9E2171F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:47:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJtwelHJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C9E2171F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fLGy75rA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA9E2171F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeHOCfj (ORCPT
+        id S1728036AbeHOChN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:35:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725915AbeHOCfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:35:39 -0400
-Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com [209.85.161.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD09F21721;
-        Tue, 14 Aug 2018 23:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534290365;
-        bh=a1EubMCaSPMw7EIgqmqqc0tHY9si5he3NP/+LKe0II8=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=OJtwelHJ98+6STt7q4uNNv1zvj1FkP1670I7McktbEhQ5xIe33A0klvpS9Vc30H34
-         WVjJuZ6cUFyZwY38QHFM6L+dng6qeF0/bshIF8lp1Oc0pqtAZR6kTU3Ag7++vZM0zj
-         E6aSDnu9xgwcRJdb9Jf7PljdEDjKTMTIe38/VmMc=
-Received: by mail-yw1-f44.google.com with SMTP id r3-v6so17587017ywc.5;
-        Tue, 14 Aug 2018 16:46:05 -0700 (PDT)
-X-Gm-Message-State: AOUpUlF9yu2+xIxwmLBJjMSpzEW5rbCoR8tglgDEbB2++DZ5xqIwW9tH
-        ib4M4ieqTRzbiEw1+nvCUNVgbaU60VBT5qFdw5U=
-X-Google-Smtp-Source: AA+uWPxDdNzCoXXlurGhRa3oDGAKQGPEjb5Fl75EXizWI+rJzsn5CxLHgtipivBY6iUaCDJUq6dnOOAlp+f+nFZbkeI=
-X-Received: by 2002:a81:8047:: with SMTP id q68-v6mr12716798ywf.196.1534290364968;
- Tue, 14 Aug 2018 16:46:04 -0700 (PDT)
+        Tue, 14 Aug 2018 22:37:13 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37514 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeHOChM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 22:37:12 -0400
+Received: by mail-yw1-f67.google.com with SMTP id w76-v6so17584847ywg.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:47:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=x4PfsOFaxf+JiaWC2eZH5OHGKlA5mbb0Xfvpn5E8YGY=;
+        b=fLGy75rA2JHncdI9L1RZ7Zl9KmOAwR+JUmc7IQyTpudhOATk0fcft1rhcycqXqSGUG
+         oSt2fg2edX/bLSBFJEjHEqGAL7pTHRiibih9JnjxfUKz3qQjZx3y+xQz7nKC1GtiwBsw
+         X/WAzk30SSFTp6LExhxzbrsaxuo9L5F2lGs60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=x4PfsOFaxf+JiaWC2eZH5OHGKlA5mbb0Xfvpn5E8YGY=;
+        b=CdAJHYCJ8JPEPhEnet3RnqT2frZteGlO9CEhqppn69L5x8fakMe7udqqOv/5q3n5z9
+         Y2BS7pXOU2WeUCYPsBnscuQxXy7ENWQIYy/rvOldsg370JtsED+ihgwY8DUd9kppCePQ
+         8bnHbkx7p1tHvehSH/4OE0bsX86/WljzbGdITXKbd40LIZJy9/a+nlDoSag8SeH1rGDx
+         DVV7Se5nIO3lyLCJ6G+8+ur79HeiBbIzlvcNKBKFS/8YE/LjvVJ48jafFgsLewYaL5T3
+         ATj1G2F+6Idb3R26nP7yoVuq0K37zSO+y4wnygP/NIav6xRrl5rWFaiclvZh63lKC75f
+         wXXA==
+X-Gm-Message-State: AOUpUlFxVgf4ctrQsyK7Yn2jocnU9l+Hv1lxrojAhy6OEpeAdeeTtggM
+        pAXM3vacMsTIQfAhHqZQ20vzR2CSj7g=
+X-Google-Smtp-Source: AA+uWPzVX2vY0Wuovf1cddt/CLoVnduKVLiO9JQXxQmI2V8AjpDIvGN2VYra7JQlJliC7uTD9aLkfQ==
+X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr13686075ywf.53.1534290458506;
+        Tue, 14 Aug 2018 16:47:38 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id 139-v6sm14423708ywr.61.2018.08.14.16.47.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 16:47:36 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id w76-v6so17584775ywg.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:47:36 -0700 (PDT)
+X-Received: by 2002:a81:b248:: with SMTP id q69-v6mr12519355ywh.38.1534290455915;
+ Tue, 14 Aug 2018 16:47:35 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:81cc:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 16:45:24
+Received: by 2002:a25:cc84:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 16:47:35
  -0700 (PDT)
-In-Reply-To: <3975392.G1LtsYJEZq@harkonnen>
-References: <20180814191526.3247-1-atull@kernel.org> <3975392.G1LtsYJEZq@harkonnen>
-From:   Alan Tull <atull@kernel.org>
-Date:   Tue, 14 Aug 2018 18:45:24 -0500
-X-Gmail-Original-Message-ID: <CANk1AXR=6kEx6gotxPV_E7KyMCD65qpdpJjmpKd4KSw3XrWogw@mail.gmail.com>
-Message-ID: <CANk1AXR=6kEx6gotxPV_E7KyMCD65qpdpJjmpKd4KSw3XrWogw@mail.gmail.com>
-Subject: Re: [PATCH 0/8] fpga: Add managed create in FPGA API
-To:     Federico Vaga <federico.vaga@cern.ch>
-Cc:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+In-Reply-To: <20180814223519.13610-1-surenb@google.com>
+References: <20180814223519.13610-1-surenb@google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 14 Aug 2018 16:47:35 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLAJnJpW4JKhfA=y7Nyt+_6svC5-sCAThubFgdCF1JZbA@mail.gmail.com>
+Message-ID: <CAGXu5jLAJnJpW4JKhfA=y7Nyt+_6svC5-sCAThubFgdCF1JZbA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] NFC: Fix the number of pipes
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Security Officers <security@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kevin Deus <kdeus@google.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 4:44 PM, Federico Vaga <federico.vaga@cern.ch> wrote:
-> Hi Alan,
+On Tue, Aug 14, 2018 at 3:35 PM, Suren Baghdasaryan <surenb@google.com> wrote:
+> According to ETSI TS 102 622 specification chapter 4.4 pipe identifier
+> is 7 bits long which allows for 128 unique pipe IDs. Because
+> NFC_HCI_MAX_PIPES is used as the number of pipes supported and not
+> as the max pipe ID, its value should be 128 instead of 127.
 >
-> I think you forgot to add:
+> nfc_hci_recv_from_llc extracts pipe ID from packet header using
+> NFC_HCI_FRAGMENT(0x7F) mask which allows for pipe ID value of 127.
+> Same happens when NCI_HCP_MSG_GET_PIPE() is being used. With
+> pipes array having only 127 elements and pipe ID of 127 the OOB memory
+> access will result.
 >
-> Suggested-by: Federico Vaga <federico.vaga@cern.ch>
->
-> on patches 2,3,4 which were suggested here
->
-> https://lkml.org/lkml/2018/7/26/145
->
-> and patch 8 here:
->
-> https://lkml.org/lkml/2018/7/18/959
+> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-You are right and I appreciate the suggestions.  I credited you on the
-patch that this replaces [1].  I'll fix this in v2.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Alan
+-Kees
 
-[1] https://lkml.org/lkml/2018/7/25/721
-
+> ---
+>  include/net/nfc/hci.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> On Tuesday, August 14, 2018 9:15:18 PM CEST Alan Tull wrote:
->> Fix one functional FPGA bug.
->>
->> Implement managed devm_fpga_(mgr|bridge|region)_create() functions.
->>
->> More documentation cleanup to make the documentation more helpful
->> and to emphasize the use of FPGA regions for FPGA programming.
->>
->> Fix a few minor documentation corrections.
->>
->> Alan Tull (8):
->>   fpga: do not access region struct after fpga_region_unregister
->>   fpga: mgr: add devm_fpga_mgr_create
->>   fpga: bridge: add devm_fpga_bridge_create
->>   fpga: add devm_fpga_region_create
->>   dt-bindings: fpga: fix freeze controller compatible in region doc
->>   fpga: bridge: fix obvious function documentation error
->>   docs: fpga: document fpga manager flags
->>   docs: fpga: document programming fpgas using regions
->>
->>  .../devicetree/bindings/fpga/fpga-region.txt       |   4 +-
->>  Documentation/driver-api/fpga/fpga-bridge.rst      |  37 ++-----
->>  Documentation/driver-api/fpga/fpga-mgr.rst         | 121
->> +++------------------ Documentation/driver-api/fpga/fpga-programming.rst
->> | 103 ++++++++++++++++++ Documentation/driver-api/fpga/fpga-region.rst
->>    |  91 ++++++++-------- Documentation/driver-api/fpga/index.rst
->>     |   2 +
->>  drivers/fpga/altera-cvp.c                          |   8 +-
->>  drivers/fpga/altera-fpga2sdram.c                   |   8 +-
->>  drivers/fpga/altera-freeze-bridge.c                |  13 +--
->>  drivers/fpga/altera-hps2fpga.c                     |   7 +-
->>  drivers/fpga/altera-pr-ip-core.c                   |   9 +-
->>  drivers/fpga/altera-ps-spi.c                       |  11 +-
->>  drivers/fpga/dfl-fme-br.c                          |  11 +-
->>  drivers/fpga/dfl-fme-mgr.c                         |  11 +-
->>  drivers/fpga/dfl-fme-region.c                      |  10 +-
->>  drivers/fpga/dfl.c                                 |   6 +-
->>  drivers/fpga/fpga-bridge.c                         |  74 +++++++++++--
->>  drivers/fpga/fpga-mgr.c                            |  67 ++++++++++--
->>  drivers/fpga/fpga-region.c                         |  68 ++++++++++--
->>  drivers/fpga/ice40-spi.c                           |  10 +-
->>  drivers/fpga/machxo2-spi.c                         |  11 +-
->>  drivers/fpga/of-fpga-region.c                      |   9 +-
->>  drivers/fpga/socfpga-a10.c                         |   5 +-
->>  drivers/fpga/socfpga.c                             |  10 +-
->>  drivers/fpga/ts73xx-fpga.c                         |  11 +-
->>  drivers/fpga/xilinx-pr-decoupler.c                 |   4 +-
->>  drivers/fpga/xilinx-spi.c                          |  12 +-
->>  drivers/fpga/zynq-fpga.c                           |   5 +-
->>  include/linux/fpga/fpga-bridge.h                   |   4 +
->>  include/linux/fpga/fpga-mgr.h                      |  22 +++-
->>  include/linux/fpga/fpga-region.h                   |   4 +
->>  31 files changed, 437 insertions(+), 331 deletions(-)
->>  create mode 100644 Documentation/driver-api/fpga/fpga-programming.rst
->
->
+> diff --git a/include/net/nfc/hci.h b/include/net/nfc/hci.h
+> index 316694dafa5b..008f466d1da7 100644
+> --- a/include/net/nfc/hci.h
+> +++ b/include/net/nfc/hci.h
+> @@ -87,7 +87,7 @@ struct nfc_hci_pipe {
+>   * According to specification 102 622 chapter 4.4 Pipes,
+>   * the pipe identifier is 7 bits long.
+>   */
+> -#define NFC_HCI_MAX_PIPES              127
+> +#define NFC_HCI_MAX_PIPES              128
+>  struct nfc_hci_init_data {
+>         u8 gate_count;
+>         struct nfc_hci_gate gates[NFC_HCI_MAX_CUSTOM_GATES];
 > --
-> Federico Vaga
-> [BE-CO-HT]
+> 2.18.0.865.gffc8e1a3cd6-goog
 >
->
+
+
+
+-- 
+Kees Cook
+Pixel Security
