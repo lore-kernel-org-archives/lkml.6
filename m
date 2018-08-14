@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23D7C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447F4C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E922168D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E922168D
+	by mail.kernel.org (Postfix) with ESMTP id EE8192168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8192168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeHNUY7 (ORCPT
+        id S1731520AbeHNUZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57532 "EHLO
+        Tue, 14 Aug 2018 16:25:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730771AbeHNUY6 (ORCPT
+        with ESMTP id S1730771AbeHNUZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:58 -0400
+        Tue, 14 Aug 2018 16:25:01 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97E97DF2;
-        Tue, 14 Aug 2018 17:36:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AF81DDE;
+        Tue, 14 Aug 2018 17:36:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 068/104] x86/kvm: Drop L1TF MSR list approach
-Date:   Tue, 14 Aug 2018 19:17:22 +0200
-Message-Id: <20180814171519.719920525@linuxfoundation.org>
+Subject: [PATCH 4.14 069/104] x86/l1tf: Handle EPT disabled state proper
+Date:   Tue, 14 Aug 2018 19:17:23 +0200
+Message-Id: <20180814171519.782977858@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,110 +53,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 2f055947ae5e2741fb2dc5bba1033c417ccf4faa upstream
+commit a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7 upstream
 
-The VMX module parameter to control the L1D flush should become
-writeable.
+If Extended Page Tables (EPT) are disabled or not supported, no L1D
+flushing is required. The setup function can just avoid setting up the L1D
+flush for the EPT=n case.
 
-The MSR list is set up at VM init per guest VCPU, but the run time
-switching is based on a static key which is global. Toggling the MSR list
-at run time might be feasible, but for now drop this optimization and use
-the regular MSR write to make run-time switching possible.
-
-The default mitigation is the conditional flush anyway, so for extra
-paranoid setups this will add some small overhead, but the extra code
-executed is in the noise compared to the flush itself.
-
-Aside of that the EPT disabled case is not handled correctly at the moment
-and the MSR list magic is in the way for fixing that as well.
-
-If it's really providing a significant advantage, then this needs to be
-revisited after the code is correct and the control is writable.
+Invoke it after the hardware setup has be done and enable_ept has the
+correct state and expose the EPT disabled state in the mitigation status as
+well.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Jiri Kosina <jkosina@suse.cz>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.516940445@linutronix.de
+Link: https://lkml.kernel.org/r/20180713142322.612160168@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   43 +++++++------------------------------------
- 1 file changed, 7 insertions(+), 36 deletions(-)
+ arch/x86/include/asm/vmx.h |    1 +
+ arch/x86/kernel/cpu/bugs.c |    9 +++++----
+ arch/x86/kvm/vmx.c         |   44 ++++++++++++++++++++++++++------------------
+ 3 files changed, 32 insertions(+), 22 deletions(-)
 
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -576,6 +576,7 @@ enum vmx_l1d_flush_state {
+ 	VMENTER_L1D_FLUSH_NEVER,
+ 	VMENTER_L1D_FLUSH_COND,
+ 	VMENTER_L1D_FLUSH_ALWAYS,
++	VMENTER_L1D_FLUSH_EPT_DISABLED,
+ };
+ 
+ extern enum vmx_l1d_flush_state l1tf_vmx_mitigation;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -676,10 +676,11 @@ static void __init l1tf_select_mitigatio
+ 
+ #if IS_ENABLED(CONFIG_KVM_INTEL)
+ static const char *l1tf_vmx_states[] = {
+-	[VMENTER_L1D_FLUSH_AUTO]	= "auto",
+-	[VMENTER_L1D_FLUSH_NEVER]	= "vulnerable",
+-	[VMENTER_L1D_FLUSH_COND]	= "conditional cache flushes",
+-	[VMENTER_L1D_FLUSH_ALWAYS]	= "cache flushes",
++	[VMENTER_L1D_FLUSH_AUTO]		= "auto",
++	[VMENTER_L1D_FLUSH_NEVER]		= "vulnerable",
++	[VMENTER_L1D_FLUSH_COND]		= "conditional cache flushes",
++	[VMENTER_L1D_FLUSH_ALWAYS]		= "cache flushes",
++	[VMENTER_L1D_FLUSH_EPT_DISABLED]	= "EPT disabled",
+ };
+ 
+ static ssize_t l1tf_show_state(char *buf)
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -5708,16 +5708,6 @@ static void ept_set_mmio_spte_mask(void)
- 				   VMX_EPT_MISCONFIG_WX_VALUE);
- }
- 
--static bool vmx_l1d_use_msr_save_list(void)
--{
--	if (!enable_ept || !boot_cpu_has_bug(X86_BUG_L1TF) ||
--	    static_cpu_has(X86_FEATURE_HYPERVISOR) ||
--	    !static_cpu_has(X86_FEATURE_FLUSH_L1D))
--		return false;
--
--	return vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
--}
--
- #define VMX_XSS_EXIT_BITMAP 0
- /*
-  * Sets up the vmcs for emulated real mode.
-@@ -6065,12 +6055,6 @@ static void vmx_set_nmi_mask(struct kvm_
- 			vmcs_clear_bits(GUEST_INTERRUPTIBILITY_INFO,
- 					GUEST_INTR_STATE_NMI);
- 	}
--	/*
--	 * If flushing the L1D cache on every VMENTER is enforced and the
--	 * MSR is available, use the MSR save list.
--	 */
--	if (vmx_l1d_use_msr_save_list())
--		add_atomic_switch_msr(vmx, MSR_IA32_FLUSH_CMD, L1D_FLUSH, 0, true);
- }
- 
- static int vmx_nmi_allowed(struct kvm_vcpu *vcpu)
-@@ -9092,26 +9076,14 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	bool always;
- 
- 	/*
--	 * This code is only executed when:
--	 * - the flush mode is 'cond'
--	 * - the flush mode is 'always' and the flush MSR is not
--	 *   available
--	 *
--	 * If the CPU has the flush MSR then clear the flush bit because
--	 * 'always' mode is handled via the MSR save list.
--	 *
--	 * If the MSR is not avaibable then act depending on the mitigation
--	 * mode: If 'flush always', keep the flush bit set, otherwise clear
--	 * it.
-+	 * This code is only executed when the the flush mode is 'cond' or
-+	 * 'always'
- 	 *
--	 * The flush bit gets set again either from vcpu_run() or from one
--	 * of the unsafe VMEXIT handlers.
-+	 * If 'flush always', keep the flush bit set, otherwise clear
-+	 * it. The flush bit gets set again either from vcpu_run() or from
-+	 * one of the unsafe VMEXIT handlers.
- 	 */
--	if (static_cpu_has(X86_FEATURE_FLUSH_L1D))
--		always = false;
--	else
--		always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
--
-+	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
- 	vcpu->arch.l1tf_flush_l1d = always;
- 
- 	vcpu->stat.l1d_flush++;
-@@ -12532,8 +12504,7 @@ static int __init vmx_setup_l1d_flush(vo
- 
- 	l1tf_vmx_mitigation = vmentry_l1d_flush;
- 
--	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
--	    vmx_l1d_use_msr_save_list())
-+	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
+@@ -12502,6 +12502,11 @@ static int __init vmx_setup_l1d_flush(vo
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
  		return 0;
  
- 	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
++	if (!enable_ept) {
++		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
++		return 0;
++	}
++
+ 	l1tf_vmx_mitigation = vmentry_l1d_flush;
+ 
+ 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
+@@ -12528,18 +12533,35 @@ static void vmx_cleanup_l1d_flush(void)
+ 	l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
+ }
+ 
++
++static void vmx_exit(void)
++{
++#ifdef CONFIG_KEXEC_CORE
++	RCU_INIT_POINTER(crash_vmclear_loaded_vmcss, NULL);
++	synchronize_rcu();
++#endif
++
++	kvm_exit();
++
++	vmx_cleanup_l1d_flush();
++}
++module_exit(vmx_exit)
++
+ static int __init vmx_init(void)
+ {
+ 	int r;
+ 
+-	r = vmx_setup_l1d_flush();
++	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
++		     __alignof__(struct vcpu_vmx), THIS_MODULE);
+ 	if (r)
+ 		return r;
+ 
+-	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+-		     __alignof__(struct vcpu_vmx), THIS_MODULE);
++	/*
++	 * Must be called after kvm_init() so enable_ept is properly set up
++	 */
++	r = vmx_setup_l1d_flush();
+ 	if (r) {
+-		vmx_cleanup_l1d_flush();
++		vmx_exit();
+ 		return r;
+ 	}
+ 
+@@ -12550,18 +12572,4 @@ static int __init vmx_init(void)
+ 
+ 	return 0;
+ }
+-
+-static void __exit vmx_exit(void)
+-{
+-#ifdef CONFIG_KEXEC_CORE
+-	RCU_INIT_POINTER(crash_vmclear_loaded_vmcss, NULL);
+-	synchronize_rcu();
+-#endif
+-
+-	kvm_exit();
+-
+-	vmx_cleanup_l1d_flush();
+-}
+-
+ module_init(vmx_init)
+-module_exit(vmx_exit)
 
 
