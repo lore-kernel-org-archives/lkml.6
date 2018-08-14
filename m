@@ -2,140 +2,99 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 768B9C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D297CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 302D721727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302D721727
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 891A721727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OaAlry/B";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h1H2he1N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891A721727
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389651AbeHNUTT (ORCPT
+        id S2389669AbeHNUTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:19:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53302 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387818AbeHNUTT (ORCPT
+        Tue, 14 Aug 2018 16:19:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58632 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388829AbeHNUTX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:19:19 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 832CF40B;
-        Tue, 14 Aug 2018 17:31:10 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 60/97] x86/KVM/VMX: Extend add_atomic_switch_msr() to allow VMENTER only MSRs
-Date:   Tue, 14 Aug 2018 19:17:12 +0200
-Message-Id: <20180814171435.439209786@linuxfoundation.org>
+        Tue, 14 Aug 2018 16:19:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4914F6076A; Tue, 14 Aug 2018 17:31:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534267875;
+        bh=+WJIEojQxzhY353XI2XwEGaD1c6/Ynv2JmxsaoB9aGo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OaAlry/Bgk+gPK/el57/7VBnnmG0k1ee12QrhUWDH38VRGgxXMPhJu/6R539ibUsZ
+         Twj+TV94rGahQIuCgg9qUh2RSj0zCsebYJ3moF4z71TZVyu6Qkg/cF4Kj4lukTrX45
+         PDrWaJkJDU5RdG+shvzniemmsYIwxP9l2WtlpF4s=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 744C06076A;
+        Tue, 14 Aug 2018 17:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534267874;
+        bh=+WJIEojQxzhY353XI2XwEGaD1c6/Ynv2JmxsaoB9aGo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=h1H2he1Nw+IUBbCjsAHkF/NHemMXw+zoQbXV+3sEudxuz35DDGE9Rh7UYIIG23gEA
+         eCqgQVsYX3LwLvNd9xg6Ms5ZBiZWSyuwVYOTE7t5LDUh6La2l6kqq2ZVG9Ynp0BBYa
+         ZTLGjOno2nyhntYqgwIFVgwidYcMONMlGc+uqvdc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 744C06076A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     bjorn.andersson@linaro.org, andy.gross@linaro.org
+Cc:     marc.zyngier@arm.com, rplsssn@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, devicetree@vger.kernel.org,
+        david.brown@linaro.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH] arm64: dts: msm: add PDC device bindings for sdm845
+Date:   Tue, 14 Aug 2018 11:30:58 -0600
+Message-Id: <20180814173058.26143-1-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
-References: <20180814171433.160434170@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Add PDC interrupt controller device bindings for SDM845.
 
-------------------
-
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-
-commit 989e3992d2eca32c3f1404f2bc91acda3aa122d8 upstream
-
-The IA32_FLUSH_CMD MSR needs only to be written on VMENTER. Extend
-add_atomic_switch_msr() with an entry_only parameter to allow storing the
-MSR only in the guest (ENTRY) MSR array.
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- arch/x86/kvm/vmx.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2300,9 +2300,9 @@ static void add_atomic_switch_msr_specia
- }
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 24e254efb9d1..399bfbd52c5b 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1106,6 +1106,15 @@
+ 			};
+ 		};
  
- static void add_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr,
--				  u64 guest_val, u64 host_val)
-+				  u64 guest_val, u64 host_val, bool entry_only)
- {
--	int i, j;
-+	int i, j = 0;
- 	struct msr_autoload *m = &vmx->msr_autoload;
- 
- 	switch (msr) {
-@@ -2338,7 +2338,9 @@ static void add_atomic_switch_msr(struct
- 	}
- 
- 	i = find_msr(&m->guest, msr);
--	j = find_msr(&m->host, msr);
-+	if (!entry_only)
-+		j = find_msr(&m->host, msr);
++		pdc: interrupt-controller@b220000 {
++			compatible = "qcom,sdm845-pdc";
++			reg = <0xb220000 0x30000>;
++			qcom,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
++			#interrupt-cells = <2>;
++			interrupt-parent = <&intc>;
++			interrupt-controller;
++		};
 +
- 	if (i == NR_AUTOLOAD_MSRS || j == NR_AUTOLOAD_MSRS) {
- 		printk_once(KERN_WARNING "Not enough msr switch entries. "
- 				"Can't add msr %x\n", msr);
-@@ -2348,12 +2350,16 @@ static void add_atomic_switch_msr(struct
- 		i = m->guest.nr++;
- 		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
- 	}
-+	m->guest.val[i].index = msr;
-+	m->guest.val[i].value = guest_val;
-+
-+	if (entry_only)
-+		return;
-+
- 	if (j < 0) {
- 		j = m->host.nr++;
- 		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
- 	}
--	m->guest.val[i].index = msr;
--	m->guest.val[i].value = guest_val;
- 	m->host.val[j].index = msr;
- 	m->host.val[j].value = host_val;
- }
-@@ -2399,7 +2405,7 @@ static bool update_transition_efer(struc
- 			guest_efer &= ~EFER_LME;
- 		if (guest_efer != host_efer)
- 			add_atomic_switch_msr(vmx, MSR_EFER,
--					      guest_efer, host_efer);
-+					      guest_efer, host_efer, false);
- 		return false;
- 	} else {
- 		guest_efer &= ~ignore_bits;
-@@ -3845,7 +3851,7 @@ static int vmx_set_msr(struct kvm_vcpu *
- 		vcpu->arch.ia32_xss = data;
- 		if (vcpu->arch.ia32_xss != host_xss)
- 			add_atomic_switch_msr(vmx, MSR_IA32_XSS,
--				vcpu->arch.ia32_xss, host_xss);
-+				vcpu->arch.ia32_xss, host_xss, false);
- 		else
- 			clear_atomic_switch_msr(vmx, MSR_IA32_XSS);
- 		break;
-@@ -9815,7 +9821,7 @@ static void atomic_switch_perf_msrs(stru
- 			clear_atomic_switch_msr(vmx, msrs[i].msr);
- 		else
- 			add_atomic_switch_msr(vmx, msrs[i].msr, msrs[i].guest,
--					msrs[i].host);
-+					msrs[i].host, false);
- }
- 
- static void vmx_arm_hv_timer(struct kvm_vcpu *vcpu)
-
+ 		timer@17c90000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
