@@ -2,94 +2,84 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6421AC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE10C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFF22170D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:42:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFF22170D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 6F0582170D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F0582170D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731125AbeHNL27 (ORCPT
+        id S1731222AbeHNL3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 07:28:59 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46488 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbeHNL26 (ORCPT
+        Tue, 14 Aug 2018 07:29:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55854 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbeHNL3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 07:28:58 -0400
-Received: by mail-qk0-f195.google.com with SMTP id 191-v6so12825115qki.13;
-        Tue, 14 Aug 2018 01:42:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n6TsHUQuKi7AvOXDscfx+1m7+XmwhUOlQZ2QM6OG9wc=;
-        b=S4yuKrAoXP6hKpE0M1957YdpTpUToSmx+GcwQBKGvL4tEX5vqP+P685+oenFLiZbbE
-         Sb5q9uUiYdDk0sEDT310ssmSUBVQPoAx3q5I8qRv4APagYatNXLWD0PR1zaOLLeZ9QfH
-         v3R9CVwjLkp5W1gwFdwq2r+DviaOhgIypSDrcDn00ybtVHdAzhoYjLUcoWrE0JvVQHLL
-         wlIVWzxb6wDKNecWZHZ18hOKRzymsB/GjMGLEZCVDfW737dmuvd2pc9jahS94/RBXirW
-         N443a5wLemk2XsITrntdwwo2FT7WeeS710nTmExNHPOPI9pPyTyIzoSuw93Y2CA6T6uD
-         AyAQ==
-X-Gm-Message-State: AOUpUlGQlEcxcSyUUvQHdRQT4zGPEpTBi2T7pdC0CkgJodCfSk5i8bas
-        k58mEukOag/z4fcIS5g6CVbQsi+RRAaTYN0hq1Q=
-X-Google-Smtp-Source: AA+uWPzStheYQP1HRKNUf+FV9mryx4QlVH6q3sGsaNPD4bhkjQKw7KUvB2ntyz+hD2YmAS8jeh9rI7h96zU2ASZr0LI=
-X-Received: by 2002:a37:2a65:: with SMTP id q98-v6mr18580360qkh.174.1534236168243;
- Tue, 14 Aug 2018 01:42:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180813220419.4168133-1-arnd@arndb.de> <60279ff9-95a7-c2d8-dcd3-6e505c22a0e6@redhat.com>
-In-Reply-To: <60279ff9-95a7-c2d8-dcd3-6e505c22a0e6@redhat.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 14 Aug 2018 10:42:31 +0200
-Message-ID: <CAK8P3a3QwP9qA-sjCn8UFKHPFzku0epxi6BWETpH9YTEfjQ5jA@mail.gmail.com>
-Subject: Re: [PATCH] bluetooth: hci_h5: avoid unused variable warnings
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>, jeremy@jcline.org,
-        Kees Cook <keescook@chromium.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Tue, 14 Aug 2018 07:29:49 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A9BDC74;
+        Tue, 14 Aug 2018 08:43:38 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 10:43:35 +0200
+From:   gregkh <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     ajay.kathat@microchip.com, aditya.shankar@microchip.com,
+        ganesh.krishna@microchip.com,
+        driverdevel <devel@driverdev.osuosl.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] staging: wilc1000: revert "fix TODO to compile spi and
+ sdio components in single module"
+Message-ID: <20180814084335.GB7208@kroah.com>
+References: <20180813212108.2442868-1-arnd@arndb.de>
+ <20180814105237.64b01528@ajaysk-VirtualBox>
+ <CAK8P3a3bk7urG9zO=F1NtH8hTnGQQ_Hk0qq=o8fmeYY_nEyy5w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3bk7urG9zO=F1NtH8hTnGQQ_Hk0qq=o8fmeYY_nEyy5w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 9:22 AM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi Arnd,
->
-> On 14-08-18 00:04, Arnd Bergmann wrote:
-> > When CONFIG_BT_HCIUART_RTL is disabled, the hci_h5 driver produces a build
-> > warning because of an incorrect set of #ifdef guards:
+On Tue, Aug 14, 2018 at 10:34:27AM +0200, Arnd Bergmann wrote:
+> On Tue, Aug 14, 2018 at 7:22 AM Ajay Singh <ajay.kathat@microchip.com> wrote:
 > >
-> > drivers/bluetooth/hci_h5.c:920:22: error: 'rtl_vnd' defined but not used [-Werror=unused-variable]
+> > Hi Arnd,
 > >
-> > Replacing the #ifdef with an IS_ENABLED() check shuts up the error
-> > and simplifies the logic.
+> > On Mon, 13 Aug 2018 23:20:33 +0200
+> > Arnd Bergmann <arnd@arndb.de> wrote:
 > >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Hmm, so now you're counting on dead code elimination to remove
-> references to unavailable symbols.
+> > > The TODO item named "make spi and sdio components coexist in one
+> > > build" was apparently addressed a long time ago, but never removed
+> > > from the TODO file. However, the new patch that tries to address it
+> > > actually makes it worse again by duplicating the common parts of the
+> > > driver into two separate modules rather than sharing them. This also
+> > > introduces a build regression when one of the two is built-in while
+> > > the other is a loadable module:
+> >
+> > Thanks for sharing your inputs and submitting patch.
+> > I have also submitted a patch to address the compilation error[1].
+> > We can ignore my patch and proceed with your changes.
+> >
+> > [1].https://patchwork.kernel.org/patch/10563873/
+> 
+> That patch seems useful regardless, as it removes dead code,
+> but I'd still prefer to revert the 9abc44ba4e2f ("staging: wilc1000:
+> fix TODO to compile spi and sdio components in single module")
+> commit for the other reasons I explained.
 
-Generally depending on dead code elimination is very reliable, as this
-is easy for gcc to get right. However, you are right that this is actually
-an exception since the MODULE_DEVICE_TABLE() entry will keep
-a reference around that prevents the compiler from eliminating it.
+I agree, I'll queue it up soon, I have other patches to get to Linus
+first.
 
-> I'm not sure I like this and
-> since Marcel has also indicated the does not like this fix I
-> believe we need another fix.
->
-> I will write another fix for this.
->
+thanks,
 
-Ok, thanks!
-
-      Arnd
+greg k-h
