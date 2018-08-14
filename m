@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99171C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82B2C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B71721471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B71721471
+	by mail.kernel.org (Postfix) with ESMTP id A78FF21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78FF21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391158AbeHNUfG (ORCPT
+        id S2403763AbeHNUfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60630 "EHLO
+        Tue, 14 Aug 2018 16:35:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60830 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfF (ORCPT
+        with ESMTP id S2390379AbeHNUfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:05 -0400
+        Tue, 14 Aug 2018 16:35:12 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91B57D1F;
-        Tue, 14 Aug 2018 17:46:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12DCBC74;
+        Tue, 14 Aug 2018 17:46:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 25/43] x86/speculation/l1tf: Change order of offset/type in swap entry
-Date:   Tue, 14 Aug 2018 19:18:01 +0200
-Message-Id: <20180814171518.782256517@linuxfoundation.org>
+Subject: [PATCH 4.4 26/43] x86/speculation/l1tf: Protect swap entries against L1TF
+Date:   Tue, 14 Aug 2018 19:18:02 +0200
+Message-Id: <20180814171518.823441897@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -60,39 +60,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit bcd11afa7adad8d720e7ba5ef58bdcd9775cf45f upstream
+commit 2f22b4cd45b67b3496f4aa4c7180a1271c6452f6 upstream
 
-If pages are swapped out, the swap entry is stored in the corresponding
-PTE, which has the Present bit cleared. CPUs vulnerable to L1TF speculate
-on PTE entries which have the present bit set and would treat the swap
-entry as phsyical address (PFN). To mitigate that the upper bits of the PTE
-must be set so the PTE points to non existent memory.
+With L1 terminal fault the CPU speculates into unmapped PTEs, and resulting
+side effects allow to read the memory the PTE is pointing too, if its
+values are still in the L1 cache.
 
-The swap entry stores the type and the offset of a swapped out page in the
-PTE. type is stored in bit 9-13 and offset in bit 14-63. The hardware
-ignores the bits beyond the phsyical address space limit, so to make the
-mitigation effective its required to start 'offset' at the lowest possible
-bit so that even large swap offsets do not reach into the physical address
-space limit bits.
+For swapped out pages Linux uses unmapped PTEs and stores a swap entry into
+them.
 
-Move offset to bit 9-58 and type to bit 59-63 which are the bits that
-hardware generally doesn't care about.
+To protect against L1TF it must be ensured that the swap entry is not
+pointing to valid memory, which requires setting higher bits (between bit
+36 and bit 45) that are inside the CPUs physical address space, but outside
+any real memory.
 
-That, in turn, means that if you on desktop chip with only 40 bits of
-physical addressing, now that the offset starts at bit 9, there needs to be
-30 bits of offset actually *in use* until bit 39 ends up being set, which
-means when inverted it will again point into existing memory.
+To do this invert the offset to make sure the higher bits are always set,
+as long as the swap file is not too big.
 
-So that's 4 terabyte of swap space (because the offset is counted in pages,
-so 30 bits of offset is 42 bits of actual coverage). With bigger physical
-addressing, that obviously grows further, until the limit of the offset is
-hit (at 50 bits of offset - 62 bits of actual swap file coverage).
+Note there is no workaround for 32bit !PAE, or on systems which have more
+than MAX_PA/2 worth of memory. The later case is very unlikely to happen on
+real systems.
 
-This is a preparatory change for the actual swap entry inversion to protect
-against L1TF.
-
-[ AK: Updated description and minor tweaks. Split into two parts ]
-[ tglx: Massaged changelog ]
+[AK: updated description and minor tweaks by. Split out from the original
+     patch ]
 
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
@@ -106,8 +96,8 @@ Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable_64.h |   31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/pgtable_64.h |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/include/asm/pgtable_64.h
 +++ b/arch/x86/include/asm/pgtable_64.h
@@ -115,49 +105,38 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
   *
   * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
   * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
-- * | OFFSET (14->63) | TYPE (9-13)  |0|0|X|X| X| X|X|SD|0| <- swp entry
-+ * | TYPE (59-63) |  OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
+- * | TYPE (59-63) |  OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
++ * | TYPE (59-63) | ~OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
   *
   * G (8) is aliased and used as a PROT_NONE indicator for
   * !present ptes.  We need to start storing swap entries above
-@@ -182,19 +182,28 @@ static inline int pgd_large(pgd_t pgd) {
+@@ -181,6 +181,9 @@ static inline int pgd_large(pgd_t pgd) {
+  *
   * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
   * but also L and G.
++ *
++ * The offset is inverted by a binary not operation to make the high
++ * physical bits set.
   */
--#define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
--#define SWP_TYPE_BITS 5
--/* Place the offset above the type: */
--#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS)
-+#define SWP_TYPE_BITS		5
-+
-+#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
-+
-+/* We always extract/encode the offset by shifting it all the way up, and then down again */
-+#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT+SWP_TYPE_BITS)
+ #define SWP_TYPE_BITS		5
  
- #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS)
+@@ -195,13 +198,15 @@ static inline int pgd_large(pgd_t pgd) {
+ #define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
  
--#define __swp_type(x)			(((x).val >> (SWP_TYPE_FIRST_BIT)) \
--					 & ((1U << SWP_TYPE_BITS) - 1))
--#define __swp_offset(x)			((x).val >> SWP_OFFSET_FIRST_BIT)
--#define __swp_entry(type, offset)	((swp_entry_t) { \
--					 ((type) << (SWP_TYPE_FIRST_BIT)) \
--					 | ((offset) << SWP_OFFSET_FIRST_BIT) })
-+/* Extract the high bits for type */
-+#define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
-+
-+/* Shift up (to get rid of type), then down to get value */
-+#define __swp_offset(x) ((x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
-+
-+/*
-+ * Shift the offset up "too far" by TYPE bits, then down again
-+ */
-+#define __swp_entry(type, offset) ((swp_entry_t) { \
-+	((unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
-+	| ((unsigned long)(type) << (64-SWP_TYPE_BITS)) })
-+
+ /* Shift up (to get rid of type), then down to get value */
+-#define __swp_offset(x) ((x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
++#define __swp_offset(x) (~(x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
+ 
+ /*
+  * Shift the offset up "too far" by TYPE bits, then down again
++ * The offset is inverted by a binary not operation to make the high
++ * physical bits set.
+  */
+ #define __swp_entry(type, offset) ((swp_entry_t) { \
+-	((unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	(~(unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
+ 	| ((unsigned long)(type) << (64-SWP_TYPE_BITS)) })
+ 
  #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val((pte)) })
- #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
- 
 
 
