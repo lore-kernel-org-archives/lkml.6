@@ -2,79 +2,69 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E85C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4445AC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C432170A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:34:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C432170A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id E6CC42170F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:34:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kXuS6usS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6CC42170F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbeHNPVw (ORCPT
+        id S1732563AbeHNPV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 11:21:52 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:14278 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728656AbeHNPVw (ORCPT
+        Tue, 14 Aug 2018 11:21:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36056 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732396AbeHNPVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 11:21:52 -0400
-Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
-  by relmlie3.idc.renesas.com with ESMTP; 14 Aug 2018 21:34:52 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id B5266835D5;
-        Tue, 14 Aug 2018 21:34:52 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,238,1531753200"; 
-   d="scan'208";a="288116219"
-Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii1.idc.renesas.com with ESMTP; 14 Aug 2018 21:34:50 +0900
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] mmc: renesas_sdhi_internal_dmac: Whitelist r8a774a1
-Date:   Tue, 14 Aug 2018 13:34:33 +0100
-Message-Id: <1534250074-15890-2-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534250074-15890-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1534250074-15890-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 14 Aug 2018 11:21:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3uTet5jZ820jJsV7crh8eqqWPnUji4A9TGfrWDwMoB4=; b=kXuS6usSTzcByj9w0vy/pLek6
+        tWYHIzOWH2v0wVvoj82IpNsHQzEa7d4kW0fIu/vCCctA4kns/HcI7mmRQAeUlMEF9wn9OR+GyYSOL
+        E9ClQBHd+xUMUDF0ysLeSqVLqSsISA6b2h1+GN77lISdisbi5+rc6KLIHYnsJKIvBHa49JJjNSqxl
+        IstxFFaLsFPtH/CXyqP2D9mOxsCNsUkUotRTqrfF6j7uFsuGyMrLU1nVtnwhLmoKtH6rA7j2Ssrqz
+        /ChHOuGLF4aWJTOAAGTgM6FU5WMYR+XxmGh4L6NxtoHdQWfEs2zhCuU9BdJA5KysTX8wFemNUkwxD
+        QaUd6Ntvg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fpYXG-0004Ja-RW; Tue, 14 Aug 2018 12:34:54 +0000
+Date:   Tue, 14 Aug 2018 05:34:54 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Xiaofeng Yuan <yuanxiaofeng1@huawei.com>
+Cc:     keescook@chromium.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] usercopy: optimize stack check flow when the
+Message-ID: <20180814123454.GA25328@bombadil.infradead.org>
+References: <1534249051-56879-1-git-send-email-yuanxiaofeng1@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534249051-56879-1-git-send-email-yuanxiaofeng1@huawei.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need r8a774a1 to be whitelisted for SDHI to work on the RZ/G2M,
-but we don't care about the revision of the SoC, so just whitelist
-the generic part number.
+On Tue, Aug 14, 2018 at 08:17:31PM +0800, Xiaofeng Yuan wrote:
+> The check_heap_object() checks the spanning multiple pages and slab.
+> When the page-spanning test is disabled, the check_heap_object() is
+> redundant for spanning multiple pages. However, the kernel stacks are
+> multiple pages under certain conditions: CONFIG_ARCH_THREAD_STACK_ALLOCATOR
+> is not defined and (THREAD_SIZE >= PAGE_SIZE). At this point, We can skip
+> the check_heap_object() for kernel stacks to improve performance.
+> Similarly, the virtually-mapped stack can skip check_heap_object() also,
+> beacause virt_addr_valid() will return.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 35cc0de..1703fdb 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -290,6 +290,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	{ .soc_id = "r8a7796", .revision = "ES1.0",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	/* generic ones */
-+	{ .soc_id = "r8a774a1" },
- 	{ .soc_id = "r8a7795" },
- 	{ .soc_id = "r8a7796" },
- 	{ .soc_id = "r8a77965" },
--- 
-2.7.4
-
+Why not just check_stack_object() first, then check_heap_object() second?
