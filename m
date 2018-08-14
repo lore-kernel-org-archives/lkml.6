@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6583EC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C74CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E29520894
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E29520894
+	by mail.kernel.org (Postfix) with ESMTP id C37A820896
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37A820896
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389025AbeHNUQs (ORCPT
+        id S2389042AbeHNUQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:16:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52692 "EHLO
+        Tue, 14 Aug 2018 16:16:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52704 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388101AbeHNUQr (ORCPT
+        with ESMTP id S2388101AbeHNUQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:16:47 -0400
+        Tue, 14 Aug 2018 16:16:50 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6DD7D1A;
-        Tue, 14 Aug 2018 17:28:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBFEAC5C;
+        Tue, 14 Aug 2018 17:28:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.17 15/97] fix mntput/mntput race
-Date:   Tue, 14 Aug 2018 19:16:27 +0200
-Message-Id: <20180814171433.772941377@linuxfoundation.org>
+Subject: [PATCH 4.17 16/97] fix __legitimize_mnt()/mntput() race
+Date:   Tue, 14 Aug 2018 19:16:28 +0200
+Message-Id: <20180814171433.806984936@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -52,75 +52,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 9ea0a46ca2c318fcc449c1e6b62a7230a17888f1 upstream.
+commit 119e1ef80ecfe0d1deb6378d4ab41f5b71519de1 upstream.
 
-mntput_no_expire() does the calculation of total refcount under mount_lock;
-unfortunately, the decrement (as well as all increments) are done outside
-of it, leading to false positives in the "are we dropping the last reference"
-test.  Consider the following situation:
-	* mnt is a lazy-umounted mount, kept alive by two opened files.  One
-of those files gets closed.  Total refcount of mnt is 2.  On CPU 42
-mntput(mnt) (called from __fput()) drops one reference, decrementing component
-	* After it has looked at component #0, the process on CPU 0 does
-mntget(), incrementing component #0, gets preempted and gets to run again -
-on CPU 69.  There it does mntput(), which drops the reference (component #69)
-and proceeds to spin on mount_lock.
-	* On CPU 42 our first mntput() finishes counting.  It observes the
-decrement of component #69, but not the increment of component #0.  As the
-result, the total it gets is not 1 as it should've been - it's 0.  At which
-point we decide that vfsmount needs to be killed and proceed to free it and
-shut the filesystem down.  However, there's still another opened file
-on that filesystem, with reference to (now freed) vfsmount, etc. and we are
-screwed.
+__legitimize_mnt() has two problems - one is that in case of success
+the check of mount_lock is not ordered wrt preceding increment of
+refcount, making it possible to have successful __legitimize_mnt()
+on one CPU just before the otherwise final mntpu() on another,
+with __legitimize_mnt() not seeing mntput() taking the lock and
+mntput() not seeing the increment done by __legitimize_mnt().
+Solved by a pair of barriers.
 
-It's not a wide race, but it can be reproduced with artificial slowdown of
-the mnt_get_count() loop, and it should be easier to hit on SMP KVM setups.
+Another is that failure of __legitimize_mnt() on the second
+read_seqretry() leaves us with reference that'll need to be
+dropped by caller; however, if that races with final mntput()
+we can end up with caller dropping rcu_read_lock() and doing
+mntput() to release that reference - with the first mntput()
+having freed the damn thing just as rcu_read_lock() had been
+dropped.  Solution: in "do mntput() yourself" failure case
+grab mount_lock, check if MNT_DOOMED has been set by racing
+final mntput() that has missed our increment and if it has -
+undo the increment and treat that as "failure, caller doesn't
+need to drop anything" case.
 
-Fix consists of moving the refcount decrement under mount_lock; the tricky
-part is that we want (and can) keep the fast case (i.e. mount that still
-has non-NULL ->mnt_ns) entirely out of mount_lock.  All places that zero
-mnt->mnt_ns are dropping some reference to mnt and they call synchronize_rcu()
-before that mntput().  IOW, if mntput() observes (under rcu_read_lock())
-a non-NULL ->mnt_ns, it is guaranteed that there is another reference yet to
-be dropped.
+It's not easy to hit - the final mntput() has to come right
+after the first read_seqretry() in __legitimize_mnt() *and*
+manage to miss the increment done by __legitimize_mnt() before
+the second read_seqretry() in there.  The things that are almost
+impossible to hit on bare hardware are not impossible on SMP
+KVM, though...
 
-Reported-by: Jann Horn <jannh@google.com>
-Tested-by: Jann Horn <jannh@google.com>
+Reported-by: Oleg Nesterov <oleg@redhat.com>
 Fixes: 48a066e72d97 ("RCU'd vsfmounts")
 Cc: stable@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/namespace.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1195,12 +1195,22 @@ static DECLARE_DELAYED_WORK(delayed_mntp
- static void mntput_no_expire(struct mount *mnt)
- {
- 	rcu_read_lock();
--	mnt_add_count(mnt, -1);
--	if (likely(mnt->mnt_ns)) { /* shouldn't be the last one */
-+	if (likely(READ_ONCE(mnt->mnt_ns))) {
-+		/*
-+		 * Since we don't do lock_mount_hash() here,
-+		 * ->mnt_ns can change under us.  However, if it's
-+		 * non-NULL, then there's a reference that won't
-+		 * be dropped until after an RCU delay done after
-+		 * turning ->mnt_ns NULL.  So if we observe it
-+		 * non-NULL under rcu_read_lock(), the reference
-+		 * we are dropping is not the final one.
-+		 */
+@@ -659,12 +659,21 @@ int __legitimize_mnt(struct vfsmount *ba
+ 		return 0;
+ 	mnt = real_mount(bastard);
+ 	mnt_add_count(mnt, 1);
++	smp_mb();			// see mntput_no_expire()
+ 	if (likely(!read_seqretry(&mount_lock, seq)))
+ 		return 0;
+ 	if (bastard->mnt_flags & MNT_SYNC_UMOUNT) {
+ 		mnt_add_count(mnt, -1);
+ 		return 1;
+ 	}
++	lock_mount_hash();
++	if (unlikely(bastard->mnt_flags & MNT_DOOMED)) {
 +		mnt_add_count(mnt, -1);
- 		rcu_read_unlock();
++		unlock_mount_hash();
++		return 1;
++	}
++	unlock_mount_hash();
++	/* caller will mntput() */
+ 	return -1;
+ }
+ 
+@@ -1210,6 +1219,11 @@ static void mntput_no_expire(struct moun
  		return;
  	}
  	lock_mount_hash();
-+	mnt_add_count(mnt, -1);
++	/*
++	 * make sure that if __legitimize_mnt() has not seen us grab
++	 * mount_lock, we'll see their refcount increment here.
++	 */
++	smp_mb();
+ 	mnt_add_count(mnt, -1);
  	if (mnt_get_count(mnt)) {
  		rcu_read_unlock();
- 		unlock_mount_hash();
 
 
