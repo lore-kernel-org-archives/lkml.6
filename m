@@ -5,98 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF26C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF97C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012D62173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:57:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012D62173C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id ED1642173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 04:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1642173C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731855AbeHNHmm (ORCPT
+        id S1731886AbeHNHm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 03:42:42 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10718 "EHLO huawei.com"
+        Tue, 14 Aug 2018 03:42:58 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:60002 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbeHNHml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 03:42:41 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 28973F9F81189;
-        Tue, 14 Aug 2018 12:57:11 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Tue, 14 Aug 2018
- 12:57:10 +0800
-Message-ID: <5B726124.5030308@huawei.com>
-Date:   Tue, 14 Aug 2018 12:57:08 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1725999AbeHNHm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 03:42:58 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowABXMxwVYXJbAPUVAQ--.9106S2;
+        Tue, 14 Aug 2018 12:57:10 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v3 07/17] x86/pci: add Hygon PCI vendor and northbridge
+ support
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-pci@vger.kernel.org
+References: <cover.1533989492.git.puwen@hygon.cn>
+ <0b8f3a7c5ba8b4f496f8f790e3dafa8d612ffc81.1533989492.git.puwen@hygon.cn>
+ <20180813221436.GN113140@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <ec0ef867-3254-9e17-bf37-de697e9d0709@hygon.cn>
+Date:   Tue, 14 Aug 2018 12:56:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-To:     Joe Perches <golf@perches.com>
-CC:     <tony.luck@intel.com>, <fenghua.yu@intel.com>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <oleg@redhat.com>, <rppt@linux.vnet.ibm.com>,
-        <dhowells@redhat.com>, <akpm@linux-foundation.org>,
-        <viro@zeniv.linux.org.uk>, <linux-ia64@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 1/2] ia64: Use ARRAY_SIZE to replace its implementation
-References: <1534214814-9043-1-git-send-email-zhongjiang@huawei.com>  <1534214814-9043-2-git-send-email-zhongjiang@huawei.com> <81ae2b1b7ea395217dbf3494457a232bdfdc79c5.camel@perches.com>
-In-Reply-To: <81ae2b1b7ea395217dbf3494457a232bdfdc79c5.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+In-Reply-To: <20180813221436.GN113140@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+X-CM-TRANSID: swCowABXMxwVYXJbAPUVAQ--.9106S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFy5GFWDJFW5JFWkZrW3Awb_yoWDJFc_Jw
+        n7Wa1DKr4UZF1rtan3J3W5Aw43C34vqF18Xa9YgrZxuF1UtrZ5Jr9rG3s7ZFs5Kwn8KrW5
+        J3Za9w40934qvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbVkYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z2
+        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26F4j6r4UJw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+        1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAI
+        cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+        nxnUUI43ZEXa7IU1eWlDUUUUU==
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/14 12:45, Joe Perches wrote:
-> On Tue, 2018-08-14 at 10:46 +0800, zhong jiang wrote:
->> We prefer to ARRAY_SIZE rather than duplicating its implementation.
->> So just replace it.
-> []
->> diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
-> []
->> @@ -4645,7 +4645,7 @@ static char *pfmfs_dname(struct dentry *dentry, char *buffer, int buflen)
->>  /* 32 */PFM_CMD(pfm_write_ibrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL),
->>  /* 33 */PFM_CMD(pfm_write_dbrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL)
->>  };
->> -#define PFM_CMD_COUNT	(sizeof(pfm_cmd_tab)/sizeof(pfm_cmd_desc_t))
->> +#define PFM_CMD_COUNT	ARRAY_SIZE(pfm_cmd_tab)
-> Better would be to remove the #define altogether and change
-> the one place where it's used to ARRAY_SIZE(...)
-> ---
->  arch/ia64/kernel/perfmon.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
-> index a9d4dc6c0427..08ece2c7b6e1 100644
-> --- a/arch/ia64/kernel/perfmon.c
-> +++ b/arch/ia64/kernel/perfmon.c
-> @@ -4645,7 +4645,6 @@ static pfm_cmd_desc_t pfm_cmd_tab[]={
->  /* 32 */PFM_CMD(pfm_write_ibrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL),
->  /* 33 */PFM_CMD(pfm_write_dbrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL)
->  };
-> -#define PFM_CMD_COUNT	(sizeof(pfm_cmd_tab)/sizeof(pfm_cmd_desc_t))
->  
->  static int
->  pfm_check_task_state(pfm_context_t *ctx, int cmd, unsigned long flags)
-> @@ -4770,7 +4769,7 @@ sys_perfmonctl (int fd, int cmd, void __user *arg, int count)
->  	 */
->  	if (unlikely(pmu_conf == NULL)) return -ENOSYS;
->  
-> -	if (unlikely(cmd < 0 || cmd >= PFM_CMD_COUNT)) {
-> +	if (unlikely(cmd < 0 || cmd >= ARRAY_SIZE(pfm_cmd_tab)) {
->  		DPRINT(("invalid cmd=%d\n", cmd));
->  		return -EINVAL;
->  	}
->
->
-> .
->
- Thank you for suggestion.  That's indeed better if just one palce use it.  I will repost in v2.
+On 2018/8/14 6:14, Bjorn Helgaas wrote:
+> On Sat, Aug 11, 2018 at 09:27:42PM +0800, Pu Wen wrote:
+>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+>> index 2950223..d0e98a9 100644
+>> --- a/include/linux/pci_ids.h
+>> +++ b/include/linux/pci_ids.h
+>> @@ -511,6 +511,8 @@
+>>   #define PCI_DEVICE_ID_AMI_MEGARAID	0x9010
+>>   #define PCI_DEVICE_ID_AMI_MEGARAID2	0x9060
+>>   
+>> +#define PCI_VENDOR_ID_HYGON		0x1d94
+> 
+> Please add this entry so pci_ids.h remains sorted by Vendor ID, then Device
+> ID, as the comment at the top suggests.
 
- Sincerely,
-zhong jiang
+Thanks for the suggestion. Will place PCI_VENDOR_ID_HYGON between 
+PCI_VENDOR_ID_AMAZON(0x1d0f) and PCI_VENDOR_ID_TEKRAM(0x1de1) in next
+patch set.
+
+Pu Wen
+
+> 
+> With that changed,
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci_ids.h
+> 
+>>   #define PCI_VENDOR_ID_AMD		0x1022
+>>   #define PCI_DEVICE_ID_AMD_K8_NB		0x1100
+>>   #define PCI_DEVICE_ID_AMD_K8_NB_ADDRMAP	0x1101
+>> -- 
+>> 2.7.4
+>>
 
