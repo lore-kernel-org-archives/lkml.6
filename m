@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A280FC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94063C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640CC2154F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640CC2154F
+	by mail.kernel.org (Postfix) with ESMTP id 5883A2154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:42:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5883A2154F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390440AbeHNUaz (ORCPT
+        id S2390451AbeHNUa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59692 "EHLO
+        Tue, 14 Aug 2018 16:30:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUay (ORCPT
+        with ESMTP id S1728642AbeHNUa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:54 -0400
+        Tue, 14 Aug 2018 16:30:58 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E122DC7B;
-        Tue, 14 Aug 2018 17:42:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6160EAF3;
+        Tue, 14 Aug 2018 17:42:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 066/107] x86/KVM/VMX: Extend add_atomic_switch_msr() to allow VMENTER only MSRs
-Date:   Tue, 14 Aug 2018 19:17:29 +0200
-Message-Id: <20180814171524.956106449@linuxfoundation.org>
+Subject: [PATCH 4.9 067/107] x86/KVM/VMX: Use MSR save list for IA32_FLUSH_CMD if required
+Date:   Tue, 14 Aug 2018 19:17:30 +0200
+Message-Id: <20180814171524.999876779@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,90 +54,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 989e3992d2eca32c3f1404f2bc91acda3aa122d8 upstream
+commit 390d975e0c4e60ce70d4157e0dd91ede37824603 upstream
 
-The IA32_FLUSH_CMD MSR needs only to be written on VMENTER. Extend
-add_atomic_switch_msr() with an entry_only parameter to allow storing the
-MSR only in the guest (ENTRY) MSR array.
+If the L1D flush module parameter is set to 'always' and the IA32_FLUSH_CMD
+MSR is available, optimize the VMENTER code with the MSR save list.
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ arch/x86/kvm/vmx.c |   42 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -2038,9 +2038,9 @@ static void add_atomic_switch_msr_specia
+@@ -5269,6 +5269,16 @@ static void ept_set_mmio_spte_mask(void)
+ 	kvm_mmu_set_mmio_spte_mask((0x3ull << 62) | 0x6ull);
  }
  
- static void add_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr,
--				  u64 guest_val, u64 host_val)
-+				  u64 guest_val, u64 host_val, bool entry_only)
- {
--	int i, j;
-+	int i, j = 0;
- 	struct msr_autoload *m = &vmx->msr_autoload;
- 
- 	switch (msr) {
-@@ -2076,7 +2076,9 @@ static void add_atomic_switch_msr(struct
- 	}
- 
- 	i = find_msr(&m->guest, msr);
--	j = find_msr(&m->host, msr);
-+	if (!entry_only)
-+		j = find_msr(&m->host, msr);
++static bool vmx_l1d_use_msr_save_list(void)
++{
++	if (!enable_ept || !boot_cpu_has_bug(X86_BUG_L1TF) ||
++	    static_cpu_has(X86_FEATURE_HYPERVISOR) ||
++	    !static_cpu_has(X86_FEATURE_FLUSH_L1D))
++		return false;
 +
- 	if (i == NR_AUTOLOAD_MSRS || j == NR_AUTOLOAD_MSRS) {
- 		printk_once(KERN_WARNING "Not enough msr switch entries. "
- 				"Can't add msr %x\n", msr);
-@@ -2086,12 +2088,16 @@ static void add_atomic_switch_msr(struct
- 		i = m->guest.nr++;
- 		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
- 	}
-+	m->guest.val[i].index = msr;
-+	m->guest.val[i].value = guest_val;
++	return vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
++}
 +
-+	if (entry_only)
-+		return;
-+
- 	if (j < 0) {
- 		j = m->host.nr++;
- 		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
+ #define VMX_XSS_EXIT_BITMAP 0
+ /*
+  * Sets up the vmcs for emulated real mode.
+@@ -5618,6 +5628,12 @@ static void vmx_set_nmi_mask(struct kvm_
+ 			vmcs_clear_bits(GUEST_INTERRUPTIBILITY_INFO,
+ 					GUEST_INTR_STATE_NMI);
  	}
--	m->guest.val[i].index = msr;
--	m->guest.val[i].value = guest_val;
- 	m->host.val[j].index = msr;
- 	m->host.val[j].value = host_val;
- }
-@@ -2150,7 +2156,7 @@ static bool update_transition_efer(struc
- 			guest_efer &= ~EFER_LME;
- 		if (guest_efer != host_efer)
- 			add_atomic_switch_msr(vmx, MSR_EFER,
--					      guest_efer, host_efer);
-+					      guest_efer, host_efer, false);
- 		return false;
- 	} else {
- 		guest_efer &= ~ignore_bits;
-@@ -3314,7 +3320,7 @@ static int vmx_set_msr(struct kvm_vcpu *
- 		vcpu->arch.ia32_xss = data;
- 		if (vcpu->arch.ia32_xss != host_xss)
- 			add_atomic_switch_msr(vmx, MSR_IA32_XSS,
--				vcpu->arch.ia32_xss, host_xss);
-+				vcpu->arch.ia32_xss, host_xss, false);
- 		else
- 			clear_atomic_switch_msr(vmx, MSR_IA32_XSS);
- 		break;
-@@ -8985,7 +8991,7 @@ static void atomic_switch_perf_msrs(stru
- 			clear_atomic_switch_msr(vmx, msrs[i].msr);
- 		else
- 			add_atomic_switch_msr(vmx, msrs[i].msr, msrs[i].guest,
--					msrs[i].host);
-+					msrs[i].host, false);
++	/*
++	 * If flushing the L1D cache on every VMENTER is enforced and the
++	 * MSR is available, use the MSR save list.
++	 */
++	if (vmx_l1d_use_msr_save_list())
++		add_atomic_switch_msr(vmx, MSR_IA32_FLUSH_CMD, L1D_FLUSH, 0, true);
  }
  
- void vmx_arm_hv_timer(struct kvm_vcpu *vcpu)
+ static int vmx_nmi_allowed(struct kvm_vcpu *vcpu)
+@@ -8581,11 +8597,26 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 	bool always;
+ 
+ 	/*
+-	 * If the mitigation mode is 'flush always', keep the flush bit
+-	 * set, otherwise clear it. It gets set again either from
+-	 * vcpu_run() or from one of the unsafe VMEXIT handlers.
++	 * This code is only executed when:
++	 * - the flush mode is 'cond'
++	 * - the flush mode is 'always' and the flush MSR is not
++	 *   available
++	 *
++	 * If the CPU has the flush MSR then clear the flush bit because
++	 * 'always' mode is handled via the MSR save list.
++	 *
++	 * If the MSR is not avaibable then act depending on the mitigation
++	 * mode: If 'flush always', keep the flush bit set, otherwise clear
++	 * it.
++	 *
++	 * The flush bit gets set again either from vcpu_run() or from one
++	 * of the unsafe VMEXIT handlers.
+ 	 */
+-	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
++	if (static_cpu_has(X86_FEATURE_FLUSH_L1D))
++		always = false;
++	else
++		always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
++
+ 	vcpu->arch.l1tf_flush_l1d = always;
+ 
+ 	vcpu->stat.l1d_flush++;
+@@ -11660,7 +11691,8 @@ static int __init vmx_setup_l1d_flush(vo
+ 	struct page *page;
+ 
+ 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
+-	    !boot_cpu_has_bug(X86_BUG_L1TF))
++	    !boot_cpu_has_bug(X86_BUG_L1TF) ||
++	    vmx_l1d_use_msr_save_list())
+ 		return 0;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
 
 
