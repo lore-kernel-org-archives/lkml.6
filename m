@@ -2,262 +2,83 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DFFC46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 06:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB81C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 06:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6CF52174B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 06:11:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6CF52174B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C31B2173D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 06:12:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVNesVS3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C31B2173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731161AbeHNI5b (ORCPT
+        id S1731186AbeHNI6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 04:57:31 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:60107 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730907AbeHNI5a (ORCPT
+        Tue, 14 Aug 2018 04:58:35 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:42106 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728483AbeHNI6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 04:57:30 -0400
-Received: from droid10.amlogic.com (10.18.11.213) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 14 Aug 2018
- 14:11:50 +0800
-From:   Hanjie Lin <hanjie.lin@amlogic.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-CC:     Yue Wang <yue.wang@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Kevin Hilman" <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        <shawn.lin@rock-chips.com>
-Subject: [PATCH 2/2] PCI: meson: add the Amlogic Meson PCIe phy driver
-Date:   Tue, 14 Aug 2018 02:12:14 -0400
-Message-ID: <1534227134-151584-3-git-send-email-hanjie.lin@amlogic.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534227134-151584-1-git-send-email-hanjie.lin@amlogic.com>
-References: <1534227134-151584-1-git-send-email-hanjie.lin@amlogic.com>
+        Tue, 14 Aug 2018 04:58:34 -0400
+Received: by mail-io0-f195.google.com with SMTP id n18-v6so17159320ioa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Aug 2018 23:12:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=spANRlcvrDGDenb2tH7Y/zieCxeDK4pPQltAWBq3Yg8=;
+        b=AVNesVS3tCKLz159svMILzOM8p2IPIzbc2pqnE5m2c64yHhV+1/phGjPNxL8t+2b0d
+         0GUPNUorr6Eg2qaOeL0jaYuddVCgBKfg3NlWSgSpo/QVh03KOnE5LMKerJPXb0VAQtqa
+         xkqY7fU0HKn4D1rSf9M+MtFk+L0PBne2KXogt+LAA8g6ptEvNM9D4EULuMcp+6dDBcUA
+         +Z+LbRRhOI+9svWl3CcoYcuf8li3ivIc8uMmljG6YJ/F1/f6vFDezruGPuvL0xLCoRmv
+         xeqbbOF+GrIyq5Exioc4c/JQheFBvHasha7mZ6j07duNLhEGIVlcj+acDc1Lb7UMm24J
+         3IgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=spANRlcvrDGDenb2tH7Y/zieCxeDK4pPQltAWBq3Yg8=;
+        b=NBVOyovP5OHaK1WBbDieltP8CsEuRnl3YKYjA/vR7BSJauLRWdEKLpwX0yNS2DVUg/
+         1uh0bt54FE776bxJzIy7+UGdpHcZ7cNKwJ6bU67cfhOedTt0BAYRh0MbdV6J4hQvw6Jd
+         W3Ea5F+10jopuucXwnHzRTvCMQ+NYkpTtg3PQyFdx6x6rNadMR47Xd6sOEBDqDxTKNUl
+         sXGeOKwKgJingiDqORdFYaG4CHdEwZwhJbrplCHXVdg7ByUaq16fRVVzB3DQnT4cbNsy
+         4eR80z227y0b1QkAeLSIPTBoUavU88VFPbcG1qtGrV1fF8r/sMnk0sfqmrLsjTZK0m/B
+         sEvQ==
+X-Gm-Message-State: AOUpUlHTo2XcLy/X+nk0ZyBnGL5RpwLlc6/eRWXqoHWL0sMEkOwWOrTR
+        /vNQJDcSVqEV4znsENxDpwQly6UnU7ZK/ZCyt80=
+X-Google-Smtp-Source: AA+uWPzHf6/EEdkW6HbbsBM4Q3ZinyclAGz1mCv3o1qiyJMaKYaVpjzRMw3D7JD1TroLLGuy0x+sdmUAb0GZHaLHpCU=
+X-Received: by 2002:a6b:9f0e:: with SMTP id i14-v6mr18132206ioe.0.1534227173549;
+ Mon, 13 Aug 2018 23:12:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.213]
+References: <20180723070145.GB7523@krava> <20180811083915.17471-1-alexander.kapshuk@gmail.com>
+ <20180813111631.GA718@krava> <CAJ1xhMUfQ9GDEXgL-+R_vs1aoidbwj5LRsyb9K32MMUnR23whQ@mail.gmail.com>
+ <20180813185850.GC4499@kernel.org>
+In-Reply-To: <20180813185850.GC4499@kernel.org>
+From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Date:   Tue, 14 Aug 2018 09:12:17 +0300
+Message-ID: <CAJ1xhMUp0gO=0LV8485FsxVk+P6LyDDPJKXg8+ENEAG04z_w_g@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Fix check-headers.sh AND list path of execution
+To:     arnaldo.melo@gmail.com
+Cc:     Jiri Olsa <jolsa@redhat.com>, jolsa@kernel.org, mingo@kernel.org,
+        namhyung@kernel.org, David Ahern <dsahern@gmail.com>,
+        alexander.shishkin@linux.intel.com, a.p.zijlstra@chello.nl,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Wang <yue.wang@amlogic.com>
+On Mon, Aug 13, 2018 at 9:58 PM Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
+> Thanks, applied the three patches to acme/perf/core.
+>
+> - Arnaldo
 
-The Meson-PCIE-PHY controller supports the 5-Gbps data rate
-of the PCI Express Gen 2 specification and is backwardcompatible
-with the 2.5-Gbps Gen 1.1 specification with only
-inferred idle detection supported on AMLOGIC SoCs.
-
-Signed-off-by: Yue Wang <yue.wang@amlogic.com>
-Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
----
- drivers/phy/amlogic/Kconfig              |   8 ++
- drivers/phy/amlogic/Makefile             |   1 +
- drivers/phy/amlogic/phy-meson-axg-pcie.c | 160 +++++++++++++++++++++++++++++++
- 3 files changed, 169 insertions(+)
- create mode 100644 drivers/phy/amlogic/phy-meson-axg-pcie.c
-
-diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
-index 23fe1cd..3ab07f9 100644
---- a/drivers/phy/amlogic/Kconfig
-+++ b/drivers/phy/amlogic/Kconfig
-@@ -36,3 +36,11 @@ config PHY_MESON_GXL_USB3
- 	  Enable this to support the Meson USB3 PHY and OTG detection
- 	  IP block found in Meson GXL and GXM SoCs.
- 	  If unsure, say N.
-+
-+config PHY_MESON_AXG_PCIE
-+	bool "Meson AXG PCIe PHY driver"
-+	depends on OF && (ARCH_MESON || COMPILE_TEST)
-+	select GENERIC_PHY
-+	help
-+	  Enable PCIe PHY support for Meson AXG SoC series.
-+	  This driver provides PHY interface for Meson PCIe controller.
-\ No newline at end of file
-diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
-index 4fd8848..5ab8578 100644
---- a/drivers/phy/amlogic/Makefile
-+++ b/drivers/phy/amlogic/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_PHY_MESON8B_USB2)		+= phy-meson8b-usb2.o
- obj-$(CONFIG_PHY_MESON_GXL_USB2)	+= phy-meson-gxl-usb2.o
- obj-$(CONFIG_PHY_MESON_GXL_USB3)	+= phy-meson-gxl-usb3.o
-+obj-$(CONFIG_PHY_MESON_AXG_PCIE)	+= phy-meson-axg-pcie.o
-diff --git a/drivers/phy/amlogic/phy-meson-axg-pcie.c b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-new file mode 100644
-index 0000000..8bc5c49
---- /dev/null
-+++ b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-@@ -0,0 +1,160 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Amlogic MESON SoC series PCIe PHY driver
-+ *
-+ * Phy provider for PCIe controller on MESON SoC series
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Yue Wang <yue.wang@amlogic.com>
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
-+#include <linux/reset.h>
-+
-+struct meson_pcie_phy_data {
-+	const struct phy_ops	*ops;
-+};
-+
-+struct meson_pcie_reset {
-+	struct reset_control	*port_a;
-+	struct reset_control	*port_b;
-+	struct reset_control	*phy;
-+	struct reset_control	*apb;
-+};
-+
-+struct meson_pcie_phy {
-+	const struct meson_pcie_phy_data	*data;
-+	struct meson_pcie_reset	reset;
-+	void __iomem	*phy_base;
-+};
-+
-+static int meson_pcie_phy_init(struct phy *phy)
-+{
-+	struct meson_pcie_phy *mphy = phy_get_drvdata(phy);
-+	struct meson_pcie_reset *mrst = &mphy->reset;
-+
-+	writel(0x1c, mphy->phy_base);
-+	reset_control_assert(mrst->port_a);
-+	reset_control_assert(mrst->port_b);
-+	reset_control_assert(mrst->phy);
-+	reset_control_assert(mrst->apb);
-+	udelay(400);
-+	reset_control_deassert(mrst->port_a);
-+	reset_control_deassert(mrst->port_b);
-+	reset_control_deassert(mrst->phy);
-+	reset_control_deassert(mrst->apb);
-+	udelay(500);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops meson_phy_ops = {
-+	.init		= meson_pcie_phy_init,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static const struct meson_pcie_phy_data meson_pcie_phy_data = {
-+	.ops		= &meson_phy_ops,
-+};
-+
-+static const struct of_device_id meson_pcie_phy_match[] = {
-+	{
-+		.compatible = "amlogic,axg-pcie-phy",
-+		.data = &meson_pcie_phy_data,
-+	},
-+	{},
-+};
-+
-+static int meson_pcie_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct meson_pcie_phy *mphy;
-+	struct meson_pcie_reset *mrst;
-+	struct phy *generic_phy;
-+	struct phy_provider *phy_provider;
-+	struct resource *res;
-+	const struct meson_pcie_phy_data *data;
-+
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	mphy = devm_kzalloc(dev, sizeof(*mphy), GFP_KERNEL);
-+	if (!mphy)
-+		return -ENOMEM;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	mphy->phy_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(mphy->phy_base))
-+		return PTR_ERR(mphy->phy_base);
-+
-+	mrst = &mphy->reset;
-+
-+	mrst->port_a = devm_reset_control_get_shared(dev, "port_a");
-+	if (IS_ERR(mrst->port_a)) {
-+		if (PTR_ERR(mrst->port_a) != -EPROBE_DEFER)
-+			dev_err(dev, "couldn't get port a reset %ld\n",
-+				PTR_ERR(mrst->port_a));
-+
-+		return PTR_ERR(mrst->port_a);
-+	}
-+
-+	mrst->port_b = devm_reset_control_get_shared(dev, "port_b");
-+	if (IS_ERR(mrst->port_b)) {
-+		if (PTR_ERR(mrst->port_b) != -EPROBE_DEFER)
-+			dev_err(dev, "couldn't get port b reset %ld\n",
-+				PTR_ERR(mrst->port_b));
-+
-+		return PTR_ERR(mrst->port_b);
-+	}
-+
-+	mrst->phy = devm_reset_control_get_shared(dev, "phy");
-+	if (IS_ERR(mrst->phy)) {
-+		if (PTR_ERR(mrst->phy) != -EPROBE_DEFER)
-+			dev_err(dev, "couldn't get phy reset\n");
-+
-+		return PTR_ERR(mrst->phy);
-+	}
-+
-+	mrst->apb = devm_reset_control_get_shared(dev, "apb");
-+	if (IS_ERR(mrst->apb)) {
-+		if (PTR_ERR(mrst->apb) != -EPROBE_DEFER)
-+			dev_err(dev, "couldn't get apb reset\n");
-+
-+		return PTR_ERR(mrst->apb);
-+	}
-+
-+	reset_control_deassert(mrst->port_a);
-+	reset_control_deassert(mrst->port_b);
-+	reset_control_deassert(mrst->phy);
-+	reset_control_deassert(mrst->apb);
-+
-+	mphy->data = data;
-+
-+	generic_phy = devm_phy_create(dev, dev->of_node, mphy->data->ops);
-+	if (IS_ERR(generic_phy)) {
-+		if (PTR_ERR(generic_phy) != -EPROBE_DEFER)
-+			dev_err(dev, "failed to create PHY\n");
-+
-+		return PTR_ERR(generic_phy);
-+	}
-+
-+	phy_set_drvdata(generic_phy, mphy);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static struct platform_driver meson_pcie_phy_driver = {
-+	.probe	= meson_pcie_phy_probe,
-+	.driver = {
-+		.of_match_table	= meson_pcie_phy_match,
-+		.name		= "meson-pcie-phy",
-+	}
-+};
-+
-+builtin_platform_driver(meson_pcie_phy_driver);
--- 
-2.7.4
-
+Thanks.
