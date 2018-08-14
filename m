@@ -6,47 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 650FAC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C75FC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26B802150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B802150B
+	by mail.kernel.org (Postfix) with ESMTP id 5B8AF2154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8AF2154F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388647AbeHNU1n (ORCPT
+        id S2388775AbeHNU1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:27:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58484 "EHLO
+        Tue, 14 Aug 2018 16:27:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58506 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729689AbeHNU1m (ORCPT
+        with ESMTP id S1729689AbeHNU1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:27:42 -0400
+        Tue, 14 Aug 2018 16:27:45 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3A99CBA;
-        Tue, 14 Aug 2018 17:39:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F13FED20;
+        Tue, 14 Aug 2018 17:39:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Eric Dumazet <edumazet@google.com>,
         Ingo Molnar <mingo@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sodagudi Prasad <psodagud@codeaurora.org>
-Subject: [PATCH 4.9 005/107] kasan: add no_sanitize attribute for clang builds
-Date:   Tue, 14 Aug 2018 19:16:28 +0200
-Message-Id: <20180814171521.174514497@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 006/107] Mark HI and TASKLET softirq synchronous
+Date:   Tue, 14 Aug 2018 19:16:29 +0200
+Message-Id: <20180814171521.226864314@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -63,55 +54,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 12c8f25a016dff69ee284aa3338bebfd2cfcba33 upstream.
+commit 3c53776e29f81719efcf8f7a6e30cdf753bee94d upstream.
 
-KASAN uses the __no_sanitize_address macro to disable instrumentation of
-particular functions.  Right now it's defined only for GCC build, which
-causes false positives when clang is used.
+Way back in 4.9, we committed 4cd13c21b207 ("softirq: Let ksoftirqd do
+its job"), and ever since we've had small nagging issues with it.  For
+example, we've had:
 
-This patch adds a definition for clang.
+  1ff688209e2e ("watchdog: core: make sure the watchdog_worker is not deferred")
+  8d5755b3f77b ("watchdog: softdog: fire watchdog even if softirqs do not get to run")
+  217f69743681 ("net: busy-poll: allow preemption in sk_busy_loop()")
 
-Note, that clang's revision 329612 or higher is required.
+all of which worked around some of the effects of that commit.
 
-[andreyknvl@google.com: remove redundant #ifdef CONFIG_KASAN check]
-  Link: http://lkml.kernel.org/r/c79aa31a2a2790f6131ed607c58b0dd45dd62a6c.1523967959.git.andreyknvl@google.com
-Link: http://lkml.kernel.org/r/4ad725cc903f8534f8c8a60f0daade5e3d674f8d.1523554166.git.andreyknvl@google.com
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Cc: Will Deacon <will.deacon@arm.com>
+The DVB people have also complained that the commit causes excessive USB
+URB latencies, which seems to be due to the USB code using tasklets to
+schedule USB traffic.  This seems to be an issue mainly when already
+living on the edge, but waiting for ksoftirqd to handle it really does
+seem to cause excessive latencies.
+
+Now Hanna Hawa reports that this issue isn't just limited to USB URB and
+DVB, but also causes timeout problems for the Marvell SoC team:
+
+ "I'm facing kernel panic issue while running raid 5 on sata disks
+  connected to Macchiatobin (Marvell community board with Armada-8040
+  SoC with 4 ARMv8 cores of CA72) Raid 5 built with Marvell DMA engine
+  and async_tx mechanism (ASYNC_TX_DMA [=y]); the DMA driver (mv_xor_v2)
+  uses a tasklet to clean the done descriptors from the queue"
+
+The latency problem causes a panic:
+
+  mv_xor_v2 f0400000.xor: dma_sync_wait: timeout!
+  Kernel panic - not syncing: async_tx_quiesce: DMA error waiting for transaction
+
+We've discussed simply just reverting the original commit entirely, and
+also much more involved solutions (with per-softirq threads etc).  This
+patch is intentionally stupid and fairly limited, because the issue
+still remains, and the other solutions either got sidetracked or had
+other issues.
+
+We should probably also consider the timer softirqs to be synchronous
+and not be delayed to ksoftirqd (since they were the issue with the
+earlier watchdog problems), but that should be done as a separate patch.
+This does only the tasklet cases.
+
+Reported-and-tested-by: Hanna Hawa <hannah@marvell.com>
+Reported-and-tested-by: Josef Griebichler <griebichler.josef@gmx.at>
+Reported-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Paul Lawrence <paullawrence@google.com>
-Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sodagudi Prasad <psodagud@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler-clang.h |    3 +++
- 1 file changed, 3 insertions(+)
+ kernel/softirq.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -16,6 +16,9 @@
-  */
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -79,12 +79,16 @@ static void wakeup_softirqd(void)
  
-+#undef __no_sanitize_address
-+#define __no_sanitize_address __attribute__((no_sanitize("address")))
-+
- /* Clang doesn't have a way to turn it off per-function, yet. */
- #ifdef __noretpoline
- #undef __noretpoline
+ /*
+  * If ksoftirqd is scheduled, we do not want to process pending softirqs
+- * right now. Let ksoftirqd handle this at its own rate, to get fairness.
++ * right now. Let ksoftirqd handle this at its own rate, to get fairness,
++ * unless we're doing some of the synchronous softirqs.
+  */
+-static bool ksoftirqd_running(void)
++#define SOFTIRQ_NOW_MASK ((1 << HI_SOFTIRQ) | (1 << TASKLET_SOFTIRQ))
++static bool ksoftirqd_running(unsigned long pending)
+ {
+ 	struct task_struct *tsk = __this_cpu_read(ksoftirqd);
+ 
++	if (pending & SOFTIRQ_NOW_MASK)
++		return false;
+ 	return tsk && (tsk->state == TASK_RUNNING);
+ }
+ 
+@@ -324,7 +328,7 @@ asmlinkage __visible void do_softirq(voi
+ 
+ 	pending = local_softirq_pending();
+ 
+-	if (pending && !ksoftirqd_running())
++	if (pending && !ksoftirqd_running(pending))
+ 		do_softirq_own_stack();
+ 
+ 	local_irq_restore(flags);
+@@ -351,7 +355,7 @@ void irq_enter(void)
+ 
+ static inline void invoke_softirq(void)
+ {
+-	if (ksoftirqd_running())
++	if (ksoftirqd_running(local_softirq_pending()))
+ 		return;
+ 
+ 	if (!force_irqthreads) {
 
 
