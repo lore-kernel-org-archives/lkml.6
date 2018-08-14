@@ -2,74 +2,113 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0C4C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA527C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E262172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E262172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 727FF2172B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:05:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="OAGgfGa9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727FF2172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sargun.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387539AbeHNTxD (ORCPT
+        id S2387588AbeHNTxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:53:03 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:52454 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733064AbeHNTxD (ORCPT
+        Tue, 14 Aug 2018 15:53:48 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37357 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387566AbeHNTxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:53:03 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E3EF513CED779;
-        Tue, 14 Aug 2018 10:05:03 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 10:05:03 -0700 (PDT)
-Message-Id: <20180814.100503.1519932338963499861.davem@davemloft.net>
-To:     jcline@redhat.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, konrad.wilk@oracle.com, jamie.iles@oracle.com,
-        liran.alon@oracle.com, stable@vger.kernel.org
-Subject: Re: [PATCH] net: sock_diag: Fix spectre v1 gadget in
- __sock_diag_cmd()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180813222313.3510-1-jcline@redhat.com>
-References: <20180813222313.3510-1-jcline@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 14 Aug 2018 10:05:04 -0700 (PDT)
+        Tue, 14 Aug 2018 15:53:48 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b10-v6so10503606eds.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 10:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mVpf3iBLV5E1SlBkuM9FBYCPNdtJHu5pIFhXuPrdFo4=;
+        b=OAGgfGa9zcKb03inrNyhw/L8kRdC2cBpPEP8u7XlPjzb3V55FAVfMF/QbHMw3u5ATK
+         nWAxk9Sv1V59J+F8uj3a9GqBHo5rucRLmrtmQVrlf4Hq5ykFk5LYYdAD3m5w/BmJ7A/A
+         eCPYSqBUse/FKj8gK4wrBO1z/9fGNUhnNkPq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mVpf3iBLV5E1SlBkuM9FBYCPNdtJHu5pIFhXuPrdFo4=;
+        b=Hiu0SY7soUi8QLO8CImi8kIb1TcgbHwjqhh+/qayj88vrFKrpViKyK4CasnBMjVJ/+
+         x7ezzHzEmkUXXwMSCT0BXX/WHXCf4myu2PuN7n8xosDGN8+MW8InWRQlBxluSB9aEPr0
+         MNlHa8ST7K/PpkGwt7oGnDuX5SuiD1CHykvWcEy44Up7RBnvuyZ+lYrEalOprMVD0u5z
+         aJa5C4X9zpZze0GEsjRXiEonor3iIHmFR1k0TOnim26w3nLZlkFm7vw5bEeLYlFuJRbN
+         2U8mIkN62hBnGpL90qLC1+CRPfQ07OUM/qHKv0D7AksqvKh69ApYBshpS8NzIapP3WLh
+         wOYw==
+X-Gm-Message-State: AOUpUlGZTtb6kDTTK/3vaeaSjVhqrrPdCFIxyLl1QDqOAvOB7WMwpufq
+        N0Q8kRjT9sLlXMe0jPgl/ABWMyz9REXsAuCktORhgw==
+X-Google-Smtp-Source: AA+uWPzE94bCMp19qk0PFV4dkCYTkf+YcXMZye1P2h4JSiChJrunVIlnImM1DA9BNvDTRcp+2rKUWsU8Su5qCZUsbHA=
+X-Received: by 2002:a50:86a1:: with SMTP id r30-v6mr28843744eda.138.1534266347634;
+ Tue, 14 Aug 2018 10:05:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:906:35d3:0:0:0:0 with HTTP; Tue, 14 Aug 2018 10:05:07
+ -0700 (PDT)
+In-Reply-To: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
+References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Tue, 14 Aug 2018 10:05:07 -0700
+Message-ID: <CAMp4zn94SzqK_Q=de2E+Fpv5yeAhYv62XW-KU3=ghRma9d7Jvw@mail.gmail.com>
+Subject: Re: [PATCH v1 00/22] LSM: Full security module stacking
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        James Morris <jmorris@namei.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Cline <jcline@redhat.com>
-Date: Mon, 13 Aug 2018 22:23:13 +0000
+On Mon, Jul 16, 2018 at 10:53 AM, Casey Schaufler
+<casey@schaufler-ca.com> wrote:
+> LSM: Full security module stacking
+>
+> I'm calling this v1 not because it's the first version
+> I've put out but because it's the first version I'm getting
+> serious external pressure to get upstream.
+Awesome work, I'm glad that this is getting further.
 
-> req->sdiag_family is a user-controlled value that's used as an array
-> index. Sanitize it after the bounds check to avoid speculative
-> out-of-bounds array access.
-> 
-> This also protects the sock_is_registered() call, so this removes the
-> sanitize call there.
-> 
-> Fixes: e978de7a6d38 ("net: socket: Fix potential spectre v1 gadget in sock_is_registered")
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: konrad.wilk@oracle.com
-> Cc: jamie.iles@oracle.com
-> Cc: liran.alon@oracle.com
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jeremy Cline <jcline@redhat.com>
-> ---
-> 
-> Since commit e978de7a6d38 didn't apply cleanly to v4.14, this won't
-> either since it reverts that change. To apply cleanly there, the change
-> to sock_is_registered() needs to be dropped.
+>
+> The blob management part (through "LSM: Sharing of security blobs")
+> is ready for prime-time. These changes move the management of
+> security blobs out of the security modules and into the security
+> module infrastructure. With this change the proposed S.A.R.A,
+> LandLock and PTAGS security modules could co-exist with any of
+> the existing "major" security modules. The changes reduce some
+> code duplication.
+>
+> Beyond the blob management there's a bit of clean-up.
+> Mounting filesystems had to be changed so that options
+> a security module doesn't recognize won't be considered
+> a fatal error. The mount infrastructure is somewhat
+> more complex than one might assume.
+>
 
-Applied, thank you.
+Casey,
+Do you think you can break out 1 into its own patch? It seems like
+that'd be valuable to everyone.
+
+
+What's your thought here if we ever introduce dynamic security
+modules? It's nice that we now have a way around rolling back blobs if
+one fails, but what if a new module was activated, would we just
+resize the slab cache?
