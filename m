@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 331BDC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0871C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C7521727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C7521727
+	by mail.kernel.org (Postfix) with ESMTP id B1F3521727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F3521727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389490AbeHNUSj (ORCPT
+        id S2389504AbeHNUSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53152 "EHLO
+        Tue, 14 Aug 2018 16:18:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53164 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387619AbeHNUSi (ORCPT
+        with ESMTP id S2387619AbeHNUSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:38 -0400
+        Tue, 14 Aug 2018 16:18:42 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F6F0D1A;
-        Tue, 14 Aug 2018 17:30:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AEAFD06;
+        Tue, 14 Aug 2018 17:30:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
         John Fastabend <john.fastabend@gmail.com>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.17 08/97] bpf, sockmap: fix leak in bpf_tcp_sendmsg wait for mem path
-Date:   Tue, 14 Aug 2018 19:16:20 +0200
-Message-Id: <20180814171433.500179358@linuxfoundation.org>
+Subject: [PATCH 4.17 09/97] bpf, sockmap: fix bpf_tcp_sendmsg sock error handling
+Date:   Tue, 14 Aug 2018 19:16:21 +0200
+Message-Id: <20180814171433.539404635@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -53,13 +53,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 7c81c71730456845e6212dccbf00098faa66740f upstream.
+commit 5121700b346b6160ccc9411194e3f1f417c340d1 upstream.
 
-In bpf_tcp_sendmsg() the sk_alloc_sg() may fail. In the case of
-ENOMEM, it may also mean that we've partially filled the scatterlist
-entries with pages. Later jumping to sk_stream_wait_memory()
-we could further fail with an error for several reasons, however
-we miss to call free_start_sg() if the local sk_msg_buff was used.
+While working on bpf_tcp_sendmsg() code, I noticed that when a
+sk->sk_err is set we error out with err = sk->sk_err. However
+this is problematic since sk->sk_err is a positive error value
+and therefore we will neither go into sk_stream_error() nor will
+we report an error back to user space. I had this case with EPIPE
+and user space was thinking sendmsg() succeeded since EPIPE is
+a positive value, thinking we submitted 32 bytes. Fix it by
+negating the sk->sk_err value.
 
 Fixes: 4f738adba30a ("bpf: create tcp_bpf_ulp allowing BPF to monitor socket TX/RX data")
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
@@ -68,32 +71,19 @@ Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/sockmap.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ kernel/bpf/sockmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/kernel/bpf/sockmap.c
 +++ b/kernel/bpf/sockmap.c
-@@ -947,7 +947,7 @@ static int bpf_tcp_sendmsg(struct sock *
- 	timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
- 
- 	while (msg_data_left(msg)) {
--		struct sk_msg_buff *m;
-+		struct sk_msg_buff *m = NULL;
- 		bool enospc = false;
+@@ -952,7 +952,7 @@ static int bpf_tcp_sendmsg(struct sock *
  		int copy;
  
-@@ -1015,8 +1015,11 @@ wait_for_sndbuf:
- 		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
- wait_for_memory:
- 		err = sk_stream_wait_memory(sk, &timeo);
--		if (err)
-+		if (err) {
-+			if (m && m != psock->cork)
-+				free_start_sg(sk, m);
+ 		if (sk->sk_err) {
+-			err = sk->sk_err;
++			err = -sk->sk_err;
  			goto out_err;
-+		}
- 	}
- out_err:
- 	if (err < 0)
+ 		}
+ 
 
 
