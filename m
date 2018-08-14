@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C54C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C3CC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB28F21653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB28F21653
+	by mail.kernel.org (Postfix) with ESMTP id 05403216FB
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:56:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05403216FB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389276AbeHNUo0 (ORCPT
+        id S2390120AbeHNUaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:44:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59228 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390095AbeHNUaI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 16:30:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59170 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390089AbeHNUaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 16:30:07 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 50B63DA5;
-        Tue, 14 Aug 2018 17:32:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54BEADA7;
+        Tue, 14 Aug 2018 17:32:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <JBeulich@suse.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 4.17 49/97] x86/speculation/l1tf: Fix up pte->pfn conversion for PAE
-Date:   Tue, 14 Aug 2018 19:17:01 +0200
-Message-Id: <20180814171435.021295450@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 85/97] x86/KVM/VMX: Dont set l1tf_flush_l1d from vmx_handle_external_intr()
+Date:   Tue, 14 Aug 2018 19:17:37 +0200
+Message-Id: <20180814171436.371098976@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -52,78 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.cz>
+From: Nicolai Stange <nstange@suse.de>
 
-commit e14d7dfb41f5807a0c1c26a13f2b8ef16af24935 upstream
+commit 18b57ce2eb8c8b9a24174a89250cf5f57c76ecdc upstream
 
-Jan has noticed that pte_pfn and co. resp. pfn_pte are incorrect for
-CONFIG_PAE because phys_addr_t is wider than unsigned long and so the
-pte_val reps. shift left would get truncated. Fix this up by using proper
-types.
+For VMEXITs caused by external interrupts, vmx_handle_external_intr()
+indirectly calls into the interrupt handlers through the host's IDT.
 
-Fixes: 6b28baca9b1f ("x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation")
-Reported-by: Jan Beulich <JBeulich@suse.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+It follows that these interrupts get accounted for in the
+kvm_cpu_l1tf_flush_l1d per-cpu flag.
+
+The subsequently executed vmx_l1d_flush() will thus be aware that some
+interrupts have happened and conduct a L1d flush anyway.
+
+Setting l1tf_flush_l1d from vmx_handle_external_intr() isn't needed
+anymore. Drop it.
+
+Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable.h |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -191,21 +191,21 @@ static inline u64 protnone_mask(u64 val)
- 
- static inline unsigned long pte_pfn(pte_t pte)
- {
--	unsigned long pfn = pte_val(pte);
-+	phys_addr_t pfn = pte_val(pte);
- 	pfn ^= protnone_mask(pfn);
- 	return (pfn & PTE_PFN_MASK) >> PAGE_SHIFT;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9758,7 +9758,6 @@ static void vmx_handle_external_intr(str
+ 			[ss]"i"(__KERNEL_DS),
+ 			[cs]"i"(__KERNEL_CS)
+ 			);
+-		vcpu->arch.l1tf_flush_l1d = true;
+ 	}
  }
- 
- static inline unsigned long pmd_pfn(pmd_t pmd)
- {
--	unsigned long pfn = pmd_val(pmd);
-+	phys_addr_t pfn = pmd_val(pmd);
- 	pfn ^= protnone_mask(pfn);
- 	return (pfn & pmd_pfn_mask(pmd)) >> PAGE_SHIFT;
- }
- 
- static inline unsigned long pud_pfn(pud_t pud)
- {
--	unsigned long pfn = pud_val(pud);
-+	phys_addr_t pfn = pud_val(pud);
- 	pfn ^= protnone_mask(pfn);
- 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
- }
-@@ -555,7 +555,7 @@ static inline pgprotval_t check_pgprot(p
- 
- static inline pte_t pfn_pte(unsigned long page_nr, pgprot_t pgprot)
- {
--	phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
- 	pfn ^= protnone_mask(pgprot_val(pgprot));
- 	pfn &= PTE_PFN_MASK;
- 	return __pte(pfn | check_pgprot(pgprot));
-@@ -563,7 +563,7 @@ static inline pte_t pfn_pte(unsigned lon
- 
- static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
- {
--	phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
- 	pfn ^= protnone_mask(pgprot_val(pgprot));
- 	pfn &= PHYSICAL_PMD_PAGE_MASK;
- 	return __pmd(pfn | check_pgprot(pgprot));
-@@ -571,7 +571,7 @@ static inline pmd_t pfn_pmd(unsigned lon
- 
- static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
- {
--	phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
- 	pfn ^= protnone_mask(pgprot_val(pgprot));
- 	pfn &= PHYSICAL_PUD_PAGE_MASK;
- 	return __pud(pfn | check_pgprot(pgprot));
+ STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
 
 
