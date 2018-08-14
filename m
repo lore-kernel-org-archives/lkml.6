@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3B2C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDA2C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A732150F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A732150F
+	by mail.kernel.org (Postfix) with ESMTP id 5840021471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5840021471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391026AbeHNUeY (ORCPT
+        id S2391035AbeHNUe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:34:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60348 "EHLO
+        Tue, 14 Aug 2018 16:34:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60360 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390473AbeHNUeX (ORCPT
+        with ESMTP id S2390473AbeHNUe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:34:23 -0400
+        Tue, 14 Aug 2018 16:34:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 691C6CAE;
-        Tue, 14 Aug 2018 17:46:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3524CCAE;
+        Tue, 14 Aug 2018 17:46:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        stable@vger.kernel.org, Michael Mera <dev@michaelmera.com>,
         Leon Romanovsky <leonro@mellanox.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 14/43] IB/mlx4: Mark user MR as writable if actual virtual memory is writable
-Date:   Tue, 14 Aug 2018 19:17:50 +0200
-Message-Id: <20180814171518.046291292@linuxfoundation.org>
+        Doug Ledford <dledford@redhat.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.4 15/43] IB/ocrdma: fix out of bounds access to local buffer
+Date:   Tue, 14 Aug 2018 19:17:51 +0200
+Message-Id: <20180814171518.106262417@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -52,121 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Michael Mera <dev@michaelmera.com>
 
-commit d8f9cc328c8888369880e2527e9186d745f2bbf6 upstream.
+commit 062d0f22a30c39840ea49b72cfcfc1aa4cc538fa upstream.
 
-To allow rereg_user_mr to modify the MR from read-only to writable without
-using get_user_pages again, we needed to define the initial MR as writable.
-However, this was originally done unconditionally, without taking into
-account the writability of the underlying virtual memory.
+In write to debugfs file 'resource_stats' the local buffer 'tmp_str' is
+written at index 'count-1' where 'count' is the size of the write, so
+potentially 0.
 
-As a result, any attempt to register a read-only MR over read-only
-virtual memory failed.
+This patch filters odd values for the write size/position to avoid this
+type of problem.
 
-To fix this, do not add the writable flag bit when the user virtual memory
-is not writable (e.g. const memory).
-
-However, when the underlying memory is NOT writable (and we therefore
-do not define the initial MR as writable), the IB core adds a
-"force writable" flag to its user-pages request. If this succeeds,
-the reg_user_mr caller gets a writable copy of the original pages.
-
-If the user-space caller then does a rereg_user_mr operation to enable
-writability, this will succeed. This should not be allowed, since
-the original virtual memory was not writable.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 9376932d0c26 ("IB/mlx4_ib: Add support for user MR re-registration")
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Michael Mera <dev@michaelmera.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx4/mr.c |   50 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 42 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -130,6 +130,40 @@ out:
- 	return err;
- }
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+@@ -643,7 +643,7 @@ static ssize_t ocrdma_dbgfs_ops_write(st
+ 	struct ocrdma_stats *pstats = filp->private_data;
+ 	struct ocrdma_dev *dev = pstats->dev;
  
-+static struct ib_umem *mlx4_get_umem_mr(struct ib_ucontext *context, u64 start,
-+					u64 length, u64 virt_addr,
-+					int access_flags)
-+{
-+	/*
-+	 * Force registering the memory as writable if the underlying pages
-+	 * are writable.  This is so rereg can change the access permissions
-+	 * from readable to writable without having to run through ib_umem_get
-+	 * again
-+	 */
-+	if (!ib_access_writable(access_flags)) {
-+		struct vm_area_struct *vma;
-+
-+		down_read(&current->mm->mmap_sem);
-+		/*
-+		 * FIXME: Ideally this would iterate over all the vmas that
-+		 * cover the memory, but for now it requires a single vma to
-+		 * entirely cover the MR to support RO mappings.
-+		 */
-+		vma = find_vma(current->mm, start);
-+		if (vma && vma->vm_end >= start + length &&
-+		    vma->vm_start <= start) {
-+			if (vma->vm_flags & VM_WRITE)
-+				access_flags |= IB_ACCESS_LOCAL_WRITE;
-+		} else {
-+			access_flags |= IB_ACCESS_LOCAL_WRITE;
-+		}
-+
-+		up_read(&current->mm->mmap_sem);
-+	}
-+
-+	return ib_umem_get(context, start, length, access_flags, 0);
-+}
-+
- struct ib_mr *mlx4_ib_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
- 				  u64 virt_addr, int access_flags,
- 				  struct ib_udata *udata)
-@@ -144,10 +178,8 @@ struct ib_mr *mlx4_ib_reg_user_mr(struct
- 	if (!mr)
- 		return ERR_PTR(-ENOMEM);
+-	if (count > 32)
++	if (*ppos != 0 || count == 0 || count > sizeof(tmp_str))
+ 		goto err;
  
--	/* Force registering the memory as writable. */
--	/* Used for memory re-registeration. HCA protects the access */
--	mr->umem = ib_umem_get(pd->uobject->context, start, length,
--			       access_flags | IB_ACCESS_LOCAL_WRITE, 0);
-+	mr->umem = mlx4_get_umem_mr(pd->uobject->context, start, length,
-+				    virt_addr, access_flags);
- 	if (IS_ERR(mr->umem)) {
- 		err = PTR_ERR(mr->umem);
- 		goto err_free;
-@@ -214,6 +246,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 	}
- 
- 	if (flags & IB_MR_REREG_ACCESS) {
-+		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
-+			return -EPERM;
-+
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
- 
-@@ -227,10 +262,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 
- 		mlx4_mr_rereg_mem_cleanup(dev->dev, &mmr->mmr);
- 		ib_umem_release(mmr->umem);
--		mmr->umem = ib_umem_get(mr->uobject->context, start, length,
--					mr_access_flags |
--					IB_ACCESS_LOCAL_WRITE,
--					0);
-+		mmr->umem =
-+			mlx4_get_umem_mr(mr->uobject->context, start, length,
-+					 virt_addr, mr_access_flags);
- 		if (IS_ERR(mmr->umem)) {
- 			err = PTR_ERR(mmr->umem);
- 			/* Prevent mlx4_ib_dereg_mr from free'ing invalid pointer */
+ 	if (copy_from_user(tmp_str, buffer, count))
 
 
