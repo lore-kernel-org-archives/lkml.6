@@ -2,198 +2,306 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466DDC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6185AC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F322173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3F322173C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F1F2F21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:33:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2lu9qZ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F2F21736
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732456AbeHNRU2 (ORCPT
+        id S1732667AbeHNRUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:20:28 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:57628 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730759AbeHNRU2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:20:28 -0400
-Received: by mail-it0-f70.google.com with SMTP id e6-v6so12790926itc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 07:33:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=xujd+8qasjSCqx/i7H6mKIDT7aTQGnURQvvW/d55yVU=;
-        b=VO5s+J0wTiln+OcYeIs+VXU+HX8V1EIbycn3kJXk0CbNE5rdcQUDoeo8Tnp0r/bnGN
-         LkWLAkv/qaQyCs+cHRxQE6gWRK3kkwO9f6y9yTTj74YPZ6PVo5dpyjnR87L7VQy7r2zy
-         XpsmhQWafEkoZp0ywvv/sUxmgqSOQkA6EA4qgU5AO5TVooZ1BiUmbxxc6/LfZKUMjt59
-         6AEjlko4fEheL/7xrB5eM1xnV6YoQv2D1RdZ+HWBsvNO86AjZW6YzHR2ERZHchAGwjCc
-         b1DILXQbW1ylcp+BV1ejQmq15i7zQH0jWyq5+XHRpQwBym2yLE1tHqjzauQKAuDO6t8+
-         fqWA==
-X-Gm-Message-State: AOUpUlGO+6um+suNqERdsfcHGc2xuf3D6hecEtQqxDukiL/Bn4bRmzDx
-        MVxPmmuGbe678ZZg/zcavF4Re3nAA5mSZokIxzrrQaa57i0S
-X-Google-Smtp-Source: AA+uWPylHqXY8FbfQlP2WHLtNdjlD7LMN+LCBfF4Atmnuu3x01LkeR8wu3RGG+Q2nOZg59dfPnwoiwGNyWD1o1JjDUIEk6QZC2Xx
+        Tue, 14 Aug 2018 13:20:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729560AbeHNRUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:20:43 -0400
+Received: from mail-qt0-f172.google.com (mail-qt0-f172.google.com [209.85.216.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F683217C3;
+        Tue, 14 Aug 2018 14:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534257196;
+        bh=dLD7XVH0gg4ak0Iyde8k/ZMFx0eP3gzOP+3VwI9umP8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=l2lu9qZ+nIoY2MAbisxdnQGrHWWk2OJE1mx2ATZleJnsEXOmBL/Rpv+4VRyvkceBL
+         9z2b8JKX4dUEMK8gJLdTjLoCpYX2URlXSDawAHpSluJEiFVsv43I8OiniHxmXk/jVx
+         tkqy2LIIYY8DiH6i5n/0CIcXSKP2A0A/VrWtaopA=
+Received: by mail-qt0-f172.google.com with SMTP id q12-v6so21309770qtp.6;
+        Tue, 14 Aug 2018 07:33:16 -0700 (PDT)
+X-Gm-Message-State: AOUpUlG51hy8loFgKbQyDUGU6R6LQjv+XvjHr3xnZE+Ukk9KuYwEcDxn
+        kkK/pUDq7e28ArObTp7INxbP0Gv7jbtHzuK83g==
+X-Google-Smtp-Source: AA+uWPyvUe7CWp0BXEEyumvSHyGvPrGnGAB0+zJHE2SOJ4pUzgqmAZGcmZo6H9KokJBGMJg+Ha/xUYL0ZVQsBJj1aVM=
+X-Received: by 2002:a0c:98c1:: with SMTP id g1-v6mr19297171qvd.27.1534257195702;
+ Tue, 14 Aug 2018 07:33:15 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b3d4:: with SMTP id c203-v6mr10093759iof.53.1534257182376;
- Tue, 14 Aug 2018 07:33:02 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 07:33:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000598cfe0573661657@google.com>
-Subject: KASAN: use-after-free Read in vmx_vcpu_load
-From:   syzbot <syzbot+1ff78ee6b7dd52919ab9@syzkaller.appspotmail.com>
-To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20180810130359.9882-1-peda@axentia.se> <20180810130359.9882-4-peda@axentia.se>
+ <20180813135949.32vrlrevtazr5x7d@apu3b.nibble.pw> <0baac94e-f3d2-53fd-4af9-854bb4498345@axentia.se>
+ <CAL_JsqJPzwpN2TFghy-FfHZppexG9gW4qBy6iYtGpyP_Bp6dUA@mail.gmail.com> <5c9853fc-e2ea-6983-ac88-b52b6e9e6ecd@axentia.se>
+In-Reply-To: <5c9853fc-e2ea-6983-ac88-b52b6e9e6ecd@axentia.se>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 14 Aug 2018 08:33:03 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJHRL0f2YwvOJBpggKRVQwPWy8j08-+_nd-VifOOKYqFA@mail.gmail.com>
+Message-ID: <CAL_JsqJHRL0f2YwvOJBpggKRVQwPWy8j08-+_nd-VifOOKYqFA@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] drm/atmel-hlcdc: iterate over all output endpoints
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        jmondi <jacopo@jmondi.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Aug 14, 2018 at 12:36 AM Peter Rosin <peda@axentia.se> wrote:
+>
+> On 2018-08-13 22:52, Rob Herring wrote:
+> > On Mon, Aug 13, 2018 at 8:25 AM Peter Rosin <peda@axentia.se> wrote:
+> >>
+> >> On 2018-08-13 15:59, jacopo mondi wrote:
+> >>> Hi Peter,
+> >>>
+> >>> On Fri, Aug 10, 2018 at 03:03:58PM +0200, Peter Rosin wrote:
+> >>>> This enables more flexible devicetrees. You can e.g. have two output
+> >>>> nodes where one is not enabled, without the ordering affecting things.
+> >
+> > Your DTs are not supposed to be flexible. They should be well defined
+> > by the binding.
+>
+> I feel the need to explain the situation with more words...
+>
+> We have a board with this atmel-hlcdc wired to both an LVDS encoder
+> and an HDMI encoder. Depending on how we integrate this board, only
+> one of these paths make sense. Hence, I would like to do the following
+> in a .dtsi for that board:
+>
+> / {
+>         hlcdc-display-controller {
+>                 ...
+>                 port@0 {
+>                         hlcdc_lvds: endpoint@0 {
+>                                 reg = <0>;
+>                                 remote-endpoint = <&lvds_encoder_input>;
+>                         };
+>
+>                         hlcdc_hdmi: endpoint@1 {
+>                                 reg = <1>;
+>                                 remote-endpoint = <&hdmi_encoder_input>;
+>                         };
+>                 };
+>         };
+>
+>         lvds_encoder: lvds-encoder {
+>                 status = "disabled";
+>
+>                 ...
+>
+>                 ports {
+>                         #address-cells = <1>;
+>                         #size-cells = <0>;
+>
+>                         port@0 {
+>                                 reg = <0>;
+>
+>                                 lvds_encoder_input: endpoint {
+>                                         remote-endpoint = <&hlcdc_lvds>;
+>                                 };
+>                         };
+>
+>                         port@1 {
+>                                 reg = <1>;
+>
+>                                 lvds_encoder_output: endpoint {
+>                                 };
+>                         };
+>                 };
+>         };
+> };
+>
+> &i2c2 {
+>         ...
+>         hdmi_encoder: hdmi-encoder@70 {
+>                 status = "disabled";
+>
+>                 ...
+>
+>                 port {
+>                         hdmi_encoder_input: endpoint {
+>                                 remote-endpoint = <&hlcdc_hdmi>;
+>                         };
+>                 };
+>         };
+> };
+>
+>
+> And then, depending on what components are fitted and what LVDS panel has
+> been attached to the LVDS encoder output, this can be used as follows
+> in the .dts file for LVDS case:
+>
+> / {
+>         panel: panel {
+>                 compatible = "litemax,dlf2118", "panel-lvds";
+>
+>                 ...
+>
+>                 port {
+>                         panel_input: endpoint {
+>                                 remote-endpoint = <&lvds_encoder_output>;
+>                         };
+>                 };
+>         };
+> };
+>
+>
+> &lvds_encoder {
+>         status = "okay";
+> };
+>
+> &lvds_encoder_output {
+>         remote-endpoint = <&panel_input>;
+> };
+>
+>
+> For the HDMI case, it would be this in the .dts file:
+>
+> &hdmi_encoder {
+>         status = "okay";
+> };
+>
+>
+> The above seem so much better than just having the following in
+> the .dtsi file
+>
+> / {
+>         hlcdc-display-controller {
+>                 ...
+>                 port@0 {
+>                         hlcdc_lvds: endpoint {
+>                                 remote-endpoint = <&encoder_input>;
+>                         };
+>                 };
+>         };
+> };
+>
+> and pushing the lvds-encoder and hdmi-encoder nodes (slightly modified) down
+> to the relevant .dts files. Especially so since we have to this point
+> delivered several variants with different LVDS panels. The duplication
+> is ugly, and the number of different panels is expected to grow...
+>
+> But maybe I have misunderstood what endpoints are all about, but to me
+> the actual endpoint id is not that interesting and I see nothing in the
+> graph binding that suggests that endpoint id 0 has to be up and kicking
+> in order for endpoint id 1 to be examined at all.
 
-syzbot found the following crash on:
+I guess it depends if the numbering is significant. For a one to many
+fan out like this, not so much. For a muxed input, then it would be.
 
-HEAD commit:    1c2f2531cf8b Add linux-next specific files for 20180809
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10129c74400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=44657afb75515c8b
-dashboard link: https://syzkaller.appspot.com/bug?extid=1ff78ee6b7dd52919ab9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> For ports, yes, you are right that the port id needs to be defined and
+> fixed for a specific function, so scratch that. It was just a "maybe"
+> question anyway...
+>
+> >>>>
+> >>>> Prior to this patch the active node had to have endpoint id zero.
+> >>>>
+> >>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>> ---
+> >>>>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 32 ++++++++++++++++++------
+> >>>>  1 file changed, 25 insertions(+), 7 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+> >>>> index 8db51fb131db..16c1b2f54b42 100644
+> >>>> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+> >>>> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+> >>>> @@ -31,14 +31,16 @@ static const struct drm_encoder_funcs atmel_hlcdc_panel_encoder_funcs = {
+> >>>>      .destroy = drm_encoder_cleanup,
+> >>>>  };
+> >>>>
+> >>>> -static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+> >>>> +static int atmel_hlcdc_attach_endpoint(struct drm_device *dev,
+> >>>> +                                   struct of_endpoint *endpoint)
+> >>>>  {
+> >>>>      struct drm_encoder *encoder;
+> >>>>      struct drm_panel *panel;
+> >>>>      struct drm_bridge *bridge;
+> >>>>      int ret;
+> >>>>
+> >>>> -    ret = drm_of_find_panel_or_bridge(dev->dev->of_node, 0, endpoint,
+> >>>> +    ret = drm_of_find_panel_or_bridge(dev->dev->of_node,
+> >>>> +                                      endpoint->port, endpoint->id,
+> >>>
+> >>> You are refusing endpoint->port != 0 in the caller, so that could be
+> >>> 0.
+> >>
+> >> Yes, it could. However, I intentionally did not write 0 here, so that
+> >> the logic related to "port has to be zero" was in one place and not
+> >> scattered about. I guess it's up to Boris?
+> >>
+> >> Maybe the port do not actually have to be zero at all? With the old
+> >> code, it was kind of understandable that the port number was fixed,
+> >> but for the code in my patch it does not matter at all AFAICT. There
+> >> is nothing in the binding docs (except for the example) that hints
+> >> that port has to be zero, so that's one thing in favor of just getting
+> >> rid of the port number checking altogether...
+> >
+> > The port numbering must be defined and fixed. If that is not clear in
+> > the binding, fix the binding.
+>
+> Ok, so the code in my patch does the right thing forcing the port
+> number to zero.
+>
+> >>>> @@ -77,13 +79,29 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+> >>>>
+> >>>>  int atmel_hlcdc_create_outputs(struct drm_device *dev)
+> >>>>  {
+> >>>> -    int endpoint, ret = 0;
+> >>>> -
+> >>>> -    for (endpoint = 0; !ret; endpoint++)
+> >>>> -            ret = atmel_hlcdc_attach_endpoint(dev, endpoint);
+> >>>> +    struct of_endpoint endpoint;
+> >>>> +    struct device_node *node = NULL;
+> >>>> +    int count = 0;
+> >>>> +    int ret = 0;
+> >>>> +
+> >>>> +    for_each_endpoint_of_node(dev->dev->of_node, node) {
+> >>>> +            of_graph_parse_endpoint(node, &endpoint);
+> >
+> > I'd really like to kill off of_graph_parse_endpoint, not add more
+> > users (check the git history on this code). You should know what are
+> > possible port and endpoint numbers, so iterate over those.
+>
+> So, add a comment to that effect in the docs of the of_graph_parse_endpoint
+> function.
+>
+> How can the hlcdc driver know the actual number of endpoints? It's a
+> one-way signal path out from that port, and it can easily be routed to
+> 1, 2, 3 or even more places. As shown above, forcing the endpoint id
+> to start at zero is a nuisance, and I don't see the point of it.
+>
+> But I welcome suggestions on how to arrange the above dtsi/dts fragments
+> in a world where the endpoint id absolutely has to start at zero.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Your dts file arrangement seems fine. Can't you just not exit the loop
+on -ENODEV? IOW, just iterate til you find an enabled endpoint.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1ff78ee6b7dd52919ab9@syzkaller.appspotmail.com
-
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000009300a8
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000009300ac
-R13: 00007fff7398e49f R14: 00007f51b2d9f9c0 R15: 0000000000000000
-==================================================================
-BUG: KASAN: use-after-free in vmx_vcpu_load+0xf78/0xfe0  
-arch/x86/kvm/vmx.c:2929
-Read of size 8 at addr ffff88019a46e5e0 by task syz-executor7/17308
-
-CPU: 1 PID: 17308 Comm: syz-executor7 Not tainted 4.18.0-rc8-next-20180809+  
-#35
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  vmx_vcpu_load+0xf78/0xfe0 arch/x86/kvm/vmx.c:2929
-  kvm_arch_vcpu_load+0x22b/0x940 arch/x86/kvm/x86.c:3081
-  kvm_sched_in+0x82/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3975
-  __fire_sched_in_preempt_notifiers kernel/sched/core.c:2481 [inline]
-  fire_sched_in_preempt_notifiers kernel/sched/core.c:2487 [inline]
-  finish_task_switch+0x50d/0x870 kernel/sched/core.c:2679
-  context_switch kernel/sched/core.c:2826 [inline]
-  __schedule+0x884/0x1ec0 kernel/sched/core.c:3471
-  schedule+0xfb/0x450 kernel/sched/core.c:3515
-  freezable_schedule include/linux/freezer.h:172 [inline]
-  futex_wait_queue_me+0x3f9/0x840 kernel/futex.c:2530
-  futex_wait+0x45b/0xa20 kernel/futex.c:2645
-  do_futex+0x336/0x27d0 kernel/futex.c:3527
-  __do_sys_futex kernel/futex.c:3587 [inline]
-  __se_sys_futex kernel/futex.c:3555 [inline]
-  __x64_sys_futex+0x472/0x6a0 kernel/futex.c:3555
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f51b2d9ecf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 00000000009300a8 RCX: 0000000000457089
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000009300a8
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000009300ac
-R13: 00007fff7398e49f R14: 00007f51b2d9f9c0 R15: 0000000000000000
-
-Allocated by task 17308:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  kmem_cache_zalloc include/linux/slab.h:697 [inline]
-  vmx_create_vcpu+0xcf/0x28b0 arch/x86/kvm/vmx.c:10682
-  kvm_arch_vcpu_create+0xe5/0x220 arch/x86/kvm/x86.c:8401
-  kvm_vm_ioctl_create_vcpu arch/x86/kvm/../../../virt/kvm/kvm_main.c:2476  
-[inline]
-  kvm_vm_ioctl+0x488/0x1d80 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2977
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 17301:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  vmx_free_vcpu+0x26b/0x300 arch/x86/kvm/vmx.c:10676
-  kvm_arch_vcpu_free arch/x86/kvm/x86.c:8387 [inline]
-  kvm_free_vcpus arch/x86/kvm/x86.c:8836 [inline]
-  kvm_arch_destroy_vm+0x365/0x7c0 arch/x86/kvm/x86.c:8933
-  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:752 [inline]
-  kvm_put_kvm+0x73f/0x1060 arch/x86/kvm/../../../virt/kvm/kvm_main.c:773
-  kvm_vcpu_release+0x7b/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2407
-  __fput+0x376/0x8a0 fs/file_table.c:279
-  ____fput+0x15/0x20 fs/file_table.c:312
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88019a468e00
-  which belongs to the cache kvm_vcpu of size 23808
-The buggy address is located 22496 bytes inside of
-  23808-byte region [ffff88019a468e00, ffff88019a46eb00)
-The buggy address belongs to the page:
-page:ffffea0006691a00 count:1 mapcount:0 mapping:ffff8801d9fed3c0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0006bd0c08 ffffea0006432c08 ffff8801d9fed3c0
-raw: 0000000000000000 ffff88019a468e00 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88019a46e480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88019a46e500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88019a46e580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff88019a46e600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88019a46e680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Rob
