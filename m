@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08ED2C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78069C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE91821741
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE91821741
+	by mail.kernel.org (Postfix) with ESMTP id 392DE21730
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392DE21730
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388022AbeHNUMy (ORCPT
+        id S2388037AbeHNUM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:12:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51454 "EHLO
+        Tue, 14 Aug 2018 16:12:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51468 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387747AbeHNUMx (ORCPT
+        with ESMTP id S2387747AbeHNUM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:12:53 -0400
+        Tue, 14 Aug 2018 16:12:56 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83F19C5C;
-        Tue, 14 Aug 2018 17:24:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E715D1D;
+        Tue, 14 Aug 2018 17:24:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.18 21/79] x86/cpu/AMD: Remove the pointless detect_ht() call
-Date:   Tue, 14 Aug 2018 19:16:40 +0200
-Message-Id: <20180814171337.615482939@linuxfoundation.org>
+Subject: [PATCH 4.18 22/79] x86/cpu/common: Provide detect_ht_early()
+Date:   Tue, 14 Aug 2018 19:16:41 +0200
+Message-Id: <20180814171337.650642136@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -53,29 +53,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-Real 32bit AMD CPUs do not have SMT and the only value of the call was to
-reach the magic printout which got removed.
+To support force disabling of SMT it's required to know the number of
+thread siblings early. detect_ht() cannot be called before the APIC driver
+is selected, so split out the part which initializes smp_num_siblings.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/amd.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/kernel/cpu/common.c |   24 ++++++++++++++----------
+ arch/x86/kernel/cpu/cpu.h    |    1 +
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -857,10 +857,6 @@ static void init_amd(struct cpuinfo_x86
- 		srat_detect_node(c);
- 	}
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -661,32 +661,36 @@ static void cpu_detect_tlb(struct cpuinf
+ 		tlb_lld_4m[ENTRIES], tlb_lld_1g[ENTRIES]);
+ }
  
--#ifdef CONFIG_X86_32
--	detect_ht(c);
--#endif
--
- 	init_amd_cacheinfo(c);
+-void detect_ht(struct cpuinfo_x86 *c)
++int detect_ht_early(struct cpuinfo_x86 *c)
+ {
+ #ifdef CONFIG_SMP
+ 	u32 eax, ebx, ecx, edx;
+-	int index_msb, core_bits;
  
- 	if (c->x86 >= 0xf)
+ 	if (!cpu_has(c, X86_FEATURE_HT))
+-		return;
++		return -1;
+ 
+ 	if (cpu_has(c, X86_FEATURE_CMP_LEGACY))
+-		return;
++		return -1;
+ 
+ 	if (cpu_has(c, X86_FEATURE_XTOPOLOGY))
+-		return;
++		return -1;
+ 
+ 	cpuid(1, &eax, &ebx, &ecx, &edx);
+ 
+ 	smp_num_siblings = (ebx & 0xff0000) >> 16;
++	if (smp_num_siblings == 1)
++		pr_info_once("CPU0: Hyper-Threading is disabled\n");
++#endif
++	return 0;
++}
+ 
+-	if (!smp_num_siblings)
+-		smp_num_siblings = 1;
++void detect_ht(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_SMP
++	int index_msb, core_bits;
+ 
+-	if (smp_num_siblings == 1) {
+-		pr_info_once("CPU0: Hyper-Threading is disabled\n");
++	if (detect_ht_early(c) < 0)
+ 		return;
+-	}
+ 
+ 	index_msb = get_count_order(smp_num_siblings);
+ 	c->phys_proc_id = apic->phys_pkg_id(c->initial_apicid, index_msb);
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -56,6 +56,7 @@ extern void init_amd_cacheinfo(struct cp
+ 
+ extern void detect_num_cpu_cores(struct cpuinfo_x86 *c);
+ extern int detect_extended_topology(struct cpuinfo_x86 *c);
++extern int detect_ht_early(struct cpuinfo_x86 *c);
+ extern void detect_ht(struct cpuinfo_x86 *c);
+ 
+ unsigned int aperfmperf_get_khz(int cpu);
 
 
