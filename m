@@ -2,81 +2,131 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7819EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C117C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CE8921709
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:15:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CE8921709
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B0BCD216EE
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:16:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dtIlKoDJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BCD216EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732430AbeHNTDd (ORCPT
+        id S1732678AbeHNTD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:03:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32954 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbeHNTDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:03:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1A6EA2072C; Tue, 14 Aug 2018 18:15:42 +0200 (CEST)
-Received: from localhost (unknown [37.168.208.63])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 901FB203EC;
-        Tue, 14 Aug 2018 18:15:41 +0200 (CEST)
-Date:   Tue, 14 Aug 2018 18:15:41 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     a.zummo@towertech.it, baruch@tkos.co.il, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rtc:rtc-digicolor: Use PTR_ERR_OR_ZERO to replace
- the open code
-Message-ID: <20180814161541.GP943@piout.net>
-References: <1534159885-25364-1-git-send-email-zhongjiang@huawei.com>
- <1534159885-25364-2-git-send-email-zhongjiang@huawei.com>
+        Tue, 14 Aug 2018 15:03:57 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:47098 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729560AbeHNTD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:03:57 -0400
+Received: by mail-lf1-f65.google.com with SMTP id l16-v6so14175702lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 09:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BDsve/tkZzdGny1shTMPYKbIoE1fI0/YwA2iuO3vtfY=;
+        b=dtIlKoDJhtPWzcdujxNWYg1FyqDbrBdJSq10KiMXqlIbC8MwZXSOuZX6VivBW7UC8t
+         5PcDXREjowS/6r579wdr21JD/9aHgHcGevOt/zaRFVIocZeAW9RDye56+gCTtZP7Ngum
+         Q6DV7r2ZHd2tjy2BlDIYMCTze1pLsXv1TqvG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BDsve/tkZzdGny1shTMPYKbIoE1fI0/YwA2iuO3vtfY=;
+        b=F0YiVQZWOUykwz/+HcubdyvHKC+sYVgC/GKxKm0EU1UcQ58Q7YdkYFrw1r/hbFhwc2
+         SteEHqC0tLLY0U69hgXNDqJdMu7an2HhV4xGY/SbcX9oVFsYDbdZL4JpFwTw3M31/Ls0
+         3XD/XRhyg13Og4yV2u16dKf6HRDX2RyO3n8Qgc1Dzg5fPm+NU5sj6RRI5BopvHTNJqF1
+         bx45f/QpfrnzVNXQtRr91pSSP56TZd/PxgjgsPrByewCWWgRgmqmgAITGh/TcUSzInG+
+         4DdFZVZilGfmFBnk+A3FK0pUifhIrgco+tXGkKP8Vsens1hcjLWiKSt0hWFfjx3C3YEj
+         Kxsw==
+X-Gm-Message-State: AOUpUlF059vU5oOp2rEuMqwDz1voyFFyitEoYxEflBh/dYE+EL80JR7C
+        fXwFHd5mJpNCMXXTeHac9CQxdOLkLhyZznz8iIl5LA==
+X-Google-Smtp-Source: AA+uWPx3SQR5YZ+XhXh91jjzU6rIN9bD0nlgtcpA4oObUnpFgKLba8XVQjbs8y6pFHu/+OzKyBsw8m1waaTdk//jieQ=
+X-Received: by 2002:a19:26d2:: with SMTP id m201-v6mr13696194lfm.43.1534263367428;
+ Tue, 14 Aug 2018 09:16:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534159885-25364-2-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org> <20180813124642.3d49c082a95fc294d926016e@arm.com>
+In-Reply-To: <20180813124642.3d49c082a95fc294d926016e@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 14 Aug 2018 10:15:56 -0600
+Message-ID: <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+To:     Kim Phillips <kim.phillips@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
+        linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 13 Aug 2018 at 11:46, Kim Phillips <kim.phillips@arm.com> wrote:
+>
+> On Wed, 18 Jul 2018 15:48:00 -0600
+> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+> > This set adds the capability to communiate event specific configuration
+> > to the PMU kernel driver using an ioctl().  The functionatlity is made
+> > generic enough for anyone to use but is targeted at the identification
+> > of CoreSight sinks when operating in CPU-wide trace scenarios.
+> >
+> > ---
+> > Changes for V3:
+> > . Return an error for CPU-wide scenarios while the feature is being
+> >   implemented (Kim)
+>
+> Hi, I'm giving this series a short test-drive on Juno.
+
 Hi,
 
-On 13/08/2018 19:31:24+0800, zhong jiang wrote:
-> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR, So
-> just replace them rather than duplicating its implement.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/rtc/rtc-digicolor.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
-> index b253bf1..fd6850c 100644
-> --- a/drivers/rtc/rtc-digicolor.c
-> +++ b/drivers/rtc/rtc-digicolor.c
-> @@ -202,10 +202,8 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, rtc);
->  	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
->  						&dc_rtc_ops, THIS_MODULE);
-> -	if (IS_ERR(rtc->rtc_dev))
-> -		return PTR_ERR(rtc->rtc_dev);
->  
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(rtc->rtc_dev);
+>
+> It yields success for the --per-thread case..:
+>
+> $ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ --per-thread uname -a
+> Linux juno 4.18.0-rc8-00011-gb82af52c4b35-dirty #147 SMP PREEMPT Thu Aug 9 11:20:37 CDT 2018 aarch64 GNU/Linux
+> [ perf record: Woken up 0 times to write data ]
+> Warning:
+> AUX data lost 1 times out of 2!
+>
+> [ perf record: Captured and wrote 0.067 MB perf.data ]
+> $
+>
+> ..but not for CPU-wide?:
+>
+> $ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ uname -a
+> failed to mmap with 12 (Cannot allocate memory)
+> $ sudo taskset -c 0 ./perf record -e cs_etm/@20010000.etf/ -C 0 uname -a
+> failed to mmap with 12 (Cannot allocate memory)
+> $
 
-As many other maintainers, I don't find that kind of change useful and
-I'm not taking them unless there are other improvements in the driver.
+This patchset is getting very old and a fair amount of things have
+changed since then.  I'm hoping to be coming out with a new one
+shortly.  Nonetheless the above is returning an error in CPU-wide
+scenarios while the feature is being implemented.  Isn't what you
+requested or have I misunderstood your comment?
 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>
+> Thanks,
+>
+> Kim
