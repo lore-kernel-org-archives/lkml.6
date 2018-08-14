@@ -3,226 +3,197 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E03C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF43C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045602170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818C82170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:58:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ct3+BZww"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045602170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgMBMrKe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818C82170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeHOCqV (ORCPT
+        id S1728715AbeHOCrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:46:21 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36400 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbeHOCqV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:46:21 -0400
-Received: by mail-ua1-f66.google.com with SMTP id c12-v6so15140293uan.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UwJfCvGdbdWxYL3wU4DcmdEjvgZoWaRoeF6+kLsy9iY=;
-        b=ct3+BZwwAQr2glyteG4aBUAdpv5VfgPsugOf2g/8zU4D3OHH8xayFD7j6CScHomDM/
-         4xtJBfiWmQ0r1S63uadp3LOjKK21s9XR3Kr9CQwFYzYQY2S2r0OQg60F3v9W0ir0tOA9
-         kgCe+/D+Jhen8pHn8lsy0/GulS953CdngVYOM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UwJfCvGdbdWxYL3wU4DcmdEjvgZoWaRoeF6+kLsy9iY=;
-        b=JniOmOKROdHX1aMYDXCiYXF9/+43A6yEbjE/Gpw+6VZjsg3g4QysGsg35UxwP4hEp9
-         TqzndPMUQSOMrRi5y7c6oHDetaHh/UOp4Y5rWzBvE37VbTJE6CQ2mXdeLsR+ASwFC+jQ
-         qheSthyrOPqR7Gdo3E4Rd1L+WvN+ss1rit4fnVYtmlzpe9bajWcpJG/4brC6MwzrZ8ni
-         9zpG9lCfgdvFZ/LyZP+8Z+R4pntjpYcWGCe2IwiU73dvy6kkF9nXnuk2Ubo8h2gr8CEu
-         7PaSkt35SMqDyIdl2E73dq5KqVF1ZFs7EMO6ZojtUML0qwrz+WR1cqlIA8S/KVgQbqvF
-         PYNw==
-X-Gm-Message-State: AOUpUlG9R1wJhrnUGXhvtuNg/9UIMIgW6R/MJRjTSwWCC7go3mrIhE0U
-        2kpJka2r58dV8U9BLilg9nMlWKxdXYM=
-X-Google-Smtp-Source: AA+uWPzRRagfo7hb82o+CeJWM2+QPkWipI8U2954XB4Pk79cfrQwIGFdRRQdKdB0jpmxQN43aDouMg==
-X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr15657567uae.72.1534291005043;
-        Tue, 14 Aug 2018 16:56:45 -0700 (PDT)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id b132-v6sm4428368vke.10.2018.08.14.16.56.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 16:56:43 -0700 (PDT)
-Received: by mail-ua1-f52.google.com with SMTP id f4-v6so15167453uao.10
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:56:43 -0700 (PDT)
-X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr15638743uac.191.1534291003197;
- Tue, 14 Aug 2018 16:56:43 -0700 (PDT)
+        Tue, 14 Aug 2018 22:47:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728119AbeHOCrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 22:47:43 -0400
+Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com [209.85.161.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84A882170E;
+        Tue, 14 Aug 2018 23:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534291087;
+        bh=01XDqgzF+7HqaD1pkOZsmZ1HyFXUKtZ/fSsSFb+7MQU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=DgMBMrKeVFzczuPNlEMywcc4zT5spkYNKQIJC/YGqBj0uI2ybg+DctO/rqC+FhVIQ
+         jLrdhSNVGOoQjulPsYviMppcc88ohQPD+GsQVDmEBPkczqDXK2n1w3bKY3ahVPoBI7
+         mgObw6q1hsNIad3YWFNqokjXD8UljMcVOQOAPjsE=
+Received: by mail-yw1-f45.google.com with SMTP id 139-v6so17585019ywg.12;
+        Tue, 14 Aug 2018 16:58:07 -0700 (PDT)
+X-Gm-Message-State: AOUpUlG5HdMbb2w6muyEsi3IdPw1H2qPg0Hi76d4vuPj/cnNM6XltydD
+        2v+WFmy5GYFIeTX/2YyGVEMt1Tz3jz0gHPrBrKo=
+X-Google-Smtp-Source: AA+uWPxYyJ9A9yuFvc5wtfX7omGxKngJROLQRwi3vQdUrf+FPOpG+7/Bx2a+0KWuureuv3awPXfuEapOSoAetzMpmKg=
+X-Received: by 2002:a25:448b:: with SMTP id r133-v6mr13496670yba.122.1534291086759;
+ Tue, 14 Aug 2018 16:58:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 16:56:42 -0700 (PDT)
-In-Reply-To: <aa2bd1f6-74b4-a63b-d115-88d6e16ed95d@codeaurora.org>
-References: <20180814170617.100087-1-dianders@chromium.org>
- <20180814170617.100087-2-dianders@chromium.org> <bf70f01d-41ac-dcdc-b503-5e0eb1e70329@codeaurora.org>
- <CAD=FV=VNCOyyq5+xvSudTmtBgPm4-s7gj7GRCvuL5vSmA6yDVA@mail.gmail.com> <aa2bd1f6-74b4-a63b-d115-88d6e16ed95d@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 14 Aug 2018 16:56:42 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WBw2SKgPq8Atb+SkziUku8p7N4GWemHYZZvoMSE0bK9g@mail.gmail.com>
-Message-ID: <CAD=FV=WBw2SKgPq8Atb+SkziUku8p7N4GWemHYZZvoMSE0bK9g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] regulator: core: If consumers don't call
- regulator_set_load() assume max
-To:     David Collins <collinsd@codeaurora.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:81cc:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 16:57:26
+ -0700 (PDT)
+In-Reply-To: <3092191.aOBZP6MEga@pcbe13614>
+References: <20180725181514.3501-1-atull@kernel.org> <3092191.aOBZP6MEga@pcbe13614>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 14 Aug 2018 18:57:26 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTfCsJi1bnGw41V1seGc0c5vW1ZCLdor6x_eso6Uy71Vw@mail.gmail.com>
+Message-ID: <CANk1AXTfCsJi1bnGw41V1seGc0c5vW1ZCLdor6x_eso6Uy71Vw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fpga: Document when fpga_blah_free functions should
+ be used
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Aug 14, 2018 at 2:59 PM, David Collins <collinsd@codeaurora.org> wrote:
-> Hi,
+On Thu, Jul 26, 2018 at 2:26 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
+> Hi Alan,
 >
-> On 08/14/2018 01:03 PM, Doug Anderson wrote:
->> On Tue, Aug 14, 2018 at 11:30 AM, David Collins <collinsd@codeaurora.org> wrote:>>> --- a/drivers/regulator/core.c
->>>> +++ b/drivers/regulator/core.c
->>>> @@ -732,6 +732,7 @@ static int drms_uA_update(struct regulator_dev *rdev)
->>>>       struct regulator *sibling;
->>>>       int current_uA = 0, output_uV, input_uV, err;
->>>>       unsigned int mode;
->>>> +     bool any_unset = false;
->>>>
->>>>       lockdep_assert_held_once(&rdev->mutex);
->>>>
->>>> @@ -751,11 +752,17 @@ static int drms_uA_update(struct regulator_dev *rdev)
->>>>               return -EINVAL;
->>>>
->>>>       /* calc total requested load */
->>>> -     list_for_each_entry(sibling, &rdev->consumer_list, list)
->>>> +     list_for_each_entry(sibling, &rdev->consumer_list, list) {
->>>>               current_uA += sibling->uA_load;
->>>> +             if (!sibling->uA_load_set)
->>>> +                     any_unset = true;
->>>> +     }
->>>>
->>>>       current_uA += rdev->constraints->system_load;
->>>>
->>>> +     if (any_unset)
->>>> +             current_uA = INT_MAX;
->>>> +
->>>
->>> This check will incorrectly result in a constant load request of INT_MAX
->>> for all regulators that have at least one child regulator.  This is the
->>> case because such child regulators are present in rdev->consumer_list and
->>> because regulator_set_load() requests are not propagated up to parent
->>> regulators.  Thus, the regulator structs for child regulators will always
->>> have uA_load==0 and uA_load_set==false.
+> have you considered the possibility of having something like devm_fpga_[mgr|
+> bridge|region]_[create|free]() ? Like this, it will be obvious that 'struct
+> fpga_mgr' will be released automatically without reading any comment (but the
+> comment is still good), and you use devm_*_free() only to handle error
+> conditions.
+
+Hi Federico,
+
+Sorry for the late reply.  I was waiting until I had this all
+implemented.  As you've seen, I've posted the devm_fpga_mgr_create
+implementation [1].  I found I didn't need devm_*_free() for the error
+conditions, the managed device code handled cleanup nicely without it.
+
+Just to be clear, I'm dropping this patch in favor of devm support instead.
+
+Thanks again for your suggestions.
+
+Alan
+
+[1] https://lkml.org/lkml/2018/8/14/954
+
+>
+> On Wednesday, July 25, 2018 8:15:13 PM CEST Alan Tull wrote:
+>> Clarify when fpga_(mgr|bridge|region)_free functions should be used.
+>> The class's dev_release will handle cleanup when the device is released
+>> so once the mgr/brige/region has been successfully registered, it
+>> would be a bug to call fpga_(mgr|bridge|region)_free.
 >>
->> Ah, interesting.
+>> Signed-off-by: Alan Tull <atull@kernel.org>
+>> Suggested-by: Florian Fainelli <f.fainelli@gmail.com>
+>> Suggested-by: Federico Vaga <federico.vaga@cern.ch>
+>> ---
+>>  drivers/fpga/fpga-bridge.c | 10 +++++++++-
+>>  drivers/fpga/fpga-mgr.c    | 10 +++++++++-
+>>  drivers/fpga/fpga-region.c | 10 +++++++++-
+>>  3 files changed, 27 insertions(+), 3 deletions(-)
 >>
->> ...but doesn't this same bug exist anyway, just in the opposite
->> direction?  Without my patch we'll try to request a 0 mA load in this
->> case which seems just as wrong (or perhaps worse?).  I guess on RPMh
->> regulator you're "saved" because the RPMh hardware itself knows the
->> parent/child relationship and knows to ignore this 0 mA load, but it's
->> still a bug in the overall Linux framework...
+>> diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
+>> index 24b8f98..528d2149 100644
+>> --- a/drivers/fpga/fpga-bridge.c
+>> +++ b/drivers/fpga/fpga-bridge.c
+>> @@ -379,7 +379,11 @@ EXPORT_SYMBOL_GPL(fpga_bridge_create);
+>>
+>>  /**
+>>   * fpga_bridge_free - free a fpga bridge and its id
+>> - * @bridge:  FPGA bridge struct created by fpga_bridge_create
+>> + * @bridge:  FPGA bridge struct created by fpga_bridge_create()
+>> + *
+>> + * Free a FPGA bridge.  This function should only be called for
+>> + * freeing a bridge that has not been registered yet (such as in error
+>> + * paths in a probe function).
+>>   */
+>>  void fpga_bridge_free(struct fpga_bridge *bridge)
+>>  {
+>> @@ -414,6 +418,10 @@ EXPORT_SYMBOL_GPL(fpga_bridge_register);
+>>  /**
+>>   * fpga_bridge_unregister - unregister and free a fpga bridge
+>>   * @bridge:  FPGA bridge struct created by fpga_bridge_create
+>> + *
+>> + * Unregister the bridge device.  The class's dev_release will handle
+>> + * freeing the bridge struct when the device is released so don't
+>> + * call fpga_bridge_free() after calling fpga_bridge_unregister().
+>>   */
+>>  void fpga_bridge_unregister(struct fpga_bridge *bridge)
+>>  {
+>> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+>> index a41b07e..9632cbd 100644
+>> --- a/drivers/fpga/fpga-mgr.c
+>> +++ b/drivers/fpga/fpga-mgr.c
+>> @@ -619,7 +619,11 @@ EXPORT_SYMBOL_GPL(fpga_mgr_create);
+>>
+>>  /**
+>>   * fpga_mgr_free - deallocate a FPGA manager
+>> - * @mgr:     fpga manager struct created by fpga_mgr_create
+>> + * @mgr:     fpga manager struct created by fpga_mgr_create()
+>> + *
+>> + * Free a FPGA manager struct.  This function should only be called
+>> + * for freeing a manager that has not been registered yet (such as in
+>> + * error paths in a probe function).
+>>   */
+>>  void fpga_mgr_free(struct fpga_manager *mgr)
+>>  {
+>> @@ -663,6 +667,10 @@ EXPORT_SYMBOL_GPL(fpga_mgr_register);
+>>  /**
+>>   * fpga_mgr_unregister - unregister and free a FPGA manager
+>>   * @mgr:     fpga manager struct
+>> + *
+>> + * Unregister the manager device.  The class's dev_release will handle
+>> + * freeing the manager struct when the device is released so don't
+>> + * call fpga_mgr_free() after calling fpga_mgr_unregister().
+>>   */
+>>  void fpga_mgr_unregister(struct fpga_manager *mgr)
+>>  {
+>> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+>> index 0d65220..7335fa9 100644
+>> --- a/drivers/fpga/fpga-region.c
+>> +++ b/drivers/fpga/fpga-region.c
+>> @@ -231,7 +231,11 @@ EXPORT_SYMBOL_GPL(fpga_region_create);
+>>
+>>  /**
+>>   * fpga_region_free - free a struct fpga_region
+>> - * @region: FPGA region created by fpga_region_create
+>> + * @region:  FPGA region created by fpga_region_create()
+>> + *
+>> + * Free a FPGA region struct.  This function should only be called for
+>> + * freeing a region that has not been registered yet (such as in error
+>> + * paths in a probe function).
+>>   */
+>>  void fpga_region_free(struct fpga_region *region)
+>>  {
+>> @@ -255,6 +259,10 @@ EXPORT_SYMBOL_GPL(fpga_region_register);
+>>  /**
+>>   * fpga_region_unregister - unregister and free a FPGA region
+>>   * @region: FPGA region
+>> + *
+>> + * Unregister the region device.  The class's dev_release will handle
+>> + * freeing the region so don't call fpga_region_free() after calling
+>> + * fpga_region_unregister().
+>>   */
+>>  void fpga_region_unregister(struct fpga_region *region)
+>>  {
 >
-> I'm not sure what existing bug you are referring to here.  Where is a 0 mA
-> load being requested?  Could you list the consumer function calls and the
-> behavior on the framework side that you're envisioning?
-
-Imagine you've got a tree like this:
-
-- regulatorParent (1.8 V)
-  - regulatorChildA (1.7 V)
-  - regulatorChildB (1.2 V)
-  - regulatorChildC (1.5 V)
-
-...and this set of calls:
-
-regulator_set_load(regulatorChildA, 1000);
-regulator_set_load(regulatorChildB, 2000);
-regulator_set_load(regulatorChildC, 3000);
-
-regulator_enable(regulatorChildA);
-regulator_enable(regulatorChildB);
-regulator_enable(regulatorChildC);
-
-
-With the existing code in Mark's tree then ChildA / ChildB / ChildC
-will presumably have a load high enough to be in high power mode.
-However, as you said, loads aren't propagated.  ...so "Parent" will
-see no load requested (which translates to a load request of 0 mA).
-
-The "bug" is that when you did the
-"regulator_enable(regulatorChildA);" then that will propagate up and
-cause a "regulator_enable(regulatorParent)".  In _regulator_enable()
-you can see drms_uA_update().  That will cause it to set the mode of
-regulatorParent based on a load of 0 mA.  That is the bug.  You may
-respond "but REGULATOR_CHANGE_DRMS isn't set for the parent!  See
-below and for now imagine that REGULATOR_CHANGE_DRMS _is_ set for the
-parent.
-
-With my code in the same situation the parent will end up with a load
-of "MAX_INT" mA which I think is the bug you pointed out.  ...while it
-would be good to fix this it does seem to be better to set the parent
-to a mode based on MAX_INT mA rather than 0 mA?
-
-
-> The RPMh hardware never sees requests with units of mA (though its
-> predecessor RPM SMD did).  Instead, mode requests sent to RPMh are raw
-> PMIC MODE_CTL register values.  RPMh then applies max aggregation of these
-> register values across masters (APPS, modem, etc).  Also note that the
-> RPMh knowledge of parent/child relationships is only utilized in enable
-> control and voltage headroom management.  It does not apply to mode control.
-
-Yeah, I know RPMh only sees modes.  I was sorta assuming that perhaps
-RPMh would use its parent/child relationship knowledge to say that if
-a child is in HPM then the parent should automatically go to HPM.
-
-...but as I dug further I figured out why we're not running into this
-bug (at least with the regulator setup I have in my tree).  All of the
-"parent" regulators are always configured such that
-"REGULATOR_CHANGE_DRMS" is not valid.  Thus we never end up calling
-into drms_uA_update() and never update the mode.
-
-
-So tl;dr: your original comment was that my patch had problems
-whenever one regulator is the supply for another regulator if parent
-has REGULATOR_CHANGE_DRMS set.  I believe I have shown that even
-without my patch we have problems in this exact same case.
-
-
->> I have no idea how we ought to propagate regulator_set_load() to
->> parents though.  That seems like a tough thing to try to handle
->> automagically.
 >
-> I attempted it seven years ago with two revisions of a patch series [1]
-> and [2].  The feature wasn't completed though.  Perhaps something along
-> the same lines could be reintroduced now that child regulators are handled
-> the same way as ordinary consumers within the regulator framework.
 >
-> Thanks,
-> David
 >
-> [1]: https://lkml.org/lkml/2011/3/28/246
-> [2]: https://lkml.org/lkml/2011/3/28/530
-
-Thanks for the links.  My first instinct is just what Mark said there:
-you can't really take the child load and map it accurately to a parent
-load without loads of per-device complexity and even then you'd
-probably get nothing more than an approximation.
-
-IMO about the best we could hope to do would be to map "mode" from
-children to parent.  AKA: perhaps you could assume that if a child is
-in a higher power mode that perhaps a parent should be too?
-
-
--Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
