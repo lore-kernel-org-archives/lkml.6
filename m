@@ -6,36 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33812C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D148C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD4A216E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:04:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD4A216E4
+	by mail.kernel.org (Postfix) with ESMTP id 3A4B5216E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:04:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4B5216E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730698AbeHNUwP (ORCPT
+        id S1729262AbeHNUXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:52:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57234 "EHLO
+        Tue, 14 Aug 2018 16:23:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729384AbeHNUX0 (ORCPT
+        with ESMTP id S1729177AbeHNUXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:23:26 -0400
+        Tue, 14 Aug 2018 16:23:17 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 896AEDE0;
-        Tue, 14 Aug 2018 17:35:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27F0CE21;
+        Tue, 14 Aug 2018 17:35:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 4.14 032/104] x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings
-Date:   Tue, 14 Aug 2018 19:16:46 +0200
-Message-Id: <20180814171517.336937532@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, bigeasy@linutronix.de,
+        matt@codeblueprint.co.uk, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 008/104] stop_machine: Disable preemption after queueing stopper threads
+Date:   Tue, 14 Aug 2018 19:16:22 +0200
+Message-Id: <20180814171515.777916480@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -52,292 +56,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Isaac J. Manjarres <isaacm@codeaurora.org>
 
-commit 42e4089c7890725fcd329999252dc489b72f2921 upstream
+commit 2610e88946632afb78aa58e61f11368ac4c0af7b upstream.
 
-For L1TF PROT_NONE mappings are protected by inverting the PFN in the page
-table entry. This sets the high bits in the CPU's address space, thus
-making sure to point to not point an unmapped entry to valid cached memory.
+This commit:
 
-Some server system BIOSes put the MMIO mappings high up in the physical
-address space. If such an high mapping was mapped to unprivileged users
-they could attack low memory by setting such a mapping to PROT_NONE. This
-could happen through a special device driver which is not access
-protected. Normal /dev/mem is of course access protected.
+  9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two stopper threads")
 
-To avoid this forbid PROT_NONE mappings or mprotect for high MMIO mappings.
+does not fully address the race condition that can occur
+as follows:
 
-Valid page mappings are allowed because the system is then unsafe anyways.
+On one CPU, call it CPU 3, thread 1 invokes
+cpu_stop_queue_two_works(2, 3,...), and the execution is such
+that thread 1 queues the works for migration/2 and migration/3,
+and is preempted after releasing the locks for migration/2 and
+migration/3, but before waking the threads.
 
-It's not expected that users commonly use PROT_NONE on MMIO. But to
-minimize any impact this is only enforced if the mapping actually refers to
-a high MMIO address (defined as the MAX_PA-1 bit being set), and also skip
-the check for root.
+Then, On CPU 2, a kworker, call it thread 2, is running,
+and it invokes cpu_stop_queue_two_works(1, 2,...), such that
+thread 2 queues the works for migration/1 and migration/2.
+Meanwhile, on CPU 3, thread 1 resumes execution, and wakes
+migration/2 and migration/3. This means that when CPU 2
+releases the locks for migration/1 and migration/2, but before
+it wakes those threads, it can be preempted by migration/2.
 
-For mmaps this is straight forward and can be handled in vm_insert_pfn and
-in remap_pfn_range().
+If thread 2 is preempted by migration/2, then migration/2 will
+execute the first work item successfully, since migration/3
+was woken up by CPU 3, but when it goes to execute the second
+work item, it disables preemption, calls multi_cpu_stop(),
+and thus, CPU 2 will wait forever for migration/1, which should
+have been woken up by thread 2. However migration/1 cannot be
+woken up by thread 2, since it is a kworker, so it is affine to
+CPU 2, but CPU 2 is running migration/2 with preemption
+disabled, so thread 2 will never run.
 
-For mprotect it's a bit trickier. At the point where the actual PTEs are
-accessed a lot of state has been changed and it would be difficult to undo
-on an error. Since this is a uncommon case use a separate early page talk
-walk pass for MMIO PROT_NONE mappings that checks for this condition
-early. For non MMIO and non PROT_NONE there are no changes.
+Disable preemption after queueing works for stopper threads
+to ensure that the operation of queueing the works and waking
+the stopper threads is atomic.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+Co-Developed-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Co-Developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
+Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bigeasy@linutronix.de
+Cc: gregkh@linuxfoundation.org
+Cc: matt@codeblueprint.co.uk
+Fixes: 9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two stopper threads")
+Link: http://lkml.kernel.org/r/1531856129-9871-1-git-send-email-isaacm@codeaurora.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/pgtable.h |    8 ++++++
- arch/x86/mm/mmap.c             |   21 +++++++++++++++++
- include/asm-generic/pgtable.h  |   12 ++++++++++
- mm/memory.c                    |   37 ++++++++++++++++++++++--------
- mm/mprotect.c                  |   49 +++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 117 insertions(+), 10 deletions(-)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1292,6 +1292,14 @@ static inline bool pud_access_permitted(
- 	return __pte_access_permitted(pud_val(pud), write);
- }
- 
-+#define __HAVE_ARCH_PFN_MODIFY_ALLOWED 1
-+extern bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot);
-+
-+static inline bool arch_has_pfn_modify_check(void)
-+{
-+	return boot_cpu_has_bug(X86_BUG_L1TF);
-+}
-+
- #include <asm-generic/pgtable.h>
- #endif	/* __ASSEMBLY__ */
- 
---- a/arch/x86/mm/mmap.c
-+++ b/arch/x86/mm/mmap.c
-@@ -174,3 +174,24 @@ const char *arch_vma_name(struct vm_area
- 		return "[mpx]";
- 	return NULL;
- }
-+
-+/*
-+ * Only allow root to set high MMIO mappings to PROT_NONE.
-+ * This prevents an unpriv. user to set them to PROT_NONE and invert
-+ * them, then pointing to valid memory for L1TF speculation.
-+ *
-+ * Note: for locked down kernels may want to disable the root override.
-+ */
-+bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_L1TF))
-+		return true;
-+	if (!__pte_needs_invert(pgprot_val(prot)))
-+		return true;
-+	/* If it's real memory always allow */
-+	if (pfn_valid(pfn))
-+		return true;
-+	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
-+		return false;
-+	return true;
-+}
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1069,4 +1069,16 @@ static inline void init_espfix_bsp(void)
- #endif
- #endif
- 
-+#ifndef __HAVE_ARCH_PFN_MODIFY_ALLOWED
-+static inline bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
-+{
-+	return true;
-+}
-+
-+static inline bool arch_has_pfn_modify_check(void)
-+{
-+	return false;
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_PGTABLE_H */
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1887,6 +1887,9 @@ int vm_insert_pfn_prot(struct vm_area_st
- 	if (addr < vma->vm_start || addr >= vma->vm_end)
- 		return -EFAULT;
- 
-+	if (!pfn_modify_allowed(pfn, pgprot))
-+		return -EACCES;
-+
- 	track_pfn_insert(vma, &pgprot, __pfn_to_pfn_t(pfn, PFN_DEV));
- 
- 	ret = insert_pfn(vma, addr, __pfn_to_pfn_t(pfn, PFN_DEV), pgprot,
-@@ -1908,6 +1911,9 @@ static int __vm_insert_mixed(struct vm_a
- 
- 	track_pfn_insert(vma, &pgprot, pfn);
- 
-+	if (!pfn_modify_allowed(pfn_t_to_pfn(pfn), pgprot))
-+		return -EACCES;
-+
- 	/*
- 	 * If we don't have pte special, then we have to use the pfn_valid()
- 	 * based VM_MIXEDMAP scheme (see vm_normal_page), and thus we *must*
-@@ -1955,6 +1961,7 @@ static int remap_pte_range(struct mm_str
- {
- 	pte_t *pte;
- 	spinlock_t *ptl;
-+	int err = 0;
- 
- 	pte = pte_alloc_map_lock(mm, pmd, addr, &ptl);
- 	if (!pte)
-@@ -1962,12 +1969,16 @@ static int remap_pte_range(struct mm_str
- 	arch_enter_lazy_mmu_mode();
- 	do {
- 		BUG_ON(!pte_none(*pte));
-+		if (!pfn_modify_allowed(pfn, prot)) {
-+			err = -EACCES;
-+			break;
-+		}
- 		set_pte_at(mm, addr, pte, pte_mkspecial(pfn_pte(pfn, prot)));
- 		pfn++;
- 	} while (pte++, addr += PAGE_SIZE, addr != end);
- 	arch_leave_lazy_mmu_mode();
- 	pte_unmap_unlock(pte - 1, ptl);
--	return 0;
-+	return err;
- }
- 
- static inline int remap_pmd_range(struct mm_struct *mm, pud_t *pud,
-@@ -1976,6 +1987,7 @@ static inline int remap_pmd_range(struct
- {
- 	pmd_t *pmd;
- 	unsigned long next;
-+	int err;
- 
- 	pfn -= addr >> PAGE_SHIFT;
- 	pmd = pmd_alloc(mm, pud, addr);
-@@ -1984,9 +1996,10 @@ static inline int remap_pmd_range(struct
- 	VM_BUG_ON(pmd_trans_huge(*pmd));
- 	do {
- 		next = pmd_addr_end(addr, end);
--		if (remap_pte_range(mm, pmd, addr, next,
--				pfn + (addr >> PAGE_SHIFT), prot))
--			return -ENOMEM;
-+		err = remap_pte_range(mm, pmd, addr, next,
-+				pfn + (addr >> PAGE_SHIFT), prot);
-+		if (err)
-+			return err;
- 	} while (pmd++, addr = next, addr != end);
- 	return 0;
- }
-@@ -1997,6 +2010,7 @@ static inline int remap_pud_range(struct
- {
- 	pud_t *pud;
- 	unsigned long next;
-+	int err;
- 
- 	pfn -= addr >> PAGE_SHIFT;
- 	pud = pud_alloc(mm, p4d, addr);
-@@ -2004,9 +2018,10 @@ static inline int remap_pud_range(struct
- 		return -ENOMEM;
- 	do {
- 		next = pud_addr_end(addr, end);
--		if (remap_pmd_range(mm, pud, addr, next,
--				pfn + (addr >> PAGE_SHIFT), prot))
--			return -ENOMEM;
-+		err = remap_pmd_range(mm, pud, addr, next,
-+				pfn + (addr >> PAGE_SHIFT), prot);
-+		if (err)
-+			return err;
- 	} while (pud++, addr = next, addr != end);
- 	return 0;
- }
-@@ -2017,6 +2032,7 @@ static inline int remap_p4d_range(struct
- {
- 	p4d_t *p4d;
- 	unsigned long next;
-+	int err;
- 
- 	pfn -= addr >> PAGE_SHIFT;
- 	p4d = p4d_alloc(mm, pgd, addr);
-@@ -2024,9 +2040,10 @@ static inline int remap_p4d_range(struct
- 		return -ENOMEM;
- 	do {
- 		next = p4d_addr_end(addr, end);
--		if (remap_pud_range(mm, p4d, addr, next,
--				pfn + (addr >> PAGE_SHIFT), prot))
--			return -ENOMEM;
-+		err = remap_pud_range(mm, p4d, addr, next,
-+				pfn + (addr >> PAGE_SHIFT), prot);
-+		if (err)
-+			return err;
- 	} while (p4d++, addr = next, addr != end);
- 	return 0;
- }
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -292,6 +292,42 @@ unsigned long change_protection(struct v
- 	return pages;
- }
- 
-+static int prot_none_pte_entry(pte_t *pte, unsigned long addr,
-+			       unsigned long next, struct mm_walk *walk)
-+{
-+	return pfn_modify_allowed(pte_pfn(*pte), *(pgprot_t *)(walk->private)) ?
-+		0 : -EACCES;
-+}
-+
-+static int prot_none_hugetlb_entry(pte_t *pte, unsigned long hmask,
-+				   unsigned long addr, unsigned long next,
-+				   struct mm_walk *walk)
-+{
-+	return pfn_modify_allowed(pte_pfn(*pte), *(pgprot_t *)(walk->private)) ?
-+		0 : -EACCES;
-+}
-+
-+static int prot_none_test(unsigned long addr, unsigned long next,
-+			  struct mm_walk *walk)
-+{
-+	return 0;
-+}
-+
-+static int prot_none_walk(struct vm_area_struct *vma, unsigned long start,
-+			   unsigned long end, unsigned long newflags)
-+{
-+	pgprot_t new_pgprot = vm_get_page_prot(newflags);
-+	struct mm_walk prot_none_walk = {
-+		.pte_entry = prot_none_pte_entry,
-+		.hugetlb_entry = prot_none_hugetlb_entry,
-+		.test_walk = prot_none_test,
-+		.mm = current->mm,
-+		.private = &new_pgprot,
-+	};
-+
-+	return walk_page_range(start, end, &prot_none_walk);
-+}
-+
- int
- mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
- 	unsigned long start, unsigned long end, unsigned long newflags)
-@@ -310,6 +346,19 @@ mprotect_fixup(struct vm_area_struct *vm
+---
+ kernel/stop_machine.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -260,6 +260,15 @@ retry:
+ 	err = 0;
+ 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
+ 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
++	/*
++	 * The waking up of stopper threads has to happen
++	 * in the same scheduling context as the queueing.
++	 * Otherwise, there is a possibility of one of the
++	 * above stoppers being woken up by another CPU,
++	 * and preempting us. This will cause us to n ot
++	 * wake up the other stopper forever.
++	 */
++	preempt_disable();
+ unlock:
+ 	raw_spin_unlock(&stopper2->lock);
+ 	raw_spin_unlock_irq(&stopper1->lock);
+@@ -271,7 +280,6 @@ unlock:
  	}
  
- 	/*
-+	 * Do PROT_NONE PFN permission checks here when we can still
-+	 * bail out without undoing a lot of state. This is a rather
-+	 * uncommon case, so doesn't need to be very optimized.
-+	 */
-+	if (arch_has_pfn_modify_check() &&
-+	    (vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP)) &&
-+	    (newflags & (VM_READ|VM_WRITE|VM_EXEC)) == 0) {
-+		error = prot_none_walk(vma, start, end, newflags);
-+		if (error)
-+			return error;
-+	}
-+
-+	/*
- 	 * If we make a private mapping writable we increase our commit;
- 	 * but (without finer accounting) cannot reduce our commit if we
- 	 * make it unwritable again. hugetlb mapping were accounted for
+ 	if (!err) {
+-		preempt_disable();
+ 		wake_up_q(&wakeq);
+ 		preempt_enable();
+ 	}
 
 
