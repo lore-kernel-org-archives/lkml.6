@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA62C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DE2C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 619BD2154F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 619BD2154F
+	by mail.kernel.org (Postfix) with ESMTP id 87B202154F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:43:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87B202154F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390486AbeHNUbJ (ORCPT
+        id S2390498AbeHNUbN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:31:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59732 "EHLO
+        Tue, 14 Aug 2018 16:31:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59748 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUbI (ORCPT
+        with ESMTP id S1728642AbeHNUbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:31:08 -0400
+        Tue, 14 Aug 2018 16:31:12 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B0F0AF3;
-        Tue, 14 Aug 2018 17:42:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C169B40B;
+        Tue, 14 Aug 2018 17:43:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 070/107] x86/kvm: Drop L1TF MSR list approach
-Date:   Tue, 14 Aug 2018 19:17:33 +0200
-Message-Id: <20180814171525.124970724@linuxfoundation.org>
+Subject: [PATCH 4.9 053/107] x86/speculation/l1tf: Protect PAE swap entries against L1TF
+Date:   Tue, 14 Aug 2018 19:17:16 +0200
+Message-Id: <20180814171524.390362592@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -52,113 +52,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 2f055947ae5e2741fb2dc5bba1033c417ccf4faa upstream
+commit 0d0f6249058834ffe1ceaad0bb31464af66f6e7a upstream
 
-The VMX module parameter to control the L1D flush should become
-writeable.
+The PAE 3-level paging code currently doesn't mitigate L1TF by flipping the
+offset bits, and uses the high PTE word, thus bits 32-36 for type, 37-63 for
+offset. The lower word is zeroed, thus systems with less than 4GB memory are
+safe. With 4GB to 128GB the swap type selects the memory locations vulnerable
+to L1TF; with even more memory, also the swap offfset influences the address.
+This might be a problem with 32bit PAE guests running on large 64bit hosts.
 
-The MSR list is set up at VM init per guest VCPU, but the run time
-switching is based on a static key which is global. Toggling the MSR list
-at run time might be feasible, but for now drop this optimization and use
-the regular MSR write to make run-time switching possible.
+By continuing to keep the whole swap entry in either high or low 32bit word of
+PTE we would limit the swap size too much. Thus this patch uses the whole PAE
+PTE with the same layout as the 64bit version does. The macros just become a
+bit tricky since they assume the arch-dependent swp_entry_t to be 32bit.
 
-The default mitigation is the conditional flush anyway, so for extra
-paranoid setups this will add some small overhead, but the extra code
-executed is in the noise compared to the flush itself.
-
-Aside of that the EPT disabled case is not handled correctly at the moment
-and the MSR list magic is in the way for fixing that as well.
-
-If it's really providing a significant advantage, then this needs to be
-revisited after the code is correct and the control is writable.
-
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.516940445@linutronix.de
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   43 +++++++------------------------------------
- 1 file changed, 7 insertions(+), 36 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h |   35 ++++++++++++++++++++++++++++++++--
+ arch/x86/mm/init.c                    |    2 -
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5263,16 +5263,6 @@ static void ept_set_mmio_spte_mask(void)
- 	kvm_mmu_set_mmio_spte_mask((0x3ull << 62) | 0x6ull);
- }
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -177,12 +177,43 @@ static inline pmd_t native_pmdp_get_and_
+ #endif
  
--static bool vmx_l1d_use_msr_save_list(void)
--{
--	if (!enable_ept || !boot_cpu_has_bug(X86_BUG_L1TF) ||
--	    static_cpu_has(X86_FEATURE_HYPERVISOR) ||
--	    !static_cpu_has(X86_FEATURE_FLUSH_L1D))
--		return false;
--
--	return vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
--}
--
- #define VMX_XSS_EXIT_BITMAP 0
- /*
-  * Sets up the vmcs for emulated real mode.
-@@ -5622,12 +5612,6 @@ static void vmx_set_nmi_mask(struct kvm_
- 			vmcs_clear_bits(GUEST_INTERRUPTIBILITY_INFO,
- 					GUEST_INTR_STATE_NMI);
- 	}
--	/*
--	 * If flushing the L1D cache on every VMENTER is enforced and the
--	 * MSR is available, use the MSR save list.
--	 */
--	if (vmx_l1d_use_msr_save_list())
--		add_atomic_switch_msr(vmx, MSR_IA32_FLUSH_CMD, L1D_FLUSH, 0, true);
- }
+ /* Encode and de-code a swap entry */
++#define SWP_TYPE_BITS		5
++
++#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
++
++/* We always extract/encode the offset by shifting it all the way up, and then down again */
++#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT + SWP_TYPE_BITS)
++
+ #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > 5)
+ #define __swp_type(x)			(((x).val) & 0x1f)
+ #define __swp_offset(x)			((x).val >> 5)
+ #define __swp_entry(type, offset)	((swp_entry_t){(type) | (offset) << 5})
+-#define __pte_to_swp_entry(pte)		((swp_entry_t){ (pte).pte_high })
+-#define __swp_entry_to_pte(x)		((pte_t){ { .pte_high = (x).val } })
++
++/*
++ * Normally, __swp_entry() converts from arch-independent swp_entry_t to
++ * arch-dependent swp_entry_t, and __swp_entry_to_pte() just stores the result
++ * to pte. But here we have 32bit swp_entry_t and 64bit pte, and need to use the
++ * whole 64 bits. Thus, we shift the "real" arch-dependent conversion to
++ * __swp_entry_to_pte() through the following helper macro based on 64bit
++ * __swp_entry().
++ */
++#define __swp_pteval_entry(type, offset) ((pteval_t) { \
++	(~(pteval_t)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	| ((pteval_t)(type) << (64 - SWP_TYPE_BITS)) })
++
++#define __swp_entry_to_pte(x)	((pte_t){ .pte = \
++		__swp_pteval_entry(__swp_type(x), __swp_offset(x)) })
++/*
++ * Analogically, __pte_to_swp_entry() doesn't just extract the arch-dependent
++ * swp_entry_t, but also has to convert it from 64bit to the 32bit
++ * intermediate representation, using the following macros based on 64bit
++ * __swp_type() and __swp_offset().
++ */
++#define __pteval_swp_type(x) ((unsigned long)((x).pte >> (64 - SWP_TYPE_BITS)))
++#define __pteval_swp_offset(x) ((unsigned long)(~((x).pte) << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT))
++
++#define __pte_to_swp_entry(pte)	(__swp_entry(__pteval_swp_type(pte), \
++					     __pteval_swp_offset(pte)))
  
- static int vmx_nmi_allowed(struct kvm_vcpu *vcpu)
-@@ -8591,26 +8575,14 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	bool always;
+ #include <asm/pgtable-invert.h>
  
- 	/*
--	 * This code is only executed when:
--	 * - the flush mode is 'cond'
--	 * - the flush mode is 'always' and the flush MSR is not
--	 *   available
--	 *
--	 * If the CPU has the flush MSR then clear the flush bit because
--	 * 'always' mode is handled via the MSR save list.
--	 *
--	 * If the MSR is not avaibable then act depending on the mitigation
--	 * mode: If 'flush always', keep the flush bit set, otherwise clear
--	 * it.
-+	 * This code is only executed when the the flush mode is 'cond' or
-+	 * 'always'
- 	 *
--	 * The flush bit gets set again either from vcpu_run() or from one
--	 * of the unsafe VMEXIT handlers.
-+	 * If 'flush always', keep the flush bit set, otherwise clear
-+	 * it. The flush bit gets set again either from vcpu_run() or from
-+	 * one of the unsafe VMEXIT handlers.
- 	 */
--	if (static_cpu_has(X86_FEATURE_FLUSH_L1D))
--		always = false;
--	else
--		always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
--
-+	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
- 	vcpu->arch.l1tf_flush_l1d = always;
- 
- 	vcpu->stat.l1d_flush++;
-@@ -11689,8 +11661,7 @@ static int __init vmx_setup_l1d_flush(vo
- 
- 	l1tf_vmx_mitigation = vmentry_l1d_flush;
- 
--	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
--	    vmx_l1d_use_msr_save_list())
-+	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
- 		return 0;
- 
- 	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -796,7 +796,7 @@ unsigned long max_swapfile_size(void)
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+ 		 */
+-#ifdef CONFIG_X86_64
++#if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+ 		pages = min_t(unsigned long, l1tf_limit, pages);
 
 
