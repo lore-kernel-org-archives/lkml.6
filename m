@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574F0C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC042C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 156F621730
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156F621730
+	by mail.kernel.org (Postfix) with ESMTP id 6F1E421728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1E421728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388732AbeHNUPc (ORCPT
+        id S2388745AbeHNUPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:15:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52466 "EHLO
+        Tue, 14 Aug 2018 16:15:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387886AbeHNUPb (ORCPT
+        with ESMTP id S2387886AbeHNUPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:15:31 -0400
+        Tue, 14 Aug 2018 16:15:34 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2A8FC5C;
-        Tue, 14 Aug 2018 17:27:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0DE240B;
+        Tue, 14 Aug 2018 17:27:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ave Hansen <dave.hansen@intel.com>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 69/79] Documentation/l1tf: Remove Yonah processors from not vulnerable list
-Date:   Tue, 14 Aug 2018 19:17:28 +0200
-Message-Id: <20180814171340.771764224@linuxfoundation.org>
+Subject: [PATCH 4.18 70/79] x86/speculation: Simplify sysfs report of VMX L1TF vulnerability
+Date:   Tue, 14 Aug 2018 19:17:29 +0200
+Message-Id: <20180814171340.812254646@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -50,28 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-Dave reported, that it's not confirmed that Yonah processors are
-unaffected. Remove them from the list.
+Three changes to the content of the sysfs file:
 
-Reported-by: ave Hansen <dave.hansen@intel.com>
+ - If EPT is disabled, L1TF cannot be exploited even across threads on the
+   same core, and SMT is irrelevant.
+
+ - If mitigation is completely disabled, and SMT is enabled, print "vulnerable"
+   instead of "vulnerable, SMT vulnerable"
+
+ - Reorder the two parts so that the main vulnerability state comes first
+   and the detail on SMT is second.
+
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/admin-guide/l1tf.rst |    2 --
- 1 file changed, 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -19,8 +19,6 @@ vulnerability is not present on:
-    - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
-      Penwell, Pineview, Silvermont, Airmont, Merrifield)
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -738,9 +738,15 @@ static ssize_t l1tf_show_state(char *buf
+ 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_AUTO)
+ 		return sprintf(buf, "%s\n", L1TF_DEFAULT_MSG);
  
--   - The Intel Core Duo Yonah variants (2006 - 2008)
--
-    - The Intel XEON PHI family
- 
-    - Intel processors which have the ARCH_CAP_RDCL_NO bit set in the
+-	return sprintf(buf, "%s; VMX: SMT %s, L1D %s\n", L1TF_DEFAULT_MSG,
+-		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled",
+-		       l1tf_vmx_states[l1tf_vmx_mitigation]);
++	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
++	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
++	     cpu_smt_control == CPU_SMT_ENABLED))
++		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
++			       l1tf_vmx_states[l1tf_vmx_mitigation]);
++
++	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
++		       l1tf_vmx_states[l1tf_vmx_mitigation],
++		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
+ }
+ #else
+ static ssize_t l1tf_show_state(char *buf)
 
 
