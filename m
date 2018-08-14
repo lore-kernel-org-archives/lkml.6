@@ -2,214 +2,123 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33BAC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E97E8C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59D72204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DA1F204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:24:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hnsz90kk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59D72204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="eMhG7fkJ";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="C1AwNbd2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA1F204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732779AbeHNSLw (ORCPT
+        id S1732586AbeHNSMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:11:52 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:50953 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730759AbeHNSLw (ORCPT
+        Tue, 14 Aug 2018 14:12:14 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43776 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730759AbeHNSMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:11:52 -0400
-Received: by mail-it0-f68.google.com with SMTP id j81-v6so18712516ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 08:24:15 -0700 (PDT)
+        Tue, 14 Aug 2018 14:12:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1534260277; x=1565796277;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=akboYYYz7BE722onqzuNjh/sqy1buCGr4E7KRirlmUs=;
+  b=eMhG7fkJh040zuL/kzjVuzI4T7R0eYPPInZaY1XaTtYlazcLlo4v2ird
+   03f/u5ogNYIB9omNrIwkIMuaW4Bu5mXsOtzDg1PkPEvA+w3ZVyqIpgIr/
+   IVB/UDxC362sdB1Ma4SYjeH5fLw+8SVppcKroQNZtAOWANHTyGBOsn3S7
+   gA+eUxMYiO97lO9FhF04LjnchudKJXobgfRLuBaCcXUOlvvW1XyElna7l
+   rzE8fu5Qko9dQJg9u4wlaIsIHh/TPmMG17MlgBiiLKIHyu4sem4PAm5ea
+   FN1Z54CsY+YcFIzj30jcS3eKfyAqaYGmsFdldagdd4illUwkjnVWMbX3i
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,238,1531756800"; 
+   d="scan'208";a="91325941"
+Received: from mail-sn1nam01lp0114.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([207.46.163.114])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Aug 2018 23:24:36 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EiVka1508O6cEd2pEdL8Vr0M6oZYzhmVbd1m9NwMNPA=;
-        b=Hnsz90kkWH0LKgD/hqPf6Ogcde9rIGUePnMAWjaGPL4wEpy6pkMjmtKT4j0WBTMuYU
-         yY+zX6ZWL5xHW/svjhkvrr4DxOMECd06ckpo4TPsVKa+gNX14l79AXgGmxYIYS1R8HgF
-         XtBnA6fX3+skPmbB3Y3LgM8/umwegVsOJCC25pA/zuT4QKHhtK/7tEjzHYsr5SBmWonW
-         awIdY+CLyBLUimIfSrHhFgtuLIGm4gjbN3RBbRVFR7fM4A0Rkgrd29PkMlft3Z0wQfC6
-         HPCbpQE3m2/elEYw/s+6XF+dpulEg7Al8Gt7Lecgzv8+DMDunYXSOswx9oCHOxV8djEn
-         H3ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EiVka1508O6cEd2pEdL8Vr0M6oZYzhmVbd1m9NwMNPA=;
-        b=FemezOqV9R4QF9AuygvU2AC+xBUwMbeWLr4N5GBmD+C+jPmmL29I91G9c4u9GrhWoL
-         G5w96v9ZuC7ApX5a7IWcAg0UOZfHLB1UjLYgUMSb5I4R5h9wp6bHieHq9DfNlcfR9k6x
-         orC/kYwJJQoGRu/ygbJdmEGAKOVmm+M9qEXqqRKF8XyMnJHlLP88bjMM6vaWr/TLcg3I
-         kgOA8gCtXeqYErPW2XdSj3a05dmu07gXHCGRDahYkn+FkGUPjhKXM6e3kYQyKZbUFOmk
-         uSSaoNb4LzgS3u7TtzQS7lAwYm8/g5urr0ri8FWSCrKso/gxC0Db0QAuSuf+I4kTqWEy
-         diaA==
-X-Gm-Message-State: AOUpUlF5ttg2y9NJXkky/hHQY6TgBoR4SrVL7tMOSSxOh+CZ0sS7lX0x
-        Pt63AJy6EIZnHlwQVi09zYmRTyLq3gsnYIEm9Ck=
-X-Google-Smtp-Source: AA+uWPxFOjH73eUf7jtA/7r1zbaCpbGEa+zfoKEgf3ba0o61uQZPhoBbfFkSyhYIVHkBw2xmnRyBgOivIBsKVePANTM=
-X-Received: by 2002:a24:5d4a:: with SMTP id w71-v6mr15741977ita.118.1534260254925;
- Tue, 14 Aug 2018 08:24:14 -0700 (PDT)
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=akboYYYz7BE722onqzuNjh/sqy1buCGr4E7KRirlmUs=;
+ b=C1AwNbd2bFPSTJ4oi+IhariAYaWRgJHSj/o7Ij75+QZnACzBUN/CClYl0tISdihPDidOanhGloU3ckhUzQwjo36utt1hApFbrqTriIvEBx6BFWGMi5alvnLf+ouS+7tiJwx3uTyCgpx7uXrGBoAQV6rARvrDam8l88HB3ZtaUB4=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0544.namprd04.prod.outlook.com (10.173.49.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1038.23; Tue, 14 Aug 2018 15:24:34 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee%9]) with mapi id 15.20.1038.023; Tue, 14 Aug 2018
+ 15:24:34 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "hare@suse.de" <hare@suse.de>, "axboe@kernel.dk" <axboe@kernel.dk>
+CC:     "hch@lst.de" <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "keith.busch@intel.com" <keith.busch@intel.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "hare@suse.com" <hare@suse.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>
+Subject: Re: [PATCH 5/5] virtio-blk: modernize sysfs attribute creation
+Thread-Topic: [PATCH 5/5] virtio-blk: modernize sysfs attribute creation
+Thread-Index: AQHUM6EQ5hw++VTdqk64t4Ix7odRf6S/XouA
+Date:   Tue, 14 Aug 2018 15:24:34 +0000
+Message-ID: <0e99ae23c2bea89e597dd3e8b20489054f461ff5.camel@wdc.com>
+References: <20180814073305.87255-1-hare@suse.de>
+         <20180814073305.87255-6-hare@suse.de>
+In-Reply-To: <20180814073305.87255-6-hare@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.174]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0544;20:VSRSZVBkgA0/ftUAg4qjWwiTcPQ77NO5Sh3fXGIOyrVbTmItsgzInY3CzJSOo8K83DmWid8CNz2oJev2QwR+eqm6W6g2Tb9fEgIObFOHpVyFUFPw93S3lDDHhhNg1zqzd81fYRxFbOxLOvU2xc69UUHFvGu//5HNTB3j/baQLTQ=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f376fcd9-20a7-4924-f34f-08d601fa0a43
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0544;
+x-ms-traffictypediagnostic: MWHPR04MB0544:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0544ABB909C9E56D2AA7F43198380@MWHPR04MB0544.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0544;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0544;
+x-forefront-prvs: 0764C4A8CD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(366004)(39860400002)(199004)(189003)(66066001)(97736004)(76176011)(110136005)(54906003)(25786009)(6436002)(99286004)(7736002)(8676002)(6486002)(53936002)(305945005)(6246003)(229853002)(316002)(4326008)(256004)(106356001)(2900100001)(105586002)(81156014)(6512007)(118296001)(5660300001)(81166006)(2616005)(5250100002)(2501003)(102836004)(186003)(446003)(476003)(11346002)(478600001)(26005)(6506007)(72206003)(6116002)(3846002)(2906002)(486006)(14454004)(86362001)(8936002)(68736007)(558084003)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0544;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: y12AiZPX7qShcvg7odDQ4cDuw9d4m81+wXlruXGH7hNic+jzE7xbFbh+DhQSDP+veyAp8h4inpWWkoGQMGwiUVrSi201XjXSRuYfHI6CdKGGlAlkZsabFKcZAVsX92klqO8oLiKcwrADc8HCDIbQXLA3ne4B4AwSc6AKSkChWlb4mwJfxsFuGeCOtdclkUJn6tn6STiJdpvHhvyhMYm3dpyqRyA6htbCqUwLNsFUemxf1mT42Y/AMS+y8eg1wnGx4aO+Fr85oeiQLcF4aFZ1j9jIqMpYsKisl5oc00eJqGaGD8l4KiuhdRdPvq8OlL4d+gq4meLJoE0f3Wx/Kd1Y5uWyVeKpKUl3yZf4fltfsIM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <4642E7118B5F1749BAFE9B54EC2DED01@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <7f57199f45df7212fdbba0bd1e78142a@agner.ch>
-In-Reply-To: <7f57199f45df7212fdbba0bd1e78142a@agner.ch>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 14 Aug 2018 17:24:03 +0200
-Message-ID: <CAOi1vP9Y5Nrr7kVo5GAKnS4casbXPa+LSgY=si=mAW6OHs7-BA@mail.gmail.com>
-Subject: Re: Warning when using eMMC and partprobe: generic_make_request:
- Trying to write to read-only block-device
-To:     stefan@agner.ch
-Cc:     Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f376fcd9-20a7-4924-f34f-08d601fa0a43
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2018 15:24:34.3609
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0544
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 4:41 PM Stefan Agner <stefan@agner.ch> wrote:
->
-> Hi,
->
-> Using Linux 4.18 on a i.MX 6Q I see the following warning during
-> boot-up:
->
-> [   23.928916] ------------[ cut here ]------------
-> [   23.933795] WARNING: CPU: 1 PID: 527 at block/blk-core.c:2161
-> generic_make_request_checks+0x868/0xa18
-> [   23.943306] generic_make_request: Trying to write to read-only
-> block-device mmcblk2boot0 (partno 0)
-> [   23.952569] Modules linked in: joydev flexcan can_dev coda imx_vdoa
-> v4l2_mem2mem videobuf2_vmalloc dw_hdmi_ahb_audio evbug nhc_mobility
-> nhc_hop nhc_routing nhc_ipv6 nhc_dest nhc_fragment nhc_udp fuse
-> bluetooth_6lowpan 6lowpan
-> [   23.973115] CPU: 1 PID: 527 Comm: partprobe Not tainted 4.18.0 #1
-> [   23.979336] Hardware name: Freescale i.MX6 Quad/DualLite (Device
-> Tree)
-> [   23.985984] Backtrace:
-> [   23.988513] [<c010ecdc>] (dump_backtrace) from [<c010f064>]
-> (show_stack+0x18/0x1c)
-> [   23.996231]  r7:00000000 r6:60060013 r5:00000000 r4:c118ca44
-> [   24.002009] [<c010f04c>] (show_stack) from [<c0bc54e4>]
-> (dump_stack+0xb4/0xec)
-> [   24.009377] [<c0bc5430>] (dump_stack) from [<c012d7dc>]
-> (__warn+0xc4/0x108)
-> [   24.016471]  r10:c1108908 r9:c04864f0 r8:00000871 r7:c0ea02dc
-> r6:00000009 r5:00000000
-> [   24.024447]  r4:d73d1d1c r3:abf2ba7b
-> [   24.028111] [<c012d718>] (__warn) from [<c012d424>]
-> (warn_slowpath_fmt+0x4c/0x6c)
-> [   24.035741]  r9:d73d0000 r8:c01011e4 r7:c04873cc r6:d6f27400
-> r5:c0ea05b0 r4:c1108908
-> [   24.043641] [<c012d3dc>] (warn_slowpath_fmt) from [<c04864f0>]
-> (generic_make_request_checks+0x868/0xa18)
-> [   24.053296]  r3:d73d1d74 r2:c0ea05b0
-> [   24.058425]  r5:d6d4d0a0 r4:d6f94240
-> [   24.063538] [<c0485c88>] (generic_make_request_checks) from
-> [<c04873cc>] (generic_make_request+0xc0/0x480)
-> [   24.076301]  r10:d6f94240 r9:d73d0000 r8:c01011e4 r7:c1108908
-> r6:d73d1e98 r5:c1108908
-> [   24.087212]  r4:d6d4d0a0
-> [   24.091251] [<c048730c>] (generic_make_request) from [<c04877c4>]
-> (submit_bio+0x38/0x19c)
-> [   24.102438]  r10:00000076 r9:d73d0000 r8:c01011e4 r7:7fffffff
-> r6:d73d1e98 r5:c1108908
-> [   24.113265]  r4:d6f94240
-> [   24.117278] [<c048778c>] (submit_bio) from [<c047d8c4>]
-> (submit_bio_wait+0x5c/0x98)
-> [   24.127914]  r10:00000076 r9:d73d0000 r8:c01011e4 r7:7fffffff
-> r6:d73d1e98 r5:c1108908
-> [   24.138724]  r4:d6f94240
-> [   24.142739] [<c047d868>] (submit_bio_wait) from [<c048bd20>]
-> (blkdev_issue_flush+0x80/0xb0)
-> [   24.154038]  r6:00000000 r5:d4164340 r4:d6f94240
-> [   24.160143] [<c048bca0>] (blkdev_issue_flush) from [<c02de510>]
-> (blkdev_fsync+0x3c/0x54)
-> [   24.171143]  r7:7fffffff r6:d4164428 r5:7fffffff r4:00000000
-> [   24.178322] [<c02de4d4>] (blkdev_fsync) from [<c02d434c>]
-> (vfs_fsync_range+0x44/0x84)
-> [   24.189080]  r6:ffffffff r5:00000000 r4:d66ce000
-> [   24.195173] [<c02d4308>] (vfs_fsync_range) from [<c02d4404>]
-> (do_fsync+0x44/0x78)
-> [   24.205530]  r7:00000076 r6:00000000 r5:d66ce000 r4:d66ce000
-> [   24.212672] [<c02d43c0>] (do_fsync) from [<c02d46f8>]
-> (sys_fsync+0x14/0x18)
-> [   24.221140]  r6:01320248 r5:00000001 r4:013201d0
-> [   24.227266] [<c02d46e4>] (sys_fsync) from [<c0101000>]
-> (ret_fast_syscall+0x0/0x28)
-> [   24.237781] Exception stack(0xd73d1fa8 to 0xd73d1ff0)
-> [   24.244320] 1fa0:                   013201d0 00000001 00000004
-> be863b1c 00000064 00000000
-> [   24.255437] 1fc0: 013201d0 00000001 01320248 00000076 b6ef8aec
-> b6ef4c04 b6f37fa4 00000000
-> [   24.266593] 1fe0: 00000076 be863a00 b6e61faf b6de8306
-> [   24.273302] irq event stamp: 13037
-> [   24.278202] hardirqs last  enabled at (13045): [<c019a9e4>]
-> console_unlock+0x3e0/0x4e4
-> [   24.289163] hardirqs last disabled at (13054): [<c019a684>]
-> console_unlock+0x80/0x4e4
-> [   24.300085] softirqs last  enabled at (12880): [<c010240c>]
-> __do_softirq+0x224/0x2d0
-> [   24.310934] softirqs last disabled at (12833): [<c01334e4>]
-> irq_exit+0xc8/0x1ac
-> [   24.321438] ---[ end trace 05a4aba40df38a0c ]---
->
-> The system I am using calls partprobe for some reason, which causes the
-> stack
-> trace to appear.
->
-> The mmcblkXbootY partitions are hardware partitions on eMMC devices
-> which are
-> by default set to read only. Partition probing should really not lead to
-> a
-> write as far as I can tell...
->
-> strace shows what partprobe is actually doing:
->
-> ...
-> openat(AT_FDCWD, "/dev/mmcblk2boot0", O_RDONLY|O_LARGEFILE) = 4
-> ...
-> ioctl(4, BLKFLSBUF)                     = 0
-> ...
-> ioctl(4, BLKSSZGET, [512])              = 0
-> fadvise64_64(4, 0, 0, POSIX_FADV_RANDOM) = 0
-> fstat64(4, {st_mode=S_IFBLK|0660, st_rdev=makedev(179, 64), ...}) = 0
-> ioctl(4, BLKGETSIZE64, [2097152])       = 0
-> ...
-> ioctl(4, CDROM_GET_CAPABILITY, 0)       = -1 EINVAL (Invalid argument)
-> ioctl(4, BLKALIGNOFF, [0])              = 0
-> ioctl(4, BLKIOMIN, [512])               = 0
-> ioctl(4, BLKIOOPT, [0])                 = 0
-> ioctl(4, BLKPBSZGET, [512])             = 0
-> ioctl(4, BLKSSZGET, [512])              = 0
-> ioctl(4, BLKGETSIZE64, [2097152])       = 0
-> ioctl(4, HDIO_GETGEO, {heads=4, sectors=16, cylinders=64, start=0}) = 0
-> fsync(4)                                = 0
-> close(4)                                = 0
-> ...
->
-> Any idea?
+On Tue, 2018-08-14 at 09:33 +-0200, Hannes Reinecke wrote:
++AD4- Use new-style DEVICE+AF8-ATTR+AF8-RO/DEVICE+AF8-ATTR+AF8-RW to create=
+ the sysfs attributes
++AD4- and register the disk with default sysfs attribute groups.
 
-Looks like it's coming from that fsync():
+Reviewed-by: Bart Van Assche +ADw-bart.vanassche+AEA-wdc.com+AD4-
 
-  sys_fsync
-    do_fsync
-      vfs_fsync_range
-        blkdev_fsync
-          blkdev_issue_flush
 
-I think we need to teach blkdev_issue_flush() to bail out if the bdev
-is read-only, similar to blkdev_issue_discard(), _write_zeroes(), etc.
-The question is which error code to use.  blkdev_fsync() already skips
-over EOPNOTSUPP, so it is a (no-so-good) option.  Other blkdev_issue_
-functions return EPERM.
-
-Thanks,
-
-                Ilya
