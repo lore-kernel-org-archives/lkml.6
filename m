@@ -2,95 +2,196 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401F2C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FBBC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FA8216FE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B83E21700
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:51:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsUF5dD5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FA8216FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="SE32+H4E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B83E21700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732917AbeHNQbL (ORCPT
+        id S1732822AbeHNQip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:31:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44362 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732699AbeHNQbL (ORCPT
+        Tue, 14 Aug 2018 12:38:45 -0400
+Received: from services.gouders.net ([141.101.32.176]:44110 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732667AbeHNQio (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:31:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k21-v6so9255443pff.11;
-        Tue, 14 Aug 2018 06:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0GJAVV0LQoLLb/xORuLGfWOqsJy3SJXg82euTrhQiNE=;
-        b=VsUF5dD5d7hJrxs6cr9fA2BtMm41R9AxyzWXaS3IDShhgVsIXwfFsWOibX99DnGMqK
-         HT948eEjeFT4u1OGosKLOMpuhQP0LHylrZUKjYK0O3JcBbOSRrgYhAZr8ezhyKTFNuUt
-         nzIQL0fMBwV2DDn6E79YAQN3dowkD5buf23Fc+qQDvzainKI+K3LSibQ4YRna+jcGGIE
-         xVhXc/k/T29+BT1UyI3D7slfaet9DN1+gEJb8VV+jRfPl/Uw8Vzyl2Tq+05C+5VXpczL
-         T496e0fOzPE4DUZ0STF4MlqhSfpbNM2lOkj2oHmI8kSyEfQEb2rq6MgPiLdvNhQXB5kY
-         UxiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0GJAVV0LQoLLb/xORuLGfWOqsJy3SJXg82euTrhQiNE=;
-        b=s7s90ro4KoSMBYjlrrphb0dyss3+9Jeh/CABj+vLXv4wl+hR1gn3UFWv0zB/uJu8wt
-         ACq6QZcZLcablszEqFOKlSnhC2aWvZDRCxm0s2/xgImgNeFfiUqvNToBRoGkylwfCxeI
-         hIhcqWkwoVlKbRZ/5yRdrP89E+JbtQEVdYVR+i6taQ6QoenIWEyt2Tq5kKlJUak1dh/A
-         mhx7euGiPOjM3sRDiqORiUVzn9Kxo6Y27Hcq2Lx1P7jaayr5/b/QYdhBg7xfbQW9/XVH
-         7wwiFR8FeTb1uN02/stM0k4xeJ7Q8RG9p2NebjO4Vl8507w2ce+GYHNJ1OVMG65MVQNB
-         t2ow==
-X-Gm-Message-State: AOUpUlHpJBupa7B/8/5o+2gPeaGCXlMgbWzCZnMQthZWuGDeBDf1xn96
-        HdUntFNZUGAMzaYnVmVMj6ZNbY9S
-X-Google-Smtp-Source: AA+uWPwP9U9nn4+gvJNIl1+WEEvm+nsTU4IDTYOYJOK2Y03JNIeW+aX24hEiAteGQZcWjUV6/W6fOA==
-X-Received: by 2002:a65:6243:: with SMTP id q3-v6mr20633373pgv.273.1534254236860;
-        Tue, 14 Aug 2018 06:43:56 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id l27-v6sm43560437pfi.180.2018.08.14.06.43.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 06:43:56 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 06:43:55 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     michael.hennerich@analog.com
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        corbet@lwn.net, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        Tue, 14 Aug 2018 12:38:44 -0400
+Received: from localhost ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w7EDidib027405
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Aug 2018 15:44:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1534254280; bh=IGsFAP2AKkOYGxvfVWdieOc3ctXh0KqvO3uh6shWDJc=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=SE32+H4ERXxUDXuOVJhkXpqKoMnf/lj+ZJCJDchv5eBtUyxexantkCcfN9d4wl7IC
+         RsCck4AcaBDy5D1Ral29PmmX64BKa7k2f/2Ao3YP/l+wa/W1T1WdqdRywIBYbFezzK
+         0qwu/AJd1NPBklU7Nyiu88Td0eFCh1/IwNgcRU0Q=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: hwmon: pmbus: ltc2978: Add support for LTM4686
- uModule
-Message-ID: <20180814134355.GA15658@roeck-us.net>
-References: <1534249108-29765-1-git-send-email-michael.hennerich@analog.com>
+Subject: Re: [PATCH 1/2] kconfig: report recursive dependency involving 'imply'
+In-Reply-To: <gh8t59utb2.fsf@lena.gouders.net> (Dirk Gouders's message of
+        "Tue, 14 Aug 2018 12:38:25 +0200")
+References: <1534229021-8056-1-git-send-email-yamada.masahiro@socionext.com>
+        <gh8t59utb2.fsf@lena.gouders.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Date:   Tue, 14 Aug 2018 15:44:39 +0200
+Message-ID: <gh4lfxukoo.fsf@lena.gouders.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534249108-29765-1-git-send-email-michael.hennerich@analog.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 02:18:28PM +0200, michael.hennerich@analog.com wrote:
-> From: Michael Hennerich <michael.hennerich@analog.com>
-> 
-> This patch adds support for LTM4686 Ultrathin Dual 10A or
-> Single 20A uModule Regulator with Digital Power System Management.
-> 
-> Datasheet: http://www.analog.com/ltm4686
-> 
-> 
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Dirk Gouders <dirk@gouders.net> writes:
 
-Applied to hwmon-next.
+> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+>
+>> Currently, Kconfig does not report anything about the recursive
+>> dependency where 'imply' keywords are involved.
+>>
+>> [Test Code]
+>>
+>>   config A
+>>           bool "a"
+>>
+>>   config B
+>>           bool "b"
+>>           imply A
+>>           depends on A
+>
+> Hello Masahiro,
+>
+> obviously, it is hard to find a reason why one wants to use dependencies
+> like above but I also wonder how e.g. menuconfig handles this case:
+>
+> First, only "a" is visible, if I then select "a", "b" does not become
+> visible but when I then reset "a" to "n", "b" becomes visible.  If I then
+> try to select "b", it becomes invisible...
+>
+> Perhaps it would be better to just error out instead of giving users the
+> impression, Kconfig thinks such questionable behavior is OK.
+>
+> Side note: perhaps, the documentation could be better when it comes to
+>            recursive dependencies.  The documentation says "select" and
+>            "imply" can be used to specify lower limits whereas direct
+>            dependencies specify upper limits for symbol values and with
+>            this in mind, one might wonder why it is a problem to work
+>            with both limits in a recursive way.
+>
+>            Not very unlikely that it is just me who still has to
+>            understand recursive dependencies or problems with reading
+>            English text, though.
+>
+> What definitely seems to get void with your patches is item c) in
+> "Practical solutions to kconfig recursive issue" in
+> Documentation/kbuild/kconfig-language:
+>
+>         c) Consider the use of "imply" instead of "select"
 
-Thanks,
-Guenter
+Just some more information that adds to me feeling unsure about the
+correct definition of recursive dependencies:
+
+With commit 29c434f367ea (kconfig: tests: test if recursive dependencies
+are detected) a test case similar to the example above was introduced,
+explicitely stating it is _no_ recursive dependency:
+
++# depends on and imply
++# This is not recursive dependency
++
++config E1
++       bool "E1"
++       depends on E2
++       imply E2
++
++config E2
++       bool "E2"
+
+
+Dirk
+
+>
+>> In the code above, Kconfig cannot calculate the symbol values correctly
+>> due to the circular dependency.  For example, allyesconfig followed by
+>> syncconfig results in an odd behavior because CONFIG_B becomes visible
+>> in syncconfig.
+>>
+>>   $ make allyesconfig
+>>   scripts/kconfig/conf  --allyesconfig Kconfig
+>>   #
+>>   # configuration written to .config
+>>   #
+>>   $ cat .config
+>>   #
+>>   # Automatically generated file; DO NOT EDIT.
+>>   # Main menu
+>>   #
+>>   CONFIG_A=y
+>>   $ make syncconfig
+>>   scripts/kconfig/conf  --syncconfig Kconfig
+>>   *
+>>   * Restart config...
+>>   *
+>>   *
+>>   * Main menu
+>>   *
+>>   a (A) [Y/n/?] y
+>>     b (B) [N/y/?] (NEW)
+>>
+>> To report this correctly, sym_check_expr_deps() should recurse to
+>> not only sym->rev_dep.expr but also sym->implied.expr .
+>>
+>> At this moment, sym_check_print_recursive() cannot distinguish
+>> 'select' and 'imply' since it does not know the precise context
+>> where the recursive dependency is hit.  This will be solved by
+>> the next commit.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>>  scripts/kconfig/symbol.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+>> index 4ec8b1f..7de7463a 100644
+>> --- a/scripts/kconfig/symbol.c
+>> +++ b/scripts/kconfig/symbol.c
+>> @@ -1098,7 +1098,7 @@ static void sym_check_print_recursive(struct symbol *last_sym)
+>>  				sym->name ? sym->name : "<choice>",
+>>  				next_sym->name ? next_sym->name : "<choice>");
+>>  		} else {
+>> -			fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
+>> +			fprintf(stderr, "%s:%d:\tsymbol %s is selected or implied by %s\n",
+>>  				prop->file->name, prop->lineno,
+>>  				sym->name ? sym->name : "<choice>",
+>>  				next_sym->name ? next_sym->name : "<choice>");
+>> @@ -1161,8 +1161,13 @@ static struct symbol *sym_check_sym_deps(struct symbol *sym)
+>>  	if (sym2)
+>>  		goto out;
+>>  
+>> +	sym2 = sym_check_expr_deps(sym->implied.expr);
+>> +	if (sym2)
+>> +		goto out;
+>> +
+>>  	for (prop = sym->prop; prop; prop = prop->next) {
+>> -		if (prop->type == P_CHOICE || prop->type == P_SELECT)
+>> +		if (prop->type == P_CHOICE || prop->type == P_SELECT ||
+>> +		    prop->type == P_IMPLY)
+>>  			continue;
+>>  		stack.prop = prop;
+>>  		sym2 = sym_check_expr_deps(prop->visible.expr);
