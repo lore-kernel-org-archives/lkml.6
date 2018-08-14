@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEECC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C408EC46473
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 118472168D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 118472168D
+	by mail.kernel.org (Postfix) with ESMTP id 776ED2168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776ED2168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732134AbeHNUZ1 (ORCPT
+        id S1732189AbeHNUZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:25:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58080 "EHLO
+        Tue, 14 Aug 2018 16:25:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728249AbeHNUZ0 (ORCPT
+        with ESMTP id S1728642AbeHNUZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:25:26 -0400
+        Tue, 14 Aug 2018 16:25:29 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4162CD4A;
-        Tue, 14 Aug 2018 17:37:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D187D20;
+        Tue, 14 Aug 2018 17:37:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 038/104] cpu/hotplug: Make bringup/teardown of smp threads symmetric
-Date:   Tue, 14 Aug 2018 19:16:52 +0200
-Message-Id: <20180814171517.748129166@linuxfoundation.org>
+Subject: [PATCH 4.14 039/104] cpu/hotplug: Split do_cpu_down()
+Date:   Tue, 14 Aug 2018 19:16:53 +0200
+Message-Id: <20180814171517.812527037@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,39 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit c4de65696d865c225fda3b9913b31284ea65ea96 upstream
+commit cc1fe215e1efa406b03aa4389e6269b61342dec5 upstream
 
-The asymmetry caused a warning to trigger if the bootup was stopped in state
-CPUHP_AP_ONLINE_IDLE. The warning no longer triggers as kthread_park() can
-now be invoked on already or still parked threads. But there is still no
-reason to have this be asymmetric.
+Split out the inner workings of do_cpu_down() to allow reuse of that
+function for the upcoming SMT disabling mechanism.
+
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/cpu.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/cpu.c |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 --- a/kernel/cpu.c
 +++ b/kernel/cpu.c
-@@ -758,7 +758,6 @@ static int takedown_cpu(unsigned int cpu
+@@ -910,20 +910,19 @@ out:
+ 	return ret;
+ }
  
- 	/* Park the smpboot threads */
- 	kthread_park(per_cpu_ptr(&cpuhp_state, cpu)->thread);
--	smpboot_park_threads(cpu);
++static int cpu_down_maps_locked(unsigned int cpu, enum cpuhp_state target)
++{
++	if (cpu_hotplug_disabled)
++		return -EBUSY;
++	return _cpu_down(cpu, 0, target);
++}
++
+ static int do_cpu_down(unsigned int cpu, enum cpuhp_state target)
+ {
+ 	int err;
  
- 	/*
- 	 * Prevent irq alloc/free while the dying cpu reorganizes the
-@@ -1344,7 +1343,7 @@ static struct cpuhp_step cpuhp_ap_states
- 	[CPUHP_AP_SMPBOOT_THREADS] = {
- 		.name			= "smpboot/threads:online",
- 		.startup.single		= smpboot_unpark_threads,
--		.teardown.single	= NULL,
-+		.teardown.single	= smpboot_park_threads,
- 	},
- 	[CPUHP_AP_IRQ_AFFINITY_ONLINE] = {
- 		.name			= "irq/affinity:online",
+ 	cpu_maps_update_begin();
+-
+-	if (cpu_hotplug_disabled) {
+-		err = -EBUSY;
+-		goto out;
+-	}
+-
+-	err = _cpu_down(cpu, 0, target);
+-
+-out:
++	err = cpu_down_maps_locked(cpu, target);
+ 	cpu_maps_update_done();
+ 	return err;
+ }
 
 
