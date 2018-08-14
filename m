@@ -2,87 +2,97 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EABC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1625C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6368721570
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:02:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="owwJWSMN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6368721570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 59E1721709
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:04:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E1721709
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732657AbeHNSuY (ORCPT
+        id S1732894AbeHNSwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:50:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49730 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728458AbeHNSuY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:50:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ScSZMFGN86LYxcwWu/LiVzgG0d2dSK+BA+VUjdEXtyc=; b=owwJWSMNHvYqFH2OysQ9mptgIF
-        zdXb+4eP9O6iKPT0UEFeVEtPcINgtWEZXExidYydmB3o7iqZj+qTC39XTU+U3oVU8vkdAOHdPD26O
-        o6/DvmhlwtJixuBDunhK2ErQmIIJ836ZYwv09MSdiXHxaLbNwKHMtl9se2VK0/WMiVbQVs4EPS82M
-        GyqabpKargqHS43zarEZum1TXzJzFgzZ3IF3zRNkipRW1qf+OYkgqQV0uRp1iZ9BQQdO6dmlIdsfN
-        svV0SfBXbQpa6dz9qgdBBJUG8q9GXUHgLHBago5ZKbEMlxRBGgVgqQXcbqbIK5jCAbpgop8i348gl
-        T0oYkQgA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fpbmE-0002U9-Ta; Tue, 14 Aug 2018 16:02:36 +0000
-To:     linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] media: platform: fix cros-ec-cec build error
-Message-ID: <314cbfef-ad4f-b0b2-d57b-3f54c062c1f8@infradead.org>
-Date:   Tue, 14 Aug 2018 09:02:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 14 Aug 2018 14:52:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728458AbeHNSwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 14:52:22 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99BE3215E5;
+        Tue, 14 Aug 2018 16:04:35 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 12:04:33 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: implement ftrace with regs
+Message-ID: <20180814120433.1f5e8da1@gandalf.local.home>
+In-Reply-To: <a19d9e23-3dfa-ba9b-a177-cdc0d1035964@arm.com>
+References: <20180810160043.9E45568C76@newverein.lst.de>
+        <20180810160223.D360D68C76@newverein.lst.de>
+        <2b5c1092-2cc0-00ec-ba3d-341dc61452b4@arm.com>
+        <20180813220315.6e8dfc9c@vmware.local.home>
+        <a19d9e23-3dfa-ba9b-a177-cdc0d1035964@arm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Tue, 14 Aug 2018 09:33:52 +0100
+Julien Thierry <julien.thierry@arm.com> wrote:
 
-Fix build when MFD_CROS_EC is not enabled but COMPILE_TEST=y.
-Fixes this build error:
+> On 14/08/18 03:03, Steven Rostedt wrote:
+> > On Mon, 13 Aug 2018 11:54:06 +0100
+> > Julien Thierry <julien.thierry@arm.com> wrote:
+> >   
+> >>> --- a/arch/arm64/Makefile
+> >>> +++ b/arch/arm64/Makefile
+> >>> @@ -78,6 +78,15 @@ ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
+> >>>    KBUILD_LDFLAGS_MODULE	+= -T $(srctree)/arch/arm64/kernel/module.lds
+> >>>    endif
+> >>>    
+> >>> +ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> >>> +  CC_FLAGS_FTRACE := -fpatchable-function-entry=2
+> >>> +  KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
+> >>> +  ifeq ($(call cc-option,-fpatchable-function-entry=2),)
+> >>> +    $(warning Cannot use CONFIG_DYNAMIC_FTRACE_WITH_REGS: \
+> >>> +             -fpatchable-function-entry not supported by compiler)  
+> >>
+> >> Shouldn't this be an error? The option -fpatchable-function-entry has
+> >> been added to the CC_FLAGS_FTRACE, so any call to the compiler is gonna
+> >> break anyway. Or am I missing something?  
+> > 
+> > I'm guessing this adds a more informative message on that error. One
+> > will know why -fpatchable-function-entry was added to the CFLAGS. I'm
+> > for more informative error messages being a victim of poor error
+> > messages causing me to dig deep into the guts of the build
+> > infrastructure to figure out simple issues.
+> >   
+> 
+> Yes, I agree it is better to have this message. My point was that we 
+> could have "$error" instead of "$warning" to stop the compilation right 
+> away since we know everything is gonna break (and on parallel builds 
+> this warning is gonna be drowned in compiler errors).
+> 
 
-ERROR: "cros_ec_cmd_xfer_status" [drivers/media/platform/cros-ec-cec/cros-ec-cec.ko] undefined!
+OK, I see what you mean. If the resulting build wont boot, then yes
+this should be an error and not a warning.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
----
- drivers/media/platform/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
-
---- linux-next-20180814.orig/drivers/media/platform/Kconfig
-+++ linux-next-20180814/drivers/media/platform/Kconfig
-@@ -541,6 +541,8 @@ config VIDEO_CROS_EC_CEC
- 	depends on MFD_CROS_EC || COMPILE_TEST
- 	select CEC_CORE
- 	select CEC_NOTIFIER
-+	select CHROME_PLATFORMS
-+	select CROS_EC_PROTO
- 	---help---
- 	  If you say yes here you will get support for the
- 	  ChromeOS Embedded Controller's CEC.
-
-
+-- Steve
