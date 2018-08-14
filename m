@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94EAC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331BDC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F8A21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F8A21738
+	by mail.kernel.org (Postfix) with ESMTP id D1C7521727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C7521727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389480AbeHNUSd (ORCPT
+        id S2389490AbeHNUSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53134 "EHLO
+        Tue, 14 Aug 2018 16:18:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53152 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387619AbeHNUSc (ORCPT
+        with ESMTP id S2387619AbeHNUSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:32 -0400
+        Tue, 14 Aug 2018 16:18:38 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09F31D06;
-        Tue, 14 Aug 2018 17:30:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F6F0D1A;
+        Tue, 14 Aug 2018 17:30:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 43/97] x86/cpu/AMD: Evaluate smp_num_siblings early
-Date:   Tue, 14 Aug 2018 19:16:55 +0200
-Message-Id: <20180814171434.800840516@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.17 08/97] bpf, sockmap: fix leak in bpf_tcp_sendmsg wait for mem path
+Date:   Tue, 14 Aug 2018 19:16:20 +0200
+Message-Id: <20180814171433.500179358@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,50 +51,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 1e1d7e25fd759eddf96d8ab39d0a90a1979b2d8c upstream
+commit 7c81c71730456845e6212dccbf00098faa66740f upstream.
 
-To support force disabling of SMT it's required to know the number of
-thread siblings early. amd_get_topology() cannot be called before the APIC
-driver is selected, so split out the part which initializes
-smp_num_siblings and invoke it from amd_early_init().
+In bpf_tcp_sendmsg() the sk_alloc_sg() may fail. In the case of
+ENOMEM, it may also mean that we've partially filled the scatterlist
+entries with pages. Later jumping to sk_stream_wait_memory()
+we could further fail with an error for several reasons, however
+we miss to call free_start_sg() if the local sk_msg_buff was used.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 4f738adba30a ("bpf: create tcp_bpf_ulp allowing BPF to monitor socket TX/RX data")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/amd.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -315,6 +315,17 @@ static void legacy_fixup_core_id(struct
- 	c->cpu_core_id %= cus_per_node;
- }
+---
+ kernel/bpf/sockmap.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/kernel/bpf/sockmap.c
++++ b/kernel/bpf/sockmap.c
+@@ -947,7 +947,7 @@ static int bpf_tcp_sendmsg(struct sock *
+ 	timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
  
-+
-+static void amd_get_topology_early(struct cpuinfo_x86 *c)
-+{
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
-+		u32 eax, ebx, ecx, edx;
-+
-+		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
-+		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
-+	}
-+}
-+
- /*
-  * Fixup core topology information for
-  * (1) AMD multi-node processors
-@@ -694,6 +705,8 @@ static void early_init_amd(struct cpuinf
- 		set_cpu_bug(c, X86_BUG_AMD_E400);
+ 	while (msg_data_left(msg)) {
+-		struct sk_msg_buff *m;
++		struct sk_msg_buff *m = NULL;
+ 		bool enospc = false;
+ 		int copy;
  
- 	early_detect_mem_encrypt(c);
-+
-+	amd_get_topology_early(c);
- }
- 
- static void init_amd_k8(struct cpuinfo_x86 *c)
+@@ -1015,8 +1015,11 @@ wait_for_sndbuf:
+ 		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
+ wait_for_memory:
+ 		err = sk_stream_wait_memory(sk, &timeo);
+-		if (err)
++		if (err) {
++			if (m && m != psock->cork)
++				free_start_sg(sk, m);
+ 			goto out_err;
++		}
+ 	}
+ out_err:
+ 	if (err < 0)
 
 
