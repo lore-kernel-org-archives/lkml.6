@@ -2,106 +2,119 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CC5C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08520C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C576F2172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB6221729
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:53:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="xS6WMAcL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C576F2172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OfNw86mc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADB6221729
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733137AbeHNTkQ (ORCPT
+        id S1733040AbeHNTlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:40:16 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39728 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729492AbeHNTkQ (ORCPT
+        Tue, 14 Aug 2018 15:41:20 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:41944 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732430AbeHNTlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:40:16 -0400
-Received: by mail-it0-f67.google.com with SMTP id g141-v6so20685565ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 09:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BxnbpcGS6tjDkY1nxTGBB+Jd98MdCsMTskf9OKP5jkc=;
-        b=xS6WMAcLgQlrgPQMCFaiek1kRCE55j/Zn90FjlhgA6s8tCWo6C3KISd3KSEhFZawuf
-         gOMZ9D0QqR/QVio8VH76VgsT6n8JeeU20uQk58uitiAbs/kT9jMNThfNsPzQyUuuRoKO
-         B2ququavf3GHR7y03vPJfU/D1uZrgx/8YhqVRLOI76ezZWVKD3T1btoxC6povdmp/4PP
-         YBDqpfoc2f/ee2lJU6Du8b1RpASqzY4Hv1/f3w0EFOh6Dysjtrc17AhdJEybVoAl6q+B
-         /p/Ief60KCBK5cN0raOF0LLBjgpP6UjajK0SenAH7x3VYbKTflEhuQQmQW/mHUl7Jiml
-         PIfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BxnbpcGS6tjDkY1nxTGBB+Jd98MdCsMTskf9OKP5jkc=;
-        b=ZtWaCPz77Qu8mQdLAsvqocwpysdaq6LsTkMQR6fGMZvNS1rR8/9luq+YEPbjSeY07O
-         Z1tRA44hYbp9qk/AgBsSntQMtHjp+WVOCEvsAhJ/q+xwzvIuQviGIdoCvhBca+dAI8wx
-         29e4xTy63SlbI2T5FKblHgBD+w9epP81Ay6ulfUfC1DGz08I8HoZUm1iXDCt57m2MfcS
-         05ArcBakc6DJ0rkPGSPZ4GD1ugLo25EU0UDSRbis67QdRrh1zLOHOn3DPmDsNlPRTzVM
-         fKXUYeQyGZhzsjokoQX5R8fjaPwl/ECKZnNSKFHWue5f65WEQjaMcKR+uOmoQE//+Dyn
-         yTCA==
-X-Gm-Message-State: AOUpUlGVf6tDZKwiMWyYIgGzfZENWcouiT0jbwctQTX9nWgogUsBH1wp
-        WYcMH5+OzNkY+y4srzMcw2JQN6UdCjY=
-X-Google-Smtp-Source: AA+uWPxW8OYJELaBdg9U/6QjCgyLcfRz/4W2L+5NDfLMdx7cBBkwoLPAVD6HdYj9Ow7WjklF3APo3g==
-X-Received: by 2002:a02:b4ea:: with SMTP id a39-v6mr20107292jak.95.1534265539062;
-        Tue, 14 Aug 2018 09:52:19 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id q8-v6sm6573389iop.12.2018.08.14.09.52.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 09:52:17 -0700 (PDT)
-Subject: Re: Warning when using eMMC and partprobe: generic_make_request:
- Trying to write to read-only block-device
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, stefan@agner.ch,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <7f57199f45df7212fdbba0bd1e78142a@agner.ch>
- <CAOi1vP9Y5Nrr7kVo5GAKnS4casbXPa+LSgY=si=mAW6OHs7-BA@mail.gmail.com>
- <CA+55aFwyCmYfUrGt61d-6B=1XiTLoudNO=_bQ9-g_rDg8Ao_VA@mail.gmail.com>
- <22fff85b-63e5-3cfe-0e72-255044e53bab@kernel.dk>
- <e5589461-6331-7c4c-4171-7d7e304410e0@kernel.dk>
- <CA+55aFzisr_YkMJggnG0O4ALzjwKsPeio71PJY8Jur4afnOVOg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <629769cc-d50e-f7f1-7327-23c751f95be2@kernel.dk>
-Date:   Tue, 14 Aug 2018 10:52:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 14 Aug 2018 15:41:20 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7EGisPE173781;
+        Tue, 14 Aug 2018 16:53:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=7JgAsHMRTzgeSuZQXbPE//RAtV6NDCsfK/otLH1qYZk=;
+ b=OfNw86mcqnDbaH2qFqUcCxyKLKfxqT4oiygg/S8KyTGAa8tqxq0t2SO3lBAU3AXXenkw
+ 5QqZ/9iyZuimj8cGpOPM5uhBb6fOaNcScz0VkNQ/Qd1oxv2XadkCRyvPZI+lrhlreDa6
+ QcFIafSqBoLZIeNFfGra7kl1gYhRMpQdnfYH59BMYGOcAEZqNG7i4CoH6QMhXFWu/H9e
+ wZ8JLSLboygbkWrk4En3VzJkZN7XzPPYt6kSrbcWDdn/r0kCJgsxgcea1KAvJ7GuQaWH
+ +fZB/K82bHqcJVOfoyqa5JhfGoPSRDP9QHphJBw0ayMinsvwL3uTlu26OUsUCTd78kMo lA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2ksnad1kr8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Aug 2018 16:53:16 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7EGrFAB015112
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Aug 2018 16:53:15 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7EGrDXG028064;
+        Tue, 14 Aug 2018 16:53:14 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 Aug 2018 09:53:13 -0700
+Subject: Re: [PATCH] rds: fix building with IPV6=m
+To:     Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Greg Thelen <gthelen@google.com>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+References: <20180814090752.1681486-1-arnd@arndb.de>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <73b656f7-ce61-b4f7-a76d-cc099bb3820f@oracle.com>
+Date:   Tue, 14 Aug 2018 09:53:11 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzisr_YkMJggnG0O4ALzjwKsPeio71PJY8Jur4afnOVOg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180814090752.1681486-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8985 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=843
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808140172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/18 10:51 AM, Linus Torvalds wrote:
-> On Tue, Aug 14, 2018 at 9:26 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->>>
->>> We probably just want to special case a flush for this check. In other
->>> situations, like resource allocation and issue, we'd want to consider
->>> it a write.
->>
->> Ala:
+On 8/14/2018 2:07 AM, Arnd Bergmann wrote:
+> When CONFIG_RDS_TCP is built-in and CONFIG_IPV6 is a loadable
+> module, we get a link error agains the modular ipv6_chk_addr()
+> function:
 > 
-> Ack, looks sane to me.
+> net/rds/tcp.o: In function `rds_tcp_laddr_check':
+> tcp.c:(.text+0x3b2): undefined reference to `ipv6_chk_addr'
+> 
+> This adds back a dependency that forces RDS_TCP to also be
+> a loadable module when IPV6 is one.
+> 
+> Fixes: e65d4d96334e ("rds: Remove IPv6 dependency")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   net/rds/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/rds/Kconfig b/net/rds/Kconfig
+> index 41f75563b54b..01b3bd6a3708 100644
+> --- a/net/rds/Kconfig
+> +++ b/net/rds/Kconfig
+> @@ -16,6 +16,7 @@ config RDS_RDMA
+>   config RDS_TCP
+>   	tristate "RDS over TCP"
+>   	depends on RDS
+> +	depends on IPV6 || !IPV6
+>   	---help---
+>   	  Allow RDS to use TCP as a transport.
+>   	  This transport does not support RDMA operations.
+> 
+Its weird depends on but probably ok since we get to module
+to be enabled with or without IPV6.
 
-I'll add it to a followup pull this window, mark it stable since it's
-hitting 4.18.
+Thanks for the patch Arnd !!
 
--- 
-Jens Axboe
-
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
