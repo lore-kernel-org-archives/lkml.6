@@ -2,84 +2,87 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1EBC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E8FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A6321580
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BA8216F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:07:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S/Jdy/0U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A6321580
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYzTp7eW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0BA8216F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbeHOAto (ORCPT
+        id S1729624AbeHOA4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 20:49:44 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:50959 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729230AbeHOAto (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 20:49:44 -0400
-Received: by mail-it0-f67.google.com with SMTP id j81-v6so20601828ite.0;
-        Tue, 14 Aug 2018 15:00:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jmn2RyXaFJdHhO+o8iJGouaocEcuQe0RmDVn88MI+ms=;
-        b=S/Jdy/0U6dlepMQBZe+Ju+7iKCaD9tKLC+XDcOlXbMiz86a3nmzmaiY7sT3TyHEGCL
-         oGYZ28uIzPeYl2hTfWhZyHgLx9nsS66hfg9/5o2IUKhZPjCEVNkT8G7zKXfNmQ5u5H8W
-         vyo6xq2z6YTcHprbPee6EBORIccUcYYSL+ugc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jmn2RyXaFJdHhO+o8iJGouaocEcuQe0RmDVn88MI+ms=;
-        b=D3pgl0/XuJaDanVnFMi8rWizfLFxyKqkfc67Hh5Mro/RZdPJkbweblDy2eZeKuaThc
-         iOJzzBMKhplhw/XvICTvbp+TOERsXxtAndtJ2+qm1NhM18O1II3llE7HEzd9lzu/D2a7
-         9wkrKLJL+ALk/cV4Bd3Bb2bRD6aggJnO67Xj45FZ/oyZhDkX4e0d+L04ZqTDePN+RGB5
-         RrFuZuHomiF9TEQdjyjBN5YLP/aFy0r6y7y5GyCtqZZmMyeCoFzz9jMJZE7PX+jTI1r4
-         Hz5Fu38B/+aD7p4ZrkXhlej7XHM9Tbxtanv94d3zE3yyK53JxesyH2A899BERUbm2e0+
-         eDAw==
-X-Gm-Message-State: AOUpUlG4F1BVXBq6YR/vavxkGRK4I2oWY69R/cAEUDwXVcBjmNWXGFVd
-        t8R90PGEuQKfIhyN5p0su3MUN/lnoCNlYPh8xHQ=
-X-Google-Smtp-Source: AA+uWPyTvleeu1PcVBNfymXzHcFYrVTgMhCdnEkl7jR+KToDwSf39qG8FgWpjGh96EmTKpkydwepj6puWtyFLfAjtfg=
-X-Received: by 2002:a02:702:: with SMTP id f2-v6mr21127585jaf.70.1534284031998;
- Tue, 14 Aug 2018 15:00:31 -0700 (PDT)
+        Tue, 14 Aug 2018 20:56:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727835AbeHOA4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 20:56:18 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA9F2216F9;
+        Tue, 14 Aug 2018 22:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534284425;
+        bh=zCmpFwvjNRvRehjfudx+2ElQTGlToCXotfkGEaeEKHI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SYzTp7eWSDwjGy+RIZOlmEneZYOr+k+Bhp46lkdmtLze2Mn9yof+6IEDu890Xq8sZ
+         DG6A5viwFq0a0Ic5L3pCxmfUNLzNZ6bcuw86G4Dnor7d94EP3+Egz4VC7KB3gkiXcQ
+         IsUmPF/MS6Dng6LzUSuj8TFFXMKU4Cb6hK/CUDCE=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 61883140A1C; Tue, 14 Aug 2018 19:07:02 -0300 (-03)
+Date:   Tue, 14 Aug 2018 19:07:02 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf auxtrace: Fix queue resize
+Message-ID: <20180814220702.GB32497@kernel.org>
+References: <20180814084608.6563-1-adrian.hunter@intel.com>
 MIME-Version: 1.0
-References: <20180814213857.18779-1-vbabka@suse.cz>
-In-Reply-To: <20180814213857.18779-1-vbabka@suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 14 Aug 2018 15:00:20 -0700
-Message-ID: <CA+55aFyZoZFYztUjqT4m_HLhh4uoBg38ypAsZ3ufTYVnQr4s0w@mail.gmail.com>
-Subject: Re: [PATCH] x86/smp: fix non-SMP broken build due to redefinition of apic_id_is_primary_thread
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180814084608.6563-1-adrian.hunter@intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 2:39 PM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> The function has an inline "return false;" definition with CONFIG_SMP=3Dn=
- but the
-> "real" definition is also visible leading to "redefinition of
-> =E2=80=98apic_id_is_primary_thread=E2=80=99" compiler error. Guard it wit=
-h #ifdef CONFIG_SMP
+Em Tue, Aug 14, 2018 at 11:46:08AM +0300, Adrian Hunter escreveu:
+> When the number of queues grows beyond 32, the array of queues is resized
+> but not all members were being copied. Fix by also copying 'tid', 'cpu' and
+> 'set'.
 
-Applied.
-
-                Linus
+Thanks, applied.
+ 
+> Fixes: e502789302a6e ("perf auxtrace: Add helpers for queuing AUX area tracing data")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
+>  tools/perf/util/auxtrace.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index ae8c37b219c9..db1511359c5e 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -203,6 +203,9 @@ static int auxtrace_queues__grow(struct auxtrace_queues *queues,
+>  	for (i = 0; i < queues->nr_queues; i++) {
+>  		list_splice_tail(&queues->queue_array[i].head,
+>  				 &queue_array[i].head);
+> +		queue_array[i].tid = queues->queue_array[i].tid;
+> +		queue_array[i].cpu = queues->queue_array[i].cpu;
+> +		queue_array[i].set = queues->queue_array[i].set;
+>  		queue_array[i].priv = queues->queue_array[i].priv;
+>  	}
+>  
+> -- 
+> 2.17.1
