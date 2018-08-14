@@ -2,138 +2,101 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27327C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F054C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D993C21537
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:02:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D993C21537
+	by mail.kernel.org (Postfix) with ESMTP id 1E3BD21570
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:11:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3BD21570
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732581AbeHOBve (ORCPT
+        id S1732498AbeHOCAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 21:51:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55546 "EHLO
+        Tue, 14 Aug 2018 22:00:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729705AbeHOBve (ORCPT
+        with ESMTP id S1728103AbeHOCAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 21:51:34 -0400
+        Tue, 14 Aug 2018 22:00:33 -0400
 Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4D7FD00;
-        Tue, 14 Aug 2018 23:02:09 +0000 (UTC)
-Date:   Tue, 14 Aug 2018 16:02:08 -0700
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 508D9D10;
+        Tue, 14 Aug 2018 23:11:07 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 16:11:06 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Build failures with gcc 4.5 and older
-Message-Id: <20180814160208.4f4dd7ca142912f5894ddddd@linux-foundation.org>
-In-Reply-To: <20180814221559.GA15888@roeck-us.net>
-References: <20180814170904.GA12768@roeck-us.net>
-        <20180814143655.3acd4bb211d44747f77e74f2@linux-foundation.org>
-        <20180814221559.GA15888@roeck-us.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bitfield: avoid gcc-8 -Wint-in-bool-context warning
+Message-Id: <20180814161106.67b835906381415843ddbab6@linux-foundation.org>
+In-Reply-To: <20180813220950.194841-1-arnd@arndb.de>
+References: <20180813220950.194841-1-arnd@arndb.de>
 X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Aug 2018 15:15:59 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+On Tue, 14 Aug 2018 00:09:34 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
 
-> > Confused.  Why does it think that the mm_struct is "otherwise empty"?
-> > 
+> Passing an enum into FIELD_GET() produces a long but harmless warning on
+> newer compilers:
 > 
-> The problem isn't really that the structure is otherwise empty.
-> Some digging reveals that the error message is wrong; gcc should
-> instead complain about having no _named_ structure element before
-> the flexible array member.
+>                  from include/linux/linkage.h:7,
+>                  from include/linux/kernel.h:7,
+>                  from include/linux/skbuff.h:17,
+>                  from include/linux/if_ether.h:23,
+>                  from include/linux/etherdevice.h:25,
+>                  from drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:63:
+> drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c: In function 'iwl_mvm_rx_mpdu_mq':
+> include/linux/bitfield.h:56:20: error: enum constant in boolean context [-Werror=int-in-bool-context]
+>    BUILD_BUG_ON_MSG(!(_mask), _pfx "mask is zero"); \
+>                     ^
+> ...
+> include/linux/bitfield.h:103:3: note: in expansion of macro '__BF_FIELD_CHECK'
+>    __BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: "); \
+>    ^~~~~~~~~~~~~~~~
+> drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:1025:21: note: in expansion of macro 'FIELD_GET'
+>     le16_encode_bits(FIELD_GET(IWL_RX_HE_PHY_SIBG_SYM_OR_USER_NUM_MASK,
+
+Newer compilers will previously be used on older kernels, so I'll add a
+cc:stable here.
+
+> The problem here is that the caller has no idea how the macro gets
+> expanding, leading to a false-positive. It can be trivially avoided
+> by doing a comparison against zero.
 > 
-> > This shuts it up:
-> > 
-> > --- a/include/linux/mm_types.h~a
-> > +++ a/include/linux/mm_types.h
-> > @@ -490,6 +490,7 @@ struct mm_struct {
-> >  #endif
-> >  	} __randomize_layout;
-> >  
-> > +	int wibble;
-> >  	/*
-> >  	 * The mm_cpumask needs to be at the end of mm_struct, because it
-> >  	 * is dynamically sized based on nr_cpu_ids.
-> > 
+> This only recently started appearing as the iwlwifi driver was patched
+> to use FIELD_GET.
 > 
-> Unfortunately, that only triggers secondary errors.
-> Seen with both gcc 4.4 and 4.5.
+> Fixes: 514c30696fbc ("iwlwifi: add support for IEEE802.11ax")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/linux/bitfield.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> mm/init-mm.c:29: error: unknown field ‘mm_rb’ specified in initializer
-> mm/init-mm.c:29: warning: missing braces around initializer
-> mm/init-mm.c:29: warning: (near initialization for ‘init_mm.<anonymous>’)
-> mm/init-mm.c:29: error: incompatible types when initializing type ‘struct
-> vm_area_struct *’ using type ‘struct rb_root’
-> mm/init-mm.c:30: error: unknown field ‘pgd’ specified in initializer
-> 
-> and many more similar errors.
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 65a6981eef7b..3f1ef4450a7c 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -53,7 +53,7 @@
+>  	({								\
+>  		BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),		\
+>  				 _pfx "mask is not constant");		\
+> -		BUILD_BUG_ON_MSG(!(_mask), _pfx "mask is zero");	\
+> +		BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");	\
+>  		BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?		\
+>  				 ~((_mask) >> __bf_shf(_mask)) & (_val) : 0, \
 
-This works, I think.
-
-The m68k build still fails because 0cc3cd21657 ("cpu/hotplug: Boot HT
-siblings at least once") was evidently never tested on CONFIG_SMP=n. 
-How could that come about - the patch is six weeks old??
-
-kernel/cpu.c: In function 'boot_cpu_hotplug_init':
-kernel/cpu.c:2275:2: error: 'struct cpuhp_cpu_state' has no member named 'booted_once'
-
-
---- a/include/linux/mm_types.h~a
-+++ a/include/linux/mm_types.h
-@@ -490,6 +490,8 @@ struct mm_struct {
- #endif
- 	} __randomize_layout;
- 
-+	int wibble;
-+
- 	/*
- 	 * The mm_cpumask needs to be at the end of mm_struct, because it
- 	 * is dynamically sized based on nr_cpu_ids.
---- a/mm/init-mm.c~a
-+++ a/mm/init-mm.c
-@@ -26,15 +26,17 @@
-  * and size this cpu_bitmask to NR_CPUS.
-  */
- struct mm_struct init_mm = {
--	.mm_rb		= RB_ROOT,
--	.pgd		= swapper_pg_dir,
--	.mm_users	= ATOMIC_INIT(2),
--	.mm_count	= ATOMIC_INIT(1),
--	.mmap_sem	= __RWSEM_INITIALIZER(init_mm.mmap_sem),
--	.page_table_lock =  __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
--	.arg_lock	=  __SPIN_LOCK_UNLOCKED(init_mm.arg_lock),
--	.mmlist		= LIST_HEAD_INIT(init_mm.mmlist),
--	.user_ns	= &init_user_ns,
-+	{
-+		.mm_rb		= RB_ROOT,
-+		.pgd		= swapper_pg_dir,
-+		.mm_users	= ATOMIC_INIT(2),
-+		.mm_count	= ATOMIC_INIT(1),
-+		.mmap_sem	= __RWSEM_INITIALIZER(init_mm.mmap_sem),
-+		.page_table_lock = __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
-+		.arg_lock	= __SPIN_LOCK_UNLOCKED(init_mm.arg_lock),
-+		.mmlist		= LIST_HEAD_INIT(init_mm.mmlist),
-+		.user_ns	= &init_user_ns,
-+	},
- 	.cpu_bitmap	= { [BITS_TO_LONGS(NR_CPUS)] = 0},
- 	INIT_MM_CONTEXT(init_mm)
- };
-_
+I'm not understanding how a switch from !x to x==0 can fix anything. 
+Help!
 
