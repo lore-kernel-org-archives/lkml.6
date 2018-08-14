@@ -2,145 +2,107 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF05C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4C0C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D568A21709
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D568A21709
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 6EFAD21734
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:29:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EFAD21734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732850AbeHNSQ4 (ORCPT
+        id S1732686AbeHNSRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:16:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732362AbeHNSQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:16:56 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75D792173B;
-        Tue, 14 Aug 2018 15:29:17 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fpbG0-0000EF-Ho; Tue, 14 Aug 2018 11:29:16 -0400
-Message-Id: <20180814152916.445590719@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 14 Aug 2018 11:28:50 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
+        Tue, 14 Aug 2018 14:17:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45086 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729108AbeHNSRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 14:17:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3DB680D;
+        Tue, 14 Aug 2018 08:29:52 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 943A03F5D0;
+        Tue, 14 Aug 2018 08:29:52 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 39CAD1AE015E; Tue, 14 Aug 2018 16:29:59 +0100 (BST)
+Date:   Tue, 14 Aug 2018 16:29:59 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Greg Hackmann <ghackmann@google.com>
+Cc:     Greg Hackmann <ghackmann@android.com>,
+        linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Song Liu <songliubraving@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [for-next][PATCH 2/2] Uprobe: Additional argument arch_uprobe to uprobe_write_opcode()
-References: <20180814152848.394642997@goodmis.org>
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        CHANDAN VN <chandan.vn@samsung.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
+Message-ID: <20180814152958.GD567@arm.com>
+References: <20180813193013.236362-1-ghackmann@google.com>
+ <20180814104041.GB28664@arm.com>
+ <eb90a28e-893c-e02e-a9c2-1d988f08cf3a@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb90a28e-893c-e02e-a9c2-1d988f08cf3a@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+On Tue, Aug 14, 2018 at 08:17:48AM -0700, Greg Hackmann wrote:
+> On 08/14/2018 03:40 AM, Will Deacon wrote:
+> > Hi Greg,
+> > 
+> > On Mon, Aug 13, 2018 at 12:30:11PM -0700, Greg Hackmann wrote:
+> >> ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
+> >> before seeing if the PFN is valid.  This leads to false positives when
+> >> some of the upper bits are set, but the lower bits match a valid PFN.
+> >>
+> >> For example, the following userspace code looks up a bogus entry in
+> >> /proc/kpageflags:
+> >>
+> >>     int pagemap = open("/proc/self/pagemap", O_RDONLY);
+> >>     int pageflags = open("/proc/kpageflags", O_RDONLY);
+> >>     uint64_t pfn, val;
+> >>
+> >>     lseek64(pagemap, [...], SEEK_SET);
+> >>     read(pagemap, &pfn, sizeof(pfn));
+> >>     if (pfn & (1UL << 63)) {        /* valid PFN */
+> >>         pfn &= ((1UL << 55) - 1);   /* clear flag bits */
+> >>         pfn |= (1UL << 55);
+> >>         lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
+> >>         read(pageflags, &val, sizeof(val));
+> >>     }
+> >>
+> >> On ARM64 this causes the userspace process to crash with SIGSEGV rather
+> >> than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
+> >> valid, and stable_page_flags() will try to access an address between the
+> >> user and kernel address ranges.
+> >>
+> >> Signed-off-by: Greg Hackmann <ghackmann@google.com>
+> >> ---
+> >>  arch/arm64/mm/init.c | 6 +++++-
+> >>  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > Thanks, this looks like a sensible fix to me. Do you think it warrants a
+> > CC stable?
+> > 
+> > Will
+> 
+> Yes, I think so.  Should I resend with a "Fixes" field?
 
-Add addition argument 'arch_uprobe' to uprobe_write_opcode().
-We need this in later set of patches.
+Could do, but I think this goes all the way back to day 1! Doesn't arch/arm/
+also suffer from the same issue?
 
-Link: http://lkml.kernel.org/r/20180809041856.1547-3-ravi.bangoria@linux.ibm.com
-
-Reviewed-by: Song Liu <songliubraving@fb.com>
-Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- arch/arm/probes/uprobes/core.c | 2 +-
- arch/mips/kernel/uprobes.c     | 2 +-
- include/linux/uprobes.h        | 2 +-
- kernel/events/uprobes.c        | 9 +++++----
- 4 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
-index d1329f1ba4e4..bf992264060e 100644
---- a/arch/arm/probes/uprobes/core.c
-+++ b/arch/arm/probes/uprobes/core.c
-@@ -32,7 +32,7 @@ bool is_swbp_insn(uprobe_opcode_t *insn)
- int set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	     unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr,
-+	return uprobe_write_opcode(auprobe, mm, vaddr,
- 		   __opcode_to_mem_arm(auprobe->bpinsn));
- }
- 
-diff --git a/arch/mips/kernel/uprobes.c b/arch/mips/kernel/uprobes.c
-index f7a0645ccb82..4aaff3b3175c 100644
---- a/arch/mips/kernel/uprobes.c
-+++ b/arch/mips/kernel/uprobes.c
-@@ -224,7 +224,7 @@ unsigned long arch_uretprobe_hijack_return_addr(
- int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
-+	return uprobe_write_opcode(auprobe, mm, vaddr, UPROBE_SWBP_INSN);
- }
- 
- void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 0a294e950df8..bb9d2084af03 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -121,7 +121,7 @@ extern bool is_swbp_insn(uprobe_opcode_t *insn);
- extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
- extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
--extern int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
-+extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
- extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
- extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
- extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 471eac896635..c0418ba52ba8 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -299,8 +299,8 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
-  * Called with mm->mmap_sem held for write.
-  * Return 0 (success) or a negative errno.
-  */
--int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr,
--			uprobe_opcode_t opcode)
-+int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
-+			unsigned long vaddr, uprobe_opcode_t opcode)
- {
- 	struct page *old_page, *new_page;
- 	struct vm_area_struct *vma;
-@@ -351,7 +351,7 @@ int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr,
-  */
- int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
-+	return uprobe_write_opcode(auprobe, mm, vaddr, UPROBE_SWBP_INSN);
- }
- 
- /**
-@@ -366,7 +366,8 @@ int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned
- int __weak
- set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr, *(uprobe_opcode_t *)&auprobe->insn);
-+	return uprobe_write_opcode(auprobe, mm, vaddr,
-+			*(uprobe_opcode_t *)&auprobe->insn);
- }
- 
- static struct uprobe *get_uprobe(struct uprobe *uprobe)
--- 
-2.18.0
-
-
+Will
