@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7608CC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE224C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382DA2150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382DA2150B
+	by mail.kernel.org (Postfix) with ESMTP id 7B723208C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:38:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B723208C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbeHNU1B (ORCPT
+        id S2388185AbeHNU1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:27:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58402 "EHLO
+        Tue, 14 Aug 2018 16:27:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729285AbeHNU07 (ORCPT
+        with ESMTP id S1729285AbeHNU1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:26:59 -0400
+        Tue, 14 Aug 2018 16:27:02 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04592D83;
-        Tue, 14 Aug 2018 17:38:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 037D2CBA;
+        Tue, 14 Aug 2018 17:38:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Mario <jmario@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 080/104] cpu/hotplug: detect SMT disabled by BIOS
-Date:   Tue, 14 Aug 2018 19:17:34 +0200
-Message-Id: <20180814171520.421259645@linuxfoundation.org>
+Subject: [PATCH 4.14 081/104] x86/KVM/VMX: Dont set l1tf_flush_l1d to true from vmx_l1d_flush()
+Date:   Tue, 14 Aug 2018 19:17:35 +0200
+Message-Id: <20180814171520.489168695@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,47 +50,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Nicolai Stange <nstange@suse.de>
 
-commit 73d5e2b472640b1fcdb61ae8be389912ef211bda upstream
+commit 379fd0c7e6a391e5565336a646f19f218fb98c6c upstream
 
-If SMT is disabled in BIOS, the CPU code doesn't properly detect it.
-The /sys/devices/system/cpu/smt/control file shows 'on', and the 'l1tf'
-vulnerabilities file shows SMT as vulnerable.
+vmx_l1d_flush() gets invoked only if l1tf_flush_l1d is true. There's no
+point in setting l1tf_flush_l1d to true from there again.
 
-Fix it by forcing 'cpu_smt_control' to CPU_SMT_NOT_SUPPORTED in such a
-case.  Unfortunately the detection can only be done after bringing all
-the CPUs online, so we have to overwrite any previous writes to the
-variable.
-
-Reported-by: Joe Mario <jmario@redhat.com>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Fixes: f048c399e0f7 ("x86/topology: Provide topology_smt_supported()")
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/cpu.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/kvm/vmx.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2137,6 +2137,15 @@ static const struct attribute_group cpuh
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9166,15 +9166,15 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 	/*
+ 	 * This code is only executed when the the flush mode is 'cond' or
+ 	 * 'always'
+-	 *
+-	 * If 'flush always', keep the flush bit set, otherwise clear
+-	 * it. The flush bit gets set again either from vcpu_run() or from
+-	 * one of the unsafe VMEXIT handlers.
+ 	 */
+-	if (static_branch_unlikely(&vmx_l1d_flush_always))
+-		vcpu->arch.l1tf_flush_l1d = true;
+-	else
++	if (!static_branch_unlikely(&vmx_l1d_flush_always)) {
++		/*
++		 * Clear the flush bit, it gets set again either from
++		 * vcpu_run() or from one of the unsafe VMEXIT
++		 * handlers.
++		 */
+ 		vcpu->arch.l1tf_flush_l1d = false;
++	}
  
- static int __init cpu_smt_state_init(void)
- {
-+	/*
-+	 * If SMT was disabled by BIOS, detect it here, after the CPUs have
-+	 * been brought online.  This ensures the smt/l1tf sysfs entries are
-+	 * consistent with reality.  Note this may overwrite cpu_smt_control's
-+	 * previous setting.
-+	 */
-+	if (topology_max_smt_threads() == 1)
-+		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+
- 	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
- 				  &cpuhp_smt_attr_group);
- }
+ 	vcpu->stat.l1d_flush++;
+ 
 
 
