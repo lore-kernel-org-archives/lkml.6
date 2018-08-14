@@ -2,149 +2,80 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C63C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6290C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 242F521742
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ABD321655
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:35:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iTIadHCo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242F521742
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JRGFObfe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABD321655
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbeHNQWx (ORCPT
+        id S1732860AbeHNQXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:22:53 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35092 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732782AbeHNQWw (ORCPT
+        Tue, 14 Aug 2018 12:23:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58054 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732782AbeHNQXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:22:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g1-v6so17257895wru.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 06:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=K91FeSVm8izC4kRbjHtoyfX7pL61Br0otU3riF2ndyo=;
-        b=iTIadHCoFMnKJQZQpS620tRWXKIYq6M0/5lqXnqLcYOu93TtbNBcDgMfXhXDf/Mzls
-         usgIa8xlF3GWICqE3bF3uoxEF5C98A3xUMIKtbxXwega/guTEoViPHqfTY5rUC2ZRQU3
-         7xlRuhTni3CFZCD0rxyRDvUPCV7HqHHQ72Vyg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=K91FeSVm8izC4kRbjHtoyfX7pL61Br0otU3riF2ndyo=;
-        b=BULpHI3NfR7Sz03IGF8qiPOq5mDN376B7qqVmjQpEqazrvhkNfP7/DSi9W1on0uYKF
-         ttjLAl1CFS1pXOhzv1p1Yq8VAQjn8osN19C1SvsjyUGfvZGm7hKnlMkNPj0WWBVi4T/P
-         2I5vNbQmgE2ad1kMKNDj6jcG98RXDISSUQXyajdwzfKUdtPQE5oqDu06WWQOSHrfEh7V
-         FIoXjqqrUGAA88JI7rYNNiKAvfQZ7DtX0z0iiAQlumMWpc3Ewk8oQ4cK0mtXb2uCpEEN
-         RICW56rVb07lyojl+S5f3+Mfc8RHeOLAULD7fGDtLMnOoJ4qVx0XxJxbZsR5oDH0jGyC
-         VDqA==
-X-Gm-Message-State: AOUpUlEa542O2MWbf1ydpwXUAhbdxqli/3QqD7L1DC4FWcrEFyGwlje+
-        huMYH1tpQflTve4WaB1X/WWWGw==
-X-Google-Smtp-Source: AA+uWPyWiXITI05asyduaL07FJvYGlRAVdkKI1sGcLcv9KSGrOi3OWUN9i+2QWdBm3jPO7pceSyeTQ==
-X-Received: by 2002:adf:9d81:: with SMTP id p1-v6mr13010134wre.12.1534253739018;
-        Tue, 14 Aug 2018 06:35:39 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id j133-v6sm27944849wmd.12.2018.08.14.06.35.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 06:35:38 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 14:35:36 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     zhe.he@windriver.com
-Cc:     jason.wessel@windriver.com, gregkh@linuxfoundation.org,
-        jslaby@suse.com, kgdb-bugreport@lists.sourceforge.net,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] kgdboc: Change printk to the right fashion
-Message-ID: <20180814133536.bfpygzwnmlqfsee5@holly.lan>
-References: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
- <1534250761-824-2-git-send-email-zhe.he@windriver.com>
+        Tue, 14 Aug 2018 12:23:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xrP27v37wEfLTaarlipron8WUIcSnnq+qIHgp4mVPSM=; b=JRGFObfeQlY972/ReD1H+yBBh
+        hJwe2F1E7Wj8YYo3DFZ1Q6bTpI5kQKM2v3JCojTQEUdn+/QtRDfWssaPbRW8bkqmAP03u2mGXL4yr
+        viW7WRKvL/JN/w58ggT8Uee8RHLuGpAz47YVlEoermTzLMXUPhtozbhLuy/+BBfloBfkBdpVyqrNC
+        RE97C+Bvu43wU9fm+T0497fs5LaWJSBVA0Pm/7TaFgfV8YEsaVC8h4PzldxB+0blXuE+11IZHlNyl
+        q9M5f7FaKaQiJhbpC3C5/wxvHHIVF6oQ8Q50nolcrtbrCz/Rm3THBWVFGd+rU9DouIOLqYVKNdzZy
+        Fv5DQ8bpA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fpZU1-0001vk-2T; Tue, 14 Aug 2018 13:35:38 +0000
+Date:   Tue, 14 Aug 2018 06:35:36 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, aou@eecs.berkeley.edu,
+        Andrew Waterman <andrew@sifive.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux@dominikbrodowski.net, linux@roeck-us.net,
+        tklauser@distanz.ch, linux-riscv@lists.infradead.org,
+        dan.carpenter@oracle.com
+Subject: Re: [PATCH v3 1/2] RISC-V: Define sys_riscv_flush_icache when SMP=n
+Message-ID: <20180814133536.GB28080@infradead.org>
+References: <20180810083804.GA20415@infradead.org>
+ <mhng-341b5b76-2cd6-41e3-859a-6b1d926ba770@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1534250761-824-2-git-send-email-zhe.he@windriver.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <mhng-341b5b76-2cd6-41e3-859a-6b1d926ba770@palmer-si-x1c4>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 08:46:01PM +0800, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
+On Fri, Aug 10, 2018 at 11:27:37AM -0700, Palmer Dabbelt wrote:
+> I'm not sure.  We can implement the syscall fine in !SMP, it's just that the
+> vDSO is expected to always eat these calls because in non-SMP mode you can
+> do a global fence.i by just doing a local fence.i (there's only one hart).
 > 
-> pr_* is preferred according to scripts/checkpatch.pl.
+> The original rationale behind not having the syscall in non-SMP mode was to
+> limit the user ABI, but on looking again that seems like it's just a bit of
+> extra complexity that doesn't help anything.  It's already been demonstrated
+> that nothing is checking the error because it's been silently slipping past
+> userspace for six months, so the extra complexity seems like it'll just
+> cause someone else to have to chase the bug in the future.
 > 
-> Cc: stable@vger.kernel.org
+> But I'm really OK either way.  Is there a precedent for what to do here?
 
-This change does not "fix a problem that causes a build error
-(but not for things marked CONFIG_BROKEN), an oops, a hang, data
-corruption, a real security issue, or some “oh, that’s not good” issue.
-In short, something critical.". Only the first patch meets this criteria
-and only that patch should be Cc:ed to stable@ .
+I don't know of any.
 
-Please remove from this patch.
-
-
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
-> v2:
-> - Split printk cleanups into a single patch
-> - Add cc to stable@vger.kernel.org
-> 
->  drivers/tty/serial/kgdboc.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-> index 206f8c2..0003d6c 100644
-> --- a/drivers/tty/serial/kgdboc.c
-> +++ b/drivers/tty/serial/kgdboc.c
-> @@ -136,7 +136,7 @@ static int kgdboc_option_setup(char *opt)
->  	}
->  
->  	if (strlen(opt) >= MAX_CONFIG_LEN) {
-> -		printk(KERN_ERR "kgdboc: config string too long\n");
-> +		pr_err("kgdboc: config string too long\n");
-
-Looks like you should remove the tags from pr_err and use pr_fmt(fmt) to
-put tags on the messages:
-
-#define pr_fmt(fmt) "kgdboc: " fmt
-
-
-Daniel.
-
->  		return -ENOSPC;
->  	}
->  	strcpy(config, opt);
-> @@ -253,7 +253,7 @@ static int param_set_kgdboc_var(const char *kmessage,
->  	int len = strlen(kmessage);
->  
->  	if (len >= MAX_CONFIG_LEN) {
-> -		printk(KERN_ERR "kgdboc: config string too long\n");
-> +		pr_err("kgdboc: config string too long\n");
->  		return -ENOSPC;
->  	}
->  
-> @@ -264,8 +264,7 @@ static int param_set_kgdboc_var(const char *kmessage,
->  	}
->  
->  	if (kgdb_connected) {
-> -		printk(KERN_ERR
-> -		       "kgdboc: Cannot reconfigure while KGDB is connected.\n");
-> +		pr_err("kgdboc: Cannot reconfigure while KGDB is connected.\n");
->  
->  		return -EBUSY;
->  	}
-> -- 
-> 2.7.4
-> 
