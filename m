@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E07C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037D1C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88DA2154F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88DA2154F
+	by mail.kernel.org (Postfix) with ESMTP id B78E72150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B78E72150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388324AbeHNU11 (ORCPT
+        id S2388454AbeHNU1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:27:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58438 "EHLO
+        Tue, 14 Aug 2018 16:27:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732287AbeHNU10 (ORCPT
+        with ESMTP id S1730316AbeHNU13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:27:26 -0400
+        Tue, 14 Aug 2018 16:27:29 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85513D20;
-        Tue, 14 Aug 2018 17:39:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C4FED4A;
+        Tue, 14 Aug 2018 17:39:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 074/104] cpu/hotplug: Expose SMT control init function
-Date:   Tue, 14 Aug 2018 19:17:28 +0200
-Message-Id: <20180814171520.067695672@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 001/107] ext4: fix check to prevent initializing reserved inodes
+Date:   Tue, 14 Aug 2018 19:16:24 +0200
+Message-Id: <20180814171520.954192579@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
-References: <20180814171515.270692185@linuxfoundation.org>
+In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
+References: <20180814171520.883143803@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,75 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 8e1b706b6e819bed215c0db16345568864660393 upstream
+commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
 
-The L1TF mitigation will gain a commend line parameter which allows to set
-a combination of hypervisor mitigation and SMT control.
+Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
+valid" will complain if block group zero does not have the
+EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
+since a freshly created file system has this flag cleared.  It gets
+almost immediately after the file system is mounted read-write --- but
+the following somewhat unlikely sequence will end up triggering a
+false positive report of a corrupted file system:
 
-Expose cpu_smt_disable() so the command line parser can tweak SMT settings.
+   mkfs.ext4 /dev/vdc
+   mount -o ro /dev/vdc /vdc
+   mount -o remount,rw /dev/vdc
 
-[ tglx: Split out of larger patch and made it preserve an already existing
-  	force off state ]
+Instead, when initializing the inode table for block group zero, test
+to make sure that itable_unused count is not too large, since that is
+the case that will result in some or all of the reserved inodes
+getting cleared.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142323.039715135@linutronix.de
+This fixes the failures reported by Eric Whiteney when running
+generic/230 and generic/231 in the the nojournal test case.
+
+Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
+Reported-by: Eric Whitney <enwlinux@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/cpu.h |    2 ++
- kernel/cpu.c        |   16 +++++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
 
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -187,8 +187,10 @@ enum cpuhp_smt_control {
+---
+ fs/ext4/ialloc.c |    5 ++++-
+ fs/ext4/super.c  |    8 +-------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
+
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -1316,7 +1316,10 @@ int ext4_init_inode_table(struct super_b
+ 			    ext4_itable_unused_count(sb, gdp)),
+ 			    sbi->s_inodes_per_block);
  
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
-+extern void cpu_smt_disable(bool force);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
-+static inline void cpu_smt_disable(bool force) { }
- #endif
+-	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
++	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
++	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
++			       ext4_itable_unused_count(sb, gdp)) <
++			      EXT4_FIRST_INO(sb)))) {
+ 		ext4_error(sb, "Something is wrong with group %u: "
+ 			   "used itable blocks: %d; "
+ 			   "itable unused count: %u",
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3031,14 +3031,8 @@ static ext4_group_t ext4_has_uninit_itab
+ 		if (!gdp)
+ 			continue;
  
- #endif /* _LINUX_CPU_H_ */
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -351,13 +351,23 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
- 
--static int __init smt_cmdline_disable(char *str)
-+void __init cpu_smt_disable(bool force)
- {
--	cpu_smt_control = CPU_SMT_DISABLED;
--	if (str && !strcmp(str, "force")) {
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
-+		cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		return;
-+
-+	if (force) {
- 		pr_info("SMT: Force disabled\n");
- 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
-+	} else {
-+		cpu_smt_control = CPU_SMT_DISABLED;
+-		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
+-			continue;
+-		if (group != 0)
++		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
+ 			break;
+-		ext4_error(sb, "Inode table for bg 0 marked as "
+-			   "needing zeroing");
+-		if (sb->s_flags & MS_RDONLY)
+-			return ngroups;
  	}
-+}
-+
-+static int __init smt_cmdline_disable(char *str)
-+{
-+	cpu_smt_disable(str && !strcmp(str, "force"));
- 	return 0;
- }
- early_param("nosmt", smt_cmdline_disable);
+ 
+ 	return group;
 
 
