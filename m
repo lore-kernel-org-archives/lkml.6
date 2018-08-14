@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1C4C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDEFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92F0E21728
+	by mail.kernel.org (Postfix) with ESMTP id C21B921736
 	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F0E21728
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21B921736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbeHNUWX (ORCPT
+        id S1728270AbeHNUWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:22:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56338 "EHLO
+        Tue, 14 Aug 2018 16:22:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56330 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeHNUWW (ORCPT
+        with ESMTP id S1725873AbeHNUWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:22:22 -0400
+        Tue, 14 Aug 2018 16:22:24 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E02E5E4E;
-        Tue, 14 Aug 2018 17:33:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D671E9F;
+        Tue, 14 Aug 2018 17:34:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 015/104] fix mntput/mntput race
-Date:   Tue, 14 Aug 2018 19:16:29 +0200
-Message-Id: <20180814171516.194553568@linuxfoundation.org>
+        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.14 018/104] phy: phy-mtk-tphy: use auto instead of force to bypass utmi signals
+Date:   Tue, 14 Aug 2018 19:16:32 +0200
+Message-Id: <20180814171516.385584062@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -50,77 +51,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-commit 9ea0a46ca2c318fcc449c1e6b62a7230a17888f1 upstream.
+commit 00c0092c5f62147b7d85f0c6f1cf245a0a1ff3b6 upstream.
 
-mntput_no_expire() does the calculation of total refcount under mount_lock;
-unfortunately, the decrement (as well as all increments) are done outside
-of it, leading to false positives in the "are we dropping the last reference"
-test.  Consider the following situation:
-	* mnt is a lazy-umounted mount, kept alive by two opened files.  One
-of those files gets closed.  Total refcount of mnt is 2.  On CPU 42
-mntput(mnt) (called from __fput()) drops one reference, decrementing component
-	* After it has looked at component #0, the process on CPU 0 does
-mntget(), incrementing component #0, gets preempted and gets to run again -
-on CPU 69.  There it does mntput(), which drops the reference (component #69)
-and proceeds to spin on mount_lock.
-	* On CPU 42 our first mntput() finishes counting.  It observes the
-decrement of component #69, but not the increment of component #0.  As the
-result, the total it gets is not 1 as it should've been - it's 0.  At which
-point we decide that vfsmount needs to be killed and proceed to free it and
-shut the filesystem down.  However, there's still another opened file
-on that filesystem, with reference to (now freed) vfsmount, etc. and we are
-screwed.
+When system is running, if usb2 phy is forced to bypass utmi signals,
+all PLL will be turned off, and it can't detect device connection
+anymore, so replace force mode with auto mode which can bypass utmi
+signals automatically if no device attached for normal flow.
+But keep the force mode to fix RX sensitivity degradation issue.
 
-It's not a wide race, but it can be reproduced with artificial slowdown of
-the mnt_get_count() loop, and it should be easier to hit on SMP KVM setups.
-
-Fix consists of moving the refcount decrement under mount_lock; the tricky
-part is that we want (and can) keep the fast case (i.e. mount that still
-has non-NULL ->mnt_ns) entirely out of mount_lock.  All places that zero
-mnt->mnt_ns are dropping some reference to mnt and they call synchronize_rcu()
-before that mntput().  IOW, if mntput() observes (under rcu_read_lock())
-a non-NULL ->mnt_ns, it is guaranteed that there is another reference yet to
-be dropped.
-
-Reported-by: Jann Horn <jannh@google.com>
-Tested-by: Jann Horn <jannh@google.com>
-Fixes: 48a066e72d97 ("RCU'd vsfmounts")
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/phy/mediatek/phy-mtk-tphy.c |   19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1195,12 +1195,22 @@ static DECLARE_DELAYED_WORK(delayed_mntp
- static void mntput_no_expire(struct mount *mnt)
- {
- 	rcu_read_lock();
--	mnt_add_count(mnt, -1);
--	if (likely(mnt->mnt_ns)) { /* shouldn't be the last one */
-+	if (likely(READ_ONCE(mnt->mnt_ns))) {
-+		/*
-+		 * Since we don't do lock_mount_hash() here,
-+		 * ->mnt_ns can change under us.  However, if it's
-+		 * non-NULL, then there's a reference that won't
-+		 * be dropped until after an RCU delay done after
-+		 * turning ->mnt_ns NULL.  So if we observe it
-+		 * non-NULL under rcu_read_lock(), the reference
-+		 * we are dropping is not the final one.
-+		 */
-+		mnt_add_count(mnt, -1);
- 		rcu_read_unlock();
- 		return;
- 	}
- 	lock_mount_hash();
-+	mnt_add_count(mnt, -1);
- 	if (mnt_get_count(mnt)) {
- 		rcu_read_unlock();
- 		unlock_mount_hash();
+--- a/drivers/phy/mediatek/phy-mtk-tphy.c
++++ b/drivers/phy/mediatek/phy-mtk-tphy.c
+@@ -438,9 +438,9 @@ static void u2_phy_instance_init(struct
+ 	u32 index = instance->index;
+ 	u32 tmp;
+ 
+-	/* switch to USB function. (system register, force ip into usb mode) */
++	/* switch to USB function, and enable usb pll */
+ 	tmp = readl(com + U3P_U2PHYDTM0);
+-	tmp &= ~P2C_FORCE_UART_EN;
++	tmp &= ~(P2C_FORCE_UART_EN | P2C_FORCE_SUSPENDM);
+ 	tmp |= P2C_RG_XCVRSEL_VAL(1) | P2C_RG_DATAIN_VAL(0);
+ 	writel(tmp, com + U3P_U2PHYDTM0);
+ 
+@@ -500,10 +500,8 @@ static void u2_phy_instance_power_on(str
+ 	u32 index = instance->index;
+ 	u32 tmp;
+ 
+-	/* (force_suspendm=0) (let suspendm=1, enable usb 480MHz pll) */
+ 	tmp = readl(com + U3P_U2PHYDTM0);
+-	tmp &= ~(P2C_FORCE_SUSPENDM | P2C_RG_XCVRSEL);
+-	tmp &= ~(P2C_RG_DATAIN | P2C_DTM0_PART_MASK);
++	tmp &= ~(P2C_RG_XCVRSEL | P2C_RG_DATAIN | P2C_DTM0_PART_MASK);
+ 	writel(tmp, com + U3P_U2PHYDTM0);
+ 
+ 	/* OTG Enable */
+@@ -538,7 +536,6 @@ static void u2_phy_instance_power_off(st
+ 
+ 	tmp = readl(com + U3P_U2PHYDTM0);
+ 	tmp &= ~(P2C_RG_XCVRSEL | P2C_RG_DATAIN);
+-	tmp |= P2C_FORCE_SUSPENDM;
+ 	writel(tmp, com + U3P_U2PHYDTM0);
+ 
+ 	/* OTG Disable */
+@@ -546,18 +543,16 @@ static void u2_phy_instance_power_off(st
+ 	tmp &= ~PA6_RG_U2_OTG_VBUSCMP_EN;
+ 	writel(tmp, com + U3P_USBPHYACR6);
+ 
+-	/* let suspendm=0, set utmi into analog power down */
+-	tmp = readl(com + U3P_U2PHYDTM0);
+-	tmp &= ~P2C_RG_SUSPENDM;
+-	writel(tmp, com + U3P_U2PHYDTM0);
+-	udelay(1);
+-
+ 	tmp = readl(com + U3P_U2PHYDTM1);
+ 	tmp &= ~(P2C_RG_VBUSVALID | P2C_RG_AVALID);
+ 	tmp |= P2C_RG_SESSEND;
+ 	writel(tmp, com + U3P_U2PHYDTM1);
+ 
+ 	if (tphy->pdata->avoid_rx_sen_degradation && index) {
++		tmp = readl(com + U3P_U2PHYDTM0);
++		tmp &= ~(P2C_RG_SUSPENDM | P2C_FORCE_SUSPENDM);
++		writel(tmp, com + U3P_U2PHYDTM0);
++
+ 		tmp = readl(com + U3D_U2PHYDCR0);
+ 		tmp &= ~P2C_RG_SIF_U2PLL_FORCE_ON;
+ 		writel(tmp, com + U3D_U2PHYDCR0);
 
 
