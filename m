@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA0CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1E6C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFD2521727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD2521727
+	by mail.kernel.org (Postfix) with ESMTP id D1B2621727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B2621727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389579AbeHNUS6 (ORCPT
+        id S2389590AbeHNUTA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53224 "EHLO
+        Tue, 14 Aug 2018 16:19:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387619AbeHNUS5 (ORCPT
+        with ESMTP id S2387619AbeHNUTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:57 -0400
+        Tue, 14 Aug 2018 16:19:00 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90609D1A;
-        Tue, 14 Aug 2018 17:30:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C6EF40B;
+        Tue, 14 Aug 2018 17:30:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 46/97] x86/cpufeatures: Add detection of L1D cache flush support.
-Date:   Tue, 14 Aug 2018 19:16:58 +0200
-Message-Id: <20180814171434.907675316@linuxfoundation.org>
+Subject: [PATCH 4.17 55/97] x86/KVM/VMX: Add L1D MSR based flush
+Date:   Tue, 14 Aug 2018 19:17:07 +0200
+Message-Id: <20180814171435.246530115@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -51,35 +51,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 11e34e64e4103955fc4568750914c75d65ea87ee upstream
+commit 3fa045be4c720146b18a19cea7a767dc6ad5df94 upstream
 
 336996-Speculative-Execution-Side-Channel-Mitigations.pdf defines a new MSR
-(IA32_FLUSH_CMD) which is detected by CPUID.7.EDX[28]=1 bit being set.
+(IA32_FLUSH_CMD aka 0x10B) which has similar write-only semantics to other
+MSRs defined in the document.
 
-This new MSR "gives software a way to invalidate structures with finer
-granularity than other architectual methods like WBINVD."
+The semantics of this MSR is to allow "finer granularity invalidation of
+caching structures than existing mechanisms like WBINVD. It will writeback
+and invalidate the L1 data cache, including all cachelines brought in by
+preceding instructions, without invalidating all caches (eg. L2 or
+LLC). Some processors may also invalidate the first level level instruction
+cache on a L1D_FLUSH command. The L1 data and instruction caches may be
+shared across the logical processors of a core."
+
+Use it instead of the loop based L1 flush algorithm.
 
 A copy of this document is available at
-  https://bugzilla.kernel.org/show_bug.cgi?id=199511
+   https://bugzilla.kernel.org/show_bug.cgi?id=199511
 
+[ tglx: Avoid allocating pages when the MSR is available ]
+
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/msr-index.h |    6 ++++++
+ arch/x86/kvm/vmx.c               |   15 +++++++++++----
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -340,6 +340,7 @@
- #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -76,6 +76,12 @@
+ 						    * control required.
+ 						    */
  
++#define MSR_IA32_FLUSH_CMD		0x0000010b
++#define L1D_FLUSH			(1 << 0)   /*
++						    * Writeback and invalidate the
++						    * L1 data cache.
++						    */
++
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+ #define MSR_IA32_BBL_CR_CTL3		0x0000011e
+ 
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9350,6 +9350,11 @@ static void __maybe_unused vmx_l1d_flush
+ {
+ 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
+ 
++	if (static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
++		wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
++		return;
++	}
++
+ 	asm volatile(
+ 		/* First ensure the pages are in the TLB */
+ 		"xorl	%%eax, %%eax\n"
+@@ -12977,11 +12982,13 @@ static int __init vmx_setup_l1d_flush(vo
+ 	    !boot_cpu_has_bug(X86_BUG_L1TF))
+ 		return 0;
+ 
+-	page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
+-	if (!page)
+-		return -ENOMEM;
++	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
++		page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
++		if (!page)
++			return -ENOMEM;
++		vmx_l1d_flush_pages = page_address(page);
++	}
+ 
+-	vmx_l1d_flush_pages = page_address(page);
+ 	static_branch_enable(&vmx_l1d_should_flush);
+ 	return 0;
+ }
 
 
