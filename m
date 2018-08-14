@@ -2,90 +2,99 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23285C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A20FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9EC72151D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:18:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9EC72151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id B51E22170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:19:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ueVnUv1l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51E22170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732760AbeHNRFf (ORCPT
+        id S1732779AbeHNRGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:05:35 -0400
-Received: from mout.gmx.net ([212.227.17.22]:46955 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731724AbeHNRFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:05:35 -0400
-Received: from localhost.localdomain ([113.116.48.118]) by mail.gmx.com
- (mrgmx101 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MfRnb-1fVT7t3fWF-00P1wT; Tue, 14 Aug 2018 16:17:51 +0200
-From:   Chengguang Xu <cgxu519@gmx.com>
-To:     jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org,
-        hubcap@omnibond.com, martin@omnibond.com
-Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        jfs-discussion@lists.sourceforge.net,
-        Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH 5/5] orangefs: cache NULL when both default_acl and acl are NULL
-Date:   Tue, 14 Aug 2018 22:16:34 +0800
-Message-Id: <20180814141634.5471-5-cgxu519@gmx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180814141634.5471-1-cgxu519@gmx.com>
-References: <20180814141634.5471-1-cgxu519@gmx.com>
-X-Provags-ID: V03:K1:BhOPBB45She6oJeWlmpCdGqDSbI8TyNuOHvnSC5HNcIIncvOzG/
- JTK+S7R8iPNvQAxBvwGITz58MAlbBUxOxh22HKn6nIZvHYBBLXIf8WwCot63jAWjh0XiWXc
- gRGiQ/OddweveN6gn2aA9+4VM7y715GaxPlvn0SeffSIuC4GAMR6zvrJHmaXvS/ui9UD4HU
- 7ou4lwyyzT2JwGEIiEsnw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9P1WXlxYrBs=:i6ckKiby2rugs80mUEcnZy
- SJJIQRflKSCSOGi8vK539y6WXEHfLrBuncUMFm2OhStQV5mNaMlUXWtvWUFyvYTzgXwgUZ2Pk
- AWhoC4poFZlqGubtBHMC/n2pQqM3Fx2MlqpZ2kmMuFOsq4yCzAJMGnOm3UFL4TrTQvtLDp5tX
- inC+vo0V4mQ5AfX8Zhd/hf8mpP4mjfUull5BYLamUVgED5/7x1WsTlBX1QIT7tTCARx88LxBU
- ZAZ5AA0bRIfWfKT3oYRSktG0A9/jV8QbHcuj+rBVlP82ctvVlE80NJIKawAoVIJCDiLoXxVm/
- I1WhbPCkyXb1air/8A7i8o3ieRL03vW2j+fII55HOLDMv3x+d1ewE74OSmxSZ+XRUAYoPlDZi
- GyiOLugl3OtWrPOSgZywXi7rrLKdQCotBWaY0yaxIvAQOHa23zkh9Y3hCld7gu8u4xl2/bvmX
- nkG+l2zh5/TuZZaubuEbI5tedmLprcmTMIszotTf59VsaIax6uTE7IaXxRIatXtWGjESQXD9C
- 8SZUAmzOSmmEGGkv849f4/hUvXuWX4lc8SE0PrYx3GwuTZKewSZk3+TwSHvB8DnyRewF/wPGa
- Y/JkEfVu9UVyBsg7LpU+yzKQnnzPP3tUdyR+u53h0H2p7lY+zzEYXdWN+Myx6zyAcTqEQX09H
- rSWVJrwGlzwDEGbbpNCcjehThX3KgLWD9qbX3s82cvAf+WwMlKi5QgvfTceypou270VPSAxri
- M68CxdYijMVB5rUWItEPsoct9cFSJfdbDA9JFoNhW/X5QJv7EfJ6wm9GbzQ=
+        Tue, 14 Aug 2018 13:06:24 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59672 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730259AbeHNRGY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:06:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sXwMjNq8QW2l2WGeOGKXF2ABAogUZ1Vbp49lPxMIR2M=; b=ueVnUv1lBRBqdxpcw/nILBMNB
+        UgCSiu29xb3kENPwpmTYe5G4ak+T/t1U36i/u+BnNNbDQhctjkEdJBXncymZBEvWHMoQHsjtE68cr
+        +fKm1E5dq42skQXfdClSWmibGZ1caUjoC4SkXsn2bY7acEcXQy+u3mVsmknWm3OToWiUo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fpa9z-0000sE-SZ; Tue, 14 Aug 2018 14:18:59 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2E7CA1124449; Tue, 14 Aug 2018 15:18:59 +0100 (BST)
+Date:   Tue, 14 Aug 2018 15:18:59 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Kirill Kapranov <kirill.kapranov@compulab.co.il>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        l.stach@pengutronix.de
+Subject: Re: [PATCH] spi:fix IDR collision on systems with both fixed and
+ dynamic SPI bus numbers
+Message-ID: <20180814141859.GC5810@sirena.org.uk>
+References: <20180813164810.16769-1-kirill.kapranov@compulab.co.il>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="IpbVkmxF4tDyP/Kb"
+Content-Disposition: inline
+In-Reply-To: <20180813164810.16769-1-kirill.kapranov@compulab.co.il>
+X-Cookie: All true wisdom is found on T-shirts.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-default_acl and acl of newly created inode will be initiated
-as ACL_NOT_CACHED in vfs function inode_init_always() and later
-will be updated by calling xxx_init_acl() in specific filesystems.
-Howerver, when default_acl and acl are NULL then they keep the value
-of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
-in this case.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
----
- fs/orangefs/acl.c | 3 +++
- 1 file changed, 3 insertions(+)
+--IpbVkmxF4tDyP/Kb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
-index 10587413b20e..e3b043a263bc 100644
---- a/fs/orangefs/acl.c
-+++ b/fs/orangefs/acl.c
-@@ -175,6 +175,9 @@ int orangefs_init_acl(struct inode *inode, struct inode *dir)
- 		posix_acl_release(acl);
- 	}
- 
-+	if (!default_acl && !acl)
-+		cache_no_acl(inode);
-+
- 	/* If mode of the inode was changed, then do a forcible ->setattr */
- 	if (mode != inode->i_mode) {
- 		memset(&iattr, 0, sizeof iattr);
--- 
-2.17.1
+On Mon, Aug 13, 2018 at 07:48:10PM +0300, Kirill Kapranov wrote:
+> On systems where some controllers get a dynamic ID assigned and some have
+> a fixed number (e.g. from ACPI tables), the current implementation might
+> run into an IDR collision: in case of a fixed bus number is gotten by a
+> driver (but not marked busy in IDR tree) and a driver with dynamic bus
+> number gets the same ID and predictably fails.
 
+Is this something that's actually happened for you?
+
+> +	} else {
+> +	/* devices with a fixed bus num must check-in with the num */
+> +		mutex_lock(&board_lock);
+
+The indentation here is weird, the comment isn't aligned with the code
+it's commenting on.
+
+--IpbVkmxF4tDyP/Kb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlty5NIACgkQJNaLcl1U
+h9Cltgf6AoHkyc03ShpCTDuvl+u2bjgiiUx+V3abGWb0pEZkU0ZVVIj4+3v+dIZI
+Rv6pP6cY1bb2q9KYxbxJSP0h9d1ywrec1ynGvxbWswLQJrXH5KDV8s2AJhOmNoOr
+bOQJESJBEpfC7msE6yqYKcI7HGBNT3Vsf8T3PVIRea+mJL8690mhsopehWwUKoiy
+6B2IZcwYmS+3fCitHQEMZ8z6G9pXYaVNWCoVe1PVDihW2NE3qI474nbqnM5KNmnx
+CfORtA1toS+a56QCR4baEWAyNAHbr/anRlnoqOic/qJQJflx1ZD5h1RoEmL3RgOV
+6TmZUGdgvfbj2HeWgoN8HQ51zySPBw==
+=EdRp
+-----END PGP SIGNATURE-----
+
+--IpbVkmxF4tDyP/Kb--
