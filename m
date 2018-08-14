@@ -7,82 +7,79 @@ X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
 	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D09C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD74C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECED21741
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E986921742
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:29:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dL0lFsX/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECED21741
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhAktqwb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E986921742
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732773AbeHNQP3 (ORCPT
+        id S1732787AbeHNQQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:15:29 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40273 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730488AbeHNQP3 (ORCPT
+        Tue, 14 Aug 2018 12:16:47 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:47049 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732414AbeHNQQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:15:29 -0400
-Received: by mail-pl0-f67.google.com with SMTP id s17-v6so8313912plp.7;
-        Tue, 14 Aug 2018 06:28:18 -0700 (PDT)
+        Tue, 14 Aug 2018 12:16:47 -0400
+Received: by mail-pl0-f65.google.com with SMTP id t17-v6so8303274ply.13;
+        Tue, 14 Aug 2018 06:29:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DRrpz+iSPP+xrFDBb7J7EZIhj8m7B7IbW0REW4izP7A=;
-        b=dL0lFsX/rH79PbXrDNJzgLrUHjDJyoPh1m5oxx6a88fkPpEk6GVwoLR6nGwIsjo3RN
-         u873CC96q2bl5B4/3YqH8FmwfYinXsJDEINl5d6Pol/hmW+YT11qLiamyduBZa5pUcjR
-         yUExycBuBQRDl0j8n4DXyWQ44F2I7q4lbSzhdtBFzns87SveMitsd/1+Lwtarw8IVs5f
-         Sv9eRThiYTGECjVSiWof/iwdQpCXAA6gbuFZbmUISj1yYeAJnOTOjXBepw9AyaFPGjIv
-         Jwl5Dgz2enWszGjvLRo4Tgl1Iz29Q+nWJiZRN+GETKNp02U1Scolfxgr4PpFIffsLatu
-         Oh+w==
+        bh=00r0+pZd/yZzjbEaugaIaV+X09y1JZ1xui4xyDh+HVk=;
+        b=jhAktqwbLYraKQG+YEttJei0iMWXFxVt7f7IIsvxbCGelAAwdZgvCnao9c6EJR1RpN
+         Q3oGB/PXL1U8jpwhQQBOb2Bubbkxt+FGL+nMElj95nCY2bdJz01CejPYRcu2NhBZc/c6
+         al2HBqE4cxdma5HlJ09XwUQ1zAIKLcu8748p4chcVLpFA4eilH97EOrZZ0VXO3gZQjvc
+         oYLOLU+LjlOn3ckc/wo9XGtFrej0CE4C1z/hVJikZkoCmWt97CJwmV1qqjWWNck1spQG
+         E1CtbEhzX37gcVBfTl0MkMRQpjW7K3HnWvtqY3Q8m7poc0QuG3UQsEY6kVkv4DtyzpAA
+         opUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DRrpz+iSPP+xrFDBb7J7EZIhj8m7B7IbW0REW4izP7A=;
-        b=XElQxApIcjpOdZV2cfCE9+FBIX8Jc00jp91ISFpB067wmUf1XdV143j1+fEfgc1fmT
-         piwg42HbRa5JxU7Vw61UHCVUpC+LdgLpIP5z+WXCB7bcsi0Sl9AePXSEL5wu48upZ9Br
-         qr9fYOR/7IrGqOOF/nkPJO9PZRqiz7S3MKXc2/+uyNQBaTZH52Jh+0rQbHQkl/6LpvqJ
-         HpxMblB1CDsXYdoqHHuAQfEBi3IrKzhteO2UkjKhmdln8SqyWWS3TuOV7p2phQVcvrzU
-         QhJKFlGmAvw2IxDnmRtG7bDHDxcDIrlS03Zcb/V+i2rn9wTcaUn4nz6B17vFyeGtirr1
-         cCtw==
-X-Gm-Message-State: AOUpUlEQv2hlVMpdhiR0u6jAMAWI4++MI0Bupz8kFNS2NvqQcQ/tzY6Z
-        X9y2ot43P0gry4FrPiaOtXs=
-X-Google-Smtp-Source: AA+uWPxIXYjFhpCjgkfQPKAMtUEY0VGrudg6pDy78uzJjeEdAXuWW9BijoIdc8qfADJb0aho0uk6kg==
-X-Received: by 2002:a17:902:22e:: with SMTP id 43-v6mr20559743plc.118.1534253298457;
-        Tue, 14 Aug 2018 06:28:18 -0700 (PDT)
+        bh=00r0+pZd/yZzjbEaugaIaV+X09y1JZ1xui4xyDh+HVk=;
+        b=grDddU9oomd8BZ5otgxNMEnegbSIClISwNwgrcE2zl1IpeBiPl8ZDqxQRnzD93u1qQ
+         vt0UMhoq+8UXYupaM6IcziIMizZKFxKIw8KRfB6zAiN7xdKnHVKm2SC7lKAW9X4QOAYk
+         K25o29LlyRM8VdyyC/2ORtbWdkftGal50OFw5gKFAEHeb20Ox9Tdye2Keu2xdS+/An4u
+         N6U6FY/Z27H/s3FFAiMxlT9F5oj0+PT+oRgIob9sY3FMFGPhItFQT23l3pAJVXwaOvEv
+         RcKlgfh0OJN/DwltMdgIiLTFe38gJKG0F71+woXJDnzRcTbfMyepwP0fZDdPYLyllDCz
+         4S5Q==
+X-Gm-Message-State: AOUpUlHVTxi587OkuZAWwxk2r4aJM1RQNvqdKbYKffL6zN1Ry1RAgacA
+        jfN3Wss0sXoVxYi42xC87yEsNjee
+X-Google-Smtp-Source: AA+uWPz104VqpHtnHSxA5SQvTpEN81rTz5rnTM5f1k1pBnUn4MF3glQ5JLx4x1vbfddKQXcE1Ha+1w==
+X-Received: by 2002:a17:902:3a3:: with SMTP id d32-v6mr20615159pld.294.1534253375781;
+        Tue, 14 Aug 2018 06:29:35 -0700 (PDT)
 Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm37362510pfj.5.2018.08.14.06.28.17
+        by smtp.gmail.com with ESMTPSA id x80-v6sm45837366pfe.129.2018.08.14.06.29.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 06:28:17 -0700 (PDT)
-Subject: Re: linux-next: build warning after merge of the net-next tree
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20180719120447.6e7ba23d@canb.auug.org.au>
- <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
- <20180719152940.0720e9c1@canb.auug.org.au>
- <6dabf12b-e3db-dfe8-101c-02772039e21a@roeck-us.net>
- <20180720080906.7a30c573@canb.auug.org.au>
- <20180719223521.GA30287@roeck-us.net>
- <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
- <CAK7LNAQgdqpi60eH-Sfnr+U9DKpwCL=wPdhJA6=hpv3cicVotw@mail.gmail.com>
+        Tue, 14 Aug 2018 06:29:35 -0700 (PDT)
+Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a774a1
+ support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <1534250028-15770-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <2146bdab-2885-931a-b878-4aac10bb1897@roeck-us.net>
-Date:   Tue, 14 Aug 2018 06:28:16 -0700
+Message-ID: <ed09553a-c201-10bb-fcc8-2f66674eba92@roeck-us.net>
+Date:   Tue, 14 Aug 2018 06:29:33 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQgdqpi60eH-Sfnr+U9DKpwCL=wPdhJA6=hpv3cicVotw@mail.gmail.com>
+In-Reply-To: <1534250028-15770-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -91,132 +88,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14/2018 12:05 AM, Masahiro Yamada wrote:
-> 2018-07-20 8:19 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> 2018-07-20 7:35 GMT+09:00 Guenter Roeck <linux@roeck-us.net>:
->>> On Fri, Jul 20, 2018 at 08:09:06AM +1000, Stephen Rothwell wrote:
->>>> Hi Guenter,
->>>>
->>>> On Thu, 19 Jul 2018 06:49:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->>>>>
->>>>> On 07/18/2018 10:29 PM, Stephen Rothwell wrote:
->>>>>>
->>>>>> On Wed, 18 Jul 2018 20:52:56 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->>>>>>>
->>>>>>> On 07/18/2018 07:04 PM, Stephen Rothwell wrote:
->>>>>>>>
->>>>>>>> After merging the net-next tree, today's linux-next build (x86_64
->>>>>>>> allmodconfig) produced this warning:
->>>>>>>>
->>>>>>>> *
->>>>>>>> * Restart config...
->>>>>>>> *
->>>>>>>> ....
->>>>>>>>
->>>>>>>> This is output by my "make allmodconfig" and only started after merging
->>>>>>>> the net-next tree today.  It has continued for further merges/builds.
->>>>>>>>
->>>>>>>> I suspect commit
->>>>>>>>
->>>>>>>>      1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
->>>>>>>>
->>>>>>>> which added an "imply" clause.
->>>>>>>>
->>>>>>> I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
->>>>>>> not. Is that a caveat when using "imply", and does it mean that "imply"
->>>>>>> should better not be used ?
->>>>>>
->>>>>> I don't know, sorry.  It was just my best guess from what I could see
->>>>>> had changed.
->>>>>>
->>>>>> I wonder if it makes a difference that I am doing my "make
->>>>>> allmodconfig" on top of a previous "make allmodconfig" and some symbols
->>>>>> are marked as "NEW" (though they are not symbols related to the changes
->>>>>> that happened during the net-next tree merge)?
->>>>>>
->>>>>
->>>>> I tried to reproduce the problem, but I don't see the message.
->>>>>
->>>>> What I do see, though, is that "make allmodconfig" on a clean tree,
->>>>> followed by "make menuconfig", results in configuration changes.
->>>>> Specifically,
->>>>>
->>>>>   > CONFIG_ARC_EMAC_CORE=m
->>>>>   > CONFIG_ARC_EMAC=m
->>>>>   > CONFIG_EMAC_ROCKCHIP=m
->>>>>
->>>>> is removed by menuconfig, and a large number of "# ... is not set"
->>>>> configuration lines are added. Weird and bad, since several of the
->>>>> disabled configurations _should_ be enabled by "make allmodconfig",
->>>>> and a large number of hwmon drivers are affected. Bisect does point
->>>>> to "net: phy: sfp: Add HWMON support for module sensors", meaning
->>>>> "imply hwmon" does have severe side effects and can not be used.
->>>>>
->>>>> I'll try to find a fix.
->>>>
->>>> OK, my mistake, the "make allmodconfig" works, the following "make"
->>>> causes the config restart.  (I am actually doing cross builds and using
->>>> an external object directory, in case that matters.)
->>>>
->>>> I removed the "imply HWMON" line added by the above commit and the
->>>> problem went away.  Also, using "depends on HWMON || HWMON=n" instead
->>>> of the imply fixes it.
->>>
->>> Yes, replacing imply with the dependency is what I did in the fixup patch.
->>> Sorry, I should have copied you: https://patchwork.kernel.org/patch/10534925/
->>>
->>> It is a bit different - imply was supposed to enforce HWMON={y,n} if SFP=y,
->>> and the depends line enforces SFP={n,m} if HWMON=m. I have no idea why
->>> imply doesn't work, but I think I'll stay away from it in the future.
->>>
->>> Guenter
->>
->>
->> Hmm, this could be a Kconfig bug.
->>
->> I will take a look.
+On 08/14/2018 05:33 AM, Fabrizio Castro wrote:
+> RZ/G2M (R8A774A1) watchdog implementation is compatible with R-Car
+> Gen3, therefore add relevant documentation.
 > 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>   Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Today, I took a look at it.
-> 
-> The cause of the problem was the circular dependency.
-> 
-> Somehow, 'imply' is not checked in the circular dependency.
-> 
-> So, I wrote patches to report this.
-> https://patchwork.kernel.org/patch/10565061/
-> https://patchwork.kernel.org/patch/10565063/
-> 
-> 
-> If you apply those two patches on top of commit
-> 1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
-> It is reported in allmodconfig stage, like this:
-> 
-> 
-> masahiro@grover:~/ref/linux-next$ make allmodconfig
->    HOSTCC  scripts/kconfig/conf.o
->    YACC    scripts/kconfig/zconf.tab.c
->    HOSTCC  scripts/kconfig/zconf.tab.o
->    HOSTLD  scripts/kconfig/conf
-> scripts/kconfig/conf  --allmodconfig Kconfig
-> drivers/of/Kconfig:68:error: recursive dependency detected!
-> drivers/of/Kconfig:68: symbol OF_IRQ depends on IRQ_DOMAIN
-> kernel/irq/Kconfig:63: symbol IRQ_DOMAIN is selected by REGMAP
-> drivers/base/regmap/Kconfig:6: symbol REGMAP is selected by SENSORS_ASPEED
-> drivers/hwmon/Kconfig:352: symbol SENSORS_ASPEED depends on HWMON
-> drivers/hwmon/Kconfig:5: symbol HWMON is implied by SFP
-> drivers/net/phy/Kconfig:214: symbol SFP depends on PHYLIB
-> drivers/net/phy/Kconfig:181: symbol PHYLIB is selected by ARC_EMAC_CORE
-> drivers/net/ethernet/arc/Kconfig:18: symbol ARC_EMAC_CORE is selected
-> by ARC_EMAC
-> drivers/net/ethernet/arc/Kconfig:24: symbol ARC_EMAC depends on OF_IRQ
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> index 5d47a26..9407212 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -7,6 +7,7 @@ Required properties:
+>   	       Examples with soctypes are:
+>   		 - "renesas,r8a7743-wdt" (RZ/G1M)
+>   		 - "renesas,r8a7745-wdt" (RZ/G1E)
+> +		 - "renesas,r8a774a1-wdt" (RZ/G2M)
+>   	         - "renesas,r8a7790-wdt" (R-Car H2)
+>   	         - "renesas,r8a7791-wdt" (R-Car M2-W)
+>   	         - "renesas,r8a7792-wdt" (R-Car V2H)
+> @@ -21,8 +22,8 @@ Required properties:
+>   	         - "renesas,r7s72100-wdt" (RZ/A1)
+>   		The generic compatible string must be:
+>   		 - "renesas,rza-wdt" for RZ/A
+> -		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
+> -		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
+> +		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G1
+> +		 - "renesas,rcar-gen3-wdt" for R-Car Gen3 and RZ/G2
+>   
+>   - reg : Should contain WDT registers location and length
+>   - clocks : the clock feeding the watchdog timer.
 > 
 
-Interesting; I thought that "implied" does not really select the symbol.
-That means 'imply' just doesn't work for HWMON, and we'll have to stick
-with the old "depends on HWMON || HWMON=n".
-
-Thanks,
-Guenter
