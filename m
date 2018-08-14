@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B60C46471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAA9C46473
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C134E2168D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C134E2168D
+	by mail.kernel.org (Postfix) with ESMTP id 3EF512168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF512168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731630AbeHNUZI (ORCPT
+        id S1731750AbeHNUZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:25:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57772 "EHLO
+        Tue, 14 Aug 2018 16:25:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731452AbeHNUZH (ORCPT
+        with ESMTP id S1731452AbeHNUZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:25:07 -0400
+        Tue, 14 Aug 2018 16:25:09 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 220CCDE0;
-        Tue, 14 Aug 2018 17:36:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F4E2CBA;
+        Tue, 14 Aug 2018 17:36:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 070/104] x86/kvm: Move l1tf setup function
-Date:   Tue, 14 Aug 2018 19:17:24 +0200
-Message-Id: <20180814171519.839748260@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 035/104] sched/smt: Update sched_smt_present at runtime
+Date:   Tue, 14 Aug 2018 19:16:49 +0200
+Message-Id: <20180814171517.554611924@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -51,207 +52,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 7db92e165ac814487264632ab2624e832f20ae38 upstream
+commit ba2591a5993eabcc8e874e30f361d8ffbb10d6d4 upstream
 
-In preparation of allowing run time control for L1D flushing, move the
-setup code to the module parameter handler.
+The static key sched_smt_present is only updated at boot time when SMT
+siblings have been detected. Booting with maxcpus=1 and bringing the
+siblings online after boot rebuilds the scheduling domains correctly but
+does not update the static key, so the SMT code is not enabled.
 
-In case of pre module init parsing, just store the value and let vmx_init()
-do the actual setup after running kvm_init() so that enable_ept is having
-the correct state.
+Let the key be updated in the scheduler CPU hotplug code to fix this.
 
-During run-time invoke it directly from the parameter setter to prepare for
-run-time control.
-
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.694063239@linutronix.de
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |  125 +++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 78 insertions(+), 47 deletions(-)
+ kernel/sched/core.c |   30 ++++++++++++------------------
+ kernel/sched/fair.c |    1 +
+ 2 files changed, 13 insertions(+), 18 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -196,7 +196,8 @@ extern const ulong vmx_return;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5615,6 +5615,18 @@ int sched_cpu_activate(unsigned int cpu)
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct rq_flags rf;
  
- static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
- 
--static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush = VMENTER_L1D_FLUSH_COND;
-+/* Storage for pre module init parameter parsing */
-+static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush_param = VMENTER_L1D_FLUSH_AUTO;
- 
- static const struct {
- 	const char *option;
-@@ -208,33 +209,85 @@ static const struct {
- 	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
- };
- 
--static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
-+#define L1D_CACHE_ORDER 4
-+static void *vmx_l1d_flush_pages;
-+
-+static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
- {
--	unsigned int i;
-+	struct page *page;
- 
--	if (!s)
--		return -EINVAL;
-+	/* If set to 'auto' select 'cond' */
-+	if (l1tf == VMENTER_L1D_FLUSH_AUTO)
-+		l1tf = VMENTER_L1D_FLUSH_COND;
- 
--	for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
--		if (!strcmp(s, vmentry_l1d_param[i].option)) {
--			vmentry_l1d_flush = vmentry_l1d_param[i].cmd;
--			return 0;
--		}
-+	if (!enable_ept) {
-+		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
-+		return 0;
- 	}
- 
-+	if (l1tf != VMENTER_L1D_FLUSH_NEVER && !vmx_l1d_flush_pages &&
-+	    !boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
-+		page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
-+		if (!page)
-+			return -ENOMEM;
-+		vmx_l1d_flush_pages = page_address(page);
-+	}
-+
-+	l1tf_vmx_mitigation = l1tf;
-+
-+	if (l1tf != VMENTER_L1D_FLUSH_NEVER)
-+		static_branch_enable(&vmx_l1d_should_flush);
-+	return 0;
-+}
-+
-+static int vmentry_l1d_flush_parse(const char *s)
-+{
-+	unsigned int i;
-+
-+	if (s) {
-+		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
-+			if (!strcmp(s, vmentry_l1d_param[i].option))
-+				return vmentry_l1d_param[i].cmd;
-+		}
-+	}
- 	return -EINVAL;
- }
- 
-+static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
-+{
-+	int l1tf;
-+
-+	if (!boot_cpu_has(X86_BUG_L1TF))
-+		return 0;
-+
-+	l1tf = vmentry_l1d_flush_parse(s);
-+	if (l1tf < 0)
-+		return l1tf;
-+
++#ifdef CONFIG_SCHED_SMT
 +	/*
-+	 * Has vmx_init() run already? If not then this is the pre init
-+	 * parameter parsing. In that case just store the value and let
-+	 * vmx_init() do the proper setup after enable_ept has been
-+	 * established.
++	 * The sched_smt_present static key needs to be evaluated on every
++	 * hotplug event because at boot time SMT might be disabled when
++	 * the number of booted CPUs is limited.
++	 *
++	 * If then later a sibling gets hotplugged, then the key would stay
++	 * off and SMT scheduling would never be functional.
 +	 */
-+	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_AUTO) {
-+		vmentry_l1d_flush_param = l1tf;
-+		return 0;
-+	}
-+
-+	return vmx_setup_l1d_flush(l1tf);
-+}
-+
- static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
++	if (cpumask_weight(cpu_smt_mask(cpu)) > 1)
++		static_branch_enable_cpuslocked(&sched_smt_present);
++#endif
+ 	set_cpu_active(cpu, true);
+ 
+ 	if (sched_smp_initialized) {
+@@ -5710,22 +5722,6 @@ int sched_cpu_dying(unsigned int cpu)
+ }
+ #endif
+ 
+-#ifdef CONFIG_SCHED_SMT
+-DEFINE_STATIC_KEY_FALSE(sched_smt_present);
+-
+-static void sched_init_smt(void)
+-{
+-	/*
+-	 * We've enumerated all CPUs and will assume that if any CPU
+-	 * has SMT siblings, CPU0 will too.
+-	 */
+-	if (cpumask_weight(cpu_smt_mask(0)) > 1)
+-		static_branch_enable(&sched_smt_present);
+-}
+-#else
+-static inline void sched_init_smt(void) { }
+-#endif
+-
+ void __init sched_init_smp(void)
  {
--	return sprintf(s, "%s\n", vmentry_l1d_param[vmentry_l1d_flush].option);
-+	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
+ 	cpumask_var_t non_isolated_cpus;
+@@ -5755,8 +5751,6 @@ void __init sched_init_smp(void)
+ 	init_sched_rt_class();
+ 	init_sched_dl_class();
+ 
+-	sched_init_smt();
+-
+ 	sched_smp_initialized = true;
  }
  
- static const struct kernel_param_ops vmentry_l1d_flush_ops = {
- 	.set = vmentry_l1d_flush_set,
- 	.get = vmentry_l1d_flush_get,
- };
--module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, &vmentry_l1d_flush, S_IRUGO);
-+module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, S_IRUGO);
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5631,6 +5631,7 @@ find_idlest_cpu(struct sched_group *grou
+ }
  
- #define NR_AUTOLOAD_MSRS 8
+ #ifdef CONFIG_SCHED_SMT
++DEFINE_STATIC_KEY_FALSE(sched_smt_present);
  
-@@ -9083,7 +9136,7 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	 * it. The flush bit gets set again either from vcpu_run() or from
- 	 * one of the unsafe VMEXIT handlers.
- 	 */
--	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
-+	always = l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_ALWAYS;
- 	vcpu->arch.l1tf_flush_l1d = always;
- 
- 	vcpu->stat.l1d_flush++;
-@@ -12495,34 +12548,6 @@ static struct kvm_x86_ops vmx_x86_ops __
- 	.setup_mce = vmx_setup_mce,
- };
- 
--static int __init vmx_setup_l1d_flush(void)
--{
--	struct page *page;
--
--	if (!boot_cpu_has_bug(X86_BUG_L1TF))
--		return 0;
--
--	if (!enable_ept) {
--		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
--		return 0;
--	}
--
--	l1tf_vmx_mitigation = vmentry_l1d_flush;
--
--	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
--		return 0;
--
--	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
--		page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
--		if (!page)
--			return -ENOMEM;
--		vmx_l1d_flush_pages = page_address(page);
--	}
--
--	static_branch_enable(&vmx_l1d_should_flush);
--	return 0;
--}
--
- static void vmx_cleanup_l1d_flush(void)
+ static inline void set_idle_cores(int cpu, int val)
  {
- 	if (vmx_l1d_flush_pages) {
-@@ -12557,12 +12582,18 @@ static int __init vmx_init(void)
- 		return r;
- 
- 	/*
--	 * Must be called after kvm_init() so enable_ept is properly set up
--	 */
--	r = vmx_setup_l1d_flush();
--	if (r) {
--		vmx_exit();
--		return r;
-+	 * Must be called after kvm_init() so enable_ept is properly set
-+	 * up. Hand the parameter mitigation value in which was stored in
-+	 * the pre module init parser. If no parameter was given, it will
-+	 * contain 'auto' which will be turned into the default 'cond'
-+	 * mitigation mode.
-+	 */
-+	if (boot_cpu_has(X86_BUG_L1TF)) {
-+		r = vmx_setup_l1d_flush(vmentry_l1d_flush_param);
-+		if (r) {
-+			vmx_exit();
-+			return r;
-+		}
- 	}
- 
- #ifdef CONFIG_KEXEC_CORE
 
 
