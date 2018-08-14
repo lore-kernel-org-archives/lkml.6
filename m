@@ -2,41 +2,46 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8404C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F226FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9755821736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9755821736
+	by mail.kernel.org (Postfix) with ESMTP id B5CE621738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CE621738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403836AbeHNUfm (ORCPT
+        id S2403844AbeHNUfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32780 "EHLO
+        Tue, 14 Aug 2018 16:35:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfm (ORCPT
+        with ESMTP id S2390379AbeHNUfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:42 -0400
+        Tue, 14 Aug 2018 16:35:45 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 525B9CAE;
-        Tue, 14 Aug 2018 17:47:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AF4FCB5;
+        Tue, 14 Aug 2018 17:47:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 34/43] x86/bugs: Move the l1tf function and define pr_fmt properly
-Date:   Tue, 14 Aug 2018 19:18:10 +0200
-Message-Id: <20180814171519.341265676@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        Srinidhi Rao <srinidhir@vmware.com>
+Subject: [PATCH 4.4 04/43] fork: unconditionally clear stack on fork
+Date:   Tue, 14 Aug 2018 19:17:40 +0200
+Message-Id: <20180814171517.334471891@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -53,95 +58,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 56563f53d3066afa9e63d6c997bf67e76a8b05c0 upstream
+commit e01e80634ecdde1dd113ac43b3adad21b47f3957 upstream.
 
-The pr_warn in l1tf_select_mitigation would have used the prior pr_fmt
-which was defined as "Spectre V2 : ".
+One of the classes of kernel stack content leaks[1] is exposing the
+contents of prior heap or stack contents when a new process stack is
+allocated.  Normally, those stacks are not zeroed, and the old contents
+remain in place.  In the face of stack content exposure flaws, those
+contents can leak to userspace.
 
-Move the function to be past SSBD and also define the pr_fmt.
+Fixing this will make the kernel no longer vulnerable to these flaws, as
+the stack will be wiped each time a stack is assigned to a new process.
+There's not a meaningful change in runtime performance; it almost looks
+like it provides a benefit.
 
-Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Performing back-to-back kernel builds before:
+	Run times: 157.86 157.09 158.90 160.94 160.80
+	Mean: 159.12
+	Std Dev: 1.54
+
+and after:
+	Run times: 159.31 157.34 156.71 158.15 160.81
+	Mean: 158.46
+	Std Dev: 1.46
+
+Instead of making this a build or runtime config, Andy Lutomirski
+recommended this just be enabled by default.
+
+[1] A noisy search for many kinds of stack content leaks can be seen here:
+https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=linux+kernel+stack+leak
+
+I did some more with perf and cycle counts on running 100,000 execs of
+/bin/true.
+
+before:
+Cycles: 218858861551 218853036130 214727610969 227656844122 224980542841
+Mean:  221015379122.60
+Std Dev: 4662486552.47
+
+after:
+Cycles: 213868945060 213119275204 211820169456 224426673259 225489986348
+Mean:  217745009865.40
+Std Dev: 5935559279.99
+
+It continues to look like it's faster, though the deviation is rather
+wide, but I'm not sure what I could do that would be less noisy.  I'm
+open to ideas!
+
+Link: http://lkml.kernel.org/r/20180221021659.GA37073@beast
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[ Srivatsa: Backported to 4.4.y ]
+Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Reviewed-by: Srinidhi Rao <srinidhir@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   55 +++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 26 deletions(-)
+ include/linux/thread_info.h |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -207,32 +207,6 @@ static void x86_amd_ssb_disable(void)
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
- }
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -55,11 +55,7 @@ extern long do_no_restart_syscall(struct
  
--static void __init l1tf_select_mitigation(void)
--{
--	u64 half_pa;
--
--	if (!boot_cpu_has_bug(X86_BUG_L1TF))
--		return;
--
--#if CONFIG_PGTABLE_LEVELS == 2
--	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
--	return;
+ #ifdef __KERNEL__
+ 
+-#ifdef CONFIG_DEBUG_STACK_USAGE
+-# define THREADINFO_GFP		(GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO)
+-#else
+-# define THREADINFO_GFP		(GFP_KERNEL | __GFP_NOTRACK)
 -#endif
--
--	/*
--	 * This is extremely unlikely to happen because almost all
--	 * systems have far more MAX_PA/2 than RAM can be fit into
--	 * DIMM slots.
--	 */
--	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
--		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
--		return;
--	}
--
--	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
--}
--
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
++#define THREADINFO_GFP		(GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO)
  
-@@ -658,6 +632,35 @@ void x86_spec_ctrl_setup_ap(void)
- 		x86_amd_ssb_disable();
- }
- 
-+#undef pr_fmt
-+#define pr_fmt(fmt)	"L1TF: " fmt
-+static void __init l1tf_select_mitigation(void)
-+{
-+	u64 half_pa;
-+
-+	if (!boot_cpu_has_bug(X86_BUG_L1TF))
-+		return;
-+
-+#if CONFIG_PGTABLE_LEVELS == 2
-+	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
-+	return;
-+#endif
-+
-+	/*
-+	 * This is extremely unlikely to happen because almost all
-+	 * systems have far more MAX_PA/2 than RAM can be fit into
-+	 * DIMM slots.
-+	 */
-+	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
-+	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
-+		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-+		return;
-+	}
-+
-+	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
-+}
-+#undef pr_fmt
-+
- #ifdef CONFIG_SYSFS
- 
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ /*
+  * flag set/clear/test wrappers
 
 
