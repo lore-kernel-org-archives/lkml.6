@@ -2,218 +2,150 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A4EC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 446DAC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2763B218DE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:21:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2763B218DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kleine-koenig.org
+	by mail.kernel.org (Postfix) with ESMTP id E26B0218DE
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:21:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="Y6WaNq3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26B0218DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731835AbeHNKH1 (ORCPT
+        id S1731917AbeHNKHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 06:07:27 -0400
-Received: from antares.kleine-koenig.org ([94.130.110.236]:47398 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731193AbeHNKH1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:07:27 -0400
-X-Greylist: delayed 560 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Aug 2018 06:07:24 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by antares.kleine-koenig.org (Postfix) with ESMTP id 28B7234D26F;
-        Tue, 14 Aug 2018 09:12:11 +0200 (CEST)
-Received: from antares.kleine-koenig.org ([127.0.0.1])
-        by localhost (antares.kleine-koenig.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id q79pMH1FbMH2; Tue, 14 Aug 2018 09:12:01 +0200 (CEST)
-Received: from [IPv6:2a02:8071:b581:3afc:e159:39eb:3e85:a3f8] (unknown [IPv6:2a02:8071:b581:3afc:e159:39eb:3e85:a3f8])
-        by antares.kleine-koenig.org (Postfix) with ESMTPSA;
-        Tue, 14 Aug 2018 09:12:01 +0200 (CEST)
-Subject: Re: Turris Omnia firmware possibilities [Was: Re: led: hw-trigger,
- global brightness and multi-colored leds]
-To:     Tomas Hlavacek <tomas.hlavacek@nic.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
-References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
- <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
- <e72ed1b1-1225-2782-e207-1af6af347810@kleine-koenig.org>
- <CAEB7QLA3hs+Wa_UD4tUXN1JB535dWJxtBLo_jveKkGkyKyGAJQ@mail.gmail.com>
-From:   =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=uwe@kleine-koenig.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4d4e3398-d50b-bc6b-d767-04f340472e59@kleine-koenig.org>
-Date:   Tue, 14 Aug 2018 09:11:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 14 Aug 2018 06:07:39 -0400
+Received: from mail-sn1nam02on0075.outbound.protection.outlook.com ([104.47.36.75]:31184
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728209AbeHNKHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:07:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7CY6eBH+CsLJxKfqaGlLTWX1ST7+jAbX5flQN2FseWI=;
+ b=Y6WaNq3jjwF+40LqAhqkXKEy1pU2cpYvM4tjTTluzcCquold3bDx7vqKVCmlaNxmpR/KilYjdcYFdLGAAmrlJ6v/u+YEzwcNuM80H4MrdScri6fzGSn0zprcr/EiXDzVxvMPWitOIBaHr59O8A9gvknvy8tRn8xI0i2gmk0ufrI=
+Received: from BN7PR07MB4676.namprd07.prod.outlook.com (52.135.249.153) by
+ BN7PR07MB4547.namprd07.prod.outlook.com (52.135.253.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1038.21; Tue, 14 Aug 2018 07:21:41 +0000
+Received: from BN7PR07MB4676.namprd07.prod.outlook.com
+ ([fe80::e94b:eb6e:2766:3208]) by BN7PR07MB4676.namprd07.prod.outlook.com
+ ([fe80::e94b:eb6e:2766:3208%3]) with mapi id 15.20.1017.022; Tue, 14 Aug 2018
+ 07:21:40 +0000
+From:   Janek Kotas <jank@cadence.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Janek Kotas <jank@cadence.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: ufs: Add bindings for Cadence UFS
+Thread-Topic: [PATCH v3 1/2] dt-bindings: ufs: Add bindings for Cadence UFS
+Thread-Index: AQHUL+RojYplStHgSUimg9p+QzGwSKS9+PiAgADmIYA=
+Date:   Tue, 14 Aug 2018 07:21:40 +0000
+Message-ID: <38727B36-5200-4A3A-B3D1-88ADC5381622@global.cadence.com>
+References: <F39BF38C-FD85-4115-975C-8D923518A541@global.cadence.com>
+ <20180813173759.GA7302@rob-hp-laptop>
+In-Reply-To: <20180813173759.GA7302@rob-hp-laptop>
+Accept-Language: en-US, pl-PL
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jank@cadence.com; 
+x-originating-ip: [199.43.4.28]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR07MB4547;20:g2BnFFCqC0nIGRUL9Mx9w8Zmdxl4xeI4wFBN3w9rTwUC8FHKPG9eEqdObiyNQXAj70zbilvXC5oI1l5ISMaWFeugZt5Di56hL47VT8AdsO5pdvO6W2alYFgWBvwQzF4k+YRfgghwHLN+prj0sBU/sS6uqK2KYqfL67moS58QxK51V3EeS8+ifBhxgcAESNMTHA4T5P2hNBigouEXf+UvMZN3+DVj2PqohTPUdLAwt84McVcdEB1IGNI+MlEGP+YA
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(136003)(346002)(366004)(36092001)(189003)(199004)(68736007)(186003)(53936002)(26005)(5660300001)(76176011)(99286004)(6306002)(39060400002)(6506007)(53546011)(6512007)(102836004)(83716003)(478600001)(6916009)(256004)(446003)(14444005)(11346002)(229853002)(486006)(8936002)(8676002)(305945005)(81166006)(6436002)(81156014)(476003)(6486002)(7736002)(4326008)(66066001)(86362001)(575784001)(33656002)(25786009)(14454004)(2900100001)(6116002)(3846002)(82746002)(6246003)(316002)(97736004)(966005)(54906003)(106356001)(105586002)(5250100002)(2906002)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4547;H:BN7PR07MB4676.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: d73c2e11-424e-40c5-0930-08d601b69465
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR07MB4547;
+x-ms-traffictypediagnostic: BN7PR07MB4547:
+x-microsoft-antispam-prvs: <BN7PR07MB45478174F18AD52BEE7E81F0D0380@BN7PR07MB4547.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110)(10436049006162)(9452136761055);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BN7PR07MB4547;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4547;
+x-forefront-prvs: 0764C4A8CD
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Qxu+dfbFJ8OYCH2UxWTa00uaYKq3h96Oz1U9r2f6wMmJyeXZgjMKDbtl/7PeLLiMPAVlE4m9cJyw+sriqQr9CDGdt6H0XMU03u4Ayhyy7pFBRHGiaYdW9o4HIuxQ6TG5yQqPpvphNDSO4pq04u/t6ItOfj/FeZUcY56qj9z0xf1Z7XR/R4Z8R7oshWo7klkO4MmfWd3aAefsUOR45JD7LZ+efKHdBLejsoJZ5rB/ptgKRYaHeGEkDfLz53O/8s7Oz5DU5fF6pWwVTpQ3NKGEfE3CmtTWoFprWIvvvEOGCVtNAyDqha0F52sxANewImcMm9QlgCB6Izh/1Pz7eERzH8dP+yrDbm1QTeEhWkwyMHQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <56140F381512A04882BAFD1BAAF4A1F6@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <CAEB7QLA3hs+Wa_UD4tUXN1JB535dWJxtBLo_jveKkGkyKyGAJQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="X29bpeSWLVW6LRnqLlaWtxjTltiXfuNQm"
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d73c2e11-424e-40c5-0930-08d601b69465
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2018 07:21:40.2577
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4547
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---X29bpeSWLVW6LRnqLlaWtxjTltiXfuNQm
-Content-Type: multipart/mixed; boundary="a6JtdUzm26r65atUPAdnEU2WGA1c1mRXW";
- protected-headers="v1"
-From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-To: Tomas Hlavacek <tomas.hlavacek@nic.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek
- <pavel@ucw.cz>, linux-kernel@vger.kernel.org
-Message-ID: <4d4e3398-d50b-bc6b-d767-04f340472e59@kleine-koenig.org>
-Subject: Re: Turris Omnia firmware possibilities [Was: Re: led: hw-trigger,
- global brightness and multi-colored leds]
-References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
- <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
- <e72ed1b1-1225-2782-e207-1af6af347810@kleine-koenig.org>
- <CAEB7QLA3hs+Wa_UD4tUXN1JB535dWJxtBLo_jveKkGkyKyGAJQ@mail.gmail.com>
-In-Reply-To: <CAEB7QLA3hs+Wa_UD4tUXN1JB535dWJxtBLo_jveKkGkyKyGAJQ@mail.gmail.com>
-
---a6JtdUzm26r65atUPAdnEU2WGA1c1mRXW
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hello Tomas,
-
-On 05/25/2018 04:02 PM, Tomas Hlavacek wrote:
->> Talking about firmware, I wonder if there is firmware supported needed=
-
->> to solve
->> https://wiki.debian.org/InstallingDebianOn/TurrisOmnia#Power_Managemen=
-t
->> . Didn't look into that deeply yet and probably not high prio given th=
-at
->> normally the Turris Omnia will just run 7x24h.
->=20
-> That's right, there is no power-down signalization from the CPU right
-> now. Btw. is there any mechanism in kernel to signal over arbitrary
-> bus (like I2C) that the host is shutting down and the power can/should
-> be cut to CPU in N seconds?
-
-I think there is no interface for "in N seconds" and currently the i2c
-core isn't prepared to do such stuff "late" (i.e. when the system is
-going down and irqs are already off). But there is some work ongoing to
-address that:
-
-	https://marc.info/?l=3Dlinux-i2c&m=3D153419498527890&w=3D2
-
-Best regards
-Uwe
-
-
---a6JtdUzm26r65atUPAdnEU2WGA1c1mRXW--
-
---X29bpeSWLVW6LRnqLlaWtxjTltiXfuNQm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAltygLwACgkQwfwUeK3K
-7Am9MQf/RaVgg9dx8a49OLGr+QGfPxozF0KQUOdA+Qw5YSv4HdoqEyk1Hy6+uJWI
-0S18QSZeV0CA5tSSMz/DlkwvdC4PnOxk1n9HF2H2o8hHckx47xbENbVYXeqKcZj5
-syEPBKbXTJ8yKQpMpAu4V4N2F0hbZxWYdRnsnaa3xBiK/BvuINlvnHzj/IEdPzsY
-r3iRz7EPXxI3cGKUsoUR/oL1LfjtoynAlNpPND6h/32pNH94YaZ+CgJhPSDLQJNr
-TsCtCtc+tRPGxgGxSgF7xWh37DtrxfLmQTZXu17mRvdgxdnRI58DhBCvxH+CYdR+
-Y2VBnOtRpcBduXIUFFLyH8lNilje9w==
-=J4hL
------END PGP SIGNATURE-----
-
---X29bpeSWLVW6LRnqLlaWtxjTltiXfuNQm--
+DQoNCj4gT24gMTMgQXVnIDIwMTgsIGF0IDE5OjM3LCBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwu
+b3JnPiB3cm90ZToNCj4gDQoNCj4gDQo+IE9uIFRodSwgQXVnIDA5LCAyMDE4IGF0IDAxOjI1OjE1
+UE0gKzAwMDAsIEphbmVrIEtvdGFzIHdyb3RlOg0KPj4gVGhpcyBwYXRjaCBhZGRzIGEgRFQgYmlu
+ZGluZyBkb2N1bWVudGF0aW9uIGZvcg0KPj4gQ2FkZW5jZSBVRlMgSG9zdCBDb250cm9sbGVyLg0K
+Pj4gDQo+PiBTaWduZWQtb2ZmLWJ5OiBKYW4gS290YXMgPGphbmtAY2FkZW5jZS5jb20+DQo+PiAt
+LS0NCj4+IC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Vmcy9jZG5zLHVmc2hjLnR4dCAgICAgICAg
+IHwgMzEgKysrKysrKysrKysrKysrKysrKysrKw0KPj4gMSBmaWxlIGNoYW5nZWQsIDMxIGluc2Vy
+dGlvbnMoKykNCj4+IGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvdWZzL2NkbnMsdWZzaGMudHh0DQo+PiANCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdWZzL2NkbnMsdWZzaGMudHh0IGIvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Vmcy9jZG5zLHVmc2hjLnR4dA0KPj4gbmV3IGZpbGUg
+bW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwLi5hMDRhNDk4OQ0KPj4gLS0tIC9kZXYvbnVs
+bA0KPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Vmcy9jZG5zLHVm
+c2hjLnR4dA0KPj4gQEAgLTAsMCArMSwzMSBAQA0KPj4gKyogQ2FkZW5jZSBVbml2ZXJzYWwgRmxh
+c2ggU3RvcmFnZSAoVUZTKSBDb250cm9sbGVyDQo+PiArDQo+PiArVUZTIG5vZGVzIGFyZSBkZWZp
+bmVkIHRvIGRlc2NyaWJlIG9uLWNoaXAgVUZTIGhvc3QgY29udHJvbGxlcnMuDQo+PiArRWFjaCBV
+RlMgY29udHJvbGxlciBpbnN0YW5jZSBzaG91bGQgaGF2ZSBpdHMgb3duIG5vZGUuDQo+PiArUGxl
+YXNlIHNlZSB0aGUgdWZzaGNkLXBsdGZybS50eHQgZm9yIGEgbGlzdCBvZiBhbGwgYXZhaWxhYmxl
+IHByb3BlcnRpZXMuDQo+PiArDQo+PiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4+ICstIGNvbXBh
+dGlibGUJOiBDb21wYXRpYmxlIGxpc3QsIGNvbnRhaW5zIHRoZSBmb2xsb3dpbmcgY29udHJvbGxl
+cjoNCj4+ICsJCQkiY2Rucyx1ZnNoYyINCj4+ICsJCSAgY29tcGxlbWVudGVkIHdpdGggdGhlIEpF
+REVDIHZlcnNpb246DQo+PiArCQkJImplZGVjLHVmcy0yLjAiDQo+PiArDQo+PiArLSByZWcJCTog
+QWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBVRlMgcmVnaXN0ZXIgc2V0Lg0KPj4gKy0gaW50ZXJy
+dXB0cwk6IE9uZSBpbnRlcnJ1cHQgbWFwcGluZy4NCj4+ICstIGZyZXEtdGFibGUtaHoJOiBDbG9j
+ayBmcmVxdWVuY3kgdGFibGUuDQo+PiArCQkgIFNlZSB0aGUgdWZzaGNkLXBsdGZybS50eHQgZm9y
+IGRldGFpbHMuDQo+PiArLSBjbG9ja3MJOiBMaXN0IG9mIHBoYW5kbGUgYW5kIGNsb2NrIHNwZWNp
+ZmllciBwYWlycy4NCj4+ICstIGNsb2NrLW5hbWVzCTogTGlzdCBvZiBjbG9jayBpbnB1dCBuYW1l
+IHN0cmluZ3Mgc29ydGVkIGluIHRoZSBzYW1lDQo+PiArCQkgIG9yZGVyIGFzIHRoZSBjbG9ja3Mg
+cHJvcGVydHkuICJjb3JlX2NsayIgaXMgbWFuZGF0b3J5Lg0KPj4gKwkJICBEZXBlbmRpbmcgb24g
+YSB0eXBlIG9mIGEgUEhZLA0KPj4gKwkJICB0aGUgInBoeV9jbGsiIGNsb2NrIGNhbiBhbHNvIGJl
+IGFkZGVkLCBpZiBuZWVkZWQuDQo+IA0KPiBVbmZvcnR1bmF0ZWx5LCB5b3Ugd2VudCB0aGUgd3Jv
+bmcgZGlyZWN0aW9uLiBUaGUgJ19jbGsnIHBhcnQgaXMgDQo+IHJlZHVuZGFudC4gSnVzdCDigJhj
+b3Jl4oCZIGFuZCAncGh5Jy4NCg0KSSB1bmRlcnN0YW5kLCBob3dldmVyIHRoZSByZXN0IG9mIHRo
+ZSB1ZnMgZnJhbWV3b3JrIHVzZXMgdGhlICdfY2xrJyBzdWZmaXg6DQpkcml2ZXJzL3Njc2kvdWZz
+L3Vmc2hjZC5jOjY5OTk6DQoNCmlmICghSVNfRVJSX09SX05VTEwoY2xraS0+Y2xrKSkgewkJCQ0K
+CWlmIChza2lwX3JlZl9jbGsgJiYgIXN0cmNtcChjbGtpLT5uYW1lLCAicmVmX2NsayIpKQkJCQ0K
+CQljb250aW51ZTsNCg0KSSB3YW50ZWQgaXQgdG8gYmUgY29uc2lzdGVudCwgd2l0aCB0aGUgcmVz
+dCBvZiB0aGUgVUZTIGRyaXZlcnMuDQoNClJlZ2FyZHMsDQpKYW4NCg0KPiBXaXRoIHRoYXQsDQo+
+IA0KPiBSZXZpZXdlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gDQo+PiAr
+DQo+PiArRXhhbXBsZToNCj4+ICsJdWZzQGZkMDMwMDAwIHsNCj4+ICsJCWNvbXBhdGlibGUgPSAi
+Y2Rucyx1ZnNoYyIsICJqZWRlYyx1ZnMtMi4wIjsNCj4+ICsJCXJlZyA9IDwweGZkMDMwMDAwIDB4
+MTAwMDA+Ow0KPj4gKwkJaW50ZXJydXB0cyA9IDwwIDEgSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+
+PiArCQlmcmVxLXRhYmxlLWh6ID0gPDAgMD4sIDwwIDA+Ow0KPj4gKwkJY2xvY2tzID0gPCZ1ZnNf
+Y29yZV9jbGs+LCA8JnVmc19waHlfY2xrPjsNCj4+ICsJCWNsb2NrLW5hbWVzID0gImNvcmVfY2xr
+IiwgInBoeV9jbGsiOw0KPj4gKwl9Ow0KPj4gLS0gDQo+PiAyLjE1LjANCj4+IA0KPj4gDQo+PiAt
+LQ0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vi
+c2NyaWJlIGRldmljZXRyZWUiIGluDQo+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
+b21vQHZnZXIua2VybmVsLm9yZw0KPj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cHM6Ly91
+cmxkZWZlbnNlLnByb29mcG9pbnQuY29tL3YyL3VybD91PWh0dHAtM0FfX3ZnZXIua2VybmVsLm9y
+Z19tYWpvcmRvbW8tMkRpbmZvLmh0bWwmZD1Ed0lCQWcmYz1hVXE5ODNMMnB1ZTJGcUtGb1A2UEdI
+TUpReW9KN2tsM3MzR1otX2hhWHFZJnI9ZzdHQVFFTlZYeF9SUWR5WEhJblBNZyZtPWVjam15MlV2
+bDNoQnBNdVVRWUZtNEhTRndwWk9Oa1QyUXI4ci0tN2cxdzgmcz1EYlFSdjFvR2xydTB3bUhaSmhG
+WHpwN3l3a0dWODk1UFBQX0xBeS1XQmtNJmU9DQoNCg==
