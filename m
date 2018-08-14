@@ -2,300 +2,125 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13BEC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A33FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E3021736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:49:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E3021736
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id EF11D21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:50:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF11D21736
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391166AbeHNUfN (ORCPT
+        id S2390815AbeHNUdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60854 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390725AbeHNUfM (ORCPT
+        Tue, 14 Aug 2018 16:33:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45746 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728642AbeHNUc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:12 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87F8ECAE;
-        Tue, 14 Aug 2018 17:46:59 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 27/43] x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation
-Date:   Tue, 14 Aug 2018 19:18:03 +0200
-Message-Id: <20180814171518.909559393@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
-References: <20180814171517.014285600@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 14 Aug 2018 16:32:59 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EHiW6R113357
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:44:47 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kv1db6dff-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 13:44:47 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 14 Aug 2018 13:44:46 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 14 Aug 2018 13:44:43 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7EHigC78585736
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 14 Aug 2018 17:44:42 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 08D89B2068;
+        Tue, 14 Aug 2018 13:43:58 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF0A3B2064;
+        Tue, 14 Aug 2018 13:43:57 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 14 Aug 2018 13:43:57 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 1CF5916C2EBE; Tue, 14 Aug 2018 10:44:43 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 10:44:43 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        peterz@infradead.org, tj@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] Make call_srcu() available during very early boot
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180814162448.GA20414@linux.vnet.ibm.com>
+ <20180814124945.5cf1753f@gandalf.local.home>
+ <20180814170618.GA24813@linux.vnet.ibm.com>
+ <20180814132453.093a4921@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180814132453.093a4921@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18081417-0052-0000-0000-0000031EF0C5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009544; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073483; UDB=6.00553122; IPR=6.00853441;
+ MB=3.00022715; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-14 17:44:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081417-0053-0000-0000-00005DB997C2
+Message-Id: <20180814174443.GG24813@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-14_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=878 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808140182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Aug 14, 2018 at 01:24:53PM -0400, Steven Rostedt wrote:
+> On Tue, 14 Aug 2018 10:06:18 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> 
+> > > >  #define __SRCU_STRUCT_INIT(name, pcpu_name)				\
+> > > > -	{								\
+> > > > -		.sda = &pcpu_name,					\
+> > > > -		.lock = __SPIN_LOCK_UNLOCKED(name.lock),		\
+> > > > -		.srcu_gp_seq_needed = 0 - 1,				\
+> > > > -		__SRCU_DEP_MAP_INIT(name)				\
+> > > > -	}
+> > > > +{									\
+> > > > +	.sda = &pcpu_name,						\
+> > > > +	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
+> > > > +	.srcu_gp_seq_needed = 0 - 1,					\  
+> > > 
+> > > Interesting initialization of -1. This was there before, but still
+> > > interesting none the less.  
+> > 
+> > If I recall correctly, this subterfuge suppresses compiler complaints
+> > about initializing an unsigned long with a negative number.  :-/
+> 
+> Did you try:
+> 
+> 	.srcu_gp_seq_needed = -1UL,
+> 
+> ?
 
-------------------
+Works for my compiler, not sure what set of complaints pushed me in that
+direction.
 
-From: Andi Kleen <ak@linux.intel.com>
-
-commit 6b28baca9b1f0d4a42b865da7a05b1c81424bd5c upstream
-
-When PTEs are set to PROT_NONE the kernel just clears the Present bit and
-preserves the PFN, which creates attack surface for L1TF speculation
-speculation attacks.
-
-This is important inside guests, because L1TF speculation bypasses physical
-page remapping. While the host has its own migitations preventing leaking
-data from other VMs into the guest, this would still risk leaking the wrong
-page inside the current guest.
-
-This uses the same technique as Linus' swap entry patch: while an entry is
-is in PROTNONE state invert the complete PFN part part of it. This ensures
-that the the highest bit will point to non existing memory.
-
-The invert is done by pte/pmd_modify and pfn/pmd/pud_pte for PROTNONE and
-pte/pmd/pud_pfn undo it.
-
-This assume that no code path touches the PFN part of a PTE directly
-without using these primitives.
-
-This doesn't handle the case that MMIO is on the top of the CPU physical
-memory. If such an MMIO region was exposed by an unpriviledged driver for
-mmap it would be possible to attack some real memory.  However this
-situation is all rather unlikely.
-
-For 32bit non PAE the inversion is not done because there are really not
-enough bits to protect anything.
-
-Q: Why does the guest need to be protected when the HyperVisor already has
-   L1TF mitigations?
-
-A: Here's an example:
-
-   Physical pages 1 2 get mapped into a guest as
-   GPA 1 -> PA 2
-   GPA 2 -> PA 1
-   through EPT.
-
-   The L1TF speculation ignores the EPT remapping.
-
-   Now the guest kernel maps GPA 1 to process A and GPA 2 to process B, and
-   they belong to different users and should be isolated.
-
-   A sets the GPA 1 PA 2 PTE to PROT_NONE to bypass the EPT remapping and
-   gets read access to the underlying physical page. Which in this case
-   points to PA 2, so it can read process B's data, if it happened to be in
-   L1, so isolation inside the guest is broken.
-
-   There's nothing the hypervisor can do about this. This mitigation has to
-   be done in the guest itself.
-
-[ tglx: Massaged changelog ]
-[ dwmw2: backported to 4.9 ]
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/pgtable-2level.h |   17 +++++++++++++++
- arch/x86/include/asm/pgtable-3level.h |    2 +
- arch/x86/include/asm/pgtable-invert.h |   32 ++++++++++++++++++++++++++++
- arch/x86/include/asm/pgtable.h        |   38 ++++++++++++++++++++++++----------
- arch/x86/include/asm/pgtable_64.h     |    2 +
- 5 files changed, 80 insertions(+), 11 deletions(-)
- create mode 100644 arch/x86/include/asm/pgtable-invert.h
-
---- a/arch/x86/include/asm/pgtable-2level.h
-+++ b/arch/x86/include/asm/pgtable-2level.h
-@@ -77,4 +77,21 @@ static inline unsigned long pte_bitop(un
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { (pte).pte_low })
- #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
- 
-+/* No inverted PFNs on 2 level page tables */
-+
-+static inline u64 protnone_mask(u64 val)
-+{
-+	return 0;
-+}
-+
-+static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask)
-+{
-+	return val;
-+}
-+
-+static inline bool __pte_needs_invert(u64 val)
-+{
-+	return false;
-+}
-+
- #endif /* _ASM_X86_PGTABLE_2LEVEL_H */
---- a/arch/x86/include/asm/pgtable-3level.h
-+++ b/arch/x86/include/asm/pgtable-3level.h
-@@ -184,4 +184,6 @@ static inline pmd_t native_pmdp_get_and_
- #define __pte_to_swp_entry(pte)		((swp_entry_t){ (pte).pte_high })
- #define __swp_entry_to_pte(x)		((pte_t){ { .pte_high = (x).val } })
- 
-+#include <asm/pgtable-invert.h>
-+
- #endif /* _ASM_X86_PGTABLE_3LEVEL_H */
---- /dev/null
-+++ b/arch/x86/include/asm/pgtable-invert.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_PGTABLE_INVERT_H
-+#define _ASM_PGTABLE_INVERT_H 1
-+
-+#ifndef __ASSEMBLY__
-+
-+static inline bool __pte_needs_invert(u64 val)
-+{
-+	return (val & (_PAGE_PRESENT|_PAGE_PROTNONE)) == _PAGE_PROTNONE;
-+}
-+
-+/* Get a mask to xor with the page table entry to get the correct pfn. */
-+static inline u64 protnone_mask(u64 val)
-+{
-+	return __pte_needs_invert(val) ?  ~0ull : 0;
-+}
-+
-+static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask)
-+{
-+	/*
-+	 * When a PTE transitions from NONE to !NONE or vice-versa
-+	 * invert the PFN part to stop speculation.
-+	 * pte_pfn undoes this when needed.
-+	 */
-+	if (__pte_needs_invert(oldval) != __pte_needs_invert(val))
-+		val = (val & ~mask) | (~val & mask);
-+	return val;
-+}
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -148,19 +148,29 @@ static inline int pte_special(pte_t pte)
- 	return pte_flags(pte) & _PAGE_SPECIAL;
- }
- 
-+/* Entries that were set to PROT_NONE are inverted */
-+
-+static inline u64 protnone_mask(u64 val);
-+
- static inline unsigned long pte_pfn(pte_t pte)
- {
--	return (pte_val(pte) & PTE_PFN_MASK) >> PAGE_SHIFT;
-+	unsigned long pfn = pte_val(pte);
-+	pfn ^= protnone_mask(pfn);
-+	return (pfn & PTE_PFN_MASK) >> PAGE_SHIFT;
- }
- 
- static inline unsigned long pmd_pfn(pmd_t pmd)
- {
--	return (pmd_val(pmd) & pmd_pfn_mask(pmd)) >> PAGE_SHIFT;
-+	unsigned long pfn = pmd_val(pmd);
-+	pfn ^= protnone_mask(pfn);
-+	return (pfn & pmd_pfn_mask(pmd)) >> PAGE_SHIFT;
- }
- 
- static inline unsigned long pud_pfn(pud_t pud)
- {
--	return (pud_val(pud) & pud_pfn_mask(pud)) >> PAGE_SHIFT;
-+	unsigned long pfn = pud_val(pud);
-+	pfn ^= protnone_mask(pfn);
-+	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
- }
- 
- #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
-@@ -359,19 +369,25 @@ static inline pgprotval_t massage_pgprot
- 
- static inline pte_t pfn_pte(unsigned long page_nr, pgprot_t pgprot)
- {
--	return __pte(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+	phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+	pfn ^= protnone_mask(pgprot_val(pgprot));
-+	pfn &= PTE_PFN_MASK;
-+	return __pte(pfn | massage_pgprot(pgprot));
- }
- 
- static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
- {
--	return __pmd(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+	phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+	pfn ^= protnone_mask(pgprot_val(pgprot));
-+	pfn &= PHYSICAL_PMD_PAGE_MASK;
-+	return __pmd(pfn | massage_pgprot(pgprot));
- }
- 
-+static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
-+
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- {
--	pteval_t val = pte_val(pte);
-+	pteval_t val = pte_val(pte), oldval = val;
- 
- 	/*
- 	 * Chop off the NX bit (if present), and add the NX portion of
-@@ -379,17 +395,17 @@ static inline pte_t pte_modify(pte_t pte
- 	 */
- 	val &= _PAGE_CHG_MASK;
- 	val |= massage_pgprot(newprot) & ~_PAGE_CHG_MASK;
--
-+	val = flip_protnone_guard(oldval, val, PTE_PFN_MASK);
- 	return __pte(val);
- }
- 
- static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
- {
--	pmdval_t val = pmd_val(pmd);
-+	pmdval_t val = pmd_val(pmd), oldval = val;
- 
- 	val &= _HPAGE_CHG_MASK;
- 	val |= massage_pgprot(newprot) & ~_HPAGE_CHG_MASK;
--
-+	val = flip_protnone_guard(oldval, val, PHYSICAL_PMD_PAGE_MASK);
- 	return __pmd(val);
- }
- 
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -235,6 +235,8 @@ extern void cleanup_highmap(void);
- extern void init_extra_mapping_uc(unsigned long phys, unsigned long size);
- extern void init_extra_mapping_wb(unsigned long phys, unsigned long size);
- 
-+#include <asm/pgtable-invert.h>
-+
- #endif /* !__ASSEMBLY__ */
- 
- #endif /* _ASM_X86_PGTABLE_64_H */
-
+							Thanx, Paul
 
