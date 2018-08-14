@@ -3,87 +3,174 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22D3C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D36C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70AC0218C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AC0218C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BF1E4218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1E4218D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbeHNLVD (ORCPT
+        id S1730811AbeHNL2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 07:21:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39974 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727986AbeHNLVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 07:21:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3AF180D;
-        Tue, 14 Aug 2018 01:34:54 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C563A3F5D0;
-        Tue, 14 Aug 2018 01:34:54 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 57C9F1AE3096; Tue, 14 Aug 2018 09:35:01 +0100 (BST)
-Date:   Tue, 14 Aug 2018 09:35:01 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
- mode
-Message-ID: <20180814083500.GA28101@arm.com>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
- <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
- <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com>
- <5B597628.2020103@huawei.com>
- <04239cfa-bcf2-a33a-e662-ebc75e66782b@arm.com>
- <1d24541340334954969c58980ef85444@HXTBJIDCEMVIW01.hxtcorp.net>
- <5B7293E5.7040702@huawei.com>
+        Tue, 14 Aug 2018 07:28:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55848 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727986AbeHNL2z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 07:28:55 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5EEFA9F0;
+        Tue, 14 Aug 2018 08:42:44 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 10:42:41 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, arjan@linux.intel.com,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
+Message-ID: <20180814084241.GA7208@kroah.com>
+References: <20180608095154.22413-1-feng.tang@intel.com>
+ <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
+ <20180612084234.gjzq66xsqblryrkm@shbuild888>
+ <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
+ <20180802091539.m5k7cdoad6hfkdfy@shbuild888>
+ <20180814063959.45bddz42ytz3e4jb@shbuild888>
+ <20180814071834.GB24616@kroah.com>
+ <20180814073810.m7ewuyvuhptgsm22@shbuild888>
+ <20180814074041.GB28982@kroah.com>
+ <20180814080851.jazg3qebsleklqa5@shbuild888>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5B7293E5.7040702@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180814080851.jazg3qebsleklqa5@shbuild888>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 04:33:41PM +0800, Leizhen (ThunderTown) wrote:
-> On 2018/8/6 9:32, Yang, Shunyong wrote:
-> > On 2018/7/26 22:37, Robin Murphy wrote:
-> >> Because DMA code is not the only caller of iommu_map/unmap. It's 
-> >> perfectly legal in the IOMMU API to partially unmap a previous mapping 
-> >> such that a block entry needs to be split. The DMA API, however, is a 
-> >> lot more constrined, and thus by construction the iommu-dma layer will 
-> >> never generate a block-splitting iommu_unmap() except as a result of 
-> >> illegal DMA API usage, and we obviously do not need to optimise for that 
-> >> (you will get a warning about mismatched unmaps under dma-debug, but 
-> >> it's a bit too expensive to police in the general case).
-> >>
-> > 
-> > When I was reading the code around arm_lpae_split_blk_unmap(), I was
-> > curious in which scenario a block will be split. Now with your comments
-> > "Because DMA code is not the only caller of iommu_map/unmap", it seems
-> > depending on the user.
-> > 
-> > Would you please explain this further? I mean besides DMA, which user
-> > will use iommu_map/umap and how it split a block.
+On Tue, Aug 14, 2018 at 04:08:51PM +0800, Feng Tang wrote:
+> Hi Greg,
 > 
-> I also think that arm_lpae_split_blk_unmap() scenario is not exist, maybe
-> we should remove it, and give a warning for this wrong usage.
+> Thanks for the prompt review.
+> 
+> On Tue, Aug 14, 2018 at 09:40:41AM +0200, Greg Kroah-Hartman wrote:
+> > On Tue, Aug 14, 2018 at 03:38:10PM +0800, Feng Tang wrote:
+> > > Hi Greg,
+> > > 
+> > > On Tue, Aug 14, 2018 at 09:18:34AM +0200, Greg Kroah-Hartman wrote:
+> > > > On Tue, Aug 14, 2018 at 02:39:59PM +0800, Feng Tang wrote:
+> > > > > Hi Greg, Ulf
+> > > > > 
+> > > > > Could you help to review this? many thanks!
+> > > > 
+> > > > Review what?  I see no patch here.  And why would I need to review a mmc
+> > > > patch in the middle of the merge window?
+> > > > 
+> > > > totally confused,
+> > > 
+> > > Sorry for the confusion! I didn't noticed the 4.19 merge window.
+> > > 
+> > > The patch was originally posted in June, and has gone through some
+> > > review discussions with mmc maintainers, my last mail was trying
+> > > to keep some discussion info.
+> > 
+> > Ok, then why ask me?  I'm not the mmc maintainer.
+> 
+> The reason is this patch not only touches the mmc, but also affects many other
+> subsystems in drivers/ as the init order is changed. And the get_maintainer.pl
+> shows you are the first suggested reviewer for changes to drivers/Makefile :)
 
-Can't it happen with VFIO?
+Fair enough, but then I could not make that change without the mmc
+maintainer agreeing with it.
 
-Will
+> 
+> > 
+> > > The original patch is:
+> > > -----
+> > > 
+> > > >From 1514c7d56e887ace37466dded09bc43f2a4c9a4a Mon Sep 17 00:00:00 2001
+> > > From: Feng Tang <feng.tang@intel.com>
+> > > Date: Fri, 8 Jun 2018 17:10:30 +0800
+> > > Subject: [PATCH] mmc: Move the mmc driver init earlier
+> > > 
+> > > When doing some boot time optimization for an eMMC rootfs NUCs,
+> > > we found the rootfs may spend around 100 microseconds waiting
+> > > for eMMC card to be initialized, then the rootfs could be
+> > > mounted.
+> > > 	[    1.216561] Waiting for root device /dev/mmcblk1p1...
+> > > 	[    1.289262] mmc1: new HS400 MMC card at address 0001
+> > > 	[    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
+> > > 	[    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
+> > > 	[    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
+> > > 	[    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
+> > > 	[    1.292798]  mmcblk1: p1 p2 p3
+> > > 	[    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
+> > > 	[    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
+> > > 
+> > > And this is a common problem for smartphones, tablets, embedded
+> > > devices and automotive products. This patch will make the eMMC/SD
+> > > card  start initializing earlier, by changing its order in drivers/Makefile.
+> > > 
+> > > On our platform, the waiting for eMMC card is almost eliminated with the patch,
+> > > which is critical to boot time. And it should benefit other non-x86 platforms
+> > > which see the similar waiting for emmc rootfs.
+> > > 
+> > > Signed-off-by: Feng Tang <feng.tang@intel.com>
+> > > ---
+> > >  drivers/Makefile | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/Makefile b/drivers/Makefile
+> > > index 24cd47014657..c473afd3c688 100644
+> > > --- a/drivers/Makefile
+> > > +++ b/drivers/Makefile
+> > > @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)		+= regulator/
+> > >  # reset controllers early, since gpu drivers might rely on them to initialize
+> > >  obj-$(CONFIG_RESET_CONTROLLER)	+= reset/
+> > >  
+> > > +# put mmc early as many morden devices use emm/sd card as rootfs storage
+> > 
+> > Spelling error :)
+> 
+> Will change it.
+> 
+> > 
+> > > +obj-y				+= mmc/
+> > > +
+> > >  # tty/ comes before char/ so that the VT console is the boot-time
+> > >  # default.
+> > >  obj-y				+= tty/
+> > 
+> > Everyone wants to be first.  Watch out if you try to put stuff before
+> > tty, you have to be very careful.  There are sd serial devices, right?
+> 
+> As the eMMC/SD card initialization takes quite some time, the SDHCI
+> host controller's module init function will quickly return, while leaving 
+> a worker to do the real card detection/initialization, so other subsystems
+> should not be blocked.
+> 
+> And yes, it is safer to move it after tty/
+
+Again, everyone wants to be first, saving 100ms is great, but make sure
+this will not break anything else.  It's a huge change to a
+long-standing "we know this works" linker order.  Personally, I would
+not want to accept this patch for that reason alone.
+
+Also given you ignored the comment for the tty line doesn't make me feel
+comfortable either.
+
+If you really really need this, I would suggest just doing it in your
+device-specific tree for a few years and when this is the only
+out-of-tree patch you are carrying, then revisit it :)
+
+thanks,
+
+greg k-h
