@@ -7,59 +7,59 @@ X-Spam-Status: No, score=2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875C3C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B037C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F3221727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530A02087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:38:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OREjY5gZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F3221727
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbE8eKB0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530A02087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbeHNW1G (ORCPT
+        id S1729560AbeHNW1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 18:27:06 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37594 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeHNW1G (ORCPT
+        Tue, 14 Aug 2018 18:27:16 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52128 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeHNW1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 18:27:06 -0400
-Received: by mail-wr1-f68.google.com with SMTP id u12-v6so18178197wrr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 12:38:22 -0700 (PDT)
+        Tue, 14 Aug 2018 18:27:16 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y2-v6so13418165wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 12:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=Ya7+lcwxTld/Yshw/rZOR6JUPPVhqf8alklCuUtrEKU=;
-        b=OREjY5gZMsk5tjX0uFfzppDXYXSL9y4D05b4VZMJZy8MPd0cISuBiqNal1b6rBtt0q
-         LaLSwW/YtGuBCz9C0s8lqXaaQQGrfQuI2uOlAJEIFE1kDNbDix5+U8gXQ4xGVlM/0oev
-         ApXdbiZXaV81pYST+h9GA0AMnYxTZh5LfBymkQPXPh26O4zuANKGUZsiVMsUQwUBC7ua
-         TTT38KrFEs1WPRyihNTEZS0AsWLvBMnUIsN0dPPqNBbo2Ojme8v6gJPYD/bWvL/M1W5Y
-         NXgdXkDTjF8AfeF0DD1a9+5zABkobUn5O5Gr6aLdd13PdJ0P5wRIma0NPC//qr1mStQ+
-         vHSQ==
+        bh=p+yT9bU25Z0jttTyWIsrJixlhiLAEn6t8dJgKPVcykg=;
+        b=qbE8eKB0zAGwA0CTLGuSe91z9KrKYdRV7yP9UJpB8wfisP1nl+/R9/1Jf9OSqNcgur
+         aXf/zge/2VTubqJFElHSHnAeGamkHpxTVVXRU859/1bpivk88JdO/fIGmhqWJhoe62qL
+         jRuXRWbY7VJxjwLhgZp4J9DnaduXplOTnLT2kJWuzRxkv1pdtfAr2bGfXQphReBxDMLK
+         MOCOi8ilaYf/cjKLWoutQLc+X5NzjMqlSjHcSJHTGBTzGqqJma4sN8cRfPI7EhWPu19n
+         DuUlBtJuS9UjI65RflSX8X5yd4zC59SrTjSjCGIi0+3SgTmjmbNDWna2Lh0wMciBvsFi
+         c5wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=Ya7+lcwxTld/Yshw/rZOR6JUPPVhqf8alklCuUtrEKU=;
-        b=RFspwNIdvtR1hrmxhqGEFcFoTmyOb4flRBQGTpA4ldK4LT8llyIlX5cOR4Oj401fZ1
-         uKh/Kidt02iYEEq18vk6dfsT1aUXchk7Vindm1b/blZeFaWTR6yTh7bL4BBYyZGfP7Dj
-         k7uobq0jNaKiwmFPxjvV6pF4sfD0YAfXXkY3ms/JsEEeJTgziGdmftrYP66BxFEkcqlB
-         EvJCOd5OSwoU+9SaE73UttNJBwF/Qvi7Z40sBBR4010zGhqAq8YDhIgOfIHT9hIuUDcM
-         7RnJBPXaQzpV4VbfLprL8sNkFLBDYa/+cg71aVfEReYQzMpevgQp3tEHkri6l3Tz1Fbn
-         xCzA==
-X-Gm-Message-State: AOUpUlFBxEGZ82njecPLyC4F+edCWIgak1WDEIKtkHUzgdfGMHUn/6E8
-        bKhkjyLqWmPbX5fKubCJc7o=
-X-Google-Smtp-Source: AA+uWPyQN1f2D8/SdLBEkL4zJKY4KMHkbPKKFp2EuH+0fHDD1oOg7cRc/DHvP7XMntN8TVJvLsSxNQ==
-X-Received: by 2002:adf:be03:: with SMTP id n3-v6mr14280280wrh.267.1534275502236;
-        Tue, 14 Aug 2018 12:38:22 -0700 (PDT)
+        bh=p+yT9bU25Z0jttTyWIsrJixlhiLAEn6t8dJgKPVcykg=;
+        b=HOw/UYijWVW4WPyWj4mB6YKUyQMUk7IkSebtQ/Dov8PAPyfjS6fidEhS5Qb47Tgvhu
+         vcMByVyBFHmOT2WSMQ+5PlaHNoSiXazP0/h/znRcv8fBIZaQ1U+jkkMz/C4S+HSNDnfk
+         +mrKZt0HKu4uW6PwiE0+ZkCXy3/C2NmB43XUs6KZvJL3NPWHrEFqRpzK3gsvGHMpn36k
+         HFqOPeOh9gQdwkIC6GxWER/6XIew5AQktRUSPa1xQQNiZiQKXalUbY5YT2+ta+dSDHzT
+         cscF2E8MQbb45ANYgLKQ+9MzhfUTyTo07cZSJeO49otjbq1bUYIuD1HRv3JJKjnQI+FC
+         1+/g==
+X-Gm-Message-State: AOUpUlFUwd4Qy1/A19s6Bn/fS0w7aZs+kuxN9MjkP4Lzw6PWW18SmUyo
+        XyCkrJ9MJ77QjDJkdW5XWdY=
+X-Google-Smtp-Source: AA+uWPynmnnRZeRpH3rVf+Tk7AhRHTqiH8ZF0xGVwpGZpFG5Dm4TscGxsT+B+LiGjiILNi3UuNjU7w==
+X-Received: by 2002:a1c:3:: with SMTP id 3-v6mr10760736wma.99.1534275511192;
+        Tue, 14 Aug 2018 12:38:31 -0700 (PDT)
 Received: from gmail.com (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id i23-v6sm19234710wmf.24.2018.08.14.12.38.20
+        by smtp.gmail.com with ESMTPSA id q70-v6sm27435495wmd.39.2018.08.14.12.38.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 12:38:21 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 21:38:13 +0200
+        Tue, 14 Aug 2018 12:38:30 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 21:38:26 +0200
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -72,8 +72,9 @@ Cc:     Willy Tarreau <w@1wt.eu>, Ingo Molnar <mingo@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Martin Sebor <msebor@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
         Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] Support the nonstring variable attribute (gcc >= 8)
-Message-ID: <20180814193813.GA5473@gmail.com>
+Subject: [PATCH v3 2/2] auxdisplay: panel: avoid gcc 8's Wstringop-truncation
+ warning
+Message-ID: <20180814193826.GA5459@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -83,24 +84,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From the GCC manual:
-
-  The nonstring variable attribute specifies that an object or member
-  declaration with type array of char, signed char, or unsigned char,
-  or pointer to such a type is intended to store character arrays that
-  do not necessarily contain a terminating NUL. This is useful in detecting
-  uses of such arrays or pointers with functions that expect NUL-terminated
-  strings, and to avoid warnings when such an array or pointer is used as
-  an argument to a bounded string manipulation function such as strncpy.
-
-  https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
-
-Some reports are already coming to the LKML regarding these
-warnings. When they are false positives, like this one
-
-  https://lkml.org/lkml/2018/1/16/135
-
-we can use __nonstring to let gcc know a NUL character is not required.
+Let gcc know it is not meant to be NUL-terminated by annotating with
+the new __nonstring variable attribute; and remove the comment since it
+conveys the same information.
 
 Cc: Willy Tarreau <w@1wt.eu>
 Cc: Ingo Molnar <mingo@kernel.org>
@@ -129,46 +115,27 @@ v2:
   GCC's feature and warnings are appearing in Geert's build bot.
   Added an example in the second patch as requested by David.
 
- include/linux/compiler-gcc.h   | 15 +++++++++++++++
- include/linux/compiler_types.h |  4 ++++
- 2 files changed, 19 insertions(+)
+ drivers/auxdisplay/panel.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 573f5a7d42d4..6b7fd8cd2851 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -387,3 +387,18 @@
- #else
- #define __diag_GCC_8(s)
- #endif
-+
-+#if GCC_VERSION >= 80000
-+/*
-+ * The nonstring variable attribute specifies that an object or member
-+ * declaration with type array of char, signed char, or unsigned char,
-+ * or pointer to such a type is intended to store character arrays that
-+ * do not necessarily contain a terminating NUL. This is useful in detecting
-+ * uses of such arrays or pointers with functions that expect NUL-terminated
-+ * strings, and to avoid warnings when such an array or pointer is used as
-+ * an argument to a bounded string manipulation function such as strncpy.
-+ *
-+ * https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
-+ */
-+#define __nonstring __attribute__((nonstring))
-+#endif
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index a8ba6b04152c..9c07be36e86a 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -289,4 +289,8 @@ struct ftrace_likely_data {
- #define __diag_error(compiler, version, option, comment) \
- 	__diag_ ## compiler(version, error, option)
- 
-+#ifndef __nonstring
-+# define __nonstring
-+#endif
-+
- #endif /* __LINUX_COMPILER_TYPES_H */
+diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
+index 3b25a643058c..21b9b2f2470a 100644
+--- a/drivers/auxdisplay/panel.c
++++ b/drivers/auxdisplay/panel.c
+@@ -155,10 +155,9 @@ struct logical_input {
+ 			int release_data;
+ 		} std;
+ 		struct {	/* valid when type == INPUT_TYPE_KBD */
+-			/* strings can be non null-terminated */
+-			char press_str[sizeof(void *) + sizeof(int)];
+-			char repeat_str[sizeof(void *) + sizeof(int)];
+-			char release_str[sizeof(void *) + sizeof(int)];
++			char press_str[sizeof(void *) + sizeof(int)] __nonstring;
++			char repeat_str[sizeof(void *) + sizeof(int)] __nonstring;
++			char release_str[sizeof(void *) + sizeof(int)] __nonstring;
+ 		} kbd;
+ 	} u;
+ };
 -- 
 2.17.1
 
