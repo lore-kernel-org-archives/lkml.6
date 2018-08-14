@@ -5,96 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2FAC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8A6C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A25321765
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A25321765
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 547AB21765
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547AB21765
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbeHNMtX (ORCPT
+        id S1732001AbeHNMvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:49:23 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40822 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728483AbeHNMtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:49:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98B9080D;
-        Tue, 14 Aug 2018 03:02:55 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F9443F5D0;
-        Tue, 14 Aug 2018 03:02:54 -0700 (PDT)
-Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
- mode
-To:     Will Deacon <will.deacon@arm.com>,
-        "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
- <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
- <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com> <5B597628.2020103@huawei.com>
- <04239cfa-bcf2-a33a-e662-ebc75e66782b@arm.com>
- <1d24541340334954969c58980ef85444@HXTBJIDCEMVIW01.hxtcorp.net>
- <5B7293E5.7040702@huawei.com> <20180814083500.GA28101@arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <feabf4a3-db1e-a22b-daab-fad831b473f9@arm.com>
-Date:   Tue, 14 Aug 2018 11:02:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 14 Aug 2018 08:51:22 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:48951 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728101AbeHNMvW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 08:51:22 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-128-pjp3_NTwNF2CZ8DnN7IoSA-1; Tue, 14 Aug 2018 11:04:51 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
+ 14 Aug 2018 11:06:31 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 14 Aug 2018 11:06:31 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Johannes Berg' <johannes@sipsolutions.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] bitfield: avoid gcc-8 -Wint-in-bool-context warning
+Thread-Topic: [PATCH] bitfield: avoid gcc-8 -Wint-in-bool-context warning
+Thread-Index: AQHUM6S9MtwhT4oWPE+vI6EhBy4DeaS/BLdg
+Date:   Tue, 14 Aug 2018 10:06:31 +0000
+Message-ID: <74bd14d45d2b47978218517093ae9de1@AcuMS.aculab.com>
+References: <20180813220950.194841-1-arnd@arndb.de>
+         <CAK7LNASVE-vZhGyAsWg8YmPb8P-sucwPVOUt5qsfVwZQuHg9gw@mail.gmail.com>
+ <1534233405.3547.4.camel@sipsolutions.net>
+In-Reply-To: <1534233405.3547.4.camel@sipsolutions.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-In-Reply-To: <20180814083500.GA28101@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-MC-Unique: pjp3_NTwNF2CZ8DnN7IoSA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/08/18 09:35, Will Deacon wrote:
-> On Tue, Aug 14, 2018 at 04:33:41PM +0800, Leizhen (ThunderTown) wrote:
->> On 2018/8/6 9:32, Yang, Shunyong wrote:
->>> On 2018/7/26 22:37, Robin Murphy wrote:
->>>> Because DMA code is not the only caller of iommu_map/unmap. It's
->>>> perfectly legal in the IOMMU API to partially unmap a previous mapping
->>>> such that a block entry needs to be split. The DMA API, however, is a
->>>> lot more constrined, and thus by construction the iommu-dma layer will
->>>> never generate a block-splitting iommu_unmap() except as a result of
->>>> illegal DMA API usage, and we obviously do not need to optimise for that
->>>> (you will get a warning about mismatched unmaps under dma-debug, but
->>>> it's a bit too expensive to police in the general case).
->>>>
->>>
->>> When I was reading the code around arm_lpae_split_blk_unmap(), I was
->>> curious in which scenario a block will be split. Now with your comments
->>> "Because DMA code is not the only caller of iommu_map/unmap", it seems
->>> depending on the user.
->>>
->>> Would you please explain this further? I mean besides DMA, which user
->>> will use iommu_map/umap and how it split a block.
->>
->> I also think that arm_lpae_split_blk_unmap() scenario is not exist, maybe
->> we should remove it, and give a warning for this wrong usage.
-> 
-> Can't it happen with VFIO?
+RnJvbTogSm9oYW5uZXMgQmVyZw0KPiBTZW50OiAxNCBBdWd1c3QgMjAxOCAwODo1Nw0KLi4uDQo+
+ID4gSG93IGFib3V0IGZpeGluZyB0aGUgcm9vdCBjYXVzZQ0KPiA+IGluIGRyaXZlcnMvbmV0L3dp
+cmVsZXNzL2ludGVsL2l3bHdpZmkvZncvYXBpL3J4LmggPw0KPiA+DQo+ID4NCj4gPiAjZGVmaW5l
+IElXTF9SWF9IRV9QSFlfU0lCR19TWU1fT1JfVVNFUl9OVU1fTUFTSyAgIDB4MWUwMDAwMDAwMFVM
+TA0KPiA+DQo+ID4NCj4gPiBlbnVtIGl3bF9yeF9oZV9waHkgbG9va3MgcmVhbGx5IHN0cmFuZ2Uu
+DQo+IA0KPiBXaHk/IEkgZG9uJ3QgdGhpbmsgdGhpcyBpcyBhIHByb2JsZW0sIHRoZSBlbnVtIGlz
+IHVzZWQgaGVyZSB0byBnZXQNCj4gY29uc3RhbnRzIHNvIHRoYXQgd2UgY2FuIGFsc28gaGF2ZSBk
+b2N1bWVudGF0aW9uIGZvciB0aGVtLiBUaGF0J3MgYQ0KPiBjb21tb24gYW5kIGFjY2VwdGVkIHRl
+Y2huaXF1ZS4NCg0KSXQgd291bGQgYmUgbXVjaCBtb3JlIHVzZWZ1bCB0byBpbmRpY2F0ZSB3aGVy
+ZSB0aGUgdmFsdWVzIGFyZSB1c2VkLg0KU3VjaCBhIGZpZWxkL3BhcmFtZXRlciBjb3VsZCAocHJv
+YmFibHkpIGhhdmUgdGhlIHR5cGUgb2YgdGhlIGVudW0uDQpCdXQsIGF0IHNvbWUgcG9pbnQsIHRo
+ZSBjb21waWxlciBtaWdodCBzdGFydCBiYXJmaW5nIGF0IHRoYXQgYXQgd2VsbC4NCg0KVGhlcmUg
+YXJlIGFsc28gYSB3aG9sZSBsb2FkIG9mIGNyYXBweSBfX3BhY2tlZCBpbiB0aGF0IGhlYWRlciBm
+aWxlLg0KVGhlcmUgbWlnaHQgYmUgb25lIG9yIHR3byA2NGJpdCBpdGVtcyBvbiAzMmJpdCBib3Vu
+ZGFyaWVzIGJ1dA0KdGhhdCBjYW4gYmUgc29sdmVkIHdpdGhvdXQgdXNpbmcgX19wYWNrZWQuDQoN
+CglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwg
+TW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzog
+MTM5NzM4NiAoV2FsZXMpDQo=
 
-...or GPU drivers, or anyone else managing their own IOMMU domain 
-directly. A sequence like this is perfectly legal:
-
-	iommu_map(domain, iova, paddr, SZ_8M, prot);
-	...
-	iommu_unmap(domain, iova + SZ_1M * 5, SZ_1M * 3);
-
-where if iova and paddr happen to be suitably aligned, the map will lay 
-down blocks, and the unmap will then have to split one of them into 
-pages to remove half of it. We don't tear our hair out maintaining 
-split_blk_unmap() for the fun of it :(
-
-Robin.
