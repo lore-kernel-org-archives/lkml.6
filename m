@@ -2,125 +2,158 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E54C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9FBC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E2321715
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89F02216FF
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:26:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="LXyHX5DG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E2321715
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jTgWS24h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F02216FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732670AbeHOCLk (ORCPT
+        id S1732652AbeHOCQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:11:40 -0400
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:12288 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729705AbeHOCLj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:11:39 -0400
-Date:   Tue, 14 Aug 2018 23:22:03 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1534288928;
-        bh=OcYDjefpkLlJNbiY0/lSTBVZNxEXmoDeW6ccriyr7tM=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=LXyHX5DGF5jxLnSuSmWpz5KbKWA4Vjn0ynw8DLF6qZYGZ5+LqomRwdSUvVQJvtNX9
-         yD9Ojv4M0htHLNp1ZU1AZM+ZdoJ7+RrqTlZO/8s7gEmHS8lFifoQThM1ZvxREtos+8
-         wPFQzGKFPFgf72S1trILH9tGaAClC28wPwFlQrGA=
-To:     Casey Schaufler <casey@schaufler-ca.com>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [PATCH v1 00/22] LSM: Full security module stacking
-Message-ID: <kubjHWMWfFDu8Rk19x79iMDKVbewTUMWwSjOA7vFGIbYsWYcGb50jb-Z-PSXxmcby3ZFMZWi0HCeuFgo3F8BRskxo_JUdSHFhdIsIlBxHyQ=@protonmail.ch>
-In-Reply-To: <a287800e-bd4d-2b99-8c4c-bd61ba87fab1@schaufler-ca.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
- <CAMp4zn94SzqK_Q=de2E+Fpv5yeAhYv62XW-KU3=ghRma9d7Jvw@mail.gmail.com>
- <a287800e-bd4d-2b99-8c4c-bd61ba87fab1@schaufler-ca.com>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Tue, 14 Aug 2018 22:16:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:40521 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729705AbeHOCQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 22:16:00 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41qpdG401Cz9sDT;
+        Wed, 15 Aug 2018 09:26:26 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534289187;
+        bh=QOmc1BM/lHs1lcVaua7IdnKtMDhm/bauPOWobH7vkA8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jTgWS24hosa7nTtw2OTxfYjgqlT9UG4YYgxUyuh8NNeq2Xsw+uoIInlq+ihkmNvwi
+         Zn/kShM/O0J0+Db3Ra6ltKl2GlzWBYhjzRxKYEkMge9qGMw0PM0xvL+rZXt50AlI1n
+         prFk66EKk2hJ6ZHRYadq1TshfcbsrC6ONYg14n0XbsxTbDlkiCUlQzxpzn1yEHVcKS
+         SNba9ErUJ+8SA8QdOZsvDCktAILR56tbHSCAYomQ/nlRogn0mNPnCCxZZxPxFkUwMn
+         4uF0LghnCAc5Xjm4TAKi//sWRa/euHIJ6NDecpJMB94yTrngapEaq/fjJb3t6FhdrM
+         XqlEEkz6TAHBw==
+Date:   Wed, 15 Aug 2018 09:26:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
+Message-ID: <20180815092625.1ab4109d@canb.auug.org.au>
+In-Reply-To: <20180806144736.4fbe1e51@canb.auug.org.au>
+References: <20180806144736.4fbe1e51@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Sx7AvN6uXHHlExj_ZxsOT3g"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On August 14, 2018 8:28 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+--Sig_/Sx7AvN6uXHHlExj_ZxsOT3g
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 8/14/2018 10:05 AM, Sargun Dhillon wrote:
->
-> > On Mon, Jul 16, 2018 at 10:53 AM, Casey Schaufler
-> > casey@schaufler-ca.com wrote:
-> >
-> > > LSM: Full security module stacking
-> > > I'm calling this v1 not because it's the first version
-> > > I've put out but because it's the first version I'm getting
-> > > serious external pressure to get upstream.
-> > > Awesome work, I'm glad that this is getting further.
->
-> It's following the 90/90 rule pretty closely. The first
-> 90% of the work took 90% of the time, and the last 10% is
-> taking the other 90% of the time.
->
-> > > The blob management part (through "LSM: Sharing of security blobs")
-> > > is ready for prime-time. These changes move the management of
-> > > security blobs out of the security modules and into the security
-> > > module infrastructure. With this change the proposed S.A.R.A,
-> > > LandLock and PTAGS security modules could co-exist with any of
-> > > the existing "major" security modules. The changes reduce some
-> > > code duplication.
-> > > Beyond the blob management there's a bit of clean-up.
-> > > Mounting filesystems had to be changed so that options
-> > > a security module doesn't recognize won't be considered
-> > > a fatal error. The mount infrastructure is somewhat
-> > > more complex than one might assume.
-> >
-> > Casey,
-> > Do you think you can break out 1 into its own patch? It seems like
-> > that'd be valuable to everyone.
->
-> Yes, I think that is a good idea. Landlock, S.A.R.A. and a couple
-> other security modules could be added upstream if this part of the
-> work was available. It would not provide everything needed to stack
-> all the existing modules. I believe there is concern that if this
-> much went upstream the work on finishing what's required to make
-> everything work might be abandoned.
->
+Hi all,
 
-On the other hand there is concern that those security modules might
-be abandoned if they have to wait until everything is finished :)
-
-> > What's your thought here if we ever introduce dynamic security
-> > modules? It's nice that we now have a way around rolling back blobs if
-> > one fails, but what if a new module was activated, would we just
-> > resize the slab cache?
+On Mon, 6 Aug 2018 14:47:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> Making the blob size dynamic at run time makes the blob management
-> more complicated because you have to keep track of the modules in
-> play when the blob was allocated, and pay attention to that when hooks
-> are called. It's a lot simpler if you don't let blobs get smaller,
-> but still requires more bookkeeping than if the size is static. It
-> is completely doable. I have played with it a bit. There are performance
-> implications.
+> Today's linux-next merge of the tip tree got conflicts in:
+>=20
+>   arch/arm64/Kconfig
+>   arch/openrisc/Kconfig
+>=20
+> between commit:
+>=20
+>   1572497cb0e6 ("kconfig: include common Kconfig files from top-level Kco=
+nfig")
+>=20
+> from the kbuild tree and commits:
+>=20
+>   78ae2e1cd845 ("arm64: Use the new GENERIC_IRQ_MULTI_HANDLER")
+>   c5ca4560de0f ("openrisc: Use the new GENERIC_IRQ_MULTI_HANDLER")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/arm64/Kconfig
+> index a3de6ad666d4,3d1011957823..000000000000
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@@ -278,9 -265,10 +279,6 @@@ config ARCH_SUPPORTS_UPROBE
+>   config ARCH_PROC_KCORE_TEXT
+>   	def_bool y
+>  =20
+> - config MULTI_IRQ_HANDLER
+> - 	def_bool y
+>  -source "init/Kconfig"
+>  -
+>  -source "kernel/Kconfig.freezer"
+> --
+>   source "arch/arm64/Kconfig.platforms"
+>  =20
+>   menu "Bus support"
+> diff --cc arch/openrisc/Kconfig
+> index fee9d91a66e6,dfb6a79ba7ff..000000000000
+> --- a/arch/openrisc/Kconfig
+> +++ b/arch/openrisc/Kconfig
+> @@@ -71,9 -69,10 +71,6 @@@ config STACKTRACE_SUPPOR
+>   config LOCKDEP_SUPPORT
+>   	def_bool  y
+>  =20
+> - config MULTI_IRQ_HANDLER
+> - 	def_bool y
+>  -source "init/Kconfig"
+>  -
+>  -source "kernel/Kconfig.freezer"
+> --
+>   menu "Processor type and features"
+>  =20
+>   choice
 
-Jordan
+This is now a conflict between Linus' tree and the kbuild tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Sx7AvN6uXHHlExj_ZxsOT3g
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzZSEACgkQAVBC80lX
+0GzY4Af9HAwRUFzDMQdV+ZCtuXNmW+PUqsqm5TxM+uKleg6M8ZpQyR8MIMkd2zhL
+ZxdSKWwewLWUXaJKG8cNW3Qno2aitUhILJXU6flUsTft2ovGwvWVZ8S5XkD+rhiS
+kc2k9UJQWXgDYc1RS5AB7H2Qm6jcEpAHqcmFSFvQvxhsdq59lhJlpciLP4Fd2Wd/
+xe7oL6IxHaTUDBsx/ZSuvNqaoqQF2JvPdZAEoSVSm4vnWo21drgtH+5c4GpC+UcA
+7UHWMAXSfw9vpOiC0oqHnUwjgp3ZaNv824gBYf8rVWngGPj3y5TrMg6DhEE1aCPa
+x/SaP/OQBTuH7sBxLMgz6yMaYEMc1g==
+=EqXl
+-----END PGP SIGNATURE-----
+
+--Sig_/Sx7AvN6uXHHlExj_ZxsOT3g--
