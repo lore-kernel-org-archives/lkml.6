@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13575C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FE0C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09B221471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C09B221471
+	by mail.kernel.org (Postfix) with ESMTP id C843E21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C843E21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391006AbeHNUeQ (ORCPT
+        id S2391017AbeHNUeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:34:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60330 "EHLO
+        Tue, 14 Aug 2018 16:34:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390473AbeHNUeP (ORCPT
+        with ESMTP id S2390473AbeHNUeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:34:15 -0400
+        Tue, 14 Aug 2018 16:34:19 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C7E9CA5;
-        Tue, 14 Aug 2018 17:46:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF226CAE;
+        Tue, 14 Aug 2018 17:46:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 12/43] fix __legitimize_mnt()/mntput() race
-Date:   Tue, 14 Aug 2018 19:17:48 +0200
-Message-Id: <20180814171517.896244329@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 13/43] IB/core: Make testing MR flags for writability a static inline function
+Date:   Tue, 14 Aug 2018 19:17:49 +0200
+Message-Id: <20180814171517.962689861@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -50,82 +52,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 119e1ef80ecfe0d1deb6378d4ab41f5b71519de1 upstream.
+commit 08bb558ac11ab944e0539e78619d7b4c356278bd upstream.
 
-__legitimize_mnt() has two problems - one is that in case of success
-the check of mount_lock is not ordered wrt preceding increment of
-refcount, making it possible to have successful __legitimize_mnt()
-on one CPU just before the otherwise final mntpu() on another,
-with __legitimize_mnt() not seeing mntput() taking the lock and
-mntput() not seeing the increment done by __legitimize_mnt().
-Solved by a pair of barriers.
+Make the MR writability flags check, which is performed in umem.c,
+a static inline function in file ib_verbs.h
 
-Another is that failure of __legitimize_mnt() on the second
-read_seqretry() leaves us with reference that'll need to be
-dropped by caller; however, if that races with final mntput()
-we can end up with caller dropping rcu_read_lock() and doing
-mntput() to release that reference - with the first mntput()
-having freed the damn thing just as rcu_read_lock() had been
-dropped.  Solution: in "do mntput() yourself" failure case
-grab mount_lock, check if MNT_DOOMED has been set by racing
-final mntput() that has missed our increment and if it has -
-undo the increment and treat that as "failure, caller doesn't
-need to drop anything" case.
+This allows the function to be used by low-level infiniband drivers.
 
-It's not easy to hit - the final mntput() has to come right
-after the first read_seqretry() in __legitimize_mnt() *and*
-manage to miss the increment done by __legitimize_mnt() before
-the second read_seqretry() in there.  The things that are almost
-impossible to hit on bare hardware are not impossible on SMP
-KVM, though...
-
-Reported-by: Oleg Nesterov <oleg@redhat.com>
-Fixes: 48a066e72d97 ("RCU'd vsfmounts")
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/namespace.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/infiniband/core/umem.c |   11 +----------
+ include/rdma/ib_verbs.h        |   14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -603,12 +603,21 @@ int __legitimize_mnt(struct vfsmount *ba
- 		return 0;
- 	mnt = real_mount(bastard);
- 	mnt_add_count(mnt, 1);
-+	smp_mb();			// see mntput_no_expire()
- 	if (likely(!read_seqretry(&mount_lock, seq)))
- 		return 0;
- 	if (bastard->mnt_flags & MNT_SYNC_UMOUNT) {
- 		mnt_add_count(mnt, -1);
- 		return 1;
- 	}
-+	lock_mount_hash();
-+	if (unlikely(bastard->mnt_flags & MNT_DOOMED)) {
-+		mnt_add_count(mnt, -1);
-+		unlock_mount_hash();
-+		return 1;
-+	}
-+	unlock_mount_hash();
-+	/* caller will mntput() */
- 	return -1;
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -122,16 +122,7 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 	umem->address   = addr;
+ 	umem->page_size = PAGE_SIZE;
+ 	umem->pid       = get_task_pid(current, PIDTYPE_PID);
+-	/*
+-	 * We ask for writable memory if any of the following
+-	 * access flags are set.  "Local write" and "remote write"
+-	 * obviously require write access.  "Remote atomic" can do
+-	 * things like fetch and add, which will modify memory, and
+-	 * "MW bind" can change permissions by binding a window.
+-	 */
+-	umem->writable  = !!(access &
+-		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
+-		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
++	umem->writable   = ib_access_writable(access);
+ 
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+ 		put_pid(umem->pid);
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -3007,6 +3007,20 @@ static inline int ib_check_mr_access(int
+ 	return 0;
  }
  
-@@ -1139,6 +1148,11 @@ static void mntput_no_expire(struct moun
- 		return;
- 	}
- 	lock_mount_hash();
++static inline bool ib_access_writable(int access_flags)
++{
 +	/*
-+	 * make sure that if __legitimize_mnt() has not seen us grab
-+	 * mount_lock, we'll see their refcount increment here.
++	 * We have writable memory backing the MR if any of the following
++	 * access flags are set.  "Local write" and "remote write" obviously
++	 * require write access.  "Remote atomic" can do things like fetch and
++	 * add, which will modify memory, and "MW bind" can change permissions
++	 * by binding a window.
 +	 */
-+	smp_mb();
- 	mnt_add_count(mnt, -1);
- 	if (mnt_get_count(mnt)) {
- 		rcu_read_unlock();
++	return access_flags &
++		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
++		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND);
++}
++
+ /**
+  * ib_check_mr_status: lightweight check of MR status.
+  *     This routine may provide status checks on a selected
 
 
