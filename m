@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B601C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D13C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4FC721736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4FC721736
+	by mail.kernel.org (Postfix) with ESMTP id 7A73621471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A73621471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390971AbeHNUd5 (ORCPT
+        id S2390976AbeHNUeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:33:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60286 "EHLO
+        Tue, 14 Aug 2018 16:34:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60302 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388101AbeHNUd5 (ORCPT
+        with ESMTP id S2388101AbeHNUeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:33:57 -0400
+        Tue, 14 Aug 2018 16:34:05 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1DFCBCBA;
-        Tue, 14 Aug 2018 17:45:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3094D06;
+        Tue, 14 Aug 2018 17:45:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 102/107] x86/speculation/l1tf: Make pmd/pud_mknotpresent() invert
-Date:   Tue, 14 Aug 2018 19:18:05 +0200
-Message-Id: <20180814171526.918806307@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 01/43] ext4: fix check to prevent initializing reserved inodes
+Date:   Tue, 14 Aug 2018 19:17:37 +0200
+Message-Id: <20180814171517.096058903@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
-References: <20180814171520.883143803@linuxfoundation.org>
+In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
+References: <20180814171517.014285600@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,60 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 0768f91530ff46683e0b372df14fd79fe8d156e5 upstream
+commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
 
-Some cases in THP like:
-  - MADV_FREE
-  - mprotect
-  - split
+Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
+valid" will complain if block group zero does not have the
+EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
+since a freshly created file system has this flag cleared.  It gets
+almost immediately after the file system is mounted read-write --- but
+the following somewhat unlikely sequence will end up triggering a
+false positive report of a corrupted file system:
 
-mark the PMD non present for temporarily to prevent races. The window for
-an L1TF attack in these contexts is very small, but it wants to be fixed
-for correctness sake.
+   mkfs.ext4 /dev/vdc
+   mount -o ro /dev/vdc /vdc
+   mount -o remount,rw /dev/vdc
 
-Use the proper low level functions for pmd/pud_mknotpresent() to address
-this.
+Instead, when initializing the inode table for block group zero, test
+to make sure that itable_unused count is not too large, since that is
+the case that will result in some or all of the reserved inodes
+getting cleared.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+This fixes the failures reported by Eric Whiteney when running
+generic/230 and generic/231 in the the nojournal test case.
+
+Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
+Reported-by: Eric Whitney <enwlinux@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/pgtable.h |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -350,11 +350,6 @@ static inline pmd_t pmd_mkwrite(pmd_t pm
- 	return pmd_set_flags(pmd, _PAGE_RW);
- }
+---
+ fs/ext4/ialloc.c |    5 ++++-
+ fs/ext4/super.c  |    8 +-------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
+
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -1308,7 +1308,10 @@ int ext4_init_inode_table(struct super_b
+ 			    ext4_itable_unused_count(sb, gdp)),
+ 			    sbi->s_inodes_per_block);
  
--static inline pmd_t pmd_mknotpresent(pmd_t pmd)
--{
--	return pmd_clear_flags(pmd, _PAGE_PRESENT | _PAGE_PROTNONE);
--}
--
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline int pte_soft_dirty(pte_t pte)
- {
-@@ -418,6 +413,12 @@ static inline pmd_t pfn_pmd(unsigned lon
- 	return __pmd(pfn | massage_pgprot(pgprot));
- }
+-	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
++	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
++	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
++			       ext4_itable_unused_count(sb, gdp)) <
++			      EXT4_FIRST_INO(sb)))) {
+ 		ext4_error(sb, "Something is wrong with group %u: "
+ 			   "used itable blocks: %d; "
+ 			   "itable unused count: %u",
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2875,14 +2875,8 @@ static ext4_group_t ext4_has_uninit_itab
+ 		if (!gdp)
+ 			continue;
  
-+static inline pmd_t pmd_mknotpresent(pmd_t pmd)
-+{
-+	return pfn_pmd(pmd_pfn(pmd),
-+		       __pgprot(pmd_flags(pmd) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
-+}
-+
- static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
+-		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
+-			continue;
+-		if (group != 0)
++		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
+ 			break;
+-		ext4_error(sb, "Inode table for bg 0 marked as "
+-			   "needing zeroing");
+-		if (sb->s_flags & MS_RDONLY)
+-			return ngroups;
+ 	}
  
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ 	return group;
 
 
