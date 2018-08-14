@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B236C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E193C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3107821653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3107821653
+	by mail.kernel.org (Postfix) with ESMTP id F23D121653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F23D121653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390308AbeHNUaQ (ORCPT
+        id S2390295AbeHNUaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 14 Aug 2018 16:30:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59344 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390219AbeHNUaN (ORCPT
+        with ESMTP id S2390222AbeHNUaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 16:30:13 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA4C6C93;
-        Tue, 14 Aug 2018 17:33:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D57B2DCB;
+        Tue, 14 Aug 2018 17:33:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 45/97] x86/speculation/l1tf: Extend 64bit swap file size limit
-Date:   Tue, 14 Aug 2018 19:16:57 +0200
-Message-Id: <20180814171434.871858283@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.17 95/97] tools headers: Synchronize prctl.h ABI header
+Date:   Tue, 14 Aug 2018 19:17:47 +0200
+Message-Id: <20180814171436.970739336@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,45 +55,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit 1a7ed1ba4bba6c075d5ad61bb75e3fbc870840d6 upstream
+commit 63b89a19cc9ef911dcc64d41b60930c346eee0c0 upstream
 
-The previous patch has limited swap file size so that large offsets cannot
-clear bits above MAX_PA/2 in the pte and interfere with L1TF mitigation.
+To pick up changes from:
 
-It assumed that offsets are encoded starting with bit 12, same as pfn. But
-on x86_64, offsets are encoded starting with bit 9.
+  $ git log --oneline -2 -i include/uapi/linux/prctl.h
+  356e4bfff2c5 prctl: Add force disable speculation
+  b617cfc85816 prctl: Add speculation control prctls
 
-Thus the limit can be raised by 3 bits. That means 16TB with 42bit MAX_PA
-and 256TB with 46bit MAX_PA.
+  $ tools/perf/trace/beauty/prctl_option.sh > before.c
+  $ cp include/uapi/linux/prctl.h tools/include/uapi/linux/prctl.h
+  $ tools/perf/trace/beauty/prctl_option.sh > after.c
+  $ diff -u before.c after.c
+#  --- before.c	2018-06-01 10:39:53.834073962 -0300
+#  +++ after.c	2018-06-01 10:42:11.307985394 -0300
+  @@ -35,6 +35,8 @@
+          [42] = "GET_THP_DISABLE",
+          [45] = "SET_FP_MODE",
+          [46] = "GET_FP_MODE",
+  +       [52] = "GET_SPECULATION_CTRL",
+  +       [53] = "SET_SPECULATION_CTRL",
+   };
+   static const char *prctl_set_mm_options[] = {
+ 	  [1] = "START_CODE",
+  $
 
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+This will be used by 'perf trace' to show these strings when beautifying
+the prctl syscall args. At some point we'll be able to say something
+like:
+
+	'perf trace --all-cpus -e prctl(option=*SPEC*)'
+
+To filter by arg by name.
+
+  This silences this warning when building tools/perf:
+
+    Warning: Kernel ABI header at 'tools/include/uapi/linux/prctl.h' differs from latest version at 'include/uapi/linux/prctl.h'
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-zztsptwhc264r8wg44tqh5gp@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/init.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tools/include/uapi/linux/prctl.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -891,7 +891,15 @@ unsigned long max_swapfile_size(void)
+--- a/tools/include/uapi/linux/prctl.h
++++ b/tools/include/uapi/linux/prctl.h
+@@ -207,4 +207,16 @@ struct prctl_mm_map {
+ # define PR_SVE_VL_LEN_MASK		0xffff
+ # define PR_SVE_VL_INHERIT		(1 << 17) /* inherit across exec */
  
- 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
--		pages = min_t(unsigned long, l1tf_pfn_limit() + 1, pages);
-+		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
-+		/*
-+		 * We encode swap offsets also with 3 bits below those for pfn
-+		 * which makes the usable limit higher.
-+		 */
-+#ifdef CONFIG_X86_64
-+		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
-+#endif
-+		pages = min_t(unsigned long, l1tf_limit, pages);
- 	}
- 	return pages;
- }
++/* Per task speculation control */
++#define PR_GET_SPECULATION_CTRL		52
++#define PR_SET_SPECULATION_CTRL		53
++/* Speculation control variants */
++# define PR_SPEC_STORE_BYPASS		0
++/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
++# define PR_SPEC_NOT_AFFECTED		0
++# define PR_SPEC_PRCTL			(1UL << 0)
++# define PR_SPEC_ENABLE			(1UL << 1)
++# define PR_SPEC_DISABLE		(1UL << 2)
++# define PR_SPEC_FORCE_DISABLE		(1UL << 3)
++
+ #endif /* _LINUX_PRCTL_H */
 
 
