@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E193C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388DFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F23D121653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F23D121653
+	by mail.kernel.org (Postfix) with ESMTP id EE0F121653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0F121653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390295AbeHNUaQ (ORCPT
+        id S2389238AbeHNUlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:16 -0400
+        Tue, 14 Aug 2018 16:41:45 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:59170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390222AbeHNUaN (ORCPT
+        with ESMTP id S2389859AbeHNUaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:13 -0400
+        Tue, 14 Aug 2018 16:30:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D57B2DCB;
-        Tue, 14 Aug 2018 17:33:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78E86DB4;
+        Tue, 14 Aug 2018 17:32:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.17 95/97] tools headers: Synchronize prctl.h ABI header
-Date:   Tue, 14 Aug 2018 19:17:47 +0200
-Message-Id: <20180814171436.970739336@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 52/97] x86/KVM: Warn user if KVM is loaded SMT and L1TF CPU bug being present
+Date:   Tue, 14 Aug 2018 19:17:04 +0200
+Message-Id: <20180814171435.136260973@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -55,77 +51,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 63b89a19cc9ef911dcc64d41b60930c346eee0c0 upstream
+commit 26acfb666a473d960f0fd971fe68f3e3ad16c70b upstream
 
-To pick up changes from:
+If the L1TF CPU bug is present we allow the KVM module to be loaded as the
+major of users that use Linux and KVM have trusted guests and do not want a
+broken setup.
 
-  $ git log --oneline -2 -i include/uapi/linux/prctl.h
-  356e4bfff2c5 prctl: Add force disable speculation
-  b617cfc85816 prctl: Add speculation control prctls
+Cloud vendors are the ones that are uncomfortable with CVE 2018-3620 and as
+such they are the ones that should set nosmt to one.
 
-  $ tools/perf/trace/beauty/prctl_option.sh > before.c
-  $ cp include/uapi/linux/prctl.h tools/include/uapi/linux/prctl.h
-  $ tools/perf/trace/beauty/prctl_option.sh > after.c
-  $ diff -u before.c after.c
-#  --- before.c	2018-06-01 10:39:53.834073962 -0300
-#  +++ after.c	2018-06-01 10:42:11.307985394 -0300
-  @@ -35,6 +35,8 @@
-          [42] = "GET_THP_DISABLE",
-          [45] = "SET_FP_MODE",
-          [46] = "GET_FP_MODE",
-  +       [52] = "GET_SPECULATION_CTRL",
-  +       [53] = "SET_SPECULATION_CTRL",
-   };
-   static const char *prctl_set_mm_options[] = {
- 	  [1] = "START_CODE",
-  $
+Setting 'nosmt' means that the system administrator also needs to disable
+SMT (Hyper-threading) in the BIOS, or via the 'nosmt' command line
+parameter, or via the /sys/devices/system/cpu/smt/control. See commit
+05736e4ac13c ("cpu/hotplug: Provide knobs to control SMT").
 
-This will be used by 'perf trace' to show these strings when beautifying
-the prctl syscall args. At some point we'll be able to say something
-like:
+Other mitigations are to use task affinity, cpu sets, interrupt binding,
+etc - anything to make sure that _only_ the same guests vCPUs are running
+on sibling threads.
 
-	'perf trace --all-cpus -e prctl(option=*SPEC*)'
-
-To filter by arg by name.
-
-  This silences this warning when building tools/perf:
-
-    Warning: Kernel ABI header at 'tools/include/uapi/linux/prctl.h' differs from latest version at 'include/uapi/linux/prctl.h'
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-zztsptwhc264r8wg44tqh5gp@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/include/uapi/linux/prctl.h |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |    6 ++++++
+ arch/x86/kvm/vmx.c                              |   13 +++++++++++++
+ kernel/cpu.c                                    |    1 +
+ 3 files changed, 20 insertions(+)
 
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -207,4 +207,16 @@ struct prctl_mm_map {
- # define PR_SVE_VL_LEN_MASK		0xffff
- # define PR_SVE_VL_INHERIT		(1 << 17) /* inherit across exec */
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1937,6 +1937,12 @@
+ 			[KVM,ARM] Allow use of GICv4 for direct injection of
+ 			LPIs.
  
-+/* Per task speculation control */
-+#define PR_GET_SPECULATION_CTRL		52
-+#define PR_SET_SPECULATION_CTRL		53
-+/* Speculation control variants */
-+# define PR_SPEC_STORE_BYPASS		0
-+/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
-+# define PR_SPEC_NOT_AFFECTED		0
-+# define PR_SPEC_PRCTL			(1UL << 0)
-+# define PR_SPEC_ENABLE			(1UL << 1)
-+# define PR_SPEC_DISABLE		(1UL << 2)
-+# define PR_SPEC_FORCE_DISABLE		(1UL << 3)
++	kvm-intel.nosmt=[KVM,Intel] If the L1TF CPU bug is present (CVE-2018-3620)
++			and the system has SMT (aka Hyper-Threading) enabled then
++			don't allow guests to be created.
 +
- #endif /* _LINUX_PRCTL_H */
++			Default is 0 (allow guests to be created).
++
+ 	kvm-intel.ept=	[KVM,Intel] Disable extended page tables
+ 			(virtualized MMU) support on capable Intel chips.
+ 			Default is 1 (enabled)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -71,6 +71,9 @@ static const struct x86_cpu_id vmx_cpu_i
+ };
+ MODULE_DEVICE_TABLE(x86cpu, vmx_cpu_id);
+ 
++static bool __read_mostly nosmt;
++module_param(nosmt, bool, S_IRUGO);
++
+ static bool __read_mostly enable_vpid = 1;
+ module_param_named(vpid, enable_vpid, bool, 0444);
+ 
+@@ -10142,10 +10145,20 @@ free_vcpu:
+ 	return ERR_PTR(err);
+ }
+ 
++#define L1TF_MSG "SMT enabled with L1TF CPU bug present. Refer to CVE-2018-3620 for details.\n"
++
+ static int vmx_vm_init(struct kvm *kvm)
+ {
+ 	if (!ple_gap)
+ 		kvm->arch.pause_in_guest = true;
++
++	if (boot_cpu_has(X86_BUG_L1TF) && cpu_smt_control == CPU_SMT_ENABLED) {
++		if (nosmt) {
++			pr_err(L1TF_MSG);
++			return -EOPNOTSUPP;
++		}
++		pr_warn(L1TF_MSG);
++	}
+ 	return 0;
+ }
+ 
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -345,6 +345,7 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
+ 
+ #ifdef CONFIG_HOTPLUG_SMT
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
++EXPORT_SYMBOL_GPL(cpu_smt_control);
+ 
+ static int __init smt_cmdline_disable(char *str)
+ {
 
 
