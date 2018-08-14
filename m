@@ -2,111 +2,82 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53967C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C48C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097B92172C
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:03:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iwpG6ApN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097B92172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C41CD2172C
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41CD2172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732398AbeHNQvO (ORCPT
+        id S1732446AbeHNQve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:51:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34320 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbeHNQvO (ORCPT
+        Tue, 14 Aug 2018 12:51:34 -0400
+Received: from smtprelay0137.hostedemail.com ([216.40.44.137]:36723 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728458AbeHNQve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:51:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=G+8CeSpeua02zygrfLANjAYN+ckULJEzAKOEWqVyybw=; b=iwpG6ApNgtKaHMCVbTDhMKut2
-        DkXQhPEVsslOIH9mJsH+l4cDFk6t3oFSD9Ru9JK9MdWaLGOVSwubGs0tMQIYEH2APkWiRK1O2Uaec
-        Jc789FMKy1zH6ObvXFR4NlxVqG1lM44aixUYhXd/QYbA7a/fqDTBRHwwOr0q8KaEc5/nQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fpZvE-0000rO-Ln; Tue, 14 Aug 2018 14:03:44 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 30C1B1124449; Tue, 14 Aug 2018 15:03:44 +0100 (BST)
-Date:   Tue, 14 Aug 2018 15:03:44 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Wu Zhigang <zhigang.wu@linux.intel.com>, kbuild-all@01.org,
-        sof-ci-monitor@eclists.intel.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fix ifnullfree.cocci warnings
-Message-ID: <20180814140344.GB5810@sirena.org.uk>
-References: <alpine.DEB.2.20.1808141255470.3371@hadrien>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1808141255470.3371@hadrien>
-X-Cookie: All true wisdom is found on T-shirts.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 14 Aug 2018 12:51:34 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave01.hostedemail.com (Postfix) with ESMTP id 3EA2A180238A6;
+        Tue, 14 Aug 2018 14:04:15 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 55E3618028911;
+        Tue, 14 Aug 2018 14:04:14 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: geese80_41e3d3e908601
+X-Filterd-Recvd-Size: 1831
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 14 Aug 2018 14:04:12 +0000 (UTC)
+Message-ID: <1678613360b7aebbf1ab42dd89139cb666ee8cd9.camel@perches.com>
+Subject: Re: [PATCH v2 2/2] kgdboc: Change printk to the right fashion
+From:   Joe Perches <golf@perches.com>
+To:     Daniel Thompson <daniel.thompson@linaro.org>, zhe.he@windriver.com
+Cc:     jason.wessel@windriver.com, gregkh@linuxfoundation.org,
+        jslaby@suse.com, kgdb-bugreport@lists.sourceforge.net,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 14 Aug 2018 07:04:11 -0700
+In-Reply-To: <20180814133536.bfpygzwnmlqfsee5@holly.lan>
+References: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
+         <1534250761-824-2-git-send-email-zhe.he@windriver.com>
+         <20180814133536.bfpygzwnmlqfsee5@holly.lan>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-08-14 at 14:35 +0100, Daniel Thompson wrote:
+> On Tue, Aug 14, 2018 at 08:46:01PM +0800, zhe.he@windriver.com wrote:
+> > From: He Zhe <zhe.he@windriver.com>
+> > 
+> > pr_* is preferred according to scripts/checkpatch.pl.
+[]
+> > diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
+[]
+> > @@ -136,7 +136,7 @@ static int kgdboc_option_setup(char *opt)
+> >  	}
+> >  
+> >  	if (strlen(opt) >= MAX_CONFIG_LEN) {
+> > -		printk(KERN_ERR "kgdboc: config string too long\n");
+> > +		pr_err("kgdboc: config string too long\n");
+> 
+> Looks like you should remove the tags from pr_err and use pr_fmt(fmt) to
+> put tags on the messages:
+> 
+> #define pr_fmt(fmt) "kgdboc: " fmt
 
---QKdGvSO+nmPlgiQ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+True and it's probably better to use:
 
-On Tue, Aug 14, 2018 at 12:57:57PM +0200, Julia Lawall wrote:
-> From: kbuild test robot <fengguang.wu@intel.com>
->=20
->  NULL check before some freeing functions is not needed.
->=20
->  Based on checkpatch warning
->  "kfree(NULL) is safe this check is probably not required"
->  and kfreeaddr.cocci by Julia Lawall.
->=20
-> Generated by: scripts/coccinelle/free/ifnullfree.cocci
->=20
-> Fixes: 0099cc17a399 ("ASoC:topology:avoid error log and oops during topol=
-ogy free.")
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-This doesn't apply against current code, please check and resend (the
-above commit isn't in my tree:
-
-$ git show 0099cc17a399
-fatal: ambiguous argument '0099cc17a399': unknown revision or path not in t=
-he working tree.
-
---QKdGvSO+nmPlgiQ/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlty4T8ACgkQJNaLcl1U
-h9Dwswf/cDzgU0SX6gKs4T7NvRHZi0/VT7Sly/AA3cioGpDgCEkD/ovz/mL8R85v
-9ksNIyrGtWig6xZV3X0gcofU1jSTIS1CefTqArEjyu7jBFLJITJFWu2ZDhnp/4Ys
-shB50aZi6kGTg88ll17eJEGNbk/g6WXrSfyjjyjCsXj9I2aY8oSE5UAgtg7J66Yl
-YGSWofAT/VV2Ww+6QW1YDLjmYKMgsrsjv+o8/1GTzSILiPOI8pi0pcIpO9di7n/i
-LMpsUzsi5exuP3IGPLXYTZLCXLRgjXzvPYcRHuBv5gu+zYMY0GPW56JVGnPA2shk
-t45M1fzOUKC4mMP0k0KbihGrZw/Xrw==
-=7fXd
------END PGP SIGNATURE-----
-
---QKdGvSO+nmPlgiQ/--
