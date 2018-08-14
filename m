@@ -6,204 +6,196 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E04C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE288C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D61F2170A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7F82170A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OxtBixD2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D61F2170A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UxIhyTxw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7F82170A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbeHOBDo (ORCPT
+        id S1729972AbeHOBDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 21:03:44 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34983 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727776AbeHOBDo (ORCPT
+        Tue, 14 Aug 2018 21:03:47 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50350 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727776AbeHOBDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 21:03:44 -0400
-Received: by mail-io0-f193.google.com with SMTP id w11-v6so19901652iob.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 15:14:29 -0700 (PDT)
+        Tue, 14 Aug 2018 21:03:46 -0400
+Received: by mail-it0-f66.google.com with SMTP id j81-v6so20664314ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 15:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ESncSgmCF65uR5Mjzqxtn9ajR1WbAE7v81L5WJOABy4=;
-        b=OxtBixD2V9Jhg1n9ecw1Y7QVjIWmmGreTDkvupfhpNRoc+efaai+HiU6drtKM71chZ
-         3NDL7i0QCweE/pIyEUSw9NAfjim2gbChdgKBnX7LRnC0PCmsRe/+nVjAafBmTo0Z7U37
-         kfrpOTO2lmqJw2VCn0sMpZAhFfIVe5oK5mtF0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=n51nv7HwDkyeWHHsQ0Nv037MqvdoJ65KhHly2Ldym/Y=;
+        b=UxIhyTxw92DOtIN8p6E3424O47ORqXDZodEsy1RhgIFb/26kg1HEtKrc0R6SBhCJ88
+         KMKSofpmU3p+IWUoft+4FTqideD8//vuKceqjR9pf1c+Pn+SsPdjS6L59K9mEW8iqjny
+         W5jiFs61RZCez6fNgIH2xCUdaFaWrL1SNWWfA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ESncSgmCF65uR5Mjzqxtn9ajR1WbAE7v81L5WJOABy4=;
-        b=W+QVVXFewbiClYeopeVdaOwN0drtFCI8E6j+DSxM3z0CThMyHPTw0B7YwJdF8iZIgm
-         /aB+dGthu1xuAmzVgcnvQIW4F9TaWisgkDJ2oimcET9gZEqeCVEYEs2yyRDDeEyux5up
-         1MXCHXcpDKxMfBDi5/AUl8FlfafcSkptj+BBIZajBCD+zS7EvqKK1SI71+l+JzLH3McG
-         XWXQpxM5WGn9LllbhAb2M83/fCHfd+O5WZuskkjeSSqzOeKKumPEqX+MOspiD0W89Zjp
-         aX09X1FyuW7/rdywGj0Fpk9dpc5SXQfbGOuYCDlzFXRa/03vW2w1+oxl9n02GydGLJwj
-         pFUA==
-X-Gm-Message-State: AOUpUlHMONw57X0RHCeFrviB0Z4vnNwEeEP5NSgLEV4B/yA1UzonThGr
-        YxnwUjaE52/DOGkp9MXYKms14D65S70=
-X-Google-Smtp-Source: AA+uWPzjYF7lCvQUXAO9YsfTlFfp1s6vilLRmdQNXIIgOVuOd8pP6vGEEt1B1tTtGgxq14nHH4NRQg==
-X-Received: by 2002:a6b:b010:: with SMTP id z16-v6mr19960214ioe.206.1534284869098;
-        Tue, 14 Aug 2018 15:14:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=n51nv7HwDkyeWHHsQ0Nv037MqvdoJ65KhHly2Ldym/Y=;
+        b=iUqdnibClsPRovorA9PTjr0B8QZLVIfHScezntIgzTnwXxSaHhAtnKm9o1Yc+8tgqt
+         NMJbI1kPV6j0APxEmEMWfvF2K+QDg2V4nHlk/+9G0RSqIndYEeVU0ECPHUBgzllNFhoV
+         4biuXaNZm/197YaLun/QRUVSpK8vVnFFHPDqq0Rj/Yu3rvl8Nu4ATwiOpSLgeL5Ael+N
+         2N/QasGP+Oaf4tYwbIPclg44Sn7h6eoxJiPrlD0jrPvnTN7a8DbyIFIPycHF8xavG6Du
+         8yTmexvjO8IsYgaLX7F3Ov2reP+vVmsrQYsiaQLzoQIMEEKfyNddWwrt8KIvEuNNm5Ii
+         UZPg==
+X-Gm-Message-State: AOUpUlGUQ97H0wiPuGxXSh2aNREaHghT6mlmcqulTUyZ9q9zje38C0wK
+        AF3EBMDgonxxZnuSuqHCNO7CKQ==
+X-Google-Smtp-Source: AA+uWPxr+g4pSFkvTx2BWnW8vVksa4vBFz/w6tklU+ksxYS553VZEPNmyTHouM/UUxB+xi1mnyj+8g==
+X-Received: by 2002:a24:e347:: with SMTP id d68-v6mr16873835ith.75.1534284870823;
+        Tue, 14 Aug 2018 15:14:30 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m1-v6sm7858231iok.81.2018.08.14.15.14.27
+        by smtp.gmail.com with ESMTPSA id m1-v6sm7858231iok.81.2018.08.14.15.14.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 14 Aug 2018 15:14:28 -0700 (PDT)
+        Tue, 14 Aug 2018 15:14:29 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     alexander.shishkin@linux.intel.com, suzuki.poulose@arm.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] coresight: etb10: Refactor etb_drvdata::mode handling
-Date:   Tue, 14 Aug 2018 16:14:25 -0600
-Message-Id: <1534284866-2523-1-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 2/2] coresight: etb10: Splitting function etb_enable()
+Date:   Tue, 14 Aug 2018 16:14:26 -0600
+Message-Id: <1534284866-2523-2-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534284866-2523-1-git-send-email-mathieu.poirier@linaro.org>
+References: <1534284866-2523-1-git-send-email-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the etb_drvdata::mode from a locat_t to a simple u32,
-as it is for the ETF and ETR drivers.  This streamlines the code and adds
-commonality with the other drivers when dealing with similar operations.
+Up until now the relative simplicity of enabling the ETB made it
+possible to accommodate processing for both sysFS and perf methods.
+But work on claimtags and CPU-wide trace scenarios is adding some
+complexity, making the current code messy and hard to maintain.
+
+As such follow what has been done for ETF and ETR components and split
+function etb_enable() so that processing for both API can be done
+cleanly.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etb10.c | 62 +++++++++++++++------------
- 1 file changed, 34 insertions(+), 28 deletions(-)
+ drivers/hwtracing/coresight/coresight-etb10.c | 73 +++++++++++++++++++--------
+ 1 file changed, 52 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 9fd77fdc1244..69287163ce4e 100644
+index 69287163ce4e..08fa660098f8 100644
 --- a/drivers/hwtracing/coresight/coresight-etb10.c
 +++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -5,7 +5,6 @@
-  * Description: CoreSight Embedded Trace Buffer driver
-  */
+@@ -134,7 +134,7 @@ static void etb_enable_hw(struct etb_drvdata *drvdata)
+ 	CS_LOCK(drvdata->base);
+ }
  
--#include <asm/local.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/types.h>
-@@ -72,8 +71,8 @@
-  * @miscdev:	specifics to handle "/dev/xyz.etb" entry.
-  * @spinlock:	only one at a time pls.
-  * @reading:	synchronise user space access to etb buffer.
-- * @mode:	this ETB is being used.
-  * @buf:	area of memory where ETB buffer content gets sent.
-+ * @mode:	this ETB is being used.
-  * @buffer_depth: size of @buf.
-  * @trigger_cntr: amount of words to store after a trigger.
-  */
-@@ -85,8 +84,8 @@ struct etb_drvdata {
- 	struct miscdevice	miscdev;
- 	spinlock_t		spinlock;
- 	local_t			reading;
--	local_t			mode;
- 	u8			*buf;
-+	u32			mode;
- 	u32			buffer_depth;
- 	u32			trigger_cntr;
- };
-@@ -138,44 +137,48 @@ static void etb_enable_hw(struct etb_drvdata *drvdata)
- static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
+-static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
++static int etb_enable_sysfs(struct coresight_device *csdev)
  {
  	int ret = 0;
--	u32 val;
  	unsigned long flags;
- 	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+@@ -142,48 +142,79 @@ static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
+ 
+ 	spin_lock_irqsave(&drvdata->spinlock, flags);
  
 -	/*
--	 * We don't have an internal state to clean up if we fail to setup
--	 * the perf buffer. So we can perform the step before we turn the
--	 * ETB on and leave without cleaning up.
+-	 * When accessing from Perf, a HW buffer can be handled
+-	 * by a single trace entity.  In sysFS mode many tracers
+-	 * can be logging to the same HW buffer.
 -	 */
++	/* Don't messup with perf sessions. */
+ 	if (drvdata->mode == CS_MODE_PERF) {
+ 		ret = -EBUSY;
+ 		goto out;
+ 	}
+ 
+-	/* Don't let perf disturb sysFS sessions */
+-	if (drvdata->mode == CS_MODE_SYSFS && mode == CS_MODE_PERF) {
+-		ret = -EBUSY;
++	/* Nothing to do, the tracer is already enabled. */
++	if (drvdata->mode == CS_MODE_SYSFS)
+ 		goto out;
+-	}
+ 
+-	/* Nothing to do, the tracer is already enabled. */
+-	if (drvdata->mode == CS_MODE_SYSFS && mode == CS_MODE_SYSFS)
++	drvdata->mode = CS_MODE_SYSFS;
++	etb_enable_hw(drvdata);
++
++out:
++	spin_unlock_irqrestore(&drvdata->spinlock, flags);
++	return ret;
++}
++
++static int etb_enable_perf(struct coresight_device *csdev, void *data)
++{
++	int ret = 0;
++	unsigned long flags;
++	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++
++	spin_lock_irqsave(&drvdata->spinlock, flags);
++
++	/* No need to continue if the component is already in use. */
++	if (drvdata->mode != CS_MODE_DISABLED) {
++		ret = -EBUSY;
+ 		goto out;
++	}
+ 
+ 	/*
+ 	 * We don't have an internal state to clean up if we fail to setup
+ 	 * the perf buffer. So we can perform the step before we turn the
+ 	 * ETB on and leave without cleaning up.
+ 	 */
 -	if (mode == CS_MODE_PERF) {
 -		ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
 -		if (ret)
 -			goto out;
 -	}
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
- 
--	val = local_cmpxchg(&drvdata->mode,
--			    CS_MODE_DISABLED, mode);
- 	/*
- 	 * When accessing from Perf, a HW buffer can be handled
- 	 * by a single trace entity.  In sysFS mode many tracers
- 	 * can be logging to the same HW buffer.
- 	 */
--	if (val == CS_MODE_PERF)
--		return -EBUSY;
-+	if (drvdata->mode == CS_MODE_PERF) {
-+		ret = -EBUSY;
++	ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
++	if (ret)
 +		goto out;
-+	}
  
- 	/* Don't let perf disturb sysFS sessions */
--	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
--		return -EBUSY;
-+	if (drvdata->mode == CS_MODE_SYSFS && mode == CS_MODE_PERF) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
- 
- 	/* Nothing to do, the tracer is already enabled. */
--	if (val == CS_MODE_SYSFS)
-+	if (drvdata->mode == CS_MODE_SYSFS && mode == CS_MODE_SYSFS)
- 		goto out;
- 
--	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	/*
-+	 * We don't have an internal state to clean up if we fail to setup
-+	 * the perf buffer. So we can perform the step before we turn the
-+	 * ETB on and leave without cleaning up.
-+	 */
-+	if (mode == CS_MODE_PERF) {
-+		ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	drvdata->mode = mode;
+-	drvdata->mode = mode;
++	drvdata->mode = CS_MODE_PERF;
  	etb_enable_hw(drvdata);
--	spin_unlock_irqrestore(&drvdata->spinlock, flags);
  
  out:
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
- 	if (!ret)
- 		dev_dbg(drvdata->dev, "ETB enabled\n");
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+-
+-	if (!ret)
+-		dev_dbg(drvdata->dev, "ETB enabled\n");
  	return ret;
-@@ -277,11 +280,14 @@ static void etb_disable(struct coresight_device *csdev)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
--	etb_disable_hw(drvdata);
--	etb_dump_hw(drvdata);
--	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
--	local_set(&drvdata->mode, CS_MODE_DISABLED);
-+	/* Disable the ETB only if it needs to */
-+	if (drvdata->mode != CS_MODE_DISABLED) {
-+		etb_disable_hw(drvdata);
-+		etb_dump_hw(drvdata);
-+		drvdata->mode = CS_MODE_DISABLED;
-+	}
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	dev_dbg(drvdata->dev, "ETB disabled\n");
  }
-@@ -488,7 +494,7 @@ static void etb_dump(struct etb_drvdata *drvdata)
- 	unsigned long flags;
  
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
--	if (local_read(&drvdata->mode) == CS_MODE_SYSFS) {
-+	if (drvdata->mode == CS_MODE_SYSFS) {
- 		etb_disable_hw(drvdata);
- 		etb_dump_hw(drvdata);
- 		etb_enable_hw(drvdata);
++static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
++{
++	int ret;
++	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++
++	switch (mode) {
++	case CS_MODE_SYSFS:
++		ret = etb_enable_sysfs(csdev);
++		break;
++	case CS_MODE_PERF:
++		ret = etb_enable_perf(csdev, data);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	if (ret)
++		return ret;
++
++	dev_dbg(drvdata->dev, "ETB enabled\n");
++	return 0;
++}
++
+ static void etb_disable_hw(struct etb_drvdata *drvdata)
+ {
+ 	u32 ffcr;
 -- 
 2.7.4
 
