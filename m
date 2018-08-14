@@ -2,345 +2,213 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83977C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A41C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0009321728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:23:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIbA5/m9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0009321728
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6681121728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6681121728
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387809AbeHNULU (ORCPT
+        id S2387832AbeHNUMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:11:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387796AbeHNULU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:11:20 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81394216C4;
-        Tue, 14 Aug 2018 17:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534267394;
-        bh=5G5WoDAxs5S5h7VBBy2sZmX40/iPY9a97hRGIdLT2Eg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oIbA5/m9hCb6JJg5wSqk1bO2U3TsFPbyONr6tvZJuQNJ6JJqYKMOOhEcUnUuA3ccw
-         nVFOl0O2YQSwiFARMPDZsdk4dkkVTi7uqbNFmMtENaYpfzjAi6Ukx1m8KpjY0ukIZ1
-         WpIKwu7VvOcUfxw0hPOzGjT5Ah1ZZVDRcpDhWpBk=
-Date:   Tue, 14 Aug 2018 10:23:13 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH 2/2] f2fs: tune discard speed with storage usage rate
-Message-ID: <20180814172313.GC56510@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810100806.9298-1-yuchao0@huawei.com>
- <20180810100806.9298-2-yuchao0@huawei.com>
- <20180814041906.GC52730@jaegeuk-macbookpro.roam.corp.google.com>
- <57d9b6ea-68a5-4736-0b34-74db539d8959@huawei.com>
+        Tue, 14 Aug 2018 16:12:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51218 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387747AbeHNUMM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 16:12:12 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 158DAC5C;
+        Tue, 14 Aug 2018 17:24:05 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH 4.18 01/79] x86/paravirt: Fix spectre-v2 mitigations for paravirt guests
+Date:   Tue, 14 Aug 2018 19:16:20 +0200
+Message-Id: <20180814171336.852079487@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
+References: <20180814171336.799314117@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57d9b6ea-68a5-4736-0b34-74db539d8959@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14, Chao Yu wrote:
-> On 2018/8/14 12:19, Jaegeuk Kim wrote:
-> > On 08/10, Chao Yu wrote:
-> >> Previously, discard speed was fixed mostly, and in high usage rate
-> >> device, we will speed up issuing discard, but it doesn't make sense
-> >> that in a non-full filesystem, we still issue discard with slow speed.
-> > 
-> > Could you please elaborate the problem in more detail? The speed depends
-> > on how many candidates?
-> 
-> undiscard blocks are all 4k granularity.
-> a) utility: filesystem: 20% + undiscard blocks: 20% = flash storage: 40%
-> b) utility: filesystem: 40% + undiscard blocks: 25% = flash storage: 65%
-> c) utility: filesystem: 60% + undiscard blocks: 30% = flash storage: 100%
-> 
-> 
-> 1. for case c), we need to speed up issuing discard based on utilization of
-> "filesystem + undiscard" instead of just utilization of filesystem.
-> 
-> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
-> -			dpolicy->granularity = 1;
-> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> -		}
-> 
-> 2. If free space in storage touches therein threshold, performance will be very
-> sensitive. In low-end storage, with high usage in space, even free space is
-> reduced by 1%, performance will decrease a lot.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-So, we may need to distinguish low-end vs. high-end storage. In high-end case,
-it'd be better to avoid IO contention, while low-end device wants to get more
-discard commands as much as possible. So, how about adding an option for this
-as a tunable point?
+------------------
 
-> 
-> IMO, in above cases, we'd better to issue discard with high speed for c), middle
-> speed for b), and low speed for a).
-> 
-> How do you think?
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Anyway, it comes out undiscarded block makes FTL GC be lower efficient
-> >> and causing high lifetime overhead.
-> >>
-> >> Let's tune discard speed as below:
-> >>
-> >> a. adjust default issue interval:
-> >> 		original	after
-> >> min_interval:	50ms		100ms
-> >> mid_interval:	500ms		1000ms
-> >> max_interval:	60000ms		10000ms
-> >>
-> >> b. if last time we stop issuing discard due to IO interruption of user,
-> >> let's reset all {min,mid,max}_interval to default one.
-> >>
-> >> c. tune {min,mid,max}_interval with below calculation method:
-> >>
-> >> base_interval = default_interval / 10;
-> >> total_interval = default_interval - base_interval;
-> >> interval = base_interval + total_interval * (100 - dev_util) / 100;
-> >>
-> >> For example:
-> >> min_interval (:100ms)
-> >> dev_util (%)	interval (ms)
-> >> 0		100
-> >> 10		91
-> >> 20		82
-> >> 30		73
-> >> ...
-> >> 80		28
-> >> 90		19
-> >> 100		10
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/f2fs.h    | 11 ++++----
-> >>  fs/f2fs/segment.c | 64 +++++++++++++++++++++++++++++++++++++----------
-> >>  fs/f2fs/segment.h |  9 +++++++
-> >>  fs/f2fs/super.c   |  2 +-
-> >>  4 files changed, 67 insertions(+), 19 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index 273ffdaf4891..a1dd2e1c3cb9 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -185,10 +185,9 @@ enum {
-> >>  
-> >>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
-> >>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> >> -#define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
-> >> -#define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
-> >> -#define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> >> -#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
-> >> +#define DEF_MIN_DISCARD_ISSUE_TIME	100	/* 100 ms, if exists */
-> >> +#define DEF_MID_DISCARD_ISSUE_TIME	1000	/* 1000 ms, if device busy */
-> >> +#define DEF_MAX_DISCARD_ISSUE_TIME	10000	/* 10000 ms, if no candidates */
-> >>  #define DEF_CP_INTERVAL			60	/* 60 secs */
-> >>  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
-> >>  
-> >> @@ -248,7 +247,8 @@ struct discard_entry {
-> >>  };
-> >>  
-> >>  /* default discard granularity of inner discard thread, unit: block count */
-> >> -#define DEFAULT_DISCARD_GRANULARITY		1
-> >> +#define MID_DISCARD_GRANULARITY			16
-> >> +#define MIN_DISCARD_GRANULARITY			1
-> >>  
-> >>  /* max discard pend list number */
-> >>  #define MAX_PLIST_NUM		512
-> >> @@ -330,6 +330,7 @@ struct discard_cmd_control {
-> >>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
-> >>  	struct rb_root root;			/* root of discard rb-tree */
-> >>  	bool rbtree_check;			/* config for consistence check */
-> >> +	bool io_interrupted;			/* last state of io interrupted */
-> >>  };
-> >>  
-> >>  /* for the list of fsync inodes, used only during recovery */
-> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >> index 8b52e8dfb12f..9564aaf1f27b 100644
-> >> --- a/fs/f2fs/segment.c
-> >> +++ b/fs/f2fs/segment.c
-> >> @@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
-> >>  #endif
-> >>  }
-> >>  
-> >> +static void __adjust_discard_speed(unsigned int *interval,
-> >> +				unsigned int def_interval, int dev_util)
-> >> +{
-> >> +	unsigned int base_interval, total_interval;
-> >> +
-> >> +	base_interval = def_interval / 10;
-> >> +	total_interval = def_interval - base_interval;
-> >> +
-> >> +	/*
-> >> +	 * if def_interval = 100, adjusted interval should be in range of
-> >> +	 * [10, 100].
-> >> +	 */
-> >> +	*interval = base_interval + total_interval * (100 - dev_util) / 100;
-> >> +}
-> >> +
-> >> +static void __tune_discard_policy(struct f2fs_sb_info *sbi,
-> >> +					struct discard_policy *dpolicy)
-> >> +{
-> >> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >> +	int dev_util;
-> >> +
-> >> +	if (dcc->io_interrupted) {
-> >> +		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> >> +		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-> >> +		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-> >> +		return;
-> >> +	}
-> >> +
-> >> +	dev_util = dev_utilization(sbi);
-> >> +
-> >> +	__adjust_discard_speed(&dpolicy->min_interval,
-> >> +				DEF_MIN_DISCARD_ISSUE_TIME, dev_util);
-> >> +	__adjust_discard_speed(&dpolicy->mid_interval,
-> >> +				DEF_MID_DISCARD_ISSUE_TIME, dev_util);
-> >> +	__adjust_discard_speed(&dpolicy->max_interval,
-> >> +				DEF_MAX_DISCARD_ISSUE_TIME, dev_util);
-> >> +}
-> >> +
-> >>  static void __init_discard_policy(struct f2fs_sb_info *sbi,
-> >>  				struct discard_policy *dpolicy,
-> >>  				int discard_type, unsigned int granularity)
-> >> @@ -982,20 +1020,11 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
-> >>  	dpolicy->io_aware_gran = MAX_PLIST_NUM;
-> >>  
-> >>  	if (discard_type == DPOLICY_BG) {
-> >> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> >> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-> >> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-> >>  		dpolicy->io_aware = true;
-> >>  		dpolicy->sync = false;
-> >>  		dpolicy->ordered = true;
-> >> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
-> >> -			dpolicy->granularity = 1;
-> >> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> >> -		}
-> >> +		__tune_discard_policy(sbi, dpolicy);
-> >>  	} else if (discard_type == DPOLICY_FORCE) {
-> >> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> >> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-> >> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-> >>  		dpolicy->io_aware = false;
-> >>  	} else if (discard_type == DPOLICY_FSTRIM) {
-> >>  		dpolicy->io_aware = false;
-> >> @@ -1353,6 +1382,8 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> >>  	if (!issued && io_interrupted)
-> >>  		issued = -1;
-> >>  
-> >> +	dcc->io_interrupted = io_interrupted;
-> >> +
-> >>  	return issued;
-> >>  }
-> >>  
-> >> @@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  		if (i + 1 < dpolicy->granularity)
-> >>  			break;
-> >>  
-> >> -		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
-> >> +		if (i < MID_DISCARD_GRANULARITY && dpolicy->ordered)
-> >>  			return __issue_discard_cmd_orderly(sbi, dpolicy);
-> >>  
-> >>  		pend_list = &dcc->pend_list[i];
-> >> @@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  	if (!issued && io_interrupted)
-> >>  		issued = -1;
-> >>  
-> >> +	dcc->io_interrupted = io_interrupted;
-> >> +
-> >>  	return issued;
-> >>  }
-> >>  
-> >> @@ -1576,7 +1609,11 @@ static int issue_discard_thread(void *data)
-> >>  	struct f2fs_sb_info *sbi = data;
-> >>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >>  	wait_queue_head_t *q = &dcc->discard_wait_queue;
-> >> -	struct discard_policy dpolicy;
-> >> +	struct discard_policy dpolicy = {
-> >> +		.min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
-> >> +		.mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
-> >> +		.max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
-> >> +	};
-> >>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
-> >>  	int issued;
-> >>  
-> >> @@ -1929,7 +1966,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
-> >>  	if (!dcc)
-> >>  		return -ENOMEM;
-> >>  
-> >> -	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
-> >> +	dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
-> >>  	INIT_LIST_HEAD(&dcc->entry_list);
-> >>  	for (i = 0; i < MAX_PLIST_NUM; i++)
-> >>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
-> >> @@ -1945,6 +1982,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
-> >>  	dcc->next_pos = 0;
-> >>  	dcc->root = RB_ROOT;
-> >>  	dcc->rbtree_check = false;
-> >> +	dcc->io_interrupted = false;
-> >>  
-> >>  	init_waitqueue_head(&dcc->discard_wait_queue);
-> >>  	SM_I(sbi)->dcc_info = dcc;
-> >> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> >> index 422b0ceb1eaa..63b4da72cd34 100644
-> >> --- a/fs/f2fs/segment.h
-> >> +++ b/fs/f2fs/segment.h
-> >> @@ -616,6 +616,15 @@ static inline int utilization(struct f2fs_sb_info *sbi)
-> >>  					sbi->user_block_count);
-> >>  }
-> >>  
-> >> +static inline int dev_utilization(struct f2fs_sb_info *sbi)
-> >> +{
-> >> +	unsigned int dev_blks;
-> >> +
-> >> +	dev_blks = valid_user_blocks(sbi) + SM_I(sbi)->dcc_info->undiscard_blks;
-> >> +	return div_u64((u64)dev_blks * 100,
-> >> +			MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
-> >> +}
-> >> +
-> >>  /*
-> >>   * Sometimes f2fs may be better to drop out-of-place update policy.
-> >>   * And, users can control the policy through sysfs entries.
-> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >> index b055f2ea77c5..55ed76daad23 100644
-> >> --- a/fs/f2fs/super.c
-> >> +++ b/fs/f2fs/super.c
-> >> @@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
-> >>  	/* adjust parameters according to the volume size */
-> >>  	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
-> >>  		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
-> >> -		sm_i->dcc_info->discard_granularity = 1;
-> >> +		sm_i->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
-> >>  		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
-> >>  	}
-> >>  
-> >> -- 
-> >> 2.18.0.rc1
-> > 
-> > .
-> > 
+From: Peter Zijlstra <peterz@infradead.org>
+
+commit 5800dc5c19f34e6e03b5adab1282535cb102fafd upstream.
+
+Nadav reported that on guests we're failing to rewrite the indirect
+calls to CALLEE_SAVE paravirt functions. In particular the
+pv_queued_spin_unlock() call is left unpatched and that is all over the
+place. This obviously wrecks Spectre-v2 mitigation (for paravirt
+guests) which relies on not actually having indirect calls around.
+
+The reason is an incorrect clobber test in paravirt_patch_call(); this
+function rewrites an indirect call with a direct call to the _SAME_
+function, there is no possible way the clobbers can be different
+because of this.
+
+Therefore remove this clobber check. Also put WARNs on the other patch
+failure case (not enough room for the instruction) which I've not seen
+trigger in my (limited) testing.
+
+Three live kernel image disassemblies for lock_sock_nested (as a small
+function that illustrates the problem nicely). PRE is the current
+situation for guests, POST is with this patch applied and NATIVE is with
+or without the patch for !guests.
+
+PRE:
+
+(gdb) disassemble lock_sock_nested
+Dump of assembler code for function lock_sock_nested:
+   0xffffffff817be970 <+0>:     push   %rbp
+   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
+   0xffffffff817be974 <+4>:     push   %rbx
+   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
+   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
+   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
+   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
+   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
+   0xffffffff817be98f <+31>:    test   %eax,%eax
+   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
+   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
+   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
+   0xffffffff817be9a0 <+48>:    callq  *0xffffffff822299e8
+   0xffffffff817be9a7 <+55>:    pop    %rbx
+   0xffffffff817be9a8 <+56>:    pop    %rbp
+   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
+   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
+   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
+   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
+   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
+   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
+End of assembler dump.
+
+POST:
+
+(gdb) disassemble lock_sock_nested
+Dump of assembler code for function lock_sock_nested:
+   0xffffffff817be970 <+0>:     push   %rbp
+   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
+   0xffffffff817be974 <+4>:     push   %rbx
+   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
+   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
+   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
+   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
+   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
+   0xffffffff817be98f <+31>:    test   %eax,%eax
+   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
+   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
+   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
+   0xffffffff817be9a0 <+48>:    callq  0xffffffff810a0c20 <__raw_callee_save___pv_queued_spin_unlock>
+   0xffffffff817be9a5 <+53>:    xchg   %ax,%ax
+   0xffffffff817be9a7 <+55>:    pop    %rbx
+   0xffffffff817be9a8 <+56>:    pop    %rbp
+   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
+   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
+   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063aa0 <__local_bh_enable_ip>
+   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
+   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
+   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
+End of assembler dump.
+
+NATIVE:
+
+(gdb) disassemble lock_sock_nested
+Dump of assembler code for function lock_sock_nested:
+   0xffffffff817be970 <+0>:     push   %rbp
+   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
+   0xffffffff817be974 <+4>:     push   %rbx
+   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
+   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
+   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
+   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
+   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
+   0xffffffff817be98f <+31>:    test   %eax,%eax
+   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
+   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
+   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
+   0xffffffff817be9a0 <+48>:    movb   $0x0,(%rdi)
+   0xffffffff817be9a3 <+51>:    nopl   0x0(%rax)
+   0xffffffff817be9a7 <+55>:    pop    %rbx
+   0xffffffff817be9a8 <+56>:    pop    %rbp
+   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
+   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
+   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
+   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
+   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
+   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
+End of assembler dump.
+
+
+Fixes: 63f70270ccd9 ("[PATCH] i386: PARAVIRT: add common patching machinery")
+Fixes: 3010a0663fd9 ("x86/paravirt, objtool: Annotate indirect calls")
+Reported-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/paravirt.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -88,10 +88,12 @@ unsigned paravirt_patch_call(void *insnb
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
+ 
+-	if (tgt_clobbers & ~site_clobbers)
+-		return len;	/* target would clobber too much for this site */
+-	if (len < 5)
++	if (len < 5) {
++#ifdef CONFIG_RETPOLINE
++		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++#endif
+ 		return len;	/* call too long for patch site */
++	}
+ 
+ 	b->opcode = 0xe8; /* call */
+ 	b->delta = delta;
+@@ -106,8 +108,12 @@ unsigned paravirt_patch_jmp(void *insnbu
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
+ 
+-	if (len < 5)
++	if (len < 5) {
++#ifdef CONFIG_RETPOLINE
++		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++#endif
+ 		return len;	/* call too long for patch site */
++	}
+ 
+ 	b->opcode = 0xe9;	/* jmp */
+ 	b->delta = delta;
+
+
