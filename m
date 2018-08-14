@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36986C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7AAC46471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED54B21728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED54B21728
+	by mail.kernel.org (Postfix) with ESMTP id 4F5D32168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5D32168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732359AbeHNUZk (ORCPT
+        id S1732405AbeHNUZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:25:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58122 "EHLO
+        Tue, 14 Aug 2018 16:25:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58136 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728875AbeHNUZj (ORCPT
+        with ESMTP id S1728875AbeHNUZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:25:39 -0400
+        Tue, 14 Aug 2018 16:25:41 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68C8AD20;
-        Tue, 14 Aug 2018 17:37:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 758A2CBA;
+        Tue, 14 Aug 2018 17:37:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 075/104] cpu/hotplug: Set CPU_SMT_NOT_SUPPORTED early
-Date:   Tue, 14 Aug 2018 19:17:29 +0200
-Message-Id: <20180814171520.118923356@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 084/104] x86/irq: Demote irq_cpustat_t::__softirq_pending to u16
+Date:   Tue, 14 Aug 2018 19:17:38 +0200
+Message-Id: <20180814171520.660397255@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -51,88 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Nicolai Stange <nstange@suse.de>
 
-commit fee0aede6f4739c87179eca76136f83210953b86 upstream
+commit 9aee5f8a7e30330d0a8f4c626dc924ca5590aba5 upstream
 
-The CPU_SMT_NOT_SUPPORTED state is set (if the processor does not support
-SMT) when the sysfs SMT control file is initialized.
+An upcoming patch will extend KVM's L1TF mitigation in conditional mode
+to also cover interrupts after VMEXITs. For tracking those, stores to a
+new per-cpu flag from interrupt handlers will become necessary.
 
-That was fine so far as this was only required to make the output of the
-control file correct and to prevent writes in that case.
+In order to improve cache locality, this new flag will be added to x86's
+irq_cpustat_t.
 
-With the upcoming l1tf command line parameter, this needs to be set up
-before the L1TF mitigation selection and command line parsing happens.
+Make some space available there by shrinking the ->softirq_pending bitfield
+from 32 to 16 bits: the number of bits actually used is only NR_SOFTIRQS,
+i.e. 10.
 
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142323.121795971@linutronix.de
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    6 ++++++
- include/linux/cpu.h        |    2 ++
- kernel/cpu.c               |   13 ++++++++++---
- 3 files changed, 18 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/hardirq.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -58,6 +58,12 @@ void __init check_bugs(void)
- {
- 	identify_boot_cpu();
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -6,7 +6,7 @@
+ #include <linux/irq.h>
  
-+	/*
-+	 * identify_boot_cpu() initialized SMT support information, let the
-+	 * core code know.
-+	 */
-+	cpu_smt_check_topology();
-+
- 	if (!IS_ENABLED(CONFIG_SMP)) {
- 		pr_info("CPU: ");
- 		print_cpu_info(&boot_cpu_data);
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -188,9 +188,11 @@ enum cpuhp_smt_control {
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
- extern void cpu_smt_disable(bool force);
-+extern void cpu_smt_check_topology(void);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
- static inline void cpu_smt_disable(bool force) { }
-+static inline void cpu_smt_check_topology(void) { }
- #endif
- 
- #endif /* _LINUX_CPU_H_ */
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -365,6 +365,16 @@ void __init cpu_smt_disable(bool force)
- 	}
- }
- 
-+/*
-+ * The decision whether SMT is supported can only be done after the full
-+ * CPU identification. Called from architecture code.
-+ */
-+void __init cpu_smt_check_topology(void)
-+{
-+	if (!topology_smt_supported())
-+		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+}
-+
- static int __init smt_cmdline_disable(char *str)
- {
- 	cpu_smt_disable(str && !strcmp(str, "force"));
-@@ -2127,9 +2137,6 @@ static const struct attribute_group cpuh
- 
- static int __init cpu_smt_state_init(void)
- {
--	if (!topology_smt_supported())
--		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
--
- 	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
- 				  &cpuhp_smt_attr_group);
- }
+ typedef struct {
+-	unsigned int __softirq_pending;
++	u16	     __softirq_pending;
+ 	unsigned int __nmi_count;	/* arch dependent */
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	unsigned int apic_timer_irqs;	/* arch dependent */
 
 
