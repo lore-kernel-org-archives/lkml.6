@@ -2,114 +2,88 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB9DC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22D3C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 775B0217BC
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 775B0217BC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 70AC0218C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:34:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AC0218C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbeHNLUx (ORCPT
+        id S1731186AbeHNLVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 07:20:53 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:44821 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbeHNLUx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 07:20:53 -0400
-Received: by mail-qk0-f193.google.com with SMTP id v17-v6so12820912qkb.11;
-        Tue, 14 Aug 2018 01:34:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RZUIzkYPG2ljFmU6mNBTyY4zyg8uB0bo9CyuX0+3OMw=;
-        b=QxoMQJwCepiL/kSOrteAiNvKJXG6CBomnT3vKKohVwyyCM0gFnPATyettpaaZoKqPH
-         Qrios9HgnfSwaY0FME4ixj5higPFGMOVP72SRafOKhFwrYf70FQWqPotSsW50YBUfHe+
-         WtJjgl3h9vXkVBqjFVDRJkO4CTj4IjkXMx1YShQMrLUkcjl7pxCf3IImK3QGlqRW6xZa
-         ci9XfSXrY5IkNqwjbBne4P3z8+wvcGC7pMLYxr5/bFezScMpI2AG9ZKjTOwN3L+KFzgJ
-         hxdjJWkA3ihy6mxoOU6qHmlw7Gl10wIKrx+qKkpZqULSU+rTSgnk4sM/2yJDV7q03GxJ
-         Joaw==
-X-Gm-Message-State: AOUpUlFPrdYwQc8TO0Te7sOFxtShDO0w7k0gU3jomFJ2WntuoWior+vR
-        12+/3NxMWGcTjpKOsLozxfp5CKfLA078HsJxqKE=
-X-Google-Smtp-Source: AA+uWPw56AvfVA0kFj3SUeTHaKLhZUyJjgE/Ln1dVYH0j8Iyb2a4fJn95WwH/EtRUtcg0vLH+lrIe8FZP3yV8cC0V40=
-X-Received: by 2002:a37:8786:: with SMTP id j128-v6mr18133049qkd.32.1534235683910;
- Tue, 14 Aug 2018 01:34:43 -0700 (PDT)
+        Tue, 14 Aug 2018 07:21:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39974 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727986AbeHNLVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 07:21:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3AF180D;
+        Tue, 14 Aug 2018 01:34:54 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C563A3F5D0;
+        Tue, 14 Aug 2018 01:34:54 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 57C9F1AE3096; Tue, 14 Aug 2018 09:35:01 +0100 (BST)
+Date:   Tue, 14 Aug 2018 09:35:01 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Cc:     "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
+ mode
+Message-ID: <20180814083500.GA28101@arm.com>
+References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+ <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
+ <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com>
+ <5B597628.2020103@huawei.com>
+ <04239cfa-bcf2-a33a-e662-ebc75e66782b@arm.com>
+ <1d24541340334954969c58980ef85444@HXTBJIDCEMVIW01.hxtcorp.net>
+ <5B7293E5.7040702@huawei.com>
 MIME-Version: 1.0
-References: <20180813212108.2442868-1-arnd@arndb.de> <20180814105237.64b01528@ajaysk-VirtualBox>
-In-Reply-To: <20180814105237.64b01528@ajaysk-VirtualBox>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 14 Aug 2018 10:34:27 +0200
-Message-ID: <CAK8P3a3bk7urG9zO=F1NtH8hTnGQQ_Hk0qq=o8fmeYY_nEyy5w@mail.gmail.com>
-Subject: Re: [PATCH] staging: wilc1000: revert "fix TODO to compile spi and
- sdio components in single module"
-To:     ajay.kathat@microchip.com
-Cc:     aditya.shankar@microchip.com, ganesh.krishna@microchip.com,
-        gregkh <gregkh@linuxfoundation.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B7293E5.7040702@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 7:22 AM Ajay Singh <ajay.kathat@microchip.com> wrote:
->
-> Hi Arnd,
->
-> On Mon, 13 Aug 2018 23:20:33 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
->
-> > The TODO item named "make spi and sdio components coexist in one
-> > build" was apparently addressed a long time ago, but never removed
-> > from the TODO file. However, the new patch that tries to address it
-> > actually makes it worse again by duplicating the common parts of the
-> > driver into two separate modules rather than sharing them. This also
-> > introduces a build regression when one of the two is built-in while
-> > the other is a loadable module:
->
-> Thanks for sharing your inputs and submitting patch.
-> I have also submitted a patch to address the compilation error[1].
-> We can ignore my patch and proceed with your changes.
->
-> [1].https://patchwork.kernel.org/patch/10563873/
+On Tue, Aug 14, 2018 at 04:33:41PM +0800, Leizhen (ThunderTown) wrote:
+> On 2018/8/6 9:32, Yang, Shunyong wrote:
+> > On 2018/7/26 22:37, Robin Murphy wrote:
+> >> Because DMA code is not the only caller of iommu_map/unmap. It's 
+> >> perfectly legal in the IOMMU API to partially unmap a previous mapping 
+> >> such that a block entry needs to be split. The DMA API, however, is a 
+> >> lot more constrined, and thus by construction the iommu-dma layer will 
+> >> never generate a block-splitting iommu_unmap() except as a result of 
+> >> illegal DMA API usage, and we obviously do not need to optimise for that 
+> >> (you will get a warning about mismatched unmaps under dma-debug, but 
+> >> it's a bit too expensive to police in the general case).
+> >>
+> > 
+> > When I was reading the code around arm_lpae_split_blk_unmap(), I was
+> > curious in which scenario a block will be split. Now with your comments
+> > "Because DMA code is not the only caller of iommu_map/unmap", it seems
+> > depending on the user.
+> > 
+> > Would you please explain this further? I mean besides DMA, which user
+> > will use iommu_map/umap and how it split a block.
+> 
+> I also think that arm_lpae_split_blk_unmap() scenario is not exist, maybe
+> we should remove it, and give a warning for this wrong usage.
 
-That patch seems useful regardless, as it removes dead code,
-but I'd still prefer to revert the 9abc44ba4e2f ("staging: wilc1000:
-fix TODO to compile spi and sdio components in single module")
-commit for the other reasons I explained.
+Can't it happen with VFIO?
 
-> In my understanding, even when the common part is compiled separately,
-> the wilc1000-sdio/wilc1000-spi module still expects separate instance of
-> common part for each of them because of use of static variables.
->
-> Shouldn't it be correct to compile the components required for SDIO and
-> SPI separately and then get rid of use of global variables to support
-> running of SDIO/SPI module at same time?
-
-What your patch does is to change the behavior so that for loadable
-modules, you get two copies of each global variable and function,
-but for built-in drivers, you still only get one. The old behavior was
-arguably better here because at least it was consistent and always
-shared the common part.
-
-> > In order to have multiple instances working (sdio, spi, or mixed),
-> > all such variables need to be dynamically allocated per instance and
-> > stored in 'struct wilc' or one of the structures referenced by it.
-> >
->
-> Actually, I have been locally working on this patch for a while now
-> and I will submit a patch to avoid use of most of global and static
-> variable soon.
-
-Ok, very nice!
-
-      Arnd
+Will
