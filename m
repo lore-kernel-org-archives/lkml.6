@@ -2,122 +2,104 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07378C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9C4C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B939020837
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:57:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B939020837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8244621537
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:00:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OSh534o1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8244621537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbeHOBrQ (ORCPT
+        id S1732478AbeHOBtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 21:47:16 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54051 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732120AbeHOBrQ (ORCPT
+        Tue, 14 Aug 2018 21:49:52 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:60495 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730606AbeHOBtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 21:47:16 -0400
-Received: by mail-it0-f65.google.com with SMTP id 72-v6so20825338itw.3;
-        Tue, 14 Aug 2018 15:57:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fCj2eBkXhbQ4eupu1ycrv5oErVjXU95mjR7H51Qe2hU=;
-        b=M8prO+jBvcRZshviDTuqsiLwz1qOu2vHE4yFwVwHyiFfTM/9R/NDS42kCYwKMZH1RY
-         lQLM2ItKiI+TikI8e43J24w4PjOnfUnM+I5QciFxm/zjKdFPjXCZTEIdtBiyBgxffZ8l
-         IwJsUvOWh8qfusOrqHqCF/mJf2kZqZc6pRQM93nXwBM0C4guWVF78ceXPwhdqTKRtc2G
-         o5sly2D5ZmX9G52kcTAvzH/urjukAoL/J+cz1mQ42z7drGW3uKlkEziLvXyAGKDL8tOV
-         vexQ+XkM26lqfvU/xN078SstTOWrWwskJjP9SBQMOngitd0lQZ8ml9gY2OCnCuGWAAzz
-         vvfg==
-X-Gm-Message-State: AOUpUlFjbHjbXSwwivc0ZgghJTTkL9osyMg93JSBvt3GYl5uIekUgN/K
-        nm2McmePbGC0K/b7p6hkgA==
-X-Google-Smtp-Source: AA+uWPx9EaCQzHemRouIdvTO/mOZP4vrIfYCAclvmV2xYasgg71XeHrRITDt1KujrqVa6ctXgl6mhQ==
-X-Received: by 2002:a24:4511:: with SMTP id y17-v6mr17075071ita.67.1534287472931;
-        Tue, 14 Aug 2018 15:57:52 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id u68-v6sm229379ita.36.2018.08.14.15.57.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 15:57:52 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 16:57:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 3/3] dts: arm64/sdm845: Add node for qcom,smmu-v2
-Message-ID: <20180814225750.GA31263@rob-hp-laptop>
-References: <20180814102740.30222-1-vivek.gautam@codeaurora.org>
- <20180814102740.30222-4-vivek.gautam@codeaurora.org>
- <27372288-447d-6c9a-504a-8b8ef40e3d58@arm.com>
- <CAFp+6iG8HohQ5=gwL37OuykK+R4U407yfrp=WN6pSgOK-mdzzA@mail.gmail.com>
+        Tue, 14 Aug 2018 21:49:52 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id BD8D024E0BD1;
+        Tue, 14 Aug 2018 16:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1534287628; bh=4ICGTsEGSXcmusNDEvuG2KbgASsJhtwMNbSIM+bAc0U=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=OSh534o1mfjE04/qPVNGI/84qB/w5vOx5l2BbuZXlgLk1aYn9AhckOph1oJQN740Z
+         XRs/HheIivC4KLW6ztiAzf1/HcYdiF2XBTo5Gz4qeYgoN4E4/zIFUVTHfsB+mqxlId
+         QYQj6e0KGN3R/0aL2hrC2PusVry18wtGZPwfVP1M8qTzNAv5wJQE3YThsbcY0lA7Y/
+         6yKBuz9t7/8isz1ej5yfUYrOSNbYAQN8+cSNrBTUK3sSgXVNgyU2iOI4NRgU0Yjx//
+         PKx0U77QQuhhIbntZWl34CkzCJAbgE1z22tZzKn/CkBisC/wZSQ/WR/Pvn+zjBtx0a
+         eoClEJbwu+mYg==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 6DFBC33A0;
+        Tue, 14 Aug 2018 16:00:28 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue, 14
+ Aug 2018 16:00:28 -0700
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Ingo Molnar" <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the arc-current tree with Linus'
+ tree
+Thread-Topic: linux-next: manual merge of the arc-current tree with Linus'
+ tree
+Thread-Index: AQHUNBvQfOLwQkVAeEqvzWxvxncsEQ==
+Date:   Tue, 14 Aug 2018 23:00:27 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B08D198@us01wembx1.internal.synopsys.com>
+References: <20180815081141.3f1b1059@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iG8HohQ5=gwL37OuykK+R4U407yfrp=WN6pSgOK-mdzzA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 01:09:43AM +0530, Vivek Gautam wrote:
-> Adding Jordan here.
-> 
-> On Tue, Aug 14, 2018 at 4:19 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> > Hi Vivek,
-> >
-> > On 14/08/18 11:27, Vivek Gautam wrote:
-> >>
-> >> Add device node for qcom,smmu-v2 available on sdm845.
-> >> This smmu is available only to GPU device.
-> >>
-> >> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 23 +++++++++++++++++++++++
-> >>   1 file changed, 23 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> >> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> >> index 1c2be2082f33..bd1ec5fa5146 100644
-> >> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> >> @@ -6,6 +6,7 @@
-> >>    */
-> >>     #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> >> +#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
-> >>   #include <dt-bindings/clock/qcom,rpmh.h>
-> >>   #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >>   #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-> >> @@ -989,6 +990,28 @@
-> >>                         cell-index = <0>;
-> >>                 };
-> >>   +             gpu_smmu: iommu@5040000 {
-> >> +                       compatible = "qcom,sdm845-smmu-v2",
-> >> "qcom,smmu-v2";
-> >
-> >
-> > Which of "sdm845" or "msm8996"[1] is the actual SoC name here?
-> 
-> Well, the bindings use the SoC prefix with smmu-v2, so it should be
-> sdm845 for this SoC. This is same as I posted in my v1 of the series [2].
-> Using 8996 based string in sdm845 makes things look awful.
-
-You need to list valid values of '<soc>' in the binding. Otherwise we 
-get this confusion.
-
-Rob
+On 08/14/2018 03:11 PM, Stephen Rothwell wrote:=0A=
+> Hi Vineet,=0A=
+>=0A=
+> Today's linux-next merge of the arc-current tree got a conflict in:=0A=
+>=0A=
+>   arch/arc/include/asm/atomic.h=0A=
+>=0A=
+> between commit:=0A=
+>=0A=
+>   ab0b910490fe ("atomics/arc: Define atomic64_fetch_add_unless()")=0A=
+>=0A=
+> from Linus' tree and commit:=0A=
+>=0A=
+>   39456148db74 ("ARC: atomic64: fix atomic64_add_unless function")=0A=
+>=0A=
+> from the arc-current tree.=0A=
+>=0A=
+> I fixed it up (I just used the version from Linus' tree for now) and=0A=
+> can carry the fix as necessary. This is now fixed as far as linux-next=0A=
+> is concerned, but any non trivial conflicts should be mentioned to your=
+=0A=
+> upstream maintainer when your tree is submitted for merging.  You may=0A=
+> also want to consider cooperating with the maintainer of the conflicting=
+=0A=
+> tree to minimise any particularly complex conflicts.=0A=
+=0A=
+Thx for the report Stephen. I've dropped my patch for now, let the dust set=
+tle and=0A=
+then we can add it.=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
