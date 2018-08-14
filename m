@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB4DC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A717DC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D52521733
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:29:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D52521733
+	by mail.kernel.org (Postfix) with ESMTP id 5248621733
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5248621733
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731990AbeHNMPc (ORCPT
+        id S1731429AbeHNMRR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:15:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42660 "EHLO mx1.redhat.com"
+        Tue, 14 Aug 2018 08:17:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34210 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728272AbeHNMPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:15:31 -0400
+        id S1728978AbeHNMRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 08:17:17 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AA7F7D84D;
-        Tue, 14 Aug 2018 09:29:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8BD0340203F2;
+        Tue, 14 Aug 2018 09:30:54 +0000 (UTC)
 Received: from [10.36.117.57] (ovpn-117-57.ams2.redhat.com [10.36.117.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BE7121C71A;
-        Tue, 14 Aug 2018 09:29:05 +0000 (UTC)
-Subject: Re: [PATCH v2 1/3] mm/memory-hotplug: Drop unused args from
- remove_memory_section
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B0311C71E;
+        Tue, 14 Aug 2018 09:30:52 +0000 (UTC)
+Subject: Re: [PATCH v2 2/3] mm/memory_hotplug: Drop mem_blk check from
+ unregister_mem_sect_under_nodes
 To:     osalvador@techadventures.net, akpm@linux-foundation.org
 Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
         rafael@kernel.org, yasu.isimatu@gmail.com, logang@deltatee.com,
@@ -39,7 +39,7 @@ Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Oscar Salvador <osalvador@suse.de>
 References: <20180813154639.19454-1-osalvador@techadventures.net>
- <20180813154639.19454-2-osalvador@techadventures.net>
+ <20180813154639.19454-3-osalvador@techadventures.net>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -86,18 +86,18 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <322cf553-9d4e-4878-0d9e-6d5a50c900fb@redhat.com>
-Date:   Tue, 14 Aug 2018 11:29:05 +0200
+Message-ID: <82148bc6-672d-6610-757f-d910a17d23c6@redhat.com>
+Date:   Tue, 14 Aug 2018 11:30:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180813154639.19454-2-osalvador@techadventures.net>
+In-Reply-To: <20180813154639.19454-3-osalvador@techadventures.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 14 Aug 2018 09:29:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 14 Aug 2018 09:29:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 09:30:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 09:30:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -106,47 +106,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 13.08.2018 17:46, osalvador@techadventures.net wrote:
 > From: Oscar Salvador <osalvador@suse.de>
 > 
-> unregister_memory_section() calls remove_memory_section()
-> with three arguments:
+> Before calling to unregister_mem_sect_under_nodes(),
+> remove_memory_section() already checks if we got a valid
+> memory_block.
 > 
-> * node_id
-> * section
-> * phys_device
-> 
-> Neither node_id nor phys_device are used.
-> Let us drop them from the function.
+> No need to check that again in unregister_mem_sect_under_nodes().
 > 
 > Signed-off-by: Oscar Salvador <osalvador@suse.de>
 > ---
->  drivers/base/memory.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/base/node.c | 4 ----
+>  1 file changed, 4 deletions(-)
 > 
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index c8a1cb0b6136..2c622a9a7490 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -752,8 +752,7 @@ unregister_memory(struct memory_block *memory)
->  	device_unregister(&memory->dev);
->  }
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index 1ac4c36e13bb..dd3bdab230b2 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -455,10 +455,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+>  	NODEMASK_ALLOC(nodemask_t, unlinked_nodes, GFP_KERNEL);
+>  	unsigned long pfn, sect_start_pfn, sect_end_pfn;
 >  
-> -static int remove_memory_section(unsigned long node_id,
-> -			       struct mem_section *section, int phys_device)
-> +static int remove_memory_section(struct mem_section *section)
->  {
->  	struct memory_block *mem;
->  
-> @@ -785,7 +784,7 @@ int unregister_memory_section(struct mem_section *section)
->  	if (!present_section(section))
->  		return -EINVAL;
->  
-> -	return remove_memory_section(0, section, 0);
-> +	return remove_memory_section(section);
->  }
->  #endif /* CONFIG_MEMORY_HOTREMOVE */
->  
+> -	if (!mem_blk) {
+> -		NODEMASK_FREE(unlinked_nodes);
+> -		return -EFAULT;
+> -	}
+>  	if (!unlinked_nodes)
+>  		return -ENOMEM;
+>  	nodes_clear(*unlinked_nodes);
 > 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+While it is correct in current code, I wonder if this sanity check
+should stay. I would completely agree if it would be a static function.
 
 -- 
 
