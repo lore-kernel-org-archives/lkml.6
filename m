@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12231C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2E8C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C28AA21727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C28AA21727
+	by mail.kernel.org (Postfix) with ESMTP id 1C5EB21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5EB21736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389779AbeHNUTq (ORCPT
+        id S2389792AbeHNUTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:19:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53512 "EHLO
+        Tue, 14 Aug 2018 16:19:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389765AbeHNUTp (ORCPT
+        with ESMTP id S2389765AbeHNUTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:19:45 -0400
+        Tue, 14 Aug 2018 16:19:48 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75A57D06;
-        Tue, 14 Aug 2018 17:31:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E8E640B;
+        Tue, 14 Aug 2018 17:31:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.17 67/97] x86/kvm: Add static key for flush always
-Date:   Tue, 14 Aug 2018 19:17:19 +0200
-Message-Id: <20180814171435.698618346@linuxfoundation.org>
+Subject: [PATCH 4.17 68/97] x86/kvm: Serialize L1D flush parameter setter
+Date:   Tue, 14 Aug 2018 19:17:20 +0200
+Message-Id: <20180814171435.733143468@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -53,65 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 4c6523ec59fe895ea352a650218a6be0653910b1 upstream
+commit dd4bfa739a72508b75760b393d129ed7b431daab upstream
 
-Avoid the conditional in the L1D flush control path.
+Writes to the parameter files are not serialized at the sysfs core
+level, so local serialization is required.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Jiri Kosina <jkosina@suse.cz>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.790914912@linutronix.de
+Link: https://lkml.kernel.org/r/20180713142322.873642605@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/x86/kvm/vmx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -192,6 +192,7 @@ module_param(ple_window_max, uint, 0444)
- extern const ulong vmx_return;
+@@ -193,6 +193,7 @@ extern const ulong vmx_return;
  
  static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
-+static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_always);
+ static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_always);
++static DEFINE_MUTEX(vmx_l1d_flush_mutex);
  
  /* Storage for pre module init parameter parsing */
  static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush_param = VMENTER_L1D_FLUSH_AUTO;
-@@ -232,8 +233,12 @@ static int vmx_setup_l1d_flush(enum vmx_
+@@ -257,7 +258,7 @@ static int vmentry_l1d_flush_parse(const
  
- 	l1tf_vmx_mitigation = l1tf;
+ static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
+ {
+-	int l1tf;
++	int l1tf, ret;
  
--	if (l1tf != VMENTER_L1D_FLUSH_NEVER)
--		static_branch_enable(&vmx_l1d_should_flush);
-+	if (l1tf == VMENTER_L1D_FLUSH_NEVER)
-+		return 0;
-+
-+	static_branch_enable(&vmx_l1d_should_flush);
-+	if (l1tf == VMENTER_L1D_FLUSH_ALWAYS)
-+		static_branch_enable(&vmx_l1d_flush_always);
- 	return 0;
+ 	if (!boot_cpu_has(X86_BUG_L1TF))
+ 		return 0;
+@@ -277,7 +278,10 @@ static int vmentry_l1d_flush_set(const c
+ 		return 0;
+ 	}
+ 
+-	return vmx_setup_l1d_flush(l1tf);
++	mutex_lock(&vmx_l1d_flush_mutex);
++	ret = vmx_setup_l1d_flush(l1tf);
++	mutex_unlock(&vmx_l1d_flush_mutex);
++	return ret;
  }
  
-@@ -9421,7 +9426,6 @@ static void *vmx_l1d_flush_pages;
- static void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- {
- 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
--	bool always;
- 
- 	/*
- 	 * This code is only executed when the the flush mode is 'cond' or
-@@ -9431,8 +9435,10 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	 * it. The flush bit gets set again either from vcpu_run() or from
- 	 * one of the unsafe VMEXIT handlers.
- 	 */
--	always = l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_ALWAYS;
--	vcpu->arch.l1tf_flush_l1d = always;
-+	if (static_branch_unlikely(&vmx_l1d_flush_always))
-+		vcpu->arch.l1tf_flush_l1d = true;
-+	else
-+		vcpu->arch.l1tf_flush_l1d = false;
- 
- 	vcpu->stat.l1d_flush++;
- 
+ static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
 
 
