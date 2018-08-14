@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95405C46474
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909B3C46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A2BD2168D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2BD2168D
+	by mail.kernel.org (Postfix) with ESMTP id 5197A2168D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:37:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5197A2168D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbeHNUZS (ORCPT
+        id S1732033AbeHNUZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:25:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58050 "EHLO
+        Tue, 14 Aug 2018 16:25:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731654AbeHNUZR (ORCPT
+        with ESMTP id S1728249AbeHNUZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:25:17 -0400
+        Tue, 14 Aug 2018 16:25:20 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 231E3D65;
-        Tue, 14 Aug 2018 17:37:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 297EFD20;
+        Tue, 14 Aug 2018 17:37:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 073/104] x86/kvm: Allow runtime control of L1D flush
-Date:   Tue, 14 Aug 2018 19:17:27 +0200
-Message-Id: <20180814171520.019571177@linuxfoundation.org>
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 036/104] x86/smp: Provide topology_is_primary_thread()
+Date:   Tue, 14 Aug 2018 19:16:50 +0200
+Message-Id: <20180814171517.622620132@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,75 +53,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 895ae47f9918833c3a880fbccd41e0692b37e7d9 upstream
+commit 6a4d2657e048f096c7ffcad254010bd94891c8c0 upstream
 
-All mitigation modes can be switched at run time with a static key now:
+If the CPU is supporting SMT then the primary thread can be found by
+checking the lower APIC ID bits for zero. smp_num_siblings is used to build
+the mask for the APIC ID bits which need to be taken into account.
 
- - Use sysfs_streq() instead of strcmp() to handle the trailing new line
-   from sysfs writes correctly.
- - Make the static key management handle multiple invocations properly.
- - Set the module parameter file to RW
+This uses the MPTABLE or ACPI/MADT supplied APIC ID, which can be different
+than the initial APIC ID in CPUID. But according to AMD the lower bits have
+to be consistent. Intel gave a tentative confirmation as well.
+
+Preparatory patch to support disabling SMT at boot/runtime.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.954525119@linutronix.de
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- arch/x86/kvm/vmx.c         |   13 ++++++++-----
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/apic.h     |    7 +++++++
+ arch/x86/include/asm/topology.h |    4 +++-
+ arch/x86/kernel/apic/apic.c     |   15 +++++++++++++++
+ arch/x86/kernel/smpboot.c       |    9 +++++++++
+ 4 files changed, 34 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -639,7 +639,7 @@ void x86_spec_ctrl_setup_ap(void)
- #define pr_fmt(fmt)	"L1TF: " fmt
- 
- #if IS_ENABLED(CONFIG_KVM_INTEL)
--enum vmx_l1d_flush_state l1tf_vmx_mitigation __ro_after_init = VMENTER_L1D_FLUSH_AUTO;
-+enum vmx_l1d_flush_state l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
- EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -613,6 +613,13 @@ extern int default_check_phys_apicid_pre
  #endif
  
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -237,12 +237,15 @@ static int vmx_setup_l1d_flush(enum vmx_
+ #endif /* CONFIG_X86_LOCAL_APIC */
++
++#ifdef CONFIG_SMP
++bool apic_id_is_primary_thread(unsigned int id);
++#else
++static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
++#endif
++
+ extern void irq_enter(void);
+ extern void irq_exit(void);
  
- 	l1tf_vmx_mitigation = l1tf;
- 
--	if (l1tf == VMENTER_L1D_FLUSH_NEVER)
--		return 0;
-+	if (l1tf != VMENTER_L1D_FLUSH_NEVER)
-+		static_branch_enable(&vmx_l1d_should_flush);
-+	else
-+		static_branch_disable(&vmx_l1d_should_flush);
- 
--	static_branch_enable(&vmx_l1d_should_flush);
- 	if (l1tf == VMENTER_L1D_FLUSH_ALWAYS)
- 		static_branch_enable(&vmx_l1d_flush_always);
-+	else
-+		static_branch_disable(&vmx_l1d_flush_always);
- 	return 0;
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -123,13 +123,15 @@ static inline int topology_max_smt_threa
  }
  
-@@ -252,7 +255,7 @@ static int vmentry_l1d_flush_parse(const
+ int topology_update_package_map(unsigned int apicid, unsigned int cpu);
+-extern int topology_phys_to_logical_pkg(unsigned int pkg);
++int topology_phys_to_logical_pkg(unsigned int pkg);
++bool topology_is_primary_thread(unsigned int cpu);
+ #else
+ #define topology_max_packages()			(1)
+ static inline int
+ topology_update_package_map(unsigned int apicid, unsigned int cpu) { return 0; }
+ static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
+ static inline int topology_max_smt_threads(void) { return 1; }
++static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
+ #endif
  
- 	if (s) {
- 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
--			if (!strcmp(s, vmentry_l1d_param[i].option))
-+			if (sysfs_streq(s, vmentry_l1d_param[i].option))
- 				return vmentry_l1d_param[i].cmd;
- 		}
- 	}
-@@ -296,7 +299,7 @@ static const struct kernel_param_ops vme
- 	.set = vmentry_l1d_flush_set,
- 	.get = vmentry_l1d_flush_get,
+ static inline void arch_fix_phys_package_id(int num, u32 slot)
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2092,6 +2092,21 @@ static int cpuid_to_apicid[] = {
+ 	[0 ... NR_CPUS - 1] = -1,
  };
--module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, S_IRUGO);
-+module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, 0644);
  
- #define NR_AUTOLOAD_MSRS 8
++/**
++ * apic_id_is_primary_thread - Check whether APIC ID belongs to a primary thread
++ * @id:	APIC ID to check
++ */
++bool apic_id_is_primary_thread(unsigned int apicid)
++{
++	u32 mask;
++
++	if (smp_num_siblings == 1)
++		return true;
++	/* Isolate the SMT bit(s) in the APICID and check for 0 */
++	mask = (1U << (fls(smp_num_siblings) - 1)) - 1;
++	return !(apicid & mask);
++}
++
+ /*
+  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
+  * and cpuid_to_apicid[] synchronized.
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -312,6 +312,15 @@ found:
+ }
  
+ /**
++ * topology_is_primary_thread - Check whether CPU is the primary SMT thread
++ * @cpu:	CPU to check
++ */
++bool topology_is_primary_thread(unsigned int cpu)
++{
++	return apic_id_is_primary_thread(per_cpu(x86_cpu_to_apicid, cpu));
++}
++
++/**
+  * topology_phys_to_logical_pkg - Map a physical package id to a logical
+  *
+  * Returns logical package id or -1 if not found
 
 
