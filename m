@@ -2,178 +2,147 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01000C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5E8C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A423621735
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A423621735
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DB6F21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:25:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OuqHGI1M";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D3Rh4fUU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB6F21738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732078AbeHNOGV (ORCPT
+        id S1732111AbeHNOMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 10:06:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37038 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730923AbeHNOGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 10:06:20 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 14 Aug 2018 10:12:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46224 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727858AbeHNOMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 10:12:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 28711601B4; Tue, 14 Aug 2018 11:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534245920;
+        bh=Q8OzZ3XWX+ekHPBBUqWeqb5nk2X+feis/WIY09XTyW0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OuqHGI1MHg/BW8/H28+HwJHM+KPkwqkFI8J/6fxdVREzc5S1IUJ1CadAny7hYn+Nb
+         E+MCmzzE7Tgk6DqRYBvvezCwatHaqbNd6SGfmh1cR4T8t7XthlUwVgLqDylzYP4Wk9
+         4P1VwQaEXZNHzlhSdMl4Rw0zHLtzHG9dIcJoWWyw=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C63B840203F2;
-        Tue, 14 Aug 2018 11:19:35 +0000 (UTC)
-Received: from gondolin (ovpn-117-136.ams2.redhat.com [10.36.117.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 444842026D7E;
-        Tue, 14 Aug 2018 11:19:32 +0000 (UTC)
-Date:   Tue, 14 Aug 2018 13:19:29 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v9 09/22] s390: vfio-ap: register matrix device with
- VFIO mdev framework
-Message-ID: <20180814131929.37d4b530.cohuck@redhat.com>
-In-Reply-To: <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        (Authenticated sender: pkondeti@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5B7F6601B4;
+        Tue, 14 Aug 2018 11:25:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534245918;
+        bh=Q8OzZ3XWX+ekHPBBUqWeqb5nk2X+feis/WIY09XTyW0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D3Rh4fUUaKvQvWCVaR1H931yhhLk8ym+zFkABWjdepP9rVsB1ZCemaFTdr332SQ5b
+         HxjgrzRMc45ab18SLUANiAiuvUTa07LsQzANYOSydwlDbI0ZCw6qvj5cXLcZz5j621
+         GBm3S3F+8Ws8jNN+LseDW5g3jCaRl5UtZa7eZqtQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B7F6601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Date:   Tue, 14 Aug 2018 16:55:09 +0530
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 02/14] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20180814112509.GB2661@codeaurora.org>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-3-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 11:19:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 11:19:35 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806163946.28380-3-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 17:48:06 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
+On Mon, Aug 06, 2018 at 05:39:34PM +0100, Patrick Bellasi wrote:
+> Utilization clamping requires each CPU to know which clamp values are
+> assigned to tasks that are currently RUNNABLE on that CPU.
+> Multiple tasks can be assigned the same clamp value and tasks with
+> different clamp values can be concurrently active on the same CPU.
+> Thus, a proper data structure is required to support a fast and
+> efficient aggregation of the clamp values required by the currently
+> RUNNABLE tasks.
 > 
-> Registers the matrix device created by the VFIO AP device
-> driver with the VFIO mediated device framework.
-> Registering the matrix device will create the sysfs
-> structures needed to create mediated matrix devices
-> each of which will be used to configure the AP matrix
-> for a guest and connect it to the VFIO AP device driver.
+> For this purpose we use a per-CPU array of reference counters,
+> where each slot is used to account how many tasks require a certain
+> clamp value are currently RUNNABLE on each CPU.
+> Each clamp value corresponds to a "clamp index" which identifies the
+> position within the array of reference couters.
 > 
-> Registering the matrix device with the VFIO mediated device
-> framework will create the following sysfs structures:
+>                                  :
+>        (user-space changes)      :      (kernel space / scheduler)
+>                                  :
+>              SLOW PATH           :             FAST PATH
+>                                  :
+>     task_struct::uclamp::value   :     sched/core::enqueue/dequeue
+>                                  :         cpufreq_schedutil
+>                                  :
+>   +----------------+    +--------------------+     +-------------------+
+>   |      TASK      |    |     CLAMP GROUP    |     |    CPU CLAMPS     |
+>   +----------------+    +--------------------+     +-------------------+
+>   |                |    |   clamp_{min,max}  |     |  clamp_{min,max}  |
+>   | util_{min,max} |    |      se_count      |     |    tasks count    |
+>   +----------------+    +--------------------+     +-------------------+
+>                                  :
+>            +------------------>  :  +------------------->
+>     group_id = map(clamp_value)  :  ref_count(group_id)
+>                                  :
+>                                  :
 > 
-> /sys/devices/vfio_ap/matrix/
-> ...... [mdev_supported_types]
-> ......... [vfio_ap-passthrough]
-> ............ create
+> Let's introduce the support to map tasks to "clamp groups".
+> Specifically we introduce the required functions to translate a
+> "clamp value" into a clamp's "group index" (group_id).
 > 
-> To create a mediated device for the AP matrix device, write a UUID
-> to the create file:
+> Only a limited number of (different) clamp values are supported since:
+> 1. there are usually only few classes of workloads for which it makes
+>    sense to boost/limit to different frequencies,
+>    e.g. background vs foreground, interactive vs low-priority
+> 2. it allows a simpler and more memory/time efficient tracking of
+>    the per-CPU clamp values in the fast path.
 > 
-> 	uuidgen > create
-> 
-> A symbolic link to the mediated device's directory will be created in the
-> devices subdirectory named after the generated $uuid:
-> 
-> /sys/devices/vfio_ap/matrix/
-> ...... [mdev_supported_types]
-> ......... [vfio_ap-passthrough]
-> ............ [devices]
-> ............... [$uuid]
-> 
-> A symbolic link to the mediated device will also be created
-> in the vfio_ap matrix's directory:
-> 
-> /sys/devices/vfio_ap/matrix/[$uuid]
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  MAINTAINERS                           |    1 +
->  drivers/s390/crypto/Makefile          |    2 +-
->  drivers/s390/crypto/vfio_ap_drv.c     |   23 ++++++
->  drivers/s390/crypto/vfio_ap_ops.c     |  124 +++++++++++++++++++++++++++++++++
->  drivers/s390/crypto/vfio_ap_private.h |   45 ++++++++++++
->  include/uapi/linux/vfio.h             |    1 +
->  6 files changed, 195 insertions(+), 1 deletions(-)
->  create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+> The number of possible different clamp values is currently defined at
+> compile time. Thus, setting a new clamp value for a task can result into
+> a -ENOSPC error in case this will exceed the number of maximum different
+> clamp values supported.
 > 
 
+I see that we drop reference on the previous clamp group when a task changes
+its clamp limits. What about exiting tasks which claimed clamp groups? should
+not we drop the reference?
 
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> new file mode 100644
-> index 0000000..8018c2d
-> --- /dev/null
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -0,0 +1,124 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Adjunct processor matrix VFIO device driver callbacks.
-> + *
-> + * Copyright IBM Corp. 2018
-> + *
-> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
-> + *	      Halil Pasic <pasic@linux.ibm.com>
-> + *	      Pierre Morel <pmorel@linux.ibm.com>
-> + */
-> +#include <linux/string.h>
-> +#include <linux/vfio.h>
-> +#include <linux/device.h>
-> +#include <linux/list.h>
-> +#include <linux/ctype.h>
-> +
-> +#include "vfio_ap_private.h"
-> +
-> +#define VFIO_AP_MDEV_TYPE_HWVIRT "passthrough"
-> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
-> +
-> +static void vfio_ap_matrix_init(struct ap_config_info *info,
-> +				struct ap_matrix *matrix)
-> +{
-> +	matrix->apm_max = info->apxa ? info->Na : 63;
-> +	matrix->aqm_max = info->apxa ? info->Nd : 15;
-> +	matrix->adm_max = info->apxa ? info->Nd : 15;
-> +}
-> +
-> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
-> +{
-> +	struct ap_matrix_mdev *matrix_mdev;
-> +
-> +	matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
-> +	if (!matrix_mdev)
-> +		return -ENOMEM;
-> +
-> +	matrix_mdev->name = dev_name(mdev_dev(mdev));
-> +	vfio_ap_matrix_init(&matrix_dev.info, &matrix_mdev->matrix);
-> +	mdev_set_drvdata(mdev, matrix_mdev);
-> +
-> +	if (atomic_dec_if_positive(&matrix_dev.available_instances) < 0) {
-> +		kfree(matrix_mdev);
-> +		return -EPERM;
-> +	}
+Thanks,
+Pavan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Maybe move this check to the top of the function?
-
-> +
-> +	mutex_lock(&matrix_dev.lock);
-> +	list_add(&matrix_mdev->list, &matrix_dev.mdev_list);
-> +	mutex_unlock(&matrix_dev.lock);
-> +
-> +	return 0;
-> +}
