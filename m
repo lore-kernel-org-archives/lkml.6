@@ -2,197 +2,145 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED11C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFF6C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD23C2173A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:20:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD23C2173A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 143002173A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:22:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="p/qMyxFm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143002173A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732753AbeHNQHf (ORCPT
+        id S1732759AbeHNQJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:07:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46214 "EHLO mx1.redhat.com"
+        Tue, 14 Aug 2018 12:09:40 -0400
+Received: from mail-eopbgr730066.outbound.protection.outlook.com ([40.107.73.66]:12865
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732414AbeHNQHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:07:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6817B4072CFE;
-        Tue, 14 Aug 2018 13:20:25 +0000 (UTC)
-Received: from [10.72.12.152] (ovpn-12-152.pek2.redhat.com [10.72.12.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 496D523140;
-        Tue, 14 Aug 2018 13:20:20 +0000 (UTC)
-Subject: Re: [RFC PATCH net-next V2 0/6] XDP rx handler
-To:     Jesper Dangaard Brouer <jbrouer@redhat.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, mst@redhat.com
-References: <1534130250-5302-1-git-send-email-jasowang@redhat.com>
- <20180814003253.fkgl6lyklc7fclvq@ast-mbp>
- <5de3d14f-f21a-c806-51f4-b5efd7d809b7@redhat.com>
- <20180814121734.105769fa@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <03ab3b18-9b13-8169-7e68-ada307694bc1@redhat.com>
-Date:   Tue, 14 Aug 2018 21:20:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180814121734.105769fa@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1730488AbeHNQJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 12:09:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0M+SLjm3pC91cnt6IB7Avy8N8Ruqg36YQr/QvIaurzs=;
+ b=p/qMyxFm6+jeaQhzC0Mbty9/qpzeWx3SW1grgzxtvZCa4JIhnI3KyQOOoDhgnqHfb//iRQLBYcJxQyqjUZP0bk1RD/+gzdQJVrjfEBLZcbs2CzAOlMjbgXjINb+Urd6lw3viF9MeEOC6cvo1NuP04zeEvaHGq3SmnwQ3k9oQaMY=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB554.namprd06.prod.outlook.com (10.141.199.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1038.20; Tue, 14 Aug 2018 13:22:28 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::311c:7e3f:3043:5287]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::311c:7e3f:3043:5287%8]) with mapi id 15.20.1017.022; Tue, 14 Aug 2018
+ 13:22:27 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        Heiner Litz <hlitz@ucsc.edu>,
+        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/1] lightnvm: move bad block and chunk state logic to
+ core
+Thread-Topic: [RFC PATCH 0/1] lightnvm: move bad block and chunk state logic
+ to core
+Thread-Index: AQHUM9E0EtL6Kj8kJE6svbb6o2BAu6S/PAoA
+Date:   Tue, 14 Aug 2018 13:22:26 +0000
+Message-ID: <3B0C813D-EA2C-422A-B017-07F4A5B11956@cnexlabs.com>
+References: <20180814131735.6853-1-mb@lightnvm.io>
+In-Reply-To: <20180814131735.6853-1-mb@lightnvm.io>
+Accept-Language: en-US
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 14 Aug 2018 13:20:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 14 Aug 2018 13:20:25 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB554;6:SXwAepAzkuBs332LnqkPzHFLLrA5CpQQOzj9Kz+c9bZW7MOO8F67M0CFmN0T9ebjkmEUvOMl4DShntmzf/WprDqq5kaw2TjwZWCRvwo1sY7qlpqrUH/MD3Q68SMHJST3qYmZshNXdHD2EKsP8Z7T/5GSOmyXu85Wi8dqPY9jko1oLTg7Y341iy+X90xvTkBXw5rK2iW9wescTDXW6so7BPStBfB1pLlAShmsvZg2eG+4a1Tn4TXGEzuoVRJNkIA+gPAwKsanDuRMqDdLm6bbMpWgZbCJvkvwiK92yGr5IvifDMTYkM1Hi3AWWp4FEniAORH4e2OkMyRPNoN9DxJPTPwaQEFUqrcqLiXB2M8yGzj9DQ7NpZjPxkK2LlpVMUZjEbrinf2KE8F9oU8fzHqaropv1u5S69fRXOTKeW9f1oZtETrSHkFbk07KrvKOO/hJ/f8r63AMMI1wOkYFttkKyQ==;5:CKJYES5HU85Lo5zmXmpEZv7Fwm6uRjiE14Jkq14ZaNhl8JFc8QZjSL54V1Dx4FiHKSWsqk/8Yv7SJUl6Sjgqy8+j+8LJ8HHQRJLPQoQqWlGYM0/1f0i0/F1S1pEkKfURX222BTgqn5iA82JZ4oe7OdLRE0h+OGor7h0IiKXFHK8=;7:mqdraekV/2KQhIMW+cHOsrZ0s7VJIVginsaH1V2I7+mRC4TWerAxh8MKo1dxL8y1Wsb1kY27vEXeoQsG/D1lP2xMUvLmYiGzv4BAvgiZQesZU4nARmv05ozhB4dMyhZIB8k8ZttkbwYk5WEc4CVHvmSq9pvjXrsoitM1gpOF15DaJTQ9q6ttivzp4J9Y+RQJiG2cTymTgTRO0Fvi373zglhgKvHa071GiV1mwT6yOsgNMv8+J9JOx6KLj2fCRLlx
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39840400004)(346002)(396003)(136003)(366004)(376002)(189003)(199004)(99286004)(81156014)(5660300001)(76176011)(217873002)(478600001)(36756003)(81166006)(6916009)(54906003)(14454004)(86362001)(97736004)(68736007)(4326008)(316002)(6506007)(8676002)(7736002)(305945005)(256004)(25786009)(8936002)(6512007)(6436002)(2616005)(26005)(99936001)(476003)(2900100001)(11346002)(66066001)(53936002)(2906002)(6486002)(83716003)(102836004)(6246003)(3846002)(6116002)(186003)(105586002)(229853002)(82746002)(486006)(33656002)(106356001)(446003)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB554;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 418bcbe2-fe51-4223-a392-08d601e8facc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB554;
+x-ms-traffictypediagnostic: CO2PR06MB554:
+x-microsoft-antispam-prvs: <CO2PR06MB554DDC55CA6E53563B4C076BA380@CO2PR06MB554.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB554;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB554;
+x-forefront-prvs: 0764C4A8CD
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: i8P6JlHxvUGZovgoMoC2A9+E8s17p7oOEwzmEH0dtPLElqkAVdvpc8WIepTivwN9AGwFua4ucCcPpLoAf8qWOe3Y5jC+CHIij2xo8gOjuVPFOGop4NbGeI6Z1ark5DhuWIsXQFNUyaMmF6hVrAKaPus2E4sW1sqoPpHlokIUQyq4eAo3RRYwVQJVhK571FqULUlu0M5g60UBqyXRMw4ltc6MlbEp7/7hfM/bCQ+6PwJcjSd+6JX6xZ+hhK2IwoZzIY7BsJno9soiI74EHcLBMbvSWUmFiupIHoO+pDRNsRAAoKGyyphVuHk8kMSu1Wm7gCW+t4Onn8D02vbGZ2O8dDa2D38IHuDcucn5Q5aF0TM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_1985CC79-7CEA-467B-B2AE-90539FABBB33";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+MIME-Version: 1.0
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 418bcbe2-fe51-4223-a392-08d601e8facc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2018 13:22:26.9818
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB554
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Apple-Mail=_1985CC79-7CEA-467B-B2AE-90539FABBB33
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
+> On 14 Aug 2018, at 15.17, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> This patch moves the 1.2 and 2.0 block/chunk metadata retrieval to
+> core.
+>=20
+> Javier, would you like me to pick up your 1.2 chunk state patch and
+> merge it into this one, or would you like to rebase on this later when
+> it has been reviewed?
+>=20
 
-On 2018年08月14日 18:17, Jesper Dangaard Brouer wrote:
-> On Tue, 14 Aug 2018 15:59:01 +0800
-> Jason Wang <jasowang@redhat.com> wrote:
->
->> On 2018年08月14日 08:32, Alexei Starovoitov wrote:
->>> On Mon, Aug 13, 2018 at 11:17:24AM +0800, Jason Wang wrote:
->>>> Hi:
->>>>
->>>> This series tries to implement XDP support for rx hanlder. This would
->>>> be useful for doing native XDP on stacked device like macvlan, bridge
->>>> or even bond.
->>>>
->>>> The idea is simple, let stacked device register a XDP rx handler. And
->>>> when driver return XDP_PASS, it will call a new helper xdp_do_pass()
->>>> which will try to pass XDP buff to XDP rx handler directly. XDP rx
->>>> handler may then decide how to proceed, it could consume the buff, ask
->>>> driver to drop the packet or ask the driver to fallback to normal skb
->>>> path.
->>>>
->>>> A sample XDP rx handler was implemented for macvlan. And virtio-net
->>>> (mergeable buffer case) was converted to call xdp_do_pass() as an
->>>> example. For ease comparision, generic XDP support for rx handler was
->>>> also implemented.
->>>>
->>>> Compared to skb mode XDP on macvlan, native XDP on macvlan (XDP_DROP)
->>>> shows about 83% improvement.
->>> I'm missing the motiviation for this.
->>> It seems performance of such solution is ~1M packet per second.
->> Notice it was measured by virtio-net which is kind of slow.
->>
->>> What would be a real life use case for such feature ?
->> I had another run on top of 10G mlx4 and macvlan:
->>
->> XDP_DROP on mlx4: 14.0Mpps
->> XDP_DROP on macvlan: 10.05Mpps
->>
->> Perf shows macvlan_hash_lookup() and indirect call to
->> macvlan_handle_xdp() are the reasons for the number drop. I think the
->> numbers are acceptable. And we could try more optimizations on top.
->>
->> So here's real life use case is trying to have an fast XDP path for rx
->> handler based device:
->>
->> - For containers, we can run XDP for macvlan (~70% of wire speed). This
->> allows a container specific policy.
->> - For VM, we can implement macvtap XDP rx handler on top. This allow us
->> to forward packet to VM without building skb in the setup of macvtap.
->> - The idea could be used by other rx handler based device like bridge,
->> we may have a XDP fast forwarding path for bridge.
->>
->>> Another concern is that XDP users expect to get line rate performance
->>> and native XDP delivers it. 'generic XDP' is a fallback only
->>> mechanism to operate on NICs that don't have native XDP yet.
->> So I can replace generic XDP TX routine with a native one for macvlan.
-> If you simply implement ndo_xdp_xmit() for macvlan, and instead use
-> XDP_REDIRECT, then we are basically done.
+This is great. Thanks! Let me look into the patch itself, test, etc. I'm
+ok with merging the 1.2 chunk fixes here. I'll then rebase the 2.0 WP
+recovery patches that I have staging and submit them.
 
-As I replied in another thread this probably not true. Its 
-ndo_xdp_xmit() just need to call under layer device's ndo_xdp_xmit() 
-except for the case of bridge mode.
+Javier
 
->
->
->>> Toshiaki's veth XDP work fits XDP philosophy and allows
->>> high speed networking to be done inside containers after veth.
->>> It's trying to get to line rate inside container.
->> This is one of the goal of this series as well. I agree veth XDP work
->> looks pretty fine, but it only work for a specific setup I believe since
->> it depends on XDP_REDIRECT which is supported by few drivers (and
->> there's no VF driver support).
-> The XDP_REDIRECT (RX-side) is trivial to add to drivers.  It is a bad
-> argument that only a few drivers implement this.  Especially since all
-> drivers also need to be extended with your proposed xdp_do_pass() call.
->
-> (rant) The thing that is delaying XDP_REDIRECT adaption in drivers, is
-> that it is harder to implement the TX-side, as the ndo_xdp_xmit() call
-> have to allocate HW TX-queue resources.  If we disconnect RX and TX
-> side of redirect, then we can implement RX-side in an afternoon.
+--Apple-Mail=_1985CC79-7CEA-467B-B2AE-90539FABBB33
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-That's exactly the point, ndo_xdp_xmit() may requires per CPU TX queues 
-which breaks assumptions of some drivers. And since we don't disconnect 
-RX and TX, it looks to me the partial implementation is even worse? 
-Consider a user can redirect from mlx4 to ixgbe but not ixgbe to mlx4.
+-----BEGIN PGP SIGNATURE-----
 
->
->
->> And in order to make it work for a end
->> user, the XDP program still need logic like hash(map) lookup to
->> determine the destination veth.
-> That _is_ the general idea behind XDP and eBPF, that we need to add logic
-> that determine the destination.  The kernel provides the basic
-> mechanisms for moving/redirecting packets fast, and someone else
-> builds an orchestration tool like Cilium, that adds the needed logic.
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlty15AACgkQIX4xUKFR
+nnROCQ/9GtueUh20caiYuoFfZJ90gtHk2S1AfX7Slk9RQQ6dDefZmS/xdvSY+4JU
+GZQg3RhJz1s49toDOOgCuKcU8F2WPNZsubreYd2suZBgYF+O4EdC12eKpVwUyOs/
+BzyM8iYrr0I0indanazoPKKfH4Kn0HUvo3gj0xnaIVhVsCHba79Jhuh1yEiqWYrT
+5jXAMVNoT5d7pJ2thdF+xUNFZuatm8eeQkV1vQTlabRdRdcTRbVRoJb0KNve4wS6
+lBGu3EUjcHYAYmYKf3DKpWQByWN9ICxkwr7MDq8+xnLCtEWflx4tcgsDyivonSbG
+QySSmWAILiLCk5Epcg5Lg/N1T5vhngsRfduhnrdD53JfxCZu0HjAlchnyJ/0Ymx6
+koELWJWBqUVKYIRQuNfiy4Xpn8SX5T8f9msW9CLW77UmskQB5hCeKnb50GYAfiLW
+N5CaJ8V70ZGOFnv++gj/SHctT/SFLahHVWC7Fy638N383GLXD7m4MMs4Sxq7FeSJ
+dz0X1mFYaiCveL0wWJ3gzu29bKWD3gNUffCCW672BVdsSb5nUCUSG9xXiI4e8GL+
+MfEESk6qFo0eMZUC2WMflMN7C+O7ChnvGlVnsU0YRoskQjtYf1n55surril5Eb8S
+zNtsZWfWT2hVZE9lWv0gAKCceCcphFJbITN1Cb+iDijofyf6xaI=
+=Wxc+
+-----END PGP SIGNATURE-----
 
-Yes, so my reply is for the concern about performance. I meant anyway 
-the hash lookup will make it not hit the wire speed.
-
->
-> Did you notice that we (Ahern) added bpf_fib_lookup a FIB route lookup
-> accessible from XDP.
-
-Yes.
-
->
-> For macvlan, I imagine that we could add a BPF helper that allows you
-> to lookup/call macvlan_hash_lookup().
-
-That's true but we still need a method to feed macvlan with XDP buff. 
-I'm not sure if this could be treated as another kind of redirection, 
-but ndo_xdp_xmit() could not be used for this case for sure. Compared to 
-redirection, XDP rx handler has its own advantages:
-
-1) Use the exist API and userspace to setup the network topology instead 
-of inventing new tools and its own specific API. This means user can 
-just setup macvlan (macvtap, bridge or other) as usual and simply attach 
-XDP programs to both macvlan and its under layer device.
-2) Ease the processing of complex logic, XDP can not do cloning or 
-reference counting. We can differ those cases and let normal networking 
-stack to deal with such packets seamlessly. I believe this is one of the 
-advantage of XDP. This makes us to focus on the fast path and greatly 
-simplify the codes.
-
-Like ndo_xdp_xmit(), XDP rx handler is used to feed RX handler with XDP 
-buff. It's just another basic mechanism. Policy is still done by XDP 
-program itself.
-
-Thanks
-
->
->   
->>> This XDP rx handler stuff is destined to stay at 1Mpps speeds forever
->>> and the users will get confused with forever slow modes of XDP.
->>>
->>> Please explain the problem you're trying to solve.
->>> "look, here I can to XDP on top of macvlan" is not an explanation of the problem.
->>>   
->
-
+--Apple-Mail=_1985CC79-7CEA-467B-B2AE-90539FABBB33--
