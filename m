@@ -2,191 +2,322 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D83C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557CCC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 768CE21735
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:45:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768CE21735
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DD2FE21735
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:47:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KRcN4CYG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2FE21735
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbeHNMbg (ORCPT
+        id S1731909AbeHNMdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:31:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19121 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730042AbeHNMbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:31:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2018 02:45:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,237,1531810800"; 
-   d="scan'208";a="81196166"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Aug 2018 02:45:06 -0700
-Date:   Tue, 14 Aug 2018 17:49:02 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, arjan@linux.intel.com,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
-Message-ID: <20180814094902.a7pnioc6kytt4k5n@shbuild888>
-References: <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
- <20180612084234.gjzq66xsqblryrkm@shbuild888>
- <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
- <20180802091539.m5k7cdoad6hfkdfy@shbuild888>
- <20180814063959.45bddz42ytz3e4jb@shbuild888>
- <20180814071834.GB24616@kroah.com>
- <20180814073810.m7ewuyvuhptgsm22@shbuild888>
- <20180814074041.GB28982@kroah.com>
- <20180814080851.jazg3qebsleklqa5@shbuild888>
- <20180814084241.GA7208@kroah.com>
+        Tue, 14 Aug 2018 08:33:47 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51288 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729547AbeHNMdr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 08:33:47 -0400
+Received: from avalon.localnet (h-17-125.A137.corp.bahnhof.se [94.254.17.125])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BC5A0CE;
+        Tue, 14 Aug 2018 11:47:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1534240039;
+        bh=ZOnMs54ysG9qJW6kbX+Lj5K8tDl1NelygKlkctBRkkw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KRcN4CYGXKT68OfQIAj65eclhnwmIi1Mqii45g6I+kMlHQ6DrBSNb+BpjHKg/mkjA
+         sbwQ+ZhPFVd5Q8yiO3W+kmsezgw5zzIj26bUGYqV/57oGtUiKYkAPWyuolUJ/R/PoR
+         5VbBd+/+0ggjT6fX2/bS6BAEsaXMQQCVJSTi7PKo=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for display planes
+Date:   Tue, 14 Aug 2018 12:48:08 +0300
+Message-ID: <7041537.TPdt8DIvGD@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180807172202.1961-2-digetx@gmail.com>
+References: <20180807172202.1961-1-digetx@gmail.com> <20180807172202.1961-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814084241.GA7208@kroah.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi Dmitry,
 
-On Tue, Aug 14, 2018 at 10:42:41AM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Aug 14, 2018 at 04:08:51PM +0800, Feng Tang wrote:
-> > Hi Greg,
-> > 
-> > Thanks for the prompt review.
-> > 
-> > On Tue, Aug 14, 2018 at 09:40:41AM +0200, Greg Kroah-Hartman wrote:
-> > > On Tue, Aug 14, 2018 at 03:38:10PM +0800, Feng Tang wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > On Tue, Aug 14, 2018 at 09:18:34AM +0200, Greg Kroah-Hartman wrote:
-> > > > > On Tue, Aug 14, 2018 at 02:39:59PM +0800, Feng Tang wrote:
-> > > > > > Hi Greg, Ulf
-> > > > > > 
-> > > > > > Could you help to review this? many thanks!
-> > > > > 
-> > > > > Review what?  I see no patch here.  And why would I need to review a mmc
-> > > > > patch in the middle of the merge window?
-> > > > > 
-> > > > > totally confused,
-> > > > 
-> > > > Sorry for the confusion! I didn't noticed the 4.19 merge window.
-> > > > 
-> > > > The patch was originally posted in June, and has gone through some
-> > > > review discussions with mmc maintainers, my last mail was trying
-> > > > to keep some discussion info.
-> > > 
-> > > Ok, then why ask me?  I'm not the mmc maintainer.
-> > 
-> > The reason is this patch not only touches the mmc, but also affects many other
-> > subsystems in drivers/ as the init order is changed. And the get_maintainer.pl
-> > shows you are the first suggested reviewer for changes to drivers/Makefile :)
-> 
-> Fair enough, but then I could not make that change without the mmc
-> maintainer agreeing with it.
-> 
-> > 
-> > > 
-> > > > The original patch is:
-> > > > -----
-> > > > 
-> > > > >From 1514c7d56e887ace37466dded09bc43f2a4c9a4a Mon Sep 17 00:00:00 2001
-> > > > From: Feng Tang <feng.tang@intel.com>
-> > > > Date: Fri, 8 Jun 2018 17:10:30 +0800
-> > > > Subject: [PATCH] mmc: Move the mmc driver init earlier
-> > > > 
-> > > > When doing some boot time optimization for an eMMC rootfs NUCs,
-> > > > we found the rootfs may spend around 100 microseconds waiting
-> > > > for eMMC card to be initialized, then the rootfs could be
-> > > > mounted.
-> > > > 	[    1.216561] Waiting for root device /dev/mmcblk1p1...
-> > > > 	[    1.289262] mmc1: new HS400 MMC card at address 0001
-> > > > 	[    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
-> > > > 	[    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
-> > > > 	[    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
-> > > > 	[    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
-> > > > 	[    1.292798]  mmcblk1: p1 p2 p3
-> > > > 	[    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
-> > > > 	[    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
-> > > > 
-> > > > And this is a common problem for smartphones, tablets, embedded
-> > > > devices and automotive products. This patch will make the eMMC/SD
-> > > > card  start initializing earlier, by changing its order in drivers/Makefile.
-> > > > 
-> > > > On our platform, the waiting for eMMC card is almost eliminated with the patch,
-> > > > which is critical to boot time. And it should benefit other non-x86 platforms
-> > > > which see the similar waiting for emmc rootfs.
-> > > > 
-> > > > Signed-off-by: Feng Tang <feng.tang@intel.com>
-> > > > ---
-> > > >  drivers/Makefile | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/Makefile b/drivers/Makefile
-> > > > index 24cd47014657..c473afd3c688 100644
-> > > > --- a/drivers/Makefile
-> > > > +++ b/drivers/Makefile
-> > > > @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)		+= regulator/
-> > > >  # reset controllers early, since gpu drivers might rely on them to initialize
-> > > >  obj-$(CONFIG_RESET_CONTROLLER)	+= reset/
-> > > >  
-> > > > +# put mmc early as many morden devices use emm/sd card as rootfs storage
-> > > 
-> > > Spelling error :)
-> > 
-> > Will change it.
-> > 
-> > > 
-> > > > +obj-y				+= mmc/
-> > > > +
-> > > >  # tty/ comes before char/ so that the VT console is the boot-time
-> > > >  # default.
-> > > >  obj-y				+= tty/
-> > > 
-> > > Everyone wants to be first.  Watch out if you try to put stuff before
-> > > tty, you have to be very careful.  There are sd serial devices, right?
-> > 
-> > As the eMMC/SD card initialization takes quite some time, the SDHCI
-> > host controller's module init function will quickly return, while leaving 
-> > a worker to do the real card detection/initialization, so other subsystems
-> > should not be blocked.
-> > 
-> > And yes, it is safer to move it after tty/
-> 
-> Again, everyone wants to be first, saving 100ms is great, but make sure
-> this will not break anything else.  It's a huge change to a
-> long-standing "we know this works" linker order.  Personally, I would
-> not want to accept this patch for that reason alone.
+Thank you for the patch.
 
-Valid concern.
-
+On Tuesday, 7 August 2018 20:22:01 EEST Dmitry Osipenko wrote:
+> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > 
-> Also given you ignored the comment for the tty line doesn't make me feel
-> comfortable either.
+> Color keying is the action of replacing pixels matching a given color
+> (or range of colors) with transparent pixels in an overlay when
+> performing blitting. Depending on the hardware capabilities, the
+> matching pixel can either become fully transparent or gain adjustment
+> of the pixels component values.
 > 
-> If you really really need this, I would suggest just doing it in your
-> device-specific tree for a few years and when this is the only
-> out-of-tree patch you are carrying, then revisit it :)
+> Color keying is found in a large number of devices whose capabilities
+> often differ, but they still have enough common features in range to
+> standardize color key properties. This commit adds new generic DRM plane
+> properties related to the color keying, providing initial color keying
+> support.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_atomic.c |  20 +++++
+>  drivers/gpu/drm/drm_blend.c  | 150 +++++++++++++++++++++++++++++++++++
+>  include/drm/drm_blend.h      |   3 +
+>  include/drm/drm_plane.h      |  91 +++++++++++++++++++++
+>  4 files changed, 264 insertions(+)
 
-It's already in one of our tree, and we'll keep testing it. Actually I've
-asked some developer to test on their arm or other socs, but got no
-response so far :) Anyway, thanks for the suggestion!
+[snip]
 
-- Feng
+> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> index a16a74d7e15e..13c61dd0d9b7 100644
+> --- a/drivers/gpu/drm/drm_blend.c
+> +++ b/drivers/gpu/drm/drm_blend.c
+> @@ -107,6 +107,11 @@
+>   *	planes. Without this property the primary plane is always below the
+> cursor *	plane, and ordering between all other planes is undefined.
+>   *
+> + * colorkey:
+> + *	Color keying is set up with drm_plane_create_colorkey_properties().
+> + *	It adds support for actions like replacing a range of colors with a
+> + *	transparent color in the plane. Color keying is disabled by default.
+> + *
+>   * Note that all the property extensions described here apply either to the
+> * plane or the CRTC (e.g. for the background color, which currently is not
+> * exposed and assumed to be black).
+> @@ -448,3 +453,148 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+> +
+> +static const char * const plane_colorkey_mode_name[] = {
+> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+> +	[DRM_PLANE_COLORKEY_MODE_TRANSPARENT] = "transparent",
+> +};
+> +
+> +/**
+> + * drm_plane_create_colorkey_properties - create colorkey properties
+> + * @plane: drm plane
+> + * @supported_modes: bitmask of supported color keying modes
+> + *
+> + * This function creates the generic color keying properties and attaches
+> them
+> + * to the @plane to enable color keying control for blending operations.
+> + *
+> + * Glossary:
+> + *
+> + * Destination plane:
+> + *	Plane to which color keying properties are applied, this planes takes
+> + *	the effect of color keying operation. The effect is determined by a
+> + *	given color keying mode.
+> + *
+> + * Source plane:
+> + *	Pixels of this plane are the source for color key matching operation.
+> + *
+> + * Color keying is controlled by these properties:
+> + *
+> + * colorkey.plane_mask:
+> + *	The mask property specifies which planes participate in color key
+> + *	matching process, these planes are the color key sources.
+> + *
+> + *	Drivers return an error from their plane atomic check if plane can't be
+> + *	handled.
+
+This seems fragile to me. We don't document how userspace determines which 
+planes need to be specified here, and we don't document what happens if a 
+plane underneath the destination plane is not specified in the mask. More 
+precise documentation is needed if we want to use such a property.
+
+It also seems quite complex. Is an explicit plane mask really the best option 
+? What's the reason why planes couldn't be handled ? How do drivers determine 
+that ?
+
+> + * colorkey.mode:
+> + *	The mode is an enumerated property that controls how color keying
+> + *	operates.
+
+A link to the drm_plane_colorkey_mode enum documentation would be useful.
+
+> + * colorkey.mask:
+> + *	This property specifies the pixel components mask. Unmasked pixel
+> + *	components are not participating in the matching. This mask value is
+> + *	applied to colorkey.min / max values. The mask value is given in a
+> + *	64-bit integer in ARGB16161616 format, where A is the alpha value and
+> + *	R, G and B correspond to the color components. Drivers shall convert
+> + *	ARGB16161616 value into appropriate format within planes atomic check.
+> + *
+> + *	Drivers return an error from their plane atomic check if mask can't be
+> + *	handled.
+> + *
+> + * colorkey.min, colorkey.max:
+> + *	These two properties specify the colors that are treated as the color
+> + *	key. Pixel whose value is in the [min, max] range is the color key
+> + *	matching pixel. The minimum and maximum values are expressed as a
+> + *	64-bit integer in ARGB16161616 format, where A is the alpha value and
+> + *	R, G and B correspond to the color components. Drivers shall convert
+> + *	ARGB16161616 value into appropriate format within planes atomic check.
+> + *	The converted value shall be *rounded up* to the nearest value.
+> + *
+> + *	When a single color key is desired instead of a range, userspace shall
+> + *	set the min and max properties to the same value.
+> + *
+> + *	Drivers return an error from their plane atomic check if range can't be
+> + *	handled.
+> + *
+> + * Returns:
+> + * Zero on success, negative errno on failure.
+> + */
+
+While you're defining the concept of source and destination planes, it's not 
+clear from the documentation how all this maps to the usual source and 
+destination color keying concepts. I think that should be documented as well 
+or users will be confused. Examples could help in this area.
+
+[snip]
+
+> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> index 8a152dc16ea5..ab6a91e6b54e 100644
+> --- a/include/drm/drm_plane.h
+> +++ b/include/drm/drm_plane.h
+
+[snip]
+
+> @@ -32,6 +33,52 @@ struct drm_crtc;
+>  struct drm_printer;
+>  struct drm_modeset_acquire_ctx;
+> 
+> +/**
+> + * enum drm_plane_colorkey_mode - uapi plane colorkey mode enumeration
+> + */
+
+If it's uAPI, should it be moved to include/uapi/drm/ ?
+
+> +enum drm_plane_colorkey_mode {
+> +	/**
+> +	 * @DRM_PLANE_COLORKEY_MODE_DISABLED:
+> +	 *
+> +	 * No color matching performed in this mode.
+
+Do you mean "No color keying" ?
+
+> +	 */
+> +	DRM_PLANE_COLORKEY_MODE_DISABLED,
+> +
+> +	/**
+> +	 * @DRM_PLANE_COLORKEY_MODE_TRANSPARENT:
+> +	 *
+> +	 * Destination plane pixels are completely transparent in areas
+> +	 * where pixels of a source plane are matching a given color key
+> +	 * range, in other cases pixels of a destination plane are unaffected.
+
+How do we handle hardware that performs configurable color replacement instead 
+of a fixed fully transparency ? That was included in my original proposal and 
+available in R-Car hardware.
+
+> +	 * In areas where two or more source planes overlap, the topmost
+> +	 * plane takes precedence.
+> +	 */
+> +	DRM_PLANE_COLORKEY_MODE_TRANSPARENT,
+> +
+> +	/**
+> +	 * @DRM_PLANE_COLORKEY_MODES_NUM:
+> +	 *
+> +	 * Total number of color keying modes.
+> +	 */
+> +	DRM_PLANE_COLORKEY_MODES_NUM,
+
+This one, however, shouldn't be part of the uAPI as it will change when we 
+will add new modes.
+
+> +};
+
+[snip]
+
+> @@ -779,5 +846,29 @@ static inline struct drm_plane *drm_plane_find(struct
+> drm_device *dev, #define drm_for_each_plane(plane, dev) \
+>  	list_for_each_entry(plane, &(dev)->mode_config.plane_list, head)
+> 
+> +/**
+> + * drm_colorkey_extract_component - get color key component value
+> + * @ckey64: 64bit color key value
+> + * @comp_name: name of 16bit color component to extract
+> + * @nbits: size in bits of extracted component value
+> + *
+> + * Extract 16bit color component of @ckey64 given by @comp_name (alpha,
+> red,
+> + * green or blue) and convert it to an unsigned integer that has bit-width
+> + * of @nbits (result is rounded-up).
+> + */
+> +#define drm_colorkey_extract_component(ckey64, comp_name, nbits) \
+> +	__DRM_CKEY_CLAMP(__DRM_CKEY_CONV(ckey64, comp_name, nbits), nbits)
+> +
+> +#define __drm_ckey_alpha_shift	48
+> +#define __drm_ckey_red_shift	32
+> +#define __drm_ckey_green_shift	16
+> +#define __drm_ckey_blue_shift	0
+> +
+> +#define __DRM_CKEY_CONV(ckey64, comp_name, nbits) \
+> +	DIV_ROUND_UP((u16)((ckey64) >> __drm_ckey_ ## comp_name ## _shift), \
+> +		     1 << (16 - (nbits)))
+
+As the divisor is a power of two, could we use masking instead of a division ? 
+Or do you expect the compiler to optimize it properly ?
+
+> +#define __DRM_CKEY_CLAMP(value, nbits) \
+> +	min_t(u16, (value), (1 << (nbits)) - 1)
+
+Would the following be simpler to read and a bit more efficient as it avoids 
+the division ?
+
+static inline u16 __drm_colorkey_extract_component(u64 ckey64, 
+                                                   unsigned int shift, 
+                                                   unsigned int nbits)
+{       
+        u16 mask = (1 << (16 - nbits)) - 1;
+        
+        return ((u16)(ckey >> shift) + mask) >> (16 - nbits);
+}
+
+#define drm_colorkey_extract_component(ckey64, comp_name, nbits) \
+        __drm_colorkey_extract_component(ckey64, __drm_ckey_ ## comp_name ## 
+_shift, nbits)
+
+>  #endif
+
+-- 
+Regards,
+
+Laurent Pinchart
 
 
 
