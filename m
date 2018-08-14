@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4C2C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3B1C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D0221727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D0221727
+	by mail.kernel.org (Postfix) with ESMTP id 2F79321736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F79321736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbeHNURu (ORCPT
+        id S2389305AbeHNURw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:17:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52998 "EHLO
+        Tue, 14 Aug 2018 16:17:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388383AbeHNURs (ORCPT
+        with ESMTP id S2388383AbeHNURv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:17:48 -0400
+        Tue, 14 Aug 2018 16:17:51 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD4D3C5C;
-        Tue, 14 Aug 2018 17:29:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE5C540B;
+        Tue, 14 Aug 2018 17:29:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 32/97] x86/smp: Provide topology_is_primary_thread()
-Date:   Tue, 14 Aug 2018 19:16:44 +0200
-Message-Id: <20180814171434.400675980@linuxfoundation.org>
+        stable@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        Tino Lehnig <tino.lehnig@contabo.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 06/97] zram: remove BD_CAP_SYNCHRONOUS_IO with writeback feature
+Date:   Tue, 14 Aug 2018 19:16:18 +0200
+Message-Id: <20180814171433.418421345@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -51,106 +54,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Minchan Kim <minchan@kernel.org>
 
-commit 6a4d2657e048f096c7ffcad254010bd94891c8c0 upstream
+commit 4f7a7beaee77275671654f7b9f3f9e73ca16ec65 upstream.
 
-If the CPU is supporting SMT then the primary thread can be found by
-checking the lower APIC ID bits for zero. smp_num_siblings is used to build
-the mask for the APIC ID bits which need to be taken into account.
+If zram supports writeback feature, it's no longer a
+BD_CAP_SYNCHRONOUS_IO device beause zram does asynchronous IO operations
+for incompressible pages.
 
-This uses the MPTABLE or ACPI/MADT supplied APIC ID, which can be different
-than the initial APIC ID in CPUID. But according to AMD the lower bits have
-to be consistent. Intel gave a tentative confirmation as well.
+Do not pretend to be synchronous IO device.  It makes the system very
+sluggish due to waiting for IO completion from upper layers.
 
-Preparatory patch to support disabling SMT at boot/runtime.
+Furthermore, it causes a user-after-free problem because swap thinks the
+opearion is done when the IO functions returns so it can free the page
+(e.g., lock_page_or_retry and goto out_release in do_swap_page) but in
+fact, IO is asynchronous so the driver could access a just freed page
+afterward.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
+This patch fixes the problem.
+
+  BUG: Bad page state in process qemu-system-x86  pfn:3dfab21
+  page:ffffdfb137eac840 count:0 mapcount:0 mapping:0000000000000000 index:0x1
+  flags: 0x17fffc000000008(uptodate)
+  raw: 017fffc000000008 dead000000000100 dead000000000200 0000000000000000
+  raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+  page dumped because: PAGE_FLAGS_CHECK_AT_PREP flag set
+  bad because of flags: 0x8(uptodate)
+  CPU: 4 PID: 1039 Comm: qemu-system-x86 Tainted: G    B 4.18.0-rc5+ #1
+  Hardware name: Supermicro Super Server/X10SRL-F, BIOS 2.0b 05/02/2017
+  Call Trace:
+    dump_stack+0x5c/0x7b
+    bad_page+0xba/0x120
+    get_page_from_freelist+0x1016/0x1250
+    __alloc_pages_nodemask+0xfa/0x250
+    alloc_pages_vma+0x7c/0x1c0
+    do_swap_page+0x347/0x920
+    __handle_mm_fault+0x7b4/0x1110
+    handle_mm_fault+0xfc/0x1f0
+    __get_user_pages+0x12f/0x690
+    get_user_pages_unlocked+0x148/0x1f0
+    __gfn_to_pfn_memslot+0xff/0x3c0 [kvm]
+    try_async_pf+0x87/0x230 [kvm]
+    tdp_page_fault+0x132/0x290 [kvm]
+    kvm_mmu_page_fault+0x74/0x570 [kvm]
+    kvm_arch_vcpu_ioctl_run+0x9b3/0x1990 [kvm]
+    kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
+    do_vfs_ioctl+0xa2/0x630
+    ksys_ioctl+0x70/0x80
+    __x64_sys_ioctl+0x16/0x20
+    do_syscall_64+0x55/0x100
+    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Link: https://lore.kernel.org/lkml/0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de/
+Link: http://lkml.kernel.org/r/20180802051112.86174-1-minchan@kernel.org
+[minchan@kernel.org: fix changelog, add comment]
+ Link: https://lore.kernel.org/lkml/0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de/
+ Link: http://lkml.kernel.org/r/20180802051112.86174-1-minchan@kernel.org
+ Link: http://lkml.kernel.org/r/20180805233722.217347-1-minchan@kernel.org
+[akpm@linux-foundation.org: coding-style fixes]
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+Reported-by: Tino Lehnig <tino.lehnig@contabo.de>
+Tested-by: Tino Lehnig <tino.lehnig@contabo.de>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: <stable@vger.kernel.org>	[4.15+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/apic.h     |    6 ++++++
- arch/x86/include/asm/topology.h |    4 +++-
- arch/x86/kernel/apic/apic.c     |   15 +++++++++++++++
- arch/x86/kernel/smpboot.c       |    9 +++++++++
- 4 files changed, 33 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -502,6 +502,12 @@ extern int default_check_phys_apicid_pre
- 
- #endif /* CONFIG_X86_LOCAL_APIC */
- 
-+#ifdef CONFIG_SMP
-+bool apic_id_is_primary_thread(unsigned int id);
-+#else
-+static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
-+#endif
-+
- extern void irq_enter(void);
- extern void irq_exit(void);
- 
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -123,13 +123,15 @@ static inline int topology_max_smt_threa
+---
+ drivers/block/zram/zram_drv.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -280,7 +280,8 @@ static void reset_bdev(struct zram *zram
+ 	zram->backing_dev = NULL;
+ 	zram->old_block_size = 0;
+ 	zram->bdev = NULL;
+-
++	zram->disk->queue->backing_dev_info->capabilities |=
++				BDI_CAP_SYNCHRONOUS_IO;
+ 	kvfree(zram->bitmap);
+ 	zram->bitmap = NULL;
  }
+@@ -382,6 +383,18 @@ static ssize_t backing_dev_store(struct
+ 	zram->backing_dev = backing_dev;
+ 	zram->bitmap = bitmap;
+ 	zram->nr_pages = nr_pages;
++	/*
++	 * With writeback feature, zram does asynchronous IO so it's no longer
++	 * synchronous device so let's remove synchronous io flag. Othewise,
++	 * upper layer(e.g., swap) could wait IO completion rather than
++	 * (submit and return), which will cause system sluggish.
++	 * Furthermore, when the IO function returns(e.g., swap_readpage),
++	 * upper layer expects IO was done so it could deallocate the page
++	 * freely but in fact, IO is going on so finally could cause
++	 * use-after-free when the IO is really done.
++	 */
++	zram->disk->queue->backing_dev_info->capabilities &=
++			~BDI_CAP_SYNCHRONOUS_IO;
+ 	up_write(&zram->init_lock);
  
- int topology_update_package_map(unsigned int apicid, unsigned int cpu);
--extern int topology_phys_to_logical_pkg(unsigned int pkg);
-+int topology_phys_to_logical_pkg(unsigned int pkg);
-+bool topology_is_primary_thread(unsigned int cpu);
- #else
- #define topology_max_packages()			(1)
- static inline int
- topology_update_package_map(unsigned int apicid, unsigned int cpu) { return 0; }
- static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
- static inline int topology_max_smt_threads(void) { return 1; }
-+static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
- #endif
- 
- static inline void arch_fix_phys_package_id(int num, u32 slot)
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -2192,6 +2192,21 @@ static int cpuid_to_apicid[] = {
- 	[0 ... NR_CPUS - 1] = -1,
- };
- 
-+/**
-+ * apic_id_is_primary_thread - Check whether APIC ID belongs to a primary thread
-+ * @id:	APIC ID to check
-+ */
-+bool apic_id_is_primary_thread(unsigned int apicid)
-+{
-+	u32 mask;
-+
-+	if (smp_num_siblings == 1)
-+		return true;
-+	/* Isolate the SMT bit(s) in the APICID and check for 0 */
-+	mask = (1U << (fls(smp_num_siblings) - 1)) - 1;
-+	return !(apicid & mask);
-+}
-+
- /*
-  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
-  * and cpuid_to_apicid[] synchronized.
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -273,6 +273,15 @@ static void notrace start_secondary(void
- }
- 
- /**
-+ * topology_is_primary_thread - Check whether CPU is the primary SMT thread
-+ * @cpu:	CPU to check
-+ */
-+bool topology_is_primary_thread(unsigned int cpu)
-+{
-+	return apic_id_is_primary_thread(per_cpu(x86_cpu_to_apicid, cpu));
-+}
-+
-+/**
-  * topology_phys_to_logical_pkg - Map a physical package id to a logical
-  *
-  * Returns logical package id or -1 if not found
+ 	pr_info("setup backing device %s\n", file_name);
 
 
