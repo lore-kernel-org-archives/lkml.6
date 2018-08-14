@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE536C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BFFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F5C21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F5C21471
+	by mail.kernel.org (Postfix) with ESMTP id E425321736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E425321736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403807AbeHNUfc (ORCPT
+        id S2403816AbeHNUfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60936 "EHLO
+        Tue, 14 Aug 2018 16:35:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60958 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfb (ORCPT
+        with ESMTP id S2390379AbeHNUff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:31 -0400
+        Tue, 14 Aug 2018 16:35:35 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78BD3C74;
-        Tue, 14 Aug 2018 17:47:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A9E4C9A;
+        Tue, 14 Aug 2018 17:47:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 31/43] mm: fix cache mode tracking in vm_insert_mixed()
-Date:   Tue, 14 Aug 2018 19:18:07 +0200
-Message-Id: <20180814171519.142204859@linuxfoundation.org>
+Subject: [PATCH 4.4 32/43] x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings
+Date:   Tue, 14 Aug 2018 19:18:08 +0200
+Message-Id: <20180814171519.219354177@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -55,59 +54,275 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 87744ab3832b83ba71b931f86f9cfdb000d07da5 upstream
+commit 42e4089c7890725fcd329999252dc489b72f2921 upstream
 
-vm_insert_mixed() unlike vm_insert_pfn_prot() and vmf_insert_pfn_pmd(),
-fails to check the pgprot_t it uses for the mapping against the one
-recorded in the memtype tracking tree.  Add the missing call to
-track_pfn_insert() to preclude cases where incompatible aliased mappings
-are established for a given physical address range.
+For L1TF PROT_NONE mappings are protected by inverting the PFN in the page
+table entry. This sets the high bits in the CPU's address space, thus
+making sure to point to not point an unmapped entry to valid cached memory.
 
-[groeck: Backport to v4.4.y]
+Some server system BIOSes put the MMIO mappings high up in the physical
+address space. If such an high mapping was mapped to unprivileged users
+they could attack low memory by setting such a mapping to PROT_NONE. This
+could happen through a special device driver which is not access
+protected. Normal /dev/mem is of course access protected.
 
-Link: http://lkml.kernel.org/r/147328717909.35069.14256589123570653697.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+To avoid this forbid PROT_NONE mappings or mprotect for high MMIO mappings.
+
+Valid page mappings are allowed because the system is then unsafe anyways.
+
+It's not expected that users commonly use PROT_NONE on MMIO. But to
+minimize any impact this is only enforced if the mapping actually refers to
+a high MMIO address (defined as the MAX_PA-1 bit being set), and also skip
+the check for root.
+
+For mmaps this is straight forward and can be handled in vm_insert_pfn and
+in remap_pfn_range().
+
+For mprotect it's a bit trickier. At the point where the actual PTEs are
+accessed a lot of state has been changed and it would be difficult to undo
+on an error. Since this is a uncommon case use a separate early page talk
+walk pass for MMIO PROT_NONE mappings that checks for this condition
+early. For non MMIO and non PROT_NONE there are no changes.
+
+[dwmw2: Backport to 4.9]
+[groeck: Backport to 4.4]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/memory.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable.h |    8 ++++++
+ arch/x86/mm/mmap.c             |   21 +++++++++++++++++
+ include/asm-generic/pgtable.h  |   12 ++++++++++
+ mm/memory.c                    |   29 ++++++++++++++++++------
+ mm/mprotect.c                  |   49 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 112 insertions(+), 7 deletions(-)
 
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -942,6 +942,14 @@ static inline pte_t pte_swp_clear_soft_d
+ }
+ #endif
+ 
++#define __HAVE_ARCH_PFN_MODIFY_ALLOWED 1
++extern bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot);
++
++static inline bool arch_has_pfn_modify_check(void)
++{
++	return boot_cpu_has_bug(X86_BUG_L1TF);
++}
++
+ #include <asm-generic/pgtable.h>
+ #endif	/* __ASSEMBLY__ */
+ 
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -121,3 +121,24 @@ const char *arch_vma_name(struct vm_area
+ 		return "[mpx]";
+ 	return NULL;
+ }
++
++/*
++ * Only allow root to set high MMIO mappings to PROT_NONE.
++ * This prevents an unpriv. user to set them to PROT_NONE and invert
++ * them, then pointing to valid memory for L1TF speculation.
++ *
++ * Note: for locked down kernels may want to disable the root override.
++ */
++bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
++{
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return true;
++	if (!__pte_needs_invert(pgprot_val(prot)))
++		return true;
++	/* If it's real memory always allow */
++	if (pfn_valid(pfn))
++		return true;
++	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
++		return false;
++	return true;
++}
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -805,4 +805,16 @@ static inline int pmd_free_pte_page(pmd_
+ #define io_remap_pfn_range remap_pfn_range
+ #endif
+ 
++#ifndef __HAVE_ARCH_PFN_MODIFY_ALLOWED
++static inline bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
++{
++	return true;
++}
++
++static inline bool arch_has_pfn_modify_check(void)
++{
++	return false;
++}
++#endif
++
+ #endif /* _ASM_GENERIC_PGTABLE_H */
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -1654,10 +1654,14 @@ EXPORT_SYMBOL(vm_insert_pfn_prot);
- int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 			unsigned long pfn)
- {
-+	pgprot_t pgprot = vma->vm_page_prot;
+@@ -1645,6 +1645,9 @@ int vm_insert_pfn_prot(struct vm_area_st
+ 	if (track_pfn_insert(vma, &pgprot, pfn))
+ 		return -EINVAL;
+ 
++	if (!pfn_modify_allowed(pfn, pgprot))
++		return -EACCES;
 +
- 	BUG_ON(!(vma->vm_flags & VM_MIXEDMAP));
+ 	ret = insert_pfn(vma, addr, pfn, pgprot);
  
- 	if (addr < vma->vm_start || addr >= vma->vm_end)
- 		return -EFAULT;
-+	if (track_pfn_insert(vma, &pgprot, pfn))
-+		return -EINVAL;
+ 	return ret;
+@@ -1663,6 +1666,9 @@ int vm_insert_mixed(struct vm_area_struc
+ 	if (track_pfn_insert(vma, &pgprot, pfn))
+ 		return -EINVAL;
  
++	if (!pfn_modify_allowed(pfn, pgprot))
++		return -EACCES;
++
  	/*
  	 * If we don't have pte special, then we have to use the pfn_valid()
-@@ -1670,9 +1674,9 @@ int vm_insert_mixed(struct vm_area_struc
- 		struct page *page;
+ 	 * based VM_MIXEDMAP scheme (see vm_normal_page), and thus we *must*
+@@ -1691,6 +1697,7 @@ static int remap_pte_range(struct mm_str
+ {
+ 	pte_t *pte;
+ 	spinlock_t *ptl;
++	int err = 0;
  
- 		page = pfn_to_page(pfn);
--		return insert_page(vma, addr, page, vma->vm_page_prot);
-+		return insert_page(vma, addr, page, pgprot);
- 	}
--	return insert_pfn(vma, addr, pfn, vma->vm_page_prot);
-+	return insert_pfn(vma, addr, pfn, pgprot);
+ 	pte = pte_alloc_map_lock(mm, pmd, addr, &ptl);
+ 	if (!pte)
+@@ -1698,12 +1705,16 @@ static int remap_pte_range(struct mm_str
+ 	arch_enter_lazy_mmu_mode();
+ 	do {
+ 		BUG_ON(!pte_none(*pte));
++		if (!pfn_modify_allowed(pfn, prot)) {
++			err = -EACCES;
++			break;
++		}
+ 		set_pte_at(mm, addr, pte, pte_mkspecial(pfn_pte(pfn, prot)));
+ 		pfn++;
+ 	} while (pte++, addr += PAGE_SIZE, addr != end);
+ 	arch_leave_lazy_mmu_mode();
+ 	pte_unmap_unlock(pte - 1, ptl);
+-	return 0;
++	return err;
  }
- EXPORT_SYMBOL(vm_insert_mixed);
  
+ static inline int remap_pmd_range(struct mm_struct *mm, pud_t *pud,
+@@ -1712,6 +1723,7 @@ static inline int remap_pmd_range(struct
+ {
+ 	pmd_t *pmd;
+ 	unsigned long next;
++	int err;
+ 
+ 	pfn -= addr >> PAGE_SHIFT;
+ 	pmd = pmd_alloc(mm, pud, addr);
+@@ -1720,9 +1732,10 @@ static inline int remap_pmd_range(struct
+ 	VM_BUG_ON(pmd_trans_huge(*pmd));
+ 	do {
+ 		next = pmd_addr_end(addr, end);
+-		if (remap_pte_range(mm, pmd, addr, next,
+-				pfn + (addr >> PAGE_SHIFT), prot))
+-			return -ENOMEM;
++		err = remap_pte_range(mm, pmd, addr, next,
++				pfn + (addr >> PAGE_SHIFT), prot);
++		if (err)
++			return err;
+ 	} while (pmd++, addr = next, addr != end);
+ 	return 0;
+ }
+@@ -1733,6 +1746,7 @@ static inline int remap_pud_range(struct
+ {
+ 	pud_t *pud;
+ 	unsigned long next;
++	int err;
+ 
+ 	pfn -= addr >> PAGE_SHIFT;
+ 	pud = pud_alloc(mm, pgd, addr);
+@@ -1740,9 +1754,10 @@ static inline int remap_pud_range(struct
+ 		return -ENOMEM;
+ 	do {
+ 		next = pud_addr_end(addr, end);
+-		if (remap_pmd_range(mm, pud, addr, next,
+-				pfn + (addr >> PAGE_SHIFT), prot))
+-			return -ENOMEM;
++		err = remap_pmd_range(mm, pud, addr, next,
++				pfn + (addr >> PAGE_SHIFT), prot);
++		if (err)
++			return err;
+ 	} while (pud++, addr = next, addr != end);
+ 	return 0;
+ }
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -255,6 +255,42 @@ unsigned long change_protection(struct v
+ 	return pages;
+ }
+ 
++static int prot_none_pte_entry(pte_t *pte, unsigned long addr,
++			       unsigned long next, struct mm_walk *walk)
++{
++	return pfn_modify_allowed(pte_pfn(*pte), *(pgprot_t *)(walk->private)) ?
++		0 : -EACCES;
++}
++
++static int prot_none_hugetlb_entry(pte_t *pte, unsigned long hmask,
++				   unsigned long addr, unsigned long next,
++				   struct mm_walk *walk)
++{
++	return pfn_modify_allowed(pte_pfn(*pte), *(pgprot_t *)(walk->private)) ?
++		0 : -EACCES;
++}
++
++static int prot_none_test(unsigned long addr, unsigned long next,
++			  struct mm_walk *walk)
++{
++	return 0;
++}
++
++static int prot_none_walk(struct vm_area_struct *vma, unsigned long start,
++			   unsigned long end, unsigned long newflags)
++{
++	pgprot_t new_pgprot = vm_get_page_prot(newflags);
++	struct mm_walk prot_none_walk = {
++		.pte_entry = prot_none_pte_entry,
++		.hugetlb_entry = prot_none_hugetlb_entry,
++		.test_walk = prot_none_test,
++		.mm = current->mm,
++		.private = &new_pgprot,
++	};
++
++	return walk_page_range(start, end, &prot_none_walk);
++}
++
+ int
+ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ 	unsigned long start, unsigned long end, unsigned long newflags)
+@@ -273,6 +309,19 @@ mprotect_fixup(struct vm_area_struct *vm
+ 	}
+ 
+ 	/*
++	 * Do PROT_NONE PFN permission checks here when we can still
++	 * bail out without undoing a lot of state. This is a rather
++	 * uncommon case, so doesn't need to be very optimized.
++	 */
++	if (arch_has_pfn_modify_check() &&
++	    (vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP)) &&
++	    (newflags & (VM_READ|VM_WRITE|VM_EXEC)) == 0) {
++		error = prot_none_walk(vma, start, end, newflags);
++		if (error)
++			return error;
++	}
++
++	/*
+ 	 * If we make a private mapping writable we increase our commit;
+ 	 * but (without finer accounting) cannot reduce our commit if we
+ 	 * make it unwritable again. hugetlb mapping were accounted for
 
 
