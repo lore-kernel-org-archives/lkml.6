@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10983C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91FBC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C60192168D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60192168D
+	by mail.kernel.org (Postfix) with ESMTP id 6096F21727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6096F21727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730907AbeHNUYf (ORCPT
+        id S1730979AbeHNUYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57466 "EHLO
+        Tue, 14 Aug 2018 16:24:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730771AbeHNUYd (ORCPT
+        with ESMTP id S1730771AbeHNUYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:33 -0400
+        Tue, 14 Aug 2018 16:24:36 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23D3FDDE;
-        Tue, 14 Aug 2018 17:36:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29FE6DE0;
+        Tue, 14 Aug 2018 17:36:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 034/104] x86/bugs: Move the l1tf function and define pr_fmt properly
-Date:   Tue, 14 Aug 2018 19:16:48 +0200
-Message-Id: <20180814171517.484345770@linuxfoundation.org>
+Subject: [PATCH 4.14 061/104] x86/KVM/VMX: Split the VMX MSR LOAD structures to have an host/guest numbers
+Date:   Tue, 14 Aug 2018 19:17:15 +0200
+Message-Id: <20180814171519.277659485@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -53,91 +53,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 56563f53d3066afa9e63d6c997bf67e76a8b05c0 upstream
+commit 33966dd6b2d2c352fae55412db2ea8cfff5df13a upstream
 
-The pr_warn in l1tf_select_mitigation would have used the prior pr_fmt
-which was defined as "Spectre V2 : ".
+There is no semantic change but this change allows an unbalanced amount of
+MSRs to be loaded on VMEXIT and VMENTER, i.e. the number of MSRs to save or
+restore on VMEXIT or VMENTER may be different.
 
-Move the function to be past SSBD and also define the pr_fmt.
-
-Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   55 +++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 26 deletions(-)
+ arch/x86/kvm/vmx.c |   65 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 35 insertions(+), 30 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -209,32 +209,6 @@ static void x86_amd_ssb_disable(void)
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -618,6 +618,11 @@ static inline int pi_test_sn(struct pi_d
+ 			(unsigned long *)&pi_desc->control);
  }
  
--static void __init l1tf_select_mitigation(void)
--{
--	u64 half_pa;
++struct vmx_msrs {
++	unsigned int		nr;
++	struct vmx_msr_entry	val[NR_AUTOLOAD_MSRS];
++};
++
+ struct vcpu_vmx {
+ 	struct kvm_vcpu       vcpu;
+ 	unsigned long         host_rsp;
+@@ -651,9 +656,8 @@ struct vcpu_vmx {
+ 	struct loaded_vmcs   *loaded_vmcs;
+ 	bool                  __launched; /* temporary, used in vmx_vcpu_run */
+ 	struct msr_autoload {
+-		unsigned nr;
+-		struct vmx_msr_entry guest[NR_AUTOLOAD_MSRS];
+-		struct vmx_msr_entry host[NR_AUTOLOAD_MSRS];
++		struct vmx_msrs guest;
++		struct vmx_msrs host;
+ 	} msr_autoload;
+ 	struct {
+ 		int           loaded;
+@@ -2041,18 +2045,18 @@ static void clear_atomic_switch_msr(stru
+ 		}
+ 		break;
+ 	}
 -
--	if (!boot_cpu_has_bug(X86_BUG_L1TF))
--		return;
--
--#if CONFIG_PGTABLE_LEVELS == 2
--	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
--	return;
--#endif
--
--	/*
--	 * This is extremely unlikely to happen because almost all
--	 * systems have far more MAX_PA/2 than RAM can be fit into
--	 * DIMM slots.
--	 */
--	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
--		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
--		return;
--	}
--
--	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
--}
--
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
+-	for (i = 0; i < m->nr; ++i)
+-		if (m->guest[i].index == msr)
++	for (i = 0; i < m->guest.nr; ++i)
++		if (m->guest.val[i].index == msr)
+ 			break;
  
-@@ -660,6 +634,35 @@ void x86_spec_ctrl_setup_ap(void)
- 		x86_amd_ssb_disable();
+-	if (i == m->nr)
++	if (i == m->guest.nr)
+ 		return;
+-	--m->nr;
+-	m->guest[i] = m->guest[m->nr];
+-	m->host[i] = m->host[m->nr];
+-	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->nr);
+-	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->nr);
++	--m->guest.nr;
++	--m->host.nr;
++	m->guest.val[i] = m->guest.val[m->guest.nr];
++	m->host.val[i] = m->host.val[m->host.nr];
++	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
  }
  
-+#undef pr_fmt
-+#define pr_fmt(fmt)	"L1TF: " fmt
-+static void __init l1tf_select_mitigation(void)
-+{
-+	u64 half_pa;
-+
-+	if (!boot_cpu_has_bug(X86_BUG_L1TF))
-+		return;
-+
-+#if CONFIG_PGTABLE_LEVELS == 2
-+	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
-+	return;
-+#endif
-+
-+	/*
-+	 * This is extremely unlikely to happen because almost all
-+	 * systems have far more MAX_PA/2 than RAM can be fit into
-+	 * DIMM slots.
-+	 */
-+	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
-+	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
-+		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-+		return;
-+	}
-+
-+	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
-+}
-+#undef pr_fmt
-+
- #ifdef CONFIG_SYSFS
+ static void add_atomic_switch_msr_special(struct vcpu_vmx *vmx,
+@@ -2104,24 +2108,25 @@ static void add_atomic_switch_msr(struct
+ 		wrmsrl(MSR_IA32_PEBS_ENABLE, 0);
+ 	}
  
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+-	for (i = 0; i < m->nr; ++i)
+-		if (m->guest[i].index == msr)
++	for (i = 0; i < m->guest.nr; ++i)
++		if (m->guest.val[i].index == msr)
+ 			break;
+ 
+ 	if (i == NR_AUTOLOAD_MSRS) {
+ 		printk_once(KERN_WARNING "Not enough msr switch entries. "
+ 				"Can't add msr %x\n", msr);
+ 		return;
+-	} else if (i == m->nr) {
+-		++m->nr;
+-		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->nr);
+-		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->nr);
++	} else if (i == m->guest.nr) {
++		++m->guest.nr;
++		++m->host.nr;
++		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
+ 	}
+ 
+-	m->guest[i].index = msr;
+-	m->guest[i].value = guest_val;
+-	m->host[i].index = msr;
+-	m->host[i].value = host_val;
++	m->guest.val[i].index = msr;
++	m->guest.val[i].value = guest_val;
++	m->host.val[i].index = msr;
++	m->host.val[i].value = host_val;
+ }
+ 
+ static bool update_transition_efer(struct vcpu_vmx *vmx, int efer_offset)
+@@ -5765,9 +5770,9 @@ static int vmx_vcpu_setup(struct vcpu_vm
+ 
+ 	vmcs_write32(VM_EXIT_MSR_STORE_COUNT, 0);
+ 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, 0);
+-	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host));
++	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host.val));
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, 0);
+-	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest));
++	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest.val));
+ 
+ 	if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT)
+ 		vmcs_write64(GUEST_IA32_PAT, vmx->vcpu.arch.pat);
+@@ -10901,10 +10906,10 @@ static int prepare_vmcs02(struct kvm_vcp
+ 	 * Set the MSR load/store lists to match L0's settings.
+ 	 */
+ 	vmcs_write32(VM_EXIT_MSR_STORE_COUNT, 0);
+-	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+-	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host));
+-	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+-	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest));
++	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
++	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host.val));
++	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
++	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest.val));
+ 
+ 	/*
+ 	 * HOST_RSP is normally set correctly in vmx_vcpu_run() just before
+@@ -11842,8 +11847,8 @@ static void nested_vmx_vmexit(struct kvm
+ 	vmx_segment_cache_clear(vmx);
+ 
+ 	/* Update any VMCS fields that might have changed while L2 ran */
+-	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+-	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
++	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
++	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
+ 	vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
+ 	if (vmx->hv_deadline_tsc == -1)
+ 		vmcs_clear_bits(PIN_BASED_VM_EXEC_CONTROL,
 
 
