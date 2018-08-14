@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96922C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532E0C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51ADD21653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:54:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51ADD21653
+	by mail.kernel.org (Postfix) with ESMTP id 182F221653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:54:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182F221653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390214AbeHNUaM (ORCPT
+        id S2389221AbeHNUnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59228 "EHLO
+        Tue, 14 Aug 2018 16:43:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390105AbeHNUaL (ORCPT
+        with ESMTP id S2390199AbeHNUaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:11 -0400
+        Tue, 14 Aug 2018 16:30:12 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DD10D8D;
-        Tue, 14 Aug 2018 17:32:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07B52DC4;
+        Tue, 14 Aug 2018 17:33:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Mario <jmario@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.17 77/97] cpu/hotplug: detect SMT disabled by BIOS
-Date:   Tue, 14 Aug 2018 19:17:29 +0200
-Message-Id: <20180814171436.077529180@linuxfoundation.org>
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 92/97] x86/speculation/l1tf: Make pmd/pud_mknotpresent() invert
+Date:   Tue, 14 Aug 2018 19:17:44 +0200
+Message-Id: <20180814171436.791386862@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -52,46 +50,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 73d5e2b472640b1fcdb61ae8be389912ef211bda upstream
+commit 0768f91530ff46683e0b372df14fd79fe8d156e5 upstream
 
-If SMT is disabled in BIOS, the CPU code doesn't properly detect it.
-The /sys/devices/system/cpu/smt/control file shows 'on', and the 'l1tf'
-vulnerabilities file shows SMT as vulnerable.
+Some cases in THP like:
+  - MADV_FREE
+  - mprotect
+  - split
 
-Fix it by forcing 'cpu_smt_control' to CPU_SMT_NOT_SUPPORTED in such a
-case.  Unfortunately the detection can only be done after bringing all
-the CPUs online, so we have to overwrite any previous writes to the
-variable.
+mark the PMD non present for temporarily to prevent races. The window for
+an L1TF attack in these contexts is very small, but it wants to be fixed
+for correctness sake.
 
-Reported-by: Joe Mario <jmario@redhat.com>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Fixes: f048c399e0f7 ("x86/topology: Provide topology_smt_supported()")
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Use the proper low level functions for pmd/pud_mknotpresent() to address
+this.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/cpu.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/include/asm/pgtable.h |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2125,6 +2125,15 @@ static const struct attribute_group cpuh
- 
- static int __init cpu_smt_state_init(void)
- {
-+	/*
-+	 * If SMT was disabled by BIOS, detect it here, after the CPUs have
-+	 * been brought online.  This ensures the smt/l1tf sysfs entries are
-+	 * consistent with reality.  Note this may overwrite cpu_smt_control's
-+	 * previous setting.
-+	 */
-+	if (topology_max_smt_threads() == 1)
-+		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+
- 	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
- 				  &cpuhp_smt_attr_group);
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -410,11 +410,6 @@ static inline pmd_t pmd_mkwrite(pmd_t pm
+ 	return pmd_set_flags(pmd, _PAGE_RW);
  }
+ 
+-static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+-{
+-	return pmd_clear_flags(pmd, _PAGE_PRESENT | _PAGE_PROTNONE);
+-}
+-
+ static inline pud_t pud_set_flags(pud_t pud, pudval_t set)
+ {
+ 	pudval_t v = native_pud_val(pud);
+@@ -469,11 +464,6 @@ static inline pud_t pud_mkwrite(pud_t pu
+ 	return pud_set_flags(pud, _PAGE_RW);
+ }
+ 
+-static inline pud_t pud_mknotpresent(pud_t pud)
+-{
+-	return pud_clear_flags(pud, _PAGE_PRESENT | _PAGE_PROTNONE);
+-}
+-
+ #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+ static inline int pte_soft_dirty(pte_t pte)
+ {
+@@ -577,6 +567,18 @@ static inline pud_t pfn_pud(unsigned lon
+ 	return __pud(pfn | check_pgprot(pgprot));
+ }
+ 
++static inline pmd_t pmd_mknotpresent(pmd_t pmd)
++{
++	return pfn_pmd(pmd_pfn(pmd),
++		      __pgprot(pmd_flags(pmd) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
++}
++
++static inline pud_t pud_mknotpresent(pud_t pud)
++{
++	return pfn_pud(pud_pfn(pud),
++	      __pgprot(pud_flags(pud) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
++}
++
+ static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
+ 
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
 
 
