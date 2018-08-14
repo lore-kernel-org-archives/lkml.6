@@ -2,174 +2,150 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F8FC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C539C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F8921717
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:11:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F8921717
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FF5D21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:12:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJ9rs1aH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF5D21728
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeHNWAF (ORCPT
+        id S1728514AbeHNWBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 18:00:05 -0400
-Received: from fieldses.org ([173.255.197.46]:58970 "EHLO fieldses.org"
+        Tue, 14 Aug 2018 18:01:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeHNWAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 18:00:05 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 3532E63F; Tue, 14 Aug 2018 15:11:29 -0400 (EDT)
-Date:   Tue, 14 Aug 2018 15:11:29 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     syzbot <syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com>
-Cc:     jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: general protection fault in send_sigurg_to_task
-Message-ID: <20180814191129.GN7906@fieldses.org>
-References: <0000000000007f59610573509684@google.com>
- <000000000000f4136d0573512103@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000f4136d0573512103@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1725988AbeHNWBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 18:01:11 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E734F21717;
+        Tue, 14 Aug 2018 19:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534273953;
+        bh=9vhuO+FsWeTDPLcMHzOd3kBiADJxFey5m1rKRTH+Xz0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bJ9rs1aHUPEOxkHY4aLL11k9gp2Q+NL6Q11qfQO33jONOUIu1iuxyY6ZmUput2Fk/
+         i+K1vnTZRRe5iNxgQ1M5GrrNZplzQdXWpyBM8BC2126iKzHbRiCSv55U8L8Qo0VrLq
+         dUqT97dSiF0tHpATfIfthxF9DhAQwb5m0ajWh8nA=
+Message-ID: <4afedd921922253224fd54d1e88acb3f40da4ef7.camel@kernel.org>
+Subject: Re: [PATCH 0/5 v2] locks: avoid thundering-herd wake-ups
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "J. Bruce Fields" <bfields@fieldses.org>,
+        NeilBrown <neilb@suse.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 14 Aug 2018 15:12:31 -0400
+In-Reply-To: <20180814184146.GM7906@fieldses.org>
+References: <153421852728.24426.2111161640156686201.stgit@noble>
+         <20180814184146.GM7906@fieldses.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 06:33:02AM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
+On Tue, 2018-08-14 at 14:41 -0400, J. Bruce Fields wrote:
+> This version looks correct to me, and simpler.  I'll be curious to hear
+> whatever you learn from testing!
 > 
-> HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
-> git tree:       linux-next
-
-I fetched linux-next but don't have 5ed5da74de9e.
-
-I'm also not sure why I'm on the cc for this.
-
---b.
-
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10787028400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=18edf0289d1b5ab
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1f371ca19b341a276761
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1487e828400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15084b72400000
+> --b.
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com
-> 
-> nf_conntrack: default automatic helper assignment has been turned
-> off for security reasons and CT-based  firewall rule not found. Use
-> the iptables CT target to attach helpers instead.
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> CPU: 1 PID: 4474 Comm: syz-executor782 Not tainted 4.18.0-next-20180813+ #37
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 01/01/2011
-> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-> RIP: 0010:sigio_perm fs/fcntl.c:715 [inline]
-> RIP: 0010:send_sigurg_to_task+0xf5/0x4d0 fs/fcntl.c:810
-> Code: 61 af b1 ff 45 84 f6 0f 84 52 03 00 00 e8 83 ae b1 ff 49 8d bf
-> 58 06 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80>
-> 3c 02 00 0f 85 91 03 00 00 48 8d 43 c0 4d 8b b7 58 06 00 00 48
-> RSP: 0000:ffff8801db106c18 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: ffff8801db106c88 RCX: ffffffff81cae2d0
-> RDX: 00000000000000cb RSI: ffffffff81cadf6d RDI: 0000000000000658
-> RBP: ffff8801db106cb0 R08: ffff8801b4ad4640 R09: ffffed003b6246d6
-> R10: ffffed003b6246d6 R11: ffff8801db1236b3 R12: 1ffff1003b620d85
-> R13: ffff8801b4cb9388 R14: 0000000000000001 R15: 0000000000000000
-> FS:  0000000000949880(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000400bc3 CR3: 00000001bb122000 CR4: 00000000001406e0
-> Call Trace:
->  <IRQ>
->  send_sigurg+0x342/0x480 fs/fcntl.c:833
->  sk_send_sigurg+0xd2/0x3d0 net/core/sock.c:2731
->  tcp_check_urg net/ipv4/tcp_input.c:5266 [inline]
->  tcp_urg+0x3c3/0xba0 net/ipv4/tcp_input.c:5307
->  tcp_rcv_established+0xd45/0x2130 net/ipv4/tcp_input.c:5637
->  tcp_v4_do_rcv+0x635/0x8f0 net/ipv4/tcp_ipv4.c:1532
->  tcp_v4_rcv+0x2ff9/0x3a90 net/ipv4/tcp_ipv4.c:1824
->  ip_local_deliver_finish+0x2eb/0xda0 net/ipv4/ip_input.c:215
->  NF_HOOK include/linux/netfilter.h:287 [inline]
->  ip_local_deliver+0x1e9/0x750 net/ipv4/ip_input.c:256
->  dst_input include/net/dst.h:450 [inline]
->  ip_rcv_finish+0x1f9/0x300 net/ipv4/ip_input.c:415
->  NF_HOOK include/linux/netfilter.h:287 [inline]
->  ip_rcv+0xed/0x610 net/ipv4/ip_input.c:524
->  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4892
->  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5002
->  process_backlog+0x219/0x760 net/core/dev.c:5808
->  napi_poll net/core/dev.c:6228 [inline]
->  net_rx_action+0x799/0x1900 net/core/dev.c:6294
->  __do_softirq+0x2e8/0xa6d kernel/softirq.c:292
->  invoke_softirq kernel/softirq.c:372 [inline]
->  irq_exit+0x1d4/0x210 kernel/softirq.c:412
->  exiting_irq arch/x86/include/asm/apic.h:527 [inline]
->  smp_apic_timer_interrupt+0x186/0x690 arch/x86/kernel/apic/apic.c:1055
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:867
->  </IRQ>
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
-> [inline]
-> RIP: 0010:lock_is_held_type+0x18b/0x210 kernel/locking/lockdep.c:3941
-> Code: ff df 41 c7 84 24 3c 08 00 00 00 00 00 00 48 89 fa 48 c1 ea 03
-> 80 3c 02 00 75 63 48 83 3d f4 33 93 06 00 74 30 48 89 df 57 9d <0f>
-> 1f 44 00 00 48 83 c4 08 44 89 e8 5b 41 5c 41 5d 5d c3 48 83 c4
-> RSP: 0000:ffff8801c6de7578 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-> RAX: dffffc0000000000 RBX: 0000000000000286 RCX: 0000000000000000
-> RDX: 1ffffffff0fe3665 RSI: 0000000000000000 RDI: 0000000000000286
-> RBP: ffff8801c6de7598 R08: ffffed003b6246d7 R09: ffffed003b6246d6
-> R10: ffffed003b6246d6 R11: ffff8801db1236b3 R12: ffff8801b4ad4640
-> R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000000
->  lock_is_held include/linux/lockdep.h:344 [inline]
->  rcu_read_lock_held+0xa9/0xc0 kernel/rcu/update.c:285
->  xa_entry include/linux/xarray.h:486 [inline]
->  xas_next_entry include/linux/xarray.h:905 [inline]
->  filemap_map_pages+0xdab/0x1990 mm/filemap.c:2536
->  do_fault_around mm/memory.c:3603 [inline]
->  do_read_fault mm/memory.c:3637 [inline]
->  do_fault mm/memory.c:3742 [inline]
->  handle_pte_fault mm/memory.c:3973 [inline]
->  __handle_mm_fault+0x339c/0x4470 mm/memory.c:4097
->  handle_mm_fault+0x53e/0xc80 mm/memory.c:4134
->  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
->  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
->  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1164
-> RIP: 0033:0x400bc3
-> Code: 09 00 00 00 e8 0e 09 04 00 48 c7 05 2b 2b 2d 00 00 00 00 00 48
-> 83 c4 10 e8 fa f1 03 00 85 c0 0f 85 d2 07 00 00 e8 ed f1 03 00 <89>
-> c3 89 c5 85 c0 79 0a bf 01 00 00 00 e8 6b ed 00 00 85 c0 0f 85
-> RSP: 002b:00007ffd6e71ae70 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 000000000000116b RCX: 000000000043fe8a
-> RDX: 0000001899a3a3ae RSI: 0000000000000000 RDI: 0000000001200011
-> RBP: 000000000000116b R08: 0000000000001149 R09: 0000000000949880
-> R10: 0000000000949b50 R11: 0000000000000246 R12: 000000000000a5e7
-> R13: 00000000004023f0 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> ---[ end trace b74ebc04d71b9f0f ]---
-> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-> RIP: 0010:sigio_perm fs/fcntl.c:715 [inline]
-> RIP: 0010:send_sigurg_to_task+0xf5/0x4d0 fs/fcntl.c:810
-> Code: 61 af b1 ff 45 84 f6 0f 84 52 03 00 00 e8 83 ae b1 ff 49 8d bf
-> 58 06 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80>
-> 3c 02 00 0f 85 91 03 00 00 48 8d 43 c0 4d 8b b7 58 06 00 00 48
-> RSP: 0000:ffff8801db106c18 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: ffff8801db106c88 RCX: ffffffff81cae2d0
-> RDX: 00000000000000cb RSI: ffffffff81cadf6d RDI: 0000000000000658
-> RBP: ffff8801db106cb0 R08: ffff8801b4ad4640 R09: ffffed003b6246d6
-> R10: ffffed003b6246d6 R11: ffff8801db1236b3 R12: 1ffff1003b620d85
-> R13: ffff8801b4cb9388 R14: 0000000000000001 R15: 0000000000000000
-> FS:  0000000000949880(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000400bc3 CR3: 00000001bb122000 CR4: 00000000001406e0
+
+Agreed. I'll go ahead and put this in linux-next with an eye toward
+merging in v4.20 if we don't hit any major problems with it.
+
+Thanks again and nice work, Neil!
+
+> On Tue, Aug 14, 2018 at 01:56:51PM +1000, NeilBrown wrote:
+> > 
+> > V2, which added wake_non_conflicts() was more broken than V1 - as
+> > Bruce explained there is no transitivity in the blocking relation
+> > between locks.
+> > So this series takes a simpler approach.
+> > It still attached waiters between other waiters as necessary to ensure
+> > that:
+> >   - a waiter is blocked by it's parent (fl->blocker) and all further
+> >     ancestors, and
+> >   - the list of waiters on fl_blocked are mutually non-conflicting.
+> > 
+> > When a lock (the root of a tree of requests) is released, only its
+> > immediate children (fl_blocked) are woken.
+> > When any lock is woken (either because its fl_blocker was released
+> > to due to a signal or similar) it with either:
+> >  - be granted
+> >  - be aborted
+> >  - be re-queued beneath some other lock.
+> > 
+> > In the first case tree of blocked locks is moved across to the newly
+> > created lock, and the invariants still hold.
+> > In the order two cases, the tree or blocked waiters are all detached
+> > and woken.
+> > 
+> > Note that this series has not received much testing yet.
+> > 
+> > Original description:
+> > If you have a many-core machine, and have many threads all wanting to
+> > briefly lock a give file (udev is known to do this), you can get quite
+> > poor performance.
+> > 
+> > When one thread releases a lock, it wakes up all other threads that
+> > are waiting (classic thundering-herd) - one will get the lock and the
+> > others go to sleep.
+> > When you have few cores, this is not very noticeable: by the time the
+> > 4th or 5th thread gets enough CPU time to try to claim the lock, the
+> > earlier threads have claimed it, done what was needed, and released.
+> > With 50+ cores, the contention can easily be measured.
+> > 
+> > This patchset creates a tree of pending lock request in which siblings
+> > don't conflict and each lock request does conflict with its parent.
+> > When a lock is released, only requests which don't conflict with each
+> > other a woken.
+> > 
+> > Testing shows that lock-acquisitions-per-second is now fairly stable even
+> > as number of contending process goes to 1000.  Without this patch,
+> > locks-per-second drops off steeply after a few 10s of processes.
+> > 
+> > There is a small cost to this extra complexity.
+> > At 20 processes running a particular test on 72 cores, the lock
+> > acquisitions per second drops from 1.8 million to 1.4 million with
+> > this patch.  For 100 processes, this patch still provides 1.4 million
+> > while without this patch there are about 700,000.
+> > 
+> > NeilBrown
+> > 
+> > ---
+> > 
+> > NeilBrown (5):
+> >       fs/locks: rename some lists and pointers.
+> >       fs/locks: split out __locks_wake_up_blocks().
+> >       fs/locks: allow a lock request to block other requests.
+> >       fs/locks: change all *_conflict() functions to return bool.
+> >       fs/locks: create a tree of dependent requests.
+> > 
+> > 
+> >  fs/cifs/file.c                  |    2 -
+> >  fs/locks.c                      |  156 ++++++++++++++++++++++++++-------------
+> >  include/linux/fs.h              |    7 +-
+> >  include/trace/events/filelock.h |   16 ++--
+> >  4 files changed, 119 insertions(+), 62 deletions(-)
+> > 
+> > --
+> > Signature
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
