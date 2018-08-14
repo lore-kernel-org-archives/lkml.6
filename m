@@ -6,102 +6,90 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD44C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4455DC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF9121734
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:39:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF9121734
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 04D6F21731
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:39:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D6F21731
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732717AbeHNS1D (ORCPT
+        id S1732796AbeHNS1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:27:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51856 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728458AbeHNS1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:27:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1B778AECF;
-        Tue, 14 Aug 2018 15:39:22 +0000 (UTC)
-Subject: Re: [PATCH 2/5] nvme: register ns_id attributes as default sysfs
- groups
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "hare@suse.com" <hare@suse.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>
-References: <20180814073305.87255-1-hare@suse.de>
- <20180814073305.87255-3-hare@suse.de>
- <5a4aab8b5f509d8090ad10107b01d11285fe1528.camel@wdc.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <e4c9ba55-ad92-dcb2-1126-38e5ea4c0a13@suse.de>
-Date:   Tue, 14 Aug 2018 17:39:20 +0200
+        Tue, 14 Aug 2018 14:27:33 -0400
+Received: from mail.windriver.com ([147.11.1.11]:47758 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728458AbeHNS1d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 14:27:33 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w7EFdejL025029
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 14 Aug 2018 08:39:40 -0700 (PDT)
+Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 14 Aug
+ 2018 08:39:39 -0700
+Subject: Re: [PATCH v2 2/2] kgdboc: Change printk to the right fashion
+To:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Joe Perches <golf@perches.com>
+CC:     <jason.wessel@windriver.com>, <gregkh@linuxfoundation.org>,
+        <jslaby@suse.com>, <kgdb-bugreport@lists.sourceforge.net>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
+ <1534250761-824-2-git-send-email-zhe.he@windriver.com>
+ <20180814133536.bfpygzwnmlqfsee5@holly.lan>
+ <1678613360b7aebbf1ab42dd89139cb666ee8cd9.camel@perches.com>
+ <20180814144132.mpqzz3sxdbfzn7fe@holly.lan>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <e7e52f01-0ea6-094f-d9e9-cd2115311962@windriver.com>
+Date:   Tue, 14 Aug 2018 23:39:35 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <5a4aab8b5f509d8090ad10107b01d11285fe1528.camel@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
+In-Reply-To: <20180814144132.mpqzz3sxdbfzn7fe@holly.lan>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.216]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14/2018 05:20 PM, Bart Van Assche wrote:
-> On Tue, 2018-08-14 at 09:33 +0200, Hannes Reinecke wrote:
->> +const struct attribute_group *nvme_ns_id_attr_groups[] = {
->> +	&nvme_ns_id_attr_group,
->> +	NULL, /* Will be filled in by lightnvm if present */
->> +	NULL,
->> +};
-> [ ... ]
->> -void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
->> -{
->> -	struct nvm_dev *ndev = ns->ndev;
->> -	struct nvm_geo *geo = &ndev->geo;
->> +		return;
->>  
->>  	switch (geo->major_ver_id) {
->>  	case 1:
->> -		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
->> -					&nvm_dev_attr_group_12);
->> +		nvme_ns_id_attr_groups[1] = &nvm_dev_attr_group_12;
->>  		break;
->>  	case 2:
->> -		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
->> -					&nvm_dev_attr_group_20);
->> +		nvme_ns_id_attr_groups[1] = &nvm_dev_attr_group_20;
-> 
-> This patch introduces a really ugly dependency between the NVMe core code and
-> the lightnvm code, namely that the lightnvm code has to know at which position
-> in the nvme_ns_id_attr_groups it can fill in its attribute group pointer. Have
-> you considered to make nvme_nvm_register_sysfs() return an attribute group
-> pointer such that the nvme_ns_id_attr_groups can be changed from a global into
-> a static array?
-> 
-Wouldn't help much, as the 'nvme_ns_id_attr_groups' needs to be a global
-pointer anyway as it's references from drivers/nvme/host/core.c and
-drivers/nvme/host/multipath.c.
 
-While I have considered having nvme_nvm_register_sysfs() returning a
-pointer I would then have to remove the 'static' declaration from the
-nvm_dev_attr_group_12/20.
-Which I didn't really like, either.
 
-Cheers,
+On 2018年08月14日 22:41, Daniel Thompson wrote:
+> On Tue, Aug 14, 2018 at 07:04:11AM -0700, Joe Perches wrote:
+>> On Tue, 2018-08-14 at 14:35 +0100, Daniel Thompson wrote:
+>>> On Tue, Aug 14, 2018 at 08:46:01PM +0800, zhe.he@windriver.com wrote:
+>>>> From: He Zhe <zhe.he@windriver.com>
+>>>>
+>>>> pr_* is preferred according to scripts/checkpatch.pl.
+>> []
+>>>> diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
+>> []
+>>>> @@ -136,7 +136,7 @@ static int kgdboc_option_setup(char *opt)
+>>>>  	}
+>>>>  
+>>>>  	if (strlen(opt) >= MAX_CONFIG_LEN) {
+>>>> -		printk(KERN_ERR "kgdboc: config string too long\n");
+>>>> +		pr_err("kgdboc: config string too long\n");
+>>> Looks like you should remove the tags from pr_err and use pr_fmt(fmt) to
+>>> put tags on the messages:
+>>>
+>>> #define pr_fmt(fmt) "kgdboc: " fmt
+>> True and it's probably better to use:
+>>
+>> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> Good point! Thanks.
 
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+Daniel, Joe, thanks for your good suggestions. v3 is sent.
+
+Zhe
+
+>
+>
+> Daniel.
+>
+
