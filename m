@@ -2,79 +2,81 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED91C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08035C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF8F20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:36:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF8F20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A9837216F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 21:39:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9837216F9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbeHOA0E (ORCPT
+        id S1729719AbeHOA2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 20:26:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48384 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728302AbeHOA0E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 20:26:04 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B905ACFC;
-        Tue, 14 Aug 2018 21:36:56 +0000 (UTC)
-Date:   Tue, 14 Aug 2018 14:36:55 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Build failures with gcc 4.5 and older
-Message-Id: <20180814143655.3acd4bb211d44747f77e74f2@linux-foundation.org>
-In-Reply-To: <20180814170904.GA12768@roeck-us.net>
-References: <20180814170904.GA12768@roeck-us.net>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 14 Aug 2018 20:28:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52148 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728196AbeHOA2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 20:28:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E9583ADB1;
+        Tue, 14 Aug 2018 21:39:05 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, stable@vger.kernel.org
+Subject: [PATCH] x86/smp: fix non-SMP broken build due to redefinition of apic_id_is_primary_thread
+Date:   Tue, 14 Aug 2018 23:38:57 +0200
+Message-Id: <20180814213857.18779-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Aug 2018 10:09:04 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+The function has an inline "return false;" definition with CONFIG_SMP=n but the
+"real" definition is also visible leading to "redefinition of
+‘apic_id_is_primary_thread’" compiler error. Guard it with #ifdef CONFIG_SMP
 
-> Since commit c1a2f7f0c0645 ("mm: Allocate the mm_cpumask
-> (mm->cpu_bitmap[]) dynamically based on nr_cpu_ids"), building
-> the Linux kernel with gcc version 4.5 and older fails as follows.
-> 
-> In file included from ./include/linux/mm.h:17:0,
->                  from ./include/linux/pid_namespace.h:7,
-> 		 from ./include/linux/ptrace.h:10,
-> 		 from arch/openrisc/kernel/asm-offsets.c:32:
-> ./include/linux/mm_types.h:497:16: error: flexible array member in otherwise empty struct
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: 6a4d2657e048 ("x86/smp: Provide topology_is_primary_thread()")
+Cc: stable@vger.kernel.org
+---
+ arch/x86/kernel/apic/apic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Confused.  Why does it think that the mm_struct is "otherwise empty"?
-
-This shuts it up:
-
---- a/include/linux/mm_types.h~a
-+++ a/include/linux/mm_types.h
-@@ -490,6 +490,7 @@ struct mm_struct {
- #endif
- 	} __randomize_layout;
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 87ff6235bbfe..84132eddb5a8 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2193,6 +2193,7 @@ static int cpuid_to_apicid[] = {
+ 	[0 ... NR_CPUS - 1] = -1,
+ };
  
-+	int wibble;
- 	/*
- 	 * The mm_cpumask needs to be at the end of mm_struct, because it
- 	 * is dynamically sized based on nr_cpu_ids.
-
-
-So we could add something like that, along with the appropriate #if
-GCC_VERSION and a comment.  A simple enough change, to keep those old
-gcc versions limping along for a bit longer?
++#ifdef CONFIG_SMP
+ /**
+  * apic_id_is_primary_thread - Check whether APIC ID belongs to a primary thread
+  * @id:	APIC ID to check
+@@ -2207,6 +2208,7 @@ bool apic_id_is_primary_thread(unsigned int apicid)
+ 	mask = (1U << (fls(smp_num_siblings) - 1)) - 1;
+ 	return !(apicid & mask);
+ }
++#endif
+ 
+ /*
+  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
+-- 
+2.18.0
 
