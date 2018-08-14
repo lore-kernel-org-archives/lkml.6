@@ -2,111 +2,342 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB89DC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33812C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8580B21700
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:01:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOD8zKfg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8580B21700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id DDD4A216E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:04:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD4A216E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbeHNUYf (ORCPT
+        id S1730698AbeHNUwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:24:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42819 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbeHNUYe (ORCPT
+        Tue, 14 Aug 2018 16:52:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57234 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729384AbeHNUX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:24:34 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y4-v6so9402534pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 10:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MB4DeZcc1axnQV8hDkceH08m/Jqflt+rGhPGhn5Najo=;
-        b=fOD8zKfgNjZwdchtnE8wjoJYA0UzSUEuZyuRv4jNWS3ULn7eu/JqdQ68aX8si6FsGC
-         swJnJk9nVgvTuFiiL5mkUjzSVsqsX/UGFZw2EsSHIqvy8Wv4IXfrKdd51HARQRwYgnZe
-         r/s6bN6nSw6EqZW+DUkrTg2CTuZxcDMu6QTaXmRjrMLR6Y4yRF3oaxRwPJ1cQd0GwH1L
-         UV/L/iVv/WO5paGBP8n3B7PDvycpptaIEgWvCDSiJ+EeJFYrqbpAOJc2mdjSMgoiQQb5
-         BiJJDMxEnOSBc46zwkW0G3AWIUOgVgWIgBLAV2ttOH/mM07DvU2/AmbN+teX3FJQ93FF
-         h4nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MB4DeZcc1axnQV8hDkceH08m/Jqflt+rGhPGhn5Najo=;
-        b=f/a6imw6Virt+zh3GsXZs4hNl2i7/8HXmcNgi0/wxarcriAcpBHKVIOIkCW+9sZQMZ
-         SoCVd+A5+b73wc0w5FvNZXMT3T68G735mc+CxJ4JhAVjEQDwRPtiExM54ruEh2dUEFeQ
-         F0RPm0kEi2B0lHd33WNvVLJ6/61tNBMCG3+tUhFF7lzT4ibakYHl8Xd9fS8cJymkILAo
-         32cHmqwP8biOcOUtCJDu4wssmM+hVewU/5QYwqztBXAqE0K98tHOxgEj8aqexKST0r3H
-         J7qMdU3BjgFsaJnlwjaLe+eETZfzjbz7rv5oRlTb0PLYOxipeSyRxFrYZ20FY8C+OtCD
-         GVeQ==
-X-Gm-Message-State: AOUpUlHuxFzw9KcYpxxD4wrdzh5hCL0bDtZ1k0oPa7ErWx36jBKINZrK
-        tMPCo7mbHxwHposoZUyo39Q=
-X-Google-Smtp-Source: AA+uWPyvgC5GIErPuJ3YCeHLs3bEsV6wFNOTrP5yuuBz2BZG/KH7LafbVIaBp6B9GOoNQD8NlRpslQ==
-X-Received: by 2002:a62:d842:: with SMTP id e63-v6mr24653745pfg.88.1534268184841;
-        Tue, 14 Aug 2018 10:36:24 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id e190-v6sm57839086pfc.81.2018.08.14.10.36.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 10:36:24 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 10:36:23 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Build failures with gcc 4.5 and older
-Message-ID: <20180814173623.GA5117@roeck-us.net>
-References: <20180814170904.GA12768@roeck-us.net>
- <CA+55aFy0SFGaNmzCcpwMCeY_f3ZTG54NmV3SosbK6=QdE20=5A@mail.gmail.com>
+        Tue, 14 Aug 2018 16:23:26 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 896AEDE0;
+        Tue, 14 Aug 2018 17:35:16 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH 4.14 032/104] x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings
+Date:   Tue, 14 Aug 2018 19:16:46 +0200
+Message-Id: <20180814171517.336937532@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
+References: <20180814171515.270692185@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFy0SFGaNmzCcpwMCeY_f3ZTG54NmV3SosbK6=QdE20=5A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 10:20:32AM -0700, Linus Torvalds wrote:
-> On Tue, Aug 14, 2018 at 10:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > Does that mean that gcc 4.5 and older are now officially no longer
-> > supported for compiling the kernel ?
-> 
-> I guess we might as well make this the excuse for making that official.
-> 
-> Maybe it's trivially fixable, but I don't even want to look at it,
-> since we've talked about updating the minimum gcc version so long.
-> 
-> > If so, would it make sense to update include/linux/compiler-gcc.h
-> > accordingly ?
-> 
-> Unless somebody cares, and comes with a trivial fix to make old
-> compilers happy, let's just do that.
-> 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Only implication is that it is the death warrant for unicore32,
-since the only compiler available for it is gcc 4.4.2.
+------------------
 
-Another question is if there are still companies out there who only
-permit gcc 4.4 and older due to its switch to GPL3.
+From: Andi Kleen <ak@linux.intel.com>
 
-Not that I care about any of those. Building the kernel with those old
-compilers without hitting some compiler bug is getting more and more
-difficult.
+commit 42e4089c7890725fcd329999252dc489b72f2921 upstream
 
-Guenter
+For L1TF PROT_NONE mappings are protected by inverting the PFN in the page
+table entry. This sets the high bits in the CPU's address space, thus
+making sure to point to not point an unmapped entry to valid cached memory.
+
+Some server system BIOSes put the MMIO mappings high up in the physical
+address space. If such an high mapping was mapped to unprivileged users
+they could attack low memory by setting such a mapping to PROT_NONE. This
+could happen through a special device driver which is not access
+protected. Normal /dev/mem is of course access protected.
+
+To avoid this forbid PROT_NONE mappings or mprotect for high MMIO mappings.
+
+Valid page mappings are allowed because the system is then unsafe anyways.
+
+It's not expected that users commonly use PROT_NONE on MMIO. But to
+minimize any impact this is only enforced if the mapping actually refers to
+a high MMIO address (defined as the MAX_PA-1 bit being set), and also skip
+the check for root.
+
+For mmaps this is straight forward and can be handled in vm_insert_pfn and
+in remap_pfn_range().
+
+For mprotect it's a bit trickier. At the point where the actual PTEs are
+accessed a lot of state has been changed and it would be difficult to undo
+on an error. Since this is a uncommon case use a separate early page talk
+walk pass for MMIO PROT_NONE mappings that checks for this condition
+early. For non MMIO and non PROT_NONE there are no changes.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/include/asm/pgtable.h |    8 ++++++
+ arch/x86/mm/mmap.c             |   21 +++++++++++++++++
+ include/asm-generic/pgtable.h  |   12 ++++++++++
+ mm/memory.c                    |   37 ++++++++++++++++++++++--------
+ mm/mprotect.c                  |   49 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 117 insertions(+), 10 deletions(-)
+
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1292,6 +1292,14 @@ static inline bool pud_access_permitted(
+ 	return __pte_access_permitted(pud_val(pud), write);
+ }
+ 
++#define __HAVE_ARCH_PFN_MODIFY_ALLOWED 1
++extern bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot);
++
++static inline bool arch_has_pfn_modify_check(void)
++{
++	return boot_cpu_has_bug(X86_BUG_L1TF);
++}
++
+ #include <asm-generic/pgtable.h>
+ #endif	/* __ASSEMBLY__ */
+ 
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -174,3 +174,24 @@ const char *arch_vma_name(struct vm_area
+ 		return "[mpx]";
+ 	return NULL;
+ }
++
++/*
++ * Only allow root to set high MMIO mappings to PROT_NONE.
++ * This prevents an unpriv. user to set them to PROT_NONE and invert
++ * them, then pointing to valid memory for L1TF speculation.
++ *
++ * Note: for locked down kernels may want to disable the root override.
++ */
++bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
++{
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return true;
++	if (!__pte_needs_invert(pgprot_val(prot)))
++		return true;
++	/* If it's real memory always allow */
++	if (pfn_valid(pfn))
++		return true;
++	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
++		return false;
++	return true;
++}
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1069,4 +1069,16 @@ static inline void init_espfix_bsp(void)
+ #endif
+ #endif
+ 
++#ifndef __HAVE_ARCH_PFN_MODIFY_ALLOWED
++static inline bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
++{
++	return true;
++}
++
++static inline bool arch_has_pfn_modify_check(void)
++{
++	return false;
++}
++#endif
++
+ #endif /* _ASM_GENERIC_PGTABLE_H */
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1887,6 +1887,9 @@ int vm_insert_pfn_prot(struct vm_area_st
+ 	if (addr < vma->vm_start || addr >= vma->vm_end)
+ 		return -EFAULT;
+ 
++	if (!pfn_modify_allowed(pfn, pgprot))
++		return -EACCES;
++
+ 	track_pfn_insert(vma, &pgprot, __pfn_to_pfn_t(pfn, PFN_DEV));
+ 
+ 	ret = insert_pfn(vma, addr, __pfn_to_pfn_t(pfn, PFN_DEV), pgprot,
+@@ -1908,6 +1911,9 @@ static int __vm_insert_mixed(struct vm_a
+ 
+ 	track_pfn_insert(vma, &pgprot, pfn);
+ 
++	if (!pfn_modify_allowed(pfn_t_to_pfn(pfn), pgprot))
++		return -EACCES;
++
+ 	/*
+ 	 * If we don't have pte special, then we have to use the pfn_valid()
+ 	 * based VM_MIXEDMAP scheme (see vm_normal_page), and thus we *must*
+@@ -1955,6 +1961,7 @@ static int remap_pte_range(struct mm_str
+ {
+ 	pte_t *pte;
+ 	spinlock_t *ptl;
++	int err = 0;
+ 
+ 	pte = pte_alloc_map_lock(mm, pmd, addr, &ptl);
+ 	if (!pte)
+@@ -1962,12 +1969,16 @@ static int remap_pte_range(struct mm_str
+ 	arch_enter_lazy_mmu_mode();
+ 	do {
+ 		BUG_ON(!pte_none(*pte));
++		if (!pfn_modify_allowed(pfn, prot)) {
++			err = -EACCES;
++			break;
++		}
+ 		set_pte_at(mm, addr, pte, pte_mkspecial(pfn_pte(pfn, prot)));
+ 		pfn++;
+ 	} while (pte++, addr += PAGE_SIZE, addr != end);
+ 	arch_leave_lazy_mmu_mode();
+ 	pte_unmap_unlock(pte - 1, ptl);
+-	return 0;
++	return err;
+ }
+ 
+ static inline int remap_pmd_range(struct mm_struct *mm, pud_t *pud,
+@@ -1976,6 +1987,7 @@ static inline int remap_pmd_range(struct
+ {
+ 	pmd_t *pmd;
+ 	unsigned long next;
++	int err;
+ 
+ 	pfn -= addr >> PAGE_SHIFT;
+ 	pmd = pmd_alloc(mm, pud, addr);
+@@ -1984,9 +1996,10 @@ static inline int remap_pmd_range(struct
+ 	VM_BUG_ON(pmd_trans_huge(*pmd));
+ 	do {
+ 		next = pmd_addr_end(addr, end);
+-		if (remap_pte_range(mm, pmd, addr, next,
+-				pfn + (addr >> PAGE_SHIFT), prot))
+-			return -ENOMEM;
++		err = remap_pte_range(mm, pmd, addr, next,
++				pfn + (addr >> PAGE_SHIFT), prot);
++		if (err)
++			return err;
+ 	} while (pmd++, addr = next, addr != end);
+ 	return 0;
+ }
+@@ -1997,6 +2010,7 @@ static inline int remap_pud_range(struct
+ {
+ 	pud_t *pud;
+ 	unsigned long next;
++	int err;
+ 
+ 	pfn -= addr >> PAGE_SHIFT;
+ 	pud = pud_alloc(mm, p4d, addr);
+@@ -2004,9 +2018,10 @@ static inline int remap_pud_range(struct
+ 		return -ENOMEM;
+ 	do {
+ 		next = pud_addr_end(addr, end);
+-		if (remap_pmd_range(mm, pud, addr, next,
+-				pfn + (addr >> PAGE_SHIFT), prot))
+-			return -ENOMEM;
++		err = remap_pmd_range(mm, pud, addr, next,
++				pfn + (addr >> PAGE_SHIFT), prot);
++		if (err)
++			return err;
+ 	} while (pud++, addr = next, addr != end);
+ 	return 0;
+ }
+@@ -2017,6 +2032,7 @@ static inline int remap_p4d_range(struct
+ {
+ 	p4d_t *p4d;
+ 	unsigned long next;
++	int err;
+ 
+ 	pfn -= addr >> PAGE_SHIFT;
+ 	p4d = p4d_alloc(mm, pgd, addr);
+@@ -2024,9 +2040,10 @@ static inline int remap_p4d_range(struct
+ 		return -ENOMEM;
+ 	do {
+ 		next = p4d_addr_end(addr, end);
+-		if (remap_pud_range(mm, p4d, addr, next,
+-				pfn + (addr >> PAGE_SHIFT), prot))
+-			return -ENOMEM;
++		err = remap_pud_range(mm, p4d, addr, next,
++				pfn + (addr >> PAGE_SHIFT), prot);
++		if (err)
++			return err;
+ 	} while (p4d++, addr = next, addr != end);
+ 	return 0;
+ }
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -292,6 +292,42 @@ unsigned long change_protection(struct v
+ 	return pages;
+ }
+ 
++static int prot_none_pte_entry(pte_t *pte, unsigned long addr,
++			       unsigned long next, struct mm_walk *walk)
++{
++	return pfn_modify_allowed(pte_pfn(*pte), *(pgprot_t *)(walk->private)) ?
++		0 : -EACCES;
++}
++
++static int prot_none_hugetlb_entry(pte_t *pte, unsigned long hmask,
++				   unsigned long addr, unsigned long next,
++				   struct mm_walk *walk)
++{
++	return pfn_modify_allowed(pte_pfn(*pte), *(pgprot_t *)(walk->private)) ?
++		0 : -EACCES;
++}
++
++static int prot_none_test(unsigned long addr, unsigned long next,
++			  struct mm_walk *walk)
++{
++	return 0;
++}
++
++static int prot_none_walk(struct vm_area_struct *vma, unsigned long start,
++			   unsigned long end, unsigned long newflags)
++{
++	pgprot_t new_pgprot = vm_get_page_prot(newflags);
++	struct mm_walk prot_none_walk = {
++		.pte_entry = prot_none_pte_entry,
++		.hugetlb_entry = prot_none_hugetlb_entry,
++		.test_walk = prot_none_test,
++		.mm = current->mm,
++		.private = &new_pgprot,
++	};
++
++	return walk_page_range(start, end, &prot_none_walk);
++}
++
+ int
+ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ 	unsigned long start, unsigned long end, unsigned long newflags)
+@@ -310,6 +346,19 @@ mprotect_fixup(struct vm_area_struct *vm
+ 	}
+ 
+ 	/*
++	 * Do PROT_NONE PFN permission checks here when we can still
++	 * bail out without undoing a lot of state. This is a rather
++	 * uncommon case, so doesn't need to be very optimized.
++	 */
++	if (arch_has_pfn_modify_check() &&
++	    (vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP)) &&
++	    (newflags & (VM_READ|VM_WRITE|VM_EXEC)) == 0) {
++		error = prot_none_walk(vma, start, end, newflags);
++		if (error)
++			return error;
++	}
++
++	/*
+ 	 * If we make a private mapping writable we increase our commit;
+ 	 * but (without finer accounting) cannot reduce our commit if we
+ 	 * make it unwritable again. hugetlb mapping were accounted for
+
+
