@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7104C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14313C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A0FC21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A0FC21738
+	by mail.kernel.org (Postfix) with ESMTP id CB07221727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB07221727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389724AbeHNUTe (ORCPT
+        id S2389738AbeHNUTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:19:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53408 "EHLO
+        Tue, 14 Aug 2018 16:19:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388320AbeHNUTd (ORCPT
+        with ESMTP id S2388320AbeHNUTg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:19:33 -0400
+        Tue, 14 Aug 2018 16:19:36 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7CEFBDB;
-        Tue, 14 Aug 2018 17:31:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAD4BD06;
+        Tue, 14 Aug 2018 17:31:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.17 64/97] x86/kvm: Drop L1TF MSR list approach
-Date:   Tue, 14 Aug 2018 19:17:16 +0200
-Message-Id: <20180814171435.584780230@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 47/97] x86/CPU/AMD: Move TOPOEXT reenablement before reading smp_num_siblings
+Date:   Tue, 14 Aug 2018 19:16:59 +0200
+Message-Id: <20180814171434.943092732@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -51,112 +50,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit 2f055947ae5e2741fb2dc5bba1033c417ccf4faa upstream
+commit 7ce2f0393ea2396142b7faf6ee9b1f3676d08a5f upstream
 
-The VMX module parameter to control the L1D flush should become
-writeable.
+The TOPOEXT reenablement is a workaround for broken BIOSen which didn't
+enable the CPUID bit. amd_get_topology_early(), however, relies on
+that bit being set so that it can read out the CPUID leaf and set
+smp_num_siblings properly.
 
-The MSR list is set up at VM init per guest VCPU, but the run time
-switching is based on a static key which is global. Toggling the MSR list
-at run time might be feasible, but for now drop this optimization and use
-the regular MSR write to make run-time switching possible.
+Move the reenablement up to early_init_amd(). While at it, simplify
+amd_get_topology_early().
 
-The default mitigation is the conditional flush anyway, so for extra
-paranoid setups this will add some small overhead, but the extra code
-executed is in the noise compared to the flush itself.
-
-Aside of that the EPT disabled case is not handled correctly at the moment
-and the MSR list magic is in the way for fixing that as well.
-
-If it's really providing a significant advantage, then this needs to be
-revisited after the code is correct and the control is writable.
-
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiri Kosina <jkosina@suse.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.516940445@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   43 +++++++------------------------------------
- 1 file changed, 7 insertions(+), 36 deletions(-)
+ arch/x86/kernel/cpu/amd.c |   37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6039,16 +6039,6 @@ static void ept_set_mmio_spte_mask(void)
- 				   VMX_EPT_MISCONFIG_WX_VALUE);
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -318,12 +318,8 @@ static void legacy_fixup_core_id(struct
+ 
+ static void amd_get_topology_early(struct cpuinfo_x86 *c)
+ {
+-	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
+-		u32 eax, ebx, ecx, edx;
+-
+-		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
+-		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
+-	}
++	if (cpu_has(c, X86_FEATURE_TOPOEXT))
++		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
  }
  
--static bool vmx_l1d_use_msr_save_list(void)
--{
--	if (!enable_ept || !boot_cpu_has_bug(X86_BUG_L1TF) ||
--	    static_cpu_has(X86_FEATURE_HYPERVISOR) ||
--	    !static_cpu_has(X86_FEATURE_FLUSH_L1D))
--		return false;
--
--	return vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
--}
--
- #define VMX_XSS_EXIT_BITMAP 0
  /*
-  * Sets up the vmcs for emulated real mode.
-@@ -6164,12 +6154,6 @@ static void vmx_vcpu_setup(struct vcpu_v
- 		vmcs_write64(PML_ADDRESS, page_to_phys(vmx->pml_pg));
- 		vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
- 	}
--	/*
--	 * If flushing the L1D cache on every VMENTER is enforced and the
--	 * MSR is available, use the MSR save list.
--	 */
--	if (vmx_l1d_use_msr_save_list())
--		add_atomic_switch_msr(vmx, MSR_IA32_FLUSH_CMD, L1D_FLUSH, 0, true);
+@@ -344,7 +340,6 @@ static void amd_get_topology(struct cpui
+ 		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
+ 
+ 		node_id  = ecx & 0xff;
+-		smp_num_siblings = ((ebx >> 8) & 0xff) + 1;
+ 
+ 		if (c->x86 == 0x15)
+ 			c->cu_id = ebx & 0xff;
+@@ -635,6 +630,7 @@ clear_sev:
+ 
+ static void early_init_amd(struct cpuinfo_x86 *c)
+ {
++	u64 value;
+ 	u32 dummy;
+ 
+ 	early_init_amd_mc(c);
+@@ -706,6 +702,20 @@ static void early_init_amd(struct cpuinf
+ 
+ 	early_detect_mem_encrypt(c);
+ 
++	/* Re-enable TopologyExtensions if switched off by BIOS */
++	if (c->x86 == 0x15 &&
++	    (c->x86_model >= 0x10 && c->x86_model <= 0x6f) &&
++	    !cpu_has(c, X86_FEATURE_TOPOEXT)) {
++
++		if (msr_set_bit(0xc0011005, 54) > 0) {
++			rdmsrl(0xc0011005, value);
++			if (value & BIT_64(54)) {
++				set_cpu_cap(c, X86_FEATURE_TOPOEXT);
++				pr_info_once(FW_INFO "CPU: Re-enabling disabled Topology Extensions Support.\n");
++			}
++		}
++	}
++
+ 	amd_get_topology_early(c);
  }
  
- static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-@@ -9387,26 +9371,14 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	bool always;
+@@ -798,19 +808,6 @@ static void init_amd_bd(struct cpuinfo_x
+ {
+ 	u64 value;
  
- 	/*
--	 * This code is only executed when:
--	 * - the flush mode is 'cond'
--	 * - the flush mode is 'always' and the flush MSR is not
--	 *   available
--	 *
--	 * If the CPU has the flush MSR then clear the flush bit because
--	 * 'always' mode is handled via the MSR save list.
--	 *
--	 * If the MSR is not avaibable then act depending on the mitigation
--	 * mode: If 'flush always', keep the flush bit set, otherwise clear
--	 * it.
-+	 * This code is only executed when the the flush mode is 'cond' or
-+	 * 'always'
- 	 *
--	 * The flush bit gets set again either from vcpu_run() or from one
--	 * of the unsafe VMEXIT handlers.
-+	 * If 'flush always', keep the flush bit set, otherwise clear
-+	 * it. The flush bit gets set again either from vcpu_run() or from
-+	 * one of the unsafe VMEXIT handlers.
- 	 */
--	if (static_cpu_has(X86_FEATURE_FLUSH_L1D))
--		always = false;
--	else
--		always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
+-	/* re-enable TopologyExtensions if switched off by BIOS */
+-	if ((c->x86_model >= 0x10) && (c->x86_model <= 0x6f) &&
+-	    !cpu_has(c, X86_FEATURE_TOPOEXT)) {
 -
-+	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
- 	vcpu->arch.l1tf_flush_l1d = always;
- 
- 	vcpu->stat.l1d_flush++;
-@@ -13053,8 +13025,7 @@ static int __init vmx_setup_l1d_flush(vo
- 
- 	l1tf_vmx_mitigation = vmentry_l1d_flush;
- 
--	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
--	    vmx_l1d_use_msr_save_list())
-+	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
- 		return 0;
- 
- 	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+-		if (msr_set_bit(0xc0011005, 54) > 0) {
+-			rdmsrl(0xc0011005, value);
+-			if (value & BIT_64(54)) {
+-				set_cpu_cap(c, X86_FEATURE_TOPOEXT);
+-				pr_info_once(FW_INFO "CPU: Re-enabling disabled Topology Extensions Support.\n");
+-			}
+-		}
+-	}
+-
+ 	/*
+ 	 * The way access filter has a performance penalty on some workloads.
+ 	 * Disable it on the affected CPUs.
 
 
