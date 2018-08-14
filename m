@@ -2,92 +2,171 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3263C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 016FCC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD2F208D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:46:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nv9YI1QO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD2F208D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8CA7321653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:54:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA7321653
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbeHNReT (ORCPT
+        id S1732628AbeHNRmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:34:19 -0400
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:40629 "EHLO
-        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728978AbeHNReT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:34:19 -0400
-Received: by mail-qk0-f170.google.com with SMTP id c126-v6so13536493qkd.7;
-        Tue, 14 Aug 2018 07:46:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=Txk6oWhViutvEe6HaUZP134awYrZYqFog73Niq3QikM=;
-        b=nv9YI1QO0G4qIMd9IAokLBJI6PDYw1FB+z7rSGcr+P8erWSzWN0uoRDLEVjbQdtRCQ
-         OTtJCP2vI5S/Qz2IuxF4OWefqhNS4+GZkTbBshCLGc1Ry0qSEBf+UDRK0dgh4qHpJVoQ
-         /jNI9Knigy3B/OmYbRZiGEJzWxpes0JOhQVz+4ZI1cUZgZOfnJXEjI17qS80yQg5xPcJ
-         WdK+Lq8fgVBbwkM9/9+p8yIAdc1jFaTqVrTxe3HuG3pNLZEaLXvuG0+IyFW/wWfBjNuT
-         KeImdfZUYu/PWJM0pcNXepf3v1sP1mBPQaALukdQAq4x0YhLuhUH2x2dygLuu76dNmAX
-         ALQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=Txk6oWhViutvEe6HaUZP134awYrZYqFog73Niq3QikM=;
-        b=TMI58VZyRj9fo0iSL2LAG/jSacXwgu5Lg0VOyE05GcD237tUPv2Ze26oSHZM7Ww00v
-         GkNnyN4YMhADrwnWZ7v3f7bRlgf65aGiMjoLuraicN8AsX4K2WK8DVPFLKISucpHX+3a
-         tTizH50XJUbisNlKPcK2R0XoLtVbV9uaEM4tCh0LYgJJdr0kwS8kLiJeXe2mkwzbsXqt
-         YOpHt0tqGGj+EmIvTgI4P6BbrLSSiLpZbTZ2LpZQ9uTCb4z/u7IU4IbOw+8SrY0SLDvX
-         iGQx9FRSqMS+89gp/1xd9nw1neTeUBNFp6ua0PwyH/4/Hjq3XtXYYQtOn8jWtJxHCV+m
-         MS5w==
-X-Gm-Message-State: AOUpUlHu9S1On+iLg+lE9jrZ0HOMsWT9z5TSwnNb3x9HZvZOzqdHOYWJ
-        a05bdJ7IuD48pSL2wFIEh/zPFmyAGB6dg9Pd7r4=
-X-Google-Smtp-Source: AA+uWPwrphuJwJ3/fbq+YAGFQG+FS25jM+y0R8K83Od6vCPsmwcBYCURxPPOr7Mlbe6o8xJxDlboj43yAKDDTp0LvSU=
-X-Received: by 2002:a37:f9f:: with SMTP id 31-v6mr19560466qkp.278.1534258010592;
- Tue, 14 Aug 2018 07:46:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:9e5b:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 07:46:50
- -0700 (PDT)
-From:   =?UTF-8?B?5byg5rOi?= <zbsdta@gmail.com>
-Date:   Tue, 14 Aug 2018 22:46:50 +0800
-Message-ID: <CADUUTHBZ---U7YNYYry7qJY=vt_QpXpytymqJQc9xLFE_NjsAg@mail.gmail.com>
-Subject: How delete node or property in overlayd dts?
-To:     robh+dt@kernel.org, frowand.list@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 14 Aug 2018 13:42:14 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:17578 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728458AbeHNRmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:42:14 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41qbGq047wz9tvSq;
+        Tue, 14 Aug 2018 16:54:43 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 4_1X8nqB6beR; Tue, 14 Aug 2018 16:54:42 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41qbGp6c5Fz9tvSn;
+        Tue, 14 Aug 2018 16:54:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4D3C58B7D6;
+        Tue, 14 Aug 2018 16:54:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Q4dwgOTTPmV3; Tue, 14 Aug 2018 16:54:43 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F8948B7D4;
+        Tue, 14 Aug 2018 16:54:43 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id AE8A971288; Tue, 14 Aug 2018 14:54:42 +0000 (UTC)
+Message-Id: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 1/4] powerpc/mm: enable the use of page table cache of
+ order 0
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 14 Aug 2018 14:54:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-/delete-node/ /delete-prop/ could be used in dtsi files without device
-tree overlay.
+hugepages uses a cache of order 0. Lets allow page tables
+of order 0 in the common part in order to avoid open coding
+in hugetlb
 
-but with device tree overlay,  /delete-node/ and  /delete-prop/ are not work.
-How to delete property and node in overlay dts?
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/32/pgalloc.h | 5 +----
+ arch/powerpc/include/asm/book3s/64/pgalloc.h | 5 +----
+ arch/powerpc/include/asm/nohash/32/pgalloc.h | 5 +----
+ arch/powerpc/include/asm/nohash/64/pgalloc.h | 5 +----
+ arch/powerpc/mm/init-common.c                | 6 +++---
+ 5 files changed, 7 insertions(+), 19 deletions(-)
 
-for example,
-in basel.dts have following node
-node1 {
-    property1;
-    property3;
-    node2 {
-        property2;
-    }
-}
+diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+index 82e44b1a00ae..96138ab3ddd6 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+@@ -25,10 +25,7 @@
+ extern void __bad_pte(pmd_t *pmd);
+ 
+ extern struct kmem_cache *pgtable_cache[];
+-#define PGT_CACHE(shift) ({				\
+-			BUG_ON(!(shift));		\
+-			pgtable_cache[(shift) - 1];	\
+-		})
++#define PGT_CACHE(shift) pgtable_cache[shift]
+ 
+ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+index 391ed2c3b697..bfed4cf3b2f3 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+@@ -37,10 +37,7 @@ extern struct vmemmap_backing *vmemmap_list;
+ #define MAX_PGTABLE_INDEX_SIZE	0xf
+ 
+ extern struct kmem_cache *pgtable_cache[];
+-#define PGT_CACHE(shift) ({				\
+-			BUG_ON(!(shift));		\
+-			pgtable_cache[(shift) - 1];	\
+-		})
++#define PGT_CACHE(shift) pgtable_cache[shift]
+ 
+ extern pte_t *pte_fragment_alloc(struct mm_struct *, unsigned long, int);
+ extern pmd_t *pmd_fragment_alloc(struct mm_struct *, unsigned long);
+diff --git a/arch/powerpc/include/asm/nohash/32/pgalloc.h b/arch/powerpc/include/asm/nohash/32/pgalloc.h
+index 8825953c225b..6fbbb90043c0 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgalloc.h
++++ b/arch/powerpc/include/asm/nohash/32/pgalloc.h
+@@ -25,10 +25,7 @@
+ extern void __bad_pte(pmd_t *pmd);
+ 
+ extern struct kmem_cache *pgtable_cache[];
+-#define PGT_CACHE(shift) ({				\
+-			BUG_ON(!(shift));		\
+-			pgtable_cache[(shift) - 1];	\
+-		})
++#define PGT_CACHE(shift) pgtable_cache[shift]
+ 
+ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+diff --git a/arch/powerpc/include/asm/nohash/64/pgalloc.h b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+index e2d62d033708..e95eb499a174 100644
+--- a/arch/powerpc/include/asm/nohash/64/pgalloc.h
++++ b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+@@ -36,10 +36,7 @@ extern struct vmemmap_backing *vmemmap_list;
+ #define MAX_PGTABLE_INDEX_SIZE	0xf
+ 
+ extern struct kmem_cache *pgtable_cache[];
+-#define PGT_CACHE(shift) ({				\
+-			BUG_ON(!(shift));		\
+-			pgtable_cache[(shift) - 1];	\
+-		})
++#define PGT_CACHE(shift) pgtable_cache[shift]
+ 
+ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
+index 2b656e67f2ea..41190f2b60c2 100644
+--- a/arch/powerpc/mm/init-common.c
++++ b/arch/powerpc/mm/init-common.c
+@@ -40,7 +40,7 @@ static void pmd_ctor(void *addr)
+ 	memset(addr, 0, PMD_TABLE_SIZE);
+ }
+ 
+-struct kmem_cache *pgtable_cache[MAX_PGTABLE_INDEX_SIZE];
++struct kmem_cache *pgtable_cache[MAX_PGTABLE_INDEX_SIZE + 1];
+ EXPORT_SYMBOL_GPL(pgtable_cache);	/* used by kvm_hv module */
+ 
+ /*
+@@ -71,7 +71,7 @@ void pgtable_cache_add(unsigned shift, void (*ctor)(void *))
+ 	 * moment, gcc doesn't seem to recognize is_power_of_2 as a
+ 	 * constant expression, so so much for that. */
+ 	BUG_ON(!is_power_of_2(minalign));
+-	BUG_ON((shift < 1) || (shift > MAX_PGTABLE_INDEX_SIZE));
++	BUG_ON(shift > MAX_PGTABLE_INDEX_SIZE);
+ 
+ 	if (PGT_CACHE(shift))
+ 		return; /* Already have a cache of this size */
+@@ -83,7 +83,7 @@ void pgtable_cache_add(unsigned shift, void (*ctor)(void *))
+ 		panic("Could not allocate pgtable cache for order %d", shift);
+ 
+ 	kfree(name);
+-	pgtable_cache[shift - 1] = new;
++	pgtable_cache[shift] = new;
+ 
+ 	pr_debug("Allocated pgtable cache for order %d\n", shift);
+ }
+-- 
+2.13.3
 
-in overlay.dts as following
- node1 {
-    /delete-property/ property1;
-    /delete-node/ node2;
-}
-
-after overlay, property1 and node2 is not deleted.
