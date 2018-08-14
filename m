@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07732C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8569C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD83521727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD83521727
+	by mail.kernel.org (Postfix) with ESMTP id 62C2A21727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:31:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C2A21727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389751AbeHNUTj (ORCPT
+        id S2389763AbeHNUTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:19:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53442 "EHLO
+        Tue, 14 Aug 2018 16:19:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53486 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388320AbeHNUTj (ORCPT
+        with ESMTP id S2388923AbeHNUTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:19:39 -0400
+        Tue, 14 Aug 2018 16:19:42 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03C9240B;
-        Tue, 14 Aug 2018 17:31:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30F24BDB;
+        Tue, 14 Aug 2018 17:31:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.17 65/97] x86/l1tf: Handle EPT disabled state proper
-Date:   Tue, 14 Aug 2018 19:17:17 +0200
-Message-Id: <20180814171435.619459192@linuxfoundation.org>
+Subject: [PATCH 4.17 66/97] x86/kvm: Move l1tf setup function
+Date:   Tue, 14 Aug 2018 19:17:18 +0200
+Message-Id: <20180814171435.659837815@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -53,175 +53,205 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7 upstream
+commit 7db92e165ac814487264632ab2624e832f20ae38 upstream
 
-If Extended Page Tables (EPT) are disabled or not supported, no L1D
-flushing is required. The setup function can just avoid setting up the L1D
-flush for the EPT=n case.
+In preparation of allowing run time control for L1D flushing, move the
+setup code to the module parameter handler.
 
-Invoke it after the hardware setup has be done and enable_ept has the
-correct state and expose the EPT disabled state in the mitigation status as
-well.
+In case of pre module init parsing, just store the value and let vmx_init()
+do the actual setup after running kvm_init() so that enable_ept is having
+the correct state.
+
+During run-time invoke it directly from the parameter setter to prepare for
+run-time control.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Jiri Kosina <jkosina@suse.cz>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20180713142322.612160168@linutronix.de
+Link: https://lkml.kernel.org/r/20180713142322.694063239@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/vmx.h |    1 
- arch/x86/kernel/cpu/bugs.c |    9 ++--
- arch/x86/kvm/vmx.c         |   89 ++++++++++++++++++++++++---------------------
- 3 files changed, 54 insertions(+), 45 deletions(-)
+ arch/x86/kvm/vmx.c |  125 +++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 78 insertions(+), 47 deletions(-)
 
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -579,6 +579,7 @@ enum vmx_l1d_flush_state {
- 	VMENTER_L1D_FLUSH_NEVER,
- 	VMENTER_L1D_FLUSH_COND,
- 	VMENTER_L1D_FLUSH_ALWAYS,
-+	VMENTER_L1D_FLUSH_EPT_DISABLED,
- };
- 
- extern enum vmx_l1d_flush_state l1tf_vmx_mitigation;
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -676,10 +676,11 @@ static void __init l1tf_select_mitigatio
- 
- #if IS_ENABLED(CONFIG_KVM_INTEL)
- static const char *l1tf_vmx_states[] = {
--	[VMENTER_L1D_FLUSH_AUTO]	= "auto",
--	[VMENTER_L1D_FLUSH_NEVER]	= "vulnerable",
--	[VMENTER_L1D_FLUSH_COND]	= "conditional cache flushes",
--	[VMENTER_L1D_FLUSH_ALWAYS]	= "cache flushes",
-+	[VMENTER_L1D_FLUSH_AUTO]		= "auto",
-+	[VMENTER_L1D_FLUSH_NEVER]		= "vulnerable",
-+	[VMENTER_L1D_FLUSH_COND]		= "conditional cache flushes",
-+	[VMENTER_L1D_FLUSH_ALWAYS]		= "cache flushes",
-+	[VMENTER_L1D_FLUSH_EPT_DISABLED]	= "EPT disabled",
- };
- 
- static ssize_t l1tf_show_state(char *buf)
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -13023,6 +13023,11 @@ static int __init vmx_setup_l1d_flush(vo
- 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
- 		return 0;
+@@ -193,7 +193,8 @@ extern const ulong vmx_return;
  
+ static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
+ 
+-static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush = VMENTER_L1D_FLUSH_COND;
++/* Storage for pre module init parameter parsing */
++static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush_param = VMENTER_L1D_FLUSH_AUTO;
+ 
+ static const struct {
+ 	const char *option;
+@@ -205,33 +206,85 @@ static const struct {
+ 	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
+ };
+ 
+-static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
++#define L1D_CACHE_ORDER 4
++static void *vmx_l1d_flush_pages;
++
++static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
+ {
+-	unsigned int i;
++	struct page *page;
+ 
+-	if (!s)
+-		return -EINVAL;
++	/* If set to 'auto' select 'cond' */
++	if (l1tf == VMENTER_L1D_FLUSH_AUTO)
++		l1tf = VMENTER_L1D_FLUSH_COND;
+ 
+-	for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
+-		if (!strcmp(s, vmentry_l1d_param[i].option)) {
+-			vmentry_l1d_flush = vmentry_l1d_param[i].cmd;
+-			return 0;
+-		}
 +	if (!enable_ept) {
 +		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
 +		return 0;
+ 	}
+ 
++	if (l1tf != VMENTER_L1D_FLUSH_NEVER && !vmx_l1d_flush_pages &&
++	    !boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
++		page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
++		if (!page)
++			return -ENOMEM;
++		vmx_l1d_flush_pages = page_address(page);
 +	}
 +
- 	l1tf_vmx_mitigation = vmentry_l1d_flush;
- 
- 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
-@@ -13049,6 +13054,41 @@ static void vmx_cleanup_l1d_flush(void)
- 	l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
- }
- 
-+static void vmx_exit(void)
-+{
-+#ifdef CONFIG_KEXEC_CORE
-+	RCU_INIT_POINTER(crash_vmclear_loaded_vmcss, NULL);
-+	synchronize_rcu();
-+#endif
++	l1tf_vmx_mitigation = l1tf;
 +
-+	kvm_exit();
-+
-+#if IS_ENABLED(CONFIG_HYPERV)
-+	if (static_branch_unlikely(&enable_evmcs)) {
-+		int cpu;
-+		struct hv_vp_assist_page *vp_ap;
-+		/*
-+		 * Reset everything to support using non-enlightened VMCS
-+		 * access later (e.g. when we reload the module with
-+		 * enlightened_vmcs=0)
-+		 */
-+		for_each_online_cpu(cpu) {
-+			vp_ap =	hv_get_vp_assist_page(cpu);
-+
-+			if (!vp_ap)
-+				continue;
-+
-+			vp_ap->current_nested_vmcs = 0;
-+			vp_ap->enlighten_vmentry = 0;
-+		}
-+
-+		static_branch_disable(&enable_evmcs);
-+	}
-+#endif
-+	vmx_cleanup_l1d_flush();
++	if (l1tf != VMENTER_L1D_FLUSH_NEVER)
++		static_branch_enable(&vmx_l1d_should_flush);
++	return 0;
 +}
-+module_exit(vmx_exit);
 +
- static int __init vmx_init(void)
- {
- 	int r;
-@@ -13082,14 +13122,17 @@ static int __init vmx_init(void)
- 	}
- #endif
- 
--	r = vmx_setup_l1d_flush();
-+	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
-+		     __alignof__(struct vcpu_vmx), THIS_MODULE);
- 	if (r)
- 		return r;
- 
--	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
--		     __alignof__(struct vcpu_vmx), THIS_MODULE);
-+	/*
-+	 * Must be called after kvm_init() so enable_ept is properly set up
-+	 */
-+	r = vmx_setup_l1d_flush();
- 	if (r) {
--		vmx_cleanup_l1d_flush();
-+		vmx_exit();
- 		return r;
- 	}
- 
-@@ -13100,40 +13143,4 @@ static int __init vmx_init(void)
- 
- 	return 0;
++static int vmentry_l1d_flush_parse(const char *s)
++{
++	unsigned int i;
++
++	if (s) {
++		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
++			if (!strcmp(s, vmentry_l1d_param[i].option))
++				return vmentry_l1d_param[i].cmd;
++		}
++	}
+ 	return -EINVAL;
  }
--
--static void __exit vmx_exit(void)
+ 
++static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
++{
++	int l1tf;
++
++	if (!boot_cpu_has(X86_BUG_L1TF))
++		return 0;
++
++	l1tf = vmentry_l1d_flush_parse(s);
++	if (l1tf < 0)
++		return l1tf;
++
++	/*
++	 * Has vmx_init() run already? If not then this is the pre init
++	 * parameter parsing. In that case just store the value and let
++	 * vmx_init() do the proper setup after enable_ept has been
++	 * established.
++	 */
++	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_AUTO) {
++		vmentry_l1d_flush_param = l1tf;
++		return 0;
++	}
++
++	return vmx_setup_l1d_flush(l1tf);
++}
++
+ static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
+ {
+-	return sprintf(s, "%s\n", vmentry_l1d_param[vmentry_l1d_flush].option);
++	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
+ }
+ 
+ static const struct kernel_param_ops vmentry_l1d_flush_ops = {
+ 	.set = vmentry_l1d_flush_set,
+ 	.get = vmentry_l1d_flush_get,
+ };
+-module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, &vmentry_l1d_flush, S_IRUGO);
++module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, S_IRUGO);
+ 
+ struct kvm_vmx {
+ 	struct kvm kvm;
+@@ -9378,7 +9431,7 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 	 * it. The flush bit gets set again either from vcpu_run() or from
+ 	 * one of the unsafe VMEXIT handlers.
+ 	 */
+-	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
++	always = l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_ALWAYS;
+ 	vcpu->arch.l1tf_flush_l1d = always;
+ 
+ 	vcpu->stat.l1d_flush++;
+@@ -13016,34 +13069,6 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.enable_smi_window = enable_smi_window,
+ };
+ 
+-static int __init vmx_setup_l1d_flush(void)
 -{
--#ifdef CONFIG_KEXEC_CORE
--	RCU_INIT_POINTER(crash_vmclear_loaded_vmcss, NULL);
--	synchronize_rcu();
--#endif
+-	struct page *page;
 -
--	kvm_exit();
+-	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+-		return 0;
 -
--#if IS_ENABLED(CONFIG_HYPERV)
--	if (static_branch_unlikely(&enable_evmcs)) {
--		int cpu;
--		struct hv_vp_assist_page *vp_ap;
--		/*
--		 * Reset everything to support using non-enlightened VMCS
--		 * access later (e.g. when we reload the module with
--		 * enlightened_vmcs=0)
--		 */
--		for_each_online_cpu(cpu) {
--			vp_ap =	hv_get_vp_assist_page(cpu);
--
--			if (!vp_ap)
--				continue;
--
--			vp_ap->current_nested_vmcs = 0;
--			vp_ap->enlighten_vmentry = 0;
--		}
--
--		static_branch_disable(&enable_evmcs);
+-	if (!enable_ept) {
+-		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
+-		return 0;
 -	}
--#endif
--	vmx_cleanup_l1d_flush();
+-
+-	l1tf_vmx_mitigation = vmentry_l1d_flush;
+-
+-	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER)
+-		return 0;
+-
+-	if (!boot_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+-		page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
+-		if (!page)
+-			return -ENOMEM;
+-		vmx_l1d_flush_pages = page_address(page);
+-	}
+-
+-	static_branch_enable(&vmx_l1d_should_flush);
+-	return 0;
 -}
 -
--module_init(vmx_init)
--module_exit(vmx_exit)
-+module_init(vmx_init);
+ static void vmx_cleanup_l1d_flush(void)
+ {
+ 	if (vmx_l1d_flush_pages) {
+@@ -13128,12 +13153,18 @@ static int __init vmx_init(void)
+ 		return r;
+ 
+ 	/*
+-	 * Must be called after kvm_init() so enable_ept is properly set up
+-	 */
+-	r = vmx_setup_l1d_flush();
+-	if (r) {
+-		vmx_exit();
+-		return r;
++	 * Must be called after kvm_init() so enable_ept is properly set
++	 * up. Hand the parameter mitigation value in which was stored in
++	 * the pre module init parser. If no parameter was given, it will
++	 * contain 'auto' which will be turned into the default 'cond'
++	 * mitigation mode.
++	 */
++	if (boot_cpu_has(X86_BUG_L1TF)) {
++		r = vmx_setup_l1d_flush(vmentry_l1d_flush_param);
++		if (r) {
++			vmx_exit();
++			return r;
++		}
+ 	}
+ 
+ #ifdef CONFIG_KEXEC_CORE
 
 
