@@ -2,111 +2,87 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 341F8C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F563C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E305121721
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:44:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SPYdhqby"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E305121721
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F1072171F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:45:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1072171F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeHOCdm (ORCPT
+        id S1728100AbeHOCe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:33:42 -0400
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:43732 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725915AbeHOCdm (ORCPT
+        Tue, 14 Aug 2018 22:34:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57416 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbeHOCe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:33:42 -0400
-Received: from nis-sj1-27.broadcom.com (nis-sj1-27.lvn.broadcom.net [10.75.144.136])
-        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 633CF30C075;
-        Tue, 14 Aug 2018 16:44:08 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 633CF30C075
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1534290248;
-        bh=IX+4ea/Q3fKYpSOurHAqiHra49GeAkVfHB6TNiMTsZY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SPYdhqby3daC5XAMgxp/Tv4VT7oWB+IQAp7HfKV/0U8K/bUO2u1RqesPVYFe3Izg+
-         4kDNgbL2veanaVS+eQ/zTa64IiIQCQfhNsKOe29O9gE+KcHotOVAK1b57ltZFoIH2d
-         m5Hzo+6dOYSwMahvg4IFIt/kSWxxsHzekCvYga5s=
-Received: from stbirv-lnx-2.igp.broadcom.net (stbirv-lnx-2.igp.broadcom.net [10.67.48.34])
-        by nis-sj1-27.broadcom.com (Postfix) with ESMTP id 89D92AC07C5;
-        Tue, 14 Aug 2018 16:44:09 -0700 (PDT)
-Received: by stbirv-lnx-2.igp.broadcom.net (Postfix, from userid 47169)
-        id AF6A727F3D0; Tue, 14 Aug 2018 16:32:07 -0700 (PDT)
-From:   justinpopo6@gmail.com
-To:     linux-gpio@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
-        computersforpeace@gmail.com, linus.walleij@linaro.org,
-        gregory.0xf0@gmail.com, Justin Chen <justinpopo6@gmail.com>
-Subject: [PATCH] gpio: brcmstb: allow 0 width GPIO banks
-Date:   Tue, 14 Aug 2018 16:31:57 -0700
-Message-Id: <1534289517-1805-1-git-send-email-justinpopo6@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 14 Aug 2018 22:34:56 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23CDAC94;
+        Tue, 14 Aug 2018 23:45:24 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 16:45:23 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Peter Kalauskas <peskal@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] zram: fix bug storing backing_dev
+Message-Id: <20180814164523.e0fdeed962917e23062ef958@linux-foundation.org>
+In-Reply-To: <20180813073825.GA1062@jagdpanzerIV>
+References: <20180808223100.225086-1-peskal@google.com>
+        <20180813061623.GC64836@rodete-desktop-imager.corp.google.com>
+        <20180813073825.GA1062@jagdpanzerIV>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Justin Chen <justinpopo6@gmail.com>
+On Mon, 13 Aug 2018 16:38:25 +0900 Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-Sometimes we have empty banks within the GPIO block. This commit allows
-proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
-incrementing the bank and number of GPIOs, but not initializing them.
-This will mean a call into the non-existent GPIOs will return an error.
+> On (08/13/18 15:16), Minchan Kim wrote:
+> > > The call to strlcpy in backing_dev_store is incorrect. It should take
+> > > the size of the destination buffer instead of the size of the source
+> > > buffer.  Additionally, ignore the newline character (\n) when reading
+> > > the new file_name buffer. This makes it possible to set the backing_dev
+> > > as follows:
+> > > 
+> > >   echo /dev/sdX > /sys/block/zram0/backing_dev
+> > > 
+> > > Signed-off-by: Peter Kalauskas <peskal@google.com>
+> > Acked-by: Minchan Kim <minchan@kernel.org>
+> > 
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> > CC: LKML <linux-kernel@vger.kernel.org>
+> > Cc: <stable@vger.kernel.org>    [4.14+]
+> 
+> Thanks for Cc-ing Minchan.
+> 
+> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> 
+> > > -	strlcpy(file_name, buf, len);
+> 
+> This is quite interesting. The reason it worked before was the fact that
+> strlcpy() copies 'len - 1' bytes, which is strlen(buf) - 1 in our case,
+> so it accidentally didn't copy the trailing new line symbol. Which also
+> means that "echo -n /dev/sdX" most likely was broken.
+> 
 
-Also remove banks and GPIO information from the dev_info print. This
-information is misleading since the incremented banks and gpio_base do
-not reflect the actual GPIOs that got initialized. We leave this
-information out since it is already printed with dev_dbg.
+I can't find the original email on lkml for some reason, but I
+recreated the patch.
 
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
----
- drivers/gpio/gpio-brcmstb.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+The changelog doesn't describe the end-user impact of the bug, which is
+very desirable when tagging a patch for -stable backporting.  Can we
+have that paragraph please?
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 16c7f9f..8658910 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
- 		struct brcmstb_gpio_bank *bank;
- 		struct gpio_chip *gc;
- 
-+		/*
-+		 * If bank_width is 0, then there is an empty bank in the
-+		 * register block. Special handling for this case.
-+		 */
-+		if (bank_width == 0) {
-+			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
-+					num_banks);
-+			num_banks++;
-+			gpio_base += MAX_GPIO_PER_BANK;
-+			continue;
-+		}
-+
- 		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
- 		if (!bank) {
- 			err = -ENOMEM;
-@@ -740,8 +752,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
- 			goto fail;
- 	}
- 
--	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
--			num_banks, priv->gpio_base, gpio_base - 1);
-+	dev_info(dev, "Brcmstb GPIO registered\n");
- 
- 	if (priv->parent_wake_irq && need_wakeup_event)
- 		pm_wakeup_event(dev, 0);
--- 
-2.7.4
-
+The implementation might be able to use strim() somehow.
