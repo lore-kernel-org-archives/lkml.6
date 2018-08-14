@@ -6,38 +6,50 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C39FC46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF4C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FC312150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC312150B
+	by mail.kernel.org (Postfix) with ESMTP id BEEE52150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEEE52150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389599AbeHNU22 (ORCPT
+        id S2389640AbeHNU2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:28:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58714 "EHLO
+        Tue, 14 Aug 2018 16:28:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58736 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729758AbeHNU21 (ORCPT
+        with ESMTP id S1729758AbeHNU2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:28:27 -0400
+        Tue, 14 Aug 2018 16:28:31 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 560E9D4A;
-        Tue, 14 Aug 2018 17:40:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 382B6D65;
+        Tue, 14 Aug 2018 17:40:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
         Dave Hansen <dave.hansen@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        David Nellans <dnellans@nvidia.com>,
+        Ingo Molnar <mingo@elte.hu>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Minchan Kim <minchan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 027/107] x86/speculation/l1tf: Increase 32bit PAE __PHYSICAL_PAGE_SHIFT
-Date:   Tue, 14 Aug 2018 19:16:50 +0200
-Message-Id: <20180814171522.429135334@linuxfoundation.org>
+Subject: [PATCH 4.9 028/107] mm: x86: move _PAGE_SWP_SOFT_DIRTY from bit 7 to bit 1
+Date:   Tue, 14 Aug 2018 19:16:51 +0200
+Message-Id: <20180814171522.512333536@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,81 +66,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-commit 50896e180c6aa3a9c61a26ced99e15d602666a4c upstream
+commit eee4818baac0f2b37848fdf90e4b16430dc536ac upstream
 
-L1 Terminal Fault (L1TF) is a speculation related vulnerability. The CPU
-speculates on PTE entries which do not have the PRESENT bit set, if the
-content of the resulting physical address is available in the L1D cache.
+_PAGE_PSE is used to distinguish between a truly non-present
+(_PAGE_PRESENT=0) PMD, and a PMD which is undergoing a THP split and
+should be treated as present.
 
-The OS side mitigation makes sure that a !PRESENT PTE entry points to a
-physical address outside the actually existing and cachable memory
-space. This is achieved by inverting the upper bits of the PTE. Due to the
-address space limitations this only works for 64bit and 32bit PAE kernels,
-but not for 32bit non PAE.
+But _PAGE_SWP_SOFT_DIRTY currently uses the _PAGE_PSE bit, which would
+cause confusion between one of those PMDs undergoing a THP split, and a
+soft-dirty PMD.  Dropping _PAGE_PSE check in pmd_present() does not work
+well, because it can hurt optimization of tlb handling in thp split.
 
-This mitigation applies to both host and guest kernels, but in case of a
-64bit host (hypervisor) and a 32bit PAE guest, inverting the upper bits of
-the PAE address space (44bit) is not enough if the host has more than 43
-bits of populated memory address space, because the speculation treats the
-PTE content as a physical host address bypassing EPT.
+Thus, we need to move the bit.
 
-The host (hypervisor) protects itself against the guest by flushing L1D as
-needed, but pages inside the guest are not protected against attacks from
-other processes inside the same guest.
+In the current kernel, bits 1-4 are not used in non-present format since
+commit 00839ee3b299 ("x86/mm: Move swap offset/type up in PTE to work
+around erratum").  So let's move _PAGE_SWP_SOFT_DIRTY to bit 1.  Bit 7
+is used as reserved (always clear), so please don't use it for other
+purpose.
 
-For the guest the inverted PTE mask has to match the host to provide the
-full protection for all pages the host could possibly map into the
-guest. The hosts populated address space is not known to the guest, so the
-mask must cover the possible maximal host address space, i.e. 52 bit.
+[dwmw2: Pulled in to 4.9 backport to support L1TF changes]
 
-On 32bit PAE the maximum PTE mask is currently set to 44 bit because that
-is the limit imposed by 32bit unsigned long PFNs in the VMs. This limits
-the mask to be below what the host could possible use for physical pages.
-
-The L1TF PROT_NONE protection code uses the PTE masks to determine which
-bits to invert to make sure the higher bits are set for unmapped entries to
-prevent L1TF speculation attacks against EPT inside guests.
-
-In order to invert all bits that could be used by the host, increase
-__PHYSICAL_PAGE_SHIFT to 52 to match 64bit.
-
-The real limit for a 32bit PAE kernel is still 44 bits because all Linux
-PTEs are created from unsigned long PFNs, so they cannot be higher than 44
-bits on a 32bit kernel. So these extra PFN bits should be never set. The
-only users of this macro are using it to look at PTEs, so it's safe.
-
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Link: http://lkml.kernel.org/r/20170717193955.20207-3-zi.yan@sent.com
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Zi Yan <zi.yan@cs.rutgers.edu>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: David Nellans <dnellans@nvidia.com>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/page_32_types.h |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable_64.h    |   12 +++++++++---
+ arch/x86/include/asm/pgtable_types.h |   10 +++++-----
+ 2 files changed, 14 insertions(+), 8 deletions(-)
 
---- a/arch/x86/include/asm/page_32_types.h
-+++ b/arch/x86/include/asm/page_32_types.h
-@@ -28,8 +28,13 @@
- #define N_EXCEPTION_STACKS 1
- 
- #ifdef CONFIG_X86_PAE
--/* 44=32+12, the limit we can fit into an unsigned long pfn */
--#define __PHYSICAL_MASK_SHIFT	44
-+/*
-+ * This is beyond the 44 bit limit imposed by the 32bit long pfns,
-+ * but we need the full mask to make sure inverted PROT_NONE
-+ * entries have all the host bits set in a guest.
-+ * The real limit is still 44 bits.
-+ */
-+#define __PHYSICAL_MASK_SHIFT	52
- #define __VIRTUAL_MASK_SHIFT	32
- 
- #else  /* !CONFIG_X86_PAE */
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -166,15 +166,21 @@ static inline int pgd_large(pgd_t pgd) {
+ /*
+  * Encode and de-code a swap entry
+  *
+- * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2|1|0| <- bit number
+- * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U|W|P| <- bit names
+- * | OFFSET (14->63) | TYPE (9-13)  |0|X|X|X| X| X|X|X|0| <- swp entry
++ * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
++ * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
++ * | OFFSET (14->63) | TYPE (9-13)  |0|0|X|X| X| X|X|SD|0| <- swp entry
+  *
+  * G (8) is aliased and used as a PROT_NONE indicator for
+  * !present ptes.  We need to start storing swap entries above
+  * there.  We also need to avoid using A and D because of an
+  * erratum where they can be incorrectly set by hardware on
+  * non-present PTEs.
++ *
++ * SD (1) in swp entry is used to store soft dirty bit, which helps us
++ * remember soft dirty over page migration
++ *
++ * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
++ * but also L and G.
+  */
+ #define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
+ #define SWP_TYPE_BITS 5
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -97,15 +97,15 @@
+ /*
+  * Tracking soft dirty bit when a page goes to a swap is tricky.
+  * We need a bit which can be stored in pte _and_ not conflict
+- * with swap entry format. On x86 bits 6 and 7 are *not* involved
+- * into swap entry computation, but bit 6 is used for nonlinear
+- * file mapping, so we borrow bit 7 for soft dirty tracking.
++ * with swap entry format. On x86 bits 1-4 are *not* involved
++ * into swap entry computation, but bit 7 is used for thp migration,
++ * so we borrow bit 1 for soft dirty tracking.
+  *
+  * Please note that this bit must be treated as swap dirty page
+- * mark if and only if the PTE has present bit clear!
++ * mark if and only if the PTE/PMD has present bit clear!
+  */
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+-#define _PAGE_SWP_SOFT_DIRTY	_PAGE_PSE
++#define _PAGE_SWP_SOFT_DIRTY	_PAGE_RW
+ #else
+ #define _PAGE_SWP_SOFT_DIRTY	(_AT(pteval_t, 0))
+ #endif
 
 
