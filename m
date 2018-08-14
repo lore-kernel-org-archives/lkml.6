@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D595DC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F18C46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9764621738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9764621738
+	by mail.kernel.org (Postfix) with ESMTP id E291B21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E291B21736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391335AbeHNUgf (ORCPT
+        id S2391344AbeHNUgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:36:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32974 "EHLO
+        Tue, 14 Aug 2018 16:36:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390567AbeHNUgf (ORCPT
+        with ESMTP id S2390501AbeHNUgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:36:35 -0400
+        Tue, 14 Aug 2018 16:36:38 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CA54C74;
-        Tue, 14 Aug 2018 17:48:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1FADC8D;
+        Tue, 14 Aug 2018 17:48:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 43/43] x86/speculation/l1tf: Fix up CPU feature flags
-Date:   Tue, 14 Aug 2018 19:18:19 +0200
-Message-Id: <20180814171519.886415475@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 35/43] x86/speculation/l1tf: Extend 64bit swap file size limit
+Date:   Tue, 14 Aug 2018 19:18:11 +0200
+Message-Id: <20180814171519.410521293@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -49,37 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-In linux-4.4.y, the definition of X86_FEATURE_RETPOLINE and
-X86_FEATURE_RETPOLINE_AMD is different from the upstream
-definition. Result is an overlap with the newly introduced
-X86_FEATURE_L1TF_PTEINV. Update RETPOLINE definitions to match
-upstream definitions to improve alignment with upstream code.
+commit 1a7ed1ba4bba6c075d5ad61bb75e3fbc870840d6 upstream
 
+The previous patch has limited swap file size so that large offsets cannot
+clear bits above MAX_PA/2 in the pte and interfere with L1TF mitigation.
+
+It assumed that offsets are encoded starting with bit 12, same as pfn. But
+on x86_64, offsets are encoded starting with bit 9.
+
+Thus the limit can be raised by 3 bits. That means 16TB with 42bit MAX_PA
+and 256TB with 46bit MAX_PA.
+
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/mm/init.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -193,12 +193,12 @@
- #define X86_FEATURE_HW_PSTATE	( 7*32+ 8) /* AMD HW-PState */
- #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -778,7 +778,15 @@ unsigned long max_swapfile_size(void)
  
-+#define X86_FEATURE_RETPOLINE	( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
-+#define X86_FEATURE_RETPOLINE_AMD ( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
-+
- #define X86_FEATURE_INTEL_PT	( 7*32+15) /* Intel Processor Trace */
- #define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* "" Fill RSB on context switches */
- 
--#define X86_FEATURE_RETPOLINE	( 7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
--#define X86_FEATURE_RETPOLINE_AMD ( 7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
--
- #define X86_FEATURE_MSR_SPEC_CTRL ( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
- #define X86_FEATURE_SSBD	( 7*32+17) /* Speculative Store Bypass Disable */
- 
+ 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+-		pages = min_t(unsigned long, l1tf_pfn_limit() + 1, pages);
++		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
++		/*
++		 * We encode swap offsets also with 3 bits below those for pfn
++		 * which makes the usable limit higher.
++		 */
++#ifdef CONFIG_X86_64
++		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
++#endif
++		pages = min_t(unsigned long, l1tf_limit, pages);
+ 	}
+ 	return pages;
+ }
 
 
