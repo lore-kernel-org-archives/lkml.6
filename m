@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C90C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B236C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0EC21653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0EC21653
+	by mail.kernel.org (Postfix) with ESMTP id 3107821653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3107821653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390321AbeHNUaR (ORCPT
+        id S2390308AbeHNUaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59172 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390278AbeHNUaQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 16:30:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59344 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390219AbeHNUaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 16:30:13 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2C7240B;
-        Tue, 14 Aug 2018 17:42:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA4C6C93;
+        Tue, 14 Aug 2018 17:33:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.9 017/107] proc: Fix proc_sys_prune_dcache to hold a sb reference
-Date:   Tue, 14 Aug 2018 19:16:40 +0200
-Message-Id: <20180814171521.778570170@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 45/97] x86/speculation/l1tf: Extend 64bit swap file size limit
+Date:   Tue, 14 Aug 2018 19:16:57 +0200
+Message-Id: <20180814171434.871858283@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
-References: <20180814171520.883143803@linuxfoundation.org>
+In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
+References: <20180814171433.160434170@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,188 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 2fd1d2c4ceb2248a727696962cf3370dc9f5a0a4 upstream.
+commit 1a7ed1ba4bba6c075d5ad61bb75e3fbc870840d6 upstream
 
-Andrei Vagin writes:
-FYI: This bug has been reproduced on 4.11.7
-> BUG: Dentry ffff895a3dd01240{i=4e7c09a,n=lo}  still in use (1) [unmount of proc proc]
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 13588 at fs/dcache.c:1445 umount_check+0x6e/0x80
-> CPU: 1 PID: 13588 Comm: kworker/1:1 Not tainted 4.11.7-200.fc25.x86_64 #1
-> Hardware name: CompuLab sbc-flt1/fitlet, BIOS SBCFLT_0.08.04 06/27/2015
-> Workqueue: events proc_cleanup_work
-> Call Trace:
->  dump_stack+0x63/0x86
->  __warn+0xcb/0xf0
->  warn_slowpath_null+0x1d/0x20
->  umount_check+0x6e/0x80
->  d_walk+0xc6/0x270
->  ? dentry_free+0x80/0x80
->  do_one_tree+0x26/0x40
->  shrink_dcache_for_umount+0x2d/0x90
->  generic_shutdown_super+0x1f/0xf0
->  kill_anon_super+0x12/0x20
->  proc_kill_sb+0x40/0x50
->  deactivate_locked_super+0x43/0x70
->  deactivate_super+0x5a/0x60
->  cleanup_mnt+0x3f/0x90
->  mntput_no_expire+0x13b/0x190
->  kern_unmount+0x3e/0x50
->  pid_ns_release_proc+0x15/0x20
->  proc_cleanup_work+0x15/0x20
->  process_one_work+0x197/0x450
->  worker_thread+0x4e/0x4a0
->  kthread+0x109/0x140
->  ? process_one_work+0x450/0x450
->  ? kthread_park+0x90/0x90
->  ret_from_fork+0x2c/0x40
-> ---[ end trace e1c109611e5d0b41 ]---
-> VFS: Busy inodes after unmount of proc. Self-destruct in 5 seconds.  Have a nice day...
-> BUG: unable to handle kernel NULL pointer dereference at           (null)
-> IP: _raw_spin_lock+0xc/0x30
-> PGD 0
+The previous patch has limited swap file size so that large offsets cannot
+clear bits above MAX_PA/2 in the pte and interfere with L1TF mitigation.
 
-Fix this by taking a reference to the super block in proc_sys_prune_dcache.
+It assumed that offsets are encoded starting with bit 12, same as pfn. But
+on x86_64, offsets are encoded starting with bit 9.
 
-The superblock reference is the core of the fix however the sysctl_inodes
-list is converted to a hlist so that hlist_del_init_rcu may be used.  This
-allows proc_sys_prune_dache to remove inodes the sysctl_inodes list, while
-not causing problems for proc_sys_evict_inode when if it later choses to
-remove the inode from the sysctl_inodes list.  Removing inodes from the
-sysctl_inodes list allows proc_sys_prune_dcache to have a progress
-guarantee, while still being able to drop all locks.  The fact that
-head->unregistering is set in start_unregistering ensures that no more
-inodes will be added to the the sysctl_inodes list.
+Thus the limit can be raised by 3 bits. That means 16TB with 42bit MAX_PA
+and 256TB with 46bit MAX_PA.
 
-Previously the code did a dance where it delayed calling iput until the
-next entry in the list was being considered to ensure the inode remained on
-the sysctl_inodes list until the next entry was walked to.  The structure
-of the loop in this patch does not need that so is much easier to
-understand and maintain.
-
-Cc: stable@vger.kernel.org
-Reported-by: Andrei Vagin <avagin@gmail.com>
-Tested-by: Andrei Vagin <avagin@openvz.org>
-Fixes: ace0c791e6c3 ("proc/sysctl: Don't grab i_lock under sysctl_lock.")
-Fixes: d6cffbbe9a7e ("proc/sysctl: prune stale dentries during unregistering")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/proc/internal.h     |    2 +-
- fs/proc/proc_sysctl.c  |   43 ++++++++++++++++++++++++++++++-------------
- include/linux/sysctl.h |    2 +-
- 3 files changed, 32 insertions(+), 15 deletions(-)
+ arch/x86/mm/init.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -65,7 +65,7 @@ struct proc_inode {
- 	struct proc_dir_entry *pde;
- 	struct ctl_table_header *sysctl;
- 	struct ctl_table *sysctl_entry;
--	struct list_head sysctl_inodes;
-+	struct hlist_node sysctl_inodes;
- 	const struct proc_ns_operations *ns_ops;
- 	struct inode vfs_inode;
- };
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -190,7 +190,7 @@ static void init_header(struct ctl_table
- 	head->set = set;
- 	head->parent = NULL;
- 	head->node = node;
--	INIT_LIST_HEAD(&head->inodes);
-+	INIT_HLIST_HEAD(&head->inodes);
- 	if (node) {
- 		struct ctl_table *entry;
- 		for (entry = table; entry->procname; entry++, node++)
-@@ -260,25 +260,42 @@ static void unuse_table(struct ctl_table
- 			complete(p->unregistering);
- }
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -891,7 +891,15 @@ unsigned long max_swapfile_size(void)
  
--/* called under sysctl_lock */
- static void proc_sys_prune_dcache(struct ctl_table_header *head)
- {
--	struct inode *inode, *prev = NULL;
-+	struct inode *inode;
- 	struct proc_inode *ei;
-+	struct hlist_node *node;
-+	struct super_block *sb;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(ei, &head->inodes, sysctl_inodes) {
--		inode = igrab(&ei->vfs_inode);
--		if (inode) {
--			rcu_read_unlock();
--			iput(prev);
--			prev = inode;
--			d_prune_aliases(inode);
-+	for (;;) {
-+		node = hlist_first_rcu(&head->inodes);
-+		if (!node)
-+			break;
-+		ei = hlist_entry(node, struct proc_inode, sysctl_inodes);
-+		spin_lock(&sysctl_lock);
-+		hlist_del_init_rcu(&ei->sysctl_inodes);
-+		spin_unlock(&sysctl_lock);
-+
-+		inode = &ei->vfs_inode;
-+		sb = inode->i_sb;
-+		if (!atomic_inc_not_zero(&sb->s_active))
-+			continue;
-+		inode = igrab(inode);
-+		rcu_read_unlock();
-+		if (unlikely(!inode)) {
-+			deactivate_super(sb);
- 			rcu_read_lock();
-+			continue;
- 		}
-+
-+		d_prune_aliases(inode);
-+		iput(inode);
-+		deactivate_super(sb);
-+
-+		rcu_read_lock();
+ 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+-		pages = min_t(unsigned long, l1tf_pfn_limit() + 1, pages);
++		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
++		/*
++		 * We encode swap offsets also with 3 bits below those for pfn
++		 * which makes the usable limit higher.
++		 */
++#ifdef CONFIG_X86_64
++		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
++#endif
++		pages = min_t(unsigned long, l1tf_limit, pages);
  	}
- 	rcu_read_unlock();
--	iput(prev);
+ 	return pages;
  }
- 
- /* called under sysctl_lock, will reacquire if has to wait */
-@@ -464,7 +481,7 @@ static struct inode *proc_sys_make_inode
- 	}
- 	ei->sysctl = head;
- 	ei->sysctl_entry = table;
--	list_add_rcu(&ei->sysctl_inodes, &head->inodes);
-+	hlist_add_head_rcu(&ei->sysctl_inodes, &head->inodes);
- 	head->count++;
- 	spin_unlock(&sysctl_lock);
- 
-@@ -492,7 +509,7 @@ out:
- void proc_sys_evict_inode(struct inode *inode, struct ctl_table_header *head)
- {
- 	spin_lock(&sysctl_lock);
--	list_del_rcu(&PROC_I(inode)->sysctl_inodes);
-+	hlist_del_init_rcu(&PROC_I(inode)->sysctl_inodes);
- 	if (!--head->count)
- 		kfree_rcu(head, rcu);
- 	spin_unlock(&sysctl_lock);
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -143,7 +143,7 @@ struct ctl_table_header
- 	struct ctl_table_set *set;
- 	struct ctl_dir *parent;
- 	struct ctl_node *node;
--	struct list_head inodes; /* head for proc_inode->sysctl_inodes */
-+	struct hlist_head inodes; /* head for proc_inode->sysctl_inodes */
- };
- 
- struct ctl_dir {
 
 
