@@ -6,42 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F226FC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4774C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CE621738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CE621738
+	by mail.kernel.org (Postfix) with ESMTP id 64AD521736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64AD521736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403844AbeHNUfq (ORCPT
+        id S2391205AbeHNUft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32794 "EHLO
+        Tue, 14 Aug 2018 16:35:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfp (ORCPT
+        with ESMTP id S2390379AbeHNUfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:45 -0400
+        Tue, 14 Aug 2018 16:35:48 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AF4FCB5;
-        Tue, 14 Aug 2018 17:47:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16A79C74;
+        Tue, 14 Aug 2018 17:47:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        Srinidhi Rao <srinidhir@vmware.com>
-Subject: [PATCH 4.4 04/43] fork: unconditionally clear stack on fork
-Date:   Tue, 14 Aug 2018 19:17:40 +0200
-Message-Id: <20180814171517.334471891@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.4 05/43] parisc: Enable CONFIG_MLONGCALLS by default
+Date:   Tue, 14 Aug 2018 19:17:41 +0200
+Message-Id: <20180814171517.431411225@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -58,86 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Helge Deller <deller@gmx.de>
 
-commit e01e80634ecdde1dd113ac43b3adad21b47f3957 upstream.
+commit 66509a276c8c1d19ee3f661a41b418d101c57d29 upstream.
 
-One of the classes of kernel stack content leaks[1] is exposing the
-contents of prior heap or stack contents when a new process stack is
-allocated.  Normally, those stacks are not zeroed, and the old contents
-remain in place.  In the face of stack content exposure flaws, those
-contents can leak to userspace.
+Enable the -mlong-calls compiler option by default, because otherwise in most
+cases linking the vmlinux binary fails due to truncations of R_PARISC_PCREL22F
+relocations. This fixes building the 64-bit defconfig.
 
-Fixing this will make the kernel no longer vulnerable to these flaws, as
-the stack will be wiped each time a stack is assigned to a new process.
-There's not a meaningful change in runtime performance; it almost looks
-like it provides a benefit.
-
-Performing back-to-back kernel builds before:
-	Run times: 157.86 157.09 158.90 160.94 160.80
-	Mean: 159.12
-	Std Dev: 1.54
-
-and after:
-	Run times: 159.31 157.34 156.71 158.15 160.81
-	Mean: 158.46
-	Std Dev: 1.46
-
-Instead of making this a build or runtime config, Andy Lutomirski
-recommended this just be enabled by default.
-
-[1] A noisy search for many kinds of stack content leaks can be seen here:
-https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=linux+kernel+stack+leak
-
-I did some more with perf and cycle counts on running 100,000 execs of
-/bin/true.
-
-before:
-Cycles: 218858861551 218853036130 214727610969 227656844122 224980542841
-Mean:  221015379122.60
-Std Dev: 4662486552.47
-
-after:
-Cycles: 213868945060 213119275204 211820169456 224426673259 225489986348
-Mean:  217745009865.40
-Std Dev: 5935559279.99
-
-It continues to look like it's faster, though the deviation is rather
-wide, but I'm not sure what I could do that would be less noisy.  I'm
-open to ideas!
-
-Link: http://lkml.kernel.org/r/20180221021659.GA37073@beast
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[ Srivatsa: Backported to 4.4.y ]
-Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
-Reviewed-by: Srinidhi Rao <srinidhir@vmware.com>
+Cc: stable@vger.kernel.org # 4.0+
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/thread_info.h |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -55,11 +55,7 @@ extern long do_no_restart_syscall(struct
+---
+ arch/parisc/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/parisc/Kconfig
++++ b/arch/parisc/Kconfig
+@@ -177,7 +177,7 @@ config PREFETCH
  
- #ifdef __KERNEL__
- 
--#ifdef CONFIG_DEBUG_STACK_USAGE
--# define THREADINFO_GFP		(GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO)
--#else
--# define THREADINFO_GFP		(GFP_KERNEL | __GFP_NOTRACK)
--#endif
-+#define THREADINFO_GFP		(GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO)
- 
- /*
-  * flag set/clear/test wrappers
+ config MLONGCALLS
+ 	bool "Enable the -mlong-calls compiler option for big kernels"
+-	def_bool y if (!MODULES)
++	default y
+ 	depends on PA8X00
+ 	help
+ 	  If you configure the kernel to include many drivers built-in instead
 
 
