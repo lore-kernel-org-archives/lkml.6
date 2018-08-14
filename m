@@ -2,147 +2,147 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6DBC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C88C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48B122173A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B14C2173A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:25:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbNCNNYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B122173A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="L7Z1/FpF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B14C2173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeHNRMW (ORCPT
+        id S1732595AbeHNRMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:12:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40659 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728978AbeHNRMV (ORCPT
+        Tue, 14 Aug 2018 13:12:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42304 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbeHNRMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:12:21 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y9-v6so12473367wma.5;
-        Tue, 14 Aug 2018 07:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QGhkZVlxuhNbrKjVcwZjBlRbz5zA6lX59VqL04ya/EQ=;
-        b=qbNCNNYCPzi3AAEApHDLHRc70bd06C6Q9/Y0ykJZrxEO0RGDTRO0MOAdvgWGBvxqH1
-         c6OKBc73UQP/lSJm8jNxNgdzvKOdb3IQp6iRCAHJlsaqA9i9aTWmJUp+8m07iCvdxCuG
-         44q0RvasHDZ3aW7dKB4SYmCWLyVmSgovHflv9xS7EUa8tXDpy1b//zjRrhrZ46sdyUzT
-         F5Pr+O/F3X3gi5+qozuoNrA9hksMTQUs8Y9pNPAP9CIbEPgx+CRiRWM7jCVMwk2naZvg
-         a8BjNxrTABreyQTpFZb72kheVGEXmZL50000VZeXve1BoQEPrB9AmptUd8yk9+y4F46H
-         v1VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QGhkZVlxuhNbrKjVcwZjBlRbz5zA6lX59VqL04ya/EQ=;
-        b=oJI4HlzNrN/yvkPMk2w3EL/99Bt4/b9O0+ZxBk8hSROvqzlMFi/CJzXSYlNhuqEyqR
-         OaRC9NNyd4VKnC6wF/RdezTUfnfPTlzViJPukTOwiS6aayO7qje8d3mZ1ZWgWirT9kNp
-         EqzxKnW0mJzs2NweOrTagkftuPhwPoxoq4Y49ZUIjGj01r6onN5ApiOc27aYdPiukYvN
-         NaMLW3dblsSQ/0HnY9h+KXC36mg/kNpJSU8C2DlHlTigx6uc7Mmu/Go8ikJp4xIn/bA7
-         FWrTbglKJ+aBIyJq0+cAFzgn3HiZHeSNfXskYxwd0huLjA8L2St/Ev5JTbjN14okJ5f2
-         JLqg==
-X-Gm-Message-State: AOUpUlG0cOYEeD7FeX9yZ5+T/1ZXGxIGyT68Yw+Gup9gz9YgEjG1RsiP
-        F+YKRIv4lgDsRMuESVHEZNQ=
-X-Google-Smtp-Source: AA+uWPzW4a+AO9yZ7ZcRif8Su9XOctHsW4613elJXPhAWVTZZZgUy8mV+7Txwh739XOF05RhwshlFA==
-X-Received: by 2002:a1c:9e4d:: with SMTP id h74-v6mr11585059wme.70.1534256696143;
-        Tue, 14 Aug 2018 07:24:56 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id o10-v6sm14336623wrw.79.2018.08.14.07.24.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 07:24:55 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 16:24:54 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH] soc/tegra: pmc: fix child-node lookup
-Message-ID: <20180814142454.GB21075@ulmo>
-References: <20171115094458.31666-1-johan@kernel.org>
- <20180322142432.GA5853@ulmo>
- <20180813143317.GI24218@localhost>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="O5XBE6gyVG5Rl6Rj"
-Content-Disposition: inline
-In-Reply-To: <20180813143317.GI24218@localhost>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 14 Aug 2018 13:12:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=iedwjAgb4nUZB/LSkdK3adN6MPELQQaorrJGa8TDwTc=; b=L7Z1/FpFxI9p
+        Ab6v4BrGVUAKwm/OfVHHDyyznpgV3XNqH8XsOvqductyFpvtW0xroUAfWXk5NG9p17zwgZ+UYHp8p
+        RwhEMlpWHJF6rs4KkbOamSfoGRffy2+/UHp76nri5+VlSq0OOQ00NnT+LBw5LaAm+cv0L1wAj5rdq
+        toRao=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fpaG8-0000sa-1B; Tue, 14 Aug 2018 14:25:20 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id BB8D41124449; Tue, 14 Aug 2018 15:25:19 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        patches@opensource.cirrus.com, Takashi Iwai <tiwai@suse.com>,
+        linux-kernel@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: wm9712: fix replace codec to component" to the asoc tree
+In-Reply-To:  <20180813223556.16262-1-marcel@ziswiler.com>
+Message-Id: <20180814142519.BB8D41124449@debutante.sirena.org.uk>
+Date:   Tue, 14 Aug 2018 15:25:19 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: wm9712: fix replace codec to component
 
-On Mon, Aug 13, 2018 at 04:33:17PM +0200, Johan Hovold wrote:
-> Hi Thierry,
->=20
-> On Thu, Mar 22, 2018 at 03:24:32PM +0100, Thierry Reding wrote:
-> > On Wed, Nov 15, 2017 at 10:44:58AM +0100, Johan Hovold wrote:
-> > > Fix child-node lookup during probe, which ended up searching the whole
-> > > device tree depth-first starting at the parent rather than just match=
-ing
-> > > on its children.
-> > >=20
-> > > To make things worse, the parent pmc node could end up being prematur=
-ely
-> > > freed as of_find_node_by_name() drops a reference to its first argume=
-nt.
-> > >=20
-> > > Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) suppo=
-rt to PMC")
-> > > Cc: stable <stable@vger.kernel.org>     # 4.0
-> > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> > > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > > ---
-> > >  drivers/soc/tegra/pmc.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > Applied, thanks.
->=20
-> I noticed this one still hasn't made it into linux-next. Looks like it
-> wasn't included in you 4.17 pull request and is still sitting in the
-> tegra for-4.17/soc branch.
+has been applied to the asoc tree at
 
-Indeed. Looking at my tree it seems like I applied this to for-4.17/soc
-a couple of days after the signed tag for the pull request. It probably
-should've gone into a for-4.18/soc, or perhaps into fixes pull request.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-I've cherry-picked it into for-4.20/soc now. Thanks for the reminder.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Thierry
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlty5jYACgkQ3SOs138+
-s6Et9hAAnZ04tRIizkcPqVJmHyaTRnw4dedbCFiKwJCInlc/o6l8lj9+g52bazTb
-1tbqzzrMqVT1zWtILFZsoPKDXE5OMOv98twCGZEwIJ6Got6w5TsJbI0ctPhdL2Be
-B+nUNM0wAOyaQluqhHSWikJJEvkHZ6rftXUwzQMVhwxVEh01QzIwRW/jGHDB6Twe
-a06gnfKHGCqhZm4Qb5aeA4mUopTbad5VCrXclWAXGMcfUQA/KV2BKz7Stj0dTWlA
-Q09/CPgMFnBTqCR1n3Pd2HZp0H8TAx3YopQr1r6SGsiZdh/udjvmIoo2Ih4GFXy7
-pN5y/kjiuOKrsjx3FkmAxwN8SkJfi4BwzsL7ACpsqr5cXJJLmuQguotjm5q20fSQ
-4Be+SrOPt91eeLEDIrXO5Zgs0O3HmGjpzBBsZZQuzbMa009lQPGyOqVjN85trx2o
-73lrfZKdecVEOVQivaiHdLX8QTeSVbgm79HSdnQjSrTh1SfmuGpJIwAJczIj+l6l
-l9PCnznTGQiQoLpBpXnEgjZEKE1KQa/rJxZBhbTk/D7fqFMJkklexXW5o6pkS7sN
-fOsZXeldMXvhdkxH53fZOUBj6nX/8if+jqLa9wGSIW4Z03Ic/tgTM7reC72EjqYT
-SmB46t/mz4qG1bph2pVeax6+bogJS6SfW9eiLAGztrCgczEwXAg=
-=Usxc
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---O5XBE6gyVG5Rl6Rj--
+From 5e4cfadaf5b73a0801b2fa7fb007f98400ebfe6e Mon Sep 17 00:00:00 2001
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Date: Tue, 14 Aug 2018 00:35:56 +0200
+Subject: [PATCH] ASoC: wm9712: fix replace codec to component
+
+Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
+"wm9712-codec" got renamed to "wm9712-component", however, this change
+never got propagated down to the actual board/platform drivers. E.g. on
+Colibri T20 this lead to the following spew upon boot with sound/touch
+being broken:
+
+[    2.214121] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    2.222137] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    2.344384] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    2.351885] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    2.668339] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    2.675811] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    3.208408] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    3.216312] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    3.235397] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    3.248938] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[   14.970443] ALSA device list:
+[   14.996628]   No soundcards found.
+
+This commit finally fixes this again.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ sound/soc/codecs/wm9712.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
+index 953d94d50586..ade34c26ad2f 100644
+--- a/sound/soc/codecs/wm9712.c
++++ b/sound/soc/codecs/wm9712.c
+@@ -719,7 +719,7 @@ static int wm9712_probe(struct platform_device *pdev)
+ 
+ static struct platform_driver wm9712_component_driver = {
+ 	.driver = {
+-		.name = "wm9712-component",
++		.name = "wm9712-codec",
+ 	},
+ 
+ 	.probe = wm9712_probe,
+-- 
+2.18.0
+
