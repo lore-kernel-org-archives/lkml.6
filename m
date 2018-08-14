@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56F3C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E9AC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C7821471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C7821471
+	by mail.kernel.org (Postfix) with ESMTP id DE30921471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:44:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE30921471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390760AbeHNUcj (ORCPT
+        id S2390769AbeHNUcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:32:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60034 "EHLO
+        Tue, 14 Aug 2018 16:32:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbeHNUcj (ORCPT
+        with ESMTP id S1728642AbeHNUcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:32:39 -0400
+        Tue, 14 Aug 2018 16:32:47 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5AC3B40B;
-        Tue, 14 Aug 2018 17:44:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D000C8D;
+        Tue, 14 Aug 2018 17:44:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ave Hansen <dave.hansen@intel.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 091/107] Documentation/l1tf: Remove Yonah processors from not vulnerable list
-Date:   Tue, 14 Aug 2018 19:17:54 +0200
-Message-Id: <20180814171526.459231966@linuxfoundation.org>
+Subject: [PATCH 4.9 056/107] cpu/hotplug: Boot HT siblings at least once
+Date:   Tue, 14 Aug 2018 19:17:19 +0200
+Message-Id: <20180814171524.517633215@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -53,29 +54,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 58331136136935c631c2b5f06daf4c3006416e91 upstream
+commit 0cc3cd21657be04cb0559fe8063f2130493f92cf upstream
 
-Dave reported, that it's not confirmed that Yonah processors are
-unaffected. Remove them from the list.
+Due to the way Machine Check Exceptions work on X86 hyperthreads it's
+required to boot up _all_ logical cores at least once in order to set the
+CR4.MCE bit.
 
-Reported-by: ave Hansen <dave.hansen@intel.com>
+So instead of ignoring the sibling threads right away, let them boot up
+once so they can configure themselves. After they came out of the initial
+boot stage check whether its a "secondary" sibling and cancel the operation
+which puts the CPU back into offline state.
+
+[dwmw2: Backport to 4.9]
+
+Reported-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/l1tf.rst |    2 --
- 1 file changed, 2 deletions(-)
+ kernel/cpu.c |   72 +++++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 48 insertions(+), 24 deletions(-)
 
---- a/Documentation/l1tf.rst
-+++ b/Documentation/l1tf.rst
-@@ -19,8 +19,6 @@ vulnerability is not present on:
-    - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
-      Penwell, Pineview, Silvermont, Airmont, Merrifield)
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -54,6 +54,7 @@ struct cpuhp_cpu_state {
+ 	bool			rollback;
+ 	bool			single;
+ 	bool			bringup;
++	bool			booted_once;
+ 	struct hlist_node	*node;
+ 	enum cpuhp_state	cb_state;
+ 	int			result;
+@@ -355,6 +356,40 @@ void cpu_hotplug_enable(void)
+ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
+ #endif	/* CONFIG_HOTPLUG_CPU */
  
--   - The Intel Core Duo Yonah variants (2006 - 2008)
++#ifdef CONFIG_HOTPLUG_SMT
++enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
++
++static int __init smt_cmdline_disable(char *str)
++{
++	cpu_smt_control = CPU_SMT_DISABLED;
++	if (str && !strcmp(str, "force")) {
++		pr_info("SMT: Force disabled\n");
++		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
++	}
++	return 0;
++}
++early_param("nosmt", smt_cmdline_disable);
++
++static inline bool cpu_smt_allowed(unsigned int cpu)
++{
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		return true;
++
++	if (topology_is_primary_thread(cpu))
++		return true;
++
++	/*
++	 * On x86 it's required to boot all logical CPUs at least once so
++	 * that the init code can get a chance to set CR4.MCE on each
++	 * CPU. Otherwise, a broadacasted MCE observing CR4.MCE=0b on any
++	 * core will shutdown the machine.
++	 */
++	return !per_cpu(cpuhp_state, cpu).booted_once;
++}
++#else
++static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
++#endif
++
+ /* Need to know about CPUs going up/down? */
+ int register_cpu_notifier(struct notifier_block *nb)
+ {
+@@ -431,6 +466,16 @@ static int bringup_wait_for_ap(unsigned
+ 	stop_machine_unpark(cpu);
+ 	kthread_unpark(st->thread);
+ 
++	/*
++	 * SMT soft disabling on X86 requires to bring the CPU out of the
++	 * BIOS 'wait for SIPI' state in order to set the CR4.MCE bit.  The
++	 * CPU marked itself as booted_once in cpu_notify_starting() so the
++	 * cpu_smt_allowed() check will now return false if this is not the
++	 * primary sibling.
++	 */
++	if (!cpu_smt_allowed(cpu))
++		return -ECANCELED;
++
+ 	/* Should we go further up ? */
+ 	if (st->target > CPUHP_AP_ONLINE_IDLE) {
+ 		__cpuhp_kick_ap_work(st);
+@@ -978,29 +1023,6 @@ int cpu_down(unsigned int cpu)
+ EXPORT_SYMBOL(cpu_down);
+ #endif /*CONFIG_HOTPLUG_CPU*/
+ 
+-#ifdef CONFIG_HOTPLUG_SMT
+-enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
 -
-    - The Intel XEON PHI family
+-static int __init smt_cmdline_disable(char *str)
+-{
+-	cpu_smt_control = CPU_SMT_DISABLED;
+-	if (str && !strcmp(str, "force")) {
+-		pr_info("SMT: Force disabled\n");
+-		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
+-	}
+-	return 0;
+-}
+-early_param("nosmt", smt_cmdline_disable);
+-
+-static inline bool cpu_smt_allowed(unsigned int cpu)
+-{
+-	return cpu_smt_control == CPU_SMT_ENABLED ||
+-		topology_is_primary_thread(cpu);
+-}
+-#else
+-static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
+-#endif
+-
+ /**
+  * notify_cpu_starting(cpu) - Invoke the callbacks on the starting CPU
+  * @cpu: cpu that just started
+@@ -1014,6 +1036,7 @@ void notify_cpu_starting(unsigned int cp
+ 	enum cpuhp_state target = min((int)st->target, CPUHP_AP_ONLINE);
  
-    - Intel processors which have the ARCH_CAP_RDCL_NO bit set in the
+ 	rcu_cpu_starting(cpu);	/* Enables RCU usage on this CPU. */
++	st->booted_once = true;
+ 	while (st->state < target) {
+ 		st->state++;
+ 		cpuhp_invoke_callback(cpu, st->state, true, NULL);
+@@ -2114,5 +2137,6 @@ void __init boot_cpu_init(void)
+  */
+ void __init boot_cpu_hotplug_init(void)
+ {
+-	per_cpu_ptr(&cpuhp_state, smp_processor_id())->state = CPUHP_ONLINE;
++	this_cpu_write(cpuhp_state.booted_once, true);
++	this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
+ }
 
 
