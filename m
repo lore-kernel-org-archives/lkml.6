@@ -2,168 +2,109 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A65CC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752D4C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5E542172F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:05:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E542172F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D4D0220C03
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D0220C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbeHNKvL (ORCPT
+        id S1731003AbeHNK7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 06:51:11 -0400
-Received: from mga17.intel.com ([192.55.52.151]:13774 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727830AbeHNKvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:51:11 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2018 01:05:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,237,1531810800"; 
-   d="scan'208";a="64762399"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
-  by orsmga007.jf.intel.com with ESMTP; 14 Aug 2018 01:04:55 -0700
-Date:   Tue, 14 Aug 2018 16:08:51 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, arjan@linux.intel.com,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
-Message-ID: <20180814080851.jazg3qebsleklqa5@shbuild888>
-References: <20180608095154.22413-1-feng.tang@intel.com>
- <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
- <20180612084234.gjzq66xsqblryrkm@shbuild888>
- <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
- <20180802091539.m5k7cdoad6hfkdfy@shbuild888>
- <20180814063959.45bddz42ytz3e4jb@shbuild888>
- <20180814071834.GB24616@kroah.com>
- <20180814073810.m7ewuyvuhptgsm22@shbuild888>
- <20180814074041.GB28982@kroah.com>
+        Tue, 14 Aug 2018 06:59:45 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:35610 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726053AbeHNK7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:59:45 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7E89NTm001293;
+        Tue, 14 Aug 2018 03:12:46 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2ksw6yk8p1-1;
+        Tue, 14 Aug 2018 03:12:46 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id C8E8E611C8AC;
+        Tue, 14 Aug 2018 03:14:33 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 14 Aug 2018
+ 09:12:45 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w7E8ChwS020612; Tue,
+ 14 Aug 2018 09:12:43 +0100
+Date:   Tue, 14 Aug 2018 09:12:43 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Robert Jarzmik" <robert.jarzmik@free.fr>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH v2] ASoC: wm9712: fix replace codec to component
+Message-ID: <20180814081243.GM32322@imbe.wolfsonmicro.main>
+References: <20180813223556.16262-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180814074041.GB28982@kroah.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180813223556.16262-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=660 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808140084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
-
-Thanks for the prompt review.
-
-On Tue, Aug 14, 2018 at 09:40:41AM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Aug 14, 2018 at 03:38:10PM +0800, Feng Tang wrote:
-> > Hi Greg,
-> > 
-> > On Tue, Aug 14, 2018 at 09:18:34AM +0200, Greg Kroah-Hartman wrote:
-> > > On Tue, Aug 14, 2018 at 02:39:59PM +0800, Feng Tang wrote:
-> > > > Hi Greg, Ulf
-> > > > 
-> > > > Could you help to review this? many thanks!
-> > > 
-> > > Review what?  I see no patch here.  And why would I need to review a mmc
-> > > patch in the middle of the merge window?
-> > > 
-> > > totally confused,
-> > 
-> > Sorry for the confusion! I didn't noticed the 4.19 merge window.
-> > 
-> > The patch was originally posted in June, and has gone through some
-> > review discussions with mmc maintainers, my last mail was trying
-> > to keep some discussion info.
+On Tue, Aug 14, 2018 at 12:35:56AM +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Ok, then why ask me?  I'm not the mmc maintainer.
-
-The reason is this patch not only touches the mmc, but also affects many other
-subsystems in drivers/ as the init order is changed. And the get_maintainer.pl
-shows you are the first suggested reviewer for changes to drivers/Makefile :)
-
+> Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
+> "wm9712-codec" got renamed to "wm9712-component", however, this change
+> never got propagated down to the actual board/platform drivers. E.g. on
+> Colibri T20 this lead to the following spew upon boot with sound/touch
+> being broken:
 > 
-> > The original patch is:
-> > -----
-> > 
-> > >From 1514c7d56e887ace37466dded09bc43f2a4c9a4a Mon Sep 17 00:00:00 2001
-> > From: Feng Tang <feng.tang@intel.com>
-> > Date: Fri, 8 Jun 2018 17:10:30 +0800
-> > Subject: [PATCH] mmc: Move the mmc driver init earlier
-> > 
-> > When doing some boot time optimization for an eMMC rootfs NUCs,
-> > we found the rootfs may spend around 100 microseconds waiting
-> > for eMMC card to be initialized, then the rootfs could be
-> > mounted.
-> > 	[    1.216561] Waiting for root device /dev/mmcblk1p1...
-> > 	[    1.289262] mmc1: new HS400 MMC card at address 0001
-> > 	[    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
-> > 	[    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
-> > 	[    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
-> > 	[    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
-> > 	[    1.292798]  mmcblk1: p1 p2 p3
-> > 	[    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
-> > 	[    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
-> > 
-> > And this is a common problem for smartphones, tablets, embedded
-> > devices and automotive products. This patch will make the eMMC/SD
-> > card  start initializing earlier, by changing its order in drivers/Makefile.
-> > 
-> > On our platform, the waiting for eMMC card is almost eliminated with the patch,
-> > which is critical to boot time. And it should benefit other non-x86 platforms
-> > which see the similar waiting for emmc rootfs.
-> > 
-> > Signed-off-by: Feng Tang <feng.tang@intel.com>
-> > ---
-> >  drivers/Makefile | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/Makefile b/drivers/Makefile
-> > index 24cd47014657..c473afd3c688 100644
-> > --- a/drivers/Makefile
-> > +++ b/drivers/Makefile
-> > @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)		+= regulator/
-> >  # reset controllers early, since gpu drivers might rely on them to initialize
-> >  obj-$(CONFIG_RESET_CONTROLLER)	+= reset/
-> >  
-> > +# put mmc early as many morden devices use emm/sd card as rootfs storage
+> [    2.214121] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+> [    2.222137] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+> ...
+> [    2.344384] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+> [    2.351885] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+> ...
+> [    2.668339] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+> [    2.675811] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+> ...
+> [    3.208408] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+> [    3.216312] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+> ...
+> [    3.235397] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+> [    3.248938] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+> ...
+> [   14.970443] ALSA device list:
+> [   14.996628]   No soundcards found.
 > 
-> Spelling error :)
-
-Will change it.
-
+> This commit finally fixes this again.
 > 
-> > +obj-y				+= mmc/
-> > +
-> >  # tty/ comes before char/ so that the VT console is the boot-time
-> >  # default.
-> >  obj-y				+= tty/
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Everyone wants to be first.  Watch out if you try to put stuff before
-> tty, you have to be very careful.  There are sd serial devices, right?
+> ---
 
-As the eMMC/SD card initialization takes quite some time, the SDHCI
-host controller's module init function will quickly return, while leaving 
-a worker to do the real card detection/initialization, so other subsystems
-should not be blocked.
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-And yes, it is safer to move it after tty/
-
-> 
-> Anyway, nothing we can do now until after 4.19-rc1 is out.
-
-Understood, will send v2 after the merge window. Thanks again.
-
-- Feng
-
-
+Thanks,
+Charles
