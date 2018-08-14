@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,WEIRD_QUOTING
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E03C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF354C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871E121653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871E121653
+	by mail.kernel.org (Postfix) with ESMTP id 610F3216FB
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:53:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610F3216FB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390267AbeHNUaP (ORCPT
+        id S2389549AbeHNUmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:30:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59200 "EHLO
+        Tue, 14 Aug 2018 16:42:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390232AbeHNUaN (ORCPT
+        with ESMTP id S2390235AbeHNUaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:13 -0400
+        Tue, 14 Aug 2018 16:30:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 286EEDB8;
-        Tue, 14 Aug 2018 17:33:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 783A8C9A;
+        Tue, 14 Aug 2018 17:31:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 88/97] x86/speculation: Use ARCH_CAPABILITIES to skip L1D flush on vmentry
-Date:   Tue, 14 Aug 2018 19:17:40 +0200
-Message-Id: <20180814171436.484333845@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 73/97] Documentation: Add section about CPU vulnerabilities
+Date:   Tue, 14 Aug 2018 19:17:25 +0200
+Message-Id: <20180814171435.926080495@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,72 +51,640 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 8e0b2b916662e09dd4d09e5271cdf214c6b80e62 upstream
+commit 3ec8ce5d866ec6a08a9cfab82b62acf4a830b35f upstream
 
-Bit 3 of ARCH_CAPABILITIES tells a hypervisor that L1D flush on vmentry is
-not needed.  Add a new value to enum vmx_l1d_flush_state, which is used
-either if there is no L1TF bug at all, or if bit 3 is set in ARCH_CAPABILITIES.
+Add documentation for the L1TF vulnerability and the mitigation mechanisms:
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+  - Explain the problem and risks
+  - Document the mitigation mechanisms
+  - Document the command line controls
+  - Document the sysfs files
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lkml.kernel.org/r/20180713142323.287429944@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/msr-index.h |    1 +
- arch/x86/include/asm/vmx.h       |    1 +
- arch/x86/kernel/cpu/bugs.c       |    1 +
- arch/x86/kvm/vmx.c               |   10 ++++++++++
- 4 files changed, 13 insertions(+)
+ Documentation/admin-guide/index.rst |    9 
+ Documentation/admin-guide/l1tf.rst  |  591 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 600 insertions(+)
+ create mode 100644 Documentation/admin-guide/l1tf.rst
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -70,6 +70,7 @@
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
- #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
- #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
-+#define ARCH_CAP_SKIP_VMENTRY_L1DFLUSH	(1 << 3)   /* Skip L1D flush on vmentry */
- #define ARCH_CAP_SSB_NO			(1 << 4)   /*
- 						    * Not susceptible to Speculative Store Bypass
- 						    * attack, so no Speculative Store Bypass
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -580,6 +580,7 @@ enum vmx_l1d_flush_state {
- 	VMENTER_L1D_FLUSH_COND,
- 	VMENTER_L1D_FLUSH_ALWAYS,
- 	VMENTER_L1D_FLUSH_EPT_DISABLED,
-+	VMENTER_L1D_FLUSH_NOT_REQUIRED,
- };
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -17,6 +17,15 @@ etc.
+    kernel-parameters
+    devices
  
- extern enum vmx_l1d_flush_state l1tf_vmx_mitigation;
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -731,6 +731,7 @@ static const char *l1tf_vmx_states[] = {
- 	[VMENTER_L1D_FLUSH_COND]		= "conditional cache flushes",
- 	[VMENTER_L1D_FLUSH_ALWAYS]		= "cache flushes",
- 	[VMENTER_L1D_FLUSH_EPT_DISABLED]	= "EPT disabled",
-+	[VMENTER_L1D_FLUSH_NOT_REQUIRED]	= "flush not necessary"
- };
- 
- static ssize_t l1tf_show_state(char *buf)
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -218,6 +218,16 @@ static int vmx_setup_l1d_flush(enum vmx_
- 		return 0;
- 	}
- 
-+       if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
-+	       u64 msr;
++This section describes CPU vulnerabilities and provides an overview of the
++possible mitigations along with guidance for selecting mitigations if they
++are configurable at compile, boot or run time.
 +
-+	       rdmsrl(MSR_IA32_ARCH_CAPABILITIES, msr);
-+	       if (msr & ARCH_CAP_SKIP_VMENTRY_L1DFLUSH) {
-+		       l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_NOT_REQUIRED;
-+		       return 0;
-+	       }
-+       }
++.. toctree::
++   :maxdepth: 1
 +
- 	/* If set to auto use the default l1tf mitigation method */
- 	if (l1tf == VMENTER_L1D_FLUSH_AUTO) {
- 		switch (l1tf_mitigation) {
++   l1tf
++
+ Here is a set of documents aimed at users who are trying to track down
+ problems and bugs in particular.
+ 
+--- /dev/null
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -0,0 +1,591 @@
++L1TF - L1 Terminal Fault
++========================
++
++L1 Terminal Fault is a hardware vulnerability which allows unprivileged
++speculative access to data which is available in the Level 1 Data Cache
++when the page table entry controlling the virtual address, which is used
++for the access, has the Present bit cleared or other reserved bits set.
++
++Affected processors
++-------------------
++
++This vulnerability affects a wide range of Intel processors. The
++vulnerability is not present on:
++
++   - Processors from AMD, Centaur and other non Intel vendors
++
++   - Older processor models, where the CPU family is < 6
++
++   - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
++     Penwell, Pineview, Slivermont, Airmont, Merrifield)
++
++   - The Intel Core Duo Yonah variants (2006 - 2008)
++
++   - The Intel XEON PHI family
++
++   - Intel processors which have the ARCH_CAP_RDCL_NO bit set in the
++     IA32_ARCH_CAPABILITIES MSR. If the bit is set the CPU is not affected
++     by the Meltdown vulnerability either. These CPUs should become
++     available by end of 2018.
++
++Whether a processor is affected or not can be read out from the L1TF
++vulnerability file in sysfs. See :ref:`l1tf_sys_info`.
++
++Related CVEs
++------------
++
++The following CVE entries are related to the L1TF vulnerability:
++
++   =============  =================  ==============================
++   CVE-2018-3615  L1 Terminal Fault  SGX related aspects
++   CVE-2018-3620  L1 Terminal Fault  OS, SMM related aspects
++   CVE-2018-3646  L1 Terminal Fault  Virtualization related aspects
++   =============  =================  ==============================
++
++Problem
++-------
++
++If an instruction accesses a virtual address for which the relevant page
++table entry (PTE) has the Present bit cleared or other reserved bits set,
++then speculative execution ignores the invalid PTE and loads the referenced
++data if it is present in the Level 1 Data Cache, as if the page referenced
++by the address bits in the PTE was still present and accessible.
++
++While this is a purely speculative mechanism and the instruction will raise
++a page fault when it is retired eventually, the pure act of loading the
++data and making it available to other speculative instructions opens up the
++opportunity for side channel attacks to unprivileged malicious code,
++similar to the Meltdown attack.
++
++While Meltdown breaks the user space to kernel space protection, L1TF
++allows to attack any physical memory address in the system and the attack
++works across all protection domains. It allows an attack of SGX and also
++works from inside virtual machines because the speculation bypasses the
++extended page table (EPT) protection mechanism.
++
++
++Attack scenarios
++----------------
++
++1. Malicious user space
++^^^^^^^^^^^^^^^^^^^^^^^
++
++   Operating Systems store arbitrary information in the address bits of a
++   PTE which is marked non present. This allows a malicious user space
++   application to attack the physical memory to which these PTEs resolve.
++   In some cases user-space can maliciously influence the information
++   encoded in the address bits of the PTE, thus making attacks more
++   deterministic and more practical.
++
++   The Linux kernel contains a mitigation for this attack vector, PTE
++   inversion, which is permanently enabled and has no performance
++   impact. The kernel ensures that the address bits of PTEs, which are not
++   marked present, never point to cacheable physical memory space.
++
++   A system with an up to date kernel is protected against attacks from
++   malicious user space applications.
++
++2. Malicious guest in a virtual machine
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++   The fact that L1TF breaks all domain protections allows malicious guest
++   OSes, which can control the PTEs directly, and malicious guest user
++   space applications, which run on an unprotected guest kernel lacking the
++   PTE inversion mitigation for L1TF, to attack physical host memory.
++
++   A special aspect of L1TF in the context of virtualization is symmetric
++   multi threading (SMT). The Intel implementation of SMT is called
++   HyperThreading. The fact that Hyperthreads on the affected processors
++   share the L1 Data Cache (L1D) is important for this. As the flaw allows
++   only to attack data which is present in L1D, a malicious guest running
++   on one Hyperthread can attack the data which is brought into the L1D by
++   the context which runs on the sibling Hyperthread of the same physical
++   core. This context can be host OS, host user space or a different guest.
++
++   If the processor does not support Extended Page Tables, the attack is
++   only possible, when the hypervisor does not sanitize the content of the
++   effective (shadow) page tables.
++
++   While solutions exist to mitigate these attack vectors fully, these
++   mitigations are not enabled by default in the Linux kernel because they
++   can affect performance significantly. The kernel provides several
++   mechanisms which can be utilized to address the problem depending on the
++   deployment scenario. The mitigations, their protection scope and impact
++   are described in the next sections.
++
++   The default mitigations and the rationale for chosing them are explained
++   at the end of this document. See :ref:`default_mitigations`.
++
++.. _l1tf_sys_info:
++
++L1TF system information
++-----------------------
++
++The Linux kernel provides a sysfs interface to enumerate the current L1TF
++status of the system: whether the system is vulnerable, and which
++mitigations are active. The relevant sysfs file is:
++
++/sys/devices/system/cpu/vulnerabilities/l1tf
++
++The possible values in this file are:
++
++  ===========================   ===============================
++  'Not affected'		The processor is not vulnerable
++  'Mitigation: PTE Inversion'	The host protection is active
++  ===========================   ===============================
++
++If KVM/VMX is enabled and the processor is vulnerable then the following
++information is appended to the 'Mitigation: PTE Inversion' part:
++
++  - SMT status:
++
++    =====================  ================
++    'VMX: SMT vulnerable'  SMT is enabled
++    'VMX: SMT disabled'    SMT is disabled
++    =====================  ================
++
++  - L1D Flush mode:
++
++    ================================  ====================================
++    'L1D vulnerable'		      L1D flushing is disabled
++
++    'L1D conditional cache flushes'   L1D flush is conditionally enabled
++
++    'L1D cache flushes'		      L1D flush is unconditionally enabled
++    ================================  ====================================
++
++The resulting grade of protection is discussed in the following sections.
++
++
++Host mitigation mechanism
++-------------------------
++
++The kernel is unconditionally protected against L1TF attacks from malicious
++user space running on the host.
++
++
++Guest mitigation mechanisms
++---------------------------
++
++.. _l1d_flush:
++
++1. L1D flush on VMENTER
++^^^^^^^^^^^^^^^^^^^^^^^
++
++   To make sure that a guest cannot attack data which is present in the L1D
++   the hypervisor flushes the L1D before entering the guest.
++
++   Flushing the L1D evicts not only the data which should not be accessed
++   by a potentially malicious guest, it also flushes the guest
++   data. Flushing the L1D has a performance impact as the processor has to
++   bring the flushed guest data back into the L1D. Depending on the
++   frequency of VMEXIT/VMENTER and the type of computations in the guest
++   performance degradation in the range of 1% to 50% has been observed. For
++   scenarios where guest VMEXIT/VMENTER are rare the performance impact is
++   minimal. Virtio and mechanisms like posted interrupts are designed to
++   confine the VMEXITs to a bare minimum, but specific configurations and
++   application scenarios might still suffer from a high VMEXIT rate.
++
++   The kernel provides two L1D flush modes:
++    - conditional ('cond')
++    - unconditional ('always')
++
++   The conditional mode avoids L1D flushing after VMEXITs which execute
++   only audited code pathes before the corresponding VMENTER. These code
++   pathes have beed verified that they cannot expose secrets or other
++   interesting data to an attacker, but they can leak information about the
++   address space layout of the hypervisor.
++
++   Unconditional mode flushes L1D on all VMENTER invocations and provides
++   maximum protection. It has a higher overhead than the conditional
++   mode. The overhead cannot be quantified correctly as it depends on the
++   work load scenario and the resulting number of VMEXITs.
++
++   The general recommendation is to enable L1D flush on VMENTER. The kernel
++   defaults to conditional mode on affected processors.
++
++   **Note**, that L1D flush does not prevent the SMT problem because the
++   sibling thread will also bring back its data into the L1D which makes it
++   attackable again.
++
++   L1D flush can be controlled by the administrator via the kernel command
++   line and sysfs control files. See :ref:`mitigation_control_command_line`
++   and :ref:`mitigation_control_kvm`.
++
++.. _guest_confinement:
++
++2. Guest VCPU confinement to dedicated physical cores
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++   To address the SMT problem, it is possible to make a guest or a group of
++   guests affine to one or more physical cores. The proper mechanism for
++   that is to utilize exclusive cpusets to ensure that no other guest or
++   host tasks can run on these cores.
++
++   If only a single guest or related guests run on sibling SMT threads on
++   the same physical core then they can only attack their own memory and
++   restricted parts of the host memory.
++
++   Host memory is attackable, when one of the sibling SMT threads runs in
++   host OS (hypervisor) context and the other in guest context. The amount
++   of valuable information from the host OS context depends on the context
++   which the host OS executes, i.e. interrupts, soft interrupts and kernel
++   threads. The amount of valuable data from these contexts cannot be
++   declared as non-interesting for an attacker without deep inspection of
++   the code.
++
++   **Note**, that assigning guests to a fixed set of physical cores affects
++   the ability of the scheduler to do load balancing and might have
++   negative effects on CPU utilization depending on the hosting
++   scenario. Disabling SMT might be a viable alternative for particular
++   scenarios.
++
++   For further information about confining guests to a single or to a group
++   of cores consult the cpusets documentation:
++
++   https://www.kernel.org/doc/Documentation/cgroup-v1/cpusets.txt
++
++.. _interrupt_isolation:
++
++3. Interrupt affinity
++^^^^^^^^^^^^^^^^^^^^^
++
++   Interrupts can be made affine to logical CPUs. This is not universally
++   true because there are types of interrupts which are truly per CPU
++   interrupts, e.g. the local timer interrupt. Aside of that multi queue
++   devices affine their interrupts to single CPUs or groups of CPUs per
++   queue without allowing the administrator to control the affinities.
++
++   Moving the interrupts, which can be affinity controlled, away from CPUs
++   which run untrusted guests, reduces the attack vector space.
++
++   Whether the interrupts with are affine to CPUs, which run untrusted
++   guests, provide interesting data for an attacker depends on the system
++   configuration and the scenarios which run on the system. While for some
++   of the interrupts it can be assumed that they wont expose interesting
++   information beyond exposing hints about the host OS memory layout, there
++   is no way to make general assumptions.
++
++   Interrupt affinity can be controlled by the administrator via the
++   /proc/irq/$NR/smp_affinity[_list] files. Limited documentation is
++   available at:
++
++   https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
++
++.. _smt_control:
++
++4. SMT control
++^^^^^^^^^^^^^^
++
++   To prevent the SMT issues of L1TF it might be necessary to disable SMT
++   completely. Disabling SMT can have a significant performance impact, but
++   the impact depends on the hosting scenario and the type of workloads.
++   The impact of disabling SMT needs also to be weighted against the impact
++   of other mitigation solutions like confining guests to dedicated cores.
++
++   The kernel provides a sysfs interface to retrieve the status of SMT and
++   to control it. It also provides a kernel command line interface to
++   control SMT.
++
++   The kernel command line interface consists of the following options:
++
++     =========== ==========================================================
++     nosmt	 Affects the bring up of the secondary CPUs during boot. The
++		 kernel tries to bring all present CPUs online during the
++		 boot process. "nosmt" makes sure that from each physical
++		 core only one - the so called primary (hyper) thread is
++		 activated. Due to a design flaw of Intel processors related
++		 to Machine Check Exceptions the non primary siblings have
++		 to be brought up at least partially and are then shut down
++		 again.  "nosmt" can be undone via the sysfs interface.
++
++     nosmt=force Has the same effect as "nosmt' but it does not allow to
++		 undo the SMT disable via the sysfs interface.
++     =========== ==========================================================
++
++   The sysfs interface provides two files:
++
++   - /sys/devices/system/cpu/smt/control
++   - /sys/devices/system/cpu/smt/active
++
++   /sys/devices/system/cpu/smt/control:
++
++     This file allows to read out the SMT control state and provides the
++     ability to disable or (re)enable SMT. The possible states are:
++
++	==============  ===================================================
++	on		SMT is supported by the CPU and enabled. All
++			logical CPUs can be onlined and offlined without
++			restrictions.
++
++	off		SMT is supported by the CPU and disabled. Only
++			the so called primary SMT threads can be onlined
++			and offlined without restrictions. An attempt to
++			online a non-primary sibling is rejected
++
++	forceoff	Same as 'off' but the state cannot be controlled.
++			Attempts to write to the control file are rejected.
++
++	notsupported	The processor does not support SMT. It's therefore
++			not affected by the SMT implications of L1TF.
++			Attempts to write to the control file are rejected.
++	==============  ===================================================
++
++     The possible states which can be written into this file to control SMT
++     state are:
++
++     - on
++     - off
++     - forceoff
++
++   /sys/devices/system/cpu/smt/active:
++
++     This file reports whether SMT is enabled and active, i.e. if on any
++     physical core two or more sibling threads are online.
++
++   SMT control is also possible at boot time via the l1tf kernel command
++   line parameter in combination with L1D flush control. See
++   :ref:`mitigation_control_command_line`.
++
++5. Disabling EPT
++^^^^^^^^^^^^^^^^
++
++  Disabling EPT for virtual machines provides full mitigation for L1TF even
++  with SMT enabled, because the effective page tables for guests are
++  managed and sanitized by the hypervisor. Though disabling EPT has a
++  significant performance impact especially when the Meltdown mitigation
++  KPTI is enabled.
++
++  EPT can be disabled in the hypervisor via the 'kvm-intel.ept' parameter.
++
++There is ongoing research and development for new mitigation mechanisms to
++address the performance impact of disabling SMT or EPT.
++
++.. _mitigation_control_command_line:
++
++Mitigation control on the kernel command line
++---------------------------------------------
++
++The kernel command line allows to control the L1TF mitigations at boot
++time with the option "l1tf=". The valid arguments for this option are:
++
++  ============  =============================================================
++  full		Provides all available mitigations for the L1TF
++		vulnerability. Disables SMT and enables all mitigations in
++		the hypervisors, i.e. unconditional L1D flushing
++
++		SMT control and L1D flush control via the sysfs interface
++		is still possible after boot.  Hypervisors will issue a
++		warning when the first VM is started in a potentially
++		insecure configuration, i.e. SMT enabled or L1D flush
++		disabled.
++
++  full,force	Same as 'full', but disables SMT and L1D flush runtime
++		control. Implies the 'nosmt=force' command line option.
++		(i.e. sysfs control of SMT is disabled.)
++
++  flush		Leaves SMT enabled and enables the default hypervisor
++		mitigation, i.e. conditional L1D flushing
++
++		SMT control and L1D flush control via the sysfs interface
++		is still possible after boot.  Hypervisors will issue a
++		warning when the first VM is started in a potentially
++		insecure configuration, i.e. SMT enabled or L1D flush
++		disabled.
++
++  flush,nosmt	Disables SMT and enables the default hypervisor mitigation,
++		i.e. conditional L1D flushing.
++
++		SMT control and L1D flush control via the sysfs interface
++		is still possible after boot.  Hypervisors will issue a
++		warning when the first VM is started in a potentially
++		insecure configuration, i.e. SMT enabled or L1D flush
++		disabled.
++
++  flush,nowarn	Same as 'flush', but hypervisors will not warn when a VM is
++		started in a potentially insecure configuration.
++
++  off		Disables hypervisor mitigations and doesn't emit any
++		warnings.
++  ============  =============================================================
++
++The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
++
++
++.. _mitigation_control_kvm:
++
++Mitigation control for KVM - module parameter
++-------------------------------------------------------------
++
++The KVM hypervisor mitigation mechanism, flushing the L1D cache when
++entering a guest, can be controlled with a module parameter.
++
++The option/parameter is "kvm-intel.vmentry_l1d_flush=". It takes the
++following arguments:
++
++  ============  ==============================================================
++  always	L1D cache flush on every VMENTER.
++
++  cond		Flush L1D on VMENTER only when the code between VMEXIT and
++		VMENTER can leak host memory which is considered
++		interesting for an attacker. This still can leak host memory
++		which allows e.g. to determine the hosts address space layout.
++
++  never		Disables the mitigation
++  ============  ==============================================================
++
++The parameter can be provided on the kernel command line, as a module
++parameter when loading the modules and at runtime modified via the sysfs
++file:
++
++/sys/module/kvm_intel/parameters/vmentry_l1d_flush
++
++The default is 'cond'. If 'l1tf=full,force' is given on the kernel command
++line, then 'always' is enforced and the kvm-intel.vmentry_l1d_flush
++module parameter is ignored and writes to the sysfs file are rejected.
++
++
++Mitigation selection guide
++--------------------------
++
++1. No virtualization in use
++^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++   The system is protected by the kernel unconditionally and no further
++   action is required.
++
++2. Virtualization with trusted guests
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++   If the guest comes from a trusted source and the guest OS kernel is
++   guaranteed to have the L1TF mitigations in place the system is fully
++   protected against L1TF and no further action is required.
++
++   To avoid the overhead of the default L1D flushing on VMENTER the
++   administrator can disable the flushing via the kernel command line and
++   sysfs control files. See :ref:`mitigation_control_command_line` and
++   :ref:`mitigation_control_kvm`.
++
++
++3. Virtualization with untrusted guests
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++3.1. SMT not supported or disabled
++""""""""""""""""""""""""""""""""""
++
++  If SMT is not supported by the processor or disabled in the BIOS or by
++  the kernel, it's only required to enforce L1D flushing on VMENTER.
++
++  Conditional L1D flushing is the default behaviour and can be tuned. See
++  :ref:`mitigation_control_command_line` and :ref:`mitigation_control_kvm`.
++
++3.2. EPT not supported or disabled
++""""""""""""""""""""""""""""""""""
++
++  If EPT is not supported by the processor or disabled in the hypervisor,
++  the system is fully protected. SMT can stay enabled and L1D flushing on
++  VMENTER is not required.
++
++  EPT can be disabled in the hypervisor via the 'kvm-intel.ept' parameter.
++
++3.3. SMT and EPT supported and active
++"""""""""""""""""""""""""""""""""""""
++
++  If SMT and EPT are supported and active then various degrees of
++  mitigations can be employed:
++
++  - L1D flushing on VMENTER:
++
++    L1D flushing on VMENTER is the minimal protection requirement, but it
++    is only potent in combination with other mitigation methods.
++
++    Conditional L1D flushing is the default behaviour and can be tuned. See
++    :ref:`mitigation_control_command_line` and :ref:`mitigation_control_kvm`.
++
++  - Guest confinement:
++
++    Confinement of guests to a single or a group of physical cores which
++    are not running any other processes, can reduce the attack surface
++    significantly, but interrupts, soft interrupts and kernel threads can
++    still expose valuable data to a potential attacker. See
++    :ref:`guest_confinement`.
++
++  - Interrupt isolation:
++
++    Isolating the guest CPUs from interrupts can reduce the attack surface
++    further, but still allows a malicious guest to explore a limited amount
++    of host physical memory. This can at least be used to gain knowledge
++    about the host address space layout. The interrupts which have a fixed
++    affinity to the CPUs which run the untrusted guests can depending on
++    the scenario still trigger soft interrupts and schedule kernel threads
++    which might expose valuable information. See
++    :ref:`interrupt_isolation`.
++
++The above three mitigation methods combined can provide protection to a
++certain degree, but the risk of the remaining attack surface has to be
++carefully analyzed. For full protection the following methods are
++available:
++
++  - Disabling SMT:
++
++    Disabling SMT and enforcing the L1D flushing provides the maximum
++    amount of protection. This mitigation is not depending on any of the
++    above mitigation methods.
++
++    SMT control and L1D flushing can be tuned by the command line
++    parameters 'nosmt', 'l1tf', 'kvm-intel.vmentry_l1d_flush' and at run
++    time with the matching sysfs control files. See :ref:`smt_control`,
++    :ref:`mitigation_control_command_line` and
++    :ref:`mitigation_control_kvm`.
++
++  - Disabling EPT:
++
++    Disabling EPT provides the maximum amount of protection as well. It is
++    not depending on any of the above mitigation methods. SMT can stay
++    enabled and L1D flushing is not required, but the performance impact is
++    significant.
++
++    EPT can be disabled in the hypervisor via the 'kvm-intel.ept'
++    parameter.
++
++
++.. _default_mitigations:
++
++Default mitigations
++-------------------
++
++  The kernel default mitigations for vulnerable processors are:
++
++  - PTE inversion to protect against malicious user space. This is done
++    unconditionally and cannot be controlled.
++
++  - L1D conditional flushing on VMENTER when EPT is enabled for
++    a guest.
++
++  The kernel does not by default enforce the disabling of SMT, which leaves
++  SMT systems vulnerable when running untrusted guests with EPT enabled.
++
++  The rationale for this choice is:
++
++  - Force disabling SMT can break existing setups, especially with
++    unattended updates.
++
++  - If regular users run untrusted guests on their machine, then L1TF is
++    just an add on to other malware which might be embedded in an untrusted
++    guest, e.g. spam-bots or attacks on the local network.
++
++    There is no technical way to prevent a user from running untrusted code
++    on their machines blindly.
++
++  - It's technically extremely unlikely and from today's knowledge even
++    impossible that L1TF can be exploited via the most popular attack
++    mechanisms like JavaScript because these mechanisms have no way to
++    control PTEs. If this would be possible and not other mitigation would
++    be possible, then the default might be different.
++
++  - The administrators of cloud and hosting setups have to carefully
++    analyze the risk for their scenarios and make the appropriate
++    mitigation choices, which might even vary across their deployed
++    machines and also result in other changes of their overall setup.
++    There is no way for the kernel to provide a sensible default for this
++    kind of scenarios.
 
 
