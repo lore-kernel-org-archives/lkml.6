@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E460CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383BBC46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C0F221727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0F221727
+	by mail.kernel.org (Postfix) with ESMTP id EE42821749
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE42821749
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389363AbeHNUSG (ORCPT
+        id S2389382AbeHNUSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53052 "EHLO
+        Tue, 14 Aug 2018 16:18:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53062 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388383AbeHNUSF (ORCPT
+        with ESMTP id S2388383AbeHNUSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:05 -0400
+        Tue, 14 Aug 2018 16:18:07 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B09C040B;
-        Tue, 14 Aug 2018 17:29:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDA31BDB;
+        Tue, 14 Aug 2018 17:29:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 36/97] cpu/hotplug: Provide knobs to control SMT
-Date:   Tue, 14 Aug 2018 19:16:48 +0200
-Message-Id: <20180814171434.548215226@linuxfoundation.org>
+Subject: [PATCH 4.17 37/97] x86/cpu: Remove the pointless CPU printout
+Date:   Tue, 14 Aug 2018 19:16:49 +0200
+Message-Id: <20180814171434.582765956@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -53,341 +53,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 05736e4ac13c08a4a9b1ef2de26dd31a32cbee57 upstream
+commit 55e6d279abd92cfd7576bba031e7589be8475edb upstream
 
-Provide a command line and a sysfs knob to control SMT.
+The value of this printout is dubious at best and there is no point in
+having it in two different places along with convoluted ways to reach it.
 
-The command line options are:
-
- 'nosmt':	Enumerate secondary threads, but do not online them
-
- 'nosmt=force': Ignore secondary threads completely during enumeration
- 		via MP table and ACPI/MADT.
-
-The sysfs control file has the following states (read/write):
-
- 'on':		 SMT is enabled. Secondary threads can be freely onlined
- 'off':		 SMT is disabled. Secondary threads, even if enumerated
- 		 cannot be onlined
- 'forceoff':	 SMT is permanentely disabled. Writes to the control
- 		 file are rejected.
- 'notsupported': SMT is not supported by the CPU
-
-The command line option 'nosmt' sets the sysfs control to 'off'. This
-can be changed to 'on' to reenable SMT during runtime.
-
-The command line option 'nosmt=force' sets the sysfs control to
-'forceoff'. This cannot be changed during runtime.
-
-When SMT is 'on' and the control file is changed to 'off' then all online
-secondary threads are offlined and attempts to online a secondary thread
-later on are rejected.
-
-When SMT is 'off' and the control file is changed to 'on' then secondary
-threads can be onlined again. The 'off' -> 'on' transition does not
-automatically online the secondary threads.
-
-When the control file is set to 'forceoff', the behaviour is the same as
-setting it to 'off', but the operation is irreversible and later writes to
-the control file are rejected.
-
-When the control status is 'notsupported' then writes to the control file
-are rejected.
+Remove it completely.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/ABI/testing/sysfs-devices-system-cpu |   20 ++
- Documentation/admin-guide/kernel-parameters.txt    |    8 
- arch/Kconfig                                       |    3 
- arch/x86/Kconfig                                   |    1 
- include/linux/cpu.h                                |   13 +
- kernel/cpu.c                                       |  170 +++++++++++++++++++++
- 6 files changed, 215 insertions(+)
+ arch/x86/kernel/cpu/common.c   |   20 +++++---------------
+ arch/x86/kernel/cpu/topology.c |   11 -----------
+ 2 files changed, 5 insertions(+), 26 deletions(-)
 
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -490,3 +490,23 @@ Description:	Information about CPU vulne
- 		"Not affected"	  CPU is not affected by the vulnerability
- 		"Vulnerable"	  CPU is affected and no mitigation in effect
- 		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
-+
-+What:		/sys/devices/system/cpu/smt
-+		/sys/devices/system/cpu/smt/active
-+		/sys/devices/system/cpu/smt/control
-+Date:		June 2018
-+Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-+Description:	Control Symetric Multi Threading (SMT)
-+
-+		active:  Tells whether SMT is active (enabled and siblings online)
-+
-+		control: Read/write interface to control SMT. Possible
-+			 values:
-+
-+			 "on"		SMT is enabled
-+			 "off"		SMT is disabled
-+			 "forceoff"	SMT is force disabled. Cannot be changed.
-+			 "notsupported" SMT is not supported by the CPU
-+
-+			 If control status is "forceoff" or "notsupported" writes
-+			 are rejected.
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2675,6 +2675,14 @@
- 	nosmt		[KNL,S390] Disable symmetric multithreading (SMT).
- 			Equivalent to smt=1.
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -643,13 +643,12 @@ void detect_ht(struct cpuinfo_x86 *c)
+ #ifdef CONFIG_SMP
+ 	u32 eax, ebx, ecx, edx;
+ 	int index_msb, core_bits;
+-	static bool printed;
  
-+			[KNL,x86] Disable symmetric multithreading (SMT).
-+			nosmt=force: Force disable SMT, similar to disabling
-+				     it in the BIOS except that some of the
-+				     resource partitioning effects which are
-+				     caused by having SMT enabled in the BIOS
-+				     cannot be undone. Depending on the CPU
-+				     type this might have a performance impact.
-+
- 	nospectre_v2	[X86] Disable all mitigations for the Spectre variant 2
- 			(indirect branch prediction) vulnerability. System may
- 			allow data leaks with this option, which is equivalent
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -13,6 +13,9 @@ config KEXEC_CORE
- config HAVE_IMA_KEXEC
- 	bool
+ 	if (!cpu_has(c, X86_FEATURE_HT))
+ 		return;
  
-+config HOTPLUG_SMT
-+	bool
-+
- config OPROFILE
- 	tristate "OProfile system profiling"
- 	depends on PROFILING
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -183,6 +183,7 @@ config X86
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_USER_RETURN_NOTIFIER
-+	select HOTPLUG_SMT			if SMP
- 	select IRQ_FORCED_THREADING
- 	select PCI_LOCKLESS_CONFIG
- 	select PERF_EVENTS
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -168,4 +168,17 @@ void cpuhp_report_idle_dead(void);
- static inline void cpuhp_report_idle_dead(void) { }
- #endif /* #ifdef CONFIG_HOTPLUG_CPU */
+ 	if (cpu_has(c, X86_FEATURE_CMP_LEGACY))
+-		goto out;
++		return;
  
-+enum cpuhp_smt_control {
-+	CPU_SMT_ENABLED,
-+	CPU_SMT_DISABLED,
-+	CPU_SMT_FORCE_DISABLED,
-+	CPU_SMT_NOT_SUPPORTED,
-+};
-+
-+#if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
-+extern enum cpuhp_smt_control cpu_smt_control;
-+#else
-+# define cpu_smt_control		(CPU_SMT_ENABLED)
-+#endif
-+
- #endif /* _LINUX_CPU_H_ */
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -933,6 +933,29 @@ EXPORT_SYMBOL(cpu_down);
- #define takedown_cpu		NULL
- #endif /*CONFIG_HOTPLUG_CPU*/
+ 	if (cpu_has(c, X86_FEATURE_XTOPOLOGY))
+ 		return;
+@@ -658,14 +657,14 @@ void detect_ht(struct cpuinfo_x86 *c)
  
-+#ifdef CONFIG_HOTPLUG_SMT
-+enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+ 	smp_num_siblings = (ebx & 0xff0000) >> 16;
+ 
++	if (!smp_num_siblings)
++		smp_num_siblings = 1;
 +
-+static int __init smt_cmdline_disable(char *str)
-+{
-+	cpu_smt_control = CPU_SMT_DISABLED;
-+	if (str && !strcmp(str, "force")) {
-+		pr_info("SMT: Force disabled\n");
-+		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
-+	}
-+	return 0;
-+}
-+early_param("nosmt", smt_cmdline_disable);
-+
-+static inline bool cpu_smt_allowed(unsigned int cpu)
-+{
-+	return cpu_smt_control == CPU_SMT_ENABLED ||
-+		topology_is_primary_thread(cpu);
-+}
-+#else
-+static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
-+#endif
-+
- /**
-  * notify_cpu_starting(cpu) - Invoke the callbacks on the starting CPU
-  * @cpu: cpu that just started
-@@ -1056,6 +1079,10 @@ static int do_cpu_up(unsigned int cpu, e
- 		err = -EBUSY;
- 		goto out;
+ 	if (smp_num_siblings == 1) {
+ 		pr_info_once("CPU0: Hyper-Threading is disabled\n");
+-		goto out;
++		return;
  	}
-+	if (!cpu_smt_allowed(cpu)) {
-+		err = -EPERM;
-+		goto out;
-+	}
  
- 	err = _cpu_up(cpu, 0, target);
- out:
-@@ -1904,10 +1931,153 @@ static const struct attribute_group cpuh
- 	NULL
- };
+-	if (smp_num_siblings <= 1)
+-		goto out;
+-
+ 	index_msb = get_count_order(smp_num_siblings);
+ 	c->phys_proc_id = apic->phys_pkg_id(c->initial_apicid, index_msb);
  
-+#ifdef CONFIG_HOTPLUG_SMT
-+
-+static const char *smt_states[] = {
-+	[CPU_SMT_ENABLED]		= "on",
-+	[CPU_SMT_DISABLED]		= "off",
-+	[CPU_SMT_FORCE_DISABLED]	= "forceoff",
-+	[CPU_SMT_NOT_SUPPORTED]		= "notsupported",
-+};
-+
-+static ssize_t
-+show_smt_control(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE - 2, "%s\n", smt_states[cpu_smt_control]);
-+}
-+
-+static void cpuhp_offline_cpu_device(unsigned int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+
-+	dev->offline = true;
-+	/* Tell user space about the state change */
-+	kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
-+}
-+
-+static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
-+{
-+	int cpu, ret = 0;
-+
-+	cpu_maps_update_begin();
-+	for_each_online_cpu(cpu) {
-+		if (topology_is_primary_thread(cpu))
-+			continue;
-+		ret = cpu_down_maps_locked(cpu, CPUHP_OFFLINE);
-+		if (ret)
-+			break;
-+		/*
-+		 * As this needs to hold the cpu maps lock it's impossible
-+		 * to call device_offline() because that ends up calling
-+		 * cpu_down() which takes cpu maps lock. cpu maps lock
-+		 * needs to be held as this might race against in kernel
-+		 * abusers of the hotplug machinery (thermal management).
-+		 *
-+		 * So nothing would update device:offline state. That would
-+		 * leave the sysfs entry stale and prevent onlining after
-+		 * smt control has been changed to 'off' again. This is
-+		 * called under the sysfs hotplug lock, so it is properly
-+		 * serialized against the regular offline usage.
-+		 */
-+		cpuhp_offline_cpu_device(cpu);
-+	}
-+	if (!ret)
-+		cpu_smt_control = ctrlval;
-+	cpu_maps_update_done();
-+	return ret;
-+}
-+
-+static void cpuhp_smt_enable(void)
-+{
-+	cpu_maps_update_begin();
-+	cpu_smt_control = CPU_SMT_ENABLED;
-+	cpu_maps_update_done();
-+}
-+
-+static ssize_t
-+store_smt_control(struct device *dev, struct device_attribute *attr,
-+		  const char *buf, size_t count)
-+{
-+	int ctrlval, ret;
-+
-+	if (sysfs_streq(buf, "on"))
-+		ctrlval = CPU_SMT_ENABLED;
-+	else if (sysfs_streq(buf, "off"))
-+		ctrlval = CPU_SMT_DISABLED;
-+	else if (sysfs_streq(buf, "forceoff"))
-+		ctrlval = CPU_SMT_FORCE_DISABLED;
-+	else
-+		return -EINVAL;
-+
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED)
-+		return -EPERM;
-+
-+	if (cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		return -ENODEV;
-+
-+	ret = lock_device_hotplug_sysfs();
-+	if (ret)
-+		return ret;
-+
-+	if (ctrlval != cpu_smt_control) {
-+		switch (ctrlval) {
-+		case CPU_SMT_ENABLED:
-+			cpuhp_smt_enable();
-+			break;
-+		case CPU_SMT_DISABLED:
-+		case CPU_SMT_FORCE_DISABLED:
-+			ret = cpuhp_smt_disable(ctrlval);
-+			break;
-+		}
-+	}
-+
-+	unlock_device_hotplug();
-+	return ret ? ret : count;
-+}
-+static DEVICE_ATTR(control, 0644, show_smt_control, store_smt_control);
-+
-+static ssize_t
-+show_smt_active(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	bool active = topology_max_smt_threads() > 1;
-+
-+	return snprintf(buf, PAGE_SIZE - 2, "%d\n", active);
-+}
-+static DEVICE_ATTR(active, 0444, show_smt_active, NULL);
-+
-+static struct attribute *cpuhp_smt_attrs[] = {
-+	&dev_attr_control.attr,
-+	&dev_attr_active.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group cpuhp_smt_attr_group = {
-+	.attrs = cpuhp_smt_attrs,
-+	.name = "smt",
-+	NULL
-+};
-+
-+static int __init cpu_smt_state_init(void)
-+{
-+	if (!topology_smt_supported())
-+		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+
-+	return sysfs_create_group(&cpu_subsys.dev_root->kobj,
-+				  &cpuhp_smt_attr_group);
-+}
-+
-+#else
-+static inline int cpu_smt_state_init(void) { return 0; }
-+#endif
-+
- static int __init cpuhp_sysfs_init(void)
- {
- 	int cpu, ret;
+@@ -677,15 +676,6 @@ void detect_ht(struct cpuinfo_x86 *c)
  
-+	ret = cpu_smt_state_init();
-+	if (ret)
-+		return ret;
-+
- 	ret = sysfs_create_group(&cpu_subsys.dev_root->kobj,
- 				 &cpuhp_cpu_root_attr_group);
- 	if (ret)
+ 	c->cpu_core_id = apic->phys_pkg_id(c->initial_apicid, index_msb) &
+ 				       ((1 << core_bits) - 1);
+-
+-out:
+-	if (!printed && (c->x86_max_cores * smp_num_siblings) > 1) {
+-		pr_info("CPU: Physical Processor ID: %d\n",
+-			c->phys_proc_id);
+-		pr_info("CPU: Processor Core ID: %d\n",
+-			c->cpu_core_id);
+-		printed = 1;
+-	}
+ #endif
+ }
+ 
+--- a/arch/x86/kernel/cpu/topology.c
++++ b/arch/x86/kernel/cpu/topology.c
+@@ -33,7 +33,6 @@ void detect_extended_topology(struct cpu
+ 	unsigned int eax, ebx, ecx, edx, sub_index;
+ 	unsigned int ht_mask_width, core_plus_mask_width;
+ 	unsigned int core_select_mask, core_level_siblings;
+-	static bool printed;
+ 
+ 	if (c->cpuid_level < 0xb)
+ 		return;
+@@ -86,15 +85,5 @@ void detect_extended_topology(struct cpu
+ 	c->apicid = apic->phys_pkg_id(c->initial_apicid, 0);
+ 
+ 	c->x86_max_cores = (core_level_siblings / smp_num_siblings);
+-
+-	if (!printed) {
+-		pr_info("CPU: Physical Processor ID: %d\n",
+-		       c->phys_proc_id);
+-		if (c->x86_max_cores > 1)
+-			pr_info("CPU: Processor Core ID: %d\n",
+-			       c->cpu_core_id);
+-		printed = 1;
+-	}
+-	return;
+ #endif
+ }
 
 
