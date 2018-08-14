@@ -3,114 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8626C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29145C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3103218DE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:43:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3103218DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C974D2172C
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 08:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C974D2172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbeHNL3z (ORCPT
+        id S1731105AbeHNLaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 07:29:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32988 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727689AbeHNL3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 07:29:55 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0F255401EF09;
-        Tue, 14 Aug 2018 08:43:44 +0000 (UTC)
-Received: from gondolin (ovpn-117-136.ams2.redhat.com [10.36.117.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D3EC27C41;
-        Tue, 14 Aug 2018 08:43:38 +0000 (UTC)
-Date:   Tue, 14 Aug 2018 10:43:35 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v9 04/22] s390/zcrypt: Integrate ap_asm.h into
- include/asm/ap.h.
-Message-ID: <20180814104335.4bc3630a.cohuck@redhat.com>
-In-Reply-To: <1534196899-16987-5-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-5-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        Tue, 14 Aug 2018 07:30:13 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43497 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeHNLaM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 07:30:12 -0400
+Received: by mail-qt0-f193.google.com with SMTP id f18-v6so20277267qtp.10
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 01:44:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rj3Iu5SdcNG26avVHSw7vWSAp/q5O4XT2I5YgCEK5oQ=;
+        b=SPTsIZUTBNUjn08yXcPVbaCVqi8EBT1GhTmKpbrNqM4XFn4CnAaOe2Q2PNmZWrv2ex
+         78S2nFKaTT59SyODixgYfpraDqImRua58qO3VkBJvxu8kKsxUNlgLjXectJuMTMDw4XY
+         aFrkQmiwJ8yfzYfNVs0HAwjQL9PDCSq1Ajx1xF1VV/G3K6avzPCtK3htv8W3gjV/mvy8
+         w6Yn/w+YqQQaNBGC4RQjlijKipEJJ7UUGGFSfpTaCToRXt0U75zUzaQeT5R5Bu/zrBj8
+         EtNiFauQyG37YEJ/tR/Qf2BRYFSK4W5ldYqqOhmMtxhemT6Oq3ccIA2RR/YqsDrZFL+J
+         fQPg==
+X-Gm-Message-State: AOUpUlE/WvqjXH4nHmA96C48fG9jyAHNwzVHkHpFY9muOEp0BmTQy4d7
+        TFxdDoIiT4SkCgtE0AkEog0KaOLm7zsTyt5Gmjo=
+X-Google-Smtp-Source: AA+uWPx/LYXEaYyr2Lh7Tp8btfvYUtHYyZjB6drsbu/4Bpo7vJrHSNJE/VmfUZ6qvEr4IcsgmDjOe0C3TKFkJBmHg5c=
+X-Received: by 2002:ac8:30e3:: with SMTP id w32-v6mr20656334qta.280.1534236241939;
+ Tue, 14 Aug 2018 01:44:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 08:43:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 08:43:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+References: <20180813220950.194841-1-arnd@arndb.de> <CAK7LNASVE-vZhGyAsWg8YmPb8P-sucwPVOUt5qsfVwZQuHg9gw@mail.gmail.com>
+ <1534233405.3547.4.camel@sipsolutions.net>
+In-Reply-To: <1534233405.3547.4.camel@sipsolutions.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 14 Aug 2018 10:43:45 +0200
+Message-ID: <CAK8P3a2+ZLN_HmNJiNs4YFsvkqewnwq-a2d0uNe+RS61RAMYOQ@mail.gmail.com>
+Subject: Re: [PATCH] bitfield: avoid gcc-8 -Wint-in-bool-context warning
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 17:48:01 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Tue, Aug 14, 2018 at 9:57 AM Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Tue, 2018-08-14 at 08:57 +0900, Masahiro Yamada wrote:
+> > 2018-08-14 7:09 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
 
-> From: Harald Freudenberger <freude@de.ibm.com>
-> 
-> Move all the inline functions from the ap bus header
-> file ap_asm.h into the in-kernel api header file
-> arch/s390/include/asm/ap.h so that KVM can make use
-> of all the low level AP functions.
-> 
-> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> ---
->  arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
->  drivers/s390/crypto/ap_bus.c   |   23 +---
->  drivers/s390/crypto/ap_bus.h   |    1 +
->  drivers/s390/crypto/ap_card.c  |    1 -
->  drivers/s390/crypto/ap_queue.c |    1 -
->  5 files changed, 260 insertions(+), 50 deletions(-)
-> 
-> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-> index c1bedb4..887494a 100644
-> --- a/arch/s390/include/asm/ap.h
-> +++ b/arch/s390/include/asm/ap.h
-> @@ -47,6 +47,50 @@ struct ap_queue_status {
->  };
->  
->  /**
-> + * ap_intructions_available() - Test if AP instructions are available.
-> + *
-> + * Returns 1 if the AP instructions are installed, otherwise 0.
-> + */
-> +static inline int ap_instructions_available(void)
-> +{
-> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
-> +	register unsigned long reg1 asm ("1") = 0;
-> +	register unsigned long reg2 asm ("2") = 0;
-> +
-> +	asm volatile(
-> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
-> +		"0: la    %0,1\n"
-> +		"1:\n"
-> +		EX_TABLE(0b, 1b)
-> +		: "+d" (reg1), "+d" (reg2)
-> +		: "d" (reg0)
-> +		: "cc");
-> +	return reg1;
-> +}
+> > > drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:1025:21: note: in expansion of macro 'FIELD_GET'
+> > >     le16_encode_bits(FIELD_GET(IWL_RX_HE_PHY_SIBG_SYM_OR_USER_NUM_MASK,
+> >
+> >
+> > How about fixing the root cause
+> > in drivers/net/wireless/intel/iwlwifi/fw/api/rx.h ?
+> >
+> >
+> > #define IWL_RX_HE_PHY_SIBG_SYM_OR_USER_NUM_MASK   0x1e00000000ULL
+> >
+> >
+> > enum iwl_rx_he_phy looks really strange.
+>
+> Why? I don't think this is a problem, the enum is used here to get
+> constants so that we can also have documentation for them. That's a
+> common and accepted technique.
 
-I think upstream this change (have this function return !0 when the
-instructions are installed) will be an addon patch to the one which has
-already made its way into master. Not really relevant for the remainder
-of this patch series, though.
+I think using #define is more common overall, but I also prefer using enum
+for this in my own code.
+
+   Arnd
