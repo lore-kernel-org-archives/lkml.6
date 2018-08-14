@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E70C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFEEC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256D821471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256D821471
+	by mail.kernel.org (Postfix) with ESMTP id C727521471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C727521471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390902AbeHNUd1 (ORCPT
+        id S2390909AbeHNUdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:33:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60190 "EHLO
+        Tue, 14 Aug 2018 16:33:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389912AbeHNUd0 (ORCPT
+        with ESMTP id S2389912AbeHNUdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:33:26 -0400
+        Tue, 14 Aug 2018 16:33:35 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAB40C8D;
-        Tue, 14 Aug 2018 17:45:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E5FDCA5;
+        Tue, 14 Aug 2018 17:45:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 107/107] x86/microcode: Allow late microcode loading with SMT disabled
-Date:   Tue, 14 Aug 2018 19:18:10 +0200
-Message-Id: <20180814171527.116006902@linuxfoundation.org>
+Subject: [PATCH 4.9 096/107] KVM: VMX: support MSR_IA32_ARCH_CAPABILITIES as a feature MSR
+Date:   Tue, 14 Aug 2018 19:17:59 +0200
+Message-Id: <20180814171526.689219948@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -51,48 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 07d981ad4cf1e78361c6db1c28ee5ba105f96cc1 upstream
+commit cd28325249a1ca0d771557ce823e0308ad629f98 upstream
 
-The kernel unnecessarily prevents late microcode loading when SMT is
-disabled.  It should be safe to allow it if all the primary threads are
-online.
+This lets userspace read the MSR_IA32_ARCH_CAPABILITIES and check that all
+requested features are available on the host.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/x86/kvm/x86.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -386,12 +386,20 @@ static struct platform_device	*microcode
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1015,6 +1015,7 @@ static unsigned num_emulated_msrs;
+ static u32 msr_based_features[] = {
+ 	MSR_F10H_DECFG,
+ 	MSR_IA32_UCODE_REV,
++	MSR_IA32_ARCH_CAPABILITIES,
+ };
  
- static int check_online_cpus(void)
+ static unsigned int num_msr_based_features;
+@@ -1023,7 +1024,8 @@ static int kvm_get_msr_feature(struct kv
  {
--	if (num_online_cpus() == num_present_cpus())
--		return 0;
-+	unsigned int cpu;
- 
--	pr_err("Not all CPUs online, aborting microcode update.\n");
-+	/*
-+	 * Make sure all CPUs are online.  It's fine for SMT to be disabled if
-+	 * all the primary threads are still online.
-+	 */
-+	for_each_present_cpu(cpu) {
-+		if (topology_is_primary_thread(cpu) && !cpu_online(cpu)) {
-+			pr_err("Not all CPUs online, aborting microcode update.\n");
-+			return -EINVAL;
-+		}
-+	}
- 
--	return -EINVAL;
-+	return 0;
- }
- 
- static int reload_for_cpu(int cpu)
+ 	switch (msr->index) {
+ 	case MSR_IA32_UCODE_REV:
+-		rdmsrl(msr->index, msr->data);
++	case MSR_IA32_ARCH_CAPABILITIES:
++		rdmsrl_safe(msr->index, &msr->data);
+ 		break;
+ 	default:
+ 		if (kvm_x86_ops->get_msr_feature(msr))
 
 
