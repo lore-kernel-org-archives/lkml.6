@@ -2,147 +2,221 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA1BC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D09C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA91B21741
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ECED21741
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgrA0ekT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA91B21741
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dL0lFsX/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECED21741
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732747AbeHNQON (ORCPT
+        id S1732773AbeHNQP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:14:13 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35425 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730488AbeHNQON (ORCPT
+        Tue, 14 Aug 2018 12:15:29 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40273 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730488AbeHNQP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:14:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g1-v6so17232387wru.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 06:27:02 -0700 (PDT)
+        Tue, 14 Aug 2018 12:15:29 -0400
+Received: by mail-pl0-f67.google.com with SMTP id s17-v6so8313912plp.7;
+        Tue, 14 Aug 2018 06:28:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GsWTMFGYFcxpsxmOW4OQEyxu/FWI0LaQi7x6AaaVFaM=;
-        b=dgrA0ekTyVRGPSyByTjflEWDjbRvmc6GzWUUlEfZeBhiTYNchDf5+M781qO7UOkI5f
-         3/6SPJCqhSfQKRrhTDwTYA+maSEO4IUNiJhB3mJD4fyAQkO+G4SB8Qp6ztjO18xKfU1Q
-         iQ1c9uXUHy1n/5KmqE6VnXrH6/+WqHtjUWYk8=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DRrpz+iSPP+xrFDBb7J7EZIhj8m7B7IbW0REW4izP7A=;
+        b=dL0lFsX/rH79PbXrDNJzgLrUHjDJyoPh1m5oxx6a88fkPpEk6GVwoLR6nGwIsjo3RN
+         u873CC96q2bl5B4/3YqH8FmwfYinXsJDEINl5d6Pol/hmW+YT11qLiamyduBZa5pUcjR
+         yUExycBuBQRDl0j8n4DXyWQ44F2I7q4lbSzhdtBFzns87SveMitsd/1+Lwtarw8IVs5f
+         Sv9eRThiYTGECjVSiWof/iwdQpCXAA6gbuFZbmUISj1yYeAJnOTOjXBepw9AyaFPGjIv
+         Jwl5Dgz2enWszGjvLRo4Tgl1Iz29Q+nWJiZRN+GETKNp02U1Scolfxgr4PpFIffsLatu
+         Oh+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GsWTMFGYFcxpsxmOW4OQEyxu/FWI0LaQi7x6AaaVFaM=;
-        b=XEiMUzS9Mitmgd0oO5pgpli2iZWPKIgZEId+920Mi0S+Ms06alV+KHoVtRdfgGA2wl
-         dFF0CG8lCwbSptFpu8tlvqro2HMBDuJGz0lliQlT1Ibq5iTPrbKXwu7whb9PnCswdZvv
-         DNfgS8j8d17Hcoy3Sa31ZnkN5+cHB1CfzazmgNFipbwoeTzbqfE3pO33bpWiznpS/w4Z
-         akSC8vOi58fHzX8iYWa5tVfXtjBLjTx+B/h9o86ksiPIziLKL7FZnNWHtJ1F4RYvFe18
-         kPjBjCEjOZyeENVoL6y98RrqHAVdrI8JnnL/cMHROatnhapOHj0Eb9fTuDEGOFVe3AaW
-         B5pQ==
-X-Gm-Message-State: AOUpUlHrzd/yeHgoCBKTWDl3aiBwo5X/m4ovEGUg00httXVpdKFf4r3o
-        OzYw1sxpHCMRmnuyCKexd7cMqw==
-X-Google-Smtp-Source: AA+uWPzPNJzQk3mY4Hd+b1sOfFpH1ld2FNUsMg/NYIsc2O8IABidJ3RzwxI1zJIkif6ufDC6qgk5jg==
-X-Received: by 2002:a5d:69ca:: with SMTP id s10-v6mr13598853wrw.77.1534253221722;
-        Tue, 14 Aug 2018 06:27:01 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm14592819wrs.1.2018.08.14.06.27.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 06:27:00 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 14:26:58 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     zhe.he@windriver.com
-Cc:     jason.wessel@windriver.com, gregkh@linuxfoundation.org,
-        jslaby@suse.com, kgdb-bugreport@lists.sourceforge.net,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] kgdboc: Passing ekgdboc to command line causes
- panic
-Message-ID: <20180814132658.nadasqcwi3f44duv@holly.lan>
-References: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DRrpz+iSPP+xrFDBb7J7EZIhj8m7B7IbW0REW4izP7A=;
+        b=XElQxApIcjpOdZV2cfCE9+FBIX8Jc00jp91ISFpB067wmUf1XdV143j1+fEfgc1fmT
+         piwg42HbRa5JxU7Vw61UHCVUpC+LdgLpIP5z+WXCB7bcsi0Sl9AePXSEL5wu48upZ9Br
+         qr9fYOR/7IrGqOOF/nkPJO9PZRqiz7S3MKXc2/+uyNQBaTZH52Jh+0rQbHQkl/6LpvqJ
+         HpxMblB1CDsXYdoqHHuAQfEBi3IrKzhteO2UkjKhmdln8SqyWWS3TuOV7p2phQVcvrzU
+         QhJKFlGmAvw2IxDnmRtG7bDHDxcDIrlS03Zcb/V+i2rn9wTcaUn4nz6B17vFyeGtirr1
+         cCtw==
+X-Gm-Message-State: AOUpUlEQv2hlVMpdhiR0u6jAMAWI4++MI0Bupz8kFNS2NvqQcQ/tzY6Z
+        X9y2ot43P0gry4FrPiaOtXs=
+X-Google-Smtp-Source: AA+uWPxIXYjFhpCjgkfQPKAMtUEY0VGrudg6pDy78uzJjeEdAXuWW9BijoIdc8qfADJb0aho0uk6kg==
+X-Received: by 2002:a17:902:22e:: with SMTP id 43-v6mr20559743plc.118.1534253298457;
+        Tue, 14 Aug 2018 06:28:18 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r23-v6sm37362510pfj.5.2018.08.14.06.28.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 06:28:17 -0700 (PDT)
+Subject: Re: linux-next: build warning after merge of the net-next tree
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+References: <20180719120447.6e7ba23d@canb.auug.org.au>
+ <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
+ <20180719152940.0720e9c1@canb.auug.org.au>
+ <6dabf12b-e3db-dfe8-101c-02772039e21a@roeck-us.net>
+ <20180720080906.7a30c573@canb.auug.org.au>
+ <20180719223521.GA30287@roeck-us.net>
+ <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
+ <CAK7LNAQgdqpi60eH-Sfnr+U9DKpwCL=wPdhJA6=hpv3cicVotw@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <2146bdab-2885-931a-b878-4aac10bb1897@roeck-us.net>
+Date:   Tue, 14 Aug 2018 06:28:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAK7LNAQgdqpi60eH-Sfnr+U9DKpwCL=wPdhJA6=hpv3cicVotw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 08:46:00PM +0800, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
+On 08/14/2018 12:05 AM, Masahiro Yamada wrote:
+> 2018-07-20 8:19 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> 2018-07-20 7:35 GMT+09:00 Guenter Roeck <linux@roeck-us.net>:
+>>> On Fri, Jul 20, 2018 at 08:09:06AM +1000, Stephen Rothwell wrote:
+>>>> Hi Guenter,
+>>>>
+>>>> On Thu, 19 Jul 2018 06:49:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>>
+>>>>> On 07/18/2018 10:29 PM, Stephen Rothwell wrote:
+>>>>>>
+>>>>>> On Wed, 18 Jul 2018 20:52:56 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>>>>
+>>>>>>> On 07/18/2018 07:04 PM, Stephen Rothwell wrote:
+>>>>>>>>
+>>>>>>>> After merging the net-next tree, today's linux-next build (x86_64
+>>>>>>>> allmodconfig) produced this warning:
+>>>>>>>>
+>>>>>>>> *
+>>>>>>>> * Restart config...
+>>>>>>>> *
+>>>>>>>> ....
+>>>>>>>>
+>>>>>>>> This is output by my "make allmodconfig" and only started after merging
+>>>>>>>> the net-next tree today.  It has continued for further merges/builds.
+>>>>>>>>
+>>>>>>>> I suspect commit
+>>>>>>>>
+>>>>>>>>      1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+>>>>>>>>
+>>>>>>>> which added an "imply" clause.
+>>>>>>>>
+>>>>>>> I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
+>>>>>>> not. Is that a caveat when using "imply", and does it mean that "imply"
+>>>>>>> should better not be used ?
+>>>>>>
+>>>>>> I don't know, sorry.  It was just my best guess from what I could see
+>>>>>> had changed.
+>>>>>>
+>>>>>> I wonder if it makes a difference that I am doing my "make
+>>>>>> allmodconfig" on top of a previous "make allmodconfig" and some symbols
+>>>>>> are marked as "NEW" (though they are not symbols related to the changes
+>>>>>> that happened during the net-next tree merge)?
+>>>>>>
+>>>>>
+>>>>> I tried to reproduce the problem, but I don't see the message.
+>>>>>
+>>>>> What I do see, though, is that "make allmodconfig" on a clean tree,
+>>>>> followed by "make menuconfig", results in configuration changes.
+>>>>> Specifically,
+>>>>>
+>>>>>   > CONFIG_ARC_EMAC_CORE=m
+>>>>>   > CONFIG_ARC_EMAC=m
+>>>>>   > CONFIG_EMAC_ROCKCHIP=m
+>>>>>
+>>>>> is removed by menuconfig, and a large number of "# ... is not set"
+>>>>> configuration lines are added. Weird and bad, since several of the
+>>>>> disabled configurations _should_ be enabled by "make allmodconfig",
+>>>>> and a large number of hwmon drivers are affected. Bisect does point
+>>>>> to "net: phy: sfp: Add HWMON support for module sensors", meaning
+>>>>> "imply hwmon" does have severe side effects and can not be used.
+>>>>>
+>>>>> I'll try to find a fix.
+>>>>
+>>>> OK, my mistake, the "make allmodconfig" works, the following "make"
+>>>> causes the config restart.  (I am actually doing cross builds and using
+>>>> an external object directory, in case that matters.)
+>>>>
+>>>> I removed the "imply HWMON" line added by the above commit and the
+>>>> problem went away.  Also, using "depends on HWMON || HWMON=n" instead
+>>>> of the imply fixes it.
+>>>
+>>> Yes, replacing imply with the dependency is what I did in the fixup patch.
+>>> Sorry, I should have copied you: https://patchwork.kernel.org/patch/10534925/
+>>>
+>>> It is a bit different - imply was supposed to enforce HWMON={y,n} if SFP=y,
+>>> and the depends line enforces SFP={n,m} if HWMON=m. I have no idea why
+>>> imply doesn't work, but I think I'll stay away from it in the future.
+>>>
+>>> Guenter
+>>
+>>
+>> Hmm, this could be a Kconfig bug.
+>>
+>> I will take a look.
 > 
-> kgdboc_option_setup does not check input argument before passing it
-> to strlen. The argument would be a NULL pointer if "ekgdboc", without
-> its value, is set in command line and thus cause the following panic.
 > 
-> PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
-> [    0.000000] RIP: 0010:strlen+0x0/0x20
-> ...
-> [    0.000000] Call Trace
-> [    0.000000]  ? kgdboc_option_setup+0x9/0xa0
-> [    0.000000]  ? kgdboc_early_init+0x6/0x1b
-> [    0.000000]  ? do_early_param+0x4d/0x82
-> [    0.000000]  ? parse_args+0x212/0x330
-> [    0.000000]  ? rdinit_setup+0x26/0x26
-> [    0.000000]  ? parse_early_options+0x20/0x23
-> [    0.000000]  ? rdinit_setup+0x26/0x26
-> [    0.000000]  ? parse_early_param+0x2d/0x39
-> [    0.000000]  ? setup_arch+0x2f7/0xbf4
-> [    0.000000]  ? start_kernel+0x5e/0x4c2
-> [    0.000000]  ? load_ucode_bsp+0x113/0x12f
-> [    0.000000]  ? secondary_startup_64+0xa5/0xb0
+> Today, I took a look at it.
 > 
-> This patch adds a check to prevent the panic.
+> The cause of the problem was the circular dependency.
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
-> v2:
-> - Split out printk cleanups
-> - Add cc to stable@vger.kernel.org
+> Somehow, 'imply' is not checked in the circular dependency.
 > 
->  drivers/tty/serial/kgdboc.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> So, I wrote patches to report this.
+> https://patchwork.kernel.org/patch/10565061/
+> https://patchwork.kernel.org/patch/10565063/
 > 
-> diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-> index b4ba2b1..206f8c2 100644
-> --- a/drivers/tty/serial/kgdboc.c
-> +++ b/drivers/tty/serial/kgdboc.c
-> @@ -130,6 +130,11 @@ static void kgdboc_unregister_kbd(void)
->  
->  static int kgdboc_option_setup(char *opt)
->  {
-> +	if (!opt) {
-> +		pr_err("kgdboc: null option\n");
+> 
+> If you apply those two patches on top of commit
+> 1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+> It is reported in allmodconfig stage, like this:
+> 
+> 
+> masahiro@grover:~/ref/linux-next$ make allmodconfig
+>    HOSTCC  scripts/kconfig/conf.o
+>    YACC    scripts/kconfig/zconf.tab.c
+>    HOSTCC  scripts/kconfig/zconf.tab.o
+>    HOSTLD  scripts/kconfig/conf
+> scripts/kconfig/conf  --allmodconfig Kconfig
+> drivers/of/Kconfig:68:error: recursive dependency detected!
+> drivers/of/Kconfig:68: symbol OF_IRQ depends on IRQ_DOMAIN
+> kernel/irq/Kconfig:63: symbol IRQ_DOMAIN is selected by REGMAP
+> drivers/base/regmap/Kconfig:6: symbol REGMAP is selected by SENSORS_ASPEED
+> drivers/hwmon/Kconfig:352: symbol SENSORS_ASPEED depends on HWMON
+> drivers/hwmon/Kconfig:5: symbol HWMON is implied by SFP
+> drivers/net/phy/Kconfig:214: symbol SFP depends on PHYLIB
+> drivers/net/phy/Kconfig:181: symbol PHYLIB is selected by ARC_EMAC_CORE
+> drivers/net/ethernet/arc/Kconfig:18: symbol ARC_EMAC_CORE is selected
+> by ARC_EMAC
+> drivers/net/ethernet/arc/Kconfig:24: symbol ARC_EMAC depends on OF_IRQ
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> 
 
-Apologies... I should have picked this up when I replied earlier but
-this error message describes what the function gets when I think it
-should report what the user actually did. So should be something like:
+Interesting; I thought that "implied" does not really select the symbol.
+That means 'imply' just doesn't work for HWMON, and we'll have to stick
+with the old "depends on HWMON || HWMON=n".
 
-		pr_err("kgdboc: config string not provided\n");
-	
-With that (or a very similar) change:
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-
-Daniel.
-
-
-> +		return -EINVAL;
-> +	}
-> +
->  	if (strlen(opt) >= MAX_CONFIG_LEN) {
->  		printk(KERN_ERR "kgdboc: config string too long\n");
->  		return -ENOSPC;
-> -- 
-> 2.7.4
-> 
+Thanks,
+Guenter
