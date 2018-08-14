@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7676C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FF4C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A9621730
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A9621730
+	by mail.kernel.org (Postfix) with ESMTP id BC21521728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:26:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC21521728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388536AbeHNUOv (ORCPT
+        id S2388549AbeHNUOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:14:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52072 "EHLO
+        Tue, 14 Aug 2018 16:14:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387824AbeHNUOu (ORCPT
+        with ESMTP id S2387702AbeHNUOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:14:50 -0400
+        Tue, 14 Aug 2018 16:14:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 489FAC5C;
-        Tue, 14 Aug 2018 17:26:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65948CD8;
+        Tue, 14 Aug 2018 17:26:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 57/79] x86/speculation/l1tf: Unbreak !__HAVE_ARCH_PFN_MODIFY_ALLOWED architectures
-Date:   Tue, 14 Aug 2018 19:17:16 +0200
-Message-Id: <20180814171340.052011732@linuxfoundation.org>
+Subject: [PATCH 4.18 58/79] x86/KVM/VMX: Initialize the vmx_l1d_flush_pages content
+Date:   Tue, 14 Aug 2018 19:17:17 +0200
+Message-Id: <20180814171340.100860318@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -50,68 +50,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Nicolai Stange <nstange@suse.de>
 
-pfn_modify_allowed() and arch_has_pfn_modify_check() are outside of the
-!__ASSEMBLY__ section in include/asm-generic/pgtable.h, which confuses
-assembler on archs that don't have __HAVE_ARCH_PFN_MODIFY_ALLOWED (e.g.
-ia64) and breaks build:
+The slow path in vmx_l1d_flush() reads from vmx_l1d_flush_pages in order
+to evict the L1d cache.
 
-    include/asm-generic/pgtable.h: Assembler messages:
-    include/asm-generic/pgtable.h:538: Error: Unknown opcode `static inline bool pfn_modify_allowed(unsigned long pfn,pgprot_t prot)'
-    include/asm-generic/pgtable.h:540: Error: Unknown opcode `return true'
-    include/asm-generic/pgtable.h:543: Error: Unknown opcode `static inline bool arch_has_pfn_modify_check(void)'
-    include/asm-generic/pgtable.h:545: Error: Unknown opcode `return false'
-    arch/ia64/kernel/entry.S:69: Error: `mov' does not fit into bundle
+However, these pages are never cleared and, in theory, their data could be
+leaked.
 
-Move those two static inlines into the !__ASSEMBLY__ section so that they
-don't confuse the asm build pass.
+More importantly, KSM could merge a nested hypervisor's vmx_l1d_flush_pages
+to fewer than 1 << L1D_CACHE_ORDER host physical pages and this would break
+the L1d flushing algorithm: L1D on x86_64 is tagged by physical addresses.
 
-Fixes: 42e4089c7890 ("x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings")
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fix this by initializing the individual vmx_l1d_flush_pages with a
+different pattern each.
+
+Rename the "empty_zp" asm constraint identifier in vmx_l1d_flush() to
+"flush_pages" to reflect this change.
+
+Fixes: a47dd5f06714 ("x86/KVM/VMX: Add L1D flush algorithm")
+Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/asm-generic/pgtable.h |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/x86/kvm/vmx.c |   17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1083,6 +1083,18 @@ int phys_mem_access_prot_allowed(struct
- static inline void init_espfix_bsp(void) { }
- #endif
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -211,6 +211,7 @@ static void *vmx_l1d_flush_pages;
+ static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
+ {
+ 	struct page *page;
++	unsigned int i;
  
-+#ifndef __HAVE_ARCH_PFN_MODIFY_ALLOWED
-+static inline bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
-+{
-+	return true;
-+}
+ 	if (!enable_ept) {
+ 		l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_EPT_DISABLED;
+@@ -243,6 +244,16 @@ static int vmx_setup_l1d_flush(enum vmx_
+ 		if (!page)
+ 			return -ENOMEM;
+ 		vmx_l1d_flush_pages = page_address(page);
 +
-+static inline bool arch_has_pfn_modify_check(void)
-+{
-+	return false;
-+}
-+#endif /* !_HAVE_ARCH_PFN_MODIFY_ALLOWED */
-+
- #endif /* !__ASSEMBLY__ */
++		/*
++		 * Initialize each page with a different pattern in
++		 * order to protect against KSM in the nested
++		 * virtualization case.
++		 */
++		for (i = 0; i < 1u << L1D_CACHE_ORDER; ++i) {
++			memset(vmx_l1d_flush_pages + i * PAGE_SIZE, i + 1,
++			       PAGE_SIZE);
++		}
+ 	}
  
- #ifndef io_remap_pfn_range
-@@ -1097,16 +1109,4 @@ static inline void init_espfix_bsp(void)
- #endif
- #endif
- 
--#ifndef __HAVE_ARCH_PFN_MODIFY_ALLOWED
--static inline bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
--{
--	return true;
--}
--
--static inline bool arch_has_pfn_modify_check(void)
--{
--	return false;
--}
--#endif
--
- #endif /* _ASM_GENERIC_PGTABLE_H */
+ 	l1tf_vmx_mitigation = l1tf;
+@@ -9737,7 +9748,7 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 		/* First ensure the pages are in the TLB */
+ 		"xorl	%%eax, %%eax\n"
+ 		".Lpopulate_tlb:\n\t"
+-		"movzbl	(%[empty_zp], %%" _ASM_AX "), %%ecx\n\t"
++		"movzbl	(%[flush_pages], %%" _ASM_AX "), %%ecx\n\t"
+ 		"addl	$4096, %%eax\n\t"
+ 		"cmpl	%%eax, %[size]\n\t"
+ 		"jne	.Lpopulate_tlb\n\t"
+@@ -9746,12 +9757,12 @@ static void vmx_l1d_flush(struct kvm_vcp
+ 		/* Now fill the cache */
+ 		"xorl	%%eax, %%eax\n"
+ 		".Lfill_cache:\n"
+-		"movzbl	(%[empty_zp], %%" _ASM_AX "), %%ecx\n\t"
++		"movzbl	(%[flush_pages], %%" _ASM_AX "), %%ecx\n\t"
+ 		"addl	$64, %%eax\n\t"
+ 		"cmpl	%%eax, %[size]\n\t"
+ 		"jne	.Lfill_cache\n\t"
+ 		"lfence\n"
+-		:: [empty_zp] "r" (vmx_l1d_flush_pages),
++		:: [flush_pages] "r" (vmx_l1d_flush_pages),
+ 		    [size] "r" (size)
+ 		: "eax", "ebx", "ecx", "edx");
+ }
 
 
