@@ -6,41 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C7CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6709AC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D8EC2172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8EC2172B
+	by mail.kernel.org (Postfix) with ESMTP id 295B921728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 295B921728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387997AbeHNUMs (ORCPT
+        id S2388009AbeHNUMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:12:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51422 "EHLO
+        Tue, 14 Aug 2018 16:12:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51440 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387747AbeHNUMs (ORCPT
+        with ESMTP id S2387747AbeHNUMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:12:48 -0400
+        Tue, 14 Aug 2018 16:12:50 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 300ABCBA;
-        Tue, 14 Aug 2018 17:24:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F795CD8;
+        Tue, 14 Aug 2018 17:24:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 02/79] x86/speculation: Protect against userspace-userspace spectreRSB
-Date:   Tue, 14 Aug 2018 19:16:21 +0200
-Message-Id: <20180814171336.888584491@linuxfoundation.org>
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 20/79] x86/cpu: Remove the pointless CPU printout
+Date:   Tue, 14 Aug 2018 19:16:39 +0200
+Message-Id: <20180814171337.580263815@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -57,92 +51,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit fdf82a7856b32d905c39afc85e34364491e46346 upstream.
+The value of this printout is dubious at best and there is no point in
+having it in two different places along with convoluted ways to reach it.
 
-The article "Spectre Returns! Speculation Attacks using the Return Stack
-Buffer" [1] describes two new (sub-)variants of spectrev2-like attacks,
-making use solely of the RSB contents even on CPUs that don't fallback to
-BTB on RSB underflow (Skylake+).
+Remove it completely.
 
-Mitigate userspace-userspace attacks by always unconditionally filling RSB on
-context switch when the generic spectrev2 mitigation has been enabled.
-
-[1] https://arxiv.org/pdf/1807.07940.pdf
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1807261308190.997@cbobk.fhfr.pm
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/bugs.c |   38 +++++++-------------------------------
- 1 file changed, 7 insertions(+), 31 deletions(-)
+ arch/x86/kernel/cpu/common.c   |   20 +++++---------------
+ arch/x86/kernel/cpu/topology.c |   10 ----------
+ 2 files changed, 5 insertions(+), 25 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -313,23 +313,6 @@ static enum spectre_v2_mitigation_cmd __
- 	return cmd;
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -666,13 +666,12 @@ void detect_ht(struct cpuinfo_x86 *c)
+ #ifdef CONFIG_SMP
+ 	u32 eax, ebx, ecx, edx;
+ 	int index_msb, core_bits;
+-	static bool printed;
+ 
+ 	if (!cpu_has(c, X86_FEATURE_HT))
+ 		return;
+ 
+ 	if (cpu_has(c, X86_FEATURE_CMP_LEGACY))
+-		goto out;
++		return;
+ 
+ 	if (cpu_has(c, X86_FEATURE_XTOPOLOGY))
+ 		return;
+@@ -681,14 +680,14 @@ void detect_ht(struct cpuinfo_x86 *c)
+ 
+ 	smp_num_siblings = (ebx & 0xff0000) >> 16;
+ 
++	if (!smp_num_siblings)
++		smp_num_siblings = 1;
++
+ 	if (smp_num_siblings == 1) {
+ 		pr_info_once("CPU0: Hyper-Threading is disabled\n");
+-		goto out;
++		return;
+ 	}
+ 
+-	if (smp_num_siblings <= 1)
+-		goto out;
+-
+ 	index_msb = get_count_order(smp_num_siblings);
+ 	c->phys_proc_id = apic->phys_pkg_id(c->initial_apicid, index_msb);
+ 
+@@ -700,15 +699,6 @@ void detect_ht(struct cpuinfo_x86 *c)
+ 
+ 	c->cpu_core_id = apic->phys_pkg_id(c->initial_apicid, index_msb) &
+ 				       ((1 << core_bits) - 1);
+-
+-out:
+-	if (!printed && (c->x86_max_cores * smp_num_siblings) > 1) {
+-		pr_info("CPU: Physical Processor ID: %d\n",
+-			c->phys_proc_id);
+-		pr_info("CPU: Processor Core ID: %d\n",
+-			c->cpu_core_id);
+-		printed = 1;
+-	}
+ #endif
  }
  
--/* Check for Skylake-like CPUs (for RSB handling) */
--static bool __init is_skylake_era(void)
--{
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
--	    boot_cpu_data.x86 == 6) {
--		switch (boot_cpu_data.x86_model) {
--		case INTEL_FAM6_SKYLAKE_MOBILE:
--		case INTEL_FAM6_SKYLAKE_DESKTOP:
--		case INTEL_FAM6_SKYLAKE_X:
--		case INTEL_FAM6_KABYLAKE_MOBILE:
--		case INTEL_FAM6_KABYLAKE_DESKTOP:
--			return true;
--		}
--	}
--	return false;
--}
+--- a/arch/x86/kernel/cpu/topology.c
++++ b/arch/x86/kernel/cpu/topology.c
+@@ -33,7 +33,6 @@ int detect_extended_topology(struct cpui
+ 	unsigned int eax, ebx, ecx, edx, sub_index;
+ 	unsigned int ht_mask_width, core_plus_mask_width;
+ 	unsigned int core_select_mask, core_level_siblings;
+-	static bool printed;
+ 
+ 	if (c->cpuid_level < 0xb)
+ 		return -1;
+@@ -86,15 +85,6 @@ int detect_extended_topology(struct cpui
+ 	c->apicid = apic->phys_pkg_id(c->initial_apicid, 0);
+ 
+ 	c->x86_max_cores = (core_level_siblings / smp_num_siblings);
 -
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -390,22 +373,15 @@ retpoline_auto:
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
- 	/*
--	 * If neither SMEP nor PTI are available, there is a risk of
--	 * hitting userspace addresses in the RSB after a context switch
--	 * from a shallow call stack to a deeper one. To prevent this fill
--	 * the entire RSB, even when using IBRS.
-+	 * If spectre v2 protection has been enabled, unconditionally fill
-+	 * RSB during a context switch; this protects against two independent
-+	 * issues:
- 	 *
--	 * Skylake era CPUs have a separate issue with *underflow* of the
--	 * RSB, when they will predict 'ret' targets from the generic BTB.
--	 * The proper mitigation for this is IBRS. If IBRS is not supported
--	 * or deactivated in favour of retpolines the RSB fill on context
--	 * switch is required.
-+	 *	- RSB underflow (and switch to BTB) on Skylake+
-+	 *	- SpectreRSB variant of spectre v2 on X86_BUG_SPECTRE_V2 CPUs
- 	 */
--	if ((!boot_cpu_has(X86_FEATURE_PTI) &&
--	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
--		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
--		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
+-	if (!printed) {
+-		pr_info("CPU: Physical Processor ID: %d\n",
+-		       c->phys_proc_id);
+-		if (c->x86_max_cores > 1)
+-			pr_info("CPU: Processor Core ID: %d\n",
+-			       c->cpu_core_id);
+-		printed = 1;
 -	}
-+	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
-+	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
- 
- 	/* Initialize Indirect Branch Prediction Barrier if supported */
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+ #endif
+ 	return 0;
+ }
 
 
