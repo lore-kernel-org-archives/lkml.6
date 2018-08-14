@@ -2,244 +2,137 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD23C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F86C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE2A21735
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE2A21735
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5139521735
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:40:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5139521735
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731452AbeHNM0C (ORCPT
+        id S1731784AbeHNM01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:26:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34674 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728272AbeHNM0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:26:02 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7903B40203F2;
-        Tue, 14 Aug 2018 09:39:37 +0000 (UTC)
-Received: from [10.36.117.57] (ovpn-117-57.ams2.redhat.com [10.36.117.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD7722156712;
-        Tue, 14 Aug 2018 09:39:34 +0000 (UTC)
-Subject: Re: [PATCH v2 3/3] mm/memory_hotplug: Refactor
- unregister_mem_sect_under_nodes
-To:     osalvador@techadventures.net, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
-        rafael@kernel.org, yasu.isimatu@gmail.com, logang@deltatee.com,
-        dave.jiang@intel.com, Jonathan.Cameron@huawei.com, vbabka@suse.cz,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>
-References: <20180813154639.19454-1-osalvador@techadventures.net>
- <20180813154639.19454-4-osalvador@techadventures.net>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <24b69c72-0ebd-476d-1c47-9c64c24b831f@redhat.com>
-Date:   Tue, 14 Aug 2018 11:39:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 14 Aug 2018 08:26:27 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:43178 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728541AbeHNM00 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 08:26:26 -0400
+Received: by mail-io0-f198.google.com with SMTP id w19-v6so16093550ioa.10
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 02:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=raIKP13xTCo7cAx7aqE51QxuifH6nr2cl4QYzJP1Srk=;
+        b=D89BXOvBv2XJgl1xrCwQYMvX+U/Fakyvli0M0JdWAbCwdjcPVNBYPsNTNP5fW0Ab/+
+         WJ+Ugpm9UXWNdAra4lv9vF3p1wR6g2b58qyZLWhOg5pjMa+lJBfL4rKa0F5F4idOuzw1
+         wjAI28mNQNzUaJxWUVcp0zz+/oGqVIGinYGQZblUsXWyMvTjvZFi1/y5yGjz4RDcNb7s
+         1gqyE8OP5Q6Hujdc7xKHoXbXDrdy0Q+7Vq28/FC6V3hnINvCBp0hLVQMuINQ6ESdFObI
+         oVgI2bKwhtUCNILv1IETbLlabZzum3SJClZsNyza8Ydl+LXmVAOywwG1zC5RuCxvi8JE
+         3vYA==
+X-Gm-Message-State: AOUpUlHSEeJ8GjdSZJVGKbPLs++zsbWBX6u49u9ArHlC/0sp4IJxYFwX
+        f14JKcV3FaA7ANEAoWB4ksfpDsDZ7SGb0ynqd9T7wwRz/uad
+X-Google-Smtp-Source: AA+uWPxZ/opCN8i0GEWeHpPSajDUGa0E+AgY2/Y3Si6pASESfrRfrU1pJKb0vtmC5fKt77oF2KClFccoI1O4o4fjix+M6ZLok32T
 MIME-Version: 1.0
-In-Reply-To: <20180813154639.19454-4-osalvador@techadventures.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 09:39:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 14 Aug 2018 09:39:37 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-Received: by 2002:a6b:f613:: with SMTP id n19-v6mr9475069ioh.131.1534239602781;
+ Tue, 14 Aug 2018 02:40:02 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 02:40:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000863a6e057361feb4@google.com>
+Subject: WARNING: suspicious RCU usage in bpf_prog_array_copy_core
+From:   syzbot <syzbot+6e72317008eef84a216b@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.08.2018 17:46, osalvador@techadventures.net wrote:
-> From: Oscar Salvador <osalvador@suse.de>
-> 
-> unregister_mem_sect_under_nodes() tries to allocate a nodemask_t
-> in order to check whithin the loop which nodes have already been unlinked,
-> so we do not repeat the operation on them.
-> 
-> NODEMASK_ALLOC calls kmalloc() if NODES_SHIFT > 8, otherwise
-> it just declares a nodemask_t variable whithin the stack.
-> 
-> Since kamlloc() can fail, we actually check whether NODEMASK_ALLOC failed or
-> not, and we return -ENOMEM accordingly.
-> remove_memory_section() does not check for the return value though.
-> 
-> The problem with this is that if we return -ENOMEM, it means that
-> unregister_mem_sect_under_nodes will not be able to remove the symlinks,
-> but since we do not check the return value, we go ahead and we call unregister_memory(),
-> which will remove all the mem_blks directories.
-> 
-> This will leave us with dangled symlinks.
-> 
-> The easiest way to overcome this is to fallback by calling sysfs_remove_link()
-> unconditionally in case NODEMASK_ALLOC failed.
-> This means that we will call sysfs_remove_link on nodes that have been already unlinked,
-> but nothing wrong happens as sysfs_remove_link() backs off somewhere down the chain in case
-> the link has already been removed.
-> 
-> I think that this is better than
-> 
-> a) dangled symlinks
-> b) having to recovery from such error in remove_memory_section
-> 
-> Since from now on we will not need to take care about return values, we can make the function void.
-> 
-> While at it, we can also drop the node_online() check, as a node can only be
-> offline if all the memory/cpus associated with it have been removed.
+Hello,
 
-I would prefer splitting this change out into a separate patch.
+syzbot found the following crash on:
 
-> 
-> As we have a safe fallback, one thing that could also be done is to add __GFP_NORETRY
-> in the flags when calling NODEMASK_ALLOC, so we do not retry.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> ---
->  drivers/base/node.c  | 26 +++++++++++++++-----------
->  include/linux/node.h |  5 ++---
->  2 files changed, 17 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index dd3bdab230b2..0a3ca62687ea 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -449,35 +449,39 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, void *arg)
->  }
->  
->  /* unregister memory section under all nodes that it spans */
-> -int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
-> +void unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
->  				    unsigned long phys_index)
->  {
->  	NODEMASK_ALLOC(nodemask_t, unlinked_nodes, GFP_KERNEL);
->  	unsigned long pfn, sect_start_pfn, sect_end_pfn;
->  
-> -	if (!unlinked_nodes)
-> -		return -ENOMEM;
-> -	nodes_clear(*unlinked_nodes);
-> +	if (unlinked_nodes)
-> +		nodes_clear(*unlinked_nodes);
->  
->  	sect_start_pfn = section_nr_to_pfn(phys_index);
->  	sect_end_pfn = sect_start_pfn + PAGES_PER_SECTION - 1;
->  	for (pfn = sect_start_pfn; pfn <= sect_end_pfn; pfn++) {
-> -		int nid;
-> +		int nid = get_nid_for_pfn(pfn);;
->  
-> -		nid = get_nid_for_pfn(pfn);
->  		if (nid < 0)
->  			continue;
-> -		if (!node_online(nid))
-> -			continue;
-> -		if (node_test_and_set(nid, *unlinked_nodes))
-> +		/*
-> +		 * It is possible that NODEMASK_ALLOC fails due to memory pressure.
-> +		 * If that happens, we fallback to call sysfs_remove_link unconditionally.
-> +		 * Nothing wrong will happen as sysfs_remove_link will back off
-> +		 * somewhere down the chain in case the link has already been removed.
-> +		 */
-> +		if (unlinked_nodes && node_test_and_set(nid, *unlinked_nodes))
->  			continue;
-> +
->  		sysfs_remove_link(&node_devices[nid]->dev.kobj,
->  			 kobject_name(&mem_blk->dev.kobj));
->  		sysfs_remove_link(&mem_blk->dev.kobj,
->  			 kobject_name(&node_devices[nid]->dev.kobj));
->  	}
-> -	NODEMASK_FREE(unlinked_nodes);
-> -	return 0;
-> +
-> +	if (unlinked_nodes)
-> +		NODEMASK_FREE(unlinked_nodes);
+HEAD commit:    4110b42356f3 Add linux-next specific files for 20180810
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=109bac02400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d80606e3795a4f5
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e72317008eef84a216b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=157ef48a400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e16cf8400000
 
-NODEMASK_FEEE/kfree can deal with NULL pointers.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6e72317008eef84a216b@syzkaller.appspotmail.com
 
->  }
->  
->  int link_mem_sections(int nid, unsigned long start_pfn, unsigned long end_pfn)
-> diff --git a/include/linux/node.h b/include/linux/node.h
-> index 257bb3d6d014..1203378e596a 100644
-> --- a/include/linux/node.h
-> +++ b/include/linux/node.h
-> @@ -72,7 +72,7 @@ extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
->  extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
->  extern int register_mem_sect_under_node(struct memory_block *mem_blk,
->  						void *arg);
-> -extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
-> +extern void unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
->  					   unsigned long phys_index);
->  
->  #ifdef CONFIG_HUGETLBFS
-> @@ -105,10 +105,9 @@ static inline int register_mem_sect_under_node(struct memory_block *mem_blk,
->  {
->  	return 0;
->  }
-> -static inline int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
-> +static inline void unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
->  						  unsigned long phys_index)
->  {
-> -	return 0;
->  }
->  
->  static inline void register_hugetlbfs_with_node(node_registration_func_t reg,
-> 
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+
+=============================
+WARNING: suspicious RCU usage
+4.18.0-rc8-next-20180810+ #36 Not tainted
+-----------------------------
+kernel/bpf/core.c:1582 suspicious rcu_dereference_check() usage!
+
+other info that might help us debug this:
 
 
--- 
+rcu_scheduler_active = 2, debug_locks = 1
+2 locks held by syz-executor287/4449:
+  #0: 00000000d8131c0c (&ctx->mutex){+.+.}, at:  
+perf_event_ctx_lock_nested+0x375/0x600 kernel/events/core.c:1276
+  #1: 000000006c916250 (bpf_event_mutex){+.+.}, at:  
+perf_event_query_prog_array+0x1c6/0x380 kernel/trace/bpf_trace.c:1062
 
-Thanks,
+stack backtrace:
+CPU: 1 PID: 4449 Comm: syz-executor287 Not tainted  
+4.18.0-rc8-next-20180810+ #36
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4562
+  bpf_prog_array_copy_core+0x2d9/0x360 kernel/bpf/core.c:1582
+  bpf_prog_array_copy_info+0x9a/0x110 kernel/bpf/core.c:1720
+  perf_event_query_prog_array+0x22e/0x380 kernel/trace/bpf_trace.c:1063
+  _perf_ioctl+0x986/0x1600 kernel/events/core.c:5079
+  perf_ioctl+0x59/0x80 kernel/events/core.c:5110
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440409
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffc5fc1488 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440409
+RDX: 0000000020000180 RSI: 00000000c008240a RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401c90
+R13: 0000000000401d20 R14: 0000000000000000
 
-David / dhildenb
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
