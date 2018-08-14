@@ -3,305 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6185AC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BBDC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F2F21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9BC21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:35:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2lu9qZ+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F2F21736
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ou4xRxSd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9BC21736
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732667AbeHNRUn (ORCPT
+        id S1732723AbeHNRWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729560AbeHNRUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:20:43 -0400
-Received: from mail-qt0-f172.google.com (mail-qt0-f172.google.com [209.85.216.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F683217C3;
-        Tue, 14 Aug 2018 14:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534257196;
-        bh=dLD7XVH0gg4ak0Iyde8k/ZMFx0eP3gzOP+3VwI9umP8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=l2lu9qZ+nIoY2MAbisxdnQGrHWWk2OJE1mx2ATZleJnsEXOmBL/Rpv+4VRyvkceBL
-         9z2b8JKX4dUEMK8gJLdTjLoCpYX2URlXSDawAHpSluJEiFVsv43I8OiniHxmXk/jVx
-         tkqy2LIIYY8DiH6i5n/0CIcXSKP2A0A/VrWtaopA=
-Received: by mail-qt0-f172.google.com with SMTP id q12-v6so21309770qtp.6;
-        Tue, 14 Aug 2018 07:33:16 -0700 (PDT)
-X-Gm-Message-State: AOUpUlG51hy8loFgKbQyDUGU6R6LQjv+XvjHr3xnZE+Ukk9KuYwEcDxn
-        kkK/pUDq7e28ArObTp7INxbP0Gv7jbtHzuK83g==
-X-Google-Smtp-Source: AA+uWPyvUe7CWp0BXEEyumvSHyGvPrGnGAB0+zJHE2SOJ4pUzgqmAZGcmZo6H9KokJBGMJg+Ha/xUYL0ZVQsBJj1aVM=
-X-Received: by 2002:a0c:98c1:: with SMTP id g1-v6mr19297171qvd.27.1534257195702;
- Tue, 14 Aug 2018 07:33:15 -0700 (PDT)
+        Tue, 14 Aug 2018 13:22:32 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:49538 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732119AbeHNRWc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 13:22:32 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D7D4524E121E;
+        Tue, 14 Aug 2018 07:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1534257306; bh=0MJQb5iNXt4hQz3uLgiHhuZzqUufFGDPoPlBD2zegbE=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=Ou4xRxSdWhWWR1jB0JW0UJH5bD+64WURSrv9ebIL4EoeokFgYGhpuQ8kMTlzwo2VH
+         ppBmu17IDY/afJJtcnNJ9BxoBwSwRwWuJxvw/AUuCuxtrVwOCYoYywz1E6uiYT4jGI
+         nN9Dmw2Ye3f4ZTt7KPWe+O8Gh98hHxb1IeaOcAuljCXaC+1AOEPQOGQy/7UgnBvYJp
+         rV9YXJsatbDm0+mMK4PASbaVB1Dv1lpalr9H7cDhr26OdpF5XRzTl0+u3r7u+YO5Ho
+         PESVVvlUAoImfymWqHsctzsXEeDnzEdXhoKKBP1ArF4/GJIDvJxh4pd3qG6ZEO+9UD
+         kqIXePLUt3KCQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C47673748;
+        Tue, 14 Aug 2018 07:35:05 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 14 Aug 2018 07:35:05 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
+ 14 Aug 2018 16:35:03 +0200
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "Vineet Gupta" <Vineet.Gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>
+Subject: Re: [PATCH] ARC: atomic64: fix atomic64_add_unless function
+Thread-Topic: [PATCH] ARC: atomic64: fix atomic64_add_unless function
+Thread-Index: AQHUMY2lhSLajPX2o0m683Cq9/FBEKS/M1SA
+Date:   Tue, 14 Aug 2018 14:35:02 +0000
+Message-ID: <1534257301.3962.79.camel@synopsys.com>
+References: <20180811160856.24936-1-Eugeniy.Paltsev@synopsys.com>
+         <C2D7FE5348E1B147BCA15975FBA23075012B08CB78@us01wembx1.internal.synopsys.com>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B08CB78@us01wembx1.internal.synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.86]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <883CB8865F89B841B8764B2D88E4B1F3@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20180810130359.9882-1-peda@axentia.se> <20180810130359.9882-4-peda@axentia.se>
- <20180813135949.32vrlrevtazr5x7d@apu3b.nibble.pw> <0baac94e-f3d2-53fd-4af9-854bb4498345@axentia.se>
- <CAL_JsqJPzwpN2TFghy-FfHZppexG9gW4qBy6iYtGpyP_Bp6dUA@mail.gmail.com> <5c9853fc-e2ea-6983-ac88-b52b6e9e6ecd@axentia.se>
-In-Reply-To: <5c9853fc-e2ea-6983-ac88-b52b6e9e6ecd@axentia.se>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 14 Aug 2018 08:33:03 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJHRL0f2YwvOJBpggKRVQwPWy8j08-+_nd-VifOOKYqFA@mail.gmail.com>
-Message-ID: <CAL_JsqJHRL0f2YwvOJBpggKRVQwPWy8j08-+_nd-VifOOKYqFA@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] drm/atmel-hlcdc: iterate over all output endpoints
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        jmondi <jacopo@jmondi.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 12:36 AM Peter Rosin <peda@axentia.se> wrote:
->
-> On 2018-08-13 22:52, Rob Herring wrote:
-> > On Mon, Aug 13, 2018 at 8:25 AM Peter Rosin <peda@axentia.se> wrote:
-> >>
-> >> On 2018-08-13 15:59, jacopo mondi wrote:
-> >>> Hi Peter,
-> >>>
-> >>> On Fri, Aug 10, 2018 at 03:03:58PM +0200, Peter Rosin wrote:
-> >>>> This enables more flexible devicetrees. You can e.g. have two output
-> >>>> nodes where one is not enabled, without the ordering affecting things.
-> >
-> > Your DTs are not supposed to be flexible. They should be well defined
-> > by the binding.
->
-> I feel the need to explain the situation with more words...
->
-> We have a board with this atmel-hlcdc wired to both an LVDS encoder
-> and an HDMI encoder. Depending on how we integrate this board, only
-> one of these paths make sense. Hence, I would like to do the following
-> in a .dtsi for that board:
->
-> / {
->         hlcdc-display-controller {
->                 ...
->                 port@0 {
->                         hlcdc_lvds: endpoint@0 {
->                                 reg = <0>;
->                                 remote-endpoint = <&lvds_encoder_input>;
->                         };
->
->                         hlcdc_hdmi: endpoint@1 {
->                                 reg = <1>;
->                                 remote-endpoint = <&hdmi_encoder_input>;
->                         };
->                 };
->         };
->
->         lvds_encoder: lvds-encoder {
->                 status = "disabled";
->
->                 ...
->
->                 ports {
->                         #address-cells = <1>;
->                         #size-cells = <0>;
->
->                         port@0 {
->                                 reg = <0>;
->
->                                 lvds_encoder_input: endpoint {
->                                         remote-endpoint = <&hlcdc_lvds>;
->                                 };
->                         };
->
->                         port@1 {
->                                 reg = <1>;
->
->                                 lvds_encoder_output: endpoint {
->                                 };
->                         };
->                 };
->         };
-> };
->
-> &i2c2 {
->         ...
->         hdmi_encoder: hdmi-encoder@70 {
->                 status = "disabled";
->
->                 ...
->
->                 port {
->                         hdmi_encoder_input: endpoint {
->                                 remote-endpoint = <&hlcdc_hdmi>;
->                         };
->                 };
->         };
-> };
->
->
-> And then, depending on what components are fitted and what LVDS panel has
-> been attached to the LVDS encoder output, this can be used as follows
-> in the .dts file for LVDS case:
->
-> / {
->         panel: panel {
->                 compatible = "litemax,dlf2118", "panel-lvds";
->
->                 ...
->
->                 port {
->                         panel_input: endpoint {
->                                 remote-endpoint = <&lvds_encoder_output>;
->                         };
->                 };
->         };
-> };
->
->
-> &lvds_encoder {
->         status = "okay";
-> };
->
-> &lvds_encoder_output {
->         remote-endpoint = <&panel_input>;
-> };
->
->
-> For the HDMI case, it would be this in the .dts file:
->
-> &hdmi_encoder {
->         status = "okay";
-> };
->
->
-> The above seem so much better than just having the following in
-> the .dtsi file
->
-> / {
->         hlcdc-display-controller {
->                 ...
->                 port@0 {
->                         hlcdc_lvds: endpoint {
->                                 remote-endpoint = <&encoder_input>;
->                         };
->                 };
->         };
-> };
->
-> and pushing the lvds-encoder and hdmi-encoder nodes (slightly modified) down
-> to the relevant .dts files. Especially so since we have to this point
-> delivered several variants with different LVDS panels. The duplication
-> is ugly, and the number of different panels is expected to grow...
->
-> But maybe I have misunderstood what endpoints are all about, but to me
-> the actual endpoint id is not that interesting and I see nothing in the
-> graph binding that suggests that endpoint id 0 has to be up and kicking
-> in order for endpoint id 1 to be examined at all.
-
-I guess it depends if the numbering is significant. For a one to many
-fan out like this, not so much. For a muxed input, then it would be.
-
-> For ports, yes, you are right that the port id needs to be defined and
-> fixed for a specific function, so scratch that. It was just a "maybe"
-> question anyway...
->
-> >>>>
-> >>>> Prior to this patch the active node had to have endpoint id zero.
-> >>>>
-> >>>> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >>>> ---
-> >>>>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 32 ++++++++++++++++++------
-> >>>>  1 file changed, 25 insertions(+), 7 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> >>>> index 8db51fb131db..16c1b2f54b42 100644
-> >>>> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> >>>> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> >>>> @@ -31,14 +31,16 @@ static const struct drm_encoder_funcs atmel_hlcdc_panel_encoder_funcs = {
-> >>>>      .destroy = drm_encoder_cleanup,
-> >>>>  };
-> >>>>
-> >>>> -static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
-> >>>> +static int atmel_hlcdc_attach_endpoint(struct drm_device *dev,
-> >>>> +                                   struct of_endpoint *endpoint)
-> >>>>  {
-> >>>>      struct drm_encoder *encoder;
-> >>>>      struct drm_panel *panel;
-> >>>>      struct drm_bridge *bridge;
-> >>>>      int ret;
-> >>>>
-> >>>> -    ret = drm_of_find_panel_or_bridge(dev->dev->of_node, 0, endpoint,
-> >>>> +    ret = drm_of_find_panel_or_bridge(dev->dev->of_node,
-> >>>> +                                      endpoint->port, endpoint->id,
-> >>>
-> >>> You are refusing endpoint->port != 0 in the caller, so that could be
-> >>> 0.
-> >>
-> >> Yes, it could. However, I intentionally did not write 0 here, so that
-> >> the logic related to "port has to be zero" was in one place and not
-> >> scattered about. I guess it's up to Boris?
-> >>
-> >> Maybe the port do not actually have to be zero at all? With the old
-> >> code, it was kind of understandable that the port number was fixed,
-> >> but for the code in my patch it does not matter at all AFAICT. There
-> >> is nothing in the binding docs (except for the example) that hints
-> >> that port has to be zero, so that's one thing in favor of just getting
-> >> rid of the port number checking altogether...
-> >
-> > The port numbering must be defined and fixed. If that is not clear in
-> > the binding, fix the binding.
->
-> Ok, so the code in my patch does the right thing forcing the port
-> number to zero.
->
-> >>>> @@ -77,13 +79,29 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
-> >>>>
-> >>>>  int atmel_hlcdc_create_outputs(struct drm_device *dev)
-> >>>>  {
-> >>>> -    int endpoint, ret = 0;
-> >>>> -
-> >>>> -    for (endpoint = 0; !ret; endpoint++)
-> >>>> -            ret = atmel_hlcdc_attach_endpoint(dev, endpoint);
-> >>>> +    struct of_endpoint endpoint;
-> >>>> +    struct device_node *node = NULL;
-> >>>> +    int count = 0;
-> >>>> +    int ret = 0;
-> >>>> +
-> >>>> +    for_each_endpoint_of_node(dev->dev->of_node, node) {
-> >>>> +            of_graph_parse_endpoint(node, &endpoint);
-> >
-> > I'd really like to kill off of_graph_parse_endpoint, not add more
-> > users (check the git history on this code). You should know what are
-> > possible port and endpoint numbers, so iterate over those.
->
-> So, add a comment to that effect in the docs of the of_graph_parse_endpoint
-> function.
->
-> How can the hlcdc driver know the actual number of endpoints? It's a
-> one-way signal path out from that port, and it can easily be routed to
-> 1, 2, 3 or even more places. As shown above, forcing the endpoint id
-> to start at zero is a nuisance, and I don't see the point of it.
->
-> But I welcome suggestions on how to arrange the above dtsi/dts fragments
-> in a world where the endpoint id absolutely has to start at zero.
-
-Your dts file arrangement seems fine. Can't you just not exit the loop
-on -ENODEV? IOW, just iterate til you find an enabled endpoint.
-
-Rob
+T24gVHVlLCAyMDE4LTA4LTE0IGF0IDEzOjQyICswMDAwLCBWaW5lZXQgR3VwdGEgd3JvdGU6DQo+
+IE9uIDA4LzExLzIwMTggMDk6MDkgQU0sIEV1Z2VuaXkgUGFsdHNldiB3cm90ZToNCj4gPiBDdXJy
+ZW50IGltcGxlbWVudGF0aW9uIG9mICdhdG9taWM2NF9hZGRfdW5sZXNzJyBmdW5jdGlvbg0KPiA+
+IChhbmQgaGVuY2UgJ2F0b21pYzY0X2luY19ub3RfemVybycpIHJldHVybiBpbmNvcnJlY3QgdmFs
+dWUNCj4gPiBpZiBsb3ZlciAzMiBiaXRzIG9mIGNvbXBhcmVkIDY0LWJpdCBudW1iZXIgYXJlIGVx
+dWFsIGFuZA0KPiA+IGhpZ2hlciAzMiBiaXRzIGFyZW4ndC4NCj4gPiANCj4gPiBGb3IgaW4gZm9s
+bG93aW5nIGV4YW1wbGUgYXRvbWljNjRfYWRkX3VubGVzcyBtdXN0IHJldHVybiAnMScNCj4gPiBi
+dXQgaXQgYWN0dWFsbHkgcmV0dXJucyAnMCc6DQo+ID4gLS0tLS0tLS0tPjgtLS0tLS0tLS0NCj4g
+PiBhdG9taWM2NF90IHZhbCA9IEFUT01JQzY0X0lOSVQoMHg0NDQ0MDAwMDAwMDAwMDAwTEwpOw0K
+PiA+IGludCByZXQgPSBhdG9taWM2NF9hZGRfdW5sZXNzKCZ2YWwsIDFMTCwgMExMKQ0KPiA+IC0t
+LS0tLS0tLT44LS0tLS0tLS0tDQo+ID4gDQo+ID4gVGhpcyBoYXBwZW5zIGJlY2F1c2Ugd2Ugd3Jp
+dGUgJzAnIHRvIHJldHVybmVkIHZhcmlhYmxlIHJlZ2FyZGxlc3MNCj4gPiBvZiBoaWdoZXIgMzIg
+Yml0cyBjb21wYXJpc29uIHJlc3VsdC4NCj4gPiANCj4gPiBTbyBmaXggaXQuDQo+ID4gDQo+ID4g
+Tk9URToNCj4gPiAgdGhpcyBjaGFuZ2Ugd2FzIHRlc3RlZCB3aXRoIGF0b21pYzY0X3Rlc3QuDQo+
+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZA
+c3lub3BzeXMuY29tPg0KPiANCj4gTEdUTS4gQ3VyaW91cywgd2FzIHRoaXMgZnJvbSBjb2RlIHJl
+dmlldyBvciBkaWQgdSBhY3R1YWxseSBydW4gaW50byB0aGlzID8NCg0KSSd2ZSBhY2NpZGVudGFs
+bHkgcnVuIGludG8gdGhpcyB3aGVuIEkgcGxheWVkIHdpdGggYXRvbWljNjRfKiBmdW5jdGlvbnMN
+CnRyeWluZyB0byBpbXBsZW1lbnQgaGFjayB0byBhdXRvbWF0aWNhbGx5IGFsaWduIExMNjQvU0M2
+NCBkYXRhIGZvciBhdG9taWMgNjQtYml0DQpvcGVyYXRpb25zIG9uIEFSQyB0byBhdm9pZCBwcm9i
+bGVtcyBsaWtlOg0KaHR0cHM6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1zbnBzLWFyY0Bs
+aXN0cy5pbmZyYWRlYWQub3JnL21zZzAzNzkxLmh0bWwNCg0KPiBUaHgsDQo+IC1WaW5lZXQNCj4g
+DQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJjL2luY2x1ZGUvYXNtL2F0b21pYy5oIHwgMiArLQ0KPiA+
+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4g
+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcmMvaW5jbHVkZS9hc20vYXRvbWljLmggYi9hcmNoL2FyYy9p
+bmNsdWRlL2FzbS9hdG9taWMuaA0KPiA+IGluZGV4IDExODU5Mjg3YzUyYS4uZTg0MGNiMTc2M2Iy
+IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJjL2luY2x1ZGUvYXNtL2F0b21pYy5oDQo+ID4gKysr
+IGIvYXJjaC9hcmMvaW5jbHVkZS9hc20vYXRvbWljLmgNCj4gPiBAQCAtNTc4LDExICs1NzgsMTEg
+QEAgc3RhdGljIGlubGluZSBpbnQgYXRvbWljNjRfYWRkX3VubGVzcyhhdG9taWM2NF90ICp2LCBs
+b25nIGxvbmcgYSwgbG9uZyBsb25nIHUpDQo+ID4gIA0KPiA+ICAJX19hc21fXyBfX3ZvbGF0aWxl
+X18oDQo+ID4gIAkiMToJbGxvY2tkICAlMCwgWyUyXQlcbiINCj4gPiAtCSIJbW92CSUxLCAxCQlc
+biINCj4gPiAgCSIJYnJuZQklTDAsICVMNCwgMmYJIyBjb250aW51ZSB0byBhZGQgc2luY2UgdiAh
+PSB1IFxuIg0KPiA+ICAJIglicmVxLmQJJUgwLCAlSDQsIDNmCSMgcmV0dXJuIHNpbmNlIHYgPT0g
+dSBcbiINCj4gPiAgCSIJbW92CSUxLCAwCQlcbiINCj4gPiAgCSIyOgkJCQlcbiINCj4gPiArCSIJ
+bW92CSUxLCAxCQlcbiINCj4gPiAgCSIJYWRkLmYgICAlTDAsICVMMCwgJUwzCVxuIg0KPiA+ICAJ
+IglhZGMgICAgICVIMCwgJUgwLCAlSDMJXG4iDQo+ID4gIAkiCXNjb25kZCAgJTAsIFslMl0JXG4i
+DQo+IA0KPiANCi0tIA0KIEV1Z2VuaXkgUGFsdHNldg==
