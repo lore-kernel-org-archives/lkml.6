@@ -2,293 +2,344 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4A5C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39842C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C2C62084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:33:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="KzdRUZPr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C2C62084E
+	by mail.kernel.org (Postfix) with ESMTP id CDEE221738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 11:36:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDEE221738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732345AbeHNOUW (ORCPT
+        id S1732353AbeHNOXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 10:20:22 -0400
-Received: from mail-eopbgr60075.outbound.protection.outlook.com ([40.107.6.75]:64474
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730759AbeHNOUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 10:20:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wsB4EIxZFMiD2C7gSfpBDJlno5iGLQhlh6lRCqtCIYU=;
- b=KzdRUZPrGir/fCaw/jchk6i1bGyqHQtlJ347MH5BgN+QykNmQMSa9g8PvE1smFQ51pUvsa/cdVEh4nI5x/8zzXoYLqeqwNQXXmcjVjvskwN8htXFTp2CFMo3KcGRpVC4oNQ8usKijMoRND1w9WjDBTb9HZtDcaamIyhnTgKtonQ=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Lowry.Li@arm.com; 
-Received: from lowry-ThinkStation-P300.shanghai.arm.com (113.29.88.7) by
- VI1PR08MB3533.eurprd08.prod.outlook.com (2603:10a6:803:84::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.22; Tue, 14 Aug 2018 11:33:25 +0000
-From:   Lowry Li <lowry.li@arm.com>
-To:     liviu.dudau@arm.com
-Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        daniel.vetter@intel.com, seanpaul@chromium.org, airlied@linux.ie,
-        ville.syrjala@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, brian.starkey@arm.com,
-        malidp@foss.arm.com, emil.l.velikov@gmail.com, nd@arm.com
-Subject: [PATCH v4 2/2] drm/mali-dp: Implement plane alpha and pixel blend on malidp
-Date:   Tue, 14 Aug 2018 19:32:57 +0800
-Message-Id: <1534246377-31346-3-git-send-email-lowry.li@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1534246377-31346-1-git-send-email-lowry.li@arm.com>
-References: <1534246377-31346-1-git-send-email-lowry.li@arm.com>
+        Tue, 14 Aug 2018 10:23:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:42062 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730099AbeHNOXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 10:23:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0E827A9;
+        Tue, 14 Aug 2018 04:36:27 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7EAB33F73C;
+        Tue, 14 Aug 2018 04:36:27 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 197B21AE015E; Tue, 14 Aug 2018 12:36:34 +0100 (BST)
+Date:   Tue, 14 Aug 2018 12:36:34 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, marc.zyngier@arm.com, tglx@linutronix.de
+Subject: [GIT PULL] arm64: updates for 4.19
+Message-ID: <20180814113633.GE28664@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [113.29.88.7]
-X-ClientProxiedBy: SG2PR0302CA0016.apcprd03.prod.outlook.com
- (2603:1096:3:2::26) To VI1PR08MB3533.eurprd08.prod.outlook.com
- (2603:10a6:803:84::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3fab10f3-394d-4554-6a02-08d601d9c27e
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3533;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3533;3:Zv20y0gJYnvEo9whPJ2yfuIGiWNTGqDagJqCwGf3HOl6KI8TFEOf9e0a+ElLFq4mWx2zoXgkJYXSE8Un4uEbZsW/71jcjFASLcOyRLWpI3fW+gJ4nKCB3FMpJiC60kTjn/R3ZZ/YmxYenY016Uw4jVPVDKN7UpQXeuBuZZocduaoRsxTrkWDiFdAhqV71YnGF7ME57vWGecMhg9SVxLzcNSuvTXZA8AcdBOu/poOaWT0StuX/AKABOAyrrzd+5gd;25:xaPSRR3QXTbrB6u4hRZjXKzpgJFGGJBCC7Nvcf7XZCtCI0h9ChiYxmGgoI23711NpiqszIh5yUWiVLpc2u/WcH6FcTYGy6K/6kAZ+doJx9ocBC7c2WLHl1Ms+W/7tvEvMniL5pDzCkp92x0fNav3VE8IT7ZD5Btmrhx6iMk4qUq6CnXQqeGJIkD6edsEC9pRKQu6vLCwZPymKDk25T+kCUVFYSMkxPdo/8VeDJr+uWUol0MI3JUumu/15RQ2vtTD/Z6Qe/zuNpuQPVVVOdMPdZmo35LwQeaDOxsp4nukIZxvRBA9qpYw/sT2f0OODKX6aeKpCSLdIZR3B/+N9gU28w==;31:YMi+YP+2Mvd+ES63UM0ObK7ylCSCtj7CPQ7GpgdIT37KtCjGZQ+GlUdRSEwj2xaS5YV2/xnw7x8qoTT2vMauZ6rykn1sJ/uIrGOUAAgrFk6h3prQ/dvhRnjnQzlFYWlTyHqrppu06TRmBwB7qCn2W6Q7iHfQD6smQtDWHw43Dz3ixYzUHDr9MiTmNYFMp+T/nEk9uRzaAWiKjRUDlBI0Qrwxyy/Qz6KvYK+t9lQa9ew=
-X-MS-TrafficTypeDiagnostic: VI1PR08MB3533:
-NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3533;20:3jhJpxxq+yGQRJ9MVyCUs2nEKmPjJSBy/hLBblyEDN6Ud0bDJvG8Kr681sWN1tRKj19/3PrTsbK1vUEycPfbgy7lSkA5eXQ6V9RTHZkFhoWNOMu10sa8b1iI3RFruqDd2lOWmfQSb3mvdgLAxyivQ5TMTcGUQ8fh0a8sdlXBJQ5mQaW5aoiwZuY8vsZtZOjZppQlNOOr7/4Y0XvhLgPGDR3YdHzwweicgYkFLtZVkl88qXMmzLQevlcMtjq+q6bd1Za2PKSXVL8soOw4gZiVOMRVNp94fZm09wzntms8Vi7EQ4WM0tYBpohYhyjpvfo3U0Y+BQzfYAkzO+YPYAmL7w==;4:Atlj8hGtUWd41HrkCCjVFq7oobc6tP3/mOo8H7O/RjJ+n7UGsdnZSs65JCYPd8tnf2ewDhchLNPnAFnDiaQCs6+Y8nnGarEUj9lARvLTXdglEvHLRbt6OYXn4t87LABSxl5hevdhewNKH+tDyCuzbB+3Q8BmyVrn8kYUicgQbLrSkNmDLM8kDWMbq0PcQ1Ij6pphyOW04ZuIUN+lhCvXhhY+Nga9fJY/tsq+VQ8L8S3JImbz2goV/o99QnClHcsJ+wUviyTmi2KlWXLgtj2rBm8QfPUH8zRHxOe+e0rdnBPmommrGqlm+7k6kOe8BI8m
-X-Microsoft-Antispam-PRVS: <VI1PR08MB353341D41925CF5456B4DD139F380@VI1PR08MB3533.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:VI1PR08MB3533;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3533;
-X-Forefront-PRVS: 0764C4A8CD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(346002)(376002)(366004)(189003)(199004)(8676002)(6486002)(25786009)(386003)(68736007)(2351001)(2361001)(2906002)(36756003)(316002)(53936002)(34206002)(39060400002)(50226002)(8936002)(44832011)(16526019)(81156014)(6636002)(81166006)(4326008)(6666003)(105586002)(106356001)(26005)(7696005)(51416003)(446003)(5660300001)(76176011)(52116002)(305945005)(7736002)(11346002)(476003)(66066001)(45080400002)(3846002)(37006003)(956004)(16586007)(486006)(14444005)(5024004)(478600001)(72206003)(6116002)(97736004)(50466002)(47776003)(2616005)(86362001)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3533;H:lowry-ThinkStation-P300.shanghai.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3533;23:GApA5PqmCxDrOj5ytDvG+9CC9i/sSjXe9bzWwNAzZ?=
- =?us-ascii?Q?pPcrw4NTvC/C1mtyNyKRCnGtXCERuZCL5bmsB7fhzIA3gQdtmpA5BxOIZWdA?=
- =?us-ascii?Q?sc+qr81PCcVF01eyOtoiqoapY0jLO21qdh8WnZbkyebqZu805cf2B3DLdYRU?=
- =?us-ascii?Q?mR3q5aQUP+q06tXL1sqpkGvL4JtNWxUO45XVlvXp+qYm+1hbe3my1PxFnJ6t?=
- =?us-ascii?Q?ifLzn9nfM0gQvc58Smpjio2N+MUgpxvlW6DLpWfa+fZMzeql6nO+qmqGropQ?=
- =?us-ascii?Q?1OxUVRrRqEb9skcNRnCQgKEhB3O65yQxgRdCK3I07Qj3FRRhPhCprKWIxQFn?=
- =?us-ascii?Q?5dDjETeMPppOoj7jelgafR5HI40GcCq1tY00wgUB2TPAM7w+EYAt0oPgGjYe?=
- =?us-ascii?Q?evs2I+4UEGcf/LqWQBBpcYIH7q8tuvEqkSiZTXj4JoBzXWOEaaTsWJcshPlI?=
- =?us-ascii?Q?ShMyrAzWErThd384pb7l+fHOKDgH8WNaEBNvBEcsxJ+yE+9pPC0ZbW09Fori?=
- =?us-ascii?Q?2R5vRW0EXkzelITWnOFJPNXTLq3t3oUNiJ8lsDJ8s6Dvg2QfQpKKtRUiG7xZ?=
- =?us-ascii?Q?93NvEKGBzxIY0+rM5kKjQyqwSNzRndWtm1RnMUgOfPD63Yrd7nWskX/irru1?=
- =?us-ascii?Q?eGu/TkulhLx/moiU3sASVCc7ZLyrARD31XR+vswIMjnS+H4py09xp8jXj+Pu?=
- =?us-ascii?Q?NmDR2RUBwNB6R/W6YnS/D8kxYBfnS0RfCd0Q1n9z1+VxeTBIREgFrRDC4kRy?=
- =?us-ascii?Q?lVD9RY/Agy926YwtV2F7dSgrap1PXgwEnNNHSrupBV97mWYF+i9q6cei1RPU?=
- =?us-ascii?Q?7HFUw6ZLB11FvkpxDSEItz1dr69DU6+B6I9lo8Amn4dd4eIy1NSeZabUKSy0?=
- =?us-ascii?Q?Q16+MxRuB+/5TW9TdVexpr7hQLlGhDSR8MHjDcKyg1Lfcw81H0I6ITpycPlE?=
- =?us-ascii?Q?roP8HwHIctIG2WCjdIn7tK/ifxJAbonVRWHFBjKnoXibXmfqITc3aCGKdVYg?=
- =?us-ascii?Q?mMmi3hvy29l3ILtQMp7VrvO7i16/nj5oYqs+Zh1S1kMCj4jM8qWJCFxycooW?=
- =?us-ascii?Q?c8x5dByGo/yg43Z7PAnp0PB5fNpcQ15mSrWDMqDQxej7phMH1NvqXRK/PrQW?=
- =?us-ascii?Q?zpiXfqYh5zaIe8F5oVEEnVnoAY5USEd7GwqnXl9LAybYLPmBDVmGuTNboANl?=
- =?us-ascii?Q?U72ARsWnTDcI7sHXjOmLwmvm3qoNEi3bkN2szZ+Qgjpg+y663BuvzmU/ynWl?=
- =?us-ascii?Q?5+McZuUDZjxqR1ZB+ytUOeesZ8KHQD9ZqDBriSKyPFyk6ztQBp/q9TszD7Cy?=
- =?us-ascii?Q?I2E1QsKjm6H2WJj0xInttqMX5kvzRdhxlyvQGEcc4UWDmWNc7EDA5s2XLGDG?=
- =?us-ascii?Q?Ylfog=3D=3D?=
-X-Microsoft-Antispam-Message-Info: 5Zd7d+a953cg7/y8qvTKCkjAmdE0wugl5ggbxspcFSE1e2kFzDcnG6+193Ozuharp5CmlBtbnFBaw8f0WqizcFf/hjuNf/mZvCPr9wRU01fkvK8NhkD200zknP+ud9aGkrTLyRrHbGOh+0si71KpQ9NlbSewdsWuvgmCANxIPNaO66tQZxcFGzaiqnfJC47lnMD89HJVW/lSRs2NRlhz7fUhGZsOUlOnWzykxNLhnPTOobEwEkRJZs1Dg252SmkbtvL5BedXaNUbk2m3/lQK5Lm+fsb+sUe7O1BQtS9VfNsgQilYKXEtx0c9gZBU/fU0jdKi9R10ZQeiKdOToOrHmFcQ5Dg/RmObd98zLhADrDM=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3533;6:tnszzjUZ2ZI31TDFi4Q+F4hC0tX1GAOoOE1xHooLeA+kj6AY5loCgArL0ijL9Ui/akHEppVJWRO87aAX8vNXHguSepg76O62rGsW8PZDWl9FEtQOEnw6JxXYLDIQpOWeUVqUUkolPDfxahCui1X/Uo6fNJcH3nVq2o/YIyHnnXj0yETzSMEqqrLDF4AJAeUoTcqjjndNUGXvO6gGkEr4PYSHt48ZaiPcKqNNh2BIYTXo00HH/8UuC1E28W6PmfcMEjsdxzkBbzZ4WBHk31fSzEV4OnhueBD6Lx3ZQO6q22Gad9ajr2BJkw/GHx3TQ8T/rixKSp1GpOqDGvt9VV3BdfpAhv9s1v6bSNtcipvd1txDgVSOY3GqTM5nRNC1nKKBuMuWZszulVK0d3s901/OGjosuyzVKmGrpy8/bX0umFRSMIwCcyc4e79HNfxMXIUFKHZgpP8OSWRdia7aAx8hMA==;5:DmvNKlGex9HvavlVS5fTWwk6uBWq/BpKlI6aVsUW0IgiLOjCFedqmWDSKUPICxc+uVS5ikyPch5s0cU1AihS9nWh8KqJavgxFagJydInrkSlwCuiz2gAPK5hu+fJqczRkEwXPz9vfGYsGT5mSUR1oWj7ZNhhAvGpmezdCU68jXw=;7:sQ/PqepeNJ0h4lxh1s6iml6DlP4qbEJiPWOr/oomFwTpYGlsEVDc4N4hSN+t8bywRcRv7zIAszFpSvAb/aJ9y7k5Qj9e4N65ACSED8zNBVRJpvzaUviu4n+JtIzs1iWzrAWd8ihGwAiyvIVEE5fQK1XAECO09SEC/8JsTgZJbOzYo9wsCPTM3gBQtAcxtzTwnizGdSVN/gRHPHd5dugvn+jkPDj2NLtGUeLkIcyMeaa/I1ad9fvnLaMUdZT3TKPx
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2018 11:33:25.9754
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fab10f3-394d-4554-6a02-08d601d9c27e
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3533
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checks the pixel blending mode and plane alpha value when
-do the plane_check. Mali DP supports blending the current plane
-with the background either based on the pixel alpha blending
-mode or by using the layer's alpha value, but not both at the
-same time. If both case, plane_check will return failed.
+Hi Linus,
 
-Sets the HW when doing plane_update accordingly. If plane alpha
-is the 0xffff, set the pixel blending bits accordingly. If not
-we'd set ALPHA bit as zero and layer alpha value.
+Please pull these arm64 updates for 4.19. Details in the tag, but please be
+aware that we've pulled in the x86/mm branch from -tip so that we can make
+use of the core ioremap changes which allow us to put down huge mappings
+in the vmalloc area without screwing up the TLB. Much of the positive
+diffstat is because of the rseq selftest for arm64.
 
-Signed-off-by: Lowry Li <lowry.li@arm.com>
----
- drivers/gpu/drm/arm/malidp_planes.c | 74 +++++++++++++++++++++----------------
- 1 file changed, 43 insertions(+), 31 deletions(-)
+There is a trivial conflict in arch/arm64/Makefile with your tree, since
+we effectively rewrote a fix that was merged in -rc5 [96f95a17c1cf]. The
+correct resolution is therefore to prefer the code using ld-option, which
+is what we have here. We also ran into a couple of trivial conflicts that
+were resolved in -next with the KVM and EFI trees.
 
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index 49c37f6..17be123 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -36,6 +36,7 @@
- #define   LAYER_COMP_MASK		(0x3 << 12)
- #define   LAYER_COMP_PIXEL		(0x3 << 12)
- #define   LAYER_COMP_PLANE		(0x2 << 12)
-+#define   LAYER_PMUL_ENABLE		(0x1 << 14)
- #define   LAYER_ALPHA_OFFSET		(16)
- #define   LAYER_ALPHA_MASK		(0xff)
- #define   LAYER_ALPHA(x)		(((x) & LAYER_ALPHA_MASK) << LAYER_ALPHA_OFFSET)
-@@ -180,6 +181,7 @@ static int malidp_de_plane_check(struct drm_plane *plane,
- 	struct malidp_plane_state *ms = to_malidp_plane_state(state);
- 	bool rotated = state->rotation & MALIDP_ROTATED_MASK;
- 	struct drm_framebuffer *fb;
-+	u16 pixel_alpha = state->pixel_blend_mode;
- 	int i, ret;
- 
- 	if (!state->crtc || !state->fb)
-@@ -242,6 +244,11 @@ static int malidp_de_plane_check(struct drm_plane *plane,
- 		ms->rotmem_size = val;
- 	}
- 
-+	/* HW can't support plane + pixel blending */
-+	if ((state->alpha != DRM_BLEND_ALPHA_OPAQUE) &&
-+	    (pixel_alpha != DRM_MODE_BLEND_PIXEL_NONE))
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
-@@ -323,17 +330,19 @@ static void malidp_de_plane_update(struct drm_plane *plane,
- {
- 	struct malidp_plane *mp;
- 	struct malidp_plane_state *ms = to_malidp_plane_state(plane->state);
-+	struct drm_plane_state *state = plane->state;
-+	u16 pixel_alpha = state->pixel_blend_mode;
-+	u8 plane_alpha = state->alpha >> 8;
- 	u32 src_w, src_h, dest_w, dest_h, val;
- 	int i;
--	bool format_has_alpha = plane->state->fb->format->has_alpha;
- 
- 	mp = to_malidp_plane(plane);
- 
- 	/* convert src values from Q16 fixed point to integer */
--	src_w = plane->state->src_w >> 16;
--	src_h = plane->state->src_h >> 16;
--	dest_w = plane->state->crtc_w;
--	dest_h = plane->state->crtc_h;
-+	src_w = state->src_w >> 16;
-+	src_h = state->src_h >> 16;
-+	dest_w = state->crtc_w;
-+	dest_h = state->crtc_h;
- 
- 	val = malidp_hw_read(mp->hwdev, mp->layer->base);
- 	val = (val & ~LAYER_FORMAT_MASK) | ms->format;
-@@ -342,14 +351,14 @@ static void malidp_de_plane_update(struct drm_plane *plane,
- 	for (i = 0; i < ms->n_planes; i++) {
- 		/* calculate the offset for the layer's plane registers */
- 		u16 ptr = mp->layer->ptr + (i << 4);
--		dma_addr_t fb_addr = drm_fb_cma_get_gem_addr(plane->state->fb,
--							     plane->state, i);
-+		dma_addr_t fb_addr = drm_fb_cma_get_gem_addr(state->fb,
-+							     state, i);
- 
- 		malidp_hw_write(mp->hwdev, lower_32_bits(fb_addr), ptr);
- 		malidp_hw_write(mp->hwdev, upper_32_bits(fb_addr), ptr + 4);
- 	}
- 	malidp_de_set_plane_pitches(mp, ms->n_planes,
--				    plane->state->fb->pitches);
-+				    state->fb->pitches);
- 
- 	if ((plane->state->color_encoding != old_state->color_encoding) ||
- 	    (plane->state->color_range != old_state->color_range))
-@@ -362,8 +371,8 @@ static void malidp_de_plane_update(struct drm_plane *plane,
- 	malidp_hw_write(mp->hwdev, LAYER_H_VAL(dest_w) | LAYER_V_VAL(dest_h),
- 			mp->layer->base + MALIDP_LAYER_COMP_SIZE);
- 
--	malidp_hw_write(mp->hwdev, LAYER_H_VAL(plane->state->crtc_x) |
--			LAYER_V_VAL(plane->state->crtc_y),
-+	malidp_hw_write(mp->hwdev, LAYER_H_VAL(state->crtc_x) |
-+			LAYER_V_VAL(state->crtc_y),
- 			mp->layer->base + MALIDP_LAYER_OFFSET);
- 
- 	if (mp->layer->id == DE_SMART)
-@@ -376,38 +385,35 @@ static void malidp_de_plane_update(struct drm_plane *plane,
- 	val &= ~LAYER_ROT_MASK;
- 
- 	/* setup the rotation and axis flip bits */
--	if (plane->state->rotation & DRM_MODE_ROTATE_MASK)
-+	if (state->rotation & DRM_MODE_ROTATE_MASK)
- 		val |= ilog2(plane->state->rotation & DRM_MODE_ROTATE_MASK) <<
- 		       LAYER_ROT_OFFSET;
--	if (plane->state->rotation & DRM_MODE_REFLECT_X)
-+	if (state->rotation & DRM_MODE_REFLECT_X)
- 		val |= LAYER_H_FLIP;
--	if (plane->state->rotation & DRM_MODE_REFLECT_Y)
-+	if (state->rotation & DRM_MODE_REFLECT_Y)
- 		val |= LAYER_V_FLIP;
- 
--	val &= ~LAYER_COMP_MASK;
--	if (format_has_alpha) {
--
--		/*
--		 * always enable pixel alpha blending until we have a way
--		 * to change blend modes
--		 */
--		val |= LAYER_COMP_PIXEL;
--	} else {
-+	val &= ~(LAYER_COMP_MASK | LAYER_PMUL_ENABLE | LAYER_ALPHA(0xff));
- 
--		/*
--		 * do not enable pixel alpha blending as the color channel
--		 * does not have any alpha information
--		 */
-+	if (state->alpha != DRM_BLEND_ALPHA_OPAQUE) {
- 		val |= LAYER_COMP_PLANE;
--
--		/* Set layer alpha coefficient to 0xff ie fully opaque */
--		val |= LAYER_ALPHA(0xff);
-+	} else if (state->fb->format->has_alpha) {
-+		/* We only care about blend mode if the format has alpha */
-+		switch (pixel_alpha) {
-+		case DRM_MODE_BLEND_PREMULTI:
-+			val |= LAYER_COMP_PIXEL | LAYER_PMUL_ENABLE;
-+			break;
-+		case DRM_MODE_BLEND_COVERAGE:
-+			val |= LAYER_COMP_PIXEL;
-+			break;
-+		}
- 	}
-+	val |= LAYER_ALPHA(plane_alpha);
- 
- 	val &= ~LAYER_FLOWCFG(LAYER_FLOWCFG_MASK);
--	if (plane->state->crtc) {
-+	if (state->crtc) {
- 		struct malidp_crtc_state *m =
--			to_malidp_crtc_state(plane->state->crtc->state);
-+			to_malidp_crtc_state(state->crtc->state);
- 
- 		if (m->scaler_config.scale_enable &&
- 		    m->scaler_config.plane_src_id == mp->layer->id)
-@@ -446,6 +452,9 @@ int malidp_de_planes_init(struct drm_device *drm)
- 	unsigned long crtcs = 1 << drm->mode_config.num_crtc;
- 	unsigned long flags = DRM_MODE_ROTATE_0 | DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_180 |
- 			      DRM_MODE_ROTATE_270 | DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y;
-+	unsigned int blend_caps = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-+				  BIT(DRM_MODE_BLEND_PREMULTI)   |
-+				  BIT(DRM_MODE_BLEND_COVERAGE);
- 	u32 *formats;
- 	int ret, i, j, n;
- 
-@@ -498,6 +507,9 @@ int malidp_de_planes_init(struct drm_device *drm)
- 		malidp_hw_write(malidp->dev, MALIDP_ALPHA_LUT,
- 				plane->layer->base + MALIDP_LAYER_COMPOSE);
- 
-+		drm_plane_create_alpha_property(&plane->base);
-+		drm_plane_create_blend_mode_property(&plane->base, blend_caps);
-+
- 		/* Attach the YUV->RGB property only to video layers */
- 		if (id & (DE_VIDEO1 | DE_VIDEO2)) {
- 			/* default encoding for YUV->RGB is BT601 NARROW */
--- 
-1.9.1
+Cheers,
 
+Will
+
+--->8
+
+The following changes since commit 5e0fb5df2ee871b841f96f9cb6a7f2784e96aa4e:
+
+  x86/mm: Add TLB purge to free pmd/pte page interfaces (2018-07-04 21:37:09 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-upstream
+
+for you to fetch changes up to 3c4d9137eefecf273a520d392071ffc9df0a9a7a:
+
+  arm64: alternative: Use true and false for boolean values (2018-08-08 11:20:54 +0100)
+
+----------------------------------------------------------------
+arm64 updates for 4.19
+
+A bunch of good stuff in here:
+
+- Wire up support for qspinlock, replacing our trusty ticket lock code
+
+- Add an IPI to flush_icache_range() to ensure that stale instructions
+  fetched into the pipeline are discarded along with the I-cache lines
+
+- Support for the GCC "stackleak" plugin
+
+- Support for restartable sequences, plus an arm64 port for the selftest
+
+- Kexec/kdump support on systems booting with ACPI
+
+- Rewrite of our syscall entry code in C, which allows us to zero the
+  GPRs on entry from userspace
+
+- Support for chained PMU counters, allowing 64-bit event counters to be
+  constructed on current CPUs
+
+- Ensure scheduler topology information is kept up-to-date with CPU
+  hotplug events
+
+- Re-enable support for huge vmalloc/IO mappings now that the core code
+  has the correct hooks to use break-before-make sequences
+
+- Miscellaneous, non-critical fixes and cleanups
+
+----------------------------------------------------------------
+AKASHI Takahiro (3):
+      drivers: acpi: add dependency of EFI for arm64
+      efi/arm: map UEFI memory map even w/o runtime services enabled
+      arm64: acpi: fix alignment fault in accessing ACPI
+
+Ard Biesheuvel (2):
+      efi/arm: preserve early mapping of UEFI memory map longer for BGRT
+      arm64: drop unused kernel_neon_begin_partial() macro
+
+Arnd Bergmann (2):
+      arm64: make flatmem depend on !NUMA
+      arm64: fix ACPI dependencies
+
+Ben Hutchings (1):
+      arm64: mm: Export __sync_icache_dcache() for xen-privcmd
+
+Bhupesh Sharma (1):
+      arm64, kaslr: export offset in VMCOREINFO ELF notes
+
+Chintan Pandya (2):
+      arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
+      arm64: Implement page table free interfaces
+
+Dave Kleikamp (1):
+      arm64: kexec: machine_kexec should call __flush_icache_range
+
+Gustavo A. R. Silva (1):
+      arm64: alternative: Use true and false for boolean values
+
+James Morse (1):
+      arm64: export memblock_reserve()d regions via /proc/iomem
+
+Kees Cook (1):
+      perf/arm-cci: Remove VLA usage
+
+Laura Abbott (3):
+      arm64: Add stack information to on_accessible_stack
+      arm64: Add support for STACKLEAK gcc plugin
+      efi/libstub: Only disable stackleak plugin for arm64
+
+Lorenzo Pieralisi (1):
+      arm64: numa: rework ACPI NUMA initialization
+
+Mark Rutland (30):
+      arm64: kexec: always reset to EL2 if present
+      arm64: add PSR_AA32_* definitions
+      arm64: don't zero DIT on signal return
+      arm64: compat: map SPSR_ELx<->PSR for signals
+      arm64: ptrace: map SPSR_ELx<->PSR for compat tasks
+      arm64: use PSR_AA32 definitions
+      kvm/arm: use PSR_AA32 definitions
+      arm64: remove unused COMPAT_PSR definitions
+      arm64: consistently use unsigned long for thread flags
+      arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
+      arm64: kill config_sctlr_el1()
+      arm64: kill change_cpacr()
+      arm64: move sve_user_{enable,disable} to <asm/fpsimd.h>
+      arm64: remove sigreturn wrappers
+      arm64: introduce syscall_fn_t
+      arm64: convert raw syscall invocation to C
+      arm64: convert syscall trace logic to C
+      arm64: convert native/compat syscall entry to C
+      arm64: don't restore GPRs when context tracking
+      arm64: don't reload GPRs after apply_ssbd
+      arm64: zero GPRs upon entry from EL0
+      arm64: drop alignment from syscall tables
+      kernel: add ksys_personality()
+      kernel: add kcompat_sys_{f,}statfs64()
+      arm64: remove in-kernel call to sys_personality()
+      arm64: use {COMPAT,}SYSCALL_DEFINE0 for sigreturn
+      arm64: use SYSCALL_DEFINE6() for mmap
+      arm64: convert compat wrappers to C
+      arm64: implement syscall wrappers
+      arm64: fix possible spectre-v1 write in ptrace_hbp_set_event()
+
+Michael O'Farrell (1):
+      arm64: perf: Add cap_user_time aarch64
+
+Mikulas Patocka (1):
+      arm64: fix infinite stacktrace
+
+Nikunj Kela (1):
+      arm64: add ARM64-specific support for flatmem
+
+Olof Johansson (1):
+      arm64: build with baremetal linker target instead of Linux when available
+
+Peng Donglin (1):
+      ARM64: dump: Convert to use DEFINE_SHOW_ATTRIBUTE macro
+
+Shaokun Zhang (1):
+      drivers/perf: hisi: update the sccl_id/ccl_id when MT is supported
+
+Stefan Agner (1):
+      arm: perf: prevent unbind/bind via sysfs
+
+Sudeep Holla (8):
+      arm64: topology: refactor reset_cpu_topology to add support for removing topology
+      arm64: numa: separate out updates to percpu nodeid and NUMA node cpumap
+      arm64: topology: add support to remove cpu topology sibling masks
+      arm64: topology: restrict updating siblings_masks to online cpus only
+      arm64: smp: remove cpu and numa topology information when hotplugging out CPU
+      arm64: topology: rename llc_siblings to align with other struct members
+      arm64: topology: re-introduce numa mask check for scheduler MC selection
+      drivers/perf: arm-ccn: Use devm_ioremap_resource() to map memory
+
+Suzuki K Poulose (9):
+      arm64: Fix mismatched cache line size detection
+      arm64: Handle mismatched cache type
+      arm_pmu: Clean up maximum period handling
+      arm_pmu: Change API to support 64bit counter values
+      arm_pmu: Add support for 64bit event counters
+      arm_pmu: Tidy up clear_event_idx call backs
+      arm64: perf: Clean up armv8pmu_select_counter
+      arm64: perf: Disable PMU while processing counter overflows
+      arm64: perf: Add support for chaining event counters
+
+Will Deacon (19):
+      drivers/perf: Initialise return value in armpmu_request_irqs()
+      arm64: barrier: Implement smp_cond_load_relaxed
+      arm64: locking: Replace ticket lock implementation with qspinlock
+      arm64: kconfig: Ensure spinlock fastpaths are inlined if !PREEMPT
+      arm64: IPI each CPU after invalidating the I-cache for kernel mappings
+      arm64: insn: Don't fallback on nosync path for general insn patching
+      Merge branch 'x86/mm' of git://git.kernel.org/.../tip/tip into aarch64/for-next/core
+      arm64: errata: Don't define type field twice for arm64_errata[] entries
+      arm64: mm: Export __flush_icache_range() to modules
+      MAINTAINERS: arm64: Remove boot/dts/ directory from arm64 entry
+      arm64: rseq: Implement backend rseq calls and select HAVE_RSEQ
+      asm-generic: unistd.h: Wire up sys_rseq
+      Revert "arm64: fix infinite stacktrace"
+      arm64: Drop asmlinkage qualifier from syscall_trace_{enter,exit}
+      rseq/selftests: Add support for arm64
+      Merge branch 'for-next/perf' of git://git.kernel.org/.../will/linux into aarch64/for-next/core
+      arm64: svc: Ensure hardirq tracing is updated before return
+      arm64: sdei: Mark sdei stack helper functions as static
+      arm64: kexec: Add comment to explain use of __flush_icache_range()
+
+ MAINTAINERS                               |   1 +
+ arch/arm/include/asm/kvm_emulate.h        |  14 +-
+ arch/arm/kernel/perf_event_v6.c           |  14 +-
+ arch/arm/kernel/perf_event_v7.c           |  15 +-
+ arch/arm/kernel/perf_event_xscale.c       |  18 +-
+ arch/arm64/Kconfig                        |  18 +
+ arch/arm64/Makefile                       |   9 +-
+ arch/arm64/include/asm/Kbuild             |   1 +
+ arch/arm64/include/asm/acpi.h             |  29 +-
+ arch/arm64/include/asm/barrier.h          |  13 +
+ arch/arm64/include/asm/cache.h            |   4 +
+ arch/arm64/include/asm/cacheflush.h       |  27 +-
+ arch/arm64/include/asm/cpucaps.h          |   3 +-
+ arch/arm64/include/asm/fpsimd.h           |  17 +-
+ arch/arm64/include/asm/insn.h             |   2 -
+ arch/arm64/include/asm/kvm_emulate.h      |  10 +-
+ arch/arm64/include/asm/neon.h             |   7 -
+ arch/arm64/include/asm/numa.h             |   4 +
+ arch/arm64/include/asm/processor.h        |  21 +-
+ arch/arm64/include/asm/ptrace.h           |  79 ++--
+ arch/arm64/include/asm/sdei.h             |   9 +-
+ arch/arm64/include/asm/spinlock.h         | 117 +-----
+ arch/arm64/include/asm/spinlock_types.h   |  17 +-
+ arch/arm64/include/asm/stacktrace.h       |  73 +++-
+ arch/arm64/include/asm/syscall.h          |   8 +-
+ arch/arm64/include/asm/syscall_wrapper.h  |  80 ++++
+ arch/arm64/include/asm/sysreg.h           |  30 +-
+ arch/arm64/include/asm/tlbflush.h         |   7 +
+ arch/arm64/include/asm/topology.h         |   4 +-
+ arch/arm64/include/asm/unistd.h           |   2 +-
+ arch/arm64/include/asm/unistd32.h         |  28 +-
+ arch/arm64/kernel/Makefile                |   5 +-
+ arch/arm64/kernel/acpi.c                  |  11 +-
+ arch/arm64/kernel/acpi_numa.c             |  88 +++--
+ arch/arm64/kernel/alternative.c           |   4 +-
+ arch/arm64/kernel/armv8_deprecated.c      |  32 +-
+ arch/arm64/kernel/cpu-reset.h             |   9 +-
+ arch/arm64/kernel/cpu_errata.c            |  30 +-
+ arch/arm64/kernel/cpufeature.c            |   4 +-
+ arch/arm64/kernel/entry.S                 | 160 ++------
+ arch/arm64/kernel/entry32.S               | 121 ------
+ arch/arm64/kernel/fpsimd.c                |  19 -
+ arch/arm64/kernel/insn.c                  |  70 +---
+ arch/arm64/kernel/machine_kexec.c         |  15 +-
+ arch/arm64/kernel/perf_event.c            | 281 +++++++++++---
+ arch/arm64/kernel/process.c               |  42 ++-
+ arch/arm64/kernel/ptrace.c                |  61 +--
+ arch/arm64/kernel/sdei.c                  |  48 ++-
+ arch/arm64/kernel/setup.c                 |  38 ++
+ arch/arm64/kernel/signal.c                |   8 +-
+ arch/arm64/kernel/signal32.c              |  24 +-
+ arch/arm64/kernel/smp.c                   |  44 ++-
+ arch/arm64/kernel/stacktrace.c            |   2 +-
+ arch/arm64/kernel/sys.c                   |  29 +-
+ arch/arm64/kernel/sys32.c                 | 135 ++++++-
+ arch/arm64/kernel/syscall.c               | 139 +++++++
+ arch/arm64/kernel/topology.c              |  58 ++-
+ arch/arm64/kernel/traps.c                 |  18 +-
+ arch/arm64/kvm/guest.c                    |  14 +-
+ arch/arm64/kvm/hyp/Makefile               |   3 +-
+ arch/arm64/kvm/hyp/vgic-v2-cpuif-proxy.c  |   2 +-
+ arch/arm64/kvm/regmap.c                   |  22 +-
+ arch/arm64/kvm/reset.c                    |   4 +-
+ arch/arm64/mm/cache.S                     |   4 +-
+ arch/arm64/mm/fault.c                     |   2 +-
+ arch/arm64/mm/flush.c                     |   3 +-
+ arch/arm64/mm/mmu.c                       |  48 ++-
+ arch/arm64/mm/numa.c                      |  29 +-
+ arch/arm64/mm/ptdump_debugfs.c            |  13 +-
+ arch/ia64/Kconfig                         |   1 +
+ arch/x86/Kconfig                          |   1 +
+ drivers/acpi/Kconfig                      |   8 +-
+ drivers/firmware/efi/arm-init.c           |   1 -
+ drivers/firmware/efi/arm-runtime.c        |  18 +-
+ drivers/firmware/efi/libstub/Makefile     |   7 +-
+ drivers/perf/arm-cci.c                    |  38 +-
+ drivers/perf/arm-ccn.c                    |  14 +-
+ drivers/perf/arm_pmu.c                    |  38 +-
+ drivers/perf/arm_pmu_platform.c           |   2 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.c  |  12 +-
+ fs/statfs.c                               |  14 +-
+ include/linux/compat.h                    |  11 +
+ include/linux/perf/arm_pmu.h              |  11 +-
+ include/linux/syscalls.h                  |  11 +
+ include/uapi/asm-generic/unistd.h         |   4 +-
+ kernel/events/core.c                      |   4 +-
+ scripts/Kbuild.include                    |   4 +-
+ tools/testing/selftests/rseq/param_test.c |  20 +
+ tools/testing/selftests/rseq/rseq-arm64.h | 594 ++++++++++++++++++++++++++++++
+ tools/testing/selftests/rseq/rseq.h       |   2 +
+ virt/kvm/arm/aarch32.c                    |  20 +-
+ 91 files changed, 2154 insertions(+), 1001 deletions(-)
+ create mode 100644 arch/arm64/include/asm/syscall_wrapper.h
+ delete mode 100644 arch/arm64/kernel/entry32.S
+ create mode 100644 arch/arm64/kernel/syscall.c
+ create mode 100644 tools/testing/selftests/rseq/rseq-arm64.h
