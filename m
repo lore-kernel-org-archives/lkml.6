@@ -2,133 +2,96 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF8FC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6613CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E077D2172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E077D2172B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 18D0B21732
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 19:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18D0B21732
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbeHNWJf (ORCPT
+        id S1728573AbeHNWQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 18:09:35 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37267 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727740AbeHNWJf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 18:09:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n7-v6so9535310pgq.4;
-        Tue, 14 Aug 2018 12:20:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QmKT2rgn5MepwWz7JfUMYkwpHNQUz/jo8jAKYuQhdEA=;
-        b=qU6+L5+SAPkIu9mzk9F25dCUW/2aimbw96PycsqkpUDq9Olsc8kKwiQp03EB8bPmB8
-         HsNoUJ7K37eiZ67fInCiKWUzSqXCihf2iHXFZvJOn3EjSHzPf2dfr/2AQ5uWf+I3b49X
-         vIZEhCf4Zy0uVq7a47VZEtZI/7E66axabUcyF8kqlOEhIDrgu8Ddu0mHitnV1/vo0a6L
-         eYKLgYghhKBLQLzPUuOoU7CplEK/3Y6ZqNM5UauznV9sJf9uhXTUdAh0HHR16QtojNQW
-         zLxhN7uD8sfavxGzpSOg+rvwm5ZPV3by+SCLXl9iRdqhN/urBh1SsfOdCUauUS1nAJqZ
-         0wMA==
-X-Gm-Message-State: AOUpUlFsuhd4NdU43rko5sJwU/ZmKzri8FQzRTDuCXO/nvQvWUAcGhm2
-        UglMetL2ycSItmouZ1C2Tw==
-X-Google-Smtp-Source: AA+uWPywY0ZZuavPmEMKaIWe6by0uZVNXTCY9GzA8Gqgl/sqh8WNOva16mZD8ploxS5ZFBXKbwePgw==
-X-Received: by 2002:a63:fb07:: with SMTP id o7-v6mr22732142pgh.333.1534274455759;
-        Tue, 14 Aug 2018 12:20:55 -0700 (PDT)
-Received: from localhost ([74.118.88.158])
-        by smtp.gmail.com with ESMTPSA id b76-v6sm41420971pfj.184.2018.08.14.12.20.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 12:20:55 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 13:20:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Emmanuel Vadot <manu@freebsd.org>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] dt-bindings: Add DT bindings documentation for
- Allwinner Thermal Sensor Controller
-Message-ID: <20180814192053.GA28118@rob-hp-laptop>
-References: <20180804070355.14857-1-manu@freebsd.org>
+        Tue, 14 Aug 2018 18:16:25 -0400
+Received: from nautica.notk.org ([91.121.71.147]:51331 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbeHNWQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 18:16:25 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 769D8C009; Tue, 14 Aug 2018 21:27:43 +0200 (CEST)
+Date:   Tue, 14 Aug 2018 21:27:28 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>
+Cc:     Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-pm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 18/18] cpupower: change strncpy+truncation to strlcpy
+Message-ID: <20180814192728.GA6264@nautica>
+References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+ <1531445169-19912-1-git-send-email-asmadeus@codewreck.org>
+ <CAEUSe78K3bxfXp8mAoxtd64ZeBFVN4v0sJ+puvffM_ZkUNsW+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180804070355.14857-1-manu@freebsd.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEUSe78K3bxfXp8mAoxtd64ZeBFVN4v0sJ+puvffM_ZkUNsW+A@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 09:03:49AM +0200, Emmanuel Vadot wrote:
-> This patch adds documentation for Device-Tree bindings for the Allwinner
-> Thermal Sensor Controller found on the H3, H5 and A64 SoCs
+Daniel Díaz wrote on Tue, Aug 14, 2018:
+> I can't get cpupower to compile anymore now that it made its way to linux-next:
+>   [/linux/tools/power/cpupower]$ make
+>     CC       lib/cpufreq.o
+>   [...]
+>   make[1]: Entering directory '/linux/tools/power/cpupower/bench'
+>     CC       main.o
+>     CC       parse.o
+>   parse.c: In function ‘prepare_config’:
+>   parse.c:224:4: warning: implicit declaration of function ‘strlcpy’
+> [-Wimplicit-function-declaration]
+>       strlcpy(config->governor, val,
+>       ^
+>     CC       system.o
+>     CC       benchmark.o
+>     CC       cpufreq-bench
+>   .//parse.o: In function `prepare_config':
+>   /linux/tools/power/cpupower/bench/parse.c:224: undefined reference
+> to `strlcpy'
+>   collect2: error: ld returned 1 exit status
+>   Makefile:25: recipe for target 'cpufreq-bench' failed
+>   make[1]: *** [cpufreq-bench] Error 1
+>   make[1]: Leaving directory '/linux/tools/power/cpupower/bench'
+>   Makefile:258: recipe for target 'compile-bench' failed
+>   make: *** [compile-bench] Error 2
 > 
-> Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
-> ---
->  .../bindings/thermal/allwinner-thermal.txt    | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/allwinner-thermal.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/allwinner-thermal.txt b/Documentation/devicetree/bindings/thermal/allwinner-thermal.txt
-> new file mode 100644
-> index 000000000000..5810d44cf495
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/allwinner-thermal.txt
-> @@ -0,0 +1,41 @@
-> +* Thermal Sensor Controller on Allwinner SoCs
-> +
-> +Required properties:
-> +- compatible : should be "allwinner,<name>-ths"
-> +   "allwinner,sun8i-h3-ths": found on H3 and H2+ SoCs
-> +   "allwinner,sun50i-h5-ths": found on H5 SoC
-> +   "allwinner,sun50i-a64-ths": found on H5 SoC
-> +- reg : physical base address of the controller and length of memory mapped
-> +	region.
-> +- interrupts : The interrupt number to the cpu. The interrupt specifier format
-> +	       depends on the interrupt controller.
+> Does it need anything special to make?
 
-Just need to say how many entries (and order if more than one).
+Ugh, no, I am really ashamed about this patch series for insufficient
+testing in general. It is currently "under rework" for an indefinite
+time frame as I have had other priorities but I'll add cpupower to the
+list...
+More precisely, the function is defined in the linux kernel but for
+userspace strlcpy is only available through libbsd, and I don't believe
+we should pull that in just for this.
 
-> +- clocks : Must contain an entry for each entry in clock-names.
-> +- clock-names : Shall be "apb" for the bus, and "ths" for
-> +		the peripheral clock.
-> +- resets : Must contain an entry for each entry in reset-names.
-> +	   See ../reset/reset.txt for details.
-> +- reset-names : Must be "apb".
-> +- #thermal-sensor-cells : Depend on the SoC
-> +   For H3 should be 0
-> +   For H5 should be 1
-> +   For A64 should be 2
-> +   See ./thermal.txt for a description.
-> +- nvmem-cells : Phandle to the calibration data
-> +- nvmem-cell-names = Should be "ths-calib"
-> +
-> +Example:
-> +
-> +ths: thermal_sensor@1c25000 {
+I'll send a second patch using snprintf and warning if a truncation
+occurs (which is the proper fix that the gcc folks intended people to do
+anyway) when I get around to it, but I would recommend to just revert
+the patch for now.
 
-thermal-sensor@...
 
-> +	compatible = "allwinner,sun8i-h3-ths";
-> +	reg = <0x01c25000 0x100>;
-> +	interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&ccu CLK_BUS_THS>, <&ccu CLK_THS>;
-> +	clock-names = "apb", "ths";
-> +	resets = <&ccu RST_BUS_THS>;
-> +	reset-names = "apb";
-> +	#thermal-sensor-cells = <0>;
-> +	status = "disabled";
-> +
-> +	nvmem-cells = <&ths_calib>;
-> +	nvmem-cell-names = "ths-calib";
-> +};
-> -- 
-> 2.18.0
-> 
+Shuah, could you take the patch off please if you haven't pushed it to
+linus yet?
+
+
+Sorry for the time you might have spent on this,
+-- 
+Dominique Martinet
