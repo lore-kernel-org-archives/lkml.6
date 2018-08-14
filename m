@@ -2,137 +2,152 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F86C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93610C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5139521735
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:40:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5139521735
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 42FBA21735
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:41:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="aU/Kjo9i";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="aU/Kjo9i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FBA21735
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731784AbeHNM01 (ORCPT
+        id S1731807AbeHNM11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:26:27 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:43178 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbeHNM00 (ORCPT
+        Tue, 14 Aug 2018 08:27:27 -0400
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:55349 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728541AbeHNM11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:26:26 -0400
-Received: by mail-io0-f198.google.com with SMTP id w19-v6so16093550ioa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 02:40:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=raIKP13xTCo7cAx7aqE51QxuifH6nr2cl4QYzJP1Srk=;
-        b=D89BXOvBv2XJgl1xrCwQYMvX+U/Fakyvli0M0JdWAbCwdjcPVNBYPsNTNP5fW0Ab/+
-         WJ+Ugpm9UXWNdAra4lv9vF3p1wR6g2b58qyZLWhOg5pjMa+lJBfL4rKa0F5F4idOuzw1
-         wjAI28mNQNzUaJxWUVcp0zz+/oGqVIGinYGQZblUsXWyMvTjvZFi1/y5yGjz4RDcNb7s
-         1gqyE8OP5Q6Hujdc7xKHoXbXDrdy0Q+7Vq28/FC6V3hnINvCBp0hLVQMuINQ6ESdFObI
-         oVgI2bKwhtUCNILv1IETbLlabZzum3SJClZsNyza8Ydl+LXmVAOywwG1zC5RuCxvi8JE
-         3vYA==
-X-Gm-Message-State: AOUpUlHSEeJ8GjdSZJVGKbPLs++zsbWBX6u49u9ArHlC/0sp4IJxYFwX
-        f14JKcV3FaA7ANEAoWB4ksfpDsDZ7SGb0ynqd9T7wwRz/uad
-X-Google-Smtp-Source: AA+uWPxZ/opCN8i0GEWeHpPSajDUGa0E+AgY2/Y3Si6pASESfrRfrU1pJKb0vtmC5fKt77oF2KClFccoI1O4o4fjix+M6ZLok32T
+        Tue, 14 Aug 2018 08:27:27 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1g.cmail.yandex.net (Yandex) with ESMTP id DAA2F217F2;
+        Tue, 14 Aug 2018 12:40:58 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 2h69u6n9wU-ewq8kVxH;
+        Tue, 14 Aug 2018 12:40:58 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1534239658; bh=YxzDZA3Ck/k6jC7qMmngKFEGI7qDuhDO1A2jVGo9ew8=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=aU/Kjo9iUENgyG48ek671T7qR843hOe87O1vNHLbP+KTb7aJyvjMqjevhA20WB2nY
+         mpKFDgZvrZzh5BI7o5Hg5b5c7TK1e4UGqC809AkfGuMjvWV3KB9337uVPXBv//bW5Z
+         2DIkQ9ME/nYH1MizUaBHMTpI3Kbh8HiUZK88ajIY=
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:854c:7dcd:9203:76a5])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id Y1n0zZjRFY-ew10394K;
+        Tue, 14 Aug 2018 12:40:58 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1534239658; bh=YxzDZA3Ck/k6jC7qMmngKFEGI7qDuhDO1A2jVGo9ew8=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=aU/Kjo9iUENgyG48ek671T7qR843hOe87O1vNHLbP+KTb7aJyvjMqjevhA20WB2nY
+         mpKFDgZvrZzh5BI7o5Hg5b5c7TK1e4UGqC809AkfGuMjvWV3KB9337uVPXBv//bW5Z
+         2DIkQ9ME/nYH1MizUaBHMTpI3Kbh8HiUZK88ajIY=
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: Re: [PATCH RFC 1/3] cgroup: list all subsystem states in debugfs
+ files
+To:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+References: <153414348591.737150.14229960913953276515.stgit@buzz>
+ <20180813134842.GF3978217@devbig004.ftw2.facebook.com>
+ <20180813171119.GA24658@cmpxchg.org>
+ <20180813175348.GA31962@castle.DHCP.thefacebook.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <1cc17b7b-8f5b-6682-ccc0-19ff5f9992e0@yandex-team.ru>
+Date:   Tue, 14 Aug 2018 12:40:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f613:: with SMTP id n19-v6mr9475069ioh.131.1534239602781;
- Tue, 14 Aug 2018 02:40:02 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 02:40:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000863a6e057361feb4@google.com>
-Subject: WARNING: suspicious RCU usage in bpf_prog_array_copy_core
-From:   syzbot <syzbot+6e72317008eef84a216b@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180813175348.GA31962@castle.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 13.08.2018 20:53, Roman Gushchin wrote:
+> On Mon, Aug 13, 2018 at 01:11:19PM -0400, Johannes Weiner wrote:
+>> On Mon, Aug 13, 2018 at 06:48:42AM -0700, Tejun Heo wrote:
+>>> Hello, Konstantin.
+>>>
+>>> On Mon, Aug 13, 2018 at 09:58:05AM +0300, Konstantin Khlebnikov wrote:
+>>>> After removing cgroup subsystem state could leak or live in background
+>>>> forever because it is pinned by some reference. For example memory cgroup
+>>>> could be pinned by pages in cache or tmpfs.
+>>>>
+>>>> This patch adds common debugfs interface for listing basic state for each
+>>>> controller. Controller could define callback for dumping own attributes.
+>>>>
+>>>> In file /sys/kernel/debug/cgroup/<controller> each line shows state in
+>>>> format: <common_attr>=<value>... [-- <controller_attr>=<value>... ]
+>>>
+>>> Seems pretty useful to me.  Roman, Johannes, what do you guys think?
+> 
+> Totally agree with the idea and was about to suggest something similar.
+> 
+>> Generally I like the idea of having more introspection into offlined
+>> cgroups, but I wonder if having only memory= and swap= could be a
+>> little too terse to track down what exactly is pinning the groups.
+>>
+>> Roman has more experience debugging these pileups, but it seems to me
+>> that unless we add a breakdown off memory, and maybe make slabinfo
+>> available for these groups, that in practice this might not provide
+>> that much more insight than per-cgroup stat counters of dead children.
+> 
+> I agree here.
 
-syzbot found the following crash on:
+I don't think that we could cover all cases with single interface.
 
-HEAD commit:    4110b42356f3 Add linux-next specific files for 20180810
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=109bac02400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d80606e3795a4f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e72317008eef84a216b
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=157ef48a400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e16cf8400000
+This debugfs just gives simple entry point for debugging:
+- paths for guessing user
+- pointers for looking with gdb via kcore
+- inode numbers for page-types - see second and third patch
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6e72317008eef84a216b@syzkaller.appspotmail.com
+For slab: this could show one of remaining slab. Anyway each of them pins css.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
+> 
+> It's hard to say in advance what numbers are useful, so let's export
+> these numbers, but also make the format more extendable, so we can
+> easily add new information later. Maybe, something like:
+> 
+> cgroup {
+>    path = ...
+>    ino = ...
+>    main css {
+>      refcnt = ...
+>      key = value
+>      ...
+>    }
+>    memcg css {
+>      refcnt = ...
+>      ...
+>    }
+>    some other controller css {
+>    }
+>    ...
+> }
+> 
+> Also, because we do batch charges, printing numbers without draining stocks
+> is not that useful. All stats are also per-cpu cached, what adds some
+> inaccuracy.
 
-=============================
-WARNING: suspicious RCU usage
-4.18.0-rc8-next-20180810+ #36 Not tainted
------------------------------
-kernel/bpf/core.c:1582 suspicious rcu_dereference_check() usage!
+Seems too verbose. And one-line key=value format is more grep/awk friendly.
 
-other info that might help us debug this:
+Anyway such extended debugging could be implemented as gdb plugin.
+While simple list of pointers gives enough information for dumping structures
+with gdb alone without extra plugins.
 
-
-rcu_scheduler_active = 2, debug_locks = 1
-2 locks held by syz-executor287/4449:
-  #0: 00000000d8131c0c (&ctx->mutex){+.+.}, at:  
-perf_event_ctx_lock_nested+0x375/0x600 kernel/events/core.c:1276
-  #1: 000000006c916250 (bpf_event_mutex){+.+.}, at:  
-perf_event_query_prog_array+0x1c6/0x380 kernel/trace/bpf_trace.c:1062
-
-stack backtrace:
-CPU: 1 PID: 4449 Comm: syz-executor287 Not tainted  
-4.18.0-rc8-next-20180810+ #36
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4562
-  bpf_prog_array_copy_core+0x2d9/0x360 kernel/bpf/core.c:1582
-  bpf_prog_array_copy_info+0x9a/0x110 kernel/bpf/core.c:1720
-  perf_event_query_prog_array+0x22e/0x380 kernel/trace/bpf_trace.c:1063
-  _perf_ioctl+0x986/0x1600 kernel/events/core.c:5079
-  perf_ioctl+0x59/0x80 kernel/events/core.c:5110
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440409
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffc5fc1488 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440409
-RDX: 0000000020000180 RSI: 00000000c008240a RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401c90
-R13: 0000000000401d20 R14: 0000000000000000
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> 
+> Thanks!
+> 
