@@ -2,137 +2,137 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D048C4646D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 02:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9EFC4646D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 02:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D7221736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 02:42:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D7221736
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
+	by mail.kernel.org (Postfix) with ESMTP id A335A21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 02:47:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="sUI5oNxo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A335A21736
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729426AbeHNF1c (ORCPT
+        id S1729547AbeHNFcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 01:27:32 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:50432 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbeHNF1c (ORCPT
+        Tue, 14 Aug 2018 01:32:33 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:43938 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbeHNFcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 01:27:32 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171])
-        by mwinf5d43 with ME
-        id NqiS1y0033iTc1M03qiSSN; Tue, 14 Aug 2018 04:42:27 +0200
-X-ME-Helo: mail-qt0-f171.google.com
-X-ME-Auth: bWF4aS5qb3VyZGFuQHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 Aug 2018 04:42:27 +0200
-X-ME-IP: 209.85.216.171
-Received: by mail-qt0-f171.google.com with SMTP id h4-v6so19698678qtj.7;
-        Mon, 13 Aug 2018 19:42:26 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHo5fqi2Gp6xG8QajTWLF4ZSozLvWfiQRuRL9sfMGIM19ZdMkVK
-        bt7nD/BgiHOVgS533EQtAa9QjL1C4ZCWQ3k2XOQ=
-X-Google-Smtp-Source: AA+uWPwwi8ntt+Yvp6AcdnOIa2zdUGJFLS/G7iLD+nFe/Z1AyZXPwtJbM/Bqgfoq/0M+SrkP/ekZxZzZvPxi845FXYo=
-X-Received: by 2002:ac8:725a:: with SMTP id l26-v6mr19547708qtp.181.1534214546043;
- Mon, 13 Aug 2018 19:42:26 -0700 (PDT)
+        Tue, 14 Aug 2018 01:32:32 -0400
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w7E2lQHJ022372;
+        Tue, 14 Aug 2018 11:47:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7E2lQHJ022372
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534214847;
+        bh=UVwSNJrYBSPE17Cbuoekxk0q2h8WBPBrNFSCVglw7pI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=sUI5oNxoaBrcwvefxeWZxO74wzP0Q3DGipo33UVD0tAsW45jB+Cge+7Q6QDgp3riS
+         RSX97BxKU0lcAXNphfa59J8wSixs8+P4nxnpxW768LVXEMhBCnMvnxtoreNTrdDK28
+         HignGeJ1N1J1Mu+FWTzdsNIQqeFWy+VIrs/xZfn5xAOvM7Oh56MGhX1dhFuaQLMYyq
+         qi7zLQ2GI70foFjuScFOU4nGpWw+i3DGS3DiLpEEnCK4x0P0MJbpY+fiNgsY0A4y9W
+         1OAZYhimKqWIg3wKzM1jX3uflxmese+8LWsREVcgsUpi6fwUE8doRggEEeonlZ/Acm
+         9Kq+scfoaWHUg==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id h1-v6so11558099uao.8;
+        Mon, 13 Aug 2018 19:47:26 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEPxApSfqCpzl0BeaipAHEoNv8+Vl5b43Dtt+ZdaVpnT6p0AGgp
+        0OH9T+XGeUFlRczS1k9yxTgaooeTyfh80Bfcy6Y=
+X-Google-Smtp-Source: AA+uWPyMPoXOg67vk1pSd2nHo5WHHcCgz34oK09XpyxvE1/m0gqFGUZdQUR0nfe9wV4uU3MUbuvzIe6S+7/DGV8ii84=
+X-Received: by 2002:a1f:3a95:: with SMTP id h143-v6mr12915383vka.42.1534214845942;
+ Mon, 13 Aug 2018 19:47:25 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:aed:278a:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 19:42:25
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Mon, 13 Aug 2018 19:46:45
  -0700 (PDT)
-In-Reply-To: <20180813190721.GA27621@rob-hp-laptop>
-References: <20180807220011.24436-1-maxi.jourdan@wanadoo.fr>
- <20180807220011.24436-3-maxi.jourdan@wanadoo.fr> <20180813190721.GA27621@rob-hp-laptop>
-From:   Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Tue, 14 Aug 2018 04:42:25 +0200
-X-Gmail-Original-Message-ID: <CAHStOZ5i_SzamBsWk-b+X2n_gxdNJUPCHL1U0M-d6rdJgXkzrg@mail.gmail.com>
-Message-ID: <CAHStOZ5i_SzamBsWk-b+X2n_gxdNJUPCHL1U0M-d6rdJgXkzrg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: soc: amlogic: add meson-canvas documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
+In-Reply-To: <CAGXu5jLMr1+M7Xnt5HFi73fkhgh2YEwJyaPrFb0tQ2i8T0-i-Q@mail.gmail.com>
+References: <20180813101435.17016-1-arekm@maven.pl> <CAGXu5jLMr1+M7Xnt5HFi73fkhgh2YEwJyaPrFb0tQ2i8T0-i-Q@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 14 Aug 2018 11:46:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARzA_X90g0if98U5jRrzGGYQkiqgN1+T9z84WWgDMi9Cg@mail.gmail.com>
+Message-ID: <CAK7LNARzA_X90g0if98U5jRrzGGYQkiqgN1+T9z84WWgDMi9Cg@mail.gmail.com>
+Subject: Re: [PATCH] Support mksh as /bin/sh.
+To:     Kees Cook <keescook@chromium.org>, arekm@maven.pl
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-13 21:07 GMT+02:00 Rob Herring <robh@kernel.org>:
-> On Wed, Aug 08, 2018 at 12:00:09AM +0200, Maxime Jourdan wrote:
->> DT bindings doc for amlogic,meson-canvas
+2018-08-14 7:32 GMT+09:00 Kees Cook <keescook@chromium.org>:
+> On Mon, Aug 13, 2018 at 3:14 AM,  <arekm@maven.pl> wrote:
+>> From: Arkadiusz Mi=C5=9Bkiewicz <arekm@maven.pl>
 >>
->> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+>> mksh needs space between ! and ( to work properly. Otherwise this
+>> happens:
+>>
+>> + make oldconfig
+>> scripts/kconfig/conf  --oldconfig Kconfig
+>> ./scripts/clang-version.sh[18]: COPYING: not found
+>> printf: =E2=80=98__clang_major__=E2=80=99: expected a numeric value
+>> printf: =E2=80=98__clang_minor__=E2=80=99: expected a numeric value
+>> printf: =E2=80=98__clang_patchlevel__=E2=80=99: expected a numeric value
+>> init/Kconfig:24:warning: 'CLANG_VERSION': number is invalid
+>>
+>> Signed-off-by: Arkadiusz Mi=C5=9Bkiewicz <arekm@maven.pl>
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> -Kees
+>
+
+I could not find this patch in ML.
+
+
+Arkadiusz,
+
+Please resend this patch to
+
+linux-kbuild@vger.kernel.org
+
+
+
 >> ---
->>  .../soc/amlogic/amlogic,meson-canvas.txt      | 36 +++++++++++++++++++
->>  1 file changed, 36 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
+>>  scripts/clang-version.sh | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
->> new file mode 100644
->> index 000000000000..5f0351717bee
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
->> @@ -0,0 +1,36 @@
->> +Amlogic Canvas
->> +================================
->> +
->> +A canvas is a collection of metadata that describes a pixel buffer.
->> +Those metadata include: width, height, phyaddr, wrapping, block mode
->> +and endianness.
->> +
->> +Many IPs within Amlogic SoCs rely on canvas indexes to read/write pixel data
->> +rather than use the phy addresses directly. For instance, this is the case for
->> +the video decoders and the display.
->> +
->> +Amlogic SoCs have 256 canvas.
->> +
->> +Device Tree Bindings:
->> +---------------------
->> +
->> +Canvas Provider
->> +--------------------------
->> +
->> +Required properties:
->> +- compatible: "amlogic,canvas"
->> +
->> +Parent node should have the following properties :
->> +- compatible: "amlogic,gx-dmc-sysctrl", "syscon", "simple-mfd"
->
-> Is this documented somewhere? One child function is not a reason for an
-> MFD and child nodes. And child nodes like this with no resources are
-> unnecessary.
->
-
-Hi Rob, this was done to follow the same path as other buses on the
-platform that have sysctrls in order to provide regmaps to the
-devices.
-
-I can see how it's not really necessary here though, would it be okay
-with you if I turned "canvas" into a simple bus subnode, using __iomem
-in the device ?
-
->> +- reg: base address and size of the DMC system control register space.
->> +
->> +Example:
->> +
->> +sysctrl_DMC: system-controller@0 {
->> +     compatible = "amlogic,gx-dmc-sysctrl", "syscon", "simple-mfd";
->> +     reg = <0x0 0x0 0x0 0x1000>;
->> +
->> +     canvas: canvas-provider@0 {
->> +             compatible = "amlogic,canvas";
->> +     };
->> +};
+>> diff --git a/scripts/clang-version.sh b/scripts/clang-version.sh
+>> index dbf0a31eb111..e65fbc3079d4 100755
+>> --- a/scripts/clang-version.sh
+>> +++ b/scripts/clang-version.sh
+>> @@ -12,7 +12,7 @@
+>>
+>>  compiler=3D"$*"
+>>
+>> -if !( $compiler --version | grep -q clang) ; then
+>> +if ! ( $compiler --version | grep -q clang) ; then
+>>         echo 0
+>>         exit 1
+>>  fi
 >> --
 >> 2.18.0
 >>
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> Kees Cook
+> Pixel Security
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
