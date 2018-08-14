@@ -2,131 +2,79 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACD0C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B505C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA9E2171F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:47:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fLGy75rA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA9E2171F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id CE7DE216FE
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 23:48:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7DE216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeHOChN (ORCPT
+        id S1728188AbeHOCi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 22:37:13 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:37514 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbeHOChM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 22:37:12 -0400
-Received: by mail-yw1-f67.google.com with SMTP id w76-v6so17584847ywg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=x4PfsOFaxf+JiaWC2eZH5OHGKlA5mbb0Xfvpn5E8YGY=;
-        b=fLGy75rA2JHncdI9L1RZ7Zl9KmOAwR+JUmc7IQyTpudhOATk0fcft1rhcycqXqSGUG
-         oSt2fg2edX/bLSBFJEjHEqGAL7pTHRiibih9JnjxfUKz3qQjZx3y+xQz7nKC1GtiwBsw
-         X/WAzk30SSFTp6LExhxzbrsaxuo9L5F2lGs60=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=x4PfsOFaxf+JiaWC2eZH5OHGKlA5mbb0Xfvpn5E8YGY=;
-        b=CdAJHYCJ8JPEPhEnet3RnqT2frZteGlO9CEhqppn69L5x8fakMe7udqqOv/5q3n5z9
-         Y2BS7pXOU2WeUCYPsBnscuQxXy7ENWQIYy/rvOldsg370JtsED+ihgwY8DUd9kppCePQ
-         8bnHbkx7p1tHvehSH/4OE0bsX86/WljzbGdITXKbd40LIZJy9/a+nlDoSag8SeH1rGDx
-         DVV7Se5nIO3lyLCJ6G+8+ur79HeiBbIzlvcNKBKFS/8YE/LjvVJ48jafFgsLewYaL5T3
-         ATj1G2F+6Idb3R26nP7yoVuq0K37zSO+y4wnygP/NIav6xRrl5rWFaiclvZh63lKC75f
-         wXXA==
-X-Gm-Message-State: AOUpUlFxVgf4ctrQsyK7Yn2jocnU9l+Hv1lxrojAhy6OEpeAdeeTtggM
-        pAXM3vacMsTIQfAhHqZQ20vzR2CSj7g=
-X-Google-Smtp-Source: AA+uWPzVX2vY0Wuovf1cddt/CLoVnduKVLiO9JQXxQmI2V8AjpDIvGN2VYra7JQlJliC7uTD9aLkfQ==
-X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr13686075ywf.53.1534290458506;
-        Tue, 14 Aug 2018 16:47:38 -0700 (PDT)
-Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
-        by smtp.gmail.com with ESMTPSA id 139-v6sm14423708ywr.61.2018.08.14.16.47.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 16:47:36 -0700 (PDT)
-Received: by mail-yw1-f44.google.com with SMTP id w76-v6so17584775ywg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 16:47:36 -0700 (PDT)
-X-Received: by 2002:a81:b248:: with SMTP id q69-v6mr12519355ywh.38.1534290455915;
- Tue, 14 Aug 2018 16:47:35 -0700 (PDT)
+        Tue, 14 Aug 2018 22:38:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37279 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726837AbeHOCi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 22:38:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2018 16:48:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,240,1531810800"; 
+   d="scan'208";a="254892378"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Aug 2018 16:48:55 -0700
+Date:   Tue, 14 Aug 2018 17:49:40 -0600
+From:   Keith Busch <keith.busch@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     wnukowski@google.com, Jens Axboe <axboe@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Keith Busch <keith.busch@intel.com>, yigitfiliz@google.com,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] Bugfix for handling of shadow doorbell buffer.
+Message-ID: <20180814234940.GB3224@localhost.localdomain>
+References: <20180814221735.62804-1-wnukowski@google.com>
+ <20180814225716.GA3224@localhost.localdomain>
+ <CA+55aFw-Fed2QJCYBosGby71AsXAVKGq8mG-HYR13rEnD9V2Lg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:cc84:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 16:47:35
- -0700 (PDT)
-In-Reply-To: <20180814223519.13610-1-surenb@google.com>
-References: <20180814223519.13610-1-surenb@google.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 14 Aug 2018 16:47:35 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLAJnJpW4JKhfA=y7Nyt+_6svC5-sCAThubFgdCF1JZbA@mail.gmail.com>
-Message-ID: <CAGXu5jLAJnJpW4JKhfA=y7Nyt+_6svC5-sCAThubFgdCF1JZbA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] NFC: Fix the number of pipes
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Security Officers <security@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kevin Deus <kdeus@google.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFw-Fed2QJCYBosGby71AsXAVKGq8mG-HYR13rEnD9V2Lg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 3:35 PM, Suren Baghdasaryan <surenb@google.com> wrote:
-> According to ETSI TS 102 622 specification chapter 4.4 pipe identifier
-> is 7 bits long which allows for 128 unique pipe IDs. Because
-> NFC_HCI_MAX_PIPES is used as the number of pipes supported and not
-> as the max pipe ID, its value should be 128 instead of 127.
->
-> nfc_hci_recv_from_llc extracts pipe ID from packet header using
-> NFC_HCI_FRAGMENT(0x7F) mask which allows for pipe ID value of 127.
-> Same happens when NCI_HCP_MSG_GET_PIPE() is being used. With
-> pipes array having only 127 elements and pipe ID of 127 the OOB memory
-> access will result.
->
-> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+On Tue, Aug 14, 2018 at 04:16:41PM -0700, Linus Torvalds wrote:
+> On Tue, Aug 14, 2018 at 3:56 PM Keith Busch <keith.busch@linux.intel.com> wrote:
+> >
+> > You just want to ensure the '*dbbuf_db = value' isn't reordered, right?
+> > The order dependency might be more obvious if done as:
+> >
+> >         WRITE_ONCE(*dbbuf_db, value);
+> >
+> >         if (!nvme_dbbuf_need_event(READ_ONCE(*dbbuf_ei), value, old_value))
+> >                 return false;
+> >
+> > And 'volatile' is again redundant.
+> 
+> Yes, using READ_ONCE/WRITE_ONCE obviates the need for volatile, but it
+> does *not* impose a memory ordering.
+> 
+> It imposes an ordering on the compiler, but not on the CPU, so you
+> still want the "mb()" there
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> ---
->  include/net/nfc/hci.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/net/nfc/hci.h b/include/net/nfc/hci.h
-> index 316694dafa5b..008f466d1da7 100644
-> --- a/include/net/nfc/hci.h
-> +++ b/include/net/nfc/hci.h
-> @@ -87,7 +87,7 @@ struct nfc_hci_pipe {
->   * According to specification 102 622 chapter 4.4 Pipes,
->   * the pipe identifier is 7 bits long.
->   */
-> -#define NFC_HCI_MAX_PIPES              127
-> +#define NFC_HCI_MAX_PIPES              128
->  struct nfc_hci_init_data {
->         u8 gate_count;
->         struct nfc_hci_gate gates[NFC_HCI_MAX_CUSTOM_GATES];
-> --
-> 2.18.0.865.gffc8e1a3cd6-goog
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+I mistakenly recalled memory-barriers.txt mentioned order was enforced
+on the CPU, but that's true only for overlapping memory, which this is
+not. Thanks for the correction.
