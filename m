@@ -2,143 +2,105 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF821C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A53EC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98B032172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:59:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B032172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D15BA21730
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:00:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbn27NZD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D15BA21730
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733026AbeHNTrK (ORCPT
+        id S2387485AbeHNTsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:47:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:46204 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732191AbeHNTrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:47:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A066018A;
-        Tue, 14 Aug 2018 09:59:12 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83D113F5BD;
-        Tue, 14 Aug 2018 09:59:10 -0700 (PDT)
-Subject: Re: [PATCH 4/5] iommu/arm-smmu: Make way to add Qcom's smmu-500
- errata handling
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
-        andy.gross@linaro.org, will.deacon@arm.com,
-        bjorn.andersson@linaro.org, iommu@lists.linux-foundation.org
-Cc:     mark.rutland@arm.com, david.brown@linaro.org, tfiga@chromium.org,
-        swboyd@chromium.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180814105528.20592-1-vivek.gautam@codeaurora.org>
- <20180814105528.20592-5-vivek.gautam@codeaurora.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <cfca5369-eacd-bb4b-6f1e-68a56f72c327@arm.com>
-Date:   Tue, 14 Aug 2018 17:59:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180814105528.20592-5-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Tue, 14 Aug 2018 15:48:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34922 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732961AbeHNTsG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:48:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g1-v6so17832239wru.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 10:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8hbhFTrqWuu04Rk9VZuLA3oZQs21BZaow0qm//j+tqo=;
+        b=fbn27NZD5OOzCW18DyVP6XM6KL2fUG3lVtNtFLrwa2W9wCoCRSL6ciV9S3LfIYlrmQ
+         LTfN/bw+A/FbGzlU5RMpmoc6lgar77/7XR7oZdCmUuzmLoFl+jiLclhao4EEZ5BmIJ0n
+         tNXbhajwYTh6EWmgiRPZa2ZkJQ957Etv4WAS0g1X+0w6uRdLW19dAXxZ4WHVkGQVd/8w
+         3V5EvA6stm6i2l+foWXMKPz8Eju5NsoMUIgQseh1Be7PxBK5JQNuNqJGZrMZMvbFQP0p
+         xTq4LuoWAomTV/jKaJPnyuyJ2iSuJLt0m+CylevIrr34MJzLkVFWnOIyHkWANtBgECxr
+         6mug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8hbhFTrqWuu04Rk9VZuLA3oZQs21BZaow0qm//j+tqo=;
+        b=QYtQ395ts9QOELwgPzbsSKhLybJjyPBmvv4hLoOJif+YhkiZviCPeHUutVhpuUn6dt
+         wyQO4WeYvOoGEtxYtklCBmzdo87Cra5dKwhhhP7EdE1sJAQm7toEMSYNaK0REl47/Bdn
+         GSwEwz10bo/L1n813wuHWcUBSgE25+8P0BmfVLmSEho8xvBul4KXy71vTgo2i5CFQk8X
+         r13rePaXnzwrxCu3fEqt/N/wK/gMOMw01DjkDM7SmXwWdWxoSGb7i1paAdQTGvokCgrZ
+         l/h/I10B2mojjxrUJKI/1NfhMwaq3kK9OLQ0dAqgypDGodTMMvXo8tB84f8o8e83GECY
+         hc/A==
+X-Gm-Message-State: AOUpUlF4UWpwZLbGScXfc16ANi0hJXST4VCJhEaVYO8L0a4MCEmk8gJi
+        xOacqdrhUr1Y+U7Z73kLPb5x/QS8
+X-Google-Smtp-Source: AA+uWPw5XtkusnZlk8+4FgUj5hPXnmcQVD/8bY9oMVVPRpyXiibSaLibLH6evil2Li6wxALKXvPgGw==
+X-Received: by 2002:a5d:5088:: with SMTP id a8-v6mr13466360wrt.37.1534266006700;
+        Tue, 14 Aug 2018 10:00:06 -0700 (PDT)
+Received: from localhost.localdomain.com (93-103-18-160.static.t-2.net. [93.103.18.160])
+        by smtp.gmail.com with ESMTPSA id p5-v6sm15383945wre.32.2018.08.14.10.00.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Aug 2018 10:00:06 -0700 (PDT)
+From:   Uros Bizjak <ubizjak@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Uros Bizjak <ubizjak@gmail.com>
+Subject: [PATCH] x86, asm: Use CC_SET()/CC_OUT() in arch/x86/include/asm/signal.h
+Date:   Tue, 14 Aug 2018 18:59:51 +0200
+Message-Id: <20180814165951.13538-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/08/18 11:55, Vivek Gautam wrote:
-> Cleanup to re-use some of the stuff
-> 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> ---
->   drivers/iommu/arm-smmu.c | 32 +++++++++++++++++++++++++-------
->   1 file changed, 25 insertions(+), 7 deletions(-)
+Remove open-coded uses of set instructions to use CC_SET()/CC_OUT() in arch/x86/include/asm/signal.h.
 
-I think the overall diffstat would be an awful lot smaller if the 
-erratum workaround just has its own readl_poll_timeout() as it does in 
-the vendor kernel. The burst-polling loop is for minimising latency in 
-high-throughput situations, and if you're in a workaround which has to 
-lock *every* register write and issue two firmware calls around each 
-sync I think you're already well out of that game.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+---
+ arch/x86/include/asm/signal.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 32e86df80428..75c146751c87 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -391,21 +391,31 @@ static void __arm_smmu_free_bitmap(unsigned long *map, int idx)
->   	clear_bit(idx, map);
->   }
->   
-> -/* Wait for any pending TLB invalidations to complete */
-> -static void __arm_smmu_tlb_sync(struct arm_smmu_device *smmu,
-> -				void __iomem *sync, void __iomem *status)
-> +static int __arm_smmu_tlb_sync_wait(void __iomem *status)
->   {
->   	unsigned int spin_cnt, delay;
->   
-> -	writel_relaxed(0, sync);
->   	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
->   		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
->   			if (!(readl_relaxed(status) & sTLBGSTATUS_GSACTIVE))
-> -				return;
-> +				return 0;
->   			cpu_relax();
->   		}
->   		udelay(delay);
->   	}
-> +
-> +	return -EBUSY;
-> +}
-> +
-> +/* Wait for any pending TLB invalidations to complete */
-> +static void __arm_smmu_tlb_sync(struct arm_smmu_device *smmu,
-> +				void __iomem *sync, void __iomem *status)
-> +{
-> +	writel_relaxed(0, sync);
-> +
-> +	if (!__arm_smmu_tlb_sync_wait(status))
-> +		return;
-> +
->   	dev_err_ratelimited(smmu->dev,
->   			    "TLB sync timed out -- SMMU may be deadlocked\n");
->   }
-> @@ -461,8 +471,9 @@ static void arm_smmu_tlb_inv_context_s2(void *cookie)
->   	arm_smmu_tlb_sync_global(smmu);
->   }
->   
-> -static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
-> -					  size_t granule, bool leaf, void *cookie)
-> +static void __arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
-> +					    size_t granule, bool leaf,
-> +					    void *cookie)
->   {
->   	struct arm_smmu_domain *smmu_domain = cookie;
->   	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
-> @@ -498,6 +509,13 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
->   	}
->   }
->   
-> +static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
-> +					  size_t granule, bool leaf,
-> +					  void *cookie)
-> +{
-> +	__arm_smmu_tlb_inv_range_nosync(iova, size, granule, leaf, cookie);
-> +}
-> +
+diff --git a/arch/x86/include/asm/signal.h b/arch/x86/include/asm/signal.h
+index 5f9012ff52ed..33d3c88a7225 100644
+--- a/arch/x86/include/asm/signal.h
++++ b/arch/x86/include/asm/signal.h
+@@ -39,6 +39,7 @@ extern void do_signal(struct pt_regs *regs);
+ 
+ #define __ARCH_HAS_SA_RESTORER
+ 
++#include <asm/asm.h>
+ #include <uapi/asm/sigcontext.h>
+ 
+ #ifdef __i386__
+@@ -86,9 +87,9 @@ static inline int __const_sigismember(sigset_t *set, int _sig)
+ 
+ static inline int __gen_sigismember(sigset_t *set, int _sig)
+ {
+-	unsigned char ret;
+-	asm("btl %2,%1\n\tsetc %0"
+-	    : "=qm"(ret) : "m"(*set), "Ir"(_sig-1) : "cc");
++	bool ret;
++	asm("btl %2,%1" CC_SET(c)
++	    : CC_OUT(c) (ret) : "m"(*set), "Ir"(_sig-1));
+ 	return ret;
+ }
+ 
+-- 
+2.17.1
 
-AFAICS even after patch #5 this does absolutely nothing except make the 
-code needlessly harder to read :(
-
-Robin.
-
->   /*
->    * On MMU-401 at least, the cost of firing off multiple TLBIVMIDs appears
->    * almost negligible, but the benefit of getting the first one in as far ahead
-> 
