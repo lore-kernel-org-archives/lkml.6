@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB24C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4C2C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E409A21727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E409A21727
+	by mail.kernel.org (Postfix) with ESMTP id 98D0221727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D0221727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389280AbeHNURp (ORCPT
+        id S2389293AbeHNURu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:17:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52988 "EHLO
+        Tue, 14 Aug 2018 16:17:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52998 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388383AbeHNURo (ORCPT
+        with ESMTP id S2388383AbeHNURs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:17:44 -0400
+        Tue, 14 Aug 2018 16:17:48 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B395FBDB;
-        Tue, 14 Aug 2018 17:29:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD4D3C5C;
+        Tue, 14 Aug 2018 17:29:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 31/97] sched/smt: Update sched_smt_present at runtime
-Date:   Tue, 14 Aug 2018 19:16:43 +0200
-Message-Id: <20180814171434.366222450@linuxfoundation.org>
+Subject: [PATCH 4.17 32/97] x86/smp: Provide topology_is_primary_thread()
+Date:   Tue, 14 Aug 2018 19:16:44 +0200
+Message-Id: <20180814171434.400675980@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -52,89 +51,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit ba2591a5993eabcc8e874e30f361d8ffbb10d6d4 upstream
+commit 6a4d2657e048f096c7ffcad254010bd94891c8c0 upstream
 
-The static key sched_smt_present is only updated at boot time when SMT
-siblings have been detected. Booting with maxcpus=1 and bringing the
-siblings online after boot rebuilds the scheduling domains correctly but
-does not update the static key, so the SMT code is not enabled.
+If the CPU is supporting SMT then the primary thread can be found by
+checking the lower APIC ID bits for zero. smp_num_siblings is used to build
+the mask for the APIC ID bits which need to be taken into account.
 
-Let the key be updated in the scheduler CPU hotplug code to fix this.
+This uses the MPTABLE or ACPI/MADT supplied APIC ID, which can be different
+than the initial APIC ID in CPUID. But according to AMD the lower bits have
+to be consistent. Intel gave a tentative confirmation as well.
 
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Preparatory patch to support disabling SMT at boot/runtime.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/core.c |   30 ++++++++++++------------------
- kernel/sched/fair.c |    1 +
- 2 files changed, 13 insertions(+), 18 deletions(-)
+ arch/x86/include/asm/apic.h     |    6 ++++++
+ arch/x86/include/asm/topology.h |    4 +++-
+ arch/x86/kernel/apic/apic.c     |   15 +++++++++++++++
+ arch/x86/kernel/smpboot.c       |    9 +++++++++
+ 4 files changed, 33 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5788,6 +5788,18 @@ int sched_cpu_activate(unsigned int cpu)
- 	struct rq *rq = cpu_rq(cpu);
- 	struct rq_flags rf;
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -502,6 +502,12 @@ extern int default_check_phys_apicid_pre
  
-+#ifdef CONFIG_SCHED_SMT
-+	/*
-+	 * The sched_smt_present static key needs to be evaluated on every
-+	 * hotplug event because at boot time SMT might be disabled when
-+	 * the number of booted CPUs is limited.
-+	 *
-+	 * If then later a sibling gets hotplugged, then the key would stay
-+	 * off and SMT scheduling would never be functional.
-+	 */
-+	if (cpumask_weight(cpu_smt_mask(cpu)) > 1)
-+		static_branch_enable_cpuslocked(&sched_smt_present);
+ #endif /* CONFIG_X86_LOCAL_APIC */
+ 
++#ifdef CONFIG_SMP
++bool apic_id_is_primary_thread(unsigned int id);
++#else
++static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
 +#endif
- 	set_cpu_active(cpu, true);
++
+ extern void irq_enter(void);
+ extern void irq_exit(void);
  
- 	if (sched_smp_initialized) {
-@@ -5885,22 +5897,6 @@ int sched_cpu_dying(unsigned int cpu)
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -123,13 +123,15 @@ static inline int topology_max_smt_threa
  }
+ 
+ int topology_update_package_map(unsigned int apicid, unsigned int cpu);
+-extern int topology_phys_to_logical_pkg(unsigned int pkg);
++int topology_phys_to_logical_pkg(unsigned int pkg);
++bool topology_is_primary_thread(unsigned int cpu);
+ #else
+ #define topology_max_packages()			(1)
+ static inline int
+ topology_update_package_map(unsigned int apicid, unsigned int cpu) { return 0; }
+ static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
+ static inline int topology_max_smt_threads(void) { return 1; }
++static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
  #endif
  
--#ifdef CONFIG_SCHED_SMT
--DEFINE_STATIC_KEY_FALSE(sched_smt_present);
--
--static void sched_init_smt(void)
--{
--	/*
--	 * We've enumerated all CPUs and will assume that if any CPU
--	 * has SMT siblings, CPU0 will too.
--	 */
--	if (cpumask_weight(cpu_smt_mask(0)) > 1)
--		static_branch_enable(&sched_smt_present);
--}
--#else
--static inline void sched_init_smt(void) { }
--#endif
--
- void __init sched_init_smp(void)
- {
- 	sched_init_numa();
-@@ -5922,8 +5918,6 @@ void __init sched_init_smp(void)
- 	init_sched_rt_class();
- 	init_sched_dl_class();
+ static inline void arch_fix_phys_package_id(int num, u32 slot)
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2192,6 +2192,21 @@ static int cpuid_to_apicid[] = {
+ 	[0 ... NR_CPUS - 1] = -1,
+ };
  
--	sched_init_smt();
--
- 	sched_smp_initialized = true;
++/**
++ * apic_id_is_primary_thread - Check whether APIC ID belongs to a primary thread
++ * @id:	APIC ID to check
++ */
++bool apic_id_is_primary_thread(unsigned int apicid)
++{
++	u32 mask;
++
++	if (smp_num_siblings == 1)
++		return true;
++	/* Isolate the SMT bit(s) in the APICID and check for 0 */
++	mask = (1U << (fls(smp_num_siblings) - 1)) - 1;
++	return !(apicid & mask);
++}
++
+ /*
+  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
+  * and cpuid_to_apicid[] synchronized.
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -273,6 +273,15 @@ static void notrace start_secondary(void
  }
  
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6183,6 +6183,7 @@ static inline int find_idlest_cpu(struct
- }
- 
- #ifdef CONFIG_SCHED_SMT
-+DEFINE_STATIC_KEY_FALSE(sched_smt_present);
- 
- static inline void set_idle_cores(int cpu, int val)
- {
+ /**
++ * topology_is_primary_thread - Check whether CPU is the primary SMT thread
++ * @cpu:	CPU to check
++ */
++bool topology_is_primary_thread(unsigned int cpu)
++{
++	return apic_id_is_primary_thread(per_cpu(x86_cpu_to_apicid, cpu));
++}
++
++/**
+  * topology_phys_to_logical_pkg - Map a physical package id to a logical
+  *
+  * Returns logical package id or -1 if not found
 
 
