@@ -6,44 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA85C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52162C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3770521727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3770521727
+	by mail.kernel.org (Postfix) with ESMTP id 11AB021733
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:29:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11AB021733
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389136AbeHNURO (ORCPT
+        id S2389153AbeHNURQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:17:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52846 "EHLO
+        Tue, 14 Aug 2018 16:17:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52862 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387930AbeHNURM (ORCPT
+        with ESMTP id S2387930AbeHNURP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:17:12 -0400
+        Tue, 14 Aug 2018 16:17:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE546C5C;
-        Tue, 14 Aug 2018 17:29:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0AD22D06;
+        Tue, 14 Aug 2018 17:29:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Daniel Casini <daniel.casini@santannapisa.it>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Andi Kleen <ak@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 05/97] sched/deadline: Update rq_clock of later_rq when pushing a task
-Date:   Tue, 14 Aug 2018 19:16:17 +0200
-Message-Id: <20180814171433.378826795@linuxfoundation.org>
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH 4.17 23/97] x86/speculation/l1tf: Change order of offset/type in swap entry
+Date:   Tue, 14 Aug 2018 19:16:35 +0200
+Message-Id: <20180814171434.069004836@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -60,95 +56,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Bristot de Oliveira <bristot@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 840d719604b0925ca23dde95f1767e4528668369 upstream.
+commit bcd11afa7adad8d720e7ba5ef58bdcd9775cf45f upstream
 
-Daniel Casini got this warn while running a DL task here at RetisLab:
+If pages are swapped out, the swap entry is stored in the corresponding
+PTE, which has the Present bit cleared. CPUs vulnerable to L1TF speculate
+on PTE entries which have the present bit set and would treat the swap
+entry as phsyical address (PFN). To mitigate that the upper bits of the PTE
+must be set so the PTE points to non existent memory.
 
-  [  461.137582] ------------[ cut here ]------------
-  [  461.137583] rq->clock_update_flags < RQCF_ACT_SKIP
-  [  461.137599] WARNING: CPU: 4 PID: 2354 at kernel/sched/sched.h:967 assert_clock_updated.isra.32.part.33+0x17/0x20
-      [a ton of modules]
-  [  461.137646] CPU: 4 PID: 2354 Comm: label_image Not tainted 4.18.0-rc4+ #3
-  [  461.137647] Hardware name: ASUS All Series/Z87-K, BIOS 0801 09/02/2013
-  [  461.137649] RIP: 0010:assert_clock_updated.isra.32.part.33+0x17/0x20
-  [  461.137649] Code: ff 48 89 83 08 09 00 00 eb c6 66 0f 1f 84 00 00 00 00 00 55 48 c7 c7 98 7a 6c a5 c6 05 bc 0d 54 01 01 48 89 e5 e8 a9 84 fb ff <0f> 0b 5d c3 0f 1f 44 00 00 0f 1f 44 00 00 83 7e 60 01 74 0a 48 3b
-  [  461.137673] RSP: 0018:ffffa77e08cafc68 EFLAGS: 00010082
-  [  461.137674] RAX: 0000000000000000 RBX: ffff8b3fc1702d80 RCX: 0000000000000006
-  [  461.137674] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff8b3fded164b0
-  [  461.137675] RBP: ffffa77e08cafc68 R08: 0000000000000026 R09: 0000000000000339
-  [  461.137676] R10: ffff8b3fd060d410 R11: 0000000000000026 R12: ffffffffa4e14e20
-  [  461.137677] R13: ffff8b3fdec22940 R14: ffff8b3fc1702da0 R15: ffff8b3fdec22940
-  [  461.137678] FS:  00007efe43ee5700(0000) GS:ffff8b3fded00000(0000) knlGS:0000000000000000
-  [  461.137679] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [  461.137680] CR2: 00007efe30000010 CR3: 0000000301744003 CR4: 00000000001606e0
-  [  461.137680] Call Trace:
-  [  461.137684]  push_dl_task.part.46+0x3bc/0x460
-  [  461.137686]  task_woken_dl+0x60/0x80
-  [  461.137689]  ttwu_do_wakeup+0x4f/0x150
-  [  461.137690]  ttwu_do_activate+0x77/0x80
-  [  461.137692]  try_to_wake_up+0x1d6/0x4c0
-  [  461.137693]  wake_up_q+0x32/0x70
-  [  461.137696]  do_futex+0x7e7/0xb50
-  [  461.137698]  __x64_sys_futex+0x8b/0x180
-  [  461.137701]  do_syscall_64+0x5a/0x110
-  [  461.137703]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  [  461.137705] RIP: 0033:0x7efe4918ca26
-  [  461.137705] Code: 00 00 00 74 17 49 8b 48 20 44 8b 59 10 41 83 e3 30 41 83 fb 20 74 1e be 85 00 00 00 41 ba 01 00 00 00 41 b9 01 00 00 04 0f 05 <48> 3d 01 f0 ff ff 73 1f 31 c0 c3 be 8c 00 00 00 49 89 c8 4d 31 d2
-  [  461.137738] RSP: 002b:00007efe43ee4928 EFLAGS: 00000283 ORIG_RAX: 00000000000000ca
-  [  461.137739] RAX: ffffffffffffffda RBX: 0000000005094df0 RCX: 00007efe4918ca26
-  [  461.137740] RDX: 0000000000000001 RSI: 0000000000000085 RDI: 0000000005094e24
-  [  461.137741] RBP: 00007efe43ee49c0 R08: 0000000005094e20 R09: 0000000004000001
-  [  461.137741] R10: 0000000000000001 R11: 0000000000000283 R12: 0000000000000000
-  [  461.137742] R13: 0000000005094df8 R14: 0000000000000001 R15: 0000000000448a10
-  [  461.137743] ---[ end trace 187df4cad2bf7649 ]---
+The swap entry stores the type and the offset of a swapped out page in the
+PTE. type is stored in bit 9-13 and offset in bit 14-63. The hardware
+ignores the bits beyond the phsyical address space limit, so to make the
+mitigation effective its required to start 'offset' at the lowest possible
+bit so that even large swap offsets do not reach into the physical address
+space limit bits.
 
-This warning happened in the push_dl_task(), because
-__add_running_bw()->cpufreq_update_util() is getting the rq_clock of
-the later_rq before its update, which takes place at activate_task().
-The fix then is to update the rq_clock before calling add_running_bw().
+Move offset to bit 9-58 and type to bit 59-63 which are the bits that
+hardware generally doesn't care about.
 
-To avoid double rq_clock_update() call, we set ENQUEUE_NOCLOCK flag to
-activate_task().
+That, in turn, means that if you on desktop chip with only 40 bits of
+physical addressing, now that the offset starts at bit 9, there needs to be
+30 bits of offset actually *in use* until bit 39 ends up being set, which
+means when inverted it will again point into existing memory.
 
-Reported-by: Daniel Casini <daniel.casini@santannapisa.it>
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Fixes: e0367b12674b sched/deadline: Move CPU frequency selection triggering points
-Link: http://lkml.kernel.org/r/ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+So that's 4 terabyte of swap space (because the offset is counted in pages,
+so 30 bits of offset is 42 bits of actual coverage). With bigger physical
+addressing, that obviously grows further, until the limit of the offset is
+hit (at 50 bits of offset - 62 bits of actual swap file coverage).
+
+This is a preparatory change for the actual swap entry inversion to protect
+against L1TF.
+
+[ AK: Updated description and minor tweaks. Split into two parts ]
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sched/deadline.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable_64.h |   31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2090,8 +2090,14 @@ retry:
- 	sub_rq_bw(&next_task->dl, &rq->dl);
- 	set_task_cpu(next_task, later_rq->cpu);
- 	add_rq_bw(&next_task->dl, &later_rq->dl);
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -273,7 +273,7 @@ static inline int pgd_large(pgd_t pgd) {
+  *
+  * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
+  * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
+- * | OFFSET (14->63) | TYPE (9-13)  |0|0|X|X| X| X|X|SD|0| <- swp entry
++ * | TYPE (59-63) |  OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
+  *
+  * G (8) is aliased and used as a PROT_NONE indicator for
+  * !present ptes.  We need to start storing swap entries above
+@@ -287,19 +287,28 @@ static inline int pgd_large(pgd_t pgd) {
+  * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
+  * but also L and G.
+  */
+-#define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
+-#define SWP_TYPE_BITS 5
+-/* Place the offset above the type: */
+-#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS)
++#define SWP_TYPE_BITS		5
 +
-+	/*
-+	 * Update the later_rq clock here, because the clock is used
-+	 * by the cpufreq_update_util() inside __add_running_bw().
-+	 */
-+	update_rq_clock(later_rq);
- 	add_running_bw(&next_task->dl, &later_rq->dl);
--	activate_task(later_rq, next_task, 0);
-+	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
- 	ret = 1;
++#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
++
++/* We always extract/encode the offset by shifting it all the way up, and then down again */
++#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT+SWP_TYPE_BITS)
  
- 	resched_curr(later_rq);
+ #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS)
+ 
+-#define __swp_type(x)			(((x).val >> (SWP_TYPE_FIRST_BIT)) \
+-					 & ((1U << SWP_TYPE_BITS) - 1))
+-#define __swp_offset(x)			((x).val >> SWP_OFFSET_FIRST_BIT)
+-#define __swp_entry(type, offset)	((swp_entry_t) { \
+-					 ((type) << (SWP_TYPE_FIRST_BIT)) \
+-					 | ((offset) << SWP_OFFSET_FIRST_BIT) })
++/* Extract the high bits for type */
++#define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
++
++/* Shift up (to get rid of type), then down to get value */
++#define __swp_offset(x) ((x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
++
++/*
++ * Shift the offset up "too far" by TYPE bits, then down again
++ */
++#define __swp_entry(type, offset) ((swp_entry_t) { \
++	((unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	| ((unsigned long)(type) << (64-SWP_TYPE_BITS)) })
++
+ #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val((pte)) })
+ #define __pmd_to_swp_entry(pmd)		((swp_entry_t) { pmd_val((pmd)) })
+ #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
 
 
