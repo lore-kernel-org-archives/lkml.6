@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFEEC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CD6C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C727521471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C727521471
+	by mail.kernel.org (Postfix) with ESMTP id 68FDE21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FDE21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390909AbeHNUdg (ORCPT
+        id S2390917AbeHNUdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:33:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60224 "EHLO
+        Tue, 14 Aug 2018 16:33:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389912AbeHNUdf (ORCPT
+        with ESMTP id S2388101AbeHNUdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:33:35 -0400
+        Tue, 14 Aug 2018 16:33:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E5FDCA5;
-        Tue, 14 Aug 2018 17:45:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22163CAE;
+        Tue, 14 Aug 2018 17:45:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 096/107] KVM: VMX: support MSR_IA32_ARCH_CAPABILITIES as a feature MSR
-Date:   Tue, 14 Aug 2018 19:17:59 +0200
-Message-Id: <20180814171526.689219948@linuxfoundation.org>
+Subject: [PATCH 4.9 097/107] x86/speculation: Simplify sysfs report of VMX L1TF vulnerability
+Date:   Tue, 14 Aug 2018 19:18:00 +0200
+Message-Id: <20180814171526.730445461@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -53,38 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit cd28325249a1ca0d771557ce823e0308ad629f98 upstream
+commit ea156d192f5257a5bf393d33910d3b481bf8a401 upstream
 
-This lets userspace read the MSR_IA32_ARCH_CAPABILITIES and check that all
-requested features are available on the host.
+Three changes to the content of the sysfs file:
+
+ - If EPT is disabled, L1TF cannot be exploited even across threads on the
+   same core, and SMT is irrelevant.
+
+ - If mitigation is completely disabled, and SMT is enabled, print "vulnerable"
+   instead of "vulnerable, SMT vulnerable"
+
+ - Reorder the two parts so that the main vulnerability state comes first
+   and the detail on SMT is second.
 
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/x86.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1015,6 +1015,7 @@ static unsigned num_emulated_msrs;
- static u32 msr_based_features[] = {
- 	MSR_F10H_DECFG,
- 	MSR_IA32_UCODE_REV,
-+	MSR_IA32_ARCH_CAPABILITIES,
- };
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -737,9 +737,15 @@ static ssize_t l1tf_show_state(char *buf
+ 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_AUTO)
+ 		return sprintf(buf, "%s\n", L1TF_DEFAULT_MSG);
  
- static unsigned int num_msr_based_features;
-@@ -1023,7 +1024,8 @@ static int kvm_get_msr_feature(struct kv
- {
- 	switch (msr->index) {
- 	case MSR_IA32_UCODE_REV:
--		rdmsrl(msr->index, msr->data);
-+	case MSR_IA32_ARCH_CAPABILITIES:
-+		rdmsrl_safe(msr->index, &msr->data);
- 		break;
- 	default:
- 		if (kvm_x86_ops->get_msr_feature(msr))
+-	return sprintf(buf, "%s; VMX: SMT %s, L1D %s\n", L1TF_DEFAULT_MSG,
+-		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled",
+-		       l1tf_vmx_states[l1tf_vmx_mitigation]);
++	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
++	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
++	     cpu_smt_control == CPU_SMT_ENABLED))
++		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
++			       l1tf_vmx_states[l1tf_vmx_mitigation]);
++
++	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
++		       l1tf_vmx_states[l1tf_vmx_mitigation],
++		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
+ }
+ #else
+ static ssize_t l1tf_show_state(char *buf)
 
 
