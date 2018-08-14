@@ -2,124 +2,289 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B805C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900A6C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA5421778
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:28:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HmxnRKyw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bW3eXnXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA5421778
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 3395D2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3395D2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbeHNNOj (ORCPT
+        id S1732177AbeHNNPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 09:14:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49304 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730766AbeHNNOj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 09:14:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7C5B360BDD; Tue, 14 Aug 2018 10:28:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534242485;
-        bh=7opnA+7x4vS2IiIACF9REBCtJcqJjcWW4SmcjmszsaU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HmxnRKywdLAdOoVTllmUE8ud+CfqRtxAvGb3JmdRQJJgNs/hFt9LFQ372XZyhP55F
-         q1QlSi0eLdKBF9CDDQY5Qq+KOuLO27D8fLXsGvFPDI5WIUWuO0S67KDU1oKGuV9tAZ
-         ov9567S+SAZO7HMqxDZEu03/xTJt6QXNON7TtnLE=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E1B9260BB0;
-        Tue, 14 Aug 2018 10:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534242483;
-        bh=7opnA+7x4vS2IiIACF9REBCtJcqJjcWW4SmcjmszsaU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bW3eXnXIOtomvQuxT4atgE1nHF5XZwsDsI8xfvk1hRmlrDevxO1D3kWple9d/0pHR
-         DeCCYGEdwpBNL8OWwgEGGFcloZBXUUpYZ/7WBXLcfdYeQQmZAlEeeYzF5h7knsFUkc
-         YYBC1NxRMoj1ylHsIzBvsLUWS7szsATkA9FZ6zsI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1B9260BB0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     joro@8bytes.org, robh+dt@kernel.org, andy.gross@linaro.org,
-        will.deacon@arm.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org
-Cc:     mark.rutland@arm.com, robin.murphy@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v2 3/3] dts: arm64/sdm845: Add node for qcom,smmu-v2
-Date:   Tue, 14 Aug 2018 15:57:40 +0530
-Message-Id: <20180814102740.30222-4-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20180814102740.30222-1-vivek.gautam@codeaurora.org>
-References: <20180814102740.30222-1-vivek.gautam@codeaurora.org>
+        Tue, 14 Aug 2018 09:15:08 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:28122 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729567AbeHNNPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 09:15:08 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41qTMk2tc6z9ttF5;
+        Tue, 14 Aug 2018 12:28:34 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id YSXBcpfXYRRW; Tue, 14 Aug 2018 12:28:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41qTMk2Jfzz9ttCY;
+        Tue, 14 Aug 2018 12:28:34 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2808E8B7CB;
+        Tue, 14 Aug 2018 12:28:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id qJE5tULMBeN3; Tue, 14 Aug 2018 12:28:34 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7A4408B74B;
+        Tue, 14 Aug 2018 12:28:33 +0200 (CEST)
+Subject: Re: [PATCH 1/3] powerpc/mm: fix a warning when a cache is common to
+ PGD and hugepages
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <1cbc8dba537393edbb6384b67cbb123431ba6a32.1534166756.git.christophe.leroy@c-s.fr>
+ <40132e5c-e7a7-46d1-be1d-24cb1b91923a@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <1c49ecd4-b03f-ebc2-3d01-18bd93f062c3@c-s.fr>
+Date:   Tue, 14 Aug 2018 12:28:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <40132e5c-e7a7-46d1-be1d-24cb1b91923a@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device node for qcom,smmu-v2 available on sdm845.
-This smmu is available only to GPU device.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 1c2be2082f33..bd1ec5fa5146 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -6,6 +6,7 @@
-  */
- 
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-+#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-@@ -989,6 +990,28 @@
- 			cell-index = <0>;
- 		};
- 
-+		gpu_smmu: iommu@5040000 {
-+			compatible = "qcom,sdm845-smmu-v2", "qcom,smmu-v2";
-+			reg = <0x5040000 0x10000>;
-+			#iommu-cells = <1>;
-+			#global-interrupts = <2>;
-+			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
-+			clock-names = "bus", "iface";
-+			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				 <&gcc GCC_GPU_CFG_AHB_CLK>;
-+
-+			/*power-domains = <&gpucc GPU_CX_GDSC>;*/
-+		};
-+
- 		apps_smmu: iommu@15000000 {
- 			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
- 			reg = <0x15000000 0x80000>;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Le 13/08/2018 à 15:44, Aneesh Kumar K.V a écrit :
+> On 08/13/2018 06:57 PM, Christophe Leroy wrote:
+>> While implementing TLB miss HW assistance on the 8xx, the following
+>> warning was encountered:
+>>
+>> [  423.732965] WARNING: CPU: 0 PID: 345 at mm/slub.c:2412 
+>> ___slab_alloc.constprop.30+0x26c/0x46c
+>> [  423.733033] CPU: 0 PID: 345 Comm: mmap Not tainted 
+>> 4.18.0-rc8-00664-g2dfff9121c55 #671
+>> [  423.733075] NIP:  c0108f90 LR: c0109ad0 CTR: 00000004
+>> [  423.733121] REGS: c455bba0 TRAP: 0700   Not tainted  
+>> (4.18.0-rc8-00664-g2dfff9121c55)
+>> [  423.733147] MSR:  00021032 <ME,IR,DR,RI>  CR: 24224848  XER: 20000000
+>> [  423.733319]
+>> [  423.733319] GPR00: c0109ad0 c455bc50 c4521910 c60053c0 007080c0 
+>> c0011b34 c7fa41e0 c455be30
+>> [  423.733319] GPR08: 00000001 c00103a0 c7fa41e0 c49afcc4 24282842 
+>> 10018840 c079b37c 00000040
+>> [  423.733319] GPR16: 73f00000 00210d00 00000000 00000001 c455a000 
+>> 00000100 00000200 c455a000
+>> [  423.733319] GPR24: c60053c0 c0011b34 007080c0 c455a000 c455a000 
+>> c7fa41e0 00000000 00009032
+>> [  423.734190] NIP [c0108f90] ___slab_alloc.constprop.30+0x26c/0x46c
+>> [  423.734257] LR [c0109ad0] kmem_cache_alloc+0x210/0x23c
+>> [  423.734283] Call Trace:
+>> [  423.734326] [c455bc50] [00000100] 0x100 (unreliable)
+>> [  423.734430] [c455bcc0] [c0109ad0] kmem_cache_alloc+0x210/0x23c
+>> [  423.734543] [c455bcf0] [c0011b34] huge_pte_alloc+0xc0/0x1dc
+>> [  423.734633] [c455bd20] [c01044dc] hugetlb_fault+0x408/0x48c
+>> [  423.734720] [c455bdb0] [c0104b20] follow_hugetlb_page+0x14c/0x44c
+>> [  423.734826] [c455be10] [c00e8e54] __get_user_pages+0x1c4/0x3dc
+>> [  423.734919] [c455be80] [c00e9924] __mm_populate+0xac/0x140
+>> [  423.735020] [c455bec0] [c00db14c] vm_mmap_pgoff+0xb4/0xb8
+>> [  423.735127] [c455bf00] [c00f27c0] ksys_mmap_pgoff+0xcc/0x1fc
+>> [  423.735222] [c455bf40] [c000e0f8] ret_from_syscall+0x0/0x38
+>> [  423.735271] Instruction dump:
+>> [  423.735321] 7cbf482e 38fd0008 7fa6eb78 7fc4f378 4bfff5dd 7fe3fb78 
+>> 4bfffe24 81370010
+>> [  423.735536] 71280004 41a2ff88 4840c571 4bffff80 <0fe00000> 4bfffeb8 
+>> 81340010 712a0004
+>> [  423.735757] ---[ end trace e9b222919a470790 ]---
+>>
+>> This warning occurs when calling kmem_cache_zalloc() on a
+>> cache having a constructor.
+>>
+>> In this case it happens because PGD cache and 512k hugepte cache are
+>> the same size (4k). While a cache with constructor is created for
+>> the PGD, hugepages create cache without constructor and uses
+>> kmem_cache_zalloc(). As both expect a cache with the same size,
+>> the hugepages reuse the cache created for PGD, hence the conflict.
+>>
+>> As the constructors only aim at zeroing the allocated memory, this
+>> patch fixes this issue by removing the constructors and using
+>> kmem_cache_zalloc() instead.
+>>
+> 
+> But that means we zero out on each alloc from the slab right? Earlier we 
+> allocated we we added memory to the slab. Also we have code that 
+> carefully zero things out when we free the page table back to slab.
+> The idea there was, it is better take the cost of zeroing out during 
+> free rather than fault.
 
+Ok, then it means we have to do it the other way round and change
+hugetlb to use cache with constructors as well.
+
+At first look, it seems quite tricky to do it though. The constructor 
+doesn't get the size of the cache, so it means we need one constructor 
+for each possible size.
+
+Christophe
+
+
+> 
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/include/asm/book3s/32/pgalloc.h |  2 +-
+>>   arch/powerpc/include/asm/book3s/64/pgalloc.h |  4 ++--
+>>   arch/powerpc/include/asm/nohash/32/pgalloc.h |  2 +-
+>>   arch/powerpc/include/asm/nohash/64/pgalloc.h |  6 +++---
+>>   arch/powerpc/mm/init-common.c                | 21 +++------------------
+>>   5 files changed, 10 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h 
+>> b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+>> index 82e44b1a00ae..4c23cc1ae7a1 100644
+>> --- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
+>> +++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+>> @@ -32,7 +32,7 @@ extern struct kmem_cache *pgtable_cache[];
+>>
+>>   static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+>>   {
+>> -    return kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+>> +    return kmem_cache_zalloc(PGT_CACHE(PGD_INDEX_SIZE),
+>>               pgtable_gfp_flags(mm, GFP_KERNEL));
+>>   }
+>>
+>> diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h 
+>> b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+>> index 76234a14b97d..074359cd632a 100644
+>> --- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
+>> +++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+>> @@ -81,7 +81,7 @@ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+>>       if (radix_enabled())
+>>           return radix__pgd_alloc(mm);
+>>
+>> -    pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+>> +    pgd = kmem_cache_zalloc(PGT_CACHE(PGD_INDEX_SIZE),
+>>                      pgtable_gfp_flags(mm, GFP_KERNEL));
+>>       /*
+>>        * Don't scan the PGD for pointers, it contains references to 
+>> PUDs but
+>> @@ -120,7 +120,7 @@ static inline pud_t *pud_alloc_one(struct 
+>> mm_struct *mm, unsigned long addr)
+>>   {
+>>       pud_t *pud;
+>>
+>> -    pud = kmem_cache_alloc(PGT_CACHE(PUD_CACHE_INDEX),
+>> +    pud = kmem_cache_zalloc(PGT_CACHE(PUD_CACHE_INDEX),
+>>                      pgtable_gfp_flags(mm, GFP_KERNEL));
+>>       /*
+>>        * Tell kmemleak to ignore the PUD, that means don't scan it for
+>> diff --git a/arch/powerpc/include/asm/nohash/32/pgalloc.h 
+>> b/arch/powerpc/include/asm/nohash/32/pgalloc.h
+>> index 8825953c225b..766cf0c90d19 100644
+>> --- a/arch/powerpc/include/asm/nohash/32/pgalloc.h
+>> +++ b/arch/powerpc/include/asm/nohash/32/pgalloc.h
+>> @@ -32,7 +32,7 @@ extern struct kmem_cache *pgtable_cache[];
+>>
+>>   static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+>>   {
+>> -    return kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+>> +    return kmem_cache_zalloc(PGT_CACHE(PGD_INDEX_SIZE),
+>>               pgtable_gfp_flags(mm, GFP_KERNEL));
+>>   }
+>>
+>> diff --git a/arch/powerpc/include/asm/nohash/64/pgalloc.h 
+>> b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+>> index e2d62d033708..54ee5ac02d81 100644
+>> --- a/arch/powerpc/include/asm/nohash/64/pgalloc.h
+>> +++ b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+>> @@ -43,7 +43,7 @@ extern struct kmem_cache *pgtable_cache[];
+>>
+>>   static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+>>   {
+>> -    return kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+>> +    return kmem_cache_zalloc(PGT_CACHE(PGD_INDEX_SIZE),
+>>               pgtable_gfp_flags(mm, GFP_KERNEL));
+>>   }
+>>
+>> @@ -56,7 +56,7 @@ static inline void pgd_free(struct mm_struct *mm, 
+>> pgd_t *pgd)
+>>
+>>   static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned 
+>> long addr)
+>>   {
+>> -    return kmem_cache_alloc(PGT_CACHE(PUD_INDEX_SIZE),
+>> +    return kmem_cache_zalloc(PGT_CACHE(PUD_INDEX_SIZE),
+>>               pgtable_gfp_flags(mm, GFP_KERNEL));
+>>   }
+>>
+>> @@ -86,7 +86,7 @@ static inline void pmd_populate(struct mm_struct 
+>> *mm, pmd_t *pmd,
+>>
+>>   static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned 
+>> long addr)
+>>   {
+>> -    return kmem_cache_alloc(PGT_CACHE(PMD_CACHE_INDEX),
+>> +    return kmem_cache_zalloc(PGT_CACHE(PMD_CACHE_INDEX),
+>>               pgtable_gfp_flags(mm, GFP_KERNEL));
+>>   }
+>>
+>> diff --git a/arch/powerpc/mm/init-common.c 
+>> b/arch/powerpc/mm/init-common.c
+>> index 2b656e67f2ea..2ae15ff8f76f 100644
+>> --- a/arch/powerpc/mm/init-common.c
+>> +++ b/arch/powerpc/mm/init-common.c
+>> @@ -25,21 +25,6 @@
+>>   #include <asm/pgalloc.h>
+>>   #include <asm/pgtable.h>
+>>
+>> -static void pgd_ctor(void *addr)
+>> -{
+>> -    memset(addr, 0, PGD_TABLE_SIZE);
+>> -}
+>> -
+>> -static void pud_ctor(void *addr)
+>> -{
+>> -    memset(addr, 0, PUD_TABLE_SIZE);
+>> -}
+>> -
+>> -static void pmd_ctor(void *addr)
+>> -{
+>> -    memset(addr, 0, PMD_TABLE_SIZE);
+>> -}
+>> -
+>>   struct kmem_cache *pgtable_cache[MAX_PGTABLE_INDEX_SIZE];
+>>   EXPORT_SYMBOL_GPL(pgtable_cache);    /* used by kvm_hv module */
+>>
+>> @@ -91,15 +76,15 @@ EXPORT_SYMBOL_GPL(pgtable_cache_add);    /* used 
+>> by kvm_hv module */
+>>
+>>   void pgtable_cache_init(void)
+>>   {
+>> -    pgtable_cache_add(PGD_INDEX_SIZE, pgd_ctor);
+>> +    pgtable_cache_add(PGD_INDEX_SIZE, NULL);
+>>
+>>       if (PMD_CACHE_INDEX && !PGT_CACHE(PMD_CACHE_INDEX))
+>> -        pgtable_cache_add(PMD_CACHE_INDEX, pmd_ctor);
+>> +        pgtable_cache_add(PMD_CACHE_INDEX, NULL);
+>>       /*
+>>        * In all current configs, when the PUD index exists it's the
+>>        * same size as either the pgd or pmd index except with THP enabled
+>>        * on book3s 64
+>>        */
+>>       if (PUD_CACHE_INDEX && !PGT_CACHE(PUD_CACHE_INDEX))
+>> -        pgtable_cache_add(PUD_CACHE_INDEX, pud_ctor);
+>> +        pgtable_cache_add(PUD_CACHE_INDEX, NULL);
+>>   }
+>>
