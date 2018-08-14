@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1BFC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12119C46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E15CC21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15CC21736
+	by mail.kernel.org (Postfix) with ESMTP id C883721738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C883721738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391212AbeHNUf4 (ORCPT
+        id S2391222AbeHNUf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32830 "EHLO
+        Tue, 14 Aug 2018 16:35:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390379AbeHNUfz (ORCPT
+        with ESMTP id S2390877AbeHNUf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:55 -0400
+        Tue, 14 Aug 2018 16:35:59 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5AA0C74;
-        Tue, 14 Aug 2018 17:47:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61899C74;
+        Tue, 14 Aug 2018 17:47:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Wei Liu <wei.liu2@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 07/43] xen/netfront: dont cache skb_shinfo()
-Date:   Tue, 14 Aug 2018 19:17:43 +0200
-Message-Id: <20180814171517.579117176@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 08/43] ACPI / LPSS: Add missing prv_offset setting for byt/cht PWM devices
+Date:   Tue, 14 Aug 2018 19:17:44 +0200
+Message-Id: <20180814171517.646181663@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -51,52 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit d472b3a6cf63cd31cae1ed61930f07e6cd6671b5 upstream.
+commit fdcb613d49321b5bf5d5a1bd0fba8e7c241dcc70 upstream.
 
-skb_shinfo() can change when calling __pskb_pull_tail(): Don't cache
-its return value.
+The LPSS PWM device on on Bay Trail and Cherry Trail devices has a set
+of private registers at offset 0x800, the current lpss_device_desc for
+them already sets the LPSS_SAVE_CTX flag to have these saved/restored
+over device-suspend, but the current lpss_device_desc was not setting
+the prv_offset field, leading to the regular device registers getting
+saved/restored instead.
+
+This is causing the PWM controller to no longer work, resulting in a black
+screen,  after a suspend/resume on systems where the firmware clears the
+APB clock and reset bits at offset 0x804.
+
+This commit fixes this by properly setting prv_offset to 0x800 for
+the PWM devices.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Wei Liu <wei.liu2@citrix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e1c748179754 ("ACPI / LPSS: Add Intel BayTrail ACPI mode PWM")
+Fixes: 1bfbd8eb8a7f ("ACPI / LPSS: Add ACPI IDs for Intel Braswell")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Rafael J . Wysocki <rjw@rjwysocki.net>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/xen-netfront.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/acpi/acpi_lpss.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -879,7 +879,6 @@ static RING_IDX xennet_fill_frags(struct
- 				  struct sk_buff *skb,
- 				  struct sk_buff_head *list)
- {
--	struct skb_shared_info *shinfo = skb_shinfo(skb);
- 	RING_IDX cons = queue->rx.rsp_cons;
- 	struct sk_buff *nskb;
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -154,10 +154,12 @@ static const struct lpss_device_desc lpt
  
-@@ -888,15 +887,16 @@ static RING_IDX xennet_fill_frags(struct
- 			RING_GET_RESPONSE(&queue->rx, ++cons);
- 		skb_frag_t *nfrag = &skb_shinfo(nskb)->frags[0];
+ static const struct lpss_device_desc byt_pwm_dev_desc = {
+ 	.flags = LPSS_SAVE_CTX,
++	.prv_offset = 0x800,
+ };
  
--		if (shinfo->nr_frags == MAX_SKB_FRAGS) {
-+		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
- 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+ static const struct lpss_device_desc bsw_pwm_dev_desc = {
+ 	.flags = LPSS_SAVE_CTX | LPSS_NO_D3_DELAY,
++	.prv_offset = 0x800,
+ };
  
- 			BUG_ON(pull_to <= skb_headlen(skb));
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
--		BUG_ON(shinfo->nr_frags >= MAX_SKB_FRAGS);
-+		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
- 
--		skb_add_rx_frag(skb, shinfo->nr_frags, skb_frag_page(nfrag),
-+		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
-+				skb_frag_page(nfrag),
- 				rx->offset, rx->status, PAGE_SIZE);
- 
- 		skb_shinfo(nskb)->nr_frags = 0;
+ static const struct lpss_device_desc byt_uart_dev_desc = {
 
 
