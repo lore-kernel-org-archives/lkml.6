@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BACC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 763C1C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24C3E216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C3E216E5
+	by mail.kernel.org (Postfix) with ESMTP id 25638216E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25638216E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732015AbeHNKTI (ORCPT
+        id S1732154AbeHNKTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 06:19:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54244 "EHLO mx1.suse.de"
+        Tue, 14 Aug 2018 06:19:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54322 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731213AbeHNKTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:19:08 -0400
+        id S1731213AbeHNKTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:19:10 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18B8EAF4F;
-        Tue, 14 Aug 2018 07:33:10 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 11833AF66;
+        Tue, 14 Aug 2018 07:33:11 +0000 (UTC)
 From:   Hannes Reinecke <hare@suse.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
@@ -33,75 +33,195 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Bart van Assche <bart.vanassche@wdc.com>,
         linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
         Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>
-Subject: [PATCHv2 0/5] genhd: register default groups with device_add_disk()
-Date:   Tue, 14 Aug 2018 09:33:00 +0200
-Message-Id: <20180814073305.87255-1-hare@suse.de>
+        Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>
+Subject: [PATCH 2/5] nvme: register ns_id attributes as default sysfs groups
+Date:   Tue, 14 Aug 2018 09:33:02 +0200
+Message-Id: <20180814073305.87255-3-hare@suse.de>
 X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20180814073305.87255-1-hare@suse.de>
+References: <20180814073305.87255-1-hare@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-device_add_disk() doesn't allow to register with default sysfs groups,
-which introduces a race with udev as these groups have to be created after
-the uevent has been sent.
-This patchset updates device_add_disk() to accept a 'groups' argument to
-avoid this race and updates the obvious drivers to use it.
-There are some more drivers which might benefit from this (eg loop or md),
-but the interface is not straightforward so I haven't attempted it.
+We should be registering the ns_id attribute as default sysfs
+attribute groups, otherwise we have a race condition between
+the uevent and the attributes appearing in sysfs.
 
-Patches are relative to Christophs nvme-4.19 branch.
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/nvme/host/core.c      | 21 +++++++++------------
+ drivers/nvme/host/lightnvm.c  | 27 ++++-----------------------
+ drivers/nvme/host/multipath.c | 15 ++++-----------
+ drivers/nvme/host/nvme.h      | 11 +++--------
+ 4 files changed, 20 insertions(+), 54 deletions(-)
 
-As usual, comments and reviews are welcome.
-
-Changes to v1:
-- Drop first patch
-- Convert lightnvm sysfs attributes as suggested by Bart
-
-Hannes Reinecke (5):
-  block: genhd: add 'groups' argument to device_add_disk
-  nvme: register ns_id attributes as default sysfs groups
-  aoe: use device_add_disk_with_groups()
-  zram: register default groups with device_add_disk()
-  virtio-blk: modernize sysfs attribute creation
-
- arch/um/drivers/ubd_kern.c          |  2 +-
- block/genhd.c                       | 19 ++++++++---
- drivers/block/aoe/aoe.h             |  1 -
- drivers/block/aoe/aoeblk.c          | 21 ++++--------
- drivers/block/aoe/aoedev.c          |  1 -
- drivers/block/floppy.c              |  2 +-
- drivers/block/mtip32xx/mtip32xx.c   |  2 +-
- drivers/block/ps3disk.c             |  2 +-
- drivers/block/ps3vram.c             |  2 +-
- drivers/block/rsxx/dev.c            |  2 +-
- drivers/block/skd_main.c            |  2 +-
- drivers/block/sunvdc.c              |  2 +-
- drivers/block/virtio_blk.c          | 68 +++++++++++++++++++++----------------
- drivers/block/xen-blkfront.c        |  2 +-
- drivers/block/zram/zram_drv.c       | 28 ++++-----------
- drivers/ide/ide-cd.c                |  2 +-
- drivers/ide/ide-gd.c                |  2 +-
- drivers/memstick/core/ms_block.c    |  2 +-
- drivers/memstick/core/mspro_block.c |  2 +-
- drivers/mmc/core/block.c            |  2 +-
- drivers/mtd/mtd_blkdevs.c           |  2 +-
- drivers/nvdimm/blk.c                |  2 +-
- drivers/nvdimm/btt.c                |  2 +-
- drivers/nvdimm/pmem.c               |  2 +-
- drivers/nvme/host/core.c            | 21 +++++-------
- drivers/nvme/host/lightnvm.c        | 27 +++------------
- drivers/nvme/host/multipath.c       | 15 +++-----
- drivers/nvme/host/nvme.h            | 11 ++----
- drivers/s390/block/dasd_genhd.c     |  2 +-
- drivers/s390/block/dcssblk.c        |  2 +-
- drivers/s390/block/scm_blk.c        |  2 +-
- drivers/scsi/sd.c                   |  2 +-
- drivers/scsi/sr.c                   |  2 +-
- include/linux/genhd.h               |  5 +--
- 34 files changed, 113 insertions(+), 150 deletions(-)
-
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 0e824e8c8fd7..8e26d98e9a8f 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2734,6 +2734,12 @@ const struct attribute_group nvme_ns_id_attr_group = {
+ 	.is_visible	= nvme_ns_id_attrs_are_visible,
+ };
+ 
++const struct attribute_group *nvme_ns_id_attr_groups[] = {
++	&nvme_ns_id_attr_group,
++	NULL, /* Will be filled in by lightnvm if present */
++	NULL,
++};
++
+ #define nvme_show_str_function(field)						\
+ static ssize_t  field##_show(struct device *dev,				\
+ 			    struct device_attribute *attr, char *buf)		\
+@@ -3099,14 +3105,9 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 
+ 	nvme_get_ctrl(ctrl);
+ 
+-	device_add_disk(ctrl->device, ns->disk, NULL);
+-	if (sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvme_ns_id_attr_group))
+-		pr_warn("%s: failed to create sysfs group for identification\n",
+-			ns->disk->disk_name);
+-	if (ns->ndev && nvme_nvm_register_sysfs(ns))
+-		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
+-			ns->disk->disk_name);
++	if (ns->ndev)
++		nvme_nvm_register_sysfs(ns);
++	device_add_disk(ctrl->device, ns->disk, nvme_ns_id_attr_groups);
+ 
+ 	nvme_mpath_add_disk(ns, id);
+ 	nvme_fault_inject_init(ns);
+@@ -3132,10 +3133,6 @@ static void nvme_ns_remove(struct nvme_ns *ns)
+ 
+ 	nvme_fault_inject_fini(ns);
+ 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
+-		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvme_ns_id_attr_group);
+-		if (ns->ndev)
+-			nvme_nvm_unregister_sysfs(ns);
+ 		del_gendisk(ns->disk);
+ 		blk_cleanup_queue(ns->queue);
+ 		if (blk_get_integrity(ns->disk))
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 6fe5923c95d4..7bf2f9da6293 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -1270,39 +1270,20 @@ static const struct attribute_group nvm_dev_attr_group_20 = {
+ 	.attrs		= nvm_dev_attrs_20,
+ };
+ 
+-int nvme_nvm_register_sysfs(struct nvme_ns *ns)
++void nvme_nvm_register_sysfs(struct nvme_ns *ns)
+ {
+ 	struct nvm_dev *ndev = ns->ndev;
+ 	struct nvm_geo *geo = &ndev->geo;
+ 
+ 	if (!ndev)
+-		return -EINVAL;
+-
+-	switch (geo->major_ver_id) {
+-	case 1:
+-		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group_12);
+-	case 2:
+-		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group_20);
+-	}
+-
+-	return -EINVAL;
+-}
+-
+-void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
+-{
+-	struct nvm_dev *ndev = ns->ndev;
+-	struct nvm_geo *geo = &ndev->geo;
++		return;
+ 
+ 	switch (geo->major_ver_id) {
+ 	case 1:
+-		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group_12);
++		nvme_ns_id_attr_groups[1] = &nvm_dev_attr_group_12;
+ 		break;
+ 	case 2:
+-		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group_20);
++		nvme_ns_id_attr_groups[1] = &nvm_dev_attr_group_20;
+ 		break;
+ 	}
+ }
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 477af51d01e8..8e846095c42d 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -282,13 +282,9 @@ static void nvme_mpath_set_live(struct nvme_ns *ns)
+ 	if (!head->disk)
+ 		return;
+ 
+-	if (!(head->disk->flags & GENHD_FL_UP)) {
+-		device_add_disk(&head->subsys->dev, head->disk, NULL);
+-		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
+-				&nvme_ns_id_attr_group))
+-			dev_warn(&head->subsys->dev,
+-				 "failed to create id group.\n");
+-	}
++	if (!(head->disk->flags & GENHD_FL_UP))
++		device_add_disk(&head->subsys->dev, head->disk,
++				nvme_ns_id_attr_groups);
+ 
+ 	kblockd_schedule_work(&ns->head->requeue_work);
+ }
+@@ -494,11 +490,8 @@ void nvme_mpath_remove_disk(struct nvme_ns_head *head)
+ {
+ 	if (!head->disk)
+ 		return;
+-	if (head->disk->flags & GENHD_FL_UP) {
+-		sysfs_remove_group(&disk_to_dev(head->disk)->kobj,
+-				   &nvme_ns_id_attr_group);
++	if (head->disk->flags & GENHD_FL_UP)
+ 		del_gendisk(head->disk);
+-	}
+ 	blk_set_queue_dying(head->disk->queue);
+ 	/* make sure all pending bios are cleaned up */
+ 	kblockd_schedule_work(&head->requeue_work);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index bb4a2003c097..9ba6d67d8e0a 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -459,7 +459,7 @@ int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
+ int nvme_get_log(struct nvme_ctrl *ctrl, u32 nsid, u8 log_page, u8 lsp,
+ 		void *log, size_t size, u64 offset);
+ 
+-extern const struct attribute_group nvme_ns_id_attr_group;
++extern const struct attribute_group *nvme_ns_id_attr_groups[];
+ extern const struct block_device_operations nvme_ns_head_ops;
+ 
+ #ifdef CONFIG_NVME_MULTIPATH
+@@ -551,8 +551,7 @@ static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
+ void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
+ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
+ void nvme_nvm_unregister(struct nvme_ns *ns);
+-int nvme_nvm_register_sysfs(struct nvme_ns *ns);
+-void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
++void nvme_nvm_register_sysfs(struct nvme_ns *ns);
+ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
+ #else
+ static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
+@@ -563,11 +562,7 @@ static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
+ }
+ 
+ static inline void nvme_nvm_unregister(struct nvme_ns *ns) {};
+-static inline int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+-{
+-	return 0;
+-}
+-static inline void nvme_nvm_unregister_sysfs(struct nvme_ns *ns) {};
++static inline void nvme_nvm_register_sysfs(struct nvme_ns *ns) {};
+ static inline int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd,
+ 							unsigned long arg)
+ {
 -- 
 2.12.3
 
