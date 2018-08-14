@@ -2,180 +2,147 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B3DC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6DBC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7D82173A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48B122173A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 14:25:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qFgRx0zm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7D82173A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbNCNNYC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B122173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732922AbeHNRJV (ORCPT
+        id S1732329AbeHNRMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 13:09:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43007 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728978AbeHNRJV (ORCPT
+        Tue, 14 Aug 2018 13:12:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40659 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbeHNRMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 13:09:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y4-v6so9161084pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 07:21:58 -0700 (PDT)
+        Tue, 14 Aug 2018 13:12:21 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y9-v6so12473367wma.5;
+        Tue, 14 Aug 2018 07:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=roOtXB+o1QXbekjrzYsbNRJv1BfE7idv1Sy5AbMHiZU=;
-        b=qFgRx0zmSmDImbfg62WwOAFJZ7m3Syuu7vx63ATL68+7KbnlgKpyT0oYC6T1oJiZyz
-         wOm7yvUU8ye85sRHx11XCdMQJSk2xmIg3etNybF+EOAWrCEHmzGIL53nOYzzkDXaiRUV
-         Vcp5VtMnwEa9iEgONVXj7sv5Emq5I6hEXYpyjTeGxEsb5p+ZLX+Ic4bUcKhmeH7k6Lgq
-         OdpP1tn0eTCGpathzMEIOTbJtNvIanm1WqqD7JR4IXVQp0oBmPjNE+kYAfHwMB0EITU1
-         qRk/hJX6rA98o7ftYDzPyLDvfL/pLpkprvcV8zXA+nB5miBVDZgfMYWcPuLWvtRj3Xgb
-         408A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QGhkZVlxuhNbrKjVcwZjBlRbz5zA6lX59VqL04ya/EQ=;
+        b=qbNCNNYCPzi3AAEApHDLHRc70bd06C6Q9/Y0ykJZrxEO0RGDTRO0MOAdvgWGBvxqH1
+         c6OKBc73UQP/lSJm8jNxNgdzvKOdb3IQp6iRCAHJlsaqA9i9aTWmJUp+8m07iCvdxCuG
+         44q0RvasHDZ3aW7dKB4SYmCWLyVmSgovHflv9xS7EUa8tXDpy1b//zjRrhrZ46sdyUzT
+         F5Pr+O/F3X3gi5+qozuoNrA9hksMTQUs8Y9pNPAP9CIbEPgx+CRiRWM7jCVMwk2naZvg
+         a8BjNxrTABreyQTpFZb72kheVGEXmZL50000VZeXve1BoQEPrB9AmptUd8yk9+y4F46H
+         v1VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=roOtXB+o1QXbekjrzYsbNRJv1BfE7idv1Sy5AbMHiZU=;
-        b=fYDu+EcaFHBuh95espS0xMOZxBKB65ddCcKknX9NFJt9lrfDNtIo1xIIcyfr9XaA0I
-         gEIMVwBWt/6wJ2AE4TDqPFIFVQzmbnkpiOTCOBrsxX7fd+r1DXU9obcXDszxa8DSGyU/
-         Ljdlcw5/Dos+2RiFqsJgFyKSiOwJ7hCI7BShY8N+0e4WF30kfTbHU0jmcPhtkFSQPD3p
-         FVqmp6xb/Cc0dKPfgIaeC/RkOxOq4jbxQuG5X7sRj9ZTv/5KCMYeANZ2G1bcCofFail/
-         3l2y/WjL8em+mOZ+Vkdu9saHW/ubsEHKGsrMreYze2F5ADwb06A6HM3F6z562hG3i3fk
-         fBzw==
-X-Gm-Message-State: AOUpUlHxrDY5as8puVIZfgBPgIYi0ybPrusGND72rWXPBg3jBZbCpcuA
-        bRzA3LtR5RQtVAbzVG/w8U32YcLpRZ2a08HnZp19Kg==
-X-Google-Smtp-Source: AA+uWPz5qXUvuZfwsJD8Fc303O5X6r+uwUzj7hwQE4pqVnVNKZgvlmrz2dXoHuSvOV7ykvJrKqTspnNh3VZ6P87kfGQ=
-X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr6225612pgu.96.1534256517344;
- Tue, 14 Aug 2018 07:21:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QGhkZVlxuhNbrKjVcwZjBlRbz5zA6lX59VqL04ya/EQ=;
+        b=oJI4HlzNrN/yvkPMk2w3EL/99Bt4/b9O0+ZxBk8hSROvqzlMFi/CJzXSYlNhuqEyqR
+         OaRC9NNyd4VKnC6wF/RdezTUfnfPTlzViJPukTOwiS6aayO7qje8d3mZ1ZWgWirT9kNp
+         EqzxKnW0mJzs2NweOrTagkftuPhwPoxoq4Y49ZUIjGj01r6onN5ApiOc27aYdPiukYvN
+         NaMLW3dblsSQ/0HnY9h+KXC36mg/kNpJSU8C2DlHlTigx6uc7Mmu/Go8ikJp4xIn/bA7
+         FWrTbglKJ+aBIyJq0+cAFzgn3HiZHeSNfXskYxwd0huLjA8L2St/Ev5JTbjN14okJ5f2
+         JLqg==
+X-Gm-Message-State: AOUpUlG0cOYEeD7FeX9yZ5+T/1ZXGxIGyT68Yw+Gup9gz9YgEjG1RsiP
+        F+YKRIv4lgDsRMuESVHEZNQ=
+X-Google-Smtp-Source: AA+uWPzW4a+AO9yZ7ZcRif8Su9XOctHsW4613elJXPhAWVTZZZgUy8mV+7Txwh739XOF05RhwshlFA==
+X-Received: by 2002:a1c:9e4d:: with SMTP id h74-v6mr11585059wme.70.1534256696143;
+        Tue, 14 Aug 2018 07:24:56 -0700 (PDT)
+Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
+        by smtp.gmail.com with ESMTPSA id o10-v6sm14336623wrw.79.2018.08.14.07.24.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Aug 2018 07:24:55 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 16:24:54 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH] soc/tegra: pmc: fix child-node lookup
+Message-ID: <20180814142454.GB21075@ulmo>
+References: <20171115094458.31666-1-johan@kernel.org>
+ <20180322142432.GA5853@ulmo>
+ <20180813143317.GI24218@localhost>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 14 Aug 2018 07:21:36
- -0700 (PDT)
-In-Reply-To: <f6904a2a-5c4e-854b-8fa0-4ad184fed9d6@virtuozzo.com>
-References: <0000000000008bc6660570637414@google.com> <f6904a2a-5c4e-854b-8fa0-4ad184fed9d6@virtuozzo.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 14 Aug 2018 07:21:36 -0700
-Message-ID: <CACT4Y+Yre+9bO2uR9mddjdw4aLVN+kwA53q_OkHZHQiTgSZJ2g@mail.gmail.com>
-Subject: Re: general protection fault in cgroup_reconfigure
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     syzbot <syzbot+d4eb75e353a836d57809@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>, guro@fb.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="O5XBE6gyVG5Rl6Rj"
+Content-Disposition: inline
+In-Reply-To: <20180813143317.GI24218@localhost>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 6:34 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> JFI: Fixed by https://lkml.org/lkml/2018/8/3/351
 
-Thanks!
+--O5XBE6gyVG5Rl6Rj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is linux-next and the fix was squashed and no Reported-by tag...
-so, I don't know, let's do:
+On Mon, Aug 13, 2018 at 04:33:17PM +0200, Johan Hovold wrote:
+> Hi Thierry,
+>=20
+> On Thu, Mar 22, 2018 at 03:24:32PM +0100, Thierry Reding wrote:
+> > On Wed, Nov 15, 2017 at 10:44:58AM +0100, Johan Hovold wrote:
+> > > Fix child-node lookup during probe, which ended up searching the whole
+> > > device tree depth-first starting at the parent rather than just match=
+ing
+> > > on its children.
+> > >=20
+> > > To make things worse, the parent pmc node could end up being prematur=
+ely
+> > > freed as of_find_node_by_name() drops a reference to its first argume=
+nt.
+> > >=20
+> > > Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) suppo=
+rt to PMC")
+> > > Cc: stable <stable@vger.kernel.org>     # 4.0
+> > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> > > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > > ---
+> > >  drivers/soc/tegra/pmc.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > Applied, thanks.
+>=20
+> I noticed this one still hasn't made it into linux-next. Looks like it
+> wasn't included in you 4.17 pull request and is still sitting in the
+> tegra for-4.17/soc branch.
 
-#syz fix: kernfs, sysfs, cgroup, intel_rdt: Support fs_context
+Indeed. Looking at my tree it seems like I applied this to for-4.17/soc
+a couple of days after the signed tag for the pull request. It probably
+should've gone into a for-4.18/soc, or perhaps into fixes pull request.
 
+I've cherry-picked it into for-4.20/soc now. Thanks for the reminder.
 
-> On 07.07.2018 10:09, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    526674536360 Add linux-next specific files for 20180706
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=14b51a2c400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
->> dashboard link: https://syzkaller.appspot.com/bug?extid=d4eb75e353a836d57809
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10ce2cc2400000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149cec58400000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+d4eb75e353a836d57809@syzkaller.appspotmail.com
->>
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> kasan: CONFIG_KASAN_INLINE enabled
->> kasan: GPF could be caused by NULL-ptr deref or user memory access
->> general protection fault: 0000 [#1] SMP KASAN
->> CPU: 1 PID: 4415 Comm: syz-executor204 Not tainted 4.18.0-rc3-next-20180706+ #1
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> RIP: 0010:cgroup_reconfigure+0x25/0x80 kernel/cgroup/cgroup.c:1781
->> Code: 00 00 00 00 00 55 48 89 e5 53 48 89 f3 e8 f3 e9 08 00 48 8d bb 90 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 45 48 8b 9b 90 00 00 00 48 b8 00 00 00 00 00 fc ff
->> RSP: 0018:ffff8801acc1f9f8 EFLAGS: 00010206
->> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81c5edb2
->> RDX: 0000000000000012 RSI: ffffffff8173906d RDI: 0000000000000090
->> RBP: ffff8801acc1fa00 R08: ffff8801ad2e45c0 R09: fffffbfff11c24e5
->> R10: fffffbfff11c24e5 R11: ffffffff88e1272b R12: ffff8801d9a14940
->> R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000000
->> FS:  00000000016f3880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000020000000 CR3: 00000001b24ea000 CR4: 00000000001406e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  kernfs_sop_reconfigure+0xba/0x100 fs/kernfs/mount.c:31
->>  do_remount_sb+0x34f/0x850 fs/super.c:991
->>  do_umount fs/namespace.c:1467 [inline]
->>  ksys_umount+0xfa7/0x12f0 fs/namespace.c:1585
->>  __do_sys_umount fs/namespace.c:1596 [inline]
->>  __se_sys_umount fs/namespace.c:1594 [inline]
->>  __x64_sys_umount+0x54/0x80 fs/namespace.c:1594
->>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x440059
->> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007ffe8d0cd578 EFLAGS: 00000217 ORIG_RAX: 00000000000000a6
->> RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 0000000000440059
->> RDX: 0000000000440059 RSI: 0000000000000000 RDI: 0000000020000040
->> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
->> R10: 00000000004002c8 R11: 0000000000000217 R12: 00000000004018e0
->> R13: 0000000000401970 R14: 0000000000000000 R15: 0000000000000000
->> Modules linked in:
->> Dumping ftrace buffer:
->>    (ftrace buffer empty)
->> ---[ end trace 2c2a1923aa2ae1cb ]---
->> RIP: 0010:cgroup_reconfigure+0x25/0x80 kernel/cgroup/cgroup.c:1781
->> Code: 00 00 00 00 00 55 48 89 e5 53 48 89 f3 e8 f3 e9 08 00 48 8d bb 90 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 45 48 8b 9b 90 00 00 00 48 b8 00 00 00 00 00 fc ff
->> RSP: 0018:ffff8801acc1f9f8 EFLAGS: 00010206
->> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81c5edb2
->> RDX: 0000000000000012 RSI: ffffffff8173906d RDI: 0000000000000090
->> RBP: ffff8801acc1fa00 R08: ffff8801ad2e45c0 R09: fffffbfff11c24e5
->> R10: fffffbfff11c24e5 R11: ffffffff88e1272b R12: ffff8801d9a14940
->> R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000000
->> FS:  00000000016f3880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000020000000 CR3: 00000001b24ea000 CR4: 00000000001406e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>
->>
->> ---
->> This bug is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this bug report. See:
->> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
->> syzbot can test patches for this bug, for details see:
->> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/f6904a2a-5c4e-854b-8fa0-4ad184fed9d6%40virtuozzo.com.
-> For more options, visit https://groups.google.com/d/optout.
+Thierry
+
+--O5XBE6gyVG5Rl6Rj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlty5jYACgkQ3SOs138+
+s6Et9hAAnZ04tRIizkcPqVJmHyaTRnw4dedbCFiKwJCInlc/o6l8lj9+g52bazTb
+1tbqzzrMqVT1zWtILFZsoPKDXE5OMOv98twCGZEwIJ6Got6w5TsJbI0ctPhdL2Be
+B+nUNM0wAOyaQluqhHSWikJJEvkHZ6rftXUwzQMVhwxVEh01QzIwRW/jGHDB6Twe
+a06gnfKHGCqhZm4Qb5aeA4mUopTbad5VCrXclWAXGMcfUQA/KV2BKz7Stj0dTWlA
+Q09/CPgMFnBTqCR1n3Pd2HZp0H8TAx3YopQr1r6SGsiZdh/udjvmIoo2Ih4GFXy7
+pN5y/kjiuOKrsjx3FkmAxwN8SkJfi4BwzsL7ACpsqr5cXJJLmuQguotjm5q20fSQ
+4Be+SrOPt91eeLEDIrXO5Zgs0O3HmGjpzBBsZZQuzbMa009lQPGyOqVjN85trx2o
+73lrfZKdecVEOVQivaiHdLX8QTeSVbgm79HSdnQjSrTh1SfmuGpJIwAJczIj+l6l
+l9PCnznTGQiQoLpBpXnEgjZEKE1KQa/rJxZBhbTk/D7fqFMJkklexXW5o6pkS7sN
+fOsZXeldMXvhdkxH53fZOUBj6nX/8if+jqLa9wGSIW4Z03Ic/tgTM7reC72EjqYT
+SmB46t/mz4qG1bph2pVeax6+bogJS6SfW9eiLAGztrCgczEwXAg=
+=Usxc
+-----END PGP SIGNATURE-----
+
+--O5XBE6gyVG5Rl6Rj--
