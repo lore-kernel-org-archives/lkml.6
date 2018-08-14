@@ -2,169 +2,87 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2FDC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA295C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1FB9214DC
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:36:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1FB9214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 8B86621733
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:38:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B86621733
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731835AbeHNNX1 (ORCPT
+        id S1732119AbeHNNY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 09:23:27 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:59780 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbeHNNX1 (ORCPT
+        Tue, 14 Aug 2018 09:24:58 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:26604 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729567AbeHNNY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 09:23:27 -0400
-Received: from 79.184.254.66.ipv4.supernova.orange.pl (79.184.254.66) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 34b0ae24b41ac507; Tue, 14 Aug 2018 12:36:49 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v5] cpuidle: menu: Handle stopped tick more aggressively
-Date:   Tue, 14 Aug 2018 12:34:40 +0200
-Message-ID: <1572343.jWaXB8XNF1@aspire.rjw.lan>
-In-Reply-To: <1582055.9b67urWYFa@aspire.rjw.lan>
-References: <1951009.1jlQfyrxio@aspire.rjw.lan> <1754612.IcCR94pSYR@aspire.rjw.lan> <1582055.9b67urWYFa@aspire.rjw.lan>
+        Tue, 14 Aug 2018 09:24:57 -0400
+Received: from droid02.amlogic.com (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 14 Aug 2018
+ 18:38:34 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] arm64: dts: meson-g12a: Introduce new DT files for Meson-G12A SoC
+Date:   Tue, 14 Aug 2018 18:38:38 +0800
+Message-ID: <1534243121-33589-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This attempt will try to add new DT files to support Meson-G12A SoC.
 
-Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
-with stopped tick) missed the case when the target residencies of
-deep idle states of CPUs are above the tick boundary which may cause
-the CPU to get stuck in a shallow idle state for a long time.
+1) first, Please notice that, in this patch series, the DT node about 16M reserved
+memory for hwrom is removed, since it's not needed by G12A SoC.
+2) second, the pclk for uart_AO need to be fixed once G12A clock_ao driver is
+merged. In this version, it rely on bootloader to enable the pclk gate which 
+belong to AO clock domain. Please add clk_ignore_unused to bootargs.
 
-Say there are two CPU idle states available: one shallow, with the
-target residency much below the tick boundary and one deep, with
-the target residency significantly above the tick boundary.  In
-that case, if the tick has been stopped already and the expected
-next timer event is relatively far in the future, the governor will
-assume the idle duration to be equal to TICK_USEC and it will select
-the idle state for the CPU accordingly.  However, that will cause the
-shallow state to be selected even though it would have been more
-energy-efficient to select the deep one.
+Changes since v2 [1]:
+ - reorder subnodes
+ - collect Rob's Reviewed-by
 
-To address this issue, modify the governor to always use the time
-till the closest timer event instead of the predicted idle duration
-if the latter is less than the tick period length and the tick has
-been stopped already.  Also make it extend the search for a matching
-idle state if the tick is stopped to avoid settling on a shallow
-state if deep states with target residencies above the tick period
-length are available.
+Changes since v1 [0]:
+ - fix signoff typo
+ - order subnodes by addresses when there is one and alphabetically when there is none
 
-In addition, make it always indicate that the tick should be stopped
-if it has been stopped already for consistency.
+[0] https://lore.kernel.org/lkml/1533802951-49919-2-git-send-email-jianxin.pan@amlogic.com/
 
-Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
-Reported-by: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
--> v2: Initialize first_idx properly in the stopped tick case.
- 
-v2 -> v3: Compute data->bucket before checking whether or not the tick has been
-          stopped already to prevent it from becoming stale.
+Jianxin Pan (2):
+  dt-bindings: arm: amlogic: Add Meson G12A binding
+  arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support
 
-v3 -> v4: Allow the usual state selection to be carried out if the tick has been
-          stopped in case the predicted idle duration is greater than the tick
-          period length and a matching state can be found without overriding
-          the prediction result.
+ Documentation/devicetree/bindings/arm/amlogic.txt |   6 +
+ arch/arm64/boot/dts/amlogic/Makefile              |   1 +
+ arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts   |  22 +++
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi       | 172 ++++++++++++++++++++++
+ 4 files changed, 201 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
 
-v4 -> v5: Rework code to be more straightforward.  Functionally, it should
-          behave like the v4.
----
- drivers/cpuidle/governors/menu.c |   36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
-
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -349,14 +349,12 @@ static int menu_select(struct cpuidle_dr
- 		 * If the tick is already stopped, the cost of possible short
- 		 * idle duration misprediction is much higher, because the CPU
- 		 * may be stuck in a shallow idle state for a long time as a
--		 * result of it.  In that case say we might mispredict and try
--		 * to force the CPU into a state for which we would have stopped
--		 * the tick, unless a timer is going to expire really soon
--		 * anyway.
-+		 * result of it.  In that case say we might mispredict and use
-+		 * the known time till the closest timer event for the idle
-+		 * state selection.
- 		 */
- 		if (data->predicted_us < TICK_USEC)
--			data->predicted_us = min_t(unsigned int, TICK_USEC,
--						   ktime_to_us(delta_next));
-+			data->predicted_us = ktime_to_us(delta_next);
- 	} else {
- 		/*
- 		 * Use the performance multiplier and the user-configurable
-@@ -381,8 +379,22 @@ static int menu_select(struct cpuidle_dr
- 			continue;
- 		if (idx == -1)
- 			idx = i; /* first enabled state */
--		if (s->target_residency > data->predicted_us)
--			break;
-+		if (s->target_residency > data->predicted_us) {
-+			if (!tick_nohz_tick_stopped())
-+				break;
-+
-+			/*
-+			 * If the state selected so far is shallow and this
-+			 * state's target residency matches the time till the
-+			 * closest timer event, select this one to avoid getting
-+			 * stuck in the shallow one for too long.
-+			 */
-+			if (drv->states[idx].target_residency < TICK_USEC &&
-+			    s->target_residency <= ktime_to_us(delta_next))
-+				idx = i;
-+
-+			goto out;
-+		}
- 		if (s->exit_latency > latency_req) {
- 			/*
- 			 * If we break out of the loop for latency reasons, use
-@@ -403,14 +415,13 @@ static int menu_select(struct cpuidle_dr
- 	 * Don't stop the tick if the selected state is a polling one or if the
- 	 * expected idle duration is shorter than the tick period length.
- 	 */
--	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
--	    expected_interval < TICK_USEC) {
-+	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-+	     expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
- 		unsigned int delta_next_us = ktime_to_us(delta_next);
- 
- 		*stop_tick = false;
- 
--		if (!tick_nohz_tick_stopped() && idx > 0 &&
--		    drv->states[idx].target_residency > delta_next_us) {
-+		if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
- 			/*
- 			 * The tick is not going to be stopped and the target
- 			 * residency of the state to be returned is not within
-@@ -429,6 +440,7 @@ static int menu_select(struct cpuidle_dr
- 		}
- 	}
- 
-+out:
- 	data->last_state_idx = idx;
- 
- 	return data->last_state_idx;
+-- 
+1.9.1
 
