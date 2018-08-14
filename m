@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAD5C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003D6C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A83A216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A83A216E5
+	by mail.kernel.org (Postfix) with ESMTP id B7644216E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7644216E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbeHNUWX (ORCPT
+        id S1729430AbeHNUxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:22:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56318 "EHLO
+        Tue, 14 Aug 2018 16:53:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56338 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeHNUWV (ORCPT
+        with ESMTP id S1726837AbeHNUWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:22:21 -0400
+        Tue, 14 Aug 2018 16:22:23 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CECEADE0;
-        Tue, 14 Aug 2018 17:33:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 095E2EB1;
+        Tue, 14 Aug 2018 17:34:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 013/104] root dentries need RCU-delayed freeing
-Date:   Tue, 14 Aug 2018 19:16:27 +0200
-Message-Id: <20180814171516.072169620@linuxfoundation.org>
+        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.14 017/104] mtd: nand: qcom: Add a NULL check for devm_kasprintf()
+Date:   Tue, 14 Aug 2018 19:16:31 +0200
+Message-Id: <20180814171516.326734834@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -49,47 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-commit 90bad5e05bcdb0308cfa3d3a60f5c0b9c8e2efb3 upstream.
+commit 069f05346d01e7298939f16533953cdf52370be3 upstream.
 
-Since mountpoint crossing can happen without leaving lazy mode,
-root dentries do need the same protection against having their
-memory freed without RCU delay as everything else in the tree.
+devm_kasprintf() may fail, so we should better add a NULL check
+and propagate an error on failure.
 
-It's partially hidden by RCU delay between detaching from the
-mount tree and dropping the vfsmount reference, but the starting
-point of pathwalk can be on an already detached mount, in which
-case umount-caused RCU delay has already passed by the time the
-lazy pathwalk grabs rcu_read_lock().  If the starting point
-happens to be at the root of that vfsmount *and* that vfsmount
-covers the entire filesystem, we get trouble.
-
-Fixes: 48a066e72d97 ("RCU'd vsfmounts")
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/qcom_nandc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1922,10 +1922,12 @@ struct dentry *d_make_root(struct inode
+--- a/drivers/mtd/nand/qcom_nandc.c
++++ b/drivers/mtd/nand/qcom_nandc.c
+@@ -2544,6 +2544,9 @@ static int qcom_nand_host_init(struct qc
  
- 	if (root_inode) {
- 		res = __d_alloc(root_inode->i_sb, NULL);
--		if (res)
-+		if (res) {
-+			res->d_flags |= DCACHE_RCUACCESS;
- 			d_instantiate(res, root_inode);
--		else
-+		} else {
- 			iput(root_inode);
-+		}
- 	}
- 	return res;
- }
+ 	nand_set_flash_node(chip, dn);
+ 	mtd->name = devm_kasprintf(dev, GFP_KERNEL, "qcom_nand.%d", host->cs);
++	if (!mtd->name)
++		return -ENOMEM;
++
+ 	mtd->owner = THIS_MODULE;
+ 	mtd->dev.parent = dev;
+ 
 
 
