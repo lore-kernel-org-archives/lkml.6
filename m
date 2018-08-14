@@ -2,116 +2,360 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4714C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F04EC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2AE214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:24:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="J0ebdlDo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2AE214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 2AB2D214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB2D214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732900AbeHNTMm (ORCPT
+        id S1732930AbeHNTMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:12:42 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:34680 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728978AbeHNTMm (ORCPT
+        Tue, 14 Aug 2018 15:12:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42510 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728978AbeHNTMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:12:42 -0400
-Received: by mail-ua1-f68.google.com with SMTP id r15-v6so13787698uao.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 09:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iRuenKUIWBuqHAcjNk19T2wq2U3TLJLVakenm0TqYXo=;
-        b=J0ebdlDopMPDQuCRFuXEoEx+wqi368xrYWvzbIlxuNzD9wgQvOEvx5LDk865JRQswd
-         mDNj/y1t2K5o2srUh2guKlFKhrRL4k8D5wlX8/4INCSsMY4Kw7dTDV6BFe+O6FPLIagy
-         7AJs8cgM9hIpjFOKRfYarLpfN1sfmcmTdECsedl8LKqRCZHxi9kz/OxYmjH+2RNiD6It
-         HqmFq3B4unCBQ0E1UXvx9PJv46+i1UQYCL2RwZrO7yAUsgNAyNPkIxcGG2Gp6DiSFhYq
-         dzy8vjXzvFjWarWjD6cC/XvFOXpQM+hzb9fswKh7ITuq5887AX4ug+4Xaae4UUFp/ljQ
-         eSBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iRuenKUIWBuqHAcjNk19T2wq2U3TLJLVakenm0TqYXo=;
-        b=HyO7L1BlFMRDTvdiNF9cm8ooAIY51TawmMZOHdjfBVXpxtdowozuFJUxIDxRzja24x
-         6xjREUGNysAeoZb5zQcvtFQMdwBXd6UNwh0H3+IE5IZTLzq8R4xE8Q0KkWOuEBR+AXYf
-         jJ36VQ8eLPBzdXTFTDBGdu6EE9m3Cj6ml6YfeU2vIG31UZ7FVOpAM6efrXhIqrgHV7wW
-         uYEifceAaLtHa/+55AoKhz5mzbdSan5/zcGk7TkbJd/ogpjF8nwiAHjddDxSGJ9i9LUz
-         93p0vGQ+oxN1QhqhhzuIOqhpSw7ivz7SQiIXhI8KYv5wOB3DI77OaW1bhOnt6I8zmU3J
-         +5Iw==
-X-Gm-Message-State: AOUpUlF5Gl0SD8Y3lpx4ot0waAiCnxwEOeKsy6sZO1SILBbR6108hOfm
-        jdRKjYIkZERRss1EfMQqfZ6unUGLQHs=
-X-Google-Smtp-Source: AA+uWPzDj/J0drWmVMkApnaTusGJLvqBNkmSRPBjJiZVuZl3HTb2A9CQmwNAwwo2K906BT2AFRefZw==
-X-Received: by 2002:ab0:6a6:: with SMTP id g35-v6mr14865927uag.16.1534263890230;
-        Tue, 14 Aug 2018 09:24:50 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm3135619uao.25.2018.08.14.09.24.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 09:24:49 -0700 (PDT)
-Subject: Re: Warning when using eMMC and partprobe: generic_make_request:
- Trying to write to read-only block-device
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     stefan@agner.ch, Sagi Grimberg <sagi@grimberg.me>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <7f57199f45df7212fdbba0bd1e78142a@agner.ch>
- <CAOi1vP9Y5Nrr7kVo5GAKnS4casbXPa+LSgY=si=mAW6OHs7-BA@mail.gmail.com>
- <CA+55aFwyCmYfUrGt61d-6B=1XiTLoudNO=_bQ9-g_rDg8Ao_VA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <22fff85b-63e5-3cfe-0e72-255044e53bab@kernel.dk>
-Date:   Tue, 14 Aug 2018 10:24:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 14 Aug 2018 15:12:45 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EGOIBC049670
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 12:24:54 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kv18k3mw1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 12:24:53 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 14 Aug 2018 12:24:52 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 14 Aug 2018 12:24:48 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7EGOl5316712188
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 14 Aug 2018 16:24:47 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6EFFB205F;
+        Tue, 14 Aug 2018 12:24:03 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95F0DB2065;
+        Tue, 14 Aug 2018 12:24:03 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 14 Aug 2018 12:24:03 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A222116C8794; Tue, 14 Aug 2018 09:24:48 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 09:24:48 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     rostedt@goodmis.org, joel@joelfernandes.org,
+        mathieu.desnoyers@efficios.com, peterz@infradead.org, tj@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RFC] Make call_srcu() available during very early boot
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFwyCmYfUrGt61d-6B=1XiTLoudNO=_bQ9-g_rDg8Ao_VA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18081416-0040-0000-0000-0000045EC451
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009544; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073456; UDB=6.00553106; IPR=6.00853414;
+ MB=3.00022715; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-14 16:24:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081416-0041-0000-0000-00000865CD2E
+Message-Id: <20180814162448.GA20414@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808140168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/18 10:22 AM, Linus Torvalds wrote:
-> On Tue, Aug 14, 2018 at 8:24 AM Ilya Dryomov <idryomov@gmail.com> wrote:
->>
->> Looks like it's coming from that fsync():
->>
->>   sys_fsync
->>     do_fsync
->>       vfs_fsync_range
->>         blkdev_fsync
->>           blkdev_issue_flush
->>
->> I think we need to teach blkdev_issue_flush() to bail out if the bdev
->> is read-only, similar to blkdev_issue_discard(), _write_zeroes(), etc.
->> The question is which error code to use.  blkdev_fsync() already skips
->> over EOPNOTSUPP, so it is a (no-so-good) option.  Other blkdev_issue_
->> functions return EPERM.
-> 
-> Oh, just make issue_flush() return EROFS for a read-only device.
-> 
-> Or maybe we should even just consider the flush to be a read operation?
-> 
-> But I guess the error code gets percolated all the way to user space?
-> The safest option might just be to return 0.
+Event tracing is moving to SRCU in order to take advantage of the fact
+that SRCU may be safely used from idle and even offline CPUs.  However,
+event tracing can invoke call_srcu() very early in the boot process,
+even before workqueue_init_early() is invoked (let alone rcu_init()).
+Therefore, call_srcu()'s attempts to queue work fail miserably.
 
-We probably just want to special case a flush for this check. In other
-situations, like resource allocation and issue, we'd want to consider
-it a write.
+This commit therefore detects this situation, and refrains from attempting
+to queue work before rcu_init() time, but does everything else that it
+would have done, and in addition, adds the srcu_struct to a global list.
+The rcu_init() function now invokes a new srcu_init() function, which
+is empty if CONFIG_SRCU=n.  Otherwise, srcu_init() queues work for
+each srcu_struct on the list.  This all happens early enough in boot
+that there is but a single CPU with interrupts disabled, which allows
+synchronization to be dispensed with.
 
--- 
-Jens Axboe
+Of course, the queued work won't actually be invoked until after
+workqueue_init() is invoked, which happens shortly after the scheduler
+is up and running.  This means that although call_srcu() may be invoked
+any time after per-CPU variables have been set up, there is still a very
+narrow window when synchronize_srcu() won't work, and this window
+extends from the time that the scheduler starts until the time that
+workqueue_init() returns.  This can be fixed in a manner similar to
+the fix for synchronize_rcu_expedited() and friends, but until someone
+actually needs to use synchronize_srcu() during this window, this fix
+is added churn for no benefit.
+
+Finally, note that Tree SRCU's new srcu_init() function invokes
+queue_work() rather than the queue_delayed_work() function that is invoked
+post-boot.  The reason is that queue_delayed_work() will (as you would
+expect) post a timer, and timers have not yet been initialized.  So use
+of queue_delayed_work() avoids the complaints about use of uninitialized
+spinlocks that would otherwise result.  Besides, delay is in any case
+provide by the aforementioned fact that the queued work won't actually
+be invoked until after the scheduler is up and running.
+
+Requested-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
+index f41d2fb09f87..2b5c0822e683 100644
+--- a/include/linux/srcutiny.h
++++ b/include/linux/srcutiny.h
+@@ -36,6 +36,7 @@ struct srcu_struct {
+ 	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
+ 	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
+ 	struct work_struct srcu_work;	/* For driving grace periods. */
++	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lockdep_map dep_map;
+ #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+@@ -48,6 +49,7 @@ void srcu_drive_gp(struct work_struct *wp);
+ 	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
+ 	.srcu_cb_tail = &name.srcu_cb_head,				\
+ 	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
++	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
+ 	__SRCU_DEP_MAP_INIT(name)					\
+ }
+ 
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index 745d4ca4dd50..86ad97111315 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -94,6 +94,7 @@ struct srcu_struct {
+ 						/*  callback for the barrier */
+ 						/*  operation. */
+ 	struct delayed_work work;
++	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lockdep_map dep_map;
+ #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+@@ -105,12 +106,13 @@ struct srcu_struct {
+ #define SRCU_STATE_SCAN2	2
+ 
+ #define __SRCU_STRUCT_INIT(name, pcpu_name)				\
+-	{								\
+-		.sda = &pcpu_name,					\
+-		.lock = __SPIN_LOCK_UNLOCKED(name.lock),		\
+-		.srcu_gp_seq_needed = 0 - 1,				\
+-		__SRCU_DEP_MAP_INIT(name)				\
+-	}
++{									\
++	.sda = &pcpu_name,						\
++	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
++	.srcu_gp_seq_needed = 0 - 1,					\
++	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
++	__SRCU_DEP_MAP_INIT(name)					\
++}
+ 
+ /*
+  * Define and initialize a srcu struct at build time.
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 4c56c1d98fb3..8e92ecdf3e9f 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -434,6 +434,12 @@ do {									\
+ 
+ #endif /* #if defined(SRCU) || !defined(TINY_RCU) */
+ 
++#ifdef CONFIG_SRCU
++void srcu_init(void);
++#else /* #ifdef CONFIG_SRCU */
++static inline void void srcu_init(void) { }
++#endif /* #else #ifdef CONFIG_SRCU */
++
+ #ifdef CONFIG_TINY_RCU
+ /* Tiny RCU doesn't expedite, as its purpose in life is instead to be tiny. */
+ static inline bool rcu_gp_is_normal(void) { return true; }
+diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+index 622792abe41a..d4042fe1bedd 100644
+--- a/kernel/rcu/srcutiny.c
++++ b/kernel/rcu/srcutiny.c
+@@ -34,6 +34,8 @@
+ #include "rcu.h"
+ 
+ int rcu_scheduler_active __read_mostly;
++static LIST_HEAD(srcu_boot_list);
++static bool srcu_init_done;
+ 
+ static int init_srcu_struct_fields(struct srcu_struct *sp)
+ {
+@@ -46,6 +48,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp)
+ 	sp->srcu_gp_waiting = false;
+ 	sp->srcu_idx = 0;
+ 	INIT_WORK(&sp->srcu_work, srcu_drive_gp);
++	INIT_LIST_HEAD(&sp->srcu_boot_entry);
+ 	return 0;
+ }
+ 
+@@ -179,8 +182,12 @@ void call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
+ 	*sp->srcu_cb_tail = rhp;
+ 	sp->srcu_cb_tail = &rhp->next;
+ 	local_irq_restore(flags);
+-	if (!READ_ONCE(sp->srcu_gp_running))
+-		schedule_work(&sp->srcu_work);
++	if (!READ_ONCE(sp->srcu_gp_running)) {
++		if (likely(srcu_init_done))
++			schedule_work(&sp->srcu_work);
++		else if (list_empty(&sp->srcu_boot_entry))
++			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
++	}
+ }
+ EXPORT_SYMBOL_GPL(call_srcu);
+ 
+@@ -204,3 +211,21 @@ void __init rcu_scheduler_starting(void)
+ {
+ 	rcu_scheduler_active = RCU_SCHEDULER_RUNNING;
+ }
++
++/*
++ * Queue work for srcu_struct structures with early boot callbacks.
++ * The work won't actually execute until the workqueue initialization
++ * phase that takes place after the scheduler starts.
++ */
++void __init srcu_init(void)
++{
++	struct srcu_struct *sp;
++
++	srcu_init_done = true;
++	while (!list_empty(&srcu_boot_list)) {
++		sp = list_first_entry(&srcu_boot_list,
++				      struct srcu_struct, srcu_boot_entry);
++		list_del_init(&sp->srcu_boot_entry);
++		schedule_work(&sp->srcu_work);
++	}
++}
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 7f266b0f9832..60d4fd66905c 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -51,6 +51,10 @@ module_param(exp_holdoff, ulong, 0444);
+ static ulong counter_wrap_check = (ULONG_MAX >> 2);
+ module_param(counter_wrap_check, ulong, 0444);
+ 
++/* Early-boot callback-management, so early that no lock is required! */
++static LIST_HEAD(srcu_boot_list);
++static bool __read_mostly srcu_init_done;
++
+ static void srcu_invoke_callbacks(struct work_struct *work);
+ static void srcu_reschedule(struct srcu_struct *sp, unsigned long delay);
+ static void process_srcu(struct work_struct *work);
+@@ -182,6 +186,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp, bool is_static)
+ 	mutex_init(&sp->srcu_barrier_mutex);
+ 	atomic_set(&sp->srcu_barrier_cpu_cnt, 0);
+ 	INIT_DELAYED_WORK(&sp->work, process_srcu);
++	INIT_LIST_HEAD(&sp->srcu_boot_entry);
+ 	if (!is_static)
+ 		sp->sda = alloc_percpu(struct srcu_data);
+ 	init_srcu_struct_nodes(sp, is_static);
+@@ -701,7 +706,11 @@ static void srcu_funnel_gp_start(struct srcu_struct *sp, struct srcu_data *sdp,
+ 	    rcu_seq_state(sp->srcu_gp_seq) == SRCU_STATE_IDLE) {
+ 		WARN_ON_ONCE(ULONG_CMP_GE(sp->srcu_gp_seq, sp->srcu_gp_seq_needed));
+ 		srcu_gp_start(sp);
+-		queue_delayed_work(rcu_gp_wq, &sp->work, srcu_get_delay(sp));
++		if (likely(srcu_init_done))
++			queue_delayed_work(rcu_gp_wq, &sp->work,
++					   srcu_get_delay(sp));
++		else if (list_empty(&sp->srcu_boot_entry))
++			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
+ 	}
+ 	spin_unlock_irqrestore_rcu_node(sp, flags);
+ }
+@@ -1308,3 +1317,17 @@ static int __init srcu_bootup_announce(void)
+ 	return 0;
+ }
+ early_initcall(srcu_bootup_announce);
++
++void __init srcu_init(void)
++{
++	struct srcu_struct *sp;
++
++	srcu_init_done = true;
++	while (!list_empty(&srcu_boot_list)) {
++		sp = list_first_entry(&srcu_boot_list,
++				      struct srcu_struct, srcu_boot_entry);
++		check_init_srcu_struct(sp);
++		list_del_init(&sp->srcu_boot_entry);
++		queue_work(rcu_gp_wq, &sp->work.work);
++	}
++}
+diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
+index 1745d30e170e..5f5963ba313e 100644
+--- a/kernel/rcu/tiny.c
++++ b/kernel/rcu/tiny.c
+@@ -167,4 +167,5 @@ void __init rcu_init(void)
+ {
+ 	open_softirq(RCU_SOFTIRQ, rcu_process_callbacks);
+ 	rcu_early_boot_tests();
++	srcu_init();
+ }
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 821a665cc76d..bf016ff9f873 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3737,6 +3737,7 @@ void __init rcu_init(void)
+ 	WARN_ON(!rcu_gp_wq);
+ 	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM, 0);
+ 	WARN_ON(!rcu_par_gp_wq);
++	srcu_init();
+ }
+ 
+ #include "tree_exp.h"
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index f6de0ba1d149..f203b94f6b5b 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -880,11 +880,16 @@ static void test_callback(struct rcu_head *r)
+ 	pr_info("RCU test callback executed %d\n", rcu_self_test_counter);
+ }
+ 
++DEFINE_STATIC_SRCU(early_srcu);
++
+ static void early_boot_test_call_rcu(void)
+ {
+ 	static struct rcu_head head;
++	static struct rcu_head shead;
+ 
+ 	call_rcu(&head, test_callback);
++	if (IS_ENABLED(CONFIG_SRCU))
++		call_srcu(&early_srcu, &shead, test_callback);
+ }
+ 
+ void rcu_early_boot_tests(void)
+@@ -904,6 +909,10 @@ static int rcu_verify_early_boot_tests(void)
+ 	if (rcu_self_test) {
+ 		early_boot_test_counter++;
+ 		rcu_barrier();
++		if (IS_ENABLED(CONFIG_SRCU)) {
++			early_boot_test_counter++;
++			srcu_barrier(&early_srcu);
++		}
+ 	}
+ 	if (rcu_self_test_counter != early_boot_test_counter) {
+ 		WARN_ON(1);
 
