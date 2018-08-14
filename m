@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0562BC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62236C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABC72150F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABC72150F
+	by mail.kernel.org (Postfix) with ESMTP id 22EB221471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22EB221471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391123AbeHNUez (ORCPT
+        id S2391135AbeHNUe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:34:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60526 "EHLO
+        Tue, 14 Aug 2018 16:34:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60570 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390706AbeHNUez (ORCPT
+        with ESMTP id S2390706AbeHNUe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:34:55 -0400
+        Tue, 14 Aug 2018 16:34:58 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2675EAF3;
-        Tue, 14 Aug 2018 17:46:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5D65CA5;
+        Tue, 14 Aug 2018 17:46:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -41,13 +41,11 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Luis R. Rodriguez" <mcgrof@suse.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Toshi Kani <toshi.kani@hp.com>, dave.hansen@intel.com,
-        linux-mm@kvack.org, mhocko@suse.com,
-        Ingo Molnar <mingo@kernel.org>,
+        Toshi Kani <toshi.kani@hp.com>, Ingo Molnar <mingo@kernel.org>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 22/43] x86/mm: Move swap offset/type up in PTE to work around erratum
-Date:   Tue, 14 Aug 2018 19:17:58 +0200
-Message-Id: <20180814171518.589533556@linuxfoundation.org>
+Subject: [PATCH 4.4 23/43] x86/mm: Fix swap entry comment and macro
+Date:   Tue, 14 Aug 2018 19:17:59 +0200
+Message-Id: <20180814171518.654604376@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -66,32 +64,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 00839ee3b299303c6a5e26a0a2485427a3afcbbf upstream
+commit ace7fab7a6cdd363a615ec537f2aa94dbc761ee2 upstream
 
-This erratum can result in Accessed/Dirty getting set by the hardware
-when we do not expect them to be (on !Present PTEs).
+A recent patch changed the format of a swap PTE.
 
-Instead of trying to fix them up after this happens, we just
-allow the bits to get set and try to ignore them.  We do this by
-shifting the layout of the bits we use for swap offset/type in
-our 64-bit PTEs.
+The comment explaining the format of the swap PTE is wrong about
+the bits used for the swap type field.  Amusingly, the ASCII art
+and the patch description are correct, but the comment itself
+is wrong.
 
-It looks like this:
-
- bitnrs: |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2|1|0|
- names:  |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U|W|P|
- before: |         OFFSET (9-63)          |0|X|X| TYPE(1-5) |0|
-  after: | OFFSET (14-63)  |  TYPE (9-13) |0|X|X|X| X| X|X|X|0|
-
-Note that D was already a don't care (X) even before.  We just
-move TYPE up and turn its old spot (which could be hit by the
-A bit) into all don't cares.
-
-We take 5 bits away from the offset, but that still leaves us
-with 50 bits which lets us index into a 62-bit swapfile (4 EiB).
-I think that's probably fine for the moment.  We could
-theoretically reclaim 5 of the bits (1, 2, 3, 4, 7) but it
-doesn't gain us anything.
+As I was looking at this, I also noticed that the
+SWP_OFFSET_FIRST_BIT has an off-by-one error.  This does not
+really hurt anything.  It just wasted a bit of space in the PTE,
+giving us 2^59 bytes of addressable space in our swapfiles
+instead of 2^60.  But, it doesn't match with the comments, and it
+wastes a bit of space, so fix it.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -107,57 +94,34 @@ Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Toshi Kani <toshi.kani@hp.com>
-Cc: dave.hansen@intel.com
-Cc: linux-mm@kvack.org
-Cc: mhocko@suse.com
-Link: http://lkml.kernel.org/r/20160708001911.9A3FD2B6@viggo.jf.intel.com
+Fixes: 00839ee3b299 ("x86/mm: Move swap offset/type up in PTE to work around erratum")
+Link: http://lkml.kernel.org/r/20160810172325.E56AD7DA@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable_64.h |   26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pgtable_64.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/include/asm/pgtable_64.h
 +++ b/arch/x86/include/asm/pgtable_64.h
-@@ -163,18 +163,32 @@ static inline int pgd_large(pgd_t pgd) {
- #define pte_offset_map(dir, address) pte_offset_kernel((dir), (address))
- #define pte_unmap(pte) ((void)(pte))/* NOP */
- 
--/* Encode and de-code a swap entry */
-+/*
-+ * Encode and de-code a swap entry
-+ *
-+ * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2|1|0| <- bit number
-+ * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U|W|P| <- bit names
-+ * | OFFSET (14->63) | TYPE (10-13) |0|X|X|X| X| X|X|X|0| <- swp entry
-+ *
-+ * G (8) is aliased and used as a PROT_NONE indicator for
-+ * !present ptes.  We need to start storing swap entries above
-+ * there.  We also need to avoid using A and D because of an
-+ * erratum where they can be incorrectly set by hardware on
-+ * non-present PTEs.
-+ */
-+#define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
+@@ -168,7 +168,7 @@ static inline int pgd_large(pgd_t pgd) {
+  *
+  * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2|1|0| <- bit number
+  * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U|W|P| <- bit names
+- * | OFFSET (14->63) | TYPE (10-13) |0|X|X|X| X| X|X|X|0| <- swp entry
++ * | OFFSET (14->63) | TYPE (9-13)  |0|X|X|X| X| X|X|X|0| <- swp entry
+  *
+  * G (8) is aliased and used as a PROT_NONE indicator for
+  * !present ptes.  We need to start storing swap entries above
+@@ -179,7 +179,7 @@ static inline int pgd_large(pgd_t pgd) {
+ #define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
  #define SWP_TYPE_BITS 5
--#define SWP_OFFSET_SHIFT (_PAGE_BIT_PROTNONE + 1)
-+/* Place the offset above the type: */
-+#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS + 1)
+ /* Place the offset above the type: */
+-#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS + 1)
++#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS)
  
  #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS)
- 
--#define __swp_type(x)			(((x).val >> (_PAGE_BIT_PRESENT + 1)) \
-+#define __swp_type(x)			(((x).val >> (SWP_TYPE_FIRST_BIT)) \
- 					 & ((1U << SWP_TYPE_BITS) - 1))
--#define __swp_offset(x)			((x).val >> SWP_OFFSET_SHIFT)
-+#define __swp_offset(x)			((x).val >> SWP_OFFSET_FIRST_BIT)
- #define __swp_entry(type, offset)	((swp_entry_t) { \
--					 ((type) << (_PAGE_BIT_PRESENT + 1)) \
--					 | ((offset) << SWP_OFFSET_SHIFT) })
-+					 ((type) << (SWP_TYPE_FIRST_BIT)) \
-+					 | ((offset) << SWP_OFFSET_FIRST_BIT) })
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val((pte)) })
- #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
  
 
 
