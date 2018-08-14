@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B202EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B189EC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BECC216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BECC216E5
+	by mail.kernel.org (Postfix) with ESMTP id 6D26620837
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:33:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D26620837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbeHNKTK (ORCPT
+        id S1732068AbeHNKTK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 14 Aug 2018 06:19:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54264 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:54286 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731257AbeHNKTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731341AbeHNKTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 06:19:09 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18B1CAEE6;
+        by mx1.suse.de (Postfix) with ESMTP id 29981AF5C;
         Tue, 14 Aug 2018 07:33:10 +0000 (UTC)
 From:   Hannes Reinecke <hare@suse.de>
 To:     Jens Axboe <axboe@kernel.dk>
@@ -33,12 +33,10 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Bart van Assche <bart.vanassche@wdc.com>,
         linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
         Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Martin Wilck <martin.wilck@suse.com>,
-        Hannes Reinecke <hare@suse.com>
-Subject: [PATCH 1/5] block: genhd: add 'groups' argument to device_add_disk
-Date:   Tue, 14 Aug 2018 09:33:01 +0200
-Message-Id: <20180814073305.87255-2-hare@suse.de>
+        Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>
+Subject: [PATCH 5/5] virtio-blk: modernize sysfs attribute creation
+Date:   Tue, 14 Aug 2018 09:33:05 +0200
+Message-Id: <20180814073305.87255-6-hare@suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180814073305.87255-1-hare@suse.de>
 References: <20180814073305.87255-1-hare@suse.de>
@@ -47,473 +45,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update device_add_disk() to take an 'groups' argument so that
-individual drivers can register a device with additional sysfs
-attributes.
-This avoids race condition the driver would otherwise have if these
-groups were to be created with sysfs_add_groups().
+Use new-style DEVICE_ATTR_RO/DEVICE_ATTR_RW to create the sysfs attributes
+and register the disk with default sysfs attribute groups.
 
-Signed-off-by: Martin Wilck <martin.wilck@suse.com>
 Signed-off-by: Hannes Reinecke <hare@suse.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- arch/um/drivers/ubd_kern.c          |  2 +-
- block/genhd.c                       | 19 ++++++++++++++-----
- drivers/block/floppy.c              |  2 +-
- drivers/block/mtip32xx/mtip32xx.c   |  2 +-
- drivers/block/ps3disk.c             |  2 +-
- drivers/block/ps3vram.c             |  2 +-
- drivers/block/rsxx/dev.c            |  2 +-
- drivers/block/skd_main.c            |  2 +-
- drivers/block/sunvdc.c              |  2 +-
- drivers/block/virtio_blk.c          |  2 +-
- drivers/block/xen-blkfront.c        |  2 +-
- drivers/ide/ide-cd.c                |  2 +-
- drivers/ide/ide-gd.c                |  2 +-
- drivers/memstick/core/ms_block.c    |  2 +-
- drivers/memstick/core/mspro_block.c |  2 +-
- drivers/mmc/core/block.c            |  2 +-
- drivers/mtd/mtd_blkdevs.c           |  2 +-
- drivers/nvdimm/blk.c                |  2 +-
- drivers/nvdimm/btt.c                |  2 +-
- drivers/nvdimm/pmem.c               |  2 +-
- drivers/nvme/host/core.c            |  2 +-
- drivers/nvme/host/multipath.c       |  2 +-
- drivers/s390/block/dasd_genhd.c     |  2 +-
- drivers/s390/block/dcssblk.c        |  2 +-
- drivers/s390/block/scm_blk.c        |  2 +-
- drivers/scsi/sd.c                   |  2 +-
- drivers/scsi/sr.c                   |  2 +-
- include/linux/genhd.h               |  5 +++--
- 28 files changed, 43 insertions(+), 33 deletions(-)
+ drivers/block/virtio_blk.c | 68 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 39 insertions(+), 29 deletions(-)
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 83c470364dfb..6ee4c56032f7 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -891,7 +891,7 @@ static int ubd_disk_register(int major, u64 size, int unit,
- 
- 	disk->private_data = &ubd_devs[unit];
- 	disk->queue = ubd_devs[unit].queue;
--	device_add_disk(parent, disk);
-+	device_add_disk(parent, disk, NULL);
- 
- 	*disk_out = disk;
- 	return 0;
-diff --git a/block/genhd.c b/block/genhd.c
-index 8cc719a37b32..ef0936184d69 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -567,7 +567,8 @@ static int exact_lock(dev_t devt, void *data)
- 	return 0;
- }
- 
--static void register_disk(struct device *parent, struct gendisk *disk)
-+static void register_disk(struct device *parent, struct gendisk *disk,
-+			  const struct attribute_group **groups)
- {
- 	struct device *ddev = disk_to_dev(disk);
- 	struct block_device *bdev;
-@@ -582,6 +583,10 @@ static void register_disk(struct device *parent, struct gendisk *disk)
- 	/* delay uevents, until we scanned partition table */
- 	dev_set_uevent_suppress(ddev, 1);
- 
-+	if (groups) {
-+		WARN_ON(ddev->groups);
-+		ddev->groups = groups;
-+	}
- 	if (device_add(ddev))
- 		return;
- 	if (!sysfs_deprecated) {
-@@ -647,6 +652,7 @@ static void register_disk(struct device *parent, struct gendisk *disk)
-  * __device_add_disk - add disk information to kernel list
-  * @parent: parent device for the disk
-  * @disk: per-device partitioning information
-+ * @groups: Additional per-device sysfs groups
-  * @register_queue: register the queue if set to true
-  *
-  * This function registers the partitioning information in @disk
-@@ -655,6 +661,7 @@ static void register_disk(struct device *parent, struct gendisk *disk)
-  * FIXME: error handling
-  */
- static void __device_add_disk(struct device *parent, struct gendisk *disk,
-+			      const struct attribute_group **groups,
- 			      bool register_queue)
- {
- 	dev_t devt;
-@@ -698,7 +705,7 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
- 		blk_register_region(disk_devt(disk), disk->minors, NULL,
- 				    exact_match, exact_lock, disk);
- 	}
--	register_disk(parent, disk);
-+	register_disk(parent, disk, groups);
- 	if (register_queue)
- 		blk_register_queue(disk);
- 
-@@ -712,15 +719,17 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
- 	blk_integrity_add(disk);
- }
- 
--void device_add_disk(struct device *parent, struct gendisk *disk)
-+void device_add_disk(struct device *parent, struct gendisk *disk,
-+		     const struct attribute_group **groups)
-+
- {
--	__device_add_disk(parent, disk, true);
-+	__device_add_disk(parent, disk, groups, true);
- }
- EXPORT_SYMBOL(device_add_disk);
- 
- void device_add_disk_no_queue_reg(struct device *parent, struct gendisk *disk)
- {
--	__device_add_disk(parent, disk, false);
-+	__device_add_disk(parent, disk, NULL, false);
- }
- EXPORT_SYMBOL(device_add_disk_no_queue_reg);
- 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 48f622728ce6..1bc99e9dfaee 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -4676,7 +4676,7 @@ static int __init do_floppy_init(void)
- 		/* to be cleaned up... */
- 		disks[drive]->private_data = (void *)(long)drive;
- 		disks[drive]->flags |= GENHD_FL_REMOVABLE;
--		device_add_disk(&floppy_device[drive].dev, disks[drive]);
-+		device_add_disk(&floppy_device[drive].dev, disks[drive], NULL);
- 	}
- 
- 	return 0;
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index c73626decb46..ac3b19ad8544 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -3873,7 +3873,7 @@ static int mtip_block_initialize(struct driver_data *dd)
- 	set_capacity(dd->disk, capacity);
- 
- 	/* Enable the block device and add it to /dev */
--	device_add_disk(&dd->pdev->dev, dd->disk);
-+	device_add_disk(&dd->pdev->dev, dd->disk, NULL);
- 
- 	dd->bdev = bdget_disk(dd->disk, 0);
- 	/*
-diff --git a/drivers/block/ps3disk.c b/drivers/block/ps3disk.c
-index afe1508d82c6..29a4419e8ba3 100644
---- a/drivers/block/ps3disk.c
-+++ b/drivers/block/ps3disk.c
-@@ -500,7 +500,7 @@ static int ps3disk_probe(struct ps3_system_bus_device *_dev)
- 		 gendisk->disk_name, priv->model, priv->raw_capacity >> 11,
- 		 get_capacity(gendisk) >> 11);
- 
--	device_add_disk(&dev->sbd.core, gendisk);
-+	device_add_disk(&dev->sbd.core, gendisk, NULL);
- 	return 0;
- 
- fail_cleanup_queue:
-diff --git a/drivers/block/ps3vram.c b/drivers/block/ps3vram.c
-index 1e3d5de9d838..c0c50816a10b 100644
---- a/drivers/block/ps3vram.c
-+++ b/drivers/block/ps3vram.c
-@@ -769,7 +769,7 @@ static int ps3vram_probe(struct ps3_system_bus_device *dev)
- 	dev_info(&dev->core, "%s: Using %lu MiB of GPU memory\n",
- 		 gendisk->disk_name, get_capacity(gendisk) >> 11);
- 
--	device_add_disk(&dev->core, gendisk);
-+	device_add_disk(&dev->core, gendisk, NULL);
- 	return 0;
- 
- fail_cleanup_queue:
-diff --git a/drivers/block/rsxx/dev.c b/drivers/block/rsxx/dev.c
-index 1a92f9e65937..3894aa0f350b 100644
---- a/drivers/block/rsxx/dev.c
-+++ b/drivers/block/rsxx/dev.c
-@@ -226,7 +226,7 @@ int rsxx_attach_dev(struct rsxx_cardinfo *card)
- 			set_capacity(card->gendisk, card->size8 >> 9);
- 		else
- 			set_capacity(card->gendisk, 0);
--		device_add_disk(CARD_TO_DEV(card), card->gendisk);
-+		device_add_disk(CARD_TO_DEV(card), card->gendisk, NULL);
- 		card->bdev_attached = 1;
- 	}
- 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index 87b9e7fbf062..a85c9a622c41 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -3104,7 +3104,7 @@ static int skd_bdev_getgeo(struct block_device *bdev, struct hd_geometry *geo)
- static int skd_bdev_attach(struct device *parent, struct skd_device *skdev)
- {
- 	dev_dbg(&skdev->pdev->dev, "add_disk\n");
--	device_add_disk(parent, skdev->disk);
-+	device_add_disk(parent, skdev->disk, NULL);
- 	return 0;
- }
- 
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index 5ca56bfae63c..09409edce384 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -850,7 +850,7 @@ static int probe_disk(struct vdc_port *port)
- 	       port->vdisk_size, (port->vdisk_size >> (20 - 9)),
- 	       port->vio.ver.major, port->vio.ver.minor);
- 
--	device_add_disk(&port->vio.vdev->dev, g);
-+	device_add_disk(&port->vio.vdev->dev, g, NULL);
- 
- 	return 0;
- }
 diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 23752dc99b00..fe80560000a1 100644
+index fe80560000a1..086c6bb12baa 100644
 --- a/drivers/block/virtio_blk.c
 +++ b/drivers/block/virtio_blk.c
-@@ -780,7 +780,7 @@ static int virtblk_probe(struct virtio_device *vdev)
+@@ -351,8 +351,8 @@ static int minor_to_index(int minor)
+ 	return minor >> PART_BITS;
+ }
+ 
+-static ssize_t virtblk_serial_show(struct device *dev,
+-				struct device_attribute *attr, char *buf)
++static ssize_t serial_show(struct device *dev,
++			   struct device_attribute *attr, char *buf)
+ {
+ 	struct gendisk *disk = dev_to_disk(dev);
+ 	int err;
+@@ -371,7 +371,7 @@ static ssize_t virtblk_serial_show(struct device *dev,
+ 	return err;
+ }
+ 
+-static DEVICE_ATTR(serial, 0444, virtblk_serial_show, NULL);
++static DEVICE_ATTR_RO(serial);
+ 
+ /* The queue's logical block size must be set before calling this */
+ static void virtblk_update_capacity(struct virtio_blk *vblk, bool resize)
+@@ -545,8 +545,8 @@ static const char *const virtblk_cache_types[] = {
+ };
+ 
+ static ssize_t
+-virtblk_cache_type_store(struct device *dev, struct device_attribute *attr,
+-			 const char *buf, size_t count)
++cache_type_store(struct device *dev, struct device_attribute *attr,
++		 const char *buf, size_t count)
+ {
+ 	struct gendisk *disk = dev_to_disk(dev);
+ 	struct virtio_blk *vblk = disk->private_data;
+@@ -564,8 +564,7 @@ virtblk_cache_type_store(struct device *dev, struct device_attribute *attr,
+ }
+ 
+ static ssize_t
+-virtblk_cache_type_show(struct device *dev, struct device_attribute *attr,
+-			 char *buf)
++cache_type_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	struct gendisk *disk = dev_to_disk(dev);
+ 	struct virtio_blk *vblk = disk->private_data;
+@@ -575,12 +574,38 @@ virtblk_cache_type_show(struct device *dev, struct device_attribute *attr,
+ 	return snprintf(buf, 40, "%s\n", virtblk_cache_types[writeback]);
+ }
+ 
+-static const struct device_attribute dev_attr_cache_type_ro =
+-	__ATTR(cache_type, 0444,
+-	       virtblk_cache_type_show, NULL);
+-static const struct device_attribute dev_attr_cache_type_rw =
+-	__ATTR(cache_type, 0644,
+-	       virtblk_cache_type_show, virtblk_cache_type_store);
++static DEVICE_ATTR_RW(cache_type);
++
++static struct attribute *virtblk_attrs[] = {
++	&dev_attr_serial.attr,
++	&dev_attr_cache_type.attr,
++	NULL,
++};
++
++static umode_t virtblk_attrs_are_visible(struct kobject *kobj,
++		struct attribute *a, int n)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct gendisk *disk = dev_to_disk(dev);
++	struct virtio_blk *vblk = disk->private_data;
++	struct virtio_device *vdev = vblk->vdev;
++
++	if (a == &dev_attr_cache_type.attr &&
++	    !virtio_has_feature(vdev, VIRTIO_BLK_F_CONFIG_WCE))
++		return S_IRUGO;
++
++	return a->mode;
++}
++
++static const struct attribute_group virtblk_attr_group = {
++	.attrs = virtblk_attrs,
++	.is_visible = virtblk_attrs_are_visible,
++};
++
++static const struct attribute_group *virtblk_attr_groups[] = {
++	&virtblk_attr_group,
++	NULL,
++};
+ 
+ static int virtblk_init_request(struct blk_mq_tag_set *set, struct request *rq,
+ 		unsigned int hctx_idx, unsigned int numa_node)
+@@ -780,24 +805,9 @@ static int virtblk_probe(struct virtio_device *vdev)
  	virtblk_update_capacity(vblk, false);
  	virtio_device_ready(vdev);
  
--	device_add_disk(&vdev->dev, vblk->disk);
-+	device_add_disk(&vdev->dev, vblk->disk, NULL);
- 	err = device_create_file(disk_to_dev(vblk->disk), &dev_attr_serial);
- 	if (err)
- 		goto out_del_disk;
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 94300dbe358b..2d47c7a5e0fa 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -2397,7 +2397,7 @@ static void blkfront_connect(struct blkfront_info *info)
- 	for (i = 0; i < info->nr_rings; i++)
- 		kick_pending_request_queues(&info->rinfo[i]);
- 
--	device_add_disk(&info->xbdev->dev, info->gd);
-+	device_add_disk(&info->xbdev->dev, info->gd, NULL);
- 
- 	info->is_ready = 1;
- 	return;
-diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
-index 44a7a255ef74..f9b59d41813f 100644
---- a/drivers/ide/ide-cd.c
-+++ b/drivers/ide/ide-cd.c
-@@ -1784,7 +1784,7 @@ static int ide_cd_probe(ide_drive_t *drive)
- 	ide_cd_read_toc(drive);
- 	g->fops = &idecd_ops;
- 	g->flags |= GENHD_FL_REMOVABLE | GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE;
--	device_add_disk(&drive->gendev, g);
-+	device_add_disk(&drive->gendev, g, NULL);
+-	device_add_disk(&vdev->dev, vblk->disk, NULL);
+-	err = device_create_file(disk_to_dev(vblk->disk), &dev_attr_serial);
+-	if (err)
+-		goto out_del_disk;
+-
+-	if (virtio_has_feature(vdev, VIRTIO_BLK_F_CONFIG_WCE))
+-		err = device_create_file(disk_to_dev(vblk->disk),
+-					 &dev_attr_cache_type_rw);
+-	else
+-		err = device_create_file(disk_to_dev(vblk->disk),
+-					 &dev_attr_cache_type_ro);
+-	if (err)
+-		goto out_del_disk;
++	device_add_disk(&vdev->dev, vblk->disk, virtblk_attr_groups);
  	return 0;
  
- out_free_disk:
-diff --git a/drivers/ide/ide-gd.c b/drivers/ide/ide-gd.c
-index e823394ed543..04e008e8f6f9 100644
---- a/drivers/ide/ide-gd.c
-+++ b/drivers/ide/ide-gd.c
-@@ -416,7 +416,7 @@ static int ide_gd_probe(ide_drive_t *drive)
- 	if (drive->dev_flags & IDE_DFLAG_REMOVABLE)
- 		g->flags = GENHD_FL_REMOVABLE;
- 	g->fops = &ide_gd_ops;
--	device_add_disk(&drive->gendev, g);
-+	device_add_disk(&drive->gendev, g, NULL);
- 	return 0;
- 
- out_free_disk:
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index 716fc8ed31d3..8a02f11076f9 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -2146,7 +2146,7 @@ static int msb_init_disk(struct memstick_dev *card)
- 		set_disk_ro(msb->disk, 1);
- 
- 	msb_start(card);
--	device_add_disk(&card->dev, msb->disk);
-+	device_add_disk(&card->dev, msb->disk, NULL);
- 	dbg("Disk added");
- 	return 0;
- 
-diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
-index 5ee932631fae..0cd30dcb6801 100644
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -1236,7 +1236,7 @@ static int mspro_block_init_disk(struct memstick_dev *card)
- 	set_capacity(msb->disk, capacity);
- 	dev_dbg(&card->dev, "capacity set %ld\n", capacity);
- 
--	device_add_disk(&card->dev, msb->disk);
-+	device_add_disk(&card->dev, msb->disk, NULL);
- 	msb->active = 1;
- 	return 0;
- 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index a0b9102c4c6e..de8e1a8be690 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -2698,7 +2698,7 @@ static int mmc_add_disk(struct mmc_blk_data *md)
- 	int ret;
- 	struct mmc_card *card = md->queue.card;
- 
--	device_add_disk(md->parent, md->disk);
-+	device_add_disk(md->parent, md->disk, NULL);
- 	md->force_ro.show = force_ro_show;
- 	md->force_ro.store = force_ro_store;
- 	sysfs_attr_init(&md->force_ro.attr);
-diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index 29c0bfd74e8a..6a41dfa3c36b 100644
---- a/drivers/mtd/mtd_blkdevs.c
-+++ b/drivers/mtd/mtd_blkdevs.c
-@@ -447,7 +447,7 @@ int add_mtd_blktrans_dev(struct mtd_blktrans_dev *new)
- 	if (new->readonly)
- 		set_disk_ro(gd, 1);
- 
--	device_add_disk(&new->mtd->dev, gd);
-+	device_add_disk(&new->mtd->dev, gd, NULL);
- 
- 	if (new->disk_attributes) {
- 		ret = sysfs_create_group(&disk_to_dev(gd)->kobj,
-diff --git a/drivers/nvdimm/blk.c b/drivers/nvdimm/blk.c
-index 62e9cb167aad..db45c6bbb7bb 100644
---- a/drivers/nvdimm/blk.c
-+++ b/drivers/nvdimm/blk.c
-@@ -290,7 +290,7 @@ static int nsblk_attach_disk(struct nd_namespace_blk *nsblk)
- 	}
- 
- 	set_capacity(disk, available_disk_size >> SECTOR_SHIFT);
--	device_add_disk(dev, disk);
-+	device_add_disk(dev, disk, NULL);
- 	revalidate_disk(disk);
- 	return 0;
- }
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 0360c015f658..b123b0dcf274 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1556,7 +1556,7 @@ static int btt_blk_init(struct btt *btt)
- 		}
- 	}
- 	set_capacity(btt->btt_disk, btt->nlba * btt->sector_size >> 9);
--	device_add_disk(&btt->nd_btt->dev, btt->btt_disk);
-+	device_add_disk(&btt->nd_btt->dev, btt->btt_disk, NULL);
- 	btt->nd_btt->size = btt->nlba * (u64)btt->sector_size;
- 	revalidate_disk(btt->btt_disk);
- 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index dd17acd8fe68..dad84a1d23db 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -445,7 +445,7 @@ static int pmem_attach_disk(struct device *dev,
- 	gendev = disk_to_dev(disk);
- 	gendev->groups = pmem_attribute_groups;
- 
--	device_add_disk(dev, disk);
-+	device_add_disk(dev, disk, NULL);
- 	if (devm_add_action_or_reset(dev, pmem_release_disk, pmem))
- 		return -ENOMEM;
- 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index dd8ec1dd9219..0e824e8c8fd7 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3099,7 +3099,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 
- 	nvme_get_ctrl(ctrl);
- 
--	device_add_disk(ctrl->device, ns->disk);
-+	device_add_disk(ctrl->device, ns->disk, NULL);
- 	if (sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
- 					&nvme_ns_id_attr_group))
- 		pr_warn("%s: failed to create sysfs group for identification\n",
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 5a9562881d4e..477af51d01e8 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -283,7 +283,7 @@ static void nvme_mpath_set_live(struct nvme_ns *ns)
- 		return;
- 
- 	if (!(head->disk->flags & GENHD_FL_UP)) {
--		device_add_disk(&head->subsys->dev, head->disk);
-+		device_add_disk(&head->subsys->dev, head->disk, NULL);
- 		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
- 				&nvme_ns_id_attr_group))
- 			dev_warn(&head->subsys->dev,
-diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
-index 7036a6c6f86f..5542d9eadfe0 100644
---- a/drivers/s390/block/dasd_genhd.c
-+++ b/drivers/s390/block/dasd_genhd.c
-@@ -76,7 +76,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
- 	gdp->queue = block->request_queue;
- 	block->gdp = gdp;
- 	set_capacity(block->gdp, 0);
--	device_add_disk(&base->cdev->dev, block->gdp);
-+	device_add_disk(&base->cdev->dev, block->gdp, NULL);
- 	return 0;
- }
- 
-diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
-index ed607288e696..a0738c6c4eab 100644
---- a/drivers/s390/block/dcssblk.c
-+++ b/drivers/s390/block/dcssblk.c
-@@ -685,7 +685,7 @@ dcssblk_add_store(struct device *dev, struct device_attribute *attr, const char
- 	}
- 
- 	get_device(&dev_info->dev);
--	device_add_disk(&dev_info->dev, dev_info->gd);
-+	device_add_disk(&dev_info->dev, dev_info->gd, NULL);
- 
- 	switch (dev_info->segment_type) {
- 		case SEG_TYPE_SR:
-diff --git a/drivers/s390/block/scm_blk.c b/drivers/s390/block/scm_blk.c
-index b1fcb76dd272..7559ac40f01b 100644
---- a/drivers/s390/block/scm_blk.c
-+++ b/drivers/s390/block/scm_blk.c
-@@ -499,7 +499,7 @@ int scm_blk_dev_setup(struct scm_blk_dev *bdev, struct scm_device *scmdev)
- 
- 	/* 512 byte sectors */
- 	set_capacity(bdev->gendisk, scmdev->size >> 9);
--	device_add_disk(&scmdev->dev, bdev->gendisk);
-+	device_add_disk(&scmdev->dev, bdev->gendisk, NULL);
- 	return 0;
- 
- out_queue:
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index bbebdc3769b0..dbc7b7cb04c3 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3273,7 +3273,7 @@ static void sd_probe_async(void *data, async_cookie_t cookie)
- 	}
- 
- 	blk_pm_runtime_init(sdp->request_queue, dev);
--	device_add_disk(dev, gd);
-+	device_add_disk(dev, gd, NULL);
- 	if (sdkp->capacity)
- 		sd_dif_config_host(sdkp);
- 
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 3f3cb72e0c0c..f628b04e0920 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -745,7 +745,7 @@ static int sr_probe(struct device *dev)
- 
- 	dev_set_drvdata(dev, cd);
- 	disk->flags |= GENHD_FL_REMOVABLE;
--	device_add_disk(&sdev->sdev_gendev, disk);
-+	device_add_disk(&sdev->sdev_gendev, disk, NULL);
- 
- 	sdev_printk(KERN_DEBUG, sdev,
- 		    "Attached scsi CD-ROM %s\n", cd->cdi.name);
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 57864422a2c8..0b820ff05839 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -399,10 +399,11 @@ static inline void free_part_info(struct hd_struct *part)
- extern void part_round_stats(struct request_queue *q, int cpu, struct hd_struct *part);
- 
- /* block/genhd.c */
--extern void device_add_disk(struct device *parent, struct gendisk *disk);
-+extern void device_add_disk(struct device *parent, struct gendisk *disk,
-+			    const struct attribute_group **groups);
- static inline void add_disk(struct gendisk *disk)
- {
--	device_add_disk(NULL, disk);
-+	device_add_disk(NULL, disk, NULL);
- }
- extern void device_add_disk_no_queue_reg(struct device *parent, struct gendisk *disk);
- static inline void add_disk_no_queue_reg(struct gendisk *disk)
+-out_del_disk:
+-	del_gendisk(vblk->disk);
+-	blk_cleanup_queue(vblk->disk->queue);
+ out_free_tags:
+ 	blk_mq_free_tag_set(&vblk->tag_set);
+ out_put_disk:
 -- 
 2.12.3
 
