@@ -2,123 +2,111 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC3EC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB89DC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C24321700
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:59:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C24321700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8580B21700
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:01:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOD8zKfg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8580B21700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387403AbeHNU06 (ORCPT
+        id S1730825AbeHNUYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:26:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58388 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730437AbeHNU05 (ORCPT
+        Tue, 14 Aug 2018 16:24:35 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42819 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbeHNUYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:26:57 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF41AD4A;
-        Tue, 14 Aug 2018 17:38:46 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 079/104] Documentation/l1tf: Fix typos
-Date:   Tue, 14 Aug 2018 19:17:33 +0200
-Message-Id: <20180814171520.369506110@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
-References: <20180814171515.270692185@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 14 Aug 2018 16:24:34 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y4-v6so9402534pgp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 10:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MB4DeZcc1axnQV8hDkceH08m/Jqflt+rGhPGhn5Najo=;
+        b=fOD8zKfgNjZwdchtnE8wjoJYA0UzSUEuZyuRv4jNWS3ULn7eu/JqdQ68aX8si6FsGC
+         swJnJk9nVgvTuFiiL5mkUjzSVsqsX/UGFZw2EsSHIqvy8Wv4IXfrKdd51HARQRwYgnZe
+         r/s6bN6nSw6EqZW+DUkrTg2CTuZxcDMu6QTaXmRjrMLR6Y4yRF3oaxRwPJ1cQd0GwH1L
+         UV/L/iVv/WO5paGBP8n3B7PDvycpptaIEgWvCDSiJ+EeJFYrqbpAOJc2mdjSMgoiQQb5
+         BiJJDMxEnOSBc46zwkW0G3AWIUOgVgWIgBLAV2ttOH/mM07DvU2/AmbN+teX3FJQ93FF
+         h4nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MB4DeZcc1axnQV8hDkceH08m/Jqflt+rGhPGhn5Najo=;
+        b=f/a6imw6Virt+zh3GsXZs4hNl2i7/8HXmcNgi0/wxarcriAcpBHKVIOIkCW+9sZQMZ
+         SoCVd+A5+b73wc0w5FvNZXMT3T68G735mc+CxJ4JhAVjEQDwRPtiExM54ruEh2dUEFeQ
+         F0RPm0kEi2B0lHd33WNvVLJ6/61tNBMCG3+tUhFF7lzT4ibakYHl8Xd9fS8cJymkILAo
+         32cHmqwP8biOcOUtCJDu4wssmM+hVewU/5QYwqztBXAqE0K98tHOxgEj8aqexKST0r3H
+         J7qMdU3BjgFsaJnlwjaLe+eETZfzjbz7rv5oRlTb0PLYOxipeSyRxFrYZ20FY8C+OtCD
+         GVeQ==
+X-Gm-Message-State: AOUpUlHuxFzw9KcYpxxD4wrdzh5hCL0bDtZ1k0oPa7ErWx36jBKINZrK
+        tMPCo7mbHxwHposoZUyo39Q=
+X-Google-Smtp-Source: AA+uWPyvgC5GIErPuJ3YCeHLs3bEsV6wFNOTrP5yuuBz2BZG/KH7LafbVIaBp6B9GOoNQD8NlRpslQ==
+X-Received: by 2002:a62:d842:: with SMTP id e63-v6mr24653745pfg.88.1534268184841;
+        Tue, 14 Aug 2018 10:36:24 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id e190-v6sm57839086pfc.81.2018.08.14.10.36.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 10:36:24 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 10:36:23 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Build failures with gcc 4.5 and older
+Message-ID: <20180814173623.GA5117@roeck-us.net>
+References: <20180814170904.GA12768@roeck-us.net>
+ <CA+55aFy0SFGaNmzCcpwMCeY_f3ZTG54NmV3SosbK6=QdE20=5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFy0SFGaNmzCcpwMCeY_f3ZTG54NmV3SosbK6=QdE20=5A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Aug 14, 2018 at 10:20:32AM -0700, Linus Torvalds wrote:
+> On Tue, Aug 14, 2018 at 10:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > Does that mean that gcc 4.5 and older are now officially no longer
+> > supported for compiling the kernel ?
+> 
+> I guess we might as well make this the excuse for making that official.
+> 
+> Maybe it's trivially fixable, but I don't even want to look at it,
+> since we've talked about updating the minimum gcc version so long.
+> 
+> > If so, would it make sense to update include/linux/compiler-gcc.h
+> > accordingly ?
+> 
+> Unless somebody cares, and comes with a trivial fix to make old
+> compilers happy, let's just do that.
+> 
 
-------------------
+Only implication is that it is the death warrant for unicore32,
+since the only compiler available for it is gcc 4.4.2.
 
-From: Tony Luck <tony.luck@intel.com>
+Another question is if there are still companies out there who only
+permit gcc 4.4 and older due to its switch to GPL3.
 
-commit 1949f9f49792d65dba2090edddbe36a5f02e3ba3 upstream
+Not that I care about any of those. Building the kernel with those old
+compilers without hitting some compiler bug is getting more and more
+difficult.
 
-Fix spelling and other typos
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/admin-guide/l1tf.rst |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -17,7 +17,7 @@ vulnerability is not present on:
-    - Older processor models, where the CPU family is < 6
- 
-    - A range of Intel ATOM processors (Cedarview, Cloverview, Lincroft,
--     Penwell, Pineview, Slivermont, Airmont, Merrifield)
-+     Penwell, Pineview, Silvermont, Airmont, Merrifield)
- 
-    - The Intel Core Duo Yonah variants (2006 - 2008)
- 
-@@ -113,7 +113,7 @@ Attack scenarios
-    deployment scenario. The mitigations, their protection scope and impact
-    are described in the next sections.
- 
--   The default mitigations and the rationale for chosing them are explained
-+   The default mitigations and the rationale for choosing them are explained
-    at the end of this document. See :ref:`default_mitigations`.
- 
- .. _l1tf_sys_info:
-@@ -191,15 +191,15 @@ Guest mitigation mechanisms
-     - unconditional ('always')
- 
-    The conditional mode avoids L1D flushing after VMEXITs which execute
--   only audited code pathes before the corresponding VMENTER. These code
--   pathes have beed verified that they cannot expose secrets or other
-+   only audited code paths before the corresponding VMENTER. These code
-+   paths have been verified that they cannot expose secrets or other
-    interesting data to an attacker, but they can leak information about the
-    address space layout of the hypervisor.
- 
-    Unconditional mode flushes L1D on all VMENTER invocations and provides
-    maximum protection. It has a higher overhead than the conditional
-    mode. The overhead cannot be quantified correctly as it depends on the
--   work load scenario and the resulting number of VMEXITs.
-+   workload scenario and the resulting number of VMEXITs.
- 
-    The general recommendation is to enable L1D flush on VMENTER. The kernel
-    defaults to conditional mode on affected processors.
-@@ -262,7 +262,7 @@ Guest mitigation mechanisms
-    Whether the interrupts with are affine to CPUs, which run untrusted
-    guests, provide interesting data for an attacker depends on the system
-    configuration and the scenarios which run on the system. While for some
--   of the interrupts it can be assumed that they wont expose interesting
-+   of the interrupts it can be assumed that they won't expose interesting
-    information beyond exposing hints about the host OS memory layout, there
-    is no way to make general assumptions.
- 
-@@ -299,7 +299,7 @@ Guest mitigation mechanisms
- 		 to be brought up at least partially and are then shut down
- 		 again.  "nosmt" can be undone via the sysfs interface.
- 
--     nosmt=force Has the same effect as "nosmt' but it does not allow to
-+     nosmt=force Has the same effect as "nosmt" but it does not allow to
- 		 undo the SMT disable via the sysfs interface.
-      =========== ==========================================================
- 
-
-
+Guenter
