@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6557EC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75384C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2906621653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2906621653
+	by mail.kernel.org (Postfix) with ESMTP id 37A1621653
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A1621653
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389953AbeHNUnP (ORCPT
+        id S2389361AbeHNUnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:43:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59170 "EHLO
+        Tue, 14 Aug 2018 16:43:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59344 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390166AbeHNUaL (ORCPT
+        with ESMTP id S2390152AbeHNUaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:11 -0400
+        Tue, 14 Aug 2018 16:30:10 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 064D8D9C;
-        Tue, 14 Aug 2018 17:32:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A5B594B;
+        Tue, 14 Aug 2018 17:32:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 80/97] x86/KVM/VMX: Move the l1tf_flush_l1d test to vmx_l1d_flush()
-Date:   Tue, 14 Aug 2018 19:17:32 +0200
-Message-Id: <20180814171436.191686790@linuxfoundation.org>
+Subject: [PATCH 4.17 54/97] x86/KVM/VMX: Add L1D flush algorithm
+Date:   Tue, 14 Aug 2018 19:17:06 +0200
+Message-Id: <20180814171435.211148089@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,62 +51,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolai Stange <nstange@suse.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 5b6ccc6c3b1a477fbac9ec97a0b4c1c48e765209 upstream
+commit a47dd5f06714c844b33f3b5f517b6f3e81ce57b5 upstream
 
-Currently, vmx_vcpu_run() checks if l1tf_flush_l1d is set and invokes
-vmx_l1d_flush() if so.
+To mitigate the L1 Terminal Fault vulnerability it's required to flush L1D
+on VMENTER to prevent rogue guests from snooping host memory.
 
-This test is unncessary for the "always flush L1D" mode.
+CPUs will have a new control MSR via a microcode update to flush L1D with a
+single MSR write, but in the absence of microcode a fallback to a software
+based flush algorithm is required.
 
-Move the check to vmx_l1d_flush()'s conditional mode code path.
+Add a software flush loop which is based on code from Intel.
 
-Notes:
-- vmx_l1d_flush() is likely to get inlined anyway and thus, there's no
-  extra function call.
+[ tglx: Split out from combo patch ]
+[ bpetkov: Polish the asm code ]
 
-- This inverts the (static) branch prediction, but there hadn't been any
-  explicit likely()/unlikely() annotations before and so it stays as is.
-
-Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c |   71 +++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 66 insertions(+), 5 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -9463,12 +9463,16 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
-+		bool flush_l1d = vcpu->arch.l1tf_flush_l1d;
-+
- 		/*
- 		 * Clear the flush bit, it gets set again either from
- 		 * vcpu_run() or from one of the unsafe VMEXIT
- 		 * handlers.
- 		 */
- 		vcpu->arch.l1tf_flush_l1d = false;
-+		if (!flush_l1d)
-+			return;
+@@ -9333,6 +9333,46 @@ static int vmx_handle_exit(struct kvm_vc
  	}
+ }
  
- 	vcpu->stat.l1d_flush++;
-@@ -10003,10 +10007,8 @@ static void __noclone vmx_vcpu_run(struc
- 	evmcs_rsp = static_branch_unlikely(&enable_evmcs) ?
- 		(unsigned long)&current_evmcs->host_rsp : 0;
++/*
++ * Software based L1D cache flush which is used when microcode providing
++ * the cache control MSR is not loaded.
++ *
++ * The L1D cache is 32 KiB on Nehalem and later microarchitectures, but to
++ * flush it is required to read in 64 KiB because the replacement algorithm
++ * is not exactly LRU. This could be sized at runtime via topology
++ * information but as all relevant affected CPUs have 32KiB L1D cache size
++ * there is no point in doing so.
++ */
++#define L1D_CACHE_ORDER 4
++static void *vmx_l1d_flush_pages;
++
++static void __maybe_unused vmx_l1d_flush(void)
++{
++	int size = PAGE_SIZE << L1D_CACHE_ORDER;
++
++	asm volatile(
++		/* First ensure the pages are in the TLB */
++		"xorl	%%eax, %%eax\n"
++		".Lpopulate_tlb:\n\t"
++		"movzbl	(%[empty_zp], %%" _ASM_AX "), %%ecx\n\t"
++		"addl	$4096, %%eax\n\t"
++		"cmpl	%%eax, %[size]\n\t"
++		"jne	.Lpopulate_tlb\n\t"
++		"xorl	%%eax, %%eax\n\t"
++		"cpuid\n\t"
++		/* Now fill the cache */
++		"xorl	%%eax, %%eax\n"
++		".Lfill_cache:\n"
++		"movzbl	(%[empty_zp], %%" _ASM_AX "), %%ecx\n\t"
++		"addl	$64, %%eax\n\t"
++		"cmpl	%%eax, %[size]\n\t"
++		"jne	.Lfill_cache\n\t"
++		"lfence\n"
++		:: [empty_zp] "r" (vmx_l1d_flush_pages),
++		    [size] "r" (size)
++		: "eax", "ebx", "ecx", "edx");
++}
++
+ static void update_cr8_intercept(struct kvm_vcpu *vcpu, int tpr, int irr)
+ {
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+@@ -12929,13 +12969,29 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.enable_smi_window = enable_smi_window,
+ };
  
--	if (static_branch_unlikely(&vmx_l1d_should_flush)) {
--		if (vcpu->arch.l1tf_flush_l1d)
--			vmx_l1d_flush(vcpu);
--	}
-+	if (static_branch_unlikely(&vmx_l1d_should_flush))
-+		vmx_l1d_flush(vcpu);
+-static void __init vmx_setup_l1d_flush(void)
++static int __init vmx_setup_l1d_flush(void)
+ {
++	struct page *page;
++
+ 	if (vmentry_l1d_flush == VMENTER_L1D_FLUSH_NEVER ||
+ 	    !boot_cpu_has_bug(X86_BUG_L1TF))
+-		return;
++		return 0;
++
++	page = alloc_pages(GFP_KERNEL, L1D_CACHE_ORDER);
++	if (!page)
++		return -ENOMEM;
  
- 	asm(
- 		/* Store host registers */
++	vmx_l1d_flush_pages = page_address(page);
+ 	static_branch_enable(&vmx_l1d_should_flush);
++	return 0;
++}
++
++static void vmx_free_l1d_flush_pages(void)
++{
++	if (vmx_l1d_flush_pages) {
++		free_pages((unsigned long)vmx_l1d_flush_pages, L1D_CACHE_ORDER);
++		vmx_l1d_flush_pages = NULL;
++	}
+ }
+ 
+ static int __init vmx_init(void)
+@@ -12971,12 +13027,16 @@ static int __init vmx_init(void)
+ 	}
+ #endif
+ 
+-	vmx_setup_l1d_flush();
++	r = vmx_setup_l1d_flush();
++	if (r)
++		return r;
+ 
+ 	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+-                     __alignof__(struct vcpu_vmx), THIS_MODULE);
+-	if (r)
++		     __alignof__(struct vcpu_vmx), THIS_MODULE);
++	if (r) {
++		vmx_free_l1d_flush_pages();
+ 		return r;
++	}
+ 
+ #ifdef CONFIG_KEXEC_CORE
+ 	rcu_assign_pointer(crash_vmclear_loaded_vmcss,
+@@ -13017,6 +13077,7 @@ static void __exit vmx_exit(void)
+ 		static_branch_disable(&enable_evmcs);
+ 	}
+ #endif
++	vmx_free_l1d_flush_pages();
+ }
+ 
+ module_init(vmx_init)
 
 
