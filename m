@@ -6,75 +6,75 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D04C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5ADC46470
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFA0216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFA0216E5
+	by mail.kernel.org (Postfix) with ESMTP id 347EE216E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347EE216E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbeHNUy1 (ORCPT
+        id S1730408AbeHNUy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:54:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43124 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728692AbeHNUy0 (ORCPT
+        Tue, 14 Aug 2018 16:54:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728692AbeHNUy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:54:26 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EI48cs089477
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:06:06 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kv298vexu-1
+        Tue, 14 Aug 2018 16:54:28 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EI49Zj086715
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:06:09 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kv2854npm-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:06:06 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 14:06:09 -0400
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <davidj@linux.ibm.com>;
-        Tue, 14 Aug 2018 12:06:05 -0600
+        Tue, 14 Aug 2018 12:06:08 -0600
 Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 14 Aug 2018 12:06:02 -0600
+        Tue, 14 Aug 2018 12:06:06 -0600
 Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7EI61BD18940108
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7EI65BN19595284
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 14 Aug 2018 11:06:01 -0700
+        Tue, 14 Aug 2018 11:06:05 -0700
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27530C6055;
-        Tue, 14 Aug 2018 12:06:01 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 0CD60C6059;
+        Tue, 14 Aug 2018 12:06:05 -0600 (MDT)
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABF32C6057;
-        Tue, 14 Aug 2018 12:06:00 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 91D79C6055;
+        Tue, 14 Aug 2018 12:06:04 -0600 (MDT)
 Received: from dev.watson.ibm.com (unknown [9.31.111.83])
         by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Aug 2018 12:06:00 -0600 (MDT)
+        Tue, 14 Aug 2018 12:06:04 -0600 (MDT)
 From:   David Jacobson <davidj@linux.ibm.com>
 To:     linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 Cc:     David Jacobson <david@davidej.com>, Petr Vorel <pvorel@suze.cz>,
         David Jacobson <davidj@linux.ibm.com>
-Subject: [PATCH 5/7] evmtest: validate boot record
-Date:   Tue, 14 Aug 2018 14:05:49 -0400
+Subject: [PATCH 7/7] emvtest: Add ability to run all tests
+Date:   Tue, 14 Aug 2018 14:05:51 -0400
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180814180551.28311-1-davidj@linux.ibm.com>
 References: <20180814180551.28311-1-davidj@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18081418-0036-0000-0000-00000A22B2A1
+x-cbid: 18081418-0020-0000-0000-00000E504FF5
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009544; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01073490; UDB=6.00553126; IPR=6.00853448;
- MB=3.00022715; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-14 18:06:03
+ MB=3.00022715; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-14 18:06:07
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081418-0037-0000-0000-00004894FA8B
-Message-Id: <20180814180551.28311-5-davidj@linux.ibm.com>
+x-cbparentid: 18081418-0021-0000-0000-000062ACFC8B
+Message-Id: <20180814180551.28311-7-davidj@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-14_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808140185
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,164 +82,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first record in the IMA runtime measurement list is the boot
-aggregate - a hash of PCRs 0-7. This test calculates the boot aggregate
-based off the PCRs and compares it to IMA's boot aggregate.
+evmtest tests functionality of different IMA-Appraisal policies.
 
-Dependencies: a TPM, IBMTSS2.
+To simplify testing, this patch defines an evmtest config file.  This
+allows for running all tests at once, rather than invoking each test
+individually. Variables can be set once rather than specifying
+parameters at runtime on the command line.
 
 Signed-off-by: David Jacobson <davidj@linux.ibm.com>
 ---
- evmtest/functions/r_validate_boot_record.sh | 140 ++++++++++++++++++++
- 1 file changed, 140 insertions(+)
- create mode 100755 evmtest/functions/r_validate_boot_record.sh
+ evmtest/README       | 19 +++++++++++++++--
+ evmtest/evmtest      | 51 +++++++++++++++++++++++++++++++++++++++++++-
+ evmtest/example.conf | 14 ++++++++++++
+ 3 files changed, 81 insertions(+), 3 deletions(-)
+ create mode 100644 evmtest/example.conf
 
-diff --git a/evmtest/functions/r_validate_boot_record.sh b/evmtest/functions/r_validate_boot_record.sh
-new file mode 100755
-index 0000000..421cbf1
+diff --git a/evmtest/README b/evmtest/README
+index ac0c175..6f1c5c8 100644
+--- a/evmtest/README
++++ b/evmtest/README
+@@ -20,8 +20,8 @@ used to check a kernel's configuration and validate compatibility with IMA.
+ COMMANDS
+ --------
+ 
+- runtest <test name> - Run a specific test
+- runall <configuration> - Run all tests
++ runtest <test name> 	 - Run a specific test
++ runall  <configuration> - Run all tests
+ 
+ OPTIONS
+ -------
+@@ -34,7 +34,21 @@ OPTIONS
+  --vm				Validate compatibility with a virtual machine
+ 
+ 
++CONFIGURATION FILE
++------------------
++
++The `example.conf` provides a skeleton configuration file, where the only
++variable that *must* be defined is `IMA_KEY`.
++
++* `IMA_KEY` - The private key for the certificate on the IMA Trusted Keyring
+ 
++* `KBUILD_DIR` - Should point to a kernel build tree. If not provided, the test
++will use `/lib/modules/$(uname -r)/build`.
++
++* `KERN_IMAGE` - Should point towards an unsigned kernel image. If not provided,
++the test will attempt to use the running kernel.
++
++* `VERBOSE` - If set to 1, will add -v to all tests run
+ 
+ BACKGROUND
+ ----------
+@@ -42,6 +56,7 @@ The Linux kernel needs to be configured properly with a key embedded into the
+ kernel and loaded onto the `.builtin_trusted_keys` keyring at boot in order to
+ run evmtest.
+ 
++
+ === 1. Confirming the kernel is properly configured with IMA enabled.
+ 
+ A number of Kconfig options need to be configured to enable IMA and permit
+diff --git a/evmtest/evmtest b/evmtest/evmtest
+index dfe39a9..74c829c 100755
+--- a/evmtest/evmtest
++++ b/evmtest/evmtest
+@@ -17,7 +17,7 @@ fi
+ 
+ source $EVMDIR/files/common.sh
+ usage (){
+-	echo "Usage: evmtest [[runtest] <test_name>] [options]"
++	echo "Usage: evmtest [[runtest|runall] <test_name|config>] [options]"
+ 	echo ""
+ 	echo "Tests may be called directly by cd'ing to the evmtest directory:"
+ 	echo "$ cd $EVMDIR/functions"
+@@ -69,6 +69,55 @@ elif [[ "$1" == "runtest" ]]; then
+ 		runtest $@
+ 		exit $?
+ 	fi
++elif [[ "$1" == "runall" ]]; then
++	if [[ -z $2 || ! -e $2 ]]; then
++		echo "evmtest runall <config file>"
++		echo "[!] Please provide a config file"
++		exit 1
++	fi
++	source $2 # Load in config
++	if [[ $VERBOSE -eq 1 ]]; then
++		V="-v"
++	fi
++
++	# Key is not optional
++	if [[ -z $IMA_KEY ]]; then
++		echo "[*] Please correct your config file"
++		exit 1
++	fi
++
++	EVMTEST_require_root
++	FAIL=0
++	echo "[*] Running tests..."
++	# 1
++	$EVMDIR/functions/r_env_validate.sh -r $V
++
++	# 2
++	if [[ -z $KERN_IMAGE ]]; then
++		$EVMDIR/functions/r_kexec_sig.sh -k $IMA_KEY $V
++	else
++		$EVMDIR/functions/r_kexec_sig.sh -k $IMA_KEY -i $KERN_IMAGE $V
++	fi
++	FAIL=$((FAIL+$?))
++	# 3
++	if [[ -z $KBUILD_DIR ]]; then
++		$EVMDIR/functions/r_kmod_sig.sh -k $IMA_KEY $V
++	else
++		$EVMDIR/functions/r_kmod_sig.sh -b $KBUILD_DIR -k $IMA_KEY $V
++	fi
++	FAIL=$((FAIL+$?))
++	# 4
++	$EVMDIR/functions/r_policy_sig.sh -k $IMA_KEY $V
++	FAIL=$((FAIL+$?))
++	# 5
++	$EVMDIR/functions/r_validate_boot_record.sh $V
++	FAIL=$((FAIL+$?))
++	# 6
++	$EVMDIR/functions/r_xattr_preserve.sh $V
++	FAIL=$((FAIL+$?))
++	echo "..."
++	echo "[*] TESTS PASSED: $((6-FAIL))"
++	echo "[*] TESTS FAILED: $FAIL"
+ else
+ 	usage
+ fi
+diff --git a/evmtest/example.conf b/evmtest/example.conf
+new file mode 100644
+index 0000000..fd1c8fe
 --- /dev/null
-+++ b/evmtest/functions/r_validate_boot_record.sh
-@@ -0,0 +1,140 @@
-+#!/bin/bash
-+# Author: David Jacobson <davidj@linux.ibm.com>
-+TEST="r_validate_boot_record"
++++ b/evmtest/example.conf
+@@ -0,0 +1,14 @@
++# This is an example config file
++# There are three variables that can be set when using evmtest runall
 +
-+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/.."
-+source $ROOT/files/common.sh
-+
-+TPM_VERSION="2.0" # DEFAULT
++#Set this to 1 for verbose output
 +VERBOSE=0
-+TSS_DIR=`locate ibmtpm20tss | head -1`
-+EVENT_EXTEND=$TSS_DIR/utils12/eventextend
-+LD_LIBRARY_PATH=$TSS_DIR/utils:$TSS_DIR/utils12
-+MEASUREMENT_FILE=$EVMTEST_SECFS/tpm0/binary_bios_measurements
-+# This test validates the eventlog against the hardware PCRs in the TPM, and
-+# the boot aggregate against IMA.
++# Path to the private key for the IMA Trusted Keyring
++# This is required
++IMA_KEY=/path/to/your/ima_key
 +
-+usage (){
-+	echo "r_validate_boot_record [-hv]"
-+	echo ""
-+	echo "	This test must be run as root"
-+	echo ""
-+	echo "	This test will attempt to validate PCRs 0-7 in the TPM"
-+	echo "	It will also validate the boot_aggregate based those PCRs"
-+	echo "	against what IMA has recorded"
-+	echo ""
-+	echo "	-h,--help	Display this help message"
-+	echo "	-v,--verbose	Verbose logging"
-+}
++# If this is not provided, tests will run but attempt to copy the running kernel
++KERN_IMAGE=/path/to/unsigned/kernel_image
 +
-+
-+TEMP=`getopt -o 'hv' -l 'help,verbose' -n 'r_validate_boot_record' -- "$@"`
-+eval set -- "$TEMP"
-+
-+while true ; do
-+	case "$1" in
-+	-h|--help) usage; exit; shift;;
-+	-v|--verbose) VERBOSE=1; shift;;
-+	--) shift; break;;
-+	*) echo "[*] Unrecognized option $1"; exit 1 ;;
-+	esac
-+done
-+
-+EVMTEST_require_root
-+
-+echo "[*] Starting test: $TEST"
-+
-+v_out "Checking if securityfs is mounted..."
-+if [[ -z $EVMTEST_SECFS_EXISTS ]]; then
-+	fail "securityfs not found..."
-+fi
-+
-+v_out "Verifying TPM is present..."
-+if [[ ! -d $EVMTEST_SECFS/tpm0 ]]; then
-+	fail "Could not locate TPM in $EVMTEST_SECFS"
-+fi
-+
-+v_out "TPM found..."
-+
-+v_out "Checking if system supports reading event log..."
-+
-+if [[ ! -f $EVMTEST_SECFS/tpm0/binary_bios_measurements ]]; then
-+		fail "Kernel does not support reading BIOS measurements,
-+		please update to at least 4.16.0"
-+fi
-+
-+
-+
-+v_out "Verifying TPM Version"
-+if [[ -e /sys/class/tpm/tpm0/device/caps ]]; then
-+	contains_12=`grep 'TCG version: 1.2' /sys/class/tpm/tpm0/device/caps`
-+	if [[ -z $contains12 ]]; then
-+		v_out "TPM 1.2"
-+		TPM_VERSION="1.2"
-+	fi
-+else
-+	v_out "TPM 2.0"
-+fi
-+
-+v_out "Checking if system supports reading PCRs..."
-+
-+if [[ ! -d $TSS_DIR ]]; then
-+	fail "Could not find TSS2, please install using the package and
-+	 try again"
-+fi
-+
-+v_out "Grabbing PCR values..."
-+pcrs=() # array to store the Hardware PCR values
-+sim_pcrs=() # What PCRs should be according to the event log
-+halg=$(grep boot_aggregate $EVMTEST_SECFS/ima/ascii_runtime_measurements|\
-+		sed -n 's/.*\(sha[^:]*\):.*/\1/p')
-+
-+for ((i=0; i<=7; i++)); do
-+	if [[ $TPM_VERSION == "1.2" ]]; then
-+		pcrs[i]=`TPM_INTERFACE_TYPE=dev $TSS_DIR/utils12/pcrread \
-+			-ha $i -ns`
-+	else
-+		pcrs[i]=`TPM_INTERFACE_TYPE=dev $TSS_DIR/utils/pcrread \
-+			-ha $i -halg $halg -ns`
-+	fi
-+done
-+
-+tss_out=`LD_LIBRARY_PATH=$LD_LIBRARY_PATH $EVENT_EXTEND -if \
-+				$MEASUREMENT_FILE -sim -ns`
-+for ((y=2; y<=9; y++)); do
-+	# Parse TSS output - first strip away PCR, then split on :, then
-+	# remove leading whitespace
-+	x=`echo $tss_out | awk -v y=$y -F 'PCR' '{print $y}'`
-+	x=`echo "$x" | awk -F ":" '{print $2}' | sed -e 's/^[ \t]*//'`
-+	index=$((y-2))
-+	sim_pcrs[$index]=$x
-+done
-+
-+v_out "Validating PCRs.."
-+for ((i=0; i<=7; i++)); do
-+	v_out "SIM PCR [$i]: ${sim_pcrs[$i]}"
-+	v_out "TPM PCR [$i]: ${pcrs[$i]}"
-+	if [[  "${pcrs[$i]}" = "${sim_pcrs[$i]}" ]]; then
-+		v_out "PCRs are incorrect..."
-+		fail "Mismatch at PCR "$i" "
-+	else
-+		v_out "PCR $i validated..."
-+	fi
-+done
-+
-+
-+v_out "Validating Boot Aggregate..."
-+tss_boot_agg=`echo $tss_out | awk -F "boot aggregate:" '{print $2}'| tr -d " "`
-+ima_boot_agg=`grep boot_aggregate \
-+$EVMTEST_SECFS/ima/ascii_runtime_measurements|cut -d ":" -f2|cut -d " " -f1`
-+v_out "TSS BOOT AGG: $tss_boot_agg"
-+v_out "IMA BOOT AGG: $ima_boot_agg"
-+
-+if [ "$tss_boot_agg" != "$ima_boot_agg" ]; then
-+	fail "Boot Aggregate is inconsistent"
-+else
-+	v_out "Boot Aggregate validated"
-+fi
-+
-+echo "[*] TEST: PASSED"
-+exit 0
++# If this is not defined, tests will try to find build tree
++KBUILD_DIR=/path/to/kernel/build/tree
 -- 
 2.17.1
 
