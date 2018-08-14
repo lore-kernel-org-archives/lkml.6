@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7DFC46473
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D595DC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808A521736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808A521736
+	by mail.kernel.org (Postfix) with ESMTP id 9764621738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9764621738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391324AbeHNUgc (ORCPT
+        id S2391335AbeHNUgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:36:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32968 "EHLO
+        Tue, 14 Aug 2018 16:36:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32974 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390567AbeHNUgb (ORCPT
+        with ESMTP id S2390567AbeHNUgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:36:31 -0400
+        Tue, 14 Aug 2018 16:36:35 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5941CAE;
-        Tue, 14 Aug 2018 17:48:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CA54C74;
+        Tue, 14 Aug 2018 17:48:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 42/43] x86/mm/kmmio: Make the tracer robust against L1TF
-Date:   Tue, 14 Aug 2018 19:18:18 +0200
-Message-Id: <20180814171519.829833877@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 43/43] x86/speculation/l1tf: Fix up CPU feature flags
+Date:   Tue, 14 Aug 2018 19:18:19 +0200
+Message-Id: <20180814171519.886415475@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -52,71 +49,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 1063711b57393c1999248cccb57bebfaf16739e7 upstream
+In linux-4.4.y, the definition of X86_FEATURE_RETPOLINE and
+X86_FEATURE_RETPOLINE_AMD is different from the upstream
+definition. Result is an overlap with the newly introduced
+X86_FEATURE_L1TF_PTEINV. Update RETPOLINE definitions to match
+upstream definitions to improve alignment with upstream code.
 
-The mmio tracer sets io mapping PTEs and PMDs to non present when enabled
-without inverting the address bits, which makes the PTE entry vulnerable
-for L1TF.
-
-Make it use the right low level macros to actually invert the address bits
-to protect against L1TF.
-
-In principle this could be avoided because MMIO tracing is not likely to be
-enabled on production machines, but the fix is straigt forward and for
-consistency sake it's better to get rid of the open coded PTE manipulation.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/kmmio.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -125,24 +125,29 @@ static struct kmmio_fault_page *get_kmmi
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -193,12 +193,12 @@
+ #define X86_FEATURE_HW_PSTATE	( 7*32+ 8) /* AMD HW-PState */
+ #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
  
- static void clear_pmd_presence(pmd_t *pmd, bool clear, pmdval_t *old)
- {
-+	pmd_t new_pmd;
- 	pmdval_t v = pmd_val(*pmd);
- 	if (clear) {
--		*old = v & _PAGE_PRESENT;
--		v &= ~_PAGE_PRESENT;
--	} else	/* presume this has been called with clear==true previously */
--		v |= *old;
--	set_pmd(pmd, __pmd(v));
-+		*old = v;
-+		new_pmd = pmd_mknotpresent(*pmd);
-+	} else {
-+		/* Presume this has been called with clear==true previously */
-+		new_pmd = __pmd(*old);
-+	}
-+	set_pmd(pmd, new_pmd);
- }
++#define X86_FEATURE_RETPOLINE	( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE_AMD ( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
++
+ #define X86_FEATURE_INTEL_PT	( 7*32+15) /* Intel Processor Trace */
+ #define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* "" Fill RSB on context switches */
  
- static void clear_pte_presence(pte_t *pte, bool clear, pteval_t *old)
- {
- 	pteval_t v = pte_val(*pte);
- 	if (clear) {
--		*old = v & _PAGE_PRESENT;
--		v &= ~_PAGE_PRESENT;
--	} else	/* presume this has been called with clear==true previously */
--		v |= *old;
--	set_pte_atomic(pte, __pte(v));
-+		*old = v;
-+		/* Nothing should care about address */
-+		pte_clear(&init_mm, 0, pte);
-+	} else {
-+		/* Presume this has been called with clear==true previously */
-+		set_pte_atomic(pte, __pte(*old));
-+	}
- }
+-#define X86_FEATURE_RETPOLINE	( 7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
+-#define X86_FEATURE_RETPOLINE_AMD ( 7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+-
+ #define X86_FEATURE_MSR_SPEC_CTRL ( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
+ #define X86_FEATURE_SSBD	( 7*32+17) /* Speculative Store Bypass Disable */
  
- static int clear_page_presence(struct kmmio_fault_page *f, bool clear)
 
 
