@@ -2,169 +2,159 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A8BC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D27C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5EE121728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:49:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5EE121728
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B6792172B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:49:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6792172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732564AbeHNThG (ORCPT
+        id S1732767AbeHNThn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:37:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45936 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732280AbeHNThF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:37:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FDFD18A;
-        Tue, 14 Aug 2018 09:49:10 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A24BF3F5BD;
-        Tue, 14 Aug 2018 09:49:07 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 17:49:05 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 03/14] sched/core: uclamp: add CPU's clamp groups
- accounting
-Message-ID: <20180814164905.GG2605@e110439-lin>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-4-patrick.bellasi@arm.com>
- <a24def9b-57bb-d072-5064-0421076d2e43@arm.com>
+        Tue, 14 Aug 2018 15:37:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732280AbeHNThn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:37:43 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B899C21728;
+        Tue, 14 Aug 2018 16:49:46 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 12:49:45 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        peterz@infradead.org, tj@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] Make call_srcu() available during very early boot
+Message-ID: <20180814124945.5cf1753f@gandalf.local.home>
+In-Reply-To: <20180814162448.GA20414@linux.vnet.ibm.com>
+References: <20180814162448.GA20414@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a24def9b-57bb-d072-5064-0421076d2e43@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar!
+On Tue, 14 Aug 2018 09:24:48 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-On 14-Aug 17:44, Dietmar Eggemann wrote:
-> On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
-
-[...]
-
-> >+/**
-> >+ * uclamp_cpu_put_id(): decrease reference count for a clamp group on a CPU
-> >+ * @p: the task being dequeued from a CPU
-> >+ * @cpu: the CPU from where the clamp group has to be released
-> >+ * @clamp_id: the utilization clamp (e.g. min or max utilization) to release
-> >+ *
-> >+ * When a task is dequeued from a CPU's RQ, the CPU's clamp group reference
-> >+ * counted by the task is decreased.
-> >+ * If this was the last task defining the current max clamp group, then the
-> >+ * CPU clamping is updated to find the new max for the specified clamp
-> >+ * index.
-> >+ */
-> >+static inline void uclamp_cpu_put_id(struct task_struct *p,
-> >+				     struct rq *rq, int clamp_id)
-> >+{
-> >+	struct uclamp_group *uc_grp;
-> >+	struct uclamp_cpu *uc_cpu;
-> >+	unsigned int clamp_value;
-> >+	int group_id;
-> >+
-> >+	/* No task specific clamp values: nothing to do */
-> >+	group_id = p->uclamp[clamp_id].group_id;
-> >+	if (group_id == UCLAMP_NOT_VALID)
-> >+		return;
-> >+
-> >+	/* Decrement the task's reference counted group index */
-> >+	uc_grp = &rq->uclamp.group[clamp_id][0];
-> >+#ifdef SCHED_DEBUG
-> >+	if (unlikely(uc_grp[group_id].tasks == 0)) {
-> >+		WARN(1, "invalid CPU[%d] clamp group [%d:%d] refcount\n",
-> >+		     cpu_of(rq), clamp_id, group_id);
-> >+		uc_grp[group_id].tasks = 1;
-> >+	}
-> >+#endif
+> Event tracing is moving to SRCU in order to take advantage of the fact
+> that SRCU may be safely used from idle and even offline CPUs.  However,
+> event tracing can invoke call_srcu() very early in the boot process,
+> even before workqueue_init_early() is invoked (let alone rcu_init()).
+> Therefore, call_srcu()'s attempts to queue work fail miserably.
 > 
-> This one indicates that there are some holes in your ref-counting.
-
-Not really, this has been added not because I've detected a refcount
-issue... but because it was suggested as a possible safety check in a
-previous code review comment:
-
-   https://lore.kernel.org/lkml/20180720151156.GA31421@e110439-lin/
-
-> It's probably easier to debug that there is still a task but the
-> uc_grp[group_id].tasks value == 0 (A). I assume the other problem exists as
-> well, i.e. last task and uc_grp[group_id].tasks > 1 (B)?
+> This commit therefore detects this situation, and refrains from attempting
+> to queue work before rcu_init() time, but does everything else that it
+> would have done, and in addition, adds the srcu_struct to a global list.
+> The rcu_init() function now invokes a new srcu_init() function, which
+> is empty if CONFIG_SRCU=n.  Otherwise, srcu_init() queues work for
+> each srcu_struct on the list.  This all happens early enough in boot
+> that there is but a single CPU with interrupts disabled, which allows
+> synchronization to be dispensed with.
 > 
-> You have uclamp_cpu_[get/put](_id)() in [enqueue/dequeue]_task.
+> Of course, the queued work won't actually be invoked until after
+> workqueue_init() is invoked, which happens shortly after the scheduler
+> is up and running.  This means that although call_srcu() may be invoked
+> any time after per-CPU variables have been set up, there is still a very
+> narrow window when synchronize_srcu() won't work, and this window
+> extends from the time that the scheduler starts until the time that
+> workqueue_init() returns.  This can be fixed in a manner similar to
+> the fix for synchronize_rcu_expedited() and friends, but until someone
+> actually needs to use synchronize_srcu() during this window, this fix
+> is added churn for no benefit.
 > 
-> Patch 04/14 introduces its use in uclamp_task_update_active().
+> Finally, note that Tree SRCU's new srcu_init() function invokes
+> queue_work() rather than the queue_delayed_work() function that is invoked
+> post-boot.  The reason is that queue_delayed_work() will (as you would
+> expect) post a timer, and timers have not yet been initialized.  So use
+> of queue_delayed_work() avoids the complaints about use of uninitialized
+
+You mean "So use of queue_work() avoids .." ?
+
+> spinlocks that would otherwise result.  Besides, delay is in any case
+> provide by the aforementioned fact that the queued work won't actually
+> be invoked until after the scheduler is up and running.
 > 
-> Do you know why (A) (and (B)) are happening?
-
-I've never saw that warning in my tests so far so, again, the warning
-is there just to support testing/debugging when refcounting code
-is/will be touched in the future. That's also the reason why is
-SCHED_DEBUG protected.
-
-> >+	uc_grp[group_id].tasks -= 1;
-> >+
-> >+	/* If this is not the last task, no updates are required */
-> >+	if (uc_grp[group_id].tasks > 0)
-> >+		return;
-> >+
-> >+	/*
-> >+	 * Update the CPU only if this was the last task of the group
-> >+	 * defining the current clamp value.
-> >+	 */
-> >+	uc_cpu = &rq->uclamp;
-> >+	clamp_value = uc_grp[group_id].value;
-> >+	if (clamp_value >= uc_cpu->value[clamp_id])
+> Requested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 > 
-> 'clamp_value > uc_cpu->value[clamp_id]' should indicate another
-> inconsistency in the uclamp machinery, right?
+> diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
+> index f41d2fb09f87..2b5c0822e683 100644
+> --- a/include/linux/srcutiny.h
+> +++ b/include/linux/srcutiny.h
+> @@ -36,6 +36,7 @@ struct srcu_struct {
+>  	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
+>  	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
+>  	struct work_struct srcu_work;	/* For driving grace periods. */
+> +	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
 
-Here you right, I would say that it should always be:
+I really don't like increasing the size of a structure for a field that
+is hardly ever used.
 
-    clamp_value <= uc_cpu->value[clamp_id]
+Is there a way we could make a union, or reuse one of the other fields,
+as we know that synchronize_srcu() can't be used yet (and if it is,
+either warn, or just make it a nop). And when we call srcu_init() and
+remove the srcu_struct from the list, we can then initialize whatever
+we used as the temporary boot up list field.
 
-since this matches the update done at the end of uclamp_cpu_get_id():
+srcu_init is called when we are still running only one CPU correct?
 
-   if (uc_cpu->value[clamp_id] < clamp_value)
-        uc_cpu->value[clamp_id] = clamp_value;
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>  	struct lockdep_map dep_map;
+>  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+> @@ -48,6 +49,7 @@ void srcu_drive_gp(struct work_struct *wp);
+>  	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
+>  	.srcu_cb_tail = &name.srcu_cb_head,				\
+>  	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
+> +	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
+>  	__SRCU_DEP_MAP_INIT(name)					\
+>  }
+>  
+> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+> index 745d4ca4dd50..86ad97111315 100644
+> --- a/include/linux/srcutree.h
+> +++ b/include/linux/srcutree.h
+> @@ -94,6 +94,7 @@ struct srcu_struct {
+>  						/*  callback for the barrier */
+>  						/*  operation. */
+>  	struct delayed_work work;
+> +	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>  	struct lockdep_map dep_map;
+>  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+> @@ -105,12 +106,13 @@ struct srcu_struct {
+>  #define SRCU_STATE_SCAN2	2
+>  
+>  #define __SRCU_STRUCT_INIT(name, pcpu_name)				\
+> -	{								\
+> -		.sda = &pcpu_name,					\
+> -		.lock = __SPIN_LOCK_UNLOCKED(name.lock),		\
+> -		.srcu_gp_seq_needed = 0 - 1,				\
+> -		__SRCU_DEP_MAP_INIT(name)				\
+> -	}
+> +{									\
+> +	.sda = &pcpu_name,						\
+> +	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
+> +	.srcu_gp_seq_needed = 0 - 1,					\
 
-Perhaps we can add another safety check here, similar to the one
-above, to have something like:
+Interesting initialization of -1. This was there before, but still
+interesting none the less.
 
-    clamp_value = uc_grp[group_id].value;
-#ifdef SCHED_DEBUG
-    if (unlikely(clamp_value > uc_cpu->value[clamp_id])) {
-        WARN(1, "invalid CPU[%d] clamp group [%d:%d] value\n",
-                cpu_of(rq), clamp_id, group_id);
-#endif
-    if (clamp_value == uc_cpu->value[clamp_id])
-        uclamp_cpu_update(rq, clamp_id);
+> +	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
+> +	__SRCU_DEP_MAP_INIT(name)					\
+> +}
+>  
+>
 
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+-- Steve
