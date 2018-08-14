@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE167C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3EEC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A209821655
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A209821655
+	by mail.kernel.org (Postfix) with ESMTP id 8FE472150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE472150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389890AbeHNU3D (ORCPT
+        id S2389901AbeHNU3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:29:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58908 "EHLO
+        Tue, 14 Aug 2018 16:29:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732016AbeHNU3C (ORCPT
+        with ESMTP id S1732016AbeHNU3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:29:02 -0400
+        Tue, 14 Aug 2018 16:29:05 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5DC3D83;
-        Tue, 14 Aug 2018 17:40:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF63BD20;
+        Tue, 14 Aug 2018 17:40:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 037/107] x86/smp: Provide topology_is_primary_thread()
-Date:   Tue, 14 Aug 2018 19:17:00 +0200
-Message-Id: <20180814171523.013977044@linuxfoundation.org>
+Subject: [PATCH 4.9 038/107] x86/topology: Provide topology_smt_supported()
+Date:   Tue, 14 Aug 2018 19:17:01 +0200
+Message-Id: <20180814171523.075397492@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -54,101 +54,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 6a4d2657e048f096c7ffcad254010bd94891c8c0 upstream
+commit f048c399e0f7490ab7296bc2c255d37eb14a9675 upstream
 
-If the CPU is supporting SMT then the primary thread can be found by
-checking the lower APIC ID bits for zero. smp_num_siblings is used to build
-the mask for the APIC ID bits which need to be taken into account.
+Provide information whether SMT is supoorted by the CPUs. Preparatory patch
+for SMT control mechanism.
 
-This uses the MPTABLE or ACPI/MADT supplied APIC ID, which can be different
-than the initial APIC ID in CPUID. But according to AMD the lower bits have
-to be consistent. Intel gave a tentative confirmation as well.
-
-Preparatory patch to support disabling SMT at boot/runtime.
-
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/apic.h     |    7 +++++++
- arch/x86/include/asm/topology.h |    4 +++-
- arch/x86/kernel/apic/apic.c     |   15 +++++++++++++++
- arch/x86/kernel/smpboot.c       |    9 +++++++++
- 4 files changed, 34 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/topology.h |    2 ++
+ arch/x86/kernel/smpboot.c       |    8 ++++++++
+ 2 files changed, 10 insertions(+)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -633,6 +633,13 @@ extern int default_check_phys_apicid_pre
- #endif
- 
- #endif /* CONFIG_X86_LOCAL_APIC */
-+
-+#ifdef CONFIG_SMP
-+bool apic_id_is_primary_thread(unsigned int id);
-+#else
-+static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
-+#endif
-+
- extern void irq_enter(void);
- extern void irq_exit(void);
- 
 --- a/arch/x86/include/asm/topology.h
 +++ b/arch/x86/include/asm/topology.h
-@@ -129,13 +129,15 @@ static inline int topology_max_smt_threa
- }
- 
+@@ -131,6 +131,7 @@ static inline int topology_max_smt_threa
  int topology_update_package_map(unsigned int apicid, unsigned int cpu);
--extern int topology_phys_to_logical_pkg(unsigned int pkg);
-+int topology_phys_to_logical_pkg(unsigned int pkg);
-+bool topology_is_primary_thread(unsigned int cpu);
+ int topology_phys_to_logical_pkg(unsigned int pkg);
+ bool topology_is_primary_thread(unsigned int cpu);
++bool topology_smt_supported(void);
  #else
  #define topology_max_packages()			(1)
  static inline int
- topology_update_package_map(unsigned int apicid, unsigned int cpu) { return 0; }
+@@ -138,6 +139,7 @@ topology_update_package_map(unsigned int
  static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
  static inline int topology_max_smt_threads(void) { return 1; }
-+static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
+ static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
++static inline bool topology_smt_supported(void) { return false; }
  #endif
  
  static inline void arch_fix_phys_package_id(int num, u32 slot)
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -2041,6 +2041,21 @@ static int cpuid_to_apicid[] = {
- 	[0 ... NR_CPUS - 1] = -1,
- };
- 
-+/**
-+ * apic_id_is_primary_thread - Check whether APIC ID belongs to a primary thread
-+ * @id:	APIC ID to check
-+ */
-+bool apic_id_is_primary_thread(unsigned int apicid)
-+{
-+	u32 mask;
-+
-+	if (smp_num_siblings == 1)
-+		return true;
-+	/* Isolate the SMT bit(s) in the APICID and check for 0 */
-+	mask = (1U << (fls(smp_num_siblings) - 1)) - 1;
-+	return !(apicid & mask);
-+}
-+
- /*
-  * Should use this API to allocate logical CPU IDs to keep nr_logical_cpuids
-  * and cpuid_to_apicid[] synchronized.
 --- a/arch/x86/kernel/smpboot.c
 +++ b/arch/x86/kernel/smpboot.c
-@@ -296,6 +296,15 @@ found:
+@@ -305,6 +305,14 @@ bool topology_is_primary_thread(unsigned
  }
  
  /**
-+ * topology_is_primary_thread - Check whether CPU is the primary SMT thread
-+ * @cpu:	CPU to check
++ * topology_smt_supported - Check whether SMT is supported by the CPUs
 + */
-+bool topology_is_primary_thread(unsigned int cpu)
++bool topology_smt_supported(void)
 +{
-+	return apic_id_is_primary_thread(per_cpu(x86_cpu_to_apicid, cpu));
++	return smp_num_siblings > 1;
 +}
 +
 +/**
