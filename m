@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3839CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951A2C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFEA2172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEFEA2172B
+	by mail.kernel.org (Postfix) with ESMTP id 5651821728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5651821728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388187AbeHNUN3 (ORCPT
+        id S2388200AbeHNUNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:13:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51646 "EHLO
+        Tue, 14 Aug 2018 16:13:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733240AbeHNUN2 (ORCPT
+        with ESMTP id S1733240AbeHNUNc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:13:28 -0400
+        Tue, 14 Aug 2018 16:13:32 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F404DCD8;
-        Tue, 14 Aug 2018 17:25:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 379FFD67;
+        Tue, 14 Aug 2018 17:25:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Laight <david.laight@aculab.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        jgross@suse.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, astrachan@google.com, mka@chromium.org,
-        arnd@arndb.de, tstellar@redhat.com, sedat.dilek@gmail.com,
-        David.Laight@aculab.com
-Subject: [PATCH 4.18 04/79] x86/irqflags: Provide a declaration for native_save_fl
-Date:   Tue, 14 Aug 2018 19:16:23 +0200
-Message-Id: <20180814171336.964554855@linuxfoundation.org>
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH 4.18 05/79] x86/speculation/l1tf: Increase 32bit PAE __PHYSICAL_PAGE_SHIFT
+Date:   Tue, 14 Aug 2018 19:16:24 +0200
+Message-Id: <20180814171337.001114399@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -56,53 +53,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 208cbb32558907f68b3b2a081ca2337ac3744794 upstream.
+L1 Terminal Fault (L1TF) is a speculation related vulnerability. The CPU
+speculates on PTE entries which do not have the PRESENT bit set, if the
+content of the resulting physical address is available in the L1D cache.
 
-It was reported that the commit d0a8d9378d16 is causing users of gcc < 4.9
-to observe -Werror=missing-prototypes errors.
+The OS side mitigation makes sure that a !PRESENT PTE entry points to a
+physical address outside the actually existing and cachable memory
+space. This is achieved by inverting the upper bits of the PTE. Due to the
+address space limitations this only works for 64bit and 32bit PAE kernels,
+but not for 32bit non PAE.
 
-Indeed, it seems that:
-extern inline unsigned long native_save_fl(void) { return 0; }
+This mitigation applies to both host and guest kernels, but in case of a
+64bit host (hypervisor) and a 32bit PAE guest, inverting the upper bits of
+the PAE address space (44bit) is not enough if the host has more than 43
+bits of populated memory address space, because the speculation treats the
+PTE content as a physical host address bypassing EPT.
 
-compiled with -Werror=missing-prototypes produces this warning in gcc <
-4.9, but not gcc >= 4.9.
+The host (hypervisor) protects itself against the guest by flushing L1D as
+needed, but pages inside the guest are not protected against attacks from
+other processes inside the same guest.
 
-Fixes: d0a8d9378d16 ("x86/paravirt: Make native_save_fl() extern inline").
-Reported-by: David Laight <david.laight@aculab.com>
-Reported-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+For the guest the inverted PTE mask has to match the host to provide the
+full protection for all pages the host could possibly map into the
+guest. The hosts populated address space is not known to the guest, so the
+mask must cover the possible maximal host address space, i.e. 52 bit.
+
+On 32bit PAE the maximum PTE mask is currently set to 44 bit because that
+is the limit imposed by 32bit unsigned long PFNs in the VMs. This limits
+the mask to be below what the host could possible use for physical pages.
+
+The L1TF PROT_NONE protection code uses the PTE masks to determine which
+bits to invert to make sure the higher bits are set for unmapped entries to
+prevent L1TF speculation attacks against EPT inside guests.
+
+In order to invert all bits that could be used by the host, increase
+__PHYSICAL_PAGE_SHIFT to 52 to match 64bit.
+
+The real limit for a 32bit PAE kernel is still 44 bits because all Linux
+PTEs are created from unsigned long PFNs, so they cannot be higher than 44
+bits on a 32bit kernel. So these extra PFN bits should be never set. The
+only users of this macro are using it to look at PTEs, so it's safe.
+
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Cc: jgross@suse.com
-Cc: kstewart@linuxfoundation.org
-Cc: gregkh@linuxfoundation.org
-Cc: boris.ostrovsky@oracle.com
-Cc: astrachan@google.com
-Cc: mka@chromium.org
-Cc: arnd@arndb.de
-Cc: tstellar@redhat.com
-Cc: sedat.dilek@gmail.com
-Cc: David.Laight@aculab.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180803170550.164688-1-ndesaulniers@google.com
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/irqflags.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/include/asm/page_32_types.h |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -13,6 +13,8 @@
-  * Interrupt control:
-  */
+--- a/arch/x86/include/asm/page_32_types.h
++++ b/arch/x86/include/asm/page_32_types.h
+@@ -29,8 +29,13 @@
+ #define N_EXCEPTION_STACKS 1
  
-+/* Declaration required for gcc < 4.9 to prevent -Werror=missing-prototypes */
-+extern inline unsigned long native_save_fl(void);
- extern inline unsigned long native_save_fl(void)
- {
- 	unsigned long flags;
+ #ifdef CONFIG_X86_PAE
+-/* 44=32+12, the limit we can fit into an unsigned long pfn */
+-#define __PHYSICAL_MASK_SHIFT	44
++/*
++ * This is beyond the 44 bit limit imposed by the 32bit long pfns,
++ * but we need the full mask to make sure inverted PROT_NONE
++ * entries have all the host bits set in a guest.
++ * The real limit is still 44 bits.
++ */
++#define __PHYSICAL_MASK_SHIFT	52
+ #define __VIRTUAL_MASK_SHIFT	32
+ 
+ #else  /* !CONFIG_X86_PAE */
 
 
