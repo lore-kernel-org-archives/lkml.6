@@ -6,35 +6,49 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DACE1C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C89FC46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4CF2172B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4CF2172B
+	by mail.kernel.org (Postfix) with ESMTP id D0BB92172B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BB92172B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388142AbeHNUNT (ORCPT
+        id S2388158AbeHNUNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:13:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51570 "EHLO
+        Tue, 14 Aug 2018 16:13:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51598 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387804AbeHNUNT (ORCPT
+        with ESMTP id S2387804AbeHNUNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:13:19 -0400
+        Tue, 14 Aug 2018 16:13:22 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F9DACD8;
-        Tue, 14 Aug 2018 17:25:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2FD8C5C;
+        Tue, 14 Aug 2018 17:25:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 29/79] x86/cpufeatures: Add detection of L1D cache flush support.
-Date:   Tue, 14 Aug 2018 19:16:48 +0200
-Message-Id: <20180814171337.912152753@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jon Medhurst <tixy@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Will Deacon <will.deacon@arm.com>, acme@kernel.org,
+        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
+        linux-arch@vger.kernel.org, rostedt@goodmis.org,
+        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 03/79] kprobes/x86: Fix %p uses in error messages
+Date:   Tue, 14 Aug 2018 19:16:22 +0200
+Message-Id: <20180814171336.924800339@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -51,33 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-336996-Speculative-Execution-Side-Channel-Mitigations.pdf defines a new MSR
-(IA32_FLUSH_CMD) which is detected by CPUID.7.EDX[28]=1 bit being set.
+commit 0ea063306eecf300fcf06d2f5917474b580f666f upstream.
 
-This new MSR "gives software a way to invalidate structures with finer
-granularity than other architectual methods like WBINVD."
+Remove all %p uses in error messages in kprobes/x86.
 
-A copy of this document is available at
-  https://bugzilla.kernel.org/show_bug.cgi?id=199511
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jon Medhurst <tixy@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Tobin C . Harding <me@tobin.cc>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: acme@kernel.org
+Cc: akpm@linux-foundation.org
+Cc: brueckner@linux.vnet.ibm.com
+Cc: linux-arch@vger.kernel.org
+Cc: rostedt@goodmis.org
+Cc: schwidefsky@de.ibm.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/lkml/152491902310.9916.13355297638917767319.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/cpufeatures.h |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -342,6 +342,7 @@
- #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
- 
+---
+ arch/x86/kernel/kprobes/core.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -395,8 +395,6 @@ int __copy_instruction(u8 *dest, u8 *src
+ 			  - (u8 *) real;
+ 		if ((s64) (s32) newdisp != newdisp) {
+ 			pr_err("Kprobes error: new displacement does not fit into s32 (%llx)\n", newdisp);
+-			pr_err("\tSrc: %p, Dest: %p, old disp: %x\n",
+-				src, real, insn->displacement.value);
+ 			return 0;
+ 		}
+ 		disp = (u8 *) dest + insn_offset_displacement(insn);
+@@ -640,8 +638,7 @@ static int reenter_kprobe(struct kprobe
+ 		 * Raise a BUG or we'll continue in an endless reentering loop
+ 		 * and eventually a stack overflow.
+ 		 */
+-		printk(KERN_WARNING "Unrecoverable kprobe detected at %p.\n",
+-		       p->addr);
++		pr_err("Unrecoverable kprobe detected.\n");
+ 		dump_kprobe(p);
+ 		BUG();
+ 	default:
 
 
