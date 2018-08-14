@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12119C46470
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBF6C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C883721738
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C883721738
+	by mail.kernel.org (Postfix) with ESMTP id 157E92173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:47:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157E92173C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391222AbeHNUf7 (ORCPT
+        id S2391229AbeHNUgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:35:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32846 "EHLO
+        Tue, 14 Aug 2018 16:36:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390877AbeHNUf7 (ORCPT
+        with ESMTP id S2390875AbeHNUgC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:35:59 -0400
+        Tue, 14 Aug 2018 16:36:02 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61899C74;
-        Tue, 14 Aug 2018 17:47:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BDC2CC74;
+        Tue, 14 Aug 2018 17:47:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 08/43] ACPI / LPSS: Add missing prv_offset setting for byt/cht PWM devices
-Date:   Tue, 14 Aug 2018 19:17:44 +0200
-Message-Id: <20180814171517.646181663@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Maurizio Lombardi <mlombard@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 09/43] scsi: sr: Avoid that opening a CD-ROM hangs with runtime power management enabled
+Date:   Tue, 14 Aug 2018 19:17:45 +0200
+Message-Id: <20180814171517.705499658@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -52,50 +53,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit fdcb613d49321b5bf5d5a1bd0fba8e7c241dcc70 upstream.
+commit 1214fd7b497400d200e3f4e64e2338b303a20949 upstream.
 
-The LPSS PWM device on on Bay Trail and Cherry Trail devices has a set
-of private registers at offset 0x800, the current lpss_device_desc for
-them already sets the LPSS_SAVE_CTX flag to have these saved/restored
-over device-suspend, but the current lpss_device_desc was not setting
-the prv_offset field, leading to the regular device registers getting
-saved/restored instead.
+Surround scsi_execute() calls with scsi_autopm_get_device() and
+scsi_autopm_put_device(). Note: removing sr_mutex protection from the
+scsi_cd_get() and scsi_cd_put() calls is safe because the purpose of
+sr_mutex is to serialize cdrom_*() calls.
 
-This is causing the PWM controller to no longer work, resulting in a black
-screen,  after a suspend/resume on systems where the firmware clears the
-APB clock and reset bits at offset 0x804.
+This patch avoids that complaints similar to the following appear in the
+kernel log if runtime power management is enabled:
 
-This commit fixes this by properly setting prv_offset to 0x800 for
-the PWM devices.
+INFO: task systemd-udevd:650 blocked for more than 120 seconds.
+     Not tainted 4.18.0-rc7-dbg+ #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+systemd-udevd   D28176   650    513 0x00000104
+Call Trace:
+__schedule+0x444/0xfe0
+schedule+0x4e/0xe0
+schedule_preempt_disabled+0x18/0x30
+__mutex_lock+0x41c/0xc70
+mutex_lock_nested+0x1b/0x20
+__blkdev_get+0x106/0x970
+blkdev_get+0x22c/0x5a0
+blkdev_open+0xe9/0x100
+do_dentry_open.isra.19+0x33e/0x570
+vfs_open+0x7c/0xd0
+path_openat+0x6e3/0x1120
+do_filp_open+0x11c/0x1c0
+do_sys_open+0x208/0x2d0
+__x64_sys_openat+0x59/0x70
+do_syscall_64+0x77/0x230
+entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Cc: stable@vger.kernel.org
-Fixes: e1c748179754 ("ACPI / LPSS: Add Intel BayTrail ACPI mode PWM")
-Fixes: 1bfbd8eb8a7f ("ACPI / LPSS: Add ACPI IDs for Intel Braswell")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Rafael J . Wysocki <rjw@rjwysocki.net>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Maurizio Lombardi <mlombard@redhat.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: <stable@vger.kernel.org>
+Tested-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/acpi/acpi_lpss.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -154,10 +154,12 @@ static const struct lpss_device_desc lpt
+---
+ drivers/scsi/sr.c |   29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -520,18 +520,26 @@ static int sr_init_command(struct scsi_c
+ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+ {
+ 	struct scsi_cd *cd;
++	struct scsi_device *sdev;
+ 	int ret = -ENXIO;
  
- static const struct lpss_device_desc byt_pwm_dev_desc = {
- 	.flags = LPSS_SAVE_CTX,
-+	.prv_offset = 0x800,
- };
++	cd = scsi_cd_get(bdev->bd_disk);
++	if (!cd)
++		goto out;
++
++	sdev = cd->device;
++	scsi_autopm_get_device(sdev);
+ 	check_disk_change(bdev);
  
- static const struct lpss_device_desc bsw_pwm_dev_desc = {
- 	.flags = LPSS_SAVE_CTX | LPSS_NO_D3_DELAY,
-+	.prv_offset = 0x800,
- };
+ 	mutex_lock(&sr_mutex);
+-	cd = scsi_cd_get(bdev->bd_disk);
+-	if (cd) {
+-		ret = cdrom_open(&cd->cdi, bdev, mode);
+-		if (ret)
+-			scsi_cd_put(cd);
+-	}
++	ret = cdrom_open(&cd->cdi, bdev, mode);
+ 	mutex_unlock(&sr_mutex);
++
++	scsi_autopm_put_device(sdev);
++	if (ret)
++		scsi_cd_put(cd);
++
++out:
+ 	return ret;
+ }
  
- static const struct lpss_device_desc byt_uart_dev_desc = {
+@@ -559,6 +567,8 @@ static int sr_block_ioctl(struct block_d
+ 	if (ret)
+ 		goto out;
+ 
++	scsi_autopm_get_device(sdev);
++
+ 	/*
+ 	 * Send SCSI addressing ioctls directly to mid level, send other
+ 	 * ioctls to cdrom/block level.
+@@ -567,15 +577,18 @@ static int sr_block_ioctl(struct block_d
+ 	case SCSI_IOCTL_GET_IDLUN:
+ 	case SCSI_IOCTL_GET_BUS_NUMBER:
+ 		ret = scsi_ioctl(sdev, cmd, argp);
+-		goto out;
++		goto put;
+ 	}
+ 
+ 	ret = cdrom_ioctl(&cd->cdi, bdev, mode, cmd, arg);
+ 	if (ret != -ENOSYS)
+-		goto out;
++		goto put;
+ 
+ 	ret = scsi_ioctl(sdev, cmd, argp);
+ 
++put:
++	scsi_autopm_put_device(sdev);
++
+ out:
+ 	mutex_unlock(&sr_mutex);
+ 	return ret;
 
 
