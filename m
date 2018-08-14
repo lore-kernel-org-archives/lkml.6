@@ -6,33 +6,47 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA3BC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 650FAC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 220932150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220932150B
+	by mail.kernel.org (Postfix) with ESMTP id 26B802150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B802150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388594AbeHNU1g (ORCPT
+        id S2388647AbeHNU1n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:27:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58462 "EHLO
+        Tue, 14 Aug 2018 16:27:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58484 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeHNU1g (ORCPT
+        with ESMTP id S1729689AbeHNU1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:27:36 -0400
+        Tue, 14 Aug 2018 16:27:42 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE597CBA;
-        Tue, 14 Aug 2018 17:39:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3A99CBA;
+        Tue, 14 Aug 2018 17:39:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.9 003/107] parisc: Enable CONFIG_MLONGCALLS by default
-Date:   Tue, 14 Aug 2018 19:16:26 +0200
-Message-Id: <20180814171521.062016591@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sodagudi Prasad <psodagud@codeaurora.org>
+Subject: [PATCH 4.9 005/107] kasan: add no_sanitize attribute for clang builds
+Date:   Tue, 14 Aug 2018 19:16:28 +0200
+Message-Id: <20180814171521.174514497@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
@@ -49,32 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Andrey Konovalov <andreyknvl@google.com>
 
-commit 66509a276c8c1d19ee3f661a41b418d101c57d29 upstream.
+commit 12c8f25a016dff69ee284aa3338bebfd2cfcba33 upstream.
 
-Enable the -mlong-calls compiler option by default, because otherwise in most
-cases linking the vmlinux binary fails due to truncations of R_PARISC_PCREL22F
-relocations. This fixes building the 64-bit defconfig.
+KASAN uses the __no_sanitize_address macro to disable instrumentation of
+particular functions.  Right now it's defined only for GCC build, which
+causes false positives when clang is used.
 
-Cc: stable@vger.kernel.org # 4.0+
-Signed-off-by: Helge Deller <deller@gmx.de>
+This patch adds a definition for clang.
+
+Note, that clang's revision 329612 or higher is required.
+
+[andreyknvl@google.com: remove redundant #ifdef CONFIG_KASAN check]
+  Link: http://lkml.kernel.org/r/c79aa31a2a2790f6131ed607c58b0dd45dd62a6c.1523967959.git.andreyknvl@google.com
+Link: http://lkml.kernel.org/r/4ad725cc903f8534f8c8a60f0daade5e3d674f8d.1523554166.git.andreyknvl@google.com
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Lawrence <paullawrence@google.com>
+Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sodagudi Prasad <psodagud@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/compiler-clang.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -184,7 +184,7 @@ config PREFETCH
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -16,6 +16,9 @@
+  */
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
  
- config MLONGCALLS
- 	bool "Enable the -mlong-calls compiler option for big kernels"
--	def_bool y if (!MODULES)
-+	default y
- 	depends on PA8X00
- 	help
- 	  If you configure the kernel to include many drivers built-in instead
++#undef __no_sanitize_address
++#define __no_sanitize_address __attribute__((no_sanitize("address")))
++
+ /* Clang doesn't have a way to turn it off per-function, yet. */
+ #ifdef __noretpoline
+ #undef __noretpoline
 
 
