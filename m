@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E90C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7B4C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5D521730
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5D521730
+	by mail.kernel.org (Postfix) with ESMTP id 1A5E221728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5E221728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388821AbeHNUP5 (ORCPT
+        id S2388835AbeHNUQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:15:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52536 "EHLO
+        Tue, 14 Aug 2018 16:16:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52546 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387825AbeHNUP5 (ORCPT
+        with ESMTP id S2387825AbeHNUQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:15:57 -0400
+        Tue, 14 Aug 2018 16:16:00 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC259BDB;
-        Tue, 14 Aug 2018 17:27:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE410C5C;
+        Tue, 14 Aug 2018 17:27:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 39/79] x86/KVM/VMX: Add L1D flush logic
-Date:   Tue, 14 Aug 2018 19:16:58 +0200
-Message-Id: <20180814171338.305107339@linuxfoundation.org>
+Subject: [PATCH 4.18 40/79] x86/KVM/VMX: Split the VMX MSR LOAD structures to have an host/guest numbers
+Date:   Tue, 14 Aug 2018 19:16:59 +0200
+Message-Id: <20180814171338.341329218@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -51,175 +51,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-Add the logic for flushing L1D on VMENTER. The flush depends on the static
-key being enabled and the new l1tf_flush_l1d flag being set.
+There is no semantic change but this change allows an unbalanced amount of
+MSRs to be loaded on VMEXIT and VMENTER, i.e. the number of MSRs to save or
+restore on VMEXIT or VMENTER may be different.
 
-The flags is set:
- - Always, if the flush module parameter is 'always'
-
- - Conditionally at:
-   - Entry to vcpu_run(), i.e. after executing user space
-
-   - From the sched_in notifier, i.e. when switching to a vCPU thread.
-
-   - From vmexit handlers which are considered unsafe, i.e. where
-     sensitive data can be brought into L1D:
-
-     - The emulator, which could be a good target for other speculative
-       execution-based threats,
-
-     - The MMU, which can bring host page tables in the L1 cache.
-
-     - External interrupts
-
-     - Nested operations that require the MMU (see above). That is
-       vmptrld, vmptrst, vmclear,vmwrite,vmread.
-
-     - When handling invept,invvpid
-
-[ tglx: Split out from combo patch and reduced to a single flag ]
-
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/kvm_host.h |    4 ++++
- arch/x86/kvm/mmu.c              |    1 +
- arch/x86/kvm/vmx.c              |   22 +++++++++++++++++++++-
- arch/x86/kvm/x86.c              |    8 ++++++++
- 4 files changed, 34 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |   65 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 35 insertions(+), 30 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -713,6 +713,9 @@ struct kvm_vcpu_arch {
- 
- 	/* be preempted when it's in kernel-mode(cpl=0) */
- 	bool preempted_in_kernel;
-+
-+	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
-+	bool l1tf_flush_l1d;
- };
- 
- struct kvm_lpage_info {
-@@ -881,6 +884,7 @@ struct kvm_vcpu_stat {
- 	u64 signal_exits;
- 	u64 irq_window_exits;
- 	u64 nmi_window_exits;
-+	u64 l1d_flush;
- 	u64 halt_exits;
- 	u64 halt_successful_poll;
- 	u64 halt_attempted_poll;
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3840,6 +3840,7 @@ int kvm_handle_page_fault(struct kvm_vcp
- {
- 	int r = 1;
- 
-+	vcpu->arch.l1tf_flush_l1d = true;
- 	switch (vcpu->arch.apf.host_apf_reason) {
- 	default:
- 		trace_kvm_page_fault(fault_address, error_code);
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -9612,9 +9612,20 @@ static int vmx_handle_exit(struct kvm_vc
- #define L1D_CACHE_ORDER 4
- static void *vmx_l1d_flush_pages;
+@@ -808,6 +808,11 @@ static inline int pi_test_sn(struct pi_d
+ 			(unsigned long *)&pi_desc->control);
+ }
  
--static void __maybe_unused vmx_l1d_flush(void)
-+static void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- {
- 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
-+	bool always;
++struct vmx_msrs {
++	unsigned int		nr;
++	struct vmx_msr_entry	val[NR_AUTOLOAD_MSRS];
++};
 +
-+	/*
-+	 * If the mitigation mode is 'flush always', keep the flush bit
-+	 * set, otherwise clear it. It gets set again either from
-+	 * vcpu_run() or from one of the unsafe VMEXIT handlers.
-+	 */
-+	always = vmentry_l1d_flush == VMENTER_L1D_FLUSH_ALWAYS;
-+	vcpu->arch.l1tf_flush_l1d = always;
-+
-+	vcpu->stat.l1d_flush++;
- 
- 	if (static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
- 		wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
-@@ -9883,6 +9894,7 @@ static void vmx_handle_external_intr(str
- 			[ss]"i"(__KERNEL_DS),
- 			[cs]"i"(__KERNEL_CS)
- 			);
-+		vcpu->arch.l1tf_flush_l1d = true;
+ struct vcpu_vmx {
+ 	struct kvm_vcpu       vcpu;
+ 	unsigned long         host_rsp;
+@@ -841,9 +846,8 @@ struct vcpu_vmx {
+ 	struct loaded_vmcs   *loaded_vmcs;
+ 	bool                  __launched; /* temporary, used in vmx_vcpu_run */
+ 	struct msr_autoload {
+-		unsigned nr;
+-		struct vmx_msr_entry guest[NR_AUTOLOAD_MSRS];
+-		struct vmx_msr_entry host[NR_AUTOLOAD_MSRS];
++		struct vmx_msrs guest;
++		struct vmx_msrs host;
+ 	} msr_autoload;
+ 	struct {
+ 		int           loaded;
+@@ -2451,18 +2455,18 @@ static void clear_atomic_switch_msr(stru
+ 		}
+ 		break;
  	}
- }
- STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
-@@ -10140,6 +10152,11 @@ static void __noclone vmx_vcpu_run(struc
- 	evmcs_rsp = static_branch_unlikely(&enable_evmcs) ?
- 		(unsigned long)&current_evmcs->host_rsp : 0;
+-
+-	for (i = 0; i < m->nr; ++i)
+-		if (m->guest[i].index == msr)
++	for (i = 0; i < m->guest.nr; ++i)
++		if (m->guest.val[i].index == msr)
+ 			break;
  
-+	if (static_branch_unlikely(&vmx_l1d_should_flush)) {
-+		if (vcpu->arch.l1tf_flush_l1d)
-+			vmx_l1d_flush(vcpu);
-+	}
-+
- 	asm(
- 		/* Store host registers */
- 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
-@@ -12005,6 +12022,9 @@ static int nested_vmx_run(struct kvm_vcp
- 		return ret;
+-	if (i == m->nr)
++	if (i == m->guest.nr)
+ 		return;
+-	--m->nr;
+-	m->guest[i] = m->guest[m->nr];
+-	m->host[i] = m->host[m->nr];
+-	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->nr);
+-	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->nr);
++	--m->guest.nr;
++	--m->host.nr;
++	m->guest.val[i] = m->guest.val[m->guest.nr];
++	m->host.val[i] = m->host.val[m->host.nr];
++	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
+ }
+ 
+ static void add_atomic_switch_msr_special(struct vcpu_vmx *vmx,
+@@ -2514,24 +2518,25 @@ static void add_atomic_switch_msr(struct
+ 		wrmsrl(MSR_IA32_PEBS_ENABLE, 0);
  	}
  
-+	/* Hide L1D cache contents from the nested guest.  */
-+	vmx->vcpu.arch.l1tf_flush_l1d = true;
-+
- 	/*
- 	 * If we're entering a halted L2 vcpu and the L2 vcpu won't be woken
- 	 * by event injection, halt vcpu.
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -195,6 +195,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "irq_injections", VCPU_STAT(irq_injections) },
- 	{ "nmi_injections", VCPU_STAT(nmi_injections) },
- 	{ "req_event", VCPU_STAT(req_event) },
-+	{ "l1d_flush", VCPU_STAT(l1d_flush) },
- 	{ "mmu_shadow_zapped", VM_STAT(mmu_shadow_zapped) },
- 	{ "mmu_pte_write", VM_STAT(mmu_pte_write) },
- 	{ "mmu_pte_updated", VM_STAT(mmu_pte_updated) },
-@@ -4876,6 +4877,9 @@ static int emulator_write_std(struct x86
- int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
- 				unsigned int bytes, struct x86_exception *exception)
- {
-+	/* kvm_write_guest_virt_system can pull in tons of pages. */
-+	vcpu->arch.l1tf_flush_l1d = true;
-+
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
- 					   PFERR_WRITE_MASK, exception);
- }
-@@ -6052,6 +6056,8 @@ int x86_emulate_instruction(struct kvm_v
- 	bool writeback = true;
- 	bool write_fault_to_spt = vcpu->arch.write_fault_to_shadow_pgtable;
+-	for (i = 0; i < m->nr; ++i)
+-		if (m->guest[i].index == msr)
++	for (i = 0; i < m->guest.nr; ++i)
++		if (m->guest.val[i].index == msr)
+ 			break;
  
-+	vcpu->arch.l1tf_flush_l1d = true;
-+
- 	/*
- 	 * Clear write_fault_to_shadow_pgtable here to ensure it is
- 	 * never reused.
-@@ -7581,6 +7587,7 @@ static int vcpu_run(struct kvm_vcpu *vcp
- 	struct kvm *kvm = vcpu->kvm;
+ 	if (i == NR_AUTOLOAD_MSRS) {
+ 		printk_once(KERN_WARNING "Not enough msr switch entries. "
+ 				"Can't add msr %x\n", msr);
+ 		return;
+-	} else if (i == m->nr) {
+-		++m->nr;
+-		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->nr);
+-		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->nr);
++	} else if (i == m->guest.nr) {
++		++m->guest.nr;
++		++m->host.nr;
++		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->guest.nr);
++		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->host.nr);
+ 	}
  
- 	vcpu->srcu_idx = srcu_read_lock(&kvm->srcu);
-+	vcpu->arch.l1tf_flush_l1d = true;
- 
- 	for (;;) {
- 		if (kvm_vcpu_running(vcpu)) {
-@@ -8700,6 +8707,7 @@ void kvm_arch_vcpu_uninit(struct kvm_vcp
- 
- void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
- {
-+	vcpu->arch.l1tf_flush_l1d = true;
- 	kvm_x86_ops->sched_in(vcpu, cpu);
+-	m->guest[i].index = msr;
+-	m->guest[i].value = guest_val;
+-	m->host[i].index = msr;
+-	m->host[i].value = host_val;
++	m->guest.val[i].index = msr;
++	m->guest.val[i].value = guest_val;
++	m->host.val[i].index = msr;
++	m->host.val[i].value = host_val;
  }
  
+ static bool update_transition_efer(struct vcpu_vmx *vmx, int efer_offset)
+@@ -6325,9 +6330,9 @@ static void vmx_vcpu_setup(struct vcpu_v
+ 
+ 	vmcs_write32(VM_EXIT_MSR_STORE_COUNT, 0);
+ 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, 0);
+-	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host));
++	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host.val));
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, 0);
+-	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest));
++	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest.val));
+ 
+ 	if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT)
+ 		vmcs_write64(GUEST_IA32_PAT, vmx->vcpu.arch.pat);
+@@ -11383,10 +11388,10 @@ static void prepare_vmcs02_full(struct k
+ 	 * Set the MSR load/store lists to match L0's settings.
+ 	 */
+ 	vmcs_write32(VM_EXIT_MSR_STORE_COUNT, 0);
+-	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+-	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host));
+-	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+-	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest));
++	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
++	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host.val));
++	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
++	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest.val));
+ 
+ 	set_cr4_guest_host_mask(vmx);
+ 
+@@ -12545,8 +12550,8 @@ static void nested_vmx_vmexit(struct kvm
+ 	vmx_segment_cache_clear(vmx);
+ 
+ 	/* Update any VMCS fields that might have changed while L2 ran */
+-	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+-	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
++	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
++	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
+ 	vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
+ 	if (vmx->hv_deadline_tsc == -1)
+ 		vmcs_clear_bits(PIN_BASED_VM_EXEC_CONTROL,
 
 
