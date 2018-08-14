@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D21C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAD5C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEFD1216E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEFD1216E5
+	by mail.kernel.org (Postfix) with ESMTP id 0A83A216E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 18:05:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A83A216E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeHNUWX (ORCPT
+        id S1728072AbeHNUWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 14 Aug 2018 16:22:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56330 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56318 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbeHNUWV (ORCPT
+        with ESMTP id S1725867AbeHNUWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 16:22:21 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D57F1E93;
-        Tue, 14 Aug 2018 17:33:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CECEADE0;
+        Tue, 14 Aug 2018 17:33:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Dae R. Jeong" <threeearcat@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 014/104] make sure that __dentry_kill() always invalidates d_seq, unhashed or not
-Date:   Tue, 14 Aug 2018 19:16:28 +0200
-Message-Id: <20180814171516.137970307@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 013/104] root dentries need RCU-delayed freeing
+Date:   Tue, 14 Aug 2018 19:16:27 +0200
+Message-Id: <20180814171516.072169620@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
 References: <20180814171515.270692185@linuxfoundation.org>
@@ -52,48 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 4c0d7cd5c8416b1ef41534d19163cb07ffaa03ab upstream.
+commit 90bad5e05bcdb0308cfa3d3a60f5c0b9c8e2efb3 upstream.
 
-RCU pathwalk relies upon the assumption that anything that changes
-->d_inode of a dentry will invalidate its ->d_seq.  That's almost
-true - the one exception is that the final dput() of already unhashed
-dentry does *not* touch ->d_seq at all.  Unhashing does, though,
-so for anything we'd found by RCU dcache lookup we are fine.
-Unfortunately, we can *start* with an unhashed dentry or jump into
-it.
+Since mountpoint crossing can happen without leaving lazy mode,
+root dentries do need the same protection against having their
+memory freed without RCU delay as everything else in the tree.
 
-We could try and be careful in the (few) places where that could
-happen.  Or we could just make the final dput() invalidate the damn
-thing, unhashed or not.  The latter is much simpler and easier to
-backport, so let's do it that way.
+It's partially hidden by RCU delay between detaching from the
+mount tree and dropping the vfsmount reference, but the starting
+point of pathwalk can be on an already detached mount, in which
+case umount-caused RCU delay has already passed by the time the
+lazy pathwalk grabs rcu_read_lock().  If the starting point
+happens to be at the root of that vfsmount *and* that vfsmount
+covers the entire filesystem, we get trouble.
 
-Reported-by: "Dae R. Jeong" <threeearcat@gmail.com>
+Fixes: 48a066e72d97 ("RCU'd vsfmounts")
 Cc: stable@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/dcache.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -357,14 +357,11 @@ static void dentry_unlink_inode(struct d
- 	__releases(dentry->d_inode->i_lock)
- {
- 	struct inode *inode = dentry->d_inode;
--	bool hashed = !d_unhashed(dentry);
+@@ -1922,10 +1922,12 @@ struct dentry *d_make_root(struct inode
  
--	if (hashed)
--		raw_write_seqcount_begin(&dentry->d_seq);
-+	raw_write_seqcount_begin(&dentry->d_seq);
- 	__d_clear_type_and_inode(dentry);
- 	hlist_del_init(&dentry->d_u.d_alias);
--	if (hashed)
--		raw_write_seqcount_end(&dentry->d_seq);
-+	raw_write_seqcount_end(&dentry->d_seq);
- 	spin_unlock(&dentry->d_lock);
- 	spin_unlock(&inode->i_lock);
- 	if (!inode->i_nlink)
+ 	if (root_inode) {
+ 		res = __d_alloc(root_inode->i_sb, NULL);
+-		if (res)
++		if (res) {
++			res->d_flags |= DCACHE_RCUACCESS;
+ 			d_instantiate(res, root_inode);
+-		else
++		} else {
+ 			iput(root_inode);
++		}
+ 	}
+ 	return res;
+ }
 
 
