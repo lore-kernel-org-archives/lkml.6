@@ -2,132 +2,157 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313F9C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4CFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2F1821709
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0C7121709
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 22:18:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhnz2jek"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F1821709
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KApLR1ci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C7121709
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbeHOBFQ (ORCPT
+        id S1729764AbeHOBHX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 21:05:16 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36534 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727776AbeHOBFQ (ORCPT
+        Tue, 14 Aug 2018 21:07:23 -0400
+Received: from mail-yw1-f73.google.com ([209.85.161.73]:51556 "EHLO
+        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727776AbeHOBHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 21:05:16 -0400
-Received: by mail-pl0-f66.google.com with SMTP id e11-v6so8875191plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 15:16:01 -0700 (PDT)
+        Tue, 14 Aug 2018 21:07:23 -0400
+Received: by mail-yw1-f73.google.com with SMTP id v14-v6so27657318ywv.18
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 15:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=DVT95wMs8iciLnoB+xncJ3cewJC6M3HPWMID8AIAjzU=;
-        b=nhnz2jek0KMWBU6Mi/Rup+jXme9IAO7/UKn8NXvV6TGNND/DaRoZMr/Dk13QfdYKbk
-         kssm2kYfmXNJxDlrn553WTMoXWjHSpVB2s/8fM8lARgXKCi9IgnYz249eJlxdzKB6Eqi
-         bYtRGy53sG6DS5uK8BI3OQttnpSPtxsaQT8J75l1mo7pXESeicJmsB1rWwfv7/t54bQx
-         8XLKoobptFWlSilUMokbLDVOH/V0HXyjUj4g0DJnPjb9a7jAgv8P9107S1Diq6E5202j
-         Q32/jMiSSE6N3EJalXoYnGbdvlhdITT/G0eo+qJWx4CjVCFYgyoM2EwO5xpFtwdmYeeZ
-         gpzQ==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:cc
+         :content-transfer-encoding;
+        bh=0jcTr2jZFTFq0mJjH4TgMxz6NVPThf7kR9ohRsDw31U=;
+        b=KApLR1ciciPPmRMy40Avwki/CF8Mw44FEw04SuAFoiKYnNIT6DRCthP/fsGaydL1on
+         aEaRg11bdRyv+ul7KSGDAv7kiHHfNb7G+H8ejIx7c3EYTG4vDzUHORVsNCpImkz14DWu
+         YA9513J1xI481CJYejx1ID5TZIGOTSsR5AYTL6k9hySyonKHpn4Wb1Zs4xmcKgvWj7Yb
+         2/S+6+o9ltFgH3h8no0jdx72ooSVqqwIwNL79OZFr8PqBEIyD66iIOyxlgmJ42ZHa1wd
+         pT/FBLcCYPuBZwdYTnETuCseJL5qbESbwKzX0auC++/LqqnmOlP5xK1+gm3Z0sgCrocE
+         WYFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=DVT95wMs8iciLnoB+xncJ3cewJC6M3HPWMID8AIAjzU=;
-        b=KM7L/jc0HKzUAoTJ2ghRpEZqMJZpb33t16946STBc4DzziIiRuhbKvrEwY5+I/UHfm
-         3YWItI1533clVvH7nrO24w6GiKQm0jNfRl+VX4PxduoUneVDARPWpbfBqHX4eYcYUdVA
-         WtCZ0woCoY1MRLJaH564mHC1tVXCQBFBLDjXsNxoVbV8fRPkvjdeTh6AjkykqeUGJnXM
-         Rc1tCSljrULk26Kx10AjCBB5SHsgP823qQtVYHyW5vJZMqgePCMWByPKmp8/XFKlQEZ/
-         f/yqaS5hO/TWFU1qUkCAGBoBVP9lRfrbo+xEwzJd8t8OMtWiowTJctax8BGGoIfJXeSv
-         kvqg==
-X-Gm-Message-State: AOUpUlEGV4w/4ee7UDDNDvxTmtawy9HIxXoVB97DgK01Pp05KFX5rlym
-        OpvTB/ZR1EnU3vFkm7b4N5Nr/s0Q
-X-Google-Smtp-Source: AA+uWPxiTVomNEgGK202zNkwwr8zMA7GbdZ0hb6tz8mnA3OrKHvxugY2xLCUz4CGewjHJ2N4BQ8sZg==
-X-Received: by 2002:a17:902:7486:: with SMTP id h6-v6mr22575116pll.165.1534284960847;
-        Tue, 14 Aug 2018 15:16:00 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id f90-v6sm36822442pfh.168.2018.08.14.15.16.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 15:16:00 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 15:15:59 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Build failures with gcc 4.5 and older
-Message-ID: <20180814221559.GA15888@roeck-us.net>
-References: <20180814170904.GA12768@roeck-us.net>
- <20180814143655.3acd4bb211d44747f77e74f2@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180814143655.3acd4bb211d44747f77e74f2@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc
+         :content-transfer-encoding;
+        bh=0jcTr2jZFTFq0mJjH4TgMxz6NVPThf7kR9ohRsDw31U=;
+        b=iORXQCeoOxd2mscxgTiObb+zpmrb8KTL23ROrkWuoFWlmizSQobidybUSf/E7oQMqB
+         1Gpr1Tv5cSMkL9q999t82L1vmWFITK3c4EmtPwUGMyCWmmu/Dn7AY8N01PXC3aGpmqSs
+         UaKcd/FHDh0HvzPIluEvYWWCz8uXcnn84Q7fuRXix2SeOh/FNDo7XxDZpf66LGNhWrdD
+         tSS+6l1Or5ki70ij3XsDF8M9P1VcZ2a4jyDvl5kHFeoJ7UrtjxPeA1WPHwy32hhmi2J5
+         KMH9ZFBAZBv5CTAaMCJqBRSvuDKXvkUtETiEPlkFzh4bIuHHW6WrvznQtmxizBEHlcWq
+         3NAw==
+X-Gm-Message-State: AOUpUlEHVUkwoXcXSWCGG9DQv/U119QbYDB3vfwboabJ9VfVWPe4Rb8S
+        IAhC26A283u/7m2S38eRfZ8oLwvkYK2THyI=
+X-Google-Smtp-Source: AA+uWPxlTjhV9wTRHvFa4ygpvCFDlK9zqMS0/23tjlSQLD0AqQpFWwwN13sfPcaMFNvSOvPwcbQOHlark/ROnjE=
+X-Received: by 2002:a0d:e0c6:: with SMTP id j189-v6mr7387483ywe.80.1534285087784;
+ Tue, 14 Aug 2018 15:18:07 -0700 (PDT)
+Date:   Tue, 14 Aug 2018 15:17:35 -0700
+Message-Id: <20180814221735.62804-1-wnukowski@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
+Subject: [PATCH] Bugfix for handling of shadow doorbell buffer.
+From:   Michal Wnukowski <wnukowski@google.com>
+Cc:     yigitfiliz@google.com, Michal Wnukowski <wnukowski@google.com>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 02:36:55PM -0700, Andrew Morton wrote:
-> On Tue, 14 Aug 2018 10:09:04 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> 
-> > Since commit c1a2f7f0c0645 ("mm: Allocate the mm_cpumask
-> > (mm->cpu_bitmap[]) dynamically based on nr_cpu_ids"), building
-> > the Linux kernel with gcc version 4.5 and older fails as follows.
-> > 
-> > In file included from ./include/linux/mm.h:17:0,
-> >                  from ./include/linux/pid_namespace.h:7,
-> > 		 from ./include/linux/ptrace.h:10,
-> > 		 from arch/openrisc/kernel/asm-offsets.c:32:
-> > ./include/linux/mm_types.h:497:16: error: flexible array member in otherwise empty struct
- 
-> Confused.  Why does it think that the mm_struct is "otherwise empty"?
-> 
+This patch adds full memory barrier into nvme_dbbuf_update_and_check_event
+function to ensure that the shadow doorbell is written before reading
+EventIdx from memory. This is a critical bugfix for initial patch that
+added support for shadow doorbell into NVMe driver
+(f9f38e33389c019ec880f6825119c94867c1fde0).
 
-The problem isn't really that the structure is otherwise empty.
-Some digging reveals that the error message is wrong; gcc should
-instead complain about having no _named_ structure element before
-the flexible array member.
+This memory barrier is required because =E2=80=9CLoads may be reordered wit=
+h
+older stores to different locations=E2=80=9C (quote from Intel 64 Architect=
+ure
+Memory Ordering White Paper). The following two operations can be
+reordered:
+ - Write shadow doorbell (dbbuf_db) into memory.
+ - Read EventIdx (dbbuf_ei) from memory.
+This can result in a potential race condition between driver and VM host
+processing requests (if given virtual NVMe controller has a support for
+shadow doorbell). If that occurs, then virtual NVMe controller may
+decide to wait for MMIO doorbell from guest operating system, and guest
+driver may decide not to issue MMIO doorbell on any of subsequent
+commands.
 
-> This shuts it up:
-> 
-> --- a/include/linux/mm_types.h~a
-> +++ a/include/linux/mm_types.h
-> @@ -490,6 +490,7 @@ struct mm_struct {
->  #endif
->  	} __randomize_layout;
->  
-> +	int wibble;
->  	/*
->  	 * The mm_cpumask needs to be at the end of mm_struct, because it
->  	 * is dynamically sized based on nr_cpu_ids.
-> 
+With memory barrier in place, the volatile keyword around *dbbuf_ei is
+redundant.
 
-Unfortunately, that only triggers secondary errors.
-Seen with both gcc 4.4 and 4.5.
+This issue is purely timing-dependent one, so there is no easy way to
+reproduce it. Currently the easiest known approach is to run =E2=80=9CORacl=
+e IO
+Numbers=E2=80=9D (orion) that is shipped with Oracle DB:
 
-mm/init-mm.c:29: error: unknown field ‘mm_rb’ specified in initializer
-mm/init-mm.c:29: warning: missing braces around initializer
-mm/init-mm.c:29: warning: (near initialization for ‘init_mm.<anonymous>’)
-mm/init-mm.c:29: error: incompatible types when initializing type ‘struct
-vm_area_struct *’ using type ‘struct rb_root’
-mm/init-mm.c:30: error: unknown field ‘pgd’ specified in initializer
+orion -run advanced -num_large 0 -size_small 8 -type rand -simulate
+concat -write 40 -duration 120 -matrix row -testname nvme_test
 
-and many more similar errors.
+Where nvme_test is a .lun file that contains a list of NVMe block
+devices to run test against. Limiting number of vCPUs assigned to given
+VM instance seems to increase chances for this bug to occur. On test
+environment with VM that got 4 NVMe drives and 1 vCPU assigned the
+virtual NVMe controller hang could be observed within 10-20 minutes.
+That correspond to about 400-500k IO operations processed (or about
+100GB of IO read/writes).
 
-Guenter
+Orion tool was used as a validation and set to run in a loop for 36
+hours (equivalent of pushing 550M IO operations). No issues were
+observed. That suggest that the patch fixes the issue.
+
+Fixes: f9f38e33389c (=E2=80=9Cnvme: improve performance for virtual NVMe de=
+vices=E2=80=9D)
+Signed-off-by: Michal Wnukowski <wnukowski@google.com>
+---
+ drivers/nvme/host/pci.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 17a0190bd88f..091c2441b6fa 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -292,7 +292,7 @@ static inline int nvme_dbbuf_need_event(u16 event_idx, =
+u16 new_idx, u16 old)
+=20
+ /* Update dbbuf and return true if an MMIO is required */
+ static bool nvme_dbbuf_update_and_check_event(u16 value, u32 *dbbuf_db,
+-					      volatile u32 *dbbuf_ei)
++					      u32 *dbbuf_ei)
+ {
+ 	if (dbbuf_db) {
+ 		u16 old_value;
+@@ -306,6 +306,12 @@ static bool nvme_dbbuf_update_and_check_event(u16 valu=
+e, u32 *dbbuf_db,
+ 		old_value =3D *dbbuf_db;
+ 		*dbbuf_db =3D value;
+=20
++		/*
++		 * Ensure that the doorbell is updated before reading
++		 * the EventIdx from memory
++		 */
++		mb();
++
+ 		if (!nvme_dbbuf_need_event(*dbbuf_ei, value, old_value))
+ 			return false;
+ 	}
+--=20
+2.18.0.865.gffc8e1a3cd6-goog
+
