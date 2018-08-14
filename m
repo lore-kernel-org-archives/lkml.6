@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D10C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F087C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E97E220B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:46:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E97E220B6F
+	by mail.kernel.org (Postfix) with ESMTP id 1C2D720B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 12:46:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C2D720B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732556AbeHNPdW (ORCPT
+        id S1732590AbeHNPdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 11:33:22 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:51335 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731841AbeHNPdW (ORCPT
+        Tue, 14 Aug 2018 11:33:24 -0400
+Received: from mail.windriver.com ([147.11.1.11]:49452 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732092AbeHNPdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Aug 2018 11:33:22 -0400
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w7ECk9hm016415
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w7ECk4IU010692
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 14 Aug 2018 05:46:09 -0700 (PDT)
+        Tue, 14 Aug 2018 05:46:04 -0700 (PDT)
 Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
  ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 14 Aug 2018 05:46:08 -0700
+ 14.3.399.0; Tue, 14 Aug 2018 05:46:04 -0700
 From:   <zhe.he@windriver.com>
 To:     <jason.wessel@windriver.com>, <daniel.thompson@linaro.org>,
         <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
         <kgdb-bugreport@lists.sourceforge.net>,
         <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <zhe.he@windriver.com>
-Subject: [PATCH v2 2/2] kgdboc: Change printk to the right fashion
-Date:   Tue, 14 Aug 2018 20:46:01 +0800
-Message-ID: <1534250761-824-2-git-send-email-zhe.he@windriver.com>
+Subject: [PATCH v2 1/2] kgdboc: Passing ekgdboc to command line causes panic
+Date:   Tue, 14 Aug 2018 20:46:00 +0800
+Message-ID: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
-References: <1534250761-824-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,50 +49,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: He Zhe <zhe.he@windriver.com>
 
-pr_* is preferred according to scripts/checkpatch.pl.
+kgdboc_option_setup does not check input argument before passing it
+to strlen. The argument would be a NULL pointer if "ekgdboc", without
+its value, is set in command line and thus cause the following panic.
+
+PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
+[    0.000000] RIP: 0010:strlen+0x0/0x20
+...
+[    0.000000] Call Trace
+[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
+[    0.000000]  ? kgdboc_early_init+0x6/0x1b
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+
+This patch adds a check to prevent the panic.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: He Zhe <zhe.he@windriver.com>
 ---
 v2:
-- Split printk cleanups into a single patch
+- Split out printk cleanups
 - Add cc to stable@vger.kernel.org
 
- drivers/tty/serial/kgdboc.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/tty/serial/kgdboc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-index 206f8c2..0003d6c 100644
+index b4ba2b1..206f8c2 100644
 --- a/drivers/tty/serial/kgdboc.c
 +++ b/drivers/tty/serial/kgdboc.c
-@@ -136,7 +136,7 @@ static int kgdboc_option_setup(char *opt)
- 	}
+@@ -130,6 +130,11 @@ static void kgdboc_unregister_kbd(void)
  
+ static int kgdboc_option_setup(char *opt)
+ {
++	if (!opt) {
++		pr_err("kgdboc: null option\n");
++		return -EINVAL;
++	}
++
  	if (strlen(opt) >= MAX_CONFIG_LEN) {
--		printk(KERN_ERR "kgdboc: config string too long\n");
-+		pr_err("kgdboc: config string too long\n");
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
  		return -ENOSPC;
- 	}
- 	strcpy(config, opt);
-@@ -253,7 +253,7 @@ static int param_set_kgdboc_var(const char *kmessage,
- 	int len = strlen(kmessage);
- 
- 	if (len >= MAX_CONFIG_LEN) {
--		printk(KERN_ERR "kgdboc: config string too long\n");
-+		pr_err("kgdboc: config string too long\n");
- 		return -ENOSPC;
- 	}
- 
-@@ -264,8 +264,7 @@ static int param_set_kgdboc_var(const char *kmessage,
- 	}
- 
- 	if (kgdb_connected) {
--		printk(KERN_ERR
--		       "kgdboc: Cannot reconfigure while KGDB is connected.\n");
-+		pr_err("kgdboc: Cannot reconfigure while KGDB is connected.\n");
- 
- 		return -EBUSY;
- 	}
 -- 
 2.7.4
 
