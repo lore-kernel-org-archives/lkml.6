@@ -2,91 +2,91 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF04C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBACC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F6221706
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F6221706
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 124E52170A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 124E52170A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731652AbeHNKVD (ORCPT
+        id S1729891AbeHNK0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 06:21:03 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:6406 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727830AbeHNKVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:21:03 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 0601C8C75F387;
-        Tue, 14 Aug 2018 15:35:02 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.26]) by
- DGGEMM404-HUB.china.huawei.com ([10.3.20.212]) with mapi id 14.03.0399.000;
- Tue, 14 Aug 2018 15:35:00 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Roger Quadros <rogerq@ti.com>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        "mike.looijmans@topic.nl" <mike.looijmans@topic.nl>,
-        "joe@perches.com" <joe@perches.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Topic: [PATCH] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Index: AQHUMHhu69J7qZINb0WTPExaubbbVKS4SOuAgAA6VQCABl4BAA==
-Date:   Tue, 14 Aug 2018 07:35:00 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C9B12B9@dggemm526-mbx.china.huawei.com>
-References: <a29afa26-22b4-3188-f9ee-993e44df7703@ti.com>
- <Pine.LNX.4.44L0.1808101017050.1425-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1808101017050.1425-100000@iolanthe.rowland.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.15]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        Tue, 14 Aug 2018 06:26:15 -0400
+Received: from mout.perfora.net ([74.208.4.197]:51381 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbeHNK0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:26:15 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0M2N6o-1g86kI1sf6-00sAX6; Tue, 14 Aug 2018 09:39:55 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>
+Subject: [PATCH v2] ARM: dts: spear: fix stmpe811 interrupt properties
+Date:   Tue, 14 Aug 2018 09:39:48 +0200
+Message-Id: <20180814073949.27392-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:wr4LumbPFs4V51UpVSzotq6kGoxJFQ6uF4ewZ1Ax7CWASpR5uJH
+ JYjXcqcBo6XeXf8DMO+QV7f89324DpAubIVyYBMRFz8rJ3KANzRzNIW/szy34jqrfZOwx+P
+ 2v07Ddk3Z1Szm5bsJW0cpfCa5wXFFK3yA13OBzS5soijCAU44APZmPQGLevujtL/JXktGyt
+ ElChkbO9mk6wsqfc7tpKw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:E50FbTfOpYc=:A8ZaXwD7//TYCzYtZnxG2e
+ MpVJmriplJYpYCpoGYaakvSGl6uNvPRle8ImDVq7ZX/bQ/yApspbWKDUKtIaLQf9LDNI6Vox/
+ peWCFj8FWQ6xA8VLqwoiEO+X2CobVnEHrI2OGUYv1krD7pwZc1ND8ebMUNUcDv6HKXSpyk53w
+ RWDpZToU4Uclu0s23SgKK53hUCUd4iTX/SIuqPm4IguS/+vVjNAUbAhyEUmQqMpndyUKHxig1
+ K9LzOlv8U6ICBWvJHdCF8EKKNb49UVb3c5Ua3fwgAIFxnVCgOynuDNyXMQIhS0wtd0Xm+8/wM
+ Y8kfMa+CfGJVeIUWEKt9TxhF5Z5Ai3AAKudhDgf4z3OVe4nQs4OpzZtStxkrB13hpeNF3nvcr
+ NUtSlIJWUlKbtIjNE6MpJjK9zR0FahypWQMOkV6pRg1WSqleCetokzuovwbzJNhZ9VI7W6cKi
+ oUlMCPgMFUW+dp3AeaIJmHhJY13rlsgtoM/9TZJwCah9RANdFNh1g18oKaDlb6XZYVyCmXoBv
+ ljYXNvi/YUz9RUjL/QEO9Icu2DRIayrnBIXDWCzb4Co8haKg2Bt8RX/ZUGHqhnAKtVWGls7pA
+ cpBmJQNazfNOCxPXWi7yHuib/DTPjs0eGHhdlF2taZVXXwWxsyYeZD8ASO27rXLvRtEec+cVF
+ Ks43MvfcBUPud+5n5758IXAW8y6bRqJPqSiq7hBC93zDx2qeDppTTmoROXKM2VhdwErM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgYWxhbjogDQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IGxpbnV4LXVz
-Yi1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj5bbWFpbHRvOmxpbnV4LXVzYi1vd25lckB2Z2VyLmtl
-cm5lbC5vcmddIE9uIEJlaGFsZiBPZiBBbGFuIFN0ZXJuDQo+U2VudDogRnJpZGF5LCBBdWd1c3Qg
-MTAsIDIwMTggMTA6MjAgUE0NCj5UbzogUm9nZXIgUXVhZHJvcyA8cm9nZXJxQHRpLmNvbT4NCj5D
-YzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29uLmNvbT47IGdyZWdraEBsaW51eGZv
-dW5kYXRpb24ub3JnOw0KPm1hdGhpYXMubnltYW5AbGludXguaW50ZWwuY29tOyBkcmlua2NhdEBj
-aHJvbWl1bS5vcmc7DQo+ZmVsaXBlLmJhbGJpQGxpbnV4LmludGVsLmNvbTsgZHJha2VAZW5kbGVz
-c20uY29tOyBtaWtlLmxvb2lqbWFuc0B0b3BpYy5ubDsNCj5qb2VAcGVyY2hlcy5jb207IGxpbnV4
-LXVzYkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj5TdWJq
-ZWN0OiBSZTogW1BBVENIXSB1c2I6IGh1YjogdHJ5IG9sZCBlbnVtZXJhdGlvbiBzY2hlbWUgZmly
-c3QgZm9yIGhpZ2ggc3BlZWQNCj5kZXZpY2VzDQo+DQo+T24gRnJpLCAxMCBBdWcgMjAxOCwgUm9n
-ZXIgUXVhZHJvcyB3cm90ZToNCj4NCj4+IEhpLA0KPj4NCj4+IE9uIDEwLzA4LzE4IDE4OjAxLCBa
-ZW5nIFRhbyB3cm90ZToNCj4+ID4gVGhlIG5ldyBzY2hlbWUgaXMgcmVxdWlyZWQganVzdCB0byBz
-dXBwb3J0IGxlZ2FjeSBsb3cgYW5kIGZ1bGwtc3BlZWQNCj4+ID4gZGV2aWNlcy4gRm9yIGhpZ2gg
-c3BlZWQgZGV2aWNlcywgaXQgd2lsbCBzbG93ZXIgdGhlIGVudW1lcmF0aW9uIHNwZWVkLg0KPj4g
-PiBTbyBpbiB0aGlzIHBhdGNoIHdlIHRyeSB0aGUgIm9sZCIgZW51bWVyYXRpb24gc2NoZW1lIGZp
-cnN0IGZvciBoaWdoDQo+PiA+IHNwZWVkIGRldmljZXMuDQo+Pg0KPj4gSG93IHNsb3cgZG9lcyBp
-dCBnZXQ/IElzIGl0IHNpZ25pZmljYW50Pw0KPj4gRG8gd2UgcmlzayBicmVha2luZyBleGlzdGlu
-ZyBIUyBkZXZpY2VzIHRoYXQgd29yaz8gSSBkb24ndCB0aGluayB3ZQ0KPj4gY2FuIGJlIHN1cmUg
-dGlsbCB3ZSBydW4gdGhpcyB0aHJvdWdoIHRlc3RpbmcuDQo+DQo+SW5kZWVkLiAgSSBhbSBleHRy
-ZW1lbHkgc2tlcHRpY2FsIGFib3V0IGEgcGF0Y2ggbGlrZSB0aGlzLCB1bmxlc3Mgc29tZWJvZHkg
-Y2FuDQo+c2hvdyB0aGF0IFdpbmRvd3MgdXNlcyB0aGUgIm9sZCIgc2NoZW1lIGZvciBoaWdoLXNw
-ZWVkIGRldmljZXMuDQoNClllcywgdGhpcyBpcyB3aGF0IHRoZSB3aW5kb3dzIGhhcyBkb25lLCB5
-b3UgY2FuIHJlZmVyIHRvIA0KaHR0cHM6Ly9ibG9ncy5tc2RuLm1pY3Jvc29mdC5jb20vdXNiY29y
-ZWJsb2cvMjAxMy8wNC8xMS91c2ItMi0xLTItMC0xLTEtZGV2aWNlLWVudW1lcmF0aW9uLWNoYW5n
-ZXMtaW4td2luZG93cy04Lw0KDQo+DQo+QWxhbiBTdGVybg0KDQo=
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+The property "irq-over-gpio" simply does not exist (this is nowadays
+actually auto detected) and the property "irq-gpios" is actually called
+"irq-gpio".
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+Changes in v2:
+- Fix commit message as pointed out by Viresh.
+
+ arch/arm/boot/dts/spear320-hmi.dts | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/spear320-hmi.dts b/arch/arm/boot/dts/spear320-hmi.dts
+index 0d0da1f65f0e..d2d1fe944407 100644
+--- a/arch/arm/boot/dts/spear320-hmi.dts
++++ b/arch/arm/boot/dts/spear320-hmi.dts
+@@ -241,8 +241,7 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <0x41>;
+-					irq-over-gpio;
+-					irq-gpios = <&gpiopinctrl 29 0x4>;
++					irq-gpio = <&gpiopinctrl 29 0x4>;
+ 					id = <0>;
+ 					blocks = <0x5>;
+ 					irq-trigger = <0x1>;
+-- 
+2.14.4
+
