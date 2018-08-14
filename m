@@ -3,55 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADB3C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621D4C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2583521763
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:19:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2583521763
+	by mail.kernel.org (Postfix) with ESMTP id 2029321763
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 09:19:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2029321763
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731556AbeHNMF6 (ORCPT
+        id S1731813AbeHNMGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 08:05:58 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:50048 "EHLO
+        Tue, 14 Aug 2018 08:06:06 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:47064 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbeHNMF6 (ORCPT
+        with ESMTP id S1728101AbeHNMGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 08:05:58 -0400
+        Tue, 14 Aug 2018 08:06:06 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0M5CnP-1g5d9o0UxT-00zViv; Tue, 14 Aug 2018 11:19:07 +0200
+ 0MH9BC-1fbly40z9G-00Dqbw; Tue, 14 Aug 2018 11:19:30 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jiri Kosina <jikos@kernel.org>, x86@kernel.org
+        Russell King <linux@armlinux.org.uk>
 Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] x86: apm: mark proc_apm_show as __maybe_unused
-Date:   Tue, 14 Aug 2018 11:18:45 +0200
-Message-Id: <20180814091904.2186262-1-arnd@arndb.de>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] ARM: rpc: mark ecard_devices_proc_show as __maybe_unused
+Date:   Tue, 14 Aug 2018 11:18:46 +0200
+Message-Id: <20180814091904.2186262-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:TPE3A5+lvBRh6ZNmEst+uvvh7Ewirgg7myx05RLeD8uKaTf/OgZ
- nBhtl5pSOib9WqR/1zTqgQ8DZEOyw3LlBKQv0i6MuDT1taEU0l4K7Dup+NfRy4TD/rbVJCf
- cWbf4POaX6VXZNaeUZwRdV7JWFV7ys7/nFANAIXGCoHLoBHzJxvhoyDCzXFt9hq+Uwb4ugb
- ldO8WcZh+D1mAvCk167vQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mmUeFJAVrhY=:rj6WeoUacqLMlIxtsJ+8e5
- UNMxcX5q1BtUoG+XY4oGhXVp+mihiqyMNj220kr+se0f8qefYb/JpsB2s8woQRuiorTl7V1d0
- RXCOeCUJnetHOWoOItygtkBbF2nse1Ho+yllNVspDpl8FPYvEEccFCMhdpQJqc/6waoxVx1sV
- N9RokeCCs5pb6YoniQgXkTC4UCD9gNwbFGTxYmpzru+g0sjDi+FgwHjUFzHOt+sTJMMcTzuq6
- +sivVR26nclwiISh05pX8OdpI7W4VZIu6AhG6HR3rk2I44ZBVvWtK/4uWflXG0Uxu2jSzxITx
- FVWbU9VGQ1cUc9iNnDwGspDnzOgVSjQJpH+15JRt8rDME7ptpN/ZtV7FXhQF9uNH54usIZZR/
- /ySw+PU7hAwxTPrX+WGxkfOXLhr/2R9bKQ82sgWPwmN8lg5ELGxha+VYx1/w1Eyrgf3EWr43x
- MOt9uP6frAaLeAtSivFTeYCChdNeuwqIklMuJNurQnbim30z0XO0yqkPq6HjudgbvYQbK8Sx+
- r2xSfo/JkXMuZD7K1RBoGaeZnGusBT9RAqmZyPCzP71KGaBZ5ZbmjqGwWZ2ARxgbBxfISja+4
- DQRiTl52MqzmoAD73Gn42tsctsAD0qRKIqk/QqBYmYK7/Z25zf3+UqMpjt7CqtU/znSLsspfp
- 7q27duFQcMED3KID1tFUBacWRV6ap/qefPr+Dvgbym2op8QQMsyx/n+16/maNMJJG6aA=
+In-Reply-To: <20180814091904.2186262-1-arnd@arndb.de>
+References: <20180814091904.2186262-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:TuvXcBZLzJWevm+NCljyFt6YA3ntRuhyHXRh9HbxkkRPYDpmi8D
+ ozDN+oJLLiRPmlBS3LlPvCTgjN/aGMT4/Gap3JwaO8/lpeV+bRS4UhWexu5hlFDlxcr/Nme
+ ljtCQqHxSBhRKMWZLZBOeEc9ZGAOkR5fI43snApIAGfbInsBs2RIu2XUC7H6StAZtNWXTZ2
+ PvPx62ul5CcyRsxjE1TyQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lmnb6dFe+hI=:HcVHHxtKV/sZg0qku12Ir+
+ ooPhY71bWzWn6hHEb/45dv0k2WILH27HizedHc+zDDIglfifiAZVa+dilp2xGeNWuC95OnouT
+ 9MuoZzWIvOj42kjedVqq2omnZjaCtNpwg1mNJvFrUh40T8eXy2eYvJ08aZCX4rvrNybblPAXi
+ nEGmF6slJ4Mmm6KASsRqBALsQCxkN+c3L/KEvQNZQOqho6DxAIoL4LkVHnKEk0hZs8gJVNKTx
+ SRAiQXHYPuDdPnyo6UrBGm/aNxqHsQQiWk5j/uj+kWzOhmMdkZRvppm7WukOOoFwfkqdTcxko
+ S5gyv2au3MUyjAu9cF/YeZ+MNDF18LDuRbb5VColGauAlRnQXswPcL82EEDejpnGWdI2wHOgj
+ 1TlwteSndlYm+L8yfLlFv6iIc4bK54sO7xZBOYAJUBHvEMaLectYjo3qfFLzRzVDbHDDBaVQh
+ ITXxxH4MpNxDoQoHQ+gQxng54jH2lwcPHkeB7LcU4SRaasOTn85PDzIN5kcsB1lq9Y7Fux4KI
+ vLA75qI1bKal1GNSxUB9hf99YcxES9d4rx0V/Ci4ttnyGAoWAY9hzbzF0VVOX6U2C7k9Qv7Oi
+ chwhh0WWNVsEprdBnWtMkD+rICL++xslq36VCrneko70K5b1jihuVFKbsxRZUPY8tPd90iREF
+ CjGH/xjqQ/S42IlKP6CpUzS8YI7/xGKBfVkqSUiUlCUPys8AVsXaf9oQFQlYd/O//V08=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 A new build error appeared with CONFIG_PROC_FS disabled:
 
-arch/x86/kernel/apm_32.c:1643:12: error: 'proc_apm_show' defined but not used [-Werror=unused-function]
+arch/arm/mach-rpc/ecard.c:646:12: error: 'ecard_devices_proc_show' defined but not used [-Werror=unused-function]
 
 This marks the function as __maybe_unused to let the compiler drop
 it silently.
@@ -67,22 +67,22 @@ it silently.
 Fixes: 3f3942aca6da ("proc: introduce proc_create_single{,_data}")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/kernel/apm_32.c | 2 +-
+ arch/arm/mach-rpc/ecard.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
-index ec00d1ff5098..79b5ed518471 100644
---- a/arch/x86/kernel/apm_32.c
-+++ b/arch/x86/kernel/apm_32.c
-@@ -1640,7 +1640,7 @@ static int do_open(struct inode *inode, struct file *filp)
+diff --git a/arch/arm/mach-rpc/ecard.c b/arch/arm/mach-rpc/ecard.c
+index 6fb51d49ad26..761a629f9e9d 100644
+--- a/arch/arm/mach-rpc/ecard.c
++++ b/arch/arm/mach-rpc/ecard.c
+@@ -643,7 +643,7 @@ static int ecard_prints(struct seq_file *m, ecard_t *ec)
  	return 0;
  }
  
--static int proc_apm_show(struct seq_file *m, void *v)
-+static int __maybe_unused proc_apm_show(struct seq_file *m, void *v)
+-static int ecard_devices_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused ecard_devices_proc_show(struct seq_file *m, void *v)
  {
- 	unsigned short	bx;
- 	unsigned short	cx;
+ 	ecard_t *ec = cards;
+ 
 -- 
 2.18.0
 
