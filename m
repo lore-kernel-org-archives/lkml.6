@@ -3,112 +3,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEFEC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6E4C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA850216EE
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA850216EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BF7221709
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BF7221709
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbeHNTF7 convert rfc822-to-8bit (ORCPT
+        id S1732873AbeHNTGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:05:59 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2060 "EHLO huawei.com"
+        Tue, 14 Aug 2018 15:06:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52954 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728978AbeHNTF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:05:58 -0400
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 77B04476A9B4B;
-        Tue, 14 Aug 2018 17:18:06 +0100 (IST)
-Received: from FRAEMA707-CHM.china.huawei.com (10.206.14.56) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Tue, 14 Aug 2018 17:18:07 +0100
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.135]) by
- FRAEMA707-CHM.china.huawei.com ([169.254.7.74]) with mapi id 14.03.0399.000;
- Tue, 14 Aug 2018 18:17:55 +0200
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     David Miller <davem@davemloft.net>
-CC:     "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "lipeng (Y)" <lipeng321@huawei.com>,
-        "mehta.salil.lnk@gmail.com" <mehta.salil.lnk@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        linyunsheng <linyunsheng@huawei.com>
-Subject: RE: [PATCH net-next 1/9] net: hns3: Add support for serdes loopback
- selftest
-Thread-Topic: [PATCH net-next 1/9] net: hns3: Add support for serdes
- loopback selftest
-Thread-Index: AQHUMiGisAb3aZHHdk6UpTErYM83c6S9tisAgAG5jzA=
-Date:   Tue, 14 Aug 2018 16:17:55 +0000
-Message-ID: <F4CC6FACFEB3C54C9141D49AD221F7F93BE870DE@FRAEML521-MBX.china.huawei.com>
-References: <20180812094738.14852-1-salil.mehta@huawei.com>
-        <20180812094738.14852-2-salil.mehta@huawei.com>
- <20180813.085456.1905254242911513146.davem@davemloft.net>
-In-Reply-To: <20180813.085456.1905254242911513146.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.226.54]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728978AbeHNTGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:06:20 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EA42F4219DD2;
+        Tue, 14 Aug 2018 16:18:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-8.rdu2.redhat.com [10.10.121.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A11410FFE70;
+        Tue, 14 Aug 2018 16:18:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1534214814-9043-1-git-send-email-zhongjiang@huawei.com>
+References: <1534214814-9043-1-git-send-email-zhongjiang@huawei.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     dhowells@redhat.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        oleg@redhat.com, rppt@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 0/2] Use ARRAY_SIZE to replace its implementation
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30999.1534263506.1@warthog.procyon.org.uk>
+Date:   Tue, 14 Aug 2018 17:18:26 +0100
+Message-ID: <31000.1534263506@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 14 Aug 2018 16:18:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 14 Aug 2018 16:18:31 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+> "Use ARRAY_SIZE to replace its implementation"
 
-> -----Original Message-----
-> From: David Miller [mailto:davem@davemloft.net]
-> Sent: Monday, August 13, 2018 4:55 PM
-> To: Salil Mehta <salil.mehta@huawei.com>
-> Cc: Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>; lipeng (Y)
-> <lipeng321@huawei.com>; mehta.salil.lnk@gmail.com;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-> <linuxarm@huawei.com>; linyunsheng <linyunsheng@huawei.com>
-> Subject: Re: [PATCH net-next 1/9] net: hns3: Add support for serdes
-> loopback selftest
-> 
-> From: Salil Mehta <salil.mehta@huawei.com>
-> Date: Sun, 12 Aug 2018 10:47:30 +0100
-> 
-> > -#define HNS3_SELF_TEST_TPYE_NUM		1
-> > +#define HNS3_SELF_TEST_TPYE_NUM		2
+Um, the subject line doesn't make sense.
 
-Sure, fixed in V2. Thanks.
-
-> 
-> Is this supposed to be the number of self test "types"?  If so, this
-> CPP
-> macro should be named "HNS3_SELF_TEST_TYPE_NUM".
-> 
-> > +
-> > +		count ++;
->                      ^
-> 
-> Please remove that unnecessary space
-
-
-Sure, fixed in V2 version, thanks.
-
-
-> 
-> > +	} while (++i < HCLGE_SERDES_RETRY_NUM  &&
->                                              ^^
-> 
-> Only need one space there, not two.
-
-Thank you. Fixed in V2.
-
-Best regards
-Salil
- 
+David
