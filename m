@@ -2,142 +2,138 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C124BC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE574C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC8F214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:25:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC8F214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 8F873214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 16:26:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="1/BTSND0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F873214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732940AbeHNTN3 (ORCPT
+        id S1732919AbeHNTOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 15:13:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728978AbeHNTN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 15:13:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BD786ACCF;
-        Tue, 14 Aug 2018 16:25:36 +0000 (UTC)
-Subject: Re: [PATCH 2/2] bcache: add undef for macro in function
-To:     "cdbdyx@163.com" <cdbdyx@163.com>
-Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-        kent.overstreet@gmail.com
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a223a080-6fbe-36cb-8085-361294a89c96@suse.de>
-Date:   Wed, 15 Aug 2018 00:25:25 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 14 Aug 2018 15:14:46 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:37535 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730635AbeHNTOq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 15:14:46 -0400
+Received: by mail-ua1-f66.google.com with SMTP id y10-v6so13807126uao.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 09:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eFC16Z6qdSckNuwhsQdqXbRBHnjwAx/qmhqUGZ9TT5w=;
+        b=1/BTSND0+TTfk5RTSLbWVoOSx4MlVp23GuoMh7GpL59NBT/c1KM53DD7SQKxm9EdZE
+         yAu3ZNvF6H4gEg8wNNggBrjFqNSLNaKGS7S9mnNH3X1G0r/LuMIXMEELTjQMubp3zShK
+         Gtfk7X59vV6hYxpo3fYF7q0sFkXT0slat9bgyy/nf2UUAyWueJdELu4woCBsMcMzE+gq
+         IksusyoWiZtXGXjYbooj08NSnG3E2QazsyHypkciliec6fDgwKT/t+rp8HJVexkcG6Ql
+         Ryk3j87bTrMzfo7KNtO6apNfBWUkcYxDgQpI2Wk5QxCOFy928wrLryBd7iaPFGZ5gs7n
+         WBRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eFC16Z6qdSckNuwhsQdqXbRBHnjwAx/qmhqUGZ9TT5w=;
+        b=kI32LHW1Bq6w0SxIs/TUJphrCCXpdXlbbMibTHY0xyTi54t5XQK6lHd9xnjgq4rPYw
+         L8o/xC888tUDr3E7eP1uwTVNm4yCfbuDzMmge/RcfkVW3LQf492Ch0dpHdETA8Hm6X8T
+         EDrxsBmCRNY31QC5B/PfOo7EbBReBKIVsLIdf52zTy/X+LTQy7ds6QhtxERZy19y/FA4
+         pUIvnwf2UyBaGC4eN28wfbT2sEHyezyGT9RpAwj8s7Lwfx6qi0lehz8kjaIchdF4/dga
+         vYgn0TBEPrjDDeO1xWuQrIb5S6WnT/doPKsFRGv7QQrKOjBML5Uk0fVfkw20HChz1l3C
+         2c8A==
+X-Gm-Message-State: AOUpUlFI2E4Ah+E4RP9gzycSwL59b22yZdR8gew3Dd1FV86DzuAeBEXh
+        RJWS9RtujZQoeRnK+Co7OQnRk6UAV4Y=
+X-Google-Smtp-Source: AA+uWPyL6hZdnzyG3BgTUx8BkJ/prVYiTdJ9KtpHGljDTLWa8tHzG6N7TGTMdLNxSjENZszh9Npm3g==
+X-Received: by 2002:a9f:3563:: with SMTP id o90-v6mr14804086uao.79.1534264014439;
+        Tue, 14 Aug 2018 09:26:54 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id u22-v6sm6649981vkb.0.2018.08.14.09.26.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 09:26:53 -0700 (PDT)
+Subject: Re: Warning when using eMMC and partprobe: generic_make_request:
+ Trying to write to read-only block-device
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     stefan@agner.ch, Sagi Grimberg <sagi@grimberg.me>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <7f57199f45df7212fdbba0bd1e78142a@agner.ch>
+ <CAOi1vP9Y5Nrr7kVo5GAKnS4casbXPa+LSgY=si=mAW6OHs7-BA@mail.gmail.com>
+ <CA+55aFwyCmYfUrGt61d-6B=1XiTLoudNO=_bQ9-g_rDg8Ao_VA@mail.gmail.com>
+ <22fff85b-63e5-3cfe-0e72-255044e53bab@kernel.dk>
+Message-ID: <e5589461-6331-7c4c-4171-7d7e304410e0@kernel.dk>
+Date:   Tue, 14 Aug 2018 10:26:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <22fff85b-63e5-3cfe-0e72-255044e53bab@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/14 10:59 PM, cdbdyx@163.com wrote:
-> Hi Coly，
-> The three macros is only locally used in func "__cached_dev"，I think
-> they should be undefined before leaving the func.
+On 8/14/18 10:24 AM, Jens Axboe wrote:
+> On 8/14/18 10:22 AM, Linus Torvalds wrote:
+>> On Tue, Aug 14, 2018 at 8:24 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+>>>
+>>> Looks like it's coming from that fsync():
+>>>
+>>>   sys_fsync
+>>>     do_fsync
+>>>       vfs_fsync_range
+>>>         blkdev_fsync
+>>>           blkdev_issue_flush
+>>>
+>>> I think we need to teach blkdev_issue_flush() to bail out if the bdev
+>>> is read-only, similar to blkdev_issue_discard(), _write_zeroes(), etc.
+>>> The question is which error code to use.  blkdev_fsync() already skips
+>>> over EOPNOTSUPP, so it is a (no-so-good) option.  Other blkdev_issue_
+>>> functions return EPERM.
+>>
+>> Oh, just make issue_flush() return EROFS for a read-only device.
+>>
+>> Or maybe we should even just consider the flush to be a read operation?
+>>
+>> But I guess the error code gets percolated all the way to user space?
+>> The safest option might just be to return 0.
 > 
+> We probably just want to special case a flush for this check. In other
+> situations, like resource allocation and issue, we'd want to consider
+> it a write.
 
-Hi Dongbo,
-
-It is worthy to do this if there is a potential conflict. But they are
-defined in sysfs.c and not exported to anywhere else, I guess there
-won't be any symbol conflict. Then we don't need to worry about this.
-
-Coly Li
+Ala:
 
 
-> ---Original---
-> *From:* "Coly Li"<colyli@suse.de>
-> *Date:* Tue, Aug 14, 2018 20:16 PM
-> *To:* "Dongbo Cao"<cdbdyx@163.com>;
-> *Cc:*
-> "linux-kernel"<linux-kernel@vger.kernel.org>;"linux-bcache"<linux-bcache@vger.kernel.org>;"kent.overstreet"<kent.overstreet@gmail.com>;
-> *Subject:* Re: [PATCH 2/2] bcache: add undef for macro in function
-> 
-> On 2018/8/14 4:16 PM, Dongbo Cao wrote:
->> add undef for macro d_strtoul,d_strtoul_nonzero and d_strtoi_h
->> 
->> Signed-off-by: Dongbo Cao 
->> ---
->>  drivers/md/bcache/sysfs.c | 3 +++
->>  1 file changed, 3 insertions(+)
->> 
->> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
->> index 225b15aa..ed67a290 100644
->> --- a/drivers/md/bcache/sysfs.c
->> +++ b/drivers/md/bcache/sysfs.c
->> @@ -349,6 +349,9 @@ STORE(__cached_dev)
->>   if (attr == &sysfs_stop)
->>   bcache_device_stop(&dc->disk);
->>  
->> +#undef d_strtoul
->> +#undef d_strtoul_nonzero
->> +#undef d_strtoi_h
->>   return size;
->>  }
->>  
->> 
-> 
-> Hi Dongbo,
-> 
-> Could you please to provide the motivation why you make this change ?
-> 
-> Thanks.
-> 
-> Coly Li
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 12550340418d..29f8a60965bc 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -2162,7 +2163,9 @@ static inline bool should_fail_request(struct hd_struct *part,
+ 
+ static inline bool bio_check_ro(struct bio *bio, struct hd_struct *part)
+ {
+-	if (part->policy && op_is_write(bio_op(bio))) {
++	const int op = bio_op(bio);
++
++	if (part->policy && (op_is_write(op) && !op_is_flush(op))) {
+ 		char b[BDEVNAME_SIZE];
+ 
+ 		WARN_ONCE(1,
+
+
+-- 
+Jens Axboe
 
