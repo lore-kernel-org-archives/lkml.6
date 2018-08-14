@@ -2,81 +2,90 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3F0C4646D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05ACC4646D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38AA21733
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38AA21733
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6045E21733
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 00:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6045E21733
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbeHNCo0 (ORCPT
+        id S1730684AbeHNCqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 13 Aug 2018 22:44:26 -0400
-Received: from mga17.intel.com ([192.55.52.151]:16344 "EHLO mga17.intel.com"
+        Mon, 13 Aug 2018 22:46:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729947AbeHNCoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Aug 2018 22:44:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2018 16:59:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,235,1531810800"; 
-   d="scan'208";a="64938737"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga008.jf.intel.com with ESMTP; 13 Aug 2018 16:59:51 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fpMkS-0001qE-S5; Tue, 14 Aug 2018 07:59:44 +0800
-Date:   Tue, 14 Aug 2018 07:59:47 +0800
-From:   kbuild test robot <fengguang.wu@intel.com>
-To:     Bart Van Assche <bart.vanassche@wdc.com>
-Cc:     kbuild-all@01.org, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] block: fix noderef.cocci warnings
-Message-ID: <20180813235947.GA25573@lkp-sbx04>
-References: <201808140744.LIoM2Vik%fengguang.wu@intel.com>
+        id S1729380AbeHNCqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Aug 2018 22:46:19 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CDED21731;
+        Tue, 14 Aug 2018 00:01:43 +0000 (UTC)
+Date:   Mon, 13 Aug 2018 20:01:41 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        srikar@linux.vnet.ibm.com, mhiramat@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v8 3/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+Message-ID: <20180813200141.601a44e0@gandalf.local.home>
+In-Reply-To: <CAPhsuW4ymZAxLdDOAz-rKkyb_POA3ibNW7+2G3BE5Mxtntyqsg@mail.gmail.com>
+References: <20180809041856.1547-1-ravi.bangoria@linux.ibm.com>
+        <20180809041856.1547-4-ravi.bangoria@linux.ibm.com>
+        <20180809143827.GC22636@redhat.com>
+        <20180810155813.49259913@gandalf.local.home>
+        <CAPhsuW4ymZAxLdDOAz-rKkyb_POA3ibNW7+2G3BE5Mxtntyqsg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201808140744.LIoM2Vik%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
+On Fri, 10 Aug 2018 23:14:01 -0700
+Song Liu <liu.song.a23@gmail.com> wrote:
 
-block/genhd.c:1483:37-43: ERROR: application of sizeof to pointer
+> On Fri, Aug 10, 2018 at 12:58 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > On Thu, 9 Aug 2018 16:38:28 +0200
+> > Oleg Nesterov <oleg@redhat.com> wrote:
+> >  
+> >> I need to read this (hopefully final) version carefully. I'll try to do
+> >> this before next Monday.
+> >>  
+> >
+> > Monday may be the opening of the merge window (more likely Sunday). Do
+> > you think this is good enough for pushing it in this late in the game,
+> > or do you think we should wait another cycle?
+> >
+> > -- Steve  
+> 
+> We (Facebook) have use cases in production that would benefit from this work, so
+> I would rather see this gets in sooner than later. After a brief
+> review (I will more
+> careful review before Monday), I think this set is not likely to break
+> existing uprobes
+> (those w/o ref_ctr). Therefore, I think it is safe to put it in this cycle.
+> 
 
- sizeof when applied to a pointer typed expression gives the size of
- the pointer
+It's still going under review, and the merge window is now open. I'd
+prefer that this waits till the next merge window.
 
-Generated by: scripts/coccinelle/misc/noderef.cocci
-
-Fixes: b4032d402850 ("block: Introduce alloc_disk_node_attr()")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
-
- genhd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1480,7 +1480,7 @@ struct gendisk *__alloc_disk_node(int mi
- 		disk_to_dev(disk)->class = &block_class;
- 		disk_to_dev(disk)->type = &disk_type;
- 		if (num_groups) {
--			memcpy(disk->ag, ag, num_groups * sizeof(ag));
-+			memcpy(disk->ag, ag, num_groups * sizeof(*ag));
- 			disk_to_dev(disk)->groups = disk->ag;
- 		}
- 		device_initialize(disk_to_dev(disk));
+-- Steve
