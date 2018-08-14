@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D4DC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939C3C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7562221730
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7562221730
+	by mail.kernel.org (Postfix) with ESMTP id 5830B21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5830B21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388653AbeHNUPM (ORCPT
+        id S2388666AbeHNUPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:15:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52398 "EHLO
+        Tue, 14 Aug 2018 16:15:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388032AbeHNUPM (ORCPT
+        with ESMTP id S2388032AbeHNUPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:15:12 -0400
+        Tue, 14 Aug 2018 16:15:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB300CBB;
-        Tue, 14 Aug 2018 17:27:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01F3F40B;
+        Tue, 14 Aug 2018 17:27:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 63/79] x86/KVM/VMX: Move the l1tf_flush_l1d test to vmx_l1d_flush()
-Date:   Tue, 14 Aug 2018 19:17:22 +0200
-Message-Id: <20180814171340.315167477@linuxfoundation.org>
+Subject: [PATCH 4.18 64/79] x86/irq: Demote irq_cpustat_t::__softirq_pending to u16
+Date:   Tue, 14 Aug 2018 19:17:23 +0200
+Message-Id: <20180814171340.478339964@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -52,58 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nicolai Stange <nstange@suse.de>
 
-Currently, vmx_vcpu_run() checks if l1tf_flush_l1d is set and invokes
-vmx_l1d_flush() if so.
+An upcoming patch will extend KVM's L1TF mitigation in conditional mode
+to also cover interrupts after VMEXITs. For tracking those, stores to a
+new per-cpu flag from interrupt handlers will become necessary.
 
-This test is unncessary for the "always flush L1D" mode.
+In order to improve cache locality, this new flag will be added to x86's
+irq_cpustat_t.
 
-Move the check to vmx_l1d_flush()'s conditional mode code path.
+Make some space available there by shrinking the ->softirq_pending bitfield
+from 32 to 16 bits: the number of bits actually used is only NR_SOFTIRQS,
+i.e. 10.
 
-Notes:
-- vmx_l1d_flush() is likely to get inlined anyway and thus, there's no
-  extra function call.
-
-- This inverts the (static) branch prediction, but there hadn't been any
-  explicit likely()/unlikely() annotations before and so it stays as is.
-
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/hardirq.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9729,12 +9729,16 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
-+		bool flush_l1d = vcpu->arch.l1tf_flush_l1d;
-+
- 		/*
- 		 * Clear the flush bit, it gets set again either from
- 		 * vcpu_run() or from one of the unsafe VMEXIT
- 		 * handlers.
- 		 */
- 		vcpu->arch.l1tf_flush_l1d = false;
-+		if (!flush_l1d)
-+			return;
- 	}
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -6,7 +6,7 @@
+ #include <linux/irq.h>
  
- 	vcpu->stat.l1d_flush++;
-@@ -10264,10 +10268,8 @@ static void __noclone vmx_vcpu_run(struc
- 	evmcs_rsp = static_branch_unlikely(&enable_evmcs) ?
- 		(unsigned long)&current_evmcs->host_rsp : 0;
- 
--	if (static_branch_unlikely(&vmx_l1d_should_flush)) {
--		if (vcpu->arch.l1tf_flush_l1d)
--			vmx_l1d_flush(vcpu);
--	}
-+	if (static_branch_unlikely(&vmx_l1d_should_flush))
-+		vmx_l1d_flush(vcpu);
- 
- 	asm(
- 		/* Store host registers */
+ typedef struct {
+-	unsigned int __softirq_pending;
++	u16	     __softirq_pending;
+ 	unsigned int __nmi_count;	/* arch dependent */
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	unsigned int apic_timer_irqs;	/* arch dependent */
 
 
