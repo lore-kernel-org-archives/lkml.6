@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C74CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D91AC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37A820896
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37A820896
+	by mail.kernel.org (Postfix) with ESMTP id 2F52221733
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F52221733
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389042AbeHNUQv (ORCPT
+        id S2389056AbeHNUQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:16:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52704 "EHLO
+        Tue, 14 Aug 2018 16:16:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52710 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388101AbeHNUQu (ORCPT
+        with ESMTP id S2387930AbeHNUQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:16:50 -0400
+        Tue, 14 Aug 2018 16:16:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBFEAC5C;
-        Tue, 14 Aug 2018 17:28:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D834CBDB;
+        Tue, 14 Aug 2018 17:28:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.17 16/97] fix __legitimize_mnt()/mntput() race
-Date:   Tue, 14 Aug 2018 19:16:28 +0200
-Message-Id: <20180814171433.806984936@linuxfoundation.org>
+        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.17 17/97] ARM: dts: imx6sx: fix irq for pcie bridge
+Date:   Tue, 14 Aug 2018 19:16:29 +0200
+Message-Id: <20180814171433.842830341@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,82 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
 
-commit 119e1ef80ecfe0d1deb6378d4ab41f5b71519de1 upstream.
+commit 1bcfe0564044be578841744faea1c2f46adc8178 upstream.
 
-__legitimize_mnt() has two problems - one is that in case of success
-the check of mount_lock is not ordered wrt preceding increment of
-refcount, making it possible to have successful __legitimize_mnt()
-on one CPU just before the otherwise final mntpu() on another,
-with __legitimize_mnt() not seeing mntput() taking the lock and
-mntput() not seeing the increment done by __legitimize_mnt().
-Solved by a pair of barriers.
+Use the correct IRQ line for the MSI controller in the PCIe host
+controller. Apparently a different IRQ line is used compared to other
+i.MX6 variants. Without this change MSI IRQs aren't properly propagated
+to the upstream interrupt controller.
 
-Another is that failure of __legitimize_mnt() on the second
-read_seqretry() leaves us with reference that'll need to be
-dropped by caller; however, if that races with final mntput()
-we can end up with caller dropping rcu_read_lock() and doing
-mntput() to release that reference - with the first mntput()
-having freed the damn thing just as rcu_read_lock() had been
-dropped.  Solution: in "do mntput() yourself" failure case
-grab mount_lock, check if MNT_DOOMED has been set by racing
-final mntput() that has missed our increment and if it has -
-undo the increment and treat that as "failure, caller doesn't
-need to drop anything" case.
-
-It's not easy to hit - the final mntput() has to come right
-after the first read_seqretry() in __legitimize_mnt() *and*
-manage to miss the increment done by __legitimize_mnt() before
-the second read_seqretry() in there.  The things that are almost
-impossible to hit on bare hardware are not impossible on SMP
-KVM, though...
-
-Reported-by: Oleg Nesterov <oleg@redhat.com>
-Fixes: 48a066e72d97 ("RCU'd vsfmounts")
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Fixes: b1d17f68e5c5 ("ARM: dts: imx: add initial imx6sx device tree source")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/imx6sx.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -659,12 +659,21 @@ int __legitimize_mnt(struct vfsmount *ba
- 		return 0;
- 	mnt = real_mount(bastard);
- 	mnt_add_count(mnt, 1);
-+	smp_mb();			// see mntput_no_expire()
- 	if (likely(!read_seqretry(&mount_lock, seq)))
- 		return 0;
- 	if (bastard->mnt_flags & MNT_SYNC_UMOUNT) {
- 		mnt_add_count(mnt, -1);
- 		return 1;
- 	}
-+	lock_mount_hash();
-+	if (unlikely(bastard->mnt_flags & MNT_DOOMED)) {
-+		mnt_add_count(mnt, -1);
-+		unlock_mount_hash();
-+		return 1;
-+	}
-+	unlock_mount_hash();
-+	/* caller will mntput() */
- 	return -1;
- }
- 
-@@ -1210,6 +1219,11 @@ static void mntput_no_expire(struct moun
- 		return;
- 	}
- 	lock_mount_hash();
-+	/*
-+	 * make sure that if __legitimize_mnt() has not seen us grab
-+	 * mount_lock, we'll see their refcount increment here.
-+	 */
-+	smp_mb();
- 	mnt_add_count(mnt, -1);
- 	if (mnt_get_count(mnt)) {
- 		rcu_read_unlock();
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -1351,7 +1351,7 @@
+ 			ranges = <0x81000000 0 0          0x08f80000 0 0x00010000 /* downstream I/O */
+ 				  0x82000000 0 0x08000000 0x08000000 0 0x00f00000>; /* non-prefetchable memory */
+ 			num-lanes = <1>;
+-			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "msi";
+ 			#interrupt-cells = <1>;
+ 			interrupt-map-mask = <0 0 0 0x7>;
 
 
