@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FB4C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE4CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA80121653
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:55:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA80121653
+	by mail.kernel.org (Postfix) with ESMTP id E7A7321736
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:56:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A7321736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390258AbeHNUoL (ORCPT
+        id S2390134AbeHNUaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:44:11 -0400
+        Tue, 14 Aug 2018 16:30:08 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:59200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390116AbeHNUaJ (ORCPT
+        with ESMTP id S2390072AbeHNUaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:30:09 -0400
+        Tue, 14 Aug 2018 16:30:07 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14AD1D8F;
-        Tue, 14 Aug 2018 17:32:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E809FD1A;
+        Tue, 14 Aug 2018 17:32:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 78/97] x86/KVM/VMX: Dont set l1tf_flush_l1d to true from vmx_l1d_flush()
-Date:   Tue, 14 Aug 2018 19:17:30 +0200
-Message-Id: <20180814171436.113342499@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [PATCH 4.17 48/97] x86/speculation/l1tf: Protect PAE swap entries against L1TF
+Date:   Tue, 14 Aug 2018 19:17:00 +0200
+Message-Id: <20180814171434.982816719@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -50,44 +51,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolai Stange <nstange@suse.de>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 379fd0c7e6a391e5565336a646f19f218fb98c6c upstream
+commit 0d0f6249058834ffe1ceaad0bb31464af66f6e7a upstream
 
-vmx_l1d_flush() gets invoked only if l1tf_flush_l1d is true. There's no
-point in setting l1tf_flush_l1d to true from there again.
+The PAE 3-level paging code currently doesn't mitigate L1TF by flipping the
+offset bits, and uses the high PTE word, thus bits 32-36 for type, 37-63 for
+offset. The lower word is zeroed, thus systems with less than 4GB memory are
+safe. With 4GB to 128GB the swap type selects the memory locations vulnerable
+to L1TF; with even more memory, also the swap offfset influences the address.
+This might be a problem with 32bit PAE guests running on large 64bit hosts.
 
-Signed-off-by: Nicolai Stange <nstange@suse.de>
+By continuing to keep the whole swap entry in either high or low 32bit word of
+PTE we would limit the swap size too much. Thus this patch uses the whole PAE
+PTE with the same layout as the 64bit version does. The macros just become a
+bit tricky since they assume the arch-dependent swp_entry_t to be 32bit.
+
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h |   35 ++++++++++++++++++++++++++++++++--
+ arch/x86/mm/init.c                    |    2 -
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9461,15 +9461,15 @@ static void vmx_l1d_flush(struct kvm_vcp
- 	/*
- 	 * This code is only executed when the the flush mode is 'cond' or
- 	 * 'always'
--	 *
--	 * If 'flush always', keep the flush bit set, otherwise clear
--	 * it. The flush bit gets set again either from vcpu_run() or from
--	 * one of the unsafe VMEXIT handlers.
- 	 */
--	if (static_branch_unlikely(&vmx_l1d_flush_always))
--		vcpu->arch.l1tf_flush_l1d = true;
--	else
-+	if (!static_branch_unlikely(&vmx_l1d_flush_always)) {
-+		/*
-+		 * Clear the flush bit, it gets set again either from
-+		 * vcpu_run() or from one of the unsafe VMEXIT
-+		 * handlers.
-+		 */
- 		vcpu->arch.l1tf_flush_l1d = false;
-+	}
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -241,12 +241,43 @@ static inline pud_t native_pudp_get_and_
+ #endif
  
- 	vcpu->stat.l1d_flush++;
+ /* Encode and de-code a swap entry */
++#define SWP_TYPE_BITS		5
++
++#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
++
++/* We always extract/encode the offset by shifting it all the way up, and then down again */
++#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT + SWP_TYPE_BITS)
++
+ #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > 5)
+ #define __swp_type(x)			(((x).val) & 0x1f)
+ #define __swp_offset(x)			((x).val >> 5)
+ #define __swp_entry(type, offset)	((swp_entry_t){(type) | (offset) << 5})
+-#define __pte_to_swp_entry(pte)		((swp_entry_t){ (pte).pte_high })
+-#define __swp_entry_to_pte(x)		((pte_t){ { .pte_high = (x).val } })
++
++/*
++ * Normally, __swp_entry() converts from arch-independent swp_entry_t to
++ * arch-dependent swp_entry_t, and __swp_entry_to_pte() just stores the result
++ * to pte. But here we have 32bit swp_entry_t and 64bit pte, and need to use the
++ * whole 64 bits. Thus, we shift the "real" arch-dependent conversion to
++ * __swp_entry_to_pte() through the following helper macro based on 64bit
++ * __swp_entry().
++ */
++#define __swp_pteval_entry(type, offset) ((pteval_t) { \
++	(~(pteval_t)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	| ((pteval_t)(type) << (64 - SWP_TYPE_BITS)) })
++
++#define __swp_entry_to_pte(x)	((pte_t){ .pte = \
++		__swp_pteval_entry(__swp_type(x), __swp_offset(x)) })
++/*
++ * Analogically, __pte_to_swp_entry() doesn't just extract the arch-dependent
++ * swp_entry_t, but also has to convert it from 64bit to the 32bit
++ * intermediate representation, using the following macros based on 64bit
++ * __swp_type() and __swp_offset().
++ */
++#define __pteval_swp_type(x) ((unsigned long)((x).pte >> (64 - SWP_TYPE_BITS)))
++#define __pteval_swp_offset(x) ((unsigned long)(~((x).pte) << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT))
++
++#define __pte_to_swp_entry(pte)	(__swp_entry(__pteval_swp_type(pte), \
++					     __pteval_swp_offset(pte)))
  
+ #define gup_get_pte gup_get_pte
+ /*
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -896,7 +896,7 @@ unsigned long max_swapfile_size(void)
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+ 		 */
+-#ifdef CONFIG_X86_64
++#if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+ 		pages = min_t(unsigned long, l1tf_limit, pages);
 
 
