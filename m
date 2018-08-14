@@ -2,196 +2,216 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FBBC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6D1C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B83E21700
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:51:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="SE32+H4E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B83E21700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	by mail.kernel.org (Postfix) with ESMTP id B00EA2173A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00EA2173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732822AbeHNQip (ORCPT
+        id S1732897AbeHNQlt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:38:45 -0400
-Received: from services.gouders.net ([141.101.32.176]:44110 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732667AbeHNQio (ORCPT
+        Tue, 14 Aug 2018 12:41:49 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51994 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732757AbeHNQlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:38:44 -0400
-Received: from localhost ([193.175.198.193])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w7EDidib027405
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Aug 2018 15:44:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1534254280; bh=IGsFAP2AKkOYGxvfVWdieOc3ctXh0KqvO3uh6shWDJc=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=SE32+H4ERXxUDXuOVJhkXpqKoMnf/lj+ZJCJDchv5eBtUyxexantkCcfN9d4wl7IC
-         RsCck4AcaBDy5D1Ral29PmmX64BKa7k2f/2Ao3YP/l+wa/W1T1WdqdRywIBYbFezzK
-         0qwu/AJd1NPBklU7Nyiu88Td0eFCh1/IwNgcRU0Q=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] kconfig: report recursive dependency involving 'imply'
-In-Reply-To: <gh8t59utb2.fsf@lena.gouders.net> (Dirk Gouders's message of
-        "Tue, 14 Aug 2018 12:38:25 +0200")
-References: <1534229021-8056-1-git-send-email-yamada.masahiro@socionext.com>
-        <gh8t59utb2.fsf@lena.gouders.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-Date:   Tue, 14 Aug 2018 15:44:39 +0200
-Message-ID: <gh4lfxukoo.fsf@lena.gouders.net>
+        Tue, 14 Aug 2018 12:41:49 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7EDsRKV033285;
+        Tue, 14 Aug 2018 08:54:27 -0500
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7EDsRuw007372;
+        Tue, 14 Aug 2018 08:54:27 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 14
+ Aug 2018 08:54:27 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 14 Aug 2018 08:54:27 -0500
+Received: from [172.22.172.27] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7EDsQkQ030453;
+        Tue, 14 Aug 2018 08:54:27 -0500
+Subject: Re: [PATCH v2 2/2] leds: lm3697: Introduce the lm3697 driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180807160442.8937-1-dmurphy@ti.com>
+ <20180807160442.8937-2-dmurphy@ti.com> <20180808195909.GC20912@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <d76cb536-7ac0-6616-4979-8706ef22e9f3@ti.com>
+Date:   Tue, 14 Aug 2018 08:54:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180808195909.GC20912@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dirk Gouders <dirk@gouders.net> writes:
+Pavel
 
-> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
->
->> Currently, Kconfig does not report anything about the recursive
->> dependency where 'imply' keywords are involved.
->>
->> [Test Code]
->>
->>   config A
->>           bool "a"
->>
->>   config B
->>           bool "b"
->>           imply A
->>           depends on A
->
-> Hello Masahiro,
->
-> obviously, it is hard to find a reason why one wants to use dependencies
-> like above but I also wonder how e.g. menuconfig handles this case:
->
-> First, only "a" is visible, if I then select "a", "b" does not become
-> visible but when I then reset "a" to "n", "b" becomes visible.  If I then
-> try to select "b", it becomes invisible...
->
-> Perhaps it would be better to just error out instead of giving users the
-> impression, Kconfig thinks such questionable behavior is OK.
->
-> Side note: perhaps, the documentation could be better when it comes to
->            recursive dependencies.  The documentation says "select" and
->            "imply" can be used to specify lower limits whereas direct
->            dependencies specify upper limits for symbol values and with
->            this in mind, one might wonder why it is a problem to work
->            with both limits in a recursive way.
->
->            Not very unlikely that it is just me who still has to
->            understand recursive dependencies or problems with reading
->            English text, though.
->
-> What definitely seems to get void with your patches is item c) in
-> "Practical solutions to kconfig recursive issue" in
-> Documentation/kbuild/kconfig-language:
->
->         c) Consider the use of "imply" instead of "select"
+Thanks for the review
 
-Just some more information that adds to me feeling unsure about the
-correct definition of recursive dependencies:
-
-With commit 29c434f367ea (kconfig: tests: test if recursive dependencies
-are detected) a test case similar to the example above was introduced,
-explicitely stating it is _no_ recursive dependency:
-
-+# depends on and imply
-+# This is not recursive dependency
-+
-+config E1
-+       bool "E1"
-+       depends on E2
-+       imply E2
-+
-+config E2
-+       bool "E2"
-
-
-Dirk
-
->
->> In the code above, Kconfig cannot calculate the symbol values correctly
->> due to the circular dependency.  For example, allyesconfig followed by
->> syncconfig results in an odd behavior because CONFIG_B becomes visible
->> in syncconfig.
+On 08/08/2018 02:59 PM, Pavel Machek wrote:
+> Hi!
+> 
+>> Introduce the lm3697 LED driver for
+>> backlighting and display.
 >>
->>   $ make allyesconfig
->>   scripts/kconfig/conf  --allyesconfig Kconfig
->>   #
->>   # configuration written to .config
->>   #
->>   $ cat .config
->>   #
->>   # Automatically generated file; DO NOT EDIT.
->>   # Main menu
->>   #
->>   CONFIG_A=y
->>   $ make syncconfig
->>   scripts/kconfig/conf  --syncconfig Kconfig
->>   *
->>   * Restart config...
->>   *
->>   *
->>   * Main menu
->>   *
->>   a (A) [Y/n/?] y
->>     b (B) [N/y/?] (NEW)
+>> Datasheet location:
+>> http://www.ti.com/lit/ds/symlink/lm3697.pdf
 >>
->> To report this correctly, sym_check_expr_deps() should recurse to
->> not only sym->rev_dep.expr but also sym->implied.expr .
->>
->> At this moment, sym_check_print_recursive() cannot distinguish
->> 'select' and 'imply' since it does not know the precise context
->> where the recursive dependency is hit.  This will be solved by
->> the next commit.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->>  scripts/kconfig/symbol.c | 9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
->> index 4ec8b1f..7de7463a 100644
->> --- a/scripts/kconfig/symbol.c
->> +++ b/scripts/kconfig/symbol.c
->> @@ -1098,7 +1098,7 @@ static void sym_check_print_recursive(struct symbol *last_sym)
->>  				sym->name ? sym->name : "<choice>",
->>  				next_sym->name ? next_sym->name : "<choice>");
->>  		} else {
->> -			fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
->> +			fprintf(stderr, "%s:%d:\tsymbol %s is selected or implied by %s\n",
->>  				prop->file->name, prop->lineno,
->>  				sym->name ? sym->name : "<choice>",
->>  				next_sym->name ? next_sym->name : "<choice>");
->> @@ -1161,8 +1161,13 @@ static struct symbol *sym_check_sym_deps(struct symbol *sym)
->>  	if (sym2)
->>  		goto out;
->>  
->> +	sym2 = sym_check_expr_deps(sym->implied.expr);
->> +	if (sym2)
->> +		goto out;
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> 
 >> +
->>  	for (prop = sym->prop; prop; prop = prop->next) {
->> -		if (prop->type == P_CHOICE || prop->type == P_SELECT)
->> +		if (prop->type == P_CHOICE || prop->type == P_SELECT ||
->> +		    prop->type == P_IMPLY)
->>  			continue;
->>  		stack.prop = prop;
->>  		sym2 = sym_check_expr_deps(prop->visible.expr);
+>> +#define LM3697_HVLED1_2_3_A		0
+>> +#define LM3697_HVLED1_B_HVLED2_3_A	1
+>> +#define LM3697_HVLED2_B_HVLED1_3_A	2
+>> +#define LM3697_HVLED1_2_B_HVLED3_A	3
+>> +#define LM3697_HVLED3_B_HVLED1_2_A	4
+>> +#define LM3697_HVLED1_3_B_HVLED2_A	5
+>> +#define LM3697_HVLED1_A_HVLED2_3_B	6
+>> +#define LM3697_HVLED1_2_3_B		7
+> 
+> That's rather long and verbose way to describe a bitmap, right?
+
+It will be removed with v3
+
+> 
+>> +static const struct regmap_config lm3697_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +
+>> +	.max_register = LM3697_CTRL_ENABLE,
+>> +	.reg_defaults = lm3697_reg_defs,
+>> +	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
+>> +	.cache_type = REGCACHE_RBTREE,
+>> +};
+> 
+> Is rbtree good idea? You don't have that many registers.
+
+ack
+
+> 
+>> +static int lm3697_init(struct lm3697 *priv)
+>> +{
+>> +	int ret;
+>> +
+> ....
+>> +		regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
+> 
+> No error checking required here?
+
+Ack
+
+> 
+>> +	if (priv->control_bank_config < LM3697_HVLED1_2_3_A ||
+>> +	    priv->control_bank_config > LM3697_HVLED1_2_3_B) {
+>> +		dev_err(&priv->client->dev, "Control bank configuration is out of range\n");
+>> +		ret = -EINVAL;
+>> +		goto out;
+>> +	}
+>> +
+>> +	device_for_each_child_node(priv->dev, child) {
+>> +		led = &priv->leds[i];
+>> +
+>> +		ret = fwnode_property_read_u32(child, "reg", &led->control_bank);
+>> +		if (ret) {
+>> +			dev_err(&priv->client->dev, "reg DT property missing\n");
+>> +			goto child_out;
+>> +		}
+>> +
+>> +		fwnode_property_read_string(child, "linux,default-trigger",
+>> +					    &led->led_dev.default_trigger);
+>> +
+>> +		ret = fwnode_property_read_string(child, "label", &name);
+>> +		if (ret)
+>> +			snprintf(led->label, sizeof(led->label),
+>> +				"%s::", priv->client->name);
+>> +		else
+>> +			snprintf(led->label, sizeof(led->label),
+>> +				 "%s:%s", priv->client->name, name);
+>> +
+>> +
+>> +		led->priv = priv;
+>> +		led->led_dev.name = led->label;
+>> +		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
+>> +
+>> +		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
+>> +		if (ret) {
+>> +			dev_err(&priv->client->dev, "led register err: %d\n", ret);
+>> +			goto child_out;
+>> +		}
+>> +
+>> +		if (priv->control_bank_config == LM3697_HVLED1_2_3_A ||
+>> +		    priv->control_bank_config == LM3697_HVLED1_2_3_B)
+>> +			goto child_out;
+> 
+> This checks if we have just one bank, I see it. Should it also check
+> the led actually uses the correct bank?
+
+It will be removed with v3
+
+> 
+>> +		i++;
+>> +		fwnode_handle_put(child);
+>> +	}
+>> +
+>> +child_out:
+>> +	fwnode_handle_put(child);
+> 
+> Is not the fwnode_handle_put() done twice for non-error case?
+
+Ack
+
+> 
+>> +	ret = lm3697_init(led);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return ret;
+>> +}
+> 
+> The if is not needed here.
+> 
+
+Ack
+
+>> +static int lm3697_remove(struct i2c_client *client)
+>> +{
+>> +	struct lm3697 *led = i2c_get_clientdata(client);
+>> +	int ret;
+>> +
+>> +	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
+>> +				 LM3697_CTRL_A_B_EN, 0);
+>> +	if (ret) {
+>> +		dev_err(&led->client->dev, "Failed to disable regulator\n");
+>> +		return ret;
+> 
+> Misleading, this does nothing with regulators.
+
+Ack
+
+> 
+> 									Pavel
+> 
+
+
+-- 
+------------------
+Dan Murphy
