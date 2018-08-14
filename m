@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D13C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1735C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A73621471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A73621471
+	by mail.kernel.org (Postfix) with ESMTP id 7CEBA21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEBA21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390976AbeHNUeG (ORCPT
+        id S2390987AbeHNUeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:34:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60302 "EHLO
+        Tue, 14 Aug 2018 16:34:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60310 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388101AbeHNUeF (ORCPT
+        with ESMTP id S2390473AbeHNUeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:34:05 -0400
+        Tue, 14 Aug 2018 16:34:08 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3094D06;
-        Tue, 14 Aug 2018 17:45:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7250CD06;
+        Tue, 14 Aug 2018 17:45:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.4 01/43] ext4: fix check to prevent initializing reserved inodes
-Date:   Tue, 14 Aug 2018 19:17:37 +0200
-Message-Id: <20180814171517.096058903@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 10/43] root dentries need RCU-delayed freeing
+Date:   Tue, 14 Aug 2018 19:17:46 +0200
+Message-Id: <20180814171517.772981706@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,71 +49,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
+commit 90bad5e05bcdb0308cfa3d3a60f5c0b9c8e2efb3 upstream.
 
-Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
-valid" will complain if block group zero does not have the
-EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
-since a freshly created file system has this flag cleared.  It gets
-almost immediately after the file system is mounted read-write --- but
-the following somewhat unlikely sequence will end up triggering a
-false positive report of a corrupted file system:
+Since mountpoint crossing can happen without leaving lazy mode,
+root dentries do need the same protection against having their
+memory freed without RCU delay as everything else in the tree.
 
-   mkfs.ext4 /dev/vdc
-   mount -o ro /dev/vdc /vdc
-   mount -o remount,rw /dev/vdc
+It's partially hidden by RCU delay between detaching from the
+mount tree and dropping the vfsmount reference, but the starting
+point of pathwalk can be on an already detached mount, in which
+case umount-caused RCU delay has already passed by the time the
+lazy pathwalk grabs rcu_read_lock().  If the starting point
+happens to be at the root of that vfsmount *and* that vfsmount
+covers the entire filesystem, we get trouble.
 
-Instead, when initializing the inode table for block group zero, test
-to make sure that itable_unused count is not too large, since that is
-the case that will result in some or all of the reserved inodes
-getting cleared.
-
-This fixes the failures reported by Eric Whiteney when running
-generic/230 and generic/231 in the the nojournal test case.
-
-Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
-Reported-by: Eric Whitney <enwlinux@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: 48a066e72d97 ("RCU'd vsfmounts")
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ialloc.c |    5 ++++-
- fs/ext4/super.c  |    8 +-------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ fs/dcache.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1308,7 +1308,10 @@ int ext4_init_inode_table(struct super_b
- 			    ext4_itable_unused_count(sb, gdp)),
- 			    sbi->s_inodes_per_block);
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1954,10 +1954,12 @@ struct dentry *d_make_root(struct inode
+ 		static const struct qstr name = QSTR_INIT("/", 1);
  
--	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
-+	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
-+	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
-+			       ext4_itable_unused_count(sb, gdp)) <
-+			      EXT4_FIRST_INO(sb)))) {
- 		ext4_error(sb, "Something is wrong with group %u: "
- 			   "used itable blocks: %d; "
- 			   "itable unused count: %u",
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2875,14 +2875,8 @@ static ext4_group_t ext4_has_uninit_itab
- 		if (!gdp)
- 			continue;
- 
--		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
--			continue;
--		if (group != 0)
-+		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
- 			break;
--		ext4_error(sb, "Inode table for bg 0 marked as "
--			   "needing zeroing");
--		if (sb->s_flags & MS_RDONLY)
--			return ngroups;
+ 		res = __d_alloc(root_inode->i_sb, &name);
+-		if (res)
++		if (res) {
++			res->d_flags |= DCACHE_RCUACCESS;
+ 			d_instantiate(res, root_inode);
+-		else
++		} else {
+ 			iput(root_inode);
++		}
  	}
- 
- 	return group;
+ 	return res;
+ }
 
 
