@@ -2,91 +2,138 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBACC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC30C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 124E52170A
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:40:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 124E52170A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 7209B21734
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 07:40:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7209B21734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729891AbeHNK0P (ORCPT
+        id S1731029AbeHNK0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 06:26:15 -0400
-Received: from mout.perfora.net ([74.208.4.197]:51381 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbeHNK0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 06:26:15 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0M2N6o-1g86kI1sf6-00sAX6; Tue, 14 Aug 2018 09:39:55 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>
-Subject: [PATCH v2] ARM: dts: spear: fix stmpe811 interrupt properties
-Date:   Tue, 14 Aug 2018 09:39:48 +0200
-Message-Id: <20180814073949.27392-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:wr4LumbPFs4V51UpVSzotq6kGoxJFQ6uF4ewZ1Ax7CWASpR5uJH
- JYjXcqcBo6XeXf8DMO+QV7f89324DpAubIVyYBMRFz8rJ3KANzRzNIW/szy34jqrfZOwx+P
- 2v07Ddk3Z1Szm5bsJW0cpfCa5wXFFK3yA13OBzS5soijCAU44APZmPQGLevujtL/JXktGyt
- ElChkbO9mk6wsqfc7tpKw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:E50FbTfOpYc=:A8ZaXwD7//TYCzYtZnxG2e
- MpVJmriplJYpYCpoGYaakvSGl6uNvPRle8ImDVq7ZX/bQ/yApspbWKDUKtIaLQf9LDNI6Vox/
- peWCFj8FWQ6xA8VLqwoiEO+X2CobVnEHrI2OGUYv1krD7pwZc1ND8ebMUNUcDv6HKXSpyk53w
- RWDpZToU4Uclu0s23SgKK53hUCUd4iTX/SIuqPm4IguS/+vVjNAUbAhyEUmQqMpndyUKHxig1
- K9LzOlv8U6ICBWvJHdCF8EKKNb49UVb3c5Ua3fwgAIFxnVCgOynuDNyXMQIhS0wtd0Xm+8/wM
- Y8kfMa+CfGJVeIUWEKt9TxhF5Z5Ai3AAKudhDgf4z3OVe4nQs4OpzZtStxkrB13hpeNF3nvcr
- NUtSlIJWUlKbtIjNE6MpJjK9zR0FahypWQMOkV6pRg1WSqleCetokzuovwbzJNhZ9VI7W6cKi
- oUlMCPgMFUW+dp3AeaIJmHhJY13rlsgtoM/9TZJwCah9RANdFNh1g18oKaDlb6XZYVyCmXoBv
- ljYXNvi/YUz9RUjL/QEO9Icu2DRIayrnBIXDWCzb4Co8haKg2Bt8RX/ZUGHqhnAKtVWGls7pA
- cpBmJQNazfNOCxPXWi7yHuib/DTPjs0eGHhdlF2taZVXXwWxsyYeZD8ASO27rXLvRtEec+cVF
- Ks43MvfcBUPud+5n5758IXAW8y6bRqJPqSiq7hBC93zDx2qeDppTTmoROXKM2VhdwErM=
+        Tue, 14 Aug 2018 06:26:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49176 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeHNK0m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 06:26:42 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 763BD9D3;
+        Tue, 14 Aug 2018 07:40:43 +0000 (UTC)
+Date:   Tue, 14 Aug 2018 09:40:41 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, arjan@linux.intel.com,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
+Message-ID: <20180814074041.GB28982@kroah.com>
+References: <20180608095154.22413-1-feng.tang@intel.com>
+ <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
+ <20180612084234.gjzq66xsqblryrkm@shbuild888>
+ <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
+ <20180802091539.m5k7cdoad6hfkdfy@shbuild888>
+ <20180814063959.45bddz42ytz3e4jb@shbuild888>
+ <20180814071834.GB24616@kroah.com>
+ <20180814073810.m7ewuyvuhptgsm22@shbuild888>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180814073810.m7ewuyvuhptgsm22@shbuild888>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Tue, Aug 14, 2018 at 03:38:10PM +0800, Feng Tang wrote:
+> Hi Greg,
+> 
+> On Tue, Aug 14, 2018 at 09:18:34AM +0200, Greg Kroah-Hartman wrote:
+> > On Tue, Aug 14, 2018 at 02:39:59PM +0800, Feng Tang wrote:
+> > > Hi Greg, Ulf
+> > > 
+> > > Could you help to review this? many thanks!
+> > 
+> > Review what?  I see no patch here.  And why would I need to review a mmc
+> > patch in the middle of the merge window?
+> > 
+> > totally confused,
+> 
+> Sorry for the confusion! I didn't noticed the 4.19 merge window.
+> 
+> The patch was originally posted in June, and has gone through some
+> review discussions with mmc maintainers, my last mail was trying
+> to keep some discussion info.
 
-The property "irq-over-gpio" simply does not exist (this is nowadays
-actually auto detected) and the property "irq-gpios" is actually called
-"irq-gpio".
+Ok, then why ask me?  I'm not the mmc maintainer.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> The original patch is:
+> -----
+> 
+> >From 1514c7d56e887ace37466dded09bc43f2a4c9a4a Mon Sep 17 00:00:00 2001
+> From: Feng Tang <feng.tang@intel.com>
+> Date: Fri, 8 Jun 2018 17:10:30 +0800
+> Subject: [PATCH] mmc: Move the mmc driver init earlier
+> 
+> When doing some boot time optimization for an eMMC rootfs NUCs,
+> we found the rootfs may spend around 100 microseconds waiting
+> for eMMC card to be initialized, then the rootfs could be
+> mounted.
+> 	[    1.216561] Waiting for root device /dev/mmcblk1p1...
+> 	[    1.289262] mmc1: new HS400 MMC card at address 0001
+> 	[    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
+> 	[    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
+> 	[    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
+> 	[    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
+> 	[    1.292798]  mmcblk1: p1 p2 p3
+> 	[    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
+> 	[    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
+> 
+> And this is a common problem for smartphones, tablets, embedded
+> devices and automotive products. This patch will make the eMMC/SD
+> card  start initializing earlier, by changing its order in drivers/Makefile.
+> 
+> On our platform, the waiting for eMMC card is almost eliminated with the patch,
+> which is critical to boot time. And it should benefit other non-x86 platforms
+> which see the similar waiting for emmc rootfs.
+> 
+> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> ---
+>  drivers/Makefile | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 24cd47014657..c473afd3c688 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)		+= regulator/
+>  # reset controllers early, since gpu drivers might rely on them to initialize
+>  obj-$(CONFIG_RESET_CONTROLLER)	+= reset/
+>  
+> +# put mmc early as many morden devices use emm/sd card as rootfs storage
 
----
+Spelling error :)
 
-Changes in v2:
-- Fix commit message as pointed out by Viresh.
+> +obj-y				+= mmc/
+> +
+>  # tty/ comes before char/ so that the VT console is the boot-time
+>  # default.
+>  obj-y				+= tty/
 
- arch/arm/boot/dts/spear320-hmi.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Everyone wants to be first.  Watch out if you try to put stuff before
+tty, you have to be very careful.  There are sd serial devices, right?
 
-diff --git a/arch/arm/boot/dts/spear320-hmi.dts b/arch/arm/boot/dts/spear320-hmi.dts
-index 0d0da1f65f0e..d2d1fe944407 100644
---- a/arch/arm/boot/dts/spear320-hmi.dts
-+++ b/arch/arm/boot/dts/spear320-hmi.dts
-@@ -241,8 +241,7 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <0x41>;
--					irq-over-gpio;
--					irq-gpios = <&gpiopinctrl 29 0x4>;
-+					irq-gpio = <&gpiopinctrl 29 0x4>;
- 					id = <0>;
- 					blocks = <0x5>;
- 					irq-trigger = <0x1>;
--- 
-2.14.4
+Anyway, nothing we can do now until after 4.19-rc1 is out.
 
+thanks,
+
+greg k-h
