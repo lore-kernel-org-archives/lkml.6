@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 037D1C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC263C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B78E72150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B78E72150B
+	by mail.kernel.org (Postfix) with ESMTP id 8F3A82150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:39:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3A82150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388454AbeHNU1a (ORCPT
+        id S2388519AbeHNU1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:27:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58446 "EHLO
+        Tue, 14 Aug 2018 16:27:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58456 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730316AbeHNU13 (ORCPT
+        with ESMTP id S1730292AbeHNU1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:27:29 -0400
+        Tue, 14 Aug 2018 16:27:33 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C4FED4A;
-        Tue, 14 Aug 2018 17:39:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E6C0CBA;
+        Tue, 14 Aug 2018 17:39:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 001/107] ext4: fix check to prevent initializing reserved inodes
-Date:   Tue, 14 Aug 2018 19:16:24 +0200
-Message-Id: <20180814171520.954192579@linuxfoundation.org>
+        stable@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.9 002/107] tpm: fix race condition in tpm_common_write()
+Date:   Tue, 14 Aug 2018 19:16:25 +0200
+Message-Id: <20180814171521.005146387@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 References: <20180814171520.883143803@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,71 +50,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
 
-commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
+commit 3ab2011ea368ec3433ad49e1b9e1c7b70d2e65df upstream.
 
-Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
-valid" will complain if block group zero does not have the
-EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
-since a freshly created file system has this flag cleared.  It gets
-almost immediately after the file system is mounted read-write --- but
-the following somewhat unlikely sequence will end up triggering a
-false positive report of a corrupted file system:
+There is a race condition in tpm_common_write function allowing
+two threads on the same /dev/tpm<N>, or two different applications
+on the same /dev/tpmrm<N> to overwrite each other commands/responses.
+Fixed this by taking the priv->buffer_mutex early in the function.
 
-   mkfs.ext4 /dev/vdc
-   mount -o ro /dev/vdc /vdc
-   mount -o remount,rw /dev/vdc
+Also converted the priv->data_pending from atomic to a regular size_t
+type. There is no need for it to be atomic since it is only touched
+under the protection of the priv->buffer_mutex.
 
-Instead, when initializing the inode table for block group zero, test
-to make sure that itable_unused count is not too large, since that is
-the case that will result in some or all of the reserved inodes
-getting cleared.
-
-This fixes the failures reported by Eric Whiteney when running
-generic/230 and generic/231 in the the nojournal test case.
-
-Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
-Reported-by: Eric Whitney <enwlinux@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ialloc.c |    5 ++++-
- fs/ext4/super.c  |    8 +-------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ drivers/char/tpm/tpm-dev.c |   43 ++++++++++++++++++++-----------------------
+ 1 file changed, 20 insertions(+), 23 deletions(-)
 
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1316,7 +1316,10 @@ int ext4_init_inode_table(struct super_b
- 			    ext4_itable_unused_count(sb, gdp)),
- 			    sbi->s_inodes_per_block);
+--- a/drivers/char/tpm/tpm-dev.c
++++ b/drivers/char/tpm/tpm-dev.c
+@@ -25,7 +25,7 @@ struct file_priv {
+ 	struct tpm_chip *chip;
  
--	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
-+	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
-+	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
-+			       ext4_itable_unused_count(sb, gdp)) <
-+			      EXT4_FIRST_INO(sb)))) {
- 		ext4_error(sb, "Something is wrong with group %u: "
- 			   "used itable blocks: %d; "
- 			   "itable unused count: %u",
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3031,14 +3031,8 @@ static ext4_group_t ext4_has_uninit_itab
- 		if (!gdp)
- 			continue;
+ 	/* Data passed to and from the tpm via the read/write calls */
+-	atomic_t data_pending;
++	size_t data_pending;
+ 	struct mutex buffer_mutex;
  
--		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
--			continue;
--		if (group != 0)
-+		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
- 			break;
--		ext4_error(sb, "Inode table for bg 0 marked as "
--			   "needing zeroing");
--		if (sb->s_flags & MS_RDONLY)
--			return ngroups;
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
+@@ -46,7 +46,7 @@ static void timeout_work(struct work_str
+ 	struct file_priv *priv = container_of(work, struct file_priv, work);
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+-	atomic_set(&priv->data_pending, 0);
++	priv->data_pending = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ }
+@@ -72,7 +72,6 @@ static int tpm_open(struct inode *inode,
  	}
  
- 	return group;
+ 	priv->chip = chip;
+-	atomic_set(&priv->data_pending, 0);
+ 	mutex_init(&priv->buffer_mutex);
+ 	setup_timer(&priv->user_read_timer, user_reader_timeout,
+ 			(unsigned long)priv);
+@@ -86,28 +85,24 @@ static ssize_t tpm_read(struct file *fil
+ 			size_t size, loff_t *off)
+ {
+ 	struct file_priv *priv = file->private_data;
+-	ssize_t ret_size;
++	ssize_t ret_size = 0;
+ 	int rc;
+ 
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+ 	flush_work(&priv->work);
+-	ret_size = atomic_read(&priv->data_pending);
+-	if (ret_size > 0) {	/* relay data */
+-		ssize_t orig_ret_size = ret_size;
+-		if (size < ret_size)
+-			ret_size = size;
++	mutex_lock(&priv->buffer_mutex);
+ 
+-		mutex_lock(&priv->buffer_mutex);
++	if (priv->data_pending) {
++		ret_size = min_t(ssize_t, size, priv->data_pending);
+ 		rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-		memset(priv->data_buffer, 0, orig_ret_size);
++		memset(priv->data_buffer, 0, priv->data_pending);
+ 		if (rc)
+ 			ret_size = -EFAULT;
+ 
+-		mutex_unlock(&priv->buffer_mutex);
++		priv->data_pending = 0;
+ 	}
+ 
+-	atomic_set(&priv->data_pending, 0);
+-
++	mutex_unlock(&priv->buffer_mutex);
+ 	return ret_size;
+ }
+ 
+@@ -118,18 +113,20 @@ static ssize_t tpm_write(struct file *fi
+ 	size_t in_size = size;
+ 	ssize_t out_size;
+ 
+-	/* cannot perform a write until the read has cleared
+-	   either via tpm_read or a user_read_timer timeout.
+-	   This also prevents splitted buffered writes from blocking here.
+-	*/
+-	if (atomic_read(&priv->data_pending) != 0)
+-		return -EBUSY;
+-
+ 	if (in_size > TPM_BUFSIZE)
+ 		return -E2BIG;
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+ 
++	/* Cannot perform a write until the read has cleared either via
++	 * tpm_read or a user_read_timer timeout. This also prevents split
++	 * buffered writes from blocking here.
++	 */
++	if (priv->data_pending != 0) {
++		mutex_unlock(&priv->buffer_mutex);
++		return -EBUSY;
++	}
++
+ 	if (copy_from_user
+ 	    (priv->data_buffer, (void __user *) buf, in_size)) {
+ 		mutex_unlock(&priv->buffer_mutex);
+@@ -159,7 +156,7 @@ static ssize_t tpm_write(struct file *fi
+ 		return out_size;
+ 	}
+ 
+-	atomic_set(&priv->data_pending, out_size);
++	priv->data_pending = out_size;
+ 	mutex_unlock(&priv->buffer_mutex);
+ 
+ 	/* Set a timeout by which the reader must come claim the result */
+@@ -178,7 +175,7 @@ static int tpm_release(struct inode *ino
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+ 	flush_work(&priv->work);
+ 	file->private_data = NULL;
+-	atomic_set(&priv->data_pending, 0);
++	priv->data_pending = 0;
+ 	clear_bit(0, &priv->chip->is_open);
+ 	kfree(priv);
+ 	return 0;
 
 
