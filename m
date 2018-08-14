@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A087C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA0CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E857A21727
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E857A21727
+	by mail.kernel.org (Postfix) with ESMTP id DFD2521727
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:30:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD2521727
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389564AbeHNUSz (ORCPT
+        id S2389579AbeHNUS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:18:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53214 "EHLO
+        Tue, 14 Aug 2018 16:18:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387619AbeHNUSz (ORCPT
+        with ESMTP id S2387619AbeHNUS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:18:55 -0400
+        Tue, 14 Aug 2018 16:18:57 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62C3DD67;
-        Tue, 14 Aug 2018 17:30:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90609D1A;
+        Tue, 14 Aug 2018 17:30:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Eric Dumazet <edumazet@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 03/97] Mark HI and TASKLET softirq synchronous
-Date:   Tue, 14 Aug 2018 19:16:15 +0200
-Message-Id: <20180814171433.300425851@linuxfoundation.org>
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 46/97] x86/cpufeatures: Add detection of L1D cache flush support.
+Date:   Tue, 14 Aug 2018 19:16:58 +0200
+Message-Id: <20180814171434.907675316@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171433.160434170@linuxfoundation.org>
 References: <20180814171433.160434170@linuxfoundation.org>
@@ -54,103 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 3c53776e29f81719efcf8f7a6e30cdf753bee94d upstream.
+commit 11e34e64e4103955fc4568750914c75d65ea87ee upstream
 
-Way back in 4.9, we committed 4cd13c21b207 ("softirq: Let ksoftirqd do
-its job"), and ever since we've had small nagging issues with it.  For
-example, we've had:
+336996-Speculative-Execution-Side-Channel-Mitigations.pdf defines a new MSR
+(IA32_FLUSH_CMD) which is detected by CPUID.7.EDX[28]=1 bit being set.
 
-  1ff688209e2e ("watchdog: core: make sure the watchdog_worker is not deferred")
-  8d5755b3f77b ("watchdog: softdog: fire watchdog even if softirqs do not get to run")
-  217f69743681 ("net: busy-poll: allow preemption in sk_busy_loop()")
+This new MSR "gives software a way to invalidate structures with finer
+granularity than other architectual methods like WBINVD."
 
-all of which worked around some of the effects of that commit.
+A copy of this document is available at
+  https://bugzilla.kernel.org/show_bug.cgi?id=199511
 
-The DVB people have also complained that the commit causes excessive USB
-URB latencies, which seems to be due to the USB code using tasklets to
-schedule USB traffic.  This seems to be an issue mainly when already
-living on the edge, but waiting for ksoftirqd to handle it really does
-seem to cause excessive latencies.
-
-Now Hanna Hawa reports that this issue isn't just limited to USB URB and
-DVB, but also causes timeout problems for the Marvell SoC team:
-
- "I'm facing kernel panic issue while running raid 5 on sata disks
-  connected to Macchiatobin (Marvell community board with Armada-8040
-  SoC with 4 ARMv8 cores of CA72) Raid 5 built with Marvell DMA engine
-  and async_tx mechanism (ASYNC_TX_DMA [=y]); the DMA driver (mv_xor_v2)
-  uses a tasklet to clean the done descriptors from the queue"
-
-The latency problem causes a panic:
-
-  mv_xor_v2 f0400000.xor: dma_sync_wait: timeout!
-  Kernel panic - not syncing: async_tx_quiesce: DMA error waiting for transaction
-
-We've discussed simply just reverting the original commit entirely, and
-also much more involved solutions (with per-softirq threads etc).  This
-patch is intentionally stupid and fairly limited, because the issue
-still remains, and the other solutions either got sidetracked or had
-other issues.
-
-We should probably also consider the timer softirqs to be synchronous
-and not be delayed to ksoftirqd (since they were the issue with the
-earlier watchdog problems), but that should be done as a separate patch.
-This does only the tasklet cases.
-
-Reported-and-tested-by: Hanna Hawa <hannah@marvell.com>
-Reported-and-tested-by: Josef Griebichler <griebichler.josef@gmx.at>
-Reported-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/softirq.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -79,12 +79,16 @@ static void wakeup_softirqd(void)
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -340,6 +340,7 @@
+ #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
+ #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+ #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
  
- /*
-  * If ksoftirqd is scheduled, we do not want to process pending softirqs
-- * right now. Let ksoftirqd handle this at its own rate, to get fairness.
-+ * right now. Let ksoftirqd handle this at its own rate, to get fairness,
-+ * unless we're doing some of the synchronous softirqs.
-  */
--static bool ksoftirqd_running(void)
-+#define SOFTIRQ_NOW_MASK ((1 << HI_SOFTIRQ) | (1 << TASKLET_SOFTIRQ))
-+static bool ksoftirqd_running(unsigned long pending)
- {
- 	struct task_struct *tsk = __this_cpu_read(ksoftirqd);
- 
-+	if (pending & SOFTIRQ_NOW_MASK)
-+		return false;
- 	return tsk && (tsk->state == TASK_RUNNING);
- }
- 
-@@ -329,7 +333,7 @@ asmlinkage __visible void do_softirq(voi
- 
- 	pending = local_softirq_pending();
- 
--	if (pending && !ksoftirqd_running())
-+	if (pending && !ksoftirqd_running(pending))
- 		do_softirq_own_stack();
- 
- 	local_irq_restore(flags);
-@@ -356,7 +360,7 @@ void irq_enter(void)
- 
- static inline void invoke_softirq(void)
- {
--	if (ksoftirqd_running())
-+	if (ksoftirqd_running(local_softirq_pending()))
- 		return;
- 
- 	if (!force_irqthreads) {
 
 
