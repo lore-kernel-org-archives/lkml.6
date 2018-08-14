@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 951A2C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5B2C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5651821728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5651821728
+	by mail.kernel.org (Postfix) with ESMTP id 6EA9D21728
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:25:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA9D21728
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388200AbeHNUNc (ORCPT
+        id S2388216AbeHNUNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:13:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51676 "EHLO
+        Tue, 14 Aug 2018 16:13:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733240AbeHNUNc (ORCPT
+        with ESMTP id S1733240AbeHNUNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:13:32 -0400
+        Tue, 14 Aug 2018 16:13:34 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 379FFD67;
-        Tue, 14 Aug 2018 17:25:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 494F7D1D;
+        Tue, 14 Aug 2018 17:25:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
         Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 4.18 05/79] x86/speculation/l1tf: Increase 32bit PAE __PHYSICAL_PAGE_SHIFT
-Date:   Tue, 14 Aug 2018 19:16:24 +0200
-Message-Id: <20180814171337.001114399@linuxfoundation.org>
+Subject: [PATCH 4.18 06/79] x86/speculation/l1tf: Change order of offset/type in swap entry
+Date:   Tue, 14 Aug 2018 19:16:25 +0200
+Message-Id: <20180814171337.037614975@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -53,78 +56,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-L1 Terminal Fault (L1TF) is a speculation related vulnerability. The CPU
-speculates on PTE entries which do not have the PRESENT bit set, if the
-content of the resulting physical address is available in the L1D cache.
+If pages are swapped out, the swap entry is stored in the corresponding
+PTE, which has the Present bit cleared. CPUs vulnerable to L1TF speculate
+on PTE entries which have the present bit set and would treat the swap
+entry as phsyical address (PFN). To mitigate that the upper bits of the PTE
+must be set so the PTE points to non existent memory.
 
-The OS side mitigation makes sure that a !PRESENT PTE entry points to a
-physical address outside the actually existing and cachable memory
-space. This is achieved by inverting the upper bits of the PTE. Due to the
-address space limitations this only works for 64bit and 32bit PAE kernels,
-but not for 32bit non PAE.
+The swap entry stores the type and the offset of a swapped out page in the
+PTE. type is stored in bit 9-13 and offset in bit 14-63. The hardware
+ignores the bits beyond the phsyical address space limit, so to make the
+mitigation effective its required to start 'offset' at the lowest possible
+bit so that even large swap offsets do not reach into the physical address
+space limit bits.
 
-This mitigation applies to both host and guest kernels, but in case of a
-64bit host (hypervisor) and a 32bit PAE guest, inverting the upper bits of
-the PAE address space (44bit) is not enough if the host has more than 43
-bits of populated memory address space, because the speculation treats the
-PTE content as a physical host address bypassing EPT.
+Move offset to bit 9-58 and type to bit 59-63 which are the bits that
+hardware generally doesn't care about.
 
-The host (hypervisor) protects itself against the guest by flushing L1D as
-needed, but pages inside the guest are not protected against attacks from
-other processes inside the same guest.
+That, in turn, means that if you on desktop chip with only 40 bits of
+physical addressing, now that the offset starts at bit 9, there needs to be
+30 bits of offset actually *in use* until bit 39 ends up being set, which
+means when inverted it will again point into existing memory.
 
-For the guest the inverted PTE mask has to match the host to provide the
-full protection for all pages the host could possibly map into the
-guest. The hosts populated address space is not known to the guest, so the
-mask must cover the possible maximal host address space, i.e. 52 bit.
+So that's 4 terabyte of swap space (because the offset is counted in pages,
+so 30 bits of offset is 42 bits of actual coverage). With bigger physical
+addressing, that obviously grows further, until the limit of the offset is
+hit (at 50 bits of offset - 62 bits of actual swap file coverage).
 
-On 32bit PAE the maximum PTE mask is currently set to 44 bit because that
-is the limit imposed by 32bit unsigned long PFNs in the VMs. This limits
-the mask to be below what the host could possible use for physical pages.
+This is a preparatory change for the actual swap entry inversion to protect
+against L1TF.
 
-The L1TF PROT_NONE protection code uses the PTE masks to determine which
-bits to invert to make sure the higher bits are set for unmapped entries to
-prevent L1TF speculation attacks against EPT inside guests.
-
-In order to invert all bits that could be used by the host, increase
-__PHYSICAL_PAGE_SHIFT to 52 to match 64bit.
-
-The real limit for a 32bit PAE kernel is still 44 bits because all Linux
-PTEs are created from unsigned long PFNs, so they cannot be higher than 44
-bits on a 32bit kernel. So these extra PFN bits should be never set. The
-only users of this macro are using it to look at PTEs, so it's safe.
-
+[ AK: Updated description and minor tweaks. Split into two parts ]
 [ tglx: Massaged changelog ]
 
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Andi Kleen <ak@linux.intel.com>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/page_32_types.h |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable_64.h |   31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/arch/x86/include/asm/page_32_types.h
-+++ b/arch/x86/include/asm/page_32_types.h
-@@ -29,8 +29,13 @@
- #define N_EXCEPTION_STACKS 1
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -273,7 +273,7 @@ static inline int pgd_large(pgd_t pgd) {
+  *
+  * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
+  * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
+- * | OFFSET (14->63) | TYPE (9-13)  |0|0|X|X| X| X|X|SD|0| <- swp entry
++ * | TYPE (59-63) |  OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
+  *
+  * G (8) is aliased and used as a PROT_NONE indicator for
+  * !present ptes.  We need to start storing swap entries above
+@@ -287,19 +287,28 @@ static inline int pgd_large(pgd_t pgd) {
+  * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
+  * but also L and G.
+  */
+-#define SWP_TYPE_FIRST_BIT (_PAGE_BIT_PROTNONE + 1)
+-#define SWP_TYPE_BITS 5
+-/* Place the offset above the type: */
+-#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS)
++#define SWP_TYPE_BITS		5
++
++#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
++
++/* We always extract/encode the offset by shifting it all the way up, and then down again */
++#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT+SWP_TYPE_BITS)
  
- #ifdef CONFIG_X86_PAE
--/* 44=32+12, the limit we can fit into an unsigned long pfn */
--#define __PHYSICAL_MASK_SHIFT	44
+ #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS)
+ 
+-#define __swp_type(x)			(((x).val >> (SWP_TYPE_FIRST_BIT)) \
+-					 & ((1U << SWP_TYPE_BITS) - 1))
+-#define __swp_offset(x)			((x).val >> SWP_OFFSET_FIRST_BIT)
+-#define __swp_entry(type, offset)	((swp_entry_t) { \
+-					 ((type) << (SWP_TYPE_FIRST_BIT)) \
+-					 | ((offset) << SWP_OFFSET_FIRST_BIT) })
++/* Extract the high bits for type */
++#define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
++
++/* Shift up (to get rid of type), then down to get value */
++#define __swp_offset(x) ((x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
++
 +/*
-+ * This is beyond the 44 bit limit imposed by the 32bit long pfns,
-+ * but we need the full mask to make sure inverted PROT_NONE
-+ * entries have all the host bits set in a guest.
-+ * The real limit is still 44 bits.
++ * Shift the offset up "too far" by TYPE bits, then down again
 + */
-+#define __PHYSICAL_MASK_SHIFT	52
- #define __VIRTUAL_MASK_SHIFT	32
- 
- #else  /* !CONFIG_X86_PAE */
++#define __swp_entry(type, offset) ((swp_entry_t) { \
++	((unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	| ((unsigned long)(type) << (64-SWP_TYPE_BITS)) })
++
+ #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val((pte)) })
+ #define __pmd_to_swp_entry(pmd)		((swp_entry_t) { pmd_val((pmd)) })
+ #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
 
 
