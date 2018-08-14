@@ -2,558 +2,197 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B554C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED11C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3838621742
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:17:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="I8DNWUeH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3838621742
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id DD23C2173A
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 13:20:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD23C2173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbeHNQE6 (ORCPT
+        id S1732753AbeHNQHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 12:04:58 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35262 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732724AbeHNQE5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:04:57 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p10-v6so15374203ljg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 06:17:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8VCwPOiX9eio+DJdkICjewze+BRu1cwAAf8ikJZNbBY=;
-        b=I8DNWUeHmgWKkmxjPEucTRWXXzOFTNPpqDNY8EvcHiqyR5S0E1VHaH9yeuqI1PGAti
-         urDk0ylaLxAPeFQjQvWJWTISJ6jmhjUSfJAdGyFiSMfqFJZolOngbdHCeIdfuM9WBNxV
-         RPEX09/beVw48g9HmwrAdtq3/NE/ne4Q3ibguyKz4oz7Qap9xcJUWyzOaVqvH99oc7mj
-         mwbZVQSGvXgolqv+TMQssPXL2Z5R54/ojbpyrFMM1sKgGQDUIkPaxsVkbZLuGuSnbEBj
-         fzp9hnXWKis+DhQF2ECZHu/jelAVwoF3cgdWPl5UUlqg//BSIIEwuL9yD3egjV2KBfcl
-         oFCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8VCwPOiX9eio+DJdkICjewze+BRu1cwAAf8ikJZNbBY=;
-        b=PH3va/0NHawWdt/eCHbm/XKv/VT7J7A0s7PtafGCCUTu0vSl2uKRoZcLg/qafjV3AY
-         fSgnKewRmNwjw3fZE5Y2okP4Evy4w2tMuxLl1+XgGF/jiKg+BTvvhzWFZO9UV2EEuqvV
-         L3naHHeXNVRQgjw5dMk6BM9yuJsB5K42B6QaR+LhkLfn31Rpdy99tnbxTNM2X/DhAKAa
-         FYbVtNnFmq/THuCwNtwGWnkxaOBA+sWI3fmicjPvBcwz+453A1Y3JvS5evE+/JXx3khm
-         nMVSdRkPNi8z/tPA4RhhbrgntQwmQ99umcN4CgnG4KQ/xhjJ3tKIxC/edhHwlko0eO77
-         1Z9w==
-X-Gm-Message-State: AOUpUlHka5RZRnCnFR01Ry1G+6UE6aDKhv/ghMVFEtQpwko9bj7b+sJq
-        GcAKkbmUXe2FA8/v7P6DYgpohxccRq0=
-X-Google-Smtp-Source: AA+uWPyaWGmHJNfOVX+YkQjkxwfDsfCATgZm0hVFag2/Wi52cmNHl6ZUSIIqq3MW3QReytchmr2yKg==
-X-Received: by 2002:a2e:291c:: with SMTP id u28-v6mr1892454lje.70.1534252667436;
-        Tue, 14 Aug 2018 06:17:47 -0700 (PDT)
-Received: from localhost.localdomain (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id r73-v6sm3926320lfi.34.2018.08.14.06.17.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 06:17:46 -0700 (PDT)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [RFC PATCH 1/1] lightnvm: move bad block and chunk state logic to core
-Date:   Tue, 14 Aug 2018 15:17:35 +0200
-Message-Id: <20180814131735.6853-2-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180814131735.6853-1-mb@lightnvm.io>
-References: <20180814131735.6853-1-mb@lightnvm.io>
+        Tue, 14 Aug 2018 12:07:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46214 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732414AbeHNQHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 12:07:35 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6817B4072CFE;
+        Tue, 14 Aug 2018 13:20:25 +0000 (UTC)
+Received: from [10.72.12.152] (ovpn-12-152.pek2.redhat.com [10.72.12.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 496D523140;
+        Tue, 14 Aug 2018 13:20:20 +0000 (UTC)
+Subject: Re: [RFC PATCH net-next V2 0/6] XDP rx handler
+To:     Jesper Dangaard Brouer <jbrouer@redhat.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, mst@redhat.com
+References: <1534130250-5302-1-git-send-email-jasowang@redhat.com>
+ <20180814003253.fkgl6lyklc7fclvq@ast-mbp>
+ <5de3d14f-f21a-c806-51f4-b5efd7d809b7@redhat.com>
+ <20180814121734.105769fa@redhat.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <03ab3b18-9b13-8169-7e68-ada307694bc1@redhat.com>
+Date:   Tue, 14 Aug 2018 21:20:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180814121734.105769fa@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 14 Aug 2018 13:20:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 14 Aug 2018 13:20:25 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pblk implements two data paths for recovery line state. One for 1.2
-and another for 2.0, instead of having pblk implement these, combine
-them in the core to reduce complexity and make available to other
-targets.
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/core.c      | 166 ++++++++++++++++++++++++++++---------------
- drivers/lightnvm/pblk-core.c |   6 +-
- drivers/lightnvm/pblk-init.c | 116 +-----------------------------
- drivers/lightnvm/pblk.h      |   2 +-
- drivers/nvme/host/lightnvm.c |   4 +-
- include/linux/lightnvm.h     |  15 ++--
- 6 files changed, 122 insertions(+), 187 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 964352720a03..bb948724f33c 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -717,46 +717,6 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
- 	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
- }
- 
--int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct nvm_chk_meta *meta,
--		struct ppa_addr ppa, int nchks)
--{
--	struct nvm_dev *dev = tgt_dev->parent;
--
--	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
--
--	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
--						(sector_t)ppa.ppa, nchks);
--}
--EXPORT_SYMBOL(nvm_get_chunk_meta);
--
--int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
--		       int nr_ppas, int type)
--{
--	struct nvm_dev *dev = tgt_dev->parent;
--	struct nvm_rq rqd;
--	int ret;
--
--	if (nr_ppas > NVM_MAX_VLBA) {
--		pr_err("nvm: unable to update all blocks atomically\n");
--		return -EINVAL;
--	}
--
--	memset(&rqd, 0, sizeof(struct nvm_rq));
--
--	nvm_set_rqd_ppalist(tgt_dev, &rqd, ppas, nr_ppas);
--	nvm_rq_tgt_to_dev(tgt_dev, &rqd);
--
--	ret = dev->ops->set_bb_tbl(dev, &rqd.ppa_addr, rqd.nr_ppas, type);
--	nvm_free_rqd_ppalist(tgt_dev, &rqd);
--	if (ret) {
--		pr_err("nvm: failed bb mark\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL(nvm_set_tgt_bb_tbl);
--
- static int nvm_set_flags(struct nvm_geo *geo, struct nvm_rq *rqd)
- {
- 	int flags = 0;
-@@ -831,26 +791,22 @@ void nvm_end_io(struct nvm_rq *rqd)
- EXPORT_SYMBOL(nvm_end_io);
- 
- /*
-- * folds a bad block list from its plane representation to its virtual
-- * block representation. The fold is done in place and reduced size is
-- * returned.
-+ * folds a bad block list from its plane representation to its
-+ * chunk representation.
-  *
-- * If any of the planes status are bad or grown bad block, the virtual block
-- * is marked bad. If not bad, the first plane state acts as the block state.
-+ * If any of the planes status are bad or grown bad, the chunk is marked
-+ * offline. If not bad, the first plane state acts as the chunk state.
-  */
--int nvm_bb_tbl_fold(struct nvm_dev *dev, u8 *blks, int nr_blks)
-+static void nvm_bb_to_chunk(struct nvm_dev *dev, u8 *blks, int nr_blks,
-+						struct nvm_chk_meta *meta)
- {
- 	struct nvm_geo *geo = &dev->geo;
--	int blk, offset, pl, blktype;
--
--	if (nr_blks != geo->num_chk * geo->pln_mode)
--		return -EINVAL;
-+	int blk, pl, offset, blktype;
- 
- 	for (blk = 0; blk < geo->num_chk; blk++) {
- 		offset = blk * geo->pln_mode;
- 		blktype = blks[offset];
- 
--		/* Bad blocks on any planes take precedence over other types */
- 		for (pl = 0; pl < geo->pln_mode; pl++) {
- 			if (blks[offset + pl] &
- 					(NVM_BLK_T_BAD|NVM_BLK_T_GRWN_BAD)) {
-@@ -859,23 +815,117 @@ int nvm_bb_tbl_fold(struct nvm_dev *dev, u8 *blks, int nr_blks)
- 			}
- 		}
- 
--		blks[blk] = blktype;
-+		if (blktype == NVM_BLK_T_FREE)
-+			meta->state = NVM_CHK_ST_CLOSED;
-+		else
-+			meta->state = NVM_CHK_ST_OFFLINE;
-+
-+		meta->type = NVM_CHK_TP_W_SEQ;
-+		meta->wi = 0;
-+		meta->slba = -1;
-+		meta->cnlb = meta->wp = dev->geo.clba;
-+
-+		meta++;
- 	}
- 
--	return geo->num_chk;
-+	return 0;
-+}
-+
-+static int nvm_get_bb_meta(struct nvm_dev *dev, sector_t slba, int nchks,
-+			   struct nvm_chk_meta *meta)
-+{
-+	struct nvm_geo *geo = &dev->geo;
-+	struct ppa_addr ppa;
-+	u8 *blks;
-+	int ch, lun, nr_blks;
-+	int ret;
-+
-+	ppa.ppa = slba;
-+	ppa = dev_to_generic_addr(dev, ppa);
-+
-+	if (ppa.g.blk != 0)
-+		return -EINVAL;
-+
-+	if ((nchks % geo->num_chk) != 0)
-+		return -EINVAL;
-+
-+	nr_blks = geo->num_chk * geo->pln_mode;
-+
-+	blks = kmalloc(nr_blks, GFP_KERNEL);
-+	if (!blks)
-+		return -ENOMEM;
-+
-+	for (ch = ppa.g.ch; ch < geo->num_ch; ch++) {
-+		for (lun = ppa.g.lun; lun < geo->num_lun; lun++) {
-+			struct ppa_addr ppa_tmp;
-+
-+			if (!nchks)
-+				goto out;
-+
-+			ppa_tmp.ppa = 0;
-+			ppa_tmp.a.ch = ch;
-+			ppa_tmp.a.lun = lun;
-+			ppa_tmp = generic_to_dev_addr(dev, ppa_tmp);
-+
-+			ret = dev->ops->get_bb_tbl(dev, ppa_tmp, blks);
-+			if (ret)
-+				goto err;
-+
-+			nvm_bb_to_chunk(dev, blks, nr_blks, meta);
-+
-+			meta += geo->num_chk;
-+			nchks -= geo->num_chk;
-+		}
-+	}
-+out:
-+	return 0;
-+err:
-+	kfree(blks);
-+	return ret;
- }
--EXPORT_SYMBOL(nvm_bb_tbl_fold);
- 
--int nvm_get_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr ppa,
--		       u8 *blks)
-+int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct ppa_addr ppa,
-+		       int nchks, struct nvm_chk_meta *meta)
- {
- 	struct nvm_dev *dev = tgt_dev->parent;
- 
- 	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
- 
--	return dev->ops->get_bb_tbl(dev, ppa, blks);
-+	if (dev->geo.version == NVM_OCSSD_SPEC_12)
-+		return nvm_get_bb_meta(dev, (sector_t)ppa.ppa, nchks, meta);
-+
-+	return dev->ops->get_chk_meta(dev, (sector_t)ppa.ppa, nchks, meta);
- }
--EXPORT_SYMBOL(nvm_get_tgt_bb_tbl);
-+EXPORT_SYMBOL_GPL(nvm_get_chunk_meta);
-+
-+int nvm_set_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
-+		       int nr_ppas, int type)
-+{
-+	struct nvm_dev *dev = tgt_dev->parent;
-+	struct nvm_rq rqd;
-+	int ret;
-+
-+	if (dev->geo.version == NVM_OCSSD_SPEC_20)
-+		return 0;
-+
-+	if (nr_ppas > NVM_MAX_VLBA) {
-+		pr_err("nvm: unable to update all blocks atomically\n");
-+		return -EINVAL;
-+	}
-+
-+	memset(&rqd, 0, sizeof(struct nvm_rq));
-+
-+	nvm_set_rqd_ppalist(tgt_dev, &rqd, ppas, nr_ppas);
-+	nvm_rq_tgt_to_dev(tgt_dev, &rqd);
-+
-+	ret = dev->ops->set_bb_tbl(dev, &rqd.ppa_addr, rqd.nr_ppas, type);
-+	nvm_free_rqd_ppalist(tgt_dev, &rqd);
-+	if (ret)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(nvm_set_chunk_meta);
- 
- static int nvm_core_init(struct nvm_dev *dev)
- {
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 814204d22a2e..4df90b3e574e 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -27,7 +27,7 @@ static void pblk_line_mark_bb(struct work_struct *work)
- 	struct ppa_addr *ppa = line_ws->priv;
- 	int ret;
- 
--	ret = nvm_set_tgt_bb_tbl(dev, ppa, 1, NVM_BLK_T_GRWN_BAD);
-+	ret = nvm_set_chunk_meta(dev, ppa, 1, NVM_BLK_T_GRWN_BAD);
- 	if (ret) {
- 		struct pblk_line *line;
- 		int pos;
-@@ -110,7 +110,7 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
-  *
-  * The caller is responsible for freeing the returned structure
-  */
--struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk)
-+struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-@@ -126,7 +126,7 @@ struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk)
- 	if (!meta)
- 		return ERR_PTR(-ENOMEM);
- 
--	ret = nvm_get_chunk_meta(dev, meta, ppa, geo->all_chunks);
-+	ret = nvm_get_chunk_meta(dev, ppa, geo->all_chunks, meta);
- 	if (ret) {
- 		kfree(meta);
- 		return ERR_PTR(-EIO);
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index cc8a59e3c240..25686ce3b0d5 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -540,67 +540,6 @@ static void pblk_lines_free(struct pblk *pblk)
- 	kfree(pblk->lines);
- }
- 
--static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct pblk_lun *rlun,
--			   u8 *blks, int nr_blks)
--{
--	struct ppa_addr ppa;
--	int ret;
--
--	ppa.ppa = 0;
--	ppa.g.ch = rlun->bppa.g.ch;
--	ppa.g.lun = rlun->bppa.g.lun;
--
--	ret = nvm_get_tgt_bb_tbl(dev, ppa, blks);
--	if (ret)
--		return ret;
--
--	nr_blks = nvm_bb_tbl_fold(dev->parent, blks, nr_blks);
--	if (nr_blks < 0)
--		return -EIO;
--
--	return 0;
--}
--
--static void *pblk_bb_get_meta(struct pblk *pblk)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--	u8 *meta;
--	int i, nr_blks, blk_per_lun;
--	int ret;
--
--	blk_per_lun = geo->num_chk * geo->pln_mode;
--	nr_blks = blk_per_lun * geo->all_luns;
--
--	meta = kmalloc(nr_blks, GFP_KERNEL);
--	if (!meta)
--		return ERR_PTR(-ENOMEM);
--
--	for (i = 0; i < geo->all_luns; i++) {
--		struct pblk_lun *rlun = &pblk->luns[i];
--		u8 *meta_pos = meta + i * blk_per_lun;
--
--		ret = pblk_bb_get_tbl(dev, rlun, meta_pos, blk_per_lun);
--		if (ret) {
--			kfree(meta);
--			return ERR_PTR(-EIO);
--		}
--	}
--
--	return meta;
--}
--
--static void *pblk_chunk_get_meta(struct pblk *pblk)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--
--	if (geo->version == NVM_OCSSD_SPEC_12)
--		return pblk_bb_get_meta(pblk);
--	else
--		return pblk_chunk_get_info(pblk);
--}
--
- static int pblk_luns_init(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
-@@ -699,51 +638,7 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
- 	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
- }
- 
--static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
--				   void *chunk_meta)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--	struct pblk_line_meta *lm = &pblk->lm;
--	int i, chk_per_lun, nr_bad_chks = 0;
--
--	chk_per_lun = geo->num_chk * geo->pln_mode;
--
--	for (i = 0; i < lm->blk_per_line; i++) {
--		struct pblk_lun *rlun = &pblk->luns[i];
--		struct nvm_chk_meta *chunk;
--		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
--		u8 *lun_bb_meta = chunk_meta + pos * chk_per_lun;
--
--		chunk = &line->chks[pos];
--
--		/*
--		 * In 1.2 spec. chunk state is not persisted by the device. Thus
--		 * some of the values are reset each time pblk is instantiated,
--		 * so we have to assume that the block is closed.
--		 */
--		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
--			chunk->state =  NVM_CHK_ST_CLOSED;
--		else
--			chunk->state = NVM_CHK_ST_OFFLINE;
--
--		chunk->type = NVM_CHK_TP_W_SEQ;
--		chunk->wi = 0;
--		chunk->slba = -1;
--		chunk->cnlb = geo->clba;
--		chunk->wp = 0;
--
--		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
--			continue;
--
--		set_bit(pos, line->blk_bitmap);
--		nr_bad_chks++;
--	}
--
--	return nr_bad_chks;
--}
--
--static int pblk_setup_line_meta_20(struct pblk *pblk, struct pblk_line *line,
-+static int pblk_setup_line_meta_chk(struct pblk *pblk, struct pblk_line *line,
- 				   struct nvm_chk_meta *meta)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
-@@ -790,8 +685,6 @@ static int pblk_setup_line_meta_20(struct pblk *pblk, struct pblk_line *line,
- static long pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
- 				 void *chunk_meta, int line_id)
- {
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	struct pblk_line_meta *lm = &pblk->lm;
- 	long nr_bad_chks, chk_in_line;
-@@ -804,10 +697,7 @@ static long pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
- 	line->vsc = &l_mg->vsc_list[line_id];
- 	spin_lock_init(&line->lock);
- 
--	if (geo->version == NVM_OCSSD_SPEC_12)
--		nr_bad_chks = pblk_setup_line_meta_12(pblk, line, chunk_meta);
--	else
--		nr_bad_chks = pblk_setup_line_meta_20(pblk, line, chunk_meta);
-+	nr_bad_chks = pblk_setup_line_meta_chk(pblk, line, chunk_meta);
- 
- 	chk_in_line = lm->blk_per_line - nr_bad_chks;
- 	if (nr_bad_chks < 0 || nr_bad_chks > lm->blk_per_line ||
-@@ -1058,7 +948,7 @@ static int pblk_lines_init(struct pblk *pblk)
- 	if (ret)
- 		goto fail_free_meta;
- 
--	chunk_meta = pblk_chunk_get_meta(pblk);
-+	chunk_meta = pblk_get_chunk_meta(pblk);
- 	if (IS_ERR(chunk_meta)) {
- 		ret = PTR_ERR(chunk_meta);
- 		goto fail_free_luns;
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 48b3035df3c4..579b4ea9716c 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -774,7 +774,7 @@ void pblk_set_sec_per_write(struct pblk *pblk, int sec_per_write);
- int pblk_setup_w_rec_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 			struct pblk_c_ctx *c_ctx);
- void pblk_discard(struct pblk *pblk, struct bio *bio);
--struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk);
-+struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk);
- struct nvm_chk_meta *pblk_chunk_get_off(struct pblk *pblk,
- 					      struct nvm_chk_meta *lp,
- 					      struct ppa_addr ppa);
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index a156fe3ca7d3..a4b036e240c8 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -567,8 +567,8 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
-  * Expect the lba in device format
-  */
- static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
--				 struct nvm_chk_meta *meta,
--				 sector_t slba, int nchks)
-+				 sector_t slba, int nchks,
-+				 struct nvm_chk_meta *meta)
- {
- 	struct nvm_geo *geo = &ndev->geo;
- 	struct nvme_ns *ns = ndev->q->queuedata;
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index f4a84694e5e2..0106984400bc 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -86,8 +86,8 @@ struct nvm_chk_meta;
- typedef int (nvm_id_fn)(struct nvm_dev *);
- typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
- typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
--typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, struct nvm_chk_meta *,
--								sector_t, int);
-+typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, sector_t, int,
-+							struct nvm_chk_meta *);
- typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
-@@ -532,18 +532,13 @@ extern struct nvm_dev *nvm_alloc_dev(int);
- extern int nvm_register(struct nvm_dev *);
- extern void nvm_unregister(struct nvm_dev *);
- 
--
--extern int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev,
--			      struct nvm_chk_meta *meta, struct ppa_addr ppa,
--			      int nchks);
--
--extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
-+extern int nvm_get_chunk_meta(struct nvm_tgt_dev *, struct ppa_addr,
-+			      int, struct nvm_chk_meta *);
-+extern int nvm_set_chunk_meta(struct nvm_tgt_dev *, struct ppa_addr *,
- 			      int, int);
- extern int nvm_submit_io(struct nvm_tgt_dev *, struct nvm_rq *);
- extern int nvm_submit_io_sync(struct nvm_tgt_dev *, struct nvm_rq *);
- extern void nvm_end_io(struct nvm_rq *);
--extern int nvm_bb_tbl_fold(struct nvm_dev *, u8 *, int);
--extern int nvm_get_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr, u8 *);
- 
- #else /* CONFIG_NVM */
- struct nvm_dev_ops;
--- 
-2.11.0
+On 2018年08月14日 18:17, Jesper Dangaard Brouer wrote:
+> On Tue, 14 Aug 2018 15:59:01 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
+>
+>> On 2018年08月14日 08:32, Alexei Starovoitov wrote:
+>>> On Mon, Aug 13, 2018 at 11:17:24AM +0800, Jason Wang wrote:
+>>>> Hi:
+>>>>
+>>>> This series tries to implement XDP support for rx hanlder. This would
+>>>> be useful for doing native XDP on stacked device like macvlan, bridge
+>>>> or even bond.
+>>>>
+>>>> The idea is simple, let stacked device register a XDP rx handler. And
+>>>> when driver return XDP_PASS, it will call a new helper xdp_do_pass()
+>>>> which will try to pass XDP buff to XDP rx handler directly. XDP rx
+>>>> handler may then decide how to proceed, it could consume the buff, ask
+>>>> driver to drop the packet or ask the driver to fallback to normal skb
+>>>> path.
+>>>>
+>>>> A sample XDP rx handler was implemented for macvlan. And virtio-net
+>>>> (mergeable buffer case) was converted to call xdp_do_pass() as an
+>>>> example. For ease comparision, generic XDP support for rx handler was
+>>>> also implemented.
+>>>>
+>>>> Compared to skb mode XDP on macvlan, native XDP on macvlan (XDP_DROP)
+>>>> shows about 83% improvement.
+>>> I'm missing the motiviation for this.
+>>> It seems performance of such solution is ~1M packet per second.
+>> Notice it was measured by virtio-net which is kind of slow.
+>>
+>>> What would be a real life use case for such feature ?
+>> I had another run on top of 10G mlx4 and macvlan:
+>>
+>> XDP_DROP on mlx4: 14.0Mpps
+>> XDP_DROP on macvlan: 10.05Mpps
+>>
+>> Perf shows macvlan_hash_lookup() and indirect call to
+>> macvlan_handle_xdp() are the reasons for the number drop. I think the
+>> numbers are acceptable. And we could try more optimizations on top.
+>>
+>> So here's real life use case is trying to have an fast XDP path for rx
+>> handler based device:
+>>
+>> - For containers, we can run XDP for macvlan (~70% of wire speed). This
+>> allows a container specific policy.
+>> - For VM, we can implement macvtap XDP rx handler on top. This allow us
+>> to forward packet to VM without building skb in the setup of macvtap.
+>> - The idea could be used by other rx handler based device like bridge,
+>> we may have a XDP fast forwarding path for bridge.
+>>
+>>> Another concern is that XDP users expect to get line rate performance
+>>> and native XDP delivers it. 'generic XDP' is a fallback only
+>>> mechanism to operate on NICs that don't have native XDP yet.
+>> So I can replace generic XDP TX routine with a native one for macvlan.
+> If you simply implement ndo_xdp_xmit() for macvlan, and instead use
+> XDP_REDIRECT, then we are basically done.
+
+As I replied in another thread this probably not true. Its 
+ndo_xdp_xmit() just need to call under layer device's ndo_xdp_xmit() 
+except for the case of bridge mode.
+
+>
+>
+>>> Toshiaki's veth XDP work fits XDP philosophy and allows
+>>> high speed networking to be done inside containers after veth.
+>>> It's trying to get to line rate inside container.
+>> This is one of the goal of this series as well. I agree veth XDP work
+>> looks pretty fine, but it only work for a specific setup I believe since
+>> it depends on XDP_REDIRECT which is supported by few drivers (and
+>> there's no VF driver support).
+> The XDP_REDIRECT (RX-side) is trivial to add to drivers.  It is a bad
+> argument that only a few drivers implement this.  Especially since all
+> drivers also need to be extended with your proposed xdp_do_pass() call.
+>
+> (rant) The thing that is delaying XDP_REDIRECT adaption in drivers, is
+> that it is harder to implement the TX-side, as the ndo_xdp_xmit() call
+> have to allocate HW TX-queue resources.  If we disconnect RX and TX
+> side of redirect, then we can implement RX-side in an afternoon.
+
+That's exactly the point, ndo_xdp_xmit() may requires per CPU TX queues 
+which breaks assumptions of some drivers. And since we don't disconnect 
+RX and TX, it looks to me the partial implementation is even worse? 
+Consider a user can redirect from mlx4 to ixgbe but not ixgbe to mlx4.
+
+>
+>
+>> And in order to make it work for a end
+>> user, the XDP program still need logic like hash(map) lookup to
+>> determine the destination veth.
+> That _is_ the general idea behind XDP and eBPF, that we need to add logic
+> that determine the destination.  The kernel provides the basic
+> mechanisms for moving/redirecting packets fast, and someone else
+> builds an orchestration tool like Cilium, that adds the needed logic.
+
+Yes, so my reply is for the concern about performance. I meant anyway 
+the hash lookup will make it not hit the wire speed.
+
+>
+> Did you notice that we (Ahern) added bpf_fib_lookup a FIB route lookup
+> accessible from XDP.
+
+Yes.
+
+>
+> For macvlan, I imagine that we could add a BPF helper that allows you
+> to lookup/call macvlan_hash_lookup().
+
+That's true but we still need a method to feed macvlan with XDP buff. 
+I'm not sure if this could be treated as another kind of redirection, 
+but ndo_xdp_xmit() could not be used for this case for sure. Compared to 
+redirection, XDP rx handler has its own advantages:
+
+1) Use the exist API and userspace to setup the network topology instead 
+of inventing new tools and its own specific API. This means user can 
+just setup macvlan (macvtap, bridge or other) as usual and simply attach 
+XDP programs to both macvlan and its under layer device.
+2) Ease the processing of complex logic, XDP can not do cloning or 
+reference counting. We can differ those cases and let normal networking 
+stack to deal with such packets seamlessly. I believe this is one of the 
+advantage of XDP. This makes us to focus on the fast path and greatly 
+simplify the codes.
+
+Like ndo_xdp_xmit(), XDP rx handler is used to feed RX handler with XDP 
+buff. It's just another basic mechanism. Policy is still done by XDP 
+program itself.
+
+Thanks
+
+>
+>   
+>>> This XDP rx handler stuff is destined to stay at 1Mpps speeds forever
+>>> and the users will get confused with forever slow modes of XDP.
+>>>
+>>> Please explain the problem you're trying to solve.
+>>> "look, here I can to XDP on top of macvlan" is not an explanation of the problem.
+>>>   
+>
 
