@@ -2,130 +2,132 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091FDC46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C62C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9380421733
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AEA021733
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 15:17:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Caz0B0tE";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="QknfPVUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9380421733
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IDeuB5Ib"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AEA021733
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732465AbeHNSEu (ORCPT
+        id S1732564AbeHNSF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 14:04:50 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43157 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730759AbeHNSEu (ORCPT
+        Tue, 14 Aug 2018 14:05:27 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39814 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732063AbeHNSF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 14:04:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1534259834; x=1565795834;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=oUEn9/0NQJ2NJoZazDPDad+sZPOtokestGpTorxDDts=;
-  b=Caz0B0tE4xaVASbyWA5FXTp0ViuQ3WhPjoZJ1k68/k/vWfuptJNMlt0j
-   c7izQDgG7+kw1QXbY7vYfywj52h/gI8I8qza6EF36GiXUbocwRv3ha2FF
-   hTgCAc7TOn7m1ki0nJcTrCrbDs/2niXCCGxIUvO1hVtJHMiix3BYX6ouf
-   WNOJcCL6RWH8wuzWklg1SIIqXThZVVh/BSp5MvZvbERwYF7xqOncJatxK
-   HbeHlMPOq2/9yn6NSqNxbFuudAOAiIow85CK0q1OaxhNhuk5YFbJVhuQj
-   /O2MA3dSG6xBXpAcXPh7icMud95Z0BrS7tCE8WRoSsJ0rFVoe0OpaEsAu
-   w==;
-X-IronPort-AV: E=Sophos;i="5.53,238,1531756800"; 
-   d="scan'208";a="91324269"
-Received: from mail-by2nam05lp0248.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([216.32.181.248])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Aug 2018 23:17:13 +0800
+        Tue, 14 Aug 2018 14:05:27 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j8-v6so9389153pff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 08:17:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74euITe8nVCEsPujlI3ZHzoUAXj43tNlhlES4gjwk2I=;
- b=QknfPVUHeM1KRc6LqZ4CcZor2s/IIHiWG2tWnIhqE1Sk54v2ktFOvK7nuaDuDkaum077OzNN9fSPRUfUD958IZcUZYAEeRYidli8FwzTI36u98+v+6nYqNIU47NFnHI9FG9H4/AFdKcdDKsVk2S+jxcry2qjFE/YAMYWPynUKpo=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB1200.namprd04.prod.outlook.com (10.173.51.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1038.21; Tue, 14 Aug 2018 15:17:11 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::855a:8758:5f65:f8ee%9]) with mapi id 15.20.1038.023; Tue, 14 Aug 2018
- 15:17:11 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "hare@suse.de" <hare@suse.de>, "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.wilck@suse.com" <martin.wilck@suse.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>, "hch@lst.de" <hch@lst.de>,
-        "hare@suse.com" <hare@suse.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "keith.busch@intel.com" <keith.busch@intel.com>
-Subject: Re: [PATCH 1/5] block: genhd: add 'groups' argument to
- device_add_disk
-Thread-Topic: [PATCH 1/5] block: genhd: add 'groups' argument to
- device_add_disk
-Thread-Index: AQHUM6EQMxiNQwza40etQY6gZ0WgVKS/XHsA
-Date:   Tue, 14 Aug 2018 15:17:11 +0000
-Message-ID: <712eaa404a1a76193b1a304443dcbae339e53ab5.camel@wdc.com>
-References: <20180814073305.87255-1-hare@suse.de>
-         <20180814073305.87255-2-hare@suse.de>
-In-Reply-To: <20180814073305.87255-2-hare@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [199.255.44.174]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB1200;20:WsVBYMU+y1mYEmhNmo2vm9I1lOPBwbueFQoykou4fACAWM1oW4sJmbHlpr+uQKgYrsGt+K5j43cZ/syCHyD+5DsrscmkrH/z3dBe/HH26e+vqXquwUY3VJnQbra6S9jXtc+XzRz0gFrnaCSygK7FUd6+eHsB0fmQSkzitqPOeZU=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 44c37d07-c51e-4348-10f6-08d601f90270
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1200;
-x-ms-traffictypediagnostic: MWHPR04MB1200:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB120021B39B9F47A894605C7E98380@MWHPR04MB1200.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB1200;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1200;
-x-forefront-prvs: 0764C4A8CD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(366004)(396003)(376002)(199004)(189003)(6246003)(2906002)(6512007)(7416002)(8676002)(81166006)(81156014)(4326008)(5660300001)(305945005)(7736002)(68736007)(229853002)(25786009)(2501003)(6436002)(6486002)(97736004)(8936002)(86362001)(478600001)(6116002)(72206003)(3846002)(53936002)(5250100002)(106356001)(2900100001)(105586002)(6506007)(14454004)(186003)(54906003)(110136005)(316002)(26005)(102836004)(36756003)(446003)(11346002)(476003)(66066001)(99286004)(2616005)(76176011)(118296001)(486006)(14444005)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1200;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: dhuNSZJTyi7nalrw56khMoBtz7FrIsecDS3QJxiHIC4/PTQx1OZIrYhyHN6T/NoCrIESPk5zGXqFGEXiNoaoCzMcRY3g0roCTsZK2juy5T5sS9AbguKe/8KM3c7gmLXJVXKCh0iQm+bYLGMP9qDZbNUbAby+JCPuVN9OP8iMmNeSQ9KTY2/bb5lDr8r51bS94htZa6O1gSmHAm90tXwZEaw7SqnIXsriNwa40s+cPwy1QQBaPNYNL9c4wOgghWjr03iv8pa8jnUeILfxxvY4ce2P1i6aRs4x9ZHswHe9kB+hbB4++h+p1gx9OxzzHweHttXEicB/D4KhbOYy5oMd1KAzlmjI6nR0OI7sRQ4erE0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-7"
-Content-ID: <3214CBA1E2AFFE4AA0B3CF71E622E3FB@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=google.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WcjsWNlcr8TRn0d1+jmwlAKFm8MGLJqKabVwN5Y30lw=;
+        b=IDeuB5IbtSGqfIAj7KoAMBC822txbx1/1zVAjjTyfBvTw4S3g3bD1R+QT7ZTAAmWSk
+         C1kbEYS46+3n1mVGpCkCPUk1kTVA7vCVySlBWK2T4kwP476KfflFSZppCA6igjF2+6Ed
+         8ZeozQNp41jaR6pumsGGhA6yfDNA+HLWtKKq9LUkC2N6Z2YAJmGh5d9J5stEyjXRzmon
+         MTqwkgqDt2E+t7r3eFwKEJekem3xL4O3x97lrKUE4oAlLPDse05h9NLyJZT6UEv4o7th
+         uuuGvyb66QMDWSrLSUp76bG+ER0DhXOB63ox1tM+lk32bi5c215Wr9/G7FDIsoNE3ot1
+         UmnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WcjsWNlcr8TRn0d1+jmwlAKFm8MGLJqKabVwN5Y30lw=;
+        b=S/EFFHsPmpO6dL69t53b/eak4Pul1cueKNw1VWXVSjgpuYhqi+1vSZFybOngVHjvkW
+         T2+lRRlJVOIj7DTmybczmH9n7jcfaAO4wDftuTPGrOkuZn5qmgmE9iPhg5hL1hyPZ4hx
+         2+gO5HEdcib2IyUfk/VfUNmZs7t3YkT2tnlXXSGLceW1yCiN/KQy8x2Yz5wl6xD1r7sn
+         66+DLHh5zJKPEO3BUcFzUKtxkHrLkBYjy31vZ8MDkvAsioEX0rM15LZZx7LsR1/Z8ocn
+         zvc2RILL9+QRssrIx7ndwJtm6XH+IZcqUnQc/HdrU0KrmgmUeFjz4jiLZc7NmcHSPrme
+         uMEQ==
+X-Gm-Message-State: AOUpUlGLQ+fIilUXAV/lTu0/h1emTiNTriM2GVgT+LIrl4SKYrRffwLy
+        BDWLqDx3OgG3MfBo8sGl/bCRe8Lg3hSZUw==
+X-Google-Smtp-Source: AA+uWPz31vXNY1a1ktere+XwcTSdrOQWWASEGKk1x368AwwuPRhB0+4lL0JEeFnJNkcQryFVeerHxw==
+X-Received: by 2002:a62:3703:: with SMTP id e3-v6mr23889495pfa.117.1534259871049;
+        Tue, 14 Aug 2018 08:17:51 -0700 (PDT)
+Received: from hackmann.mtv.corp.google.com ([2620:0:1000:1601:82f7:8f1:8c08:a97a])
+        by smtp.gmail.com with ESMTPSA id 143-v6sm33437590pfy.156.2018.08.14.08.17.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Aug 2018 08:17:50 -0700 (PDT)
+Subject: Re: [PATCH] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
+To:     Will Deacon <will.deacon@arm.com>,
+        Greg Hackmann <ghackmann@android.com>
+Cc:     linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        CHANDAN VN <chandan.vn@samsung.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org
+References: <20180813193013.236362-1-ghackmann@google.com>
+ <20180814104041.GB28664@arm.com>
+From:   Greg Hackmann <ghackmann@google.com>
+Message-ID: <eb90a28e-893c-e02e-a9c2-1d988f08cf3a@google.com>
+Date:   Tue, 14 Aug 2018 08:17:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44c37d07-c51e-4348-10f6-08d601f90270
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2018 15:17:11.6915
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1200
+In-Reply-To: <20180814104041.GB28664@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-14 at 09:33 +-0200, Hannes Reinecke wrote:
-+AD4- Update device+AF8-add+AF8-disk() to take an 'groups' argument so that
-+AD4- individual drivers can register a device with additional sysfs
-+AD4- attributes.
-+AD4- This avoids race condition the driver would otherwise have if these
-             +AF4- +ACI-a+ACI- is missing?
-+AD4- groups were to be created with sysfs+AF8-add+AF8-groups().
+On 08/14/2018 03:40 AM, Will Deacon wrote:
+> Hi Greg,
+> 
+> On Mon, Aug 13, 2018 at 12:30:11PM -0700, Greg Hackmann wrote:
+>> ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
+>> before seeing if the PFN is valid.  This leads to false positives when
+>> some of the upper bits are set, but the lower bits match a valid PFN.
+>>
+>> For example, the following userspace code looks up a bogus entry in
+>> /proc/kpageflags:
+>>
+>>     int pagemap = open("/proc/self/pagemap", O_RDONLY);
+>>     int pageflags = open("/proc/kpageflags", O_RDONLY);
+>>     uint64_t pfn, val;
+>>
+>>     lseek64(pagemap, [...], SEEK_SET);
+>>     read(pagemap, &pfn, sizeof(pfn));
+>>     if (pfn & (1UL << 63)) {        /* valid PFN */
+>>         pfn &= ((1UL << 55) - 1);   /* clear flag bits */
+>>         pfn |= (1UL << 55);
+>>         lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
+>>         read(pageflags, &val, sizeof(val));
+>>     }
+>>
+>> On ARM64 this causes the userspace process to crash with SIGSEGV rather
+>> than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
+>> valid, and stable_page_flags() will try to access an address between the
+>> user and kernel address ranges.
+>>
+>> Signed-off-by: Greg Hackmann <ghackmann@google.com>
+>> ---
+>>  arch/arm64/mm/init.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> Thanks, this looks like a sensible fix to me. Do you think it warrants a
+> CC stable?
+> 
+> Will
 
-Anyway:
-
-Reviewed-by: Bart Van Assche +ADw-bart.vanassche+AEA-wdc.com+AD4-
-
-
+Yes, I think so.  Should I resend with a "Fixes" field?
