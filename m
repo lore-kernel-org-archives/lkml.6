@@ -6,43 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A41C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFA4C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6681121728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6681121728
+	by mail.kernel.org (Postfix) with ESMTP id 932CC21730
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:24:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932CC21730
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387832AbeHNUMM (ORCPT
+        id S2387847AbeHNUMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:12:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51218 "EHLO
+        Tue, 14 Aug 2018 16:12:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51246 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387747AbeHNUMM (ORCPT
+        with ESMTP id S2387747AbeHNUMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:12:12 -0400
+        Tue, 14 Aug 2018 16:12:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 158DAC5C;
-        Tue, 14 Aug 2018 17:24:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D4FBCBA;
+        Tue, 14 Aug 2018 17:24:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH 4.18 01/79] x86/paravirt: Fix spectre-v2 mitigations for paravirt guests
-Date:   Tue, 14 Aug 2018 19:16:20 +0200
-Message-Id: <20180814171336.852079487@linuxfoundation.org>
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH 4.18 10/79] x86/speculation/l1tf: Add sysfs reporting for l1tf
+Date:   Tue, 14 Aug 2018 19:16:29 +0200
+Message-Id: <20180814171337.203532320@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,161 +52,226 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 5800dc5c19f34e6e03b5adab1282535cb102fafd upstream.
+L1TF core kernel workarounds are cheap and normally always enabled, However
+they still should be reported in sysfs if the system is vulnerable or
+mitigated. Add the necessary CPU feature/bug bits.
 
-Nadav reported that on guests we're failing to rewrite the indirect
-calls to CALLEE_SAVE paravirt functions. In particular the
-pv_queued_spin_unlock() call is left unpatched and that is all over the
-place. This obviously wrecks Spectre-v2 mitigation (for paravirt
-guests) which relies on not actually having indirect calls around.
+- Extend the existing checks for Meltdowns to determine if the system is
+  vulnerable. All CPUs which are not vulnerable to Meltdown are also not
+  vulnerable to L1TF
 
-The reason is an incorrect clobber test in paravirt_patch_call(); this
-function rewrites an indirect call with a direct call to the _SAME_
-function, there is no possible way the clobbers can be different
-because of this.
+- Check for 32bit non PAE and emit a warning as there is no practical way
+  for mitigation due to the limited physical address bits
 
-Therefore remove this clobber check. Also put WARNs on the other patch
-failure case (not enough room for the instruction) which I've not seen
-trigger in my (limited) testing.
+- If the system has more than MAX_PA/2 physical memory the invert page
+  workarounds don't protect the system against the L1TF attack anymore,
+  because an inverted physical address will also point to valid
+  memory. Print a warning in this case and report that the system is
+  vulnerable.
 
-Three live kernel image disassemblies for lock_sock_nested (as a small
-function that illustrates the problem nicely). PRE is the current
-situation for guests, POST is with this patch applied and NATIVE is with
-or without the patch for !guests.
+Add a function which returns the PFN limit for the L1TF mitigation, which
+will be used in follow up patches for sanity and range checks.
 
-PRE:
+[ tglx: Renamed the CPU feature bit to L1TF_PTEINV ]
 
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    callq  *0xffffffff822299e8
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-POST:
-
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    callq  0xffffffff810a0c20 <__raw_callee_save___pv_queued_spin_unlock>
-   0xffffffff817be9a5 <+53>:    xchg   %ax,%ax
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063aa0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-NATIVE:
-
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    movb   $0x0,(%rdi)
-   0xffffffff817be9a3 <+51>:    nopl   0x0(%rax)
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-
-Fixes: 63f70270ccd9 ("[PATCH] i386: PARAVIRT: add common patching machinery")
-Fixes: 3010a0663fd9 ("x86/paravirt, objtool: Annotate indirect calls")
-Reported-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: stable@vger.kernel.org
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/paravirt.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    2 +
+ arch/x86/include/asm/processor.h   |    5 ++++
+ arch/x86/kernel/cpu/bugs.c         |   40 +++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/common.c       |   20 ++++++++++++++++++
+ drivers/base/cpu.c                 |    8 +++++++
+ include/linux/cpu.h                |    2 +
+ 6 files changed, 77 insertions(+)
 
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -88,10 +88,12 @@ unsigned paravirt_patch_call(void *insnb
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -219,6 +219,7 @@
+ #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
++#define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
  
--	if (tgt_clobbers & ~site_clobbers)
--		return len;	/* target would clobber too much for this site */
--	if (len < 5)
-+	if (len < 5) {
-+#ifdef CONFIG_RETPOLINE
-+		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+@@ -373,5 +374,6 @@
+ #define X86_BUG_SPECTRE_V1		X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
+ #define X86_BUG_SPECTRE_V2		X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
+ #define X86_BUG_SPEC_STORE_BYPASS	X86_BUG(17) /* CPU is affected by speculative store bypass attack */
++#define X86_BUG_L1TF			X86_BUG(18) /* CPU is affected by L1 Terminal Fault */
+ 
+ #endif /* _ASM_X86_CPUFEATURES_H */
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -181,6 +181,11 @@ extern const struct seq_operations cpuin
+ 
+ extern void cpu_detect(struct cpuinfo_x86 *c);
+ 
++static inline unsigned long l1tf_pfn_limit(void)
++{
++	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++}
++
+ extern void early_cpu_init(void);
+ extern void identify_boot_cpu(void);
+ extern void identify_secondary_cpu(struct cpuinfo_x86 *);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -28,9 +28,11 @@
+ #include <asm/set_memory.h>
+ #include <asm/intel-family.h>
+ #include <asm/hypervisor.h>
++#include <asm/e820/api.h>
+ 
+ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
++static void __init l1tf_select_mitigation(void);
+ 
+ /*
+  * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+@@ -82,6 +84,8 @@ void __init check_bugs(void)
+ 	 */
+ 	ssb_select_mitigation();
+ 
++	l1tf_select_mitigation();
++
+ #ifdef CONFIG_X86_32
+ 	/*
+ 	 * Check whether we are able to run this kernel safely on SMP.
+@@ -207,6 +211,32 @@ static void x86_amd_ssb_disable(void)
+ 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+ }
+ 
++static void __init l1tf_select_mitigation(void)
++{
++	u64 half_pa;
++
++	if (!boot_cpu_has_bug(X86_BUG_L1TF))
++		return;
++
++#if CONFIG_PGTABLE_LEVELS == 2
++	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
++	return;
 +#endif
- 		return len;	/* call too long for patch site */
++
++	/*
++	 * This is extremely unlikely to happen because almost all
++	 * systems have far more MAX_PA/2 than RAM can be fit into
++	 * DIMM slots.
++	 */
++	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
++	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
++		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
++		return;
 +	}
++
++	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
++}
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
  
- 	b->opcode = 0xe8; /* call */
- 	b->delta = delta;
-@@ -106,8 +108,12 @@ unsigned paravirt_patch_jmp(void *insnbu
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
+@@ -660,6 +690,11 @@ static ssize_t cpu_show_common(struct de
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
  
--	if (len < 5)
-+	if (len < 5) {
-+#ifdef CONFIG_RETPOLINE
-+		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+#endif
- 		return len;	/* call too long for patch site */
-+	}
++	case X86_BUG_L1TF:
++		if (boot_cpu_has(X86_FEATURE_L1TF_PTEINV))
++			return sprintf(buf, "Mitigation: Page Table Inversion\n");
++		break;
++
+ 	default:
+ 		break;
+ 	}
+@@ -686,4 +721,9 @@ ssize_t cpu_show_spec_store_bypass(struc
+ {
+ 	return cpu_show_common(dev, attr, buf, X86_BUG_SPEC_STORE_BYPASS);
+ }
++
++ssize_t cpu_show_l1tf(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	return cpu_show_common(dev, attr, buf, X86_BUG_L1TF);
++}
+ #endif
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -987,6 +987,21 @@ static const __initconst struct x86_cpu_
+ 	{}
+ };
  
- 	b->opcode = 0xe9;	/* jmp */
- 	b->delta = delta;
++static const __initconst struct x86_cpu_id cpu_no_l1tf[] = {
++	/* in addition to cpu_no_speculation */
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_MERRIFIELD	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_MOOREFIELD	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_GOLDMONT	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_DENVERTON	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_GEMINI_LAKE	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
++	{}
++};
++
+ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ {
+ 	u64 ia32_cap = 0;
+@@ -1013,6 +1028,11 @@ static void __init cpu_set_bug_bits(stru
+ 		return;
+ 
+ 	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
++
++	if (x86_match_cpu(cpu_no_l1tf))
++		return;
++
++	setup_force_cpu_bug(X86_BUG_L1TF);
+ }
+ 
+ /*
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -540,16 +540,24 @@ ssize_t __weak cpu_show_spec_store_bypas
+ 	return sprintf(buf, "Not affected\n");
+ }
+ 
++ssize_t __weak cpu_show_l1tf(struct device *dev,
++			     struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "Not affected\n");
++}
++
+ static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
+ static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
+ static DEVICE_ATTR(spectre_v2, 0444, cpu_show_spectre_v2, NULL);
+ static DEVICE_ATTR(spec_store_bypass, 0444, cpu_show_spec_store_bypass, NULL);
++static DEVICE_ATTR(l1tf, 0444, cpu_show_l1tf, NULL);
+ 
+ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+ 	&dev_attr_meltdown.attr,
+ 	&dev_attr_spectre_v1.attr,
+ 	&dev_attr_spectre_v2.attr,
+ 	&dev_attr_spec_store_bypass.attr,
++	&dev_attr_l1tf.attr,
+ 	NULL
+ };
+ 
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -55,6 +55,8 @@ extern ssize_t cpu_show_spectre_v2(struc
+ 				   struct device_attribute *attr, char *buf);
+ extern ssize_t cpu_show_spec_store_bypass(struct device *dev,
+ 					  struct device_attribute *attr, char *buf);
++extern ssize_t cpu_show_l1tf(struct device *dev,
++			     struct device_attribute *attr, char *buf);
+ 
+ extern __printf(4, 5)
+ struct device *cpu_device_create(struct device *parent, void *drvdata,
 
 
