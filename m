@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E69C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E47D8C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761DE21728
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761DE21728
+	by mail.kernel.org (Postfix) with ESMTP id A8AD221730
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8AD221730
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388889AbeHNUQN (ORCPT
+        id S2388899AbeHNUQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:16:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52584 "EHLO
+        Tue, 14 Aug 2018 16:16:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52592 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733240AbeHNUQM (ORCPT
+        with ESMTP id S2388227AbeHNUQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:16:12 -0400
+        Tue, 14 Aug 2018 16:16:16 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2F6E40B;
-        Tue, 14 Aug 2018 17:28:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A462CBA;
+        Tue, 14 Aug 2018 17:28:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 76/79] x86/mm/pat: Make set_memory_np() L1TF safe
-Date:   Tue, 14 Aug 2018 19:17:35 +0200
-Message-Id: <20180814171341.054441030@linuxfoundation.org>
+Subject: [PATCH 4.18 77/79] x86/mm/kmmio: Make the tracer robust against L1TF
+Date:   Tue, 14 Aug 2018 19:17:36 +0200
+Message-Id: <20180814171341.093567916@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
 References: <20180814171336.799314117@linuxfoundation.org>
@@ -52,45 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-set_memory_np() is used to mark kernel mappings not present, but it has
-it's own open coded mechanism which does not have the L1TF protection of
-inverting the address bits.
+The mmio tracer sets io mapping PTEs and PMDs to non present when enabled
+without inverting the address bits, which makes the PTE entry vulnerable
+for L1TF.
 
-Replace the open coded PTE manipulation with the L1TF protecting low level
-PTE routines.
+Make it use the right low level macros to actually invert the address bits
+to protect against L1TF.
 
-Passes the CPA self test.
+In principle this could be avoided because MMIO tracing is not likely to be
+enabled on production machines, but the fix is straigt forward and for
+consistency sake it's better to get rid of the open coded PTE manipulation.
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pageattr.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/mm/kmmio.c |   25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -1014,8 +1014,8 @@ static long populate_pmd(struct cpa_data
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -126,24 +126,29 @@ static struct kmmio_fault_page *get_kmmi
  
- 		pmd = pmd_offset(pud, start);
+ static void clear_pmd_presence(pmd_t *pmd, bool clear, pmdval_t *old)
+ {
++	pmd_t new_pmd;
+ 	pmdval_t v = pmd_val(*pmd);
+ 	if (clear) {
+-		*old = v & _PAGE_PRESENT;
+-		v &= ~_PAGE_PRESENT;
+-	} else	/* presume this has been called with clear==true previously */
+-		v |= *old;
+-	set_pmd(pmd, __pmd(v));
++		*old = v;
++		new_pmd = pmd_mknotpresent(*pmd);
++	} else {
++		/* Presume this has been called with clear==true previously */
++		new_pmd = __pmd(*old);
++	}
++	set_pmd(pmd, new_pmd);
+ }
  
--		set_pmd(pmd, __pmd(cpa->pfn << PAGE_SHIFT | _PAGE_PSE |
--				   massage_pgprot(pmd_pgprot)));
-+		set_pmd(pmd, pmd_mkhuge(pfn_pmd(cpa->pfn,
-+					canon_pgprot(pmd_pgprot))));
+ static void clear_pte_presence(pte_t *pte, bool clear, pteval_t *old)
+ {
+ 	pteval_t v = pte_val(*pte);
+ 	if (clear) {
+-		*old = v & _PAGE_PRESENT;
+-		v &= ~_PAGE_PRESENT;
+-	} else	/* presume this has been called with clear==true previously */
+-		v |= *old;
+-	set_pte_atomic(pte, __pte(v));
++		*old = v;
++		/* Nothing should care about address */
++		pte_clear(&init_mm, 0, pte);
++	} else {
++		/* Presume this has been called with clear==true previously */
++		set_pte_atomic(pte, __pte(*old));
++	}
+ }
  
- 		start	  += PMD_SIZE;
- 		cpa->pfn  += PMD_SIZE >> PAGE_SHIFT;
-@@ -1087,8 +1087,8 @@ static int populate_pud(struct cpa_data
- 	 * Map everything starting from the Gb boundary, possibly with 1G pages
- 	 */
- 	while (boot_cpu_has(X86_FEATURE_GBPAGES) && end - start >= PUD_SIZE) {
--		set_pud(pud, __pud(cpa->pfn << PAGE_SHIFT | _PAGE_PSE |
--				   massage_pgprot(pud_pgprot)));
-+		set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
-+				   canon_pgprot(pud_pgprot))));
- 
- 		start	  += PUD_SIZE;
- 		cpa->pfn  += PUD_SIZE >> PAGE_SHIFT;
+ static int clear_page_presence(struct kmmio_fault_page *f, bool clear)
 
 
