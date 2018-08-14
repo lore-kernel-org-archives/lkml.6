@@ -2,119 +2,84 @@ Return-Path: <SRS0=Rtk1=K5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F789C46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD11C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36502175D
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F36502175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 61A372175D
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 10:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A372175D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbeHNNPZ (ORCPT
+        id S1731405AbeHNNSq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 09:15:25 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54797 "EHLO huawei.com"
+        Tue, 14 Aug 2018 09:18:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45838 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727986AbeHNNPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 09:15:24 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 51F43C359677D;
-        Tue, 14 Aug 2018 18:28:49 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Tue, 14 Aug 2018
- 18:28:45 +0800
-Message-ID: <5B72AEDB.70505@huawei.com>
-Date:   Tue, 14 Aug 2018 18:28:43 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1727986AbeHNNSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 09:18:46 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4E0FA8197003;
+        Tue, 14 Aug 2018 10:32:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2D8052026D7E;
+        Tue, 14 Aug 2018 10:32:10 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 14 Aug 2018 12:32:12 +0200 (CEST)
+Date:   Tue, 14 Aug 2018 12:32:09 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Milind Chabbi <chabbi.milind@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 4/5] perf/hw_breakpoint: Enable breakpoint in
+ modify_user_hw_breakpoint
+Message-ID: <20180814103208.GB7268@redhat.com>
+References: <20180810104730.3293-1-jolsa@kernel.org>
+ <20180810104730.3293-5-jolsa@kernel.org>
 MIME-Version: 1.0
-To:     Michael Ellerman <mpe@ellerman.id.au>
-CC:     <tony.luck@intel.com>, <fenghua.yu@intel.com>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>, <oleg@redhat.com>,
-        <rppt@linux.vnet.ibm.com>, <dhowells@redhat.com>,
-        <akpm@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
-        <linux-ia64@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 2/2] powerpc: Use ARRAY_SIZE to replace its implementation
-References: <1534214814-9043-1-git-send-email-zhongjiang@huawei.com> <1534214814-9043-3-git-send-email-zhongjiang@huawei.com> <874lfxjnzl.fsf@concordia.ellerman.id.au>
-In-Reply-To: <874lfxjnzl.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810104730.3293-5-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 14 Aug 2018 10:32:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 14 Aug 2018 10:32:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/14 17:28, Michael Ellerman wrote:
-> zhong jiang <zhongjiang@huawei.com> writes:
->> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
->> So just replace it.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  arch/powerpc/xmon/ppc-opc.c | 12 ++++--------
->>  1 file changed, 4 insertions(+), 8 deletions(-)
-> This code is copied from binutils and we don't want to needlessly cause
-> it to diverge from the binutils copy.
+On 08/10, Jiri Olsa wrote:
 >
-> So thanks but no thanks.
-Thank you for clarification.
+> --- a/kernel/events/hw_breakpoint.c
+> +++ b/kernel/events/hw_breakpoint.c
+> @@ -523,13 +523,11 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+>  		perf_event_disable(bp);
+>  
+>  	err = modify_user_hw_breakpoint_check(bp, attr, false);
+> -	if (err)
+> -		return err;
+>  
+> -	if (!attr->disabled)
+> +	if (!bp->attr.disabled)
+>  		perf_event_enable(bp);
+>  
+> -	return 0;
+> +	return err;
+>  }
 
-Sincerely
-zhong jiang
-> cheers
->
->> diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-opc.c
->> index ac2b55b..f3f57a1 100644
->> --- a/arch/powerpc/xmon/ppc-opc.c
->> +++ b/arch/powerpc/xmon/ppc-opc.c
->> @@ -966,8 +966,7 @@
->>    { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
->>  };
->>  
->> -const unsigned int num_powerpc_operands = (sizeof (powerpc_operands)
->> -					   / sizeof (powerpc_operands[0]));
->> +const unsigned int num_powerpc_operands = ARRAY_SIZE(powerpc_operands);
->>  
->>  /* The functions used to insert and extract complicated operands.  */
->>  
->> @@ -6980,8 +6979,7 @@
->>  {"fcfidu.",	XRC(63,974,1),	XRA_MASK, POWER7|PPCA2,	PPCVLE,		{FRT, FRB}},
->>  };
->>  
->> -const int powerpc_num_opcodes =
->> -  sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
->> +const int powerpc_num_opcodes = ARRAY_SIZE(powerpc_opcodes);
->>  
->>  /* The VLE opcode table.
->>  
->> @@ -7219,8 +7217,7 @@
->>  {"se_bl",	BD8(58,0,1),	BD8_MASK,	PPCVLE,	0,		{B8}},
->>  };
->>  
->> -const int vle_num_opcodes =
->> -  sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
->> +const int vle_num_opcodes = ARRAY_SIZE(vle_opcodes);
->>  
->>  /* The macro table.  This is only used by the assembler.  */
->>  
->> @@ -7288,5 +7285,4 @@
->>  {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-(%3)"},
->>  };
->>  
->> -const int powerpc_num_macros =
->> -  sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
->> +const int powerpc_num_macros = ARRAY_SIZE(powerpc_macros);
->> -- 
->> 1.7.12.4
-> .
->
-
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
