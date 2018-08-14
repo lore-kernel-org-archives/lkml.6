@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FE0C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3B2C46464
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C843E21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C843E21471
+	by mail.kernel.org (Postfix) with ESMTP id A9A732150F
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:46:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A732150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391017AbeHNUeT (ORCPT
+        id S2391026AbeHNUeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:34:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60334 "EHLO
+        Tue, 14 Aug 2018 16:34:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390473AbeHNUeT (ORCPT
+        with ESMTP id S2390473AbeHNUeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:34:19 -0400
+        Tue, 14 Aug 2018 16:34:23 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF226CAE;
-        Tue, 14 Aug 2018 17:46:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 691C6CAE;
+        Tue, 14 Aug 2018 17:46:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jack Morgenstein <jackm@dev.mellanox.co.il>,
         Leon Romanovsky <leonro@mellanox.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 13/43] IB/core: Make testing MR flags for writability a static inline function
-Date:   Tue, 14 Aug 2018 19:17:49 +0200
-Message-Id: <20180814171517.962689861@linuxfoundation.org>
+Subject: [PATCH 4.4 14/43] IB/mlx4: Mark user MR as writable if actual virtual memory is writable
+Date:   Tue, 14 Aug 2018 19:17:50 +0200
+Message-Id: <20180814171518.046291292@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -54,66 +54,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 08bb558ac11ab944e0539e78619d7b4c356278bd upstream.
+commit d8f9cc328c8888369880e2527e9186d745f2bbf6 upstream.
 
-Make the MR writability flags check, which is performed in umem.c,
-a static inline function in file ib_verbs.h
+To allow rereg_user_mr to modify the MR from read-only to writable without
+using get_user_pages again, we needed to define the initial MR as writable.
+However, this was originally done unconditionally, without taking into
+account the writability of the underlying virtual memory.
 
-This allows the function to be used by low-level infiniband drivers.
+As a result, any attempt to register a read-only MR over read-only
+virtual memory failed.
+
+To fix this, do not add the writable flag bit when the user virtual memory
+is not writable (e.g. const memory).
+
+However, when the underlying memory is NOT writable (and we therefore
+do not define the initial MR as writable), the IB core adds a
+"force writable" flag to its user-pages request. If this succeeds,
+the reg_user_mr caller gets a writable copy of the original pages.
+
+If the user-space caller then does a rereg_user_mr operation to enable
+writability, this will succeed. This should not be allowed, since
+the original virtual memory was not writable.
 
 Cc: <stable@vger.kernel.org>
+Fixes: 9376932d0c26 ("IB/mlx4_ib: Add support for user MR re-registration")
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/core/umem.c |   11 +----------
- include/rdma/ib_verbs.h        |   14 ++++++++++++++
- 2 files changed, 15 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -122,16 +122,7 @@ struct ib_umem *ib_umem_get(struct ib_uc
- 	umem->address   = addr;
- 	umem->page_size = PAGE_SIZE;
- 	umem->pid       = get_task_pid(current, PIDTYPE_PID);
--	/*
--	 * We ask for writable memory if any of the following
--	 * access flags are set.  "Local write" and "remote write"
--	 * obviously require write access.  "Remote atomic" can do
--	 * things like fetch and add, which will modify memory, and
--	 * "MW bind" can change permissions by binding a window.
--	 */
--	umem->writable  = !!(access &
--		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
--		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
-+	umem->writable   = ib_access_writable(access);
- 
- 	if (access & IB_ACCESS_ON_DEMAND) {
- 		put_pid(umem->pid);
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -3007,6 +3007,20 @@ static inline int ib_check_mr_access(int
- 	return 0;
+---
+ drivers/infiniband/hw/mlx4/mr.c |   50 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 42 insertions(+), 8 deletions(-)
+
+--- a/drivers/infiniband/hw/mlx4/mr.c
++++ b/drivers/infiniband/hw/mlx4/mr.c
+@@ -130,6 +130,40 @@ out:
+ 	return err;
  }
  
-+static inline bool ib_access_writable(int access_flags)
++static struct ib_umem *mlx4_get_umem_mr(struct ib_ucontext *context, u64 start,
++					u64 length, u64 virt_addr,
++					int access_flags)
 +{
 +	/*
-+	 * We have writable memory backing the MR if any of the following
-+	 * access flags are set.  "Local write" and "remote write" obviously
-+	 * require write access.  "Remote atomic" can do things like fetch and
-+	 * add, which will modify memory, and "MW bind" can change permissions
-+	 * by binding a window.
++	 * Force registering the memory as writable if the underlying pages
++	 * are writable.  This is so rereg can change the access permissions
++	 * from readable to writable without having to run through ib_umem_get
++	 * again
 +	 */
-+	return access_flags &
-+		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
-+		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND);
++	if (!ib_access_writable(access_flags)) {
++		struct vm_area_struct *vma;
++
++		down_read(&current->mm->mmap_sem);
++		/*
++		 * FIXME: Ideally this would iterate over all the vmas that
++		 * cover the memory, but for now it requires a single vma to
++		 * entirely cover the MR to support RO mappings.
++		 */
++		vma = find_vma(current->mm, start);
++		if (vma && vma->vm_end >= start + length &&
++		    vma->vm_start <= start) {
++			if (vma->vm_flags & VM_WRITE)
++				access_flags |= IB_ACCESS_LOCAL_WRITE;
++		} else {
++			access_flags |= IB_ACCESS_LOCAL_WRITE;
++		}
++
++		up_read(&current->mm->mmap_sem);
++	}
++
++	return ib_umem_get(context, start, length, access_flags, 0);
 +}
 +
- /**
-  * ib_check_mr_status: lightweight check of MR status.
-  *     This routine may provide status checks on a selected
+ struct ib_mr *mlx4_ib_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
+ 				  u64 virt_addr, int access_flags,
+ 				  struct ib_udata *udata)
+@@ -144,10 +178,8 @@ struct ib_mr *mlx4_ib_reg_user_mr(struct
+ 	if (!mr)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	/* Force registering the memory as writable. */
+-	/* Used for memory re-registeration. HCA protects the access */
+-	mr->umem = ib_umem_get(pd->uobject->context, start, length,
+-			       access_flags | IB_ACCESS_LOCAL_WRITE, 0);
++	mr->umem = mlx4_get_umem_mr(pd->uobject->context, start, length,
++				    virt_addr, access_flags);
+ 	if (IS_ERR(mr->umem)) {
+ 		err = PTR_ERR(mr->umem);
+ 		goto err_free;
+@@ -214,6 +246,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
+ 	}
+ 
+ 	if (flags & IB_MR_REREG_ACCESS) {
++		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
++			return -EPERM;
++
+ 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
+ 					       convert_access(mr_access_flags));
+ 
+@@ -227,10 +262,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
+ 
+ 		mlx4_mr_rereg_mem_cleanup(dev->dev, &mmr->mmr);
+ 		ib_umem_release(mmr->umem);
+-		mmr->umem = ib_umem_get(mr->uobject->context, start, length,
+-					mr_access_flags |
+-					IB_ACCESS_LOCAL_WRITE,
+-					0);
++		mmr->umem =
++			mlx4_get_umem_mr(mr->uobject->context, start, length,
++					 virt_addr, mr_access_flags);
+ 		if (IS_ERR(mmr->umem)) {
+ 			err = PTR_ERR(mmr->umem);
+ 			/* Prevent mlx4_ib_dereg_mr from free'ing invalid pointer */
 
 
