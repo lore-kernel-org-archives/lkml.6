@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2267CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC59C46460
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F3621736
-	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F3621736
+	by mail.kernel.org (Postfix) with ESMTP id 40D2421738
+	for <linux-kernel@archiver.kernel.org>; Tue, 14 Aug 2018 17:48:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D2421738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391263AbeHNUgP (ORCPT
+        id S2391276AbeHNUgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 16:36:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32906 "EHLO
+        Tue, 14 Aug 2018 16:36:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390875AbeHNUgO (ORCPT
+        with ESMTP id S2390875AbeHNUgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:36:14 -0400
+        Tue, 14 Aug 2018 16:36:17 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9F96CAE;
-        Tue, 14 Aug 2018 17:48:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 523C0C74;
+        Tue, 14 Aug 2018 17:48:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Jan Beulich <JBeulich@suse.com>,
         Michal Hocko <mhocko@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
         David Woodhouse <dwmw@amazon.co.uk>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 37/43] x86/speculation/l1tf: Protect PAE swap entries against L1TF
-Date:   Tue, 14 Aug 2018 19:18:13 +0200
-Message-Id: <20180814171519.516547838@linuxfoundation.org>
+Subject: [PATCH 4.4 38/43] x86/speculation/l1tf: Fix up pte->pfn conversion for PAE
+Date:   Tue, 14 Aug 2018 19:18:14 +0200
+Message-Id: <20180814171519.579666720@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
 References: <20180814171517.014285600@linuxfoundation.org>
@@ -53,91 +54,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Michal Hocko <mhocko@suse.cz>
 
-commit 0d0f6249058834ffe1ceaad0bb31464af66f6e7a upstream
+commit e14d7dfb41f5807a0c1c26a13f2b8ef16af24935 upstream
 
-The PAE 3-level paging code currently doesn't mitigate L1TF by flipping the
-offset bits, and uses the high PTE word, thus bits 32-36 for type, 37-63 for
-offset. The lower word is zeroed, thus systems with less than 4GB memory are
-safe. With 4GB to 128GB the swap type selects the memory locations vulnerable
-to L1TF; with even more memory, also the swap offfset influences the address.
-This might be a problem with 32bit PAE guests running on large 64bit hosts.
+Jan has noticed that pte_pfn and co. resp. pfn_pte are incorrect for
+CONFIG_PAE because phys_addr_t is wider than unsigned long and so the
+pte_val reps. shift left would get truncated. Fix this up by using proper
+types.
 
-By continuing to keep the whole swap entry in either high or low 32bit word of
-PTE we would limit the swap size too much. Thus this patch uses the whole PAE
-PTE with the same layout as the 64bit version does. The macros just become a
-bit tricky since they assume the arch-dependent swp_entry_t to be 32bit.
+[dwmw2: Backport to 4.9]
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: 6b28baca9b1f ("x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation")
+Reported-by: Jan Beulich <JBeulich@suse.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/pgtable-3level.h |   35 ++++++++++++++++++++++++++++++++--
- arch/x86/mm/init.c                    |    2 -
- 2 files changed, 34 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/pgtable.h |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/pgtable-3level.h
-+++ b/arch/x86/include/asm/pgtable-3level.h
-@@ -177,12 +177,43 @@ static inline pmd_t native_pmdp_get_and_
- #endif
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -154,21 +154,21 @@ static inline u64 protnone_mask(u64 val)
  
- /* Encode and de-code a swap entry */
-+#define SWP_TYPE_BITS		5
-+
-+#define SWP_OFFSET_FIRST_BIT	(_PAGE_BIT_PROTNONE + 1)
-+
-+/* We always extract/encode the offset by shifting it all the way up, and then down again */
-+#define SWP_OFFSET_SHIFT	(SWP_OFFSET_FIRST_BIT + SWP_TYPE_BITS)
-+
- #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > 5)
- #define __swp_type(x)			(((x).val) & 0x1f)
- #define __swp_offset(x)			((x).val >> 5)
- #define __swp_entry(type, offset)	((swp_entry_t){(type) | (offset) << 5})
--#define __pte_to_swp_entry(pte)		((swp_entry_t){ (pte).pte_high })
--#define __swp_entry_to_pte(x)		((pte_t){ { .pte_high = (x).val } })
-+
-+/*
-+ * Normally, __swp_entry() converts from arch-independent swp_entry_t to
-+ * arch-dependent swp_entry_t, and __swp_entry_to_pte() just stores the result
-+ * to pte. But here we have 32bit swp_entry_t and 64bit pte, and need to use the
-+ * whole 64 bits. Thus, we shift the "real" arch-dependent conversion to
-+ * __swp_entry_to_pte() through the following helper macro based on 64bit
-+ * __swp_entry().
-+ */
-+#define __swp_pteval_entry(type, offset) ((pteval_t) { \
-+	(~(pteval_t)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
-+	| ((pteval_t)(type) << (64 - SWP_TYPE_BITS)) })
-+
-+#define __swp_entry_to_pte(x)	((pte_t){ .pte = \
-+		__swp_pteval_entry(__swp_type(x), __swp_offset(x)) })
-+/*
-+ * Analogically, __pte_to_swp_entry() doesn't just extract the arch-dependent
-+ * swp_entry_t, but also has to convert it from 64bit to the 32bit
-+ * intermediate representation, using the following macros based on 64bit
-+ * __swp_type() and __swp_offset().
-+ */
-+#define __pteval_swp_type(x) ((unsigned long)((x).pte >> (64 - SWP_TYPE_BITS)))
-+#define __pteval_swp_offset(x) ((unsigned long)(~((x).pte) << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT))
-+
-+#define __pte_to_swp_entry(pte)	(__swp_entry(__pteval_swp_type(pte), \
-+					     __pteval_swp_offset(pte)))
+ static inline unsigned long pte_pfn(pte_t pte)
+ {
+-	unsigned long pfn = pte_val(pte);
++	phys_addr_t pfn = pte_val(pte);
+ 	pfn ^= protnone_mask(pfn);
+ 	return (pfn & PTE_PFN_MASK) >> PAGE_SHIFT;
+ }
  
- #include <asm/pgtable-invert.h>
+ static inline unsigned long pmd_pfn(pmd_t pmd)
+ {
+-	unsigned long pfn = pmd_val(pmd);
++	phys_addr_t pfn = pmd_val(pmd);
+ 	pfn ^= protnone_mask(pfn);
+ 	return (pfn & pmd_pfn_mask(pmd)) >> PAGE_SHIFT;
+ }
  
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -783,7 +783,7 @@ unsigned long max_swapfile_size(void)
- 		 * We encode swap offsets also with 3 bits below those for pfn
- 		 * which makes the usable limit higher.
- 		 */
--#ifdef CONFIG_X86_64
-+#if CONFIG_PGTABLE_LEVELS > 2
- 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
- #endif
- 		pages = min_t(unsigned long, l1tf_limit, pages);
+ static inline unsigned long pud_pfn(pud_t pud)
+ {
+-	unsigned long pfn = pud_val(pud);
++	phys_addr_t pfn = pud_val(pud);
+ 	pfn ^= protnone_mask(pfn);
+ 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
+ }
+@@ -369,7 +369,7 @@ static inline pgprotval_t massage_pgprot
+ 
+ static inline pte_t pfn_pte(unsigned long page_nr, pgprot_t pgprot)
+ {
+-	phys_addr_t pfn = page_nr << PAGE_SHIFT;
++	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
+ 	pfn ^= protnone_mask(pgprot_val(pgprot));
+ 	pfn &= PTE_PFN_MASK;
+ 	return __pte(pfn | massage_pgprot(pgprot));
+@@ -377,7 +377,7 @@ static inline pte_t pfn_pte(unsigned lon
+ 
+ static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
+ {
+-	phys_addr_t pfn = page_nr << PAGE_SHIFT;
++	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
+ 	pfn ^= protnone_mask(pgprot_val(pgprot));
+ 	pfn &= PHYSICAL_PMD_PAGE_MASK;
+ 	return __pmd(pfn | massage_pgprot(pgprot));
 
 
