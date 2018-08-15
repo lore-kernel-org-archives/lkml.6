@@ -2,118 +2,241 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DFAC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 837F4C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50F6D2152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:15:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F6D2152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 726972152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726972152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeHPBJu (ORCPT
+        id S1728036AbeHPBKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:09:50 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:48372 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbeHPBJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:09:50 -0400
-X-Greylist: delayed 1138 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Aug 2018 21:09:48 EDT
-Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fq3mY-0006Le-OS; Wed, 15 Aug 2018 23:56:46 +0200
-To:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Arianna Avanzini <avanzini.arianna@gmail.com>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH] block, bfq: return nbytes and not zero from struct cftype
- .write() method
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f574e019-00f2-96c3-fc32-541c6584ca96@maciej.szmigiero.name>
-Date:   Wed, 15 Aug 2018 23:56:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Wed, 15 Aug 2018 21:10:10 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34094 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbeHPBKJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 21:10:09 -0400
+Received: by mail-it0-f68.google.com with SMTP id d70-v6so18563408ith.1;
+        Wed, 15 Aug 2018 15:16:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xj8Pg7/N+Ttp0id8p6NwASY08gzc+07p/yYyocaASFg=;
+        b=k1pQM+4AacLx7w9HzmQ8/xnb4AhOUW19cQDZtQvuT/sL/VsJPM/y3+3cSAJFY4zyPl
+         gKuO4ukEdSHVsneo/TkBJUFszxgsHIQd+YyQDRf7DiJWvEZFsEsOWZD9c4mp25OBdpGi
+         vTDbLeOSfVNkMBkZN+H8WINvf3glM3i+IqUwdMKG+Y7l+ECG04O65x39IL0UKGeC0Xu4
+         Rn7syL6n7AZgHBMmc453ETFXpMpo6Oqo0jLOY+Z5smXjnAvfhiOdfK9FeDaPwLP3yYP2
+         GpeuX755A8x8154a8wzCKPQfIDW3oCf6L8JvKWCHz/sP8z3+bTRHTc2dZZirL/Ac+/bZ
+         hvow==
+X-Gm-Message-State: AOUpUlGp3ETHiSTMebwqreQscGU3KP8ljduFG02ANv0Hcm7o6EekPOIq
+        pqnNtdyeiE+Iqtlk7atHOw==
+X-Google-Smtp-Source: AA+uWPz0zy6u99gA1kIM/wdkspf4GfH4NpqFfq+FWJqapCh/GFHuYV/Z8cf7ZAi3vxEp/E8nSI4AAA==
+X-Received: by 2002:a24:b54b:: with SMTP id j11-v6mr19573535iti.79.1534371363570;
+        Wed, 15 Aug 2018 15:16:03 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id n21-v6sm7159067ioj.22.2018.08.15.15.16.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 15:16:02 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 16:16:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Brian Norris <computersforpeace@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Julius Werner <jwerner@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [RFC PATCH v1 0/3] device property: Support MAC address in VPD
+Message-ID: <20180815221601.GB24830@rob-hp-laptop>
+References: <20180814223758.117433-1-briannorris@chromium.org>
+ <a240b3f9-d41b-30d7-ef11-5dcd1a981c0f@gmail.com>
+ <20180815002204.GA258561@ban.mtv.corp.google.com>
+ <bb1b2b7d-2c47-a6b3-7618-063351f379b2@gmail.com>
+ <20180815014436.GA17200@ban.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180815014436.GA17200@ban.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The value that struct cftype .write() method returns is then directly
-returned to userspace as the value returned by write() syscall, so it
-should be the number of bytes actually written (or consumed) and not zero.
+On Tue, Aug 14, 2018 at 06:44:36PM -0700, Brian Norris wrote:
+> Hi,
 
-Returning zero from write() syscall makes programs like /bin/echo or bash
-spin.
+I should have read the rest of this thread first...
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: e21b7a0b9887 ("block, bfq: add full hierarchical scheduling and cgroups support")
-Cc: stable@vger.kernel.org
----
- block/bfq-cgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> On Tue, Aug 14, 2018 at 05:52:49PM -0700, Florian Fainelli wrote:
+> > On 08/14/2018 05:22 PM, Brian Norris wrote:
+> > >  * in any of the above (and in any other case of lack of clarity), one
+> > >    can make slightly different choices when, e.g., submitting a device
+> > >    tree upstream vs. a downstream tree. While we may try our hardest to
+> > >    document and stick to documented bindings, I personally can't
+> > >    guarantee that one of these choices will be made differently during
+> > >    review, possibly breaking any firmware that made assumptions based on
+> > >    those choices. So I might end up with a firmware that satisfies
+> > >    documented bindings and works with a downstream device tree, but
+> > >    doesn't work with a device tree that gets submitted upstream.
+> > 
+> > Sure, this is kind of a self inflicted problem but agreed this does exist.
+> 
+> You can say "self-inflicted", but of all the things that need to go
+> upstream, the DTS files themselves are the least integral. I mean, why
+> else do we ever pretend to have anything close to an ABI for device
+> tree bindings?
 
-diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index a9e8633388f4..58c6efa9f9a9 100644
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -913,7 +913,8 @@ static ssize_t bfq_io_set_weight(struct kernfs_open_file *of,
- 	if (ret)
- 		return ret;
- 
--	return bfq_io_set_weight_legacy(of_css(of), NULL, weight);
-+	ret = bfq_io_set_weight_legacy(of_css(of), NULL, weight);
-+	return ret ?: nbytes;
- }
- 
- #ifdef CONFIG_DEBUG_BLK_CGROUP
+That sounds like an inadequately documented binding.
+
+> 
+> > >> Also, aliases in DT are meant to provide some stability.
+> > > 
+> > > How, specifically? I don't see any relevant binding description for
+> > > aliases under Documentation/devicetree/bindings/net/.
+> > 
+> > Indeed they are not, likewise, we should probably update devicetree-spec
+> > to come up with standard names that of_alias_get_id() already consumes.
+> 
+> A quick grep shows we already have divergence: both "eth" and "ethernet"
+> are in use.
+
+Uggg, it would be nice to clean that up. 
+
+There's several aliases I'd like to get rid of (some platforms went a 
+little crazy with them) and I'd like to start requiring alias names to 
+be documented. I created an issue for the spec. Patches welcomeTM. :)
+
+> But anyway, would the idea be that you just put 'ethernet{0,1,...}' and
+> 'wifi{0,1,...}' aliases in the /chosen node, then require boot firmware
+> to insert any {ethernet,wifi}_mac{0,1,...} into the paths represented by
+> the corresponding aliases?
+
+In the /aliases node, but yes.
+
+>  I suppose that would reduce the problems with
+> (1), but it still doesn't really help with (2).
+> 
+> In some circles, the gold standard of boot firmware is to be as thin as
+> possible, doing only what's needed to get a kernel up and running, and
+> this function seems wholly unrelated to the firmware's core
+> functionality. I mean, the kernel already knows how to parse VPD, so why
+> can't it learn to find the right field?
+> 
+> > >>>  (2) Other than this device-tree shim requirement, system firmware may
+> > >>>      have no reason to understand anything about network devices.
+> > >>>
+> > >>> So instead, I'm looking for a way to have a device node describe where
+> > >>> to find its MAC address, rather than having the device node contain the
+> > >>> MAC address directly. Then system firmware doesn't have to manage
+> > >>> anything.
+> > >>>
+> > >>> In particular, I add support for the Google Vital Product Data (VPD)
+> > >>> format, used within the Coreboot project. The format is described here:
+> > >>>
+> > >>> https://chromium.googlesource.com/chromiumos/platform/vpd/+/master/README.md
+> > >>>
+> > >>> TL;DR: VPD consists of a TLV-like table, with key/value pairs of
+> > >>> strings. This is often stored persistently on the boot flash and
+> > >>> presented via in-memory Coreboot tables, for the operating system to
+> > >>> read.
+> > >>>
+> > >>> We already have a VPD driver that parses this table and presents it to
+> > >>> user space. This series extends that driver to allow in-kernel lookups
+> > >>> of MAC address entries.
+> > >>
+> > >> A possible alternative approach is to have the VPD driver become a NVMEM
+> > >> producer to expose the VPD keys, did you look into that and possibly
+> > >> found that it was not a good model? The downside to that approach though
+> > >> is that you might have to have a phandle for the VPD provider in the
+> > >> Device Tree, but AFAICS this should solve your needs?
+> > > 
+> > > I did notice some NVMEM work. The MTD links you point at shouldn't be
+> > > relevant, since this table is already present in RAM. But I suppose I
+> > > could shoehorn the memory table into being a fake NVMEM...
+> > > 
+> > > And then, how would you recommend doing the parameterization I note
+> > > here? Is the expectation that I define a new cell for every single type?
+> > > Each cell might have a different binary format, so I'd have to describe:
+> > > (a) that they contain MAC addresses (so the "reader" knows to translate
+> > >     the ASCII strings into equivalent binary representation) and
+> > 
+> > I see, in your current patch series that knowledge is pushed to both the
+> > VPD producer and the specific object lookup function, so this scales better.
+> 
+> Yeah, one of the advantages is that my API is specialized to exactly one
+> data type ;) With the nvmem API, the data format isn't really specified,
+> so you gotta hope that either the NVMEM stores MAC addresses as 6 bytes
+> of binary data, or else that the NVMEM driver figures out how to do any
+> translation for you implicitly.
+> 
+> If I understand the NVMEM subsystem correctly, that is.
+> 
+> > > (b) which key matches (it's not just "mac_address=xxxxx"; there may be
+> > >     many MAC addresses, with keys "ether_mac0", "ether_mac1",
+> > >     "wifi_mac0")
+> > 
+> > The key to lookup is definitively node specific, it is just unfortunate
+> > that there is not a better way to infer which key to lookup for (as
+> > opposed to just having to specify it directly) based on the Device Tree
+> > topology. By that I mean, if you have a "mac-address-lookup" property
+> > associated with Wi-Fi adapter #1 (with numbering starting at 0), then
+> > this automatically means looking up for "wifi_mac1", etc.
+> 
+> Would that really be a virtue, though? Keys can really be anything (in
+> VPD, or in any other hypothetical MAC address store), and it seems nice
+> to avoid entangling them with device tree specifics too much. And how
+> does one figure out what's Device 0 anyway? Based on the FDT layout? I
+> don't actually know what order 'dtc' puts my nodes in.
+> 
+> > > Part (a) especially doesn't really sound like the typical NVMEM, which
+> > > seems to pretend it provides raw access to these memory regions.
+> > > 
+> > > Additionally, VPD is not stored at a fixed address, nor are any
+> > > particular entries within it (it uses TLV), so it seems like there are
+> > > plenty of other bits of the nvmem.txt documentation I'd have to violate
+> > > to get there, such as the definition of 'reg':
+> > > 
+> > > reg:    specifies the offset in byte within the storage device.
+> > > 
+> > > And finally, this may be surmountable, but the existing APIs seem very
+> > > device tree centric. We use this same format on ACPI systems, and the
+> > > current series would theoretically work on both [1]. I'd have to rewrite
+> > > the current (OF-only) helpers to get equivalent support...
+> > 
+> > All fair points, never mind NVMEM, I was just too keen on thinking this
+> > would be finally the way to make the consumers and producers of such
+> > information into a single API, but your proposal appears valid too.
+> 
+> I don't want to throw out any notion of unification from the start, but
+> I don't immediately see how one would do that reasonably. I'm still open
+> to education though, and I'm definitely not wedded to my specific
+> proposal.
+
+Seems to me that nvmem needs to be extended to allow providers to 
+retrieve and interpret data. Not everything is at some fixed offset and 
+size. Something like this is valid dts:
+
+nvmem = <&phandle> "a-string";
+
+But that's pretty uncommon (I can't think of a binding that actually 
+uses that). Perhaps the provider has an array of keys defined and the 
+consumer just provides the index.
+
+Or we could do '<key>-nvmem = <&phandle>', but parsing that is a bit 
+more complicated.
+
+Rob
