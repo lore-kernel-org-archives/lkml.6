@@ -2,130 +2,351 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FB5C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BD9C46464
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2571C216F6
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2571C216F6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 63E7E2170A
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:51:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M/MVjW/A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E7E2170A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbeHOEiT (ORCPT
+        id S1726185AbeHOElf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 00:38:19 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:39703 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725831AbeHOEiT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 00:38:19 -0400
-X-UUID: d7748fb18dbb43b0a95d01610e6d9b64-20180815
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <houlong.wei@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1058311607; Wed, 15 Aug 2018 09:48:17 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 15 Aug
- 2018 09:48:15 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 15 Aug 2018 09:48:14 +0800
-Message-ID: <1534297694.21668.5.camel@mhfsdcap03>
-Subject: Re: [PATCH v23 3/4] arm64: dts: mt8173: Add GCE node
-From:   houlong wei <houlong.wei@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        JassiBrar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        CK Hu =?UTF-8?Q?=28=E8=83=A1=E4=BF=8A=E5=85=89=29?= 
-        <ck.hu@mediatek.com>,
-        "Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?=" 
-        <Bibby.Hsieh@mediatek.com>,
-        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
-        <Yt.Shen@mediatek.com>,
-        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
-        <Daoyuan.Huang@mediatek.com>,
-        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
-        <monica.wang@mediatek.com>,
-        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
-        <Hs.Liao@mediatek.com>,
-        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
-        <ginny.chen@mediatek.com>,
-        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
-        <enzhu.wang@mediatek.com>, <houlong.wei@mediatek.com>
-Date:   Wed, 15 Aug 2018 09:48:14 +0800
-In-Reply-To: <1532482002-11164-4-git-send-email-houlong.wei@mediatek.com>
-References: <1532482002-11164-1-git-send-email-houlong.wei@mediatek.com>
-         <1532482002-11164-4-git-send-email-houlong.wei@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 00:41:35 -0400
+Received: from ozlabs.org ([203.11.71.1]:60181 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbeHOElf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 00:41:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41qsrh29Ysz9sCR;
+        Wed, 15 Aug 2018 11:51:31 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534297894;
+        bh=PDm98TnG4THewardWEPH0o6fqvTFw1I+tqwH4413PZE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=M/MVjW/AyIUdlOxYgMXLWZ5OpIDdfyGYsqZxLPidyD4Bqn0sE1SvSx7v20zYa9Nix
+         0Z7Dr+2h9+9aG1S9k8LVjnsRszj+JCsxTgwYPn7umYSeb6TESWntfwqlPphphLpkBy
+         d+K125bI443VaKt9149DKGr0oU5UednmVB4lgkiPgu9dLKuoHZuTTSg0PQC0rCYHPI
+         XzzWbBKydBpTPmhx6MSC7+VxzFs/1ACEsHDBKAos5tz2k51nEdFBnH2Mu1bQP/RSOu
+         DN545LrNcq9dGq4hNKJ8+XkspyItkoNIf/+Ox+RA9WVmLUD2scH0Ks4+u5MiCkRx4p
+         dHIAuGu5Qx6Qw==
+Date:   Wed, 15 Aug 2018 11:51:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: linux-next: manual merge of the tip tree with the rdma tree
+Message-ID: <20180815115130.03dbbbce@canb.auug.org.au>
+In-Reply-To: <20180806145331.68538a0b@canb.auug.org.au>
+References: <20180806145331.68538a0b@canb.auug.org.au>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zOcmKmKGd1wbzSdKd=XJ8pm"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-25 at 09:26 +0800, Houlong Wei wrote:
-> This patch adds the device node of the GCE hardware for CMDQ module.
-> 
-> Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> Signed-off-by: HS Liao <hs.liao@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt8173.dtsi |   10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> index 94597e3..97b1ec6 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> @@ -18,6 +18,7 @@
->  #include <dt-bindings/phy/phy.h>
->  #include <dt-bindings/power/mt8173-power.h>
->  #include <dt-bindings/reset/mt8173-resets.h>
-> +#include <dt-bindings/gce/mt8173-gce.h>
->  #include "mt8173-pinfunc.h"
->  
->  / {
-> @@ -519,6 +520,15 @@
->  			status = "disabled";
->  		};
->  
-> +		gce: mailbox@10212000 {
-> +			compatible = "mediatek,mt8173-gce";
-> +			reg = <0 0x10212000 0 0x1000>;
-> +			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
-> +			clocks = <&infracfg CLK_INFRA_GCE>;
-> +			clock-names = "gce";
-> +			#mbox-cells = <3>;
-> +		};
-> +
->  		mipi_tx0: mipi-dphy@10215000 {
->  			compatible = "mediatek,mt8173-mipi-tx";
->  			reg = <0 0x10215000 0 0x1000>;
+--Sig_/zOcmKmKGd1wbzSdKd=XJ8pm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Matthias,
-  Could you please review this patch when you are available? Thanks a
-lot.
+Hi all,
 
+On Mon, 6 Aug 2018 14:53:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   drivers/infiniband/core/rdma_core.c
+>=20
+> between commit:
+>=20
+>   9867f5c6695f ("IB/uverbs: Convert 'bool exclusive' into an enum")
+>=20
+> from the rdma tree and commit:
+>=20
+>   bfc18e389c7a ("atomics/treewide: Rename __atomic_add_unless() =3D> atom=
+ic_fetch_add_unless()")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/infiniband/core/rdma_core.c
+> index 4235b9ddc2ad,475910ffbcb6..000000000000
+> --- a/drivers/infiniband/core/rdma_core.c
+> +++ b/drivers/infiniband/core/rdma_core.c
+> @@@ -122,206 -120,19 +122,206 @@@ static int uverbs_try_lock_object(struc
+>   	 * concurrently, setting the counter to zero is enough for releasing
+>   	 * this lock.
+>   	 */
+>  -	if (!exclusive)
+>  +	switch (mode) {
+>  +	case UVERBS_LOOKUP_READ:
+> - 		return __atomic_add_unless(&uobj->usecnt, 1, -1) =3D=3D -1 ?
+> + 		return atomic_fetch_add_unless(&uobj->usecnt, 1, -1) =3D=3D -1 ?
+>   			-EBUSY : 0;
+>  +	case UVERBS_LOOKUP_WRITE:
+>  +		/* lock is exclusive */
+>  +		return atomic_cmpxchg(&uobj->usecnt, 0, -1) =3D=3D 0 ? 0 : -EBUSY;
+>  +	case UVERBS_LOOKUP_DESTROY:
+>  +		return 0;
+>  +	}
+>  +	return 0;
+>  +}
+>  +
+>  +static void assert_uverbs_usecnt(struct ib_uobject *uobj,
+>  +				 enum rdma_lookup_mode mode)
+>  +{
+>  +#ifdef CONFIG_LOCKDEP
+>  +	switch (mode) {
+>  +	case UVERBS_LOOKUP_READ:
+>  +		WARN_ON(atomic_read(&uobj->usecnt) <=3D 0);
+>  +		break;
+>  +	case UVERBS_LOOKUP_WRITE:
+>  +		WARN_ON(atomic_read(&uobj->usecnt) !=3D -1);
+>  +		break;
+>  +	case UVERBS_LOOKUP_DESTROY:
+>  +		break;
+>  +	}
+>  +#endif
+>  +}
+>  +
+>  +/*
+>  + * This must be called with the hw_destroy_rwsem locked for read or wri=
+te,
+>  + * also the uobject itself must be locked for write.
+>  + *
+>  + * Upon return the HW object is guaranteed to be destroyed.
+>  + *
+>  + * For RDMA_REMOVE_ABORT, the hw_destroy_rwsem is not required to be he=
+ld,
+>  + * however the type's allocat_commit function cannot have been called a=
+nd the
+>  + * uobject cannot be on the uobjects_lists
+>  + *
+>  + * For RDMA_REMOVE_DESTROY the caller shold be holding a kref (eg via
+>  + * rdma_lookup_get_uobject) and the object is left in a state where the=
+ caller
+>  + * needs to call rdma_lookup_put_uobject.
+>  + *
+>  + * For all other destroy modes this function internally unlocks the uob=
+ject
+>  + * and consumes the kref on the uobj.
+>  + */
+>  +static int uverbs_destroy_uobject(struct ib_uobject *uobj,
+>  +				  enum rdma_remove_reason reason)
+>  +{
+>  +	struct ib_uverbs_file *ufile =3D uobj->ufile;
+>  +	unsigned long flags;
+>  +	int ret;
+>  +
+>  +	lockdep_assert_held(&ufile->hw_destroy_rwsem);
+>  +	assert_uverbs_usecnt(uobj, UVERBS_LOOKUP_WRITE);
+>  +
+>  +	if (uobj->object) {
+>  +		ret =3D uobj->type->type_class->destroy_hw(uobj, reason);
+>  +		if (ret) {
+>  +			if (ib_is_destroy_retryable(ret, reason, uobj))
+>  +				return ret;
+>  +
+>  +			/* Nothing to be done, dangle the memory and move on */
+>  +			WARN(true,
+>  +			     "ib_uverbs: failed to remove uobject id %d, driver err=3D%d",
+>  +			     uobj->id, ret);
+>  +		}
+>  +
+>  +		uobj->object =3D NULL;
+>  +	}
+>  +
+>  +	if (reason =3D=3D RDMA_REMOVE_ABORT) {
+>  +		WARN_ON(!list_empty(&uobj->list));
+>  +		WARN_ON(!uobj->context);
+>  +		uobj->type->type_class->alloc_abort(uobj);
+>  +	}
+>  +
+>  +	uobj->context =3D NULL;
+>  +
+>  +	/*
+>  +	 * For DESTROY the usecnt is held write locked, the caller is expected
+>  +	 * to put it unlock and put the object when done with it. Only DESTROY
+>  +	 * can remove the IDR handle.
+>  +	 */
+>  +	if (reason !=3D RDMA_REMOVE_DESTROY)
+>  +		atomic_set(&uobj->usecnt, 0);
+>  +	else
+>  +		uobj->type->type_class->remove_handle(uobj);
+>  +
+>  +	if (!list_empty(&uobj->list)) {
+>  +		spin_lock_irqsave(&ufile->uobjects_lock, flags);
+>  +		list_del_init(&uobj->list);
+>  +		spin_unlock_irqrestore(&ufile->uobjects_lock, flags);
+>  +
+>  +		/*
+>  +		 * Pairs with the get in rdma_alloc_commit_uobject(), could
+>  +		 * destroy uobj.
+>  +		 */
+>  +		uverbs_uobject_put(uobj);
+>  +	}
+>  =20
+>  -	/* lock is either WRITE or DESTROY - should be exclusive */
+>  -	return atomic_cmpxchg(&uobj->usecnt, 0, -1) =3D=3D 0 ? 0 : -EBUSY;
+>  +	/*
+>  +	 * When aborting the stack kref remains owned by the core code, and is
+>  +	 * not transferred into the type. Pairs with the get in alloc_uobj
+>  +	 */
+>  +	if (reason =3D=3D RDMA_REMOVE_ABORT)
+>  +		uverbs_uobject_put(uobj);
+>  +
+>  +	return 0;
+>   }
+>  =20
+>  -static struct ib_uobject *alloc_uobj(struct ib_ucontext *context,
+>  +/*
+>  + * This calls uverbs_destroy_uobject() using the RDMA_REMOVE_DESTROY
+>  + * sequence. It should only be used from command callbacks. On success =
+the
+>  + * caller must pair this with rdma_lookup_put_uobject(LOOKUP_WRITE). Th=
+is
+>  + * version requires the caller to have already obtained an
+>  + * LOOKUP_DESTROY uobject kref.
+>  + */
+>  +int uobj_destroy(struct ib_uobject *uobj)
+>  +{
+>  +	struct ib_uverbs_file *ufile =3D uobj->ufile;
+>  +	int ret;
+>  +
+>  +	down_read(&ufile->hw_destroy_rwsem);
+>  +
+>  +	ret =3D uverbs_try_lock_object(uobj, UVERBS_LOOKUP_WRITE);
+>  +	if (ret)
+>  +		goto out_unlock;
+>  +
+>  +	ret =3D uverbs_destroy_uobject(uobj, RDMA_REMOVE_DESTROY);
+>  +	if (ret) {
+>  +		atomic_set(&uobj->usecnt, 0);
+>  +		goto out_unlock;
+>  +	}
+>  +
+>  +out_unlock:
+>  +	up_read(&ufile->hw_destroy_rwsem);
+>  +	return ret;
+>  +}
+>  +
+>  +/*
+>  + * uobj_get_destroy destroys the HW object and returns a handle to the =
+uobj
+>  + * with a NULL object pointer. The caller must pair this with
+>  + * uverbs_put_destroy.
+>  + */
+>  +struct ib_uobject *__uobj_get_destroy(const struct uverbs_obj_type *typ=
+e,
+>  +				      u32 id, struct ib_uverbs_file *ufile)
+>  +{
+>  +	struct ib_uobject *uobj;
+>  +	int ret;
+>  +
+>  +	uobj =3D rdma_lookup_get_uobject(type, ufile, id, UVERBS_LOOKUP_DESTRO=
+Y);
+>  +	if (IS_ERR(uobj))
+>  +		return uobj;
+>  +
+>  +	ret =3D uobj_destroy(uobj);
+>  +	if (ret) {
+>  +		rdma_lookup_put_uobject(uobj, UVERBS_LOOKUP_DESTROY);
+>  +		return ERR_PTR(ret);
+>  +	}
+>  +
+>  +	return uobj;
+>  +}
+>  +
+>  +/*
+>  + * Does both uobj_get_destroy() and uobj_put_destroy().  Returns succes=
+s_res
+>  + * on success (negative errno on failure). For use by callers that do n=
+ot need
+>  + * the uobj.
+>  + */
+>  +int __uobj_perform_destroy(const struct uverbs_obj_type *type, u32 id,
+>  +			   struct ib_uverbs_file *ufile, int success_res)
+>  +{
+>  +	struct ib_uobject *uobj;
+>  +
+>  +	uobj =3D __uobj_get_destroy(type, id, ufile);
+>  +	if (IS_ERR(uobj))
+>  +		return PTR_ERR(uobj);
+>  +
+>  +	/*
+>  +	 * FIXME: After destroy this is not safe. We no longer hold the rwsem
+>  +	 * so disassociation could have completed and unloaded the module that
+>  +	 * backs the uobj->type pointer.
+>  +	 */
+>  +	rdma_lookup_put_uobject(uobj, UVERBS_LOOKUP_WRITE);
+>  +	return success_res;
+>  +}
+>  +
+>  +/* alloc_uobj must be undone by uverbs_destroy_uobject() */
+>  +static struct ib_uobject *alloc_uobj(struct ib_uverbs_file *ufile,
+>   				     const struct uverbs_obj_type *type)
+>   {
+>  -	struct ib_uobject *uobj =3D kzalloc(type->obj_size, GFP_KERNEL);
+>  +	struct ib_uobject *uobj;
+>  +	struct ib_ucontext *ucontext;
+>  +
+>  +	ucontext =3D ib_uverbs_get_ucontext(ufile);
+>  +	if (IS_ERR(ucontext))
+>  +		return ERR_CAST(ucontext);
+>  =20
+>  +	uobj =3D kzalloc(type->obj_size, GFP_KERNEL);
+>   	if (!uobj)
+>   		return ERR_PTR(-ENOMEM);
+>   	/*
+
+This is now a conflict between Linus' tree and the rdma tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zOcmKmKGd1wbzSdKd=XJ8pm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzhyIACgkQAVBC80lX
+0Gyg+Af+Lv18Y1xa+/ba6R2Kw8jzz62Ym3xr0x45z0tt2pC3khexKtuQBxLosWGA
+Oo8KGdWvVil8vo0S6TSQ7Dh+zewYtSB3NEye7NQ9AFNAyBJwwSmiUwyvZo/mkNgj
+KU6KdBHx3ANADrATnIuJK56RHJkOvtbD4KuczffiP3VZGLpLYMwuFp3mONEYrU1w
+lu3IOkzjDxrzzJyBK3f8OInH6iUyoMAshu/Is7zE/pAfu/bH9LLBFn2Mu3UYsnqY
+5vD76/GYHnRgdAHwS34+UrXeCyRBWR2cpP052j4DdlnOtCCIOrJ3NFRpq0ykcrFR
+4ydAAPxjEjkgcEjRQlMdFloFNQqvJg==
+=ocjY
+-----END PGP SIGNATURE-----
+
+--Sig_/zOcmKmKGd1wbzSdKd=XJ8pm--
