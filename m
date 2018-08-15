@@ -2,401 +2,203 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C073C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B79DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44F9C2089E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:26:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNJR+BBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F9C2089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 546DC20841
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:27:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 546DC20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbeHPCVG (ORCPT
+        id S1727817AbeHPCWP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 22:21:06 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:38750 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbeHPCVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 22:21:05 -0400
-Received: by mail-yw1-f65.google.com with SMTP id r3-v6so2150311ywc.5;
-        Wed, 15 Aug 2018 16:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bQUfoafMHJn3jNeSRMJA/RipiTIUjZB9XDadwDKXyiw=;
-        b=TNJR+BBWSUmXu5NzLPStysbmYC+SUcSkS9A6Sgi6sis2a+GK4oQap1Axmig6MOa29u
-         TtcA/PQc0qKzqH1A6wvU5FtdXozZPVN7sZhuAZ4fQ8ndlWz+nn+MFhmXmQcC9GT/BVtt
-         5rRs+YHr9AOHhPzY40zRPKTCs+hMGEgWIShp3CYmUpkuX5XxOQYPZZttQqhB6BB5/nOP
-         C1F8AEB/0GrkiVgqkP3ocbRnpprw/hRL4CXAScVw+Ad8PNPmnDAGbWtrO77Rx1bihJEm
-         G2OINlSSyqwf3ZiU4mI7qQ/7yntnbTSLgwf/MCKvjDb5YZt+JSM/7d+l6BB0za9f5xV7
-         hNug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bQUfoafMHJn3jNeSRMJA/RipiTIUjZB9XDadwDKXyiw=;
-        b=gCEZCxahgOlK8+Ty8kCFerrQLCwPb6HCoI6OuFZSOolYieEDQGLYvvORCp7H5eRMkz
-         9MyNjp7IY1LtUuI/ZjoP7XmYyvzs6moN/W06y7uLYk33qyPpRVieUu1h3WNBDtFRqvL0
-         X0jETGbfSPuxVGcREOABG2x/BLnToifUBVv44GAdDsIOx/aXxHRlaxovlP+cvBIhC7/V
-         bH+lR1/1aMwTR5vue/mHY/moLjTOe78RkXBweg9jGgHZCdZFTefIPdSe3xGY5Ckysga+
-         C+uUxnqRQu0QQZ+clywWzj4AZELxtw8wFzk7na+9t3RdYsoxvQJzrPlFE08yJpfbg5o9
-         WErw==
-X-Gm-Message-State: AOUpUlE8Y28SS6UFRUb4lFlg7SMmzYCy/aetp8/8hmxdx37KyaaC7efy
-        RlZae+E0Uz2Sxf0bzMOzM4TGE+k=
-X-Google-Smtp-Source: AA+uWPwbcB/0KG0+CF3ocH/2FnV9ykEAbgwG77P5RJ4RWj/PcZSUmn0O025zlgRY11Un4+nw8JApDg==
-X-Received: by 2002:a81:430f:: with SMTP id q15-v6mr14725723ywa.39.1534375601673;
-        Wed, 15 Aug 2018 16:26:41 -0700 (PDT)
-Received: from localhost.localdomain (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id h10-v6sm6204361ywa.35.2018.08.15.16.26.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 16:26:40 -0700 (PDT)
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 2/2] fs: generic_file_buffered_read() now uses find_get_pages_contig
-Date:   Wed, 15 Aug 2018 19:26:32 -0400
-Message-Id: <20180815232632.32548-3-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180815232632.32548-1-kent.overstreet@gmail.com>
-References: <20180815232632.32548-1-kent.overstreet@gmail.com>
+        Wed, 15 Aug 2018 22:22:15 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22225 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726185AbeHPCWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 22:22:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 16:27:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,245,1531810800"; 
+   d="scan'208";a="65502426"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga008.jf.intel.com with ESMTP; 15 Aug 2018 16:27:37 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 15 Aug 2018 16:27:36 -0700
+Received: from fmsmsx105.amr.corp.intel.com ([169.254.4.225]) by
+ FMSMSX112.amr.corp.intel.com ([169.254.5.84]) with mapi id 14.03.0319.002;
+ Wed, 15 Aug 2018 16:27:36 -0700
+From:   "Howell, Seth" <seth.howell@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     "Walker, Benjamin" <benjamin.walker@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Moni Shoua <monis@mellanox.com>
+Subject: RE: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Thread-Topic: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Thread-Index: AQHUNB7XmXOwV8047EKXXIqMnpdlHaTB4cuA//+UiKA=
+Date:   Wed, 15 Aug 2018 23:27:36 +0000
+Message-ID: <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
+References: <20180814223303.83556-1-seth.howell@intel.com>
+ <20180815225021.GB31799@ziepe.ca>
+In-Reply-To: <20180815225021.GB31799@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTE5NGNkNjktM2VlOC00YTg4LTk1MTMtYWJhYWU3ZWI1MzljIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQnRMQmNLa1FsZEc2Y2V3MWxUTnNcL2VERDkxeVRVRzNmVWdQaWhlY01JaW1aMUVjQ1VRMVlLWUlTbFZPelJ1OW4ifQ==
+x-originating-ip: [10.1.200.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert generic_file_buffered_read() to get pages to read from in
-batches, and then copy data to userspace from many pages at once - in
-particular, we now don't touch any cachelines that might be contended
-while we're in the loop to copy data to userspace.
+Thank you for taking the time to review this issue. The patch you submitted will definitely fix the problem I was facing.
 
-This is is a performance improvement on workloads that do buffered reads
-with large blocksizes, and a very large performance improvement if that
-file is also being accessed concurrently by different threads.
+-----Original Message-----
+From: Jason Gunthorpe [mailto:jgg@ziepe.ca] 
+Sent: Wednesday, August 15, 2018 3:50 PM
+To: Howell, Seth <seth.howell@intel.com>
+Cc: Walker, Benjamin <benjamin.walker@intel.com>; Doug Ledford <dledford@redhat.com>; linux-rdma@vger.kernel.org; linux-kernel@vger.kernel.org; Moni Shoua <monis@mellanox.com>
+Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
 
-On smaller reads (512 bytes), there's a very small performance
-improvement (1%, within the margin of error).
+On Tue, Aug 14, 2018 at 03:33:02PM -0700, Seth Howell wrote:
+> By making this enum accessible to the userspace API, we can avoid 
+> conflicts between the kernel-space ib_wr_opcode and the user-space 
+> ibv_wr_opcode enums.
+> 
+> When using the rxe software driver interface between kernel and user 
+> space, the enum value IBV_WR_SEND_WITH_INV was being improperly 
+> translated to IB_WR_READ_WITH_INV causing the userspace application to 
+> fail.
+> 
+> Signed-off-by: Seth Howell <seth.howell@intel.com>
+>  include/rdma/ib_verbs.h           | 31 -------------------------------
+>  include/uapi/rdma/ib_user_verbs.h | 31 
+> +++++++++++++++++++++++++++++++
+>  2 files changed, 31 insertions(+), 31 deletions(-)
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+I've looked at this for a bit now, and I think we should just do the below and not change userspace:
+
+From e3c1b1b81373601fa6cbad2ba5fadd2c8cfdfaed Mon Sep 17 00:00:00 2001
+From: Seth Howell <seth.howell@intel.com>
+Date: Tue, 14 Aug 2018 15:33:02 -0700
+Subject: [PATCH] IB/rxe: Revise the ib_wr_opcode enum
+
+This enum has become part of the uABI, as both RXE and the
+ib_uverbs_post_send() command expect userspace to supply values from this enum. So it should be properly placed in include/uapi/rdma.
+
+In userspace this enum is called 'enum ibv_wr_opcode' as part of libibverbs.h. That enum defines different values for IB_WR_LOCAL_INV, IB_WR_SEND_WITH_INV, and IB_WR_LSO. These were introduced (incorrectly, it turns out) into libiberbs in 2015.
+
+The kernel has changed its mind on the numbering for several of the IB_WC values over the years, but has remained stable on IB_WR_LOCAL_INV and below.
+
+Based on this we can conclude that there is no real user space user of the values beyond IB_WR_ATOMIC_FETCH_AND_ADD, as they have never worked via rdma-core. This is confirmed by inspection, only rxe uses the kernel enum and implements the latter operations. rxe has clearly never worked with these attributes from userspace. Other drivers that support these opcodes implement the functionality without calling out to the kernel.
+
+To make IB_WR_SEND_WITH_INV and related work for RXE in userspace we choose to renumber the IB_WR enum in the kernel to match the uABI that userspace has bee using since before Soft RoCE was merged. This is an overall simpler configuration for the whole software stack, and obviously can't break anything existing.
+
+Reported-by: Seth Howell <seth.howell@intel.com>
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- mm/filemap.c | 266 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 144 insertions(+), 122 deletions(-)
+ include/rdma/ib_verbs.h           | 34 ++++++++++++++++++-------------
+ include/uapi/rdma/ib_user_verbs.h | 20 +++++++++++++++++-
+ 2 files changed, 39 insertions(+), 15 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 308bdd466f..0de9fe4c61 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2110,67 +2110,6 @@ static void shrink_readahead_size_eio(struct file *filp,
- 	ra->ra_pages /= 4;
- }
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h index 5d404c20b49f27..5e51ea9832a0c8 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -1278,21 +1278,27 @@ struct ib_qp_attr {  };
  
--static int generic_file_buffered_read_page_ok(struct kiocb *iocb,
--			struct iov_iter *iter,
--			struct page *page)
--{
--	struct address_space *mapping = iocb->ki_filp->f_mapping;
--	struct inode *inode = mapping->host;
--	struct file_ra_state *ra = &iocb->ki_filp->f_ra;
--	unsigned offset = iocb->ki_pos & ~PAGE_MASK;
--	unsigned bytes, copied;
--	loff_t isize, end_offset;
--
--	BUG_ON(iocb->ki_pos >> PAGE_SHIFT != page->index);
--
--	/*
--	 * i_size must be checked after we know the page is Uptodate.
--	 *
--	 * Checking i_size after the check allows us to calculate
--	 * the correct value for "bytes", which means the zero-filled
--	 * part of the page is not copied back to userspace (unless
--	 * another truncate extends the file - this is desired though).
--	 */
--
--	isize = i_size_read(inode);
--	if (unlikely(iocb->ki_pos >= isize))
--		return 1;
--
--	end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
--
--	bytes = min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE - offset);
--
--	/* If users can be writing to this page using arbitrary
--	 * virtual addresses, take care about potential aliasing
--	 * before reading the page on the kernel side.
--	 */
--	if (mapping_writably_mapped(mapping))
--		flush_dcache_page(page);
--
--	/*
--	 * Ok, we have the page, and it's up-to-date, so
--	 * now we can copy it to user space...
--	 */
--
--	copied = copy_page_to_iter(page, offset, bytes, iter);
--
--	iocb->ki_pos += copied;
--
--	/*
--	 * When a sequential read accesses a page several times,
--	 * only mark it as accessed the first time.
--	 */
--	if (iocb->ki_pos >> PAGE_SHIFT != ra->prev_pos >> PAGE_SHIFT)
--		mark_page_accessed(page);
--
--	ra->prev_pos = iocb->ki_pos;
--
--	if (copied < bytes)
--		return -EFAULT;
--
--	return !iov_iter_count(iter) || iocb->ki_pos == isize;
--}
--
- static struct page *
- generic_file_buffered_read_readpage(struct file *filp,
- 				    struct address_space *mapping,
-@@ -2314,6 +2253,79 @@ generic_file_buffered_read_no_cached_page(struct kiocb *iocb,
- 	return generic_file_buffered_read_readpage(filp, mapping, page);
- }
+ enum ib_wr_opcode {
+-	IB_WR_RDMA_WRITE,
+-	IB_WR_RDMA_WRITE_WITH_IMM,
+-	IB_WR_SEND,
+-	IB_WR_SEND_WITH_IMM,
+-	IB_WR_RDMA_READ,
+-	IB_WR_ATOMIC_CMP_AND_SWP,
+-	IB_WR_ATOMIC_FETCH_AND_ADD,
+-	IB_WR_LSO,
+-	IB_WR_SEND_WITH_INV,
+-	IB_WR_RDMA_READ_WITH_INV,
+-	IB_WR_LOCAL_INV,
+-	IB_WR_REG_MR,
+-	IB_WR_MASKED_ATOMIC_CMP_AND_SWP,
+-	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD,
++	/* These are shared with userspace */
++	IB_WR_RDMA_WRITE = IB_UVERBS_WR_RDMA_WRITE,
++	IB_WR_RDMA_WRITE_WITH_IMM = IB_UVERBS_WR_RDMA_WRITE_WITH_IMM,
++	IB_WR_SEND = IB_UVERBS_WR_SEND,
++	IB_WR_SEND_WITH_IMM = IB_UVERBS_WR_SEND_WITH_IMM,
++	IB_WR_RDMA_READ = IB_UVERBS_WR_RDMA_READ,
++	IB_WR_ATOMIC_CMP_AND_SWP = IB_UVERBS_WR_ATOMIC_CMP_AND_SWP,
++	IB_WR_ATOMIC_FETCH_AND_ADD = IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD,
++	IB_WR_LSO = IB_UVERBS_WR_TSO,
++	IB_WR_SEND_WITH_INV = IB_UVERBS_WR_SEND_WITH_INV,
++	IB_WR_RDMA_READ_WITH_INV = IB_UVERBS_WR_RDMA_READ_WITH_INV,
++	IB_WR_LOCAL_INV = IB_UVERBS_WR_LOCAL_INV,
++	IB_WR_MASKED_ATOMIC_CMP_AND_SWP =
++		IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP,
++	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD =
++		IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD,
++
++	/* These are kernel only and can not be issued by userspace */
++	IB_WR_REG_MR = 0x20,
+ 	IB_WR_REG_SIG_MR,
++
+ 	/* reserve values for low level drivers' internal use.
+ 	 * These values will not be used at all in the ib core layer.
+ 	 */
+diff --git a/include/uapi/rdma/ib_user_verbs.h b/include/uapi/rdma/ib_user_verbs.h
+index 25a16760de2ad1..1254b51a551a1c 100644
+--- a/include/uapi/rdma/ib_user_verbs.h
++++ b/include/uapi/rdma/ib_user_verbs.h
+@@ -763,10 +763,28 @@ struct ib_uverbs_sge {
+ 	__u32 lkey;
+ };
  
-+static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
-+						struct iov_iter *iter,
-+						struct page **pages,
-+						unsigned nr)
-+{
-+	struct file *filp = iocb->ki_filp;
-+	struct address_space *mapping = filp->f_mapping;
-+	struct file_ra_state *ra = &filp->f_ra;
-+	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
-+	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
-+	int i, j, ret, err = 0;
++enum ib_uverbs_wr_opcode {
++	IB_UVERBS_WR_RDMA_WRITE = 0,
++	IB_UVERBS_WR_RDMA_WRITE_WITH_IMM = 1,
++	IB_UVERBS_WR_SEND = 2,
++	IB_UVERBS_WR_SEND_WITH_IMM = 3,
++	IB_UVERBS_WR_RDMA_READ = 4,
++	IB_UVERBS_WR_ATOMIC_CMP_AND_SWP = 5,
++	IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD = 6,
++	IB_UVERBS_WR_LOCAL_INV = 7,
++	IB_UVERBS_WR_BIND_MW = 8,
++	IB_UVERBS_WR_SEND_WITH_INV = 9,
++	IB_UVERBS_WR_TSO = 10,
++	IB_UVERBS_WR_RDMA_READ_WITH_INV = 11,
++	IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP = 12,
++	IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD = 13,
++	/* Review enum ib_wr_opcode before modifying this */ };
 +
-+	nr = min_t(unsigned long, last_index - index, nr);
-+find_page:
-+	if (fatal_signal_pending(current))
-+		return -EINTR;
-+
-+	ret = find_get_pages_contig(mapping, index, nr, pages);
-+	if (ret)
-+		goto got_pages;
-+
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		return -EAGAIN;
-+
-+	page_cache_sync_readahead(mapping, ra, filp, index, last_index - index);
-+
-+	ret = find_get_pages_contig(mapping, index, nr, pages);
-+	if (ret)
-+		goto got_pages;
-+
-+	pages[0] = generic_file_buffered_read_no_cached_page(iocb, iter);
-+	err = PTR_ERR_OR_ZERO(pages[0]);
-+	ret = !IS_ERR_OR_NULL(pages[0]);
-+got_pages:
-+	for (i = 0; i < ret; i++) {
-+		struct page *page = pages[i];
-+		pgoff_t pg_index = index +i;
-+		loff_t pg_pos = max(iocb->ki_pos,
-+				    (loff_t) pg_index << PAGE_SHIFT);
-+		loff_t pg_count = iocb->ki_pos + iter->count - pg_pos;
-+
-+		if (PageReadahead(page))
-+			page_cache_async_readahead(mapping, ra, filp, page,
-+					pg_index, last_index - pg_index);
-+
-+		if (!PageUptodate(page)) {
-+			if (iocb->ki_flags & IOCB_NOWAIT) {
-+				for (j = i; j < ret; j++)
-+					put_page(pages[j]);
-+				ret = i;
-+				err = -EAGAIN;
-+				break;
-+			}
-+
-+			page = generic_file_buffered_read_pagenotuptodate(filp,
-+						iter, page, pg_pos, pg_count);
-+			if (IS_ERR_OR_NULL(page)) {
-+				for (j = i + 1; j < ret; j++)
-+					put_page(pages[j]);
-+				ret = i;
-+				err = PTR_ERR_OR_ZERO(page);
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (likely(ret))
-+		return ret;
-+	if (err)
-+		return err;
-+	goto find_page;
-+}
-+
- /**
-  * generic_file_buffered_read - generic file read routine
-  * @iocb:	the iocb to read
-@@ -2330,83 +2342,93 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		struct iov_iter *iter, ssize_t written)
- {
- 	struct file *filp = iocb->ki_filp;
-+	struct file_ra_state *ra = &filp->f_ra;
- 	struct address_space *mapping = filp->f_mapping;
- 	struct inode *inode = mapping->host;
--	struct file_ra_state *ra = &filp->f_ra;
- 	size_t orig_count = iov_iter_count(iter);
--	pgoff_t last_index;
--	int error = 0;
-+	struct page *pages[64];
-+	int i, pg_nr, error = 0;
-+	bool writably_mapped;
-+	loff_t isize, end_offset;
- 
- 	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
- 		return 0;
- 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
- 
--	last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
--
--	for (;;) {
--		pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
--		struct page *page;
--
-+	do {
- 		cond_resched();
--find_page:
--		if (fatal_signal_pending(current)) {
--			error = -EINTR;
--			goto out;
--		}
- 
--		page = find_get_page(mapping, index);
--		if (!page) {
--			if (iocb->ki_flags & IOCB_NOWAIT)
--				goto would_block;
--			page_cache_sync_readahead(mapping,
--					ra, filp,
--					index, last_index - index);
--			page = find_get_page(mapping, index);
--			if (unlikely(page == NULL)) {
--				page = generic_file_buffered_read_no_cached_page(iocb, iter);
--				if (!page)
--					goto find_page;
--				if (IS_ERR(page)) {
--					error = PTR_ERR(page);
--					goto out;
--				}
--			}
--		}
--		if (PageReadahead(page)) {
--			page_cache_async_readahead(mapping,
--					ra, filp, page,
--					index, last_index - index);
-+		i = 0;
-+		pg_nr = generic_file_buffered_read_get_pages(iocb, iter, pages,
-+							     ARRAY_SIZE(pages));
-+		if (pg_nr < 0) {
-+			error = pg_nr;
-+			break;
- 		}
--		if (!PageUptodate(page)) {
--			if (iocb->ki_flags & IOCB_NOWAIT) {
--				put_page(page);
--				error = -EAGAIN;
--				goto out;
--			}
- 
--			page = generic_file_buffered_read_pagenotuptodate(filp,
--					iter, page, iocb->ki_pos, iter->count);
--			if (!page)
--				goto find_page;
--			if (IS_ERR(page)) {
--				error = PTR_ERR(page);
--				goto out;
--			}
--		}
-+		/*
-+		 * i_size must be checked after we know the pages are Uptodate.
-+		 *
-+		 * Checking i_size after the check allows us to calculate
-+		 * the correct value for "nr", which means the zero-filled
-+		 * part of the page is not copied back to userspace (unless
-+		 * another truncate extends the file - this is desired though).
-+		 */
-+		isize = i_size_read(inode);
-+		if (unlikely(iocb->ki_pos >= isize))
-+			goto put_pages;
- 
--		error = generic_file_buffered_read_page_ok(iocb, iter, page);
--		put_page(page);
-+		end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
- 
--		if (error) {
--			if (error > 0)
--				error = 0;
--			goto out;
-+		while ((iocb->ki_pos >> PAGE_SHIFT) + pg_nr >
-+		       (end_offset + PAGE_SIZE - 1) >> PAGE_SHIFT)
-+			put_page(pages[--pg_nr]);
-+
-+		/*
-+		 * Once we start copying data, we don't want to be touching any
-+		 * cachelines that might be contended:
-+		 */
-+		writably_mapped = mapping_writably_mapped(mapping);
-+
-+		/*
-+		 * When a sequential read accesses a page several times, only
-+		 * mark it as accessed the first time.
-+		 */
-+		if (iocb->ki_pos >> PAGE_SHIFT !=
-+		    ra->prev_pos >> PAGE_SHIFT)
-+			mark_page_accessed(pages[0]);
-+		for (i = 1; i < pg_nr; i++)
-+			mark_page_accessed(pages[i]);
-+
-+		for (i = 0; i < pg_nr; i++) {
-+			unsigned offset = iocb->ki_pos & ~PAGE_MASK;
-+			unsigned bytes = min_t(loff_t, end_offset - iocb->ki_pos,
-+					       PAGE_SIZE - offset);
-+			unsigned copied;
-+
-+			/*
-+			 * If users can be writing to this page using arbitrary
-+			 * virtual addresses, take care about potential aliasing
-+			 * before reading the page on the kernel side.
-+			 */
-+			if (writably_mapped)
-+				flush_dcache_page(page);
-+
-+			copied = copy_page_to_iter(pages[i], offset, bytes, iter);
-+
-+			iocb->ki_pos += copied;
-+			ra->prev_pos = iocb->ki_pos;
-+
-+			if (copied < bytes) {
-+				error = -EFAULT;
-+				break;
-+			}
- 		}
--	}
-+put_pages:
-+		for (i = 0; i < pg_nr; i++)
-+			put_page(pages[i]);
-+	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
- 
--would_block:
--	error = -EAGAIN;
--out:
- 	file_accessed(filp);
- 	written += orig_count - iov_iter_count(iter);
- 
--- 
+ struct ib_uverbs_send_wr {
+ 	__aligned_u64 wr_id;
+ 	__u32 num_sge;
+-	__u32 opcode;
++	__u32 opcode;		/* see enum ib_uverbs_wr_opcode */
+ 	__u32 send_flags;
+ 	union {
+ 		__be32 imm_data;
+--
 2.18.0
 
