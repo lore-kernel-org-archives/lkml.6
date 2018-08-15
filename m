@@ -2,216 +2,229 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D14BEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CAAC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD0B20BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:56:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrHTr2D+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD0B20BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A55F2152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A55F2152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbeHOTtf (ORCPT
+        id S1729950AbeHOTwp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:49:35 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44366 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729377AbeHOTtf (ORCPT
+        Wed, 15 Aug 2018 15:52:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36430 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729388AbeHOTwp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:49:35 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so1674771wrt.11;
-        Wed, 15 Aug 2018 09:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Je89+tnS9qOJbI4jIE40X4c3YDyPPiI2vn4kmPMgkF4=;
-        b=lrHTr2D+XBmWLzyd0b4BfR++Oi93QwfYPDY+WyD3alVZqQa9C2Kdt41pR0CbLL74Lu
-         WIIpPFvb5kxZ4Xw772FF0kvKHqeZC/qOUe48hbLWi4qujKd1aEbYfPYYZIK50ABEeA7z
-         VbvXwFy7tbsB8emaAIOQdm8nfUSXTrSwaH/3ZRhxQs3eTr9DiPNlFZYBAm9LuGQgG3mu
-         0Pxf3SKg5ng8zxt74u6fGknYWdwNJ2LQKjegfoI79hmXYpWLTJr3T2iLcEIl4p9eslr2
-         zv27uMuG3/AUiwW71n+Ce5AgJIqWWWXTrOyi+526EhIR6i/thSfEkrBTCawKQMjyKnOQ
-         osMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Je89+tnS9qOJbI4jIE40X4c3YDyPPiI2vn4kmPMgkF4=;
-        b=diSZlqhSJ0S6LqbNVogbPJm6rEmWwD+l4ZSEkH5zq7saubNELkHwWH9jBZoCPfg1Yw
-         YDxATxxLaM9Ls2dLb7CwrNWjbEkyDlv0KahJEXMpfXio/ZqWhfg3MJamEWg0GyIjI1uJ
-         6q1am/q3S9vE30q9LqqAy4Lx8XOJz2dsIg2JRyXqER1WiZ65rVXD5sA9smcTwdtcv/yC
-         TfL2zfy72JEDghsGKrgww6D4hYZ8lWpSZuAcAZPWu5Eskk2Putc6haksp+uwdLYIJpvF
-         yyLyhVplTubNCZ/uiwElvDjJjUJHSzh6Z42Ek6Qf/tT1KxFTF10I8YQOptJenH+GY4Tk
-         auPg==
-X-Gm-Message-State: AOUpUlE9wZ7Zn5lZzc4xSvkxd83RYjqy7iXdte7gFI1bxcOTTmEK2RdF
-        X4C4e278360vagpTkYTDDFhhTpw5
-X-Google-Smtp-Source: AA+uWPwSkKEXYBhN1fHiWV/fYu1Wtk2FHe9oc61K/BFFna3VrhHSZppIb1mmLdJ6orFTDVW/p581xw==
-X-Received: by 2002:adf:9c93:: with SMTP id d19-v6mr16378931wre.11.1534352196745;
-        Wed, 15 Aug 2018 09:56:36 -0700 (PDT)
-Received: from [192.168.1.18] (dkl176.neoplus.adsl.tpnet.pl. [83.24.15.176])
-        by smtp.gmail.com with ESMTPSA id e141-v6sm4633281wmd.32.2018.08.15.09.56.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 09:56:35 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20180815161734.18159-1-dmurphy@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <e278d4f2-7848-d156-01ec-3cd77803e4de@gmail.com>
-Date:   Wed, 15 Aug 2018 18:56:33 +0200
+        Wed, 15 Aug 2018 15:52:45 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7FGxXOi057337
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:59:47 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kvn0s0qxj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:59:47 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 15 Aug 2018 10:59:46 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 Aug 2018 10:59:42 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7FGxdNJ13042018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Aug 2018 09:59:39 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A31F136059;
+        Wed, 15 Aug 2018 10:59:39 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D197D136051;
+        Wed, 15 Aug 2018 10:59:35 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.175.5])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Aug 2018 10:59:35 -0600 (MDT)
+Subject: Re: [PATCH v9 10/22] s390: vfio-ap: sysfs interfaces to configure
+ adapters
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180815115242.35a2a1ce.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 15 Aug 2018 12:59:35 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180815161734.18159-1-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180815115242.35a2a1ce.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081516-0012-0000-0000-0000169EF8CB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009550; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073947; UDB=6.00553401; IPR=6.00853906;
+ MB=3.00022736; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-15 16:59:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081516-0013-0000-0000-0000540D2915
+Message-Id: <4bf27c7a-34c6-9160-cdc6-19022b86202b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808150179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On 08/15/2018 05:52 AM, Cornelia Huck wrote:
+> On Mon, 13 Aug 2018 17:48:07 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> +/**
+>> + * assign_adapter_store
+>> + *
+>> + * @dev: the matrix device
+>> + * @attr: a mediated matrix device attribute
+>> + * @buf: a buffer containing the adapter ID (APID) to be assigned
+>> + * @count: the number of bytes in @buf
+>> + *
+>> + * Parses the APID from @buf and assigns it to the mediated matrix device.
+>> + *
+>> + * Returns the number of bytes processed if the APID is valid; otherwise returns
+>> + * an error.
+>> + */
+>> +static ssize_t assign_adapter_store(struct device *dev,
+>> +				    struct device_attribute *attr,
+>> +				    const char *buf, size_t count)
+>> +{
+>> +	int ret = 0;
+> You don't need to initialize this to 0, as kstrtoul will set it in any
+> case.
 
-Thank you for the update.
+Right you are! Will change it.
 
-On 08/15/2018 06:17 PM, Dan Murphy wrote:
-> Add the device tree bindings for the lm3697
-> LED driver for backlighting and display.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
-> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
-> 
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 89 +++++++++++++++++++
->  1 file changed, 89 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> new file mode 100644
-> index 000000000000..34403a48a0ce
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> @@ -0,0 +1,89 @@
-> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
-> +
-> +The LM3697 11-bit LED driver provides high-
-> +performance backlight dimming for 1, 2, or 3 series
-> +LED strings while delivering up to 90% efficiency.
-> +
-> +This device is suitable for Display and Keypad Lighting
-> +
-> +Required properties:
-> +	- compatible:
-> +		"ti,lm3967"
-> +	- reg :  I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Optional properties:
-> +	- enable-gpios : gpio pin to enable/disable the device.
-> +	- vled-supply : LED supply
-> +
-> +Required child properties:
-> +	- reg : 0 - LED is Controlled by bank A
-> +		1 - LED is Controlled by bank B
-> +	- led-sources - Indicates which HVLED string is associated to which
-> +			control bank.  The HVLED string cannot be associated with
-> +			two control banks.  This property is an array of 3 and
-> +			all positions in the array must be populated.
-> +			Additional information is contained
-> +			in Documentation/devicetree/bindings/leds/common.txt
-> +			0 - End of array if all 3 LEDs are not declared for a
-> +			    single control bank.
+>
+>> +	unsigned long apid;
+>> +	struct mdev_device *mdev = mdev_from_dev(dev);
+>> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +	unsigned long max_apid = matrix_mdev->matrix.apm_max;
+>> +
+>> +	ret = kstrtoul(buf, 0, &apid);
+>> +	if (ret)
+>> +		return ret;
+>> +	if (apid > max_apid)
+>> +		return -EINVAL;
+>> +
+>> +	/* Set the bit in the AP mask (APM) corresponding to the AP adapter
+>> +	 * number (APID). The bits in the mask, from most significant to least
+>> +	 * significant bit, correspond to APIDs 0-255.
+>> +	 */
+>> +	mutex_lock(&matrix_dev.lock);
+>> +
+>> +	ret = vfio_ap_mdev_verify_queues_reserved_for_apid(matrix_mdev, apid);
+> That function name really is a mouthful :) I don't have any better
+> suggestions, though.
 
-This is needless complication. I propose to define led-sources as
-an array of three boolean values, whose state signifies which LED
-strings are controlled by the bank defined by the reg property in the
-given child node. I.e. <HVLED1 HVLED2 HVLED3>.
+It is, but I think it describes exactly what the function does.
 
-I modified your examples below accordingly.
+>
+>> +	if (ret)
+>> +		goto done;
+>> +
+>> +	set_bit_inv(apid, matrix_mdev->matrix.apm);
+>> +
+>> +	ret = vfio_ap_mdev_verify_no_sharing(matrix_mdev);
+>> +	if (ret)
+>> +		goto share_err;
+>> +
+>> +	ret = count;
+>> +	goto done;
+>> +
+>> +share_err:
+>> +	clear_bit_inv(apid, matrix_mdev->matrix.apm);
+>> +done:
+>> +	mutex_unlock(&matrix_dev.lock);
+>> +
+>> +	return ret;
+>> +}
+>> +static DEVICE_ATTR_WO(assign_adapter);
+>> +
+>> +/**
+>> + * unassign_adapter_store
+>> + *
+>> + * @dev: the matrix device
+>> + * @attr: a mediated matrix device attribute
+>> + * @buf: a buffer containing the adapter ID (APID) to be assigned
+>> + * @count: the number of bytes in @buf
+>> + *
+>> + * Parses the APID from @buf and unassigns it from the mediated matrix device.
+>> + * The APID must be a valid value
+> A valid value, but not necessarily assigned, right?
 
-> +			1 - HVLED 1 string
-> +			2 - HVLED 2 string
-> +			3 - HVLED 3 string
-> +
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +	- linux,default-trigger :
-> +	   see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example:
-> +
-> +HVLED string 1 and 2 controlled by control bank A and HVLED string controlled by
-> +control bank B.
-> +
-> +led-controller@36 {
-> +	compatible = "ti,lm3967";
-> +	reg = <0x36>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <0x1 0x2 0x0>
+You are correct, if the APID is not assigned, then the corresponding bit 
+will be
+cleared regardless. In a previous version, the functions failed if the 
+APID is
+not assigned, but a colleague removed that check. I guess it makes sense 
+given
+it really does not hurt anything to ask to unassign an APID that isn't 
+assigned
+to begin with. Would you prefer I update the comment, or do you feel the 
+user
+should be made aware of an attempt to unassign an APID that is not assigned?
 
-		led-sources = <1 1 0>;
-;
-> +		label = "white:first_backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		led-sources = <0x3 0x0 0x0>;
+>
+>> + *
+>> + * Returns the number of bytes processed if the APID is valid; otherwise returns
+>> + * an error.
+>> + */
+>> +static ssize_t unassign_adapter_store(struct device *dev,
+>> +				      struct device_attribute *attr,
+>> +				      const char *buf, size_t count)
+>> +{
+>> +	int ret;
+>> +	unsigned long apid;
+>> +	struct mdev_device *mdev = mdev_from_dev(dev);
+>> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +
+>> +	ret = kstrtoul(buf, 0, &apid);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (apid > matrix_mdev->matrix.apm_max)
+>> +		return -EINVAL;
+>> +
+>> +	mutex_lock(&matrix_dev.lock);
+>> +	clear_bit_inv((unsigned long)apid, matrix_mdev->matrix.apm);
+>> +	mutex_unlock(&matrix_dev.lock);
+>> +
+>> +	return count;
+>> +}
+>> +DEVICE_ATTR_WO(unassign_adapter);
+> In general, looks good to me.
 
-		led-sources = <0 0 1>;
+That is good news indeed.
 
-> +		label = "white:second_backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +}
-> +
-> +All HVLED strings controlled by control bank A
-> +
-> +led-controller@36 {
-> +	compatible = "ti,lm3967";
-> +	reg = <0x36>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <0x1 0x2 0x3>;
+>
 
-		led-sources = <1 1 1>;
-
-> +		label = "white:backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +}
-> +
-> +For more product information please see the link below:
-> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
-> 
-
--- 
-Best regards,
-Jacek Anaszewski
