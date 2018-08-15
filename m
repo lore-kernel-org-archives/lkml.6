@@ -2,92 +2,80 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9436C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D501C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD1D9214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:44:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1D9214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 557E42154E
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:45:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GTWZL//A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557E42154E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeHOXih (ORCPT
+        id S1727537AbeHOXi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:38:37 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37965 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbeHOXih (ORCPT
+        Wed, 15 Aug 2018 19:38:59 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:39277 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbeHOXi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:38:37 -0400
-Received: by mail-qt0-f194.google.com with SMTP id w26-v6so2755445qto.5;
-        Wed, 15 Aug 2018 13:44:50 -0700 (PDT)
+        Wed, 15 Aug 2018 19:38:59 -0400
+Received: by mail-io0-f193.google.com with SMTP id l7-v6so2097716iok.6
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=li2MODc71VbwVXd3HfPVx637KmA01kipzz5spz/gzT4=;
+        b=GTWZL//AGLPGUXNnzBeX+tv64U8IVAgiC4pd9P7JP2M8XXJP6w853ybgx86xxiPp7a
+         a+DxaWekU4DOTD1lcNvYA+Xlpdqx+KDkc/Iz4z79vKTbzeAQVsJGdf7Qvwzz+MpDNY+W
+         vAYGb1zZkJeXLVfkYhEr+SHBMNa4epUDxUWHE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=upVKeWjxTPP+YWqaaOKHJLrXw9Nol93xfoio7or9HT8=;
-        b=cOursw88VMdHA2iI+LbRy6ZrIo/VFhVF0UF2rUvag5czQazRQjpebKLr3lC2LLUvZr
-         xsVNe57rgm9xZ7KnTGVpC2EiaPIPZ6W4PsdeBGJA2+OM8qmsP7YJQgXOo58Pk+AbCu+m
-         7FbbH2D+p30RSDo9EJxXN/YJo42XDQo24aJKlQy7Xl3ISKW2twbKZZ44Mf6BAGN1yoq7
-         4weAJpnYWlLgme+2maExE6K4WTuqQTCGCKlylA3+xwhzkw9AzsxD6QlCTgzb4e4Nojyq
-         m/nazmSDRTmIPMxK0CZedKXgCzM79aPSrsNAc53NNlav+pcz7CewO+LnsX+EsKOU4JEH
-         cjgg==
-X-Gm-Message-State: AOUpUlEgkz3+AT2aOEEErPaO+tk3RKOpfrJgM8V/DbLj6KkYwrooGvHO
-        UWEs7rxCiWS5C5v+eldyvjNpHCFcDiXSu/qTTJ1GrALu
-X-Google-Smtp-Source: AA+uWPyuLSAdWqnfj4WvUSlnfGhFmLOnVC+JLgFPqnmWFo9UD640JOO/cLZnpYcBJkpXVDME7TefugmjGP4ykDN2lrI=
-X-Received: by 2002:aed:241d:: with SMTP id r29-v6mr26120642qtc.389.1534365890428;
- Wed, 15 Aug 2018 13:44:50 -0700 (PDT)
+        bh=li2MODc71VbwVXd3HfPVx637KmA01kipzz5spz/gzT4=;
+        b=C8gO/4EwOJLn4FsBiveas3iI3Evr0XPnMcpNZubDduMCbu454D+dKPANSG2OyulB7n
+         1ShQH2ZXhM1wKAgG0uUq/zRldxk1/clwXf1M/vyfZAeb9BTCdwrnl9XaLHtHB35niWzV
+         J+hkjgyc4TpiUkokzzp3v8x6WgVMFEy6g8Yb2DS4j6InkjIt+d/u01xHhExmzWl1KRHx
+         bYt+etW0JhRIk/SWDU3ZOr1V1PY2GAIiMMEjOB4LYSKkucpeiSTccXVMFdruX18IXrnx
+         /vRtjyQEV+hWx0fXZ4bhX2xvG0Wxuma+3AWU8b27gbJlph4p8kluCfxa+BTtdKRrZuPG
+         bcEw==
+X-Gm-Message-State: AOUpUlEMtHAAnXA4FmDcXC8aNxYuEw7KCKMxtwmz1YltQ0BRF9LKf3HJ
+        Hnimsbixl8wfen/NntfxbPv78B+2g7/v1vSdbL8=
+X-Google-Smtp-Source: AA+uWPzcWdv0k30LK3g9HvEJieyCLXHay5R575o6vZmsHa9qhIoNgJ+2MJC7HXdW3OreXhrD0WSU4q3r2rpXSzKV3QY=
+X-Received: by 2002:a6b:f815:: with SMTP id o21-v6mr10649449ioh.203.1534365913286;
+ Wed, 15 Aug 2018 13:45:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180815175040.3736548-1-arnd@arndb.de> <90A7E81AE28BAE4CBDDB3B35F187D2644073E9C4@CHN-SV-EXMX02.mchp-main.com>
- <CAK8P3a0f38ev5E4Zvg_3BS+1UN2NzYSw+dyRHXDwLCWgREXJ6g@mail.gmail.com> <90A7E81AE28BAE4CBDDB3B35F187D2644073EA26@CHN-SV-EXMX02.mchp-main.com>
-In-Reply-To: <90A7E81AE28BAE4CBDDB3B35F187D2644073EA26@CHN-SV-EXMX02.mchp-main.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 15 Aug 2018 22:44:34 +0200
-Message-ID: <CAK8P3a3guebtDLNhbQwNmA2nq=raKiP8ztGRpb03r0XD8h+ZNA@mail.gmail.com>
-Subject: Re: [PATCH] net: lan743x_ptp: convert to ktime_get_clocktai_ts64
-To:     Bryan.Whitehead@microchip.com
-Cc:     UNGLinuxDriver@microchiptechnology.mail.onmicrosoft.com,
-        David Miller <davem@davemloft.net>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Networking <netdev@vger.kernel.org>,
+References: <1534364547-20300-1-git-send-email-linux@roeck-us.net>
+In-Reply-To: <1534364547-20300-1-git-send-email-linux@roeck-us.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 Aug 2018 13:45:02 -0700
+Message-ID: <CA+55aFznJ95+Wx+WVdREJ5iEB-2VtaxnGz81EGdXFr7yStywJQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: i8259: Add missing include file
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nstange@suse.de, s.gottschall@dd-wrt.com,
+        Sven Joachim <svenjoac@gmx.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 10:41 PM <Bryan.Whitehead@microchip.com> wrote:
+On Wed, Aug 15, 2018 at 1:22 PM Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> > > > Question: this is the only ptp driver that sets the hardware time to
-> > > > the current system time in TAI. Why does it do that?
-> > >
-> > > This is done when the driver starts up after reset. Otherwise the clock is off
-> > by 48 years.
-> > > It seemed to me that the system time was the most appropriate clock to
-> > sync to.
-> > > If my reasoning is incorrect, please enlighten me.
-> >
-> > I've never worked with PTP, but my understanding from looking at the other
-> > drivers is that the time normally gets set either from another host through
-> > the PTP protocol, or using clock_settime() from user space with the current
-> > time.
->
-> Those methods will still work. But if it's not set by those methods, I thought the
-> clock should at least be set once on driver startup to align with the system clock.
-> After that, other methods are free to reset it again.
+> I have not seen a patch fly by, so here it is.
 
-(adding Richard Cochran to Cc for more insight here)
+Applied.
 
-I would argue that it's more important that the driver behaves like all other
-PTP implementations. If we want the behavior to be that the initial PTP time is
-set to the ktime_get_clocktai_ts64() value, then this should be done by the
-PTP core rather than the device driver. If there is a good reason that the
-other drivers don't do it like this, then I would assume the same reason applies
-to lan743x.
-
-        Arnd
+               Linus
