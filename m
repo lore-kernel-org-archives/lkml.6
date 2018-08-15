@@ -2,113 +2,155 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 114A2C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B0FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE229208F7
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:30:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HxVe4yiX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE229208F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DB6CA21536
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:30:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6CA21536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbeHOXXk (ORCPT
+        id S1726987AbeHOXX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:23:40 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35210 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbeHOXXk (ORCPT
+        Wed, 15 Aug 2018 19:23:59 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:42958 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbeHOXX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:23:40 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p10-v6so1939654ljg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=TWNhjrmgLpSO5MJV73m5bOu5n1H+413r7T8xRTQZNdA=;
-        b=HxVe4yiXT/cVV+jcYufkzUnRhINVIclBJ6+TZeyxYDn+E9lClIiJ94c7K32GTtBoMH
-         MoqnRk9OE3GoxDL2nMCoApEWWe0BJrRJF8BJ6eTap96qrGtQuxC4hGNnASIJUC8KDGgm
-         rB7r4/AD9a+q91ipw30ZUKyBV3I1iW/PpmepI=
+        Wed, 15 Aug 2018 19:23:59 -0400
+Received: by mail-io0-f193.google.com with SMTP id n18-v6so2057096ioa.9;
+        Wed, 15 Aug 2018 13:30:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TWNhjrmgLpSO5MJV73m5bOu5n1H+413r7T8xRTQZNdA=;
-        b=o4M/A0ygYMxvJtdH956mWF6sX2eG0iL2FLoCihSuwETLvc38HZcIbrofRcZcdt5yt9
-         hsZ8LtRxbCmmsELwiERy8ITHCVUWkx2jBHUWztC+NPApBt8DxvsCdX+6VGcsM8iNshNv
-         kuEuV6Yup46DKUCTRW4v9tiflg9TaOMYxN+u5S7JUx7xDMEMJwmjQtRMsOk0LGkes+R0
-         U+B6elb2afE76CXn3Su2vUW7zwrpHu4KnogQ3RjJQYhdJl3NyOeMe7t3c+DkWxDTQ/ym
-         VWNLaI2zSOkrevqCgl+h/UEo9E9CEh8V3l1mJhvGMgwznbTyDhEXia9B118QosdWuvv8
-         hqSA==
-X-Gm-Message-State: AOUpUlEnaseJ2b2Cj2lJNL4K84Xb5Jq/yHm56VQmQRuzFN9k7OtPR9ww
-        0pKu1jKjN+45DCV3gciXFdyPWVeNGaA=
-X-Google-Smtp-Source: AA+uWPyRKpiccg6z9nNCverE8fzsWvrRsw9Y4gMmHbbk0N+67mNfjJSfK4ERdsrOl7ECr3dG+bxcAQ==
-X-Received: by 2002:a2e:3c1a:: with SMTP id j26-v6mr9111405lja.149.1534364996620;
-        Wed, 15 Aug 2018 13:29:56 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm4139026lje.73.2018.08.15.13.29.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 13:29:55 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     grygorii.strashko@ti.com, davem@davemloft.net
-Cc:     corbet@lwn.net, netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH net-next] Documentation: networking: ti-cpsw: correct cbs parameters for Eth1 100Mb
-Date:   Wed, 15 Aug 2018 23:29:53 +0300
-Message-Id: <20180815202953.10137-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5IgQSkBxQZonxJguAA3ZV7mOYCPTJgHNP53D7dCfU8w=;
+        b=YPpO5m+YXmywPc2DNzFCduNcyMoOtc/uq29Su+kfo7Kn22KEcLLiGTsy4kIjbLFaEJ
+         CLf369hmPfaOmjfxBaolbkk6auhi+gh/Tgv7zHUwtSUTeTBOtZTLT/E7Grqy5GLlkq/i
+         73E0bzOmBhqNy/DwmejbeQqeWhs0CpSmuLs29UwdlG/o2IMoqxRUM/sHwjGsHNBKpfaM
+         Y+dDxsMtELIx6/oI5GesOlfCnelbVfrUD3kIzxc/AOH2Md05EBiSqVgrlTPmyG1T1Nhe
+         f4ldkmrD5QuAk2krgk5aQOtU23mTij3BPLoS1qwEReLCCj/lhwcdT+LccTGSn73xGZ6c
+         F+/g==
+X-Gm-Message-State: AOUpUlFnZ6RmvLJuMQhHzcU50nAxjvZyK9kqaCpxXATqxAQH/sO0Zq8g
+        hR8RKiymlkpQ9m5lg4ffHg==
+X-Google-Smtp-Source: AA+uWPx9UOELM7aVqg/tu7YYr+Rf1r7NM1+HZUdtvo4H6NUjggPH9QiGHBoOe7MYr5/QIupHUzCdPw==
+X-Received: by 2002:a6b:9e91:: with SMTP id h139-v6mr23322317ioe.185.1534365016505;
+        Wed, 15 Aug 2018 13:30:16 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id b129-v6sm18645481ioa.75.2018.08.15.13.30.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 13:30:15 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 14:30:15 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Tali Perry <tali.perry1@gmail.com>
+Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com, mark.rutland@arm.com,
+        davem@davemloft.net, mchehab+samsung@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        arnd@arndb.de, wsa@the-dreams.de,
+        andriy.shevchenko@linux.intel.com, pierre-yves.mordret@st.com,
+        cedric.madianga@gmail.com, baolin.wang@spreadtrum.com,
+        jarkko.nikula@linux.intel.com, hdegoede@redhat.com,
+        rmk+kernel@armlinux.org.uk, ard.biesheuvel@linaro.org,
+        thor.thayer@linux.intel.com, geert@linux-m68k.org,
+        heikki.krogerus@linux.intel.com, tglx@linutronix.de,
+        linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: i2c: npcm7xx: add binding for i2c
+ controller
+Message-ID: <20180815203015.GA19242@rob-hp-laptop>
+References: <20180814182907.182139-1-tali.perry1@gmail.com>
+ <20180814182907.182139-2-tali.perry1@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180814182907.182139-2-tali.perry1@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If set cbs parameters calculated for 1000Mb, but use on 100Mb port
-w/o h/w offload (for cpsw offload it doesn't matter), it works
-incorrectly. According to the example and testing board, second port
-is 100Mb interface. Correct them on recalculated for 100Mb interface.
-It allows to use the same command for CBS software implementation for
-board in example.
+On Tue, Aug 14, 2018 at 09:29:06PM +0300, Tali Perry wrote:
+> 
+> Nuvoton NPCM7XX I2C Controller
+> NPCM7xx includes 16 I2C contollers. This driver operates the controller.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
-Based on net-next/master
+s/contollers/controllers/
 
- Documentation/networking/ti-cpsw.txt | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> This module also includes a slave mode, which will be submitted later on.
+> 
+> Any feedback would be appreciated.  
+> 
+> v3 -> v2:
+> 	- fix dt binding: compatible name: ommit "bus"
+> 
+> v2 -> v1:
+> 	- run check patch in strict mode.
+> 	- use linux crc.
+> 	- define regs in constant offset without base.
+> 	- remove debug prints.
+> 	- no declerations for local functions.
+> 	
+> v1: initial version
 
-diff --git a/Documentation/networking/ti-cpsw.txt b/Documentation/networking/ti-cpsw.txt
-index 67039205bd69..d4d4c0751a09 100644
---- a/Documentation/networking/ti-cpsw.txt
-+++ b/Documentation/networking/ti-cpsw.txt
-@@ -469,17 +469,18 @@ $ tc -g class show dev eth1
- 
- 14)
- // Set rate for class A - 31 Mbit (tc0, txq2) using CBS Qdisc for Eth1
--// here only idle slope is important, others ignored
-+// here only idle slope is important, others ignored, but calculated
-+// for interface speed - 100Mb for eth1 port.
- // Set it +1 Mb for reserve (important!)
--$ tc qdisc add dev eth1 parent 100:3 cbs locredit -1453 \
--hicredit 47 sendslope -969000 idleslope 31000 offload 1
-+$ tc qdisc add dev eth1 parent 100:3 cbs locredit -1035 \
-+hicredit 465 sendslope -69000 idleslope 31000 offload 1
- net eth1: set FIFO3 bw = 31
- 
- 15)
- // Set rate for class B - 11 Mbit (tc1, txq3) using CBS Qdisc for Eth1
- // Set it +1 Mb for reserve (important!)
--$ tc qdisc add dev eth1 parent 100:4 cbs locredit -1483 \
--hicredit 34 sendslope -989000 idleslope 11000 offload 1
-+$ tc qdisc add dev eth1 parent 100:4 cbs locredit -1335 \
-+hicredit 405 sendslope -89000 idleslope 11000 offload 1
- net eth1: set FIFO2 bw = 11
- 
- 16)
--- 
-2.17.1
+The version info normally goes below the '---' so it is not part of the 
+commit msg.
 
+> 
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+> 
+> ---
+>  .../devicetree/bindings/i2c/i2c-npcm7xx.txt        | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+> new file mode 100644
+> index 000000000000..2a474a2a5b3f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+> @@ -0,0 +1,29 @@
+> +Nuvoton NPCM7XX I2C bus
+> +
+> +The NPCM750x includes sixteen I2C bus controllers. All Conterollers support
+
+s/Conterollers/controllers/
+
+With those fixed,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +both master and slave mode. Each controller has two 16 byte HW FIFO for TX and
+> +RX.
+> +
+> +Required properties:
+> +- compatible      : must be "nuvoton,npcm750-i2c"
+> +- reg             : Offset and length of the register set for the device.
+> +- interrupts      : Contain the I2C interrupt with flags for falling edge.
+> +- clocks          : phandle of I2C reference clock.
+> +
+> +Optional:
+> +- bus-frequency   : Contain the I2C bus frequency,
+> +			the default I2C bus frequency is 100000.
+> +- pinctrl-0       : must be <&smbX_pins>, X is module number
+> +			(on NPCM7XX it's 0 to 15)
+> +- pinctrl-names   : should be set to "default"
+> +Example:
+> +
+> +	i2c0: i2c@80000 {
+> +		compatible = "nuvoton,npcm750-i2c";
+> +		reg = <0x80000 0x1000>;
+> +		clocks = <&clk NPCM7XX_CLK_APB2>;
+> +		bus-frequency = <100000>;
+> +		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&smb0_pins>;
+> +	};
+> -- 
+> 2.14.1
+> 
