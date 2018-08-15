@@ -2,120 +2,107 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6527C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8105DC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3C42148C
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:44:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3C42148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F12F21501
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:52:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="mwVPptLe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F12F21501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbeHONgY (ORCPT
+        id S1729133AbeHONo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 09:36:24 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53908 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726142AbeHONgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 09:36:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1355418A;
-        Wed, 15 Aug 2018 03:44:45 -0700 (PDT)
-Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE3443F5BC;
-        Wed, 15 Aug 2018 03:44:41 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 11:44:50 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle
- path for CPUs
-Message-ID: <20180815104449.GA29108@red-moon>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <2056372.NMt4aPaF4h@aspire.rjw.lan>
- <2205807.cU2puvubpP@aspire.rjw.lan>
- <1726374.375PCQfjLZ@aspire.rjw.lan>
- <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
- <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
- <20180808105619.GB25150@e107981-ln.cambridge.arm.com>
- <20180808180248.GC27850@codeaurora.org>
- <20180809102504.GB13428@e107981-ln.cambridge.arm.com>
- <20180810201815.GE5081@codeaurora.org>
+        Wed, 15 Aug 2018 09:44:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41094 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728809AbeHONo3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 09:44:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PGCYoq7ya89EZTC8LZAl6L3NBL3n2ZnfV2RmOH2QNcU=; b=mwVPptLehouxdqgbQxSV/LAGb
+        1FpSJZuTvRepFc4Svj8zV4ch6mPJM8+0SYsoI9Ttrh0eev08OGtPFSQq6r10xFxhk4WUyEx+LT/8y
+        lHXtrwYucXmL8h35KGO8x9V1P/DI10Dd2PB2uE9iDpIO4+YqozFsTf2vNIeGF08iSZSEQ=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fptPt-0001aZ-BO; Wed, 15 Aug 2018 10:52:41 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 80F4D440078; Wed, 15 Aug 2018 11:52:39 +0100 (BST)
+Date:   Wed, 15 Aug 2018 11:52:39 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        lee.jones@linaro.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, vkoul@kernel.org
+Subject: Re: Applied "ASoC: dt-bindings: add dt bindings for wcd9335 audio
+ codec" to the asoc tree
+Message-ID: <20180815105239.GV2414@sirena.org.uk>
+References: <20180727121806.18209-2-srinivas.kandagatla@linaro.org>
+ <20180801112020.93C4A1124241@debutante.sirena.org.uk>
+ <20180814162405.GA450@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xku3GkZTJumTa1rO"
 Content-Disposition: inline
-In-Reply-To: <20180810201815.GE5081@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180814162405.GA450@rob-hp-laptop>
+X-Cookie: Many are called, few volunteer.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 02:18:15PM -0600, Lina Iyer wrote:
 
-[...]
+--xku3GkZTJumTa1rO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >>But, the OSI feature is critical for QCOM mobile platforms. The
-> >>last man activities during cpuidle save quite a lot of power.
-> >
-> >What I expressed above was that, in PSCI based systems (OSI or PC
-> >alike), it is up to firmware/hardware to detect "the last man" not
-> >the kernel.
-> >
-> >I need to understand what you mean by "last man activities" to
-> >provide feedback here.
-> >
-> When the last CPU goes down during deep sleep, the following would be
-> done
-> - Lower resource requirements for shared resources such as clocks,
->  busses and regulators that were used by drivers in AP. These shared
->  resources when not used by other processors in the SoC may be turned
->  off and put in low power state by a remote processor. [1][2]
-> - Enable and setup wakeup capable interrupts on an always-on interrupt
->  controller, so the GIC and the GPIO controllers may be put in low
->  power state. [3][4]
-> - Write next known wakeup value to the timer, so the blocks that were
->  powered off, may be brought back into operational before the wakeup.
->  [4][5]
-> 
-> These are commonly done during suspend, but to achieve a good power
-> efficiency, we have to do this when all the CPUs are just executing CPU
-> idle. Also, they cannot be done from the firmware (because the data
-> required for all this is part of Linux). OSI plays a crucial role in
-> determining when to do all this.
+On Tue, Aug 14, 2018 at 10:24:05AM -0600, Rob Herring wrote:
+> On Wed, Aug 01, 2018 at 12:20:20PM +0100, Mark Brown wrote:
+> > The patch
+> >=20
+> >    ASoC: dt-bindings: add dt bindings for wcd9335 audio codec
+> >=20
+> > has been applied to the asoc tree at
+> >=20
+> >    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git=20
 
-No it does not. It is the power domain cpumasks that allow this code to
-make an educated guess on the last cpu running (the kernel), PSCI OSI is
-not crucial at all (it is crucial in QC platforms because that's the
-only mode supported but that's not a reason I accept as valid since it
-does not comply with the PSCI specifications).
+> Why is this applied when I had requested changes?
 
-As I mentioned in another thread[1] the generic part of this
-series may be applicable in a platform agnostic way to the
-CPUidle framework, whether that's beneficial it has to be proven
-and it is benchmark specific anyway.
+Usually when this happens it's becasue I applied it before you requested
+changes, there's some lag between applying and pushing things out and if
+I'm working on my laptop also some extra lag before mail reaches me as
+well.
 
-Lorenzo
+--xku3GkZTJumTa1rO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1]: https://marc.info/?l=linux-pm&m=153382916513032&w=2 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt0BfIACgkQJNaLcl1U
+h9AbHgf/YwUj5W487kUnXYDmUInV5C1CzGSnoXIJmiJNKT9YnbdaDas1UWtc4Ea8
+02Jq0DckZ4+P81OBVBfCWPzaU4hXlp3/+6MOYzgyi0PBVBJK5gIOdSFAZ77/uzJv
+iN93JMFeI/ui/O+0jKck2Zwov4/IC5klHwR9y1l9gV/cvAGKUlkPBZcBByaoHQfc
+y1bFUsW0xqTb1u3RKKFksQzkTL0FLmW2c2B+M/Xs5Gi1pTMHvZ3sEB/qMiLImf8P
+dXsmzaFbXe+VSPe1QOHwXGMyIMDFkVsgdlX95K8V3gzY/ktdTOtEIG5fDiycbBSF
+dWU0Z5VXmD1XmUxbJW+JfE7Y62PG+w==
+=k4Ar
+-----END PGP SIGNATURE-----
+
+--xku3GkZTJumTa1rO--
