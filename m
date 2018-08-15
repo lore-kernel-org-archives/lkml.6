@@ -6,60 +6,57 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412C9C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D05BC46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC41B216E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:54:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC41B216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 0101F216E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:55:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0101F216E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbeHOIpW (ORCPT
+        id S1728516AbeHOIqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 04:45:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43710 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725876AbeHOIpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 04:45:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A045FACD2;
-        Wed, 15 Aug 2018 05:54:37 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 07:54:54 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Michael Jin <mikhail.jin@gmail.com>
-Cc:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] EDAC, amd64: Add Family 17h Model 11h support.
-Message-ID: <20180815055454.GB23008@nazgul.tnic>
-References: <20180810193623.24629-1-mikhail.jin@gmail.com>
- <BN7PR12MB2593F278911BAF74943245F8F8380@BN7PR12MB2593.namprd12.prod.outlook.com>
- <CAO6F7D=iP7-gcRH1f1SsLzjXcgw=ZB4O6GikFoee8qyQWy4HFw@mail.gmail.com>
+        Wed, 15 Aug 2018 04:46:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51246 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbeHOIqT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 04:46:19 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 661DD9D2;
+        Wed, 15 Aug 2018 05:55:35 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 07:55:32 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
+Message-ID: <20180815055532.GE10151@kroah.com>
+References: <20180814171520.883143803@linuxfoundation.org>
+ <891d41f8-e0e3-afa8-3274-b9a10afd3dbb@dd-wrt.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO6F7D=iP7-gcRH1f1SsLzjXcgw=ZB4O6GikFoee8qyQWy4HFw@mail.gmail.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <891d41f8-e0e3-afa8-3274-b9a10afd3dbb@dd-wrt.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 08:14:47PM -0400, Michael Jin wrote:
-> Therefore, I would like you to confirm that model 10h uses 0x15e8 (device
-> F0) and 0x15ee (device F6) as I can not find any documentation or test
-> whether ECC works.
+On Wed, Aug 15, 2018 at 02:36:00AM +0200, Sebastian Gottschall wrote:
+> if SWAP is disabled in kernel config, the following compile error will raise
+> up with this release
+> 
+> arch/x86/built-in.o: in function `max_swapfile_size': (.text+0x3bba1):
+> undefined reference to `generic_max_swapfile_size'
+> 
+> of course this is simple to fix. the function max_swapfile_size must be
+> excluded if CONFIG_SWAP is disabled
 
-He just asked you to make the change for models 0x10-0x2f. How much more
-confirmation do you need?
+Now fixed up, thanks.
 
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+greg k-h
