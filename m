@@ -2,175 +2,124 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6547AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97498C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B9D21545
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:36:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B9D21545
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 749802152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YONegN+T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749802152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeHOXa2 (ORCPT
+        id S1727415AbeHOXax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:30:28 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41886 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726183AbeHOXa1 (ORCPT
+        Wed, 15 Aug 2018 19:30:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42221 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbeHOXax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:30:27 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7FKXjvw036712
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 16:36:43 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kvt88jd36-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 16:36:43 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 15 Aug 2018 14:36:42 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Aug 2018 14:36:39 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7FKaaAY22479112
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 Aug 2018 13:36:36 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50845136055;
-        Wed, 15 Aug 2018 14:36:36 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7BB3013605D;
-        Wed, 15 Aug 2018 14:36:33 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.175.5])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Aug 2018 14:36:33 -0600 (MDT)
-Subject: Re: [PATCH v9 17/22] s390: vfio-ap: zeroize the AP queues.
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-18-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180815182401.4cfa0a78.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 15 Aug 2018 16:36:32 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 15 Aug 2018 19:30:53 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l9-v6so968871pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uF+sfIz7hhjrmMB6KIH9I08rwQU6IctIHtVKQdVaLs4=;
+        b=YONegN+TSI2n+fhOK7vAGgo11iJoTcquP0mGmzjnkgWwLOCVtW0hRqbj48uzs4B/EW
+         xTwqQNtlYUFRjEl9Kz7BUd49NziHuJ72q2ksnUOuDzNpsC+hQs6CuDiE7Gn41mEkjBOH
+         E3uOuN49BfgVdJN9SOsE+S81D6Rao8tR2SrPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uF+sfIz7hhjrmMB6KIH9I08rwQU6IctIHtVKQdVaLs4=;
+        b=hxj9vYgPH0k5bPxudeuDsgiELGHLT78a+Vxoyz0i/MY/cwts7F8K/c0A+1yZNemoDC
+         gkwuOUUMgSGXAUzJbT+8EtFYlVYrhZGINQSK5i85A9TczrxUVl3DYC9F/QnC7kUnP9Yl
+         UL35zJFQk8NxxXqEoe/n/7Vqhcd6u1jq0K+09pfA3Np6OJsLd5TQ63wV4XYtfSRO+/9P
+         9jj/cpWzjrKei7wUh77fBgc6S0j53Jgz9PcNU31FXnq93o7KytFl/DAjiw3H5xv3orET
+         q0PPDwiNrB11oqS3KtljuT1kUXVNPQZghrzplpPTjK8brTB0fXTlpKIYAhuJhphSRmGg
+         CixA==
+X-Gm-Message-State: AOUpUlF29cB5awIWR5U/OjTo78V2n4ogiS9I9NFwAwJc+0+wn4x2AYCd
+        yKhQoObigkz7c0Xu6uoLKkHNvg==
+X-Google-Smtp-Source: AA+uWPyazyHg+KXMUMz50O/cnd7+ObPTVzRSybjf/l84/LpFSNPnp+i41wCDzuD5vJl9qqJLOhoAuQ==
+X-Received: by 2002:a65:5c83:: with SMTP id a3-v6mr26461820pgt.164.1534365429808;
+        Wed, 15 Aug 2018 13:37:09 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id z20-v6sm54606269pfd.99.2018.08.15.13.37.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Aug 2018 13:37:09 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v4 0/6] firmware: coreboot: Fix probe and simplify code
+Date:   Wed, 15 Aug 2018 13:37:02 -0700
+Message-Id: <20180815203708.67090-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
 MIME-Version: 1.0
-In-Reply-To: <20180815182401.4cfa0a78.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18081520-0004-0000-0000-000014771914
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009550; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01074019; UDB=6.00553444; IPR=6.00853978;
- MB=3.00022740; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-15 20:36:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081520-0005-0000-0000-0000887878A2
-Message-Id: <59fddbc0-49f5-c83b-144f-7390b80dfc9f@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808150209
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/15/2018 12:24 PM, Cornelia Huck wrote:
-> On Mon, 13 Aug 2018 17:48:14 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
-> Nit: please drop the leading period in the subject.
+This series reworks the coreboot firmware driver a bit to fix some bugs
+and then simplify the code by changing the design to get rid of the
+different platform drivers, remap memory with memremap() to fix sparse
+__iomem issue, and finally simplify code. There's some risk in changing to
+memremap() but I think that should work out alright. It will either return
+memory directly, or fallback to ioremap_cache() as has been done before.
 
-I assume you mean the ending period?
+Changes from v3:
+ * Dropped last patch for resource reservation 
+ * Pick up review tags on patch#1
+ * Always unmap memory for table instead of keep it around
 
->
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Let's call PAPQ(ZAPQ) to zeroize a queue:
->>
->> * For each queue configured for a mediated matrix device
->>    when it is released.
->>
->> Zeroizing a queue resets the queue, clears all pending
->> messages for the queue entries and disables adapter interruptions
->> associated with the queue.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c     |   25 +++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |   25 +++++++++++++++++++++++++
->>   2 files changed, 50 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
->> index 3e8534b..34f982a 100644
->> --- a/drivers/s390/crypto/vfio_ap_private.h
->> +++ b/drivers/s390/crypto/vfio_ap_private.h
->> @@ -74,4 +74,29 @@ struct ap_matrix_mdev {
->>   extern int vfio_ap_mdev_register(void);
->>   extern void vfio_ap_mdev_unregister(void);
->>   
->> +static inline int vfio_ap_reset_queue(unsigned int apid, unsigned int apqi,
->> +				      unsigned int retry)
->> +{
->> +	struct ap_queue_status status;
->> +
->> +	do {
->> +		status = ap_zapq(AP_MKQID(apid, apqi));
->> +		switch (status.response_code) {
->> +		case AP_RESPONSE_NORMAL:
->> +			return 0;
->> +		case AP_RESPONSE_RESET_IN_PROGRESS:
->> +		case AP_RESPONSE_BUSY:
->> +			msleep(20);
->> +			break;
->> +		default:
->> +			pr_warn("%s: error zeroizing %02x.%04x: response code %d\n",
->> +				VFIO_AP_MODULE_NAME, apid, apqi,
->> +				status.response_code);
-> How can we end up here? Does this mean that we just don't know what to
-> do with this response, or is this something that should never happen?
-> (How much sense does it make to print an error?)
+Changes from v2:
+ * A bunch more patches
+ * Fix iounmap missing on error path
+ * Fix bus getting unregistered on driver unbind and never registered
+   again
+ * Request exclusive access to table region
+ * Pull out table signature check to driver probe
 
-There are additional response codes that could be returned; for example,
-in the case of a catastrophic failure such as: The function can not be
-performed because the AP was somehow deconfigured or the functiona
-cannot be performed due to a machine check failure that caused the AP
-path to be removed. It shouldn't happen, but all are possibilities.
-I can get rid of the message and just return -EIO if you prefer.
+Changes from v1:
+ * Split out fixlet for DT based driver from platform driver change
 
->
->> +			return -EIO;
->> +		}
->> +	} while (retry--);
->> +
->> +	return -EBUSY;
->> +}
->> +
->>   #endif /* _VFIO_AP_PRIVATE_H_ */
+Cc: Wei-Ning Huang <wnhuang@chromium.org>
+Cc: Julius Werner <jwerner@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>
+Cc: Samuel Holland <samuel@sholland.org>
 
+Stephen Boyd (6):
+  firmware: coreboot: Let OF core populate platform device
+  firmware: coreboot: Unmap ioregion after device population
+  firmware: coreboot: Make bus registration symmetric
+  firmware: coreboot: Collapse platform drivers into bus core
+  firmware: coreboot: Remap RAM with memremap() instead of ioremap()
+  firmware: coreboot: Only populate devices in coreboot_table_init()
+
+ drivers/firmware/google/Kconfig               |  26 ++--
+ drivers/firmware/google/Makefile              |   2 -
+ drivers/firmware/google/coreboot_table-acpi.c |  88 ------------
+ drivers/firmware/google/coreboot_table-of.c   |  82 ------------
+ drivers/firmware/google/coreboot_table.c      | 126 ++++++++++++------
+ drivers/firmware/google/coreboot_table.h      |   6 -
+ 6 files changed, 98 insertions(+), 232 deletions(-)
+ delete mode 100644 drivers/firmware/google/coreboot_table-acpi.c
+ delete mode 100644 drivers/firmware/google/coreboot_table-of.c
+
+-- 
+Sent by a computer through tubes
 
