@@ -2,227 +2,111 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5120C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE26C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2694320BF2
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD5C821557
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:10:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uILbxRtJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2694320BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="g4oN13l6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5C821557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbeHPADp (ORCPT
+        id S1727621AbeHPAEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 20:03:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41898 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbeHPADp (ORCPT
+        Wed, 15 Aug 2018 20:04:47 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39537 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbeHPAEr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 20:03:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nh2knEOpfILba34IAgdfY+CzwvbuSIyaKvzipMDi0Fk=; b=uILbxRtJmxFPXEKOafgglHiCU
-        cbbrSnz5yYRkIG3lVq5Niz1C5uk09xPYH3d9i07MKrWTt2d0pXnS4w2AxZoypMr5EhsffFQS0szuy
-        74bd4GWyZS2CFm4hwW3N5wBUHhRUcc6PLqfLmjGOiAUJbQaaQTNlncGzIWWegzpc1qOB6FDRWSXYa
-        Tt1TIHjZNvH2gJFdGQhdDhLKoIFMRaDGsFvS+Ms6BkAuYnx4SVKq0Vyl+1qdsdntXq5OcZQdqbbER
-        C3/pn52BaO6SH38NO61pm0wm/DHJrJ/NJmZvZqwtgIb+G4ATlkUNhBvG9982PnmWuxDYUXy1u4dD/
-        Qx04Hx9lw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fq334-0002Qh-LJ; Wed, 15 Aug 2018 21:09:46 +0000
-Date:   Wed, 15 Aug 2018 14:09:46 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-mm@kvack.org,
+        Wed, 15 Aug 2018 20:04:47 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j8-v6so1009865pff.6
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 14:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6NbjBDHVAyQzSFQyCd/J+T/NDtFTl35hHqo5OC9Ix70=;
+        b=g4oN13l6jrl51D3895IggeEzD6qAA3DGl6dKy/XRbQk2Vp88xGGwI2UZkqO75ClGdY
+         5aWpwhZ7uomhklB0tsacidkrYGuYrbEVKCjHahcIn4Uxy7w9bgPjCAEBI7yWi2ukz4H2
+         yx8IiKGlnky+9s6O9diHpTIQ5YHo1HuOeEk1LKYudEbrgLBaKtpVlEZNXVcbxwvjCu9c
+         K5Q9lwRorLb8bVuLUgG4hEDDTatP0f4SgHu7WKTVoPYaO/wSXu4zdsZjCMErWeoQ4+nv
+         PnUYlRzqF7iPWPmzlgZwQVFJys4laoMCm4J0jssMEB4Qt6zk8CWhwCoRehTIqJXjMhHB
+         KpkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6NbjBDHVAyQzSFQyCd/J+T/NDtFTl35hHqo5OC9Ix70=;
+        b=YSCXbfXaDTl2rD6baD7t+xn3boMXtkPA1u9zCJAcZy28dyPIbKU21bUh0ioHxvqsow
+         JuGn+CuV1WgX3r/FyOZtT2PtEObVqj0wr2IQwOe6YYXYKte0B4QnKr9ct7kZBRo05DB4
+         pUQtTkoKe9qUoJ12AZl+MbcJ9VrySOj/DdJqfdekAmWrWu0KvoM62WNjSEhT72Hr//z/
+         nM3kCJaw5jBrxIYjm7ydS7BoNZm0njgm07Wca8k1J/LRPiV0x+LfZI+DXHV+x93iZWwE
+         rwKCwy2t0SvVI51BJPukzpdZpOaP2R0A0mTfUDFYRTyBQALm63Gr+jF+QtaIFXzjXe2J
+         CbPg==
+X-Gm-Message-State: AOUpUlFHj7FTefOFSLovUTO3pSfXY9nUqU45wpRTfCqpXucEo/PPIEIO
+        hMwDRMBHwzstKtWYebqfZxY8Eg==
+X-Google-Smtp-Source: AA+uWPwVOhYLMA+Ec2tsZDZFMuOu+QVIEsy6en2t/MPFWf5/kcKKtFCRC47ky8cFZn5O/VWnzRNuvQ==
+X-Received: by 2002:a62:87ce:: with SMTP id i197-v6mr29420185pfe.62.1534367455770;
+        Wed, 15 Aug 2018 14:10:55 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id a20-v6sm44018794pfc.14.2018.08.15.14.10.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 14:10:55 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fq34A-0000fO-5u; Wed, 15 Aug 2018 15:10:54 -0600
+Date:   Wed, 15 Aug 2018 15:10:54 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Joe Perches <joe@perches.com>
+Cc:     Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-Message-ID: <20180815210946.GA28919@bombadil.infradead.org>
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
- <20180815191606.GA4201@bombadil.infradead.org>
+Subject: Re: [PATCH] RDMA/bnxt_re: QPLIB: Add and use #define dev_fmt(fmt)
+ "QPLIB: " fmt
+Message-ID: <20180815211054.GA2538@ziepe.ca>
+References: <fe07a1dbe1f6699b4a64444505ae2dbacc2155cc.1533926549.git.joe@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180815191606.GA4201@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <fe07a1dbe1f6699b4a64444505ae2dbacc2155cc.1533926549.git.joe@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 12:16:06PM -0700, Matthew Wilcox wrote:
-> (not even compiled, and I can see a good opportunity for combining the
-> VM_LOCKED loop with the has_uprobes loop)
+On Fri, Aug 10, 2018 at 11:42:46AM -0700, Joe Perches wrote:
+> Consistently use the "QPLIB: " prefix for dev_<level> logging.
+> 
+> Miscellanea:
+> 
+> o Add missing newlines to avoid possible message interleaving
+> o Coalesce consecutive dev_<level> uses that emit a message header to
+>   avoid < 80 column lengths and mistakenly output on multiple lines
+> o Reflow modified lines to use 80 columns where appropriate
+> o Consistently use "%s: " where __func__ is output
+> o QPLIB: is now always output immediately after the dev_<level> header
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  drivers/infiniband/hw/bnxt_re/qplib_fp.c   | 130 +++++++++++------------------
+>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c |  51 ++++++-----
+>  drivers/infiniband/hw/bnxt_re/qplib_res.c  |  29 ++++---
+>  drivers/infiniband/hw/bnxt_re/qplib_sp.c   |  57 ++++++-------
+>  4 files changed, 116 insertions(+), 151 deletions(-)
 
-I was rushing to get that sent earlier.  Here it is tidied up to
-actually compile.
+Broadcom: This is a big patch, will you ack it please?
 
-Note the diffstat:
+https://patchwork.kernel.org/patch/10563083/
 
- mmap.c |   71 ++++++++++++++++++++++++++++++++++++++---------------------------
- 1 file changed, 42 insertions(+), 29 deletions(-)
-
-I think that's a pretty small extra price to pay for having this improved
-scalability.
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index de699523c0b7..b77bb3908f8c 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2802,7 +2802,9 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	      struct list_head *uf)
- {
- 	unsigned long end;
--	struct vm_area_struct *vma, *prev, *last;
-+	struct vm_area_struct *vma, *prev, *last, *tmp;
-+	int res = 0;
-+	bool downgrade = false;
- 
- 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
- 		return -EINVAL;
-@@ -2811,17 +2813,20 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	if (len == 0)
- 		return -EINVAL;
- 
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
- 	/* Find the first overlapping VMA */
- 	vma = find_vma(mm, start);
- 	if (!vma)
--		return 0;
-+		goto unlock;
- 	prev = vma->vm_prev;
--	/* we have  start < vma->vm_end  */
-+	/* we have start < vma->vm_end  */
- 
- 	/* if it doesn't overlap, we have nothing.. */
- 	end = start + len;
- 	if (vma->vm_start >= end)
--		return 0;
-+		goto unlock;
- 
- 	/*
- 	 * If we need to split any vma, do it now to save pain later.
-@@ -2831,28 +2836,27 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	 * places tmp vma above, and higher split_vma places tmp vma below.
- 	 */
- 	if (start > vma->vm_start) {
--		int error;
--
- 		/*
- 		 * Make sure that map_count on return from munmap() will
- 		 * not exceed its limit; but let map_count go just above
- 		 * its limit temporarily, to help free resources as expected.
- 		 */
-+		res = -ENOMEM;
- 		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
--			return -ENOMEM;
-+			goto unlock;
- 
--		error = __split_vma(mm, vma, start, 0);
--		if (error)
--			return error;
-+		res = __split_vma(mm, vma, start, 0);
-+		if (res)
-+			goto unlock;
- 		prev = vma;
- 	}
- 
- 	/* Does it split the last one? */
- 	last = find_vma(mm, end);
- 	if (last && end > last->vm_start) {
--		int error = __split_vma(mm, last, end, 1);
--		if (error)
--			return error;
-+		res = __split_vma(mm, last, end, 1);
-+		if (res)
-+			goto unlock;
- 	}
- 	vma = prev ? prev->vm_next : mm->mmap;
- 
-@@ -2866,25 +2870,31 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 		 * split, despite we could. This is unlikely enough
- 		 * failure that it's not worth optimizing it for.
- 		 */
--		int error = userfaultfd_unmap_prep(vma, start, end, uf);
--		if (error)
--			return error;
-+		res = userfaultfd_unmap_prep(vma, start, end, uf);
-+		if (res)
-+			goto unlock;
- 	}
- 
- 	/*
- 	 * unlock any mlock()ed ranges before detaching vmas
-+	 * and check to see if there's any reason we might have to hold
-+	 * the mmap_sem write-locked while unmapping regions.
- 	 */
--	if (mm->locked_vm) {
--		struct vm_area_struct *tmp = vma;
--		while (tmp && tmp->vm_start < end) {
--			if (tmp->vm_flags & VM_LOCKED) {
--				mm->locked_vm -= vma_pages(tmp);
--				munlock_vma_pages_all(tmp);
--			}
--			tmp = tmp->vm_next;
-+	downgrade = true;
-+
-+	for (tmp = vma; tmp && tmp->vm_start < end; tmp = tmp->vm_next) {
-+		if (tmp->vm_flags & VM_LOCKED) {
-+			mm->locked_vm -= vma_pages(tmp);
-+			munlock_vma_pages_all(tmp);
- 		}
-+		if (tmp->vm_file &&
-+				has_uprobes(tmp, tmp->vm_start, tmp->vm_end))
-+			downgrade = false;
- 	}
- 
-+	if (downgrade)
-+		downgrade_write(&mm->mmap_sem);
-+
- 	/*
- 	 * Remove the vma's, and unmap the actual pages
- 	 */
-@@ -2896,7 +2906,14 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/* Fix up all other VM information */
- 	remove_vma_list(mm, vma);
- 
--	return 0;
-+	res = 0;
-+unlock:
-+	if (downgrade) {
-+		up_read(&mm->mmap_sem);
-+	} else {
-+		up_write(&mm->mmap_sem);
-+	}
-+	return res;
- }
- 
- int vm_munmap(unsigned long start, size_t len)
-@@ -2905,11 +2922,7 @@ int vm_munmap(unsigned long start, size_t len)
- 	struct mm_struct *mm = current->mm;
- 	LIST_HEAD(uf);
- 
--	if (down_write_killable(&mm->mmap_sem))
--		return -EINTR;
--
- 	ret = do_munmap(mm, start, len, &uf);
--	up_write(&mm->mmap_sem);
- 	userfaultfd_unmap_complete(mm, &uf);
- 	return ret;
- }
+Thanks,
+Jason
