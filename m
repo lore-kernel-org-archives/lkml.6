@@ -2,234 +2,136 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220D3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B90C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 237EC2084C
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:54:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237EC2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 2879421530
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:57:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Hd40LPVv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2879421530
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeHPAsf (ORCPT
+        id S1727617AbeHPAvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 20:48:35 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:40625 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727408AbeHPAsf (ORCPT
+        Wed, 15 Aug 2018 20:51:06 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:36064 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727126AbeHPAvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 20:48:35 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T6hAaGS_1534370054;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6hAaGS_1534370054)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 16 Aug 2018 05:54:22 +0800
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
- <20180815191606.GA4201@bombadil.infradead.org>
- <20180815210946.GA28919@bombadil.infradead.org>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <78e658dd-bdb0-09ca-9af5-b523c7ff529f@linux.alibaba.com>
-Date:   Wed, 15 Aug 2018 14:54:13 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180815210946.GA28919@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 15 Aug 2018 20:51:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DDAED8EE171;
+        Wed, 15 Aug 2018 14:57:04 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id R5woCJqv8l1G; Wed, 15 Aug 2018 14:57:04 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 154388EE0C9;
+        Wed, 15 Aug 2018 14:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1534370224;
+        bh=TqQbqJR0ANJT2mQC7WZUjdk4Bd030CgxNVupgTVJRaI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Hd40LPVvwvAScoUIM0ME8ae2J0XogIGSJ6EhmnqmHGivYBSCXDNAW3ScRYiHr1cxK
+         /hc8yhSjMA9VYd9RgWvAc+LvEmfVt47KGgWqnN3pX0xKRrK6dHW37mG3ACpJAYres+
+         RJ/PQe6dr3Ko5queMwkIcnNwLUefznSbISPJHVBE=
+Message-ID: <1534370222.4049.25.camel@HansenPartnership.com>
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom
+ platform keys to boot
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Yannik Sembritzki <yannik@sembritzki.me>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Date:   Wed, 15 Aug 2018 14:57:02 -0700
+In-Reply-To: <20180815215240.GA15952@redhat.com>
+References: <20180815100053.13609-1-yannik@sembritzki.me>
+         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+         <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
+         <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
+         <20180815194932.GD29541@redhat.com>
+         <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
+         <1ca6772b-46e0-9d93-0e15-7cf73a0b7b3f@sembritzki.me>
+         <1534367597.4049.21.camel@HansenPartnership.com>
+         <20180815215240.GA15952@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-08-15 at 17:52 -0400, Vivek Goyal wrote:
+> On Wed, Aug 15, 2018 at 02:13:17PM -0700, James Bottomley wrote:
+> > On Wed, 2018-08-15 at 23:08 +0200, Yannik Sembritzki wrote:
+> > > On 15.08.2018 22:47, Linus Torvalds wrote:
+> > > > It basically says: we don't allow modules that weren't built
+> > > > with
+> > > > the kernel. Adding a new key later and signing a module with it
+> > > > violates that premise.
+> > > 
+> > > Considering the following scenario:
+> > > A user is running a distro kernel, which is built by the distro,
+> > > and has the distro signing key builtin (i.e. fedora). Now, the
+> > > user has taken ownership of their system and provisioned their
+> > > own platform key. Accordingly, the user signs the distro kernel
+> > > with their own key.
+> > > 
+> > > If I understand you correctly, modules signed by the users own
+> > > key, but not signed with the distro key, will stop working in
+> > > this case?
+> > 
+> > They never actually would have worked, but yes.
+> > 
+> > > IMO, this is not okay. The layer of trust should extend from the
+> > > bottom (user-provisioned platform key) up. Only trusting the
+> > > kernel builtin key later on (wrt. kernel modules) contradicts
+> > > this principal.
+> > 
+> > The kernel can't tell whether the UEFI user has taken ownership or
+> > not so it has no basis on which to make a decision to trust the
+> > UEFI keys or not, so we should *always* not trust them.
+> > 
+> > Consider a UEFI system for which a user has taken ownership, but
+> > which has some signed ROMs which are UEFI secure boot
+> > verified.  Simply to get their system to boot the user will be
+> > forced to add the ODM key to the UEFI db ... and I'm sure in that
+> > situation the user wouldn't want to trust the ODM key further than
+> > booting.
+> 
+> IIUC, it is fine to trust these ODM keys, User keys and "foo" keys
+> for loading kernel but not for modules?
 
+It's fine to trust the secure boot keys for the boot environment.  If
+you argue kexec is linux booting linux then yes, that's a supported
+use.
 
-On 8/15/18 2:09 PM, Matthew Wilcox wrote:
-> On Wed, Aug 15, 2018 at 12:16:06PM -0700, Matthew Wilcox wrote:
->> (not even compiled, and I can see a good opportunity for combining the
->> VM_LOCKED loop with the has_uprobes loop)
-> I was rushing to get that sent earlier.  Here it is tidied up to
-> actually compile.
+>  If yes, then atleast we can enable trusting keys in
+> .secondary_trusted_keys keyring for kernel signature verificaton and
+> that will solve the kexec/kdump issue on distribution kernels.
 
-Thanks for the example. Yes, I believe the code still can be compacted 
-to save some lines. However, the cover letter and the commit log of this 
-patch has elaborated the discussion in the earlier reviews about why we 
-do it in this way.
+I think it's OK ... I can't think of any reason you'd want a signed
+kernel to boot but not to be able to kexec to a kernel with the same
+signer.
 
-Or you just mean I don't have to call do_munmap() for the special 
-mappings with the "downgrade" flag to save some cycles since do_munmap() 
-will redo something which have been done?
-
-Thanks,
-Yang
-
->
-> Note the diffstat:
->
->   mmap.c |   71 ++++++++++++++++++++++++++++++++++++++---------------------------
->   1 file changed, 42 insertions(+), 29 deletions(-)
->
-> I think that's a pretty small extra price to pay for having this improved
-> scalability.
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index de699523c0b7..b77bb3908f8c 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2802,7 +2802,9 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->   	      struct list_head *uf)
->   {
->   	unsigned long end;
-> -	struct vm_area_struct *vma, *prev, *last;
-> +	struct vm_area_struct *vma, *prev, *last, *tmp;
-> +	int res = 0;
-> +	bool downgrade = false;
->   
->   	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
->   		return -EINVAL;
-> @@ -2811,17 +2813,20 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->   	if (len == 0)
->   		return -EINVAL;
->   
-> +	if (down_write_killable(&mm->mmap_sem))
-> +		return -EINTR;
-> +
->   	/* Find the first overlapping VMA */
->   	vma = find_vma(mm, start);
->   	if (!vma)
-> -		return 0;
-> +		goto unlock;
->   	prev = vma->vm_prev;
-> -	/* we have  start < vma->vm_end  */
-> +	/* we have start < vma->vm_end  */
->   
->   	/* if it doesn't overlap, we have nothing.. */
->   	end = start + len;
->   	if (vma->vm_start >= end)
-> -		return 0;
-> +		goto unlock;
->   
->   	/*
->   	 * If we need to split any vma, do it now to save pain later.
-> @@ -2831,28 +2836,27 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->   	 * places tmp vma above, and higher split_vma places tmp vma below.
->   	 */
->   	if (start > vma->vm_start) {
-> -		int error;
-> -
->   		/*
->   		 * Make sure that map_count on return from munmap() will
->   		 * not exceed its limit; but let map_count go just above
->   		 * its limit temporarily, to help free resources as expected.
->   		 */
-> +		res = -ENOMEM;
->   		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
-> -			return -ENOMEM;
-> +			goto unlock;
->   
-> -		error = __split_vma(mm, vma, start, 0);
-> -		if (error)
-> -			return error;
-> +		res = __split_vma(mm, vma, start, 0);
-> +		if (res)
-> +			goto unlock;
->   		prev = vma;
->   	}
->   
->   	/* Does it split the last one? */
->   	last = find_vma(mm, end);
->   	if (last && end > last->vm_start) {
-> -		int error = __split_vma(mm, last, end, 1);
-> -		if (error)
-> -			return error;
-> +		res = __split_vma(mm, last, end, 1);
-> +		if (res)
-> +			goto unlock;
->   	}
->   	vma = prev ? prev->vm_next : mm->mmap;
->   
-> @@ -2866,25 +2870,31 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->   		 * split, despite we could. This is unlikely enough
->   		 * failure that it's not worth optimizing it for.
->   		 */
-> -		int error = userfaultfd_unmap_prep(vma, start, end, uf);
-> -		if (error)
-> -			return error;
-> +		res = userfaultfd_unmap_prep(vma, start, end, uf);
-> +		if (res)
-> +			goto unlock;
->   	}
->   
->   	/*
->   	 * unlock any mlock()ed ranges before detaching vmas
-> +	 * and check to see if there's any reason we might have to hold
-> +	 * the mmap_sem write-locked while unmapping regions.
->   	 */
-> -	if (mm->locked_vm) {
-> -		struct vm_area_struct *tmp = vma;
-> -		while (tmp && tmp->vm_start < end) {
-> -			if (tmp->vm_flags & VM_LOCKED) {
-> -				mm->locked_vm -= vma_pages(tmp);
-> -				munlock_vma_pages_all(tmp);
-> -			}
-> -			tmp = tmp->vm_next;
-> +	downgrade = true;
-> +
-> +	for (tmp = vma; tmp && tmp->vm_start < end; tmp = tmp->vm_next) {
-> +		if (tmp->vm_flags & VM_LOCKED) {
-> +			mm->locked_vm -= vma_pages(tmp);
-> +			munlock_vma_pages_all(tmp);
->   		}
-> +		if (tmp->vm_file &&
-> +				has_uprobes(tmp, tmp->vm_start, tmp->vm_end))
-> +			downgrade = false;
->   	}
->   
-> +	if (downgrade)
-> +		downgrade_write(&mm->mmap_sem);
-> +
->   	/*
->   	 * Remove the vma's, and unmap the actual pages
->   	 */
-> @@ -2896,7 +2906,14 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->   	/* Fix up all other VM information */
->   	remove_vma_list(mm, vma);
->   
-> -	return 0;
-> +	res = 0;
-> +unlock:
-> +	if (downgrade) {
-> +		up_read(&mm->mmap_sem);
-> +	} else {
-> +		up_write(&mm->mmap_sem);
-> +	}
-> +	return res;
->   }
->   
->   int vm_munmap(unsigned long start, size_t len)
-> @@ -2905,11 +2922,7 @@ int vm_munmap(unsigned long start, size_t len)
->   	struct mm_struct *mm = current->mm;
->   	LIST_HEAD(uf);
->   
-> -	if (down_write_killable(&mm->mmap_sem))
-> -		return -EINTR;
-> -
->   	ret = do_munmap(mm, start, len, &uf);
-> -	up_write(&mm->mmap_sem);
->   	userfaultfd_unmap_complete(mm, &uf);
->   	return ret;
->   }
+James
 
