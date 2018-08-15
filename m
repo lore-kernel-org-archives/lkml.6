@@ -4,118 +4,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C477C46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6598AC46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9E72154D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 050F22154D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hsfr6HaW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9E72154D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L05ETR0I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050F22154D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeHODBD (ORCPT
+        id S1728196AbeHODFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 23:01:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:50297 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbeHODBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 23:01:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41qqd53HCKz9s9N;
-        Wed, 15 Aug 2018 10:11:21 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534291883;
-        bh=j7eOPR16RVcNrkpd2enyGHJ3Rebz193rMONDWAurHyY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hsfr6HaWndCDRUnC6jYBAeZTs7oFQOdWJMM9RDWpVHpAQ6HnGChXw81W1S0TIArll
-         mDr4v9aAeSeCo30jEAcy5AYbAWZvyLZlwY2MMIQexSV5dBhe/nNW8a73Syuk9/UcOX
-         Nwt9bSkIqTUOxBT7r01PplwiY8NnwfRONcogIbyXZVkgNdUGXwreHv97PEtV2TVznc
-         cof0WvnMDwBu3iAKLc83+vHgAG6kYmAshbJLw/4k4v1brNw71L/AVen3n4Ww0wayTm
-         1hwCpJigFsPYh6ENWQUgYyLmIGzrye4sT7Dn0uzXkAj3uWO6rM/iun7YUOp9dk3FeE
-         zRsbSNW9y4NaQ==
-Date:   Wed, 15 Aug 2018 10:11:20 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        syzbot <syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com>,
-        jlayton@kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: general protection fault in send_sigurg_to_task
-Message-ID: <20180815101120.019f069e@canb.auug.org.au>
-In-Reply-To: <CACT4Y+YujnbvrgRU6xc+=8rHLctrjQbRP+wq-08UmbH_oOfAKA@mail.gmail.com>
-References: <0000000000007f59610573509684@google.com>
-        <000000000000f4136d0573512103@google.com>
-        <20180814191129.GN7906@fieldses.org>
-        <CACT4Y+YujnbvrgRU6xc+=8rHLctrjQbRP+wq-08UmbH_oOfAKA@mail.gmail.com>
+        Tue, 14 Aug 2018 23:05:54 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36864 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbeHODFy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 23:05:54 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7F0DZQM070761;
+        Wed, 15 Aug 2018 00:16:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=NdlPTBLLTtynXuhR3+yfPpeThgEsUQ9eY8Qyb8KpBVA=;
+ b=L05ETR0IbQt6zhbc5pwmAuUuPdke2llPs3n2MW4LEnYFeKR+rVKwNam4EwwU1RLnudUI
+ ykfiKyRUH5gJXDJ+XjlWZu5a6jnKm5mSstT9Ofs/k7E1BbgN/tnSPdaHjke3WsnMXfN+
+ eKPuMUZgm+Yf/IujsraJv7Y1Dc10UA4TqZcu5EyUUUs0K1ndy61hHKIA+AJ76DcdB68m
+ O9+bRITkJV03itBiKgSp5ZkfvIyq4wPIKbnHhZfCK7WHkbap3JasCVxwMRE0Gnx432js
+ LwN4gIvf/cCBrBdY9e4Jhu3khdtAOSx5E7XiEzExDV0G/R+p919daNOTCbf61wQ6zHB9 Ew== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2ksreq2nhj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Aug 2018 00:16:02 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7F0G03Y028114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Aug 2018 00:16:00 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7F0Fww0024575;
+        Wed, 15 Aug 2018 00:15:58 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 Aug 2018 17:15:58 -0700
+Subject: Re: [PATCH] mm: migration: fix migration of huge PMD shared pages
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180813034108.27269-1-mike.kravetz@oracle.com>
+ <20180813105821.j4tg6iyrdxgwyr3y@kshutemo-mobl1>
+ <d4cf0f85-e010-36f2-3fae-f7983e4f6505@oracle.com>
+ <20180814084837.nl7dkea7aov2pzao@black.fi.intel.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <17bfe24d-957f-2985-f134-3ebe2648aecb@oracle.com>
+Date:   Tue, 14 Aug 2018 17:15:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/I8o_MI0gUdV6LA/b8SpCkwp"; protocol="application/pgp-signature"
+In-Reply-To: <20180814084837.nl7dkea7aov2pzao@black.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8985 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808150001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/I8o_MI0gUdV6LA/b8SpCkwp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 08/14/2018 01:48 AM, Kirill A. Shutemov wrote:
+> On Mon, Aug 13, 2018 at 11:21:41PM +0000, Mike Kravetz wrote:
+>> On 08/13/2018 03:58 AM, Kirill A. Shutemov wrote:
+>>> On Sun, Aug 12, 2018 at 08:41:08PM -0700, Mike Kravetz wrote:
+>>>> I am not %100 sure on the required flushing, so suggestions would be
+>>>> appreciated.  This also should go to stable.  It has been around for
+>>>> a long time so still looking for an appropriate 'fixes:'.
+>>>
+>>> I believe we need flushing. And huge_pmd_unshare() usage in
+>>> __unmap_hugepage_range() looks suspicious: I don't see how we flush TLB in
+>>> that case.
+>>
+>> Thanks Kirill,
+>>
+>> __unmap_hugepage_range() has two callers:
+>> 1) unmap_hugepage_range, which wraps the call with tlb_gather_mmu and
+>>    tlb_finish_mmu on the range.  IIUC, this should cause an appropriate
+>>    TLB flush.
+>> 2) __unmap_hugepage_range_final via unmap_single_vma.  unmap_single_vma
+>>   has three callers:
+>>   - unmap_vmas which assumes the caller will flush the whole range after
+>>     return.
+>>   - zap_page_range wraps the call with tlb_gather_mmu/tlb_finish_mmu
+>>   - zap_page_range_single wraps the call with tlb_gather_mmu/tlb_finish_mmu
+>>
+>> So, it appears we are covered.  But, I could be missing something.
+> 
+> My problem here is that the mapping that moved by huge_pmd_unshare() in
+> not accounted into mmu_gather and can be missed on tlb_finish_mmu().
 
-Hi Bruce,
+Ah, I think I now see the issue you are concerned with.
 
-On Tue, 14 Aug 2018 13:50:20 -0700 Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Tue, Aug 14, 2018 at 12:11 PM, J. Bruce Fields <bfields@fieldses.org> =
-wrote:
-> > On Mon, Aug 13, 2018 at 06:33:02AM -0700, syzbot wrote: =20
-> >> syzbot has found a reproducer for the following crash on:
-> >>
-> >> HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
-> >> git tree:       linux-next =20
-> >
-> > I fetched linux-next but don't have 5ed5da74de9e. =20
->=20
-> +Stephen for the disappeared linux-next commit.
+When huge_pmd_unshare succeeds we effectively unmap a PUD_SIZE area.
+The routine __unmap_hugepage_range may only have been passed a range
+that is a subset of PUD_SIZE.  In the case I was trying to address,
+try_to_unmap_one() the 'range' will certainly be less than PUD_SIZE.
+Upon further thought, I think that even in the case of try_to_unmap_one
+we should flush PUD_SIZE range.
 
-That is just the HEAD commit on linux-next that day.  If you fetched
-linux-next after I released next-20180814 yesterday, then it would have
-a different HEAD commit.  If you check out the tag next-20180813, you
-will get the above HEAD commit.
+My first thought would be to embed this flushing within huge_pmd_unshare
+itself.  Perhaps, whenever huge_pmd_unshare succeeds we should do an
+explicit:
+flush_cache_range(PUD_SIZE)
+flush_tlb_range(PUD_SIZE)
+mmu_notifier_invalidate_range(PUD_SIZE)
+That would take some of the burden off the callers of huge_pmd_unshare.
+However, I am not sure if the flushing calls above play nice in all the
+calling environments.  I'll look into it some more, but would appreciate
+additional comments.
 
-> On the dashboard link you can see that it also happened on a more
-> recent commit 4e8b38549b50459a22573d756dd1f4e1963c2a8d that I do see
-> now in linux-next.
-
-Which is just the HEAD commit of next-20180814.
-
-Linux-next is rebuilt every day based on Linus' tree of the day,
-followed by merging all the other branches, so its HEAD is different
-every day.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/I8o_MI0gUdV6LA/b8SpCkwp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzb6gACgkQAVBC80lX
-0GwWkQgAkQotgz77Nk2wu/Zy8M2g8vT+tez8J0FYXe5IhrCyNKujLIpavlSb+HS5
-gVzyxnswvPs89Bl95q7VhYGnTnu/+A4wWFV56QRlKgqSZRtClBkMX84UB92KQpaF
-e5SPnf59xZzz3auIzgz5YAnq8jQ3xLSkCNH/8fUH1cnqPmp3nW0iQFNQvX7zgIP1
-It5m4QJhm6b0BNM0WJ1ePPU0Kg2oBYRjYnH4JQBaVVi5RIHYJJEwgNEeIkH/NePB
-NgoWiKEqo7Fw4LkxDeCpDR21/B12ZEbigLx1DnyZOTa3vTMnceoJ8DQbUEcOUjLh
-r6/kTOgBaN71fXOfh+Aso/UbYUt8QA==
-=iwCW
------END PGP SIGNATURE-----
-
---Sig_/I8o_MI0gUdV6LA/b8SpCkwp--
+-- 
+Mike Kravetz
