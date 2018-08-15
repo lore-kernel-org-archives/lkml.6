@@ -2,109 +2,263 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CAAC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7452C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 09:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE769216C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:55:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="JBrk0RSM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE769216C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id 66843216E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 09:04:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66843216E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeHOLrC (ORCPT
+        id S1728931AbeHOLz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 07:47:02 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45336 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbeHOLrB (ORCPT
+        Wed, 15 Aug 2018 07:55:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60928 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728576AbeHOLz6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 07:47:01 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j143-v6so380414lfj.12
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 01:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=OE03XtrezUtb6fHO0qsKlqzVjfPZ7sDUaKr9K2vRXyc=;
-        b=JBrk0RSM20f5CaYKlqKD8K1JSaCuyKjkVBTPOjj68wNU1iV5vCst6LhsXjLQcPhIqV
-         gz0xzuM1Ga6VUaCDxOIiOiSIYTQb0e1Xge9QAYvCn6Q+PkR5rcZukK73ASvjHd4sYnf7
-         06zB/Gz1ZMjOFbgElz6xZBBvsO/blyhyGaM+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OE03XtrezUtb6fHO0qsKlqzVjfPZ7sDUaKr9K2vRXyc=;
-        b=E4Wojv+0MYQ9eqA1Bmo436xiAdNGH2BJYp0DRNfXgiDH+w6/aY+dR1U4vlvN+zUiAU
-         ULbAqkDgvz6Q2ilINdlKOnydeU1X1F3sSZRO0J312CvmjwQEwFgMwuM3LLjxMSUpy0O+
-         AM4G2GkHK4UcWJP+FDaUvX7nJj1t1E1D5gBaIwiwStpa/rJQ5zwCEAR2te1FpbzoSF5Q
-         V1zH/C/06nxMhlrnY/vSd2SR/9QJLbMbtNzgUJo5VlOgjT+Gpft1op19/EdByKLkPnWP
-         fNBSwChCL0HlhorNGpKcvuxwk8FiOmeMiDN3DyqjWE0CFLJXpz6NjG4Da6AXgkh+BYrH
-         oo4Q==
-X-Gm-Message-State: AOUpUlE5ueZemN1iYEGaX9hf++C+fzG8BB/cDdgp+nBi8hBHEDLIKe0n
-        ZhP+6Yop7rewsJLY35jqs0Nc0++LGvjSSA==
-X-Google-Smtp-Source: AA+uWPxUNAZOxfFlyG7rB5kUK4cH++Uuf4tO98zmLKHbllMFDuwfVu8i0wzNoWp/4yZDiZyA2uBWhA==
-X-Received: by 2002:a19:2043:: with SMTP id g64-v6mr15354068lfg.66.1534323342649;
-        Wed, 15 Aug 2018 01:55:42 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id a140-v6sm4361283lfb.21.2018.08.15.01.55.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 15 Aug 2018 01:55:42 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     linux-kernel@vger.kernel.org, lkp@lists.01.org
-Cc:     akpm@linux-foundation.org, ynorov@caviumnetworks.com,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] linux/bitmap.h: (buildbot-only) check if we have any compile-time zero-size bitmaps
-Date:   Wed, 15 Aug 2018 10:55:39 +0200
-Message-Id: <20180815085539.27485-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.16.4
+        Wed, 15 Aug 2018 07:55:58 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7F94AnZ086224
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 05:04:38 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kvfxrk4b1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 05:04:37 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 15 Aug 2018 10:04:36 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 Aug 2018 10:04:32 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7F94VWu41812154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Aug 2018 09:04:31 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 288EC11C05B;
+        Wed, 15 Aug 2018 12:04:35 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88F4F11C04C;
+        Wed, 15 Aug 2018 12:04:34 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.197])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 15 Aug 2018 12:04:34 +0100 (BST)
+Date:   Wed, 15 Aug 2018 12:04:29 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Jonathan Corbet <corbet@lwn.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] docs/core-api: add memory allocation guide
+References: <1534314887-9202-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180815063649.GB24091@rapoport-lnx>
+ <20180815081539.GN32645@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180815081539.GN32645@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18081509-4275-0000-0000-000002AA14A5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081509-4276-0000-0000-000037B3351F
+Message-Id: <20180815090428.GD24091@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808150099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of the inline bitmap functions are buggy if passed a compile-time
-constant nbits==0. The convention is that the caller only guarantees
-BITS_TO_LONGS(nbits) words can be accessed, which for nbits==0 is of
-course 0. However, all the small_const_nbits() cases proceed to
-dereferencing the passed src or dst pointers unconditionally.
-
-Of course, nobody passes a literal 0 as nbits, but it could come about
-from some odd CONFIG_ combination, or because the compiler is smart
-enough to reduce some expression to 0, or... In any case, this patch is
-just for the build-bots to chew on for various .config and arches to see
-if we have any.
-
-Since most (if not all, I'll check) of the out-of-line implementations
-handle nbits==0 correctly, I'll probably just unconditionally add the
-nbits>0 clause to small_const_nbits() to force the ool versions to be
-used if any compile-time zero-size bitmap should turn up.
-
-Not-really-signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- include/linux/bitmap.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 1ee46f492267..a5879cb45687 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -196,8 +196,10 @@ extern int bitmap_print_to_pagebuf(bool list, char *buf,
- #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
- #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+On Wed, Aug 15, 2018 at 10:15:39AM +0200, Michal Hocko wrote:
+> On Wed 15-08-18 09:36:49, Mike Rapoport wrote:
+> > (this time with the subject, sorry for the noise)
+> > 
+> > On Wed, Aug 15, 2018 at 09:34:47AM +0300, Mike Rapoport wrote:
+> > > As Vlastimil mentioned at [1], it would be nice to have some guide about
+> > > memory allocation. I've drafted an initial version that tries to summarize
+> > > "best practices" for allocation functions and GFP usage.
+> > > 
+> > > [1] https://www.spinics.net/lists/netfilter-devel/msg55542.html
+> > > 
+> > > From 8027c0d4b750b8dbd687234feda63305d0d5a057 Mon Sep 17 00:00:00 2001
+> > > From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > Date: Wed, 15 Aug 2018 09:10:06 +0300
+> > > Subject: [RFC PATCH] docs/core-api: add memory allocation guide
+> > > 
+> > > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > ---
+> > >  Documentation/core-api/gfp_mask-from-fs-io.rst |   2 +
+> > >  Documentation/core-api/index.rst               |   1 +
+> > >  Documentation/core-api/memory-allocation.rst   | 117 +++++++++++++++++++++++++
+> > >  Documentation/core-api/mm-api.rst              |   2 +
+> > >  4 files changed, 122 insertions(+)
+> > >  create mode 100644 Documentation/core-api/memory-allocation.rst
+> > > 
+> > > diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> > > index e0df8f4..e7c32a8 100644
+> > > --- a/Documentation/core-api/gfp_mask-from-fs-io.rst
+> > > +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> > > @@ -1,3 +1,5 @@
+> > > +.. _gfp_mask_from_fs_io:
+> > > +
+> > >  =================================
+> > >  GFP masks used from FS/IO context
+> > >  =================================
+> > > diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+> > > index cdc2020..8afc0da 100644
+> > > --- a/Documentation/core-api/index.rst
+> > > +++ b/Documentation/core-api/index.rst
+> > > @@ -27,6 +27,7 @@ Core utilities
+> > >     errseq
+> > >     printk-formats
+> > >     circular-buffers
+> > > +   memory-allocation
+> > >     mm-api
+> > >     gfp_mask-from-fs-io
+> > >     timekeeping
+> > > diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
+> > > new file mode 100644
+> > > index 0000000..b1f2ad5
+> > > --- /dev/null
+> > > +++ b/Documentation/core-api/memory-allocation.rst
+> > > @@ -0,0 +1,117 @@
+> > > +=======================
+> > > +Memory Allocation Guide
+> > > +=======================
+> > > +
+> > > +Linux supplies variety of APIs for memory allocation. You can allocate
+> > > +small chunks using `kmalloc` or `kmem_cache_alloc` families, large
+> > > +virtually contiguous areas using `vmalloc` and it's derivatives, or
+> > > +you can directly request pages from the page allocator with
+> > > +`__get_free_pages`. It is also possible to use more specialized
+> 
+> I would rather not mention __get_free_pages. alloc_pages is a more
+> generic API and less subtle one. If you want to mention __get_free_pages
+> then please make sure to mention the subtlety (namely that is can
+> allocate only lowmem memory).
+> 
+> > > +allocators, for instance `cma_alloc` or `zs_malloc`.
+> > > +
+> > > +Most of the memory allocations APIs use GFP flags to express how that
+> > > +memory should be allocated. The GFP acronym stands for "get free
+> > > +pages", the underlying memory allocation function.
+> > > +
+> > > +Diversity of the allocation APIs combined with the numerous GFP flags
+> > > +makes the question "How should I allocate memory?" not that easy to
+> > > +answer, although very likely you should use
+> > > +
+> > > +::
+> > > +
+> > > +  kzalloc(<size>, GFP_KERNEL);
+> > > +
+> > > +Of course there are cases when other allocation APIs and different GFP
+> > > +flags must be used.
+> > > +
+> > > +Get Free Page flags
+> > > +===================
+> > > +
+> > > +The GFP flags control the allocators behavior. They tell what memory
+> > > +zones can be used, how hard the allocator should try to find a free
+> > > +memory, whether the memory can be accessed by the userspace etc. The
+> > > +:ref:`Documentation/core-api/mm-api.rst <mm-api-gfp-flags>` provides
+> > > +reference documentation for the GFP flags and their combinations and
+> > > +here we briefly outline their recommended usage:
+> > > +
+> > > +  * Most of the times ``GFP_KERNEL`` is what you need. Memory for the
+> > > +    kernel data structures, DMAable memory, inode cache, all these and
+> > > +    many other allocations types can use ``GFP_KERNEL``. Note, that
+> > > +    using ``GFP_KERNEL`` implies ``GFP_RECLAIM``, which means that
+> > > +    direct reclaim may be triggered under memory pressure; the calling
+> > > +    context must be allowed to sleep.
+> > > +  * If the allocation is performed from an atomic context, e.g
+> > > +    interrupt handler, use ``GFP_ATOMIC``.
+> 
+> GFP_NOWAIT please. GFP_ATOMIC should be only used if accessing memory
+> reserves is justified. E.g. fallback allocation would be too costly. It
+> should be also noted that these allocation are quite likely to fail
+> especially under memory pressure.
  
-+int const_zero_size_bitmaps_are_buggy(void);
- #define small_const_nbits(nbits) \
--	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG)
-+	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG && \
-+	 ((nbits) > 0 || const_zero_size_bitmaps_are_buggy()))
+How about:
+
+* If the allocation is performed from an atomic context, e.g interrupt
+  handler, use ``GFP_NOWARN``. This flag prevents direct reclaim and IO or
+  filesystem operations. Consequently, under memory pressure ``GFP_NOWARN``
+  allocation is likely to fail.
+* If you think that accessing memory reserves is justified and the kernel
+  will be stressed unless allocation succeeds, you may use ``GFP_ATOMIC``.
+
+> > > +  * Untrusted allocations triggered from userspace should be a subject
+> > > +    of kmem accounting and must have ``__GFP_ACCOUNT`` bit set. There
+> > > +    is handy ``GFP_KERNEL_ACCOUNT`` shortcut for ``GFP_KERNEL``
+> > > +    allocations that should be accounted.
+> > > +  * Userspace allocations should use either of the ``GFP_USER``,
+> > > +    ``GFP_HIGHUSER`` and ``GFP_HIGHUSER_MOVABLE`` flags. The longer
+> > > +    the flag name the less restrictive it is.
+> > > +
+> > > +    The ``GFP_HIGHUSER_MOVABLE`` does not require that allocated
+> > > +    memory will be directly accessible by the kernel or the hardware
+> > > +    and implies that the data may move.
+> 
+> @may move@is movable@
+
+Ok
  
- static inline void bitmap_zero(unsigned long *dst, unsigned int nbits)
- {
+> > > +    The ``GFP_HIGHUSER`` means that the allocated memory is not
+> > > +    movable, but it is not required to be directly accessible by the
+> > > +    kernel or the hardware. An example may be a hardware allocation
+> > > +    that maps data directly into userspace but has no addressing
+> > > +    limitations.
+> > > +
+> > > +    The ``GFP_USER`` means that the allocated memory is not movable
+> > > +    and it must be directly accessible by the kernel or the
+> > > +    hardware. It is typically used by hardware for buffers that are
+> > > +    mapped to userspace (e.g. graphics) that hardware still must DMA
+> > > +    to.
+> > > +
+> > > +You may notice that quite a few allocations in the existing code
+> > > +specify ``GFP_NOIO`` and ``GFP_NOFS``. Historically, they were used to
+> > > +prevent recursion deadlocks caused by direct memory reclaim calling
+> > > +back into the FS or IO paths and blocking on already held
+> > > +resources. Since 4.12 the preferred way to address this issue is to
+> > > +use new scope APIs described in
+> > > +:ref:`Documentation/core-api/gfp_mask-from-fs-io.rst <gfp_mask_from_fs_io>`.
+> > > +
+> > > +Another legacy GFP flags are ``GFP_DMA`` and ``GFP_DMA32``. They are
+> > > +used to ensure that the allocated memory is accessible by hardware
+> > > +with limited addressing capabilities. So unless you are writing a
+> > > +driver for a device with such restrictions, avoid using these flags.
+> 
+> And even with HW with restrictions it is preferable to use dma_alloc*
+> APIs
+
+Will add.
+ 
+> Looks nice otherwise. Thanks! With the above changes feel free to add
+> Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks!
+
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
+
 -- 
-2.16.4
+Sincerely yours,
+Mike.
 
