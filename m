@@ -3,149 +3,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C69EC46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC0EC46464
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3957F216E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A631216ED
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:27:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IXALR1Px"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3957F216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qIIcMXWh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A631216ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeHOFHP (ORCPT
+        id S1728212AbeHOFQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 01:07:15 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39289 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbeHOFHP (ORCPT
+        Wed, 15 Aug 2018 01:16:49 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40297 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbeHOFQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 01:07:15 -0400
-Received: by mail-oi0-f68.google.com with SMTP id d189-v6so37315937oib.6
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 19:17:13 -0700 (PDT)
+        Wed, 15 Aug 2018 01:16:48 -0400
+Received: by mail-io0-f195.google.com with SMTP id l14-v6so20391704iob.7;
+        Tue, 14 Aug 2018 19:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=skqZbNutMA/DekEo8deH+lkEyYuc0vfAmIEBSU/rQxQ=;
-        b=IXALR1PxaqZaAXvZVfooewp5OvpHuIkuiEmSzaLG3MJk6R53nD83fddTKQV+E6qVch
-         ACIhUxmSUmYpclhyfqfFO34aBmKks1D95/k4IIhRlsVwX9crfHCZV0o2/wUWnMtuYip8
-         JGkdSmZAyPgbYeAfBu6p3eq06/y6uURsyso+0=
+         :cc;
+        bh=L8m0wugdj6BAb957FEZfkoGHuppOdzCbAVuYMlDkc7w=;
+        b=qIIcMXWhhLY8jpTf1FxXcDBR4Rp+PuhSTG/NB9KsbY0scGDVs8PrkQSh+QG8LoCGTA
+         rwCFmbRtnKe+4nqbBsO1RtNYUpjnZ79Er1HtDtG5pbvkVySeYjDjTY66Qg8/HsG9zGlm
+         j/AuL+r2oWC1zTVyxt2WyNRQAyUtDbGTSQLxqAxlZgCYTHjhihTwPSVoFft4r1TM6Nan
+         XDdYLYUNGtoXcAcngjGFKXQjjimnik3ytwxtKa4Ck5ZSf+6pXB8L61yff/zTayogmkrs
+         gUh5hCSZ0dt0uZDcrvYTE30KvuGHffSBJGxMvd1YaWFiluszyXiH6eWxgaQE5jwxWS2n
+         /Xlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=skqZbNutMA/DekEo8deH+lkEyYuc0vfAmIEBSU/rQxQ=;
-        b=FpXO4UKx7GjutyIe7hUYIAd32HWG/gfoC57QI2eN6O5cF0tgWTtPeoTMIpAcNa16sn
-         2bCuCgz4Az+eLdFo6jJfu39v3wTDsbuAPNggjUnrN6DqxAAuNHcRfVwxiSXG99QVYsXn
-         1hi+uIIf35IM0n10m17zzNq40AyK1gnHgOxmzuwHgE8ZUmaXy+BJiRKq/W74rqjW3z1U
-         qWAt2jE8PLB4NWiDuYChNwUIZzh7rflhFxyl/NxPm4QkKU9q/l4t/TDmwVCV/SmkEgzi
-         CkqtPNw3dCQyA9kO+/AY6cSpQRzZ9rsACRX6uvszKG64K5ny4LjW1fb66qRsYPxRDFsw
-         qaZg==
-X-Gm-Message-State: AOUpUlFspIXiaZitfb5M2YT0qaWxc4iaN12vBzUNmDXbPHBPAZ4tb2y9
-        NGV5ZjioVEn1MoBBF92gT2XCSYS/cxd3+7d2VDHVOA==
-X-Google-Smtp-Source: AA+uWPxWKJoFjne9PBExfMl+jOAegrIlws+cRn99VzQq19oEvvYmwFjTxqp7UhCtuHKfZRyv5pbGJCsODxjRuCplblI=
-X-Received: by 2002:aca:5dc5:: with SMTP id r188-v6mr25689446oib.320.1534299433317;
- Tue, 14 Aug 2018 19:17:13 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=L8m0wugdj6BAb957FEZfkoGHuppOdzCbAVuYMlDkc7w=;
+        b=eEGBZXPcFa0VOZ68JlIgVVULHqis1aIm+1FokGyRgU59CypWk+UyZJuAc6b6SmqJTr
+         cF+LpnAgfvlmvVeEbEEZ0QWyZreVp12koAH6n4/FIBw5at8rJXiuT40FOlx2wCgI9keT
+         I3SyEtH1NCv0ZAemj3p/ysz8h3xopsfXeTFBMcFlJlQ5ZPWHVJK1TlodklMNMKsIX9SU
+         YgFxhHVlVi1p1ZhIst5wYWCrkOhT0sq1XrPZKe6vCdZCJQQdvJZvLvziSSaGBMr3oD+d
+         iJf+JV9n3Mrv1uUgQogePS3cccaMAKS2B3c2PsCp4jBwXgT7+Q6ted7jmXIN32SZzt1i
+         Zqeg==
+X-Gm-Message-State: AOUpUlGty2L5JfHVfgP9s6xDCu7T/i6u0yCcznkEYxfFY5HpkkF/nRMA
+        LU6gPl7Gz7aopaxpnZop96MtS1TQlPey8ATy3DfOySbC
+X-Google-Smtp-Source: AA+uWPzwqrie3gaCNIMGiZbPTmTUWhtDL3FZBRbujaHKo/BlI1rqaxurvtTsTZkS5oAj/eeGoEe34e5s6zRu/Jr87s4=
+X-Received: by 2002:a6b:9554:: with SMTP id x81-v6mr21253288iod.93.1534300004807;
+ Tue, 14 Aug 2018 19:26:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 19:17:12
+Received: by 2002:ac0:bc4a:0:0:0:0:0 with HTTP; Tue, 14 Aug 2018 19:26:24
  -0700 (PDT)
-In-Reply-To: <20180814202720.GB26606@rob-hp-laptop>
-References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
- <20180807134121.GA7958@sirena.org.uk> <CAMz4kuJsyKv_fvrqRR3pdfKsLVy53Uj0KX+m_9jLxpcVcMvs9g@mail.gmail.com>
- <20180808095025.GB9346@sirena.org.uk> <CAMz4kuKZHxYiJaMHnqdAGth8XkfGnq3-Tsfc59cGjsHQHZaY7A@mail.gmail.com>
- <20180808105451.GE9346@sirena.org.uk> <1533754621.2283.270.camel@impinj.com>
- <CAMz4kuKwfBB8-8o5s8FQadFSFiD8KU=qNZYQjCWOfc-QpuVRSw@mail.gmail.com> <20180814202720.GB26606@rob-hp-laptop>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 15 Aug 2018 10:17:12 +0800
-Message-ID: <CAMz4kuK=n33V_AcmgmYjHHuXyDAZ+QAh947NL2g3XfOhsg_-gg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: spi: Add Spreadtrum SPI controller documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     Trent Piepho <tpiepho@impinj.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "lanqing.liu@spreadtrum.com" <lanqing.liu@spreadtrum.com>
+In-Reply-To: <1497329993-197698-1-git-send-email-liwei.song@windriver.com>
+References: <1497329993-197698-1-git-send-email-liwei.song@windriver.com>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Date:   Wed, 15 Aug 2018 03:26:24 +0100
+Message-ID: <CAJwJo6aAGS3vB-F889zmDJjtU3xGLd=twbVVC=DydXYufKEwPQ@mail.gmail.com>
+Subject: Re: [PATCH V2] i2c: ismt: fix wrong device address when unmap the
+ data buffer
+To:     stable <stable@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Seth Heasley <seth.heasley@intel.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Song liwei <liwei.song@windriver.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
++Cc: stable
 
-On 15 August 2018 at 04:27, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Aug 09, 2018 at 11:03:11AM +0800, Baolin Wang wrote:
->> Hi Trent,
->>
->> On 9 August 2018 at 02:57, Trent Piepho <tpiepho@impinj.com> wrote:
->> > On Wed, 2018-08-08 at 11:54 +0100, Mark Brown wrote:
->> >> On Wed, Aug 08, 2018 at 06:35:28PM +0800, Baolin Wang wrote:
->> >> > On 8 August 2018 at 17:50, Mark Brown <broonie@kernel.org> wrote:
->> >> > > Right, I don't think we added this yet (if we did I can't see
->> >> > > it).  I'd
->> >> > > add a new field to spi_transfer for this, then other controllers
->> >> > > with
->> >> > > the same support can implement it as well and drivers can start
->> >> > > using
->> >> > > it too.
->> >> > OK. So I will name the new filed as 'word_delay', is it OK for you?
->> >>
->> >> Sounds good, yes.
->> >
->> > Should it be in =C2=B5s like the existing iter-transfer delay?  I thin=
-k
->> > perhaps units of cycles of the SPI clock make more sense?
->>
->> Since some SPI controllers just want some interval values (neither =C2=
-=B5s
->> unit nor cycles unit ) set into hardware, and the hardware will
->> convert to the correct delay time automatically. So I did not force
->> 'word_delay' unit as =C2=B5s or cycle, and just let the slave devices
->> decide the unit which depends on the SPI hardware requirement.
+Hi Greg, JFI:
+This one has hit a couple of times on autotests on v4.9 stable.
+The fix for BUG() is trivial, so probably worth to ship it to v4.9/v4.4/v3.18.
+
+2017-06-13 5:59 GMT+01:00 Song liwei <liwei.song@windriver.com>:
+> From: Liwei Song <liwei.song@windriver.com>
 >
-> This needs to be defined units in DT, not decided by each controller.
+> Fix the following kernel bug:
+>
+> kernel BUG at drivers/iommu/intel-iommu.c:3260!
+> invalid opcode: 0000 [#5] PREEMPT SMP
+> Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB0.X64.0013.D39.1608311820 08/31/2016
+> task: ffff880175389950 ti: ffff880176bec000 task.ti: ffff880176bec000
+> RIP: 0010:[<ffffffff8150a83b>]  [<ffffffff8150a83b>] intel_unmap+0x25b/0x260
+> RSP: 0018:ffff880176bef5e8  EFLAGS: 00010296
+> RAX: 0000000000000024 RBX: ffff8800773c7c88 RCX: 000000000000ce04
+> RDX: 0000000080000000 RSI: 0000000000000000 RDI: 0000000000000009
+> RBP: ffff880176bef638 R08: 0000000000000010 R09: 0000000000000004
+> R10: ffff880175389c78 R11: 0000000000000a4f R12: ffff8800773c7868
+> R13: 00000000ffffac88 R14: ffff8800773c7818 R15: 0000000000000001
+> FS:  00007fef21258700(0000) GS:ffff88017b5c0000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000066d6d8 CR3: 000000007118c000 CR4: 00000000003406e0
+> Stack:
+>  00000000ffffac88 ffffffff8199867f ffff880176bef5f8 ffff880100000030
+>  ffff880176bef668 ffff8800773c7c88 ffff880178288098 ffff8800772c0010
+>  ffff8800773c7818 0000000000000001 ffff880176bef648 ffffffff8150a86e
+> Call Trace:
+>  [<ffffffff8199867f>] ? printk+0x46/0x48
+>  [<ffffffff8150a86e>] intel_unmap_page+0xe/0x10
+>  [<ffffffffa039d99b>] ismt_access+0x27b/0x8fa [i2c_ismt]
+>  [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
+>  [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
+>  [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
+>  [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
+>  [<ffffffff8143dfd0>] ? pci_bus_read_dev_vendor_id+0xf0/0xf0
+>  [<ffffffff8172b36c>] i2c_smbus_xfer+0xec/0x4b0
+>  [<ffffffff810aa4d5>] ? vprintk_emit+0x345/0x530
+>  [<ffffffffa038936b>] i2cdev_ioctl_smbus+0x12b/0x240 [i2c_dev]
+>  [<ffffffff810aa829>] ? vprintk_default+0x29/0x40
+>  [<ffffffffa0389b33>] i2cdev_ioctl+0x63/0x1ec [i2c_dev]
+>  [<ffffffff811b04c8>] do_vfs_ioctl+0x328/0x5d0
+>  [<ffffffff8119d8ec>] ? vfs_write+0x11c/0x190
+>  [<ffffffff8109d449>] ? rt_up_read+0x19/0x20
+>  [<ffffffff811b07f1>] SyS_ioctl+0x81/0xa0
+>  [<ffffffff819a351b>] system_call_fastpath+0x16/0x6e
+>
+> This happen When run "i2cdetect -y 0" detect SMBus iSMT adapter.
+>
+> After finished I2C block read/write, when unmap the data buffer,
+> a wrong device address was pass to dma_unmap_single().
+>
+> To fix this, give dma_unmap_single() the "dev" parameter, just like
+> what dma_map_single() does, then unmap can find the right devices.
+>
+> Fixes: 13f35ac14cd0 ("i2c: Adding support for Intel iSMT SMBus 2.0 host controller")
+> Signed-off-by: Liwei Song <liwei.song@windriver.com>
+> ---
+>  drivers/i2c/busses/i2c-ismt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-ismt.c b/drivers/i2c/busses/i2c-ismt.c
+> index f573448..e98e44e 100644
+> --- a/drivers/i2c/busses/i2c-ismt.c
+> +++ b/drivers/i2c/busses/i2c-ismt.c
+> @@ -584,7 +584,7 @@ static int ismt_access(struct i2c_adapter *adap, u16 addr,
+>
+>         /* unmap the data buffer */
+>         if (dma_size != 0)
+> -               dma_unmap_single(&adap->dev, dma_addr, dma_size, dma_direction);
+> +               dma_unmap_single(dev, dma_addr, dma_size, dma_direction);
+>
+>         if (unlikely(!time_left)) {
+>                 dev_err(dev, "completion wait timed out\n");
+> --
+> 2.7.4
+>
 
-Do you mean we should introduce one standard property (maybe named as
-'word_delay_unit') to define the word_delay unit?
-If we really need to specify the unit of word_delay, I think we can
-add comments for spi_tansfer  to specify the unit, which will be
-better.
-
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index a64235e..7a72c0a 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -711,6 +711,8 @@ extern void spi_res_release(struct spi_controller *ctlr=
-,
-  * @delay_usecs: microseconds to delay after this transfer before
-  * (optionally) changing the chipselect status, then starting
-  * the next transfer or completing this @spi_message.
-+ * @word_delay: clock cycles to inter word delay after each word size
-(set by bits_per_word)
-+ * transmission.
-  * @transfer_list: transfers are sequenced through @spi_message.transfers
-  * @tx_sg: Scatterlist for transmit, currently not for client use
-  * @rx_sg: Scatterlist for receive, currently not for client use
-@@ -793,6 +795,7 @@ struct spi_transfer {
-  u8 bits_per_word;
-  u16 delay_usecs;
-  u32 speed_hz;
-+ u16 word_delay;
-
-  struct list_head transfer_list;
- };
 
 
---=20
-Baolin Wang
-Best Regards
+-- 
+             Dmitry
