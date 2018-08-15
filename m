@@ -2,79 +2,102 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906DDC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED630C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA8BA215B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8BA215B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id A1F05215F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:44:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="evzWJFGE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F05215F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729200AbeHOPar convert rfc822-to-8bit (ORCPT
+        id S1729245AbeHOPgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 11:30:47 -0400
-Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:40894 "EHLO
-        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727141AbeHOPar (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 11:30:47 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-146-2vGXju2mPIqWmwsbvfnF3Q-1; Wed, 15 Aug 2018 13:38:43 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 15 Aug 2018 13:40:22 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 15 Aug 2018 13:40:22 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Guenter Roeck' <linux@roeck-us.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Rik van Riel <riel@surriel.com>, Mike Galbraith <efault@gmx.de>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: RE: Build failures with gcc 4.5 and older
-Thread-Topic: Build failures with gcc 4.5 and older
-Thread-Index: AQHUM/HAiGfsyFkD4UmbPfzcSwB5naTAwY9Q
-Date:   Wed, 15 Aug 2018 12:40:22 +0000
-Message-ID: <aa4bedb7b1af45c59ff4e61f3f199287@AcuMS.aculab.com>
-References: <20180814170904.GA12768@roeck-us.net>
-In-Reply-To: <20180814170904.GA12768@roeck-us.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-MIME-Version: 1.0
-X-MC-Unique: 2vGXju2mPIqWmwsbvfnF3Q-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 15 Aug 2018 11:36:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727141AbeHOPgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 11:36:07 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21989215B2;
+        Wed, 15 Aug 2018 12:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534337045;
+        bh=In9k0jjQn1GEOTAp+UcaKc5LVHwQ4P0Aycl28oShiik=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=evzWJFGE8LT6HyG4wAhAFWsmdFzuGsnQOcY6BNFc5ieWeGqOLt+zwNSlijW6hQwpL
+         q9w/8lBcDBYG+ny79fE78X/KUjnEWDhvey7y6kpUFQpCLJgKz6ZyXjScsuNuU9rqXu
+         xnxFkb2xhmllzJQ+msQgLBqs9lxvpIYnIi6L3eFM=
+Message-ID: <1eccaca5ea2ae8e5d32ef44d92e893ad870e754d.camel@kernel.org>
+Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock
+ request to block other requests."
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>, NeilBrown <neilb@suse.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Date:   Wed, 15 Aug 2018 08:44:03 -0400
+In-Reply-To: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
+References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck
-> Sent: 14 August 2018 18:09
-...
-> Does that mean that gcc 4.5 and older are now officially no longer
-> supported for compiling the kernel ?
+On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
+> ("fs/locks: allow a lock request to block other requests.") to failure
+> boot of NFSv4 with root on several boards.
+> 
+> Log is here:
+> https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
+> 
+> With several errors:
+> kernel BUG at ../fs/locks.c:336!
+> Unable to handle kernel NULL pointer dereference at virtual address 00000004
+> 
+> Configuration:
+> 1. exynos_defconfig
+> 2. Arch ARM Linux
+> 3. Boards:
+> a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
+> b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
+> 4. Systemd: v236, 238
+> 5. All boards boot from TFTP with NFS root (NFSv4)
+> 
+> On Colibri VF50 I got slightly different errors:
+> [   11.663204] Internal error: Oops - undefined instruction: 0 [#1] ARM
+> [   12.455273] Unable to handle kernel NULL pointer dereference at
+> virtual address 00000004
+> and only with some specific GCC (v6.3) or with other conditions which
+> I did not bisect yet. Maybe Colibri's failure is unrelated to that
+> commit.
+> 
+> Best regards,
+> Krzysztof
 
-Never mind the version of gcc, the x86 kernel doesn't build with the
-default kernel options because the ORC unwinder hits a bug in libelf
-(in objtool) that was only fixed late last year.
+Thanks Krzysztof,
 
-It isn't even obvious from the build log what has gone wrong.
+I or Neil will see if this is reproducible and see about coming up with
+a fix. For now, I'll take this out of -next.
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
