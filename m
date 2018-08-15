@@ -2,339 +2,306 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E223C46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 03:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23A8C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D012214FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 03:44:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D012214FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D5E8215F9
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5E8215F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbeHOGee (ORCPT
+        id S1728701AbeHOGtv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 02:34:34 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35492 "EHLO huawei.com"
+        Wed, 15 Aug 2018 02:49:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58020 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728480AbeHOGee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 02:34:34 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 95A237E8C0D5F;
-        Wed, 15 Aug 2018 11:44:11 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
- 11:44:12 +0800
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
- multi-thread sequential read
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180810023758.46974-1-jaegeuk@kernel.org>
- <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
- <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
- <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
- <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
- <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
- <7194f3d2-b875-376a-4c46-37c598bf3e8e@huawei.com>
- <20180814172837.GD56510@jaegeuk-macbookpro.roam.corp.google.com>
- <167ce8f1-ee4d-2ffc-3518-32850465cd0c@huawei.com>
- <20180815021524.GA84720@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <aba79ead-0d26-8caf-e677-e674002fa534@huawei.com>
-Date:   Wed, 15 Aug 2018 11:44:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728480AbeHOGtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 02:49:51 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DD90B401D795;
+        Wed, 15 Aug 2018 03:59:29 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-175.pek2.redhat.com [10.72.12.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 87E8C112D168;
+        Wed, 15 Aug 2018 03:59:26 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 11:59:21 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
+Message-ID: <20180815035921.GA5865@dhcp-128-65.nay.redhat.com>
+References: <1533737025.4936.3.camel@gmx.de>
+ <20180810084501.GA11901@dhcp-128-65.nay.redhat.com>
+ <20180810102846.GA31327@dhcp-128-65.nay.redhat.com>
+ <1533922786.5083.7.camel@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <20180815021524.GA84720@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533922786.5083.7.camel@gmx.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 03:59:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 03:59:29 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/15 10:15, Jaegeuk Kim wrote:
-> On 08/15, Chao Yu wrote:
->> On 2018/8/15 1:28, Jaegeuk Kim wrote:
->>> On 08/14, Chao Yu wrote:
->>>> On 2018/8/14 12:04, Jaegeuk Kim wrote:
->>>>> On 08/14, Chao Yu wrote:
->>>>>> On 2018/8/14 4:11, Jaegeuk Kim wrote:
->>>>>>> On 08/13, Chao Yu wrote:
->>>>>>>> Hi Jaegeuk,
->>>>>>>>
->>>>>>>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
->>>>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
->>>>>>>>> to fix the drop in sequential read throughput.
->>>>>>>>>
->>>>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
->>>>>>>>> device: UFS
->>>>>>>>>
->>>>>>>>> Before -
->>>>>>>>> read throughput: 185 MB/s
->>>>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
->>>>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
->>>>>>>>>
->>>>>>>>> After -
->>>>>>>>> read throughput: 758 MB/s
->>>>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
->>>>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
->>>>>>>>
->>>>>>>> IMO, it only impact sequential read performance in a large file which may be
->>>>>>>> fragmented during multi-thread writing.
->>>>>>>>
->>>>>>>> In android environment, mostly, the large file should be cold type, such as apk,
->>>>>>>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
->>>>>>>> data area writer.
->>>>>>>>
->>>>>>>> So how about adding a mount option to serialize writepage() for different type
->>>>>>>> of log, e.g. in android, using serialize=4; by default, using serialize=7
->>>>>>>> HOT_DATA	1
->>>>>>>> WARM_DATA	2
->>>>>>>> COLD_DATA	4
->>>>>>>
->>>>>>> Well, I don't think we need to give too many mount options for this fragmented
->>>>>>> case. How about doing this for the large files only like this?
->>>>>>
->>>>>> Thread A write 512 pages			Thread B write 8 pages
->>>>>>
->>>>>> - writepages()
->>>>>>  - mutex_lock(&sbi->writepages);
->>>>>>   - writepage();
->>>>>> ...
->>>>>> 						- writepages()
->>>>>> 						 - writepage()
->>>>>> 						  ....
->>>>>>   - writepage();
->>>>>> ...
->>>>>>  - mutex_unlock(&sbi->writepages);
->>>>>>
->>>>>> Above case will also cause fragmentation since we didn't serialize all
->>>>>> concurrent IO with the lock.
->>>>>>
->>>>>> Do we need to consider such case?
->>>>>
->>>>> We can simply allow 512 and 8 in the same segment, which would not a big deal,
->>>>> when considering starvation of Thread B.
->>>>
->>>> Yeah, but in reality, there would be more threads competing in same log header,
->>>> so I worry that the effect of defragmenting will not so good as we expect,
->>>> anyway, for benchmark, it's enough.
->>>
->>> Basically, I think this is not a benchmark issue. :) It just reveals the issue
->>> much easily. Let me think about three cases:
->>> 1) WB_SYNC_NONE & WB_SYNC_NONE
->>>  -> can simply use mutex_lock
->>>
->>> 2) WB_SYNC_ALL & WB_SYNC_NONE
->>>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, while WB_SYNC_NONE
->>>     will skip writing blocks
->>>
->>> 3) WB_SYNC_ALL & WB_SYNC_ALL
->>>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, in order to avoid
->>>     starvation.
->>>
->>>
->>> I've been testing the below.
->>>
->>> if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
->>>                 get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
->>>         mutex_lock(&sbi->writepages);
->>>         locked = true;
->>
->> Just cover buffered IO? how about covering Direct IO and atomic write as well?
+Apologize for late reply, I'm occupied with something else.
+
+On 08/10/18 at 07:39pm, Mike Galbraith wrote:
+> On Fri, 2018-08-10 at 18:28 +0800, Dave Young wrote:
+> > 
+> > > @@ -250,8 +253,10 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+> > >  
+> > >  #ifdef CONFIG_EFI
+> > >  	/* Setup EFI state */
+> > > -	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+> > > +	ret = setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+> > >  			efi_setup_data_offset);
+> > > +	if (ret)
+> > 
+> > Here should check efi_enabled(EFI_BOOT) && ret
 > 
-> I'd expect direct IO does in-place-updates, and not sure whether we need to
+> Patch with that works for me.
+> 
+> > In case efi boot we need the efi info set correctly,  or one need pass
+> > acpi_rsdp= in kernel cmdline param.
+> > 
+> > Still not sure how to allow one to workaround it by using acpi_rsdp=
+> > param with kexec_file_load..
+> 
+> Does this improve things, and plug the no boot hole?
 
-For initial writes, they are not IPU.
+Would you mind to tune my patch with some acpi_rsdp checking and add
+some error message in case kexec load failure? Eg. suggest people to use
+append acpi_rsdp for noefi booting etc.
 
-> add another lock contention between buffered or direct IO. Atomic writes
-> would be covered by ->min_seq_blocks.
-
-Okay. :)
-
-Thanks,
+I'm still not very satisfied with the code cleanup, ideally we should add a
+separate kbuf for efi stuff, so that we can isolate the efi_map_sz
+efi_setup_data_offset, and efi_map_offset initialization only when
+necessary.  Anyway the cleanup can be a separate patch.
 
 > 
->>
->> Thanks,
->>
->>> }
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>> >From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
->>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> Date: Thu, 9 Aug 2018 17:53:34 -0700
->>>>>>> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
->>>>>>>  sequential read
->>>>>>>
->>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
->>>>>>> to fix the drop in sequential read throughput.
->>>>>>>
->>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
->>>>>>> device: UFS
->>>>>>>
->>>>>>> Before -
->>>>>>> read throughput: 185 MB/s
->>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
->>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
->>>>>>>
->>>>>>> After -
->>>>>>> read throughput: 758 MB/s
->>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
->>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
->>>>>>>
->>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> ---
->>>>>>>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
->>>>>>>  fs/f2fs/data.c                          | 10 ++++++++++
->>>>>>>  fs/f2fs/f2fs.h                          |  2 ++
->>>>>>>  fs/f2fs/segment.c                       |  1 +
->>>>>>>  fs/f2fs/super.c                         |  1 +
->>>>>>>  fs/f2fs/sysfs.c                         |  2 ++
->>>>>>>  6 files changed, 24 insertions(+)
->>>>>>>
->>>>>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>> index 9b0123388f18..94a24aedcdb2 100644
->>>>>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>> @@ -51,6 +51,14 @@ Description:
->>>>>>>  		 Controls the dirty page count condition for the in-place-update
->>>>>>>  		 policies.
->>>>>>>  
->>>>>>> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
->>>>>>> +Date:		August 2018
->>>>>>> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->>>>>>> +Description:
->>>>>>> +		 Controls the dirty page count condition for batched sequential
->>>>>>> +		 writes in ->writepages.
->>>>>>> +
->>>>>>> +
->>>>>>>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
->>>>>>>  Date:		March 2017
->>>>>>>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>>> index 45f043ee48bd..f09231b1cc74 100644
->>>>>>> --- a/fs/f2fs/data.c
->>>>>>> +++ b/fs/f2fs/data.c
->>>>>>> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
->>>>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>>>>>  	struct blk_plug plug;
->>>>>>>  	int ret;
->>>>>>> +	bool locked = false;
->>>>>>>  
->>>>>>>  	/* deal with chardevs and other special file */
->>>>>>>  	if (!mapping->a_ops->writepage)
->>>>>>> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
->>>>>>>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
->>>>>>>  		goto skip_write;
->>>>>>>  
->>>>>>> +	if (!S_ISDIR(inode->i_mode) &&
->>>>>>> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
->>>>>>> +		mutex_lock(&sbi->writepages);
->>>>>>> +		locked = true;
->>>>>>> +	}
->>>>>>> +
->>>>>>>  	blk_start_plug(&plug);
->>>>>>>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
->>>>>>>  	blk_finish_plug(&plug);
->>>>>>>  
->>>>>>> +	if (locked)
->>>>>>> +		mutex_unlock(&sbi->writepages);
->>>>>>> +
->>>>>>>  	if (wbc->sync_mode == WB_SYNC_ALL)
->>>>>>>  		atomic_dec(&sbi->wb_sync_req[DATA]);
->>>>>>>  	/*
->>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>> index 375aa9f30cfa..098bdedc28bf 100644
->>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
->>>>>>>  	unsigned int ipu_policy;	/* in-place-update policy */
->>>>>>>  	unsigned int min_ipu_util;	/* in-place-update threshold */
->>>>>>>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
->>>>>>> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
->>>>>>>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
->>>>>>>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
->>>>>>>  
->>>>>>> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
->>>>>>>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
->>>>>>>  	int valid_super_block;			/* valid super block no */
->>>>>>>  	unsigned long s_flag;				/* flags for sbi */
->>>>>>> +	struct mutex writepages;		/* mutex for writepages() */
->>>>>>>  
->>>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
->>>>>>>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
->>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>> index 63fc647f9ac2..ffea2d1303bd 100644
->>>>>>> --- a/fs/f2fs/segment.c
->>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
->>>>>>>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
->>>>>>>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
->>>>>>>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
->>>>>>> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
->>>>>>>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
->>>>>>>  	sm_info->min_ssr_sections = reserved_sections(sbi);
->>>>>>>  
->>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>>> index be41dbd7b261..53d70b64fea1 100644
->>>>>>> --- a/fs/f2fs/super.c
->>>>>>> +++ b/fs/f2fs/super.c
->>>>>>> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>>>>>  	/* init f2fs-specific super block info */
->>>>>>>  	sbi->valid_super_block = valid_super_block;
->>>>>>>  	mutex_init(&sbi->gc_mutex);
->>>>>>> +	mutex_init(&sbi->writepages);
->>>>>>>  	mutex_init(&sbi->cp_mutex);
->>>>>>>  	init_rwsem(&sbi->node_write);
->>>>>>>  	init_rwsem(&sbi->node_change);
->>>>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>>>>>> index cd2e030e47b8..81c0e5337443 100644
->>>>>>> --- a/fs/f2fs/sysfs.c
->>>>>>> +++ b/fs/f2fs/sysfs.c
->>>>>>> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
->>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
->>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
->>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
->>>>>>> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
->>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
->>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
->>>>>>>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
->>>>>>> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
->>>>>>>  	ATTR_LIST(ipu_policy),
->>>>>>>  	ATTR_LIST(min_ipu_util),
->>>>>>>  	ATTR_LIST(min_fsync_blocks),
->>>>>>> +	ATTR_LIST(min_seq_blocks),
->>>>>>>  	ATTR_LIST(min_hot_blocks),
->>>>>>>  	ATTR_LIST(min_ssr_sections),
->>>>>>>  	ATTR_LIST(max_victim_search),
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
+> x86, kdump: cleanup efi setup data handling a bit
 > 
-> .
+> 1. Remove efi specific variables from bzImage64_load() other than the
+> one it needs, efi_map_sz, passing it and params_cmdline_sz on to efi
+> setup functions, giving them all they need without duplication.
+> 
+> 2. Only allocate space for efi setup data when a 1:1 mapping is available.
+> Bail early with -ENODEV if not available, but is required to boot, and
+> acpi_rsdp= was not passed on the command line. 
+> 
+> 3. Use the proper config dependency to isolate efi setup functions,
+> adding a !EFI_RUNTIME_MAP stub for setup_efi_state().
+> 
+> 4. Change efi functions that cannot fail to void. 
+> 
+> Signed-off-by: Mike Galbraith <efault@gmx.de>
+> ---
+>  arch/x86/kernel/kexec-bzimage64.c |   99 +++++++++++++++++---------------------
+>  1 file changed, 45 insertions(+), 54 deletions(-)
+> 
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -112,35 +112,32 @@ static int setup_e820_entries(struct boo
+>  	return 0;
+>  }
+>  
+> -#ifdef CONFIG_EFI
+> -static int setup_efi_info_memmap(struct boot_params *params,
+> +#ifdef CONFIG_EFI_RUNTIME_MAP
+> +static void setup_efi_info_memmap(struct boot_params *params,
+>  				  unsigned long params_load_addr,
+> -				  unsigned int efi_map_offset,
+> +				  unsigned int params_cmdline_sz,
+>  				  unsigned int efi_map_sz)
+>  {
+> -	void *efi_map = (void *)params + efi_map_offset;
+> -	unsigned long efi_map_phys_addr = params_load_addr + efi_map_offset;
+> +	void *efi_map = (void *)params + params_cmdline_sz;
+> +	unsigned long efi_map_phys_addr = params_load_addr + params_cmdline_sz;
+>  	struct efi_info *ei = &params->efi_info;
+>  
+> -	if (!efi_map_sz)
+> -		return -EINVAL;
+> -
+>  	efi_runtime_map_copy(efi_map, efi_map_sz);
+>  
+>  	ei->efi_memmap = efi_map_phys_addr & 0xffffffff;
+>  	ei->efi_memmap_hi = efi_map_phys_addr >> 32;
+>  	ei->efi_memmap_size = efi_map_sz;
+> -
+> -	return 0;
+>  }
+>  
+> -static int
+> +static void
+>  prepare_add_efi_setup_data(struct boot_params *params,
+> -		       unsigned long params_load_addr,
+> -		       unsigned int efi_setup_data_offset)
+> +			   unsigned long params_load_addr,
+> +			   unsigned int params_cmdline_sz,
+> +			   unsigned int efi_map_sz)
+>  {
+> +	unsigned int data_offset = params_cmdline_sz + ALIGN(efi_map_sz, 16);
+>  	unsigned long setup_data_phys;
+> -	struct setup_data *sd = (void *)params + efi_setup_data_offset;
+> +	struct setup_data *sd = (void *)params + data_offset;
+>  	struct efi_setup_data *esd = (void *)sd + sizeof(struct setup_data);
+>  
+>  	esd->fw_vendor = efi.fw_vendor;
+> @@ -152,33 +149,20 @@ prepare_add_efi_setup_data(struct boot_p
+>  	sd->len = sizeof(struct efi_setup_data);
+>  
+>  	/* Add setup data */
+> -	setup_data_phys = params_load_addr + efi_setup_data_offset;
+> +	setup_data_phys = params_load_addr + data_offset;
+>  	sd->next = params->hdr.setup_data;
+>  	params->hdr.setup_data = setup_data_phys;
+> -
+> -	return 0;
+>  }
+>  
+>  static int
+>  setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+> -		unsigned int efi_map_offset, unsigned int efi_map_sz,
+> -		unsigned int efi_setup_data_offset)
+> +		unsigned int params_cmdline_sz, unsigned int efi_map_sz)
+>  {
+>  	struct efi_info *current_ei = &boot_params.efi_info;
+>  	struct efi_info *ei = &params->efi_info;
+> -	int ret;
+> -
+> -	if (!current_ei->efi_memmap_size)
+> -		return -EINVAL;
+>  
+> -	/*
+> -	 * If 1:1 mapping is not enabled, second kernel can not setup EFI
+> -	 * and use EFI run time services. User space will have to pass
+> -	 * acpi_rsdp=<addr> on kernel command line to make second kernel boot
+> -	 * without efi.
+> -	 */
+> -	if (efi_enabled(EFI_OLD_MEMMAP) || !efi_enabled(EFI_RUNTIME_SERVICES))
+> -		return -ENODEV;
+> +	if (!efi_map_sz || !current_ei->efi_memmap_size)
+> +		return efi_map_sz ? -EINVAL : 0;
+>  
+>  	ei->efi_loader_signature = current_ei->efi_loader_signature;
+>  	ei->efi_systab = current_ei->efi_systab;
+> @@ -187,21 +171,24 @@ setup_efi_state(struct boot_params *para
+>  	ei->efi_memdesc_version = current_ei->efi_memdesc_version;
+>  	ei->efi_memdesc_size = efi_get_runtime_map_desc_size();
+>  
+> -	ret = setup_efi_info_memmap(params, params_load_addr, efi_map_offset,
+> +	setup_efi_info_memmap(params, params_load_addr, params_cmdline_sz,
+>  			      efi_map_sz);
+> -	if (ret)
+> -		return ret;
+> -	prepare_add_efi_setup_data(params, params_load_addr,
+> -				   efi_setup_data_offset);
+> +	prepare_add_efi_setup_data(params, params_load_addr, params_cmdline_sz,
+> +				   efi_map_sz);
+>  	return 0;
+>  }
+> -#endif /* CONFIG_EFI */
+> +#else /* !CONFIG_EFI_RUNTIME_MAP */
+> +static int
+> +setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+> +		unsigned int params_cmdline_sz, unsigned int efi_map_sz)
+> +{ return 0; }
+> +#endif /* CONFIG_EFI_RUNTIME_MAP */
+>  
+>  static int
+>  setup_boot_parameters(struct kimage *image, struct boot_params *params,
+>  		      unsigned long params_load_addr,
+> -		      unsigned int efi_map_offset, unsigned int efi_map_sz,
+> -		      unsigned int efi_setup_data_offset)
+> +		      unsigned int params_cmdline_sz,
+> +		      unsigned int efi_map_sz)
+>  {
+>  	unsigned int nr_e820_entries;
+>  	unsigned long long mem_k, start, end;
+> @@ -251,13 +238,9 @@ setup_boot_parameters(struct kimage *ima
+>  		}
+>  	}
+>  
+> -#ifdef CONFIG_EFI
+> -	/* Setup EFI state */
+> -	ret = setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+> -			efi_setup_data_offset);
+> -	if (efi_enabled(EFI_BOOT) && ret)
+> +	ret = setup_efi_state(params, params_load_addr, params_cmdline_sz, efi_map_sz);
+> +	if (ret)
+>  		return ret;
+> -#endif
+>  
+>  	/* Setup EDD info */
+>  	memcpy(params->eddbuf, boot_params.eddbuf,
+> @@ -343,7 +326,7 @@ static void *bzImage64_load(struct kimag
+>  	struct kexec_entry64_regs regs64;
+>  	void *stack;
+>  	unsigned int setup_hdr_offset = offsetof(struct boot_params, hdr);
+> -	unsigned int efi_map_offset, efi_map_sz, efi_setup_data_offset;
+> +	unsigned int efi_map_sz = 0;
+>  	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+>  				  .top_down = true };
+>  	struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
+> @@ -402,19 +385,28 @@ static void *bzImage64_load(struct kimag
+>  	 * have to create separate segment for each. Keeps things
+>  	 * little bit simple
+>  	 */
+> -	efi_map_sz = efi_get_runtime_map_size();
+>  	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
+>  				MAX_ELFCOREHDR_STR_LEN;
+>  	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
+> -	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
+> -				sizeof(struct setup_data) +
+> -				sizeof(struct efi_setup_data);
+> +	kbuf.bufsz = params_cmdline_sz + sizeof(struct setup_data);
+> +
+> +	/*
+> +	 * If a 1:1 mapping does not exist, the second kernel cannot setup
+> +	 * and use EFI run time services, user space will have to pass
+> +	 * acpi_rsdp=<addr> on the kernel command line to make the second
+> +	 * kernel boot without efi.  Allocate space for efi setup data if
+> +	 * this constraint is met, bail if not, but is required to boot,
+> +	 * and acpi_rsdp=<addr> was not passed on the command line.
+> +	 */
+> +	if (efi_enabled(EFI_RUNTIME_SERVICES) && !efi_enabled(EFI_OLD_MEMMAP)) {
+> +		efi_map_sz = efi_get_runtime_map_size();
+> +		kbuf.bufsz += ALIGN(efi_map_sz, 16) + sizeof(struct efi_setup_data);
+> +	} else if (efi_enabled(EFI_BOOT) && !strstr(cmdline, "acpi_rsdp="))
+> +		return ERR_PTR(-ENODEV);
+>  
+>  	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
+>  	if (!params)
+>  		return ERR_PTR(-ENOMEM);
+> -	efi_map_offset = params_cmdline_sz;
+> -	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
+>  
+>  	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
+>  	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
+> @@ -494,8 +486,7 @@ static void *bzImage64_load(struct kimag
+>  		goto out_free_params;
+>  
+>  	ret = setup_boot_parameters(image, params, bootparam_load_addr,
+> -				    efi_map_offset, efi_map_sz,
+> -				    efi_setup_data_offset);
+> +				    params_cmdline_sz, efi_map_sz);
+>  	if (ret)
+>  		goto out_free_params;
+>  
 > 
 
+Thanks
+Dave
