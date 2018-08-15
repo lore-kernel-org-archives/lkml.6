@@ -2,106 +2,156 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBE9C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D2BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A70208E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A70208E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id CAD412124D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:31:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD412124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbeHOTRJ (ORCPT
+        id S1729995AbeHOTYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:17:09 -0400
-Received: from gateway30.websitewelcome.com ([192.185.149.4]:32446 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729504AbeHOTRJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:17:09 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 2FD2929424
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 11:24:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id pyaNfnSlObXuJpyaefBBSf; Wed, 15 Aug 2018 11:24:19 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.37.72] (port=59898 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fpyaN-003usJ-5w; Wed, 15 Aug 2018 11:23:51 -0500
-Date:   Wed, 15 Aug 2018 11:23:49 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] iio: health: max30102: Mark expected switch fall-throughs
-Message-ID: <20180815162349.GA3458@embeddedor.com>
+        Wed, 15 Aug 2018 15:24:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57528 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729348AbeHOTYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 15:24:22 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4EBB740216E8;
+        Wed, 15 Aug 2018 16:31:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-8.rdu2.redhat.com [10.10.121.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 53E4320389E0;
+        Wed, 15 Aug 2018 16:31:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        sfrench@samba.org, steved@redhat.com, viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        "Eric W. Biederman" <ebiederm@redhat.com>,
+        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net
+Subject: Should we split the network filesystem setup into two phases?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.37.72
-X-Source-L: No
-X-Exim-ID: 1fpyaN-003usJ-5w
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.37.72]:59898
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17762.1534350685.1@warthog.procyon.org.uk>
+Date:   Wed, 15 Aug 2018 17:31:25 +0100
+Message-ID: <17763.1534350685@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 15 Aug 2018 16:31:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 15 Aug 2018 16:31:31 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Having just re-ported NFS on top of the new mount API stuff, I find that I
+don't really like the idea of superblocks being separated by communication
+parameters - especially when it might seem reasonable to be able to adjust
+those parameters.
 
-Notice that in this particular case, I placed the "fall through"
-annotation at the bottom of the case, which is what GCC is expecting
-to find.
+Does it make sense to abstract out the remote peer and allow (a) that to be
+configured separately from any superblocks using it and (b) that to be used to
+create superblocks?
 
-Addresses-Coverity-ID: 1458342 ("Missing break in switch")
-Addresses-Coverity-ID: 1458345 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/iio/health/max30102.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Note that what a 'remote peer' is would be different for different
+filesystems:
 
-diff --git a/drivers/iio/health/max30102.c b/drivers/iio/health/max30102.c
-index 15ccadc..3e29562 100644
---- a/drivers/iio/health/max30102.c
-+++ b/drivers/iio/health/max30102.c
-@@ -282,9 +282,11 @@ static int max30102_read_measurement(struct max30102_data *data,
- 	switch (measurements) {
- 	case 3:
- 		MAX30102_COPY_DATA(2);
--	case 2: /* fall-through */
-+		/* fall through */
-+	case 2:
- 		MAX30102_COPY_DATA(1);
--	case 1: /* fall-through */
-+		/* fall through */
-+	case 1:
- 		MAX30102_COPY_DATA(0);
- 		break;
- 	default:
--- 
-2.7.4
+ (*) For NFS, it would probably be a named server, with address(es) attached
+     to the name.  In lieu of actually having a name, the initial IP address
+     could be used.
 
+ (*) For CIFS, it would probably be a named server.  I'm not sure if CIFS
+     allows an abstraction for a share that can move about inside a domain.
+
+ (*) For AFS, it would be a cell, I think, where the actual fileserver(s) used
+     are a matter of direction from the Volume Location server.
+
+ (*) For 9P and Ceph, I don't really know.
+
+What could be configured?  Well, addresses, ports, timeouts.  Maybe protocol
+level negotiation - though not being able to explicitly specify, say, the
+particular version and minorversion on an NFS share would be problematic for
+backward compatibility.
+
+One advantage it could give us is that it might make it easier if someone asks
+for server X to query userspace in some way for the default parameters for X
+are.
+
+What might this look like in terms of userspace?  Well, we could overload the
+new mount API:
+
+	peer1 = fsopen("nfs", FSOPEN_CREATE_PEER);
+	fsconfig(peer1, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+	fsconfig(peer1, FSCONFIG_SET_STRING, "peer_name", "server.home");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "vers", "4.2");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.1");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.2");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "timeo", "122");
+	fsconfig(peer1, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+
+	peer2 = fsopen("nfs", FSOPEN_CREATE_PEER);
+	fsconfig(peer2, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+	fsconfig(peer2, FSCONFIG_SET_STRING, "peer_name", "server2.home");
+	fsconfig(peer2, FSCONFIG_SET_STRING, "vers", "3");
+	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.3");
+	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "udp:192.168.1.4+6001");
+	fsconfig(peer2, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+
+	fs = fsopen("nfs", 0);
+	fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
+	fsconfig(fs, FSCONFIG_SET_PEER, "peer.2", NULL, peer2);
+	fsconfig(fs, FSCONFIG_SET_STRING, "source", "/home/dhowells", 0);
+	m = fsmount(fs, 0, 0);
+
+[Note that Eric's oft-repeated point about the 'creation' operation altering
+ established parameters still stands here.]
+
+You could also then reopen it for configuration, maybe by:
+
+	peer = fspick(AT_FDCWD, "/mnt", FSPICK_PEER);
+
+or:
+
+	peer = fspick(AT_FDCWD, "nfs:server.home", FSPICK_PEER_BY_NAME);
+
+though it might be better to give it its own syscall:
+
+	peer = fspeer("nfs", "server.home", O_CLOEXEC);
+	fsconfig(peer, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+	...
+	fsconfig(peer, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+
+In terms of alternative interfaces, I'm not sure how easy it would be to make
+it like cgroups where you go and create a dir in a special filesystem, say,
+"/sys/peers/nfs", because the peers records and names would have to be network
+namespaced.  Also, it might make it more difficult to use to create a root fs.
+
+On the other hand, being able to adjust the peer configuration by:
+
+	echo 71 >/sys/peers/nfs/server.home/timeo
+
+does have a certain appeal.
+
+Also, netlink might be the right option, but I'm not sure how you'd pin the
+resultant object whilst you make use of it.
+
+A further thought is that is it worth making this idea more general and
+encompassing non-network devices also?  This would run into issues of some
+logical sources being visible across namespaces and but not others.
+
+David
