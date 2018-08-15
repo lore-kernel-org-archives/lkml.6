@@ -1,239 +1,135 @@
 Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D5BC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257DCC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD28214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37D13208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nw8+ZY/R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD28214C3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R40kkhKJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D13208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730835AbeHOSB1 (ORCPT
+        id S1730626AbeHOSA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:01:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51328 "EHLO mail.kernel.org"
+        Wed, 15 Aug 2018 14:00:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729528AbeHOSB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:01:26 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730492AbeHOSA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:00:58 -0400
+Received: from [192.168.1.25] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7049F208E0;
-        Wed, 15 Aug 2018 15:08:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E99420C09;
+        Wed, 15 Aug 2018 15:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534345733;
-        bh=Ni8RidsLzLP/whU6ki/li3VkX2/A4bocvh6eZlx+Qkc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nw8+ZY/RPL4rAz61OKE3gKYwz2KTD1eIw1krRpXADHq8PyUdjHVEpQxhqbQ719OKU
-         xy+PtKmzqQBVP5s/JUOd7nA4Hx1vBzMIzrBp6MqiKyjH+/xqsRCVaQemcsKaQORefu
-         wyGUM3NWFas4pAFujFrc0j4sDz+BKjACyx+feaz8=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 35/35] x86: Add entry trampolines to kcore
-Date:   Wed, 15 Aug 2018 12:06:11 -0300
-Message-Id: <20180815150611.32080-36-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180815150611.32080-1-acme@kernel.org>
-References: <20180815150611.32080-1-acme@kernel.org>
+        s=default; t=1534345705;
+        bh=87z3EyxDLAfToEQG3Hm9/7tG6pxrC5f5goCjVS1KOWQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=R40kkhKJgwduKU+/lyyoFxzn2K0ypajD4FrfwgxITfEt8Z9bv+Au0TeCGLGjp9Ec+
+         rOWMCZXxIh/taeW3U9Fz606O8kBpOLcqzfFD1K4FpiEJVZhB5M1rnvpO33W4uJtH8R
+         JLifCNOBibfhz2EAaIoZqrBXloirU+rEk2FzqiZA=
+Subject: Re: [PATCH] arm64: dts: stratix10: i2c clock running out of spec
+To:     Alan Tull <atull@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180808154241.3760-1-atull@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <dd109cc6-00a8-244b-07e9-97e29739d804@kernel.org>
+Date:   Wed, 15 Aug 2018 10:08:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180808154241.3760-1-atull@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
 
-Without program headers for PTI entry trampoline pages, the trampoline
-virtual addresses do not map to anything.
 
-Example before:
+On 08/08/2018 10:42 AM, Alan Tull wrote:
+> DesignWare I2C controller was observed running at 105.93kHz rather
+> than the specified 100kHz.  Adjust device tree settings to bring it
+> within spec (a slightly conservative 98 MHz).
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> ---
+>  arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+> index 6edc4fa..53cf195 100644
+> --- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+> +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+> @@ -124,6 +124,8 @@
+>  &i2c1 {
+>  	status = "okay";
+>  	clock-frequency = <100000>;
+> +	i2c-sda-falling-time-ns = <890>;  /* hcnt */
+> +	i2c-sdl-falling-time-ns = <890>;  /* lcnt */
+>  
+>  	adc@14 {
+>  		compatible = "lltc,ltc2497";
+> 
 
- sudo gdb --quiet vmlinux /proc/kcore
- Reading symbols from vmlinux...done.
- [New process 1]
- Core was generated by `BOOT_IMAGE=/boot/vmlinuz-4.16.0 root=UUID=a6096b83-b763-4101-807e-f33daff63233'.
- #0  0x0000000000000000 in irq_stack_union ()
- (gdb) x /21ib 0xfffffe0000006000
-    0xfffffe0000006000:  Cannot access memory at address 0xfffffe0000006000
- (gdb) quit
+Applied!
 
-After:
-
- sudo gdb --quiet vmlinux /proc/kcore
- [sudo] password for ahunter:
- Reading symbols from vmlinux...done.
- [New process 1]
- Core was generated by `BOOT_IMAGE=/boot/vmlinuz-4.16.0-fix-4-00005-gd6e65a8b4072 root=UUID=a6096b83-b7'.
- #0  0x0000000000000000 in irq_stack_union ()
- (gdb) x /21ib 0xfffffe0000006000
-    0xfffffe0000006000:  swapgs
-    0xfffffe0000006003:  mov    %rsp,-0x3e12(%rip)        # 0xfffffe00000021f8
-    0xfffffe000000600a:  xchg   %ax,%ax
-    0xfffffe000000600c:  mov    %cr3,%rsp
-    0xfffffe000000600f:  bts    $0x3f,%rsp
-    0xfffffe0000006014:  and    $0xffffffffffffe7ff,%rsp
-    0xfffffe000000601b:  mov    %rsp,%cr3
-    0xfffffe000000601e:  mov    -0x3019(%rip),%rsp        # 0xfffffe000000300c
-    0xfffffe0000006025:  pushq  $0x2b
-    0xfffffe0000006027:  pushq  -0x3e35(%rip)        # 0xfffffe00000021f8
-    0xfffffe000000602d:  push   %r11
-    0xfffffe000000602f:  pushq  $0x33
-    0xfffffe0000006031:  push   %rcx
-    0xfffffe0000006032:  push   %rdi
-    0xfffffe0000006033:  mov    $0xffffffff91a00010,%rdi
-    0xfffffe000000603a:  callq  0xfffffe0000006046
-    0xfffffe000000603f:  pause
-    0xfffffe0000006041:  lfence
-    0xfffffe0000006044:  jmp    0xfffffe000000603f
-    0xfffffe0000006046:  mov    %rdi,(%rsp)
-    0xfffffe000000604a:  retq
- (gdb) quit
-
-In addition, entry trampolines all map to the same page.  Represent that
-by giving the corresponding program headers in kcore the same offset.
-
-This has the benefit that, when perf tools uses /proc/kcore as a source
-for kernel object code, samples from different CPU trampolines are
-aggregated together.  Note, such aggregation is normal for profiling
-i.e. people want to profile the object code, not every different virtual
-address the object code might be mapped to (across different processes
-for example).
-
-Notes by PeterZ:
-
-This also adds the KCORE_REMAP functionality.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1528289651-4113-4-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
- fs/proc/kcore.c              |  7 +++++--
- include/linux/kcore.h        | 13 +++++++++++++
- 3 files changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
-index fab49fd5190f..076ebdce9bd4 100644
---- a/arch/x86/mm/cpu_entry_area.c
-+++ b/arch/x86/mm/cpu_entry_area.c
-@@ -3,6 +3,7 @@
- #include <linux/spinlock.h>
- #include <linux/percpu.h>
- #include <linux/kallsyms.h>
-+#include <linux/kcore.h>
- 
- #include <asm/cpu_entry_area.h>
- #include <asm/pgtable.h>
-@@ -14,6 +15,7 @@ static DEFINE_PER_CPU_PAGE_ALIGNED(struct entry_stack_page, entry_stack_storage)
- #ifdef CONFIG_X86_64
- static DEFINE_PER_CPU_PAGE_ALIGNED(char, exception_stacks
- 	[(N_EXCEPTION_STACKS - 1) * EXCEPTION_STKSZ + DEBUG_STKSZ]);
-+static DEFINE_PER_CPU(struct kcore_list, kcore_entry_trampoline);
- #endif
- 
- struct cpu_entry_area *get_cpu_entry_area(int cpu)
-@@ -147,6 +149,14 @@ static void __init setup_cpu_entry_area(int cpu)
- 
- 	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
- 		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
-+	/*
-+	 * The cpu_entry_area alias addresses are not in the kernel binary
-+	 * so they do not show up in /proc/kcore normally.  This adds entries
-+	 * for them manually.
-+	 */
-+	kclist_add_remap(&per_cpu(kcore_entry_trampoline, cpu),
-+			 _entry_trampoline,
-+			 &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE);
- #endif
- 	percpu_setup_debug_store(cpu);
- }
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e64ecb9f2720..00282f134336 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -383,8 +383,11 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
- 		phdr->p_type	= PT_LOAD;
- 		phdr->p_flags	= PF_R|PF_W|PF_X;
- 		phdr->p_offset	= kc_vaddr_to_offset(m->addr) + dataoff;
--		phdr->p_vaddr	= (size_t)m->addr;
--		if (m->type == KCORE_RAM || m->type == KCORE_TEXT)
-+		if (m->type == KCORE_REMAP)
-+			phdr->p_vaddr	= (size_t)m->vaddr;
-+		else
-+			phdr->p_vaddr	= (size_t)m->addr;
-+		if (m->type == KCORE_RAM || m->type == KCORE_TEXT || m->type == KCORE_REMAP)
- 			phdr->p_paddr	= __pa(m->addr);
- 		else
- 			phdr->p_paddr	= (elf_addr_t)-1;
-diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-index 8de55e4b5ee9..bc088ef96358 100644
---- a/include/linux/kcore.h
-+++ b/include/linux/kcore.h
-@@ -12,11 +12,13 @@ enum kcore_type {
- 	KCORE_VMEMMAP,
- 	KCORE_USER,
- 	KCORE_OTHER,
-+	KCORE_REMAP,
- };
- 
- struct kcore_list {
- 	struct list_head list;
- 	unsigned long addr;
-+	unsigned long vaddr;
- 	size_t size;
- 	int type;
- };
-@@ -36,11 +38,22 @@ struct vmcoredd_node {
- 
- #ifdef CONFIG_PROC_KCORE
- extern void kclist_add(struct kcore_list *, void *, size_t, int type);
-+static inline
-+void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
-+{
-+	m->vaddr = (unsigned long)vaddr;
-+	kclist_add(m, addr, sz, KCORE_REMAP);
-+}
- #else
- static inline
- void kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
- {
- }
-+
-+static inline
-+void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
-+{
-+}
- #endif
- 
- #endif /* _LINUX_KCORE_H */
--- 
-2.14.4
-
+Thanks,
+Dinh
