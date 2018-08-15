@@ -3,90 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CC0C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 06:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3A1C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 07:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31459216E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 06:54:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31459216E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id A0471216E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 07:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0471216E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeHOJpL (ORCPT
+        id S1728783AbeHOJzp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 05:45:11 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:46135 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726013AbeHOJpL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 05:45:11 -0400
-X-UUID: 5b9daf2db2df488dab8765933e32ef73-20180815
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1093554356; Wed, 15 Aug 2018 14:54:04 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 15 Aug 2018 14:54:01 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 15 Aug 2018 14:54:01 +0800
-Message-ID: <1534316041.31978.30.camel@mtkswgap22>
-Subject: Re: [PATCH 2/5] arm64: dts: mt7622: add a bluetooth 5 device node
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 15 Aug 2018 14:54:01 +0800
-In-Reply-To: <aba82b5c68c840a36b902e7cb7eab4ed4516f003.1534130854.git.ryder.lee@mediatek.com>
-References: <68c4ca0158518d6bf50f2f7becfcb87ff3ce158a.1534130854.git.ryder.lee@mediatek.com>
-         <aba82b5c68c840a36b902e7cb7eab4ed4516f003.1534130854.git.ryder.lee@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 05:55:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55210 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726135AbeHOJzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 05:55:44 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7080D7A7E8;
+        Wed, 15 Aug 2018 07:04:46 +0000 (UTC)
+Received: from [10.72.12.27] (ovpn-12-27.pek2.redhat.com [10.72.12.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C1C11012331;
+        Wed, 15 Aug 2018 07:04:39 +0000 (UTC)
+Subject: Re: [RFC PATCH net-next V2 0/6] XDP rx handler
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     David Ahern <dsahern@gmail.com>,
+        Jesper Dangaard Brouer <jbrouer@redhat.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, mst@redhat.com,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+References: <1534130250-5302-1-git-send-email-jasowang@redhat.com>
+ <20180814003253.fkgl6lyklc7fclvq@ast-mbp>
+ <5de3d14f-f21a-c806-51f4-b5efd7d809b7@redhat.com>
+ <20180814121734.105769fa@redhat.com>
+ <03ab3b18-9b13-8169-7e68-ada307694bc1@redhat.com>
+ <08bf7aec-078a-612d-833f-5b3d09a289d0@gmail.com>
+ <aa9cf883-7822-70a7-5ab5-c873b69c2098@redhat.com>
+ <20180815053550.5g4f5qeb7r4wtgm5@ast-mbp>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <0809cbab-9c91-52f1-2abe-124a255d9304@redhat.com>
+Date:   Wed, 15 Aug 2018 15:04:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20180815053550.5g4f5qeb7r4wtgm5@ast-mbp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 15 Aug 2018 07:04:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 15 Aug 2018 07:04:46 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-15 at 13:18 +0800, Ryder Lee wrote:
-> Add a built-in bluetooth 5 support for MT7622.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> index b235df7..f8c3495 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> @@ -515,6 +515,13 @@
->  		reg-shift = <2>;
->  		reg-io-width = <4>;
->  		status = "disabled";
-> +
-> +		bluetooth {
-> +			compatible = "mediatek,mt7622-bluetooth";
-> +			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
-> +			clocks = <&clk25m>;
-> +			clock-names = "ref";
-> +		};
->  	};
->  
-
-Acked-by: Sean Wang <sean.wang@mediatek.com>
-
->  	nandc: nfi@1100d000 {
 
 
+On 2018年08月15日 13:35, Alexei Starovoitov wrote:
+> On Wed, Aug 15, 2018 at 08:29:45AM +0800, Jason Wang wrote:
+>> Looks less flexible since the topology is hard coded in the XDP program
+>> itself and this requires all logic to be implemented in the program on the
+>> root netdev.
+>>
+>>> I have L3 forwarding working for vlan devices and bonds. I had not
+>>> considered macvlans specifically yet, but it should be straightforward
+>>> to add.
+>>>
+>> Yes, and all these could be done through XDP rx handler as well, and it can
+>> do even more with rather simple logic:
+>>
+>> 1 macvlan has its own namespace, and want its own bpf logic.
+>> 2 Ruse the exist topology information for dealing with more complex setup
+>> like macvlan on top of bond and team. There's no need to bpf program to care
+>> about topology. If you look at the code, there's even no need to attach XDP
+>> on each stacked device. The calling of xdp_do_pass() can try to pass XDP
+>> buff to upper device even if there's no XDP program attached to current
+>> layer.
+>> 3 Deliver XDP buff to userspace through macvtap.
+> I think I'm getting what you're trying to achieve.
+> You actually don't want any bpf programs in there at all.
+> You want macvlan builtin logic to act on raw packet frames.
+
+The built-in logic is just used to find the destination macvlan device. 
+It could be done by through another bpf program. Instead of inventing 
+lots of generic infrastructure on kernel with specific userspace API, 
+built-in logic has its own advantages:
+
+- support hundreds or even thousands of macvlans
+- using exist tools to configure network
+- immunity to topology changes
+
+> It would have been less confusing if you said so from the beginning.
+
+The name "XDP rx handler" is probably not good. Something like "stacked 
+deivce XDP" might be better.
+
+> I think there is little value in such work, since something still
+> needs to process this raw frames eventually. If it's XDP with BPF progs
+> than they can maintain the speed, but in such case there is no need
+> for macvlan. The first layer can be normal xdp+bpf+xdp_redirect just fine.
+
+I'm a little bit confused. We allow per veth XDP program, so I believe 
+per macvlan XDP program makes sense as well? This allows great 
+flexibility and there's no need to care about topology in bpf program. 
+The configuration is also greatly simplified. The only difference is we 
+can use xdp_redirect for veth since it was pair device, we can transmit 
+XDP frames to one veth and do XDP on its peer. This does not work for 
+the case of macvlan which is based on rx handler.
+
+Actually, for the case of veth, if we implement XDP rx handler for 
+bridge it can works seamlessly with veth like.
+
+eth0(XDP_PASS) -> [bridge XDP rx handler and ndo_xdp_xmit()] -> veth --- 
+veth (XDP).
+
+Besides the usage for containers, we can implement macvtap RX handler 
+which allows a fast packet forwarding to userspace.
+
+> In case where there is no xdp+bpf in final processing, the frames are
+> converted to skb and performance is lost, so in such cases there is no
+> need for builtin macvlan acting on raw xdp frames either. Just keep
+> existing macvlan acting on skbs.
+>
+
+Yes, this is how veth works as well.
+
+Actually, the idea is not limited to macvlan but for all device that is 
+based on rx handler. Consider the case of bonding, this allows to set a 
+very simple XDP program on slaves and keep a single main logic XDP 
+program on the bond instead of duplicating it in all slaves.
+
+Thanks
