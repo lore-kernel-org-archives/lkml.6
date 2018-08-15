@@ -1,49 +1,48 @@
 Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257DCC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E7CC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D13208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F64B208DF
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R40kkhKJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D13208B1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0YgymQPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F64B208DF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbeHOSA6 (ORCPT
+        id S1730168AbeHOSCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:00:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50842 "EHLO mail.kernel.org"
+        Wed, 15 Aug 2018 14:02:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730492AbeHOSA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:00:58 -0400
+        id S1729348AbeHOSCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:02:11 -0400
 Received: from [192.168.1.25] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E99420C09;
-        Wed, 15 Aug 2018 15:08:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 045B72064A;
+        Wed, 15 Aug 2018 15:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534345705;
-        bh=87z3EyxDLAfToEQG3Hm9/7tG6pxrC5f5goCjVS1KOWQ=;
+        s=default; t=1534345777;
+        bh=Hrx2Bk9ja/fYncuP6p4kT3zydNvhITWFVds8IelkBHY=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=R40kkhKJgwduKU+/lyyoFxzn2K0ypajD4FrfwgxITfEt8Z9bv+Au0TeCGLGjp9Ec+
-         rOWMCZXxIh/taeW3U9Fz606O8kBpOLcqzfFD1K4FpiEJVZhB5M1rnvpO33W4uJtH8R
-         JLifCNOBibfhz2EAaIoZqrBXloirU+rEk2FzqiZA=
-Subject: Re: [PATCH] arm64: dts: stratix10: i2c clock running out of spec
-To:     Alan Tull <atull@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180808154241.3760-1-atull@kernel.org>
+        b=0YgymQPxfgnQvzbzTzT1XXXHGHxLXHSU+sZ6hpIvHQ0S1lY7xAyecScwGTHsxJKc/
+         vtcbG1zPpa25/sixrtqRTre0E2zP7w2hX6hsy8ZAOLHjcxHVD0sNPPz2gpz4xhfb07
+         V94f54g3A3q25q7H018snwiYTllr9wfg6QUXFrFs=
+Subject: Re: [PATCH] ARM: dts: socfpga: use stdout-path for chosen node
+To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Vasut <marex@denx.de>
+References: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
 From:   Dinh Nguyen <dinguyen@kernel.org>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
@@ -88,12 +87,12 @@ Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
  cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
  Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
  JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <dd109cc6-00a8-244b-07e9-97e29739d804@kernel.org>
-Date:   Wed, 15 Aug 2018 10:08:24 -0500
+Message-ID: <e209db3a-22af-ae6c-99b6-f79658530131@kernel.org>
+Date:   Wed, 15 Aug 2018 10:09:37 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180808154241.3760-1-atull@kernel.org>
+In-Reply-To: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -104,30 +103,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 08/08/2018 10:42 AM, Alan Tull wrote:
-> DesignWare I2C controller was observed running at 105.93kHz rather
-> than the specified 100kHz.  Adjust device tree settings to bring it
-> within spec (a slightly conservative 98 MHz).
+On 08/08/2018 04:09 AM, Simon Goldschmidt wrote:
+> Use stdout-path dts property for kernel console.
 > 
-> Signed-off-by: Alan Tull <atull@kernel.org>
+> There were two socfpga boards left not using stdout-path:
+> socrates and vining. Make sure they match the other boards.
+> 
+> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
 > ---
->  arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-> index 6edc4fa..53cf195 100644
-> --- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-> +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-> @@ -124,6 +124,8 @@
->  &i2c1 {
->  	status = "okay";
->  	clock-frequency = <100000>;
-> +	i2c-sda-falling-time-ns = <890>;  /* hcnt */
-> +	i2c-sdl-falling-time-ns = <890>;  /* lcnt */
->  
->  	adc@14 {
->  		compatible = "lltc,ltc2497";
-> 
+>  arch/arm/boot/dts/socfpga_cyclone5_socrates.dts    | 3 ++-
+>  arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 
 Applied!
 
