@@ -6,171 +6,137 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B680DC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EABFC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A56C2152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AB452150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:38:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UDOs+3pL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A56C2152C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NtByhl3W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB452150C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeHOW2a (ORCPT
+        id S1727765AbeHOWbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 18:28:30 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45033 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727571AbeHOW2a (ORCPT
+        Wed, 15 Aug 2018 18:31:42 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:44302 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727599AbeHOWbm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 18:28:30 -0400
-Received: by mail-io0-f196.google.com with SMTP id q19-v6so1911695ioh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:35:00 -0700 (PDT)
+        Wed, 15 Aug 2018 18:31:42 -0400
+Received: by mail-io0-f195.google.com with SMTP id q19-v6so1919299ioh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=BLKCDSV/k+zcxSthG9zvO5mepRDW16wcJUsDdqm8yr0=;
-        b=UDOs+3pLeafGSyuu48FZXNAi73MpUFwZc/QSfut9RhqgMW2024NqzTqqOKgydGH6fE
-         K/HOMMb9ZbGMcqV9ZvN5RSnnMf2feW3+iu1UYSMEchbrdjv5NfsYlGctPQTQW8DpQcDG
-         RFuSwWsIVjgQU+ue9hIbrc+pPyz04gxd1pUzM=
+        bh=Htx65ITGBM0ju1OtwFWNT6dMkh/cZwZWGC2azkJuC6k=;
+        b=NtByhl3WoDeU828HgdYFnz31OWVUjmTbIh/Pc1Tnf3HKgHqfx2BhpxpyzsZGvWU1tM
+         AgLy2XYq/zXCEwLscnZ27CltQ6pyWbtLrnqz2EwvjIT8D+Zm9RTg+Tu0CEOT1akG+lBL
+         OeZSpTcJfFQJFrAifLroLNZ2kM4OxagKOzFDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BLKCDSV/k+zcxSthG9zvO5mepRDW16wcJUsDdqm8yr0=;
-        b=F+0hPz3RoA0Iq/AxoHphPO8H0bM7TYxc5mBVyhkBxPaFsuCjDDGxnB5nKX/o1RAPP0
-         clgEjKgiuayepnBWtZUlxgczHNnfLcTiGrEO9s9oINJJzKRdGL3xR4h/RF3inTECxQfn
-         SPWDm1bASLTEidrPG7inwo3ia24GXHRdmfrD8Adypm12AaMODm/rCtV9iXzW+AF00NMt
-         +Fe6KBlLz4ISQcoj2H22TJsVYcX46BDSoiRupcEJDedZDbkTKlg0uAdSpMVpPv5SmDJW
-         ZBpUyfbpu0VwW9Ny8zjhbE3zw/f5UFiTbAOX/uOZv5eGvn0cvsUoTy1yAGfDyeKwTsB+
-         K8DA==
-X-Gm-Message-State: AOUpUlEx9y4bH9rHaeshaqumAOajW5IrT5MEPVc0RKhF/h+FHUWCwHVz
-        yHue4Q4lUmQRRgjKIBHFXhKP3g==
-X-Google-Smtp-Source: AA+uWPygXFOYLRsaxOwsFJkdPDchdnxeiE+d1pIzg5x+axUmnSaTWeTixIP5m0mzOXOayStmmXpj3A==
-X-Received: by 2002:a5e:8518:: with SMTP id i24-v6mr15850020ioj.301.1534361699841;
-        Wed, 15 Aug 2018 12:34:59 -0700 (PDT)
+        bh=Htx65ITGBM0ju1OtwFWNT6dMkh/cZwZWGC2azkJuC6k=;
+        b=NVWGfd1Gr/VYyL0XLhfYu2jjgt7cc2ZxFJkCAvdLkLzhYwe8Hx+jfVMDFvkDM1D0gk
+         ukCn5s4cMJgGU9gwLR8954aJs1MdJwd1TZGVlppDgJ1ktLNFbgvejF2Bf1Slx816KqUU
+         Vhnn27jFVjWzgUHGtvDsOVYN46V/qOv51jglyAkdPppxfvEXJDEhjaMGyEXr38pnzZPY
+         yfShWPwlvIjTecaRiJa5Ifcxug9wQGhfZjzBBjPOUjuEy50E6V79QgV/g6fwxQQK/iwY
+         mB56W8Xcg8gQYeJc/RteFId226biowSr9FwUOXusdo4IHG67Xe12zF1GfDYFWO6Mi8to
+         GvwA==
+X-Gm-Message-State: AOUpUlGfqe2sYr1E/8d4ZtoSiHhrRpP/O6DJY6PAxsfCbAYuYouis+0/
+        3jfLS+QsF4/4BGHdQgww3WTk8w==
+X-Google-Smtp-Source: AA+uWPy1Kjcx2F6mSvb1bKcUWGkG3O0oEwwAMTu3UVpBBy6wm+ApGznrHR9njyQZX5MTzH2PATHaQw==
+X-Received: by 2002:a6b:1fd1:: with SMTP id f200-v6mr16518697iof.227.1534361891267;
+        Wed, 15 Aug 2018 12:38:11 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id v82-v6sm9773629iod.14.2018.08.15.12.34.58
+        by smtp.gmail.com with ESMTPSA id h13-v6sm3602606iom.1.2018.08.15.12.38.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 12:34:58 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 13:34:56 -0600
+        Wed, 15 Aug 2018 12:38:10 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 13:38:07 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         robert.walker@arm.com, mike.leach@arm.com
-Subject: Re: [PATCH 05/13] coresight: etm3: Add support for handling errors
-Message-ID: <20180815193456.GA17954@xps15>
+Subject: Re: [PATCH 06/13] coresight: etb10: Handle errors enabling the device
+Message-ID: <20180815193807.GB17954@xps15>
 References: <1533562915-21558-1-git-send-email-suzuki.poulose@arm.com>
- <1533562915-21558-6-git-send-email-suzuki.poulose@arm.com>
+ <1533562915-21558-7-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533562915-21558-6-git-send-email-suzuki.poulose@arm.com>
+In-Reply-To: <1533562915-21558-7-git-send-email-suzuki.poulose@arm.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 02:41:47PM +0100, Suzuki K Poulose wrote:
-> Add support for reporting errors back from the SMP cross
-> function call for enabling ETM.
+On Mon, Aug 06, 2018 at 02:41:48PM +0100, Suzuki K Poulose wrote:
+> Prepare the etb10 driver to return errors in enabling
+> the device.
 > 
 > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 > ---
->  drivers/hwtracing/coresight/coresight-etm3x.c | 42 ++++++++++++++++++---------
->  1 file changed, 28 insertions(+), 14 deletions(-)
+>  drivers/hwtracing/coresight/coresight-etb10.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
-> index 9ce8fba..771691c 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x.c
-> @@ -355,11 +355,10 @@ static int etm_parse_event_config(struct etm_drvdata *drvdata,
->  	return 0;
+> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+> index 9fd77fd..37d2c88 100644
+> --- a/drivers/hwtracing/coresight/coresight-etb10.c
+> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
+> @@ -107,7 +107,7 @@ static unsigned int etb_get_buffer_depth(struct etb_drvdata *drvdata)
+>  	return depth;
 >  }
 >  
-> -static void etm_enable_hw(void *info)
-> +static int etm_enable_hw(struct etm_drvdata *drvdata)
+> -static void etb_enable_hw(struct etb_drvdata *drvdata)
+> +static void __etb_enable_hw(struct etb_drvdata *drvdata)
 >  {
 >  	int i;
->  	u32 etmcr;
-> -	struct etm_drvdata *drvdata = info;
->  	struct etm_config *config = &drvdata->config;
->  
->  	CS_UNLOCK(drvdata->base);
-> @@ -421,6 +420,21 @@ static void etm_enable_hw(void *info)
+>  	u32 depth;
+> @@ -135,6 +135,12 @@ static void etb_enable_hw(struct etb_drvdata *drvdata)
 >  	CS_LOCK(drvdata->base);
+>  }
 >  
->  	dev_dbg(drvdata->dev, "cpu: %d enable smp call done\n", drvdata->cpu);
+> +static int etb_enable_hw(struct etb_drvdata *drvdata)
+> +{
+> +	__etb_enable_hw(drvdata);
 > +	return 0;
 > +}
 > +
-> +struct etm_enable_arg {
-> +	struct etm_drvdata *drvdata;
-> +	int rc;
-> +}
-
-This doesn't compile a ';' is missing.
-
-> +
-> +static void etm_enable_hw_smp_call(void *info)
-> +{
-> +	struct etm_enable_arg *arg = info;
-> +
-> +	if (WARN_ON(!arg))
-> +		return;
-> +	arg->rc = etm_enable_hw(arg->drvdata);
->  }
->  
->  static int etm_cpu_id(struct coresight_device *csdev)
-> @@ -475,14 +489,13 @@ static int etm_enable_perf(struct coresight_device *csdev,
->  	/* Configure the tracer based on the session's specifics */
->  	etm_parse_event_config(drvdata, event);
->  	/* And enable it */
-> -	etm_enable_hw(drvdata);
-> -
-> -	return 0;
-> +	return etm_enable_hw(drvdata);
->  }
->  
->  static int etm_enable_sysfs(struct coresight_device *csdev)
+>  static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
 >  {
->  	struct etm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +	struct etm_enable_arg arg = { 0 };
->  	int ret;
->  
->  	spin_lock(&drvdata->spinlock);
-> @@ -492,20 +505,21 @@ static int etm_enable_sysfs(struct coresight_device *csdev)
->  	 * hw configuration will take place on the local CPU during bring up.
->  	 */
->  	if (cpu_online(drvdata->cpu)) {
-> +		arg.drvdata = drvdata;
->  		ret = smp_call_function_single(drvdata->cpu,
-> -					       etm_enable_hw, drvdata, 1);
-> -		if (ret)
-> -			goto err;
-> +					       etm_enable_hw_smp_call, &arg, 1);
-> +		if (!ret)
-> +			ret = arg.rc;
-> +		if (!ret)
-> +			drvdata->sticky_enable = true;
-> +	} else {
-> +		ret = -ENODEV;
+>  	int ret = 0;
+> @@ -150,7 +156,7 @@ static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
+>  	if (mode == CS_MODE_PERF) {
+>  		ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
+>  		if (ret)
+> -			goto out;
+> +			return ret;
 >  	}
 >  
-> -	drvdata->sticky_enable = true;
->  	spin_unlock(&drvdata->spinlock);
+>  	val = local_cmpxchg(&drvdata->mode,
+> @@ -172,12 +178,14 @@ static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
+>  		goto out;
+
+Leaving this here doesn't compile when 'out' is removed below.
+
 >  
-> -	dev_dbg(drvdata->dev, "ETM tracing enabled\n");
-> -	return 0;
-> -
-> -err:
-> -	spin_unlock(&drvdata->spinlock);
-> +	if (!ret)
-> +		dev_dbg(drvdata->dev, "ETM tracing enabled\n");
+>  	spin_lock_irqsave(&drvdata->spinlock, flags);
+> -	etb_enable_hw(drvdata);
+> +	ret = etb_enable_hw(drvdata);
+>  	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>  
+> -out:
+> -	if (!ret)
+> +	if (ret)
+> +		local_cmpxchg(&drvdata->mode, mode, CS_MODE_DISABLED);
+> +	else
+>  		dev_dbg(drvdata->dev, "ETB enabled\n");
+> +
 >  	return ret;
 >  }
 >  
