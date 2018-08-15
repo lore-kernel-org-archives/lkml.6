@@ -2,105 +2,85 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F812C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A96C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C163215F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B4662154F
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:28:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShUcL+or"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C163215F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="U5Gp1aGh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4662154F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbeHORLm (ORCPT
+        id S1729384AbeHORU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 13:11:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728957AbeHORLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 13:11:42 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93B2D215B2;
-        Wed, 15 Aug 2018 14:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534342761;
-        bh=5EG1NaIeQ2ThZWf5QNeGF/GEBvTXE3nWH+qUaatrQf0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ShUcL+or8zjobSU0URucAPa4Sg/OnZRSo8mFPnirNfOQWrNjivA84pZ8OsfsyHvQ3
-         rLFo9jB9GPKb2a3CWd+ke/dxytKoi3ZrjrtRbATEIJujBsjljBNZT27wn/v30kIj32
-         6NP/CFqHSzClj1xsYvxdejYI9eCuucbYNGnnLVyo=
-Message-ID: <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
-Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock
- request to block other requests."
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>, NeilBrown <neilb@suse.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Date:   Wed, 15 Aug 2018 10:19:18 -0400
-In-Reply-To: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
-References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 13:20:26 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33736 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728957AbeHORU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 13:20:26 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s12-v6so1114933ljj.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 07:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=RpYCJOJBuPI6VUTj/r96n9THMA6NhemNuRpkTH24LUY=;
+        b=U5Gp1aGhaKjQ+CTim4xRmXYXcZjDOLgXy6K+aEYmDqV7SPposBwwgpT2tplb0tVu5R
+         S70B05GCTQaiJPcISPqzegKzBn635t7PXKMdDEzbQn+8yJ8KxI0hVFSl5BehtE9Eg4bc
+         Y6wQ77Egt9S7fKvk9pb5JKlCOqZbcTCWleGrA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RpYCJOJBuPI6VUTj/r96n9THMA6NhemNuRpkTH24LUY=;
+        b=krn78VRRGrZENDcpA6jIbKg2AR1YJEBVTHiotN5KYMkd85FHB032BzWyQK2Xn6MPfj
+         K28mmEKCchMc6HHJ6zsK5Y+kCCHo0Hyh3PQK3h1YcxEnf9mgYS1fmUBSlgK8RVW4K4Mm
+         1EAxwbjTo8f9om8YcT+V7LxNdXe2tFBsCl9pQ9KXXjiJTLxPPXAOHnY9upXw9Jtxi5s0
+         i3I17w/OZcX0zzJAljTNJUrQtVS7SKX93frRweTwyv2uJyCOtagD58sEXJGz5xpZNIS/
+         m04sapXiYeAnwGTO+nIe2/Kt9L6US3CoGFdBjHeTTSl7gBXuIeh6IT8BvM+iP2yTElZh
+         sZdQ==
+X-Gm-Message-State: AOUpUlG3osrLCcWzaYb4nKjfHi6ACu8IG1RWm5/VTDXqxcW3+tLM/uuF
+        J02bWZKWlFRPsYnKK+GMm5IEUg==
+X-Google-Smtp-Source: AA+uWPxdL9lQUPCEjbT7XqDhLQvEDyuvtxR929DJoXE5PrrW4gn11Kw5bGAzkMInP+R8vFSaTWu0fQ==
+X-Received: by 2002:a2e:1609:: with SMTP id w9-v6mr8672558ljd.120.1534343282158;
+        Wed, 15 Aug 2018 07:28:02 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm4559597lfi.36.2018.08.15.07.28.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 15 Aug 2018 07:28:01 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 0/3] Kbuild: Some fixdep tweaks
+Date:   Wed, 15 Aug 2018 16:27:46 +0200
+Message-Id: <20180815142749.18804-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
-> ("fs/locks: allow a lock request to block other requests.") to failure
-> boot of NFSv4 with root on several boards.
-> 
-> Log is here:
-> https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
-> 
-> With several errors:
-> kernel BUG at ../fs/locks.c:336!
-> Unable to handle kernel NULL pointer dereference at virtual address 00000004
-> 
-> Configuration:
-> 1. exynos_defconfig
-> 2. Arch ARM Linux
-> 3. Boards:
-> a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
-> b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
-> 4. Systemd: v236, 238
-> 5. All boards boot from TFTP with NFS root (NFSv4)
-> 
-> On Colibri VF50 I got slightly different errors:
-> [   11.663204] Internal error: Oops - undefined instruction: 0 [#1] ARM
-> [   12.455273] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000004
-> and only with some specific GCC (v6.3) or with other conditions which
-> I did not bisect yet. Maybe Colibri's failure is unrelated to that
-> commit.
-> 
-> Best regards,
-> Krzysztof
+These patches eliminate two (albeit tiny and shortlived) processes
+from the cmd_and_fixdep rule, i.e. from every TU being
+compiled. Whether the diffstat below is worth it I'll leave to Kbuild
+maintainers to decide.
 
-The BUG is due to a lock being freed when the fl_blocked list wasn't
-empty (implying that there were still blocked locks waiting on it).
+Rasmus Villemoes (3):
+  Kbuild: refactor fixdep to use getopt()
+  Kbuild: teach fixdep to optionally remove the depfile
+  Kbuild: let fixdep do the renaming to .cmd
 
-There are a number of calls to locks_delete_lock_ctx in posix_lock_inode
-and I don't think the fl_blocked list is being handled properly with all
-of them. It only transplants the blocked locks to a new lock when there
-are surviving locks on the list, and that may not be the case when the
-whole file is being unlocked.
+ scripts/Kbuild.include | 11 ++++------
+ scripts/basic/fixdep.c | 56 ++++++++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 52 insertions(+), 15 deletions(-)
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.16.4
 
