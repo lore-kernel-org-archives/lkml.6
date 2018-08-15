@@ -3,576 +3,357 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F96C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEBEC46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6295E216F6
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:46:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6295E216F6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B9B0E216F6
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B0E216F6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbeHOEgZ (ORCPT
+        id S1728453AbeHOEgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 00:36:25 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:42393 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725831AbeHOEgZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 00:36:25 -0400
-X-UUID: 533edd484233477e924f866980fe2d9c-20180815
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <houlong.wei@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1683531059; Wed, 15 Aug 2018 09:46:13 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 15 Aug
- 2018 09:46:11 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 15 Aug 2018 09:46:10 +0800
-Message-ID: <1534297570.21668.3.camel@mhfsdcap03>
-Subject: Re: [PATCH v23 4/4] soc: mediatek: Add Mediatek CMDQ helper
-From:   houlong wei <houlong.wei@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        CK Hu =?UTF-8?Q?=28=E8=83=A1=E4=BF=8A=E5=85=89=29?= 
-        <ck.hu@mediatek.com>,
-        "Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?=" 
-        <Bibby.Hsieh@mediatek.com>,
-        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
-        <Yt.Shen@mediatek.com>,
-        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
-        <Daoyuan.Huang@mediatek.com>,
-        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
-        <monica.wang@mediatek.com>,
-        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
-        <Hs.Liao@mediatek.com>,
-        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
-        <ginny.chen@mediatek.com>,
-        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
-        <enzhu.wang@mediatek.com>, <houlong.wei@mediatek.com>
-Date:   Wed, 15 Aug 2018 09:46:10 +0800
-In-Reply-To: <1532482002-11164-5-git-send-email-houlong.wei@mediatek.com>
-References: <1532482002-11164-1-git-send-email-houlong.wei@mediatek.com>
-         <1532482002-11164-5-git-send-email-houlong.wei@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 00:36:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49798 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725831AbeHOEge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 00:36:34 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BD6905DD8E3A9;
+        Wed, 15 Aug 2018 09:46:35 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
+ 09:46:36 +0800
+Subject: Re: [PATCH 2/2] f2fs: tune discard speed with storage usage rate
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180810100806.9298-1-yuchao0@huawei.com>
+ <20180810100806.9298-2-yuchao0@huawei.com>
+ <20180814041906.GC52730@jaegeuk-macbookpro.roam.corp.google.com>
+ <57d9b6ea-68a5-4736-0b34-74db539d8959@huawei.com>
+ <20180814172313.GC56510@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <cf3e27a2-de20-13e7-eb5e-f0ad2781cf0f@huawei.com>
+Date:   Wed, 15 Aug 2018 09:46:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20180814172313.GC56510@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-25 at 09:26 +0800, Houlong Wei wrote:
-> Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
+On 2018/8/15 1:23, Jaegeuk Kim wrote:
+> On 08/14, Chao Yu wrote:
+>> On 2018/8/14 12:19, Jaegeuk Kim wrote:
+>>> On 08/10, Chao Yu wrote:
+>>>> Previously, discard speed was fixed mostly, and in high usage rate
+>>>> device, we will speed up issuing discard, but it doesn't make sense
+>>>> that in a non-full filesystem, we still issue discard with slow speed.
+>>>
+>>> Could you please elaborate the problem in more detail? The speed depends
+>>> on how many candidates?
+>>
+>> undiscard blocks are all 4k granularity.
+>> a) utility: filesystem: 20% + undiscard blocks: 20% = flash storage: 40%
+>> b) utility: filesystem: 40% + undiscard blocks: 25% = flash storage: 65%
+>> c) utility: filesystem: 60% + undiscard blocks: 30% = flash storage: 100%
+>>
+>>
+>> 1. for case c), we need to speed up issuing discard based on utilization of
+>> "filesystem + undiscard" instead of just utilization of filesystem.
+>>
+>> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+>> -			dpolicy->granularity = 1;
+>> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>> -		}
+>>
+>> 2. If free space in storage touches therein threshold, performance will be very
+>> sensitive. In low-end storage, with high usage in space, even free space is
+>> reduced by 1%, performance will decrease a lot.
 > 
-> Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> Signed-off-by: HS Liao <hs.liao@mediatek.com>
-> ---
->  drivers/soc/mediatek/Kconfig           |   12 ++
->  drivers/soc/mediatek/Makefile          |    1 +
->  drivers/soc/mediatek/mtk-cmdq-helper.c |  291 ++++++++++++++++++++++++++++++++
->  include/linux/soc/mediatek/mtk-cmdq.h  |  135 +++++++++++++++
->  4 files changed, 439 insertions(+)
->  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
->  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
-> 
-> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-> index a7d0667..17bd759 100644
-> --- a/drivers/soc/mediatek/Kconfig
-> +++ b/drivers/soc/mediatek/Kconfig
-> @@ -4,6 +4,18 @@
->  menu "MediaTek SoC drivers"
->  	depends on ARCH_MEDIATEK || COMPILE_TEST
->  
-> +config MTK_CMDQ
-> +	tristate "MediaTek CMDQ Support"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	select MAILBOX
-> +	select MTK_CMDQ_MBOX
-> +	select MTK_INFRACFG
-> +	help
-> +	  Say yes here to add support for the MediaTek Command Queue (CMDQ)
-> +	  driver. The CMDQ is used to help read/write registers with critical
-> +	  time limitation, such as updating display configuration during the
-> +	  vblank.
-> +
->  config MTK_INFRACFG
->  	bool "MediaTek INFRACFG Support"
->  	select REGMAP
-> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-> index 12998b0..64ce5ee 100644
-> --- a/drivers/soc/mediatek/Makefile
-> +++ b/drivers/soc/mediatek/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
->  obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
->  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
->  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
-> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> new file mode 100644
-> index 0000000..e4dbb7e
-> --- /dev/null
-> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> @@ -0,0 +1,291 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (c) 2018 MediaTek Inc.
-> +
-> +#include <linux/completion.h>
-> +#include <linux/errno.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/mailbox_controller.h>
-> +#include <linux/soc/mediatek/mtk-cmdq.h>
-> +
-> +#define CMDQ_ARG_A_WRITE_MASK	0xffff
-> +#define CMDQ_WRITE_ENABLE_MASK	BIT(0)
-> +#define CMDQ_EOC_IRQ_EN		BIT(0)
-> +#define CMDQ_EOC_CMD		((u64)((CMDQ_CODE_EOC << CMDQ_OP_CODE_SHIFT)) \
-> +				<< 32 | CMDQ_EOC_IRQ_EN)
-> +
-> +static void cmdq_client_timeout(struct timer_list *t)
-> +{
-> +	struct cmdq_client *client = from_timer(client, t, timer);
-> +
-> +	dev_err(client->client.dev, "cmdq timeout!\n");
-> +}
-> +
-> +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index, u32 timeout)
-> +{
-> +	struct cmdq_client *client;
-> +
-> +	client = kzalloc(sizeof(*client), GFP_KERNEL);
-> +	if (!client)
-> +		return (struct cmdq_client *)-ENOMEM;
-> +
-> +	client->timeout_ms = timeout;
-> +	if (timeout != CMDQ_NO_TIMEOUT) {
-> +		spin_lock_init(&client->lock);
-> +		timer_setup(&client->timer, cmdq_client_timeout, 0);
-> +	}
-> +	client->pkt_cnt = 0;
-> +	client->client.dev = dev;
-> +	client->client.tx_block = false;
-> +	client->chan = mbox_request_channel(&client->client, index);
-> +
-> +	if (IS_ERR(client->chan)) {
-> +		long err = 0;
-> +
-> +		dev_err(dev, "failed to request channel\n");
-> +		err = PTR_ERR(client->chan);
-> +		kfree(client);
-> +
-> +		return (struct cmdq_client *)err;
-> +	}
-> +
-> +	return client;
-> +}
-> +EXPORT_SYMBOL(cmdq_mbox_create);
-> +
-> +void cmdq_mbox_destroy(struct cmdq_client *client)
-> +{
-> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
-> +		spin_lock(&client->lock);
-> +		del_timer_sync(&client->timer);
-> +		spin_unlock(&client->lock);
-> +	}
-> +	mbox_free_channel(client->chan);
-> +	kfree(client);
-> +}
-> +EXPORT_SYMBOL(cmdq_mbox_destroy);
-> +
-> +int cmdq_pkt_create(struct cmdq_client *client, struct cmdq_pkt **pkt_ptr,
-> +		    size_t size)
-> +{
-> +	struct cmdq_pkt *pkt;
-> +	struct device *dev;
-> +	dma_addr_t dma_addr;
-> +
-> +	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
-> +	if (!pkt)
-> +		return -ENOMEM;
-> +	pkt->va_base = kzalloc(size, GFP_KERNEL);
-> +	if (!pkt->va_base) {
-> +		kfree(pkt);
-> +		return -ENOMEM;
-> +	}
-> +	pkt->buf_size = size;
-> +	pkt->cl = (void *)client;
-> +
-> +	dev = client->chan->mbox->dev;
-> +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->buf_size,
-> +		DMA_TO_DEVICE);
-> +	if (dma_mapping_error(dev, dma_addr)) {
-> +		dev_err(dev, "dma map failed, size=%u\n", (u32)(u64)size);
-> +		kfree(pkt->va_base);
-> +		kfree(pkt);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	pkt->pa_base = dma_addr;
-> +	*pkt_ptr = pkt;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_create);
-> +
-> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt)
-> +{
-> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
-> +
-> +	dma_unmap_single(client->chan->mbox->dev, pkt->pa_base, pkt->buf_size,
-> +			 DMA_TO_DEVICE);
-> +	kfree(pkt->va_base);
-> +	kfree(pkt);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_destroy);
-> +
-> +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
-> +				   u32 arg_a, u32 arg_b)
-> +{
-> +	u64 *cmd_ptr;
-> +
-> +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
-> +		pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> +		return -ENOMEM;
-> +	}
-> +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
-> +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
-> +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> +
-> +	return 0;
-> +}
-> +
-> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset)
-> +{
-> +	u32 arg_a = (offset & CMDQ_ARG_A_WRITE_MASK) |
-> +		    (subsys << CMDQ_SUBSYS_SHIFT);
-> +
-> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WRITE, arg_a, value);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_write);
-> +
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> +			u32 subsys, u32 offset, u32 mask)
-> +{
-> +	u32 offset_mask = offset;
-> +	int err;
-> +
-> +	if (mask != 0xffffffff) {
-> +		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
-> +		WARN_ON(err < 0);
-> +		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
-> +	}
-> +
-> +	return cmdq_pkt_write(pkt, value, subsys, offset_mask);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_write_mask);
-> +
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
-> +{
-> +	u32 arg_b;
-> +
-> +	if (event >= CMDQ_MAX_EVENT)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * WFE arg_b
-> +	 * bit 0-11: wait value
-> +	 * bit 15: 1 - wait, 0 - no wait
-> +	 * bit 16-27: update value
-> +	 * bit 31: 1 - update, 0 - no update
-> +	 */
-> +	arg_b = CMDQ_WFE_UPDATE | CMDQ_WFE_WAIT | CMDQ_WFE_WAIT_VALUE;
-> +
-> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE, event, arg_b);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_wfe);
-> +
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event)
-> +{
-> +	if (event >= CMDQ_MAX_EVENT)
-> +		return -EINVAL;
-> +
-> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE, event,
-> +				       CMDQ_WFE_UPDATE);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_clear_event);
-> +
-> +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
-> +{
-> +	int err;
-> +
-> +	/* insert EOC and generate IRQ for each command iteration */
-> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
-> +	WARN_ON(err < 0);
-> +
-> +	/* JUMP to end */
-> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
-> +	WARN_ON(err < 0);
-> +
-> +	return err;
-> +}
-> +
-> +static void cmdq_pkt_flush_async_cb(struct cmdq_cb_data data)
-> +{
-> +	struct cmdq_pkt *pkt = (struct cmdq_pkt *)data.data;
-> +	struct cmdq_task_cb *cb = &pkt->cb;
-> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
-> +
-> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
-> +		unsigned long flags = 0;
-> +
-> +		spin_lock_irqsave(&client->lock, flags);
-> +		if (--client->pkt_cnt == 0)
-> +			del_timer(&client->timer);
-> +		else
-> +			mod_timer(&client->timer, jiffies +
-> +				  msecs_to_jiffies(client->timeout_ms));
-> +		spin_unlock_irqrestore(&client->lock, flags);
-> +	}
-> +
-> +	dma_sync_single_for_cpu(client->chan->mbox->dev, pkt->pa_base,
-> +				pkt->cmd_buf_size, DMA_TO_DEVICE);
-> +	if (cb->cb) {
-> +		data.data = cb->data;
-> +		cb->cb(data);
-> +	}
-> +}
-> +
-> +int cmdq_pkt_flush_async(struct cmdq_pkt *pkt, cmdq_async_flush_cb cb,
-> +			 void *data)
-> +{
-> +	int err;
-> +	unsigned long flags = 0;
-> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
-> +
-> +	err = cmdq_pkt_finalize(pkt);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	pkt->cb.cb = cb;
-> +	pkt->cb.data = data;
-> +	pkt->async_cb.cb = cmdq_pkt_flush_async_cb;
-> +	pkt->async_cb.data = pkt;
-> +
-> +	dma_sync_single_for_device(client->chan->mbox->dev, pkt->pa_base,
-> +				   pkt->cmd_buf_size, DMA_TO_DEVICE);
-> +
-> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
-> +		spin_lock_irqsave(&client->lock, flags);
-> +		if (client->pkt_cnt++ == 0)
-> +			mod_timer(&client->timer, jiffies +
-> +				  msecs_to_jiffies(client->timeout_ms));
-> +		spin_unlock_irqrestore(&client->lock, flags);
-> +	}
-> +
-> +	mbox_send_message(client->chan, pkt);
-> +	/* We can send next packet immediately, so just call txdone. */
-> +	mbox_client_txdone(client->chan, 0);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_flush_async);
-> +
-> +struct cmdq_flush_completion {
-> +	struct completion cmplt;
-> +	bool err;
-> +};
-> +
-> +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
-> +{
-> +	struct cmdq_flush_completion *cmplt;
-> +
-> +	cmplt = (struct cmdq_flush_completion *)data.data;
-> +	if (data.sta != CMDQ_CB_NORMAL)
-> +		cmplt->err = true;
-> +	else
-> +		cmplt->err = false;
-> +	complete(&cmplt->cmplt);
-> +}
-> +
-> +int cmdq_pkt_flush(struct cmdq_pkt *pkt)
-> +{
-> +	struct cmdq_flush_completion cmplt;
-> +	int err;
-> +
-> +	init_completion(&cmplt.cmplt);
-> +	err = cmdq_pkt_flush_async(pkt, cmdq_pkt_flush_cb, &cmplt);
-> +	if (err < 0)
-> +		return err;
-> +	wait_for_completion(&cmplt.cmplt);
-> +
-> +	return cmplt.err ? -EFAULT : 0;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_flush);
-> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-> new file mode 100644
-> index 0000000..fc84fe4
-> --- /dev/null
-> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-> @@ -0,0 +1,135 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + *
-> + */
-> +
-> +#ifndef __MTK_CMDQ_H__
-> +#define __MTK_CMDQ_H__
-> +
-> +#include <linux/mailbox_client.h>
-> +#include <linux/mailbox/mtk-cmdq-mailbox.h>
-> +#include <linux/timer.h>
-> +
-> +#define CMDQ_NO_TIMEOUT		0xffffffffu
-> +
-> +/** cmdq event maximum */
-> +#define CMDQ_MAX_EVENT				0x3ff
-> +
-> +struct cmdq_pkt;
-> +
-> +struct cmdq_client {
-> +	spinlock_t lock;
-> +	u32 pkt_cnt;
-> +	struct mbox_client client;
-> +	struct mbox_chan *chan;
-> +	struct timer_list timer;
-> +	u32 timeout_ms; /* in unit of microsecond */
-> +};
-> +
-> +/**
-> + * cmdq_mbox_create() - create CMDQ mailbox client and channel
-> + * @dev:	device of CMDQ mailbox client
-> + * @index:	index of CMDQ mailbox channel
-> + * @timeout:	timeout of a pkt execution by GCE, in unit of microsecond, set
-> + *		CMDQ_NO_TIMEOUT if a timer is not used.
-> + *
-> + * Return: CMDQ mailbox client pointer
-> + */
-> +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index,
-> +				     u32 timeout);
-> +
-> +/**
-> + * cmdq_mbox_destroy() - destroy CMDQ mailbox client and channel
-> + * @client:	the CMDQ mailbox client
-> + */
-> +void cmdq_mbox_destroy(struct cmdq_client *client);
-> +
-> +/**
-> + * cmdq_pkt_create() - create a CMDQ packet
-> + * @client:	the CMDQ mailbox client
-> + * @pkt_ptr:	CMDQ packet pointer to retrieve cmdq_pkt
-> + * @size:	CMDQ buffer size
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_create(struct cmdq_client *client, struct cmdq_pkt **pkt_ptr,
-> +		    size_t size);
-> +
-> +/**
-> + * cmdq_pkt_destroy() - destroy the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + */
-> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
-> +
-> +/**
-> + * cmdq_pkt_write() - append write command to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @value:	the specified target register value
-> + * @subsys:	the CMDQ sub system code
-> + * @offset:	register offset from CMDQ sub system
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset);
-> +
-> +/**
-> + * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @value:	the specified target register value
-> + * @subsys:	the CMDQ sub system code
-> + * @offset:	register offset from CMDQ sub system
-> + * @mask:	the specified target register mask
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> +			u32 subsys, u32 offset, u32 mask);
-> +
-> +/**
-> + * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @event:	the desired event type to "wait and CLEAR"
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
-> +
-> +/**
-> + * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @event:	the desired event to be cleared
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event);
-> +
-> +/**
-> + * cmdq_pkt_flush() - trigger CMDQ to execute the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + *
-> + * Trigger CMDQ to execute the CMDQ packet. Note that this is a
-> + * synchronous flush function. When the function returned, the recorded
-> + * commands have been done.
-> + */
-> +int cmdq_pkt_flush(struct cmdq_pkt *pkt);
-> +
-> +/**
-> + * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
-> + *                          packet and call back at the end of done packet
-> + * @pkt:	the CMDQ packet
-> + * @cb:		called at the end of done packet
-> + * @data:	this data will pass back to cb
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + *
-> + * Trigger CMDQ to asynchronously execute the CMDQ packet and call back
-> + * at the end of done packet. Note that this is an ASYNC function. When the
-> + * function returned, it may or may not be finished.
-> + */
-> +int cmdq_pkt_flush_async(struct cmdq_pkt *pkt, cmdq_async_flush_cb cb,
-> +			 void *data);
-> +
-> +#endif	/* __MTK_CMDQ_H__ */
+> So, we may need to distinguish low-end vs. high-end storage. In high-end case,
+> it'd be better to avoid IO contention, while low-end device wants to get more
+> discard commands as much as possible. So, how about adding an option for this
+> as a tunable point?
 
-Hello Matthias,
-  Could you please review this path when you are available? Thanks a
-lot.
+Agreed, how about adding a sysfs entry discard_tunning:
+1: enabled, use 4k granularity, self-adapted speed based on real device free space.
+0: disabled, use dcc->discard_granularity, fixed speed.
+
+By default: enabled
+
+How do you think?
+
+Thanks,
+
+> 
+>>
+>> IMO, in above cases, we'd better to issue discard with high speed for c), middle
+>> speed for b), and low speed for a).
+>>
+>> How do you think?
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Anyway, it comes out undiscarded block makes FTL GC be lower efficient
+>>>> and causing high lifetime overhead.
+>>>>
+>>>> Let's tune discard speed as below:
+>>>>
+>>>> a. adjust default issue interval:
+>>>> 		original	after
+>>>> min_interval:	50ms		100ms
+>>>> mid_interval:	500ms		1000ms
+>>>> max_interval:	60000ms		10000ms
+>>>>
+>>>> b. if last time we stop issuing discard due to IO interruption of user,
+>>>> let's reset all {min,mid,max}_interval to default one.
+>>>>
+>>>> c. tune {min,mid,max}_interval with below calculation method:
+>>>>
+>>>> base_interval = default_interval / 10;
+>>>> total_interval = default_interval - base_interval;
+>>>> interval = base_interval + total_interval * (100 - dev_util) / 100;
+>>>>
+>>>> For example:
+>>>> min_interval (:100ms)
+>>>> dev_util (%)	interval (ms)
+>>>> 0		100
+>>>> 10		91
+>>>> 20		82
+>>>> 30		73
+>>>> ...
+>>>> 80		28
+>>>> 90		19
+>>>> 100		10
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/f2fs.h    | 11 ++++----
+>>>>  fs/f2fs/segment.c | 64 +++++++++++++++++++++++++++++++++++++----------
+>>>>  fs/f2fs/segment.h |  9 +++++++
+>>>>  fs/f2fs/super.c   |  2 +-
+>>>>  4 files changed, 67 insertions(+), 19 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>> index 273ffdaf4891..a1dd2e1c3cb9 100644
+>>>> --- a/fs/f2fs/f2fs.h
+>>>> +++ b/fs/f2fs/f2fs.h
+>>>> @@ -185,10 +185,9 @@ enum {
+>>>>  
+>>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+>>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+>>>> -#define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+>>>> -#define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+>>>> -#define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+>>>> -#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
+>>>> +#define DEF_MIN_DISCARD_ISSUE_TIME	100	/* 100 ms, if exists */
+>>>> +#define DEF_MID_DISCARD_ISSUE_TIME	1000	/* 1000 ms, if device busy */
+>>>> +#define DEF_MAX_DISCARD_ISSUE_TIME	10000	/* 10000 ms, if no candidates */
+>>>>  #define DEF_CP_INTERVAL			60	/* 60 secs */
+>>>>  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+>>>>  
+>>>> @@ -248,7 +247,8 @@ struct discard_entry {
+>>>>  };
+>>>>  
+>>>>  /* default discard granularity of inner discard thread, unit: block count */
+>>>> -#define DEFAULT_DISCARD_GRANULARITY		1
+>>>> +#define MID_DISCARD_GRANULARITY			16
+>>>> +#define MIN_DISCARD_GRANULARITY			1
+>>>>  
+>>>>  /* max discard pend list number */
+>>>>  #define MAX_PLIST_NUM		512
+>>>> @@ -330,6 +330,7 @@ struct discard_cmd_control {
+>>>>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
+>>>>  	struct rb_root root;			/* root of discard rb-tree */
+>>>>  	bool rbtree_check;			/* config for consistence check */
+>>>> +	bool io_interrupted;			/* last state of io interrupted */
+>>>>  };
+>>>>  
+>>>>  /* for the list of fsync inodes, used only during recovery */
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 8b52e8dfb12f..9564aaf1f27b 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+>>>>  #endif
+>>>>  }
+>>>>  
+>>>> +static void __adjust_discard_speed(unsigned int *interval,
+>>>> +				unsigned int def_interval, int dev_util)
+>>>> +{
+>>>> +	unsigned int base_interval, total_interval;
+>>>> +
+>>>> +	base_interval = def_interval / 10;
+>>>> +	total_interval = def_interval - base_interval;
+>>>> +
+>>>> +	/*
+>>>> +	 * if def_interval = 100, adjusted interval should be in range of
+>>>> +	 * [10, 100].
+>>>> +	 */
+>>>> +	*interval = base_interval + total_interval * (100 - dev_util) / 100;
+>>>> +}
+>>>> +
+>>>> +static void __tune_discard_policy(struct f2fs_sb_info *sbi,
+>>>> +					struct discard_policy *dpolicy)
+>>>> +{
+>>>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>>>> +	int dev_util;
+>>>> +
+>>>> +	if (dcc->io_interrupted) {
+>>>> +		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>> +		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+>>>> +		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>>> +		return;
+>>>> +	}
+>>>> +
+>>>> +	dev_util = dev_utilization(sbi);
+>>>> +
+>>>> +	__adjust_discard_speed(&dpolicy->min_interval,
+>>>> +				DEF_MIN_DISCARD_ISSUE_TIME, dev_util);
+>>>> +	__adjust_discard_speed(&dpolicy->mid_interval,
+>>>> +				DEF_MID_DISCARD_ISSUE_TIME, dev_util);
+>>>> +	__adjust_discard_speed(&dpolicy->max_interval,
+>>>> +				DEF_MAX_DISCARD_ISSUE_TIME, dev_util);
+>>>> +}
+>>>> +
+>>>>  static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>>>  				struct discard_policy *dpolicy,
+>>>>  				int discard_type, unsigned int granularity)
+>>>> @@ -982,20 +1020,11 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>>>  	dpolicy->io_aware_gran = MAX_PLIST_NUM;
+>>>>  
+>>>>  	if (discard_type == DPOLICY_BG) {
+>>>> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+>>>> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>>>  		dpolicy->io_aware = true;
+>>>>  		dpolicy->sync = false;
+>>>>  		dpolicy->ordered = true;
+>>>> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+>>>> -			dpolicy->granularity = 1;
+>>>> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>> -		}
+>>>> +		__tune_discard_policy(sbi, dpolicy);
+>>>>  	} else if (discard_type == DPOLICY_FORCE) {
+>>>> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+>>>> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>>>  		dpolicy->io_aware = false;
+>>>>  	} else if (discard_type == DPOLICY_FSTRIM) {
+>>>>  		dpolicy->io_aware = false;
+>>>> @@ -1353,6 +1382,8 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+>>>>  	if (!issued && io_interrupted)
+>>>>  		issued = -1;
+>>>>  
+>>>> +	dcc->io_interrupted = io_interrupted;
+>>>> +
+>>>>  	return issued;
+>>>>  }
+>>>>  
+>>>> @@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  		if (i + 1 < dpolicy->granularity)
+>>>>  			break;
+>>>>  
+>>>> -		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
+>>>> +		if (i < MID_DISCARD_GRANULARITY && dpolicy->ordered)
+>>>>  			return __issue_discard_cmd_orderly(sbi, dpolicy);
+>>>>  
+>>>>  		pend_list = &dcc->pend_list[i];
+>>>> @@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  	if (!issued && io_interrupted)
+>>>>  		issued = -1;
+>>>>  
+>>>> +	dcc->io_interrupted = io_interrupted;
+>>>> +
+>>>>  	return issued;
+>>>>  }
+>>>>  
+>>>> @@ -1576,7 +1609,11 @@ static int issue_discard_thread(void *data)
+>>>>  	struct f2fs_sb_info *sbi = data;
+>>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>>>>  	wait_queue_head_t *q = &dcc->discard_wait_queue;
+>>>> -	struct discard_policy dpolicy;
+>>>> +	struct discard_policy dpolicy = {
+>>>> +		.min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
+>>>> +		.mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
+>>>> +		.max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
+>>>> +	};
+>>>>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>>  	int issued;
+>>>>  
+>>>> @@ -1929,7 +1966,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>>>>  	if (!dcc)
+>>>>  		return -ENOMEM;
+>>>>  
+>>>> -	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
+>>>> +	dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
+>>>>  	INIT_LIST_HEAD(&dcc->entry_list);
+>>>>  	for (i = 0; i < MAX_PLIST_NUM; i++)
+>>>>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
+>>>> @@ -1945,6 +1982,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>>>>  	dcc->next_pos = 0;
+>>>>  	dcc->root = RB_ROOT;
+>>>>  	dcc->rbtree_check = false;
+>>>> +	dcc->io_interrupted = false;
+>>>>  
+>>>>  	init_waitqueue_head(&dcc->discard_wait_queue);
+>>>>  	SM_I(sbi)->dcc_info = dcc;
+>>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>>>> index 422b0ceb1eaa..63b4da72cd34 100644
+>>>> --- a/fs/f2fs/segment.h
+>>>> +++ b/fs/f2fs/segment.h
+>>>> @@ -616,6 +616,15 @@ static inline int utilization(struct f2fs_sb_info *sbi)
+>>>>  					sbi->user_block_count);
+>>>>  }
+>>>>  
+>>>> +static inline int dev_utilization(struct f2fs_sb_info *sbi)
+>>>> +{
+>>>> +	unsigned int dev_blks;
+>>>> +
+>>>> +	dev_blks = valid_user_blocks(sbi) + SM_I(sbi)->dcc_info->undiscard_blks;
+>>>> +	return div_u64((u64)dev_blks * 100,
+>>>> +			MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
+>>>> +}
+>>>> +
+>>>>  /*
+>>>>   * Sometimes f2fs may be better to drop out-of-place update policy.
+>>>>   * And, users can control the policy through sysfs entries.
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index b055f2ea77c5..55ed76daad23 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+>>>>  	/* adjust parameters according to the volume size */
+>>>>  	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
+>>>>  		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
+>>>> -		sm_i->dcc_info->discard_granularity = 1;
+>>>> +		sm_i->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
+>>>>  		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
+>>>>  	}
+>>>>  
+>>>> -- 
+>>>> 2.18.0.rc1
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
