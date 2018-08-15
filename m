@@ -6,153 +6,238 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0270C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7CFC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1808821565
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1808821565
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F2EF21475
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:19:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2EF21475
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbeHPANP (ORCPT
+        id S1727719AbeHPANu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 20:13:15 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41122 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbeHPANP (ORCPT
+        Wed, 15 Aug 2018 20:13:50 -0400
+Received: from mail.sembritzki.me ([5.45.101.249]:60736 "EHLO
+        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbeHPANt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 20:13:15 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17-v6so2016416ljy.8;
-        Wed, 15 Aug 2018 14:19:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=l7j6XxxX3C8u3HlGQPbLB8Aygt9GUsOWPlVHFoaUtEU=;
-        b=jvWzAzGZog6sqGOkVZIcr69KZciC0iFtG5sEv6XShHLeHsuilddPmrHkVVYLe6Fflf
-         b07heaExvSXvgt/Fvsfoj1w2lWXplGSXR1K8rvNn5MOPAMfWt1L04au7flWDwo8/yfio
-         E3qUuA5YIr6Y1I3md4DW6KMeoPI60csFahJWv+iqGgLKQm/veBfvSjXxg0EU0SoMlZ7H
-         xaFbP5F+6OH0dPUGZDb+/q3E6UnTJb0UF6LaomwVq/0ZqWuyAxFkUKsBoQCHUPpuQwvl
-         /+u44ybi0LBoabT6J0mrkcbHAiAP9i7mczvgLIadG1VcpAxv8gE/zuSbvKmk4nwQYs7/
-         hIxA==
-X-Gm-Message-State: AOUpUlFq2XI6BV6RQMDcI0Vj2JeHFSyMUqXgeZW8UfP9xNwvywvG2qtK
-        1D66ix0jPRkmZu9Fcc3BWbK7+V4b
-X-Google-Smtp-Source: AA+uWPz7M2CGqLZga3YWWLWHELblk/z1qRlcRHILP6PWOUzeuIdezN42UIW3E8PHKVMYbCFRkcmGCQ==
-X-Received: by 2002:a2e:21d5:: with SMTP id h82-v6mr2845615lji.46.1534367959793;
-        Wed, 15 Aug 2018 14:19:19 -0700 (PDT)
-Received: from [192.168.42.27] ([213.87.156.121])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm4151867lje.73.2018.08.15.14.19.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 14:19:19 -0700 (PDT)
-Reply-To: alex.popov@linux.com
-Subject: Re: [GIT PULL] gcc-plugin updates for v4.19-rc1
-To:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wed, 15 Aug 2018 20:13:49 -0400
+Received: from [192.168.1.22] (x55b336e5.dyn.telefonica.de [85.179.54.229])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.sembritzki.me (Postfix) with ESMTPSA id 88D2BA7AA1;
+        Wed, 15 Aug 2018 23:19:51 +0200 (CEST)
+Subject: Re: [PATCH 2/2] [FIXED] Replace magic for trusting the secondary
+ keyring with #define
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto <linux-crypto@vger.kernel.org>
-References: <20180813214328.GA15137@beast>
- <CA+55aFw5Tkn6DgkAZS-UGOjJpYp2R4rFAm9ixu_=FONeqRyofg@mail.gmail.com>
- <CAGXu5jK_w7JRywdQ78FfQxeLSMmXbvyDDnaYzj27=y8wnAzKxQ@mail.gmail.com>
- <CA+55aFyFCWH3YJnRUKtSzs9Mvny0eU+=QANxoPTE+9B9CkUWDw@mail.gmail.com>
- <CAGXu5jJ1JNSxJABUTAO85z_hXjSkjD=nWEho7KrYJTqqVGivig@mail.gmail.com>
- <CA+55aFy6jNLsywVYdGp83AMrXBo_P-pkjkphPGrO=82SPKCpLQ@mail.gmail.com>
- <CAGXu5j+Yv9Bu4mJPOfkpxrom91kSKaUESHR-Tn1CAJCTTZy_8w@mail.gmail.com>
-From:   Alexander Popov <alex.popov@linux.com>
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Justin M. Forbes" <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+References: <20180815194244.29564-3-yannik@sembritzki.me>
+ <201808160443.5h16PxVs%fengguang.wu@intel.com>
+From:   Yannik Sembritzki <yannik@sembritzki.me>
 Openpgp: preference=signencrypt
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
-Message-ID: <90a49b4e-7b17-0262-e358-27343549d990@linux.com>
-Date:   Thu, 16 Aug 2018 00:18:56 +0300
+Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
+ 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
+ YfNfIPB+
+Message-ID: <1bfa03ed-c9f8-d0f2-700c-c93e96d5b99c@sembritzki.me>
+Date:   Wed, 15 Aug 2018 23:19:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+Yv9Bu4mJPOfkpxrom91kSKaUESHR-Tn1CAJCTTZy_8w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <201808160443.5h16PxVs%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.08.2018 23:56, Kees Cook wrote:
-> On Wed, Aug 15, 2018 at 1:18 PM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->> I absolutely refuse to take any hardening patches at all that have
->> BUG() or panic() or similar machine-killing in it.
-> 
-> Okay, mental model adjusted. :) It was only "strong discouraged" until now.
+Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+---
+ arch/x86/kernel/kexec-bzimage64.c       | 2 +-
+ certs/system_keyring.c                  | 3 ++-
+ crypto/asymmetric_keys/pkcs7_key_type.c | 2 +-
+ include/linux/verification.h            | 5 +++++
+ 4 files changed, 9 insertions(+), 3 deletions(-)
 
-I've just got the insight, how to avoid having BUG_ON() in stackleak_erase().
-If 'task_struct.lowest_stack' is corrupted, we can erase once starting from the
-stack bottom and reset the 'lowest_stack' value.
+diff --git a/arch/x86/kernel/kexec-bzimage64.c
+b/arch/x86/kernel/kexec-bzimage64.c
+index 74628275..97d199a3 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -532,7 +532,7 @@ static int bzImage64_cleanup(void *loader_data)
+ static int bzImage64_verify_sig(const char *kernel, unsigned long
+kernel_len)
+ {
+     return verify_pefile_signature(kernel, kernel_len,
+-                       ((struct key *)1UL),
++                       TRUST_SECONDARY_KEYRING,
+                        VERIFYING_KEXEC_PE_SIGNATURE);
+ }
+ #endif
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b2..777ac7d2 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -15,6 +15,7 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/verification.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+@@ -230,7 +231,7 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ 
+     if (!trusted_keys) {
+         trusted_keys = builtin_trusted_keys;
+-    } else if (trusted_keys == (void *)1UL) {
++    } else if (trusted_keys == TRUST_SECONDARY_KEYRING) {
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+         trusted_keys = secondary_trusted_keys;
+ #else
+diff --git a/crypto/asymmetric_keys/pkcs7_key_type.c
+b/crypto/asymmetric_keys/pkcs7_key_type.c
+index e284d9cb..0783e555 100644
+--- a/crypto/asymmetric_keys/pkcs7_key_type.c
++++ b/crypto/asymmetric_keys/pkcs7_key_type.c
+@@ -63,7 +63,7 @@ static int pkcs7_preparse(struct key_preparsed_payload
+*prep)
+ 
+     return verify_pkcs7_signature(NULL, 0,
+                       prep->data, prep->datalen,
+-                      (void *)1UL, usage,
++                      TRUST_SECONDARY_KEYRING, usage,
+                       pkcs7_view_content, prep);
+ }
+ 
+diff --git a/include/linux/verification.h b/include/linux/verification.h
+index a10549a6..ad221ab2 100644
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -12,6 +12,11 @@
+ #ifndef _LINUX_VERIFICATION_H
+ #define _LINUX_VERIFICATION_H
+ 
++// Allow both builtin trusted keys and secondary trusted keys
++#ifndef TRUST_SECONDARY_KEYRING
++#define TRUST_SECONDARY_KEYRING ((struct key *)1UL)
++#endif
++
+ /*
+  * The use to which an asymmetric key is being put.
+  */
+-- 
+2.17.1
 
->> I care not one whit about the reason for them. In fact, if the reason
->> is stated as "it makes debugging easiler", then I fart in your general
->> direction and call your mother a hamster.
+Sorry, I've fixed this now.
 
-That is plain harassment. I ask to *stop* it!
+On 15.08.2018 23:14, kbuild test robot wrote:
+> Hi Yannik,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.18 next-20180814]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Yannik-Sembritzki/Fix-kexec-forbidding-kernels-signed-with-keys-in-the-secondary-keyring-to-boot/20180816-042529
+> config: x86_64-randconfig-x019-201832 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from include/keys/asymmetric-type.h:18:0,
+>                     from crypto/asymmetric_keys/asymmetric_keys.h:12,
+>                     from crypto/asymmetric_keys/restrict.c:17:
+>>> include/linux/verification.h:12:0: error: unterminated #ifndef
+>     #ifndef _LINUX_VERIFICATION_H
+>     
+> --
+>    In file included from include/crypto/pkcs7.h:15:0,
+>                     from crypto/asymmetric_keys/pkcs7_parser.h:13,
+>                     from crypto/asymmetric_keys/pkcs7_parser.c:20:
+>>> include/linux/verification.h:12:0: error: unterminated #ifndef
+>     #ifndef _LINUX_VERIFICATION_H
+>     
+>    In file included from include/keys/asymmetric-type.h:18:0,
+>                     from crypto/asymmetric_keys/x509_parser.h:14,
+>                     from crypto/asymmetric_keys/pkcs7_parser.h:14,
+>                     from crypto/asymmetric_keys/pkcs7_parser.c:20:
+>>> include/linux/verification.h:12:0: error: unterminated #ifndef
+>     #ifndef _LINUX_VERIFICATION_H
+>     
+>
+> vim +12 include/linux/verification.h
+>
+> e68503bd David Howells 2016-04-06 @12  #ifndef _LINUX_VERIFICATION_H
+> e68503bd David Howells 2016-04-06  13  #define _LINUX_VERIFICATION_H
+> e68503bd David Howells 2016-04-06  14  
+>
+> :::::: The code at line 12 was first introduced by commit
+> :::::: e68503bd6836ba765dc8e0ee77ea675fedc07e41 KEYS: Generalise system_verify_data() to provide access to internal content
+>
+> :::::: TO: David Howells <dhowells@redhat.com>
+> :::::: CC: David Howells <dhowells@redhat.com>
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---
-Alexander
+
