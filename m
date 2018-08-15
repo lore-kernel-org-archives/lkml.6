@@ -2,136 +2,108 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75E7C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367B8C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B5EA215A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:10:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5EA215A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DEB14215A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:12:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpZITfYs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB14215A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbeHOQCw (ORCPT
+        id S1729310AbeHOQFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 12:02:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728896AbeHOQCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 12:02:52 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F3DB34023336;
-        Wed, 15 Aug 2018 13:10:44 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DCE412026D7E;
-        Wed, 15 Aug 2018 13:10:41 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 15:10:39 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v9 14/22] KVM: s390: interfaces to clear CRYCB masks
-Message-ID: <20180815151039.63d83d5d.cohuck@redhat.com>
-In-Reply-To: <1534196899-16987-15-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-15-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        Wed, 15 Aug 2018 12:05:02 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39419 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728896AbeHOQFB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 12:05:01 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w14-v6so456612plp.6;
+        Wed, 15 Aug 2018 06:12:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Et73kfN+rWlhgb3GttKujzIbuyeaBNkRRw08BykVxIM=;
+        b=dpZITfYslIyBb/ndy085UyFDq7TGxRNYAUSCFpX0M4BkvjnYamvdeGex8yJIXuLLKW
+         dSeW24J2/smsnile5zttLR9XMS2g+J/wRBk1g/5mhmFjBf00zGca3I1XIDIH1WOfECud
+         KLGYENJE1FeIVtjh08N0mbzhVBk4SlHeaGZ6pKV1XhwZAIA/j5fH6lDa7oVq7WlYnMo6
+         +qjUx5t1GTUXfRoy8faORWgFfzn38w4ouao40SgHIABs6NOZkvrMty1c/kR4tIDlQ9Gc
+         /YqKlLvFaaRUofiHllRIS7HA+v3dodaRJrVdEBWU60ohzchdsg+KLx9IH1+ieYvOKqC+
+         hdEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Et73kfN+rWlhgb3GttKujzIbuyeaBNkRRw08BykVxIM=;
+        b=ipJoIBpfZP4LHO26YpmOIYBGfxckSQAloqDQFmnP6x3E/S+iaRg7OK27FN5BDn4KYY
+         tcmVBWRo1YAynq9wJLnIiiAC6rVeB3XZFH50ja9zW5u5PSfEfgNNEBJcZuLIFh4W8qGk
+         meQCPAL2cJ5JzFVUD9BOqjMuFPWrZdPI0EeRnBP/ECqGihMrpciNbxTVoc3ueSCKELR8
+         Ocn+51Cs91m/q/OLWxvGRcqcjFK+Xr06Jpu6dK6jnnvnY7qGhbuYTnNBTVlroASFqBp2
+         ayw3983oxq4mDewJqG1cZm0RZO74M4OMhK3xtsSShKVps2JdMmzELJVYj58sJcIHycEs
+         AOpA==
+X-Gm-Message-State: AOUpUlF48nsz69VRNWfESaofmL/vtcbHyJ2eTcCB3MOj+wfv3q8rasZt
+        r/XxlbODpn6WbXtdfLBh1ZNBh9/xY+o=
+X-Google-Smtp-Source: AA+uWPxgeKC0bxtL1BUyRU4oDj6csQ+XBjZHKMIYlaxjroIzJ2MW6xHuJDK7KzyU4OEVXzLGHS1oVQ==
+X-Received: by 2002:a17:902:123:: with SMTP id 32-v6mr23977547plb.181.1534338774570;
+        Wed, 15 Aug 2018 06:12:54 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id x184-v6sm28580770pfd.169.2018.08.15.06.12.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Aug 2018 06:12:54 -0700 (PDT)
+Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180814171520.883143803@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <10da4e27-a407-5e1b-5a67-5de854841463@roeck-us.net>
+Date:   Wed, 15 Aug 2018 06:12:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 13:10:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 13:10:45 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 17:48:11 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
+On 08/14/2018 10:16 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.120 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
-> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
-> not get out of sync.
+> Responses should be made by Thu Aug 16 17:14:53 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Acked-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  arch/s390/include/asm/kvm_host.h |    3 +++
->  arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
->  2 files changed, 18 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 4a739d4..07e58d8 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -258,6 +258,7 @@ struct kvm_s390_sie_block {
->  	__u64	tecmc;			/* 0x00e8 */
->  	__u8	reservedf0[12];		/* 0x00f0 */
->  #define CRYCB_FORMAT_MASK 0x00000003
-> +#define CRYCB_FORMAT0 0x00000000
 
-This should probably go into a different patch (define is not used
-here)?
+For v4.9.119-112-g1a93cfe:
 
->  #define CRYCB_FORMAT1 0x00000001
->  #define CRYCB_FORMAT2 0x00000003
->  	__u32	crycbd;			/* 0x00fc */
-> @@ -861,6 +862,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
->  void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
->  				 struct kvm_async_pf *work);
->  
-> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
-> +
->  extern int sie64a(struct kvm_s390_sie_block *, u64 *);
->  extern char sie_exit;
->  
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index f7de123..8d8a65a 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -1919,6 +1919,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
->  		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->  }
->  
-> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
-> +{
-> +	mutex_lock(&kvm->lock);
-> +	kvm_s390_vcpu_block_all(kvm);
-> +
-> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
-> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
-> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
-> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
-> +
-> +	kvm_s390_vcpu_unblock_all(kvm);
-> +	mutex_unlock(&kvm->lock);
-> +}
-> +EXPORT_SYMBOL(kvm_arch_crypto_clear_masks);
+Build results:
+	total: 148 pass: 146 fail: 2
+Failed builds:
+	i386:allnoconfig
+	x86_64:allnoconfig
+Qemu test results:
+	total: 289 pass: 289 fail: 0
 
-A quick grep shows that kvm-related exports tend to be
-EXPORT_SYMBOL_GPL. Should that also be done here?
+Details are available at http://kerneltests.org/builders/.
 
-> +
->  static u64 kvm_s390_get_initial_cpuid(void)
->  {
->  	struct cpuid cpuid;
+I'll send another report after the fix has been applied and tested.
 
+Guenter
