@@ -2,202 +2,97 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4FDC46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DE0C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5762F20C0D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:15:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5762F20C0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C378B216E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:21:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C378B216E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbeHOLGy (ORCPT
+        id S1728752AbeHOLML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 07:06:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60290 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726155AbeHOLGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 07:06:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D45ABADCD;
-        Wed, 15 Aug 2018 08:15:40 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 10:15:39 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     linux-mm@kvack.org, Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        Wed, 15 Aug 2018 07:12:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47613 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbeHOLML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 07:12:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7FB5420802; Wed, 15 Aug 2018 10:20:56 +0200 (CEST)
+Received: from localhost (unknown [78.250.39.94])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2837920723;
+        Wed, 15 Aug 2018 10:20:56 +0200 (CEST)
+Date:   Wed, 15 Aug 2018 10:20:55 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     a.zummo@towertech.it, baruch@tkos.co.il, linux-rtc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs/core-api: add memory allocation guide
-Message-ID: <20180815081539.GN32645@dhcp22.suse.cz>
-References: <1534314887-9202-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180815063649.GB24091@rapoport-lnx>
+Subject: Re: [PATCH 1/2] rtc:rtc-digicolor: Use PTR_ERR_OR_ZERO to replace
+ the open code
+Message-ID: <20180815082055.GV943@piout.net>
+References: <1534159885-25364-1-git-send-email-zhongjiang@huawei.com>
+ <1534159885-25364-2-git-send-email-zhongjiang@huawei.com>
+ <20180814161541.GP943@piout.net>
+ <5B73D368.5010205@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180815063649.GB24091@rapoport-lnx>
+In-Reply-To: <5B73D368.5010205@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 15-08-18 09:36:49, Mike Rapoport wrote:
-> (this time with the subject, sorry for the noise)
+On 15/08/2018 15:16:56+0800, zhong jiang wrote:
+> On 2018/8/15 0:15, Alexandre Belloni wrote:
+> > Hi,
+> >
+> > On 13/08/2018 19:31:24+0800, zhong jiang wrote:
+> >> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR, So
+> >> just replace them rather than duplicating its implement.
+> >>
+> >> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> >> ---
+> >>  drivers/rtc/rtc-digicolor.c | 4 +---
+> >>  1 file changed, 1 insertion(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
+> >> index b253bf1..fd6850c 100644
+> >> --- a/drivers/rtc/rtc-digicolor.c
+> >> +++ b/drivers/rtc/rtc-digicolor.c
+> >> @@ -202,10 +202,8 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
+> >>  	platform_set_drvdata(pdev, rtc);
+> >>  	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+> >>  						&dc_rtc_ops, THIS_MODULE);
+> >> -	if (IS_ERR(rtc->rtc_dev))
+> >> -		return PTR_ERR(rtc->rtc_dev);
+> >>  
+> >> -	return 0;
+> >> +	return PTR_ERR_OR_ZERO(rtc->rtc_dev);
+> > As many other maintainers, I don't find that kind of change useful and
+> > I'm not taking them unless there are other improvements in the driver.
+> >
+> >
+> Hi,  Alexandre
 > 
-> On Wed, Aug 15, 2018 at 09:34:47AM +0300, Mike Rapoport wrote:
-> > As Vlastimil mentioned at [1], it would be nice to have some guide about
-> > memory allocation. I've drafted an initial version that tries to summarize
-> > "best practices" for allocation functions and GFP usage.
-> > 
-> > [1] https://www.spinics.net/lists/netfilter-devel/msg55542.html
-> > 
-> > From 8027c0d4b750b8dbd687234feda63305d0d5a057 Mon Sep 17 00:00:00 2001
-> > From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > Date: Wed, 15 Aug 2018 09:10:06 +0300
-> > Subject: [RFC PATCH] docs/core-api: add memory allocation guide
-> > 
-> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > ---
-> >  Documentation/core-api/gfp_mask-from-fs-io.rst |   2 +
-> >  Documentation/core-api/index.rst               |   1 +
-> >  Documentation/core-api/memory-allocation.rst   | 117 +++++++++++++++++++++++++
-> >  Documentation/core-api/mm-api.rst              |   2 +
-> >  4 files changed, 122 insertions(+)
-> >  create mode 100644 Documentation/core-api/memory-allocation.rst
-> > 
-> > diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> > index e0df8f4..e7c32a8 100644
-> > --- a/Documentation/core-api/gfp_mask-from-fs-io.rst
-> > +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> > @@ -1,3 +1,5 @@
-> > +.. _gfp_mask_from_fs_io:
-> > +
-> >  =================================
-> >  GFP masks used from FS/IO context
-> >  =================================
-> > diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-> > index cdc2020..8afc0da 100644
-> > --- a/Documentation/core-api/index.rst
-> > +++ b/Documentation/core-api/index.rst
-> > @@ -27,6 +27,7 @@ Core utilities
-> >     errseq
-> >     printk-formats
-> >     circular-buffers
-> > +   memory-allocation
-> >     mm-api
-> >     gfp_mask-from-fs-io
-> >     timekeeping
-> > diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-> > new file mode 100644
-> > index 0000000..b1f2ad5
-> > --- /dev/null
-> > +++ b/Documentation/core-api/memory-allocation.rst
-> > @@ -0,0 +1,117 @@
-> > +=======================
-> > +Memory Allocation Guide
-> > +=======================
-> > +
-> > +Linux supplies variety of APIs for memory allocation. You can allocate
-> > +small chunks using `kmalloc` or `kmem_cache_alloc` families, large
-> > +virtually contiguous areas using `vmalloc` and it's derivatives, or
-> > +you can directly request pages from the page allocator with
-> > +`__get_free_pages`. It is also possible to use more specialized
+> The issue is detected with the help of  Coccinelle.  It simplify the code with specific
+> function rather than duplicating its implementation.
+> 
+> The patch clean up the code.   of course,  it is not a bug.  if you do not care about it.
+> I am ok with that.
+> 
 
-I would rather not mention __get_free_pages. alloc_pages is a more
-generic API and less subtle one. If you want to mention __get_free_pages
-then please make sure to mention the subtlety (namely that is can
-allocate only lowmem memory).
+But this does not simplify or make the code clearer and as soon as you
+need to add code between the devm_rtc_device_register call and the end
+of the function, the patch will need to be undone.
 
-> > +allocators, for instance `cma_alloc` or `zs_malloc`.
-> > +
-> > +Most of the memory allocations APIs use GFP flags to express how that
-> > +memory should be allocated. The GFP acronym stands for "get free
-> > +pages", the underlying memory allocation function.
-> > +
-> > +Diversity of the allocation APIs combined with the numerous GFP flags
-> > +makes the question "How should I allocate memory?" not that easy to
-> > +answer, although very likely you should use
-> > +
-> > +::
-> > +
-> > +  kzalloc(<size>, GFP_KERNEL);
-> > +
-> > +Of course there are cases when other allocation APIs and different GFP
-> > +flags must be used.
-> > +
-> > +Get Free Page flags
-> > +===================
-> > +
-> > +The GFP flags control the allocators behavior. They tell what memory
-> > +zones can be used, how hard the allocator should try to find a free
-> > +memory, whether the memory can be accessed by the userspace etc. The
-> > +:ref:`Documentation/core-api/mm-api.rst <mm-api-gfp-flags>` provides
-> > +reference documentation for the GFP flags and their combinations and
-> > +here we briefly outline their recommended usage:
-> > +
-> > +  * Most of the times ``GFP_KERNEL`` is what you need. Memory for the
-> > +    kernel data structures, DMAable memory, inode cache, all these and
-> > +    many other allocations types can use ``GFP_KERNEL``. Note, that
-> > +    using ``GFP_KERNEL`` implies ``GFP_RECLAIM``, which means that
-> > +    direct reclaim may be triggered under memory pressure; the calling
-> > +    context must be allowed to sleep.
-> > +  * If the allocation is performed from an atomic context, e.g
-> > +    interrupt handler, use ``GFP_ATOMIC``.
-
-GFP_NOWAIT please. GFP_ATOMIC should be only used if accessing memory
-reserves is justified. E.g. fallback allocation would be too costly. It
-should be also noted that these allocation are quite likely to fail
-especially under memory pressure.
-
-> > +  * Untrusted allocations triggered from userspace should be a subject
-> > +    of kmem accounting and must have ``__GFP_ACCOUNT`` bit set. There
-> > +    is handy ``GFP_KERNEL_ACCOUNT`` shortcut for ``GFP_KERNEL``
-> > +    allocations that should be accounted.
-> > +  * Userspace allocations should use either of the ``GFP_USER``,
-> > +    ``GFP_HIGHUSER`` and ``GFP_HIGHUSER_MOVABLE`` flags. The longer
-> > +    the flag name the less restrictive it is.
-> > +
-> > +    The ``GFP_HIGHUSER_MOVABLE`` does not require that allocated
-> > +    memory will be directly accessible by the kernel or the hardware
-> > +    and implies that the data may move.
-
-@may move@is movable@
-
-> > +    The ``GFP_HIGHUSER`` means that the allocated memory is not
-> > +    movable, but it is not required to be directly accessible by the
-> > +    kernel or the hardware. An example may be a hardware allocation
-> > +    that maps data directly into userspace but has no addressing
-> > +    limitations.
-> > +
-> > +    The ``GFP_USER`` means that the allocated memory is not movable
-> > +    and it must be directly accessible by the kernel or the
-> > +    hardware. It is typically used by hardware for buffers that are
-> > +    mapped to userspace (e.g. graphics) that hardware still must DMA
-> > +    to.
-> > +
-> > +You may notice that quite a few allocations in the existing code
-> > +specify ``GFP_NOIO`` and ``GFP_NOFS``. Historically, they were used to
-> > +prevent recursion deadlocks caused by direct memory reclaim calling
-> > +back into the FS or IO paths and blocking on already held
-> > +resources. Since 4.12 the preferred way to address this issue is to
-> > +use new scope APIs described in
-> > +:ref:`Documentation/core-api/gfp_mask-from-fs-io.rst <gfp_mask_from_fs_io>`.
-> > +
-> > +Another legacy GFP flags are ``GFP_DMA`` and ``GFP_DMA32``. They are
-> > +used to ensure that the allocated memory is accessible by hardware
-> > +with limited addressing capabilities. So unless you are writing a
-> > +driver for a device with such restrictions, avoid using these flags.
-
-And even with HW with restrictions it is preferable to use dma_alloc*
-APIs
-
-Looks nice otherwise. Thanks! With the above changes feel free to add
-Acked-by: Michal Hocko <mhocko@suse.com>
 -- 
-Michal Hocko
-SUSE Labs
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
