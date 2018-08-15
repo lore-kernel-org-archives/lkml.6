@@ -2,197 +2,104 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 258B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21599C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E312C21530
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E10D921557
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:53:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lejhggjm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E312C21530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="seSTvXe0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10D921557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeHOXq2 (ORCPT
+        id S1727531AbeHOXrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:46:28 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46433 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeHOXq2 (ORCPT
+        Wed, 15 Aug 2018 19:47:05 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35548 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726183AbeHOXrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:46:28 -0400
-Received: by mail-io0-f194.google.com with SMTP id x5-v6so2088785iop.13
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=XaRbJjlz4Er4JWLnVRq+qOj2TNhFl34rbneeSG0docs=;
-        b=LejhggjmQqYNYybH+1Nyb/SV9aDNXMaQpWCdDzpMWFLpPNMK+vgbqOpXpLg7X6E61j
-         ayJeqtbflBkBL8o/s/9/3EdG9vJks5jjK6CnqPA0fM9yVNJp3RXQfFxbHt+y+7rHnruh
-         iSVpxLFQOAyFHJ1As49Yn2O4ZlUH77NxWKEnI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=XaRbJjlz4Er4JWLnVRq+qOj2TNhFl34rbneeSG0docs=;
-        b=VMQOEIGiglFD1G0FuXAgj1f9ZNBw2dIARer0HR/qZS5LXtPU5HblbhO+y15vK5HH4g
-         SWLLdsbfRMnWaDZLMveLQqZp+4PXnpiaSyuOUSLRrv/huq0jVeXKNwXs1y57JNa6zRkh
-         h1A17k7ckcJoGCfBZt7RvEqljfxocEeNMv5Xgz9QW5Axk5Ok0eLg4Mr27u0if/Uj4Zph
-         MOZ3tb4qF7/15Xjv/UEthYXYIr+yfdUA99of0sLrb0KnT02Prqfd1iYnZd7rBq+lqUf8
-         LYDAjchxV2untnQhpgEcM3MK6dLdlpqqBcA00o4rCrkCGGco620siELDjXto8p584VgK
-         t7cg==
-X-Gm-Message-State: AOUpUlHJBphLNX0Wn9v++Vb1qg1TZECk7XXhxFldEhK5JsnRKNYJqnvL
-        i00acezyd+EeI3S36ztCs9Dn0A==
-X-Google-Smtp-Source: AA+uWPwZDxLGeATR+7DUugiWJ55NlLsXlaVE35NNhqw9/hDOv8flLVhalyrBGvD1qRgz4Iezh06ypw==
-X-Received: by 2002:a5e:890c:: with SMTP id k12-v6mr22565619ioj.182.1534366360033;
-        Wed, 15 Aug 2018 13:52:40 -0700 (PDT)
-Received: from localhost (c-68-47-89-210.hsd1.mn.comcast.net. [68.47.89.210])
-        by smtp.gmail.com with ESMTPSA id x15-v6sm1832726itb.9.2018.08.15.13.52.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 13:52:39 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 15:52:38 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/43] 4.4.148-stable review
-Message-ID: <20180815205238.52g7lq5cywu2tboo@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20180814171517.014285600@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180814171517.014285600@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+        Wed, 15 Aug 2018 19:47:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 188118EE171;
+        Wed, 15 Aug 2018 13:53:17 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ql1yjkpTFri6; Wed, 15 Aug 2018 13:53:16 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4ACD28EE0C9;
+        Wed, 15 Aug 2018 13:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1534366396;
+        bh=wXNx8GgRIfTPfp2DDyff1hQOYdpU/He0x5Lfq9Avd4g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=seSTvXe0WPCfWfxqN5ofg7fb6JgrcrtsMOq96GuZg/gPtLw/rkGeQAuDyRrpE4NeP
+         UAYE8uTbGRW7VjowcvDUzleOS9aXrTs0DUAX8npyrT+RXehPpIGM7lE8uPedaYyN1y
+         ifgu0OAV9YKIi0HM1+5mqQjZiS8VvA2enAicQY/I=
+Message-ID: <1534366395.4049.19.camel@HansenPartnership.com>
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom
+ platform keys to boot
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Cc:     yannik@sembritzki.me, David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Date:   Wed, 15 Aug 2018 13:53:15 -0700
+In-Reply-To: <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
+References: <20180815100053.13609-1-yannik@sembritzki.me>
+         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+         <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
+         <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
+         <20180815194932.GD29541@redhat.com>
+         <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 07:17:36PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.148 release.
-> There are 43 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, 2018-08-15 at 13:47 -0700, Linus Torvalds wrote:
+> On Wed, Aug 15, 2018 at 12:49 PM Vivek Goyal <vgoyal@redhat.com>
+> wrote:
+> > 
+> > I see that module signing code trusts only builtin keys and
+> > not the keys in secondary_trusted_keys keyring.
 > 
-> Responses should be made by Thu Aug 16 17:14:59 UTC 2018.
-> Anything received after that time might be too late.
+> This, I think, makes sense.
+> 
+> It basically says: we don't allow modules that weren't built with the
+> kernel. Adding a new key later and signing a module with it violates
+> that premise.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm and x86_64.
+Yes, the point is about layers of trust.  The UEFI secure boot keys for
+a standard (i.e. system where the user hasn't taken ownership) contain
+Microsoft and some ODM vendor keys.  You're forced to trust these keys
+in the boot (or reboot) environment because that's consistent with the
+way windows operates (any breach and microsoft will get annoyed and
+help us sort it out).  You can't trust them for other kernel key
+operations because that's outside the boot environment trust boundary
+and if something goes wrong (say someone at an ODM signs a malicious
+linux kernel module because the ODM keys are trusted to sign modules)
+Microsoft won't care and we'll be on our own with no real ability to
+sort it out.
 
-Summary
-------------------------------------------------------------------------
+James
 
-kernel: 4.4.148-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.4.y
-git commit: 41fa2bf55dc979a622e7cb367c6f815d6a508a1a
-git describe: v4.4.147-46-g41fa2bf55dc9
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.147-46-g41fa2bf55dc9
-
-
-No regressions (compared to build v4.4.147)
-
-
-Ran 9270 total tests in the following environments and test suites.
-
-Environments
---------------
-- juno-r2 - arm64
-- qemu_arm
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.148-rc2
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.148-rc2-hikey-20180815-258
-git commit: f76c67628ea73cd7814850723fd3cf4ec681c404
-git describe: 4.4.148-rc2-hikey-20180815-258
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4-oe/build/4.4.148-rc2-hikey-20180815-258
-
-
-No regressions (compared to build 4.4.148-rc1-hikey-20180814-257)
-
-
-Ran 2723 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
