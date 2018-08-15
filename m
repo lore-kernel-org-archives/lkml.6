@@ -2,119 +2,75 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96478C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC87C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4E921534
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:33:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b="dHl1G3i7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4E921534
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dd-wrt.com
+	by mail.kernel.org (Postfix) with ESMTP id F0BC221534
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BC221534
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeHOX0y (ORCPT
+        id S1727786AbeHOX1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:26:54 -0400
-Received: from webmail.newmedia-net.de ([185.84.6.166]:49247 "EHLO
-        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeHOX0y (ORCPT
+        Wed, 15 Aug 2018 19:27:01 -0400
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:34084 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeHOX1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:26:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dd-wrt.com; s=mikd;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=0EYQ9xV88y4vNhp3dU2+dVaNnMJbfZmi9JmsYVfVEmk=;
-        b=dHl1G3i79Ydo7+xqWt5q6njHP0yIo/ndR6l4+fWNV6PVwjuB13qpjIBCujiePrruVv3F+gt6CQbdyNMDJpvdLqQ5Jqrw64b2Wifp6OcNj+0XQGNVZ7eZlKWIZpcX1FlOVV3tcO9fr7vctj5gyf/c2PW4qQl6pjNltGKdqunOTAU=;
-Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Sven Joachim <svenjoac@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-References: <20180814171520.883143803@linuxfoundation.org>
- <6272e062-6cfc-0669-bebf-ebb039da051a@dd-wrt.com>
- <87k1orms9i.fsf@turtle.gmx.de>
- <55df6754-ce8c-520a-13f9-c610ac498173@dd-wrt.com>
- <20180815185553.GA18219@roeck-us.net>
- <69700876-f31a-ea0a-bdea-2e82b7a5d308@dd-wrt.com>
- <20180815192630.GA20575@roeck-us.net>
- <CA+55aFzHYYai0ZR3eapEqQzt9KVcg8+bGDSmTmc6CzhpmFVfdw@mail.gmail.com>
-From:   Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Message-ID: <c05b614d-0d4d-6e6b-1014-d5d16875e096@dd-wrt.com>
-Date:   Wed, 15 Aug 2018 22:33:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 15 Aug 2018 19:27:01 -0400
+Received: by mail-qt0-f174.google.com with SMTP id m13-v6so2726651qth.1;
+        Wed, 15 Aug 2018 13:33:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qO0fuo4gF18T7amsvw3E373alJg1UWZH1v9tF1iFKTA=;
+        b=B8O8kg7gmeK8/jsMYxuCnJavAY9x7BiCHSb3URdjkEFBJToE8QV3+8jc0pigWFKlpv
+         SVz4o6UjmJ8O+SBfBNuIUSFiMTFfQWjOMWbYRVf/Wz2Ur7Cdr0KipR7q3Cugs6W5Wpo1
+         oKIhAexFANPjuoFieE87XOF6523Y/8zkw5XINCjHygxkjC7MsMOC1T8PPWrlP4vCZJAY
+         KzDc2DQD1B/WeaYhDbqogqJVmZUT+xc1dU5LSCx5laXLKg+v6j4sSnA9QORN0SC0X4xb
+         MwmEojG4lvkGEpalJtOtGXE9yIUyxJvDnwnD9t5oE5vWmDyqd5N2pn5AT1ZSif17hac9
+         wQ+w==
+X-Gm-Message-State: AOUpUlEMwzfe1j310YDhzhP0FI90G7Warp6eHW7+ow6Rx9Zb+I96ir+E
+        h0N7ImKRLOXTN7i7d+lys8bxPO6AyUosRHxj8pI=
+X-Google-Smtp-Source: AA+uWPxR1OW4a4WCSa4lV0HND4zNDZ0mNpnV0h3AKTT97NSg/oaq2za1p4VhMKzAcrlLNpNBwWp8s+WGor5AG9x+Nug=
+X-Received: by 2002:a0c:93b3:: with SMTP id f48-v6mr24421404qvf.151.1534365198061;
+ Wed, 15 Aug 2018 13:33:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzHYYai0ZR3eapEqQzt9KVcg8+bGDSmTmc6CzhpmFVfdw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Received:  from [79.251.189.74] (helo=[10.88.193.131])
-        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.72)
-        (envelope-from <s.gottschall@dd-wrt.com>)
-        id 1fq2Te-0005RH-1v; Wed, 15 Aug 2018 22:33:10 +0200
+References: <20180815175040.3736548-1-arnd@arndb.de> <90A7E81AE28BAE4CBDDB3B35F187D2644073E9C4@CHN-SV-EXMX02.mchp-main.com>
+In-Reply-To: <90A7E81AE28BAE4CBDDB3B35F187D2644073E9C4@CHN-SV-EXMX02.mchp-main.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 15 Aug 2018 22:33:01 +0200
+Message-ID: <CAK8P3a0f38ev5E4Zvg_3BS+1UN2NzYSw+dyRHXDwLCWgREXJ6g@mail.gmail.com>
+Subject: Re: [PATCH] net: lan743x_ptp: convert to ktime_get_clocktai_ts64
+To:     Bryan.Whitehead@microchip.com
+Cc:     UNGLinuxDriver@microchiptechnology.mail.onmicrosoft.com,
+        David Miller <davem@davemloft.net>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 15, 2018 at 8:03 PM <Bryan.Whitehead@microchip.com> wrote:
+>
+> >
+> > Question: this is the only ptp driver that sets the hardware time to the
+> > current system time in TAI. Why does it do that?
+>
+> This is done when the driver starts up after reset. Otherwise the clock is off by 48 years.
+> It seemed to me that the system time was the most appropriate clock to sync to.
+> If my reasoning is incorrect, please enlighten me.
 
-Am 15.08.2018 um 21:42 schrieb Linus Torvalds:
-> On Wed, Aug 15, 2018 at 12:26 PM Guenter Roeck <linux@roeck-us.net> wrote:
->> Also seen in mainline. Meaning my non-SMP test builds are broken. Hmm.
-> Grr. I think it's due mainly due to commit 447ae3166702 ("x86: Don't
-> include linux/irq.h from asm/hardirq.h"), which exposes a number of
-> files that had some dodgy include file dependenencies, and just
-> randomly happened to get it right because of that odd include that
-> caused problems.
-correct.
->
-> That commit itself is definitely the right thing to do, but yes, we
-> clearly had a lot of cases of things getting core header files
-> included purely by luck.
->
-> And because this was all done under embargo, we didn't get the kind of
-> test robot coverage we usually get.
->
-> Part of it can also be due to subtle merge issues - even if the
-> original branch got good coverage, later changes sometimes ended up
-> adding things like that.
->
-> For example, my merge of the L1TF code found that in the meantime,
-> arch/x86/kernel/kvmclock.c had added a call to kzalloc(), which used
-> to work just fine, but with the header cleanup it turned out that
-> kvmclock.c had never included <linux/slab.h>, so now it didn't build
-> right.
->
-> And that was just the one I noticed because of my limited build tests.
->
-> And yes, every single developer has CONFIG_SMP in their config, but
-> perhaps equally importantly, I suspect CONFIG_SMP ends up getting more
-> header files included almost by mistake, so it can _continue_ to hide
-> these kinds of incomplete header file includes that just happen to
-> work.
->
->> Anyway, care to send a proper patch ? I am sure Linus will be more
->> than happy to apply it.
-> I think "happy" is too strong a word for my state of mind with all
-> this, but yes, I'll apply it, and you'll get the glory of fixing some
-> configuration that clearly didn't get properly tested.
->
-> In the meantime, maybe I should just do a "make allmodconfig" and then
-> disable SMP and see if that shows anything for me.
+I've never worked with PTP, but my understanding from looking at the other
+drivers is that the time normally gets set either from another host through the
+PTP protocol, or using clock_settime() from user space with the current time.
 
-if it would be helpfull i can do this quick here using the latest 
-vanilla tree
-
-Sebastian
-
->
->                Linus
->
+       Arnd
