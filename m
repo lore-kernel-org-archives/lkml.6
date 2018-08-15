@@ -2,79 +2,114 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35F0C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73940C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A044F2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:10:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A044F2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 83611214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83611214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbeHOUC7 (ORCPT
+        id S1730124AbeHOUEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 16:02:59 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:62974 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbeHOUC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 16:02:59 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 4C151812E76D8D0C6DD9;
-        Thu, 16 Aug 2018 01:09:58 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w7FH9qwe056136;
-        Thu, 16 Aug 2018 01:09:52 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018081601095965-4606858 ;
-          Thu, 16 Aug 2018 01:09:59 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     mingo@redhat.com
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, wang.yi59@zte.com.cn,
-        zhong.weidong@zte.com.cn
-Subject: [PATCH] sched/deadline: Fix indent in pick_next_task_dl()
-Date:   Thu, 16 Aug 2018 01:09:26 +0800
-Message-Id: <1534352966-46407-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-08-16 01:09:59,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-08-16 01:09:44,
-        Serialize complete at 2018-08-16 01:09:44
-X-MAIL: mse01.zte.com.cn w7FH9qwe056136
+        Wed, 15 Aug 2018 16:04:21 -0400
+Received: from gateway36.websitewelcome.com ([192.185.193.119]:17401 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727604AbeHOUEV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 16:04:21 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 463F54011F4A5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 11:14:20 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id pzJdfqIeQbXuJpzJqfE0xS; Wed, 15 Aug 2018 12:11:01 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.37.72] (port=60344 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fpzJc-0000Yj-4j; Wed, 15 Aug 2018 12:10:36 -0500
+Date:   Wed, 15 Aug 2018 12:10:35 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Joachim Eastwood <manabian@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: lpc18xx: mark expected switch fall-throughs
+Message-ID: <20180815171035.GA17360@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.37.72
+X-Source-L: No
+X-Exim-ID: 1fpzJc-0000Yj-4j
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.37.72]:60344
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Substitute spaces with tab before the call of function
-dequeue_pushable_dl_task().
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Addresses-Coverity-ID: 1292308 ("Missing break in switch")
+Addresses-Coverity-ID: 1292309 ("Missing break in switch")
+Addresses-Coverity-ID: 1309546 ("Missing break in switch")
+Addresses-Coverity-ID: 1357369 ("Missing break in switch")
+Addresses-Coverity-ID: 1357389 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- kernel/sched/deadline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-lpc18xx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 997ea7b..aa9038f 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1753,7 +1753,7 @@ static struct sched_dl_entity *pick_next_dl_entity(struct rq *rq,
- 	p->se.exec_start = rq_clock_task(rq);
+diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+index 190f17e..a14bc5e 100644
+--- a/drivers/pinctrl/pinctrl-lpc18xx.c
++++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+@@ -844,8 +844,11 @@ static int lpc18xx_pconf_get_pin(struct pinctrl_dev *pctldev, unsigned param,
+ 		*arg = (reg & LPC18XX_SCU_PIN_EHD_MASK) >> LPC18XX_SCU_PIN_EHD_POS;
+ 		switch (*arg) {
+ 		case 3: *arg += 5;
++			/* fall through */
+ 		case 2: *arg += 5;
++			/* fall through */
+ 		case 1: *arg += 3;
++			/* fall through */
+ 		case 0: *arg += 4;
+ 		}
+ 		break;
+@@ -1060,8 +1063,11 @@ static int lpc18xx_pconf_set_pin(struct pinctrl_dev *pctldev, unsigned param,
  
- 	/* Running task will never be pushed. */
--       dequeue_pushable_dl_task(rq, p);
-+	dequeue_pushable_dl_task(rq, p);
- 
- 	if (hrtick_enabled(rq))
- 		start_hrtick_dl(rq, p);
+ 		switch (param_val) {
+ 		case 20: param_val -= 5;
++			 /* fall through */
+ 		case 14: param_val -= 5;
++			 /* fall through */
+ 		case  8: param_val -= 3;
++			 /* fall through */
+ 		case  4: param_val -= 4;
+ 			 break;
+ 		default:
 -- 
-1.8.3.1
+2.7.4
 
