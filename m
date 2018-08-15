@@ -2,131 +2,184 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57F6C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0CCC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFDD721528
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:07:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H2oqPDja"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFDD721528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B28322156D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:07:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28322156D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbeHPBBF (ORCPT
+        id S1727881AbeHPBBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:01:05 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38345 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbeHPBBF (ORCPT
+        Wed, 15 Aug 2018 21:01:48 -0400
+Received: from mail.sembritzki.me ([5.45.101.249]:60836 "EHLO
+        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeHPBBs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:01:05 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k3-v6so1081220pgq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 15:07:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=dQvEB/tsP4+bPuG89p4QF0G4FGRFCcSFM23knCCQyNo=;
-        b=H2oqPDjaiVZoqYS9gL5IN0XpecmPGdRaKuDbcdGDj0TnwxPWLYOpTRFGyv0JTzbsfQ
-         hubPwVsWu+fNim1A6iM5R2UqtzrfpPXOkTniXCBbJdBxWZ4dbWm1vJ5Yr4k7ENx+RTSO
-         ZZngMIT09ZNXPok9ocHDCdxtKHLsqHfbpUEgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=dQvEB/tsP4+bPuG89p4QF0G4FGRFCcSFM23knCCQyNo=;
-        b=buJnMFIB/3/eMpLr1lkhR8V/Jt4Xz57gTHX7+48AfUwKcTey4ODC8/XzLFlLfau9ip
-         4AjBrHtpTzruur27yYo55CzjcOy3KLP7PrIDPNO/rW65K/ho1+qRcbJ9TO/ZTgOCpMxk
-         nVuETciyo7PysLx1ZL5K0iq/V+pbqx5h0Y7cXTQlp2M5sNDmRgWQxwutN/DB1nN3W/Qj
-         0Afo8dTD69Bql6aQ3p+dckoQSbgY1ZpuJB6BrjmVW1q6JsxsIKhcs9sIf6QzBX4xI1EM
-         3npo3mTcK+RjPTWcCffinjhCl7dsk37ZRRBUUbPYT1U111mup5JrmmRPaQIbHzDPPoFY
-         0gug==
-X-Gm-Message-State: AOUpUlGxlmSJW44ldL4ZI1xjEpV1WyHSQlVmISdk5A/XayBPGvInCbMn
-        WecCIA4GRIyXPrRm9q/efH/ROw==
-X-Google-Smtp-Source: AA+uWPw//xV0e+CzdjuaQ7fgH7edKMOGeFxQnWnQbtexvKx/fdUBplZnwkpwz1U3myhp1/28N2Ht1g==
-X-Received: by 2002:a63:9856:: with SMTP id l22-v6mr26969339pgo.208.1534370822053;
-        Wed, 15 Aug 2018 15:07:02 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id g5-v6sm27802573pfh.63.2018.08.15.15.07.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 15:07:01 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 15 Aug 2018 21:01:48 -0400
+Received: from [192.168.1.22] (xd52789ea.dyn.telefonica.de [213.39.137.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.sembritzki.me (Postfix) with ESMTPSA id E5328A7AB8;
+        Thu, 16 Aug 2018 00:07:39 +0200 (CEST)
+Subject: Re: [PATCH 2/2] [FIXED v2] Replace magic for trusting the secondary
+ keyring with #define
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+References: <20180815194244.29564-3-yannik@sembritzki.me>
+ <201808160443.5h16PxVs%fengguang.wu@intel.com>
+ <1bfa03ed-c9f8-d0f2-700c-c93e96d5b99c@sembritzki.me>
+ <CA+55aFw1oaRiqAU_61BwqS5QWS2VtZ6o9cAF3YEVx2NfMkmHpQ@mail.gmail.com>
+From:   Yannik Sembritzki <yannik@sembritzki.me>
+Openpgp: preference=signencrypt
+Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
+ 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
+ YfNfIPB+
+Message-ID: <fcc28be0-f066-9c7a-7a4e-05d0cc1c0967@sembritzki.me>
+Date:   Thu, 16 Aug 2018 00:07:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Brian Norris <computersforpeace@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180815014436.GA17200@ban.mtv.corp.google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20180814223758.117433-1-briannorris@chromium.org>
- <a240b3f9-d41b-30d7-ef11-5dcd1a981c0f@gmail.com>
- <20180815002204.GA258561@ban.mtv.corp.google.com>
- <bb1b2b7d-2c47-a6b3-7618-063351f379b2@gmail.com>
- <20180815014436.GA17200@ban.mtv.corp.google.com>
-Message-ID: <153437082071.28926.11684780766239178367@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RFC PATCH v1 0/3] device property: Support MAC address in VPD
-Date:   Wed, 15 Aug 2018 15:07:00 -0700
+In-Reply-To: <CA+55aFw1oaRiqAU_61BwqS5QWS2VtZ6o9cAF3YEVx2NfMkmHpQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Norris (2018-08-14 18:44:36)
-> Hi,
-> =
+Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+---
+ arch/x86/kernel/kexec-bzimage64.c       | 2 +-
+ certs/system_keyring.c                  | 3 ++-
+ crypto/asymmetric_keys/pkcs7_key_type.c | 2 +-
+ include/linux/verification.h            | 3 +++
+ 4 files changed, 7 insertions(+), 3 deletions(-)
 
-> On Tue, Aug 14, 2018 at 05:52:49PM -0700, Florian Fainelli wrote:
-> > On 08/14/2018 05:22 PM, Brian Norris wrote:
-> =
+diff --git a/arch/x86/kernel/kexec-bzimage64.c
+b/arch/x86/kernel/kexec-bzimage64.c
+index 74628275..97d199a3 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -532,7 +532,7 @@ static int bzImage64_cleanup(void *loader_data)
+ static int bzImage64_verify_sig(const char *kernel, unsigned long
+kernel_len)
+ {
+     return verify_pefile_signature(kernel, kernel_len,
+-                       ((struct key *)1UL),
++                       TRUST_SECONDARY_KEYRING,
+                        VERIFYING_KEXEC_PE_SIGNATURE);
+ }
+ #endif
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b2..777ac7d2 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -15,6 +15,7 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/verification.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+@@ -230,7 +231,7 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ 
+     if (!trusted_keys) {
+         trusted_keys = builtin_trusted_keys;
+-    } else if (trusted_keys == (void *)1UL) {
++    } else if (trusted_keys == TRUST_SECONDARY_KEYRING) {
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+         trusted_keys = secondary_trusted_keys;
+ #else
+diff --git a/crypto/asymmetric_keys/pkcs7_key_type.c
+b/crypto/asymmetric_keys/pkcs7_key_type.c
+index e284d9cb..0783e555 100644
+--- a/crypto/asymmetric_keys/pkcs7_key_type.c
++++ b/crypto/asymmetric_keys/pkcs7_key_type.c
+@@ -63,7 +63,7 @@ static int pkcs7_preparse(struct key_preparsed_payload
+*prep)
+ 
+     return verify_pkcs7_signature(NULL, 0,
+                       prep->data, prep->datalen,
+-                      (void *)1UL, usage,
++                      TRUST_SECONDARY_KEYRING, usage,
+                       pkcs7_view_content, prep);
+ }
+ 
+diff --git a/include/linux/verification.h b/include/linux/verification.h
+index a10549a6..c00c1143 100644
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -12,6 +12,9 @@
+ #ifndef _LINUX_VERIFICATION_H
+ #define _LINUX_VERIFICATION_H
+ 
++// Allow both builtin trusted keys and secondary trusted keys
++#define TRUST_SECONDARY_KEYRING ((struct key *)1UL)
++
+ /*
+  * The use to which an asymmetric key is being put.
+  */
+-- 
+2.17.1
 
-> > >> Also, aliases in DT are meant to provide some stability.
-> > > =
-
-> > > How, specifically? I don't see any relevant binding description for
-> > > aliases under Documentation/devicetree/bindings/net/.
-> > =
-
-> > Indeed they are not, likewise, we should probably update devicetree-spec
-> > to come up with standard names that of_alias_get_id() already consumes.
-> =
-
-> A quick grep shows we already have divergence: both "eth" and "ethernet"
-> are in use.
-> =
-
-> But anyway, would the idea be that you just put 'ethernet{0,1,...}' and
-> 'wifi{0,1,...}' aliases in the /chosen node, then require boot firmware
-> to insert any {ethernet,wifi}_mac{0,1,...} into the paths represented by
-> the corresponding aliases? I suppose that would reduce the problems with
-> (1), but it still doesn't really help with (2).
-
-Yes. Aliases are the way to do this. It obviates much of this discussion
-about finding things in DT by directly pointing to the node the
-bootloader wants to go modify.
-
-> > > =
-
-> > > And finally, this may be surmountable, but the existing APIs seem very
-> > > device tree centric. We use this same format on ACPI systems, and the
-> > > current series would theoretically work on both [1]. I'd have to rewr=
-ite
-> > > the current (OF-only) helpers to get equivalent support...
-
-Where does it go on ACPI systems? Does the firmware stick it into some
-ACPI table by reading from VPD?
 
