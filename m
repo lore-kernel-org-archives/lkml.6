@@ -2,115 +2,274 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3C3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF62EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 547EC21567
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:40:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YLcmDxts"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547EC21567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id C272421530
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C272421530
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbeHPAea (ORCPT
+        id S1727687AbeHPAoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 20:34:30 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35964 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727327AbeHPAea (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 20:34:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7C3ED8EE171;
-        Wed, 15 Aug 2018 14:40:32 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Ldwuwm48pETt; Wed, 15 Aug 2018 14:40:32 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A84658EE0C9;
-        Wed, 15 Aug 2018 14:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1534369232;
-        bh=2pJElYdZnhOtQ8eb2rMsyzB3a9b/WUAshfhTT0FwVU8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YLcmDxtsiyaYvUDwJFB8/xF8/d5HIBjAKpEdWq6K/CNse+53z0hFYBRR9AWxBIUN4
-         edJn3/Ik1kDd8fD3fLL+E3rPU9GNhhp16glY2D2m/oMfD1qCL5uVvH+AtEqiK+ewRl
-         7gaHmKzV39HrsMWMQQu5nPql/ue77fSoFP9xGU64=
-Message-ID: <1534369231.4049.23.camel@HansenPartnership.com>
-Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom
- platform keys to boot
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Yannik Sembritzki <yannik@sembritzki.me>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Wed, 15 Aug 2018 14:40:31 -0700
-In-Reply-To: <2872b945-60e7-b5d1-1f20-1ae6ecfd3967@sembritzki.me>
-References: <20180815100053.13609-1-yannik@sembritzki.me>
-         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
-         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
-         <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
-         <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
-         <20180815194932.GD29541@redhat.com>
-         <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
-         <1ca6772b-46e0-9d93-0e15-7cf73a0b7b3f@sembritzki.me>
-         <1534367597.4049.21.camel@HansenPartnership.com>
-         <2872b945-60e7-b5d1-1f20-1ae6ecfd3967@sembritzki.me>
+        Wed, 15 Aug 2018 20:44:24 -0400
+Received: from gate.crashing.org ([63.228.1.57]:60853 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727408AbeHPAoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 20:44:23 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7FLoDH0029656;
+        Wed, 15 Aug 2018 16:50:14 -0500
+Message-ID: <08bc40a6af3e614e97a78fbaab688bfcd14520ac.camel@kernel.crashing.org>
+Subject: [RFC PATCH] pci: Proof of concept at fixing
+ pci_enable_device/bridge races
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Hari Vyas <hari.vyas@broadcom.com>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        ray.jui@broadcom.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Thu, 16 Aug 2018 07:50:13 +1000
+In-Reply-To: <58192cf94de3941f9141aa3203399ae2bcdf6b7a.camel@kernel.crashing.org>
+References: <1530608741-30664-1-git-send-email-hari.vyas@broadcom.com>
+         <20180731163727.GK45322@bhelgaas-glaptop.roam.corp.google.com>
+         <ecaed7664b46d73888d2494065905f8e108fc0f4.camel@kernel.crashing.org>
+         <5e42f7990673d11e3a020e7efcfd333215d48138.camel@kernel.crashing.org>
+         <58192cf94de3941f9141aa3203399ae2bcdf6b7a.camel@kernel.crashing.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-15 at 23:31 +0200, Yannik Sembritzki wrote:
-> On 15.08.2018 23:13, James Bottomley wrote:
-> > Consider a UEFI system for which a user has taken ownership, but
-> > which
-> > has some signed ROMs which are UEFI secure boot verified.  Simply
-> > to
-> > get their system to boot the user will be forced to add the ODM key
-> > to
-> > the UEFI db ... and I'm sure in that situation the user wouldn't
-> > want
-> > to trust the ODM key further than booting.
-> 
-> I definitely agree with this point.
-> 
-> Is there any solution, except from building your own kernel, to the
-> scenario I described?
-> I think there should be. (I've personally run into this with
-> VirtualBox, which I IIRC couldn't load, even though I provisioned my
-> own PK, and signed both kernel and VirtualBox module with my own key.
-> I could've compiled my own kernel with my //own key, but that is
-> pretty impractical for most users.)
+(Resent with lkml on copy)
 
-What about the key linking patches:
+[Note: This isn't meant to be merged, it need splitting at the very
+least, see below]
 
-https://lkml.org/lkml/2018/5/2/989
+This is something I cooked up quickly today to test if that would fix
+my problems with large number of switch and NVME devices on POWER.
 
-? They allow you to insert your own binary key into bzimage and then
-resign the resulting blob for secure boot.  It's a fairly painless
-process.  The patches have been languishing for an unstated reason but
-it's suspected to have something to do with Red Hat not wanting to
-support Enterprise users signing their own kernels.
+So far it does...
 
-James
+The issue (as discussed in the Re: PCIe enable device races thread) is
+that pci_enable_device and related functions along with pci_set_master
+and pci_enable_bridge are fundamentally racy.
+
+There is no lockign protecting the state of the device in pci_dev and
+if multiple devices under the same bridge try to enable it simultaneously
+one some of them will potentially start accessing it before it has actually
+been enabled.
+
+Now there are a LOT more fields in pci_dev that aren't covered by any
+form of locking.
+
+Additionally, some other parts such as ASPM or SR-IOV seem to be trying to do
+their own ad-hoc locking, but will manipulate bit fields in pci_dev that
+might be sharing words with other unrelated bit fields racily.
+
+So I think we need to introduce a pci_dev mutex aimed at synchronizing
+the main enable/master state of a given device, and possibly also the
+bazillion of state bits held inside pci_dev.
+
+I suggest a progressive approach:
+
+ 1- First we add the mutex, and put a red line comment "/* ----- */" in
+    struct pci_dev, at the bottom
+
+ 2- We move the basic enable/disable/set_master stuff under that lock and
+    move the corresponding fields in pci_dev below the line comment.
+
+ 3- Progressively, as we untangle them and verify their locking, we move
+    individual fields below the line so that we have a good visibility of
+    what has been addressed/audited already and what not
+
+Note: I would very much like to keep most of the probing/resource allocation
+single threaded at least within a given domain, I know we have some attempts
+at locking in the hotplug code for that, I'm not ready to tackle that or
+change it at this stage.
+
+We might be able to also addrss the is_added issues (Hari Vyas stuff) using
+the same mutex, I haven't looked into the details.
+
+Not-signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+---
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 316496e99da9..9c4895c40f1d 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1348,9 +1348,13 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+  */
+ int pci_reenable_device(struct pci_dev *dev)
+ {
++	int rc = 0;
++
++	mutex_lock(&dev->lock);
+ 	if (pci_is_enabled(dev))
+-		return do_pci_enable_device(dev, (1 << PCI_NUM_RESOURCES) - 1);
+-	return 0;
++		rc = do_pci_enable_device(dev, (1 << PCI_NUM_RESOURCES) - 1);
++	mutex_unlock(&dev->lock);
++	return rc;
+ }
+ EXPORT_SYMBOL(pci_reenable_device);
+ 
+@@ -1363,12 +1367,6 @@ static void pci_enable_bridge(struct pci_dev *dev)
+ 	if (bridge)
+ 		pci_enable_bridge(bridge);
+ 
+-	if (pci_is_enabled(dev)) {
+-		if (!dev->is_busmaster)
+-			pci_set_master(dev);
+-		return;
+-	}
+-
+ 	retval = pci_enable_device(dev);
+ 	if (retval)
+ 		pci_err(dev, "Error enabling bridge (%d), continuing\n",
+@@ -1379,9 +1377,16 @@ static void pci_enable_bridge(struct pci_dev *dev)
+ static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
+ {
+ 	struct pci_dev *bridge;
+-	int err;
++	int err = 0;
+ 	int i, bars = 0;
+ 
++	/* Handle upstream bridges first to avoid locking issues */
++	bridge = pci_upstream_bridge(dev);
++	if (bridge)
++		pci_enable_bridge(bridge);
++
++	mutex_lock(&dev->lock);
++
+ 	/*
+ 	 * Power state could be unknown at this point, either due to a fresh
+ 	 * boot or a device removal call.  So get the current power state
+@@ -1394,12 +1399,9 @@ static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
+ 		dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
+ 	}
+ 
++	/* Already enabled ? */
+ 	if (atomic_inc_return(&dev->enable_cnt) > 1)
+-		return 0;		/* already enabled */
+-
+-	bridge = pci_upstream_bridge(dev);
+-	if (bridge)
+-		pci_enable_bridge(bridge);
++		goto bail;
+ 
+ 	/* only skip sriov related */
+ 	for (i = 0; i <= PCI_ROM_RESOURCE; i++)
+@@ -1412,6 +1414,8 @@ static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
+ 	err = do_pci_enable_device(dev, bars);
+ 	if (err < 0)
+ 		atomic_dec(&dev->enable_cnt);
++ bail:
++	mutex_unlock(&dev->lock);
+ 	return err;
+ }
+ 
+@@ -1618,6 +1622,7 @@ static void do_pci_disable_device(struct pci_dev *dev)
+ 	if (pci_command & PCI_COMMAND_MASTER) {
+ 		pci_command &= ~PCI_COMMAND_MASTER;
+ 		pci_write_config_word(dev, PCI_COMMAND, pci_command);
++		dev->is_busmaster = 0;
+ 	}
+ 
+ 	pcibios_disable_device(dev);
+@@ -1632,8 +1637,10 @@ static void do_pci_disable_device(struct pci_dev *dev)
+  */
+ void pci_disable_enabled_device(struct pci_dev *dev)
+ {
++	mutex_lock(&dev->lock);
+ 	if (pci_is_enabled(dev))
+ 		do_pci_disable_device(dev);
++	mutex_unlock(&dev->lock);
+ }
+ 
+ /**
+@@ -1657,12 +1664,13 @@ void pci_disable_device(struct pci_dev *dev)
+ 	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
+ 		      "disabling already-disabled device");
+ 
++	mutex_lock(&dev->lock);
+ 	if (atomic_dec_return(&dev->enable_cnt) != 0)
+-		return;
++		goto bail;
+ 
+ 	do_pci_disable_device(dev);
+-
+-	dev->is_busmaster = 0;
++ bail:
++	mutex_unlock(&dev->lock);
+ }
+ EXPORT_SYMBOL(pci_disable_device);
+ 
+@@ -3764,8 +3772,12 @@ void __weak pcibios_set_master(struct pci_dev *dev)
+  */
+ void pci_set_master(struct pci_dev *dev)
+ {
+-	__pci_set_master(dev, true);
+-	pcibios_set_master(dev);
++	mutex_lock(&dev->lock);
++	if (!dev->is_busmaster) {
++		__pci_set_master(dev, true);
++		pcibios_set_master(dev);
++	}
++	mutex_unlock(&dev->lock);
+ }
+ EXPORT_SYMBOL(pci_set_master);
+ 
+@@ -3775,7 +3787,9 @@ EXPORT_SYMBOL(pci_set_master);
+  */
+ void pci_clear_master(struct pci_dev *dev)
+ {
++	mutex_lock(&dev->lock);
+ 	__pci_set_master(dev, false);
++	mutex_unlock(&dev->lock);
+ }
+ EXPORT_SYMBOL(pci_clear_master);
+ 
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 611adcd9c169..77701bfe0d3d 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2102,6 +2102,7 @@ struct pci_dev *pci_alloc_dev(struct pci_bus *bus)
+ 	INIT_LIST_HEAD(&dev->bus_list);
+ 	dev->dev.type = &pci_dev_type;
+ 	dev->bus = pci_bus_get(bus);
++	mutex_init(&dev->lock);
+ 
+ 	return dev;
+ }
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index c133ccfa002e..09e94ba6adf0 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -33,6 +33,7 @@
+ #include <linux/io.h>
+ #include <linux/resource_ext.h>
+ #include <uapi/linux/pci.h>
++#include <linux/mutex.h>
+ 
+ #include <linux/pci_ids.h>
+ 
+@@ -289,6 +290,8 @@ struct pci_dev {
+ 	struct proc_dir_entry *procent;	/* Device entry in /proc/bus/pci */
+ 	struct pci_slot	*slot;		/* Physical slot this device is in */
+ 
++	struct mutex	lock;
++
+ 	unsigned int	devfn;		/* Encoded device & function index */
+ 	unsigned short	vendor;
+ 	unsigned short	device;
 
