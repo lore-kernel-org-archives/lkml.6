@@ -6,76 +6,76 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602B8C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AB3C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 302932150A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5FB2150A
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:53:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="NLlGFKQz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302932150A
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="eoG3YW1I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5FB2150A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeHOWrF (ORCPT
+        id S1727994AbeHOWrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 18:47:05 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43168 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbeHOWrF (ORCPT
+        Wed, 15 Aug 2018 18:47:09 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40356 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbeHOWrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 18:47:05 -0400
-Received: by mail-pl0-f66.google.com with SMTP id x6-v6so904993plv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:53:31 -0700 (PDT)
+        Wed, 15 Aug 2018 18:47:08 -0400
+Received: by mail-pf1-f193.google.com with SMTP id e13-v6so932472pff.7
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:53:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1svywvHXHC+/3YSygBgMl8aZ6Dw9DjsoXW1z7O9jlBA=;
-        b=NLlGFKQz3j/zWusta5ednPTzRb3NfIEtFqzNYY6uzt5prVvgFGUA5Sfe1G1SsgU8NY
-         AO+VJuMIMgMUGN/deVzA/BXQ6uAeUuAqLqO6EelNOJ2dnxn/i0o0FOw+s10BZ2i8DR6m
-         MKSXfpKcNIbo731rstZvsspM6z92gmf1hjbjkQce5XqzUjazMSZVIH9pRy/KqJDvKguF
-         ZXtkfjDzgLI1TNhYYE1YtR41qXj0WU9EFU9/X3wDacLQZi1VYKFr5GumQlM1+hC1/e8P
-         /r84vbVyNXH/v0wHv+4OTg/+9XJEBbjB3akWJ/1Wyuq2L+SqkI744/YJQd0dPSs2iGN1
-         f4fQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dwDV6mO7s1yCgZs7LsRX6sJli3p8jm6q+XlkWnTP1eA=;
+        b=eoG3YW1I6gf7SZP9N8BV49J+iX+idOgpGbnA9AcoOlG2prb0iHrvOtWOFDkK5zsxBP
+         bfnQZAM7y1sqHxzAV+yZd0KhSfmt4UOPrjTeVy+TzaZWObSCGJmAZQe2epCW4XwL5DCa
+         vxUBgOtIHzHDLJ5Y0AeExsEeggTYxvVE1CYv3rE6TMC/nAV1+b73hySnaEghA1fQvizZ
+         707JQSEj+ivWr8c2d38XkFB521A8cGn5iiYEuB9YNK2JpSsN1uthwDhLBae/czh4aq/S
+         t3QJk+3yhhuthk9fw6pEF4b/xLuoFHwTBOglfdRylzt1pJIsVv31Oxt3kHNj9CGt0qJ6
+         1lrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1svywvHXHC+/3YSygBgMl8aZ6Dw9DjsoXW1z7O9jlBA=;
-        b=KGSaq5vrFJ3+6jsNBrBDUWesF1q7agUXFSI1GLHJ1AsOTHGO1u+iGz95lVUiDhwXyP
-         bfcdAcXIEwxDxImsDRYCwNSnPTbXZzI0ZBBPOBbmS5eLWXhOBRA1sgU8bQVV4Zf3n1ED
-         3VeLVj6g0SQ+xldwRr4zQ8tnXzTSqLAx28vTqtj7YzEqo8lguddsGn18Kj/mD2WE0oQd
-         FCa//Q9expQjqZpqbvvRi7adcudsSWFhkSAmX1bSATrOAqCgjDGlrgRYQZ481KCC9cQB
-         tVumTumeNi5BKOZ2YvpShj2mtv17M6pc/LWkpgNQyvyPASffaN5p4GzX2hLCHfpdKAU4
-         qZ1w==
-X-Gm-Message-State: AOUpUlGAs9lloUoV6ffqz484tq6h+DeOwQkyIvwP6B1/13fPB0bZ7faH
-        wvyfTikwQ/tHUP58s5oiyplZ1w==
-X-Google-Smtp-Source: AA+uWPzzcuZTBdrphhymtLjZc2iCy8Pmu7c+I0xNV9jRYINXSfFJpZjenR/ajjGGuiYV1nzzH6s2Eg==
-X-Received: by 2002:a17:902:7793:: with SMTP id o19-v6mr26193653pll.306.1534362811154;
-        Wed, 15 Aug 2018 12:53:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dwDV6mO7s1yCgZs7LsRX6sJli3p8jm6q+XlkWnTP1eA=;
+        b=Z9E5saTNKbbH2ngGm+41zZMn0VZoIUkBKl/9EYoNkgKeRuCoZmB3npWX0LVoAyrbyi
+         x2gy7JsY0pj4JIiK4ut/MBVN/vheAFRIDZtO0ly8+m0GXlXx3jAmveTY2c+H0vUd+aOR
+         /DP9PP1VQ7B8ipsY9Hxk9XS5SDvRJQVbI2DuEvbW9r81jJbZUYWiR9PRxLspQBuLowpO
+         hQY9a3UFlHidU7MInZ54KsYkTOzewM5yqgW0B9q142MTeJRVtFn69r/outfS1dvDYjc1
+         ihIqcmpUg/OQi7gvLYKfmhupDROcfIy0N1lOjUf3wkA3jDKYGbScdmWJiwygbvPuBB7k
+         ekpA==
+X-Gm-Message-State: AOUpUlGjVUkmOUI55MMZrzlk6KKhpSO46sh4bA/Wxcrv9hWjnnJ/qX27
+        9K+4cbVARIfeqB3JcaXJM5tVDQ==
+X-Google-Smtp-Source: AA+uWPznxqNGjizY9bVg2IEDfgks2KNwo3tbDh8VwXFrfDUSXucWmyr3n364R9oE9N5pEOpls3S7Eg==
+X-Received: by 2002:a62:4083:: with SMTP id f3-v6mr29152690pfd.229.1534362814292;
+        Wed, 15 Aug 2018 12:53:34 -0700 (PDT)
 Received: from hackmann.mtv.corp.google.com ([2620:0:1000:1601:82f7:8f1:8c08:a97a])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm72514617pfd.144.2018.08.15.12.53.30
+        by smtp.gmail.com with ESMTPSA id r23-v6sm72514617pfd.144.2018.08.15.12.53.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 12:53:30 -0700 (PDT)
+        Wed, 15 Aug 2018 12:53:33 -0700 (PDT)
 From:   Greg Hackmann <ghackmann@android.com>
 X-Google-Original-From: Greg Hackmann <ghackmann@google.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     kernel-team@android.com, Greg Hackmann <ghackmann@google.com>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        CHANDAN VN <chandan.vn@samsung.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
-Date:   Wed, 15 Aug 2018 12:51:21 -0700
-Message-Id: <20180815195123.187373-1-ghackmann@google.com>
+        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] arm: mm: check for upper PAGE_SHIFT bits in pfn_valid()
+Date:   Wed, 15 Aug 2018 12:51:22 -0700
+Message-Id: <20180815195123.187373-2-ghackmann@google.com>
 X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
+In-Reply-To: <20180815195123.187373-1-ghackmann@google.com>
+References: <20180815195123.187373-1-ghackmann@google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,50 +83,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
-before seeing if the PFN is valid.  This leads to false positives when
-some of the upper bits are set, but the lower bits match a valid PFN.
+ARM's pfn_valid() has a similar shifting bug to the ARM64 bug fixed in
+the previous patch.  This only affects non-LPAE kernels, since LPAE
+kernels will promote to 64 bits inside __pfn_to_phys().
 
-For example, the following userspace code looks up a bogus entry in
-/proc/kpageflags:
-
-    int pagemap = open("/proc/self/pagemap", O_RDONLY);
-    int pageflags = open("/proc/kpageflags", O_RDONLY);
-    uint64_t pfn, val;
-
-    lseek64(pagemap, [...], SEEK_SET);
-    read(pagemap, &pfn, sizeof(pfn));
-    if (pfn & (1UL << 63)) {        /* valid PFN */
-        pfn &= ((1UL << 55) - 1);   /* clear flag bits */
-        pfn |= (1UL << 55);
-        lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
-        read(pageflags, &val, sizeof(val));
-    }
-
-On ARM64 this causes the userspace process to crash with SIGSEGV rather
-than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
-valid, and stable_page_flags() will try to access an address between the
-user and kernel address ranges.
-
-Fixes: c1cc1552616d ("arm64: MMU initialisation")
+Fixes: 5e6f6aa1c243 ("memblock/arm: pfn_valid uses memblock_is_memory()")
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Hackmann <ghackmann@google.com>
 ---
- arch/arm64/mm/init.c | 6 +++++-
+ arch/arm/mm/init.c | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 9abf8a1e7b25..787e27964ab9 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -287,7 +287,11 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 0cc8e04295a4..bee1f2e4ecf3 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -196,7 +196,11 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
  int pfn_valid(unsigned long pfn)
  {
--	return memblock_is_map_memory(pfn << PAGE_SHIFT);
-+	phys_addr_t addr = pfn << PAGE_SHIFT;
+-	return memblock_is_map_memory(__pfn_to_phys(pfn));
++	phys_addr_t addr = __pfn_to_phys(pfn);
 +
-+	if ((addr >> PAGE_SHIFT) != pfn)
++	if (__phys_to_pfn(addr) != pfn)
 +		return 0;
 +	return memblock_is_map_memory(addr);
  }
