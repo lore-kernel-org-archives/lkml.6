@@ -3,105 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 919B9C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469ECC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3214B215EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1977215EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:41:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PXFpTRGu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3214B215EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ulWqbG2y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1977215EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729203AbeHOObh (ORCPT
+        id S1729194AbeHOOdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 10:31:37 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43919 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbeHOObg (ORCPT
+        Wed, 15 Aug 2018 10:33:09 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46491 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbeHOOdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 10:31:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b15-v6so856580wrv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 04:39:46 -0700 (PDT)
+        Wed, 15 Aug 2018 10:33:09 -0400
+Received: by mail-qt0-f195.google.com with SMTP id d4-v6so751619qtn.13;
+        Wed, 15 Aug 2018 04:41:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=bttAIsX+4Dj1kpqGyBCqDZLfnZ3uy0iRTOTVcj82q+4=;
-        b=PXFpTRGuxjpn2SFiTBOnsuORQz6vZyNT2Rdmiev+kEYlNDanyPoyYG6UU3Wd4p4oD7
-         Mt3agNtp+zh8+a3URejpMbSnQNqowZ6jJUHCD9aadtRZw5zc0DnhFb/AArmeykXNNgpS
-         Z67vgS4nWFyCTc/SuaGc+B0na2Uw3TCxRa1BY=
+        bh=UqnG8FLHbSkeeogr+4uxOdWST7eUMJlJhmp730HbIM0=;
+        b=ulWqbG2y+4jNSW65dYGTFjnAcoiuA4DMCLC6bQjBlWAUD14lUDNnmDbdW/0fcRCCq6
+         zH6AqtC+VdeFu+rvyXOAeGjsU+hbk03pq+JPCWsQZFSabULKlTBNa/gvA1ksGPkZUO3U
+         Rrwv53YDC6I+SbzNk/y0JMnc19pEUq9SzyyTsgrpIXlcaGuq7FfGY++Lf5WDdizLumFr
+         fCtzLJ/5DiMBS1+cR2TOkAUyBk38axt25CDBF7WXqfhhC2V0+5aT8C/eM5yrBpvF11JF
+         dRWHdxfq0dSFDO4+7HREoeEnuOrbjvUhgiTdsC19bAXhF4netc98kC4DmjmKxVNtacbb
+         xqrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bttAIsX+4Dj1kpqGyBCqDZLfnZ3uy0iRTOTVcj82q+4=;
-        b=MF4J16uivw5F8dxHyc2gzows0JeMm7YPiz+crAuq0f4lp3Qn1AHoakWx47afVpssNN
-         lnCg8WmZ2flKqvmAvEpmdbi4i6XkVpc9h1A0mMr68WascokWIjVgXnMUR/GQnVy9s1P3
-         78awLgThDbadj9RDgDHIwDtJvpxbwZJPe2eDol9L1vBlbMhrtipxcyCBGne67KBhqNi+
-         5dOJPpe7ToBrbQChzXIzIf2Oo95T/USSwrvB3y3T7f42Ytmmt8PkcOE2tDnWwNA/WYf4
-         0pUKdVWNhLnPHMK7mVFLxetvUJmFy78b1hpBiyhKTM3Cs25ts0DS/uNUsSYvEMu3ueyr
-         +B7w==
-X-Gm-Message-State: AOUpUlFSM99q7NwCJLOsNuEJnWVL0QUnFX8l9/mxxskSWAn7g3t5Zt2L
-        nwOAyLlMhe5MTsRWBdcttd+L7Q==
-X-Google-Smtp-Source: AA+uWPx0oINOt+Q5ySpEdQ2SBg7H1TYX24+R5NrcQ1PSisiQfLugRxTXm78+3tdQ7mlxYhso6B12ug==
-X-Received: by 2002:adf:a197:: with SMTP id u23-v6mr16908076wru.50.1534333185824;
-        Wed, 15 Aug 2018 04:39:45 -0700 (PDT)
-Received: from localhost (host-176-38-103-11.la.net.ua. [176.38.103.11])
-        by smtp.gmail.com with ESMTPSA id c129-v6sm3040438wmh.2.2018.08.15.04.39.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 04:39:45 -0700 (PDT)
-From:   Igor Opaniuk <igor.opaniuk@linaro.org>
-To:     linux-mmc@vger.kernel.org
-Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Shawn Guo <shawn.guo@linaro.org>, tianshuliang@hisilicon.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] mmc: dw_mmc: hi3798cv200: add MMC_CAP_CMD23 capability
-Date:   Wed, 15 Aug 2018 14:39:44 +0300
-Message-Id: <1534333184-25599-1-git-send-email-igor.opaniuk@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        bh=UqnG8FLHbSkeeogr+4uxOdWST7eUMJlJhmp730HbIM0=;
+        b=D+cbmrMcPG3pqMk4S9wUAPJrsIFUnx21KfqhQI39f69n578ix5JtO/6jW5ddgtAh5/
+         fugxlmzKni5oYoBUm7wcX25TCTrCn0GV0Rn4SMgdTRTvKWmuL7aHpc+JnGui1sESyGco
+         5+lunMErwdNzsBAW+TU2uQ98qqR5CVHWa0JNIZIPFNbKQEQALlFh3zcA8+kEJrruJfU3
+         Tfq+3sB8pcic1jpfPSL/zQ34+bYBjlMM8Kv/aOkm5C8lf4N1C79gy1xW4Fp4LUgmr6oe
+         yNAJZayWmtUoV0cNnu1+ScuAC6b7vPVVjqXl6QQgc0gyxL3+0T0TilVN8/iIG6MMTEpO
+         dATQ==
+X-Gm-Message-State: AOUpUlHBF6VSuQKtbA3PS9xtO4386AGxXvBmK67ugPLEpy4uOfSKInS0
+        kZEC7cssiAjj2SMGbio7SN+6ucIr4Ok=
+X-Google-Smtp-Source: AA+uWPz3GOFGAGxbqPWAW9qZxVhec8MuF3J1R/ehavef5sSvbbm7wlUs4BIW82/wfB7r/iqqmpJj3w==
+X-Received: by 2002:a0c:9e5a:: with SMTP id z26-v6mr22572200qve.15.1534333278107;
+        Wed, 15 Aug 2018 04:41:18 -0700 (PDT)
+Received: from localhost.localdomain (207-38-144-250.s4314.c3-0.avec-cbr2.nyr-avec.ny.cable.rcncustomer.com. [207.38.144.250])
+        by smtp.gmail.com with ESMTPSA id j66-v6sm13572459qkf.50.2018.08.15.04.41.17
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Wed, 15 Aug 2018 04:41:17 -0700 (PDT)
+From:   Michael Jin <mikhail.jin@gmail.com>
+To:     Borislav Petkov <bp@suse.de>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Jin <mikhail.jin@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH V2] EDAC, amd64: Add Family 17h Model 10h support.
+Date:   Wed, 15 Aug 2018 07:41:07 -0400
+Message-Id: <20180815114107.29797-1-mikhail.jin@gmail.com>
+X-Mailer: git-send-email 2.14.3 (Apple Git-98)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable access to the RPMB on the on-board eMMC of the
-Poplar board.
+Add support for ECC error decoding on family 17h models 10h-2fh.
 
-Signed-off-by: Igor Opaniuk <igor.opaniuk@linaro.org>
+Link: https://lkml.kernel.org/r/20180810193623.24629-1-mikhail.jin@gmail.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
 ---
- drivers/mmc/host/dw_mmc-hi3798cv200.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/edac/amd64_edac.c | 15 +++++++++++++++
+ drivers/edac/amd64_edac.h |  3 +++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
-index f9b333f..7a023f0 100644
---- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
-+++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
-@@ -23,6 +23,12 @@ struct hi3798cv200_priv {
- 	struct clk *drive_clk;
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 18aeabb1d5ee..2d7b6d37d6ec 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2200,6 +2200,15 @@ static struct amd64_family_type family_types[] = {
+ 			.dbam_to_cs		= f17_base_addr_to_cs_size,
+ 		}
+ 	},
++	[F17_M10H_CPUS] = {
++		.ctl_name = "F17h_M10h",
++		.f0_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F0,
++		.f6_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F6,
++		.ops = {
++			.early_channel_count	= f17_early_channel_count,
++			.dbam_to_cs		= f17_base_addr_to_cs_size,
++		}
++	},
  };
  
-+static unsigned long dw_mci_hi3798cv200_caps[] = {
-+	MMC_CAP_CMD23,
-+	MMC_CAP_CMD23,
-+	0
-+};
-+
- static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- {
- 	struct hi3798cv200_priv *priv = host->priv;
-@@ -160,6 +166,8 @@ static int dw_mci_hi3798cv200_init(struct dw_mci *host)
- }
+ /*
+@@ -3188,6 +3197,12 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
+ 		break;
  
- static const struct dw_mci_drv_data hi3798cv200_data = {
-+	.caps = dw_mci_hi3798cv200_caps,
-+	.num_caps = ARRAY_SIZE(dw_mci_hi3798cv200_caps),
- 	.init = dw_mci_hi3798cv200_init,
- 	.set_ios = dw_mci_hi3798cv200_set_ios,
- 	.execute_tuning = dw_mci_hi3798cv200_execute_tuning,
+ 	case 0x17:
++		/* Check if CPU model is in range 10h-2fh */
++		if (pvt->model >= 0x10 && pvt->model <= 0x2f) {
++			fam_type = &family_types[F17_M10H_CPUS];
++			pvt->ops = &family_types[F17_M10H_CPUS].ops;
++			break;
++		}
+ 		fam_type	= &family_types[F17_CPUS];
+ 		pvt->ops	= &family_types[F17_CPUS].ops;
+ 		break;
+diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+index 1d4b74e9a037..4242f8e39c18 100644
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -115,6 +115,8 @@
+ #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F2 0x1582
+ #define PCI_DEVICE_ID_AMD_17H_DF_F0	0x1460
+ #define PCI_DEVICE_ID_AMD_17H_DF_F6	0x1466
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F0 0x15e8
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
+ 
+ /*
+  * Function 1 - Address Map
+@@ -281,6 +283,7 @@ enum amd_families {
+ 	F16_CPUS,
+ 	F16_M30H_CPUS,
+ 	F17_CPUS,
++	F17_M10H_CPUS,
+ 	NUM_FAMILIES,
+ };
+ 
 -- 
-2.7.4
+2.14.3 (Apple Git-98)
 
