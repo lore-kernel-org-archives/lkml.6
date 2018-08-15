@@ -2,219 +2,113 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72255C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114A2C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3841F21531
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3841F21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CE229208F7
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:30:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HxVe4yiX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE229208F7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbeHOXVo (ORCPT
+        id S1728220AbeHOXXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:21:44 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:40059 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbeHOXVo (ORCPT
+        Wed, 15 Aug 2018 19:23:40 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35210 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbeHOXXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:21:44 -0400
-Received: by mail-io0-f198.google.com with SMTP id i12-v6so2067410iom.7
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:28:02 -0700 (PDT)
+        Wed, 15 Aug 2018 19:23:40 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p10-v6so1939654ljg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TWNhjrmgLpSO5MJV73m5bOu5n1H+413r7T8xRTQZNdA=;
+        b=HxVe4yiXT/cVV+jcYufkzUnRhINVIclBJ6+TZeyxYDn+E9lClIiJ94c7K32GTtBoMH
+         MoqnRk9OE3GoxDL2nMCoApEWWe0BJrRJF8BJ6eTap96qrGtQuxC4hGNnASIJUC8KDGgm
+         rB7r4/AD9a+q91ipw30ZUKyBV3I1iW/PpmepI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=TtTQGJMPuCjhmVWUPITxsUVxoXOZD3gXOPK9xrF9gQE=;
-        b=k0id43Zdsm5nkzXsvD5t5l5nv7k7/xrVRdbSBjm8LcctBFU8XZxro1MWPnIpBeaOKo
-         EoTJU2b4TCx/lVez1jDidgehxlKeswlvQocJw3LKNDrDBlJ/Wp34cGnrjOdWQfVNOJEI
-         dq9e7OIvyNb6ykHZGzhOHRk4xgfos2VzQ3ASrZIVYy4fZjumQy+6lJVKbZCQ56OR8azm
-         PZClZcDmMjz9/FgzpJnFXAXXs4BL2BvwtfSpi0BAQhzyaONr6M6xLtWpJODvN+dRE6qR
-         augV9d0cdCSBmLvn4SgAJHlbYFTdiydbkjFTTEIxPAqPJZ6UHUbbBPiWOekeZIQfGvyT
-         3YUw==
-X-Gm-Message-State: AOUpUlEMLMjJDFkCBbHDN2SCxIY5zGPHy9i4pkByUxcboKYwllXGyxFN
-        HTFUbZcidoa8UTaRI+ty9/myuzOlf8Nfyc9LFEqGh1T+PxeL
-X-Google-Smtp-Source: AA+uWPweoweFOPRWylbmqDJaIDI7s5b195g81gnACTms1AOs9lXNA48NnwpYZeLCeE41MLI6rUJkVIPTjwKMvbzv3gVR3DKPt6j4
-MIME-Version: 1.0
-X-Received: by 2002:a6b:cb06:: with SMTP id b6-v6mr12507019iog.107.1534364882413;
- Wed, 15 Aug 2018 13:28:02 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 13:28:02 -0700
-In-Reply-To: <00000000000056268e05737dcb95@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c5b63005737f290d@google.com>
-Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
-From:   syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TWNhjrmgLpSO5MJV73m5bOu5n1H+413r7T8xRTQZNdA=;
+        b=o4M/A0ygYMxvJtdH956mWF6sX2eG0iL2FLoCihSuwETLvc38HZcIbrofRcZcdt5yt9
+         hsZ8LtRxbCmmsELwiERy8ITHCVUWkx2jBHUWztC+NPApBt8DxvsCdX+6VGcsM8iNshNv
+         kuEuV6Yup46DKUCTRW4v9tiflg9TaOMYxN+u5S7JUx7xDMEMJwmjQtRMsOk0LGkes+R0
+         U+B6elb2afE76CXn3Su2vUW7zwrpHu4KnogQ3RjJQYhdJl3NyOeMe7t3c+DkWxDTQ/ym
+         VWNLaI2zSOkrevqCgl+h/UEo9E9CEh8V3l1mJhvGMgwznbTyDhEXia9B118QosdWuvv8
+         hqSA==
+X-Gm-Message-State: AOUpUlEnaseJ2b2Cj2lJNL4K84Xb5Jq/yHm56VQmQRuzFN9k7OtPR9ww
+        0pKu1jKjN+45DCV3gciXFdyPWVeNGaA=
+X-Google-Smtp-Source: AA+uWPyRKpiccg6z9nNCverE8fzsWvrRsw9Y4gMmHbbk0N+67mNfjJSfK4ERdsrOl7ECr3dG+bxcAQ==
+X-Received: by 2002:a2e:3c1a:: with SMTP id j26-v6mr9111405lja.149.1534364996620;
+        Wed, 15 Aug 2018 13:29:56 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm4139026lje.73.2018.08.15.13.29.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Aug 2018 13:29:55 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     corbet@lwn.net, netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next] Documentation: networking: ti-cpsw: correct cbs parameters for Eth1 100Mb
+Date:   Wed, 15 Aug 2018 23:29:53 +0300
+Message-Id: <20180815202953.10137-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+If set cbs parameters calculated for 1000Mb, but use on 100Mb port
+w/o h/w offload (for cpsw offload it doesn't matter), it works
+incorrectly. According to the example and testing board, second port
+is 100Mb interface. Correct them on recalculated for 100Mb interface.
+It allows to use the same command for CBS software implementation for
+board in example.
 
-HEAD commit:    31130a16d459 Merge tag 'for-linus-4.19-rc1-tag' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1116b46c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8d52931cda051de
-dashboard link: https://syzkaller.appspot.com/bug?extid=30209ea299c09d8785c9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11617322400000
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+Based on net-next/master
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com
+ Documentation/networking/ti-cpsw.txt | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered forwarding state
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered forwarding state
-unregister_netdevice: waiting for lo to become free. Usage count = 1
-8021q: adding VLAN 0 to HW filter on device bond0
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-IPVS: stopping master sync thread 6855 ...
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: stopping master sync thread 6859 ...
-IPVS: ftp: loaded support on port[0] = 21
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered disabled state
-device bridge_slave_0 entered promiscuous mode
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_1 entered promiscuous mode
-IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
-bond0: Enslaving bond_slave_0 as an active interface with an up link
-bond0: Enslaving bond_slave_1 as an active interface with an up link
-IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
-team0: Port device team_slave_0 added
-IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
-team0: Port device team_slave_1 added
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered forwarding state
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered forwarding state
-8021q: adding VLAN 0 to HW filter on device bond0
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-IPVS: stopping master sync thread 7118 ...
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: stopping master sync thread 7122 ...
-IPVS: ftp: loaded support on port[0] = 21
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered disabled state
-device bridge_slave_0 entered promiscuous mode
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_1 entered promiscuous mode
-IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
-bond0: Enslaving bond_slave_0 as an active interface with an up link
-bond0: Enslaving bond_slave_1 as an active interface with an up link
-IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
-team0: Port device team_slave_0 added
-IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
-team0: Port device team_slave_1 added
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered forwarding state
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered forwarding state
-8021q: adding VLAN 0 to HW filter on device bond0
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-IPVS: stopping master sync thread 7381 ...
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: stopping master sync thread 7385 ...
-IPVS: ftp: loaded support on port[0] = 21
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered disabled state
-device bridge_slave_0 entered promiscuous mode
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_1 entered promiscuous mode
-IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
-bond0: Enslaving bond_slave_0 as an active interface with an up link
-bond0: Enslaving bond_slave_1 as an active interface with an up link
-IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
-team0: Port device team_slave_0 added
-IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
-team0: Port device team_slave_1 added
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered forwarding state
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered forwarding state
-8021q: adding VLAN 0 to HW filter on device bond0
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-IPVS: stopping master sync thread 7644 ...
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0,  
-id = 0
-IPVS: stopping master sync thread 7648 ...
-IPVS: ftp: loaded support on port[0] = 21
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered disabled state
-device bridge_slave_0 entered promiscuous mode
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_1 entered promiscuous mode
-IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
-bond0: Enslaving bond_slave_0 as an active interface with an up link
-bond0: Enslaving bond_slave_1 as an active interface with an up link
-IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
-team0: Port device team_slave_0 added
-IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
-team0: Port device team_slave_1 added
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered forwarding state
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered forwarding state
-8021q: adding VLAN 0 to HW filter on device bond0
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+diff --git a/Documentation/networking/ti-cpsw.txt b/Documentation/networking/ti-cpsw.txt
+index 67039205bd69..d4d4c0751a09 100644
+--- a/Documentation/networking/ti-cpsw.txt
++++ b/Documentation/networking/ti-cpsw.txt
+@@ -469,17 +469,18 @@ $ tc -g class show dev eth1
+ 
+ 14)
+ // Set rate for class A - 31 Mbit (tc0, txq2) using CBS Qdisc for Eth1
+-// here only idle slope is important, others ignored
++// here only idle slope is important, others ignored, but calculated
++// for interface speed - 100Mb for eth1 port.
+ // Set it +1 Mb for reserve (important!)
+-$ tc qdisc add dev eth1 parent 100:3 cbs locredit -1453 \
+-hicredit 47 sendslope -969000 idleslope 31000 offload 1
++$ tc qdisc add dev eth1 parent 100:3 cbs locredit -1035 \
++hicredit 465 sendslope -69000 idleslope 31000 offload 1
+ net eth1: set FIFO3 bw = 31
+ 
+ 15)
+ // Set rate for class B - 11 Mbit (tc1, txq3) using CBS Qdisc for Eth1
+ // Set it +1 Mb for reserve (important!)
+-$ tc qdisc add dev eth1 parent 100:4 cbs locredit -1483 \
+-hicredit 34 sendslope -989000 idleslope 11000 offload 1
++$ tc qdisc add dev eth1 parent 100:4 cbs locredit -1335 \
++hicredit 405 sendslope -89000 idleslope 11000 offload 1
+ net eth1: set FIFO2 bw = 11
+ 
+ 16)
+-- 
+2.17.1
 
