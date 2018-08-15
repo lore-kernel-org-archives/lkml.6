@@ -2,120 +2,144 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C523C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D86C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C38FF215F9
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38FF215F9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 59DC8216B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:04:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bMjuyCv1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59DC8216B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbeHOGxt (ORCPT
+        id S1728791AbeHOGym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 02:53:49 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:49234 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728480AbeHOGxt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 02:53:49 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fpn1n-0000Gx-MC; Tue, 14 Aug 2018 22:03:23 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fpn1n-00007B-3m; Tue, 14 Aug 2018 22:03:23 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
-        Paul Moore <paul@paul-moore.com>,
-        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
-        apparmor@lists.ubuntu.com, fenghua.yu@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        <87d0uqpba5.fsf@xmission.com>
-        <20180810151606.GA6515@ZenIV.linux.org.uk>
-        <87pnypiufr.fsf@xmission.com> <20180811014619.GA14368@thunk.org>
-        <8736vlo6ef.fsf@xmission.com>
-        <001a1608-d0fa-84c1-9c54-ae36df95fd89@schaufler-ca.com>
-Date:   Tue, 14 Aug 2018 23:03:17 -0500
-In-Reply-To: <001a1608-d0fa-84c1-9c54-ae36df95fd89@schaufler-ca.com> (Casey
-        Schaufler's message of "Sat, 11 Aug 2018 10:47:50 -0700")
-Message-ID: <87d0ukjmyi.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 15 Aug 2018 02:54:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:41045 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728480AbeHOGym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 02:54:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41qwnr58bFz9s9F;
+        Wed, 15 Aug 2018 14:04:16 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534305856;
+        bh=WmwhpgZIFk97VIRZwnO7xRGiddFi6txLpLZS96Jy9pE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bMjuyCv1a/IGdhaMz8Zsf8odeXkJ3mXyR31Rh1WM9/F5+rd9Pf/qM0XbboVK1pebA
+         sOYZom/NsPBtlry0+PFUlzXNg6fDmsIKJzJq4kV8y4e7zGSzaAVxofsOwSLYvcU3sy
+         ydPsaL9J9Db8g9oOYcRRhqjIsT3KpotlV6L+5nZjJXNQnhBW61t2P5UsPt6C7RYvb3
+         mSN9QCuDIKBhrbNDfkz4QKq7stTpGYxIHboxbIDbfwKem6WLffxbc9PwblGZHU0FzE
+         Dm+17kt/OCyHR+78H2ZygznH7nMyS4d07ByibiGD1BVFKmsBT0BOQ4iq7ySMrGY4cR
+         dyjjBvChhP9MA==
+Date:   Wed, 15 Aug 2018 14:04:16 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tobias Tefke <tobias.tefke@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: linux-next: manual merge of the ftrace tree with Linus' tree
+Message-ID: <20180815140416.200fd873@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fpn1n-00007B-3m;;;mid=<87d0ukjmyi.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/6JXSadUqNHy+yUkMND0RDRAYIEtspPLg=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: BUG: Mount ignores mount options
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gVAgX7Kb+mYpBsve7JXvxyX"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> writes:
+--Sig_/gVAgX7Kb+mYpBsve7JXvxyX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Don't blame the filesystems for behaving as documented.
+Hi Steven,
 
-No.  This behavior is not documented.  At least I certainly don't see a
-word about this in any of the man pages.  Where does it say mounting a
-filesystem will not honor it's mount options?
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-It is also rare enough in practice it is something it is reasonable to
-expect people to be surprised by.
+  kernel/events/uprobes.c
 
-> The problem is not in the mount mechanism, it's in the way you want to
-> abuse it.
+between commit:
 
-I am not asking for this behavior.  I am pointing out this behavior
-exists.  I am pointing out this behavior is harmful.  I am asking we
-stop doing this harmful thing in the new API where we don't have a
-chance of breaking anything.
+  788faab70d5a ("perf, tools: Use correct articles in comments")
 
-The place where this has bitten the hardest is someone wrote a script to
-do something for Xen in a chroot.  That script involved a chroot that
-mounted devpts and in doing so happend to change the options of the main
-/dev/pts.  Which resulted in ptys created with /dev/ptmx outside the
-chroot with the wrong permissions.  That in turn caused several distros
-to retain the ancient suid pt_chown binary from libc that the devpts
-filesystem was built to make obsolete.  As the world turned that
-pt_chown binary could be confused into chowning the wrong pty if a pty
-from a container was used.
+from Linus' tree and commit:
 
-The fix was to mount a new instance of devpts every time mount of devpts
-is called.  That simplified the code, and allowed pt_chown to be removed
-permanently.  The tricky bit was figuring out how keep /dev/ptmx
-working.  I wound up testing on every distribution I could think of to
-ensure no one would notice the slightly changed behavior of the devpts
-filesystem.
+  38e967ae1e60 ("Uprobes: Simplify uprobe_register() body")
 
-The behavior in other filesystems of ignoring the options instead of
-changing them on the filesystem isn't quite as bad.  But it still has
-the potential for a lot of mischief.
+from the ftrace tree.
 
-Eric
+I fixed it up (the latter moved the uprobe_unregister function - see
+below) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/events/uprobes.c
+index aed1ba569954,c0418ba52ba8..000000000000
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@@ -860,7 -856,28 +856,28 @@@ __uprobe_unregister(struct uprobe *upro
+  }
+ =20
+  /*
+-  * uprobe_register - register a probe
+ - * uprobe_unregister - unregister a already registered probe.
+++ * uprobe_unregister - unregister an already registered probe.
++  * @inode: the file in which the probe has to be removed.
++  * @offset: offset from the start of the file.
++  * @uc: identify which probe if multiple probes are colocated.
++  */
++ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_=
+consumer *uc)
++ {
++ 	struct uprobe *uprobe;
++=20
++ 	uprobe =3D find_uprobe(inode, offset);
++ 	if (WARN_ON(!uprobe))
++ 		return;
++=20
++ 	down_write(&uprobe->register_rwsem);
++ 	__uprobe_unregister(uprobe, uc);
++ 	up_write(&uprobe->register_rwsem);
++ 	put_uprobe(uprobe);
++ }
++ EXPORT_SYMBOL_GPL(uprobe_unregister);
++=20
++ /*
++  * __uprobe_register - register a probe
+   * @inode: the file in which the probe has to be placed.
+   * @offset: offset from the start of the file.
+   * @uc: information on howto handle the probe..
+
+--Sig_/gVAgX7Kb+mYpBsve7JXvxyX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzpkAACgkQAVBC80lX
+0GxxRgf/Q7J755A4ifHF3e6c0oHwsvlSzs2wB+Sv8jTCeCq57rt2DF6kivlWbsm1
+TS3O6MRrB1DGv25VMk6xg4/Wxg5c2qWMX/GZbCNrVFv9zyRcdr3jOocaDypDXNRN
+OXk7MpvNUwIu/tZK90tOp4DvnL3yq4R3VFXAlCdqE2vQeIV7FxAa4IfcPqw6L2Ei
+Sby0JZNe/E0V7hEKF8HEtgNfreiG97XxjOH/RD15HEHSkhWyVXuktbfFBupRA7Y0
+vWvrD3zQ0WfxP8eKohDP1Q1XDoDSPotEW0yDrUcZqsnlPPZrBQTLYBMstHmRRiNr
+GtqbKy59SaPPt1AMC2WzfT51BOoixg==
+=RkdF
+-----END PGP SIGNATURE-----
+
+--Sig_/gVAgX7Kb+mYpBsve7JXvxyX--
