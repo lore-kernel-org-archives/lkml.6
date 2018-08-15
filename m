@@ -3,132 +3,155 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2699BC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502E9C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9874215B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:57:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9874215B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 06A72215B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:05:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A72215B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729229AbeHOOt2 (ORCPT
+        id S1729212AbeHOO5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 10:49:28 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11112 "EHLO huawei.com"
+        Wed, 15 Aug 2018 10:57:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35876 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727141AbeHOOt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 10:49:28 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 507D7C0758F93;
-        Wed, 15 Aug 2018 19:57:32 +0800 (CST)
-Received: from [127.0.0.1] (10.119.159.246) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
- 19:57:23 +0800
-Subject: Re: [PATCH RFC] usercopy: optimize stack check flow when the
- page-spanning test is disabled
-To:     Kees Cook <keescook@chromium.org>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <yinyouzhan@huawei.com>
-References: <1534249051-56879-1-git-send-email-yuanxiaofeng1@huawei.com>
- <20180814123454.GA25328@bombadil.infradead.org>
- <494CFD22286B8448AF161132C5FE9A985B624E05@dggema521-mbx.china.huawei.com>
- <CAGXu5jLw1=KB1J3gQRyg66MxfgOoRmZDfeM5KO57djKU_as+Xw@mail.gmail.com>
-From:   "Yuanxiaofeng (XiAn)" <yuanxiaofeng1@huawei.com>
-Message-ID: <2da82b8e-0e44-75e8-33d4-676fbd7ee98b@huawei.com>
-Date:   Wed, 15 Aug 2018 19:59:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1728668AbeHOO5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 10:57:06 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3686C2BCA9;
+        Wed, 15 Aug 2018 12:05:11 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94B242156712;
+        Wed, 15 Aug 2018 12:05:07 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 14:05:05 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v9 11/22] s390: vfio-ap: sysfs interfaces to configure
+ domains
+Message-ID: <20180815140505.36d3138e.cohuck@redhat.com>
+In-Reply-To: <1534196899-16987-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLw1=KB1J3gQRyg66MxfgOoRmZDfeM5KO57djKU_as+Xw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.119.159.246]
-X-CFilter-Loop: Reflected
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 15 Aug 2018 12:05:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 15 Aug 2018 12:05:11 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 13 Aug 2018 17:48:08 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Introduces two new sysfs attributes for the VFIO mediated
+> matrix device for assigning AP domains to and unassigning
+> AP domains from a mediated matrix device. The IDs of the
+> AP domains assigned to the mediated matrix device will be
+> stored in an AP queue mask (AQM).
+> 
+> The bits in the AQM, from most significant to least
+> significant bit, correspond to AP queue index (APQI) 0 to
+> 255 (note that an APQI is synonymous with with a domain ID).
+> On some systems, the maximum allowable domain number may be
+> less than 255 - depending upon the host's AP configuration -
+> and assignment may be rejected if the input domain ID exceeds
+> the limit.
+> 
+> When a domain is assigned, the bit corresponding to the APQI
+> will be set in the AQM. Likewise, when a domain is unassigned,
+> the bit corresponding to the APQI will be cleared from the AQM.
+> 
+> In order to successfully assign a domain, the APQNs derived from
+> the domain ID being assigned and the adapter numbers of all
+> adapters previously assigned:
+> 
+> 1. Must be bound to the vfio_ap device driver.
+> 
+> 2. Must not be assigned to any other mediated matrix device.
+> 
+> If there are no adapters assigned to the mdev, then there must
+> be an AP queue bound to the vfio_ap device driver with an
+> APQN containing the domain ID (i.e., APQI), otherwise all
+> adapters subsequently assigned will fail because there will be no
+> AP queues bound with an APQN containing the APQI.
+> 
+> Assigning or un-assigning an AP domain will also be rejected if
+> a guest using the mediated matrix device is running.
+> 
+> The relevant sysfs structures are:
+> 
+> /sys/devices/vfio_ap/matrix/
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ...............[$uuid]
+> .................. assign_domain
+> .................. unassign_domain
+> 
+> To assign a domain to the $uuid mediated matrix device,
+> write the domain's ID to the assign_domain file. To
+> unassign a domain, write the domain's ID to the
+> unassign_domain file. The ID is specified using
+> conventional semantics: If it begins with 0x, the number
+> will be parsed as a hexadecimal (case insensitive) number;
+> if it begins with 0, it will be parsed as an octal number;
+> otherwise, it will be parsed as a decimal number.
+> 
+> For example, to assign domain 173 (0xad) to the mediated matrix
+> device $uuid:
+> 
+> 	echo 173 > assign_domain
+> 
+> 	or
+> 
+> 	echo 0255 > assign_domain
+> 
+> 	or
+> 
+> 	echo 0xad > assign_domain
+> 
+> To unassign domain 173 (0xad):
+> 
+> 	echo 173 > unassign_domain
+> 
+> 	or
+> 
+> 	echo 0255 > unassign_domain
+> 
+> 	or
+> 
+> 	echo 0xad > unassign_domain
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c |   88 ++++++++++++++++++++++++++++++++++++-
+>  1 files changed, 87 insertions(+), 1 deletions(-)
 
-On 8/15/2018 2:54 AM, Kees Cook wrote:
-> (Please use contextual quoting in replies... mixing contextual with
-> top-posting becomes very hard to read...)
-> 
-> On Tue, Aug 14, 2018 at 6:02 AM, Yuanxiaofeng (XiAn)
-> <yuanxiaofeng1@huawei.com> wrote:
->> On Tue, Aug 14, 2018 at 8:35PM Matthew Wilcox wrote:
->>> On Tue, Aug 14, 2018 at 08:17:31PM +0800, Xiaofeng Yuan wrote:
->>>> The check_heap_object() checks the spanning multiple pages and slab.
->>>> When the page-spanning test is disabled, the check_heap_object() is
->>>> redundant for spanning multiple pages. However, the kernel stacks are
->>>> multiple pages under certain conditions: CONFIG_ARCH_THREAD_STACK_ALLOCATOR
->>>> is not defined and (THREAD_SIZE >= PAGE_SIZE). At this point, We can skip
->>>> the check_heap_object() for kernel stacks to improve performance.
->>>> Similarly, the virtually-mapped stack can skip check_heap_object() also,
->>>> beacause virt_addr_valid() will return.
->>>
->>> Why not just check_stack_object() first, then check_heap_object() second?
-> 
-> Most of the dynamically-sized copies (i.e. those that will trigger
-> __check_object_size being used at all) come out of heap. Stack copies
-> tend to be a fixed size. That said, the stack check is pretty cheap:
-> if it's not bounded by task_stack_page(current) ... +THREAD_SIZE, it
-> kicks out immediately. The frame-walking will only happen if it IS
-> actually stack (and once finished will short-circuit all remaining
-> tests).
->
->> 1, When the THREAD_SIZE is less than PAGE_SIZE, the stack will allocate memory by kmem_cache_alloc_node(), it's slab memory and will execute __check_heap_object().
-> 
-> Correct, though if an architecture supports stack frame analysis, this
-> is a more narrow check than the bulk heap object check. (i.e. it may
-> have sub-object granularity to determine if a copy spans a stack
-> frame.) This supports the idea of just doing the stack check first,
-> though.
-> 
-
->> 2, When CONFIG_HARDENED_USERCOPY_PAGESPAN is enabled, the multiple-pages stacks will do some check in check_page_span().
-> 
-> PAGESPAN checking is buggy for a lot of reasons, unfortunately. It
-> should generally stay disabled unless someone is working on getting
-> rid of allocations that _should_ have marked themselves as spanning
-> pages. It's unclear if this is even a solvable problem in the kernel
-> right now due to how networking code manages skbs.
-> 
-I also found the PAGESPAN is disabled by default, it's a reason why I
-change the heap/stack order. If PAGESPAN is enabled in the future,
-this patch will restore the original check flow.
-
->> So, I set some restrictions to make sure the useful check will not be skipped.
-> 
-> It'd be nice to find some workloads that visibly change by making the
-> heap/stack order change. I think the known worst-case (small-packet
-> UDP flooding) wouldn't get worse since both checks will be performed
-> in either case.
-> 
-Only the stack will skip the heap check. Other scenarios will return
-NOT_STACK in check_stack_object(), and will not skip any checks.
-This change just influences and benefits to the kernel stack check.
-
-> (Maybe we should also short-circuit early in heap checks if it IS a
-> valid heap object: no reason to go do the kernel text check after
-> that...)
-> 
-I tested the average time of each check (there may be some bias on different
-devices), the check_heap_object() spend most time.  And the kernel stack spend
-many time in heap check. It's another reason why I want change the order.
-If we can skip the valid heap's text check, we need do some validation.
-However, it will be beneficial to performance as the usercopy check is executed
-frequently.
-
-> -Kees
-> 
--Xiaofeng
-
+Looks sane to me.
