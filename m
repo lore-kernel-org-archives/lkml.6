@@ -2,82 +2,96 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C62CC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C443C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2895E21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:50:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2895E21528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A38A2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:53:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A38A2146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeHOVnh (ORCPT
+        id S1727484AbeHOVrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:43:37 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:60210 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726292AbeHOVnh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:43:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T6gJtNa_1534358999;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6gJtNa_1534358999)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 16 Aug 2018 02:50:08 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC v8 PATCH 4/5] mm: unmap VM_HUGETLB mappings with optimized path
-Date:   Thu, 16 Aug 2018 02:49:49 +0800
-Message-Id: <1534358990-85530-5-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+        Wed, 15 Aug 2018 17:47:06 -0400
+Received: from fieldses.org ([173.255.197.46]:60768 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727247AbeHOVrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 17:47:05 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 6E0B41CE7; Wed, 15 Aug 2018 14:53:45 -0400 (EDT)
+Date:   Wed, 15 Aug 2018 14:53:45 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com>,
+        jlayton@kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: general protection fault in send_sigurg_to_task
+Message-ID: <20180815185345.GB29569@fieldses.org>
+References: <0000000000007f59610573509684@google.com>
+ <000000000000f4136d0573512103@google.com>
+ <20180814191129.GN7906@fieldses.org>
+ <CACT4Y+YujnbvrgRU6xc+=8rHLctrjQbRP+wq-08UmbH_oOfAKA@mail.gmail.com>
+ <20180815101120.019f069e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180815101120.019f069e@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When unmapping VM_HUGETLB mappings, vm flags need to be updated. Since
-the vmas have been detached, so it sounds safe to update vm flags with
-read mmap_sem.
+On Wed, Aug 15, 2018 at 10:11:20AM +1000, Stephen Rothwell wrote:
+> Hi Bruce,
+> 
+> On Tue, 14 Aug 2018 13:50:20 -0700 Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Tue, Aug 14, 2018 at 12:11 PM, J. Bruce Fields <bfields@fieldses.org> wrote:
+> > > On Mon, Aug 13, 2018 at 06:33:02AM -0700, syzbot wrote:  
+> > >> syzbot has found a reproducer for the following crash on:
+> > >>
+> > >> HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
+> > >> git tree:       linux-next  
+> > >
+> > > I fetched linux-next but don't have 5ed5da74de9e.  
+> > 
+> > +Stephen for the disappeared linux-next commit.
+> 
+> That is just the HEAD commit on linux-next that day.  If you fetched
+> linux-next after I released next-20180814 yesterday, then it would have
+> a different HEAD commit.  If you check out the tag next-20180813, you
+> will get the above HEAD commit.
+> 
+> > On the dashboard link you can see that it also happened on a more
+> > recent commit 4e8b38549b50459a22573d756dd1f4e1963c2a8d that I do see
+> > now in linux-next.
+> 
+> Which is just the HEAD commit of next-20180814.
+> 
+> Linux-next is rebuilt every day based on Linus' tree of the day,
+> followed by merging all the other branches, so its HEAD is different
+> every day.
 
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- mm/mmap.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I new it was rebuilt every day, but for some reason I expected git to
+fetch all new tags.  But that's wrong, it just fetches whatever
+branch(es) you request and then only tags that happen to reference stuff
+on that branch; from git-fetch(1): "By default, any tag that points into
+the histories being fetched is also fetched; the effect is to fetch tags
+that point at branches that you are interested in. This default behavior
+can be changed by using the --tags or --no-tags options or by
+configuring remote.<name>.tagOpt.  By using a refspec that fetches tags
+explicitly, you can fetch tags that do not point into branches you are
+interested in as well."
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index e92f680..3b9f734 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2812,7 +2812,6 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
- 
- 	/*
- 	 * Unmapping vmas, which have:
--	 *   VM_HUGETLB or
- 	 *   VM_PFNMAP or
- 	 *   uprobes
- 	 * need get done with write mmap_sem held since they may update
-@@ -2821,7 +2820,7 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
- 	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
- 		if ((vma->vm_file &&
- 		    has_uprobes(vma, vma->vm_start, vma->vm_end)) ||
--		    (vma->vm_flags & (VM_HUGETLB | VM_PFNMAP)))
-+		    (vma->vm_flags & VM_PFNMAP))
- 			goto regular_path;
- 	}
- 
--- 
-1.8.3.1
+Sorry for the confusion!
 
+--b.
