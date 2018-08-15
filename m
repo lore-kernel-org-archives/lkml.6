@@ -6,73 +6,60 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2E8C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412C9C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F96216E6
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:51:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F96216E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id EC41B216E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:54:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC41B216E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeHOImT (ORCPT
+        id S1728373AbeHOIpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 04:42:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51202 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbeHOImT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 04:42:19 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E443394B;
-        Wed, 15 Aug 2018 05:51:34 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 07:51:31 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
-Message-ID: <20180815055131.GD10151@kroah.com>
-References: <20180814171520.883143803@linuxfoundation.org>
- <20180814185818.GA7987@flashbox>
+        Wed, 15 Aug 2018 04:45:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43710 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725876AbeHOIpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 04:45:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A045FACD2;
+        Wed, 15 Aug 2018 05:54:37 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 07:54:54 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Michael Jin <mikhail.jin@gmail.com>
+Cc:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] EDAC, amd64: Add Family 17h Model 11h support.
+Message-ID: <20180815055454.GB23008@nazgul.tnic>
+References: <20180810193623.24629-1-mikhail.jin@gmail.com>
+ <BN7PR12MB2593F278911BAF74943245F8F8380@BN7PR12MB2593.namprd12.prod.outlook.com>
+ <CAO6F7D=iP7-gcRH1f1SsLzjXcgw=ZB4O6GikFoee8qyQWy4HFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180814185818.GA7987@flashbox>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO6F7D=iP7-gcRH1f1SsLzjXcgw=ZB4O6GikFoee8qyQWy4HFw@mail.gmail.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 11:58:18AM -0700, Nathan Chancellor wrote:
-> On Tue, Aug 14, 2018 at 07:16:23PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.120 release.
-> > There are 107 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu Aug 16 17:14:53 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.120-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Merged, compiled with -Werror, and installed onto my OnePlus 6, which is
-> my daily driver while my Pixel 2 XL is in for another screen RMA...
-> 
-> No initial issues noticed in dmesg or general usage.
+On Tue, Aug 14, 2018 at 08:14:47PM -0400, Michael Jin wrote:
+> Therefore, I would like you to confirm that model 10h uses 0x15e8 (device
+> F0) and 0x15ee (device F6) as I can not find any documentation or test
+> whether ECC works.
 
-Thanks for the testing and letting me know.
+He just asked you to make the change for models 0x10-0x2f. How much more
+confirmation do you need?
 
-greg k-h
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
