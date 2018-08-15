@@ -2,88 +2,137 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921C9C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30DDC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9128821527
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:44:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dpz9fbP1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9128821527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B83F21527
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B83F21527
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbeHOSg7 (ORCPT
+        id S1729539AbeHOShC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:36:59 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:43180 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbeHOSg6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:36:58 -0400
-Received: by mail-io0-f195.google.com with SMTP id y10-v6so1321432ioa.10
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 08:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RohGbH8seZcsG3pv6IdJlL+KAjjQ0uUKPvz8LXg6wy4=;
-        b=dpz9fbP1J/Yd2KICaHJJurtFxNkU5KHaeF2Q9rUw6duBpNg8s2vkMc3JGrHXT3ugkG
-         McDKbRcdvamB2yI99pATS+yMsLXmeqANqxgbsEOKprHUmfNWXGI4jRR8xQI2AO0feFV8
-         0+Al2I0WE0A5shr5tMo+TGvvHK7nqeZHRQYS8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RohGbH8seZcsG3pv6IdJlL+KAjjQ0uUKPvz8LXg6wy4=;
-        b=EBTGHRsAsNYK0GviY06ldMwX2Sob5ZElcUrCQUWxKb52FV8Fx//ueSikFlL4woUCpG
-         XqWbmREMs7A6KX578cKxED9H+IWviZ8keWtwkdVdLHp6g/j4mmiFSUUa/EkzBZUnCx+v
-         YVEPXC//Z9ZaXNjTVvBu7luOb8L1aqHe9ys+aGFfyOiXacRlMTqN/dSgxyebR5zwcKpr
-         WUUq4LDrs1K7wvdUOzAMQSQq+BGN86Dt3jwVGNBqyRpjMbs8WXghJ/4p1F9QPr3f1QFm
-         Q2EASou1iyRV70WVckMs5T6jegoC1ovMQDB2JXmGrGmgxEvvVsNZZZDzfdaAP4wrFuVi
-         qRpA==
-X-Gm-Message-State: AOUpUlF7B7C9UurVE8gQl/PrNDwx3HGVZWd2co1ZfCvGyAJSaB95S2e9
-        JXAtwQSSXPD0/vEMh1UIpGxSSnhHj9YgZmQO6Ao=
-X-Google-Smtp-Source: AA+uWPxEJM/ZI61qnR45AIH95fVQRFrn1KOdulBVhgoJBekCmY6kBxDaFLz0KVLhuhn04ZwZlswO598ZSuvCd2LVTy8=
-X-Received: by 2002:a6b:f815:: with SMTP id o21-v6mr9685895ioh.203.1534347858736;
- Wed, 15 Aug 2018 08:44:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180814170904.GA12768@roeck-us.net> <aa4bedb7b1af45c59ff4e61f3f199287@AcuMS.aculab.com>
-In-Reply-To: <aa4bedb7b1af45c59ff4e61f3f199287@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 15 Aug 2018 08:44:07 -0700
-Message-ID: <CA+55aFyeW7rqgGqOusZSz-jFP-CMH=hcyVGKhxyLxNeyBgLbqw@mail.gmail.com>
-Subject: Re: Build failures with gcc 4.5 and older
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 15 Aug 2018 14:37:02 -0400
+Received: from mout.gmx.net ([212.227.17.20]:37459 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729249AbeHOShB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:37:01 -0400
+Received: from homer.simpson.net ([185.191.216.245]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MY3Ho-1fL9Py1dvE-00UqGB; Wed, 15
+ Aug 2018 17:44:06 +0200
+Message-ID: <1534347845.21000.0.camel@gmx.de>
+Subject: [PATCH] rcu: Convert rcu_state.ofl_lock to raw_spinlock_t
+From:   Mike Galbraith <efault@gmx.de>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 15 Aug 2018 17:44:05 +0200
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:A3x8xkbBuNcEez8LEvsHFzOo204U9RbxgM8dpbOK0vAaAtZRMUu
+ EHIULXFuvW5xktqr0QWROx9ECuvzDnIG51+dP319bniVWPZKAFyOUIhSJ+8nOI+58R+gv8j
+ A+kIkn5AV+Wns6KsnFFhSpYb/BJ4MWXN5U/LMp79eQe3LbTuIQ8ABTdCHeoZbplFf5WZUqT
+ gj9IM97nxRZbKvhAnxGNQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9t7z+tNicgI=:5HBvzyfDWnPcrDl9MLeubh
+ oRXbqpn6Ia0/Zmscvq+cAGSRCRalVee6m9I2pMIjCqjWP++G2TPkgY2UhJlR9wT+oQgzTDp5t
+ f1WbBm1cuWB4jkZfwUU6igusewN5DG5IE26NqmafjlaKwuybhfbvnYrazps9KiZCqopfXJxv2
+ w8Vj3VEFfz1JqJVWGJQoJugmeM6xDzNHgwYLbWK9kyDm/VCasOw6f0hkE/tFWMtq1IA1uNJpu
+ 5uN/rk5MfuciZNsURlIIBJgFuO/4sJ6eDQUWGN1pWHDBW9x0pZnNp+rD6yMtMfZINVpKsqxzc
+ kkhqwfu7+8UXskTqzmeLcBlPHIrFGzL3hifLCZlY2RwxYCb4VyUTpxrVdCSytjDJt91f0UOyS
+ uGtnZdX9guysKDUA4rn3Kimvu3X2UzMZLRloufbSL1EKRPi00v1lz4dxX3Pi5tpwjd7dJCo/l
+ SQENlFmEfps/qeH/JV8QfnlWx3JGOsx1aOpNhpMF9RdTF5X7OIGjI7+14lUhljLRNG42ZHbx+
+ ozL10RwTuUCdrZJKXyioevO2T3FOG2/wO7w5046dnf5+c+fRMHoy9Gwzp9tLelL6/Zojlw4ho
+ PauWpbqKwppoKI3yg+U6QNY302MwtjjwDXf4AXUoyr3zxJ2o3RKbEqlK1YKNzY0bxEDxSP/IM
+ 7oOPReRa+nS5rK2nVUFGbB7uxDq9UvkQpdwcGtrVq7lc9eHcqcCDt+fs32AntUuUkM99pSRb8
+ l66oe530Y8ZUmLFCs91Iz3RON3KLMy8fmN08Jie2GJ4CiGvHytyg52DJTJxBl+CGWc4DgEU7i
+ Isdl+Gi
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 5:38 AM David Laight <David.Laight@aculab.com> wrote:
->
-> Never mind the version of gcc, the x86 kernel doesn't build with the
-> default kernel options because the ORC unwinder hits a bug in libelf
-> (in objtool) that was only fixed late last year.
->
-> It isn't even obvious from the build log what has gone wrong.
 
-Can you give more details? We should try to work around it.
+1e64b15a4b10 ("rcu: Fix grace-period hangs due to race with CPU offline")
+added spinlock_t ofl_lock to the rcu_state structure, then takes it with
+preemption disabled during CPU offline, giving RT sleeping lock heartburn.
 
-It's one thing to care about a compiler that is almost a decade old.
-At some point we just have to let it go.
+Convert it to raw_spinlock_t.
 
-But some libelf bug that is less than a year old is likely to bite people.
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+---
+ kernel/rcu/tree.c |   12 ++++++------
+ kernel/rcu/tree.h |    2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-                     Linus
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -111,7 +111,7 @@ struct rcu_state sname##_state = { \
+ 	.abbr = sabbr, \
+ 	.exp_mutex = __MUTEX_INITIALIZER(sname##_state.exp_mutex), \
+ 	.exp_wake_mutex = __MUTEX_INITIALIZER(sname##_state.exp_wake_mutex), \
+-	.ofl_lock = __SPIN_LOCK_UNLOCKED(sname##_state.ofl_lock), \
++	.ofl_lock = __RAW_SPIN_LOCK_UNLOCKED(sname##_state.ofl_lock), \
+ }
+ 
+ RCU_STATE_INITIALIZER(rcu_sched, 's', call_rcu_sched);
+@@ -1962,13 +1962,13 @@ static bool rcu_gp_init(struct rcu_state
+ 	 */
+ 	rsp->gp_state = RCU_GP_ONOFF;
+ 	rcu_for_each_leaf_node(rsp, rnp) {
+-		spin_lock(&rsp->ofl_lock);
++		raw_spin_lock(&rsp->ofl_lock);
+ 		raw_spin_lock_irq_rcu_node(rnp);
+ 		if (rnp->qsmaskinit == rnp->qsmaskinitnext &&
+ 		    !rnp->wait_blkd_tasks) {
+ 			/* Nothing to do on this leaf rcu_node structure. */
+ 			raw_spin_unlock_irq_rcu_node(rnp);
+-			spin_unlock(&rsp->ofl_lock);
++			raw_spin_unlock(&rsp->ofl_lock);
+ 			continue;
+ 		}
+ 
+@@ -2004,7 +2004,7 @@ static bool rcu_gp_init(struct rcu_state
+ 		}
+ 
+ 		raw_spin_unlock_irq_rcu_node(rnp);
+-		spin_unlock(&rsp->ofl_lock);
++		raw_spin_unlock(&rsp->ofl_lock);
+ 	}
+ 	rcu_gp_slow(rsp, gp_preinit_delay); /* Races with CPU hotplug. */
+ 
+@@ -3892,7 +3892,7 @@ static void rcu_cleanup_dying_idle_cpu(i
+ 
+ 	/* Remove outgoing CPU from mask in the leaf rcu_node structure. */
+ 	mask = rdp->grpmask;
+-	spin_lock(&rsp->ofl_lock);
++	raw_spin_lock(&rsp->ofl_lock);
+ 	raw_spin_lock_irqsave_rcu_node(rnp, flags); /* Enforce GP memory-order guarantee. */
+ 	rdp->rcu_ofl_gp_seq = READ_ONCE(rsp->gp_seq);
+ 	rdp->rcu_ofl_gp_flags = READ_ONCE(rsp->gp_flags);
+@@ -3903,7 +3903,7 @@ static void rcu_cleanup_dying_idle_cpu(i
+ 	}
+ 	rnp->qsmaskinitnext &= ~mask;
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+-	spin_unlock(&rsp->ofl_lock);
++	raw_spin_unlock(&rsp->ofl_lock);
+ }
+ 
+ /*
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -368,7 +368,7 @@ struct rcu_state {
+ 	char abbr;				/* Abbreviated name. */
+ 	struct list_head flavors;		/* List of RCU flavors. */
+ 
+-	spinlock_t ofl_lock ____cacheline_internodealigned_in_smp;
++	raw_spinlock_t ofl_lock ____cacheline_internodealigned_in_smp;
+ 						/* Synchronize offline with */
+ 						/*  GP pre-initialization. */
+ };
