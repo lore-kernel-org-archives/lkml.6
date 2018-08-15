@@ -2,146 +2,122 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BF4C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5BFC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A0B2152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:40:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3601C2152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jx1I5pli"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A0B2152A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O7FXuvht"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3601C2152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeHOWd1 (ORCPT
+        id S1727875AbeHOWgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 18:33:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727541AbeHOWd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 18:33:27 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59EA1214DC;
-        Wed, 15 Aug 2018 19:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534361997;
-        bh=z++x4Xy56bawcIUrd4+tgL56vaDdKUs3aLT+7IuBgdU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jx1I5pliLsAEgJgSWisbwbNzzUNIaJFge4tMoJsgtdogJEN8KIliC/GkoIXzOZQ+C
-         gQaFgaKMxrIzDtj881zVgFKH95waElHeaZ1WfC+kfUDoUY2AHd1685PN8MYJ0Ri1l+
-         hZiUpaYdqZTSYn3Lq9xgFReyDOLq9RZZ2QxYLzd4=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id C9DBB140A1C; Wed, 15 Aug 2018 16:39:48 -0300 (-03)
-Date:   Wed, 15 Aug 2018 16:39:48 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jack Henschel <jackdev@mailbox.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V2] perf parser: Improve error message for PMU address
- filters
-Message-ID: <20180815193948.GB5976@kernel.org>
-References: <20180704121345.19025-1-jackdev@mailbox.org>
- <20180704152536.GC19164@krava>
+        Wed, 15 Aug 2018 18:36:11 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40547 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727660AbeHOWgK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 18:36:10 -0400
+Received: by mail-it0-f67.google.com with SMTP id h23-v6so3498729ita.5;
+        Wed, 15 Aug 2018 12:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YYh9GDDso6xdaM96rzYq8m0zOUEfU+iT8h6UTGVAEZ0=;
+        b=O7FXuvht0Q1rgnUf/cT+GbusP3M+jqCmIhNTiLmNTiFVjqH0vDIhqyLzKnhNGBn2BV
+         X2YagQVcywD0bj4Fgvs954QMAdw8g1OfCMM5i6b6Oi3lX6L2RwSjDkjz2SpNh8CMGZLl
+         wpDR1EDdA2QysdU+gQI+nBrgDcDMaqExE1aYM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YYh9GDDso6xdaM96rzYq8m0zOUEfU+iT8h6UTGVAEZ0=;
+        b=MLm0/eyJt3lwNa8CasFkM6Fk0qlT/BU3kAqqMSZ8AmhLmMDMpqd1twNZHOacKTLvS5
+         GuvaOOyGbYXBGBZ6DBB72X+WE4O4XL6MMvmFFvKHbt6THLB6PqnWvu4BPhTwxMwNfKud
+         Ajy51rWuHmyQLzTQsC5NgkaaA1eKbi6gl866WbiwY1PsDS9yunzedsRwVF++/g5g+xrT
+         BOi896b4J9GhkjxRxSPrbZtRS2dACUbmveKmnl1RI+OfUW3ECM5pN/Z8uA5YMR2go1YY
+         KjPe0t8bpXpn2ZKm+5H/IgG29XE7wBQXWzazQy9ylHiMFR6W9rJrJrL7l4SNs4eXrWY8
+         a2FQ==
+X-Gm-Message-State: AOUpUlGtmKUNZiu63QKVpZZTyB3DyM5+EJzUjF+eNR/HzLQiwGuO/OFi
+        7qF4IEJLplCuj0ug/uYhOfHFJ5N+LrgnUUiLVrE=
+X-Google-Smtp-Source: AA+uWPzsN0qnWh8ehAnwSn+vKRBVdFxEgChhPQGGdOm2SB7GMh0nwYXg+co6eSuHFKsc6m0DBmjNNnQ266xGtUkce78=
+X-Received: by 2002:a24:5002:: with SMTP id m2-v6mr18800922itb.16.1534362158467;
+ Wed, 15 Aug 2018 12:42:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704152536.GC19164@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180814171520.883143803@linuxfoundation.org> <6272e062-6cfc-0669-bebf-ebb039da051a@dd-wrt.com>
+ <87k1orms9i.fsf@turtle.gmx.de> <55df6754-ce8c-520a-13f9-c610ac498173@dd-wrt.com>
+ <20180815185553.GA18219@roeck-us.net> <69700876-f31a-ea0a-bdea-2e82b7a5d308@dd-wrt.com>
+ <20180815192630.GA20575@roeck-us.net>
+In-Reply-To: <20180815192630.GA20575@roeck-us.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 Aug 2018 12:42:27 -0700
+Message-ID: <CA+55aFzHYYai0ZR3eapEqQzt9KVcg8+bGDSmTmc6CzhpmFVfdw@mail.gmail.com>
+Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     s.gottschall@dd-wrt.com, Sven Joachim <svenjoac@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Jul 04, 2018 at 05:25:36PM +0200, Jiri Olsa escreveu:
-> On Wed, Jul 04, 2018 at 02:13:45PM +0200, Jack Henschel wrote:
-> > This is the second version of a patch that improves the error
-> > message of the perf events parser when the PMU hardware does not support
-> > address filters.
-> > 
-> > Previously, the perf returned the following error:
-> > > $ perf record -e intel_pt// --filter 'filter sys_write'
-> > > --filter option should follow a -e tracepoint or HW tracer option
-> > This implies there is some syntax error present in the command line,
-> > which is not true. Rather, notify the user that the CPU does not have
-> > support for this feature.
-> > 
-> > For example, Intel chips based on the Broadwell micro-archticture have
-> > the Intel PT PMU, but do not support address filtering.
-> > 
-> > Now, perf prints the following error message:
-> > > $ perf record -e intel_pt// --filter 'filter sys_write'
-> > > This CPU does not support address filtering
-> > 
-> > Signed-off-by: Jack Henschel <jackdev@mailbox.org>
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+On Wed, Aug 15, 2018 at 12:26 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> Also seen in mainline. Meaning my non-SMP test builds are broken. Hmm.
 
-Thanks, tested and applied,
+Grr. I think it's due mainly due to commit 447ae3166702 ("x86: Don't
+include linux/irq.h from asm/hardirq.h"), which exposes a number of
+files that had some dodgy include file dependenencies, and just
+randomly happened to get it right because of that odd include that
+caused problems.
 
-- Arnaldo
- 
-> thanks,
-> jirka
-> 
-> > ---
-> >  tools/perf/util/parse-events.c | 20 ++++++++++----------
-> >  1 file changed, 10 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> > index 15eec49e71a1..f8cd3e7c9186 100644
-> > --- a/tools/perf/util/parse-events.c
-> > +++ b/tools/perf/util/parse-events.c
-> > @@ -1991,8 +1991,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
-> >  	int nr_addr_filters = 0;
-> >  	struct perf_pmu *pmu = NULL;
-> >  
-> > -	if (evsel == NULL)
-> > -		goto err;
-> > +	if (evsel == NULL) {
-> > +		fprintf(stderr,
-> > +			"--filter option should follow a -e tracepoint or HW tracer option\n");
-> > +		return -1;
-> > +	}
-> >  
-> >  	if (evsel->attr.type == PERF_TYPE_TRACEPOINT) {
-> >  		if (perf_evsel__append_tp_filter(evsel, str) < 0) {
-> > @@ -2014,8 +2017,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
-> >  		perf_pmu__scan_file(pmu, "nr_addr_filters",
-> >  				    "%d", &nr_addr_filters);
-> >  
-> > -	if (!nr_addr_filters)
-> > -		goto err;
-> > +	if (!nr_addr_filters) {
-> > +		fprintf(stderr,
-> > +			"This CPU does not support address filtering\n");
-> > +		return -1;
-> > +	}
-> >  
-> >  	if (perf_evsel__append_addr_filter(evsel, str) < 0) {
-> >  		fprintf(stderr,
-> > @@ -2024,12 +2030,6 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
-> >  	}
-> >  
-> >  	return 0;
-> > -
-> > -err:
-> > -	fprintf(stderr,
-> > -		"--filter option should follow a -e tracepoint or HW tracer option\n");
-> > -
-> > -	return -1;
-> >  }
-> >  
-> >  int parse_filter(const struct option *opt, const char *str,
-> > -- 
-> > 2.18.0
-> > 
+That commit itself is definitely the right thing to do, but yes, we
+clearly had a lot of cases of things getting core header files
+included purely by luck.
+
+And because this was all done under embargo, we didn't get the kind of
+test robot coverage we usually get.
+
+Part of it can also be due to subtle merge issues - even if the
+original branch got good coverage, later changes sometimes ended up
+adding things like that.
+
+For example, my merge of the L1TF code found that in the meantime,
+arch/x86/kernel/kvmclock.c had added a call to kzalloc(), which used
+to work just fine, but with the header cleanup it turned out that
+kvmclock.c had never included <linux/slab.h>, so now it didn't build
+right.
+
+And that was just the one I noticed because of my limited build tests.
+
+And yes, every single developer has CONFIG_SMP in their config, but
+perhaps equally importantly, I suspect CONFIG_SMP ends up getting more
+header files included almost by mistake, so it can _continue_ to hide
+these kinds of incomplete header file includes that just happen to
+work.
+
+> Anyway, care to send a proper patch ? I am sure Linus will be more
+> than happy to apply it.
+
+I think "happy" is too strong a word for my state of mind with all
+this, but yes, I'll apply it, and you'll get the glory of fixing some
+configuration that clearly didn't get properly tested.
+
+In the meantime, maybe I should just do a "make allmodconfig" and then
+disable SMP and see if that shows anything for me.
+
+              Linus
