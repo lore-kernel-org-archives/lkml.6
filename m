@@ -3,104 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6619FC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C9EC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAF221654
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5CF215E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 08:41:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ji9wp3Cb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAF221654
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YKLjhqlW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5CF215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbeHOLV1 (ORCPT
+        id S1728900AbeHOLdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 07:21:27 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45592 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeHOLV1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 07:21:27 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7F8TnTe031784;
-        Wed, 15 Aug 2018 08:30:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=F163zw67rpznu8qFKGkGx2SpO2MyfzSHwuSHHpx7hys=;
- b=Ji9wp3Cb/NFEgaccoX0UmIROahgLTndHjlHUR+JAsVudja+EuPjgSKh4bDKPskHghQBY
- GJOEZz0ogE02JaoO/3yr4zfqODj7dIXfXxK0fMGRO+DQ1TzHQr4fNuWaW2uLQV8ysmCO
- xtPBps24nMyLuYxZ7l6QvoL8IoJ14KoiX3loio8B6TafOJHy1obGZUWLGYQtSQpQes7H
- dNOAQ18nmjCkXXLDcynv9XGDLdTEZa9YTlOjhBBDZIpdpzA8QKWn4rBmPvAr0Be7dvFg
- gbc3Z0/sD85kaa1/CzMXXTwpaTLrnaCRIrDDd4A5ZUSyYcwrdGFweGVUiXRz1cMVMxum Uw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ksqrpbjc9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Aug 2018 08:30:08 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7F8U7g0020719
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Aug 2018 08:30:07 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7F8U6ao029693;
-        Wed, 15 Aug 2018 08:30:06 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 15 Aug 2018 01:30:05 -0700
-Date:   Wed, 15 Aug 2018 11:29:56 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Security Officers <security@kernel.org>,
-        Kevin Deus <kdeus@google.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Allen Pais <allen.pais@oracle.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] NFC: Fix possible memory corruption when handling
- SHDLC I-Frame commands
-Message-ID: <20180815082956.u6grueiyshwgqt3a@mwanda>
-References: <20180813223910.26276-1-surenb@google.com>
- <20180814095413.vbjkcjkmytkffyaz@mwanda>
- <CAJuCfpF0Y6wc1z-rbn2wdWROgc_FkD2EX5HzDMcZ1oB5Z=dXSw@mail.gmail.com>
- <CAJuCfpHSZuabLr6+t_n7UDamJCAP6EPTNEZ6kNqWOhk2mpYADg@mail.gmail.com>
- <CAGXu5jKqcpbpG0Ky4-yXV4d5q10HtGwJtdyPKcrwkJUPhA_Mpg@mail.gmail.com>
- <CAJuCfpEX69Sbd=0i0ismP6q2NsZGUF4gMSCr1G5NdXd3n1NyZA@mail.gmail.com>
- <CAGXu5jJB9wMDJnfsurpxsXm6_0WsWWCaTuWBfy+3aMSE_LL9Rw@mail.gmail.com>
- <CAJuCfpEX+F-EPxQYXNdUg-uT9ecwYYdxBsr9y_69zQ0Fq50GeA@mail.gmail.com>
- <CAJuCfpGSPkB-tk4GHaJeStRph-ibVhUZ119Sfd16xgf9x=qUwQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpGSPkB-tk4GHaJeStRph-ibVhUZ119Sfd16xgf9x=qUwQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8985 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=658
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808150093
+        Wed, 15 Aug 2018 07:33:00 -0400
+Received: from m12-15.163.com ([220.181.12.15]:57133 "EHLO m12-15.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbeHOLdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 07:33:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=oEO2X/Rko26SrxmRa2
+        4J/081CM1b8tK+ol2x30mMJaU=; b=YKLjhqlW3EMCObgM9ReoL+eAPtKiteYIgB
+        uoClzyAVJmSyDI3RcIVFYgBL+qZsj58YAjYINE25GKmmqESnAbpKyCST0cER3VQn
+        orV2TAESaiLBpDoW18oNf/+BE9D0unUCME8Lkyg5ojpzqlnHAXHzeJA4c6K/wIWG
+        CRF2/lH6s=
+Received: from localhost.localdomain (unknown [117.136.38.140])
+        by smtp11 (Coremail) with SMTP id D8CowAA3DEJA53Nb719pDg--.48186S4;
+        Wed, 15 Aug 2018 16:41:36 +0800 (CST)
+From:   Dongbo Cao <cdbdyx@163.com>
+To:     colyli@suse.de
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dongbo Cao <cdbdyx@163.com>
+Subject: [PATCH 3/3] fix some potential memory leak in bcache_device_init
+Date:   Wed, 15 Aug 2018 16:41:23 +0800
+Message-Id: <20180815084123.7048-1-cdbdyx@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: D8CowAA3DEJA53Nb719pDg--.48186S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tr1xuFWkCF45ur4xCryxGrg_yoW8Kr1xpF
+        WxWa45trW8Ww42grZxZr4DXr1rC397Ka4ft3yxZ3W0g34qkr4YqFWfAr90qF4vkrZ7XFWa
+        qr4UJw1Uu3WkJF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UadgZUUUUU=
+X-Originating-IP: [117.136.38.140]
+X-CM-SenderInfo: xfgev5r06rljoofrz/1tbiRwGj3Fc7D+5KkwAAst
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 03:38:14PM -0700, Suren Baghdasaryan wrote:
-> The separate fix for the size of pipes[] array is posted here:
-> https://lkml.org/lkml/2018/8/14/1034
-> Thanks!
-> 
+add some goto label to release memory in case we got wrong return value.
 
-That's great!  Let's add some bounds checking to nfc_hci_msg_rx_work()
-and nfc_hci_recv_from_llc() as well and then we can close the chapter on
-these bugs.
+Signed-off-by: Dongbo Cao <cdbdyx@163.com>
+---
+ drivers/md/bcache/super.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 14c31e03..b1197cb7 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -768,6 +768,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+ 					 SIZE_MAX / sizeof(atomic_t));
+ 	size_t n;
+ 	int idx;
++	int ret = -ENOMEM;
+ 
+ 	if (!d->stripe_size)
+ 		d->stripe_size = 1 << 31;
+@@ -777,18 +778,18 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+ 	if (!d->nr_stripes || d->nr_stripes > max_stripes) {
+ 		pr_err("nr_stripes too large or invalid: %u (start sector beyond end of disk?)",
+ 			(unsigned)d->nr_stripes);
+-		return -ENOMEM;
++		goto err1;
+ 	}
+ 
+ 	n = d->nr_stripes * sizeof(atomic_t);
+ 	d->stripe_sectors_dirty = kvzalloc(n, GFP_KERNEL);
+ 	if (!d->stripe_sectors_dirty)
+-		return -ENOMEM;
++		goto err1;
+ 
+ 	n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
+ 	d->full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
+ 	if (!d->full_dirty_stripes)
+-		return -ENOMEM;
++		goto err2;
+ 
+ 	idx = ida_simple_get(&bcache_device_idx, 0,
+ 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
+@@ -799,7 +800,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+ 			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
+ 	    !(d->disk = alloc_disk(BCACHE_MINORS))) {
+ 		ida_simple_remove(&bcache_device_idx, idx);
+-		return -ENOMEM;
++		goto err3;
+ 	}
+ 
+ 	set_capacity(d->disk, sectors);
+@@ -812,7 +813,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+ 
+ 	q = blk_alloc_queue(GFP_KERNEL);
+ 	if (!q)
+-		return -ENOMEM;
++		goto err4;
+ 
+ 	blk_queue_make_request(q, NULL);
+ 	d->disk->queue			= q;
+@@ -834,6 +835,16 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+ 	blk_queue_write_cache(q, true, true);
+ 
+ 	return 0;
++err4:
++	bioset_exit(&d->bio_split);
++	if(d->disk)
++		del_gendisk(d->disk);
++err3:
++	kvfree(d->full_dirty_stripes);
++err2:
++	kvfree(d->stripe_sectors_dirty);
++err1:
++	return ret;
+ }
+ 
+ /* Cached device */
+-- 
+2.17.1
+
 
