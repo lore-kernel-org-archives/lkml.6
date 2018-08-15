@@ -3,82 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFC8C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580A7C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AAC82152B
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBAC32152B
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:33:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b="K3q6ZAE3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AAC82152B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dd-wrt.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="q+m7HbUU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAC32152B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeHOV0q (ORCPT
+        id S1727358AbeHOV1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:26:46 -0400
-Received: from webmail.newmedia-net.de ([185.84.6.166]:50302 "EHLO
-        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbeHOV0q (ORCPT
+        Wed, 15 Aug 2018 17:27:04 -0400
+Received: from mail-vk0-f47.google.com ([209.85.213.47]:41061 "EHLO
+        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeHOV1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:26:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dd-wrt.com; s=mikd;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=JOahlOpf5RuPftJgp+bfwjST85+kqyaSWUUlCxuBNjA=;
-        b=K3q6ZAE3/9y7j08UdI7S8/CNxuP9YrMmo6WnyJmeKThUxVDrFlTacvOFR3eEDuYCfRoMzl4/8M1ie+i8jJgzctaoQEwRAEkOmuzeSWBhn1HRz02ZM3INcYvzrx3DsGSH5UGZQ82lPWrsd1FVs65LNWJJ1qC4HKehd5lBhMBLaDo=;
-Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Sven Joachim <svenjoac@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-References: <20180814171520.883143803@linuxfoundation.org>
- <6272e062-6cfc-0669-bebf-ebb039da051a@dd-wrt.com>
- <87k1orms9i.fsf@turtle.gmx.de>
- <e675976b-c23d-5bee-0583-cf241033d02f@dd-wrt.com>
- <CA+55aFyZz5jahQvHPjZebyfRNsZTP0+_0rm3tUR_2k6D26bzYA@mail.gmail.com>
-From:   Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Message-ID: <30ded8f9-5949-52db-7ef2-763b0e7a4abf@dd-wrt.com>
-Date:   Wed, 15 Aug 2018 20:33:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 15 Aug 2018 17:27:04 -0400
+Received: by mail-vk0-f47.google.com with SMTP id o82-v6so128584vko.8
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 11:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=3IoX/X/15FA+0SE0MCV1DTWdFudATiHqbiblbZnFesY=;
+        b=q+m7HbUUgu3kI6ZDoTaYIhGxRHkyONB0hsSkhrr0EUXaZabuxTMIx3rmSUflR+R234
+         hvYcX4JIs+oxX4WSSXR+QjuNiDlfsgG3/Ulx8x6gkR8IpO2xonyM+s/Gje4KbHxzxvkW
+         MAJsH6jU8oP1H4U7Nxv9oE6OqcFOv/6WKIrLKRbWG9Ka+Z3psDNfpI5lchBfCYnE/y22
+         UvpP+zF8Y2ANvFV+OXiNdF201yRzV9PDSTe+roRWItCeZolltFNZ26MxskvSF5JXWxMu
+         Naw7gts05NLz0WXTKHuzzD0uk5wzHiBTb8h615FzaWqb64QQwbnXlq11v1E6awEhlMsO
+         f6nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=3IoX/X/15FA+0SE0MCV1DTWdFudATiHqbiblbZnFesY=;
+        b=kM3p/Y0wvwmHGBUqEZ8o+jvR+x3Az4rTGgdsDja/1/A6ha+orqWzD8zW5y9q7EpxH0
+         XeDI4AvwKOhwAJItcs8lQj+CZQ6BBQRpLKOcGomZHvKB+v84PMXpyxANePZmpyYzGnQ9
+         QJDGn86KJQNlkRpOxqScWmv/qr9GKN7hck12ag54QICutu94F/C4tPFP5CA10+F9yT19
+         qEmmLQe0RBhSCR68xpmZgAgvCkVIqqFkA7CDUtvzijBmDQSWrGjYu8xrQgD4D7XkV/Z1
+         LsSCgHMf4XUGPWS9tUW7mfUgVKVBABBlCXsjQITdvCN2JqmrlHugw5RhUy0zG+Qpn21G
+         82vQ==
+X-Gm-Message-State: AOUpUlFi30YYTevaPbCkxdWG45SmwBbEJuMGTNw618kgsib2OnAFal8T
+        tqvaQgIdqWOiJoyh3N225vjBXnzgwShUQ92E8myg+1Ai
+X-Google-Smtp-Source: AA+uWPw7cEepttxRbfs21bJZFiKUX2B1/zkyjABC7AvF/EgVZL1/sWD8dWq1G/FZa4ByqabSMQWtCbMI9Ixw8e4ugek=
+X-Received: by 2002:a1f:b60f:: with SMTP id g15-v6mr17415732vkf.27.1534358027742;
+ Wed, 15 Aug 2018 11:33:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFyZz5jahQvHPjZebyfRNsZTP0+_0rm3tUR_2k6D26bzYA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Received:  from [79.251.189.74] (helo=[10.88.193.131])
-        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.72)
-        (envelope-from <s.gottschall@dd-wrt.com>)
-        id 1fq0bp-00005q-I9; Wed, 15 Aug 2018 20:33:29 +0200
+From:   Martin Schroeder <mkschreder.uk@googlemail.com>
+Date:   Wed, 15 Aug 2018 20:33:36 +0200
+Message-ID: <CAGmj6qs6tPvVMsxSLPgkNkmfUYSuqvTR+sqpuR+k5cEoUo9hww@mail.gmail.com>
+Subject: A far fetched goal to clean up code quality
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I propose using following set of GCC flags to enforce code quality in
+the long run.
 
-Am 15.08.2018 um 20:26 schrieb Linus Torvalds:
-> On Wed, Aug 15, 2018 at 11:22 AM Sebastian Gottschall
-> <s.gottschall@dd-wrt.com> wrote:
->> btw. i found another compile error with x86 :-)
-> This should already be fixed by commit d0055f351e64 ("x86/smp: fix
-> non-SMP broken build due to redefinition of
-> apic_id_is_primary_thread").
->
->            Linus
-
-Hello Linus
-
-unfortunatly there are numerous other non smp compile issues. this patch 
-covers just one out of 3 found so far
-
-
-Sebastian
-
->
+    -Wall -Wextra -Werror\
+    -std=gnu11\
+    -pedantic \
+    -Wchar-subscripts\
+    -Wformat\
+    -Wformat-nonliteral\
+    -Wformat-security\
+    -Wmissing-braces\
+    -Wparentheses\
+    -Wsequence-point\
+    -Wswitch\
+    -Wtrigraphs\
+    -Wno-unused-function\
+    -Wunused-label\
+    -Wno-unused-parameter\
+    -Wunused-variable\
+    -Wunused-value\
+    -Wuninitialized\
+    -Wdiv-by-zero\
+    -Wfloat-equal\
+    -Wdouble-promotion\
+    -fsingle-precision-constant\
+    -Wshadow\
+    -Wpointer-arith\
+    -Wwrite-strings\
+    -Wconversion\
+    -Wredundant-decls\
+    -Wunreachable-code\
+    -Winline\
+    -Wenum-compare \
+    -Wlong-long\
+    -Wchar-subscripts
