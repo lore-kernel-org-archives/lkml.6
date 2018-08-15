@@ -2,272 +2,198 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41478C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8571C43615
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F5F208CB
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:56:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="imn4bCPi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F5F208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 4140C208B8
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:56:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4140C208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbeHOUtM (ORCPT
+        id S1730353AbeHOUtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 16:49:12 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:56955 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729377AbeHOUtM (ORCPT
+        Wed, 15 Aug 2018 16:49:13 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34532 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729537AbeHOUtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 15 Aug 2018 16:49:12 -0400
-Received: from mail-vk0-f44.google.com (mail-vk0-f44.google.com [209.85.213.44]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w7FHtvdZ019579;
-        Thu, 16 Aug 2018 02:55:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w7FHtvdZ019579
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534355758;
-        bh=gZuo4tNAiLLvjiCro5iwM/d1SzOKs1lDPW/a9RmIz6s=;
-        h=From:Date:Subject:To:Cc:From;
-        b=imn4bCPiivob2CwUROJyYyh7uTa9FQ8ktsP/EEaC/+N2vzK6QCiNWL29IASUKIYnp
-         dWJ/lB/yKkJK852kJeyA76HERHaFaWZC+wUbEHkDOtyHCdXaHcncWghgbDvx9zsrDZ
-         spU4yvoz93op9X6Z83OcCeny8IR84FYnfOFRppykm6zWKWPjKJ+fl08GicYjc/+RKq
-         JVMaeziOOALoCv0SS1vpx4oxtn6lLsh8h6h57lZJjLSHYHCMOwqPGBoMrKQAlmxG3w
-         epD1Pedl10uKUOF1tem4WEAqWZJKJ1BEYWyPIVgodZN4IQ2qNLkGTSHOPLfU51ApTp
-         UvVSGdFMOQHUA==
-X-Nifty-SrcIP: [209.85.213.44]
-Received: by mail-vk0-f44.google.com with SMTP id y70-v6so69535vkc.0;
-        Wed, 15 Aug 2018 10:55:57 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHaxBZh8W3CWO/4ETFAmJSa9GSkHpN9LDkT0pv29bkPzxHQYEh9
-        QaX8bs9N/OZZTYbNxGDbRm8Jvw1DFqyIefWXG/0=
-X-Google-Smtp-Source: AA+uWPwlOJbeX19UXxm8RJcSst6B0TREp1F34+9iN8o3AEb/NIsVb2AYc5sWiGGTE5qUnHWYDsVeMraQELJSC3ICdQo=
-X-Received: by 2002:a1f:2cce:: with SMTP id s197-v6mr16628175vks.106.1534355756362;
- Wed, 15 Aug 2018 10:55:56 -0700 (PDT)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7FHsllk108293
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:56:03 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kvmadvkyb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:56:03 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 15 Aug 2018 11:56:02 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 Aug 2018 11:55:58 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7FHttMu9699740
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Aug 2018 10:55:55 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE06213605E;
+        Wed, 15 Aug 2018 11:55:55 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9029C136051;
+        Wed, 15 Aug 2018 11:55:52 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.175.5])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Aug 2018 11:55:52 -0600 (MDT)
+Subject: Re: [PATCH v9 14/22] KVM: s390: interfaces to clear CRYCB masks
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-15-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180815151039.63d83d5d.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 15 Aug 2018 13:55:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 10:55:15
- -0700 (PDT)
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 16 Aug 2018 02:55:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQH4At6xG-+JBJ16+a=P8h6Nuk9oSfG6DF0Scd2O9i9cA@mail.gmail.com>
-Message-ID: <CAK7LNAQH4At6xG-+JBJ16+a=P8h6Nuk9oSfG6DF0Scd2O9i9cA@mail.gmail.com>
-Subject: [GIT PULL 1/3] Kbuild updates for v4.19
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180815151039.63d83d5d.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081517-0016-0000-0000-0000091B02F5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009550; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073966; UDB=6.00553412; IPR=6.00853924;
+ MB=3.00022736; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-15 17:56:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081517-0017-0000-0000-000040024BC6
+Message-Id: <4cbed75b-adb6-e97f-6719-c630266a16cd@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808150187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 08/15/2018 09:10 AM, Cornelia Huck wrote:
+> On Mon, 13 Aug 2018 17:48:11 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
+>> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
+>> not get out of sync.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   arch/s390/include/asm/kvm_host.h |    3 +++
+>>   arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
+>>   2 files changed, 18 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+>> index 4a739d4..07e58d8 100644
+>> --- a/arch/s390/include/asm/kvm_host.h
+>> +++ b/arch/s390/include/asm/kvm_host.h
+>> @@ -258,6 +258,7 @@ struct kvm_s390_sie_block {
+>>   	__u64	tecmc;			/* 0x00e8 */
+>>   	__u8	reservedf0[12];		/* 0x00f0 */
+>>   #define CRYCB_FORMAT_MASK 0x00000003
+>> +#define CRYCB_FORMAT0 0x00000000
+> This should probably go into a different patch (define is not used
+> here)?
 
-Please pull Kbuild updates for v4.19
+You are spot on. It needs to go in patch 15 where it is first used.
 
+>
+>>   #define CRYCB_FORMAT1 0x00000001
+>>   #define CRYCB_FORMAT2 0x00000003
+>>   	__u32	crycbd;			/* 0x00fc */
+>> @@ -861,6 +862,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
+>>   void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+>>   				 struct kvm_async_pf *work);
+>>   
+>> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
+>> +
+>>   extern int sie64a(struct kvm_s390_sie_block *, u64 *);
+>>   extern char sie_exit;
+>>   
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index f7de123..8d8a65a 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -1919,6 +1919,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>>   		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>>   }
+>>   
+>> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>> +{
+>> +	mutex_lock(&kvm->lock);
+>> +	kvm_s390_vcpu_block_all(kvm);
+>> +
+>> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
+>> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
+>> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
+>> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
+>> +
+>> +	kvm_s390_vcpu_unblock_all(kvm);
+>> +	mutex_unlock(&kvm->lock);
+>> +}
+>> +EXPORT_SYMBOL(kvm_arch_crypto_clear_masks);
+> A quick grep shows that kvm-related exports tend to be
+> EXPORT_SYMBOL_GPL. Should that also be done here?
 
+I did some internet searching to find out why the EXPORT_SYMBOL_GPL 
+macro is used
+rather than EXPORT_SYMBOL. I found the link below which explains why. 
+According to
+that article, if the EXPORT_SYMBOL_GPL macro is used, modules that do 
+not carry a
+GPL-compatible license can not use the function. Apparently Linus 
+Trovalds and the
+lawyers he consulted believe it codifies the intention in code itself 
+makes the code
+more flexible and a lot less likely to be misunderstood. It is further 
+pointed out
+that "circumventing the GPL-only export requires an explicit action, 
+making it clear
+that the copyright infringement was a  deliberate act.
 
-You can pull this cleanly for now, but please remember that
-you will have to change samples/statx/Makefile
-when you pull the following commit:
+Since our modules are GPL-licensed, it would probably behoove us to use the
+EXPORT_SYMBOL_GPL macro to export this function.
 
-commit 90b413cb970a25109deb292c99120cf65e5b03ce
-Author: David Howells <dhowells@redhat.com>
-Date:   Fri Aug 3 15:34:49 2018 +0100
+https://lwn.net/Articles/154602/
 
-    vfs: syscall: Add fsinfo() to query filesystem information
-
-
-
-Kbuild consolidated host compiler flag variables,
-but the vfs tree added one more occurrence.
-
-Please fix-up the Makefile as follows:
-
----------------------------------------------------------
-diff --git a/samples/statx/Makefile b/samples/statx/Makefile
-index 05b4d30cdd3c..6a862bbc0627 100644
---- a/samples/statx/Makefile
-+++ b/samples/statx/Makefile
-@@ -7,6 +7,6 @@ always := $(hostprogs-y)
- HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
-
- HOSTCFLAGS_test-fsinfo.o += -I$(objtree)/usr/include
--HOSTLOADLIBES_test-fsinfo += -lm
-+HOSTLDLIBS_test-fsinfo += -lm
-
- HOSTCFLAGS_test-fs-query.o += -I$(objtree)/usr/include
------------------------------------------------------------
-
-
-
-
-
-The following changes since commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe:
-
-  Linux 4.18-rc5 (2018-07-15 12:49:31 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-v4.19
-
-for you to fetch changes up to 512ddf7d7db056edfed3159ea7cb4e4a5eefddd4:
-
-  coccicheck: return proper error code on fail (2018-08-14 08:58:56 +0900)
-
-----------------------------------------------------------------
-Kbuild updates for v4.19
-
-- verify depmod is installed before modules_install
-
-- support build salt in case build ids must be unique between builds
-
-- allow users to specify additional host compiler flags via HOST*FLAGS,
-  and rename internal variables to KBUILD_HOST*FLAGS
-
-- update buildtar script to drop vax support, add arm64 support
-
-- update builddeb script for better debarch support
-
-- document the pit-fall of if_changed usage
-
-- fix parallel build of UML with O= option
-
-- make 'samples' target depend on headers_install to fix build errors
-
-- remove deprecated host-progs variable
-
-- add a new coccinelle script for refcount_t vs atomic_t check
-
-- improve double-test coccinelle script
-
-- misc cleanups and fixes
-
-----------------------------------------------------------------
-Ben Hutchings (12):
-      builddeb: Skip architecture detection when KBUILD_DEBARCH is set
-      builddeb: Change architecture detection fallback to use dpkg-architecture
-      builddeb: Drop check for 32-bit s390
-      builddeb: Introduce functions to simplify kconfig tests in set_debarch
-      builddeb: Add automatic support for ppc64 and powerpcspe architectures
-      builddeb: Add automatic support for mips64el architecture
-      builddeb: Add automatic support for mips{,64}r6{,el} architectures
-      builddeb: Add automatic support for sparc64 architecture
-      builddeb: Add automatic support for or1k architecture
-      builddeb: Add automatic support for m68k architecture
-      builddeb: Add automatic support for riscv* architectures
-      builddeb: Add automatic support for sh{3,4}{,eb} architectures
-
-Denis Efremov (1):
-      coccicheck: return proper error code on fail
-
-Dirk Gouders (1):
-      kbuild: if_changed: document single use per target limitation
-
-Elena Reshetova (1):
-      Coccinelle: add atomic_as_refcounter script
-
-Jeremy Cline (1):
-      scripts: Add Python 3 support to tracing/draw_functrace.py
-
-Julia Lawall (1):
-      Coccinelle: doubletest: reduce side effect false positives
-
-Laura Abbott (9):
-      kbuild: Add build salt to the kernel and modules
-      x86: Add build salt to the vDSO
-      powerpc: Add build salt to the vDSO
-      arm64: Add build salt to the vDSO
-      kbuild: Rename HOSTCFLAGS to KBUILD_HOSTCFLAGS
-      kbuild: Rename HOSTCXXFLAGS to KBUILD_HOSTCXXFLAGS
-      kbuild: Rename HOSTLDFLAGS to KBUILD_HOSTLDFLAGS
-      kbuild: Rename HOST_LOADLIBES to KBUILD_HOSTLDLIBS
-      kbuild: Use HOST*FLAGS options from the command line
-
-Masahiro Yamada (12):
-      kbuild: move bin2c back to scripts/ from scripts/basic/
-      um: remove redundant 'export LDFLAGS' in arch/x86/Makefile.um
-      kbuild: remove redundant LDFLAGS clearing in arch/*/Makefile
-      kbuild: replace $(LDFLAGS) $(ldflags-y) with $(ld_flags)
-      kbuild: change ld_flags to contain LDFLAGS_$(@F)
-      ARM: at91: remove unused duplicated filechk_offsets
-      kbuild: do not redirect the first prerequisite for filechk
-      um: fix parallel building with O= option
-      kbuild: add %asm-generic to no-dot-config-targets
-      um: clean up archheaders recipe
-      kbuild: make samples really depend on headers_install
-      kbuild: remove deprecated host-progs variable
-
-Olof Johansson (2):
-      kbuild: buildtar: remove crufty vax pieces
-      kbuild: buildtar: add arm64 support
-
-Randy Dunlap (1):
-      kbuild: verify that $DEPMOD is installed
-
- Documentation/kbuild/kbuild.txt                   |  16 +++
- Documentation/kbuild/makefiles.txt                |   8 +-
- Documentation/process/changes.rst                 |  19 ++--
- Makefile                                          |  24 +++--
- arch/alpha/boot/Makefile                          |   2 +-
- arch/arm/Makefile                                 |   3 -
- arch/arm/mach-at91/Makefile                       |  25 -----
- arch/arm64/kernel/vdso/note.S                     |   3 +
- arch/openrisc/Makefile                            |   1 -
- arch/powerpc/kernel/vdso32/note.S                 |   3 +
- arch/powerpc/purgatory/Makefile                   |   3 +-
- arch/riscv/Makefile                               |   1 -
- arch/s390/kernel/syscalls/Makefile                |   6 +-
- arch/s390/purgatory/Makefile                      |   3 +-
- arch/um/Makefile                                  |  11 +-
- arch/um/drivers/Makefile                          |   4 +-
- arch/x86/Makefile.um                              |   2 -
- arch/x86/entry/vdso/vdso-note.S                   |   3 +
- arch/x86/entry/vdso/vdso32/note.S                 |   3 +
- arch/x86/purgatory/Makefile                       |   3 +-
- arch/xtensa/boot/Makefile                         |   3 +-
- include/linux/build-salt.h                        |  20 ++++
- init/Kconfig                                      |   9 ++
- init/version.c                                    |   3 +
- kernel/Makefile                                   |   2 +-
- net/bpfilter/Makefile                             |   4 +-
- samples/bpf/Makefile                              |  22 ++--
- samples/seccomp/Makefile                          |   6 +-
- scripts/.gitignore                                |   1 +
- scripts/Kbuild.include                            |   4 +-
- scripts/Makefile                                  |   5 +-
- scripts/Makefile.build                            |   7 --
- scripts/Makefile.clean                            |   1 -
- scripts/Makefile.host                             |  24 ++---
- scripts/Makefile.lib                              |   7 +-
- scripts/basic/.gitignore                          |   1 -
- scripts/basic/Makefile                            |   1 -
- scripts/{basic => }/bin2c.c                       |   0
- scripts/coccicheck                                |   5 +-
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 129
-++++++++++++++++++++++++
- scripts/coccinelle/tests/doubletest.cocci         |  34 +++++--
- scripts/depmod.sh                                 |   8 +-
- scripts/kconfig/Makefile                          |   8 +-
- scripts/mod/modpost.c                             |   3 +
- scripts/package/buildtar                          |  12 ++-
- scripts/package/mkdebian                          |  68 +++++++++----
- scripts/tracing/draw_functrace.py                 |   2 +-
- security/tomoyo/Makefile                          |   2 +-
- tools/build/Build.include                         |   2 +-
- tools/build/Makefile                              |   2 +-
- tools/objtool/Makefile                            |   4 +-
- 51 files changed, 373 insertions(+), 169 deletions(-)
- create mode 100644 include/linux/build-salt.h
- rename scripts/{basic => }/bin2c.c (100%)
- create mode 100644 scripts/coccinelle/api/atomic_as_refcounter.cocci
+>
+>> +
+>>   static u64 kvm_s390_get_initial_cpuid(void)
+>>   {
+>>   	struct cpuid cpuid;
 
 
--- 
-Best Regards
-Masahiro Yamada
