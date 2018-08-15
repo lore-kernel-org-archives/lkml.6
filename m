@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F49C46471
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA51C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 918E6216E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 918E6216E5
+	by mail.kernel.org (Postfix) with ESMTP id 551DD2156D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 551DD2156D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbeHONCX (ORCPT
+        id S1729028AbeHONE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 09:02:23 -0400
-Received: from foss.arm.com ([217.140.101.70]:53488 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727141AbeHONCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 09:02:23 -0400
+        Wed, 15 Aug 2018 09:04:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53528 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727141AbeHONEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 09:04:55 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DFDF18A;
-        Wed, 15 Aug 2018 03:10:50 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A822F18A;
+        Wed, 15 Aug 2018 03:13:22 -0700 (PDT)
 Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B73C3F5BD;
-        Wed, 15 Aug 2018 03:10:50 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 550EF3F5BD;
+        Wed, 15 Aug 2018 03:13:22 -0700 (PDT)
 Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 7619F6801CC; Wed, 15 Aug 2018 11:10:48 +0100 (BST)
-Date:   Wed, 15 Aug 2018 11:10:48 +0100
+        id A7DD668058B; Wed, 15 Aug 2018 11:13:20 +0100 (BST)
+Date:   Wed, 15 Aug 2018 11:13:20 +0100
 From:   Liviu Dudau <liviu.dudau@arm.com>
 To:     Lowry Li <lowry.li@arm.com>
 Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
@@ -38,283 +38,216 @@ Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
         ville.syrjala@linux.intel.com, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, brian.starkey@arm.com,
         malidp@foss.arm.com, emil.l.velikov@gmail.com, nd@arm.com
-Subject: Re: [PATCH v4 1/2] drm: Add per-plane pixel blend mode property
-Message-ID: <20180815101048.GI907@e110455-lin.cambridge.arm.com>
+Subject: Re: [PATCH v4 2/2] drm/mali-dp: Implement plane alpha and pixel
+ blend on malidp
+Message-ID: <20180815101320.GJ907@e110455-lin.cambridge.arm.com>
 References: <1534314933-23182-1-git-send-email-lowry.li@arm.com>
- <1534314933-23182-2-git-send-email-lowry.li@arm.com>
+ <1534314933-23182-3-git-send-email-lowry.li@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1534314933-23182-2-git-send-email-lowry.li@arm.com>
+In-Reply-To: <1534314933-23182-3-git-send-email-lowry.li@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 02:35:32PM +0800, Lowry Li wrote:
-> Pixel blend modes represent the alpha blending equation
-> selection, describing how the pixels from the current
-> plane are composited with the background.
+On Wed, Aug 15, 2018 at 02:35:33PM +0800, Lowry Li wrote:
+> Checks the pixel blending mode and plane alpha value when
+> do the plane_check. Mali DP supports blending the current plane
+> with the background either based on the pixel alpha blending
+> mode or by using the layer's alpha value, but not both at the
+> same time. If both case, plane_check will return failed.
 > 
-> Adds a pixel_blend_mode to drm_plane_state and a
-> blend_mode_property to drm_plane, and related support
-> functions.
-> 
-> Defines three blend modes in drm_blend.h.
+> Sets the HW when doing plane_update accordingly. If plane alpha
+> is the 0xffff, set the pixel blending bits accordingly. If not
+> we'd set ALPHA bit as zero and layer alpha value.
 > 
 > Changes since v1:
->  - Moves the blending equation into the DOC comment
->  - Refines the comments of drm_plane_create_blend_mode_property to not
->    enumerate the #defines, but instead the string values
->  - Uses fg.* instead of pixel.* and plane_alpha instead of plane.alpha
+>  - Introduces to use it in the malidp driver, which depends on
+>    the plane alpha patch
 > Changes since v2:
->  - Refines the comments of drm_plane_create_blend_mode_property:
->       1) Puts the descriptions (after the ":") on a new line
->       2) Adds explaining why @supported_modes need PREMUL as default
+>  - Refines the comments of drm/mali-dp patchset
 > Changes since v3:
->  - Refines drm_plane_create_blend_mode_property(). drm_property_add_enum()
->    can calculate the index itself just fine, so no point in having the
->    caller pass it in.
->  - Since the current DRM assumption is that alpha is premultiplied
->    as default, define DRM_MODE_BLEND_PREMULTI as 0 will be better.
->  - Refines some comments.
+>  - Updates on drm/malidp, hardware limitation check only when
+>    the format has alpha pixel.
 > 
 > Signed-off-by: Lowry Li <lowry.li@arm.com>
 
-Looks good to me!
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 
 Thanks,
 Liviu
 
 > ---
->  drivers/gpu/drm/drm_atomic.c        |   4 ++
->  drivers/gpu/drm/drm_atomic_helper.c |   1 +
->  drivers/gpu/drm/drm_blend.c         | 126 ++++++++++++++++++++++++++++++++++++
->  include/drm/drm_blend.h             |   6 ++
->  include/drm/drm_plane.h             |   2 +
->  5 files changed, 139 insertions(+)
+>  drivers/gpu/drm/arm/malidp_planes.c | 74 +++++++++++++++++++++----------------
+>  1 file changed, 43 insertions(+), 31 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 3eb061e..d0478ab 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -895,6 +895,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
->  		state->src_h = val;
->  	} else if (property == plane->alpha_property) {
->  		state->alpha = val;
-> +	} else if (property == plane->blend_mode_property) {
-> +		state->pixel_blend_mode = val;
->  	} else if (property == plane->rotation_property) {
->  		if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK)) {
->  			DRM_DEBUG_ATOMIC("[PLANE:%d:%s] bad rotation bitmask: 0x%llx\n",
-> @@ -968,6 +970,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
->  		*val = state->src_h;
->  	} else if (property == plane->alpha_property) {
->  		*val = state->alpha;
-> +	} else if (property == plane->blend_mode_property) {
-> +		*val = state->pixel_blend_mode;
->  	} else if (property == plane->rotation_property) {
->  		*val = state->rotation;
->  	} else if (property == plane->zpos_property) {
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 6dd5036..563af09 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3569,6 +3569,7 @@ void __drm_atomic_helper_plane_reset(struct drm_plane *plane,
->  	/* Reset the alpha value to fully opaque if it matters */
->  	if (plane->alpha_property)
->  		state->alpha = plane->alpha_property->values[1];
-> +	plane->state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
+> diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
+> index 49c37f6..17be123 100644
+> --- a/drivers/gpu/drm/arm/malidp_planes.c
+> +++ b/drivers/gpu/drm/arm/malidp_planes.c
+> @@ -36,6 +36,7 @@
+>  #define   LAYER_COMP_MASK		(0x3 << 12)
+>  #define   LAYER_COMP_PIXEL		(0x3 << 12)
+>  #define   LAYER_COMP_PLANE		(0x2 << 12)
+> +#define   LAYER_PMUL_ENABLE		(0x1 << 14)
+>  #define   LAYER_ALPHA_OFFSET		(16)
+>  #define   LAYER_ALPHA_MASK		(0xff)
+>  #define   LAYER_ALPHA(x)		(((x) & LAYER_ALPHA_MASK) << LAYER_ALPHA_OFFSET)
+> @@ -180,6 +181,7 @@ static int malidp_de_plane_check(struct drm_plane *plane,
+>  	struct malidp_plane_state *ms = to_malidp_plane_state(state);
+>  	bool rotated = state->rotation & MALIDP_ROTATED_MASK;
+>  	struct drm_framebuffer *fb;
+> +	u16 pixel_alpha = state->pixel_blend_mode;
+>  	int i, ret;
 >  
->  	plane->state = state;
->  }
-> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-> index a16a74d..24016c9 100644
-> --- a/drivers/gpu/drm/drm_blend.c
-> +++ b/drivers/gpu/drm/drm_blend.c
-> @@ -107,6 +107,52 @@
->   *	planes. Without this property the primary plane is always below the cursor
->   *	plane, and ordering between all other planes is undefined.
->   *
-> + * pixel blend mode:
-> + *	Pixel blend mode is set up with drm_plane_create_blend_mode_property().
-> + *	It adds a blend mode for alpha blending equation selection, describing
-> + *	how the pixels from the current plane are composited with the
-> + *	background.
-> + *
-> + *	 Three alpha blending equations are defined:
-> + *
-> + *	 "None":
-> + *		 Blend formula that ignores the pixel alpha::
-> + *
-> + *			 out.rgb = plane_alpha * fg.rgb +
-> + *				 (1 - plane_alpha) * bg.rgb
-> + *
-> + *	 "Pre-multiplied":
-> + *		 Blend formula that assumes the pixel color values
-> + *		 have been already pre-multiplied with the alpha
-> + *		 channel values::
-> + *
-> + *			 out.rgb = plane_alpha * fg.rgb +
-> + *				 (1 - (plane_alpha * fg.alpha)) * bg.rgb
-> + *
-> + *	 "Coverage":
-> + *		 Blend formula that assumes the pixel color values have not
-> + *		 been pre-multiplied and will do so when blending them to the
-> + *		 background color values::
-> + *
-> + *			 out.rgb = plane_alpha * fg.alpha * fg.rgb +
-> + *				 (1 - (plane_alpha * fg.alpha)) * bg.rgb
-> + *
-> + *	 Using the following symbols:
-> + *
-> + *	 "fg.rgb":
-> + *		 Each of the RGB component values from the plane's pixel
-> + *	 "fg.alpha":
-> + *		 Alpha component value from the plane's pixel. If the plane's
-> + *		 pixel format has no alpha component, then this is assumed to be
-> + *		 1.0. In these cases, this property has no effect, as all three
-> + *		 equations become equivalent.
-> + *	 "bg.rgb":
-> + *		 Each of the RGB component values from the background
-> + *	 "plane_alpha":
-> + *		 Plane alpha value set by the plane "alpha" property. If the
-> + *		 plane does not expose the "alpha" property, then this is
-> + *		 assumed to be 1.0
-> + *
->   * Note that all the property extensions described here apply either to the
->   * plane or the CRTC (e.g. for the background color, which currently is not
->   * exposed and assumed to be black).
-> @@ -448,3 +494,83 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
->  	return 0;
->  }
->  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
-> +
-> +/**
-> + * drm_plane_create_blend_mode_property - create a new blend mode property
-> + * @plane: drm plane
-> + * @supported_modes: bitmask of supported modes, must include
-> + *		     BIT(DRM_MODE_BLEND_PREMULTI). Current DRM assumption is
-> + *		     that alpha is premultiplied, and old userspace can break if
-> + *		     the property defaults to anything else.
-> + *
-> + * This creates a new property describing the blend mode.
-> + *
-> + * The property exposed to userspace is an enumeration property (see
-> + * drm_property_create_enum()) called "pixel blend mode" and has the
-> + * following enumeration values:
-> + *
-> + * "None":
-> + *	Blend formula that ignores the pixel alpha.
-> + *
-> + * "Pre-multiplied":
-> + *	Blend formula that assumes the pixel color values have been already
-> + *	pre-multiplied with the alpha channel values.
-> + *
-> + * "Coverage":
-> + *	Blend formula that assumes the pixel color values have not been
-> + *	pre-multiplied and will do so when blending them to the background color
-> + *	values.
-> + *
-> + * RETURNS:
-> + * Zero for success or -errno
-> + */
-> +int drm_plane_create_blend_mode_property(struct drm_plane *plane,
-> +					 unsigned int supported_modes)
-> +{
-> +	struct drm_device *dev = plane->dev;
-> +	struct drm_property *prop;
-> +	static const struct drm_prop_enum_list props[] = {
-> +		{ DRM_MODE_BLEND_PIXEL_NONE, "None" },
-> +		{ DRM_MODE_BLEND_PREMULTI, "Pre-multiplied" },
-> +		{ DRM_MODE_BLEND_COVERAGE, "Coverage" },
-> +	};
-> +	unsigned int valid_mode_mask = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-> +				       BIT(DRM_MODE_BLEND_PREMULTI)   |
-> +				       BIT(DRM_MODE_BLEND_COVERAGE);
-> +	int i;
-> +
-> +	if (WARN_ON((supported_modes & ~valid_mode_mask) ||
-> +		    ((supported_modes & BIT(DRM_MODE_BLEND_PREMULTI)) == 0)))
+>  	if (!state->crtc || !state->fb)
+> @@ -242,6 +244,11 @@ static int malidp_de_plane_check(struct drm_plane *plane,
+>  		ms->rotmem_size = val;
+>  	}
+>  
+> +	/* HW can't support plane + pixel blending */
+> +	if ((state->alpha != DRM_BLEND_ALPHA_OPAQUE) &&
+> +	    (pixel_alpha != DRM_MODE_BLEND_PIXEL_NONE))
 > +		return -EINVAL;
 > +
-> +	prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
-> +				   "pixel blend mode",
-> +				   hweight32(supported_modes));
-> +	if (!prop)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(props); i++) {
-> +		int ret;
-> +
-> +		if (!(BIT(props[i].type) & supported_modes))
-> +			continue;
-> +
-> +		ret = drm_property_add_enum(prop, props[i].type,
-> +					    props[i].name);
-> +
-> +		if (ret) {
-> +			drm_property_destroy(dev, prop);
-> +
-> +			return ret;
+>  	return 0;
+>  }
+>  
+> @@ -323,17 +330,19 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  {
+>  	struct malidp_plane *mp;
+>  	struct malidp_plane_state *ms = to_malidp_plane_state(plane->state);
+> +	struct drm_plane_state *state = plane->state;
+> +	u16 pixel_alpha = state->pixel_blend_mode;
+> +	u8 plane_alpha = state->alpha >> 8;
+>  	u32 src_w, src_h, dest_w, dest_h, val;
+>  	int i;
+> -	bool format_has_alpha = plane->state->fb->format->has_alpha;
+>  
+>  	mp = to_malidp_plane(plane);
+>  
+>  	/* convert src values from Q16 fixed point to integer */
+> -	src_w = plane->state->src_w >> 16;
+> -	src_h = plane->state->src_h >> 16;
+> -	dest_w = plane->state->crtc_w;
+> -	dest_h = plane->state->crtc_h;
+> +	src_w = state->src_w >> 16;
+> +	src_h = state->src_h >> 16;
+> +	dest_w = state->crtc_w;
+> +	dest_h = state->crtc_h;
+>  
+>  	val = malidp_hw_read(mp->hwdev, mp->layer->base);
+>  	val = (val & ~LAYER_FORMAT_MASK) | ms->format;
+> @@ -342,14 +351,14 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  	for (i = 0; i < ms->n_planes; i++) {
+>  		/* calculate the offset for the layer's plane registers */
+>  		u16 ptr = mp->layer->ptr + (i << 4);
+> -		dma_addr_t fb_addr = drm_fb_cma_get_gem_addr(plane->state->fb,
+> -							     plane->state, i);
+> +		dma_addr_t fb_addr = drm_fb_cma_get_gem_addr(state->fb,
+> +							     state, i);
+>  
+>  		malidp_hw_write(mp->hwdev, lower_32_bits(fb_addr), ptr);
+>  		malidp_hw_write(mp->hwdev, upper_32_bits(fb_addr), ptr + 4);
+>  	}
+>  	malidp_de_set_plane_pitches(mp, ms->n_planes,
+> -				    plane->state->fb->pitches);
+> +				    state->fb->pitches);
+>  
+>  	if ((plane->state->color_encoding != old_state->color_encoding) ||
+>  	    (plane->state->color_range != old_state->color_range))
+> @@ -362,8 +371,8 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  	malidp_hw_write(mp->hwdev, LAYER_H_VAL(dest_w) | LAYER_V_VAL(dest_h),
+>  			mp->layer->base + MALIDP_LAYER_COMP_SIZE);
+>  
+> -	malidp_hw_write(mp->hwdev, LAYER_H_VAL(plane->state->crtc_x) |
+> -			LAYER_V_VAL(plane->state->crtc_y),
+> +	malidp_hw_write(mp->hwdev, LAYER_H_VAL(state->crtc_x) |
+> +			LAYER_V_VAL(state->crtc_y),
+>  			mp->layer->base + MALIDP_LAYER_OFFSET);
+>  
+>  	if (mp->layer->id == DE_SMART)
+> @@ -376,38 +385,35 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  	val &= ~LAYER_ROT_MASK;
+>  
+>  	/* setup the rotation and axis flip bits */
+> -	if (plane->state->rotation & DRM_MODE_ROTATE_MASK)
+> +	if (state->rotation & DRM_MODE_ROTATE_MASK)
+>  		val |= ilog2(plane->state->rotation & DRM_MODE_ROTATE_MASK) <<
+>  		       LAYER_ROT_OFFSET;
+> -	if (plane->state->rotation & DRM_MODE_REFLECT_X)
+> +	if (state->rotation & DRM_MODE_REFLECT_X)
+>  		val |= LAYER_H_FLIP;
+> -	if (plane->state->rotation & DRM_MODE_REFLECT_Y)
+> +	if (state->rotation & DRM_MODE_REFLECT_Y)
+>  		val |= LAYER_V_FLIP;
+>  
+> -	val &= ~LAYER_COMP_MASK;
+> -	if (format_has_alpha) {
+> -
+> -		/*
+> -		 * always enable pixel alpha blending until we have a way
+> -		 * to change blend modes
+> -		 */
+> -		val |= LAYER_COMP_PIXEL;
+> -	} else {
+> +	val &= ~(LAYER_COMP_MASK | LAYER_PMUL_ENABLE | LAYER_ALPHA(0xff));
+>  
+> -		/*
+> -		 * do not enable pixel alpha blending as the color channel
+> -		 * does not have any alpha information
+> -		 */
+> +	if (state->alpha != DRM_BLEND_ALPHA_OPAQUE) {
+>  		val |= LAYER_COMP_PLANE;
+> -
+> -		/* Set layer alpha coefficient to 0xff ie fully opaque */
+> -		val |= LAYER_ALPHA(0xff);
+> +	} else if (state->fb->format->has_alpha) {
+> +		/* We only care about blend mode if the format has alpha */
+> +		switch (pixel_alpha) {
+> +		case DRM_MODE_BLEND_PREMULTI:
+> +			val |= LAYER_COMP_PIXEL | LAYER_PMUL_ENABLE;
+> +			break;
+> +		case DRM_MODE_BLEND_COVERAGE:
+> +			val |= LAYER_COMP_PIXEL;
+> +			break;
 > +		}
-> +	}
-> +
-> +	drm_object_attach_property(&plane->base, prop, DRM_MODE_BLEND_PREMULTI);
-> +	plane->blend_mode_property = prop;
-> +
-> +	if (plane->state)
-> +		plane->state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drm_plane_create_blend_mode_property);
-> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
-> index 330c561..88bdfec 100644
-> --- a/include/drm/drm_blend.h
-> +++ b/include/drm/drm_blend.h
-> @@ -27,6 +27,10 @@
->  #include <linux/ctype.h>
->  #include <drm/drm_mode.h>
+>  	}
+> +	val |= LAYER_ALPHA(plane_alpha);
 >  
-> +#define DRM_MODE_BLEND_PREMULTI		0
-> +#define DRM_MODE_BLEND_COVERAGE		1
-> +#define DRM_MODE_BLEND_PIXEL_NONE	2
+>  	val &= ~LAYER_FLOWCFG(LAYER_FLOWCFG_MASK);
+> -	if (plane->state->crtc) {
+> +	if (state->crtc) {
+>  		struct malidp_crtc_state *m =
+> -			to_malidp_crtc_state(plane->state->crtc->state);
+> +			to_malidp_crtc_state(state->crtc->state);
+>  
+>  		if (m->scaler_config.scale_enable &&
+>  		    m->scaler_config.plane_src_id == mp->layer->id)
+> @@ -446,6 +452,9 @@ int malidp_de_planes_init(struct drm_device *drm)
+>  	unsigned long crtcs = 1 << drm->mode_config.num_crtc;
+>  	unsigned long flags = DRM_MODE_ROTATE_0 | DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_180 |
+>  			      DRM_MODE_ROTATE_270 | DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y;
+> +	unsigned int blend_caps = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+> +				  BIT(DRM_MODE_BLEND_PREMULTI)   |
+> +				  BIT(DRM_MODE_BLEND_COVERAGE);
+>  	u32 *formats;
+>  	int ret, i, j, n;
+>  
+> @@ -498,6 +507,9 @@ int malidp_de_planes_init(struct drm_device *drm)
+>  		malidp_hw_write(malidp->dev, MALIDP_ALPHA_LUT,
+>  				plane->layer->base + MALIDP_LAYER_COMPOSE);
+>  
+> +		drm_plane_create_alpha_property(&plane->base);
+> +		drm_plane_create_blend_mode_property(&plane->base, blend_caps);
 > +
->  struct drm_device;
->  struct drm_atomic_state;
->  struct drm_plane;
-> @@ -52,4 +56,6 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
->  					     unsigned int zpos);
->  int drm_atomic_normalize_zpos(struct drm_device *dev,
->  			      struct drm_atomic_state *state);
-> +int drm_plane_create_blend_mode_property(struct drm_plane *plane,
-> +					 unsigned int supported_modes);
->  #endif
-> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> index 8a152dc..c52614a 100644
-> --- a/include/drm/drm_plane.h
-> +++ b/include/drm/drm_plane.h
-> @@ -117,6 +117,7 @@ struct drm_plane_state {
->  	 * details.
->  	 */
->  	u16 alpha;
-> +	uint16_t pixel_blend_mode;
->  
->  	/**
->  	 * @rotation:
-> @@ -659,6 +660,7 @@ struct drm_plane {
->  	 * drm_plane_create_rotation_property().
->  	 */
->  	struct drm_property *rotation_property;
-> +	struct drm_property *blend_mode_property;
->  
->  	/**
->  	 * @color_encoding_property:
+>  		/* Attach the YUV->RGB property only to video layers */
+>  		if (id & (DE_VIDEO1 | DE_VIDEO2)) {
+>  			/* default encoding for YUV->RGB is BT601 NARROW */
 > -- 
 > 1.9.1
 > 
