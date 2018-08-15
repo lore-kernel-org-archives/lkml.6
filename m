@@ -3,130 +3,169 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AF2C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11854C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E311D21486
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E311D21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 918B521477
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:08:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 918B521477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbeHOSzZ (ORCPT
+        id S1729546AbeHOTBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:55:25 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18672 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbeHOSzZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:55:25 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b744e900000>; Wed, 15 Aug 2018 09:02:24 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 15 Aug 2018 09:02:32 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 15 Aug 2018 09:02:32 -0700
-Received: from [10.2.166.219] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 15 Aug
- 2018 16:02:40 +0000
-Subject: Re: [PATCH v2] ASoC: tegra: probe deferral error reporting
-To:     Marcel Ziswiler <marcel@ziswiler.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>
-CC:     Stefan Agner <stefan@agner.ch>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-References: <20180814140145.12212-1-marcel@ziswiler.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <930b05df-c502-192e-3cb9-9e1874701cce@nvidia.com>
-Date:   Wed, 15 Aug 2018 17:02:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 15 Aug 2018 15:01:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34274 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729347AbeHOTBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 15:01:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C9B434021FC2;
+        Wed, 15 Aug 2018 16:08:19 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FE452026D7E;
+        Wed, 15 Aug 2018 16:08:16 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 18:08:14 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v9 15/22] s390: vfio-ap: implement mediated device open
+ callback
+Message-ID: <20180815180814.5985e3f0.cohuck@redhat.com>
+In-Reply-To: <1534196899-16987-16-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-16-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <20180814140145.12212-1-marcel@ziswiler.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 15 Aug 2018 16:08:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 15 Aug 2018 16:08:19 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 13 Aug 2018 17:48:12 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-On 14/08/18 15:01, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
 > 
-> Actually report the error codes from of_get_named_gpio() resp.
-> devm_gpio_request_one() upon trying to get the codec reset resp. sync
-> GPIOs unless it is just a probe deferral.
+> Implements the open callback on the mediated matrix device.
+> The function registers a group notifier to receive notification
+> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
+> the vfio_ap device driver will get access to the guest's
+> kvm structure. The open callback must ensure that only one
+> mediated device shall be opened per guest.
 > 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+> Acked-by: Pierre Morel <pmorel@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 > ---
-> 
-> Changes in v2:
-> - Silence probe deferral as suggested by Stefan.
-> - Fix line over 80 characters as reported by checkpatch.
-> 
->  sound/soc/tegra/tegra20_ac97.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-> index 682ef33afb5f..2ac6b2d73980 100644
-> --- a/sound/soc/tegra/tegra20_ac97.c
-> +++ b/sound/soc/tegra/tegra20_ac97.c
-> @@ -351,18 +351,31 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
->  		ret = devm_gpio_request_one(&pdev->dev, ac97->reset_gpio,
->  					    GPIOF_OUT_INIT_HIGH, "codec-reset");
->  		if (ret) {
-> -			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
-> +			if (ret != -EPROBE_DEFER)
-> +				dev_err(&pdev->dev,
-> +					"could not get codec-reset GPIO: %d\n",
-> +					ret);
-> +
->  			goto err_clk_put;
->  		}
->  	} else {
-> -		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
-> +		ret = ac97->reset_gpio;
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev,
-> +				"no codec-reset GPIO supplied: %d\n",
-> +				ret);
-> +
->  		goto err_clk_put;
->  	}
+>  drivers/s390/crypto/vfio_ap_ops.c     |  174 ++++++++++++++++++++++++++++++++-
+>  drivers/s390/crypto/vfio_ap_private.h |    2 +
+>  2 files changed, 175 insertions(+), 1 deletions(-)
+
+> @@ -602,7 +633,6 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+>  }
+>  DEVICE_ATTR_RO(matrix);
 >  
->  	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
->  					    "nvidia,codec-sync-gpio", 0);
->  	if (!gpio_is_valid(ac97->sync_gpio)) {
-> -		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
-> +		ret = ac97->sync_gpio;
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n",
-> +				ret);
+> -
+
+Nit: whitespace change
+
+>  static struct attribute *vfio_ap_mdev_attrs[] = {
+>  	&dev_attr_assign_adapter.attr,
+>  	&dev_attr_unassign_adapter.attr,
+
+(...)
+
+> +/**
+> + * vfio_ap_mdev_open_once
+> + *
+> + * @matrix_mdev: a mediated matrix device
+> + *
+> + * Return 0 if no other mediated matrix device has been opened for the
+> + * KVM guest assigned to @matrix_mdev; otherwise, returns an error.
+> + */
+> +static int vfio_ap_mdev_open_once(struct ap_matrix_mdev *matrix_mdev,
+> +				  struct kvm *kvm)
+
+You're passing kvm in here, but do not use it.
+
+> +{
+> +	struct ap_matrix_mdev *m;
 > +
->  		goto err_clk_put;
->  	}
+> +	mutex_lock(&matrix_dev.lock);
+> +
+> +	list_for_each_entry(m, &matrix_dev.mdev_list, list) {
+> +		if ((m != matrix_mdev) && (m->kvm == matrix_mdev->kvm)) {
 
-Thanks, looks good to me. However, I wonder why we don't request the
-'sync_gpio' in the probe like we do for the reset? Otherwise ...
+If you used it here instead of matrix_mdev->kvm...
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> +			mutex_unlock(&matrix_dev.lock);
+> +			return -EPERM;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&matrix_dev.lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+> +				       unsigned long action, void *data)
+> +{
+> +	int ret;
+> +	struct ap_matrix_mdev *matrix_mdev;
+> +
+> +	if (action != VFIO_GROUP_NOTIFY_SET_KVM)
+> +		return NOTIFY_OK;
+> +
+> +	matrix_mdev = container_of(nb, struct ap_matrix_mdev, group_notifier);
+> +
+> +	matrix_mdev->kvm = data;
+> +	if (data == NULL)
+> +		return NOTIFY_OK;
+> +
+> +	ret = vfio_ap_mdev_open_once(matrix_mdev, data);
 
-Cheers
-Jon
+...you could move this up to before overwriting matrix_mdev->kvm and
+bailing out when the check failed, which makes more sense to me.
 
--- 
-nvpublic
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = kvm_ap_validate_crypto_setup(matrix_mdev->kvm);
+> +	if (ret)
+> +		return ret;
+
+It probably makes more sense to return NOTIFY_DONE in the error case
+(NOTIFY_BAD does not sound like a good idea as it would stop processing
+the notifier chain).
+
+> +
+> +	vfio_ap_mdev_copy_masks(matrix_mdev);
+> +
+> +	return NOTIFY_OK;
+> +}
+
+Otherwise, looks sane.
