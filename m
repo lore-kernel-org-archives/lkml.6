@@ -2,101 +2,140 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409B0C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 992A3C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F8BB2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 917A320BF2
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:37:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sVeqj+9O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8BB2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vqwu0Knt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 917A320BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbeHPBbL (ORCPT
+        id S1729654AbeHPBb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:31:11 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40832 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730403AbeHPBbK (ORCPT
+        Wed, 15 Aug 2018 21:31:59 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:32908 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728977AbeHPB21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:31:10 -0400
-Received: by mail-pl0-f65.google.com with SMTP id s17-v6so1078716plp.7;
-        Wed, 15 Aug 2018 15:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/1/iKFgTEaXpeeMtg3Y/NQrhx55prRh2rnpQH0HflkI=;
-        b=sVeqj+9OXtdKd2XNtEgZ01ydVO+BROKlEElNIM7djK4OfDOMu5OgRVzmkoqPhVb8vP
-         J/jOLG6zkc7oerdJ8ZtPd+0BfnlqmqHpvkXM2n5t+Fdk3O559WvPkW1CLxlxK3IrQHMj
-         RrzknEiGHNEHGGmPuzfqsTn3rVOCTV7yhnyMQef9W22sRLFC9ZVmWTC5Z29VRjA8DWIk
-         ihyQ0yPQ6+86m3FVnQb8gHbHN5yTBNgMJRsaqAKHO7HALIuqiaw9tNCLokLw0wOFpv5L
-         hE1SdnvSE+Je24BOjJDK1RYtZzoYke3tQR/gNOaZmfjCouqgjdtXBjOa4eYCq+o0DjIR
-         F+/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/1/iKFgTEaXpeeMtg3Y/NQrhx55prRh2rnpQH0HflkI=;
-        b=FWV5L+WwL7rZrCS/j1sdn5OxyCK/W/ldKA66LVw2Zn49zaDPlO6g2zDQ8M3oh2ZC4h
-         Gjqr5B8PFptu97Q5osS3OqdiIBSbCg3jQUJdtSo9R1joQl/ahFKw8AfKzKFa0CM4I6GP
-         huXMke00JJLi3rYK5iVdU18e6q4TkzAy/kbmGOn/lEWiqtUsIXfSpOvQyx+c3rsWWutY
-         lFtUHzigwPAI+qJv9EyBOwwUJwnv1K5j/vom/TYEkY1l9ermkbIfZPDmdSFEm9PiAVFT
-         ElKi/wMA2vdZtOv2nZ19LeDjSqE6hbhnoXcC+TGK1gMCnXmcx+ksQ4rk8zmHtowWkMDQ
-         kidQ==
-X-Gm-Message-State: AOUpUlFf8l1HIIqrWV9iMxQFIaSGEW4yzOdEYWISM13Hr/hgwxkSV1wp
-        z0XJPWszzyqFXDaicsU2hfud/Tk6
-X-Google-Smtp-Source: AA+uWPwxcGpzMrFCk+ahq10+zYYApcIGxRuZE0U7uT3lC3QNk3gaIudtdQYo8YrL1wmXtuEJLKempg==
-X-Received: by 2002:a17:902:c6:: with SMTP id a64-v6mr23897557pla.180.1534372621094;
-        Wed, 15 Aug 2018 15:37:01 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm48817514pft.93.2018.08.15.15.36.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 15:37:00 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 15:36:58 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86/speculation/l1tf: Add assembly guard for xtensa/ia64
-Message-ID: <20180815223658.GA11323@roeck-us.net>
-References: <20180815215646.12653-1-andi@firstfloor.org>
+        Wed, 15 Aug 2018 21:28:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eCmegPHgSq1zArLsmVg1mJflFIPzB0hpJYjBKd59agc=; b=vqwu0KnttvDY5SBn68XIec8CKK
+        d0m2jzkhHufIjF/G6GIB6F4Mb3zDl5nU/EpwEUVr3ibtJiknKNHzG7FonxcLrN3eHzpbxj1pyX7R1
+        dq0Lar8g5IifvVXsK1e5ojgML5WW6DacSr1M7zEfsgsHC+mKUrQr4P26nGtfSmbUWHWIdUlmH1b2k
+        KgxGshEEIKNCvOJo1Sh6r9UmxBh7PRVoh5/brhnNiJj24SuKXto4mZnNbL/AwqGSTwRu9Q3D0eyf4
+        0pt4nUUJetLgQGUAIiRpz+CLXpMl4N4WdX1yfUOCDhBeEgnfR4sq2wRF7h/qQOlBRcx7fnJGdakmO
+        w2tYBUeg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fq4Mn-0005G6-J1; Wed, 15 Aug 2018 22:34:13 +0000
+Subject: Re: [PATCH 2/2] fpga: add FPGA manager debugfs
+To:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Cc:     Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, Alan Tull <atull@opensource.altera.com>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>
+References: <20180815220958.3606-1-atull@kernel.org>
+ <20180815220958.3606-2-atull@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9043a69f-47d8-0ffe-ca15-77c9c73c085f@infradead.org>
+Date:   Wed, 15 Aug 2018 15:34:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815215646.12653-1-andi@firstfloor.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180815220958.3606-2-atull@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 02:56:46PM -0700, Andi Kleen wrote:
-> From: Andi Kleen <ak@linux.intel.com>
+On 08/15/2018 03:09 PM, Alan Tull wrote:
+> From: Alan Tull <atull@opensource.altera.com>
 > 
-> The stable backport of the
+> Implement DebugFS for the FPGA Manager Framework for
+> debugging and developmental use.
 > 
-> x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings
-> 
-> patch for 4.4 and 4.9 put new C code for !__HAVE_ARCH_PFN_MODIFY_ALLOWED
-> code outside the assembler ifdef. This breaks the xtensa and ia64
-> build as reported by 0day which somehow include this file
-> into assembler.
-> 
-> Just add an #ifdef __ASSEMBLY__ around the new code to fix this.
-> 
-> This patch is only needed for 4.9 and 4.4 stable, the newer stables
-> don't have this problem.
-> 
-> Fixes: 7c5b42f82c13 ("x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings")
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> Enabled by CONFIG_FPGA_MGR_DEBUG_FS
 
-This should be fixed in the final stable releases.
-The problem was caused by a couple of missing backports.
+Hi Alan,
 
-Guenter
+for your v2 changes:
+
+> Each FPGA gets its own directory such as
+>  <debugfs>/fpga_manager/fpga0 and three files:
+
+s/three/four/
+
+> 
+>  * [RW] flags          = flags as defined in fpga-mgr.h
+>  * [RW] firmware_name  = write/read back name of FPGA image
+>                          firmware file to program
+>  * [WO] image          = write-only file for directly writing
+>                          fpga image w/o firmware layer
+>  * [RW] config_complete_timeout_us = maximum for the FPGA to
+>                          go to the operating state after
+> 			 programming
+> 
+> The debugfs is implemented in a separate fpga_mgr_debugfs.c
+
+      debugfs interface is
+
+> file, but the FPGA manager core is still built as one
+> module.  Note the name change from fpga-mgr.ko to fpga_mgr.ko.
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> ---
+>  drivers/fpga/Kconfig            |   7 ++
+>  drivers/fpga/Makefile           |   4 +-
+>  drivers/fpga/fpga-mgr-debugfs.c | 221 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/fpga/fpga-mgr-debugfs.h |  22 ++++
+>  drivers/fpga/fpga-mgr.c         |   8 ++
+>  include/linux/fpga/fpga-mgr.h   |   3 +
+>  6 files changed, 264 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.c
+>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.h
+> 
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 1ebcef4..600924d 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -9,6 +9,13 @@ menuconfig FPGA
+>  	  kernel.  The FPGA framework adds a FPGA manager class and FPGA
+>  	  manager drivers.
+>  
+> +config FPGA_MGR_DEBUG_FS
+> +       bool "FPGA Manager DebugFS"
+> +       depends on FPGA && DEBUG_FS
+> +       help
+> +         Say Y here if you want to expose a DebugFS interface for the
+> +	 FPGA Manager Framework.
+
+Use tab indentation for bool, depends, and help lines.
+
+Use tab +2 spaces for help text.
+
+> +
+>  if FPGA
+>  
+>  config FPGA_MGR_SOCFPGA
+
+thanks,
+-- 
+~Randy
