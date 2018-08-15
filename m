@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A1DC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E899DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639AA208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 639AA208E7
+	by mail.kernel.org (Postfix) with ESMTP id BA63120C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA63120C0D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbeHOT1z (ORCPT
+        id S1730213AbeHOT1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:27:55 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:41817 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729878AbeHOT1y (ORCPT
+        Wed, 15 Aug 2018 15:27:54 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:57677 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729464AbeHOT1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 15 Aug 2018 15:27:54 -0400
-Received: by mail-it0-f72.google.com with SMTP id w132-v6so1626010ita.6
+Received: by mail-it0-f69.google.com with SMTP id e6-v6so1695873itc.7
         for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 09:35:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=q1MQ7zdUzPTHyIgOunoHdtFSxHZGQYdDY2kP4nTAEss=;
-        b=Caz2faF9XoOAUPgXk0B4z9iPUVAu+nNaaRhoG8+bc/VzvGWbmn3fHypsSpLbPUFgDC
-         00BZ5/bU2zdeQmmZYqp8oopkswG+fDjG5IJFc5ABQlKqwiC++lLFZmXrVSnW33sFzsnY
-         XugmdkpOHMcfN4FJ30WNJocUV3DxBwp4rDs/b35ha+o10k+KMP7G3MXpxo8AhgNfHjOw
-         xg50/OH9nayEh2eY3nioMEMa8N7EkQv2TttMc8FnN9uX9Os+q9Wi+wrGU6E71mcr2fmQ
-         auyVZMeCCgn6wLEFSfuwINfiRu4izValAycuBbkxAh9iK5opCiEmzIXcnAkWinHvgnPx
-         7nog==
-X-Gm-Message-State: AOUpUlHXyqTF0ioxWRCiqdqm/E5UrwzaxfY5Cpq7uXQnCdMgkU1udV7+
-        I1nO9DwJ3sFBubQXJX9P+WvmWZ13uaJpPY9WxaVH8qwhXxAo
-X-Google-Smtp-Source: AA+uWPyiTlKWfx70Qq72Jo1rqFg9QhJN2T12nni/oWZtR1eUbAarqlKvz7o0wtSh4dhd5aHDC9zM+XRP++LqIGA/OSX0oyiHcI4n
+        bh=Xj5lCQzakuy74kPQ79r5WVk3J3O8sl5Dv3W5si3grpg=;
+        b=tncXORYFjz0RcFkXsrBaxDufQ/UVEau9AdTXEZiknSzwl7AZ91y32rBXEKqZUUQmVH
+         NkdU7uFWZZFA5KfywlxWBsljRteqQGlT+92G9oznV5LZCwIHCrIP93ulv2tKY2GsGa4p
+         Cu8oqvTnCadjzbZMxwCOy5XNyYB64VUXyv0kuAG5xk089K6agigdWlDk1XEcT+Sx/AST
+         Ru6aBFVd+/X9ImDw+3Pp5PwVo/8tOrSt4hm9Y6wboe62Ua8+KbmDhhGIOkmohKjU3Mvv
+         B9N02dz9RGRZnJFyNIgnzV67Lia8hTpGiUoJYPeT4Ojdgk2XoDwB/OEXOLngf8IYr97Q
+         blnw==
+X-Gm-Message-State: AOUpUlEwhBflhquaYXRQyigApplgDFRlQZpbXxQnq+DTUX6SnLshtJ0f
+        Azz+H3y8poI0Q/RAd01JYzzPf4P3/D9Ii8JykyZNlshdeIxl
+X-Google-Smtp-Source: AA+uWPz5vfP4owo4/6hM5n9WsGLqz3xh17Xn2/1C6D6vMZ4qCMVfvz/b3R8rGpIMfnfCryWOI5nnZehGKejrlb9VltFwRL0IINiy
 MIME-Version: 1.0
-X-Received: by 2002:a24:a44:: with SMTP id 65-v6mr10680406itw.19.1534350903548;
+X-Received: by 2002:a02:ac06:: with SMTP id a6-v6mr12233797jao.62.1534350903239;
  Wed, 15 Aug 2018 09:35:03 -0700 (PDT)
 Date:   Wed, 15 Aug 2018 09:35:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091258805737be8b3@google.com>
-Subject: KASAN: use-after-free Read in sha512_mb_flusher
-From:   syzbot <syzbot+94ee41ce442afe333d2e@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        megha.dey@linux.intel.com, mingo@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        tim.c.chen@linux.intel.com, x86@kernel.org
+Message-ID: <0000000000008c6a4305737be8a4@google.com>
+Subject: general protection fault in vcpu_enter_guest
+From:   syzbot <syzbot+a7d2d21d5cbb86bfd129@syzkaller.appspotmail.com>
+To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,112 +60,89 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
+HEAD commit:    4110b42356f3 Add linux-next specific files for 20180810
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fd82c4400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18edf0289d1b5ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=94ee41ce442afe333d2e
+console output: https://syzkaller.appspot.com/x/log.txt?x=158a6f54400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d80606e3795a4f5
+dashboard link: https://syzkaller.appspot.com/bug?extid=a7d2d21d5cbb86bfd129
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+94ee41ce442afe333d2e@syzkaller.appspotmail.com
+Reported-by: syzbot+a7d2d21d5cbb86bfd129@syzkaller.appspotmail.com
 
-RDX: 00000000200002c0 RSI: 0000000000000005 RDI: 0000000000000004
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000f6a R11: 0000000000000246 R12: 0000000000000006
-R13: 00000000004d3840 R14: 00000000004c85ae R15: 0000000000000003
-==================================================================
-BUG: KASAN: use-after-free in sha512_mb_flusher+0x572/0x610  
-arch/x86/crypto/sha512-mb/sha512_mb.c:940
-Read of size 8 at addr ffff8801b35669d8 by task kworker/0:2/1879
-
-CPU: 0 PID: 1879 Comm: kworker/0:2 Not tainted 4.18.0-next-20180813+ #37
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 12684 Comm: syz-executor6 Not tainted 4.18.0-rc8-next-20180810+  
+#36
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: crypto mcryptd_flusher
+RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
+RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7243 [inline]
+RIP: 0010:vcpu_enter_guest+0x51f9/0x6360 arch/x86/kvm/x86.c:7389
+Code: 80 3c 02 00 0f 85 79 11 00 00 4c 8b a3 e0 03 00 00 48 b8 00 00 00 00  
+00 fc ff df 49 8d bc 24 88 00 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 45 11 00 00 4d 8b a4 24 88 00 00 00 48 b8 00 00
+RSP: 0018:ffff88019465f4f0 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff88018fb40200 RCX: ffffc90004417000
+RDX: 0000000000000011 RSI: ffffffff810eb6b7 RDI: 0000000000000088
+RBP: ffff88019465f840 R08: ffff8801b2b2c6c0 R09: 0000000000000001
+R10: ffff88019465f860 R11: 97ac495aab52485c R12: 0000000000000000
+R13: 0000000002814001 R14: dffffc0000000000 R15: ffff88018fb40230
+FS:  00007f75b27a9700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000001b8e7d0 CR3: 00000001aebfc000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  sha512_mb_flusher+0x572/0x610 arch/x86/crypto/sha512-mb/sha512_mb.c:940
-  mcryptd_flusher+0x342/0x4b0 crypto/mcryptd.c:208
-  process_one_work+0xc73/0x1aa0 kernel/workqueue.c:2153
-  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-
-Allocated by task 18983:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x720 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  sock_kmalloc+0x156/0x1f0 net/core/sock.c:1983
-  hash_accept_parent_nokey+0x58/0x2e0 crypto/algif_hash.c:438
-  hash_accept_parent+0x5b/0x80 crypto/algif_hash.c:465
-  af_alg_accept+0x127/0x7d0 crypto/af_alg.c:296
-  alg_accept+0x46/0x60 crypto/af_alg.c:332
-  __sys_accept4+0x3b2/0x8a0 net/socket.c:1589
-  __do_sys_accept4 net/socket.c:1624 [inline]
-  __se_sys_accept4 net/socket.c:1621 [inline]
-  __x64_sys_accept4+0x97/0xf0 net/socket.c:1621
+  vcpu_run arch/x86/kvm/x86.c:7660 [inline]
+  kvm_arch_vcpu_ioctl_run+0x33e/0x1690 arch/x86/kvm/x86.c:7837
+  kvm_vcpu_ioctl+0x7b8/0x1300 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2590
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 18979:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x210 mm/slab.c:3813
-  __sock_kfree_s net/core/sock.c:2004 [inline]
-  sock_kfree_s+0x29/0x60 net/core/sock.c:2010
-  hash_sock_destruct+0x157/0x1c0 crypto/algif_hash.c:427
-  __sk_destruct+0x107/0xa60 net/core/sock.c:1560
-  sk_destruct+0x78/0x90 net/core/sock.c:1595
-  __sk_free+0xcf/0x300 net/core/sock.c:1606
-  sk_free+0x42/0x50 net/core/sock.c:1617
-  sock_put include/net/sock.h:1691 [inline]
-  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
-  __sock_release+0xd7/0x250 net/socket.c:580
-  sock_close+0x19/0x20 net/socket.c:1140
-  __fput+0x376/0x8a0 fs/file_table.c:279
-  ____fput+0x15/0x20 fs/file_table.c:312
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801b3566600
-  which belongs to the cache kmalloc-2048 of size 2048
-The buggy address is located 984 bytes inside of
-  2048-byte region [ffff8801b3566600, ffff8801b3566e00)
-The buggy address belongs to the page:
-page:ffffea0006cd5980 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0006cf2c08 ffffea000764ef08 ffff8801dac00c40
-raw: 0000000000000000 ffff8801b3566600 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b3566880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b3566900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801b3566980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                     ^
-  ffff8801b3566a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b3566a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+RIP: 0033:0x457089
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f75b27a8c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f75b27a96d4 RCX: 0000000000457089
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004ceb90 R14: 00000000004c54c9 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace e6eaa75019e681cb ]---
+RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
+RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7243 [inline]
+RIP: 0010:vcpu_enter_guest+0x51f9/0x6360 arch/x86/kvm/x86.c:7389
+Code: 80 3c 02 00 0f 85 79 11 00 00 4c 8b a3 e0 03 00 00 48 b8 00 00 00 00  
+00 fc ff df 49 8d bc 24 88 00 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 45 11 00 00 4d 8b a4 24 88 00 00 00 48 b8 00 00
+RSP: 0018:ffff88019465f4f0 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff88018fb40200 RCX: ffffc90004417000
+RDX: 0000000000000011 RSI: ffffffff810eb6b7 RDI: 0000000000000088
+RBP: ffff88019465f840 R08: ffff8801b2b2c6c0 R09: 0000000000000001
+R10: ffff88019465f860 R11: 97ac495aab52485c R12: 0000000000000000
+netlink: 28 bytes leftover after parsing attributes in process  
+`syz-executor5'.
+R13: 0000000002814001 R14: dffffc0000000000 R15: ffff88018fb40230
+FS:  00007f75b27a9700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000001b8e7d0 CR3: 00000001aebfc000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+IPVS: set_ctl: invalid protocol: 59 172.20.20.20:20003
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
