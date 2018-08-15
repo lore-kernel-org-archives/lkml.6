@@ -2,260 +2,375 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E622AC46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF670C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8651E2154D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:40:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nWVxpeE9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8651E2154D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DE362086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 02:51:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE362086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbeHOFab (ORCPT
+        id S1728334AbeHOFl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 01:30:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54720 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbeHOFaa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 01:30:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LXVpBk8uhe8l9+PnvYR3VLAXbc/nEUmMBSx0qTOCauo=; b=nWVxpeE9dd7fny9+V11iB2urb5
-        7SdcD10QDjQKZrxDCa1Z2lZ42NXYMOMNFcNAJowfeVL3u7eekPbbAIcc2CVgHOrSXiK8ORb52Ezwt
-        iyZHWdpNYPe8X4xLceImK7/jXfE8qX5x0SfKQOaUwgDJ9cyr/lc3eZFAHBJrjZvFcAm14feS1vPhS
-        0pEpXrT+paOyuO+5M+kz1NlXLGquFmt6qFtEC7jyTuQhMo+sgACZEwwCiKbERHp47ee45v1fPlz1q
-        FLRJ04hhTYq9chJwNY+d6mjZYt61ASm0vSUvgS4JAsfiC633nj70RpIeU3hNSDpsutHxJxB/FrGCD
-        TSuzdVmA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fpljR-0008Mp-Rb; Wed, 15 Aug 2018 02:40:23 +0000
-Subject: Re: [PATCH 8/8] docs: fpga: document programming fpgas using regions
-To:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20180814191526.3247-1-atull@kernel.org>
- <20180814191526.3247-9-atull@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ae18c3c0-6ba4-7e9f-9f94-0f8b7cdc8156@infradead.org>
-Date:   Tue, 14 Aug 2018 19:40:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Wed, 15 Aug 2018 01:41:29 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10727 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726003AbeHOFl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 01:41:28 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D3A7D169B7FC6;
+        Wed, 15 Aug 2018 10:51:17 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
+ 10:51:18 +0800
+Subject: Re: [PATCH 2/2] f2fs: tune discard speed with storage usage rate
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180810100806.9298-1-yuchao0@huawei.com>
+ <20180810100806.9298-2-yuchao0@huawei.com>
+ <20180814041906.GC52730@jaegeuk-macbookpro.roam.corp.google.com>
+ <57d9b6ea-68a5-4736-0b34-74db539d8959@huawei.com>
+ <20180814172313.GC56510@jaegeuk-macbookpro.roam.corp.google.com>
+ <cf3e27a2-de20-13e7-eb5e-f0ad2781cf0f@huawei.com>
+ <20180815023326.GB84720@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <17aa1e09-6bfd-eb67-0f28-e13d8bbb17ff@huawei.com>
+Date:   Wed, 15 Aug 2018 10:51:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180814191526.3247-9-atull@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180815023326.GB84720@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14/2018 12:15 PM, Alan Tull wrote:
-> Clarify the intention that interfaces and upper layers use
-> regions rather than managers directly.
+On 2018/8/15 10:33, Jaegeuk Kim wrote:
+> On 08/15, Chao Yu wrote:
+>> On 2018/8/15 1:23, Jaegeuk Kim wrote:
+>>> On 08/14, Chao Yu wrote:
+>>>> On 2018/8/14 12:19, Jaegeuk Kim wrote:
+>>>>> On 08/10, Chao Yu wrote:
+>>>>>> Previously, discard speed was fixed mostly, and in high usage rate
+>>>>>> device, we will speed up issuing discard, but it doesn't make sense
+>>>>>> that in a non-full filesystem, we still issue discard with slow speed.
+>>>>>
+>>>>> Could you please elaborate the problem in more detail? The speed depends
+>>>>> on how many candidates?
+>>>>
+>>>> undiscard blocks are all 4k granularity.
+>>>> a) utility: filesystem: 20% + undiscard blocks: 20% = flash storage: 40%
+>>>> b) utility: filesystem: 40% + undiscard blocks: 25% = flash storage: 65%
+>>>> c) utility: filesystem: 60% + undiscard blocks: 30% = flash storage: 100%
+>>>>
+>>>>
+>>>> 1. for case c), we need to speed up issuing discard based on utilization of
+>>>> "filesystem + undiscard" instead of just utilization of filesystem.
+>>>>
+>>>> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+>>>> -			dpolicy->granularity = 1;
+>>>> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>> -		}
+>>>>
+>>>> 2. If free space in storage touches therein threshold, performance will be very
+>>>> sensitive. In low-end storage, with high usage in space, even free space is
+>>>> reduced by 1%, performance will decrease a lot.
+>>>
+>>> So, we may need to distinguish low-end vs. high-end storage. In high-end case,
+>>> it'd be better to avoid IO contention, while low-end device wants to get more
+>>> discard commands as much as possible. So, how about adding an option for this
+>>> as a tunable point?
+>>
+>> Agreed, how about adding a sysfs entry discard_tunning:
+>> 1: enabled, use 4k granularity, self-adapted speed based on real device free space.
+>> 0: disabled, use dcc->discard_granularity, fixed speed.
+>>
+>> By default: enabled
+>>
+>> How do you think?
 > 
-> Rearrange API documentation to better group the API functions
-> used to create FPGA mgr/bridge/regions and the API used for
-> programming FPGAs.
+> I don't think this is proper with a sysfs entry, since we already know the
+
+You mean by storage capacity? <= 32GB means low-end?
+
+Thanks,
+
+> device type when mounting the partition. We won't require to change the policy
+> on the fly. And, I still don't get to change the default.
 > 
-> Signed-off-by: Alan Tull <atull@kernel.org>
-> ---
->  Documentation/driver-api/fpga/fpga-bridge.rst      |  38 ++-----
->  Documentation/driver-api/fpga/fpga-mgr.rst         | 117 ++-------------------
->  Documentation/driver-api/fpga/fpga-programming.rst | 103 ++++++++++++++++++
->  Documentation/driver-api/fpga/fpga-region.rst      |  92 ++++++++--------
->  Documentation/driver-api/fpga/index.rst            |   2 +
->  5 files changed, 166 insertions(+), 186 deletions(-)
->  create mode 100644 Documentation/driver-api/fpga/fpga-programming.rst
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> IMO, in above cases, we'd better to issue discard with high speed for c), middle
+>>>> speed for b), and low speed for a).
+>>>>
+>>>> How do you think?
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>> Anyway, it comes out undiscarded block makes FTL GC be lower efficient
+>>>>>> and causing high lifetime overhead.
+>>>>>>
+>>>>>> Let's tune discard speed as below:
+>>>>>>
+>>>>>> a. adjust default issue interval:
+>>>>>> 		original	after
+>>>>>> min_interval:	50ms		100ms
+>>>>>> mid_interval:	500ms		1000ms
+>>>>>> max_interval:	60000ms		10000ms
+>>>>>>
+>>>>>> b. if last time we stop issuing discard due to IO interruption of user,
+>>>>>> let's reset all {min,mid,max}_interval to default one.
+>>>>>>
+>>>>>> c. tune {min,mid,max}_interval with below calculation method:
+>>>>>>
+>>>>>> base_interval = default_interval / 10;
+>>>>>> total_interval = default_interval - base_interval;
+>>>>>> interval = base_interval + total_interval * (100 - dev_util) / 100;
+>>>>>>
+>>>>>> For example:
+>>>>>> min_interval (:100ms)
+>>>>>> dev_util (%)	interval (ms)
+>>>>>> 0		100
+>>>>>> 10		91
+>>>>>> 20		82
+>>>>>> 30		73
+>>>>>> ...
+>>>>>> 80		28
+>>>>>> 90		19
+>>>>>> 100		10
+>>>>>>
+>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>>> ---
+>>>>>>  fs/f2fs/f2fs.h    | 11 ++++----
+>>>>>>  fs/f2fs/segment.c | 64 +++++++++++++++++++++++++++++++++++++----------
+>>>>>>  fs/f2fs/segment.h |  9 +++++++
+>>>>>>  fs/f2fs/super.c   |  2 +-
+>>>>>>  4 files changed, 67 insertions(+), 19 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>> index 273ffdaf4891..a1dd2e1c3cb9 100644
+>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>> @@ -185,10 +185,9 @@ enum {
+>>>>>>  
+>>>>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+>>>>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+>>>>>> -#define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+>>>>>> -#define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+>>>>>> -#define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+>>>>>> -#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
+>>>>>> +#define DEF_MIN_DISCARD_ISSUE_TIME	100	/* 100 ms, if exists */
+>>>>>> +#define DEF_MID_DISCARD_ISSUE_TIME	1000	/* 1000 ms, if device busy */
+>>>>>> +#define DEF_MAX_DISCARD_ISSUE_TIME	10000	/* 10000 ms, if no candidates */
+>>>>>>  #define DEF_CP_INTERVAL			60	/* 60 secs */
+>>>>>>  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+>>>>>>  
+>>>>>> @@ -248,7 +247,8 @@ struct discard_entry {
+>>>>>>  };
+>>>>>>  
+>>>>>>  /* default discard granularity of inner discard thread, unit: block count */
+>>>>>> -#define DEFAULT_DISCARD_GRANULARITY		1
+>>>>>> +#define MID_DISCARD_GRANULARITY			16
+>>>>>> +#define MIN_DISCARD_GRANULARITY			1
+>>>>>>  
+>>>>>>  /* max discard pend list number */
+>>>>>>  #define MAX_PLIST_NUM		512
+>>>>>> @@ -330,6 +330,7 @@ struct discard_cmd_control {
+>>>>>>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
+>>>>>>  	struct rb_root root;			/* root of discard rb-tree */
+>>>>>>  	bool rbtree_check;			/* config for consistence check */
+>>>>>> +	bool io_interrupted;			/* last state of io interrupted */
+>>>>>>  };
+>>>>>>  
+>>>>>>  /* for the list of fsync inodes, used only during recovery */
+>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>>> index 8b52e8dfb12f..9564aaf1f27b 100644
+>>>>>> --- a/fs/f2fs/segment.c
+>>>>>> +++ b/fs/f2fs/segment.c
+>>>>>> @@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+>>>>>>  #endif
+>>>>>>  }
+>>>>>>  
+>>>>>> +static void __adjust_discard_speed(unsigned int *interval,
+>>>>>> +				unsigned int def_interval, int dev_util)
+>>>>>> +{
+>>>>>> +	unsigned int base_interval, total_interval;
+>>>>>> +
+>>>>>> +	base_interval = def_interval / 10;
+>>>>>> +	total_interval = def_interval - base_interval;
+>>>>>> +
+>>>>>> +	/*
+>>>>>> +	 * if def_interval = 100, adjusted interval should be in range of
+>>>>>> +	 * [10, 100].
+>>>>>> +	 */
+>>>>>> +	*interval = base_interval + total_interval * (100 - dev_util) / 100;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static void __tune_discard_policy(struct f2fs_sb_info *sbi,
+>>>>>> +					struct discard_policy *dpolicy)
+>>>>>> +{
+>>>>>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>>>>>> +	int dev_util;
+>>>>>> +
+>>>>>> +	if (dcc->io_interrupted) {
+>>>>>> +		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>>>> +		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+>>>>>> +		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>>>>> +		return;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	dev_util = dev_utilization(sbi);
+>>>>>> +
+>>>>>> +	__adjust_discard_speed(&dpolicy->min_interval,
+>>>>>> +				DEF_MIN_DISCARD_ISSUE_TIME, dev_util);
+>>>>>> +	__adjust_discard_speed(&dpolicy->mid_interval,
+>>>>>> +				DEF_MID_DISCARD_ISSUE_TIME, dev_util);
+>>>>>> +	__adjust_discard_speed(&dpolicy->max_interval,
+>>>>>> +				DEF_MAX_DISCARD_ISSUE_TIME, dev_util);
+>>>>>> +}
+>>>>>> +
+>>>>>>  static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>>>>>  				struct discard_policy *dpolicy,
+>>>>>>  				int discard_type, unsigned int granularity)
+>>>>>> @@ -982,20 +1020,11 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>>>>>  	dpolicy->io_aware_gran = MAX_PLIST_NUM;
+>>>>>>  
+>>>>>>  	if (discard_type == DPOLICY_BG) {
+>>>>>> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>>>> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+>>>>>> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>>>>>  		dpolicy->io_aware = true;
+>>>>>>  		dpolicy->sync = false;
+>>>>>>  		dpolicy->ordered = true;
+>>>>>> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+>>>>>> -			dpolicy->granularity = 1;
+>>>>>> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>>>> -		}
+>>>>>> +		__tune_discard_policy(sbi, dpolicy);
+>>>>>>  	} else if (discard_type == DPOLICY_FORCE) {
+>>>>>> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>>>> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+>>>>>> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>>>>>  		dpolicy->io_aware = false;
+>>>>>>  	} else if (discard_type == DPOLICY_FSTRIM) {
+>>>>>>  		dpolicy->io_aware = false;
+>>>>>> @@ -1353,6 +1382,8 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+>>>>>>  	if (!issued && io_interrupted)
+>>>>>>  		issued = -1;
+>>>>>>  
+>>>>>> +	dcc->io_interrupted = io_interrupted;
+>>>>>> +
+>>>>>>  	return issued;
+>>>>>>  }
+>>>>>>  
+>>>>>> @@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>  		if (i + 1 < dpolicy->granularity)
+>>>>>>  			break;
+>>>>>>  
+>>>>>> -		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
+>>>>>> +		if (i < MID_DISCARD_GRANULARITY && dpolicy->ordered)
+>>>>>>  			return __issue_discard_cmd_orderly(sbi, dpolicy);
+>>>>>>  
+>>>>>>  		pend_list = &dcc->pend_list[i];
+>>>>>> @@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>  	if (!issued && io_interrupted)
+>>>>>>  		issued = -1;
+>>>>>>  
+>>>>>> +	dcc->io_interrupted = io_interrupted;
+>>>>>> +
+>>>>>>  	return issued;
+>>>>>>  }
+>>>>>>  
+>>>>>> @@ -1576,7 +1609,11 @@ static int issue_discard_thread(void *data)
+>>>>>>  	struct f2fs_sb_info *sbi = data;
+>>>>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>>>>>>  	wait_queue_head_t *q = &dcc->discard_wait_queue;
+>>>>>> -	struct discard_policy dpolicy;
+>>>>>> +	struct discard_policy dpolicy = {
+>>>>>> +		.min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
+>>>>>> +		.mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
+>>>>>> +		.max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
+>>>>>> +	};
+>>>>>>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+>>>>>>  	int issued;
+>>>>>>  
+>>>>>> @@ -1929,7 +1966,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>>>>>>  	if (!dcc)
+>>>>>>  		return -ENOMEM;
+>>>>>>  
+>>>>>> -	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
+>>>>>> +	dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
+>>>>>>  	INIT_LIST_HEAD(&dcc->entry_list);
+>>>>>>  	for (i = 0; i < MAX_PLIST_NUM; i++)
+>>>>>>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
+>>>>>> @@ -1945,6 +1982,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>>>>>>  	dcc->next_pos = 0;
+>>>>>>  	dcc->root = RB_ROOT;
+>>>>>>  	dcc->rbtree_check = false;
+>>>>>> +	dcc->io_interrupted = false;
+>>>>>>  
+>>>>>>  	init_waitqueue_head(&dcc->discard_wait_queue);
+>>>>>>  	SM_I(sbi)->dcc_info = dcc;
+>>>>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>>>>>> index 422b0ceb1eaa..63b4da72cd34 100644
+>>>>>> --- a/fs/f2fs/segment.h
+>>>>>> +++ b/fs/f2fs/segment.h
+>>>>>> @@ -616,6 +616,15 @@ static inline int utilization(struct f2fs_sb_info *sbi)
+>>>>>>  					sbi->user_block_count);
+>>>>>>  }
+>>>>>>  
+>>>>>> +static inline int dev_utilization(struct f2fs_sb_info *sbi)
+>>>>>> +{
+>>>>>> +	unsigned int dev_blks;
+>>>>>> +
+>>>>>> +	dev_blks = valid_user_blocks(sbi) + SM_I(sbi)->dcc_info->undiscard_blks;
+>>>>>> +	return div_u64((u64)dev_blks * 100,
+>>>>>> +			MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
+>>>>>> +}
+>>>>>> +
+>>>>>>  /*
+>>>>>>   * Sometimes f2fs may be better to drop out-of-place update policy.
+>>>>>>   * And, users can control the policy through sysfs entries.
+>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>>> index b055f2ea77c5..55ed76daad23 100644
+>>>>>> --- a/fs/f2fs/super.c
+>>>>>> +++ b/fs/f2fs/super.c
+>>>>>> @@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+>>>>>>  	/* adjust parameters according to the volume size */
+>>>>>>  	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
+>>>>>>  		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
+>>>>>> -		sm_i->dcc_info->discard_granularity = 1;
+>>>>>> +		sm_i->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
+>>>>>>  		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
+>>>>>>  	}
+>>>>>>  
+>>>>>> -- 
+>>>>>> 2.18.0.rc1
+>>>>>
+>>>>> .
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
 > 
 
-Hi,
-A few comments below...
-
-
-> diff --git a/Documentation/driver-api/fpga/fpga-programming.rst b/Documentation/driver-api/fpga/fpga-programming.rst
-> new file mode 100644
-> index 0000000..cc34d17
-> --- /dev/null
-> +++ b/Documentation/driver-api/fpga/fpga-programming.rst
-> @@ -0,0 +1,103 @@
-> +In-kernel API for FPGA Programming
-> +==================================
-> +
-> +Overview
-> +--------
-> +
-> +The in-kernel API for FPGA programming is a combination of APIs from
-> +FPGA manager, bridge, and regions.  The actual function used to
-> +trigger FPGA programming is :c:func:`fpga_region_program_fpga()`.
-> +
-> +:c:func:`fpga_region_program_fpga()` uses functionality supplied by
-> +the FPGA manager and bridges.  It will:
-> +
-> + * lock the region's mutex
-> + * lock the mutex of the region's FPGA manager
-> + * build a list of FPGA bridges if a method has been specified to do so
-> + * disable the bridges
-> + * program the FPGA using info passed in :c:member:`fpga_region->info`.
-> + * re-enable the bridges
-> + * release the locks
-> +
-> +The struct fpga_image_info specifies what FPGA image to program.  It is allocated/freed by :c:func:`fpga_image_info_alloc()` and freed with :c:func:`fpga_image_info_free()`
-> +
-> +How to program an FPGA using a region
-> +-------------------------------------
-> +
-> +When the FPGA region driver probed, it was given a pointer to a FPGA manager
-
-                                                              to an FPGA
-
-> +driver so it knows which manager to use.  The region also either has a list of
-> +bridges to control during programming or it has a pointer to a function that
-> +will generate that list.  Here's some sample code of what to do next::
-> +
-> +	#include <linux/fpga/fpga-mgr.h>
-> +	#include <linux/fpga/fpga-region.h>
-> +
-> +	struct fpga_image_info *info;
-> +	int ret;
-> +
-> +	/*
-> +	 * First, alloc the struct with information about the FPGA image to
-> +	 * program.
-> +	 */
-> +	info = fpga_image_info_alloc(dev);
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	/* Set flags as needed, such as: */
-> +	info->flags = FPGA_MGR_PARTIAL_RECONFIG;
-> +
-> +	/*
-> +	 * Indicate where the FPGA image is. This is pseudo-code; you're
-> +	 * going to use one of these three.
-> +	 */
-> +	if (image is in a scatter gather table) {
-> +
-> +		info->sgt = [your scatter gather table]
-> +
-> +	} else if (image is in a buffer) {
-> +
-> +		info->buf = [your image buffer]
-> +		info->count = [image buffer size]
-> +
-> +	} else if (image is in a firmware file) {
-> +
-> +		info->firmware_name = devm_kstrdup(dev, firmware_name,
-> +						   GFP_KERNEL);
-> +
-> +	}
-> +
-> +	/* Add info to region and do the programming */
-> +	region->info = info;
-> +	ret = fpga_region_program_fpga(region);
-> +	if (ret)
-> +		return ret;
-> +
-
-always deallocate and then do:
-	if (ret)
-		return ret;
-?
-
-> +	/* Deallocate the image info if you're done with it */
-> +	fpga_image_info_free(info);
-> +
-> +	/* Now enumerate whatever hardware has appeared in the FPGA. */
-> +
-> +API for programming an FPGA
-> +---------------------------
-> +
-> +* :c:func:`fpga_region_program_fpga` —  Program a FPGA
-> +* :c:type:`fpga_image_info` —  Specifies what FPGA image to program
-> +* :c:func:`fpga_image_info_alloc()` —  Allocate a FPGA image info struct
-> +* :c:func:`fpga_image_info_free()` —  Free a FPGA image info struct
-> +
-> +.. kernel-doc:: drivers/fpga/fpga-region.c
-> +   :functions: fpga_region_program_fpga
-> +
-> +FPGA Manager flags
-> +
-> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
-> +   :doc: FPGA Manager flags
-> +
-> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
-> +   :functions: fpga_image_info
-> +
-> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
-> +   :functions: fpga_image_info_alloc
-> +
-> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
-> +   :functions: fpga_image_info_free
-
-[snip]
-
->  API to add a new FPGA region
->  ----------------------------
->  
-> +* struct :c:type:`fpga_region` — The FPGA region struct
-> +* :c:func:`devm_fpga_region_create` — Allocate and init a region struct
-> +* :c:func:`fpga_region_register` —  Register a FPGA region
-
-                                                an FPGA
-
-> +* :c:func:`fpga_region_unregister` —  Unregister a FPGA region
-
-                                                    an FPGA
-
-> +
-> +The FPGA region's probe function will need to get a reference to the FPGA
-> +Manager it will be using to do the programming.  This usually would happen
-> +during the region's probe function.
-> +
-> +* :c:func:`fpga_mgr_get` — Get a reference to a FPGA manager, raise ref count
-
-                                                 an FPGA
-
-> +* :c:func:`of_fpga_mgr_get` —  Get a reference to a FPGA manager, raise ref count,
-
-                                                     an FPGA
-
-> +  given a device node.
-> +* :c:func:`fpga_mgr_put` — Put a FPGA manager
-
-                                  an FPGA
-
-> +
-> +The FPGA region will need to specify which bridges to control while programming
-> +the FPGA.  The region driver can build a list of bridges during probe time
-> +(:c:member:`fpga_region->bridge_list`) or it can have a function that creates
-> +the list of bridges to program just before programming
-> +(:c:member:`fpga_region->get_bridges`).  The FPGA bridge framework supplies the
-> +following APIs to handle building or tearing down that list.
-> +
-> +* :c:func:`fpga_bridge_get_to_list` — Get a ref of a FPGA bridge, add it to a
-> +  list
-> +* :c:func:`of_fpga_bridge_get_to_list` — Get a ref of a FPGA bridge, add it to a
-> +  list, given a device node
-> +* :c:func:`fpga_bridges_put` — Given a list of bridges, put them
-> +
->  .. kernel-doc:: include/linux/fpga/fpga-region.h
->     :functions: fpga_region
->  
-
-
-
--- 
-~Randy
