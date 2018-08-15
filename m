@@ -2,88 +2,89 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8A0C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AA1C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E384A21506
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:25:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E384A21506
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD42021506
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:25:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD42021506
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=david-bauer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeHOXSh (ORCPT
+        id S1728237AbeHOXSz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:18:37 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51824 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728024AbeHOXSh (ORCPT
+        Wed, 15 Aug 2018 19:18:55 -0400
+Received: from mars.blocktrron.ovh ([51.254.112.43]:37099 "EHLO
+        mail.blocktrron.ovh" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727997AbeHOXSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:18:37 -0400
-Received: by mail-it0-f68.google.com with SMTP id e14-v6so3406598itf.1;
-        Wed, 15 Aug 2018 13:24:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i7I5vHszIsxfRCflWUe8Kgd0b02gdzObO973E78fHv4=;
-        b=DXdHmAKZZ6YR6vMFYsWVhcQFw9lBXoyx90/MTvqI2yE2KV18fvdSyvAh23Zh/8NGV5
-         4tSQ9bPeP9uxscJhG/pMmvmjEgUGIDxWyJqPf4/1in+dqQ8XEtV+KJIjHysGBAdZ27kQ
-         Wa9FeGXzB06kbEZF9DmOxgigwhxwjadYBN9TFHWvnVbxVl0eXAZqzW7BHwt8HJsR1Lov
-         aujsTcB0DVMoL1IgUoXWhJZYBycB0dLhor7FFFyLp74gPR/smhAbbL3zorz3yegN/mUj
-         SngEyyYYAWFFyus3ZNsJ4NXQIoGXtHWG1q9LJM3Ui5OxZLAPr6LgrURZNLyYLrkQ+AUd
-         A9BQ==
-X-Gm-Message-State: AOUpUlEE1UaadBl4CS0guRJXQdfHQwdSBWiMIkxAqWs/k122fBqWUOEq
-        T2g4MwUXl287Bl08Grg/lw==
-X-Google-Smtp-Source: AA+uWPwqLqX5YXslLyktHh7F7eh3HvWSZ8OeG+nkc7WknRefm1vfXij8VtXTs9YSMP+UNuO9t44LaA==
-X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr23818687jas.72.1534364696802;
-        Wed, 15 Aug 2018 13:24:56 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id u139-v6sm1705131ita.1.2018.08.15.13.24.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 13:24:56 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 14:24:55 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        linux-pci@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v4 3/6] reset: imx7: Add PCIE_CTRL_APPS_TURNOFF
-Message-ID: <20180815202455.GA15583@rob-hp-laptop>
-References: <cover.1534264292.git.leonard.crestez@nxp.com>
- <88a5997e37d048cfc2dabb44cc13dce89c93d5eb.1534264292.git.leonard.crestez@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88a5997e37d048cfc2dabb44cc13dce89c93d5eb.1534264292.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 15 Aug 2018 19:18:55 -0400
+X-Greylist: delayed 316 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Aug 2018 19:18:54 EDT
+Received: from localhost.localdomain (p20030071CF136800381FECC4C97D924A.dip0.t-ipconnect.de [IPv6:2003:71:cf13:6800:381f:ecc4:c97d:924a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.blocktrron.ovh (Postfix) with ESMTPSA id BDDDF22C80;
+        Wed, 15 Aug 2018 22:19:57 +0200 (CEST)
+From:   David Bauer <mail@david-bauer.net>
+Cc:     David Bauer <mail@david-bauer.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: 74x164: add lines-initial-states property
+Date:   Wed, 15 Aug 2018 22:18:54 +0200
+Message-Id: <20180815201855.29738-1-mail@david-bauer.net>
+X-Mailer: git-send-email 2.18.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 07:50:17PM +0300, Leonard Crestez wrote:
-> This is required for the imx pci driver to send the PME_Turn_Off TLP.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
->  drivers/reset/reset-imx7.c             | 1 +
+This adds the ability to define the initial state of each output line on
+device probe.
 
->  include/dt-bindings/reset/imx7-reset.h | 4 +++-
+Signed-off-by: David Bauer <mail@david-bauer.net>
+---
+ Documentation/devicetree/bindings/gpio/gpio-74x164.txt | 5 +++++
+ drivers/gpio/gpio-74x164.c                             | 3 +++
+ 2 files changed, 8 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
+index 2a97553d8d76..580b18065ad3 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
+@@ -14,6 +14,11 @@ Required properties:
+ 
+ Optional properties:
+ - enable-gpios: GPIO connected to the OE (Output Enable) pin.
++- lines-initial-states: Bitmask that specifies the initial state of
++  each line. When a bit is set to zero, the corresponding output line
++  is initialized LOW. When a bit is set to one, the corresponding
++  output line is initialized HIGH. In case this property is not
++  defined, all lines will be initialized as LOW.
+ 
+ Example:
+ 
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index fb7b620763a2..275310a0a538 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -150,6 +150,9 @@ static int gen_74x164_probe(struct spi_device *spi)
+ 	chip->gpio_chip.parent = &spi->dev;
+ 	chip->gpio_chip.owner = THIS_MODULE;
+ 
++	of_property_read_u8_array(spi->dev.of_node, "lines-initial-states",
++				  chip->buffer, chip->registers);
++
+ 	mutex_init(&chip->lock);
+ 
+ 	ret = __gen_74x164_write_config(chip);
+-- 
+2.18.0
 
->  2 files changed, 4 insertions(+), 1 deletion(-)
