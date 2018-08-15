@@ -2,146 +2,122 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D2DC46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0381DC46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBDA921581
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:35:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kbVKRa0W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDA921581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A274E216FB
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A274E216FB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726123AbeHOEZM (ORCPT
+        id S1726020AbeHOEco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 00:25:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32993 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeHOEZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 00:25:12 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r5-v6so9925216pgv.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 18:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R/dSXm1U+oMTZJvbM+HvIefHaXvMTPgkOu4CPkg8DnE=;
-        b=kbVKRa0WYe4/TU1hjtJT66V2Krv47MraHrc8wUMzAtar0eWvUAkzFdDPDuo085DEXJ
-         9BzVIjGpevSmMOcfXxre5+NzvxiPxbSk0dzpwWTZxlCqqMlg4kR8DTxD/vJb5SGoo2Zp
-         ZQ6eYHVck7SUUdWGP5bjDXEAIHwuPEV079AbQAE4zLGR00WXan9rwQKY8faFYwvODjlR
-         w4k63ga8UgOrYxaCUCAYfyvDwc1QD14+s1MshlF275ZYdb89PjYXTNGJfvEk5QSZEt10
-         /iKm2r9e3YNxKslSPzeStnz/uCUx/IQwX36l532WlotfVEfjKq5cX5eSA4Rd0EeyqHT/
-         0TcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R/dSXm1U+oMTZJvbM+HvIefHaXvMTPgkOu4CPkg8DnE=;
-        b=hXjGgFBxwrj2weCr2UxlhaUKAt3+ChkkIpUOM1eCTtK9JvUza8T8nsyRs7MTXW/Vza
-         MVRh0bpL18vMAc3lEm2aEtga74JhFB4hr1QwFLjcW9pt3T3M+PTG1MedzfCpyHfTEldk
-         4vARJMChcptqfZQi/z9pev2NNUNcDhtOcH2Ly/5Zr8ONVSaM0EQf5whkWTna60cWpO0b
-         1V/NaX1HIYe/X9DXYpablF7Q8ZVzID9BzfVv0rSxePdF/4ytqh+sre303+zt74T1jrhQ
-         xWgOlXKg6wbxY3ZQR6rrTvSUCjsZT4dCCqupJp2ovdMOh4cazJ4NIsz0knz+nnNEDbrM
-         1lbw==
-X-Gm-Message-State: AOUpUlEK/kmsRkIHzFz2hGosmmp69JzUdzon5OFrMZmAOV7/KWVID0du
-        j3+Ao5jqQIk87epuJKhLN4PCow==
-X-Google-Smtp-Source: AA+uWPzA7fpG0qlJ//wHUni03GKmrwoQDkG6ML+ERyDradm24mI5xBbp1wIDiXFLsABfFMQrVOp0XQ==
-X-Received: by 2002:a63:2506:: with SMTP id l6-v6mr22988247pgl.237.1534296919094;
-        Tue, 14 Aug 2018 18:35:19 -0700 (PDT)
-Received: from wnukowski-desktop.sea.corp.google.com ([2620:0:1009:11:cdf9:e330:7b8e:1961])
-        by smtp.gmail.com with ESMTPSA id d22-v6sm45317760pfk.69.2018.08.14.18.35.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 18:35:18 -0700 (PDT)
-Subject: Re: [PATCH] Bugfix for handling of shadow doorbell buffer.
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        keith.busch@linux.intel.com
-Cc:     Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Keith Busch <keith.busch@intel.com>, yigitfiliz@google.com,
-        Christoph Hellwig <hch@lst.de>
-References: <20180814221735.62804-1-wnukowski@google.com>
- <20180814225716.GA3224@localhost.localdomain>
- <CA+55aFw-Fed2QJCYBosGby71AsXAVKGq8mG-HYR13rEnD9V2Lg@mail.gmail.com>
-From:   Michal Wnukowski <wnukowski@google.com>
-Message-ID: <d57e77d8-88e2-b92a-9545-7118de4d8065@google.com>
-Date:   Tue, 14 Aug 2018 18:35:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFw-Fed2QJCYBosGby71AsXAVKGq8mG-HYR13rEnD9V2Lg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 15 Aug 2018 00:32:44 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21695 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbeHOEco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 00:32:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2018 18:42:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,241,1531810800"; 
+   d="scan'208";a="224716298"
+Received: from pgsmsx108.gar.corp.intel.com ([10.221.44.103])
+  by orsmga004.jf.intel.com with ESMTP; 14 Aug 2018 18:42:47 -0700
+Received: from pgsmsx109.gar.corp.intel.com ([169.254.14.29]) by
+ PGSMSX108.gar.corp.intel.com ([169.254.8.104]) with mapi id 14.03.0319.002;
+ Wed, 15 Aug 2018 09:42:46 +0800
+From:   "Ong, Hean Loong" <hean.loong.ong@intel.com>
+To:     "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "airlied@linux.ie" <airlied@linux.ie>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "See, Chin Liang" <chin.liang.see@intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Vandervennet, Yves" <yves.vandervennet@intel.com>
+Subject: Re: [PATCH10 0/3] Intel FPGA Video and Image Processing Suite
+Thread-Topic: [PATCH10 0/3] Intel FPGA Video and Image Processing Suite
+Thread-Index: AQHUM6zUc+wXHV2usUSi15kWFwPc4qS+3xGAgACl/4A=
+Date:   Wed, 15 Aug 2018 01:42:45 +0000
+Message-ID: <1534297365.3035.0.camel@intel.com>
+References: <1534237029-2648-1-git-send-email-hean.loong.ong@intel.com>
+         <3720ba74-947a-1b5d-5f5b-1ef03d5941aa@kernel.org>
+In-Reply-To: <3720ba74-947a-1b5d-5f5b-1ef03d5941aa@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.226.243.17]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2A66F67514536543AD8D00F20A84CC41@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/14/2018 04:16 PM, Linus Torvalds wrote:
-> On Tue, Aug 14, 2018 at 03:17:35PM -0700, Michal Wnukowski wrote:
->>
->> With memory barrier in place, the volatile keyword around *dbbuf_ei is
->> redundant.
-> 
-> No. The memory barrier enforces _ordering_, but it doesn't enforce
-> that the accesses are only done once. So when you do
-> 
->>              *dbbuf_db = value;
-> 
-> to write to dbbuf_db, and
-> 
->>    *dbbuf_ei
-> 
-> to read from dbbuf_ei, without the volatile the write (or the read)
-> could be done multiple times, which can cause serious confusion.
-> 
-
-I got confused after comaring disassembly of this code with and 
-without volatile keyword. Thanks for the correction.
-
-> 
-> However, there's a more serious problem with your patch:
-> 
->> +             /*
->> +              * Ensure that the doorbell is updated before reading
->> +              * the EventIdx from memory
->> +              */
->> +             mb();
-> 
-> Good comment. Except what about the other side?
-> 
-> When you use memory ordering rules, as opposed to locking, there's
-> always *two* sides to any access order. There's this "write dbbuf_db"
-> vs "read dbbuf_ei" ordering.
-> 
-> But there's the other side: what about the side that writes dbbuf_ei,
-> and reads dbbuf_db?
-> 
-> I'm assuming that's the actual controller hardware, but it needs a
-> comment about *that* access being ordered too, because if it isn't,
-> then ordering this side is pointless.
-> 
-
-The other side in this case is not actual controller hardware, but 
-virtual one (the regular hardware should rely on normal MMIO 
-doorbells). I spent some time going through the code of internal 
-hypervisor and double-checking all guarantees around memory access 
-before asking the same question: "what about the other side?". This 
-execution ordering is mentioned in NVMe spec under "Controller 
-Architecture", and it turned out that the NVMe driver itself had 
-missing memory barrier. 
-
-
-Thanks,
-Michal
+T24gVHVlLCAyMDE4LTA4LTE0IGF0IDEwOjQ4IC0wNTAwLCBEaW5oIE5ndXllbiB3cm90ZToNCj4g
+DQo+IE9uIDA4LzE0LzIwMTggMDM6NTcgQU0sIEhlYW4tTG9vbmcsIE9uZyB3cm90ZToNCj4gPiAN
+Cj4gPiBGcm9tOiBPbmcsIEhlYW4gTG9vbmcgPGhlYW4ubG9vbmcub25nQGludGVsLmNvbT4NCj4g
+PiANCj4gPiBUaGUgRlBHQSBGcmFtZUJ1ZmZlciBTb2Z0IElQIGNvdWxkIGJlIHNlZW7CoMKgYXMg
+dGhlIEdQVSBhbmQgdGhlIERSTQ0KPiA+IGRyaXZlciBwYXRjaMKgDQo+ID4gaGVyZSBpcyBhbGxv
+Y2F0aW5nIG1lbW9yeSBmb3IgaW5mb3JtYXRpb24gdG8gYmUgc3RyZWFtZWQgZnJvbSB0aGUNCj4g
+PiBBUk0vTGludXjCoA0KPiA+IHRvIHRoZSBkaXNwbGF5IHBvcnQuIEJhc2ljYWxseSB0aGUgZHJp
+dmVyIGp1c3Qgd3JhcHMgdGhlDQo+ID4gaW5mb3JtYXRpb24gc3VjaCBhc8KgDQo+ID4gdGhlIHBp
+eGVscyB0byBiZSBkcmF3biBieSB0aGUgRlBHQSBGcmFtZUJ1ZmZlciAyLg0KPiA+IA0KPiA+IFRo
+ZSBwaWVjZSBvZiBoYXJkd2FyZSBpbiBkaXNjdXNzaW9uIGlzIHRoZSBTb0MgRlBHQSB3aGVyZSBM
+aW51eA0KPiA+IHJ1bnMgb24gdGhlwqANCj4gPiBBUk0gY2hpcCBhbmQgdGhlIEZHUEEgaXMgZHJp
+dmVuIGJ5IGl0cyBOSU9TIHNvZnQgY29yZSB3aXRoIGl0cyBvd24NCj4gPiBwcm9wcmlldGFyeSBm
+aXJtd2FyZS4NCj4gVGhpcyBkcml2ZXIgZG9lc24ndCBoYXZlIHRvIEFSTSBzcGVjaWZpYyBkb2Vz
+IGl0Pw0KPiANCj4gPiANCj4gPiANCj4gPiBGb3IgZXhhbXBsZSB0aGUgYXBwbGljYXRpb24gZnJv
+bSB0aGUgQVJNIExpbnV4IHdvdWxkIGhhdmUgdG8gd3JpdGUNCj4gPiBpbmZvcm1hdGlvbsKgDQo+
+ID4gb24gdGhlIC9kZXYvZmIwIHdpdGggdGhlIGluZm9ybWF0aW9uIHN0b3JlZCBpbiB0aGUgU0RS
+QU0gdG8gYmUNCj4gPiBmZXRjaGVkIGJ5IHRoZcKgDQo+ID4gRlBHQSBmcmFtZWJ1ZmZlciBJUCBh
+bmQgZGlzcGxheWVkIG9uIHRoZSBEaXNwbGF5IFBvcnQgTW9uaXRvci4NCj4gPiANCj4gPiANCj4g
+PiBPbmcgSGVhbiBMb29uZyAoMik6DQo+ID4gwqAgQVJNOnNvY2ZwZ2EtZGVmY29uZmlnIEludGVs
+IEZQR0EgVmlkZW8gYW5kIEltYWdlIFByb2Nlc3NpbmcgU3VpdGUNCj4gPiDCoCBBUk06ZHJtIGl2
+aXAgSW50ZWwgRlBHQSBWaWRlbyBhbmQgSW1hZ2UgUHJvY2Vzc2luZyBTdWl0ZQ0KPiA+IA0KPiA+
+IE9uZywgSGVhbiBMb29uZyAoMSk6DQo+ID4gwqAgQVJNOmR0LWJpbmRpbmdzOmRpc3BsYXkgSW50
+ZWwgRlBHQSBWaWRlbyBhbmQgSW1hZ2UgUHJvY2Vzc2luZw0KPiA+IFN1aXRlDQo+ID4gDQo+ID4g
+wqAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2FsdHIsdmlwLWZiMi50eHTCoMKgwqB8
+wqDCoMKgNjMgKysrKysrKw0KPiA+IMKgYXJjaC9hcm0vY29uZmlncy9zb2NmcGdhX2RlZmNvbmZp
+Z8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoMKgwqA1ICsNCj4gPiDCoGRy
+aXZlcnMvZ3B1L2RybS9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoMKgwqAyICsNCj4gPiDCoGRyaXZlcnMvZ3B1L2RybS9N
+YWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoHzCoMKgwqDCoDEgKw0KPiA+IMKgZHJpdmVycy9ncHUvZHJtL2l2aXAvS2NvbmZpZ8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoMKgMTQgKysNCj4g
+PiDCoGRyaXZlcnMvZ3B1L2RybS9pdmlwL01ha2VmaWxlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoMKgwqA5ICsNCj4gPiDCoGRyaXZlcnMvZ3B1L2RybS9p
+dmlwL2ludGVsX3ZpcF9jb25uLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqDCoDk1
+DQo+ID4gKysrKysrKysrKw0KPiA+IMKgZHJpdmVycy9ncHUvZHJtL2l2aXAvaW50ZWxfdmlwX2Nv
+cmUuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoDE2MQ0KPiA+ICsrKysrKysrKysr
+KysrKysNCj4gPiDCoGRyaXZlcnMvZ3B1L2RybS9pdmlwL2ludGVsX3ZpcF9kcnYuaMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqA1MiArKysrKysNCj4gPiDCoGRyaXZlcnMvZ3B1
+L2RybS9pdmlwL2ludGVsX3ZpcF9vZi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8
+wqDCoDE5Mw0KPiA+ICsrKysrKysrKysrKysrKysrKysrDQo+ID4gwqAxMCBmaWxlcyBjaGFuZ2Vk
+LCA1OTUgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCj4gPiDCoGNyZWF0ZSBtb2RlIDEw
+MDY0NA0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2FsdHIs
+dmlwLWZiMi50eHQNCj4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vaXZp
+cC9LY29uZmlnDQo+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2l2aXAv
+TWFrZWZpbGUNCj4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vaXZpcC9p
+bnRlbF92aXBfY29ubi5jDQo+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJt
+L2l2aXAvaW50ZWxfdmlwX2NvcmUuYw0KPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
+Z3B1L2RybS9pdmlwL2ludGVsX3ZpcF9kcnYuaA0KPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
+aXZlcnMvZ3B1L2RybS9pdmlwL2ludGVsX3ZpcF9vZi5jDQo+ID4gDQo+IENhbiB5b3UgY2xhcmlm
+eSB5b3VyIGNvbW1pdCBoZWFkZXI/IFdoYXQgaXMgIlBBVENIMTAiLCBpcyBpdCB2ZXJzaW9uDQo+
+IDEwPw0KPiBJZiBzbywgaXQgc2hvdWxkIGJlICJQQVRDSHYxMCIuDQo+IA0KPiBZb3UncmUgYWxz
+byBtaXNzaW5nIGEgZmV3IG90aGVyIG1haW50YWluZXJzIGluIHlvdXIgQ0MgbGlzdCwgdGhlICJE
+Uk0NCj4gRFJJVkVSUyBBTkQgTUlTQyBHUFUgUEFUQ0hFUyIgcGVvcGxlLg0KPiANCk5vdGVkDQoN
+Cj4gRGluaA==
