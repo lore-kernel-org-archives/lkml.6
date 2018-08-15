@@ -2,235 +2,100 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDA6C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D30F2C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 110F621566
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110F621566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D5A9021566
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A9021566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeHPBPo (ORCPT
+        id S1727969AbeHPBQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:15:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38496 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbeHPBPo (ORCPT
+        Wed, 15 Aug 2018 21:16:06 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37088 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeHPBQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:15:44 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD5A1D5A;
-        Wed, 15 Aug 2018 22:21:36 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 15:21:35 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     osalvador@techadventures.net
-Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
-        Jonathan.Cameron@huawei.com, arbab@linux.vnet.ibm.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v2 3/4] mm/memory_hotplug: Make
- register_mem_sect_under_node a cb of walk_memory_range
-Message-Id: <20180815152135.4f755e25c865af2054cfaf02@linux-foundation.org>
-In-Reply-To: <20180622111839.10071-4-osalvador@techadventures.net>
-References: <20180622111839.10071-1-osalvador@techadventures.net>
-        <20180622111839.10071-4-osalvador@techadventures.net>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 21:16:06 -0400
+Received: by mail-it0-f66.google.com with SMTP id h20-v6so4087216itf.2;
+        Wed, 15 Aug 2018 15:22:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ax9bZfHgKpfM/ozxbqZMv3Ghf48gtyNUSpFHZcaq5Mo=;
+        b=ALIlm4jSRbvbg+AG1G6tUti1KOd2nBv5CG0DV5KiFUJga629hp1AYyPg39wUgmYaHs
+         FIb9Jvvnp0960p411UQ7Q2T3N1qws1g+eCCwm6unXyRsZuxU1A1FBlRnDWQfBa9i4yQF
+         sJR42sVXZevrjpyuC0CyZc++c73K0S5aSxuDqjbH/E1hCbyjPrxZkeXF96IveoaCoOt8
+         DZAj1RIMj4k/gDE+pY7Ot0H0XvVtPoojO8cE9yEPjpyNawFb4+s8AeP+s+bzWdS+r3uv
+         bn3mSVJ29JAomPhW2B/WK06yNDjW/q+nNFOm0FXPWG+vzP5AgFQlbWHU5Lgk4wzaWGjT
+         /rYQ==
+X-Gm-Message-State: AOUpUlFarugfV99AKGXCaf8FWB2pg529I4MPMhyLVsSOPUyGeKTnuhe3
+        gET1y2/d6LsNcGEqjctMhA==
+X-Google-Smtp-Source: AA+uWPw//A+0cXMBX3mFYt29l2gN6FMLNAK39mBnWe31Vy0akM9w5bghR9YnLl3unDG6qlg8v0T8qQ==
+X-Received: by 2002:a24:355:: with SMTP id e82-v6mr18126390ite.64.1534371719589;
+        Wed, 15 Aug 2018 15:21:59 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id u68-v6sm1461230ita.36.2018.08.15.15.21.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 15:21:59 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 16:21:57 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, amstan@chromium.org,
+        groeck@google.com, kieran.bingham@ideasonboard.com,
+        kernel@collabora.com, bleung@chromium.org, heiko@sntech.de,
+        devicetree@vger.kernel.org, Frank Wang <frank.wang@rock-chips.com>,
+        linux-rockchip@lists.infradead.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/4] dt-bindings: phy-rockchip-inno-usb2: add
+ documentation for extcon and utmi-avalid properties.
+Message-ID: <20180815222157.GA8193@rob-hp-laptop>
+References: <20180815095934.11205-1-enric.balletbo@collabora.com>
+ <20180815095934.11205-3-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180815095934.11205-3-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018 13:18:38 +0200 osalvador@techadventures.net wrote:
-
-> From: Oscar Salvador <osalvador@suse.de>
+On Wed, Aug 15, 2018 at 11:59:32AM +0200, Enric Balletbo i Serra wrote:
+> Commit 98898f3bc83c8 ("phy: rockchip-inno-usb2: support otg-port for
+> rk3399") introduces two new properties. The extcon property is used to
+> detect the cable-state, and the rockchip,utmi-avalid is used to indicate
+> which register should be used to detect the vbus state.
 > 
-> link_mem_sections() and walk_memory_range() share most of the code,
-> so we can use convert link_mem_sections() into a dummy function that calls
-> walk_memory_range() with a callback to register_mem_sect_under_node().
+> Document these properties in the documentation binding.
 > 
-> This patch converts register_mem_sect_under_node() in order to
-> match a walk_memory_range's callback, getting rid of the
-> check_nid argument and checking instead if the system is still
-> boothing, since we only have to check for the nid if the system
-> is in such state.
+> Fixes: 98898f3bc83c8 ("phy: rockchip-inno-usb2: support otg-port for rk3399")
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 > 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Suggested-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+>  .../devicetree/bindings/phy/phy-rockchip-inno-usb2.txt         | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
+> index 074a7b3b0425..2d4808d3920b 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
+> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
+> @@ -23,6 +23,7 @@ Optional properties:
+>  		 register files". When set driver will request its
+>  		 phandle as one companion-grf for some special SoCs
+>  		 (e.g RV1108).
+> + - extcon : phandle to the extcon device for the otg phy.
 
-We have two tested-by's bu no reviewers or ackers?
+extcon is not a good binding. The usb connector binding should be used 
+instead for new users.
 
-From: Oscar Salvador <osalvador@suse.de>
-Subject: mm/memory_hotplug.c: make register_mem_sect_under_node() a callback of walk_memory_range()
-
-link_mem_sections() and walk_memory_range() share most of the code, so we
-can use convert link_mem_sections() into a dummy function that calls
-walk_memory_range() with a callback to register_mem_sect_under_node().
-
-This patch converts register_mem_sect_under_node() in order to match a
-walk_memory_range's callback, getting rid of the check_nid argument and
-checking instead if the system is still boothing, since we only have to
-check for the nid if the system is in such state.
-
-Link: http://lkml.kernel.org/r/20180622111839.10071-4-osalvador@techadventures.net
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Suggested-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Tested-by: Reza Arbab <arbab@linux.vnet.ibm.com>
-Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- drivers/base/node.c  |   44 +++++------------------------------------
- include/linux/node.h |   12 ++++++-----
- mm/memory_hotplug.c  |    5 ----
- 3 files changed, 14 insertions(+), 47 deletions(-)
-
---- a/drivers/base/node.c~mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range
-+++ a/drivers/base/node.c
-@@ -399,10 +399,9 @@ static int __ref get_nid_for_pfn(unsigne
- }
- 
- /* register memory section under specified node if it spans that node */
--int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
--				 bool check_nid)
-+int register_mem_sect_under_node(struct memory_block *mem_blk, void *arg)
- {
--	int ret;
-+	int ret, nid = *(int *)arg;
- 	unsigned long pfn, sect_start_pfn, sect_end_pfn;
- 
- 	if (!mem_blk)
-@@ -433,7 +432,7 @@ int register_mem_sect_under_node(struct
- 		 * case, during hotplug we know that all pages in the memory
- 		 * block belong to the same node.
- 		 */
--		if (check_nid) {
-+		if (system_state == SYSTEM_BOOTING) {
- 			page_nid = get_nid_for_pfn(pfn);
- 			if (page_nid < 0)
- 				continue;
-@@ -490,41 +489,10 @@ int unregister_mem_sect_under_nodes(stru
- 	return 0;
- }
- 
--int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages,
--		      bool check_nid)
-+int link_mem_sections(int nid, unsigned long start_pfn, unsigned long end_pfn)
- {
--	unsigned long end_pfn = start_pfn + nr_pages;
--	unsigned long pfn;
--	struct memory_block *mem_blk = NULL;
--	int err = 0;
--
--	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
--		unsigned long section_nr = pfn_to_section_nr(pfn);
--		struct mem_section *mem_sect;
--		int ret;
--
--		if (!present_section_nr(section_nr))
--			continue;
--		mem_sect = __nr_to_section(section_nr);
--
--		/* same memblock ? */
--		if (mem_blk)
--			if ((section_nr >= mem_blk->start_section_nr) &&
--			    (section_nr <= mem_blk->end_section_nr))
--				continue;
--
--		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
--
--		ret = register_mem_sect_under_node(mem_blk, nid, check_nid);
--		if (!err)
--			err = ret;
--
--		/* discard ref obtained in find_memory_block() */
--	}
--
--	if (mem_blk)
--		kobject_put(&mem_blk->dev.kobj);
--	return err;
-+	return walk_memory_range(start_pfn, end_pfn, (void *)&nid,
-+					register_mem_sect_under_node);
- }
- 
- #ifdef CONFIG_HUGETLBFS
---- a/include/linux/node.h~mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range
-+++ a/include/linux/node.h
-@@ -33,10 +33,10 @@ typedef  void (*node_registration_func_t
- 
- #if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_NUMA)
- extern int link_mem_sections(int nid, unsigned long start_pfn,
--			     unsigned long nr_pages, bool check_nid);
-+			     unsigned long end_pfn);
- #else
- static inline int link_mem_sections(int nid, unsigned long start_pfn,
--				    unsigned long nr_pages, bool check_nid)
-+				    unsigned long end_pfn)
- {
- 	return 0;
- }
-@@ -54,12 +54,14 @@ static inline int register_one_node(int
- 
- 	if (node_online(nid)) {
- 		struct pglist_data *pgdat = NODE_DATA(nid);
-+		unsigned long start_pfn = pgdat->node_start_pfn;
-+		unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
- 
- 		error = __register_one_node(nid);
- 		if (error)
- 			return error;
- 		/* link memory sections under this node */
--		error = link_mem_sections(nid, pgdat->node_start_pfn, pgdat->node_spanned_pages, true);
-+		error = link_mem_sections(nid, start_pfn, end_pfn);
- 	}
- 
- 	return error;
-@@ -69,7 +71,7 @@ extern void unregister_one_node(int nid)
- extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
- extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
- extern int register_mem_sect_under_node(struct memory_block *mem_blk,
--						int nid, bool check_nid);
-+						void *arg);
- extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
- 					   unsigned long phys_index);
- 
-@@ -99,7 +101,7 @@ static inline int unregister_cpu_under_n
- 	return 0;
- }
- static inline int register_mem_sect_under_node(struct memory_block *mem_blk,
--							int nid, bool check_nid)
-+							void *arg)
- {
- 	return 0;
- }
---- a/mm/memory_hotplug.c~mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range
-+++ a/mm/memory_hotplug.c
-@@ -1123,7 +1123,6 @@ int __ref add_memory_resource(int nid, s
- 	u64 start, size;
- 	bool new_node = false;
- 	int ret;
--	unsigned long start_pfn, nr_pages;
- 
- 	start = res->start;
- 	size = resource_size(res);
-@@ -1164,9 +1163,7 @@ int __ref add_memory_resource(int nid, s
- 	}
- 
- 	/* link memory sections under this node.*/
--	start_pfn = start >> PAGE_SHIFT;
--	nr_pages = size >> PAGE_SHIFT;
--	ret = link_mem_sections(nid, start_pfn, nr_pages, false);
-+	ret = link_mem_sections(nid, PFN_DOWN(start), PFN_UP(start + size - 1));
- 	BUG_ON(ret);
- 
- 	/* create new memmap entry */
-_
-
+Rob
