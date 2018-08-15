@@ -2,120 +2,248 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E7CC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4462DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F64B208DF
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:09:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0YgymQPx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F64B208DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 64B6721475
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:10:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B6721475
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730168AbeHOSCM (ORCPT
+        id S1730193AbeHOSD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:02:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729348AbeHOSCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:02:11 -0400
-Received: from [192.168.1.25] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 045B72064A;
-        Wed, 15 Aug 2018 15:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534345777;
-        bh=Hrx2Bk9ja/fYncuP6p4kT3zydNvhITWFVds8IelkBHY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=0YgymQPxfgnQvzbzTzT1XXXHGHxLXHSU+sZ6hpIvHQ0S1lY7xAyecScwGTHsxJKc/
-         vtcbG1zPpa25/sixrtqRTre0E2zP7w2hX6hsy8ZAOLHjcxHVD0sNPPz2gpz4xhfb07
-         V94f54g3A3q25q7H018snwiYTllr9wfg6QUXFrFs=
-Subject: Re: [PATCH] ARM: dts: socfpga: use stdout-path for chosen node
-To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marex@denx.de>
-References: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e209db3a-22af-ae6c-99b6-f79658530131@kernel.org>
-Date:   Wed, 15 Aug 2018 10:09:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 15 Aug 2018 14:03:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35984 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729381AbeHOSD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:03:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 672A8AD67;
+        Wed, 15 Aug 2018 15:10:51 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 17:10:47 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCHv3] lib/ratelimit: Lockless ratelimiting
+Message-ID: <20180815151047.qgjam3t3ujyacmaf@pathway.suse.cz>
+References: <20180703225628.25684-1-dima@arista.com>
 MIME-Version: 1.0
-In-Reply-To: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703225628.25684-1-dima@arista.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/08/2018 04:09 AM, Simon Goldschmidt wrote:
-> Use stdout-path dts property for kernel console.
+On Tue 2018-07-03 23:56:28, Dmitry Safonov wrote:
+> Currently ratelimit_state is protected with spin_lock. If the .lock is
+> taken at the moment of ___ratelimit() call, the message is suppressed to
+> make ratelimiting robust.
 > 
-> There were two socfpga boards left not using stdout-path:
-> socrates and vining. Make sure they match the other boards.
+> That results in the following issue issue:
+>       CPU0                          CPU1
+> ------------------           ------------------
+> printk_ratelimit()           printk_ratelimit()
+>         |                             |
+>   try_spin_lock()              try_spin_lock()
+>         |                             |
+> time_is_before_jiffies()          return 0; // suppress
 > 
-> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-> ---
->  arch/arm/boot/dts/socfpga_cyclone5_socrates.dts    | 3 ++-
->  arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+> So, concurrent call of ___ratelimit() results in silently suppressing
+> one of the messages, regardless if the limit is reached or not.
+> And rc->missed is not increased in such case so the issue is covered
+> from user.
+> 
+> Convert ratelimiting to use atomic counters and drop spin_lock.
+> 
+> Note: That might be unexpected, but with the first interval of messages
+> storm one can print up to burst*2 messages. So, it doesn't guarantee
+> that in *any* interval amount of messages is lesser than burst.
+> But, that differs lightly from previous behavior where one can start
+> burst=5 interval and print 4 messages on the last milliseconds of
+> interval + new 5 messages from new interval (totally 9 messages in
+> lesser than interval value):
 
-Applied!
+I am still confused by this paragraph. Does this patch change the
+behavior? What is the original and what is the new one, please?
 
-Thanks,
-Dinh
+>    msg0              msg1-msg4 msg0-msg4
+>     |                     |       |
+>     |                     |       |
+>  |--o---------------------o-|-----o--------------------|--> (t)
+>                           <------->
+>                        Lesser than burst
+> 
+> Dropped dev/random patch since v1 version:
+> lkml.kernel.org/r/<20180510125211.12583-1-dima@arista.com>
+> 
+> Dropped `name' in as it's unused in RATELIMIT_STATE_INIT()
+> 
+> diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+> index d01f47135239..d9b749d40108 100644
+> --- a/lib/ratelimit.c
+> +++ b/lib/ratelimit.c
+> @@ -13,6 +13,18 @@
+>  #include <linux/jiffies.h>
+>  #include <linux/export.h>
+>  
+> +static void ratelimit_end_interval(struct ratelimit_state *rs, const char *func)
+> +{
+> +	rs->begin = jiffies;
+> +
+> +	if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
+> +		unsigned int missed = atomic_xchg(&rs->missed, 0);
+> +
+> +		if (missed)
+> +			pr_warn("%s: %u callbacks suppressed\n", func, missed);
+> +	}
+> +}
+> +
+>  /*
+>   * __ratelimit - rate limiting
+>   * @rs: ratelimit_state data
+> @@ -27,45 +39,30 @@
+>   */
+>  int ___ratelimit(struct ratelimit_state *rs, const char *func)
+>  {
+> -	unsigned long flags;
+> -	int ret;
+> -
+>  	if (!rs->interval)
+>  		return 1;
+>  
+> -	/*
+> -	 * If we contend on this state's lock then almost
+> -	 * by definition we are too busy to print a message,
+> -	 * in addition to the one that will be printed by
+> -	 * the entity that is holding the lock already:
+> -	 */
+> -	if (!raw_spin_trylock_irqsave(&rs->lock, flags))
+> +	if (unlikely(!rs->burst)) {
+> +		atomic_add_unless(&rs->missed, 1, -1);
+> +		if (time_is_before_jiffies(rs->begin + rs->interval))
+> +			ratelimit_end_interval(rs, func);
+
+This is racy. time_is_before_jiffies() might be valid on two
+CPUs in parallel. They would both call ratelimit_end_interval().
+This is not longer atomic context. Therefore one might get scheduled
+and set rs->begin = jiffies seconds later. I am sure that there might
+be more crazy scenarios.
+
+> +
+>  		return 0;
+> +	}
+>  
+> -	if (!rs->begin)
+> -		rs->begin = jiffies;
+> +	if (atomic_add_unless(&rs->printed, 1, rs->burst))
+> +		return 1;
+>  
+>  	if (time_is_before_jiffies(rs->begin + rs->interval)) {
+> -		if (rs->missed) {
+> -			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
+> -				printk_deferred(KERN_WARNING
+> -						"%s: %d callbacks suppressed\n",
+> -						func, rs->missed);
+> -				rs->missed = 0;
+> -			}
+> -		}
+> -		rs->begin   = jiffies;
+> -		rs->printed = 0;
+> -	}
+> -	if (rs->burst && rs->burst > rs->printed) {
+> -		rs->printed++;
+> -		ret = 1;
+> -	} else {
+> -		rs->missed++;
+> -		ret = 0;
+> +		if (atomic_cmpxchg(&rs->printed, rs->burst, 0))
+> +			ratelimit_end_interval(rs, func);
+>  	}
+> -	raw_spin_unlock_irqrestore(&rs->lock, flags);
+>  
+> -	return ret;
+> +	if (atomic_add_unless(&rs->printed, 1, rs->burst))
+> +		return 1;
+
+The entire logic is complicated and hard to understand. Especially calling
+ratelimit_end_interval() and atomic_add_unless(&rs->printed) twice.
+
+> +	atomic_add_unless(&rs->missed, 1, -1);
+> +
+> +	return 0;
+>  }
+
+
+I wonder if the following code would do the job (not even compile tested!):
+
+static void ratelimit_end_interval(struct ratelimit_state *rs, const char *func)
+{
+	rs->begin = jiffies;
+
+	if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
+		unsigned int missed = atomic_xchg(&rs->missed, 0);
+
+		if (missed)
+			pr_warn("%s: %u callbacks suppressed\n", func, missed);
+	}
+
+	atomic_xchg(&rs->printed, 0);
+}
+
+/*
+ * __ratelimit - rate limiting
+ * @rs: ratelimit_state data
+ * @func: name of calling function
+ *
+ * This enforces a rate limit: not more than @rs->burst callbacks
+ * in every @rs->interval
+ *
+ * RETURNS:
+ * 0 means callbacks will be suppressed.
+ * 1 means go ahead and do it.
+ */
+int ___ratelimit(struct ratelimit_state *rs, const char *func)
+{
+	unsigned long begin, old_begin = rs->begin;
+
+	if (!rs->interval)
+		return 1;
+
+	if (time_is_before_jiffies(rs->begin + rs->interval) &&
+	    cmpxchg(&rs->begin, begin, begin + rs->interval) == begin) {
+		ratelimit_end_interval(rs, func);
+	}
+
+	if (atomic_add_unless(&rs->printed, 1, rs->burst))
+		return 1;
+
+	atomic_add_unless(&rs->missed, 1, -1);
+	return 0;
+}
+EXPORT_SYMBOL(___ratelimit);
+
+
+The main logic is the same as in the original code. Only one CPU is
+able to reset the interval and counters (thanks to cmpxchg).
+Every caller increases either "printed" or "missed" counter.
+
+Best Regards,
+Petr
