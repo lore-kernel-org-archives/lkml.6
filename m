@@ -2,92 +2,87 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FFFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B99DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9AFE208DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:50:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9AFE208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 04BB721528
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:50:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04BB721528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeHOVnX (ORCPT
+        id S1727544AbeHOVnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:43:23 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:45898 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeHOVnW (ORCPT
+        Wed, 15 Aug 2018 17:43:37 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:55403 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726296AbeHOVnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:43:22 -0400
-Received: by mail-io0-f199.google.com with SMTP id l24-v6so1817936ioj.12
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 11:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=a2QIg3UreXNji6P6SNiLPiVeDBoGOqLAm9GfsnpZAiE=;
-        b=sIDu2A2q4N4WHKJ9VV+hcg/YPdXFObM6EJyPuCZpyaBEHCkDe4Q5XO9Bxoexv3Q3Ew
-         8r+DhcMwfI+rWWJPBaErny1EUxK79zdQizGd/I080AVegMon4RjAoic9K9SaOeCQ7t4+
-         oohs+QkxmNWIk/nArSxnY+RRH38XPi1X2TTubh73gF4m2cCQ0rr1pSktwsqOfiYKafKy
-         e3qc9D9LVIBkoRi2ic7TrLihnJcmkgtRYhb+zzF0efJ3FaRRwZqCYTBw3CJcFKkdKywP
-         +gIiupweRwK/3HOxJF7kCZtIMyoSSmMTY5YAC2+Fi02KawoTphjeNcplzkO/N9Tybern
-         vl6g==
-X-Gm-Message-State: AOUpUlEnnyzMyMFcvg6d0HEtE+Qo5Uj4iHq0ic2t6pOj+r/d461PJOma
-        uNgFfb7h7vdL+VgMWzp9twZUN0F8AXK1W+0gF+ehfKTUsN7O
-X-Google-Smtp-Source: AA+uWPyMgYN8wytD9RLXRuHEETiayGNtu+CmVNhW6/RPBZ8BVoOhv9xnoGzLTajyhl18gzGCMBrmu1iNnfZITG1u9644DcbJFqzN
-MIME-Version: 1.0
-X-Received: by 2002:a5e:960b:: with SMTP id a11-v6mr3456804ioq.37.1534359003077;
- Wed, 15 Aug 2018 11:50:03 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 11:50:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000056268e05737dcb95@google.com>
-Subject: unregister_netdevice: waiting for DEV to become free (2)
-From:   syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Wed, 15 Aug 2018 17:43:37 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R391e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T6gJtNa_1534358999;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6gJtNa_1534358999)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 16 Aug 2018 02:50:08 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC v8 PATCH 5/5] mm: unmap VM_PFNMAP mappings with optimized path
+Date:   Thu, 16 Aug 2018 02:49:50 +0800
+Message-Id: <1534358990-85530-6-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+When unmapping VM_PFNMAP mappings, vm flags need to be updated. Since
+the vmas have been detached, so it sounds safe to update vm flags with
+read mmap_sem.
 
-syzbot found the following crash on:
-
-HEAD commit:    1236568ee3cb Merge tag 'gpio-v4.18-3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135f47e0400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=152cb8ccd35b1f70
-dashboard link: https://syzkaller.appspot.com/bug?extid=30209ea299c09d8785c9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com
-
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-unregister_netdevice: waiting for ip6tnl0 to become free. Usage count = 7
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-Invalid argument reading file caps for /root/syz-executor5
-
-
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ mm/mmap.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 3b9f734..0a9960d 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2811,16 +2811,13 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
+ 	}
+ 
+ 	/*
+-	 * Unmapping vmas, which have:
+-	 *   VM_PFNMAP or
+-	 *   uprobes
+-	 * need get done with write mmap_sem held since they may update
+-	 * vm_flags. Deal with such mappings with regular do_munmap() call.
++	 * Unmapping vmas, which have uprobes need get done with write
++	 * mmap_sem held since they may update vm_flags. Deal with such
++	 * mappings with regular do_munmap() call.
+ 	 */
+ 	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
+-		if ((vma->vm_file &&
+-		    has_uprobes(vma, vma->vm_start, vma->vm_end)) ||
+-		    (vma->vm_flags & VM_PFNMAP))
++		if (vma->vm_file &&
++		    has_uprobes(vma, vma->vm_start, vma->vm_end))
+ 			goto regular_path;
+ 	}
+ 
+-- 
+1.8.3.1
+
