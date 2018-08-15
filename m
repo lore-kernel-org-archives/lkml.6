@@ -2,273 +2,261 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAE0C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 06:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30127C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 06:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46228216E6
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 06:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46228216E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C781B215EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 06:50:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C781B215EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbeHOJ1t (ORCPT
+        id S1728675AbeHOJlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 05:27:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52170 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726013AbeHOJ1t (ORCPT
+        Wed, 15 Aug 2018 05:41:04 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37834 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeHOJlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 05:27:49 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7F6Y4lG039556
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 02:36:57 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kve13acbn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 02:36:57 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 15 Aug 2018 07:36:55 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Aug 2018 07:36:53 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7F6aqTb21627084
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 Aug 2018 06:36:52 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF5ADA4053;
-        Wed, 15 Aug 2018 09:36:55 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C3FEA4040;
-        Wed, 15 Aug 2018 09:36:55 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.197])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 15 Aug 2018 09:36:55 +0100 (BST)
-Date:   Wed, 15 Aug 2018 09:36:49 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     linux-mm@kvack.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs/core-api: add memory allocation guide
-References: <1534314887-9202-1-git-send-email-rppt@linux.vnet.ibm.com>
+        Wed, 15 Aug 2018 05:41:04 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7F6o3tm107845;
+        Wed, 15 Aug 2018 01:50:03 -0500
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7F6o2vS020117;
+        Wed, 15 Aug 2018 01:50:02 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 15
+ Aug 2018 01:50:01 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 15 Aug 2018 01:50:01 -0500
+Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7F6nxQA023627;
+        Wed, 15 Aug 2018 01:49:59 -0500
+Subject: Re: [PATCH RFC] driver core: Reprobe consumer if it was unbound by
+ dropped device_link
+To:     Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>
+CC:     Lukas Wunner <lukas@wunner.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+References: <cover.1519321145.git.jsarha@ti.com>
+ <57c1d52a5a8f5985dc1dd53260d7d68795be8ea2.1519321145.git.jsarha@ti.com>
+ <20180225092223.GB923@wunner.de>
+ <36c24c0e-59a1-12de-cfff-01c942862349@ti.com>
+ <CAKMK7uGiYbRCS=eGLPn3XW29VvX3yo5TZVObc5LJJvZf2eswAQ@mail.gmail.com>
+From:   Jyri Sarha <jsarha@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8e3bbebb-80b6-1747-6a5b-ee63fa70af6c@ti.com>
+Date:   Wed, 15 Aug 2018 09:49:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534314887-9202-1-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18081506-0016-0000-0000-000001F70366
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081506-0017-0000-0000-0000324D3055
-Message-Id: <20180815063649.GB24091@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808150071
+In-Reply-To: <CAKMK7uGiYbRCS=eGLPn3XW29VvX3yo5TZVObc5LJJvZf2eswAQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(this time with the subject, sorry for the noise)
+On 14/08/18 17:17, Daniel Vetter wrote:
+> On Mon, Feb 26, 2018 at 8:52 AM, Jyri Sarha <jsarha@ti.com> wrote:
+>> On 25/02/18 11:22, Lukas Wunner wrote:
+>>> On Thu, Feb 22, 2018 at 07:42:46PM +0200, Jyri Sarha wrote:
+>>>> Put consumer device to deferred probe list if it is unbound due to a
+>>>> dropped link to a supplier.
+>>>>
+>>>> When a device link supplier is unbound (either manually or because one
+>>>> of its own suppliers was unbound), its consumers are unbound as
+>>>> well. Currently if the supplier binds again after this the consumer
+>>>> does not automatically probe again. With this patch it does.
+>>>
+>>> Yes I think this makes sense, based on the rationale that the consumer
+>>> was automatically unbound, so by symmetry it should also be automatically
+>>> rebound.
+>>>
+>>> The only thing I don't understand is you wrote in an earlier e-mail of a
+>>> difference in behavior depending on whether driver_deferred_probe_add()
+>>> is called before or after device_release_driver_internal().
+>>> That's really odd, it shouldn't make a difference.
+>>>
+>>
+>> In that version there was a couple of other bugs elsewhere in the
+>> system. I tried to reproduce that situation again multiple times, but I
+>> could not (even write those bugs back in there, and move the link
+>> creation back to panel bridge code). But even from reading the code that
+>> difference did not make any sense. I suspect a heisen-bug, after I have
+>> read the code and understood that the crash is not possible, it does not
+>> happen anymore :).
+>>
+>> With the current version I could not find any difference in behaviour
+>> depending on the order of device_release_driver_internal() and
+>> driver_deferred_probe_add() calls. I just thought having them in this
+>> order just lookes nicer.
+>>
+>> I stress tested the code by unloading and loading the panel driver in a
+>> tight loop, for several minutes, but it simply wont crash (not in this
+>> setup anyway). The probe of tilcdc eventually gracefully fails in a CMA
+>> failure.
+> 
+> Is this still moving or stuck? Pinging since Sean just brought up the
+> drm_bridge lifetime issues, and I think it'd be nice if we could solve
+> those by using device_link, like we've added already for drm_panel.
+> From my very layman understanding of the discussions, device_link not
+> quite working for deferred probing is the blocker for this plan.
+> 
 
-On Wed, Aug 15, 2018 at 09:34:47AM +0300, Mike Rapoport wrote:
-> As Vlastimil mentioned at [1], it would be nice to have some guide about
-> memory allocation. I've drafted an initial version that tries to summarize
-> "best practices" for allocation functions and GFP usage.
+I would say stuck. As there is has not been any traffic regarding this
+patch after Lukas' reply. And I've been busy with other things since
+then. Perhaps I did not know to cc the right people.
+
+A reviewed-by or tested-by from someone would probably help to get this
+spinning again. I am happy to do changes or improvements etc., but for
+that I would need suggestions.
+
+As far as I can tell the patch is good to apply as it is, but then again
+I am no device core expert.
+
+Best regards,
+Jyri
+
+> Also adding Sean.
+> -Daniel
 > 
-> [1] https://www.spinics.net/lists/netfilter-devel/msg55542.html
+>>
+>> Best regards,
+>> Jyri
+>>
+>>> Thanks,
+>>>
+>>> Lukas
+>>>
+>>>>
+>>>> If this patch is not acceptable as such, how about adding this
+>>>> behavior behind a new device link flag?
+>>>>
+>>>> The idea to this patch was gotten from this post by Lucas Wunner:
+>>>> https://www.spinics.net/lists/dri-devel/msg166318.html
+>>>>
+>>>> Part of the code and the description is borrowed from him.
+>>>>
+>>>> cc: Lukas Wunner <lukas@wunner.de>
+>>>> cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>> cc: Thierry Reding <thierry.reding@gmail.com>
+>>>> Signed-off-by: Jyri Sarha <jsarha@ti.com>
+>>>> ---
+>>>>  drivers/base/base.h | 1 +
+>>>>  drivers/base/core.c | 2 ++
+>>>>  drivers/base/dd.c   | 2 +-
+>>>>  3 files changed, 4 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/base/base.h b/drivers/base/base.h
+>>>> index d800de6..39370eb 100644
+>>>> --- a/drivers/base/base.h
+>>>> +++ b/drivers/base/base.h
+>>>> @@ -114,6 +114,7 @@ extern void device_release_driver_internal(struct device *dev,
+>>>>
+>>>>  extern void driver_detach(struct device_driver *drv);
+>>>>  extern int driver_probe_device(struct device_driver *drv, struct device *dev);
+>>>> +extern void driver_deferred_probe_add(struct device *dev);
+>>>>  extern void driver_deferred_probe_del(struct device *dev);
+>>>>  static inline int driver_match_device(struct device_driver *drv,
+>>>>                                    struct device *dev)
+>>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>>>> index b2261f9..0964ed5 100644
+>>>> --- a/drivers/base/core.c
+>>>> +++ b/drivers/base/core.c
+>>>> @@ -570,6 +570,8 @@ void device_links_unbind_consumers(struct device *dev)
+>>>>
+>>>>                      device_release_driver_internal(consumer, NULL,
+>>>>                                                     consumer->parent);
+>>>> +                    driver_deferred_probe_add(consumer);
+>>>> +
+>>>>                      put_device(consumer);
+>>>>                      goto start;
+>>>>              }
+>>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>>>> index de6fd09..846ae78 100644
+>>>> --- a/drivers/base/dd.c
+>>>> +++ b/drivers/base/dd.c
+>>>> @@ -140,7 +140,7 @@ static void deferred_probe_work_func(struct work_struct *work)
+>>>>  }
+>>>>  static DECLARE_WORK(deferred_probe_work, deferred_probe_work_func);
+>>>>
+>>>> -static void driver_deferred_probe_add(struct device *dev)
+>>>> +void driver_deferred_probe_add(struct device *dev)
+>>>>  {
+>>>>      mutex_lock(&deferred_probe_mutex);
+>>>>      if (list_empty(&dev->p->deferred_probe)) {
+>>
+>>
+>> --
+>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+>> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-> From 8027c0d4b750b8dbd687234feda63305d0d5a057 Mon Sep 17 00:00:00 2001
-> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Date: Wed, 15 Aug 2018 09:10:06 +0300
-> Subject: [RFC PATCH] docs/core-api: add memory allocation guide
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> ---
->  Documentation/core-api/gfp_mask-from-fs-io.rst |   2 +
->  Documentation/core-api/index.rst               |   1 +
->  Documentation/core-api/memory-allocation.rst   | 117 +++++++++++++++++++++++++
->  Documentation/core-api/mm-api.rst              |   2 +
->  4 files changed, 122 insertions(+)
->  create mode 100644 Documentation/core-api/memory-allocation.rst
 > 
-> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> index e0df8f4..e7c32a8 100644
-> --- a/Documentation/core-api/gfp_mask-from-fs-io.rst
-> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> @@ -1,3 +1,5 @@
-> +.. _gfp_mask_from_fs_io:
-> +
->  =================================
->  GFP masks used from FS/IO context
->  =================================
-> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-> index cdc2020..8afc0da 100644
-> --- a/Documentation/core-api/index.rst
-> +++ b/Documentation/core-api/index.rst
-> @@ -27,6 +27,7 @@ Core utilities
->     errseq
->     printk-formats
->     circular-buffers
-> +   memory-allocation
->     mm-api
->     gfp_mask-from-fs-io
->     timekeeping
-> diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-> new file mode 100644
-> index 0000000..b1f2ad5
-> --- /dev/null
-> +++ b/Documentation/core-api/memory-allocation.rst
-> @@ -0,0 +1,117 @@
-> +=======================
-> +Memory Allocation Guide
-> +=======================
-> +
-> +Linux supplies variety of APIs for memory allocation. You can allocate
-> +small chunks using `kmalloc` or `kmem_cache_alloc` families, large
-> +virtually contiguous areas using `vmalloc` and it's derivatives, or
-> +you can directly request pages from the page allocator with
-> +`__get_free_pages`. It is also possible to use more specialized
-> +allocators, for instance `cma_alloc` or `zs_malloc`.
-> +
-> +Most of the memory allocations APIs use GFP flags to express how that
-> +memory should be allocated. The GFP acronym stands for "get free
-> +pages", the underlying memory allocation function.
-> +
-> +Diversity of the allocation APIs combined with the numerous GFP flags
-> +makes the question "How should I allocate memory?" not that easy to
-> +answer, although very likely you should use
-> +
-> +::
-> +
-> +  kzalloc(<size>, GFP_KERNEL);
-> +
-> +Of course there are cases when other allocation APIs and different GFP
-> +flags must be used.
-> +
-> +Get Free Page flags
-> +===================
-> +
-> +The GFP flags control the allocators behavior. They tell what memory
-> +zones can be used, how hard the allocator should try to find a free
-> +memory, whether the memory can be accessed by the userspace etc. The
-> +:ref:`Documentation/core-api/mm-api.rst <mm-api-gfp-flags>` provides
-> +reference documentation for the GFP flags and their combinations and
-> +here we briefly outline their recommended usage:
-> +
-> +  * Most of the times ``GFP_KERNEL`` is what you need. Memory for the
-> +    kernel data structures, DMAable memory, inode cache, all these and
-> +    many other allocations types can use ``GFP_KERNEL``. Note, that
-> +    using ``GFP_KERNEL`` implies ``GFP_RECLAIM``, which means that
-> +    direct reclaim may be triggered under memory pressure; the calling
-> +    context must be allowed to sleep.
-> +  * If the allocation is performed from an atomic context, e.g
-> +    interrupt handler, use ``GFP_ATOMIC``.
-> +  * Untrusted allocations triggered from userspace should be a subject
-> +    of kmem accounting and must have ``__GFP_ACCOUNT`` bit set. There
-> +    is handy ``GFP_KERNEL_ACCOUNT`` shortcut for ``GFP_KERNEL``
-> +    allocations that should be accounted.
-> +  * Userspace allocations should use either of the ``GFP_USER``,
-> +    ``GFP_HIGHUSER`` and ``GFP_HIGHUSER_MOVABLE`` flags. The longer
-> +    the flag name the less restrictive it is.
-> +
-> +    The ``GFP_HIGHUSER_MOVABLE`` does not require that allocated
-> +    memory will be directly accessible by the kernel or the hardware
-> +    and implies that the data may move.
-> +
-> +    The ``GFP_HIGHUSER`` means that the allocated memory is not
-> +    movable, but it is not required to be directly accessible by the
-> +    kernel or the hardware. An example may be a hardware allocation
-> +    that maps data directly into userspace but has no addressing
-> +    limitations.
-> +
-> +    The ``GFP_USER`` means that the allocated memory is not movable
-> +    and it must be directly accessible by the kernel or the
-> +    hardware. It is typically used by hardware for buffers that are
-> +    mapped to userspace (e.g. graphics) that hardware still must DMA
-> +    to.
-> +
-> +You may notice that quite a few allocations in the existing code
-> +specify ``GFP_NOIO`` and ``GFP_NOFS``. Historically, they were used to
-> +prevent recursion deadlocks caused by direct memory reclaim calling
-> +back into the FS or IO paths and blocking on already held
-> +resources. Since 4.12 the preferred way to address this issue is to
-> +use new scope APIs described in
-> +:ref:`Documentation/core-api/gfp_mask-from-fs-io.rst <gfp_mask_from_fs_io>`.
-> +
-> +Another legacy GFP flags are ``GFP_DMA`` and ``GFP_DMA32``. They are
-> +used to ensure that the allocated memory is accessible by hardware
-> +with limited addressing capabilities. So unless you are writing a
-> +driver for a device with such restrictions, avoid using these flags.
-> +
-> +Selecting memory allocator
-> +==========================
-> +
-> +The most straightforward way to allocate memory is to use a function
-> +from the `kmalloc` family. And, to be on the safe size it's best to
-> +use routines that set memory to zero, like `kzalloc`. If you need to
-> +allocate memory for an array, there are `kmalloc_array` and `kcalloc`
-> +helpers.
-> +
-> +The maximal size of a chunk that can be allocated with `kmalloc` is
-> +limited. The actual limit depends on the hardware and the kernel
-> +configuration, but it is a good practice to use `kmalloc` for objects
-> +smaller than page size.
-> +
-> +For large allocations you can use `vmalloc` and `vzalloc`, or directly
-> +request pages from the page allocator. The memory allocated by
-> +`vmalloc` and related functions is not physically contiguous.
-> +
-> +If you are not sure whether the allocation size is too large for
-> +`kmalloc` it is possible to use `kvmalloc` and its derivatives. It
-> +will try to allocate memory with `kmalloc` and if the allocation fails
-> +it will be retried with `vmalloc`. There are restrictions on which GFP
-> +flags can be used with `kvmalloc`, please see :c:func:`kvmalloc_node`
-> +reference documentation. Note, that `kvmalloc` may return memory that
-> +is not physically contiguous.
-> +
-> +If you need to allocate many identical objects you can use slab cache
-> +allocator. The cache should be set up with `kmem_cache_create` before
-> +it can be used. Afterwards `kmem_cache_alloc` and its convenience
-> +wrappers can allocate memory from that cache.
-> +
-> +When the allocated memory is no longer needed it must be freed. You
-> +can use `kvfree` for the memory allocated with `kmalloc`, `vmalloc`
-> +and `kvmalloc`. The slab caches should be freed with
-> +`kmem_cache_free`. And don't forget to destroy the cache with
-> +`kmem_cache_destroy`.
-> diff --git a/Documentation/core-api/mm-api.rst b/Documentation/core-api/mm-api.rst
-> index 46ae353..5ce1ec1 100644
-> --- a/Documentation/core-api/mm-api.rst
-> +++ b/Documentation/core-api/mm-api.rst
-> @@ -14,6 +14,8 @@ User Space Memory Access
->  .. kernel-doc:: mm/util.c
->     :functions: get_user_pages_fast
-> 
-> +.. _mm-api-gfp-flags:
-> +
->  Memory Allocation Controls
->  ==========================
-> 
-> -- 
-> 2.7.4
-> 
+
 
 -- 
-Sincerely yours,
-Mike.
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
