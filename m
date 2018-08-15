@@ -4,83 +4,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A96C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61FBC46470
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4662154F
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A60C215A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:28:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="U5Gp1aGh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4662154F
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="bPpmvb/H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A60C215A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbeHORU0 (ORCPT
+        id S1729427AbeHORU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 13:20:26 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33736 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728957AbeHORU0 (ORCPT
+        Wed, 15 Aug 2018 13:20:27 -0400
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:42882 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729287AbeHORU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 15 Aug 2018 13:20:26 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so1114933ljj.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 07:28:02 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id f1-v6so1093120ljc.9
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 07:28:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=RpYCJOJBuPI6VUTj/r96n9THMA6NhemNuRpkTH24LUY=;
-        b=U5Gp1aGhaKjQ+CTim4xRmXYXcZjDOLgXy6K+aEYmDqV7SPposBwwgpT2tplb0tVu5R
-         S70B05GCTQaiJPcISPqzegKzBn635t7PXKMdDEzbQn+8yJ8KxI0hVFSl5BehtE9Eg4bc
-         Y6wQ77Egt9S7fKvk9pb5JKlCOqZbcTCWleGrA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=QkFeSBVO3ndcBJySjbdB4jBjDn31pcPBVo8d0rQR4Gw=;
+        b=bPpmvb/HZ/WLqWJI+/UNL49F065PaI8FHPuO7zbuWas/eUmHQusXBPQtlNXMsvVyqL
+         YSo4P7NWFNy2Lx6pek8knvYz42+/pWbJlGMKPrfgrKojh50Zw72JEPK9ko5qWXTYqahl
+         LE7MTBbXFXV747Hvp53LpW402ZehNae9RYrQQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RpYCJOJBuPI6VUTj/r96n9THMA6NhemNuRpkTH24LUY=;
-        b=krn78VRRGrZENDcpA6jIbKg2AR1YJEBVTHiotN5KYMkd85FHB032BzWyQK2Xn6MPfj
-         K28mmEKCchMc6HHJ6zsK5Y+kCCHo0Hyh3PQK3h1YcxEnf9mgYS1fmUBSlgK8RVW4K4Mm
-         1EAxwbjTo8f9om8YcT+V7LxNdXe2tFBsCl9pQ9KXXjiJTLxPPXAOHnY9upXw9Jtxi5s0
-         i3I17w/OZcX0zzJAljTNJUrQtVS7SKX93frRweTwyv2uJyCOtagD58sEXJGz5xpZNIS/
-         m04sapXiYeAnwGTO+nIe2/Kt9L6US3CoGFdBjHeTTSl7gBXuIeh6IT8BvM+iP2yTElZh
-         sZdQ==
-X-Gm-Message-State: AOUpUlG3osrLCcWzaYb4nKjfHi6ACu8IG1RWm5/VTDXqxcW3+tLM/uuF
-        J02bWZKWlFRPsYnKK+GMm5IEUg==
-X-Google-Smtp-Source: AA+uWPxdL9lQUPCEjbT7XqDhLQvEDyuvtxR929DJoXE5PrrW4gn11Kw5bGAzkMInP+R8vFSaTWu0fQ==
-X-Received: by 2002:a2e:1609:: with SMTP id w9-v6mr8672558ljd.120.1534343282158;
-        Wed, 15 Aug 2018 07:28:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=QkFeSBVO3ndcBJySjbdB4jBjDn31pcPBVo8d0rQR4Gw=;
+        b=aeLCm4vTVyOFXDO2CFTuCW8f2U1a48etG/RM1871HVfqZ2uBA0GZu5PVtIB0UN3Uvt
+         o9iZF+X9Ew4mGBRtPXjrIkhzl62pWAGp/LlwTiY/Z7fYUAeKTloM7pmVcMO4ipbRjODD
+         aDhKwdOZQ2DVQamBFtpXCm1q09rz43KYZJ3cd5HARjjl2Z6FK9scqnOjhduqbivrhJE1
+         NC+rFKNswmdrdcleUYH7by47uN7Vh0nZisjcb4qK1siYdtC6uekHRv9R6r63f8aWxXa7
+         ++XRlWa3RdVBoqd7UcZentcQCD3qcFMT0zuO1YpSkmqbYM7Vn7rRaFrB71s0eBULhGGG
+         Dfpw==
+X-Gm-Message-State: AOUpUlGnlO8f83MjK7+0r4RPGNRbpQMP4EoZDJso56RKXhn34FvL+sbI
+        lp3PiFbzHFqc0MTC2P20OEuR3w==
+X-Google-Smtp-Source: AA+uWPxBllHj7TP4r5les7Nlfo81SDfXjTNZYetuXv6oI97Wn06rSbbkSSTFiATM6N0y/o5pRBLJXQ==
+X-Received: by 2002:a2e:590e:: with SMTP id n14-v6mr18033982ljb.128.1534343283267;
+        Wed, 15 Aug 2018 07:28:03 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm4559597lfi.36.2018.08.15.07.28.01
+        by smtp.gmail.com with ESMTPSA id l3-v6sm4559597lfi.36.2018.08.15.07.28.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 15 Aug 2018 07:28:01 -0700 (PDT)
+        Wed, 15 Aug 2018 07:28:02 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 0/3] Kbuild: Some fixdep tweaks
-Date:   Wed, 15 Aug 2018 16:27:46 +0200
-Message-Id: <20180815142749.18804-1-linux@rasmusvillemoes.dk>
+        Michal Marek <michal.lkml@markovi.net>
+Cc:     linux-kbuild@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] Kbuild: refactor fixdep to use getopt()
+Date:   Wed, 15 Aug 2018 16:27:47 +0200
+Message-Id: <20180815142749.18804-2-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180815142749.18804-1-linux@rasmusvillemoes.dk>
+References: <20180815142749.18804-1-linux@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patches eliminate two (albeit tiny and shortlived) processes
-from the cmd_and_fixdep rule, i.e. from every TU being
-compiled. Whether the diffstat below is worth it I'll leave to Kbuild
-maintainers to decide.
+As preparation for teaching an old dog a few new tricks.
 
-Rasmus Villemoes (3):
-  Kbuild: refactor fixdep to use getopt()
-  Kbuild: teach fixdep to optionally remove the depfile
-  Kbuild: let fixdep do the renaming to .cmd
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ scripts/basic/fixdep.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
- scripts/Kbuild.include | 11 ++++------
- scripts/basic/fixdep.c | 56 ++++++++++++++++++++++++++++++++++++++++++--------
- 2 files changed, 52 insertions(+), 15 deletions(-)
-
+diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+index 850966f3d602..666041841200 100644
+--- a/scripts/basic/fixdep.c
++++ b/scripts/basic/fixdep.c
+@@ -381,16 +381,23 @@ int main(int argc, char *argv[])
+ 	const char *depfile, *target, *cmdline;
+ 	int insert_extra_deps = 0;
+ 	void *buf;
++	int opt;
+ 
+-	if (argc == 5 && !strcmp(argv[1], "-e")) {
+-		insert_extra_deps = 1;
+-		argv++;
+-	} else if (argc != 4)
++	while ((opt = getopt(argc, argv, "e")) != -1) {
++		switch (opt) {
++		case 'e': insert_extra_deps = 1; break;
++		default: usage();
++		}
++	}
++	argc -= optind;
++	argv += optind;
++
++	if (argc != 3)
+ 		usage();
+ 
+-	depfile = argv[1];
+-	target = argv[2];
+-	cmdline = argv[3];
++	depfile = argv[0];
++	target = argv[1];
++	cmdline = argv[2];
+ 
+ 	printf("cmd_%s := %s\n\n", target, cmdline);
+ 
 -- 
 2.16.4
 
