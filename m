@@ -3,197 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82E0C43615
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A56C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D2C21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:00:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D2C21528
+	by mail.kernel.org (Postfix) with ESMTP id B668621528
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B668621528
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeHOVxz (ORCPT
+        id S1727626AbeHOVxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:53:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44056 "EHLO mx1.redhat.com"
+        Wed, 15 Aug 2018 17:53:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33822 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727576AbeHOVxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:53:53 -0400
+        id S1727573AbeHOVxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 17:53:51 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C3BF77721B;
+        by mx1.redhat.com (Postfix) with ESMTPS id 4BA484021703;
         Wed, 15 Aug 2018 19:00:29 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 79EC47C49;
-        Wed, 15 Aug 2018 19:00:29 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0230D7C3F;
+        Wed, 15 Aug 2018 19:00:28 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
 Cc:     stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
         Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 5/5] drm/nouveau: Fix deadlocks in nouveau_connector_detect()
-Date:   Wed, 15 Aug 2018 15:00:15 -0400
-Message-Id: <20180815190018.15396-6-lyude@redhat.com>
+Subject: [PATCH v8 4/5] drm/nouveau: Use pm_runtime_get_noresume() in connector_detect()
+Date:   Wed, 15 Aug 2018 15:00:14 -0400
+Message-Id: <20180815190018.15396-5-lyude@redhat.com>
 In-Reply-To: <20180815190018.15396-1-lyude@redhat.com>
 References: <20180815190018.15396-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 15 Aug 2018 19:00:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 15 Aug 2018 19:00:29 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 15 Aug 2018 19:00:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 15 Aug 2018 19:00:29 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we disable hotplugging on the GPU, we need to be able to
-synchronize with each connector's hotplug interrupt handler before the
-interrupt is finally disabled. This can be a problem however, since
-nouveau_connector_detect() currently grabs a runtime power reference
-when handling connector probing. This will deadlock the runtime suspend
-handler like so:
-
-[  861.480896] INFO: task kworker/0:2:61 blocked for more than 120 seconds.
-[  861.483290]       Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
-[  861.485158] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  861.486332] kworker/0:2     D    0    61      2 0x80000000
-[  861.487044] Workqueue: events nouveau_display_hpd_work [nouveau]
-[  861.487737] Call Trace:
-[  861.488394]  __schedule+0x322/0xaf0
-[  861.489070]  schedule+0x33/0x90
-[  861.489744]  rpm_resume+0x19c/0x850
-[  861.490392]  ? finish_wait+0x90/0x90
-[  861.491068]  __pm_runtime_resume+0x4e/0x90
-[  861.491753]  nouveau_display_hpd_work+0x22/0x60 [nouveau]
-[  861.492416]  process_one_work+0x231/0x620
-[  861.493068]  worker_thread+0x44/0x3a0
-[  861.493722]  kthread+0x12b/0x150
-[  861.494342]  ? wq_pool_ids_show+0x140/0x140
-[  861.494991]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  861.495648]  ret_from_fork+0x3a/0x50
-[  861.496304] INFO: task kworker/6:2:320 blocked for more than 120 seconds.
-[  861.496968]       Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
-[  861.497654] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  861.498341] kworker/6:2     D    0   320      2 0x80000080
-[  861.499045] Workqueue: pm pm_runtime_work
-[  861.499739] Call Trace:
-[  861.500428]  __schedule+0x322/0xaf0
-[  861.501134]  ? wait_for_completion+0x104/0x190
-[  861.501851]  schedule+0x33/0x90
-[  861.502564]  schedule_timeout+0x3a5/0x590
-[  861.503284]  ? mark_held_locks+0x58/0x80
-[  861.503988]  ? _raw_spin_unlock_irq+0x2c/0x40
-[  861.504710]  ? wait_for_completion+0x104/0x190
-[  861.505417]  ? trace_hardirqs_on_caller+0xf4/0x190
-[  861.506136]  ? wait_for_completion+0x104/0x190
-[  861.506845]  wait_for_completion+0x12c/0x190
-[  861.507555]  ? wake_up_q+0x80/0x80
-[  861.508268]  flush_work+0x1c9/0x280
-[  861.508990]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
-[  861.509735]  nvif_notify_put+0xb1/0xc0 [nouveau]
-[  861.510482]  nouveau_display_fini+0xbd/0x170 [nouveau]
-[  861.511241]  nouveau_display_suspend+0x67/0x120 [nouveau]
-[  861.511969]  nouveau_do_suspend+0x5e/0x2d0 [nouveau]
-[  861.512715]  nouveau_pmops_runtime_suspend+0x47/0xb0 [nouveau]
-[  861.513435]  pci_pm_runtime_suspend+0x6b/0x180
-[  861.514165]  ? pci_has_legacy_pm_support+0x70/0x70
-[  861.514897]  __rpm_callback+0x7a/0x1d0
-[  861.515618]  ? pci_has_legacy_pm_support+0x70/0x70
-[  861.516313]  rpm_callback+0x24/0x80
-[  861.517027]  ? pci_has_legacy_pm_support+0x70/0x70
-[  861.517741]  rpm_suspend+0x142/0x6b0
-[  861.518449]  pm_runtime_work+0x97/0xc0
-[  861.519144]  process_one_work+0x231/0x620
-[  861.519831]  worker_thread+0x44/0x3a0
-[  861.520522]  kthread+0x12b/0x150
-[  861.521220]  ? wq_pool_ids_show+0x140/0x140
-[  861.521925]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  861.522622]  ret_from_fork+0x3a/0x50
-[  861.523299] INFO: task kworker/6:0:1329 blocked for more than 120 seconds.
-[  861.523977]       Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
-[  861.524644] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  861.525349] kworker/6:0     D    0  1329      2 0x80000000
-[  861.526073] Workqueue: events nvif_notify_work [nouveau]
-[  861.526751] Call Trace:
-[  861.527411]  __schedule+0x322/0xaf0
-[  861.528089]  schedule+0x33/0x90
-[  861.528758]  rpm_resume+0x19c/0x850
-[  861.529399]  ? finish_wait+0x90/0x90
-[  861.530073]  __pm_runtime_resume+0x4e/0x90
-[  861.530798]  nouveau_connector_detect+0x7e/0x510 [nouveau]
-[  861.531459]  ? ww_mutex_lock+0x47/0x80
-[  861.532097]  ? ww_mutex_lock+0x47/0x80
-[  861.532819]  ? drm_modeset_lock+0x88/0x130 [drm]
-[  861.533481]  drm_helper_probe_detect_ctx+0xa0/0x100 [drm_kms_helper]
-[  861.534127]  drm_helper_hpd_irq_event+0xa4/0x120 [drm_kms_helper]
-[  861.534940]  nouveau_connector_hotplug+0x98/0x120 [nouveau]
-[  861.535556]  nvif_notify_work+0x2d/0xb0 [nouveau]
-[  861.536221]  process_one_work+0x231/0x620
-[  861.536994]  worker_thread+0x44/0x3a0
-[  861.537757]  kthread+0x12b/0x150
-[  861.538463]  ? wq_pool_ids_show+0x140/0x140
-[  861.539102]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  861.539815]  ret_from_fork+0x3a/0x50
-[  861.540521]
-               Showing all locks held in the system:
-[  861.541696] 2 locks held by kworker/0:2/61:
-[  861.542406]  #0: 000000002dbf8af5 ((wq_completion)"events"){+.+.}, at: process_one_work+0x1b3/0x620
-[  861.543071]  #1: 0000000076868126 ((work_completion)(&drm->hpd_work)){+.+.}, at: process_one_work+0x1b3/0x620
-[  861.543814] 1 lock held by khungtaskd/64:
-[  861.544535]  #0: 0000000059db4b53 (rcu_read_lock){....}, at: debug_show_all_locks+0x23/0x185
-[  861.545160] 3 locks held by kworker/6:2/320:
-[  861.545896]  #0: 00000000d9e1bc59 ((wq_completion)"pm"){+.+.}, at: process_one_work+0x1b3/0x620
-[  861.546702]  #1: 00000000c9f92d84 ((work_completion)(&dev->power.work)){+.+.}, at: process_one_work+0x1b3/0x620
-[  861.547443]  #2: 000000004afc5de1 (drm_connector_list_iter){.+.+}, at: nouveau_display_fini+0x96/0x170 [nouveau]
-[  861.548146] 1 lock held by dmesg/983:
-[  861.548889] 2 locks held by zsh/1250:
-[  861.549605]  #0: 00000000348e3cf6 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
-[  861.550393]  #1: 000000007009a7a8 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xc1/0x870
-[  861.551122] 6 locks held by kworker/6:0/1329:
-[  861.551957]  #0: 000000002dbf8af5 ((wq_completion)"events"){+.+.}, at: process_one_work+0x1b3/0x620
-[  861.552765]  #1: 00000000ddb499ad ((work_completion)(&notify->work)#2){+.+.}, at: process_one_work+0x1b3/0x620
-[  861.553582]  #2: 000000006e013cbe (&dev->mode_config.mutex){+.+.}, at: drm_helper_hpd_irq_event+0x6c/0x120 [drm_kms_helper]
-[  861.554357]  #3: 000000004afc5de1 (drm_connector_list_iter){.+.+}, at: drm_helper_hpd_irq_event+0x78/0x120 [drm_kms_helper]
-[  861.555227]  #4: 0000000044f294d9 (crtc_ww_class_acquire){+.+.}, at: drm_helper_probe_detect_ctx+0x3d/0x100 [drm_kms_helper]
-[  861.556133]  #5: 00000000db193642 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_lock+0x4b/0x130 [drm]
-
-[  861.557864] =============================================
-
-[  861.559507] NMI backtrace for cpu 2
-[  861.560363] CPU: 2 PID: 64 Comm: khungtaskd Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
-[  861.561197] Hardware name: LENOVO 20EQS64N0B/20EQS64N0B, BIOS N1EET78W (1.51 ) 05/18/2018
-[  861.561948] Call Trace:
-[  861.562757]  dump_stack+0x8e/0xd3
-[  861.563516]  nmi_cpu_backtrace.cold.3+0x14/0x5a
-[  861.564269]  ? lapic_can_unplug_cpu.cold.27+0x42/0x42
-[  861.565029]  nmi_trigger_cpumask_backtrace+0xa1/0xae
-[  861.565789]  arch_trigger_cpumask_backtrace+0x19/0x20
-[  861.566558]  watchdog+0x316/0x580
-[  861.567355]  kthread+0x12b/0x150
-[  861.568114]  ? reset_hung_task_detector+0x20/0x20
-[  861.568863]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  861.569598]  ret_from_fork+0x3a/0x50
-[  861.570370] Sending NMI from CPU 2 to CPUs 0-1,3-7:
-[  861.571426] NMI backtrace for cpu 6 skipped: idling at intel_idle+0x7f/0x120
-[  861.571429] NMI backtrace for cpu 7 skipped: idling at intel_idle+0x7f/0x120
-[  861.571432] NMI backtrace for cpu 3 skipped: idling at intel_idle+0x7f/0x120
-[  861.571464] NMI backtrace for cpu 5 skipped: idling at intel_idle+0x7f/0x120
-[  861.571467] NMI backtrace for cpu 0 skipped: idling at intel_idle+0x7f/0x120
-[  861.571469] NMI backtrace for cpu 4 skipped: idling at intel_idle+0x7f/0x120
-[  861.571472] NMI backtrace for cpu 1 skipped: idling at intel_idle+0x7f/0x120
-[  861.572428] Kernel panic - not syncing: hung_task: blocked tasks
-
-So: fix this by making it so that normal hotplug handling /only/ happens
-so long as the GPU is currently awake without any pending runtime PM
-requests. In the event that a hotplug occurs while the device is
-suspending or resuming, we can simply defer our response until the GPU
-is fully runtime resumed again.
-
-Changes since v4:
-- Use a new trick I came up with using pm_runtime_get() instead of the
-  hackish junk we had before
+It's true we can't resume the device from poll workers in
+nouveau_connector_detect(). We can however, prevent the autosuspend
+timer from elapsing immediately if it hasn't already without risking any
+sort of deadlock with the runtime suspend/resume operations. So do that
+instead of entirely avoiding grabbing a power reference.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: Karol Herbst <kherbst@redhat.com>
@@ -201,49 +61,48 @@ Acked-by: Daniel Vetter <daniel@ffwll.ch>
 Cc: stable@vger.kernel.org
 Cc: Lukas Wunner <lukas@wunner.de>
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 22 +++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 010d6db14cba..109240c03357 100644
+index 2a45b4c2ceb0..010d6db14cba 100644
 --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
 +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1124,6 +1124,26 @@ nouveau_connector_hotplug(struct nvif_notify *notify)
- 	const struct nvif_notify_conn_rep_v0 *rep = notify->data;
- 	const char *name = connector->name;
- 	struct nouveau_encoder *nv_encoder;
-+	int ret;
-+
-+	ret = pm_runtime_get(drm->dev->dev);
-+	if (ret == 0) {
-+		/* We can't block here if there's a pending PM request
-+		 * running, as we'll deadlock nouveau_display_fini() when it
-+		 * calls nvif_put() on our nvif_notify struct. So, simply
-+		 * defer the hotplug event until the device finishes resuming
-+		 */
-+		NV_DEBUG(drm, "Deferring HPD on %s until runtime resume\n",
-+			 name);
-+		schedule_work(&drm->hpd_work);
-+
-+		pm_runtime_put_noidle(drm->dev->dev);
-+		return NVIF_NOTIFY_KEEP;
-+	} else if (ret != 1 && ret != -EACCES) {
-+		NV_WARN(drm, "HPD on %s dropped due to RPM failure: %d\n",
-+			name, ret);
-+		return NVIF_NOTIFY_DROP;
-+	}
- 
- 	if (rep->mask & NVIF_NOTIFY_CONN_V0_IRQ) {
- 		NV_DEBUG(drm, "service %s\n", name);
-@@ -1141,6 +1161,8 @@ nouveau_connector_hotplug(struct nvif_notify *notify)
- 		drm_helper_hpd_irq_event(connector->dev);
+@@ -572,12 +572,16 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
+ 		nv_connector->edid = NULL;
  	}
  
-+	pm_runtime_mark_last_busy(drm->dev->dev);
-+	pm_runtime_put_autosuspend(drm->dev->dev);
- 	return NVIF_NOTIFY_KEEP;
- }
+-	/* Outputs are only polled while runtime active, so acquiring a
+-	 * runtime PM ref here is unnecessary (and would deadlock upon
+-	 * runtime suspend because it waits for polling to finish).
++	/* Outputs are only polled while runtime active, so resuming the
++	 * device here is unnecessary (and would deadlock upon runtime suspend
++	 * because it waits for polling to finish). We do however, want to
++	 * prevent the autosuspend timer from elapsing during this operation
++	 * if possible.
+ 	 */
+-	if (!drm_kms_helper_is_poll_worker()) {
+-		ret = pm_runtime_get_sync(connector->dev->dev);
++	if (drm_kms_helper_is_poll_worker()) {
++		pm_runtime_get_noresume(dev->dev);
++	} else {
++		ret = pm_runtime_get_sync(dev->dev);
+ 		if (ret < 0 && ret != -EACCES)
+ 			return conn_status;
+ 	}
+@@ -655,10 +659,8 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
  
+  out:
+ 
+-	if (!drm_kms_helper_is_poll_worker()) {
+-		pm_runtime_mark_last_busy(connector->dev->dev);
+-		pm_runtime_put_autosuspend(connector->dev->dev);
+-	}
++	pm_runtime_mark_last_busy(dev->dev);
++	pm_runtime_put_autosuspend(dev->dev);
+ 
+ 	return conn_status;
+ }
 -- 
 2.17.1
 
