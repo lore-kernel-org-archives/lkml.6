@@ -2,103 +2,137 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED7AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E913C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62C4A20C09
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TnfqAI4C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C4A20C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A17720C09
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A17720C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cr.yp.to
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730101AbeHOT0e (ORCPT
+        id S1730120AbeHOT1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:26:34 -0400
-Received: from mail-it0-f48.google.com ([209.85.214.48]:33315 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729424AbeHOT0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:26:34 -0400
-Received: by mail-it0-f48.google.com with SMTP id d16-v6so17829480itj.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 09:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FOD4dkk5r9hxIWPW6Mp1FsWLoqAvHKhmAJliyWTxBsM=;
-        b=TnfqAI4CPKcr9SDvH+n5ryNEeL04VUqFyU0NFolEDCsgRGHPnCRyjIcclFl4xDcMpM
-         Xd4vJooErMC0RgqFC/CPdmnNPqIZMFuyI3k9vLzpJm8Tte1MhPARjo9eHVsfUG3WB9Nm
-         oC/UIZlvN04+52P1yCAnVDrbvtdUl0f0ZyiNE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FOD4dkk5r9hxIWPW6Mp1FsWLoqAvHKhmAJliyWTxBsM=;
-        b=Oal4nFAjycSvSXSpb4/2PKb5W4T3v8QWCnfOu6RFukuTlpmCKU8VISYm9cYLyTILtN
-         S5kGRUh7SmONWpz5S0IIoDaRiZSgZPPNJrMghaCgSBf4KcawZyXPTJ3/4OMr3VlInaAe
-         zSOnBeNGYmmhw/QpmH+bt+tm36fC1s3lDnK1HZKl+55r3rxN/hspyIKL2cgOjUgyluv4
-         L7sRi8zB81bXAk6XsTmJmuhJvkpnkI9tqROWrmrgGZS6l9Kw9WOfuHLPA3nijeEPYL5m
-         E9IsVVDvmijHb2fEyMIH4GQOenAGCeVLH1xyTiBH8fBff9nyCZKLup69r1G2HmtPbwKt
-         3Hxg==
-X-Gm-Message-State: AOUpUlF2nuXigoHhjwOffVDpPnY2sVnXIrnrgphvk55ffpPzbLcjle2D
-        I726ygNIG6cDl1sNRQ3hkZrX3XwUqnQ0DuEfVM3Eyxk3
-X-Google-Smtp-Source: AA+uWPwwvoCuzEHkUzUcVtLEcIIUIr/xKyJQhsG2xdjDB46ASOSyp8sv+re9rSqTSq7m8c3yz6Vequ3xVZ+wXGV99aY=
-X-Received: by 2002:a24:b211:: with SMTP id u17-v6mr18117687ite.1.1534350823200;
- Wed, 15 Aug 2018 09:33:43 -0700 (PDT)
+        Wed, 15 Aug 2018 15:27:16 -0400
+Received: from salsa.cs.uic.edu ([131.193.32.108]:59440 "HELO salsa.cs.uic.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1729424AbeHOT1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 15:27:16 -0400
+X-Greylist: delayed 402 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Aug 2018 15:27:16 EDT
+Received: (qmail 24033 invoked by uid 1010); 15 Aug 2018 16:27:44 -0000
+Received: from unknown (unknown)
+  by unknown with QMTP; 15 Aug 2018 16:27:44 -0000
+Received: (qmail 22766 invoked by uid 1000); 15 Aug 2018 16:28:19 -0000
+Date:   15 Aug 2018 16:28:19 -0000
+Message-ID: <20180815162819.22765.qmail@cr.yp.to>
+Automatic-Legal-Notices: See https://cr.yp.to/mailcopyright.html.
+From:   "D. J. Bernstein" <djb@cr.yp.to>
+To:     Eric Biggers <ebiggers@kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+References: <20180801072246.GA15677@sol.localdomain>
+ <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
+ <20180814211229.GB24575@gmail.com>
 MIME-Version: 1.0
-References: <20180814170904.GA12768@roeck-us.net> <aa4bedb7b1af45c59ff4e61f3f199287@AcuMS.aculab.com>
- <CA+55aFyeW7rqgGqOusZSz-jFP-CMH=hcyVGKhxyLxNeyBgLbqw@mail.gmail.com> <d87ba353f6fc44668969a8535790cdc9@AcuMS.aculab.com>
-In-Reply-To: <d87ba353f6fc44668969a8535790cdc9@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 15 Aug 2018 09:33:32 -0700
-Message-ID: <CA+55aFwwon2MLEhw-ERLskWed8b58NseLYF-7OOQhhjMcD-A6A@mail.gmail.com>
-Subject: Re: Build failures with gcc 4.5 and older
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 9:16 AM David Laight <David.Laight@aculab.com> wrote:
->
-> >
-> > But some libelf bug that is less than a year old is likely to bite people.
->
-> See https://lkml.org/lkml/2017/9/10/186 for the libelf fix.
-> It isn't anything like as rare as those emails suggest.
-> An 'allmodconfig' build fails on a lot of object files after 4.15-rc9.
 
-Ok, but that patch that fixes it was merged a long time ago already.
-See commit 97dab2ae7e84 ("objtool: Fix object file corruption")
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So I'm a bit confused by your issue. The thing you point to from last
-year was literall fixed and committed to the tree in a couple of days
-days.
+Eric Biggers writes:
+> I've also written a scalar ChaCha20 implementation (no NEON instructions!) that
+> is 12.2 cpb on one block at a time on Cortex-A7, taking advantage of the free
+> rotates; that would be useful for the single permutation used to compute
+> XChaCha's subkey, and also for the ends of messages.
 
-> When I fell over the problem I found a few reports on the ubuntu lists
-> but they all just said the ubuntu version was unsupported.
->
-> There is this patch I did https://lkml.org/lkml/2018/7/26/266 that got
-> no comments.
->
-> But really something needs to be done to objtool.
+This is also how ends of messages are handled in the 2012 implementation
+crypto_stream/salsa20/armneon6 (see "mainloop1") inside the SUPERCOP
+benchmarking framework:
 
-I think you need to make a report about the exact problem with objtool
-and your issue.
+   https://bench.cr.yp.to/supercop.html
 
-Not on the ubuntu lists, but to Josh.
+This code is marginally different from Eric's new code because the
+occasional loads and stores are scheduled for the Cortex-A8 rather than
+the Cortex-A7, and because it's Salsa20 rather than ChaCha20.
 
-             Linus
+The bigger picture is that there are 63 implementations of Salsa20 and
+ChaCha20 in SUPERCOP from 10 authors showing various implementation
+techniques, including all the techniques that have been mentioned in
+this thread; and centralized benchmarks on (e.g.)
+
+   https://bench.cr.yp.to/results-stream.html#amd64-kizomba
+   https://bench.cr.yp.to/web-impl/amd64-kizomba-crypto_stream-salsa20.html
+
+showing what's fastest on various platforms, using well-developed
+benchmarking tools that produce repeatable, meaningful measurements.
+There are also various papers explaining the main techniques.
+
+Of course it's possible that new code will do better, especially on
+platforms with different performance characteristics from the platforms
+previously targeted. Contributing new implementations to SUPERCOP is
+easy---which is why SUPERCOP already has thousands of implementations of
+hundreds of cryptographic functions---and is a more effective way to
+advertise speedups than adding code merely to (e.g.) the Linux kernel.
+Infrastructure is centralized in SUPERCOP to minimize per-implementation
+work. There's no risk of being rejected on the basis of cryptographic
+concerns (MD5, Speck, and RSA-512 are included in the benchmarks) or
+code-style concerns. Users can then decide which implementations best
+meet their requirements.
+
+"Do better" seems to be what's happened for the Cortex-A7. The best
+SUPERCOP speeds (from code targeting the Cortex-A8 etc.) are 13.42
+cycles/byte for 4096 bytes for ChaCha20; 12.2, 11.9, and 11.3 sound
+noticeably better. The Cortex-A7 is an interesting case because it's
+simultaneously (1) widely deployed---more than a billion units sold---
+but (2) poorly documented. If you want to know, e.g., which instructions
+can dual-issue with loads/FPU moves/..., then you won't be able to find
+anything from ARM giving the answer. I've started building an automated
+tool to compute the full CPU pipeline structure from benchmarks, but
+this isn't ready yet.
+
+---Dan
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbdFSjAAoJELDADU47DlRZx2AP/RPp9lNbsncPgB7DLSLAdI8c
+Cl+s9exWiSyjkS1SyNS82dfhMfLyf0vQfNRX6ZHqCYjXz8ZMQWpilLu4xr/yG4Wh
+/Yro8BLeKdjsQOj29f7xGFCX9fv9fUa9Ouyk7myHt4LhEehJ3sl6WhL15WUQjROS
+OTAQftllNNL/0Xzj0sl1nxmZPlrAqT4HjLiB9t5XhT59jJPXPcZrFpOEPbKrRyRN
+61cOXOxXqlaIdpsck4hEMLdHlPESN31NP1m/xwNUwnFBM79dFSxSZ/E/Qbwt6hq5
+0FMJ0BRvlgugxnmS91dfz1h3rezOBfwQcLfbk0sylVOamj3YD+x/uc9Fbi/jorTu
+WO1EBwIOkAeL0I+4/kqb0MTf227ScKHiyanwSGzVZbMo14odKmMVP94MKF/90cdS
+EgG6I4joMjphvnsGRwrbfmAkwCpBvoap2orhZ8+hecsiOp/Oc4BWsjD2MMsw6HWd
+l5VcjEU+MB8VHbB78rU4scNwXpjwcgKJn09lb1J1ZrDPZfeFrZBaomnbtM9YQzPa
+4OYgwFiYzVEInrpl3ZFzTh5JR6yeoERAI/zvietVUWqebFhviEWXWanP9v9VqpJy
+VjPheFHh7DLB3rT7VSp5lKi3RejmbiKIZ/zqqapQ0o7xSxEokD9UcRhJ6Eq7O6IO
+HjT0De/Y053XN9gvXftk
+=fS0C
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
