@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098ABC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D5BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2195021475
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BD28214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdgOmVnk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2195021475
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nw8+ZY/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD28214C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbeHOSBW (ORCPT
+        id S1730835AbeHOSB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:01:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51266 "EHLO mail.kernel.org"
+        Wed, 15 Aug 2018 14:01:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729528AbeHOSBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:01:22 -0400
+        id S1729528AbeHOSB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:01:26 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE160208B1;
-        Wed, 15 Aug 2018 15:08:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7049F208E0;
+        Wed, 15 Aug 2018 15:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534345728;
-        bh=tcwPBJ8x9UEBfhreePeI1YzN+BRiKaQuHoJrBIorWFY=;
+        s=default; t=1534345733;
+        bh=Ni8RidsLzLP/whU6ki/li3VkX2/A4bocvh6eZlx+Qkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VdgOmVnkU7f3pvub1dCeetfMmR+osP5HV2FtwA17VPihgdFlKG32LxprujZfjezfi
-         CljStzsL72Tgxm63wthDmrA9suQVq0tuZrRLy2xHKCAMTy2pIRdPrUUrrVsLdaZGlj
-         MHvDzlhwHzP52XnvxYCCCrXjfRP7W6usmgZici0c=
+        b=Nw8+ZY/RPL4rAz61OKE3gKYwz2KTD1eIw1krRpXADHq8PyUdjHVEpQxhqbQ719OKU
+         xy+PtKmzqQBVP5s/JUOd7nA4Hx1vBzMIzrBp6MqiKyjH+/xqsRCVaQemcsKaQORefu
+         wyGUM3NWFas4pAFujFrc0j4sDz+BKjACyx+feaz8=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -47,9 +48,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 34/35] kallsyms, x86: Export addresses of PTI entry trampolines
-Date:   Wed, 15 Aug 2018 12:06:10 -0300
-Message-Id: <20180815150611.32080-35-acme@kernel.org>
+Subject: [PATCH 35/35] x86: Add entry trampolines to kcore
+Date:   Wed, 15 Aug 2018 12:06:11 -0300
+Message-Id: <20180815150611.32080-36-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180815150611.32080-1-acme@kernel.org>
 References: <20180815150611.32080-1-acme@kernel.org>
@@ -58,16 +59,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-Currently, the addresses of PTI entry trampolines are not exported to
-user space. Kernel profiling tools need these addresses to identify the
-kernel code, so add a symbol and address for each CPU's PTI entry
-trampoline.
+Without program headers for PTI entry trampoline pages, the trampoline
+virtual addresses do not map to anything.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Example before:
+
+ sudo gdb --quiet vmlinux /proc/kcore
+ Reading symbols from vmlinux...done.
+ [New process 1]
+ Core was generated by `BOOT_IMAGE=/boot/vmlinuz-4.16.0 root=UUID=a6096b83-b763-4101-807e-f33daff63233'.
+ #0  0x0000000000000000 in irq_stack_union ()
+ (gdb) x /21ib 0xfffffe0000006000
+    0xfffffe0000006000:  Cannot access memory at address 0xfffffe0000006000
+ (gdb) quit
+
+After:
+
+ sudo gdb --quiet vmlinux /proc/kcore
+ [sudo] password for ahunter:
+ Reading symbols from vmlinux...done.
+ [New process 1]
+ Core was generated by `BOOT_IMAGE=/boot/vmlinuz-4.16.0-fix-4-00005-gd6e65a8b4072 root=UUID=a6096b83-b7'.
+ #0  0x0000000000000000 in irq_stack_union ()
+ (gdb) x /21ib 0xfffffe0000006000
+    0xfffffe0000006000:  swapgs
+    0xfffffe0000006003:  mov    %rsp,-0x3e12(%rip)        # 0xfffffe00000021f8
+    0xfffffe000000600a:  xchg   %ax,%ax
+    0xfffffe000000600c:  mov    %cr3,%rsp
+    0xfffffe000000600f:  bts    $0x3f,%rsp
+    0xfffffe0000006014:  and    $0xffffffffffffe7ff,%rsp
+    0xfffffe000000601b:  mov    %rsp,%cr3
+    0xfffffe000000601e:  mov    -0x3019(%rip),%rsp        # 0xfffffe000000300c
+    0xfffffe0000006025:  pushq  $0x2b
+    0xfffffe0000006027:  pushq  -0x3e35(%rip)        # 0xfffffe00000021f8
+    0xfffffe000000602d:  push   %r11
+    0xfffffe000000602f:  pushq  $0x33
+    0xfffffe0000006031:  push   %rcx
+    0xfffffe0000006032:  push   %rdi
+    0xfffffe0000006033:  mov    $0xffffffff91a00010,%rdi
+    0xfffffe000000603a:  callq  0xfffffe0000006046
+    0xfffffe000000603f:  pause
+    0xfffffe0000006041:  lfence
+    0xfffffe0000006044:  jmp    0xfffffe000000603f
+    0xfffffe0000006046:  mov    %rdi,(%rsp)
+    0xfffffe000000604a:  retq
+ (gdb) quit
+
+In addition, entry trampolines all map to the same page.  Represent that
+by giving the corresponding program headers in kcore the same offset.
+
+This has the benefit that, when perf tools uses /proc/kcore as a source
+for kernel object code, samples from different CPU trampolines are
+aggregated together.  Note, such aggregation is normal for profiling
+i.e. people want to profile the object code, not every different virtual
+address the object code might be mapped to (across different processes
+for example).
+
+Notes by PeterZ:
+
+This also adds the KCORE_REMAP functionality.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Acked-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
@@ -75,116 +132,108 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1528289651-4113-3-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1528289651-4113-4-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/x86/mm/cpu_entry_area.c | 23 +++++++++++++++++++++++
- kernel/kallsyms.c            | 28 +++++++++++++++++++++++++++-
- 2 files changed, 50 insertions(+), 1 deletion(-)
+ arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
+ fs/proc/kcore.c              |  7 +++++--
+ include/linux/kcore.h        | 13 +++++++++++++
+ 3 files changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
-index b45f5aaefd74..fab49fd5190f 100644
+index fab49fd5190f..076ebdce9bd4 100644
 --- a/arch/x86/mm/cpu_entry_area.c
 +++ b/arch/x86/mm/cpu_entry_area.c
-@@ -2,6 +2,7 @@
- 
+@@ -3,6 +3,7 @@
  #include <linux/spinlock.h>
  #include <linux/percpu.h>
-+#include <linux/kallsyms.h>
+ #include <linux/kallsyms.h>
++#include <linux/kcore.h>
  
  #include <asm/cpu_entry_area.h>
  #include <asm/pgtable.h>
-@@ -150,6 +151,28 @@ static void __init setup_cpu_entry_area(int cpu)
+@@ -14,6 +15,7 @@ static DEFINE_PER_CPU_PAGE_ALIGNED(struct entry_stack_page, entry_stack_storage)
+ #ifdef CONFIG_X86_64
+ static DEFINE_PER_CPU_PAGE_ALIGNED(char, exception_stacks
+ 	[(N_EXCEPTION_STACKS - 1) * EXCEPTION_STKSZ + DEBUG_STKSZ]);
++static DEFINE_PER_CPU(struct kcore_list, kcore_entry_trampoline);
+ #endif
+ 
+ struct cpu_entry_area *get_cpu_entry_area(int cpu)
+@@ -147,6 +149,14 @@ static void __init setup_cpu_entry_area(int cpu)
+ 
+ 	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
+ 		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
++	/*
++	 * The cpu_entry_area alias addresses are not in the kernel binary
++	 * so they do not show up in /proc/kcore normally.  This adds entries
++	 * for them manually.
++	 */
++	kclist_add_remap(&per_cpu(kcore_entry_trampoline, cpu),
++			 _entry_trampoline,
++			 &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE);
+ #endif
  	percpu_setup_debug_store(cpu);
  }
- 
-+#ifdef CONFIG_X86_64
-+int arch_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
-+		     char *name)
-+{
-+	unsigned int cpu, ncpu = 0;
-+
-+	if (symnum >= num_possible_cpus())
-+		return -EINVAL;
-+
-+	for_each_possible_cpu(cpu) {
-+		if (ncpu++ >= symnum)
-+			break;
-+	}
-+
-+	*value = (unsigned long)&get_cpu_entry_area(cpu)->entry_trampoline;
-+	*type = 't';
-+	strlcpy(name, "__entry_SYSCALL_64_trampoline", KSYM_NAME_LEN);
-+
-+	return 0;
-+}
-+#endif
-+
- static __init void setup_cpu_entry_area_ptes(void)
- {
- #ifdef CONFIG_X86_32
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index aa31aa07f2ef..02a0b01380d8 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -432,6 +432,7 @@ int sprint_backtrace(char *buffer, unsigned long address)
- /* To avoid using get_symbol_offset for every symbol, we carry prefix along. */
- struct kallsym_iter {
- 	loff_t pos;
-+	loff_t pos_arch_end;
- 	loff_t pos_mod_end;
- 	loff_t pos_ftrace_mod_end;
- 	unsigned long value;
-@@ -443,9 +444,29 @@ struct kallsym_iter {
- 	int show_value;
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index e64ecb9f2720..00282f134336 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -383,8 +383,11 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
+ 		phdr->p_type	= PT_LOAD;
+ 		phdr->p_flags	= PF_R|PF_W|PF_X;
+ 		phdr->p_offset	= kc_vaddr_to_offset(m->addr) + dataoff;
+-		phdr->p_vaddr	= (size_t)m->addr;
+-		if (m->type == KCORE_RAM || m->type == KCORE_TEXT)
++		if (m->type == KCORE_REMAP)
++			phdr->p_vaddr	= (size_t)m->vaddr;
++		else
++			phdr->p_vaddr	= (size_t)m->addr;
++		if (m->type == KCORE_RAM || m->type == KCORE_TEXT || m->type == KCORE_REMAP)
+ 			phdr->p_paddr	= __pa(m->addr);
+ 		else
+ 			phdr->p_paddr	= (elf_addr_t)-1;
+diff --git a/include/linux/kcore.h b/include/linux/kcore.h
+index 8de55e4b5ee9..bc088ef96358 100644
+--- a/include/linux/kcore.h
++++ b/include/linux/kcore.h
+@@ -12,11 +12,13 @@ enum kcore_type {
+ 	KCORE_VMEMMAP,
+ 	KCORE_USER,
+ 	KCORE_OTHER,
++	KCORE_REMAP,
  };
  
-+int __weak arch_get_kallsym(unsigned int symnum, unsigned long *value,
-+			    char *type, char *name)
-+{
-+	return -EINVAL;
-+}
-+
-+static int get_ksymbol_arch(struct kallsym_iter *iter)
-+{
-+	int ret = arch_get_kallsym(iter->pos - kallsyms_num_syms,
-+				   &iter->value, &iter->type,
-+				   iter->name);
-+
-+	if (ret < 0) {
-+		iter->pos_arch_end = iter->pos;
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
- static int get_ksymbol_mod(struct kallsym_iter *iter)
- {
--	int ret = module_get_kallsym(iter->pos - kallsyms_num_syms,
-+	int ret = module_get_kallsym(iter->pos - iter->pos_arch_end,
- 				     &iter->value, &iter->type,
- 				     iter->name, iter->module_name,
- 				     &iter->exported);
-@@ -501,6 +522,7 @@ static void reset_iter(struct kallsym_iter *iter, loff_t new_pos)
- 	iter->nameoff = get_symbol_offset(new_pos);
- 	iter->pos = new_pos;
- 	if (new_pos == 0) {
-+		iter->pos_arch_end = 0;
- 		iter->pos_mod_end = 0;
- 		iter->pos_ftrace_mod_end = 0;
- 	}
-@@ -515,6 +537,10 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
- {
- 	iter->pos = pos;
+ struct kcore_list {
+ 	struct list_head list;
+ 	unsigned long addr;
++	unsigned long vaddr;
+ 	size_t size;
+ 	int type;
+ };
+@@ -36,11 +38,22 @@ struct vmcoredd_node {
  
-+	if ((!iter->pos_arch_end || iter->pos_arch_end > pos) &&
-+	    get_ksymbol_arch(iter))
-+		return 1;
+ #ifdef CONFIG_PROC_KCORE
+ extern void kclist_add(struct kcore_list *, void *, size_t, int type);
++static inline
++void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
++{
++	m->vaddr = (unsigned long)vaddr;
++	kclist_add(m, addr, sz, KCORE_REMAP);
++}
+ #else
+ static inline
+ void kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
+ {
+ }
 +
- 	if ((!iter->pos_mod_end || iter->pos_mod_end > pos) &&
- 	    get_ksymbol_mod(iter))
- 		return 1;
++static inline
++void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
++{
++}
+ #endif
+ 
+ #endif /* _LINUX_KCORE_H */
 -- 
 2.14.4
 
