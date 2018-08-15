@@ -4,226 +4,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BC0C43615
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F49C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A0DA21545
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCC6521545
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:38:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfVvMerX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0DA21545
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jFObCUbK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC6521545
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeHOXbC (ORCPT
+        id S1727881AbeHOXbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:31:02 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46201 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbeHOXbB (ORCPT
+        Wed, 15 Aug 2018 19:31:51 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39675 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeHOXbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:31:01 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u24-v6so963364pfn.13
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:37:17 -0700 (PDT)
+        Wed, 15 Aug 2018 19:31:51 -0400
+Received: by mail-it0-f66.google.com with SMTP id g141-v6so3731257ita.4
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:38:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BJNY+gds9uSorTW61ld303cZnA5bUTx9KsInyKNARKs=;
-        b=BfVvMerXu6j/cQN3igs2RznVPPZ4YqwQnmB6upXDFuaMkGdRX9Y5erTk/3RV5cm4ab
-         X5l/FcRAdB9uz2ZHS8us2rFskSCyClKIAaaJDzRQUGymPPqpRVaQdHTVOiXbK76aNEVF
-         /T2iOdeIxS8hIoA3Bh9FcscEMUtu2xygcFo1Q=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=d8hj0l4DkQoR+qHPNz2dKQwzNXyE++FCBGbvY+IEuSI=;
+        b=jFObCUbK5En0oSycKEn1G+vFxUdSJZxqQGdZ14nmifGfSChqdvqnLAumleLCXAN8gv
+         x0A/XcvIFgx8iNE2oRZt5r+4mV6xTdZ8sjZ8Pd5MmbUuOPCSoYG4KAgbm2RbN7FmZJoN
+         60swG+P0OQt/ZnSLsDdDV/z3cvcsCU2FKiOVw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BJNY+gds9uSorTW61ld303cZnA5bUTx9KsInyKNARKs=;
-        b=kL2BfItA8dSo1fSf+uYPkxYyWoC/Javm8vR/hWQMgZpoUlZ8xnlMpGBwaMzKvxl6BG
-         F+boryZ+2jfjRLqHyCDO70154EN6x3JuAof9gJnVLWb2Gl7CxLzox4/2i5db+joXOukO
-         yitapIWSUP3uf4cpLREzzCqmYqRo/P2te9SD6PATWIUaWPdOsPmlDhP4dcdpaxz4S+E7
-         ns9Xcqe25zYXRRrFV0YZn6454lu73ACART3XwwD8tavNA3FQY68qyM9QURuIy1Zx/eqR
-         +CLSCXV+XcGS0PVQnhriZ+6b384h9HbuH29g4M2BBRuKrO3yksz4FNJAy9SMRLfFr0e+
-         IpFg==
-X-Gm-Message-State: AOUpUlH8kQp7GYEB8iCgAi6jW/VHj+wgCqSDlKFyFBsYoNzcTBR4G88m
-        Dr4kuQhSoBDrmBmTol4M+rth5A==
-X-Google-Smtp-Source: AA+uWPwHdSX57H1T3Phgb+BHqGnMluqhlwDhAUa4zckkSlvp7TjGX5pYALJH5N8u9hjm9SIPjrCtfw==
-X-Received: by 2002:a63:6604:: with SMTP id a4-v6mr25718527pgc.404.1534365437284;
-        Wed, 15 Aug 2018 13:37:17 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm54606269pfd.99.2018.08.15.13.37.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 13:37:16 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=d8hj0l4DkQoR+qHPNz2dKQwzNXyE++FCBGbvY+IEuSI=;
+        b=S/95S8TZOQL7v87q9UJYRLTo6dMAesV0BFObi5OWilmqDw/KqxnN1cZ93hAQSPjxDQ
+         MWicrKwrf+Joso0cX9UK3xUJ3KVk+HRuzdCEIkHXLsq+ntqsvyrVeKtisKDoyvD1nnx0
+         KLrPGhWZW/FhQCIk9+f13zR71053hpJZOicuOJ/88WtLkfVszqvFxDh8wDZgFSdDetqu
+         SPXzYEzY13kCMzMAz4hryIjViDg9Kig8DorYDzr4f3yKY1AK3/JN1ArcEZHgpv/jSt2B
+         e6D/QyzRrh9LntkmDxSmvQV0DRNBnIktoLhKhw0bkGyL+Ws+yU6IHCXV6ksH2kOhp7lk
+         oVAQ==
+X-Gm-Message-State: AOUpUlG9ooaJj9GWb8HDiI9xlVWa+AaZNwaoUIlWVKI7dM7E43E82/Gh
+        iL9xFhBT6im0qp5m7ZYhlwBg4g==
+X-Google-Smtp-Source: AA+uWPy25cqav19lq9H53rgYfOng9Cykzlpj7xseUcdnEwnEVo81G/1BlgrMK1mTPiPI3wkZavjk4g==
+X-Received: by 2002:a24:69cb:: with SMTP id e194-v6mr20748356itc.102.1534365486305;
+        Wed, 15 Aug 2018 13:38:06 -0700 (PDT)
+Received: from localhost (c-68-47-89-210.hsd1.mn.comcast.net. [68.47.89.210])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm1790356itb.0.2018.08.15.13.38.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 13:38:05 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 15:38:05 -0500
+From:   Dan Rue <dan.rue@linaro.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v4 6/6] firmware: coreboot: Only populate devices in coreboot_table_init()
-Date:   Wed, 15 Aug 2018 13:37:08 -0700
-Message-Id: <20180815203708.67090-7-swboyd@chromium.org>
-X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
-In-Reply-To: <20180815203708.67090-1-swboyd@chromium.org>
-References: <20180815203708.67090-1-swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/104] 4.14.63-stable review
+Message-ID: <20180815203805.3syqtgztxbnuotpv@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20180814171515.270692185@linuxfoundation.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180814171515.270692185@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function checks the header for sanity, registers a bus, and
-populates devices for each coreboot table entry. Let's just populate
-devices here and pull the other bits up into the caller so that this
-function can be repurposed for pure device creation and registration.
+On Tue, Aug 14, 2018 at 07:16:14PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.63 release.
+> There are 104 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Aug 16 17:14:49 UTC 2018.
+> Anything received after that time might be too late.
 
-Cc: Wei-Ning Huang <wnhuang@chromium.org>
-Cc: Julius Werner <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Samuel Holland <samuel@sholland.org>
-Suggested-by: Julius Werner <jwerner@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/firmware/google/coreboot_table.c | 67 ++++++++++--------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
+Results from Linaro’s test farm.
+No regressions on arm64, arm and x86_64.
 
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 2c6c35f0da32..078d3bbe632f 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -32,8 +32,6 @@
- #define CB_DEV(d) container_of(d, struct coreboot_device, dev)
- #define CB_DRV(d) container_of(d, struct coreboot_driver, drv)
- 
--static struct coreboot_table_header *ptr_header;
--
- static int coreboot_bus_match(struct device *dev, struct device_driver *drv)
- {
- 	struct coreboot_device *device = CB_DEV(dev);
-@@ -94,36 +92,21 @@ void coreboot_driver_unregister(struct coreboot_driver *driver)
- }
- EXPORT_SYMBOL(coreboot_driver_unregister);
- 
--static int coreboot_table_init(struct device *dev, void *ptr)
-+static int coreboot_table_populate(struct device *dev, void *ptr)
- {
- 	int i, ret;
- 	void *ptr_entry;
- 	struct coreboot_device *device;
- 	struct coreboot_table_entry *entry;
--	struct coreboot_table_header *header;
--
--	ptr_header = ptr;
--	header = ptr;
-+	struct coreboot_table_header *header = ptr;
- 
--	if (strncmp(header->signature, "LBIO", sizeof(header->signature))) {
--		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
--		ret = -ENODEV;
--		goto out;
--	}
--
--	ret = bus_register(&coreboot_bus_type);
--	if (ret)
--		goto out;
--
--	ptr_entry = ptr_header + header->header_bytes;
-+	ptr_entry = ptr + header->header_bytes;
- 	for (i = 0; i < header->table_entries; i++) {
- 		entry = ptr_entry;
- 
- 		device = kzalloc(sizeof(struct device) + entry->size, GFP_KERNEL);
--		if (!device) {
--			ret = -ENOMEM;
--			break;
--		}
-+		if (!device)
-+			return -ENOMEM;
- 
- 		dev_set_name(&device->dev, "coreboot%d", i);
- 		device->dev.parent = dev;
-@@ -134,18 +117,13 @@ static int coreboot_table_init(struct device *dev, void *ptr)
- 		ret = device_register(&device->dev);
- 		if (ret) {
- 			put_device(&device->dev);
--			break;
-+			return ret;
- 		}
- 
- 		ptr_entry += entry->size;
- 	}
- 
--	if (ret)
--		bus_unregister(&coreboot_bus_type);
--
--out:
--	memunmap(ptr);
--	return ret;
-+	return 0;
- }
- 
- static int coreboot_table_probe(struct platform_device *pdev)
-@@ -153,7 +131,9 @@ static int coreboot_table_probe(struct platform_device *pdev)
- 	resource_size_t len;
- 	struct coreboot_table_header *header;
- 	struct resource *res;
-+	struct device *dev = &pdev->dev;
- 	void *ptr;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
-@@ -163,26 +143,37 @@ static int coreboot_table_probe(struct platform_device *pdev)
- 	if (!res->start || !len)
- 		return -EINVAL;
- 
-+	/* Check just the header first to make sure things are sane */
- 	header = memremap(res->start, sizeof(*header), MEMREMAP_WB);
--	if (header == NULL)
-+	if (!header)
- 		return -ENOMEM;
- 
--	ptr = memremap(res->start, header->header_bytes + header->table_bytes,
--		       MEMREMAP_WB);
-+	len = header->header_bytes + header->table_bytes;
-+	ret = strncmp(header->signature, "LBIO", sizeof(header->signature));
- 	memunmap(header);
-+	if (ret) {
-+		dev_warn(dev, "coreboot table missing or corrupt!\n");
-+		return -ENODEV;
-+	}
-+
-+	ptr = memremap(res->start, len, MEMREMAP_WB);
- 	if (!ptr)
- 		return -ENOMEM;
- 
--	return coreboot_table_init(&pdev->dev, ptr);
-+	ret = bus_register(&coreboot_bus_type);
-+	if (!ret) {
-+		ret = coreboot_table_populate(dev, ptr);
-+		if (ret)
-+			bus_unregister(&coreboot_bus_type);
-+	}
-+	memunmap(ptr);
-+
-+	return ret;
- }
- 
- static int coreboot_table_remove(struct platform_device *pdev)
- {
--	if (ptr_header) {
--		bus_unregister(&coreboot_bus_type);
--		ptr_header = NULL;
--	}
--
-+	bus_unregister(&coreboot_bus_type);
- 	return 0;
- }
- 
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.14.63-rc3
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.14.y
+git commit: aff06b616b3c87631fc6a162679eab65b9685c2b
+git describe: v4.14.62-110-gaff06b616b3c
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.62-110-gaff06b616b3c
+
+
+No regressions (compared to build v4.14.62)
+
+
+Ran 10327 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+
 -- 
-Sent by a computer through tubes
-
+Linaro LKFT
+https://lkft.linaro.org
