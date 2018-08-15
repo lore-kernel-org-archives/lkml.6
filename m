@@ -2,131 +2,105 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FBAC43615
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F37C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB4D2087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:54:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB4D2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 90ACD214EE
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:55:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XGKKzpWP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90ACD214EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbeHPCsv convert rfc822-to-8bit (ORCPT
+        id S1727500AbeHPCts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 22:48:51 -0400
-Received: from mga11.intel.com ([192.55.52.93]:6875 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729147AbeHPCsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 22:48:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 16:54:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,245,1531810800"; 
-   d="scan'208";a="224965644"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by orsmga004.jf.intel.com with ESMTP; 15 Aug 2018 16:54:13 -0700
-Received: from orsmsx102.amr.corp.intel.com ([169.254.3.148]) by
- ORSMSX105.amr.corp.intel.com ([169.254.2.117]) with mapi id 14.03.0319.002;
- Wed, 15 Aug 2018 16:54:13 -0700
-From:   "Wyborny, Carolyn" <carolyn.wyborny@intel.com>
-To:     Maik Broemme <mbroemme@libmpq.org>
-CC:     netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-Subject: RE: [BUG] Kernel Oops and crash using i40e VF devices
-Thread-Topic: [BUG] Kernel Oops and crash using i40e VF devices
-Thread-Index: AQHUNKSMop7YvxzFokecKdGtfjy7faTBFmHggADLVID//5DuYA==
-Date:   Wed, 15 Aug 2018 23:54:13 +0000
-Message-ID: <9BBC4E0CF881AA4299206E2E1412B6267C5EAB0D@ORSMSX102.amr.corp.intel.com>
-References: <20180815142346.GC2354@libmpq.org>
- <9BBC4E0CF881AA4299206E2E1412B6267C5EA4D6@ORSMSX102.amr.corp.intel.com>
- <20180815225346.GE2354@libmpq.org>
-In-Reply-To: <20180815225346.GE2354@libmpq.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWVkNWY4ZjItODhhNS00ODdhLWJhNzUtODAwNDQ5OWQ0N2I3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUkZcL3dSWFBIandrdldoeFZIMGZBdktaN0x1UThJV2RJclZ3Q2VuSGpja1VhU1BGQ0ZCY01iVGtSUCtIeFREZGMifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 15 Aug 2018 22:49:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44227 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbeHPCtr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 22:49:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r16-v6so2493256wrt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 16:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rdTo/A2FoV4oBy77mz3s9hCLwueCb3Br+QLhyRz+ql0=;
+        b=XGKKzpWPWAa/SnjqbpNHptcYD41oY5aerzt8poiz2tXSU/7Yztjo5JfDr8OMi6wDmm
+         rjdZxSYpTMU4lA8Skj5UOVS8oqU4HSgS0qHksL8cDiUeplYFJ8kjj0vKJGeAmeTRfrGC
+         5ADLtBDmzCmCQvEsLDNVtlsimk2ZeWtuZCkkE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rdTo/A2FoV4oBy77mz3s9hCLwueCb3Br+QLhyRz+ql0=;
+        b=YBJcYtY+LMRiW1L92RKmH3v6ppmiJMVLbTPfk42H3y8C1CiNKdmz6khna7bXaLh0Vz
+         Dlt4ul61ry90vPrQdSeCbkfv6DGKjjQz+1ycX+SNE3O8mYqgKEY8lFU4wiXTiZE95E+5
+         Nem8pktxspxFjaXiANCNH+Y2ubw+P3iw2E4B/DoLb8NhjO73LtpnUu0R71fudUD5FrPR
+         dmzO7WJL5sZ6o0x2YeXweyK9Y0/knvKYz+JvhEnATk/g5lgnTv92OOasK++lc9Jwg8I7
+         Xeqa7XroBJN2zyRxPR2g2EnebBA8fvgfwURALtb84Q6JaULClQzuCLxk/Cch3jaoleFw
+         meQA==
+X-Gm-Message-State: AOUpUlHrw4no7ikFv0eCUOyXJ72Rbj7hNsWeGtVS1cik3KhxP1a+bUqx
+        8SaY7Gg3ZdGbCMU6a8L7Pb9VDQ1KuzV2UDqldwHIxQ==
+X-Google-Smtp-Source: AA+uWPwoXe59mdwaFgMhEBvdzkUXJ8WRkfdtwfYXT1HdjulLrCIhtu1fvDpqn+xvKIQCeBLjxlDwHe8czSG7Hpg2FEc=
+X-Received: by 2002:adf:db41:: with SMTP id f1-v6mr16958635wrj.212.1534377316035;
+ Wed, 15 Aug 2018 16:55:16 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 16:55:15
+ -0700 (PDT)
+In-Reply-To: <20180814113633.GE28664@arm.com>
+References: <20180814113633.GE28664@arm.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 15 Aug 2018 16:55:15 -0700
+Message-ID: <CALAqxLVeSHp+D=9t0f7ve7YgSzqVNTkVVzv-8tdQkJARJ8Bo8Q@mail.gmail.com>
+Subject: Re: [GIT PULL] arm64: updates for 4.19
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Vishal Bhoj <vishal.bhoj@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Maik Broemme [mailto:mbroemme@libmpq.org]
-> Sent: Wednesday, August 15, 2018 3:54 PM
-> To: Wyborny, Carolyn <carolyn.wyborny@intel.com>
-> Cc: netdev <netdev@vger.kernel.org>; linux-kernel <linux-
-> kernel@vger.kernel.org>
-> Subject: Re: [BUG] Kernel Oops and crash using i40e VF devices
-> 
-Thanks for this info.  I have some questions below.
+On Tue, Aug 14, 2018 at 4:36 AM, Will Deacon <will.deacon@arm.com> wrote:
+>
+> Please pull these arm64 updates for 4.19. Details in the tag, but please be
+> aware that we've pulled in the x86/mm branch from -tip so that we can make
+> use of the core ioremap changes which allow us to put down huge mappings
+> in the vmalloc area without screwing up the TLB. Much of the positive
+> diffstat is because of the rseq selftest for arm64.
+>
+> There is a trivial conflict in arch/arm64/Makefile with your tree, since
+> we effectively rewrote a fix that was merged in -rc5 [96f95a17c1cf]. The
+> correct resolution is therefore to prefer the code using ld-option, which
+> is what we have here. We also ran into a couple of trivial conflicts that
+> were resolved in -next with the KVM and EFI trees.
+>
 
-> Hi Carolyn,
-[..]
-> > > Hi,
-> > >
-> > > I have a SuperMicro X11SPM-F mainboard with two Intel X722 devices
-> > > which
-> > > support up to 32 VF devices per PF device. They are running with i40e
-> > > driver. Whenever I try to use the VF devices in Xen VMs, the host kernel
-> > > got an Oops or crash. In all cases the PF running on the host
-> > > immediately loses network connection. I can reproduce this always
-> > > running the following:
-> > >
-> > We have some known issues around this problem.  I'll need some more
-> info to debug it.
-[..]
-> After boot I have a script which runs a set of commands to create all
-> the VFs, assign MACs to VFs, enable trust on VFs and add them to pciback
-> driver for Xen. This runs all fine. After that I start VMs via xl create
-> command.
-> 
-> > What drivers are loaded on all ports?
-> 
-> The X11SPM-F has only 2x 1 GbE ports and they are both using 'i40e.ko'
-> module as driver. Also I've blacklisted the 'i40evf.ko' module on Xen
-> host (Dom0) to not load it when VF devices are created as they will be
-> assigned to 'xen-pciback.ko' with pciback driver.
-[..]
-> > Do you have any virtualization configured in your setup?
-> 
-> Yes, I'm using Xen 4.11.0 from Arch Linux. I'm maintainer of the
-> package.
-> 
-> > If so, what exactly and how are the ethernet devices configured in that?
-> 
-> Inside VMs I use either 4.17.x (+PREEMPT) or 4.14.x LTS (-PREEMPT)
-> version. Both are using stock kernel version of 'i40evf.ko' module.
+Hey Will,
+  So I noticed issues booting Linus' master on the HiKey960 board I
+have today (something hangs early in boot before I get any serial
+output), and isolated the issue down to your branch here.
 
-[CMW]Above you said you blacklist the i40evf driver and use the xen-pciback driver.  Do you load the i40evf driver again then at a later time?
-This isn't a configuration I'm familiar with.  Can I get the full dmesg log from a system showing the problem?  You can post it in a bug at SourceForge, pastebin or something like that to save space on this thread.
+It seems to be coming from 693350a79980 ("arm64: insn: Don't fallback
+on nosync path for general insn patching"), and reverting that change
+resolves the issue for me.
 
-[CMW]To find out exactly what kind of MDD error is occurring involves some complicated debug operations because of a register issue in the part.  If  you want to do that, we should go offlist for the details due to the length, not because its anything private or hidden.  However, the most common reason is because of some traffic patterns and a configuration detail in our drivers that was not complete at release.  I will investigate the combination of driver and patches to see if there may be some driver patches you'll need to apply.
-> 
-> >
-> > Thanks,
-> >
-> > Carolyn
-> >
-> > Carolyn Wyborny
-> > Linux Development
-> > Networking Division
-> > Intel Corporation
-> >
-> >
-> 
-> --Maik
+If you have any suggestions for alternative fixes or things to try,
+please let me know.
+
+thanks
+-john
