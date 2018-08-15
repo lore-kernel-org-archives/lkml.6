@@ -2,162 +2,204 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E89C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3240C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3468121727
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E1342098B
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:19:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXU3vAcP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3468121727
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXmG/yC4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E1342098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeHODzJ (ORCPT
+        id S1725962AbeHOEID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 23:55:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43549 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbeHODzJ (ORCPT
+        Wed, 15 Aug 2018 00:08:03 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:43250 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbeHOEID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 23:55:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j26-v6so10012127pfi.10
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 18:05:22 -0700 (PDT)
+        Wed, 15 Aug 2018 00:08:03 -0400
+Received: by mail-ua1-f67.google.com with SMTP id f4-v6so15320461uao.10
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Aug 2018 18:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=tz7ZefK1LbrDSKn0DwrEqUV/sh3GPJSqGEK8Q3VVW7I=;
-        b=CXU3vAcPGAzUXqQmT2LIrvWhitStQpx+kZjFaAE87N59mwFnNqtFUwHajYnqtkHCBw
-         2uQaN0k9HjnyT2e+2QKdYvZ2y+2KfeZw+mpYeFuzirkTED6n8MNV4nTW+lkmEcZswQf1
-         rOaby8E2K6sBH1s5EsWrMd/6TWLnX29BUiOrGPprpGIRUONyatVw0PyBIhdZCH4ENqQQ
-         adyAdDy5kiO6/BqVN+7KJYil4mDEp8nikXDwU+R701g0h1RJ753mBRTomRbFY7eu2z/Y
-         irpzl+XdUvf2CHsF/kfF+3Yghs+T35+/RT9kKlOrXlrBKNICs6EnOHdfwNtY4WMrWKGA
-         JYrw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m3e1kVnJ8jDYpUaQegebiyDo9+ltxR6W39l+IdShOJo=;
+        b=cXmG/yC43BDNPZsEQsofCpLAb/KgYdziHk4zmBjVqo2M6UmRTtjfTk0YUPk6g7odrv
+         AZ1n4PNnNZz8FLVJth9gvKe00C6qeJHL8WOFnv0P3aIFi2EReHC2Y9X1bCseyOmGYQKV
+         Jc4sC+sHLMdoz71YmXBCL6maco2y7fh2gcb6H9GKRSMHRBr+Cl4D8V8tz2v7iuiKkt3k
+         W2GVCiza5nQZYHoat17dlMCWuYIl8KyAPOwVkNZ2+s5dlboLsXj3MArLPs7Rtqavszdb
+         WE8KpoKlvKivcS8H6LYYpIVYSQotsi+X1rSOb+S4xzgAGfTNkZv6PHE3ZqxIDyZZQSwa
+         vomw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=tz7ZefK1LbrDSKn0DwrEqUV/sh3GPJSqGEK8Q3VVW7I=;
-        b=m8Sy/XoCo0yOFsDq6fHm0uINj5mjAe6tQc/CG5V8rWg/D/tVyVpwoPtzvcYnkDcBtT
-         fK50tievlKqFxd/CEFI1c0t/D3US1YIfW1UQ5M4xsyUQc59l6jOv43wzUXCH0D52Rdq3
-         oiZtOBHFu9zf4H7neuC21D8cJS7rD9QGirA6ASRcMK29zDe6KJuXiiJ+dFB0xPSoA2XD
-         4SQtgu9007zHVmDy3QG66hCyUZVuZS1qHL/1rOjZuCLk/WuwX0qVB7a0/9ZQZ7t+KXxq
-         a9anPk4bzccqp7Zq2w9Udo8+IKTFQBoesxlBq0qArkUOkULbpehBYAvioRTJxpLOZBOp
-         Ur/g==
-X-Gm-Message-State: AOUpUlHVtj8ViSq2H9AHjv3vSWjwN6bKlitj2PeCkkKABd7Pqb2tTBcc
-        Kce8bKI6vkc1C9VePflNTj+LW+IM
-X-Google-Smtp-Source: AA+uWPxdp/J0jiBxkmXAQAVIsAW/MOp8Q42nxoESDpgdQrxilpiZxzIPZBnpjcCDXs+zBvHRn8gvlg==
-X-Received: by 2002:a62:3306:: with SMTP id z6-v6mr25054727pfz.85.1534295121572;
-        Tue, 14 Aug 2018 18:05:21 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.57? ([2402:f000:1:1501:200:5efe:a66f:4739])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm36718418pfg.21.2018.08.14.18.05.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Aug 2018 18:05:21 -0700 (PDT)
-Subject: Re: [BUG] kernel: rcu: a possible sleep-in-atomic-context bug in
- srcu_read_delay()
-To:     paulmck@linux.vnet.ibm.com
-Cc:     dave@stgolabs.net, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <4179b4d2-b832-abcd-d407-b865765f28d6@gmail.com>
- <20180813041826.GL24813@linux.vnet.ibm.com>
- <5b3fd721-541c-5165-ef54-d6c476318d92@gmail.com>
- <20180813124232.GM24813@linux.vnet.ibm.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <5a9b96db-07a2-67bb-c2ab-6ee1f5c0e24d@gmail.com>
-Date:   Wed, 15 Aug 2018 09:05:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m3e1kVnJ8jDYpUaQegebiyDo9+ltxR6W39l+IdShOJo=;
+        b=V8CpNgq0WTsaVkwdWDcgLIucDGeGCON7Xx5NAMPdeINgpk8R/dmMvcPoHm7GcjxeOc
+         Gcc+Ywob1E1rYtHwOtO/9ugEsPanm9yZayAK9/+H4jLUGM37BEpUK0trLSM9A4d3ZE6L
+         z+Z6tfaybsjFW0x+WdO71SQboO56lYvwg21BRUs9X9j6cy013q3e8qjsn0ax3iTvkqxQ
+         CG0nMZa1CVsL3/8W6aqJIRvgIHpqNRH0VmsfB6mOq+hVQkQ9zjrjKvG0N5CFMcVFPpKg
+         /tmn1JlkBTPAD6dHSwTDmTt3+Q8jJAb+ABinJ2AXppFFzf673Qp8mBoAulL+LgS9SAWb
+         dMaQ==
+X-Gm-Message-State: AOUpUlEraW35oL3lQ0d4RMTGgiq5To/5h9X4oXNKU6fora4e7n0JbmWL
+        ZcrYqK0qz3TMWDfLdPQ5tcceDciybq9nPQjgGFZHEw==
+X-Google-Smtp-Source: AA+uWPwvhmy09ACHq+S+8oSNU8riSv2zAHR5QCcDV+z1sz9vK5xSZ8yLE/GMDX3eADz7blsQRpawxxZIOOkvW5Qfx5o=
+X-Received: by 2002:a9f:2c87:: with SMTP id w7-v6mr15378043uaj.21.1534295892682;
+ Tue, 14 Aug 2018 18:18:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180813124232.GM24813@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20180815003620.15678-1-guro@fb.com>
+In-Reply-To: <20180815003620.15678-1-guro@fb.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 14 Aug 2018 18:18:01 -0700
+Message-ID: <CALvZod5LW_vCNbb6=PartjujnWcOiYbaAiANR_g+Dzwpp23BmA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] mm: rework memcg kernel stack accounting
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, luto@kernel.org,
+        koct9i@gmail.com, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/8/13 20:42, Paul E. McKenney wrote:
-> On Mon, Aug 13, 2018 at 05:26:49PM +0800, Jia-Ju Bai wrote:
->>
->> On 2018/8/13 12:18, Paul E. McKenney wrote:
->>> On Mon, Aug 13, 2018 at 11:04:10AM +0800, Jia-Ju Bai wrote:
->>>> The kernel may sleep with holding a spinlock.
->>>>
->>>> The function call paths (from bottom to top) in Linux-4.16 are:
->>>>
->>>> [FUNC] schedule_timeout_interruptible
->>>> kernel/rcu/rcutorture.c, 523: schedule_timeout_interruptible in
->>>> srcu_read_delay
->>>> kernel/rcu/rcutorture.c, 1105: [FUNC_PTR]srcu_read_delay in
->>>> rcu_torture_timer
->>>> kernel/rcu/rcutorture.c, 1104: spin_lock in rcu_torture_timer
->>>>
->>>> Note that [FUNC_PTR] means a function pointer call is used.
->>>>
->>>> I do not find a good way to fix, so I only report.
->>>> This is found by my static analysis tool (DSAC).
->>> Interesting.  I would have expected to have gotten a "scheduling while
->>> atomic" error message, which I do not recall seeing.  And I ran a great
->>> deal of rcutorture on v4.16.
->>>
->>> So let's see...  As you say, the rcu_torture_timer() function does in
->>> fact acquire rand_lock in 4.16 and 4.17, in which case sleeping would
->>> indeed be illegal.  But let's take a look at srcu_read_delay():
->>>
->>> static void
->>> srcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
->>> {
->>> 	long delay;
->>> 	const long uspertick = 1000000 / HZ;
->>> 	const long longdelay = 10;
->>>
->>> 	/* We want there to be long-running readers, but not all the time. */
->>>
->>> 	delay = torture_random(rrsp) %
->>> 		(nrealreaders * 2 * longdelay * uspertick);
->>> 	if (!delay && in_task()) {
->>> 		schedule_timeout_interruptible(longdelay);
->>> 		rtrsp->rt_delay_jiffies = longdelay;
->>> 	} else {
->>> 		rcu_read_delay(rrsp, rtrsp);
->>> 	}
->>> }
->>>
->>> The call to schedule_timeout_interruptible() cannot happen unless the
->>> in_task() macro returns true, which it won't if the SOFTIRQ_OFFSET bit
->>> is set:
->>>
->>> #define in_task()		(!(preempt_count() & \
->>> 				   (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
->>>
->>> And the SOFTIRQ_OFFSET bit will be set if srcu_read_delay()
->>> is invoked from a timer handler, which is the case for the
->>> call from rcu_torture_timer().  So if that lock is held,
->>> schedule_timeout_interruptible() won't ever be invoked.
->> Thanks for your reply :)
->> My tool does not track this bit...
->> Sorry for this false report.
-> Not a problem, a few false positives are to be expected.  And it looks
-> like you have some work to do on your tool -- which is good, because I
-> would not want you to be bored.  ;-)
+On Tue, Aug 14, 2018 at 5:37 PM Roman Gushchin <guro@fb.com> wrote:
 >
-> 							Thanx, Paul
+> If CONFIG_VMAP_STACK is set, kernel stacks are allocated
+> using __vmalloc_node_range() with __GFP_ACCOUNT. So kernel
+> stack pages are charged against corresponding memory cgroups
+> on allocation and uncharged on releasing them.
 >
+> The problem is that we do cache kernel stacks in small
+> per-cpu caches and do reuse them for new tasks, which can
+> belong to different memory cgroups.
+>
+> Each stack page still holds a reference to the original cgroup,
+> so the cgroup can't be released until the vmap area is released.
+>
+> To make this happen we need more than two subsequent exits
+> without forks in between on the current cpu, which makes it
+> very unlikely to happen. As a result, I saw a significant number
+> of dying cgroups (in theory, up to 2 * number_of_cpu +
+> number_of_tasks), which can't be released even by significant
+> memory pressure.
+>
+> As a cgroup structure can take a significant amount of memory
+> (first of all, per-cpu data like memcg statistics), it leads
+> to a noticeable waste of memory.
+>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
 
-Thanks for your advice.
-I will improve my tool to produce less false positives :)
+I was also looking into this issue. I was thinking of having a
+per-memcg per-cpu stack cache. However this solution seems much
+simpler. Can you also add the performance number for a similar simple
+benchmark done in ac496bf48d97 ("fork: Optimize task creation by
+caching two thread stacks per CPU if CONFIG_VMAP_STACK=y").
 
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
 
-Best wishes,
-Jia-Ju Bai
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> ---
+>  kernel/fork.c | 44 ++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 69b6fea5a181..91872b2b37bd 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -224,9 +224,14 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
+>                 return s->addr;
+>         }
+>
+> +       /*
+> +        * Allocated stacks are cached and later reused by new threads,
+> +        * so memcg accounting is performed manually on assigning/releasing
+> +        * stacks to tasks. Drop __GFP_ACCOUNT.
+> +        */
+>         stack = __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
+>                                      VMALLOC_START, VMALLOC_END,
+> -                                    THREADINFO_GFP,
+> +                                    THREADINFO_GFP & ~__GFP_ACCOUNT,
+>                                      PAGE_KERNEL,
+>                                      0, node, __builtin_return_address(0));
+>
+> @@ -246,12 +251,41 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
+>  #endif
+>  }
+>
+> +static void memcg_charge_kernel_stack(struct task_struct *tsk)
+> +{
+> +#ifdef CONFIG_VMAP_STACK
+> +       struct vm_struct *vm = task_stack_vm_area(tsk);
+> +
+> +       if (vm) {
+> +               int i;
+> +
+> +               for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++)
+> +                       memcg_kmem_charge(vm->pages[i], __GFP_NOFAIL,
+> +                                         compound_order(vm->pages[i]));
+> +
+> +               /* All stack pages belong to the same memcg. */
+> +               mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
+> +                                    THREAD_SIZE / 1024);
+> +       }
+> +#endif
+> +}
+> +
+>  static inline void free_thread_stack(struct task_struct *tsk)
+>  {
+>  #ifdef CONFIG_VMAP_STACK
+> -       if (task_stack_vm_area(tsk)) {
+> +       struct vm_struct *vm = task_stack_vm_area(tsk);
+> +
+> +       if (vm) {
+>                 int i;
+>
+> +               /* All stack pages belong to the same memcg. */
+> +               mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
+> +                                    -(int)(THREAD_SIZE / 1024));
+> +
+> +               for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++)
+> +                       memcg_kmem_uncharge(vm->pages[i],
+> +                                         compound_order(vm->pages[i]));
+> +
+>                 for (i = 0; i < NR_CACHED_STACKS; i++) {
+>                         if (this_cpu_cmpxchg(cached_stacks[i],
+>                                         NULL, tsk->stack_vm_area) != NULL)
+> @@ -352,10 +386,6 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
+>                                             NR_KERNEL_STACK_KB,
+>                                             PAGE_SIZE / 1024 * account);
+>                 }
+> -
+> -               /* All stack pages belong to the same memcg. */
+> -               mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
+> -                                    account * (THREAD_SIZE / 1024));
+>         } else {
+>                 /*
+>                  * All stack pages are in the same zone and belong to the
+> @@ -809,6 +839,8 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+>         if (!stack)
+>                 goto free_tsk;
+>
+> +       memcg_charge_kernel_stack(tsk);
+> +
+>         stack_vm_area = task_stack_vm_area(tsk);
+>
+>         err = arch_dup_task_struct(tsk, orig);
+> --
+> 2.14.4
+>
