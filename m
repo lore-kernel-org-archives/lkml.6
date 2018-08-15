@@ -2,198 +2,524 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F07C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F0AC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E2821530
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:00:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E2821530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C3552152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:01:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b="UbCnaKKy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C3552152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dd-wrt.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730105AbeHOTxu (ORCPT
+        id S1730153AbeHOTym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:53:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29865 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729381AbeHOTxt (ORCPT
+        Wed, 15 Aug 2018 15:54:42 -0400
+Received: from webmail.newmedia-net.de ([185.84.6.166]:39134 "EHLO
+        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729437AbeHOTym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:53:49 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7FGxWTe126673
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:00:51 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kvr2tg9c8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:00:50 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 15 Aug 2018 11:00:49 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Aug 2018 11:00:45 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7FH0gIG12517404
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 Aug 2018 10:00:42 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9A3E136060;
-        Wed, 15 Aug 2018 11:00:42 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 854F2136051;
-        Wed, 15 Aug 2018 11:00:39 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.175.5])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Aug 2018 11:00:39 -0600 (MDT)
-Subject: Re: [PATCH v9 11/22] s390: vfio-ap: sysfs interfaces to configure
- domains
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180815140505.36d3138e.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 15 Aug 2018 13:00:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 15 Aug 2018 15:54:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dd-wrt.com; s=mikd;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=jNTsBqOt5EKE6I/1Ef6TDfgnJoqM6Bvh6tBxN9c/5qE=;
+        b=UbCnaKKy02ELA1hJgwibttmxoXGnTnk314Om55GduaGh4YaQCgIt+/9VylngVIKSUUQwR5rPhijIj3gMMrxw2STFhpFDGqyVTi2FmJXMWic0xuby5hjKrzjVh7y4ZAgEEiqc29wHowDj1hVhC2tJIRGY8txizoiqIFpw6ahy8no=;
+Subject: Re: [PATCH 4.9 000/107] 4.9.120-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180814171520.883143803@linuxfoundation.org>
+From:   Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Message-ID: <6272e062-6cfc-0669-bebf-ebb039da051a@dd-wrt.com>
+Date:   Wed, 15 Aug 2018 19:01:38 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180815140505.36d3138e.cohuck@redhat.com>
+In-Reply-To: <20180814171520.883143803@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18081517-0016-0000-0000-0000091AFB13
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009550; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01073947; UDB=6.00553401; IPR=6.00853906;
- MB=3.00022736; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-15 17:00:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081517-0017-0000-0000-000040022DCE
-Message-Id: <6727d228-c225-c7cc-2074-a5c69d233caa@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808150179
+Content-Transfer-Encoding: 8bit
+X-Received:  from [212.111.244.1] (helo=[172.29.0.209])
+        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.72)
+        (envelope-from <s.gottschall@dd-wrt.com>)
+        id 1fpzAx-0000AO-Dc; Wed, 15 Aug 2018 19:01:39 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/15/2018 08:05 AM, Cornelia Huck wrote:
-> On Mon, 13 Aug 2018 17:48:08 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+nother issue seen on xscale and as it affects all non SMP configured kernels
+
+
+kernel/cpu.c: In function 'boot_cpu_hotplug_init':
+kernel/cpu.c:2204:28: error: 'struct cpuhp_cpu_state' has no member 
+named 'booted_once'
+   this_cpu_write(cpuhp_state.booted_once, true);
+
+Am 14.08.2018 um 19:16 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 4.9.120 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces two new sysfs attributes for the VFIO mediated
->> matrix device for assigning AP domains to and unassigning
->> AP domains from a mediated matrix device. The IDs of the
->> AP domains assigned to the mediated matrix device will be
->> stored in an AP queue mask (AQM).
->>
->> The bits in the AQM, from most significant to least
->> significant bit, correspond to AP queue index (APQI) 0 to
->> 255 (note that an APQI is synonymous with with a domain ID).
->> On some systems, the maximum allowable domain number may be
->> less than 255 - depending upon the host's AP configuration -
->> and assignment may be rejected if the input domain ID exceeds
->> the limit.
->>
->> When a domain is assigned, the bit corresponding to the APQI
->> will be set in the AQM. Likewise, when a domain is unassigned,
->> the bit corresponding to the APQI will be cleared from the AQM.
->>
->> In order to successfully assign a domain, the APQNs derived from
->> the domain ID being assigned and the adapter numbers of all
->> adapters previously assigned:
->>
->> 1. Must be bound to the vfio_ap device driver.
->>
->> 2. Must not be assigned to any other mediated matrix device.
->>
->> If there are no adapters assigned to the mdev, then there must
->> be an AP queue bound to the vfio_ap device driver with an
->> APQN containing the domain ID (i.e., APQI), otherwise all
->> adapters subsequently assigned will fail because there will be no
->> AP queues bound with an APQN containing the APQI.
->>
->> Assigning or un-assigning an AP domain will also be rejected if
->> a guest using the mediated matrix device is running.
->>
->> The relevant sysfs structures are:
->>
->> /sys/devices/vfio_ap/matrix/
->> ...... [mdev_supported_types]
->> ......... [vfio_ap-passthrough]
->> ............ [devices]
->> ...............[$uuid]
->> .................. assign_domain
->> .................. unassign_domain
->>
->> To assign a domain to the $uuid mediated matrix device,
->> write the domain's ID to the assign_domain file. To
->> unassign a domain, write the domain's ID to the
->> unassign_domain file. The ID is specified using
->> conventional semantics: If it begins with 0x, the number
->> will be parsed as a hexadecimal (case insensitive) number;
->> if it begins with 0, it will be parsed as an octal number;
->> otherwise, it will be parsed as a decimal number.
->>
->> For example, to assign domain 173 (0xad) to the mediated matrix
->> device $uuid:
->>
->> 	echo 173 > assign_domain
->>
->> 	or
->>
->> 	echo 0255 > assign_domain
->>
->> 	or
->>
->> 	echo 0xad > assign_domain
->>
->> To unassign domain 173 (0xad):
->>
->> 	echo 173 > unassign_domain
->>
->> 	or
->>
->> 	echo 0255 > unassign_domain
->>
->> 	or
->>
->> 	echo 0xad > unassign_domain
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c |   88 ++++++++++++++++++++++++++++++++++++-
->>   1 files changed, 87 insertions(+), 1 deletions(-)
-> Looks sane to me.
-
-Sanity rules!
-
+> Responses should be made by Thu Aug 16 17:14:53 UTC 2018.
+> Anything received after that time might be too late.
 >
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.120-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+> -------------
+> Pseudo-Shortlog of commits:
+>
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>      Linux 4.9.120-rc1
+>
+> Josh Poimboeuf <jpoimboe@redhat.com>
+>      x86/microcode: Allow late microcode loading with SMT disabled
+>
+> Ashok Raj <ashok.raj@intel.com>
+>      x86/microcode: Do not upload microcode if CPUs are offline
+>
+> David Woodhouse <dwmw@amazon.co.uk>
+>      tools headers: Synchronise x86 cpufeatures.h for L1TF additions
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/mm/kmmio: Make the tracer robust against L1TF
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/mm/pat: Make set_memory_np() L1TF safe
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Make pmd/pud_mknotpresent() invert
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Invert all not present mappings
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Fix SMT supported evaluation
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      KVM: VMX: Tell the nested hypervisor to skip L1D flush on vmentry
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      x86/speculation: Use ARCH_CAPABILITIES to skip L1D flush on vmentry
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      x86/speculation: Simplify sysfs report of VMX L1TF vulnerability
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      KVM: VMX: support MSR_IA32_ARCH_CAPABILITIES as a feature MSR
+>
+> Wanpeng Li <wanpengli@tencent.com>
+>      KVM: X86: Allow userspace to define the microcode version
+>
+> Wanpeng Li <wanpengli@tencent.com>
+>      KVM: X86: Introduce kvm_get_msr_feature()
+>
+> Tom Lendacky <thomas.lendacky@amd.com>
+>      KVM: SVM: Add MSR-based feature support for serializing LFENCE
+>
+> Tom Lendacky <thomas.lendacky@amd.com>
+>      KVM: x86: Add a framework for supporting MSR-based features
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      Documentation/l1tf: Remove Yonah processors from not vulnerable list
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/KVM/VMX: Don't set l1tf_flush_l1d from vmx_handle_external_intr()
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/irq: Let interrupt handlers set kvm_cpu_l1tf_flush_l1d
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86: Don't include linux/irq.h from asm/hardirq.h
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/KVM/VMX: Introduce per-host-cpu analogue of l1tf_flush_l1d
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/irq: Demote irq_cpustat_t::__softirq_pending to u16
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/KVM/VMX: Move the l1tf_flush_l1d test to vmx_l1d_flush()
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/KVM/VMX: Replace 'vmx_l1d_flush_always' with 'vmx_l1d_flush_cond'
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/KVM/VMX: Don't set l1tf_flush_l1d to true from vmx_l1d_flush()
+>
+> Josh Poimboeuf <jpoimboe@redhat.com>
+>      cpu/hotplug: detect SMT disabled by BIOS
+>
+> Tony Luck <tony.luck@intel.com>
+>      Documentation/l1tf: Fix typos
+>
+> Nicolai Stange <nstange@suse.de>
+>      x86/KVM/VMX: Initialize the vmx_l1d_flush_pages' content
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      Documentation: Add section about CPU vulnerabilities
+>
+> Jiri Kosina <jkosina@suse.cz>
+>      x86/bugs, kvm: Introduce boot-time control of L1TF mitigations
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Set CPU_SMT_NOT_SUPPORTED early
+>
+> Jiri Kosina <jkosina@suse.cz>
+>      cpu/hotplug: Expose SMT control init function
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/kvm: Allow runtime control of L1D flush
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/kvm: Serialize L1D flush parameter setter
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/kvm: Add static key for flush always
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/kvm: Move l1tf setup function
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/l1tf: Handle EPT disabled state proper
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/kvm: Drop L1TF MSR list approach
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/litf: Introduce vmx status variable
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Online siblings when SMT control is turned on
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM/VMX: Use MSR save list for IA32_FLUSH_CMD if required
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM/VMX: Extend add_atomic_switch_msr() to allow VMENTER only MSRs
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM/VMX: Separate the VMX AUTOLOAD guest/host number accounting
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM/VMX: Add find_msr() helper function
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM/VMX: Split the VMX MSR LOAD structures to have an host/guest numbers
+>
+> Jim Mattson <jmattson@google.com>
+>      kvm: nVMX: Update MSR load counts on a VMCS switch
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      x86/KVM/VMX: Add L1D flush logic
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      x86/KVM/VMX: Add L1D MSR based flush
+>
+> Paolo Bonzini <pbonzini@redhat.com>
+>      x86/KVM/VMX: Add L1D flush algorithm
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM/VMX: Add module argument for L1TF mitigation
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/KVM: Warn user if KVM is loaded SMT and L1TF CPU bug being present
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Boot HT siblings at least once
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      Revert "x86/apic: Ignore secondary threads if nosmt=force"
+>
+> Michal Hocko <mhocko@suse.cz>
+>      x86/speculation/l1tf: Fix up pte->pfn conversion for PAE
+>
+> Vlastimil Babka <vbabka@suse.cz>
+>      x86/speculation/l1tf: Protect PAE swap entries against L1TF
+>
+> Borislav Petkov <bp@suse.de>
+>      x86/CPU/AMD: Move TOPOEXT reenablement before reading smp_num_siblings
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/cpufeatures: Add detection of L1D cache flush support.
+>
+> Vlastimil Babka <vbabka@suse.cz>
+>      x86/speculation/l1tf: Extend 64bit swap file size limit
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/apic: Ignore secondary threads if nosmt=force
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/cpu/AMD: Evaluate smp_num_siblings early
+>
+> Borislav Petkov <bp@suse.de>
+>      x86/CPU/AMD: Do not check CPUID max ext level before parsing SMP info
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/cpu/intel: Evaluate smp_num_siblings early
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/cpu/topology: Provide detect_extended_topology_early()
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/cpu/common: Provide detect_ht_early()
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/cpu/AMD: Remove the pointless detect_ht() call
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/cpu: Remove the pointless CPU printout
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Provide knobs to control SMT
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Split do_cpu_down()
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      cpu/hotplug: Make bringup/teardown of smp threads symmetric
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/topology: Provide topology_smt_supported()
+>
+> Thomas Gleixner <tglx@linutronix.de>
+>      x86/smp: Provide topology_is_primary_thread()
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>      x86/bugs: Move the l1tf function and define pr_fmt properly
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Limit swap file size to MAX_PA/2
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Disallow non privileged high MMIO PROT_NONE mappings
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Add sysfs reporting for l1tf
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Make sure the first page is always reserved
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation
+>
+> Linus Torvalds <torvalds@linux-foundation.org>
+>      x86/speculation/l1tf: Protect swap entries against L1TF
+>
+> Linus Torvalds <torvalds@linux-foundation.org>
+>      x86/speculation/l1tf: Change order of offset/type in swap entry
+>
+> Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+>      mm: x86: move _PAGE_SWP_SOFT_DIRTY from bit 7 to bit 1
+>
+> Andi Kleen <ak@linux.intel.com>
+>      x86/speculation/l1tf: Increase 32bit PAE __PHYSICAL_PAGE_SHIFT
+>
+> Nick Desaulniers <ndesaulniers@google.com>
+>      x86/irqflags: Provide a declaration for native_save_fl
+>
+> Masami Hiramatsu <mhiramat@kernel.org>
+>      kprobes/x86: Fix %p uses in error messages
+>
+> Jiri Kosina <jkosina@suse.cz>
+>      x86/speculation: Protect against userspace-userspace spectreRSB
+>
+> Peter Zijlstra <peterz@infradead.org>
+>      x86/paravirt: Fix spectre-v2 mitigations for paravirt guests
+>
+> Oleksij Rempel <o.rempel@pengutronix.de>
+>      ARM: dts: imx6sx: fix irq for pcie bridge
+>
+> Michael Mera <dev@michaelmera.com>
+>      IB/ocrdma: fix out of bounds access to local buffer
+>
+> Fabio Estevam <fabio.estevam@nxp.com>
+>      mtd: nand: qcom: Add a NULL check for devm_kasprintf()
+>
+> Jack Morgenstein <jackm@dev.mellanox.co.il>
+>      IB/mlx4: Mark user MR as writable if actual virtual memory is writable
+>
+> Jack Morgenstein <jackm@dev.mellanox.co.il>
+>      IB/core: Make testing MR flags for writability a static inline function
+>
+> Eric W. Biederman <ebiederm@xmission.com>
+>      proc: Fix proc_sys_prune_dcache to hold a sb reference
+>
+> Eric W. Biederman <ebiederm@xmission.com>
+>      proc/sysctl: Don't grab i_lock under sysctl_lock.
+>
+> Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>      proc/sysctl: prune stale dentries during unregistering
+>
+> Al Viro <viro@zeniv.linux.org.uk>
+>      fix __legitimize_mnt()/mntput() race
+>
+> Al Viro <viro@zeniv.linux.org.uk>
+>      fix mntput/mntput race
+>
+> Al Viro <viro@zeniv.linux.org.uk>
+>      make sure that __dentry_kill() always invalidates d_seq, unhashed or not
+>
+> Al Viro <viro@zeniv.linux.org.uk>
+>      root dentries need RCU-delayed freeing
+>
+> Linus Torvalds <torvalds@linux-foundation.org>
+>      init: rename and re-order boot_cpu_state_init()
+>
+> Bart Van Assche <bart.vanassche@wdc.com>
+>      scsi: sr: Avoid that opening a CD-ROM hangs with runtime power management enabled
+>
+> Hans de Goede <hdegoede@redhat.com>
+>      ACPI / LPSS: Add missing prv_offset setting for byt/cht PWM devices
+>
+> Juergen Gross <jgross@suse.com>
+>      xen/netfront: don't cache skb_shinfo()
+>
+> Linus Torvalds <torvalds@linux-foundation.org>
+>      Mark HI and TASKLET softirq synchronous
+>
+> Andrey Konovalov <andreyknvl@google.com>
+>      kasan: add no_sanitize attribute for clang builds
+>
+> John David Anglin <dave.anglin@bell.net>
+>      parisc: Define mb() and add memory barriers to assembler unlock sequences
+>
+> Helge Deller <deller@gmx.de>
+>      parisc: Enable CONFIG_MLONGCALLS by default
+>
+> Tadeusz Struk <tadeusz.struk@intel.com>
+>      tpm: fix race condition in tpm_common_write()
+>
+> Theodore Ts'o <tytso@mit.edu>
+>      ext4: fix check to prevent initializing reserved inodes
+>
+>
+> -------------
+>
+> Diffstat:
+>
+>   Documentation/ABI/testing/sysfs-devices-system-cpu |  24 +
+>   Documentation/index.rst                            |   1 +
+>   Documentation/kernel-parameters.txt                |  78 +++
+>   Documentation/l1tf.rst                             | 610 +++++++++++++++++++++
+>   Documentation/virtual/kvm/api.txt                  |  40 +-
+>   Makefile                                           |   4 +-
+>   arch/Kconfig                                       |   3 +
+>   arch/arm/boot/dts/imx6sx.dtsi                      |   2 +-
+>   arch/parisc/Kconfig                                |   2 +-
+>   arch/parisc/include/asm/barrier.h                  |  32 ++
+>   arch/parisc/kernel/entry.S                         |   2 +
+>   arch/parisc/kernel/pacache.S                       |   1 +
+>   arch/parisc/kernel/syscall.S                       |   4 +
+>   arch/x86/Kconfig                                   |   1 +
+>   arch/x86/include/asm/apic.h                        |  10 +
+>   arch/x86/include/asm/cpufeatures.h                 |   4 +-
+>   arch/x86/include/asm/dmi.h                         |   2 +-
+>   arch/x86/include/asm/hardirq.h                     |  26 +-
+>   arch/x86/include/asm/irqflags.h                    |   2 +
+>   arch/x86/include/asm/kvm_host.h                    |   9 +
+>   arch/x86/include/asm/msr-index.h                   |   7 +
+>   arch/x86/include/asm/page_32_types.h               |   9 +-
+>   arch/x86/include/asm/pgtable-2level.h              |  17 +
+>   arch/x86/include/asm/pgtable-3level.h              |  37 +-
+>   arch/x86/include/asm/pgtable-invert.h              |  32 ++
+>   arch/x86/include/asm/pgtable.h                     |  85 ++-
+>   arch/x86/include/asm/pgtable_64.h                  |  48 +-
+>   arch/x86/include/asm/pgtable_types.h               |  10 +-
+>   arch/x86/include/asm/processor.h                   |  17 +
+>   arch/x86/include/asm/topology.h                    |   6 +-
+>   arch/x86/include/asm/vmx.h                         |  11 +
+>   arch/x86/kernel/apic/apic.c                        |  17 +
+>   arch/x86/kernel/apic/htirq.c                       |   2 +
+>   arch/x86/kernel/apic/io_apic.c                     |   1 +
+>   arch/x86/kernel/apic/msi.c                         |   1 +
+>   arch/x86/kernel/apic/vector.c                      |   1 +
+>   arch/x86/kernel/cpu/amd.c                          |  53 +-
+>   arch/x86/kernel/cpu/bugs.c                         | 171 ++++--
+>   arch/x86/kernel/cpu/common.c                       |  56 +-
+>   arch/x86/kernel/cpu/cpu.h                          |   2 +
+>   arch/x86/kernel/cpu/intel.c                        |   7 +
+>   arch/x86/kernel/cpu/microcode/core.c               |  26 +
+>   arch/x86/kernel/cpu/topology.c                     |  41 +-
+>   arch/x86/kernel/fpu/core.c                         |   1 +
+>   arch/x86/kernel/ftrace.c                           |   1 +
+>   arch/x86/kernel/hpet.c                             |   1 +
+>   arch/x86/kernel/i8259.c                            |   1 +
+>   arch/x86/kernel/irq.c                              |   1 +
+>   arch/x86/kernel/irq_32.c                           |   1 +
+>   arch/x86/kernel/irq_64.c                           |   1 +
+>   arch/x86/kernel/irqinit.c                          |   1 +
+>   arch/x86/kernel/kprobes/core.c                     |   5 +-
+>   arch/x86/kernel/kprobes/opt.c                      |   1 +
+>   arch/x86/kernel/paravirt.c                         |  14 +-
+>   arch/x86/kernel/setup.c                            |   6 +
+>   arch/x86/kernel/smp.c                              |   1 +
+>   arch/x86/kernel/smpboot.c                          |  18 +
+>   arch/x86/kernel/time.c                             |   1 +
+>   arch/x86/kvm/svm.c                                 |  46 +-
+>   arch/x86/kvm/vmx.c                                 | 426 ++++++++++++--
+>   arch/x86/kvm/x86.c                                 | 133 ++++-
+>   arch/x86/mm/fault.c                                |   1 +
+>   arch/x86/mm/init.c                                 |  23 +
+>   arch/x86/mm/kaiser.c                               |   1 +
+>   arch/x86/mm/kmmio.c                                |  25 +-
+>   arch/x86/mm/mmap.c                                 |  21 +
+>   arch/x86/mm/pageattr.c                             |   8 +-
+>   arch/x86/platform/efi/efi_64.c                     |   1 +
+>   arch/x86/platform/efi/quirks.c                     |   1 +
+>   .../intel-mid/device_libs/platform_mrfld_wdt.c     |   1 +
+>   arch/x86/platform/uv/tlb_uv.c                      |   1 +
+>   arch/x86/xen/enlighten.c                           |   1 +
+>   arch/x86/xen/setup.c                               |   1 +
+>   drivers/acpi/acpi_lpss.c                           |   2 +
+>   drivers/base/cpu.c                                 |   8 +
+>   drivers/char/tpm/tpm-dev.c                         |  43 +-
+>   drivers/infiniband/core/umem.c                     |  11 +-
+>   drivers/infiniband/hw/mlx4/mr.c                    |  50 +-
+>   drivers/infiniband/hw/ocrdma/ocrdma_stats.c        |   2 +-
+>   drivers/mtd/nand/qcom_nandc.c                      |   3 +
+>   drivers/net/xen-netfront.c                         |   8 +-
+>   drivers/pci/host/pci-hyperv.c                      |   2 +
+>   drivers/scsi/sr.c                                  |  29 +-
+>   fs/dcache.c                                        |  13 +-
+>   fs/ext4/ialloc.c                                   |   5 +-
+>   fs/ext4/super.c                                    |   8 +-
+>   fs/namespace.c                                     |  28 +-
+>   fs/proc/inode.c                                    |   3 +-
+>   fs/proc/internal.h                                 |   7 +-
+>   fs/proc/proc_sysctl.c                              |  83 ++-
+>   include/asm-generic/pgtable.h                      |  12 +
+>   include/linux/compiler-clang.h                     |   3 +
+>   include/linux/cpu.h                                |  23 +-
+>   include/linux/swapfile.h                           |   2 +
+>   include/linux/sysctl.h                             |   1 +
+>   include/rdma/ib_verbs.h                            |  14 +
+>   include/uapi/linux/kvm.h                           |   2 +
+>   init/main.c                                        |   2 +-
+>   kernel/cpu.c                                       | 282 +++++++++-
+>   kernel/smp.c                                       |   2 +
+>   kernel/softirq.c                                   |  12 +-
+>   mm/memory.c                                        |  29 +-
+>   mm/mprotect.c                                      |  49 ++
+>   mm/swapfile.c                                      |  46 +-
+>   tools/arch/x86/include/asm/cpufeatures.h           |   4 +-
+>   105 files changed, 2680 insertions(+), 366 deletions(-)
+>
+>
+>
