@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06938C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC913C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1024221569
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 871382156D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fn8xdt1e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1024221569
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmQCq81D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871382156D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeHPBEG (ORCPT
+        id S1728030AbeHPBEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:04:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45084 "EHLO mail.kernel.org"
+        Wed, 15 Aug 2018 21:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbeHPBEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:04:06 -0400
+        id S1727126AbeHPBEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 21:04:09 -0400
 Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14C6F21528;
-        Wed, 15 Aug 2018 22:10:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63C252156B;
+        Wed, 15 Aug 2018 22:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534371003;
-        bh=AOdrRv4SDDzCjjCwU/NAUQu75U9uVNCFoHfEXlKErX4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Fn8xdt1eEMn916aSoBPzb+xrPM7MVlRLY3OldxBnk4gkz7/God4p/tRz9t4okJ47h
-         ap/OCzEgMZLxgsRKwSTFLRaoP29/NnKOdD9CaEejRBjbvPFBf9b//R23vtfCnQVGuL
-         bbGkNyNq591Jha+70dfHwi6PVTEa72JigBhUnCkM=
+        s=default; t=1534371006;
+        bh=WzU0nwwwpdW+FYi/1YLXnBtzsACSdjFLOlu0qadvWJw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fmQCq81DbuY0NqBxwTMyWPg7bqy1kKJ9JCfMJvk0z6DnLYm2znQ9C5XU9fi6dwao2
+         +QvCaTRHKrwQhLXScLYkdtjUC9Uz9gYXa1lgTjonKT2avdJTi998uo8alrG4A1p6Iv
+         MEvQGEGUQrAxa3GutrUgMg/yLp9n6Zej7b9SgKOQ=
 From:   Alan Tull <atull@kernel.org>
 To:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         Randy Dunlap <rdunlap@infradead.org>,
@@ -45,10 +45,12 @@ Cc:     Appana Durga Kedareswara Rao <appanad@xilinx.com>,
         linux-doc@vger.kernel.org, Alan Tull <atull@kernel.org>,
         Alan Tull <atull@opensource.altera.com>,
         Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: [PATCH 1/2] fpga: doc: documentation for FPGA debugfs
-Date:   Wed, 15 Aug 2018 17:09:57 -0500
-Message-Id: <20180815220958.3606-1-atull@kernel.org>
+Subject: [PATCH 2/2] fpga: add FPGA manager debugfs
+Date:   Wed, 15 Aug 2018 17:09:58 -0500
+Message-Id: <20180815220958.3606-2-atull@kernel.org>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180815220958.3606-1-atull@kernel.org>
+References: <20180815220958.3606-1-atull@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,64 +58,387 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alan Tull <atull@opensource.altera.com>
 
-This patch depends on my recently submitted documentation changes
-("docs: fpga: document programming fpgas using regions")
+Implement DebugFS for the FPGA Manager Framework for
+debugging and developmental use.
 
-Document the DebugFS interface for the core FPGA Manager
-framework.
+Enabled by CONFIG_FPGA_MGR_DEBUG_FS
+
+Each FPGA gets its own directory such as
+ <debugfs>/fpga_manager/fpga0 and three files:
+
+ * [RW] flags          = flags as defined in fpga-mgr.h
+ * [RW] firmware_name  = write/read back name of FPGA image
+                         firmware file to program
+ * [WO] image          = write-only file for directly writing
+                         fpga image w/o firmware layer
+ * [RW] config_complete_timeout_us = maximum for the FPGA to
+                         go to the operating state after
+			 programming
+
+The debugfs is implemented in a separate fpga_mgr_debugfs.c
+file, but the FPGA manager core is still built as one
+module.  Note the name change from fpga-mgr.ko to fpga_mgr.ko.
 
 Signed-off-by: Alan Tull <atull@kernel.org>
 Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 ---
- Documentation/driver-api/fpga/fpga-mgr.rst | 38 ++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/fpga/Kconfig            |   7 ++
+ drivers/fpga/Makefile           |   4 +-
+ drivers/fpga/fpga-mgr-debugfs.c | 221 ++++++++++++++++++++++++++++++++++++++++
+ drivers/fpga/fpga-mgr-debugfs.h |  22 ++++
+ drivers/fpga/fpga-mgr.c         |   8 ++
+ include/linux/fpga/fpga-mgr.h   |   3 +
+ 6 files changed, 264 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/fpga/fpga-mgr-debugfs.c
+ create mode 100644 drivers/fpga/fpga-mgr-debugfs.h
 
-diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
-index 576f194..d7ca320 100644
---- a/Documentation/driver-api/fpga/fpga-mgr.rst
-+++ b/Documentation/driver-api/fpga/fpga-mgr.rst
-@@ -125,3 +125,41 @@ API for implementing a new FPGA Manager driver
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 1ebcef4..600924d 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -9,6 +9,13 @@ menuconfig FPGA
+ 	  kernel.  The FPGA framework adds a FPGA manager class and FPGA
+ 	  manager drivers.
  
- .. kernel-doc:: drivers/fpga/fpga-mgr.c
-    :functions: fpga_mgr_unregister
++config FPGA_MGR_DEBUG_FS
++       bool "FPGA Manager DebugFS"
++       depends on FPGA && DEBUG_FS
++       help
++         Say Y here if you want to expose a DebugFS interface for the
++	 FPGA Manager Framework.
 +
-+FPGA Manager DebugFS
-+--------------------
+ if FPGA
+ 
+ config FPGA_MGR_SOCFPGA
+diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+index 7a2d73b..62910cc 100644
+--- a/drivers/fpga/Makefile
++++ b/drivers/fpga/Makefile
+@@ -4,7 +4,9 @@
+ #
+ 
+ # Core FPGA Manager Framework
+-obj-$(CONFIG_FPGA)			+= fpga-mgr.o
++obj-$(CONFIG_FPGA)			+= fpga_mgr.o
++fpga_mgr-y				:= fpga-mgr.o
++fpga_mgr-$(CONFIG_FPGA_MGR_DEBUG_FS)	+= fpga-mgr-debugfs.o
+ 
+ # FPGA Manager Drivers
+ obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)	+= altera-cvp.o
+diff --git a/drivers/fpga/fpga-mgr-debugfs.c b/drivers/fpga/fpga-mgr-debugfs.c
+new file mode 100644
+index 0000000..f2fdf58
+--- /dev/null
++++ b/drivers/fpga/fpga-mgr-debugfs.c
+@@ -0,0 +1,221 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * FPGA Manager DebugFS
++ *
++ *  Copyright (C) 2016-2018 Intel Corporation.  All rights reserved.
++ */
++#include <linux/debugfs.h>
++#include <linux/fpga/fpga-mgr.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
 +
-+This interface allows the user to program an FPGA from userspace.  However,
-+bridges and soft IP device driver loading/unloading are not handled.  This makes
-+it really easy to mess things up by doing things like reprogramming the hardware
-+out from under a driver or reprogramming while a bridge is enabled, causing gunk
-+to go out on a CPU bus.  It should go without saying that this interface is for
-+debug and development only.  Not intended for production use.
++static struct dentry *fpga_mgr_debugfs_root;
 +
-+Each FPGA gets its own directory such as <debugfs>/fpga_manager/fpga0 and the
-+files described below.  To program the FPGA, write the ``flags`` and/or
-+``config_complete_timeout_us`` files (as needed), then use either the
-+``firmware_name`` or ``image`` file to program.
++struct fpga_mgr_debugfs {
++	struct dentry *debugfs_dir;
++	struct fpga_image_info *info;
++};
 +
-+* ``flags`` - [RW] flags as defined in fpga-mgr.h.  For example::
++static ssize_t fpga_mgr_firmware_write_file(struct file *file,
++					    const char __user *user_buf,
++					    size_t count, loff_t *ppos)
++{
++	struct fpga_manager *mgr = file->private_data;
++	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
++	struct device *dev = &mgr->dev;
++	char *buf;
++	int ret;
 +
-+   $ echo 1 > /sys/kernel/debug/fpga_manager/fpga0/flags
++	ret = fpga_mgr_lock(mgr);
++	if (ret) {
++		dev_err(dev, "FPGA manager is busy\n");
++		return -EBUSY;
++	}
 +
-+* ``config_complete_timeout_us`` - [RW] time out in microseconds to wait for the
-+  FPGA to go to operating state after region has been programmed.  Not all
-+  low level drivers use this.  For example::
++	buf = devm_kzalloc(dev, count, GFP_KERNEL);
++	if (!buf) {
++		fpga_mgr_unlock(mgr);
++		return -ENOMEM;
++	}
 +
-+   $ echo 4 > /sys/kernel/debug/fpga_manager/fpga0/config_complete_timeout_us
++	if (copy_from_user(buf, user_buf, count)) {
++		fpga_mgr_unlock(mgr);
++		devm_kfree(dev, buf);
++		return -EFAULT;
++	}
 +
-+* ``firmware_name`` - [RW] Name of an FPGA image firmware file.  Writing
-+  initiates an FPGA programming cycle.  Note that the image file must be in a
-+  directory on the firmware search path such as /lib/firmware::
++	buf[count] = 0;
++	if (buf[count - 1] == '\n')
++		buf[count - 1] = 0;
 +
-+   $ echo image.rbf > /sys/kernel/debug/fpga_manager/fpga0/firmware_name
++	/* Release previous firmware name (if any). Save current one. */
++	if (debugfs->info->firmware_name)
++		devm_kfree(dev, debugfs->info->firmware_name);
++	debugfs->info->firmware_name = buf;
 +
-+* ``image`` - [WO] Raw FPGA image data.  Writing the FPGA image data will
-+  initiate an FPGA programming cycle.  Data must be written in one chunk, for
-+  example::
++	ret = fpga_mgr_load(mgr, debugfs->info);
++	if (ret)
++		dev_err(dev, "fpga_mgr_load returned with value %d\n", ret);
 +
-+   $ dd bs=10M if=./image.rbf of=/sys/kernel/debug/fpga_manager/fpga0/image
-+    (where image.rbf < 10M)
++	fpga_mgr_unlock(mgr);
++
++	return count;
++}
++
++static ssize_t fpga_mgr_firmware_read_file(struct file *file,
++					   char __user *user_buf,
++					   size_t count, loff_t *ppos)
++{
++	struct fpga_manager *mgr = file->private_data;
++	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
++	char *buf;
++	int ret;
++
++	if (!debugfs->info->firmware_name)
++		return 0;
++
++	buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	ret = snprintf(buf, PAGE_SIZE, "%s\n", debugfs->info->firmware_name);
++	if (ret < 0) {
++		kfree(buf);
++		return ret;
++	}
++
++	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
++	kfree(buf);
++
++	return ret;
++}
++
++static const struct file_operations fpga_mgr_firmware_fops = {
++	.open = simple_open,
++	.read = fpga_mgr_firmware_read_file,
++	.write = fpga_mgr_firmware_write_file,
++	.llseek = default_llseek,
++};
++
++static ssize_t fpga_mgr_image_write_file(struct file *file,
++					 const char __user *user_buf,
++					 size_t count, loff_t *ppos)
++{
++	struct fpga_manager *mgr = file->private_data;
++	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
++	struct device *dev = &mgr->dev;
++	char *buf;
++	int ret;
++
++	dev_info(dev, "writing %zu bytes to %s\n", count, mgr->name);
++
++	ret = fpga_mgr_lock(mgr);
++	if (ret) {
++		dev_err(dev, "FPGA manager is busy\n");
++		return -EBUSY;
++	}
++
++	buf = kzalloc(count, GFP_KERNEL);
++	if (!buf) {
++		fpga_mgr_unlock(mgr);
++		return -ENOMEM;
++	}
++
++	if (copy_from_user(buf, user_buf, count)) {
++		fpga_mgr_unlock(mgr);
++		kfree(buf);
++		return -EFAULT;
++	}
++
++	/* If firmware interface was previously used, forget it. */
++	if (debugfs->info->firmware_name)
++		devm_kfree(dev, debugfs->info->firmware_name);
++	debugfs->info->firmware_name = NULL;
++
++	debugfs->info->buf = buf;
++	debugfs->info->count = count;
++
++	ret = fpga_mgr_load(mgr, debugfs->info);
++	if (ret)
++		dev_err(dev, "fpga_mgr_load returned with value %d\n", ret);
++
++	fpga_mgr_unlock(mgr);
++
++	debugfs->info->buf = NULL;
++	debugfs->info->count = 0;
++
++	kfree(buf);
++
++	return count;
++}
++
++static const struct file_operations fpga_mgr_image_fops = {
++	.open = simple_open,
++	.write = fpga_mgr_image_write_file,
++	.llseek = default_llseek,
++};
++
++void fpga_mgr_debugfs_add(struct fpga_manager *mgr)
++{
++	struct device *dev = &mgr->dev;
++	struct fpga_mgr_debugfs *debugfs;
++	struct fpga_image_info *info;
++
++	if (!fpga_mgr_debugfs_root)
++		return;
++
++	debugfs = kzalloc(sizeof(*debugfs), GFP_KERNEL);
++	if (!debugfs)
++		return;
++
++	info = fpga_image_info_alloc(dev);
++	if (!info) {
++		kfree(debugfs);
++		return;
++	}
++	debugfs->info = info;
++
++	debugfs->debugfs_dir = debugfs_create_dir(dev_name(dev),
++						  fpga_mgr_debugfs_root);
++
++	debugfs_create_file("firmware_name", 0600, debugfs->debugfs_dir, mgr,
++			    &fpga_mgr_firmware_fops);
++
++	debugfs_create_file("image", 0200, debugfs->debugfs_dir, mgr,
++			    &fpga_mgr_image_fops);
++
++	debugfs_create_u32("flags", 0600, debugfs->debugfs_dir, &info->flags);
++
++	debugfs_create_u32("config_complete_timeout_us", 0600,
++			   debugfs->debugfs_dir,
++			   &info->config_complete_timeout_us);
++
++	mgr->debugfs = debugfs;
++}
++
++void fpga_mgr_debugfs_remove(struct fpga_manager *mgr)
++{
++	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
++
++	if (!fpga_mgr_debugfs_root)
++		return;
++
++	debugfs_remove_recursive(debugfs->debugfs_dir);
++
++	/* this function also frees debugfs->info->firmware_name */
++	fpga_image_info_free(debugfs->info);
++
++	kfree(debugfs);
++}
++
++void fpga_mgr_debugfs_init(void)
++{
++	fpga_mgr_debugfs_root = debugfs_create_dir("fpga_manager", NULL);
++	if (!fpga_mgr_debugfs_root)
++		pr_warn("fpga_mgr: Failed to create debugfs root\n");
++}
++
++void fpga_mgr_debugfs_uninit(void)
++{
++	debugfs_remove_recursive(fpga_mgr_debugfs_root);
++}
+diff --git a/drivers/fpga/fpga-mgr-debugfs.h b/drivers/fpga/fpga-mgr-debugfs.h
+new file mode 100644
+index 0000000..17cd3eb
+--- /dev/null
++++ b/drivers/fpga/fpga-mgr-debugfs.h
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#ifndef _LINUX_FPGA_MGR_DEBUGFS_H
++#define _LINUX_FPGA_MGR_DEBUGFS_H
++
++#if IS_ENABLED(CONFIG_FPGA_MGR_DEBUG_FS)
++
++void fpga_mgr_debugfs_add(struct fpga_manager *mgr);
++void fpga_mgr_debugfs_remove(struct fpga_manager *mgr);
++void fpga_mgr_debugfs_init(void);
++void fpga_mgr_debugfs_uninit(void);
++
++#else
++
++void fpga_mgr_debugfs_add(struct fpga_manager *mgr) {}
++void fpga_mgr_debugfs_remove(struct fpga_manager *mgr) {}
++void fpga_mgr_debugfs_init(void) {}
++void fpga_mgr_debugfs_uninit(void) {}
++
++#endif /* CONFIG_FPGA_MGR_DEBUG_FS */
++
++#endif /*_LINUX_FPGA_MGR_DEBUGFS_H */
+diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+index c8684bc..66eb6f6 100644
+--- a/drivers/fpga/fpga-mgr.c
++++ b/drivers/fpga/fpga-mgr.c
+@@ -17,6 +17,7 @@
+ #include <linux/slab.h>
+ #include <linux/scatterlist.h>
+ #include <linux/highmem.h>
++#include "fpga-mgr-debugfs.h"
+ 
+ static DEFINE_IDA(fpga_mgr_ida);
+ static struct class *fpga_mgr_class;
+@@ -698,6 +699,8 @@ int fpga_mgr_register(struct fpga_manager *mgr)
+ 	if (ret)
+ 		goto error_device;
+ 
++	fpga_mgr_debugfs_add(mgr);
++
+ 	dev_info(&mgr->dev, "%s registered\n", mgr->name);
+ 
+ 	return 0;
+@@ -722,6 +725,8 @@ void fpga_mgr_unregister(struct fpga_manager *mgr)
+ {
+ 	dev_info(&mgr->dev, "%s %s\n", __func__, mgr->name);
+ 
++	fpga_mgr_debugfs_remove(mgr);
++
+ 	/*
+ 	 * If the low level driver provides a method for putting fpga into
+ 	 * a desired state upon unregister, do it.
+@@ -748,11 +753,14 @@ static int __init fpga_mgr_class_init(void)
+ 	fpga_mgr_class->dev_groups = fpga_mgr_groups;
+ 	fpga_mgr_class->dev_release = fpga_mgr_dev_release;
+ 
++	fpga_mgr_debugfs_init();
++
+ 	return 0;
+ }
+ 
+ static void __exit fpga_mgr_class_exit(void)
+ {
++	fpga_mgr_debugfs_uninit();
+ 	class_destroy(fpga_mgr_class);
+ 	ida_destroy(&fpga_mgr_ida);
+ }
+diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+index 777c502..e8f2159 100644
+--- a/include/linux/fpga/fpga-mgr.h
++++ b/include/linux/fpga/fpga-mgr.h
+@@ -170,6 +170,9 @@ struct fpga_manager {
+ 	struct fpga_compat_id *compat_id;
+ 	const struct fpga_manager_ops *mops;
+ 	void *priv;
++#if IS_ENABLED(CONFIG_FPGA_MGR_DEBUG_FS)
++	void *debugfs;
++#endif
+ };
+ 
+ #define to_fpga_manager(d) container_of(d, struct fpga_manager, dev)
 -- 
 2.7.4
 
