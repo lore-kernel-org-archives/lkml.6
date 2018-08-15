@@ -2,85 +2,93 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30F7C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0A6C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C49520895
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C49520895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CA20621567
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FPezjwQu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA20621567
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729569AbeHOTEz (ORCPT
+        id S1729789AbeHOTE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:04:55 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36010 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHOTEy (ORCPT
+        Wed, 15 Aug 2018 15:04:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43716 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729381AbeHOTE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:04:54 -0400
-Received: by mail-io0-f195.google.com with SMTP id m4-v6so1424468iop.3;
-        Wed, 15 Aug 2018 09:12:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7ILHDgdHg7rcID1XCIoej2crakmqE9H+ETT0/2eKCIQ=;
-        b=TN98wIgZpjj0KAH+xoCr1iLr1FRdDcVtPMO/wkIBKlK1jvi9LitCEC+GD4T1lFhEFm
-         20/paBLhv7Q8/r8wmfI1seWZxVI9AYL/+FT2unmLBFr313f229OdLjzGanoDTHaPD5RE
-         sXqY1c7emKN9QCQUuSwjZGC/bq6UTXXg/7TMf8lxHszvnLoXnkACduVCVSJpe1xcu3ke
-         SlLp32sTzAOtG1DNb+OggTxg2nwIFwP5tPBP713Xl+DYrkWBLo6U6rkhMkfgrT4nS0HL
-         hh35bLe6mWQkFPvw3iT9P7AxJRJEovmQfyevY8gOJ5wyjYEiH1ae+Ar8hp7kMm/UWOr7
-         Z/xw==
-X-Gm-Message-State: AOUpUlFqRJQCl5BvGSlVZofALeRQ4pDdrlSu1RatXOFY8oTAe0FAOo9L
-        BkolZaPbk6GyHGJgfxb9oQ==
-X-Google-Smtp-Source: AA+uWPxuZrIat9EoBRDBw034EG1XPqeGmdCm1dkHR4Qi9nahb6DQ0TUnTRYu1AyhIYZD9+qN3no2FA==
-X-Received: by 2002:a6b:15c2:: with SMTP id 185-v6mr19808381iov.161.1534349528721;
-        Wed, 15 Aug 2018 09:12:08 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id f12-v6sm4100279iog.32.2018.08.15.09.12.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 09:12:08 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 10:12:07 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: rcar-dmac: Document R8A774A1 bindings
-Message-ID: <20180815161207.GA21034@rob-hp-laptop>
-References: <1534249935-15496-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 15 Aug 2018 15:04:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Togc7bt58Igrfm0tmExX88bsaB5ErW/5bwddeZosfbY=; b=FPezjwQuue8U4DtBLrJJp8/7g
+        ii7daqQc7XJQP6PLugpEdjguqI7MVVlO46dDqLv4PTZIbNpjwcYtB3rZdGGkSUgoJwnUn2gBgIfW2
+        KA5X2gstNS0R+ev1+BCohU/NTnfkMbXrtXRfEGQqCSrc86x1GZJGUSBPhpdBdrw/jmf9p/0g6EdJm
+        mxV97MOvn0an1TVd4dBB04F/t4jXCqTnPlOhFmXlFCmO9N/29Fy2HNmOwvtNndu94qmkWrgSQTc29
+        kbKPc8ZyCfEqQwwyKci6rMnUjhhOJ4l00QBPNLYucvyOhTlbTbaSPQWdJ/cM12YWwmffMnsAiOhz0
+        LHexlLO3A==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fpyP5-0008Du-Ug; Wed, 15 Aug 2018 16:12:12 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Cc:     Zha Qipeng <qipeng.zha@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] platform/x86: fix intel_punit_ipc.c build errors
+Message-ID: <aee82dc5-cc0f-0698-04a8-a5857fce9791@infradead.org>
+Date:   Wed, 15 Aug 2018 09:12:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534249935-15496-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Aug 2018 13:32:15 +0100, Fabrizio Castro wrote:
-> Renesas' RZ/G2M (R8A774A1) SoC has DMA controllers compatible
-> with this driver, therefore document RZ/G2M specific bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
+From: Randy Dunlap <rdunlap@infradead.org>
 
-I'm assuming subsystem maintainers will take this series of Renesas 
-patches. They are bindings only, but you all update them frequently so 
-we don't want any conflicts.
+Fix build errors by #including <linux/io.h>.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_read_status':
+../drivers/platform/x86/intel_punit_ipc.c:55:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+  return readl(ipcdev->base[type][BASE_IFACE]);
+../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_write_cmd':
+../drivers/platform/x86/intel_punit_ipc.c:60:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+  writel(cmd, ipcdev->base[type][BASE_IFACE]);
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Zha Qipeng <qipeng.zha@intel.com>
+Cc: platform-driver-x86@vger.kernel.org
+---
+Found in linux-next but applies to current mainline also.
+
+ drivers/platform/x86/intel_punit_ipc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20180815.orig/drivers/platform/x86/intel_punit_ipc.c
++++ linux-next-20180815/drivers/platform/x86/intel_punit_ipc.c
+@@ -18,6 +18,7 @@
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
++#include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <asm/intel_punit_ipc.h>
+ 
+
+
