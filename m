@@ -2,306 +2,120 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C23A8C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C523C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5E8215F9
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5E8215F9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C38FF215F9
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38FF215F9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeHOGtv (ORCPT
+        id S1728760AbeHOGxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 02:49:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58020 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728480AbeHOGtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 02:49:51 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD90B401D795;
-        Wed, 15 Aug 2018 03:59:29 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-175.pek2.redhat.com [10.72.12.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 87E8C112D168;
-        Wed, 15 Aug 2018 03:59:26 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 11:59:21 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Baoquan He <bhe@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
-Message-ID: <20180815035921.GA5865@dhcp-128-65.nay.redhat.com>
-References: <1533737025.4936.3.camel@gmx.de>
- <20180810084501.GA11901@dhcp-128-65.nay.redhat.com>
- <20180810102846.GA31327@dhcp-128-65.nay.redhat.com>
- <1533922786.5083.7.camel@gmx.de>
+        Wed, 15 Aug 2018 02:53:49 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:49234 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728480AbeHOGxt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 02:53:49 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fpn1n-0000Gx-MC; Tue, 14 Aug 2018 22:03:23 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fpn1n-00007B-3m; Tue, 14 Aug 2018 22:03:23 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <87d0uqpba5.fsf@xmission.com>
+        <20180810151606.GA6515@ZenIV.linux.org.uk>
+        <87pnypiufr.fsf@xmission.com> <20180811014619.GA14368@thunk.org>
+        <8736vlo6ef.fsf@xmission.com>
+        <001a1608-d0fa-84c1-9c54-ae36df95fd89@schaufler-ca.com>
+Date:   Tue, 14 Aug 2018 23:03:17 -0500
+In-Reply-To: <001a1608-d0fa-84c1-9c54-ae36df95fd89@schaufler-ca.com> (Casey
+        Schaufler's message of "Sat, 11 Aug 2018 10:47:50 -0700")
+Message-ID: <87d0ukjmyi.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533922786.5083.7.camel@gmx.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 03:59:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 03:59:29 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+Content-Type: text/plain
+X-XM-SPF: eid=1fpn1n-00007B-3m;;;mid=<87d0ukjmyi.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/6JXSadUqNHy+yUkMND0RDRAYIEtspPLg=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: BUG: Mount ignores mount options
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apologize for late reply, I'm occupied with something else.
+Casey Schaufler <casey@schaufler-ca.com> writes:
 
-On 08/10/18 at 07:39pm, Mike Galbraith wrote:
-> On Fri, 2018-08-10 at 18:28 +0800, Dave Young wrote:
-> > 
-> > > @@ -250,8 +253,10 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
-> > >  
-> > >  #ifdef CONFIG_EFI
-> > >  	/* Setup EFI state */
-> > > -	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
-> > > +	ret = setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
-> > >  			efi_setup_data_offset);
-> > > +	if (ret)
-> > 
-> > Here should check efi_enabled(EFI_BOOT) && ret
-> 
-> Patch with that works for me.
-> 
-> > In case efi boot we need the efi info set correctly,  or one need pass
-> > acpi_rsdp= in kernel cmdline param.
-> > 
-> > Still not sure how to allow one to workaround it by using acpi_rsdp=
-> > param with kexec_file_load..
-> 
-> Does this improve things, and plug the no boot hole?
+> Don't blame the filesystems for behaving as documented.
 
-Would you mind to tune my patch with some acpi_rsdp checking and add
-some error message in case kexec load failure? Eg. suggest people to use
-append acpi_rsdp for noefi booting etc.
+No.  This behavior is not documented.  At least I certainly don't see a
+word about this in any of the man pages.  Where does it say mounting a
+filesystem will not honor it's mount options?
 
-I'm still not very satisfied with the code cleanup, ideally we should add a
-separate kbuf for efi stuff, so that we can isolate the efi_map_sz
-efi_setup_data_offset, and efi_map_offset initialization only when
-necessary.  Anyway the cleanup can be a separate patch.
+It is also rare enough in practice it is something it is reasonable to
+expect people to be surprised by.
 
-> 
-> x86, kdump: cleanup efi setup data handling a bit
-> 
-> 1. Remove efi specific variables from bzImage64_load() other than the
-> one it needs, efi_map_sz, passing it and params_cmdline_sz on to efi
-> setup functions, giving them all they need without duplication.
-> 
-> 2. Only allocate space for efi setup data when a 1:1 mapping is available.
-> Bail early with -ENODEV if not available, but is required to boot, and
-> acpi_rsdp= was not passed on the command line. 
-> 
-> 3. Use the proper config dependency to isolate efi setup functions,
-> adding a !EFI_RUNTIME_MAP stub for setup_efi_state().
-> 
-> 4. Change efi functions that cannot fail to void. 
-> 
-> Signed-off-by: Mike Galbraith <efault@gmx.de>
-> ---
->  arch/x86/kernel/kexec-bzimage64.c |   99 +++++++++++++++++---------------------
->  1 file changed, 45 insertions(+), 54 deletions(-)
-> 
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -112,35 +112,32 @@ static int setup_e820_entries(struct boo
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_EFI
-> -static int setup_efi_info_memmap(struct boot_params *params,
-> +#ifdef CONFIG_EFI_RUNTIME_MAP
-> +static void setup_efi_info_memmap(struct boot_params *params,
->  				  unsigned long params_load_addr,
-> -				  unsigned int efi_map_offset,
-> +				  unsigned int params_cmdline_sz,
->  				  unsigned int efi_map_sz)
->  {
-> -	void *efi_map = (void *)params + efi_map_offset;
-> -	unsigned long efi_map_phys_addr = params_load_addr + efi_map_offset;
-> +	void *efi_map = (void *)params + params_cmdline_sz;
-> +	unsigned long efi_map_phys_addr = params_load_addr + params_cmdline_sz;
->  	struct efi_info *ei = &params->efi_info;
->  
-> -	if (!efi_map_sz)
-> -		return -EINVAL;
-> -
->  	efi_runtime_map_copy(efi_map, efi_map_sz);
->  
->  	ei->efi_memmap = efi_map_phys_addr & 0xffffffff;
->  	ei->efi_memmap_hi = efi_map_phys_addr >> 32;
->  	ei->efi_memmap_size = efi_map_sz;
-> -
-> -	return 0;
->  }
->  
-> -static int
-> +static void
->  prepare_add_efi_setup_data(struct boot_params *params,
-> -		       unsigned long params_load_addr,
-> -		       unsigned int efi_setup_data_offset)
-> +			   unsigned long params_load_addr,
-> +			   unsigned int params_cmdline_sz,
-> +			   unsigned int efi_map_sz)
->  {
-> +	unsigned int data_offset = params_cmdline_sz + ALIGN(efi_map_sz, 16);
->  	unsigned long setup_data_phys;
-> -	struct setup_data *sd = (void *)params + efi_setup_data_offset;
-> +	struct setup_data *sd = (void *)params + data_offset;
->  	struct efi_setup_data *esd = (void *)sd + sizeof(struct setup_data);
->  
->  	esd->fw_vendor = efi.fw_vendor;
-> @@ -152,33 +149,20 @@ prepare_add_efi_setup_data(struct boot_p
->  	sd->len = sizeof(struct efi_setup_data);
->  
->  	/* Add setup data */
-> -	setup_data_phys = params_load_addr + efi_setup_data_offset;
-> +	setup_data_phys = params_load_addr + data_offset;
->  	sd->next = params->hdr.setup_data;
->  	params->hdr.setup_data = setup_data_phys;
-> -
-> -	return 0;
->  }
->  
->  static int
->  setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
-> -		unsigned int efi_map_offset, unsigned int efi_map_sz,
-> -		unsigned int efi_setup_data_offset)
-> +		unsigned int params_cmdline_sz, unsigned int efi_map_sz)
->  {
->  	struct efi_info *current_ei = &boot_params.efi_info;
->  	struct efi_info *ei = &params->efi_info;
-> -	int ret;
-> -
-> -	if (!current_ei->efi_memmap_size)
-> -		return -EINVAL;
->  
-> -	/*
-> -	 * If 1:1 mapping is not enabled, second kernel can not setup EFI
-> -	 * and use EFI run time services. User space will have to pass
-> -	 * acpi_rsdp=<addr> on kernel command line to make second kernel boot
-> -	 * without efi.
-> -	 */
-> -	if (efi_enabled(EFI_OLD_MEMMAP) || !efi_enabled(EFI_RUNTIME_SERVICES))
-> -		return -ENODEV;
-> +	if (!efi_map_sz || !current_ei->efi_memmap_size)
-> +		return efi_map_sz ? -EINVAL : 0;
->  
->  	ei->efi_loader_signature = current_ei->efi_loader_signature;
->  	ei->efi_systab = current_ei->efi_systab;
-> @@ -187,21 +171,24 @@ setup_efi_state(struct boot_params *para
->  	ei->efi_memdesc_version = current_ei->efi_memdesc_version;
->  	ei->efi_memdesc_size = efi_get_runtime_map_desc_size();
->  
-> -	ret = setup_efi_info_memmap(params, params_load_addr, efi_map_offset,
-> +	setup_efi_info_memmap(params, params_load_addr, params_cmdline_sz,
->  			      efi_map_sz);
-> -	if (ret)
-> -		return ret;
-> -	prepare_add_efi_setup_data(params, params_load_addr,
-> -				   efi_setup_data_offset);
-> +	prepare_add_efi_setup_data(params, params_load_addr, params_cmdline_sz,
-> +				   efi_map_sz);
->  	return 0;
->  }
-> -#endif /* CONFIG_EFI */
-> +#else /* !CONFIG_EFI_RUNTIME_MAP */
-> +static int
-> +setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
-> +		unsigned int params_cmdline_sz, unsigned int efi_map_sz)
-> +{ return 0; }
-> +#endif /* CONFIG_EFI_RUNTIME_MAP */
->  
->  static int
->  setup_boot_parameters(struct kimage *image, struct boot_params *params,
->  		      unsigned long params_load_addr,
-> -		      unsigned int efi_map_offset, unsigned int efi_map_sz,
-> -		      unsigned int efi_setup_data_offset)
-> +		      unsigned int params_cmdline_sz,
-> +		      unsigned int efi_map_sz)
->  {
->  	unsigned int nr_e820_entries;
->  	unsigned long long mem_k, start, end;
-> @@ -251,13 +238,9 @@ setup_boot_parameters(struct kimage *ima
->  		}
->  	}
->  
-> -#ifdef CONFIG_EFI
-> -	/* Setup EFI state */
-> -	ret = setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
-> -			efi_setup_data_offset);
-> -	if (efi_enabled(EFI_BOOT) && ret)
-> +	ret = setup_efi_state(params, params_load_addr, params_cmdline_sz, efi_map_sz);
-> +	if (ret)
->  		return ret;
-> -#endif
->  
->  	/* Setup EDD info */
->  	memcpy(params->eddbuf, boot_params.eddbuf,
-> @@ -343,7 +326,7 @@ static void *bzImage64_load(struct kimag
->  	struct kexec_entry64_regs regs64;
->  	void *stack;
->  	unsigned int setup_hdr_offset = offsetof(struct boot_params, hdr);
-> -	unsigned int efi_map_offset, efi_map_sz, efi_setup_data_offset;
-> +	unsigned int efi_map_sz = 0;
->  	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
->  				  .top_down = true };
->  	struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
-> @@ -402,19 +385,28 @@ static void *bzImage64_load(struct kimag
->  	 * have to create separate segment for each. Keeps things
->  	 * little bit simple
->  	 */
-> -	efi_map_sz = efi_get_runtime_map_size();
->  	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
->  				MAX_ELFCOREHDR_STR_LEN;
->  	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
-> -	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
-> -				sizeof(struct setup_data) +
-> -				sizeof(struct efi_setup_data);
-> +	kbuf.bufsz = params_cmdline_sz + sizeof(struct setup_data);
-> +
-> +	/*
-> +	 * If a 1:1 mapping does not exist, the second kernel cannot setup
-> +	 * and use EFI run time services, user space will have to pass
-> +	 * acpi_rsdp=<addr> on the kernel command line to make the second
-> +	 * kernel boot without efi.  Allocate space for efi setup data if
-> +	 * this constraint is met, bail if not, but is required to boot,
-> +	 * and acpi_rsdp=<addr> was not passed on the command line.
-> +	 */
-> +	if (efi_enabled(EFI_RUNTIME_SERVICES) && !efi_enabled(EFI_OLD_MEMMAP)) {
-> +		efi_map_sz = efi_get_runtime_map_size();
-> +		kbuf.bufsz += ALIGN(efi_map_sz, 16) + sizeof(struct efi_setup_data);
-> +	} else if (efi_enabled(EFI_BOOT) && !strstr(cmdline, "acpi_rsdp="))
-> +		return ERR_PTR(-ENODEV);
->  
->  	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
->  	if (!params)
->  		return ERR_PTR(-ENOMEM);
-> -	efi_map_offset = params_cmdline_sz;
-> -	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
->  
->  	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
->  	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
-> @@ -494,8 +486,7 @@ static void *bzImage64_load(struct kimag
->  		goto out_free_params;
->  
->  	ret = setup_boot_parameters(image, params, bootparam_load_addr,
-> -				    efi_map_offset, efi_map_sz,
-> -				    efi_setup_data_offset);
-> +				    params_cmdline_sz, efi_map_sz);
->  	if (ret)
->  		goto out_free_params;
->  
-> 
+> The problem is not in the mount mechanism, it's in the way you want to
+> abuse it.
 
-Thanks
-Dave
+I am not asking for this behavior.  I am pointing out this behavior
+exists.  I am pointing out this behavior is harmful.  I am asking we
+stop doing this harmful thing in the new API where we don't have a
+chance of breaking anything.
+
+The place where this has bitten the hardest is someone wrote a script to
+do something for Xen in a chroot.  That script involved a chroot that
+mounted devpts and in doing so happend to change the options of the main
+/dev/pts.  Which resulted in ptys created with /dev/ptmx outside the
+chroot with the wrong permissions.  That in turn caused several distros
+to retain the ancient suid pt_chown binary from libc that the devpts
+filesystem was built to make obsolete.  As the world turned that
+pt_chown binary could be confused into chowning the wrong pty if a pty
+from a container was used.
+
+The fix was to mount a new instance of devpts every time mount of devpts
+is called.  That simplified the code, and allowed pt_chown to be removed
+permanently.  The tricky bit was figuring out how keep /dev/ptmx
+working.  I wound up testing on every distribution I could think of to
+ensure no one would notice the slightly changed behavior of the devpts
+filesystem.
+
+The behavior in other filesystems of ignoring the options instead of
+changing them on the filesystem isn't quite as bad.  But it still has
+the potential for a lot of mischief.
+
+Eric
+
