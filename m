@@ -2,111 +2,272 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580A5C4321D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF22C41535
 	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22B621502
+	by mail.kernel.org (Postfix) with ESMTP id F205221528
 	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:21:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22B621502
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lfFptszD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F205221528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeHOVNJ (ORCPT
+        id S1728036AbeHOVNP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:13:09 -0400
-Received: from mail.sembritzki.me ([5.45.101.249]:60388 "EHLO
-        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbeHOVNJ (ORCPT
+        Wed, 15 Aug 2018 17:13:15 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50974 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbeHOVNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:13:09 -0400
-Received: from [192.168.1.22] (x4dbb4132.dyn.telefonica.de [77.187.65.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.sembritzki.me (Postfix) with ESMTPSA id 827C1A7A96;
-        Wed, 15 Aug 2018 20:19:54 +0200 (CEST)
-Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform
- keys to boot
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180815100053.13609-1-yannik@sembritzki.me>
- <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
- <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
- <CA+55aFz4J+B7jvxVAGkjdsDJQff46WU2oo00_HaktncFigmxmA@mail.gmail.com>
-From:   Yannik Sembritzki <yannik@sembritzki.me>
-Openpgp: preference=signencrypt
-Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
- 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
- YfNfIPB+
-Message-ID: <d152000f-28ad-d7c1-d656-a4bd46bba450@sembritzki.me>
-Date:   Wed, 15 Aug 2018 20:19:54 +0200
+        Wed, 15 Aug 2018 17:13:15 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7FIJw5H005765;
+        Wed, 15 Aug 2018 13:19:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1534357198;
+        bh=iTzswvn5tSTeBq/nrRrgIfuDg5v3GV/GXx5QcAQigXc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=lfFptszDlKiMOX2yEHOBDB1AgIqh/KXIDOVK7I0cbotkYJey8FjltZFcOQ40Mzqu9
+         4DTDj6NzIXMjZWRZS84BtDuZGeTdnFRJ3D1N7vVNL5HkaiCAS12CJBIXQ3eX/z3Kr/
+         Iuwvt+xYOivTMKlH2ZE2MVixXitzEaim2SCWpe8U=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7FIJvJZ026646;
+        Wed, 15 Aug 2018 13:19:57 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 15
+ Aug 2018 13:19:57 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 15 Aug 2018 13:19:57 -0500
+Received: from [172.22.176.241] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7FIJup3013292;
+        Wed, 15 Aug 2018 13:19:56 -0500
+Subject: Re: [PATCH v3 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <robh+dt@kernel.org>, <pavel@ucw.cz>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180815161734.18159-1-dmurphy@ti.com>
+ <e278d4f2-7848-d156-01ec-3cd77803e4de@gmail.com>
+ <e855cda3-4314-645c-f6b9-a86aceafbd0b@ti.com>
+ <77f11321-8876-2e34-f05e-dd855d62095c@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <4974c577-9c40-1f30-deac-47167d1afd03@ti.com>
+Date:   Wed, 15 Aug 2018 13:19:52 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFz4J+B7jvxVAGkjdsDJQff46WU2oo00_HaktncFigmxmA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <77f11321-8876-2e34-f05e-dd855d62095c@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> No, I meant that it would have to go into the proper header files, and
-> also be used by verify_pkcs7_signature() and pkcs7_preparse() etc, so
-> that you could actually grep for this, and understand what it does.
-Thanks, Linus, I'll take care of this right away.
+Jacek
 
-This is my first patch and I'm not familiar with the kernel; can you
-give me a quick hint which header file(s) would be the right place for
-this #define?
+On 08/15/2018 01:09 PM, Jacek Anaszewski wrote:
+> Dan,
+> 
+> On 08/15/2018 07:30 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 08/15/2018 11:56 AM, Jacek Anaszewski wrote:
+>>> Hi Dan,
+>>>
+>>> Thank you for the update.
+>>>
+>>> On 08/15/2018 06:17 PM, Dan Murphy wrote:
+>>>> Add the device tree bindings for the lm3697
+>>>> LED driver for backlighting and display.
+>>>>
+>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>> ---
+>>>>
+>>>> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
+>>>> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+>>>>
+>>>>  .../devicetree/bindings/leds/leds-lm3697.txt  | 89 +++++++++++++++++++
+>>>>  1 file changed, 89 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>> new file mode 100644
+>>>> index 000000000000..34403a48a0ce
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>> @@ -0,0 +1,89 @@
+>>>> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
+>>>> +
+>>>> +The LM3697 11-bit LED driver provides high-
+>>>> +performance backlight dimming for 1, 2, or 3 series
+>>>> +LED strings while delivering up to 90% efficiency.
+>>>> +
+>>>> +This device is suitable for Display and Keypad Lighting
+>>>> +
+>>>> +Required properties:
+>>>> +	- compatible:
+>>>> +		"ti,lm3967"
+>>>> +	- reg :  I2C slave address
+>>>> +	- #address-cells : 1
+>>>> +	- #size-cells : 0
+>>>> +
+>>>> +Optional properties:
+>>>> +	- enable-gpios : gpio pin to enable/disable the device.
+>>>> +	- vled-supply : LED supply
+>>>> +
+>>>> +Required child properties:
+>>>> +	- reg : 0 - LED is Controlled by bank A
+>>>> +		1 - LED is Controlled by bank B
+>>>> +	- led-sources - Indicates which HVLED string is associated to which
+>>>> +			control bank.  The HVLED string cannot be associated with
+>>>> +			two control banks.  This property is an array of 3 and
+>>>> +			all positions in the array must be populated.
+>>>> +			Additional information is contained
+>>>> +			in Documentation/devicetree/bindings/leds/common.txt
+>>>> +			0 - End of array if all 3 LEDs are not declared for a
+>>>> +			    single control bank.
+>>>
+>>> This is needless complication. I propose to define led-sources as
+>>> an array of three boolean values, whose state signifies which LED
+>>> strings are controlled by the bank defined by the reg property in the
+>>> given child node. I.e. <HVLED1 HVLED2 HVLED3>.
+>>
+>> I struggled a bit with this definition.  Once I got it working it ended up producing
+>> an overly complex control bank algorithm.
+>>
+>> I will take a look at implementing the suggestion but the complication comes in the
+>> numerous DT configurations we could encounter.  Part of the issue is that the user
+>> can connect to CTRL bank b only or CTRL bank a only or a combination of that
+>>
+>> 2^3
+> 
+> I tried to play a bit with that and here is what I got (simplified
+> DT parsing):
+> 
 
-Yannik
+Thanks for the attempt.  I think with my current code patch I might be able to get this to work.
+As per your suggestion.  It just takes a while to test all the combos
+Dan
+
+> int used_hvleds[3] = {0, 0 ,0};
+> int used_control_banks[2] = {0, 0};
+> 
+> int parse_child_node(struct fwnode_handle *child)
+> {
+> 	int bank_hvleds[3];
+> 
+> 	fwnode_property_read_u32_array(child, "led-sources",
+> 		bank_hvleds, LM3697_MAX_LED_STRINGS);
+> 
+> 	for (i = 0; i <= 3; i++) {
+> 		if (bank_hvleds[i] && used_hvleds[i])
+> 			return -EINVAL;
+> 		used_hvleds[i] = 1;
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> struct fwnode_handle *child = NULL;
+> 
+> device_for_each_child_node(priv->dev, child)
+> 	fwnode_property_read_u32(child, "reg", &control_bank);
+> 	if (used_control_banks[control_bank])
+> 		goto err;
+> 	used_control_banks[control_bank] = 1;
+> 	if (parse_child_node(child))
+> 		goto err;
+> 
+> 
+>>>
+>>> I modified your examples below accordingly.
+>>>
+>>>> +			1 - HVLED 1 string
+>>>> +			2 - HVLED 2 string
+>>>> +			3 - HVLED 3 string
+>>>> +
+>>>> +Optional child properties:
+>>>> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+>>>> +	- linux,default-trigger :
+>>>> +	   see Documentation/devicetree/bindings/leds/common.txt
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +HVLED string 1 and 2 controlled by control bank A and HVLED string controlled by
+>>>> +control bank B.
+>>>> +
+>>>> +led-controller@36 {
+>>>> +	compatible = "ti,lm3967";
+>>>> +	reg = <0x36>;
+>>>> +	#address-cells = <1>;
+>>>> +	#size-cells = <0>;
+>>>> +
+>>>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>>> +	vled-supply = <&vbatt>;
+>>>> +
+>>>> +	led@0 {
+>>>> +		reg = <0>;
+>>>> +		led-sources = <0x1 0x2 0x0>
+>>>
+>>> 		led-sources = <1 1 0>;
+>>> ;
+>>>> +		label = "white:first_backlight_cluster";
+>>>> +		linux,default-trigger = "backlight";
+>>>> +	};
+>>>> +
+>>>> +	led@1 {
+>>>> +		reg = <1>;
+>>>> +		led-sources = <0x3 0x0 0x0>;
+>>>
+>>> 		led-sources = <0 0 1>;
+>>>
+>>>> +		label = "white:second_backlight_cluster";
+>>>> +		linux,default-trigger = "backlight";
+>>>> +	};
+>>>> +}
+>>>> +
+>>>> +All HVLED strings controlled by control bank A
+>>>> +
+>>>> +led-controller@36 {
+>>>> +	compatible = "ti,lm3967";
+>>>> +	reg = <0x36>;
+>>>> +	#address-cells = <1>;
+>>>> +	#size-cells = <0>;
+>>>> +
+>>>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>>> +	vled-supply = <&vbatt>;
+>>>> +
+>>>> +	led@0 {
+>>>> +		reg = <0>;
+>>>> +		led-sources = <0x1 0x2 0x3>;
+>>>
+>>> 		led-sources = <1 1 1>;
+>>>
+>>>> +		label = "white:backlight_cluster";
+>>>> +		linux,default-trigger = "backlight";
+>>>> +	};
+>>>> +}
+>>>> +
+>>>> +For more product information please see the link below:
+>>>> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
+>>>>
+>>>
+>>
+>>
+> 
+
+
+-- 
+------------------
+Dan Murphy
