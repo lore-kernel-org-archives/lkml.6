@@ -4,57 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953D3C04AB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:20 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617CC21545
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BC0C43615
 	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:21 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 9A0DA21545
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:37:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hg3WyTlJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617CC21545
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfVvMerX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0DA21545
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeHOXbA (ORCPT
+        id S1727859AbeHOXbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:31:00 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34283 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeHOXbA (ORCPT
+        Wed, 15 Aug 2018 19:31:02 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46201 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727702AbeHOXbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:31:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y5-v6so1002799pgv.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:37:16 -0700 (PDT)
+        Wed, 15 Aug 2018 19:31:01 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so963364pfn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:37:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bFKDdbqmiRiSCZgXCs4iRCh+1CSma0t7w9bm3+NWiVw=;
-        b=hg3WyTlJfwyWVdsXJNnR5A9G3G6WkrwKzIgL3T1/RszkslopfwRnn3LIaveRC7caee
-         UY8ZtxI5FWX0INbO+xiB2rlDCLCHq+QSQKrztPlOiH/UlXwd0wFVLVxtfpW2AFP5+z1/
-         WcXr3Mwei+9mq0q3CY7ADdsXbznTAi10fs1uo=
+        bh=BJNY+gds9uSorTW61ld303cZnA5bUTx9KsInyKNARKs=;
+        b=BfVvMerXu6j/cQN3igs2RznVPPZ4YqwQnmB6upXDFuaMkGdRX9Y5erTk/3RV5cm4ab
+         X5l/FcRAdB9uz2ZHS8us2rFskSCyClKIAaaJDzRQUGymPPqpRVaQdHTVOiXbK76aNEVF
+         /T2iOdeIxS8hIoA3Bh9FcscEMUtu2xygcFo1Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bFKDdbqmiRiSCZgXCs4iRCh+1CSma0t7w9bm3+NWiVw=;
-        b=ETX8gD2+wzUyECGTYt85dJXJf1hDD/F40Wmxe2/TM8ldY00dgCwusX+Ybt5RFBEh7d
-         sKw+r8F8LXoBKQ1GwAwoHSWLCLyJCcJLi0MYunIFVBW28IP1bqQfBlcUoUvNSjY2WvVL
-         C1iHAvDKgsrg8AFVE399o28TE8KDSxZyhbdTPd5O3olVSiYBfHRZBAKG/J+w62VD0eku
-         XlxciE+oqtyJ4kFcSE7KUPScE5wouF6FH82jHXpbZXnbUgGk/F7Ew6RT1s2iiDh6KQHA
-         f14D+RxRK/rhuxfcj/3AjKru5+LmE8g4p0ufNA9hYXZDTZJ5rh28qFcIXPSjahCPibQJ
-         ffxA==
-X-Gm-Message-State: AOUpUlEj10XO0ZfKPIvvB0mV4PDCHMnGfWF1i0OQIl38PiP776tUrWgg
-        dkfH8yPsbs+Kmnl1d97UsxwBYQ==
-X-Google-Smtp-Source: AA+uWPxS+buvWU8UslMUZmPaKhl1tCTl8khVjKVYNxbduYkqPYgzVuE01Yfg8AauNOeOWkMmHwRaSA==
-X-Received: by 2002:a63:ff21:: with SMTP id k33-v6mr25839724pgi.38.1534365436287;
-        Wed, 15 Aug 2018 13:37:16 -0700 (PDT)
+        bh=BJNY+gds9uSorTW61ld303cZnA5bUTx9KsInyKNARKs=;
+        b=kL2BfItA8dSo1fSf+uYPkxYyWoC/Javm8vR/hWQMgZpoUlZ8xnlMpGBwaMzKvxl6BG
+         F+boryZ+2jfjRLqHyCDO70154EN6x3JuAof9gJnVLWb2Gl7CxLzox4/2i5db+joXOukO
+         yitapIWSUP3uf4cpLREzzCqmYqRo/P2te9SD6PATWIUaWPdOsPmlDhP4dcdpaxz4S+E7
+         ns9Xcqe25zYXRRrFV0YZn6454lu73ACART3XwwD8tavNA3FQY68qyM9QURuIy1Zx/eqR
+         +CLSCXV+XcGS0PVQnhriZ+6b384h9HbuH29g4M2BBRuKrO3yksz4FNJAy9SMRLfFr0e+
+         IpFg==
+X-Gm-Message-State: AOUpUlH8kQp7GYEB8iCgAi6jW/VHj+wgCqSDlKFyFBsYoNzcTBR4G88m
+        Dr4kuQhSoBDrmBmTol4M+rth5A==
+X-Google-Smtp-Source: AA+uWPwHdSX57H1T3Phgb+BHqGnMluqhlwDhAUa4zckkSlvp7TjGX5pYALJH5N8u9hjm9SIPjrCtfw==
+X-Received: by 2002:a63:6604:: with SMTP id a4-v6mr25718527pgc.404.1534365437284;
+        Wed, 15 Aug 2018 13:37:17 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm54606269pfd.99.2018.08.15.13.37.15
+        by smtp.gmail.com with ESMTPSA id z20-v6sm54606269pfd.99.2018.08.15.13.37.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 13:37:15 -0700 (PDT)
+        Wed, 15 Aug 2018 13:37:16 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -62,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Julius Werner <jwerner@chromium.org>,
         Brian Norris <briannorris@chromium.org>,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v4 5/6] firmware: coreboot: Remap RAM with memremap() instead of ioremap()
-Date:   Wed, 15 Aug 2018 13:37:07 -0700
-Message-Id: <20180815203708.67090-6-swboyd@chromium.org>
+Subject: [PATCH v4 6/6] firmware: coreboot: Only populate devices in coreboot_table_init()
+Date:   Wed, 15 Aug 2018 13:37:08 -0700
+Message-Id: <20180815203708.67090-7-swboyd@chromium.org>
 X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
 In-Reply-To: <20180815203708.67090-1-swboyd@chromium.org>
 References: <20180815203708.67090-1-swboyd@chromium.org>
@@ -75,132 +76,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is all system memory, so we shouldn't be mapping this all with
-ioremap() as these aren't I/O regions. Instead, they're memory regions
-so we should use memremap(). Pick MEMREMAP_WB so we can map memory from
-RAM directly if that's possible, otherwise it falls back to
-ioremap_cache() like is being done here already. This also nicely
-silences the sparse warnings in this code and reduces the need to copy
-anything around anymore.
+This function checks the header for sanity, registers a bus, and
+populates devices for each coreboot table entry. Let's just populate
+devices here and pull the other bits up into the caller so that this
+function can be repurposed for pure device creation and registration.
 
 Cc: Wei-Ning Huang <wnhuang@chromium.org>
 Cc: Julius Werner <jwerner@chromium.org>
 Cc: Brian Norris <briannorris@chromium.org>
 Cc: Samuel Holland <samuel@sholland.org>
+Suggested-by: Julius Werner <jwerner@chromium.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/firmware/google/coreboot_table.c | 40 +++++++++++-------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+ drivers/firmware/google/coreboot_table.c | 67 ++++++++++--------------
+ 1 file changed, 29 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index e9cd4da61404..2c6c35f0da32 100644
+index 2c6c35f0da32..078d3bbe632f 100644
 --- a/drivers/firmware/google/coreboot_table.c
 +++ b/drivers/firmware/google/coreboot_table.c
-@@ -32,7 +32,7 @@
+@@ -32,8 +32,6 @@
  #define CB_DEV(d) container_of(d, struct coreboot_device, dev)
  #define CB_DRV(d) container_of(d, struct coreboot_driver, drv)
  
--static struct coreboot_table_header __iomem *ptr_header;
-+static struct coreboot_table_header *ptr_header;
- 
+-static struct coreboot_table_header *ptr_header;
+-
  static int coreboot_bus_match(struct device *dev, struct device_driver *drv)
  {
-@@ -94,18 +94,18 @@ void coreboot_driver_unregister(struct coreboot_driver *driver)
+ 	struct coreboot_device *device = CB_DEV(dev);
+@@ -94,36 +92,21 @@ void coreboot_driver_unregister(struct coreboot_driver *driver)
  }
  EXPORT_SYMBOL(coreboot_driver_unregister);
  
--static int coreboot_table_init(struct device *dev, void __iomem *ptr)
-+static int coreboot_table_init(struct device *dev, void *ptr)
+-static int coreboot_table_init(struct device *dev, void *ptr)
++static int coreboot_table_populate(struct device *dev, void *ptr)
  {
  	int i, ret;
  	void *ptr_entry;
  	struct coreboot_device *device;
--	struct coreboot_table_entry entry;
--	struct coreboot_table_header header;
-+	struct coreboot_table_entry *entry;
-+	struct coreboot_table_header *header;
+ 	struct coreboot_table_entry *entry;
+-	struct coreboot_table_header *header;
+-
+-	ptr_header = ptr;
+-	header = ptr;
++	struct coreboot_table_header *header = ptr;
  
- 	ptr_header = ptr;
--	memcpy_fromio(&header, ptr_header, sizeof(header));
-+	header = ptr;
+-	if (strncmp(header->signature, "LBIO", sizeof(header->signature))) {
+-		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
+-		ret = -ENODEV;
+-		goto out;
+-	}
+-
+-	ret = bus_register(&coreboot_bus_type);
+-	if (ret)
+-		goto out;
+-
+-	ptr_entry = ptr_header + header->header_bytes;
++	ptr_entry = ptr + header->header_bytes;
+ 	for (i = 0; i < header->table_entries; i++) {
+ 		entry = ptr_entry;
  
--	if (strncmp(header.signature, "LBIO", sizeof(header.signature))) {
-+	if (strncmp(header->signature, "LBIO", sizeof(header->signature))) {
- 		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
- 		ret = -ENODEV;
- 		goto out;
-@@ -115,11 +115,11 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 	if (ret)
- 		goto out;
+ 		device = kzalloc(sizeof(struct device) + entry->size, GFP_KERNEL);
+-		if (!device) {
+-			ret = -ENOMEM;
+-			break;
+-		}
++		if (!device)
++			return -ENOMEM;
  
--	ptr_entry = (void *)ptr_header + header.header_bytes;
--	for (i = 0; i < header.table_entries; i++) {
--		memcpy_fromio(&entry, ptr_entry, sizeof(entry));
-+	ptr_entry = ptr_header + header->header_bytes;
-+	for (i = 0; i < header->table_entries; i++) {
-+		entry = ptr_entry;
- 
--		device = kzalloc(sizeof(struct device) + entry.size, GFP_KERNEL);
-+		device = kzalloc(sizeof(struct device) + entry->size, GFP_KERNEL);
- 		if (!device) {
- 			ret = -ENOMEM;
- 			break;
-@@ -129,7 +129,7 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
+ 		dev_set_name(&device->dev, "coreboot%d", i);
  		device->dev.parent = dev;
- 		device->dev.bus = &coreboot_bus_type;
- 		device->dev.release = coreboot_device_release;
--		memcpy_fromio(&device->entry, ptr_entry, entry.size);
-+		memcpy(&device->entry, ptr_entry, entry->size);
- 
+@@ -134,18 +117,13 @@ static int coreboot_table_init(struct device *dev, void *ptr)
  		ret = device_register(&device->dev);
  		if (ret) {
-@@ -137,24 +137,23 @@ static int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 			break;
+ 			put_device(&device->dev);
+-			break;
++			return ret;
  		}
  
--		ptr_entry += entry.size;
-+		ptr_entry += entry->size;
+ 		ptr_entry += entry->size;
  	}
  
- 	if (ret)
- 		bus_unregister(&coreboot_bus_type);
- 
- out:
--	iounmap(ptr);
-+	memunmap(ptr);
- 	return ret;
+-	if (ret)
+-		bus_unregister(&coreboot_bus_type);
+-
+-out:
+-	memunmap(ptr);
+-	return ret;
++	return 0;
  }
  
  static int coreboot_table_probe(struct platform_device *pdev)
- {
--	phys_addr_t phyaddr;
+@@ -153,7 +131,9 @@ static int coreboot_table_probe(struct platform_device *pdev)
  	resource_size_t len;
--	struct coreboot_table_header __iomem *header = NULL;
-+	struct coreboot_table_header *header;
+ 	struct coreboot_table_header *header;
  	struct resource *res;
--	void __iomem *ptr = NULL;
-+	void *ptr;
++	struct device *dev = &pdev->dev;
+ 	void *ptr;
++	int ret;
  
  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  	if (!res)
-@@ -164,14 +163,13 @@ static int coreboot_table_probe(struct platform_device *pdev)
+@@ -163,26 +143,37 @@ static int coreboot_table_probe(struct platform_device *pdev)
  	if (!res->start || !len)
  		return -EINVAL;
  
--	phyaddr = res->start;
--	header = ioremap_cache(phyaddr, sizeof(*header));
-+	header = memremap(res->start, sizeof(*header), MEMREMAP_WB);
- 	if (header == NULL)
++	/* Check just the header first to make sure things are sane */
+ 	header = memremap(res->start, sizeof(*header), MEMREMAP_WB);
+-	if (header == NULL)
++	if (!header)
  		return -ENOMEM;
  
--	ptr = ioremap_cache(phyaddr,
--			    header->header_bytes + header->table_bytes);
--	iounmap(header);
-+	ptr = memremap(res->start, header->header_bytes + header->table_bytes,
-+		       MEMREMAP_WB);
-+	memunmap(header);
+-	ptr = memremap(res->start, header->header_bytes + header->table_bytes,
+-		       MEMREMAP_WB);
++	len = header->header_bytes + header->table_bytes;
++	ret = strncmp(header->signature, "LBIO", sizeof(header->signature));
+ 	memunmap(header);
++	if (ret) {
++		dev_warn(dev, "coreboot table missing or corrupt!\n");
++		return -ENODEV;
++	}
++
++	ptr = memremap(res->start, len, MEMREMAP_WB);
  	if (!ptr)
  		return -ENOMEM;
+ 
+-	return coreboot_table_init(&pdev->dev, ptr);
++	ret = bus_register(&coreboot_bus_type);
++	if (!ret) {
++		ret = coreboot_table_populate(dev, ptr);
++		if (ret)
++			bus_unregister(&coreboot_bus_type);
++	}
++	memunmap(ptr);
++
++	return ret;
+ }
+ 
+ static int coreboot_table_remove(struct platform_device *pdev)
+ {
+-	if (ptr_header) {
+-		bus_unregister(&coreboot_bus_type);
+-		ptr_header = NULL;
+-	}
+-
++	bus_unregister(&coreboot_bus_type);
+ 	return 0;
+ }
  
 -- 
 Sent by a computer through tubes
