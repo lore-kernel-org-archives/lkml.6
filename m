@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D0CC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB99EC46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9982420C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:23:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9982420C0E
+	by mail.kernel.org (Postfix) with ESMTP id 9F59721581
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:23:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F59721581
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729137AbeHONPK (ORCPT
+        id S1729171AbeHONPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 09:15:10 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11162 "EHLO huawei.com"
+        Wed, 15 Aug 2018 09:15:18 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60845 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728910AbeHONPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 09:15:09 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5D7987B133A6C;
-        Wed, 15 Aug 2018 18:23:30 +0800 (CST)
-Received: from localhost (10.177.23.164) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
- 18:23:25 +0800
+        id S1728921AbeHONPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 09:15:17 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C226784E9ED0C;
+        Wed, 15 Aug 2018 18:23:28 +0800 (CST)
+Received: from localhost (10.177.23.164) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
+ 18:23:22 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Robin Murphy <robin.murphy@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -40,12 +40,10 @@ CC:     Zhen Lei <thunder.leizhen@huawei.com>,
         Hanjun Guo <guohanjun@huawei.com>,
         Libin <huawei.libin@huawei.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v3 2/2] iommu/arm-smmu-v3: avoid redundant CMD_SYNCs if possible
-Date:   Wed, 15 Aug 2018 18:23:02 +0800
-Message-ID: <1534328582-17664-3-git-send-email-thunder.leizhen@huawei.com>
+Subject: [PATCH v3 0/2] bugfix and optimization about CMD_SYNC
+Date:   Wed, 15 Aug 2018 18:23:00 +0800
+Message-ID: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 1.9.5.msysgit.0
-In-Reply-To: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
-References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.177.23.164]
@@ -55,76 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-More than two CMD_SYNCs maybe adjacent in the command queue, and the first
-one has done what others want to do. Drop the redundant CMD_SYNCs can
-improve IO performance especially under the pressure scene.
+v2 -> v3:
+Although I have no data to show how many performance will be impacted
+because of arm_smmu_cmdq_build_cmd is protected by spinlock. But it's
+clear that the performance is bound to drop, a memset operation and 
+a complicate switch..case in the function arm_smmu_cmdq_build_cmd.
 
-I did the statistics in my test environment, the number of CMD_SYNCs can
-be reduced about 1/3. See below:
-CMD_SYNCs reduced:	19542181
-CMD_SYNCs total:	58098548	(include reduced)
-CMDs total:		116197099	(TLBI:SYNC about 1:1)
+v1 -> v2:
+1. move the call to arm_smmu_cmdq_build_cmd into the critical section,
+   and keep itself unchange.
+2. Although patch2 can make sure no two CMD_SYNCs will be adjacent,
+but patch1 is still needed, see below:
 
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- drivers/iommu/arm-smmu-v3.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+cpu0			cpu1			cpu2
+msidata=0
+			msidata=1
+			insert cmd1
+						insert a TLBI command
+insert cmd0
+			smmu execute cmd1
+						smmu execute TLBI
+smmu execute cmd0
+			poll timeout, because msidata=1 is overridden by
+			cmd0, that means VAL=0, sync_idx=1.
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 3f5c236..ee0219b 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -567,6 +567,7 @@ struct arm_smmu_device {
- 	int				gerr_irq;
- 	int				combined_irq;
- 	u32				sync_nr;
-+	u8				prev_cmd_opcode;
+Zhen Lei (2):
+  iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+  iommu/arm-smmu-v3: avoid redundant CMD_SYNCs if possible
 
- 	unsigned long			ias; /* IPA */
- 	unsigned long			oas; /* PA */
-@@ -780,6 +781,11 @@ static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
- 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, msidata);
- }
+ drivers/iommu/arm-smmu-v3.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-+static inline u8 arm_smmu_cmd_opcode_get(u64 *cmd)
-+{
-+	return cmd[0] & CMDQ_0_OP;
-+}
-+
- /* High-level queue accessors */
- static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
- {
-@@ -904,6 +910,8 @@ static void arm_smmu_cmdq_insert_cmd(struct arm_smmu_device *smmu, u64 *cmd)
- 	struct arm_smmu_queue *q = &smmu->cmdq.q;
- 	bool wfe = !!(smmu->features & ARM_SMMU_FEAT_SEV);
-
-+	smmu->prev_cmd_opcode = arm_smmu_cmd_opcode_get(cmd);
-+
- 	while (queue_insert_raw(q, cmd) == -ENOSPC) {
- 		if (queue_poll_cons(q, false, wfe))
- 			dev_err_ratelimited(smmu->dev, "CMDQ timeout\n");
-@@ -958,9 +966,17 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
- 	arm_smmu_cmdq_build_cmd(cmd, &ent);
-
- 	spin_lock_irqsave(&smmu->cmdq.lock, flags);
--	ent.sync.msidata = ++smmu->sync_nr;
--	arm_smmu_cmdq_sync_set_msidata(cmd, ent.sync.msidata);
--	arm_smmu_cmdq_insert_cmd(smmu, cmd);
-+	if (smmu->prev_cmd_opcode == CMDQ_OP_CMD_SYNC) {
-+		/*
-+		 * Previous command is CMD_SYNC also, there is no need to add
-+		 * one more. Just poll it.
-+		 */
-+		ent.sync.msidata = smmu->sync_nr;
-+	} else {
-+		ent.sync.msidata = ++smmu->sync_nr;
-+		arm_smmu_cmdq_sync_set_msidata(cmd, ent.sync.msidata);
-+		arm_smmu_cmdq_insert_cmd(smmu, cmd);
-+	}
- 	spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
-
- 	return __arm_smmu_sync_poll_msi(smmu, ent.sync.msidata);
---
+-- 
 1.8.3
 
 
