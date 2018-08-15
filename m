@@ -2,186 +2,80 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F01A6C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FEFC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 935B82168C
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:36:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 935B82168C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id C2368216E6
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 05:00:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2368216E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeHOH0q (ORCPT
+        id S1727982AbeHOHsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 03:26:46 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:42824 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbeHOH0p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 03:26:45 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fpnXc-00074b-F5; Tue, 14 Aug 2018 22:36:16 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fpnXb-0000Rx-Gw; Tue, 14 Aug 2018 22:36:16 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        nikita.leshchenko@oracle.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        linux-wpan@vger.kernel.org,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
-        <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
-        <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
-        <20180718.125938.2271502580775162784.davem@davemloft.net>
-        <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
-        <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
-        <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
-        <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
-        <87muufze8w.fsf@xmission.com>
-        <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
-        <87zhyfw70m.fsf@xmission.com>
-        <dacc9322-fd5a-dfeb-e4f1-7a288fb79886@gmail.com>
-        <87o9evt9a6.fsf@xmission.com>
-        <a227d23c-40a1-97a9-d39c-70d16cd470b4@gmail.com>
-Date:   Tue, 14 Aug 2018 23:36:10 -0500
-In-Reply-To: <a227d23c-40a1-97a9-d39c-70d16cd470b4@gmail.com> (David Ahern's
-        message of "Mon, 13 Aug 2018 15:48:17 -0600")
-Message-ID: <877eksi6v9.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fpnXb-0000Rx-Gw;;;mid=<877eksi6v9.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/bD1e4s0BlxO9z14CmSn2weQITnA2o1ko=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Wed, 15 Aug 2018 03:48:24 -0400
+Received: from mout.gmx.net ([212.227.15.19]:58991 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726101AbeHOHsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 03:48:24 -0400
+Received: from homer.simpson.net ([185.191.216.245]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0M0y8F-1g9orp2RA7-00v6A9; Wed, 15
+ Aug 2018 06:57:42 +0200
+Message-ID: <1534309061.26284.17.camel@gmx.de>
+Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
+From:   Mike Galbraith <efault@gmx.de>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>
+Date:   Wed, 15 Aug 2018 06:57:41 +0200
+In-Reply-To: <20180815035921.GA5865@dhcp-128-65.nay.redhat.com>
+References: <1533737025.4936.3.camel@gmx.de>
+         <20180810084501.GA11901@dhcp-128-65.nay.redhat.com>
+         <20180810102846.GA31327@dhcp-128-65.nay.redhat.com>
+         <1533922786.5083.7.camel@gmx.de>
+         <20180815035921.GA5865@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:yxpKSsJLVNcB9DAuUnRxgIlTrLt8CoCVRWrwZiuPHlq33yUSEj9
+ NOEwiiYyX4Ir3GZbcbfZsmiWQHsAo6r6D/NLe5NWt60KoICVPTqKQVshbQXYg1oeJ3JCtSI
+ nHYD40s0JIESlbQlvlOXsh+0WNlTFTSQDfRJwTJfRXGpG1xKaqcZg6q6ZmxlIG5RL23+3co
+ 6VRXtVqgSSolpH6x6TQuQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zuTBlHWTmZk=:Qv2XXlcsTv0s/DAAAG/+rH
+ dg+JK6sHkX9X23JLLBrbT70VNJaNkjHftUl5YpJWBo4SL88RornxccOVNBlLie6Fd/4RQ8s/h
+ l+PtYqOcmCMO4gCi8+0W8JTLD+IycWaoxZIoHK3kU3bCRHzKZ/0w3oz9zqrW62+itCBDWhgD+
+ gF+/et259Cv1d+JXMf9eQ5qdW38KgucK+WOYKsYJx3wSt8lD+gZJiLHYIT7MmFJxa5wNqWOYT
+ W//48I7BoKNn64t2zIXmMtJg6ZN1WtvaiOYQeQMYFnoo95lLsHo2CSyF5TTBNhyg9ebJRWUgf
+ bf0/vYEceLT61RZOqcIc5EswGi0Q5AlG7EW/BUdOnDCHUa9YQHzP3ZE0oNzPUY6B9cvLawYTQ
+ n3bHosraxVomN/kLUyIZ9AKnFYGYG2MtFSAHL/EoiLY47eHBtXsHgYr+5IFUCZC/0YMi7xj19
+ p48cD5yVysGMdxkfPPL2YE7B4x8qlLtcWPcs4LuzUPUk4G+RnXI4K00FxOU3xAfT1luGKfFyG
+ s7qqePGydtDDHwZmFc8zH2lnkKIVa1do1znSW+500QwJSmkKPltNxTeUlbh57IQqEUy1l322K
+ YGlWloE9LA8S+9K6LYQaZfHFH3UpR3KuevuKZ1MKAM5nonbfv12VVl1+8vB/qnCoQteF+VJGn
+ XHKHlVOmyGce0IU8DOphm9EVAzJyXdhrJsQ70/qi5qC7l+yA6G0lxYH41kldCci13FTfqpF1Z
+ a/57vMNNKjMPmHixYTL2gzyl3rAhRMaNp6VWyXA3GB7uWWk1maMmPHq+2iRaIJ3fFRoi7bw3L
+ Z66fKVb
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Ahern <dsahern@gmail.com> writes:
+On Wed, 2018-08-15 at 11:59 +0800, Dave Young wrote:
+> > Does this improve things, and plug the no boot hole?
+> 
+> Would you mind to tune my patch with some acpi_rsdp checking and add
+> some error message in case kexec load failure? Eg. suggest people to use
+> append acpi_rsdp for noefi booting etc.
 
-> On 7/25/18 1:17 PM, Eric W. Biederman wrote:
->> David Ahern <dsahern@gmail.com> writes:
->> 
->>> On 7/25/18 11:38 AM, Eric W. Biederman wrote:
->>>>
->>>> Absolutely NOT.  Global thresholds are exactly correct given the fact
->>>> you are running on a single kernel.
->>>>
->>>> Memory is not free (Even though we are swimming in enough of it memory
->>>> rarely matters).  One of the few remaining challenges is for containers
->>>> is finding was to limit resources in such a way that one application
->>>> does not mess things up for another container during ordinary usage.
->>>>
->>>> It looks like the neighbour tables absolutely are that kind of problem,
->>>> because the artificial limits are too strict.   Completely giving up on
->>>> limits does not seem right approach either.  We need to fix the limits
->>>> we have (perhaps making them go away entirely), not just apply a
->>>> band-aid.  Let's get to the bottom of this and make the system better.
->>>
->>> Eric: yes, they all share the global resource of memory and there should
->>> be limits on how many entries a remote entity can create.
->>>
->>> Network namespaces can provide a separation such that one namespace does
->>> not disrupt networking in another. It is absolutely appropriate to do
->>> so. Your rigid stance is inconsistent given the basic meaning of a
->>> network namespace and the parallels to this same problem -- bridges,
->>> vxlans, and ip fragments. Only neighbor tables are not per-device or per
->>> namespace; your insistence on global limits is missing the mark and wrong.
->> 
->> That is not what I said.  Let me rephrase and see if you understand.
->> 
->> The problem appears to be of lots of devices.  Fundamentally if you use
->> lots of network devices today unless you adjust gc_thresh3 you will run
->> out of neighbour table entries.
->> 
->> The problem has a bigger scope than what you are looking at.
->> 
->> If you fix the core problem you won't see the problem in the context
->> of network namespaces either.
->> 
->> Default limits should be something that will never be hit unless
->> something goes crazy.  We are hitting them.  Therefore by definition
->> there is a bug in these limits.
->
-> I disagree that the problem is a global limit. It is trivial for users
-> to increase gc_thresh3. That does not solve the fundamental problem.
->
->> 
->> 
->> And yes there is absolutely a place for global limits on things like
->> inodes, file descriptors etc, that does not care about which part of the
->> kernel you are in.  However hitting those limits in normal operation is
->> a bug.
->> 
->> We have ourselves a bug.
->
-> I agree we have a bug; we disagree on what that bug is.
->
-> I am just back from vacation and re-read your responses. No where do you
-> acknowledge the fundamental point of this patch set - that adding a new
-> neighbor entry in one namespace can evict an entry in another namespace
-> or worse networking in one namespace can fail due to table overflow
-> because of entries from another. That is a real problem.
->
-> It is not a matter of increasing the default gc_thresh3 to some number
-> N; it is ensuring that regardless of the value of gc_thresh3 one
-> namespace is not affected by another.
+Yeah, -ENODEV is better than hanging, but not very informative.
 
-My suggestion is to look at the problem and it's requirements and figure
-out how to safely remove gc_thresh3 entirely.  We do have to ensure
-neighbour tables don't grow too large, I expect we can do it in a way
-that can scale from a small machine with few neighbours to a large
-machine with many neighbours.
+> I'm still not very satisfied with the code cleanup..
 
-Perhaps the code just needs to limit the number of neighbours who have
-never replied and the code is probing for an a per interface basis.
+Not surprising, I didn't like it much either (ergo interrogative).
 
-It still may make sense to have a global limit of perhaps a million
-entries just because that would be an indicator that something has truly
-gone weird.
-
-> You created network namespaces and it provides isolation -- separate
-> tables essentially -- for devices, FIB entries, sockets, etc, but you
-> argue against completing the task with separate neighbor tables which is
-> very strange given the impact (completely broken networking).
-
-Namespaces provide isolation at the level of names.  The objects still
-share a kernel and compete for resources.  Not competing for resources
-would require each namespace have it's own dedicated pool of resources
-which over the whole machine would be much less efficient.
-
-That is the fundamental design difference between namespaces and VM's
-and it is why namespaces can be much cheaper and much more resource
-efficient.  Reserving your worst case resource usage ahead of time tends
-to result in a lot of inefficiencies.
-
-Eric
-
-
-
-
-
-
+	-Mike
