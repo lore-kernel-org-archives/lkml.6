@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909C0C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD6BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015382154B
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:00:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015382154B
+	by mail.kernel.org (Postfix) with ESMTP id 912C82154B
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:00:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912C82154B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbeHOSws (ORCPT
+        id S1729689AbeHOSws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 15 Aug 2018 14:52:48 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:46834 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbeHOSwr (ORCPT
+Received: from mail-it0-f72.google.com ([209.85.214.72]:51215 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729504AbeHOSwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 15 Aug 2018 14:52:47 -0400
-Received: by mail-io0-f198.google.com with SMTP id c5-v6so1400127ioi.13
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 09:00:04 -0700 (PDT)
+Received: by mail-it0-f72.google.com with SMTP id q5-v6so1620680ith.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 09:00:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=UPfO5HyZ4ZE/8KhOSWxYuf7lqtESyWIvRegSsWHcUcg=;
-        b=dSABi7fEZjJCTReM4sY5TEVImlFOv0uXDuktsth4z9V9ZdKjJ8BhHAnHDztbYi31Zu
-         s8fV4SRZJ6LWIo7qel9BamQQUD2GuioOCH8kQtGjejJJYZKtNh7PHEjJW5lsj9DITygg
-         h5A42ZW/HGFpcpBavwc0wtQm2zFTGXSPYj+uqOS/IJk3hi31MUHMDC+MZDPrXZQsTjaB
-         q4MPImlC/mBqnLFfF4em6TV0d0UocCulrKZv/nApV6N0qTiC7cmyOp5zQj6b5kg8OPdC
-         bD98GoQByp4YtO91t/BwkyQUcoM6QEqvcldHKyJP86pDTYRiBrWQLeF6IkIeM/hXVX8T
-         a+dw==
-X-Gm-Message-State: AOUpUlFNKaXDr354ss2gznxu4gNRxSf7zIviuj2z5DhvtnOFKm1rD0Uo
-        7fONV3bKvJMOWwCvEFATwHw/nzWdd6zm6W7nBbvzfV4Of0Cl
-X-Google-Smtp-Source: AA+uWPyw/jFOiNIcWE1gnxQnkodcUeCqtIMtbD4fn011bhVAx+s+hCmX48ZHOgtr7+hdLmCw1jKVonhUXY2HijL0CJ8fFIIfNosZ
+        bh=IEDhB+IBZG/MNVy7maCMfBXfz36jegRFDsxzazbuBQw=;
+        b=ZbMF+eejyWpJE9GYd91VOPJZONPdrLGVW6vMP715WFG5tiOi0gyEdq8SekYMJstEl5
+         dNPJHX0zdvH1xqM4t8ZoknR1ZAW5MpFZAfdnvytp8Va42RvseSQUEdty+j+drarzm8be
+         0FeJdbLHfDKbQxt6hj3txXapT6CYxiJwFkt2t32U3PF7X/19Z9id1AwNITbuuTQ3vUbi
+         e6M5quJsuAAujllliKnfq9o/9waHA78IZF+jBblT6uOnOHNVO9pQkXnTOs+QOGpVQb/Q
+         t+xuHW/0FO/mEVv4+Kru4KtFXH3rfRQTk4HeNfqXMMSL/LbisyFLNIMg5SPeUdQx0s0+
+         XXFw==
+X-Gm-Message-State: AOUpUlFF/iOd6X4dUozPNezyHgb2b1VLSjRFPrIahs5hsn/vGhp7uEuK
+        S9k67YrdrfyMopXuPtdK05VXCEIepVQn3CzekmbMbpktHXDB
+X-Google-Smtp-Source: AA+uWPydp2ghNp9wagOcxrrplM0RIyZjrPOiNRJjbFrDz8hW4rL9WjCqoesfIJUllGV48DDpzIGeQ2lU+k4ReTZkPdhXmOSVYR0+
 MIME-Version: 1.0
-X-Received: by 2002:a6b:2306:: with SMTP id j6-v6mr12374502ioj.51.1534348804394;
+X-Received: by 2002:a6b:b513:: with SMTP id e19-v6mr12401312iof.35.1534348804134;
  Wed, 15 Aug 2018 09:00:04 -0700 (PDT)
 Date:   Wed, 15 Aug 2018 09:00:04 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000072d64d05737b6b8c@google.com>
-Subject: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
-From:   syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, ebiggers@google.com,
-        herbert@gondor.apana.org.au, hpa@zytor.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
+Message-ID: <0000000000006ebad505737b6bf4@google.com>
+Subject: WARNING in wiphy_register (2)
+From:   syzbot <syzbot+2a12f11c306afe871c1f@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,112 +60,87 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    7796916146b8 Merge branch 'x86-cpu-for-linus' of git://git..
+HEAD commit:    ec0c96714e7d Merge git://git.kernel.org/pub/scm/linux/kern..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=164b1922400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=265bef9882cce8d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=d5455bac3ba1ee9114e5
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b01274400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=152cb8ccd35b1f70
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a12f11c306afe871c1f
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1013478c400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1349c8aa400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10b2a2f8400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ff3622400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com
+Reported-by: syzbot+2a12f11c306afe871c1f@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: use-after-free in sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0  
-arch/x86/crypto/sha512-mb/sha512_mb.c:136
-Read of size 4 at addr ffff8801b0b9e838 by task kworker/0:1/13
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+netlink: 'syz-executor064': attribute type 9 has an invalid length.
+WARNING: CPU: 0 PID: 4439 at net/wireless/core.c:550  
+wiphy_verify_combinations net/wireless/core.c:550 [inline]
+WARNING: CPU: 0 PID: 4439 at net/wireless/core.c:550  
+wiphy_register+0x12c1/0x2510 net/wireless/core.c:741
+Kernel panic - not syncing: panic_on_warn set ...
 
-CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.18.0+ #187
+CPU: 0 PID: 4439 Comm: syz-executor064 Not tainted 4.18.0-rc8+ #184
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: crypto mcryptd_flusher
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0  
-arch/x86/crypto/sha512-mb/sha512_mb.c:136
-  sha512_ctx_mgr_resubmit arch/x86/crypto/sha512-mb/sha512_mb.c:135 [inline]
-  sha512_ctx_mgr_flush+0x5c/0xb0 arch/x86/crypto/sha512-mb/sha512_mb.c:367
-  sha512_mb_flusher+0x27b/0x610 arch/x86/crypto/sha512-mb/sha512_mb.c:939
-  mcryptd_flusher+0x342/0x4b0 crypto/mcryptd.c:208
-  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
-  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-
-Allocated by task 23902:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  sock_kmalloc+0x156/0x1f0 net/core/sock.c:1996
-  hash_accept_parent_nokey+0x58/0x2e0 crypto/algif_hash.c:438
-  hash_accept_parent+0x5b/0x80 crypto/algif_hash.c:465
-  af_alg_accept+0x127/0x7d0 crypto/af_alg.c:296
-  alg_accept+0x46/0x60 crypto/af_alg.c:332
-  __sys_accept4+0x3b2/0x8a0 net/socket.c:1600
-  __do_sys_accept4 net/socket.c:1635 [inline]
-  __se_sys_accept4 net/socket.c:1632 [inline]
-  __x64_sys_accept4+0x97/0xf0 net/socket.c:1632
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:wiphy_verify_combinations net/wireless/core.c:550 [inline]
+RIP: 0010:wiphy_register+0x12c1/0x2510 net/wireless/core.c:741
+Code: 74 08 3c 01 0f 8e c5 10 00 00 66 45 89 67 30 e9 18 f9 ff ff e8 40 00  
+4c fb 0f 0b bb ea ff ff ff e9 f5 f3 ff ff e8 2f 00 4c fb <0f> 0b bb ea ff  
+ff ff e9 e4 f3 ff ff e8 1e 00 4c fb 0f 0b bb ea ff
+RSP: 0018:ffff8801ac51ee60 EFLAGS: 00010293
+RAX: ffff8801af3fc700 RBX: 0000000000000000 RCX: ffffffff86301238
+RDX: 0000000000000000 RSI: ffffffff86301821 RDI: 0000000000000005
+RBP: ffff8801ac51f000 R08: ffff8801af3fc700 R09: ffffed00358d6114
+R10: ffffed00358d6114 R11: ffff8801ac6b08a5 R12: ffff8801ac6b327c
+R13: ffffffff87838ae0 R14: dffffc0000000000 R15: ffff8801ac6b08a0
+  ieee80211_register_hw+0x13d5/0x35e0 net/mac80211/main.c:1050
+  mac80211_hwsim_new_radio+0x1db8/0x33b0  
+drivers/net/wireless/mac80211_hwsim.c:2772
+  hwsim_new_radio_nl+0x7c0/0xa80 drivers/net/wireless/mac80211_hwsim.c:3247
+  genl_family_rcv_msg+0x8a3/0x1140 net/netlink/genetlink.c:601
+  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2455
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
+  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
+  netlink_sendmsg+0xa18/0xfd0 net/netlink/af_netlink.c:1908
+  sock_sendmsg_nosec net/socket.c:642 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:652
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2126
+  __sys_sendmsg+0x11d/0x290 net/socket.c:2164
+  __do_sys_sendmsg net/socket.c:2173 [inline]
+  __se_sys_sendmsg net/socket.c:2171 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2171
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 23902:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  __sock_kfree_s net/core/sock.c:2017 [inline]
-  sock_kfree_s+0x29/0x60 net/core/sock.c:2023
-  hash_sock_destruct+0x157/0x1c0 crypto/algif_hash.c:427
-  __sk_destruct+0x107/0xa60 net/core/sock.c:1573
-  sk_destruct+0x78/0x90 net/core/sock.c:1608
-  __sk_free+0xcf/0x300 net/core/sock.c:1619
-  sk_free+0x42/0x50 net/core/sock.c:1630
-  sock_put include/net/sock.h:1667 [inline]
-  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
-  __sock_release+0xd7/0x260 net/socket.c:600
-  sock_close+0x19/0x20 net/socket.c:1151
-  __fput+0x355/0x8b0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801b0b9e340
-  which belongs to the cache kmalloc-2048 of size 2048
-The buggy address is located 1272 bytes inside of
-  2048-byte region [ffff8801b0b9e340, ffff8801b0b9eb40)
-The buggy address belongs to the page:
-page:ffffea0006c2e780 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0007543a88 ffffea000760b188 ffff8801dac00c40
-raw: 0000000000000000 ffff8801b0b9e340 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b0b9e700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b0b9e780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801b0b9e800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                         ^
-  ffff8801b0b9e880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b0b9e900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+RIP: 0033:0x4402c9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffcf9426d68 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004402c9
+RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401b50
+R13: 0000000000401be0 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
