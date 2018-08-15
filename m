@@ -2,65 +2,107 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9F1C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE53C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 282922089E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:28:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 282922089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id BACC3208D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:29:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACC3208D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeHPCWV (ORCPT
+        id S1728018AbeHPCYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 22:22:21 -0400
-Received: from gate.crashing.org ([63.228.1.57]:38101 "EHLO gate.crashing.org"
+        Wed, 15 Aug 2018 22:24:17 -0400
+Received: from h2.hallyn.com ([78.46.35.8]:39648 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbeHPCWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 22:22:21 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7FNRBLj006078;
-        Wed, 15 Aug 2018 18:27:17 -0500
-Message-ID: <7ccdc39d7e255547e851497ef9f449715b45f8bd.camel@kernel.crashing.org>
-Subject: [PATCH] platform/x86: acer-wmi: Silence "unsupported" message  a bit
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Lee, Chun-Yi" <jlee@suse.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 16 Aug 2018 09:27:10 +1000
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726072AbeHPCYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 22:24:17 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id CAF811205E4; Wed, 15 Aug 2018 18:29:51 -0500 (CDT)
+Date:   Wed, 15 Aug 2018 18:29:51 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>, SELinux-NSA <selinux@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: BUG: Mount ignores mount options
+Message-ID: <20180815232951.GA6891@mail.hallyn.com>
+References: <87d0uqpba5.fsf@xmission.com>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <22361.1533913891@warthog.procyon.org.uk>
+ <28045.1533916438@warthog.procyon.org.uk>
+ <20180810161400.GA627@thunk.org>
+ <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+ <20180813173502.1a7a1d9c@alans-desktop>
+ <CALCETrXvtSLjwx0swXo5g-vU3PmF-_6J6j1a_2pAba7bhzO9QQ@mail.gmail.com>
+ <20180813172947.GS6515@ZenIV.linux.org.uk>
+ <alpine.LRH.2.21.1808140458040.23296@namei.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1808140458040.23296@namei.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver prints that "Unsupported machine..." message on every boot on
-ThinkPad X1 Carbon laptops (and I assume a number of other systems), which
-causes graphical boots to "glitch" a bit and is rather annoying ...
+Quoting James Morris (jmorris@namei.org):
+> On Mon, 13 Aug 2018, Al Viro wrote:
+> 
+> > On Mon, Aug 13, 2018 at 09:48:53AM -0700, Andy Lutomirski wrote:
+> 
+> > > Are there cases I'm missing?  It sounds like the API could be improved
+> > > to fully model the last case, and everything will work nicely.
+> > 
+> > 	You know, that's starting to remind of this little gem of Borges:
+> > http://www.alamut.com/subj/artiface/language/johnWilkins.html
+> > Especially the delightful (fake) quote contained in there:
+> > [...] it is written that the animals are divided into:
+> > 	(a) belonging to the emperor,
+> > 	(b) embalmed,
+> > 	(c) tame,
+> > 	(d) sucking pigs,
+> > 	(e) sirens,
+> > 	(f) fabulous,
+> > 	(g) stray dogs,
+> > 	(h) included in the present classification,
+> > 	(i) frenzied,
+> > 	(j) innumerable,
+> > 	(k) drawn with a very fine camelhair brush,
+> > 	(l) et cetera,
+> > 	(m) having just broken the water pitcher,
+> > 	(n) that from a long way off look like flies.
+> 
+> 
+> Coincidentally, this was also the model for Linux capabilities.
 
-Make it a pr_debug instead.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
-
-diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
-index 8952173dd380..7f7192e8fdab 100644
---- a/drivers/platform/x86/acer-wmi.c
-+++ b/drivers/platform/x86/acer-wmi.c
-@@ -2216,7 +2216,7 @@ static int __init acer_wmi_init(void)
-        if (wmi_has_guid(AMW0_GUID1) &&
-            !dmi_check_system(amw0_whitelist) &&
-            quirks == &quirk_unknown) {
--               pr_err("Unsupported machine has AMW0_GUID1, unable to load\n");
-+               pr_debug("Unsupported machine has AMW0_GUID1, unable to load\n");
-                return -ENODEV;
-        }
-  
-
+But maybe we want to split the stray dogs up by breed.
