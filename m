@@ -2,171 +2,203 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C348EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4B4C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32A021502
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:37:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="EtCIKlKe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32A021502
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id CADC521565
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADC521565
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729642AbeHOUah (ORCPT
+        id S1730087AbeHOUay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 16:30:37 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40896 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHOUag (ORCPT
+        Wed, 15 Aug 2018 16:30:54 -0400
+Received: from mail.sembritzki.me ([5.45.101.249]:60334 "EHLO
+        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729381AbeHOUay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 16:30:36 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x5-v6so800947pgp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 10:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UA2tkIB82HLEywvQ4mDDzSbEmfmj+7uNtUXu2sVPYXk=;
-        b=EtCIKlKeteq0U2rTzuh/2uVoQl6Up9+mFGZMgIZIu2IEV/B2ngh9d0mFnrz/dtz3q8
-         bLvx9XGHl8ZZe7MKM+1b48cngis8V7Dy9iDCGOD9IBqzLC8fyBMpWRWh1psj+yDen0qU
-         7kF6DxJzlQvj289ihVFz9tRieZ4y9wlSlENawFEy3kxxP6PmIqDVRtbi/eG9Uea6KGNz
-         jjHzNQYYVsjn1+NesNq0eqvizaEGb84fT0NEtfaFEEZa2i69s4w/nTXjVqAuZ8vDPxyy
-         eo8KmSJnsSh0TOjnxiLe65OlML5Kjcij9slAzaGjL1lqhiffE4QECujBBvxr3TSKAyOx
-         Tuiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UA2tkIB82HLEywvQ4mDDzSbEmfmj+7uNtUXu2sVPYXk=;
-        b=Qt7a0JL+ZGk75NiB+IzyD/U8PqioJOz9PF72zL4sTtME/V/jwfhXaRJSMKyiQJRrPy
-         YosDEcCUXkwdmemtqO1iFyEFjhCMjGZOtr+mG8Swa3XJdHSPo3HD5RJM0mnkdfEMUFUl
-         mYqnUqWBLbQZcznA0wR3ahaCkNTeWnYtDMk2bJv4C+3IMiXWv85keBut/GZKyhE5z0kq
-         v3Xk+MAmUE9Lw91BLuoIETZhoIzwmwhKMNKOdrJTMHr137nEfrm6njdaw7FRZR8M7kRL
-         Jogat/L9NjKJxaULz2ZvyeIehIqTvigWh5oX6fPGenne0kSLwwTdQo806F0hN5ZjDfBx
-         cnww==
-X-Gm-Message-State: AOUpUlE5x2Fn+Q/ebf0A8xgRtKkYjZ2orYJuLUv7mwdLMKE3gEmSuLSc
-        5flEZBe/MBOu58SN/1hQFd4k6A==
-X-Google-Smtp-Source: AA+uWPxjZ1QnJMkjHsxExoEUSEhpSphWMVtJVTHb6yIQA6/uNOvhF7wsXUH4PzlyDq+78Tt1iuWPbg==
-X-Received: by 2002:a65:4304:: with SMTP id j4-v6mr26614895pgq.109.1534354651294;
-        Wed, 15 Aug 2018 10:37:31 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b010:3fbd:7d76:67ee:fa0f:6b7f? ([2600:1010:b010:3fbd:7d76:67ee:fa0f:6b7f])
-        by smtp.gmail.com with ESMTPSA id b76-v6sm45398941pfj.184.2018.08.15.10.37.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 10:37:30 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 1/2] mm: rework memcg kernel stack accounting
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <CALvZod7TDLtr-DgqgW_0tOKei_54U1JHThpgLKr9_ObaqcC3MA@mail.gmail.com>
-Date:   Wed, 15 Aug 2018 10:37:28 -0700
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
-        Michal Hocko <mhocko@kernel.org>, luto@kernel.org,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Tejun Heo <tj@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <19CD1E5B-CB86-493A-8BA6-7389E36291B4@amacapital.net>
-References: <20180815003620.15678-1-guro@fb.com> <20180815163923.GA28953@cmpxchg.org> <20180815165513.GA26330@castle.DHCP.thefacebook.com> <2393E780-2B97-4BEE-8374-8E9E5249E5AD@amacapital.net> <20180815172557.GC26330@castle.DHCP.thefacebook.com> <CALvZod7TDLtr-DgqgW_0tOKei_54U1JHThpgLKr9_ObaqcC3MA@mail.gmail.com>
-To:     Shakeel Butt <shakeelb@google.com>
+        Wed, 15 Aug 2018 16:30:54 -0400
+Received: from [192.168.1.22] (x4dbb4132.dyn.telefonica.de [77.187.65.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.sembritzki.me (Postfix) with ESMTPSA id 58449A7A3E;
+        Wed, 15 Aug 2018 19:37:46 +0200 (CEST)
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform
+ keys to boot
+From:   Yannik Sembritzki <yannik@sembritzki.me>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180815100053.13609-1-yannik@sembritzki.me>
+ <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+ <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+Openpgp: preference=signencrypt
+Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
+ 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
+ YfNfIPB+
+Message-ID: <273c639a-b322-996a-84f2-e55ad187893b@sembritzki.me>
+Date:   Wed, 15 Aug 2018 19:37:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I'm sorry, the sign-off was missing again (this is my first submission
+to linux).
 
+Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/kernel/kexec-bzimage64.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> On Aug 15, 2018, at 10:32 AM, Shakeel Butt <shakeelb@google.com> wrote:
->=20
->> On Wed, Aug 15, 2018 at 10:26 AM Roman Gushchin <guro@fb.com> wrote:
->>=20
->>> On Wed, Aug 15, 2018 at 10:12:42AM -0700, Andy Lutomirski wrote:
->>>=20
->>>=20
->>>>> On Aug 15, 2018, at 9:55 AM, Roman Gushchin <guro@fb.com> wrote:
->>>>>=20
->>>>>> On Wed, Aug 15, 2018 at 12:39:23PM -0400, Johannes Weiner wrote:
->>>>>> On Tue, Aug 14, 2018 at 05:36:19PM -0700, Roman Gushchin wrote:
->>>>>> @@ -224,9 +224,14 @@ static unsigned long *alloc_thread_stack_node(st=
-ruct task_struct *tsk, int node)
->>>>>>       return s->addr;
->>>>>>   }
->>>>>>=20
->>>>>> +    /*
->>>>>> +     * Allocated stacks are cached and later reused by new threads,
->>>>>> +     * so memcg accounting is performed manually on assigning/releas=
-ing
->>>>>> +     * stacks to tasks. Drop __GFP_ACCOUNT.
->>>>>> +     */
->>>>>>   stack =3D __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
->>>>>>                    VMALLOC_START, VMALLOC_END,
->>>>>> -                     THREADINFO_GFP,
->>>>>> +                     THREADINFO_GFP & ~__GFP_ACCOUNT,
->>>>>>                    PAGE_KERNEL,
->>>>>>                    0, node, __builtin_return_address(0));
->>>>>>=20
->>>>>> @@ -246,12 +251,41 @@ static unsigned long *alloc_thread_stack_node(s=
-truct task_struct *tsk, int node)
->>>>>> #endif
->>>>>> }
->>>>>>=20
->>>>>> +static void memcg_charge_kernel_stack(struct task_struct *tsk)
->>>>>> +{
->>>>>> +#ifdef CONFIG_VMAP_STACK
->>>>>> +    struct vm_struct *vm =3D task_stack_vm_area(tsk);
->>>>>> +
->>>>>> +    if (vm) {
->>>>>> +        int i;
->>>>>> +
->>>>>> +        for (i =3D 0; i < THREAD_SIZE / PAGE_SIZE; i++)
->>>>>> +            memcg_kmem_charge(vm->pages[i], __GFP_NOFAIL,
->>>>>> +                      compound_order(vm->pages[i]));
->>>>>> +
->>>>>> +        /* All stack pages belong to the same memcg. */
->>>>>> +        mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
->>>>>> +                     THREAD_SIZE / 1024);
->>>>>> +    }
->>>>>> +#endif
->>>>>> +}
->>>>>=20
->>>>> Before this change, the memory limit can fail the fork, but afterwards=
+diff --git a/arch/x86/kernel/kexec-bzimage64.c
+b/arch/x86/kernel/kexec-bzimage64.c
+index 7326078e..2ba47e24 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -41,6 +41,9 @@
+ #define MIN_KERNEL_LOAD_ADDR    0x100000
+ #define MIN_INITRD_LOAD_ADDR    0x1000000
+ 
++// Allow both builtin trusted keys and secondary trusted keys
++#define TRUST_FULL_KEYRING    (void *)1UL
++
+ /*
+  * This is a place holder for all boot loader specific data structure which
+  * gets allocated in one call but gets freed much later during cleanup
+@@ -532,7 +535,7 @@ static int bzImage64_cleanup(void *loader_data)
+ static int bzImage64_verify_sig(const char *kernel, unsigned long
+kernel_len)
+ {
+     return verify_pefile_signature(kernel, kernel_len,
+-                       NULL,
++                       TRUST_FULL_KEYRING,
+                        VERIFYING_KEXEC_PE_SIGNATURE);
+ }
+ #endif
+-- 
+2.17.1
 
->>>>> fork() can grow memory consumption unimpeded by the cgroup settings.
->>>>>=20
->>>>> Can we continue to use try_charge() here and fail the fork?
->>>>=20
->>>> We can, but I'm not convinced we should.
->>>>=20
->>>> Kernel stack is relatively small, and it's already allocated at this po=
-int.
->>>> So IMO exceeding the memcg limit for 1-2 pages isn't worse than
->>>> adding complexity and handle this case (e.g. uncharge partially
->>>> charged stack). Do you have an example, when it does matter?
->>>=20
->>> What bounds it to just a few pages?  Couldn=E2=80=99t there be lots of f=
-orks in flight that all hit this path?  It=E2=80=99s unlikely, and there are=
- surely easier DoS vectors, but still.
->>=20
->> Because any following memcg-aware allocation will fail.
->> There is also the pid cgroup controlled which can be used to limit the nu=
-mber
->> of forks.
->>=20
->> Anyway, I'm ok to handle the this case and fail fork,
->> if you think it does matter.
->=20
-> Roman, before adding more changes do benchmark this. Maybe disabling
-> the stack caching for CONFIG_MEMCG is much cleaner.
->=20
->=20
+On 15.08.2018 19:27, Yannik Sembritzki wrote:
+> Would this be okay?
+>
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c
+> b/arch/x86/kernel/kexec-bzimage64.c
+> index 7326078e..2ba47e24 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -41,6 +41,9 @@
+>  #define MIN_KERNEL_LOAD_ADDR   0x100000
+>  #define MIN_INITRD_LOAD_ADDR   0x1000000
+>  
+> +// Allow both builtin trusted keys and secondary trusted keys
+> +#define TRUST_FULL_KEYRING     (void *)1UL
+> +
+>  /*
+>   * This is a place holder for all boot loader specific data structure which
+>   * gets allocated in one call but gets freed much later during cleanup
+> @@ -532,7 +535,7 @@ static int bzImage64_cleanup(void *loader_data)
+>  static int bzImage64_verify_sig(const char *kernel, unsigned long
+> kernel_len)
+>  {
+>         return verify_pefile_signature(kernel, kernel_len,
+> -                                      NULL,
+> +                                      TRUST_FULL_KEYRING,
+>                                        VERIFYING_KEXEC_PE_SIGNATURE);
+>  }
+>  #endif
+> --
+>
+> On 15.08.2018 18:54, Linus Torvalds wrote:
+>> This needs more people involved, and at least a sign-off.
+>>
+>> It looks ok, but I think we need a #define for the magical (void *)1UL
+>> thing. I see the use in verify_pkcs7_signature(), but still.
+>>
+>>               Linus
+>>
+>>
+>>
+>> On Wed, Aug 15, 2018 at 3:11 AM Yannik Sembritzki <yannik@sembritzki.me> wrote:
+>>> ---
+>>>  arch/x86/kernel/kexec-bzimage64.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+>>> index 7326078e..eaaa125d 100644
+>>> --- a/arch/x86/kernel/kexec-bzimage64.c
+>>> +++ b/arch/x86/kernel/kexec-bzimage64.c
+>>> @@ -532,7 +532,7 @@ static int bzImage64_cleanup(void *loader_data)
+>>>  static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
+>>>  {
+>>>         return verify_pefile_signature(kernel, kernel_len,
+>>> -                                      NULL,
+>>> +                                      (void *)1UL,
+>>>                                        VERIFYING_KEXEC_PE_SIGNATURE);
+>>>  }
+>>>  #endif
+>>> --
+>>> 2.17.1
+>>>
+>>> The exact scenario under which this issue occurs is described here:
+>>> https://bugzilla.redhat.com/show_bug.cgi?id=1554113
+>>>
 
-Unless memcg accounting is colossally slow, the caching should be left on. v=
-malloc() isn=E2=80=99t inherently slow, but vfree() is, since we need to do a=
- global broadcast TLB flush after enough vfree() calls.=
