@@ -2,105 +2,154 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9EEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12502C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FDC21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9A5C208E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GfagmevK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58FDC21528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJZslMiX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A5C208E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbeHOV5f (ORCPT
+        id S1727522AbeHOV6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:57:35 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39606 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbeHOV5f (ORCPT
+        Wed, 15 Aug 2018 17:58:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39436 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeHOV6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:57:35 -0400
-Received: by mail-io0-f196.google.com with SMTP id l7-v6so1854110iok.6
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:04:12 -0700 (PDT)
+        Wed, 15 Aug 2018 17:58:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h10-v6so1982129wre.6;
+        Wed, 15 Aug 2018 12:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1zIBQK5kS4J9YhuEHes31K5V1rpNIQR59/RCacyOg08=;
-        b=GfagmevKUwJnXKfiX4c3VHiczhZ1jYALrMyc5ASHTl71B2znVUPZWrkHrTe/+6wBtz
-         6opj6QDEM4dbJAh5QIgHxlHIgKYzi8PAKvx1QAimYegUiXwwFLY6Q1vEfLqYEBckuoVT
-         nrXGi40nEAv45KqbC98QIVSKyQFKhuUnXRE6A=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oEX5gOHx1pvpWmHV8PDVMKcDGJJZXRTMhlxb0kQd9KY=;
+        b=lJZslMiXAGLU/gYCC6waevoG4BqD8Px0MJaPg+Zu2eoVNSjoUruAzckH36NJqvp5Rk
+         RXqILH37jPUGk0zy8HcAtCNA8CLG7rVz5FqB84ZK91xlw7/V7V6AuGmHYdAQ2GO97bGY
+         Kvvyx9WZX2hBTf5l7iwA9ObbT4tOfx+5OdgYGOaQPHCEKbQbN9dyisYXEFMpbioQ03+M
+         jCFSn+qyaAAWzaGgRgy+Ak1FLXeCMcuUFS4fSjux6LL4k0xyx3jrMmt4D9lsaSvy9JMA
+         +/MeSeErsO0YgjeRSW7c8gC9QOlgxl/FjPc7FpaioQ7TxaMQYjAqCeM/aYXmUq1smI8i
+         o8cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1zIBQK5kS4J9YhuEHes31K5V1rpNIQR59/RCacyOg08=;
-        b=q6tSlu8JSgz+TIQgRURE5fZfAYrD8mfAHhL/CJdDMfR9YX0AScRxQJuKoRbpDeoOTU
-         TijBmQ/P4GgQanqhh3DtpPr0OonGk+lAwXpGO2PtL1fNm+9y2FnyoQ/NJUC88soz7MSd
-         JGKPmd6PiYrngQue7jw9fN03W9G+kf5PCz7+UpJAdv4WG5lkxjj+8d5rqP4bmWWkgzly
-         S2PaxCKSIYpAEO/E2hCxTXsyiLTtvmIfayRU8lVomi/WwRCWyqMjaRHwepJ0iqGS4/Ul
-         n+P2GchZR8EcFJA8lSKhtqrPglomCRuLCegTM2c6fBH72lTQX+C5x8kxa0/cbFJlJtVV
-         tfuA==
-X-Gm-Message-State: AOUpUlHNdjJ90u+brMjMIvm1Axai6JvZFA0hCPtGjrJ92c2XN7BFlt98
-        bCBn06A+JCL7Dcc9Q4jt9X0bVJ8M00hnTR1Sgks=
-X-Google-Smtp-Source: AA+uWPyTFPax4RXMvGHWZe9rj31TswmV5MtuOQRkJRbNXkwn4OczXDP3gO5WDts391vw6WkZcCJCOdHm/EW+o1/2rP8=
-X-Received: by 2002:a6b:7a08:: with SMTP id h8-v6mr18963431iom.238.1534359851720;
- Wed, 15 Aug 2018 12:04:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180813214328.GA15137@beast> <CA+55aFw5Tkn6DgkAZS-UGOjJpYp2R4rFAm9ixu_=FONeqRyofg@mail.gmail.com>
- <CAGXu5jK_w7JRywdQ78FfQxeLSMmXbvyDDnaYzj27=y8wnAzKxQ@mail.gmail.com>
-In-Reply-To: <CAGXu5jK_w7JRywdQ78FfQxeLSMmXbvyDDnaYzj27=y8wnAzKxQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 15 Aug 2018 12:04:00 -0700
-Message-ID: <CA+55aFyFCWH3YJnRUKtSzs9Mvny0eU+=QANxoPTE+9B9CkUWDw@mail.gmail.com>
-Subject: Re: [GIT PULL] gcc-plugin updates for v4.19-rc1
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Popov <alex.popov@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oEX5gOHx1pvpWmHV8PDVMKcDGJJZXRTMhlxb0kQd9KY=;
+        b=MW2vkgzT4z7dIO1+G45qc2N3K385F4gKojFDihiM3+Fm+T87xaWzWkocFLMFfcqS0Y
+         +cRVS8uIfhuYeSZ9apgt3gOVUcrn6y6965JpWOqVqjJXZqNRB2Pnsl6XI9pVk+4HJDfy
+         7RQYl0OrPL6FIV0bnEskZnRWzv4BUdqAS4eCz88E8QyqC1LhHJKGO+B6YYiNMy4pfKHb
+         /tduTsS8gtazJt1n8UbVOero0VXJ9gAVL6TbLm7rXNAfTiuATMAa5DAiGZjGHN2zoqvs
+         /9zE98s8cAfjgrHOtlC4dhJRUMb410TA8x7WHRMrwHCC7yJ+mBkFmB3tik4TU5penXrL
+         vNFQ==
+X-Gm-Message-State: AOUpUlHx0k2fdQp1B3S+Sllx/l3YSugBhViwlRPUZsvxYR+LNSSQ/F6B
+        N/1ZO0t87c83De4KQGUVGsSJsh0m
+X-Google-Smtp-Source: AA+uWPz1avyre1AVmE/An5Vy0raEHZSFhWyJn9NhEPKVq4gFvjLrcsu7q4jP9DIn8eDjn8LCW1hSRQ==
+X-Received: by 2002:adf:8276:: with SMTP id 109-v6mr17622835wrb.127.1534359902085;
+        Wed, 15 Aug 2018 12:05:02 -0700 (PDT)
+Received: from kostamach.yok.int.mrv.com (194-90-138-234.bb.netvision.net.il. [194.90.138.234])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm31079610wrp.87.2018.08.15.12.04.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Aug 2018 12:05:00 -0700 (PDT)
+From:   Kosta Zertsekel <zertsekel@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Kosta Zertsekel <zertsekel@gmail.com>,
+        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
+        Stefan Roese <sr@denx.de>, Ken Wilson <ken.wilson@opengear.com>
+Subject: [PATCH v4] spi: orion: cosmetics - alias long direct_access variables
+Date:   Wed, 15 Aug 2018 22:04:49 +0300
+Message-Id: <20180815190449.23738-1-zertsekel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 11:35 AM Kees Cook <keescook@chromium.org> wrote:
->
-> I swear I'm doing my best. Are you speaking of
-> stackleak_check_alloca() or stackleak_erase()? These were both
-> discussed on the list, and we weren't able to come up with
-> alternatives: in both cases we're off the stack, and recovery is
-> seemingly impossible.
+This change increases the source code readability.
+Instead of using `spi->child[cs].direct_access.XXX` use `dir_acc->XXX`.
+Instead of using `orion_spi->child[cs].direct_access.vaddr` use `vaddr`.
 
-Why do you even *test* that thing? Why don't you just allocate stack
-and clear it.
+Signed-off-by: Kosta Zertsekel <zertsekel@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Stefan Roese <sr@denx.de>
+---
+ drivers/spi/spi-orion.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Dammit, the whole f*cking point of this patch-set is to clear the
-stack used. It is *not* supposed to do anything else. If the process
-runs out of stack, that's caught by the vmalloc'ed stack.
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index d01a6adc726e..184ba91abeee 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -430,6 +430,7 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+ 	int word_len;
+ 	struct orion_spi *orion_spi;
+ 	int cs = spi->chip_select;
++	void __iomem *vaddr;
+ 
+ 	word_len = spi->bits_per_word;
+ 	count = xfer->len;
+@@ -440,8 +441,9 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+ 	 * Use SPI direct write mode if base address is available. Otherwise
+ 	 * fall back to PIO mode for this transfer.
+ 	 */
+-	if ((orion_spi->child[cs].direct_access.vaddr) && (xfer->tx_buf) &&
+-	    (word_len == 8)) {
++	vaddr = orion_spi->child[cs].direct_access.vaddr;
++
++	if (vaddr && xfer->tx_buf && word_len == 8) {
+ 		unsigned int cnt = count / 4;
+ 		unsigned int rem = count % 4;
+ 
+@@ -449,13 +451,11 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+ 		 * Send the TX-data to the SPI device via the direct
+ 		 * mapped address window
+ 		 */
+-		iowrite32_rep(orion_spi->child[cs].direct_access.vaddr,
+-			      xfer->tx_buf, cnt);
++		iowrite32_rep(vaddr, xfer->tx_buf, cnt);
+ 		if (rem) {
+ 			u32 *buf = (u32 *)xfer->tx_buf;
+ 
+-			iowrite8_rep(orion_spi->child[cs].direct_access.vaddr,
+-				     &buf[cnt], rem);
++			iowrite8_rep(vaddr, &buf[cnt], rem);
+ 		}
+ 
+ 		return count;
+@@ -683,6 +683,7 @@ static int orion_spi_probe(struct platform_device *pdev)
+ 
+ 	/* Scan all SPI devices of this controller for direct mapped devices */
+ 	for_each_available_child_of_node(pdev->dev.of_node, np) {
++		struct orion_direct_acc *dir_acc;
+ 		u32 cs;
+ 
+ 		/* Get chip-select number from the "reg" property */
+@@ -711,14 +712,13 @@ static int orion_spi_probe(struct platform_device *pdev)
+ 		 * This needs to get extended for the direct SPI-NOR / SPI-NAND
+ 		 * support, once this gets implemented.
+ 		 */
+-		spi->child[cs].direct_access.vaddr = devm_ioremap(&pdev->dev,
+-							    r->start,
+-							    PAGE_SIZE);
+-		if (!spi->child[cs].direct_access.vaddr) {
++		dir_acc = &spi->child[cs].direct_access;
++		dir_acc->vaddr = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
++		if (!dir_acc->vaddr) {
+ 			status = -ENOMEM;
+ 			goto out_rel_axi_clk;
+ 		}
+-		spi->child[cs].direct_access.size = PAGE_SIZE;
++		dir_acc->size = PAGE_SIZE;
+ 
+ 		dev_info(&pdev->dev, "CS%d configured for direct access\n", cs);
+ 	}
+-- 
+2.17.1
 
-And if you don't  have vmalloc'ed stack, then clearly you don't care.
-
-I refuse to take this kind of code that does stupid things, and then
-*because* it does those initial stupid things it does even more stupid
-things to correct for it.
-
-I hated the thing to begin with, told people that there are better
-approaches that don't have the downsides, got ignored, and then I'm
-pushed crap.
-
-No.
-
-         Linus
