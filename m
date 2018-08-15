@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CAFC46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A66EC46464
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2220221721
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0761216F8
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:37:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="GIt6juWo";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="XPi77NN+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2220221721
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="lg9y5jYy";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="XwTPYzfV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0761216F8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbeHOD0b (ORCPT
+        id S1728438AbeHOD0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 23:26:31 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:35832 "EHLO
+        Tue, 14 Aug 2018 23:26:32 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:35834 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728144AbeHOD0b (ORCPT
+        by vger.kernel.org with ESMTP id S1726044AbeHOD0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 23:26:31 -0400
+        Tue, 14 Aug 2018 23:26:32 -0400
 Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7F0UOnZ028091;
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7F0UOna028091;
         Tue, 14 Aug 2018 17:36:45 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=msuVjdyVfTRbspscaCDwIy7tMM2QtYrgmrKRNFFQspQ=;
- b=GIt6juWoRAuoQ/eHrtOBOWswvnmHcp2oluRtAtqJEoVtzj9tjwsoA0Z53J+9O9nV6JAY
- CxxdzI/Dq08sZ1RMAu4eMjXle3+wjMHyzY8rKrPoqd/uXK4uwZc8JJjP9SqQt7303os6
- YTAEz24Abvt05gaZVWyexfBp+WejkTEtWaU= 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=eesPrDvOqeXhMz2Kka4CiC+3KQRHS0oUCbgFaiOyA2I=;
+ b=lg9y5jYyHQURsMpjlHM/eNSGuBXqflp3SMMpZ/hF6NXnwwQjzDvpAICHml4w1O09mNn+
+ 9DR1ntzKkNteyStGrGbu+tA4P2Am1k+7EMpu0o6kFvchWx6yXaEN4p6/fZfyg/4rAGKh
+ 0HGSpHrXniZhygfKa3HRjmaZkgxPE9vs6PQ= 
 Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2kv6hqgg7w-1
+        by mx0a-00082601.pphosted.com with ESMTP id 2kv6hqgg7w-2
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
         Tue, 14 Aug 2018 17:36:45 -0700
 Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
@@ -46,26 +46,27 @@ Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=msuVjdyVfTRbspscaCDwIy7tMM2QtYrgmrKRNFFQspQ=;
- b=XPi77NN+JiTx1ADpNQleVwh/AY/CKp7MPzKQhyYQ9PHD6kCPh2V2FxiijPqEhqF31DnZqTK/3fDUXZ7SQLD2pOTE2Vss97KTtNlqd/6paEeOZ0d0E1jFIxApAds2wOMwJmQmkSnVfhVz2lHmJ8RKx2djexWEe0s3alp5NRg/Ozs=
+ bh=eesPrDvOqeXhMz2Kka4CiC+3KQRHS0oUCbgFaiOyA2I=;
+ b=XwTPYzfVJkqTd9zEHQE8MPRh6PwxAVe9/nQSMv6OF+y7kNvujKmFmCrRjVREy4h7ztByEgPWcl9DFReazpQ3CLEaxvwihOXF+/7ItGeEP8Zr3ygNOLy2CRQzkw7tzaCwimI2nX4pXDnKEu0qR0fEf+eRlsLkYS8e2+sbdI0iag4=
 Received: from castle.thefacebook.com (2620:10d:c090:200::7:b884) by
  CY1PR15MB0169.namprd15.prod.outlook.com (2a01:111:e400:58bb::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.19; Wed, 15 Aug
- 2018 00:36:40 +0000
+ 2018 00:36:41 +0000
 From:   Roman Gushchin <guro@fb.com>
 To:     <linux-mm@kvack.org>
 CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
         Roman Gushchin <guro@fb.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
         Konstantin Khlebnikov <koct9i@gmail.com>,
         Tejun Heo <tj@kernel.org>
-Subject: [RFC PATCH 1/2] mm: rework memcg kernel stack accounting
-Date:   Tue, 14 Aug 2018 17:36:19 -0700
-Message-ID: <20180815003620.15678-1-guro@fb.com>
+Subject: [RFC PATCH 2/2] mm: drain memcg stocks on css offlining
+Date:   Tue, 14 Aug 2018 17:36:20 -0700
+Message-ID: <20180815003620.15678-2-guro@fb.com>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180815003620.15678-1-guro@fb.com>
+References: <20180815003620.15678-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [2620:10d:c090:200::7:b884]
@@ -73,49 +74,49 @@ X-ClientProxiedBy: MWHPR19CA0006.namprd19.prod.outlook.com
  (2603:10b6:300:d4::16) To CY1PR15MB0169.namprd15.prod.outlook.com
  (2a01:111:e400:58bb::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9a5cdb32-0da4-4c4d-f667-08d602472af8
+X-MS-Office365-Filtering-Correlation-Id: d6f46611-207b-4f65-0590-08d602472b88
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR15MB0169;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;3:LRPc4/4L52F3p92MLwHhcDS1GgNCWW+aDFitu4cOjVbvhMKnamUv9GJab1wWcjzsCqj03dlDRg68gVv9JyvDJ/1yXVtgwLDCKOOS7AS6LOnlVvHW33wzYzQ7Rc/exldgfArZJFtSTriKzInl7FMiv0teCM2/i41/8Ws3utRGDVQ7WxhpxM2YbNnPoL7b1nLyrPJpqgUwRbruKAKJYF0HrpUYHWb+1UaqQTjF3sQa5x4rCDnMAtlcbrgq9egnvGTk;25:o6pCE9DuT7YO2itXB/7za9CkxvdbemYmvFSLo6KhggXzUWum13ceyNPdMJDv/42pCW2mZYxsMB4JAT0tjXzGgM9b51vkuU1uq8YbKAgMqrM4SEoQEmthkD8CM312SpvV4Vy5F2lgxJdBg2uo/p8V7I59KyO+YXXYvx3Oc6YkYUnS8lR/eK+VUIV+Yq2atKSjXnPe97TLP0FEeV6t2RGfWncFnw00ikeblESrqAfbnHkZjCTTZFJdMwJacIuUUw9BKzHXJyHHjK2CQJIQTbShPqxh7aGsBom7XnLZk8rabmJq4nu24fhZpDldYPI/jrXRxvTnexmeD5sRsDl0gt+qYTo/yr1ii/DvM9uJRL9ShRc=;31:m+Z7eYGzZhhQ+/NphMfs+kKsEs6kieQKrnEbykxjDEzHuxmf5GgP2cJdt5Blv7bzzXA2kVyra6X65PlamIefPqc5TycnqwxfuG8VoEZKQOHlZris/BP1AO06/hOepdAtYeFqXb+pm+uY4Bt/+eEKptpN3EnsD1QWSzOrIUx2HvkIm6ZC8xbtHmt55G5BE05M/9OauNtwbvWdH/VtHxdg+leg0WsDWEM4qI0WCCj1vE8=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;3:UI46yOKmfkpe/1meHUV6jztQpakFTB7S868xTeM/dM2ON1Ozzdn48vQCtNV1qO0KEoBHCf8GLbn52n7QoZ4md8Hhf+p0EVRhAQMf4Jjf3DFRHoQAIloxikda12pubGoqmcVQwIoFVVOlh4znWs8OYIW90E2b9tKi67MJQgx5roeOlSCCzzMLl0gZYKaj4EaK7qRP009vXBJ3yQnFXTKZ27KQGe4YcgcpBBSCSEVx+VBJMJLU1NuWc1CGsZkphpI5;25:etb9QUBEsFrmnsF5eFjbLKdrDslScAbPgtc+e8V6HcWiNk5VTbbhR1zwEJ+Dj/HRvZ7VpnWj0m5rGksturpqX2M2mTI+GKYBU9v9NnhQkF+GH9CZLRWLGv9xwkVFIYoixpsLwXnhIDTcflAFupKQe5qdkneyWTirwnK4DJL49JFIS2c0lq3ylJzfm5yBulAQty7XkGSqk3Jg2H1iUV937vZ3FLOS8WJZPd+dNWKsKMo60L/WnMoLvETSrk9ftdwz6pb+js0K7tcsTROq4FtU1Pk3PNxEtusQxLCk6aHMbcesWp76NWO3Z87ykudlPlkapIqhjKHMGwXAJGQdzznEPZxe8aXAByJPmc4aj/cDdPc=;31:TQX7d8i3dhwbQuhefTUdDD81eDFFHl349DMYA4abeOSIqAoFVlX/yW2b3PeRTK70Ox62aMtf8gUNtkx130ptAJXD0MKJacYEzgTwWcPAWk5SdLTBnS9+Z3PlI0wzA7qFB0mJbILmVdT1Wny+MyFIkw2CJD8Mwdx2/gavgfoZX8d0vjqUEr7sd7JeWsux1yJE4e/4wqluWbvjdpEg1BkB5A2B41YfLgILg1PV/Su04oc=
 X-MS-TrafficTypeDiagnostic: CY1PR15MB0169:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;20:mSQhI7zsP3mdLBOemKIuqKayUtIgKEhsSM0q0Uwfdf0Pdd88mW5NX0S8+JylweOwb2bf3aNJt16GMxZHLNsJAzSmfCMQIawZv8Se/XVGWNT61wiDIXBVECAEacTyADwPpMDrPT3leHqZejd4It5MzYRaZ78Ex3J9j9AH33GmInOL/Oil2+0lHZvNoFJE7SM6w5sIu+7iMUfL9Yz1MAbgPvGG0lQmA2M73bq366YznMUqyciBL0mC1SxuNeeGrZrl5/GEhvg7TvC4Eu3xZ+Aw9shGZwceEAycOntz1SPR11t1/f95jXwrIA4k3KN/kjOiJCIzjOb9dC5rUcUq4mSd7y8dwwuLUsqXoAup2q/ZvpD5c85+XueCxl5Awc1r4Y6EIHwEjVzIkEpQyLfmKsbz4tAz+hUWSEu8i/q4ako5wqy9lqHl6fwkifnLz3Hbd6j7YUbZRHJaTWtqmcV2jZcDgKLED2zD5P6fSt12e4e+1s89+k05you/2GX8nG35xIQS;4:SDCWh3T5go6v3z/O9XgDKjc9sXEf6Ubzc7jDscFuoQEB2yVhcNYNNG1urUFYxchTfhXQQtPTDk1n4oVxcY41IoZJ/mjRl7ZGG7H80ivSbE/FGYIRvFaGxHE8rtdXAWMEUD+vvXwKStmZWvuGjh3QlROxslxdUscoEeTkVqLbQB7z37LCqaqIPnrTKXuAh6ZzkAjcQjgqKvAUne5tEFvMkg0it4oXTOdgArQR75Cn9jSIvXzgyQCFmV383gb7VLuvOvKM569ohUm7ZGOHoNrrykjaQYYiL3j0kdGMYR9wslpaoEWkr+Ysh64PRyf2B3ucBNN2hYykEXn5r8Hx4yARjE7ido+i0TBNhX9P1oocHP8=
-X-Microsoft-Antispam-PRVS: <CY1PR15MB01693AD09F8CEF42E6CE2FC2BE3F0@CY1PR15MB0169.namprd15.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;20:uqXjB3dORnpltw96RizXDjDSrlxpj/G4EiWZ3XejixKgAYke52yCkVDpnUhz3gwLZ4RpMZKdXW6iXV1MNfIGrkSeZtaEGMS48GRbXJZKmqVe0RdlrBiLnHAUasYt3c2GJM6CuhbjN3Xb/8KWLp+NrsbdZg9zVjfQ885xHLJG+7wF3jN1emJ+Jfey6xEIfxUn5yPQ/B9f9tpDq/ExZAqiLQgk5sD5AbVQNa22tvwJHuiL4VeCxjPFzUGGlLSdIeTe3KnfIO0eUNlGeGtOlBSnt3emWFK9snUkNXiCsBJm0255F9IYZ4poS+awZLFCpynMIPOO/gF+Kfwimbm62YcAkwwZ7+BnKgPhYMtsQ6DJCu8bRUYRN37i4ktmVkQKVqvJcQKqPbIYpcUhbzl+Hjk1Phy2N9iGYp7hs0x5DfVQzmdFAWtHNBK7R5gqwh0hG2xNl826qGs69NlkEBGaetdwmm0/MW0Yij2wmf22zTcywQW3aoCYqtQnXFyCUj+4h1eS;4:P32FkiNsLl8wDY6/4n68RPX0XV3jku8zQPWgCjSWTiJRK00HjF7FPTO6QgHUKuh5IYRetYm7MO3KlwAsNvDqJkyct0FhoTt7ZnfIdiz7KA8Sna1Q7Er6nz8D1777+ZKgYQWxgL1AIPLrSdM9ohDZdEpmQ05lFqPLxvEZnH+xIBgOqqEhpZSGAwqbTPyyFDDRGxPY+s0OMAL+oU27sm1KSyrjXr0iH76M7H1gRaRigAItBz0W0zjIbdoVNT68rpCoW3QvylQwE2kwvLp1FZpfKSrG1HeKZ1sUhnM90HDhcSTtjZh2lcIGTvePO6ChhTqHXQ6LPXVm2LYWhcdTpbJhcHAP9lAjeIcOl3YgVNfSGEE=
+X-Microsoft-Antispam-PRVS: <CY1PR15MB01699E95FCBD983E2A7702C5BE3F0@CY1PR15MB0169.namprd15.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(67672495146484);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(11241501184)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY1PR15MB0169;BCL:0;PCL:0;RULEID:;SRVR:CY1PR15MB0169;
 X-Forefront-PRVS: 07658B8EA3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(366004)(39860400002)(136003)(199004)(189003)(316002)(2906002)(52396003)(54906003)(105586002)(4326008)(39060400002)(69596002)(51416003)(25786009)(16586007)(53416004)(52116002)(36756003)(305945005)(50466002)(7736002)(106356001)(48376002)(2361001)(97736004)(68736007)(8676002)(81166006)(81156014)(6512007)(6486002)(53936002)(46003)(8936002)(2616005)(486006)(476003)(386003)(6506007)(186003)(1076002)(86362001)(6116002)(2351001)(6916009)(14444005)(6666003)(47776003)(5660300001)(217873002)(478600001)(15650500001)(16526019)(50226002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR15MB0169;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(366004)(39860400002)(136003)(199004)(189003)(316002)(2906002)(52396003)(54906003)(105586002)(4326008)(39060400002)(69596002)(51416003)(25786009)(16586007)(53416004)(76176011)(52116002)(36756003)(305945005)(50466002)(7736002)(106356001)(48376002)(2361001)(97736004)(68736007)(8676002)(81166006)(81156014)(6512007)(6486002)(53936002)(46003)(8936002)(2616005)(486006)(476003)(386003)(446003)(11346002)(6506007)(186003)(1076002)(86362001)(6116002)(2351001)(6916009)(6666003)(47776003)(5660300001)(217873002)(478600001)(16526019)(50226002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR15MB0169;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR15MB0169;23:9gjqIN+urvTUoRT2aLAesPJDWHiQEbdxz+geewpDi?=
- =?us-ascii?Q?DPwxGkqOnPa1hF3rZWf1HoQkVgoEw3lNhGxJuouV872ZHII8NtH+kurZ1v+E?=
- =?us-ascii?Q?hl/Ky472N4SYGyPEKbIvoQOFAkojbAEUWuwjqUFxD+BKG5EOgjdDLGbOQ1N2?=
- =?us-ascii?Q?7XIZSrPI2a/b+cWXr3LaZha/IbKEy0JvnJNMLVUIBGT+k8mm8rQNaD5/lgXG?=
- =?us-ascii?Q?Q/woNmfQxx7O2Y9TuhLDmlh1BhG+7xoWPThRQ6Z/Oj+0fdg5nFbQY6DRrexS?=
- =?us-ascii?Q?nP5qNNzwPXm1v5CUsoIfeZj8Z6sYRyFY1bTp6mCaZXVFE9wTxxxd+k8neCQI?=
- =?us-ascii?Q?Le0cEgpcpf64iYryrUMR7XPmmExWrINxt87vX7YCChrKOMozaaSOJHxSkxF0?=
- =?us-ascii?Q?Ql5mDVr6WR1tDFMh45zylqfNfbwCbM9RTAX8NITp4ms24+DZB0FZMEV/ZtIG?=
- =?us-ascii?Q?mIWIEr1UoDZde2tGS8r1ZWbn0eZpGOMz37p1dHJLLrCLWjjs8QP1wUfx0MoH?=
- =?us-ascii?Q?Ld1nymHvpBntr7clzdbvFQtvGfm7TvknQPQ/sSIARB3TDYkjDwK66UXtKdbp?=
- =?us-ascii?Q?a+sOT2KBcKorHDv3PmMZ9F8xkZH2ixOQ5CyxtCXHnz5HymJB1yhN651+MmeC?=
- =?us-ascii?Q?yqfxIW6LOC9rGzAWIubBPKUcqF/TOGAkQscqBvNDQnqKmSxOwGSqUv9qAEdR?=
- =?us-ascii?Q?5ap8Ki5zz0OqXmjE5zvc750MzdMezaBSTF98SIAqaNRh/58XtGt67ussHf9F?=
- =?us-ascii?Q?OrZP0JxR0Q9u6CVBE04aVSluHdwmAkX4HtOpPBE65uM7RxGxxKSBxsCK0XSW?=
- =?us-ascii?Q?QyEDsWk+2EWyKxTcujSlsnAnRD9RkGfxp7NQ26TX+PHjlvGHLSzIucjH8Nvb?=
- =?us-ascii?Q?BV+tlZMj/kEUBPMMlUOoiq3uAdfLh7EtAn/JZ4Yxj/prQ/BUyBiDF4yFxM7D?=
- =?us-ascii?Q?zNuWzc1axKvzq4CrYtbOWsFTFFFr14fU8y6SSuUJpoN/m6OFo/XBvbrSBz0D?=
- =?us-ascii?Q?wJS9v7xpPkh5dgl6vQUASrI4V8WQLA3cW0DnPf8inIKzDUakQQ1npPdtqSzo?=
- =?us-ascii?Q?Ykn7PpymEiwiaQpCmwAu92XnvEx1DkvgmG614187u76Tswts4Uk19a7TXaNQ?=
- =?us-ascii?Q?xLx1KWAQcIFbn/1Pe6WGDiY7/9uskvi0t2TJGNxbU+vJzXQyvbCA3r6MhOXU?=
- =?us-ascii?Q?QZ1jSVKBWapMlB/lF/rZCWUshsM1ncJQbgFaDSKQWZTV66kyiFi/2I6iowip?=
- =?us-ascii?Q?eOvxE1Qq70S8Ua1E9n8B8/YVw+2dGR5S/FiSPORBajkWTzat/6QI0UEnRvBe?=
- =?us-ascii?Q?Z+4ug40elL3iq8RbGiJWUA=3D?=
-X-Microsoft-Antispam-Message-Info: 2PeScSO2SSc+G97qv+lO6DngyDZE56ROYGJf9Yuou6ao85a9bZJ5FY7BsOR+HHjo2bjxEKr2IXf0BNSDqfwUzYK2/jfy8kXTYF3cNWQKZuIxpRtsokdNQOZmmkQxNoY1ur3fOR9+rcVaob8RJsplEUS2w6CVv6riHJ02xw8DZITzm+NiuvEINkipfCgPG5/NmjsLttZaBbzw1nbNg0ZA6h1u+bl+Uf52wUoOmKUkM/1wYb73bU0y93evADBOuw/xJYPLCMr/CjXsR2B9zLLyiV3n9q7ALJeKSZBVQbdaAag0JMPDMx5+dRP9LNVeI4B8t7yKBnLMqZyGztRh1Jb2kVI3DXzTESys8Dn+FHL/It8=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;6:PNP9iFYjG4NKNz0a6v2813dmXWpJJRDtSu7XUM4kBqYGCr1OwIIV0+z5CBpWP5Wm9gzJKbCpVmEerc3uz3IT1SWJ0N9iA06lpZB8jRXzbwBUSyYhlzqzyfrFGxsELXSW10oJfDQqhBJMJN7ZXS7OS7IUZL7JuO9hJP3jX3nG3KtaYXrsaNGHq6EuevK2NqwcSzr4c40Bdk3+t/m32SsEBMkEARokF3qxc+opeAtb/E+A1mF69ya+RqJVLHfGHfcwmvzrRNcQcmIWtNLLBtlVOE+ymTkEn9bfXyGe1nI/Zf0jUXCUkSTFAA1I0ElQIb/P1ERdfYBR95aTf2V80GSRAdv2smD4Hc5CFjuUEp8gWzdMCm7lQXCploM9tEsfnbraJur4pakhbpEsETbmO6ThCe9rjsMny8URINtNTd2IupswJWkINE2YO7TMt4mvQ3wGScg/iH/go3NriS6nl7zyRw==;5:E+bwtcMerAGyiDw3dGL0+uhGkkVRiQ25l/oEUv2JMgIy5OlpSD3t/WcbGV3Mm2XboUyHWmH7IFL7GmbE3jLUKDMokIi7/7sJ43dzmIKp46ZwmgQVhKv2bATgUrD3webp65gYeHxiCSofxNnMIjjmY1iRMYvBDLhXSa8ZvEW3Xlc=;7:zolwcDrarTkfExDwFX5HbFMmg9JLP0edLmIz3hcDl31042Q+TU5Gpt1bhHpITFfVkISzJ8YTcn8rmxd3aDEFJPKldkwZHPm64f1pVgnMaJj8u9Z5l3OYLOvrVRz25LWpzdx9xPIz0gewklHwv7LFlYJu6Mtd/cAQrQj2PyKFEPIfV+Hq9/HIQSXcrgVKjU9uQWd3+aVS2IrJo0lCxcMlY/LBzLlSom9rlEN3hMA4W+XSnvZwOiITEB/Y3AhZxX1X
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR15MB0169;23:UY4HuPUJKdKcLYQjpc56eGtqA9hoQFrwYHtlFvWa/?=
+ =?us-ascii?Q?UF0Ycraq6GR+pIRpHRwVMXzZIVJPRgYQlGS+dgdzVX4GYZkae2qH8WUPX19m?=
+ =?us-ascii?Q?6V8Zzl4skoGV+3IXjYRkmpvsLxP1AjNbOb1XNgQb5xXzk3kTy9D2UK9YI2V/?=
+ =?us-ascii?Q?hLf6m/mZn2SMPUMC+IM2z1RcXeTmDI4n0k6SBUmlL6UM6JiWx88PcS+fnm8r?=
+ =?us-ascii?Q?BkleknfBwYSO8tBDXaGFB9DdIwCtxNw72I28cPSAAjdugzkYGGa/wx3FCXE/?=
+ =?us-ascii?Q?rSTjUEjyifrjkLqbyo+tvgIOo+BVlx365PHVgOEezyAGWXWurVZ1etEgKRV5?=
+ =?us-ascii?Q?dJuiTDHoGOV6tE4e2oVKYybP9baH+CtJDvvLVDt7E1Ai0vRcoGa7WvYfeAVM?=
+ =?us-ascii?Q?QcOQo+3Qj/ubwLWUcgy+PvZfvi2iwWb/ed8C2qefOI4KT+SeDwdGq1G3rHGx?=
+ =?us-ascii?Q?3R/geMBJYEBgAatWr+wriwCEBygBJXXxxO91xW9UnE5XabTrU2CR5Oo6oZp7?=
+ =?us-ascii?Q?MDQvWaOuyImccJG7ZwsJThehCvendKy8h4EFcTXPF69PFcHCKB4rndFTEuAT?=
+ =?us-ascii?Q?FFYJYYax+AgLOx0UqILE0IH9nLVrbaoQCQfsQpxH6fQvN3WVkVMuhR/gW7Zm?=
+ =?us-ascii?Q?mXm4zhGunVUExQHWymz/XInsePf7+jGZTxumkka8hpmlUk6/zhKuMwbQoNT8?=
+ =?us-ascii?Q?nZgdeF3C/CgYE8fh9L4vv0gSdTqe9lTrO14wayaasC2CS637i4cCi7l7iz/x?=
+ =?us-ascii?Q?MAHzGTplag3NofR3bXD0nB+pRuff4dM9plZnA9kdb7BEoqjTlYNmlCyGlNhB?=
+ =?us-ascii?Q?J5k7HVSeMsa4Mbo8OlL+0Ai4b9tBNiq2u8vMI4N8KYUxyGZmYQTpcNXq7XTA?=
+ =?us-ascii?Q?zKX6Kphi2K0d+HiIVXlEntqqa9cOfrA7E74elAi8792e8fhhNm6CPFSBRsdk?=
+ =?us-ascii?Q?K2oi3wLtxFN0Yux143FJqIl2RGlMVNrrm65ip5d2uolsMOUclbVCGybbBlPP?=
+ =?us-ascii?Q?4LCFfwshYoGWbq2V96VBnfLDNpLIdR9xCHDAGCEdaY0aP0mYwd2UBZ4cQYU+?=
+ =?us-ascii?Q?eW+Nl8imb8hall+lJiTMyjHbRZJWMQx524mF0pSlYB5oyOATVmSIvp8jFiQZ?=
+ =?us-ascii?Q?BaBDz8sRCixESrmlfQjBRJTfrIuJLg0SFQlptfBh0GkqErLeEP4lg+mN1hrE?=
+ =?us-ascii?Q?OEPthSPzsnJgm4rV8O6dqaBE2FqMuKK+egOjrg/GANQH6nK+dGXCwvsRx9DC?=
+ =?us-ascii?Q?KyIK7xKLFv2y+azr5ldPGrgcB6osp3j60bM2U3UX21aWO7IVKVj962P2rrUQ?=
+ =?us-ascii?Q?vgUKfqpremz4w1h0E0sbOs=3D?=
+X-Microsoft-Antispam-Message-Info: lNFA9jVecFSvQLY97xe/I3ObTih7Qk+RN0I7SzmzwsT3CgDpZnt7S62ES3+u+9EperH4wHcYTl5qw1kd19TUQzIHNX8GnD3Qwv0AmOl1VUb6dUp75aREzgiDHsxGpVapMniFK8JkqjadPQOWCeWdNIJWtAhD4tG7PajulrUoqCWkVQmiSSIM4NS6xa0zrDCzsXZoCshf9YgAjjtCUsVdQhNgMU/Xrn96POEgfjJNr9YBBq8h3HAcMb2CuYU4/2JTMvEEDGHupX40O0wAY+b5jmgrzFqkiwjB1K5gsyER7oPTsQdFWVchaJIpKJd7Sjgcsu0wPKnoroypOXMBRym8C/1sXotY1KTpdQcA9jLpJgE=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;6:+8mMtTD5r8Io95dGhOONlnqS7Z5hl/qDvPjlVfMZw+UfJkkSHbCTNXWS9GjV1VB+6cyVVigTLLdZeWs+xHeznn4jMN4z8kfaUcvpkpeHXpZilE4SeHD+Ed2DwXPJ9Ro0PHehnCF1ih5qhfDFaK8w84Yrs19rrbuUfnU7+1vyrHrEsbKQegwOqfVJyZFlZaNCC4XcDIcHDFAW59RmH9T5bc8Hn64MdcF/Da8m8XwjcZE5xGqXusODeCMOK/GFkF0oVyhMiUA0JBzrXwCWJ2LdMi6ro2uldp+E8BE26d5m7jrCAzKeAXjNYZWpWJL7HLdBLQvNCdqI7NhYhIgH4fxH5PCLJYDHtQhnBBzI2IB9wMrjJ9luRQsBFyNAC/uYSjZQXD/0PM12aoaRhxM6A/Eiin8nqLuqIKxsMwHRFbHkumuVnKe2+491Qv+ci4cq0kiEiCP0UFiaVUsGqd+juDxKVA==;5:F3Tm6MGeRibFLgZMAXUB+DxM+LPvG3llDVaxTccrQFYgrxzTjZ9bKNQFOVlD3oCIuPsjjSQL5kwJ9IgwIyoGNk+boh5LUFJI+hIolbeOQIOX6kPZhPWu1H6IQYfKoLfx8KBG3RFk3vSxPpi8vYW16cPwH9qGpufK/t7H/yqhmYk=;7:hr0iK5zABr70wuxRxy/xl/MqbEZZK3+/Cq+w+EX2TUWnRS76NOW95pDk1wtkGZl02KxV8J1uItfIW2mrtPsg3+CkZw3552tDmmAbLJV1c6DO8OwNaWWdtr2yg6GDgm//uagO1lKuoJQYfGtB7/CnuAVSPVcEQ4MSn6IoQJipXunA2PVQudq1wDeR9oIIR9ys46V9wPptRsnq7gBY0aV8LxCByzVEtXKU+ldyp6DoAcONTOprDV9nMKcQiDQx1kNb
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;20:/QgKraNlG6dhTjbyQ0kzePKJDnL7dV/wei6PpnrH3d6IchiEwhcnKyKAS/Nvol3Ulaage2AymD4HKmM7VRP8F8wIpfjOVmcGnzZOCqOkaRgRNAXXYsdMwPjS12Ww8aVXTnuMmGAUYch4Vd5Q7Bwj6gd2OOJoi75RWNbI+2Z1bZE=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2018 00:36:40.0458 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a5cdb32-0da4-4c4d-f667-08d602472af8
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0169;20:dRmZNGU4EStOcIfQTVsgNK4E6+Uj7zLvYCUnpBydMr6yh9y2hLv75QC/g2wO9BA6vFKPmLfBqeTPBa5AYk9olcRPjeNq/24VOurejgndA9qVm7tC+QJl9dL+CfXVOg5g56zq3OXAmjxlsEYcSQkaDb+yIQ7nR7HC95aoIpo4jgo=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2018 00:36:41.0302 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6f46611-207b-4f65-0590-08d602472b88
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR15MB0169
@@ -129,122 +130,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_VMAP_STACK is set, kernel stacks are allocated
-using __vmalloc_node_range() with __GFP_ACCOUNT. So kernel
-stack pages are charged against corresponding memory cgroups
-on allocation and uncharged on releasing them.
+Memcg charge is batched using per-cpu stocks, so an offline memcg
+can be pinned by a cached charge up to a moment, when a process
+belonging to some other cgroup will charge some memory on the same
+cpu. In other words, cached charges can prevent a memory cgroup
+from being reclaimed for some time, without any clear need.
 
-The problem is that we do cache kernel stacks in small
-per-cpu caches and do reuse them for new tasks, which can
-belong to different memory cgroups.
-
-Each stack page still holds a reference to the original cgroup,
-so the cgroup can't be released until the vmap area is released.
-
-To make this happen we need more than two subsequent exits
-without forks in between on the current cpu, which makes it
-very unlikely to happen. As a result, I saw a significant number
-of dying cgroups (in theory, up to 2 * number_of_cpu +
-number_of_tasks), which can't be released even by significant
-memory pressure.
-
-As a cgroup structure can take a significant amount of memory
-(first of all, per-cpu data like memcg statistics), it leads
-to a noticeable waste of memory.
+Let's optimize it by explicit draining of all stocks on css offlining.
+As draining is performed asynchronously, and is skipped if any
+parallel draining is happening, it's cheap.
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Konstantin Khlebnikov <koct9i@gmail.com>
 Cc: Tejun Heo <tj@kernel.org>
 ---
- kernel/fork.c | 44 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 38 insertions(+), 6 deletions(-)
+ mm/memcontrol.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 69b6fea5a181..91872b2b37bd 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -224,9 +224,14 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
- 		return s->addr;
- 	}
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 4e3c1315b1de..cfb64b5b9957 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4575,6 +4575,8 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+ 	memcg_offline_kmem(memcg);
+ 	wb_memcg_offline(memcg);
  
-+	/*
-+	 * Allocated stacks are cached and later reused by new threads,
-+	 * so memcg accounting is performed manually on assigning/releasing
-+	 * stacks to tasks. Drop __GFP_ACCOUNT.
-+	 */
- 	stack = __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
- 				     VMALLOC_START, VMALLOC_END,
--				     THREADINFO_GFP,
-+				     THREADINFO_GFP & ~__GFP_ACCOUNT,
- 				     PAGE_KERNEL,
- 				     0, node, __builtin_return_address(0));
- 
-@@ -246,12 +251,41 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
- #endif
++	drain_all_stock(memcg);
++
+ 	mem_cgroup_id_put(memcg);
  }
  
-+static void memcg_charge_kernel_stack(struct task_struct *tsk)
-+{
-+#ifdef CONFIG_VMAP_STACK
-+	struct vm_struct *vm = task_stack_vm_area(tsk);
-+
-+	if (vm) {
-+		int i;
-+
-+		for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++)
-+			memcg_kmem_charge(vm->pages[i], __GFP_NOFAIL,
-+					  compound_order(vm->pages[i]));
-+
-+		/* All stack pages belong to the same memcg. */
-+		mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
-+				     THREAD_SIZE / 1024);
-+	}
-+#endif
-+}
-+
- static inline void free_thread_stack(struct task_struct *tsk)
- {
- #ifdef CONFIG_VMAP_STACK
--	if (task_stack_vm_area(tsk)) {
-+	struct vm_struct *vm = task_stack_vm_area(tsk);
-+
-+	if (vm) {
- 		int i;
- 
-+		/* All stack pages belong to the same memcg. */
-+		mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
-+				     -(int)(THREAD_SIZE / 1024));
-+
-+		for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++)
-+			memcg_kmem_uncharge(vm->pages[i],
-+					  compound_order(vm->pages[i]));
-+
- 		for (i = 0; i < NR_CACHED_STACKS; i++) {
- 			if (this_cpu_cmpxchg(cached_stacks[i],
- 					NULL, tsk->stack_vm_area) != NULL)
-@@ -352,10 +386,6 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
- 					    NR_KERNEL_STACK_KB,
- 					    PAGE_SIZE / 1024 * account);
- 		}
--
--		/* All stack pages belong to the same memcg. */
--		mod_memcg_page_state(vm->pages[0], MEMCG_KERNEL_STACK_KB,
--				     account * (THREAD_SIZE / 1024));
- 	} else {
- 		/*
- 		 * All stack pages are in the same zone and belong to the
-@@ -809,6 +839,8 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	if (!stack)
- 		goto free_tsk;
- 
-+	memcg_charge_kernel_stack(tsk);
-+
- 	stack_vm_area = task_stack_vm_area(tsk);
- 
- 	err = arch_dup_task_struct(tsk, orig);
 -- 
 2.14.4
 
