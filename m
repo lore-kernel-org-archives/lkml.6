@@ -2,99 +2,206 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B56C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE320C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD82121470
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:41:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD82121470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 0415B21470
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:41:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h6vIqlKZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0415B21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbeHPCeL (ORCPT
+        id S1729069AbeHPCgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 22:34:11 -0400
-Received: from gate.crashing.org ([63.228.1.57]:50312 "EHLO gate.crashing.org"
+        Wed, 15 Aug 2018 22:36:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:41925 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728148AbeHPCeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 22:34:11 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7FNcgZG008323;
-        Wed, 15 Aug 2018 18:38:46 -0500
-Message-ID: <947d07eb6bc64eefe5cfd9a08420a33f855cbe2c.camel@kernel.crashing.org>
-Subject: Re: [RFC PATCH] pci: Proof of concept at fixing
- pci_enable_device/bridge races
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Hari Vyas <hari.vyas@broadcom.com>, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, ray.jui@broadcom.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 16 Aug 2018 09:38:41 +1000
-In-Reply-To: <20180815224028.GA12104@roeck-us.net>
-References: <1530608741-30664-1-git-send-email-hari.vyas@broadcom.com>
-         <20180731163727.GK45322@bhelgaas-glaptop.roam.corp.google.com>
-         <ecaed7664b46d73888d2494065905f8e108fc0f4.camel@kernel.crashing.org>
-         <5e42f7990673d11e3a020e7efcfd333215d48138.camel@kernel.crashing.org>
-         <58192cf94de3941f9141aa3203399ae2bcdf6b7a.camel@kernel.crashing.org>
-         <08bc40a6af3e614e97a78fbaab688bfcd14520ac.camel@kernel.crashing.org>
-         <20180815224028.GA12104@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728148AbeHPCgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 22:36:07 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41rQwM1QXwz9s9J;
+        Thu, 16 Aug 2018 09:41:38 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534376499;
+        bh=nO25Wdn4gm5LBryXfFw9KvvzUupbE929e/3rFGI73HE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=h6vIqlKZRZCd4VJFjDqfb0KJr8DbNquUkqnkh7tEakHLks7oLTNtb5ddqYvHRP4Eu
+         QVfb05odsFjquuEyuH/Aie4r4+7YnQjwdaU+ZVsWJZfn4KDlKJZdWS+6Mfwe6CrUjx
+         T0oJpxdmmknZq4RD9LB67bbVqHeDc0QSunDlap4bpfEu6s6EGMlt/XXEiEmRDFCiHY
+         MbFEW2+/C3Z+wjYH/eEug+UynnL7EhaZH2rNF1rkqiUEjZ5Ui4u19UL5DbCpfTJhCt
+         zIj3A6A98PeVNcLrDZLB7Uep8ekJdzM78veA8OyRYLOEl2dCZ9pV58YE0Sr9iiOWzR
+         R2Z5Iv7/UT0Mw==
+Date:   Thu, 16 Aug 2018 09:41:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Parav Pandit <parav@mellanox.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the rdma
+ tree
+Message-ID: <20180816094122.5db6dc79@canb.auug.org.au>
+In-Reply-To: <20180702102106.4ac2bd17@canb.auug.org.au>
+References: <20180702102106.4ac2bd17@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/q5y.8tMXijdBNzeQesp0aZW"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-15 at 15:40 -0700, Guenter Roeck wrote:
-> On Thu, Aug 16, 2018 at 07:50:13AM +1000, Benjamin Herrenschmidt wrote:
-> > (Resent with lkml on copy)
-> > 
-> > [Note: This isn't meant to be merged, it need splitting at the very
-> > least, see below]
-> > 
-> > This is something I cooked up quickly today to test if that would fix
-> > my problems with large number of switch and NVME devices on POWER.
-> > 
-> 
-> Is that a problem that can be reproduced with a qemu setup ?
+--Sig_/q5y.8tMXijdBNzeQesp0aZW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-With difficulty... mt-tcg might help, but you need a rather large
-systems to reproduce it.
+Hi all,
 
-My repro-case is a 2 socket POWER9 system (about 40 cores off the top
-of my mind, so 160 threads) with 72 NVME devices underneath a tree of
-switches (I don't have the system at hand today to check how many).
+On Mon, 2 Jul 2018 10:21:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>=20
+>   net/smc/smc_ib.c
+>=20
+> between commit:
+>=20
+>   ddb457c6993b ("net/smc: Replace ib_query_gid with rdma_get_gid_attr")
+>=20
+> from the rdma tree and commit:
+>=20
+>   be6a3f38ff2a ("net/smc: determine port attributes independent from pnet=
+ table")
+>=20
+> from the net-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc net/smc/smc_ib.c
+> index 74f29f814ec1,36de2fd76170..000000000000
+> --- a/net/smc/smc_ib.c
+> +++ b/net/smc/smc_ib.c
+> @@@ -144,6 -143,62 +144,66 @@@ out
+>   	return rc;
+>   }
+>  =20
+> + static int smc_ib_fill_gid_and_mac(struct smc_ib_device *smcibdev, u8 i=
+bport)
+> + {
+>  -	struct ib_gid_attr gattr;
+>  -	int rc;
+>  -
+>  -	rc =3D ib_query_gid(smcibdev->ibdev, ibport, 0,
+>  -			  &smcibdev->gid[ibport - 1], &gattr);
+>  -	if (rc || !gattr.ndev)
+>  -		return -ENODEV;
+> ++	const struct ib_gid_attr *gattr;
+> ++	int rc =3D 0;
+> +=20
+>  -	memcpy(smcibdev->mac[ibport - 1], gattr.ndev->dev_addr, ETH_ALEN);
+>  -	dev_put(gattr.ndev);
+>  -	return 0;
+> ++	gattr =3D rdma_get_gid_attr(smcibdev->ibdev, ibport, 0);
+> ++	if (IS_ERR(gattr))
+> ++		return PTR_ERR(gattr);
+> ++	if (!gattr->ndev) {
+> ++		rc =3D -ENODEV;
+> ++		goto done;
+> ++	}
+> ++	smcibdev->gid[ibport - 1] =3D gattr->gid;
+> ++	memcpy(smcibdev->mac[ibport - 1], gattr->ndev->dev_addr, ETH_ALEN);
+> ++done:
+> ++	rdma_put_gid_attr(gattr);
+> ++	return rc;
+> + }
+> +=20
+> + /* Create an identifier unique for this instance of SMC-R.
+> +  * The MAC-address of the first active registered IB device
+> +  * plus a random 2-byte number is used to create this identifier.
+> +  * This name is delivered to the peer during connection initialization.
+> +  */
+> + static inline void smc_ib_define_local_systemid(struct smc_ib_device *s=
+mcibdev,
+> + 						u8 ibport)
+> + {
+> + 	memcpy(&local_systemid[2], &smcibdev->mac[ibport - 1],
+> + 	       sizeof(smcibdev->mac[ibport - 1]));
+> + 	get_random_bytes(&local_systemid[0], 2);
+> + }
+> +=20
+> + bool smc_ib_port_active(struct smc_ib_device *smcibdev, u8 ibport)
+> + {
+> + 	return smcibdev->pattr[ibport - 1].state =3D=3D IB_PORT_ACTIVE;
+> + }
+> +=20
+> + static int smc_ib_remember_port_attr(struct smc_ib_device *smcibdev, u8=
+ ibport)
+> + {
+> + 	int rc;
+> +=20
+> + 	memset(&smcibdev->pattr[ibport - 1], 0,
+> + 	       sizeof(smcibdev->pattr[ibport - 1]));
+> + 	rc =3D ib_query_port(smcibdev->ibdev, ibport,
+> + 			   &smcibdev->pattr[ibport - 1]);
+> + 	if (rc)
+> + 		goto out;
+> + 	/* the SMC protocol requires specification of the RoCE MAC address */
+> + 	rc =3D smc_ib_fill_gid_and_mac(smcibdev, ibport);
+> + 	if (rc)
+> + 		goto out;
+> + 	if (!strncmp(local_systemid, SMC_LOCAL_SYSTEMID_RESET,
+> + 		     sizeof(local_systemid)) &&
+> + 	    smc_ib_port_active(smcibdev, ibport))
+> + 		/* create unique system identifier */
+> + 		smc_ib_define_local_systemid(smcibdev, ibport);
+> + out:
+> + 	return rc;
+> + }
+> +=20
+>   /* process context wrapper for might_sleep smc_ib_remember_port_attr */
+>   static void smc_ib_port_event_work(struct work_struct *work)
+>   {
 
-It's possible to observe it I suppose on a smaller system (in theory a
-single bridge with 2 devices is enough) but in practice the timing is
-extremely hard to hit.
+This is now a conflict between Linus' tree and the rdma tree.
 
-You need a combination of:
-
-  - The bridges come up disabled (which is the case when Linux does the
-resource assignment, such as on POWER but not on x86 unless it's
-hotplug)
-
-  - The nvme devices try to enable them simultaneously
-
-Also the resulting error is a UR, I don't know how well qemu models
-that.
-
-On the above system, I get usually *one* device failing due to the race
-out of 72, and not on every boot.
-
-However, the bug is known (see Bjorn's reply to the other thread) "Re:
-PCIe enable device races (Was: [PATCH v3] PCI: Data corruption
-happening due to race condition)" on linux-pci, so I'm not the only one
-with a repro-case around.
-
+--=20
 Cheers,
-Ben.
+Stephen Rothwell
 
+--Sig_/q5y.8tMXijdBNzeQesp0aZW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0uiIACgkQAVBC80lX
+0GxrsAf/WYpGh9nOZoybrY2Q54eit8JEsojF5K9BV25Z/HswXe11KYLpHMeDWYXu
+WY+TpOTQUFSQIjujOs02zR99s4I6y/cNNz8p28tfl1Nzy/pzuBIqnhzjOr0oEW0A
+PfKeP78uBNDoXREhl0XTdU8So2BmAbgBaLf0OUZJzZjnB5I05+N30lVYGtaEGmb7
+807LYa4ZnddS9laa/CvET75h+RyNvY0rdeIO8CUbD7uectAU7LCn+ZSBMO7TKPDt
+CtEjws5rG/lNt/mhlX0xAYm8YU/MPZnL25xVh57kR0I60Wmzwf/iIwH4r5mWgrdj
+j7SxgcxBUdhbWKRJpcMEFopwtqVWIQ==
+=XUla
+-----END PGP SIGNATURE-----
+
+--Sig_/q5y.8tMXijdBNzeQesp0aZW--
