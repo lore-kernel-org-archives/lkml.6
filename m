@@ -2,141 +2,103 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF495C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBA5C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C578E2152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C578E2152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id D2F622152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:04:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Xj2INVLh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F622152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbeHOTze (ORCPT
+        id S1730058AbeHOT5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:55:34 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:43433 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729381AbeHOTze (ORCPT
+        Wed, 15 Aug 2018 15:57:02 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:60718 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729381AbeHOT5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:55:34 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0580B12EF22
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:02:36 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id pzBlfBUOABcCXpzBqfjPUU; Wed, 15 Aug 2018 12:02:35 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.37.72] (port=60314 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fpzBk-004KFO-1q; Wed, 15 Aug 2018 12:02:28 -0500
-Date:   Wed, 15 Aug 2018 12:02:26 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mtd: cfi_cmdset_0020: Mark expected switch fall-throughs
-Message-ID: <20180815170226.GA14553@embeddedor.com>
+        Wed, 15 Aug 2018 15:57:02 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w7FGx0s8009716
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 10:04:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=CWnq+KatPzLeFpt0o44za0A0VDy0DW9TRis+GHGHmGI=;
+ b=Xj2INVLhx68kgdIPCxTUVau7i0g5Vtpw1ZVV4QtpwCKmak8psaKGIZqR14b3c1pFWHs3
+ kL++myySewwYoh0naKMksd770iMBrAeNVkkI4EJVQGXmyAhpR8mtqHlsF3m5YwkZeVlI
+ /Hqexu1pVuLOz6nfZ3PlqpoZ5rHdsKa5xOM= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0001303.ppops.net with ESMTP id 2kvcrd1h9s-14
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 10:04:01 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.19) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 15 Aug
+ 2018 10:03:42 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)    id
+ 5570A62E0F73; Wed, 15 Aug 2018 10:03:40 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>
+CC:     <lkp@intel.com>, <kernel-team@fb.com>,
+        Song Liu <songliubraving@fb.com>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v2 0/1] perf: Sharing PMU counters across compatible events
+Date:   Wed, 15 Aug 2018 10:03:12 -0700
+Message-ID: <20180815170313.455943-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.37.72
-X-Source-L: No
-X-Exim-ID: 1fpzBk-004KFO-1q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.37.72]:60314
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Changes v1 -> v2:
+  1. Fixed a bug reported by 0day kernel testing robot
 
-Addresses-Coverity-ID: 114857 ("Missing break in switch")
-Addresses-Coverity-ID: 114858 ("Missing break in switch")
-Addresses-Coverity-ID: 114859 ("Missing break in switch")
-Addresses-Coverity-ID: 114860 ("Missing break in switch")
-Addresses-Coverity-ID: 114861 ("Missing break in switch")
-Addresses-Coverity-ID: 114862 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/mtd/chips/cfi_cmdset_0020.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This is to follow up earlier discussion on sharing hardware PMU counters
+across compatible events:
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
-index 35aa72b..e752067 100644
---- a/drivers/mtd/chips/cfi_cmdset_0020.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0020.c
-@@ -324,6 +324,7 @@ static inline int do_read_onechip(struct map_info *map, struct flchip *chip, lof
- 	case FL_JEDEC_QUERY:
- 		map_write(map, CMD(0x70), cmd_addr);
- 		chip->state = FL_STATUS;
-+		/* Fall through */
- 
- 	case FL_STATUS:
- 		status = map_read(map, cmd_addr);
-@@ -461,6 +462,7 @@ static int do_write_buffer(struct map_info *map, struct flchip *chip,
- #ifdef DEBUG_CFI_FEATURES
- 	printk("%s: 1 status[%x]\n", __func__, map_read(map, cmd_adr));
- #endif
-+		/* Fall through */
- 
- 	case FL_STATUS:
- 		status = map_read(map, cmd_adr);
-@@ -754,6 +756,7 @@ static inline int do_erase_oneblock(struct map_info *map, struct flchip *chip, u
- 	case FL_READY:
- 		map_write(map, CMD(0x70), adr);
- 		chip->state = FL_STATUS;
-+		/* Fall through */
- 
- 	case FL_STATUS:
- 		status = map_read(map, adr);
-@@ -995,6 +998,7 @@ static void cfi_staa_sync (struct mtd_info *mtd)
- 			 * as the whole point is that nobody can do anything
- 			 * with the chip now anyway.
- 			 */
-+			/* Fall through */
- 		case FL_SYNCING:
- 			mutex_unlock(&chip->mutex);
- 			break;
-@@ -1050,6 +1054,7 @@ static inline int do_lock_oneblock(struct map_info *map, struct flchip *chip, un
- 	case FL_READY:
- 		map_write(map, CMD(0x70), adr);
- 		chip->state = FL_STATUS;
-+		/* Fall through */
- 
- 	case FL_STATUS:
- 		status = map_read(map, adr);
-@@ -1196,6 +1201,7 @@ static inline int do_unlock_oneblock(struct map_info *map, struct flchip *chip,
- 	case FL_READY:
- 		map_write(map, CMD(0x70), adr);
- 		chip->state = FL_STATUS;
-+		/* Fall through */
- 
- 	case FL_STATUS:
- 		status = map_read(map, adr);
--- 
-2.7.4
+  https://marc.info/?t=151213803600016
+  https://marc.info/?t=152547569200001
 
+This version limits PMU sharing to events within same ctx. As a result,
+compatible events are not evaluated during task schedule. This vesion also
+limits PMU sharing to hardware counting events. From our discussion with
+internal users, this is sufficient for most cases.
+
+This version introduces virtual master event. The virtual master event
+does require careful handling. But it is makes the logic of event add/del
+cleaner.
+
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+
+Song Liu (1):
+  perf: Sharing PMU counters across compatible events
+
+ include/linux/perf_event.h |  61 ++++++++
+ kernel/events/core.c       | 289 +++++++++++++++++++++++++++++++++++--
+ 2 files changed, 340 insertions(+), 10 deletions(-)
+
+--
+2.17.1
