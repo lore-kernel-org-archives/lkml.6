@@ -2,172 +2,130 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5658C46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF95FC46464
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6C5216F6
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:43:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FmOkmrvx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6C5216F6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7F6CD216F6
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6CD216F6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbeHOEdE (ORCPT
+        id S1727344AbeHOEdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 00:33:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:42315 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbeHOEdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 00:33:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41qsfx4GBJz9s8T;
-        Wed, 15 Aug 2018 11:43:05 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534297386;
-        bh=gcU5dFm1eKeTvjf+cB0G7vyubxF2FWvtpw9FPeGBPCA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FmOkmrvxz9MKimrpi9fXCyPMp2NmOHqj+0mIoJRWx64C0JZx4HjRcLYaTg1bMyadc
-         oTPq6ysle3zxdJfm9V767Nvza0yqNdak5Jn4/In7Ljc7JCXyMTgbmNBpYlb2zflocS
-         EiYp1Emz+pnMXBN2x9dw+dLlxe3mpvDTeLo1iEtS0DH4uDJFuUTi9+Ybzj2/0DVP6s
-         Ql4p9Uqhk1aSye1uAG1XOkZvEakdmzndXFqHgpEiR1Bnyh0EIHPjojmb1DkUeNb36J
-         XuvVxil+nY6x9CmZbsqAaJPbdp8cFkJ4qLRxd1Z4dk+4vOUVzhQXwZPYbODjIp4I9R
-         /q+Ggvkh6a+gg==
-Date:   Wed, 15 Aug 2018 11:43:03 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Wise <swise@opengridcomputing.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the block tree
-Message-ID: <20180815114303.685b1789@canb.auug.org.au>
-In-Reply-To: <20180726145624.13a604ed@canb.auug.org.au>
-References: <20180726145624.13a604ed@canb.auug.org.au>
+        Wed, 15 Aug 2018 00:33:50 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:59277
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725831AbeHOEdt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 00:33:49 -0400
+X-ASG-Debug-ID: 1534297428-093b7e070010470001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id gBExAc9crzLaiQdo (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO); Wed, 15 Aug 2018 09:43:48 +0800 (CST)
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.847.32; Wed, 15 Aug 2018 09:43:56 +0800
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1]) by
+ HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1%12]) with mapi id
+ 15.00.0847.030; Wed, 15 Aug 2018 09:43:38 +0800
+From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To:     "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "thunder.leizhen@huawei.com" <thunder.leizhen@huawei.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>
+Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
+ mode
+Thread-Topic: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for
+ non-strict mode
+X-ASG-Orig-Subj: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
+ mode
+Thread-Index: AQHULSVfvpgJoo0nvEihhr7Wc+EfZ6S+cpuAgAAAX4CAABiMAIABBouA
+Date:   Wed, 15 Aug 2018 01:43:37 +0000
+Message-ID: <7a2dedda98aa9e677eb7f85b6b55e34e0128d2d9.camel@hxt-semitech.com>
+References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+         <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
+         <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com>
+         <5B597628.2020103@huawei.com>
+         <04239cfa-bcf2-a33a-e662-ebc75e66782b@arm.com>
+         <1d24541340334954969c58980ef85444@HXTBJIDCEMVIW01.hxtcorp.net>
+         <5B7293E5.7040702@huawei.com> <20180814083500.GA28101@arm.com>
+         <feabf4a3-db1e-a22b-daab-fad831b473f9@arm.com>
+In-Reply-To: <feabf4a3-db1e-a22b-daab-fad831b473f9@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.69]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E537546CE3891F45BCB0B612902F0F8B@hxt-semitech.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vIDoGTdWW5ed7pS+zOHyQVZ"; protocol="application/pgp-signature"
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1534297428
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5832 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.55695
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vIDoGTdWW5ed7pS+zOHyQVZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Thu, 26 Jul 2018 14:56:24 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/nvme/target/rdma.c: In function 'nvmet_rdma_find_get_device':
-> drivers/nvme/target/rdma.c:894:26: error: 'struct ib_device_attr' has no =
-member named 'max_sge'; did you mean 'max_cqe'?
->      cm_id->device->attrs.max_sge) - 1;
->                           ^
-> drivers/nvme/target/rdma.c:893:21: note: in expansion of macro 'max'
->   inline_sge_count =3D max(cm_id->device->attrs.max_sge_rd,
->                      ^~~
-> In file included from include/linux/list.h:9:0,
->                  from include/linux/module.h:9,
->                  from drivers/nvme/host/rdma.c:15:
-> drivers/nvme/host/rdma.c: In function 'nvme_rdma_find_get_device':
-> drivers/nvme/host/rdma.c:381:23: error: 'struct ib_device_attr' has no me=
-mber named 'max_sge'; did you mean 'max_cqe'?
->       ndev->dev->attrs.max_sge - 1);
->                        ^
-> drivers/nvme/host/rdma.c:380:30: note: in expansion of macro 'min'
->   ndev->num_inline_segments =3D min(NVME_RDMA_MAX_INLINE_SEGMENTS,
->                               ^~~
->=20
-> Caused by commits
->=20
->   64a741c1eaa8 ("nvme-rdma: support up to 4 segments of inline data")
->   0d5ee2b2ab4f ("nvmet-rdma: support max(16KB, PAGE_SIZE) inline data")
->=20
-> interacting with commit
->=20
->   33023fb85a42 ("IB/core: add max_send_sge and max_recv_sge attributes")
->=20
-> from the rdma tree.
->=20
-> I have applied the following merge fix patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 26 Jul 2018 14:32:15 +1000
-> Subject: [PATCH] nvme-dma: merge fix up for replacement of max_sge
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/nvme/host/rdma.c   | 2 +-
->  drivers/nvme/target/rdma.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-> index cfa0319fcd1c..368fe5ac0c6b 100644
-> --- a/drivers/nvme/host/rdma.c
-> +++ b/drivers/nvme/host/rdma.c
-> @@ -378,7 +378,7 @@ nvme_rdma_find_get_device(struct rdma_cm_id *cm_id)
->  	}
-> =20
->  	ndev->num_inline_segments =3D min(NVME_RDMA_MAX_INLINE_SEGMENTS,
-> -					ndev->dev->attrs.max_sge - 1);
-> +					ndev->dev->attrs.max_send_sge - 1);
->  	list_add(&ndev->entry, &device_list);
->  out_unlock:
->  	mutex_unlock(&device_list_mutex);
-> diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-> index 86121a7a19b2..8c30ac7d8078 100644
-> --- a/drivers/nvme/target/rdma.c
-> +++ b/drivers/nvme/target/rdma.c
-> @@ -891,7 +891,7 @@ nvmet_rdma_find_get_device(struct rdma_cm_id *cm_id)
-> =20
->  	inline_page_count =3D num_pages(port->inline_data_size);
->  	inline_sge_count =3D max(cm_id->device->attrs.max_sge_rd,
-> -				cm_id->device->attrs.max_sge) - 1;
-> +				cm_id->device->attrs.max_send_sge) - 1;
->  	if (inline_page_count > inline_sge_count) {
->  		pr_warn("inline_data_size %d cannot be supported by device %s. Reducin=
-g to %lu.\n",
->  			port->inline_data_size, cm_id->device->name,
-> --=20
-> 2.18.0
-
-This is now needed (with the max_send_sge -> max_recv_sge update in
-drivers/nvme/target/rdma.c patch) when I merge the rdma tree with
-Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vIDoGTdWW5ed7pS+zOHyQVZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzhScACgkQAVBC80lX
-0GychQf/dqHMr+UL/drg6+TnENanCESJSaskwmcKgvscSabzZG3lQXj3PBb1Lca9
-MkbaG8MSrMRDe7tRspzPNnsFIOShDsY3NhPRb3mqlak4f78uskFl0qNWn4rpXUx0
-RO9umzHx1+n+sB1hUG94/2dvmr1SiBmw0zXH18ltEkUHsV3N9BK163TOtPweg411
-VxxD6+CkcIGWVHesrkk5ZcX/hjVHOmSwZ7OHkpttLkTew7kcAvpqbknc8mJn6+2J
-5J/o43fQ6+EmqkSLpw2jMP9nJzrpSKSZBtRpyc+zYdkJf/qWVwwR1Bb2CszUrLfb
-OCC9LGI+YsKUVoBNtaqPwmnWIMkZ8w==
-=7siD
------END PGP SIGNATURE-----
-
---Sig_/vIDoGTdWW5ed7pS+zOHyQVZ--
+SGksIFJvYmluLA0KDQpPbiBUdWUsIDIwMTgtMDgtMTQgYXQgMTE6MDIgKzAxMDAsIFJvYmluIE11
+cnBoeSB3cm90ZToNCj4gT24gMTQvMDgvMTggMDk6MzUsIFdpbGwgRGVhY29uIHdyb3RlOg0KPiA+
+IE9uIFR1ZSwgQXVnIDE0LCAyMDE4IGF0IDA0OjMzOjQxUE0gKzA4MDAsIExlaXpoZW4gKFRodW5k
+ZXJUb3duKQ0KPiA+IHdyb3RlOg0KPiA+ID4gT24gMjAxOC84LzYgOTozMiwgWWFuZywgU2h1bnlv
+bmcgd3JvdGU6DQo+ID4gPiA+IE9uIDIwMTgvNy8yNiAyMjozNywgUm9iaW4gTXVycGh5IHdyb3Rl
+Og0KPiA+ID4gPiA+IEJlY2F1c2UgRE1BIGNvZGUgaXMgbm90IHRoZSBvbmx5IGNhbGxlciBvZiBp
+b21tdV9tYXAvdW5tYXAuDQo+ID4gPiA+ID4gSXQncw0KPiA+ID4gPiA+IHBlcmZlY3RseSBsZWdh
+bCBpbiB0aGUgSU9NTVUgQVBJIHRvIHBhcnRpYWxseSB1bm1hcCBhDQo+ID4gPiA+ID4gcHJldmlv
+dXMgbWFwcGluZw0KPiA+ID4gPiA+IHN1Y2ggdGhhdCBhIGJsb2NrIGVudHJ5IG5lZWRzIHRvIGJl
+IHNwbGl0LiBUaGUgRE1BIEFQSSwNCj4gPiA+ID4gPiBob3dldmVyLCBpcyBhDQo+ID4gPiA+ID4g
+bG90IG1vcmUgY29uc3RyaW5lZCwgYW5kIHRodXMgYnkgY29uc3RydWN0aW9uIHRoZSBpb21tdS1k
+bWENCj4gPiA+ID4gPiBsYXllciB3aWxsDQo+ID4gPiA+ID4gbmV2ZXIgZ2VuZXJhdGUgYSBibG9j
+ay1zcGxpdHRpbmcgaW9tbXVfdW5tYXAoKSBleGNlcHQgYXMgYQ0KPiA+ID4gPiA+IHJlc3VsdCBv
+Zg0KPiA+ID4gPiA+IGlsbGVnYWwgRE1BIEFQSSB1c2FnZSwgYW5kIHdlIG9idmlvdXNseSBkbyBu
+b3QgbmVlZCB0bw0KPiA+ID4gPiA+IG9wdGltaXNlIGZvciB0aGF0DQo+ID4gPiA+ID4gKHlvdSB3
+aWxsIGdldCBhIHdhcm5pbmcgYWJvdXQgbWlzbWF0Y2hlZCB1bm1hcHMgdW5kZXIgZG1hLQ0KPiA+
+ID4gPiA+IGRlYnVnLCBidXQNCj4gPiA+ID4gPiBpdCdzIGEgYml0IHRvbyBleHBlbnNpdmUgdG8g
+cG9saWNlIGluIHRoZSBnZW5lcmFsIGNhc2UpLg0KPiA+ID4gPiA+IA0KPiA+ID4gPiANCj4gPiA+
+ID4gV2hlbiBJIHdhcyByZWFkaW5nIHRoZSBjb2RlIGFyb3VuZCBhcm1fbHBhZV9zcGxpdF9ibGtf
+dW5tYXAoKSwNCj4gPiA+ID4gSSB3YXMNCj4gPiA+ID4gY3VyaW91cyBpbiB3aGljaCBzY2VuYXJp
+byBhIGJsb2NrIHdpbGwgYmUgc3BsaXQuIE5vdyB3aXRoIHlvdXINCj4gPiA+ID4gY29tbWVudHMN
+Cj4gPiA+ID4gIkJlY2F1c2UgRE1BIGNvZGUgaXMgbm90IHRoZSBvbmx5IGNhbGxlciBvZiBpb21t
+dV9tYXAvdW5tYXAiLA0KPiA+ID4gPiBpdCBzZWVtcw0KPiA+ID4gPiBkZXBlbmRpbmcgb24gdGhl
+IHVzZXIuDQo+ID4gPiA+IA0KPiA+ID4gPiBXb3VsZCB5b3UgcGxlYXNlIGV4cGxhaW4gdGhpcyBm
+dXJ0aGVyPyBJIG1lYW4gYmVzaWRlcyBETUEsDQo+ID4gPiA+IHdoaWNoIHVzZXINCj4gPiA+ID4g
+d2lsbCB1c2UgaW9tbXVfbWFwL3VtYXAgYW5kIGhvdyBpdCBzcGxpdCBhIGJsb2NrLg0KPiA+ID4g
+DQo+ID4gPiBJIGFsc28gdGhpbmsgdGhhdCBhcm1fbHBhZV9zcGxpdF9ibGtfdW5tYXAoKSBzY2Vu
+YXJpbyBpcyBub3QNCj4gPiA+IGV4aXN0LCBtYXliZQ0KPiA+ID4gd2Ugc2hvdWxkIHJlbW92ZSBp
+dCwgYW5kIGdpdmUgYSB3YXJuaW5nIGZvciB0aGlzIHdyb25nIHVzYWdlLg0KPiA+IA0KPiA+IENh
+bid0IGl0IGhhcHBlbiB3aXRoIFZGSU8/DQo+IA0KPiAuLi5vciBHUFUgZHJpdmVycywgb3IgYW55
+b25lIGVsc2UgbWFuYWdpbmcgdGhlaXIgb3duIElPTU1VIGRvbWFpbiANCj4gZGlyZWN0bHkuIEEg
+c2VxdWVuY2UgbGlrZSB0aGlzIGlzIHBlcmZlY3RseSBsZWdhbDoNCj4gDQo+IAlpb21tdV9tYXAo
+ZG9tYWluLCBpb3ZhLCBwYWRkciwgU1pfOE0sIHByb3QpOw0KPiAJLi4uDQo+IAlpb21tdV91bm1h
+cChkb21haW4sIGlvdmEgKyBTWl8xTSAqIDUsIFNaXzFNICogMyk7DQo+IA0KPiB3aGVyZSBpZiBp
+b3ZhIGFuZCBwYWRkciBoYXBwZW4gdG8gYmUgc3VpdGFibHkgYWxpZ25lZCwgdGhlIG1hcCB3aWxs
+DQo+IGxheSANCj4gZG93biBibG9ja3MsIGFuZCB0aGUgdW5tYXAgd2lsbCB0aGVuIGhhdmUgdG8g
+c3BsaXQgb25lIG9mIHRoZW0gaW50byANCj4gcGFnZXMgdG8gcmVtb3ZlIGhhbGYgb2YgaXQuIFdl
+IGRvbid0IHRlYXIgb3VyIGhhaXIgb3V0IG1haW50YWluaW5nIA0KPiBzcGxpdF9ibGtfdW5tYXAo
+KSBmb3IgdGhlIGZ1biBvZiBpdCA6KA0KDQpUaGFuayB5b3UgZm9yIHRoZSBHUFUgZXhhbXBsZS4g
+QnV0IGZvciBWRklPLCBJIHJlbWVtYmVyIGFsbCBtZW1vcnkgd2lsbA0KYmUgICBwaW5uZWQgaW4g
+dGhlIGVhcmx5IHN0YWdlIG9mIGVtdWxhdG9yIChzdWNoIGFzIHFlbXUpIHN0YXJ0LiBTbywNCnRo
+ZSBzcGxpdCB3aWxsIG9jY3VyIGF0IHdoaWNoIG9wZXJhdGlvbj8gTWF5YmUgdmlydGlvIGJhbGxv
+b24gaW5mbGF0ZT8NCg0KVGhhbmtzLg0KU2h1bnlvbmcuDQoNCj4gDQo+IFJvYmluLg==
