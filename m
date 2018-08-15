@@ -2,105 +2,98 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A80BC46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF2FC46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7EBD2156F
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 10:57:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZKu+v+BB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7EBD2156F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 40E2921580
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 11:00:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E2921580
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbeHONtO (ORCPT
+        id S1729074AbeHONvm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 09:49:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49030 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbeHONtO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 09:49:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3aocv68c+y5A60g9AD4qIGeTr7mmnuLwxVAiuPNfa0k=; b=ZKu+v+BBuv7UUrAY3qdGR6JFA
-        mnvc5pWWs1uSyNykV8ScMVlWEa7L/3/f/Gl6kbiHYTV1mR+9/xqdO3Ie+sjjNonQ/lfV4RsI+peft
-        0DkHEKGoh8FOmk68l64bM4eya72TWBSJJWYsKIrmqlUEgKCGaET84z4Ku2HTKRP4weTvM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fptUY-0001ax-4z; Wed, 15 Aug 2018 10:57:30 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 53BD0440078; Wed, 15 Aug 2018 11:57:29 +0100 (BST)
-Date:   Wed, 15 Aug 2018 11:57:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        collinsd@codeaurora.org, swboyd@chromium.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] regulator: core: If consumers don't call
- regulator_set_load() assume max
-Message-ID: <20180815105728.GW2414@sirena.org.uk>
-References: <20180814170617.100087-1-dianders@chromium.org>
- <20180814170617.100087-2-dianders@chromium.org>
+        Wed, 15 Aug 2018 09:51:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54086 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728576AbeHONvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 09:51:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51B8F18A;
+        Wed, 15 Aug 2018 03:59:59 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0005E3F5BC;
+        Wed, 15 Aug 2018 03:59:55 -0700 (PDT)
+Subject: Re: [PATCH v3 03/14] sched/core: uclamp: add CPU's clamp groups
+ accounting
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-4-patrick.bellasi@arm.com>
+ <a24def9b-57bb-d072-5064-0421076d2e43@arm.com>
+ <20180814164905.GG2605@e110439-lin>
+ <7c45c1a8-24cb-6798-5b6f-3b5dfc9b490d@arm.com>
+ <20180815105428.GA7388@e110439-lin>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <ccd9c53f-55f7-a285-39eb-4303888dafcd@arm.com>
+Date:   Wed, 15 Aug 2018 12:59:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dIV3CY5swYZsO92m"
-Content-Disposition: inline
-In-Reply-To: <20180814170617.100087-2-dianders@chromium.org>
-X-Cookie: Many are called, few volunteer.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180815105428.GA7388@e110439-lin>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/15/2018 12:54 PM, Patrick Bellasi wrote:
+> On 15-Aug 11:37, Dietmar Eggemann wrote:
+>> On 08/14/2018 06:49 PM, Patrick Bellasi wrote:
+>>> Hi Dietmar!
+>>>
+>>> On 14-Aug 17:44, Dietmar Eggemann wrote:
+>>>> On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
 
---dIV3CY5swYZsO92m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[..]
 
-On Tue, Aug 14, 2018 at 10:06:14AM -0700, Douglas Anderson wrote:
-> Not all regulator consumers call regulator_set_load().  On some
-> regulators (like on RPMh-regulator) this could be bad since the
-> regulator framework will treat this as if consumer needs no load.
-> It's much better to assume that a dumb client needs the maximum
-> possible load so we get correctness first.
+>> If this is only for testing/debugging, I would suggest a simple one line
+>> BUG_ON()
+> 
+> These are (eventually) considered as recoverable errors... thus,
+> AFAIK, using BUG_ON is overkilling and discouraged:
+>    https://elixir.bootlin.com/linux/latest/source/include/asm-generic/bug.h#L42
 
-If you take this to its logical conclusion we should never have runtime
-mode setting - there may be passive components in the system which don't
-appear in DT but do affect the load.  It's why we require the machines
-to explicitlly enable any changes that the framework does, if we don't
-do this then things aren't safe.  You may also have a situation where
-some of the drivers that are registered are included in a fixed load
-specified by the machine integration.
+Not sure about that. If this refcounting is out of sync, that's 
+indicating a serious issue here for me which should be fixed.
 
-Dynamic mode setting is just a very hard feature to use usefully,
-there's a reason why few systems do it.
+>> You find CONFIG_SCHED_DEBUG=y in production kernels as well.
+> 
+> AFAIK, that setting is discouraged for production kernels...
+> Moreover, it's still better to WARN sometimes on a production kernel
+> the crash the device, isnt't it?
 
---dIV3CY5swYZsO92m
-Content-Type: application/pgp-signature; name="signature.asc"
+IMHO, if this is something which should not happen at all, a BUG_ON() is 
+the right thing to do here. And you get the call stack to investigate 
+why it hit.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt0BxgACgkQJNaLcl1U
-h9ASxwf+Nckyt05E1tPXv5gm3yuIus/OGZ5dZhjf6tdS7aoNL+HUG4iEr8TDBgA/
-qUMOJioFdR5YjXZwCla3KlN/TZUKOUr8qajwhvwuh+Y3LiNzUKnb/hp8GrsqK3LU
-FbsXqxzqPJXgcsacYGtVA4A7/67+c+R6ScvNorUfXGzy6BRygyvxHHeGdMnhcjOt
-ejB71/wH7yoAhtMHSKUYkzfwY95Mh+eS37WAgI69zr+KZ28e8DD+Rv2yphcxfrz2
-fHcegYeqlbXbdS7/WEAMQpZ8rmeOJ/Sg4OuA3lR0xkC+oB2NPR2VCYP0JZ7XJKrS
-x1p6qRhpznCoqbSwKk9UatVvKhHRKQ==
-=nEZj
------END PGP SIGNATURE-----
-
---dIV3CY5swYZsO92m--
