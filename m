@@ -2,256 +2,236 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4CCC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E418EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2554E2150A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80205214EE
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:22:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LCYGbOdL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2554E2150A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZKlbFck"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80205214EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeHOWJl (ORCPT
+        id S1727615AbeHOWQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 18:09:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59216 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbeHOWJk (ORCPT
+        Wed, 15 Aug 2018 18:16:19 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37298 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeHOWQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 18:09:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mRx99AdQa3QU0PBzukXJTI2K0zCt/ZW0ZmraPqJqYJI=; b=LCYGbOdLuA0PMDMFFWkk4fsLG
-        TKCbTiZLuQHsVMBdpepDh1UfaC7PbS6geXm9lN1vVwtiX2Hqki27kGIILSs/JYFvpGmXhAznExv5S
-        wGsbgSW+ZpvpBCeKJsNaPKHAEUF+bKvjTYIyjO88NLCEKH1zl62DKmrQKd6OUhz/vVux2TIqQLvWh
-        PhlcnsP7PXImlksa8xxvnvcMkVD4rfMdJCt68D76zelYYrz99JhKNb8ACaiqhDkmNc4mg/k+ki94/
-        irAjez0VFN7mHsMBTzrr4uEkTeW6OlhQBHZdjkSdbqRFKIUuv5LsGWjp4vfNpTxBCzL1HdP09/0qV
-        M1CijRXDw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fq1H5-000488-0p; Wed, 15 Aug 2018 19:16:07 +0000
-Date:   Wed, 15 Aug 2018 12:16:06 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-Message-ID: <20180815191606.GA4201@bombadil.infradead.org>
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+        Wed, 15 Aug 2018 18:16:19 -0400
+Received: by mail-it0-f65.google.com with SMTP id h20-v6so3430292itf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mfX+HJUzcWSeDWDaWpWI2mbnNLINc5wiN7a0euIR2Gg=;
+        b=YZKlbFckZPMRWftqh5PKqlX2CRhsbzChw1+woQkdjWW5oJwTZGxPMSMe15lIMJB/HX
+         e+eV1R3kHWmo+212tDI42FJyH9MXSJavsWDdlNiV34Pe3SZ9FfW9vK9/3agU01cBsjKx
+         3OOUnwMI6OjYpiuAIjZwFvyd3n0IHiT/JLVUM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mfX+HJUzcWSeDWDaWpWI2mbnNLINc5wiN7a0euIR2Gg=;
+        b=FjiA1V57Sw00ZWCZfd5M2MmKHCA172EsVYH/p23cxYphCyTXnTX+JYIxr+9rE4/U1l
+         WIOEaxGIuXNzYz72sMx02H0rJeYGPgLmv9gyMZ4AlPE/9U02ZFTPNvj/E1m3O3ajlvXV
+         2UGTT5JZD7KpK3lKYnzZFXenwRAYEqi50Ko+sohulf6UcQWKAcF0ew7XHRs6eZXQnB2Y
+         1Tuxzc3kfe43WQDWiG/HEV2wqNGh5p0QYFnkmi8FHdpiRPbX0ixlEPhWHZf7w20lgN+d
+         YCwTBzTTUeqmmK/H5et18A7rC1F/XAcZByJFKO6D5UxnWtSIrNMVZq5Y8OWb3UvhJP24
+         PXgQ==
+X-Gm-Message-State: AOUpUlEV118ePCH59+f7ua3KDWBQqIfTU0xLAaJBY/Si8aO5izOfClo4
+        5krpt4W0TIJNRhbaBNQG4K30ew==
+X-Google-Smtp-Source: AA+uWPxKoEwNQc6Q9vc4zHGyNb0rbvkB1T/brNUPVfbVf641BGfUef378DrdjF2V8rB4Vhx/kfgdGQ==
+X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr23631316jas.72.1534360971733;
+        Wed, 15 Aug 2018 12:22:51 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id i20-v6sm1369657iti.15.2018.08.15.12.22.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Aug 2018 12:22:49 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 13:22:46 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robert.walker@arm.com, mike.leach@arm.com
+Subject: Re: [PATCH 03/13] coresight: tmc-etb/etf: Prepare to handle errors
+ enabling
+Message-ID: <20180815192246.GA11625@xps15>
+References: <1533562915-21558-1-git-send-email-suzuki.poulose@arm.com>
+ <1533562915-21558-4-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1533562915-21558-4-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 02:49:48AM +0800, Yang Shi wrote:
-> +static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
-> +			       size_t len, struct list_head *uf)
+On Mon, Aug 06, 2018 at 02:41:45PM +0100, Suzuki K Poulose wrote:
+> Prepare to handle errors in enabling the hardware and
+> report it back to the core driver.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc-etf.c | 71 +++++++++++++++----------
+>  1 file changed, 44 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> index 4156c95..ceb4b30 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> @@ -15,7 +15,7 @@
+>  static int tmc_set_etf_buffer(struct coresight_device *csdev,
+>  			      struct perf_output_handle *handle);
+>  
+> -static void tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
+> +static void __tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	CS_UNLOCK(drvdata->base);
+>  
+> @@ -34,6 +34,12 @@ static void tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
+>  	CS_LOCK(drvdata->base);
+>  }
+>  
+> +static int tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
 > +{
-> +	unsigned long end;
-> +	struct vm_area_struct *start_vma, *prev, *vma;
-> +	int ret = 0;
+> +	__tmc_etb_enable_hw(drvdata);
+> +	return 0;
+> +}
 > +
-> +	if (!addr_ok(start, len))
-> +		return -EINVAL;
+>  static void tmc_etb_dump_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	char *bufp;
+> @@ -76,7 +82,7 @@ static void tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
+>  	CS_LOCK(drvdata->base);
+>  }
+>  
+> -static void tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+> +static void __tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	CS_UNLOCK(drvdata->base);
+>  
+> @@ -92,6 +98,12 @@ static void tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+>  	CS_LOCK(drvdata->base);
+>  }
+>  
+> +static int tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+> +{
+> +	__tmc_etf_enable_hw(drvdata);
+> +	return 0;
+> +}
 > +
-> +	len = PAGE_ALIGN(len);
-> +
-> +	end = start + len;
-> +
-> +	/*
-> +	 * Need write mmap_sem to split vmas and detach vmas
-> +	 * splitting vma up-front to save PITA to clean if it is failed
-> +	 */
-> +	if (down_write_killable(&mm->mmap_sem))
-> +		return -EINTR;
-> +
-> +	start_vma = munmap_lookup_vma(mm, start, end);
-> +	if (!start_vma)
-> +		goto out;
-> +	if (IS_ERR(start_vma)) {
-> +		ret = PTR_ERR(start_vma);
-> +		goto out;
-> +	}
-> +
-> +	prev = start_vma->vm_prev;
-> +
-> +	if (unlikely(uf)) {
-> +		ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
+>  static void tmc_etf_disable_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	CS_UNLOCK(drvdata->base);
+> @@ -174,8 +186,12 @@ static int tmc_enable_etf_sink_sysfs(struct coresight_device *csdev)
+>  		drvdata->buf = buf;
+>  	}
+>  
+> -	drvdata->mode = CS_MODE_SYSFS;
+> -	tmc_etb_enable_hw(drvdata);
+> +	ret = tmc_etb_enable_hw(drvdata);
+> +	if (!ret)
+> +		drvdata->mode = CS_MODE_SYSFS;
+> +	else
+> +		/* Free up the buffer if we failed to enable */
+> +		used = false;
+>  out:
+>  	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>  
+> @@ -194,27 +210,25 @@ static int tmc_enable_etf_sink_perf(struct coresight_device *csdev, void *data)
+>  	struct perf_output_handle *handle = data;
+>  
+>  	spin_lock_irqsave(&drvdata->spinlock, flags);
+> -	if (drvdata->reading) {
+> +	do {
+>  		ret = -EINVAL;
+> -		goto out;
+> -	}
+> +		if (drvdata->reading)
+> +			break;
+> +		/*
+> +		 * In Perf mode there can be only one writer per sink.  There
+> +		 * is also no need to continue if the ETB/ETF is already
+> +		 * operated from sysFS.
+> +		 */
+> +		if (drvdata->mode != CS_MODE_DISABLED)
+> +			break;
+>  
+> -	/*
+> -	 * In Perf mode there can be only one writer per sink.  There
+> -	 * is also no need to continue if the ETB/ETR is already operated
+> -	 * from sysFS.
+> -	 */
+> -	if (drvdata->mode != CS_MODE_DISABLED) {
+> -		ret = -EINVAL;
+> -		goto out;
+> -	}
+> -
+> -	ret = tmc_set_etf_buffer(csdev, handle);
+> -	if (!ret) {
+> -		drvdata->mode = CS_MODE_PERF;
+> -		tmc_etb_enable_hw(drvdata);
+> -	}
+> -out:
+> +		ret = tmc_set_etf_buffer(csdev, handle);
 > +		if (ret)
-> +			goto out;
-> +	}
-> +
-> +	/*
-> +	 * Unmapping vmas, which have:
-> +	 *   VM_HUGETLB or
-> +	 *   VM_PFNMAP or
-> +	 *   uprobes
-> +	 * need get done with write mmap_sem held since they may update
-> +	 * vm_flags. Deal with such mappings with regular do_munmap() call.
-> +	 */
-> +	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
-> +		if ((vma->vm_file &&
-> +		    has_uprobes(vma, vma->vm_start, vma->vm_end)) ||
-> +		    (vma->vm_flags & (VM_HUGETLB | VM_PFNMAP)))
-> +			goto regular_path;
+> +			break;
+> +		ret  = tmc_etb_enable_hw(drvdata);
+> +		if (!ret)
+> +			drvdata->mode = CS_MODE_PERF;
+> +	} while (0);
+>  	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>  
+>  	return ret;
+> @@ -271,6 +285,7 @@ static void tmc_disable_etf_sink(struct coresight_device *csdev)
+>  static int tmc_enable_etf_link(struct coresight_device *csdev,
+>  			       int inport, int outport)
+>  {
+> +	int ret;
+>  	unsigned long flags;
+>  	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>  
+> @@ -280,11 +295,13 @@ static int tmc_enable_etf_link(struct coresight_device *csdev,
+>  		return -EBUSY;
+>  	}
+>  
+> -	tmc_etf_enable_hw(drvdata);
+> -	drvdata->mode = CS_MODE_SYSFS;
+> +	ret = tmc_etf_enable_hw(drvdata);
+> +	if (!ret)
+> +		drvdata->mode = CS_MODE_SYSFS;
+>  	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>  
+> -	dev_dbg(drvdata->dev, "TMC-ETF enabled\n");
+> +	if (!ret)
+> +		dev_dbg(drvdata->dev, "TMC-ETF enabled\n");
+>  	return 0;
 
-but ... that's going to redo all the work you already did!  Why not just this:
+We need to tell the caller if an error as occured:
 
-(not even compiled, and I can see a good opportunity for combining the
-VM_LOCKED loop with the has_uprobes loop)
+        return ret;
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index de699523c0b7..8d121db36efc 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2803,6 +2803,8 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- {
- 	unsigned long end;
- 	struct vm_area_struct *vma, *prev, *last;
-+	int res = 0;
-+	bool downgrade = false;
- 
- 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
- 		return -EINVAL;
-@@ -2811,17 +2813,20 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	if (len == 0)
- 		return -EINVAL;
- 
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
- 	/* Find the first overlapping VMA */
- 	vma = find_vma(mm, start);
- 	if (!vma)
--		return 0;
-+		goto unlock;
- 	prev = vma->vm_prev;
--	/* we have  start < vma->vm_end  */
-+	/* we have start < vma->vm_end  */
- 
- 	/* if it doesn't overlap, we have nothing.. */
- 	end = start + len;
- 	if (vma->vm_start >= end)
--		return 0;
-+		goto unlock;
- 
- 	/*
- 	 * If we need to split any vma, do it now to save pain later.
-@@ -2831,28 +2836,27 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	 * places tmp vma above, and higher split_vma places tmp vma below.
- 	 */
- 	if (start > vma->vm_start) {
--		int error;
--
- 		/*
- 		 * Make sure that map_count on return from munmap() will
- 		 * not exceed its limit; but let map_count go just above
- 		 * its limit temporarily, to help free resources as expected.
- 		 */
-+		res = -ENOMEM
- 		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
--			return -ENOMEM;
-+			goto unlock;
- 
--		error = __split_vma(mm, vma, start, 0);
--		if (error)
--			return error;
-+		res = __split_vma(mm, vma, start, 0);
-+		if (res)
-+			goto unlock;
- 		prev = vma;
- 	}
- 
- 	/* Does it split the last one? */
- 	last = find_vma(mm, end);
- 	if (last && end > last->vm_start) {
--		int error = __split_vma(mm, last, end, 1);
--		if (error)
--			return error;
-+		res = __split_vma(mm, last, end, 1);
-+		if (res)
-+			goto unlock;
- 	}
- 	vma = prev ? prev->vm_next : mm->mmap;
- 
-@@ -2866,9 +2870,19 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 		 * split, despite we could. This is unlikely enough
- 		 * failure that it's not worth optimizing it for.
- 		 */
--		int error = userfaultfd_unmap_prep(vma, start, end, uf);
--		if (error)
--			return error;
-+		result = userfaultfd_unmap_prep(vma, start, end, uf);
-+		if (result)
-+			goto unlock;
-+	}
-+
-+	downgrade = true;
-+
-+	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
-+		if (vma->vm_file &&
-+				has_uprobes(vma, vma->vm_start, vma->vm_end)) {
-+			downgrade = false;
-+			break;
-+		}
- 	}
- 
- 	/*
-@@ -2885,6 +2899,9 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 		}
- 	}
- 
-+	if (downgrade)
-+		downgrade_write(&mm->mmap_sem);
-+
- 	/*
- 	 * Remove the vma's, and unmap the actual pages
- 	 */
-@@ -2896,7 +2913,14 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/* Fix up all other VM information */
- 	remove_vma_list(mm, vma);
- 
--	return 0;
-+	res = 0;
-+unlock:
-+	if (downgrade) {
-+		up_read(&mm->mmap_sem);
-+	} else {
-+		up_write(&mm->mmap_sem);
-+	}
-+	return res;
- }
- 
- int vm_munmap(unsigned long start, size_t len)
-@@ -2905,11 +2929,7 @@ int vm_munmap(unsigned long start, size_t len)
- 	struct mm_struct *mm = current->mm;
- 	LIST_HEAD(uf);
- 
--	if (down_write_killable(&mm->mmap_sem))
--		return -EINTR;
--
- 	ret = do_munmap(mm, start, len, &uf);
--	up_write(&mm->mmap_sem);
- 	userfaultfd_unmap_complete(mm, &uf);
- 	return ret;
- }
+>  }
+>  
+> @@ -579,7 +596,7 @@ int tmc_read_unprepare_etb(struct tmc_drvdata *drvdata)
+>  		 * can't be NULL.
+>  		 */
+>  		memset(drvdata->buf, 0, drvdata->size);
+> -		tmc_etb_enable_hw(drvdata);
+> +		__tmc_etb_enable_hw(drvdata);
+>  	} else {
+>  		/*
+>  		 * The ETB/ETF is not tracing and the buffer was just read.
+> -- 
+> 2.7.4
+> 
