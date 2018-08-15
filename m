@@ -2,127 +2,102 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7217C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4CEC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD722064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:02:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="dQ1QDN94"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD722064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
+	by mail.kernel.org (Postfix) with ESMTP id 664942054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664942054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729480AbeHORy7 (ORCPT
+        id S1729515AbeHORzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 13:54:59 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38674 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729436AbeHORy7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 13:54:59 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t25-v6so1612973wmi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 08:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EWMFnYZseMD4EOjRVwaRD4tClqy+HjFV+OLbQijm570=;
-        b=dQ1QDN9447IqvLe1yyM+e+2SP//zp32krTIVCpChOb6IG4REoQeuPcVpdrnYtEt56W
-         fmLpDNqEV2uF6VSXn9+1yZu8oLXv5cOQNvXLpNg9saDrgOUnCgmZ4ubyJ+WYNq2e50aS
-         pztpa0M8kyMIi1w0uDtgV0412H12vmLwwR0jEJlXjRM+OlYBQsMBUAG5e0vRLer4L4CJ
-         KXv530t5Cg/iX1NZlrf9DKZDE56W5me9s0F0xFYWm9OCTZDWnlcj+LlQ3n7F0MJ33tuJ
-         sdehceENvx5u2P/yXglTy5+o/R0oS2zmGuNaOYL+M26lZI8QKvL3DkuVeO/FHyx43MRp
-         i3Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EWMFnYZseMD4EOjRVwaRD4tClqy+HjFV+OLbQijm570=;
-        b=K6zHw8uyKv8Ky0d+qCKvqewCnx2vTY/uPgPLCk5BlOOvFWcnm+GrOW7LN9gG42KLWu
-         8LxHokuqMwdyT5wVVh4sU1cJMmxyyaRMr3k2vNQiNZ4fNVkMAJAXrISlG2LUeCGnkMiN
-         CMnNuiyfegVwZ+xwPfuDWnxUAhlqmcSRtba7X7at4Mwe2VFwaEkwrMC/EGkRdxueaJOC
-         eck7LEUrs7RGgBvaD0U57L9KDu+fnkKJntVC7KQWxlWqD1keRm6i9KEAiSuHz8cFPL9r
-         NhedoZBIcZEG1R+5zDpRJEw9pQWmOueZryzim7hqrkA/eFILqsr5KrXftdBMJAc9UoTN
-         AFXg==
-X-Gm-Message-State: AOUpUlE0xXFvCPtxDxwMegDjSJL+iEA792mot8S8s/oaxVuFN0T2XEgV
-        I0HO7pKz+SdhWeUf+VjWQrYB1ATgPQrqk4U+IERMMA==
-X-Google-Smtp-Source: AA+uWPz7lQDYmQRHMkdo1VaVXRvkpQB+bYUr9X18vlmUbpvbRZnxiEzhSyTsq68xoc/fQb5LPPmowvm+nKuI21SHC9Y=
-X-Received: by 2002:a1c:ea17:: with SMTP id i23-v6mr14112440wmh.29.1534345348439;
- Wed, 15 Aug 2018 08:02:28 -0700 (PDT)
+        Wed, 15 Aug 2018 13:55:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55888 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729436AbeHORzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 13:55:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52A0A80D;
+        Wed, 15 Aug 2018 08:02:47 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E5333F5BD;
+        Wed, 15 Aug 2018 08:02:43 -0700 (PDT)
+Subject: Re: [PATCH v3 04/14] sched/core: uclamp: update CPU's refcount on
+ clamp changes
+To:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-5-patrick.bellasi@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <4023267d-be06-c599-136e-1f70bf376d5d@arm.com>
+Date:   Wed, 15 Aug 2018 17:02:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180814171515.270692185@linuxfoundation.org> <20180815061429.GB1253@kroah.com>
- <CA+res+SSVV04eawQ6wDX6_gdd9G0FbQ=uWFy0tOgSX=+T0s2MA@mail.gmail.com>
-In-Reply-To: <CA+res+SSVV04eawQ6wDX6_gdd9G0FbQ=uWFy0tOgSX=+T0s2MA@mail.gmail.com>
-From:   Jinpu Wang <jinpu.wang@profitbricks.com>
-Date:   Wed, 15 Aug 2018 17:02:16 +0200
-Message-ID: <CAMGffEnBBFZMfN=veC9GHb_6BU6b+k_h2DfseVxgq1ivRNDyEQ@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/104] 4.14.63-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org,
-        patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180806163946.28380-5-patrick.bellasi@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Date: 2018=E5=B9=B48=E6=9C=8815=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8A=E5=
-=8D=888:15
-> Subject: Re: [PATCH 4.14 000/104] 4.14.63-stable review
-> To: <linux-kernel@vger.kernel.org>
-> Cc: <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-> <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-> <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-> <stable@vger.kernel.org>
->
->
-> On Tue, Aug 14, 2018 at 07:16:14PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.63 release.
-> > There are 104 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu Aug 16 17:14:49 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.63-rc1.gz
->
-> -rc2 is now out:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.63-rc2.gz
+On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
 
-Merged to our tree, tested on my test machines with basic functional
-tests, all looks fine.
+[...]
 
-Thanks,
---=20
-Jack Wang
-Linux Kernel Developer
+> +/**
+> + * uclamp_task_active: check if a task is currently clamping a CPU
+> + * @p: the task to check
+> + *
+> + * A task actively affects the utilization clamp of a CPU if:
+> + * - it's currently enqueued or running on that CPU
+> + * - it's refcounted in at least one clamp group of that CPU
+> + *
+> + * Return: true if p is currently clamping the utilization of its CPU.
+> + */
+> +static inline bool uclamp_task_active(struct task_struct *p)
+> +{
+> +	struct rq *rq = task_rq(p);
+> +	int clamp_id;
+> +
+> +	lockdep_assert_held(&p->pi_lock);
+> +	lockdep_assert_held(&rq->lock);
+> +
+> +	if (!task_on_rq_queued(p) && !p->on_cpu)
+> +		return false;
+> +
+> +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> +		if (uclamp_task_affects(p, clamp_id))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
 
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
+Looks like that uclamp_task_active() is only used once (in 
+uclamp_task_update_active()). Can you not code the if condition and the 
+for loop directly in uclamp_task_update_active()? This would save code 
+(lockdep_assert_held() etc.) and comment lines.
 
-Tel:       +49 30 577 008  042
-Fax:      +49 30 577 008 299
-Email:    jinpu.wang@profitbricks.com
-URL:      https://www.profitbricks.de
+[...]
 
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
-ens
