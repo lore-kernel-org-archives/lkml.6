@@ -2,167 +2,270 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E3FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D68C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E05A208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:09:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E05A208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 020DE208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 18:09:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJPammh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020DE208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbeHOVCO (ORCPT
+        id S1728036AbeHOVCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:02:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11115 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725962AbeHOVCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:02:13 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5E7B48DB2B;
-        Thu, 16 Aug 2018 02:08:58 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Thu, 16 Aug 2018
- 02:08:51 +0800
-Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-To:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
- <1534328582-17664-2-git-send-email-thunder.leizhen@huawei.com>
- <6027cd67-7c76-673c-082f-8dd0b7a575b0@arm.com>
- <20180815130046.GA19402@arm.com>
-CC:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5961191f-f913-9bbf-5d0d-81800bec36a1@huawei.com>
-Date:   Wed, 15 Aug 2018 19:08:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Wed, 15 Aug 2018 17:02:37 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38008 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbeHOVCg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 17:02:36 -0400
+Received: by mail-wm0-f65.google.com with SMTP id t25-v6so2071118wmi.3;
+        Wed, 15 Aug 2018 11:09:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Oz8MWi4Ol2zKOmLjc2IK84RBK9xzSlNksSaIffpt+Oc=;
+        b=JJPammh+g/wCGdzZUZ1+VcvlRsc1rbCfgNKhiXPDdVRoH/tiKBvOTjunac2AgwArku
+         L8wKR7RUk1yh3KYhdAYBTqGx1SfNPj3unRAIk7TXmNQTTwPB0PgUtRFfNbz56pSeizoD
+         wbrlY/xn9LIaWVAwGK1PJIiH8p8QXYc8DzOswcMqDPdYG3uggRAuDqCEVbGxLJX74Nu6
+         8tP6YRLnucdaqWP2hSO7ssowK7wRkCgHSkBHaxjH4VddYPkmOErk8Tut0diI4qZ1+C6w
+         0W2iAVfVONvDiWE/3zFwaLoZ0umHfKWecLywyreYQbpIXohpqdJrhpKGg9CbEa4/OrUj
+         YaTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Oz8MWi4Ol2zKOmLjc2IK84RBK9xzSlNksSaIffpt+Oc=;
+        b=iCzfgZ7av9/hA8Esuh6wLQ0p4Yfn1zl4TIRrQYHm5N/IHblIYxW+SrRmYRcf+bIUvu
+         z+SkuB39fxjj8SKBdfqu81e0jS6nDBuqcJ5x2700SWChWQs0tRUuc50N2o3jxUOsCpzT
+         MS/lS9eJ+TDZDL5fSXUW0QXhImfqwV5DfftKhYThhIVH3NcbqN3TjnOvpbV5i12HLn4c
+         LPY3ogJ1VRT7wy0TWi6HpnPTTubUNndSIFai2WGDPG19s8MjBVn6ccdkchZYGYJ+6VlH
+         f0lXHFM7blO6LgYgbCYP1Rx250BKcz0jPvT3j4OOy3t/MqKHm3/guYaFWb28cSvCBGx5
+         r7yg==
+X-Gm-Message-State: AOUpUlHNZcrd9Bw5AxKrPvOQptbi5u3Pk81kbOn7jZA9ratMRGII42Qf
+        /xNs4HSUVyeFWDcvoaMBvbN0PD6y
+X-Google-Smtp-Source: AA+uWPwxdmKRyyqi6N2VYNqGAGDl/xVW7QU0Tkory+Iz3mXtwepKZ34O14EGftn2h8CaKlilR2AWAg==
+X-Received: by 2002:a1c:2d54:: with SMTP id t81-v6mr14973705wmt.31.1534356562872;
+        Wed, 15 Aug 2018 11:09:22 -0700 (PDT)
+Received: from [192.168.1.18] (dkl176.neoplus.adsl.tpnet.pl. [83.24.15.176])
+        by smtp.gmail.com with ESMTPSA id u14-v6sm25280488wrs.57.2018.08.15.11.09.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Aug 2018 11:09:22 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180815161734.18159-1-dmurphy@ti.com>
+ <e278d4f2-7848-d156-01ec-3cd77803e4de@gmail.com>
+ <e855cda3-4314-645c-f6b9-a86aceafbd0b@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <77f11321-8876-2e34-f05e-dd855d62095c@gmail.com>
+Date:   Wed, 15 Aug 2018 20:09:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180815130046.GA19402@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <e855cda3-4314-645c-f6b9-a86aceafbd0b@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/08/2018 14:00, Will Deacon wrote:
-> On Wed, Aug 15, 2018 at 01:26:31PM +0100, Robin Murphy wrote:
->> On 15/08/18 11:23, Zhen Lei wrote:
->>> The condition "(int)(VAL - sync_idx) >= 0" to break loop in function
->>> __arm_smmu_sync_poll_msi requires that sync_idx must be increased
->>> monotonously according to the sequence of the CMDs in the cmdq.
->>>
->>> But ".msidata = atomic_inc_return_relaxed(&smmu->sync_nr)" is not protected
->>> by spinlock, so the following scenarios may appear:
->>> cpu0			cpu1
->>> msidata=0
->>> 			msidata=1
->>> 			insert cmd1
->>> insert cmd0
->>> 			smmu execute cmd1
->>> smmu execute cmd0
->>> 			poll timeout, because msidata=1 is overridden by
->>> 			cmd0, that means VAL=0, sync_idx=1.
->>>
->>> This is not a functional problem, just make the caller wait for a long
->>> time until TIMEOUT. It's rare to happen, because any other CMD_SYNCs
->>> during the waiting period will break it.
->>>
->>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->>> ---
->>>  drivers/iommu/arm-smmu-v3.c | 12 ++++++++----
->>>  1 file changed, 8 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->>> index 1d64710..3f5c236 100644
->>> --- a/drivers/iommu/arm-smmu-v3.c
->>> +++ b/drivers/iommu/arm-smmu-v3.c
->>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
->>>
->>>  	int				gerr_irq;
->>>  	int				combined_irq;
->>> -	atomic_t			sync_nr;
->>> +	u32				sync_nr;
->>>
->>>  	unsigned long			ias; /* IPA */
->>>  	unsigned long			oas; /* PA */
->>> @@ -775,6 +775,11 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
->>>  	return 0;
->>>  }
->>>
->>> +static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
+Dan,
+
+On 08/15/2018 07:30 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 08/15/2018 11:56 AM, Jacek Anaszewski wrote:
+>> Hi Dan,
 >>
->> If we *are* going to go down this route then I think it would make sense to
->> move the msiaddr and CMDQ_SYNC_0_CS_MSI logic here as well; i.e.
->> arm_smmu_cmdq_build_cmd() always generates a "normal" SEV-based sync
->> command, then calling this guy would convert it to an MSI-based one. As-is,
->> having bits of mutually-dependent data handled across two separate places
->> just seems too messy and error-prone.
->
-> Yeah, but I'd first like to see some number showing that doing all of this
-> under the lock actually has an impact.
+>> Thank you for the update.
+>>
+>> On 08/15/2018 06:17 PM, Dan Murphy wrote:
+>>> Add the device tree bindings for the lm3697
+>>> LED driver for backlighting and display.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>
+>>> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
+>>> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+>>>
+>>>  .../devicetree/bindings/leds/leds-lm3697.txt  | 89 +++++++++++++++++++
+>>>  1 file changed, 89 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>> new file mode 100644
+>>> index 000000000000..34403a48a0ce
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>> @@ -0,0 +1,89 @@
+>>> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
+>>> +
+>>> +The LM3697 11-bit LED driver provides high-
+>>> +performance backlight dimming for 1, 2, or 3 series
+>>> +LED strings while delivering up to 90% efficiency.
+>>> +
+>>> +This device is suitable for Display and Keypad Lighting
+>>> +
+>>> +Required properties:
+>>> +	- compatible:
+>>> +		"ti,lm3967"
+>>> +	- reg :  I2C slave address
+>>> +	- #address-cells : 1
+>>> +	- #size-cells : 0
+>>> +
+>>> +Optional properties:
+>>> +	- enable-gpios : gpio pin to enable/disable the device.
+>>> +	- vled-supply : LED supply
+>>> +
+>>> +Required child properties:
+>>> +	- reg : 0 - LED is Controlled by bank A
+>>> +		1 - LED is Controlled by bank B
+>>> +	- led-sources - Indicates which HVLED string is associated to which
+>>> +			control bank.  The HVLED string cannot be associated with
+>>> +			two control banks.  This property is an array of 3 and
+>>> +			all positions in the array must be populated.
+>>> +			Additional information is contained
+>>> +			in Documentation/devicetree/bindings/leds/common.txt
+>>> +			0 - End of array if all 3 LEDs are not declared for a
+>>> +			    single control bank.
+>>
+>> This is needless complication. I propose to define led-sources as
+>> an array of three boolean values, whose state signifies which LED
+>> strings are controlled by the bank defined by the reg property in the
+>> given child node. I.e. <HVLED1 HVLED2 HVLED3>.
+> 
+> I struggled a bit with this definition.  Once I got it working it ended up producing
+> an overly complex control bank algorithm.
+> 
+> I will take a look at implementing the suggestion but the complication comes in the
+> numerous DT configurations we could encounter.  Part of the issue is that the user
+> can connect to CTRL bank b only or CTRL bank a only or a combination of that
+> 
+> 2^3
 
-Update:
+I tried to play a bit with that and here is what I got (simplified
+DT parsing):
 
-I tested this patch versus a modified version which builds the command 
-under the queue spinlock (* below). From my testing there is a small 
-difference:
+int used_hvleds[3] = {0, 0 ,0};
+int used_control_banks[2] = {0, 0};
 
-Setup:
-Testing Single NVME card
-fio 15 processes
-No process pinning
-
-Average Results:
-v3 patch read/r,w/write (IOPS): 301K/149K,149K/307K
-Build under lock version read/r,w/write (IOPS): 304K/150K,150K/311K
-
-I don't know why it's better to build under the lock. We can test more.
-
-I suppose there is no justification to build the command outside the 
-spinlock based on these results alone...
-
-Cheers,
-John
-
-* Modified version:
-static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+int parse_child_node(struct fwnode_handle *child)
 {
-     u64 cmd[CMDQ_ENT_DWORDS];
-     unsigned long flags;
-     struct arm_smmu_cmdq_ent ent = {
-         .opcode = CMDQ_OP_CMD_SYNC,
-         .sync    = {
-             .msiaddr = virt_to_phys(&smmu->sync_count),
-         },
-     };
+	int bank_hvleds[3];
 
-     spin_lock_irqsave(&smmu->cmdq.lock, flags);
-     ent.sync.msidata = ++smmu->sync_nr;
-     arm_smmu_cmdq_build_cmd(cmd, &ent);
-     arm_smmu_cmdq_insert_cmd(smmu, cmd);
-     spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
+	fwnode_property_read_u32_array(child, "led-sources",
+		bank_hvleds, LM3697_MAX_LED_STRINGS);
 
-     return __arm_smmu_sync_poll_msi(smmu, ent.sync.msidata);
+	for (i = 0; i <= 3; i++) {
+		if (bank_hvleds[i] && used_hvleds[i])
+			return -EINVAL;
+		used_hvleds[i] = 1;
+	}
+
+	return 0;
 }
 
+struct fwnode_handle *child = NULL;
 
-> Will
->
-> .
->
+device_for_each_child_node(priv->dev, child)
+	fwnode_property_read_u32(child, "reg", &control_bank);
+	if (used_control_banks[control_bank])
+		goto err;
+	used_control_banks[control_bank] = 1;
+	if (parse_child_node(child))
+		goto err;
 
 
+>>
+>> I modified your examples below accordingly.
+>>
+>>> +			1 - HVLED 1 string
+>>> +			2 - HVLED 2 string
+>>> +			3 - HVLED 3 string
+>>> +
+>>> +Optional child properties:
+>>> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+>>> +	- linux,default-trigger :
+>>> +	   see Documentation/devicetree/bindings/leds/common.txt
+>>> +
+>>> +Example:
+>>> +
+>>> +HVLED string 1 and 2 controlled by control bank A and HVLED string controlled by
+>>> +control bank B.
+>>> +
+>>> +led-controller@36 {
+>>> +	compatible = "ti,lm3967";
+>>> +	reg = <0x36>;
+>>> +	#address-cells = <1>;
+>>> +	#size-cells = <0>;
+>>> +
+>>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>> +	vled-supply = <&vbatt>;
+>>> +
+>>> +	led@0 {
+>>> +		reg = <0>;
+>>> +		led-sources = <0x1 0x2 0x0>
+>>
+>> 		led-sources = <1 1 0>;
+>> ;
+>>> +		label = "white:first_backlight_cluster";
+>>> +		linux,default-trigger = "backlight";
+>>> +	};
+>>> +
+>>> +	led@1 {
+>>> +		reg = <1>;
+>>> +		led-sources = <0x3 0x0 0x0>;
+>>
+>> 		led-sources = <0 0 1>;
+>>
+>>> +		label = "white:second_backlight_cluster";
+>>> +		linux,default-trigger = "backlight";
+>>> +	};
+>>> +}
+>>> +
+>>> +All HVLED strings controlled by control bank A
+>>> +
+>>> +led-controller@36 {
+>>> +	compatible = "ti,lm3967";
+>>> +	reg = <0x36>;
+>>> +	#address-cells = <1>;
+>>> +	#size-cells = <0>;
+>>> +
+>>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>> +	vled-supply = <&vbatt>;
+>>> +
+>>> +	led@0 {
+>>> +		reg = <0>;
+>>> +		led-sources = <0x1 0x2 0x3>;
+>>
+>> 		led-sources = <1 1 1>;
+>>
+>>> +		label = "white:backlight_cluster";
+>>> +		linux,default-trigger = "backlight";
+>>> +	};
+>>> +}
+>>> +
+>>> +For more product information please see the link below:
+>>> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
+>>>
+>>
+> 
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
