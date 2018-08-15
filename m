@@ -2,104 +2,137 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B83D5C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 07:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A47C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 07:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B148216E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 07:05:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iFJQOELx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B148216E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id D9DEA21501
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 07:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9DEA21501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeHOJ4r (ORCPT
+        id S1728806AbeHOKBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 05:56:47 -0400
-Received: from m12-14.163.com ([220.181.12.14]:50242 "EHLO m12-14.163.com"
+        Wed, 15 Aug 2018 06:01:11 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:25100 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeHOJ4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 05:56:47 -0400
-X-Greylist: delayed 913 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Aug 2018 05:56:46 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=4WdXGaIAcKbqSvdCSp
-        wsEod+t9aYchU273VXKEGxzDA=; b=iFJQOELxdtIjzSr7Z5eB0gG/zsj9mWLtP4
-        xUGEJhxvzPv/wVnQ9vwCgA/wMagWdvcZoKygGQav8FI5XKdfU73+NHL86YqqWXlq
-        cKNpHQtrvtnzZig/sr8FT+uWLhUMZJZ/uyFZhxhE6N4bGtIVMFVIWNaL4wT5HOcF
-        8FX3KN1dg=
-Received: from localhost.localdomain (unknown [117.136.38.140])
-        by smtp10 (Coremail) with SMTP id DsCowAB3vR4szXNbWT8QNQ--.62402S4;
-        Wed, 15 Aug 2018 14:50:21 +0800 (CST)
-From:   Dongbo Cao <cdbdyx@163.com>
-To:     colyli@suse.de
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dongbo Cao <cdbdyx@163.com>
-Subject: [PATCH 2/2] fix potential memory leak in function "register_bcache"
-Date:   Wed, 15 Aug 2018 14:50:06 +0800
-Message-Id: <20180815065006.19856-1-cdbdyx@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: DsCowAB3vR4szXNbWT8QNQ--.62402S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar45Cw43Kw1DCw1kAF4UXFb_yoW8Gw1Upa
-        97C3y3trW8XwsrurWUJa1kua4Sga93tFZ5u3y2yw1Fv34jgw10yFW5JFy8ZFWxZFyrCw42
-        qF4DJay7Za95Cr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6yIbUUUUU=
-X-Originating-IP: [117.136.38.140]
-X-CM-SenderInfo: xfgev5r06rljoofrz/1tbiow2j3FUMG+Ql+wAAsp
+        id S1726014AbeHOKBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 06:01:11 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 4A59A41218;
+        Wed, 15 Aug 2018 09:10:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id 3KKPUjF20oni; Wed, 15 Aug 2018 09:10:09 +0200 (CEST)
+Subject: Re: [PATCH v3] spi: orion: cosmetics - alias long direct_access
+ variables
+To:     Kosta Zertsekel <zertsekel@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Jan_Kundr=c3=a1t?= <jan.kundrat@cesnet.cz>,
+        Ken Wilson <ken.wilson@opengear.com>
+References: <20180813205445.17113-1-zertsekel@gmail.com>
+From:   Stefan Roese <sr@denx.de>
+Message-ID: <b9c9ad94-2e10-6f85-2540-c60882d9630a@denx.de>
+Date:   Wed, 15 Aug 2018 09:10:06 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180813205445.17113-1-zertsekel@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if register_cache get error, memory pointed by ca should be released.
-and also, blkdev_put should be called I think.
+On 13.08.2018 22:54, Kosta Zertsekel wrote:
+> This change increases the source code readability.
+> Instead of using `spi->child[cs].direct_access.XXX` use `dir_acc->XXX`.
+> Instead of using `orion_spi->child[cs].direct_access.vaddr` use `vaddr`.
+> 
+> Signed-off-by: Kosta Zertsekel <zertsekel@gmail.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+>   drivers/spi/spi-orion.c | 22 +++++++++++-----------
+>   1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+> index d01a6adc726e..184ba91abeee 100644
+> --- a/drivers/spi/spi-orion.c
+> +++ b/drivers/spi/spi-orion.c
+> @@ -430,6 +430,7 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+>   	int word_len;
+>   	struct orion_spi *orion_spi;
+>   	int cs = spi->chip_select;
+> +	void __iomem *vaddr;
+>   
+>   	word_len = spi->bits_per_word;
+>   	count = xfer->len;
+> @@ -440,8 +441,9 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+>   	 * Use SPI direct write mode if base address is available. Otherwise
+>   	 * fall back to PIO mode for this transfer.
+>   	 */
+> -	if ((orion_spi->child[cs].direct_access.vaddr) && (xfer->tx_buf) &&
+> -	    (word_len == 8)) {
+> +	vaddr = orion_spi->child[cs].direct_access.vaddr;
+> +
+> +	if (vaddr && xfer->tx_buf && word_len == 8) {
+>   		unsigned int cnt = count / 4;
+>   		unsigned int rem = count % 4;
+>   
+> @@ -449,13 +451,11 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+>   		 * Send the TX-data to the SPI device via the direct
+>   		 * mapped address window
+>   		 */
+> -		iowrite32_rep(orion_spi->child[cs].direct_access.vaddr,
+> -			      xfer->tx_buf, cnt);
+> +		iowrite32_rep(vaddr, xfer->tx_buf, cnt);
+>   		if (rem) {
+>   			u32 *buf = (u32 *)xfer->tx_buf;
+>   
+> -			iowrite8_rep(orion_spi->child[cs].direct_access.vaddr,
+> -				     &buf[cnt], rem);
+> +			iowrite8_rep(vaddr, &buf[cnt], rem);
+>   		}
+>   
+>   		return count;
+> @@ -683,6 +683,7 @@ static int orion_spi_probe(struct platform_device *pdev)
+>   
+>   	/* Scan all SPI devices of this controller for direct mapped devices */
+>   	for_each_available_child_of_node(pdev->dev.of_node, np) {
+> +		struct orion_direct_acc *dir_acc;
+>   		u32 cs;
+>   
+>   		/* Get chip-select number from the "reg" property */
+> @@ -711,14 +712,13 @@ static int orion_spi_probe(struct platform_device *pdev)
+>   		 * This needs to get extended for the direct SPI-NOR / SPI-NAND
+>   		 * support, once this gets implemented.
+>   		 */
+> -		spi->child[cs].direct_access.vaddr = devm_ioremap(&pdev->dev,
+> -							    r->start,
+> -							    PAGE_SIZE);
+> -		if (!spi->child[cs].direct_access.vaddr) {
+> +		dir_acc = &spi->child[cs].direct_access;
+> +		dir_acc->vaddr = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
+> +		if (!dir_acc->vaddr) {
+>   			status = -ENOMEM;
+>   			goto out_rel_axi_clk;
+>   		}
+> -		spi->child[cs].direct_access.size = PAGE_SIZE;
+> +		dir_acc->size = PAGE_SIZE;
+>   
+>   		dev_info(&pdev->dev, "CS%d configured for direct access\n", cs);
+>   	}
+> 
 
-Signed-off-by: Dongbo Cao <cdbdyx@163.com>
----
- drivers/md/bcache/super.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Reviewed-by: Stefan Roese <sr@denx.de>
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index f98352d4..14c31e03 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2159,6 +2159,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	struct cache_sb *sb = NULL;
- 	struct block_device *bdev = NULL;
- 	struct page *sb_page = NULL;
-+	struct cache *ca = NULL;
- 
- 	if (!try_module_get(THIS_MODULE))
- 		return -EBUSY;
-@@ -2206,12 +2207,12 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 		register_bdev(sb, sb_page, bdev, dc);
- 		mutex_unlock(&bch_register_lock);
- 	} else {
--		struct cache *ca = kzalloc(sizeof(*ca), GFP_KERNEL);
-+		ca = kzalloc(sizeof(struct cache), GFP_KERNEL);
- 		if (!ca)
- 			goto err_close;
- 
- 		if (register_cache(sb, sb_page, bdev, ca) != 0)
--			goto err;
-+			goto err_register;
- 	}
- out:
- 	if (sb_page)
-@@ -2221,6 +2222,8 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	module_put(THIS_MODULE);
- 	return ret;
- 
-+err_register:
-+	kfree(ca);
- err_close:
- 	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
- err:
--- 
-2.17.1
-
-
+Thanks,
+Stefan
