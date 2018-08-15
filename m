@@ -2,98 +2,181 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17CBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909C0C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B1F8214EE
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:59:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SNkAnW+g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B1F8214EE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 015382154B
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:00:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015382154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbeHOSvk (ORCPT
+        id S1729834AbeHOSws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:51:40 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38006 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbeHOSvk (ORCPT
+        Wed, 15 Aug 2018 14:52:48 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:46834 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbeHOSwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:51:40 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7FFrqLD144658;
-        Wed, 15 Aug 2018 15:58:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : from :
- subject : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=A2KAu6tSCJn9RyXv/XUF6p+rsFNRNu7EU6m2L5+Zei0=;
- b=SNkAnW+gdkOT5154VT90g1oRrIVkz3nwGHZkujmiP3yDNWoJF+UJq4HbENkT7MR+1eT9
- dePoIB6Vs55Bsnu97JdyUWPkgMrHVSj4ZSCSFqDc8OwMpBFrProIfTdRA1kROfsU0fhX
- SRAU3OzY6WEW+FrkrwBPqp1t0/jqoOPXE1s0GQzWAHUXllsZoJMu2vcaX5S8eQuZw5v3
- xMZ7I86+82vTlqZbcYZH3dvC7fvkRSbvGZZhK0Yq3tg+XVQlpU7pR98IQNm5iZBozRPj
- y0v6V3V2/mgJMP+s0rlestTK682VMfwaZnqHL2IA35utGn8kSms/fq7t39O1cUvvtyPY fA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2ksreq57vc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Aug 2018 15:58:48 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7FFwlp6010683
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Aug 2018 15:58:48 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7FFwlIF010132;
-        Wed, 15 Aug 2018 15:58:47 GMT
-Received: from [192.168.1.93] (/99.156.91.244)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 15 Aug 2018 08:58:47 -0700
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        JFS Discussion <jfs-discussion@lists.sourceforge.net>
-From:   Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: [GIT PULL] jfs patches for v4.19
-Openpgp: preference=signencrypt
-Message-ID: <0937cae2-6fc5-49cb-1989-9472515fdeb4@oracle.com>
-Date:   Wed, 15 Aug 2018 10:58:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 15 Aug 2018 14:52:47 -0400
+Received: by mail-io0-f198.google.com with SMTP id c5-v6so1400127ioi.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 09:00:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=UPfO5HyZ4ZE/8KhOSWxYuf7lqtESyWIvRegSsWHcUcg=;
+        b=dSABi7fEZjJCTReM4sY5TEVImlFOv0uXDuktsth4z9V9ZdKjJ8BhHAnHDztbYi31Zu
+         s8fV4SRZJ6LWIo7qel9BamQQUD2GuioOCH8kQtGjejJJYZKtNh7PHEjJW5lsj9DITygg
+         h5A42ZW/HGFpcpBavwc0wtQm2zFTGXSPYj+uqOS/IJk3hi31MUHMDC+MZDPrXZQsTjaB
+         q4MPImlC/mBqnLFfF4em6TV0d0UocCulrKZv/nApV6N0qTiC7cmyOp5zQj6b5kg8OPdC
+         bD98GoQByp4YtO91t/BwkyQUcoM6QEqvcldHKyJP86pDTYRiBrWQLeF6IkIeM/hXVX8T
+         a+dw==
+X-Gm-Message-State: AOUpUlFNKaXDr354ss2gznxu4gNRxSf7zIviuj2z5DhvtnOFKm1rD0Uo
+        7fONV3bKvJMOWwCvEFATwHw/nzWdd6zm6W7nBbvzfV4Of0Cl
+X-Google-Smtp-Source: AA+uWPyw/jFOiNIcWE1gnxQnkodcUeCqtIMtbD4fn011bhVAx+s+hCmX48ZHOgtr7+hdLmCw1jKVonhUXY2HijL0CJ8fFIIfNosZ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8985 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=557
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808150170
+X-Received: by 2002:a6b:2306:: with SMTP id j6-v6mr12374502ioj.51.1534348804394;
+ Wed, 15 Aug 2018 09:00:04 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 09:00:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000072d64d05737b6b8c@google.com>
+Subject: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
+From:   syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, ebiggers@google.com,
+        herbert@gondor.apana.org.au, hpa@zytor.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit ba4dbdedd3edc2798659bcd8b1a184ea8bdd04dc:
+Hello,
 
-  Merge tag 'jfs-4.18' of git://github.com/kleikamp/linux-shaggy
-(2018-06-19 07:47:32 +0900)
+syzbot found the following crash on:
 
-are available in the Git repository at:
+HEAD commit:    7796916146b8 Merge branch 'x86-cpu-for-linus' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164b1922400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=265bef9882cce8d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=d5455bac3ba1ee9114e5
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1013478c400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1349c8aa400000
 
-  git://github.com/kleikamp/linux-shaggy.git tags/jfs-4.19
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com
 
-for you to fetch changes up to bd646104ac5a6bf8bdddaeaf4e441f5d439ded96:
+==================================================================
+BUG: KASAN: use-after-free in sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0  
+arch/x86/crypto/sha512-mb/sha512_mb.c:136
+Read of size 4 at addr ffff8801b0b9e838 by task kworker/0:1/13
 
-  jfs: use time64_t for otime (2018-06-19 14:09:30 -0500)
+CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.18.0+ #187
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: crypto mcryptd_flusher
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0  
+arch/x86/crypto/sha512-mb/sha512_mb.c:136
+  sha512_ctx_mgr_resubmit arch/x86/crypto/sha512-mb/sha512_mb.c:135 [inline]
+  sha512_ctx_mgr_flush+0x5c/0xb0 arch/x86/crypto/sha512-mb/sha512_mb.c:367
+  sha512_mb_flusher+0x27b/0x610 arch/x86/crypto/sha512-mb/sha512_mb.c:939
+  mcryptd_flusher+0x342/0x4b0 crypto/mcryptd.c:208
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x35a/0x420 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
 
-----------------------------------------------------------------
-Just one jfs patch for 4.19
+Allocated by task 23902:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  sock_kmalloc+0x156/0x1f0 net/core/sock.c:1996
+  hash_accept_parent_nokey+0x58/0x2e0 crypto/algif_hash.c:438
+  hash_accept_parent+0x5b/0x80 crypto/algif_hash.c:465
+  af_alg_accept+0x127/0x7d0 crypto/af_alg.c:296
+  alg_accept+0x46/0x60 crypto/af_alg.c:332
+  __sys_accept4+0x3b2/0x8a0 net/socket.c:1600
+  __do_sys_accept4 net/socket.c:1635 [inline]
+  __se_sys_accept4 net/socket.c:1632 [inline]
+  __x64_sys_accept4+0x97/0xf0 net/socket.c:1632
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      jfs: use time64_t for otime
+Freed by task 23902:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  __sock_kfree_s net/core/sock.c:2017 [inline]
+  sock_kfree_s+0x29/0x60 net/core/sock.c:2023
+  hash_sock_destruct+0x157/0x1c0 crypto/algif_hash.c:427
+  __sk_destruct+0x107/0xa60 net/core/sock.c:1573
+  sk_destruct+0x78/0x90 net/core/sock.c:1608
+  __sk_free+0xcf/0x300 net/core/sock.c:1619
+  sk_free+0x42/0x50 net/core/sock.c:1630
+  sock_put include/net/sock.h:1667 [inline]
+  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
+  __sock_release+0xd7/0x260 net/socket.c:600
+  sock_close+0x19/0x20 net/socket.c:1151
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
- fs/jfs/jfs_incore.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The buggy address belongs to the object at ffff8801b0b9e340
+  which belongs to the cache kmalloc-2048 of size 2048
+The buggy address is located 1272 bytes inside of
+  2048-byte region [ffff8801b0b9e340, ffff8801b0b9eb40)
+The buggy address belongs to the page:
+page:ffffea0006c2e780 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea0007543a88 ffffea000760b188 ffff8801dac00c40
+raw: 0000000000000000 ffff8801b0b9e340 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b0b9e700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b0b9e780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801b0b9e800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                         ^
+  ffff8801b0b9e880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b0b9e900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
