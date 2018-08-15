@@ -2,218 +2,222 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1DDC46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7BEC46464
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ACEA2156E
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:22:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSZPVVIM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACEA2156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8848C216F8
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 00:30:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8848C216F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbeHODLs (ORCPT
+        id S1728329AbeHODTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 14 Aug 2018 23:11:48 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39861 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbeHODLs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Aug 2018 23:11:48 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a11-v6so9842146pgw.6;
-        Tue, 14 Aug 2018 17:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0DE7C+LTBsnAa/zMe+NXmQPTYeEp747HH5Z3a5gnacw=;
-        b=aSZPVVIMCc27sf/drsezI3RUSr7MLoqiI+W6bWDolpPiHV7kEVWFyTOaAube8UZtTN
-         +IxHt/4zgzF/m6o8vgr3qgfgrkOFuSyMPVl7AIAHSoz43zsdRcgGoWH8VjrJ9XdXgY8Q
-         9fQMnlwUoT6Zj1p7A210vdxHWZPVIb+a23XtkDm4+WKJerRn1HoHBDMIx3HLvlr+cIJD
-         54UxmsN15HFBsTJo7yWu+ZxizQcLnUlW7mUNqdOzWSEIPz0GbkqzEmEsdfS6L9X17cLr
-         ji6Ia/inm5+RNEIMD89POLVmm6hVwK15nOYXDR5h4QnKmPmnAon4WntyRVZQrSS/HolU
-         l/0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0DE7C+LTBsnAa/zMe+NXmQPTYeEp747HH5Z3a5gnacw=;
-        b=OldqlykMOkxM5juWi9b5+vrM8OWYjjx8x15j1OoRgEt3zykyWbf5cs5giPBIq/y1AL
-         Alyu0npbjk07t+fk74YuTCUeNC5D6SpJuy8YByQSy+n4L9aEjkqTozSWE4hX7LX0OrRy
-         N4Roe9dFEo/cKZ9gVNU83JRYCSljneyjJ6ZMiENqNR8X87ugGszaFS0UKhpMLZprpdIX
-         wnQis0lAuKdlnJyqKU+p9ywmT3FuQFUFWG9aJiPrSr9qjqfxuMlwl82a2k0SJvmAUV0m
-         j4hnsFMitiCevlDBWB1Msf1/1Ibd6hBqNerfY1NQm4qmj/uYfSr1JoC1udGMDtejFATp
-         d7WQ==
-X-Gm-Message-State: AOUpUlEpyXTa6U5GLipycDQkTATHSraZ6VD4zJWdStDZA9l+YFNDwx6S
-        mHsEhuIKzqkHID3Ns4FS2X4=
-X-Google-Smtp-Source: AA+uWPwtyDg7cG+7jowh2TyChWH3zgzWLoBouhgQXJ9jjOoHjIV31GN/Oyh1/nHKAaetYtb/vViBXA==
-X-Received: by 2002:a63:1403:: with SMTP id u3-v6mr23139383pgl.13.1534292528084;
-        Tue, 14 Aug 2018 17:22:08 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm25811118pff.120.2018.08.14.17.22.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Aug 2018 17:22:06 -0700 (PDT)
-Date:   Tue, 14 Aug 2018 17:22:04 -0700
-From:   Brian Norris <computersforpeace@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Julius Werner <jwerner@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [RFC PATCH v1 0/3] device property: Support MAC address in VPD
-Message-ID: <20180815002204.GA258561@ban.mtv.corp.google.com>
-References: <20180814223758.117433-1-briannorris@chromium.org>
- <a240b3f9-d41b-30d7-ef11-5dcd1a981c0f@gmail.com>
+        Tue, 14 Aug 2018 23:19:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53202 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726837AbeHODTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Aug 2018 23:19:34 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4056C40251BD;
+        Wed, 15 Aug 2018 00:29:52 +0000 (UTC)
+Received: from [10.72.12.27] (ovpn-12-27.pek2.redhat.com [10.72.12.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 919532156712;
+        Wed, 15 Aug 2018 00:29:48 +0000 (UTC)
+Subject: Re: [RFC PATCH net-next V2 0/6] XDP rx handler
+To:     David Ahern <dsahern@gmail.com>,
+        Jesper Dangaard Brouer <jbrouer@redhat.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, mst@redhat.com
+References: <1534130250-5302-1-git-send-email-jasowang@redhat.com>
+ <20180814003253.fkgl6lyklc7fclvq@ast-mbp>
+ <5de3d14f-f21a-c806-51f4-b5efd7d809b7@redhat.com>
+ <20180814121734.105769fa@redhat.com>
+ <03ab3b18-9b13-8169-7e68-ada307694bc1@redhat.com>
+ <08bf7aec-078a-612d-833f-5b3d09a289d0@gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <aa9cf883-7822-70a7-5ab5-c873b69c2098@redhat.com>
+Date:   Wed, 15 Aug 2018 08:29:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a240b3f9-d41b-30d7-ef11-5dcd1a981c0f@gmail.com>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+In-Reply-To: <08bf7aec-078a-612d-833f-5b3d09a289d0@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 00:29:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 15 Aug 2018 00:29:52 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Srinivas, as there are NVMEM questions
 
-Hi Florian,
 
-Thanks for the quick reply.
+On 2018年08月14日 22:03, David Ahern wrote:
+> On 8/14/18 7:20 AM, Jason Wang wrote:
+>>
+>> On 2018年08月14日 18:17, Jesper Dangaard Brouer wrote:
+>>> On Tue, 14 Aug 2018 15:59:01 +0800
+>>> Jason Wang <jasowang@redhat.com> wrote:
+>>>
+>>>> On 2018年08月14日 08:32, Alexei Starovoitov wrote:
+>>>>> On Mon, Aug 13, 2018 at 11:17:24AM +0800, Jason Wang wrote:
+>>>>>> Hi:
+>>>>>>
+>>>>>> This series tries to implement XDP support for rx hanlder. This would
+>>>>>> be useful for doing native XDP on stacked device like macvlan, bridge
+>>>>>> or even bond.
+>>>>>>
+>>>>>> The idea is simple, let stacked device register a XDP rx handler. And
+>>>>>> when driver return XDP_PASS, it will call a new helper xdp_do_pass()
+>>>>>> which will try to pass XDP buff to XDP rx handler directly. XDP rx
+>>>>>> handler may then decide how to proceed, it could consume the buff, ask
+>>>>>> driver to drop the packet or ask the driver to fallback to normal skb
+>>>>>> path.
+>>>>>>
+>>>>>> A sample XDP rx handler was implemented for macvlan. And virtio-net
+>>>>>> (mergeable buffer case) was converted to call xdp_do_pass() as an
+>>>>>> example. For ease comparision, generic XDP support for rx handler was
+>>>>>> also implemented.
+>>>>>>
+>>>>>> Compared to skb mode XDP on macvlan, native XDP on macvlan (XDP_DROP)
+>>>>>> shows about 83% improvement.
+>>>>> I'm missing the motiviation for this.
+>>>>> It seems performance of such solution is ~1M packet per second.
+>>>> Notice it was measured by virtio-net which is kind of slow.
+>>>>
+>>>>> What would be a real life use case for such feature ?
+>>>> I had another run on top of 10G mlx4 and macvlan:
+>>>>
+>>>> XDP_DROP on mlx4: 14.0Mpps
+>>>> XDP_DROP on macvlan: 10.05Mpps
+>>>>
+>>>> Perf shows macvlan_hash_lookup() and indirect call to
+>>>> macvlan_handle_xdp() are the reasons for the number drop. I think the
+>>>> numbers are acceptable. And we could try more optimizations on top.
+>>>>
+>>>> So here's real life use case is trying to have an fast XDP path for rx
+>>>> handler based device:
+>>>>
+>>>> - For containers, we can run XDP for macvlan (~70% of wire speed). This
+>>>> allows a container specific policy.
+>>>> - For VM, we can implement macvtap XDP rx handler on top. This allow us
+>>>> to forward packet to VM without building skb in the setup of macvtap.
+>>>> - The idea could be used by other rx handler based device like bridge,
+>>>> we may have a XDP fast forwarding path for bridge.
+>>>>
+>>>>> Another concern is that XDP users expect to get line rate performance
+>>>>> and native XDP delivers it. 'generic XDP' is a fallback only
+>>>>> mechanism to operate on NICs that don't have native XDP yet.
+>>>> So I can replace generic XDP TX routine with a native one for macvlan.
+>>> If you simply implement ndo_xdp_xmit() for macvlan, and instead use
+>>> XDP_REDIRECT, then we are basically done.
+>> As I replied in another thread this probably not true. Its
+>> ndo_xdp_xmit() just need to call under layer device's ndo_xdp_xmit()
+>> except for the case of bridge mode.
+>>
+>>>
+>>>>> Toshiaki's veth XDP work fits XDP philosophy and allows
+>>>>> high speed networking to be done inside containers after veth.
+>>>>> It's trying to get to line rate inside container.
+>>>> This is one of the goal of this series as well. I agree veth XDP work
+>>>> looks pretty fine, but it only work for a specific setup I believe since
+>>>> it depends on XDP_REDIRECT which is supported by few drivers (and
+>>>> there's no VF driver support).
+>>> The XDP_REDIRECT (RX-side) is trivial to add to drivers.  It is a bad
+>>> argument that only a few drivers implement this.  Especially since all
+>>> drivers also need to be extended with your proposed xdp_do_pass() call.
+>>>
+>>> (rant) The thing that is delaying XDP_REDIRECT adaption in drivers, is
+>>> that it is harder to implement the TX-side, as the ndo_xdp_xmit() call
+>>> have to allocate HW TX-queue resources.  If we disconnect RX and TX
+>>> side of redirect, then we can implement RX-side in an afternoon.
+>> That's exactly the point, ndo_xdp_xmit() may requires per CPU TX queues
+>> which breaks assumptions of some drivers. And since we don't disconnect
+>> RX and TX, it looks to me the partial implementation is even worse?
+>> Consider a user can redirect from mlx4 to ixgbe but not ixgbe to mlx4.
+>>
+>>>
+>>>> And in order to make it work for a end
+>>>> user, the XDP program still need logic like hash(map) lookup to
+>>>> determine the destination veth.
+>>> That _is_ the general idea behind XDP and eBPF, that we need to add logic
+>>> that determine the destination.  The kernel provides the basic
+>>> mechanisms for moving/redirecting packets fast, and someone else
+>>> builds an orchestration tool like Cilium, that adds the needed logic.
+>> Yes, so my reply is for the concern about performance. I meant anyway
+>> the hash lookup will make it not hit the wire speed.
+>>
+>>> Did you notice that we (Ahern) added bpf_fib_lookup a FIB route lookup
+>>> accessible from XDP.
+>> Yes.
+>>
+>>> For macvlan, I imagine that we could add a BPF helper that allows you
+>>> to lookup/call macvlan_hash_lookup().
+>> That's true but we still need a method to feed macvlan with XDP buff.
+>> I'm not sure if this could be treated as another kind of redirection,
+>> but ndo_xdp_xmit() could not be used for this case for sure. Compared to
+>> redirection, XDP rx handler has its own advantages:
+>>
+>> 1) Use the exist API and userspace to setup the network topology instead
+>> of inventing new tools and its own specific API. This means user can
+>> just setup macvlan (macvtap, bridge or other) as usual and simply attach
+>> XDP programs to both macvlan and its under layer device.
+>> 2) Ease the processing of complex logic, XDP can not do cloning or
+>> reference counting. We can differ those cases and let normal networking
+>> stack to deal with such packets seamlessly. I believe this is one of the
+>> advantage of XDP. This makes us to focus on the fast path and greatly
+>> simplify the codes.
+>>
+>> Like ndo_xdp_xmit(), XDP rx handler is used to feed RX handler with XDP
+>> buff. It's just another basic mechanism. Policy is still done by XDP
+>> program itself.
+>>
+> I have been looking into handling stacked devices via lookup helper
+> functions. The idea is that a program only needs to be installed on the
+> root netdev (ie., the one representing the physical port), and it can
+> use helpers to create an efficient pipeline to decide what to do with
+> the packet in the presence of stacked devices.
+>
+> For example, anyone doing pure L3 could do:
+>
+> {port, vlan} --> [ find l2dev ] --> [ find l3dev ] ...
+>
+>    --> [ l3 forward lookup ] --> [ header rewrite ] --> XDP_REDIRECT
+>
+> port is the netdev associated with the ingress_ifindex in the xdp_md
+> context, vlan is the vlan in the packet or the assigned PVID if
+> relevant. From there l2dev could be a bond or bridge device for example,
+> and l3dev is the one with a network address (vlan netdev, bond netdev, etc).
 
-On Tue, Aug 14, 2018 at 04:00:28PM -0700, Florian Fainelli wrote:
-> On 08/14/2018 03:37 PM, Brian Norris wrote:
-> > Today, we have generic support for 'mac-address' and 'local-mac-address'
-> > properties in both Device Tree nodes and in generic Device Properties,
-> > such that network device drivers can pick up a hardware address from
-> > there, in cases where the MAC address isn't baked into the network card.
-> > This method of MAC address retrieval presumes that either:
-> > (a) there's a unique device tree (or similar) stored on a given device
-> >     or
-> > (b) some other entity (e.g., boot firmware) will modify device nodes
-> >     runtime to place that MAC address into the appropriate device
-> >     properties.
-> > 
-> > Option (a) is not feasbile for many systems.
-> > 
-> > Option (b) can work, but there are some reasons why one might not want
-> > to do that:
-> >  (1) This requires that system firmware understand the device tree
-> >      structure, sometimes to the point of memorizing path names (e.g.,
-> >      /soc/wifi@xxxxxxxx). At least for Device Tree, these path names are
-> >      not necessarily an ABI, and so this introduces unneeded fragility.
-> 
-> The path to a node is something that is well defined and should be
-> stable given that the high level function of the node and its unit
-> address are not supposed to change. Under which circumstances, besides
-> incorrect specification of either of these two things, do they not
-> consist an ABI? Not refuting your statement here, just curious when/how
-> this can happen?
+Looks less flexible since the topology is hard coded in the XDP program 
+itself and this requires all logic to be implemented in the program on 
+the root netdev.
 
-I can think of a few reasons:
+>
+> I have L3 forwarding working for vlan devices and bonds. I had not
+> considered macvlans specifically yet, but it should be straightforward
+> to add.
+>
 
- * it's not really standardized whether to use a /soc/ node or to
-   just put top-level SoC blocks directly under /. There might be
-   "recommendations", but I certainly have seen it both ways.
+Yes, and all these could be done through XDP rx handler as well, and it 
+can do even more with rather simple logic:
 
- * the "high level function name" is not set in stone AFAICT. Or at
-   least, I've never seen a list of documented names. So while on one
-   system I might see 'wlan@', another might use 'wifi@'.
+1 macvlan has its own namespace, and want its own bpf logic.
+2 Ruse the exist topology information for dealing with more complex 
+setup like macvlan on top of bond and team. There's no need to bpf 
+program to care about topology. If you look at the code, there's even no 
+need to attach XDP on each stacked device. The calling of xdp_do_pass() 
+can try to pass XDP buff to upper device even if there's no XDP program 
+attached to current layer.
+3 Deliver XDP buff to userspace through macvtap.
 
- * in any of the above (and in any other case of lack of clarity), one
-   can make slightly different choices when, e.g., submitting a device
-   tree upstream vs. a downstream tree. While we may try our hardest to
-   document and stick to documented bindings, I personally can't
-   guarantee that one of these choices will be made differently during
-   review, possibly breaking any firmware that made assumptions based on
-   those choices. So I might end up with a firmware that satisfies
-   documented bindings and works with a downstream device tree, but
-   doesn't work with a device tree that gets submitted upstream.
-
-> Also, aliases in DT are meant to provide some stability.
-
-How, specifically? I don't see any relevant binding description for
-aliases under Documentation/devicetree/bindings/net/.
-
-> >  (2) Other than this device-tree shim requirement, system firmware may
-> >      have no reason to understand anything about network devices.
-> > 
-> > So instead, I'm looking for a way to have a device node describe where
-> > to find its MAC address, rather than having the device node contain the
-> > MAC address directly. Then system firmware doesn't have to manage
-> > anything.
-> > 
-> > In particular, I add support for the Google Vital Product Data (VPD)
-> > format, used within the Coreboot project. The format is described here:
-> > 
-> > https://chromium.googlesource.com/chromiumos/platform/vpd/+/master/README.md
-> > 
-> > TL;DR: VPD consists of a TLV-like table, with key/value pairs of
-> > strings. This is often stored persistently on the boot flash and
-> > presented via in-memory Coreboot tables, for the operating system to
-> > read.
-> > 
-> > We already have a VPD driver that parses this table and presents it to
-> > user space. This series extends that driver to allow in-kernel lookups
-> > of MAC address entries.
-> 
-> A possible alternative approach is to have the VPD driver become a NVMEM
-> producer to expose the VPD keys, did you look into that and possibly
-> found that it was not a good model? The downside to that approach though
-> is that you might have to have a phandle for the VPD provider in the
-> Device Tree, but AFAICS this should solve your needs?
-
-I did notice some NVMEM work. The MTD links you point at shouldn't be
-relevant, since this table is already present in RAM. But I suppose I
-could shoehorn the memory table into being a fake NVMEM...
-
-And then, how would you recommend doing the parameterization I note
-here? Is the expectation that I define a new cell for every single type?
-Each cell might have a different binary format, so I'd have to describe:
-(a) that they contain MAC addresses (so the "reader" knows to translate
-    the ASCII strings into equivalent binary representation) and
-(b) which key matches (it's not just "mac_address=xxxxx"; there may be
-    many MAC addresses, with keys "ether_mac0", "ether_mac1",
-    "wifi_mac0")
-Part (a) especially doesn't really sound like the typical NVMEM, which
-seems to pretend it provides raw access to these memory regions.
-
-Additionally, VPD is not stored at a fixed address, nor are any
-particular entries within it (it uses TLV), so it seems like there are
-plenty of other bits of the nvmem.txt documentation I'd have to violate
-to get there, such as the definition of 'reg':
-
-reg:    specifies the offset in byte within the storage device.
-
-And finally, this may be surmountable, but the existing APIs seem very
-device tree centric. We use this same format on ACPI systems, and the
-current series would theoretically work on both [1]. I'd have to rewrite
-the current (OF-only) helpers to get equivalent support...
-
-BTW, it's quite annoying that we have all of these:
-
-fwnode_get_mac_address()
-device_get_mac_address()
-of_get_mac_address()
-of_get_nvmem_mac_address()
-
-and only 2 of those share any code! Brilliant!
-
-> [1]: https://patchwork.ozlabs.org/cover/956062/
-> [2]: https://lkml.org/lkml/2018/3/24/312
-
-Brian
-
-[1] Fortunately, I've only needed this on DT so far.
+Thanks
