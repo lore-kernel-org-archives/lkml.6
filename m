@@ -2,102 +2,486 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4CEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC93C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 664942054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:02:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664942054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 07D3820C09
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:07:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bphkt4N8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D3820C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbeHORzR (ORCPT
+        id S1729469AbeHOR7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 13:55:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55888 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbeHORzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 13:55:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52A0A80D;
-        Wed, 15 Aug 2018 08:02:47 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E5333F5BD;
-        Wed, 15 Aug 2018 08:02:43 -0700 (PDT)
-Subject: Re: [PATCH v3 04/14] sched/core: uclamp: update CPU's refcount on
- clamp changes
-To:     Patrick Bellasi <patrick.bellasi@arm.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
+        Wed, 15 Aug 2018 13:59:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729329AbeHOR7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 13:59:33 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A299F208B1;
+        Wed, 15 Aug 2018 15:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534345619;
+        bh=Leb54vT/7xOa7uyUYXHUyw3lDI1vOMOUaKKvQEIkCjA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Bphkt4N8Mm8ylpOqo0eNuhslTxu6tBTKOi2fdtEHfGm5dG3+mdNJzulSWeA0YuCMT
+         KbDTmlzZAioDlV8pGmfbo+NSCflR5lYzTVKmyA1604ADs1+hAlGa8QuD6ENkRKruou
+         kPMGS4nUsJK4fo34CWBoicXp902fg+JTPX0SnsC8=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>,
+        Benno Evers <bevers@mesosphere.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Krister Johansen <kjlx@templeofstupid.com>,
+        linux-trace-devel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-5-patrick.bellasi@arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <4023267d-be06-c599-136e-1f70bf376d5d@arm.com>
-Date:   Wed, 15 Aug 2018 17:02:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180806163946.28380-5-patrick.bellasi@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.ibm.com>, stable@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Wang Nan <wangnan0@huawei.com>, x86@kernel.org,
+        Yordan Karadzhov <y.karadz@gmail.com>
+Subject: [GIT PULL 00/35] perf/core improvements and fixes
+Date:   Wed, 15 Aug 2018 12:05:36 -0300
+Message-Id: <20180815150611.32080-1-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[...]
+Hi Ingo,
 
-> +/**
-> + * uclamp_task_active: check if a task is currently clamping a CPU
-> + * @p: the task to check
-> + *
-> + * A task actively affects the utilization clamp of a CPU if:
-> + * - it's currently enqueued or running on that CPU
-> + * - it's refcounted in at least one clamp group of that CPU
-> + *
-> + * Return: true if p is currently clamping the utilization of its CPU.
-> + */
-> +static inline bool uclamp_task_active(struct task_struct *p)
-> +{
-> +	struct rq *rq = task_rq(p);
-> +	int clamp_id;
-> +
-> +	lockdep_assert_held(&p->pi_lock);
-> +	lockdep_assert_held(&rq->lock);
-> +
-> +	if (!task_on_rq_queued(p) && !p->on_cpu)
-> +		return false;
-> +
-> +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> +		if (uclamp_task_affects(p, clamp_id))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
+	Please consider pulling, this is on top of
+perf-core-for-mingo-4.19-20180809, that is not yet in tip.
 
-Looks like that uclamp_task_active() is only used once (in 
-uclamp_task_update_active()). Can you not code the if condition and the 
-for loop directly in uclamp_task_update_active()? This would save code 
-(lockdep_assert_held() etc.) and comment lines.
+Thanks,
 
-[...]
+- Arnaldo
 
+Test results at the end of this message, as usual.
+
+The following changes since commit 6a9405b56c274024564f9014bba97b92c91b34d6:
+
+  perf map: Optimize maps__fixup_overlappings() (2018-08-08 15:56:00 -0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.19-20180815
+
+for you to fetch changes up to 6855dc41b24619c3d1de3dbd27dd0546b0e45272:
+
+  x86: Add entry trampolines to kcore (2018-08-14 19:13:26 -0300)
+
+----------------------------------------------------------------
+perf/core improvements ad fixes:
+
+kernel:
+
+. kallsyms, x86: Export addresses of PTI entry trampolines (Alexander Shishkin)
+
+. kallsyms: Simplify update_iter_mod() (Adrian Hunter)
+
+. x86: Add entry trampolines to kcore (Adrian Hunter)
+
+Hardware tracing:
+
+. Fix auxtrace queue resize (Adrian Hunter)
+
+Arch specific:
+
+. Fix uninitialized ARM SPE record error variable (Kim Phillips)
+
+. Fix trace event post-processing in powerpc (Sandipan Das)
+
+Build:
+
+. Fix check-headers.sh AND list path of execution (Alexander Kapshuk)
+
+. Remove -mcet and -fcf-protection when building the python binding
+  with older clang versions (Arnaldo Carvalho de Melo)
+
+. Make check-headers.sh check based on kernel dir (Jiri Olsa)
+
+. Move syscall_64.tbl check into check-headers.sh (Jiri Olsa)
+
+Infrastructure:
+
+. Check for null when copying nsinfo.  (Benno Evers)
+
+Libraries:
+
+. Rename libtraceevent prefixes, prep work for making it a shared
+  library generaly available (Tzvetomir Stoyanov (VMware))
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Adrian Hunter (3):
+      perf auxtrace: Fix queue resize
+      kallsyms: Simplify update_iter_mod()
+      x86: Add entry trampolines to kcore
+
+Alexander Kapshuk (1):
+      perf tools: Fix check-headers.sh AND list path of execution
+
+Alexander Shishkin (1):
+      kallsyms, x86: Export addresses of PTI entry trampolines
+
+Arnaldo Carvalho de Melo (1):
+      perf python: Remove -mcet and -fcf-protection when building with clang
+
+Benno Evers (1):
+      perf tools: Check for null when copying nsinfo.
+
+Jiri Olsa (2):
+      perf tools: Make check-headers.sh check based on kernel dir
+      perf tools: Move syscall_64.tbl check into check-headers.sh
+
+Kim Phillips (1):
+      perf arm spe: Fix uninitialized record error variable
+
+Sandipan Das (1):
+      perf probe powerpc: Fix trace event post-processing
+
+Tzvetomir Stoyanov (VMware) (24):
+      tools lib traceevent, perf tools: Rename struct pevent to struct tep_handle
+      tools lib traceevent, perf tools: Rename 'struct pevent_record' to 'struct tep_record'
+      tools lib traceevent, perf tools: Rename pevent plugin related APIs
+      tools lib traceevent, perf tools: Rename pevent alloc / free APIs
+      tools lib traceevent, perf tools: Rename pevent find APIs
+      tools lib traceevent, perf tools: Rename pevent parse APIs
+      tools lib traceevent, perf tools: Rename pevent print APIs
+      tools lib traceevent, perf tools: Rename pevent_read_number_* APIs
+      tools lib traceevent, perf tools: Rename pevent_register_* APIs
+      tools lib traceevent, perf tools: Rename pevent_set_* APIs
+      tools lib traceevent, perf tools: Rename traceevent_* APIs
+      tools lib traceevent, perf tools: Rename 'enum pevent_flag' to 'enum tep_flag'
+      tools lib traceevent, tools lib lockdep: Rename 'enum pevent_errno' to 'enum tep_errno'
+      tools lib traceevent: Rename pevent_function* APIs
+      tools lib traceevent,  perf tools: Rename traceevent_plugin_* APIs
+      tools lib traceevent: Rename pevent_filter* APIs
+      tools lib traceevent: Rename pevent_register / unregister APIs
+      tools lib traceevent: Rename pevent_data_ APIs
+      tools lib traceevent: Rename pevent field APIs
+      tools lib traceevent: Rename pevent_find_* APIs
+      tools lib traceevent: Rename various pevent get/set/is APIs
+      tools lib traceevent: Rename internal parser related APIs
+      tools lib traceevent: Rename various pevent APIs
+      tools lib traceevent: Rename static variables and functions in event-parse.c
+
+ arch/x86/mm/cpu_entry_area.c                       |  33 +
+ fs/proc/kcore.c                                    |   7 +-
+ include/linux/kcore.h                              |  13 +
+ kernel/kallsyms.c                                  |  51 +-
+ tools/lib/lockdep/Makefile                         |   4 +-
+ tools/lib/traceevent/Makefile                      |   4 +-
+ tools/lib/traceevent/event-parse.c                 | 696 ++++++++++-----------
+ tools/lib/traceevent/event-parse.h                 | 458 +++++++-------
+ tools/lib/traceevent/event-plugin.c                |  70 +--
+ tools/lib/traceevent/parse-filter.c                | 288 ++++-----
+ tools/lib/traceevent/plugin_cfg80211.c             |  20 +-
+ tools/lib/traceevent/plugin_function.c             |  34 +-
+ tools/lib/traceevent/plugin_hrtimer.c              |  56 +-
+ tools/lib/traceevent/plugin_jbd2.c                 |  36 +-
+ tools/lib/traceevent/plugin_kmem.c                 |  66 +-
+ tools/lib/traceevent/plugin_kvm.c                  | 154 ++---
+ tools/lib/traceevent/plugin_mac80211.c             |  28 +-
+ tools/lib/traceevent/plugin_sched_switch.c         |  60 +-
+ tools/lib/traceevent/plugin_scsi.c                 |  24 +-
+ tools/lib/traceevent/plugin_xen.c                  |  20 +-
+ tools/perf/arch/arm64/util/arm-spe.c               |   1 +
+ tools/perf/arch/powerpc/util/sym-handling.c        |   4 +-
+ tools/perf/arch/x86/Makefile                       |   3 -
+ tools/perf/builtin-kmem.c                          |   6 +-
+ tools/perf/builtin-report.c                        |   6 +-
+ tools/perf/builtin-script.c                        |   6 +-
+ tools/perf/check-headers.sh                        |  17 +-
+ tools/perf/util/auxtrace.c                         |   3 +
+ tools/perf/util/data-convert-bt.c                  |   6 +-
+ tools/perf/util/evsel.c                            |   2 +-
+ tools/perf/util/header.c                           |   6 +-
+ tools/perf/util/machine.h                          |   2 +-
+ tools/perf/util/namespaces.c                       |   3 +
+ tools/perf/util/python.c                           |  10 +-
+ .../perf/util/scripting-engines/trace-event-perl.c |   2 +-
+ .../util/scripting-engines/trace-event-python.c    |   6 +-
+ tools/perf/util/setup.py                           |  10 +-
+ tools/perf/util/sort.c                             |  16 +-
+ tools/perf/util/sort.h                             |   2 +-
+ tools/perf/util/trace-event-parse.c                |  34 +-
+ tools/perf/util/trace-event-read.c                 |  44 +-
+ tools/perf/util/trace-event-scripting.c            |   4 +-
+ tools/perf/util/trace-event.c                      |  28 +-
+ tools/perf/util/trace-event.h                      |  20 +-
+ 44 files changed, 1230 insertions(+), 1133 deletions(-)
+
+Test results:
+
+The first ones are container (docker) based builds of tools/perf with
+and without libelf support.  Where clang is available, it is also used
+to build perf with/without libelf, and building with LIBCLANGLLVM=1
+(built-in clang) with gcc and clang when clang and its devel libraries
+are installed.
+
+The objtool and samples/bpf/ builds are disabled now that I'm switching from
+using the sources in a local volume to fetching them from a http server to
+build it inside the container, to make it easier to build in a container cluster.
+Those will come back later.
+
+Several are cross builds, the ones with -x-ARCH and the android one, and those
+may not have all the features built, due to lack of multi-arch devel packages,
+available and being used so far on just a few, like
+debian:experimental-x-{arm64,mipsel}.
+
+The 'perf test' one will perform a variety of tests exercising
+tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
+with a variety of command line event specifications to then intercept the
+sys_perf_event syscall to check that the perf_event_attr fields are set up as
+expected, among a variety of other unit tests.
+
+Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
+with a variety of feature sets, exercising the build with an incomplete set of
+features as well as with a complete one. It is planned to have it run on each
+of the containers mentioned above, using some container orchestration
+infrastructure. Get in contact if interested in helping having this in place.
+
+  # dm
+   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   5 alpine:3.8                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   6 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+   7 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+   8 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+   9 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+  10 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+  11 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+  12 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
+  13 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+  14 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+  15 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
+  16 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+  17 debian:experimental           : Ok   gcc (Debian 8.2.0-1) 8.2.0
+  18 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 8.1.0-12) 8.1.0
+  19 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 8.1.0-12) 8.1.0
+  20 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 8.1.0-12) 8.1.0
+  21 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 8.1.0-12) 8.1.0
+  22 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+  23 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+  24 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  25 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  26 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+  27 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
+  28 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+  29 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+  30 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
+  31 fedora:28                     : Ok   gcc (GCC) 8.1.1 20180712 (Red Hat 8.1.1-5)
+  32 fedora:rawhide                : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+  33 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 7.3.0-r3 p1.4) 7.3.0
+  34 mageia:5                      : Ok   gcc (GCC) 4.9.2
+  35 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
+  36 opensuse:13.2                 : Ok   gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
+  37 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
+  38 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
+  39 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
+  40 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
+  41 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
+  42 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28.0.1)
+  43 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+  44 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
+  45 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.5-2017.10) 5.5.0
+  46 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+  47 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  48 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  49 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  50 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  51 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  52 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  53 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
+  54 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+  55 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  56 ubuntu:18.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 7.3.0-16ubuntu3) 7.3.0
+  57 ubuntu:18.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.3.0-16ubuntu3) 7.3.0
+  58 ubuntu:18.04-x-m68k           : Ok   m68k-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  59 ubuntu:18.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  60 ubuntu:18.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  61 ubuntu:18.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  62 ubuntu:18.04-x-riscv64        : Ok   riscv64-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  63 ubuntu:18.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  64 ubuntu:18.04-x-sh4            : Ok   sh4-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  65 ubuntu:18.04-x-sparc64        : Ok   sparc64-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  66 ubuntu:18.10                  : Ok   gcc (Ubuntu 8.2.0-1ubuntu2) 8.2.0
+  # 
+
+  # uname -a
+  Linux seventh 4.18.0-rc8-00002-g1236568ee3cb #1 SMP Wed Aug 8 09:39:17 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # git log --oneline -1
+  6855dc41b246 (HEAD -> perf/core) x86: Add entry trampolines to kcore
+  # perf version --build-options
+  perf version 4.18.rc7.g6855dc
+                   dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+      dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+                   glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
+                    gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
+           syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+                  libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
+                  libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+                 libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+  numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+                 libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+               libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+                libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+               libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+               libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+      libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+                    zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                    lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+               get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                     bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+  # perf test
+   1: vmlinux symtab matches kallsyms                       : Ok
+   2: Detect openat syscall event                           : Ok
+   3: Detect openat syscall event on all cpus               : Ok
+   4: Read samples using the mmap interface                 : Ok
+   5: Test data source output                               : Ok
+   6: Parse event definition strings                        : Ok
+   7: Simple expression parser                              : Ok
+   8: PERF_RECORD_* events & perf_sample fields             : Ok
+   9: Parse perf pmu format                                 : Ok
+  10: DSO data read                                         : Ok
+  11: DSO data cache                                        : Ok
+  12: DSO data reopen                                       : Ok
+  13: Roundtrip evsel->name                                 : Ok
+  14: Parse sched tracepoints fields                        : Ok
+  15: syscalls:sys_enter_openat event fields                : Ok
+  16: Setup struct perf_event_attr                          : Ok
+  17: Match and link multiple hists                         : Ok
+  18: 'import perf' in python                               : Ok
+  19: Breakpoint overflow signal handler                    : Ok
+  20: Breakpoint overflow sampling                          : Ok
+  21: Breakpoint accounting                                 : Ok
+  22: Number of exit events of a simple workload            : Ok
+  23: Software clock events period values                   : Ok
+  24: Object code reading                                   : Ok
+  25: Sample parsing                                        : Ok
+  26: Use a dummy software event to keep tracking           : Ok
+  27: Parse with no sample_id_all bit set                   : Ok
+  28: Filter hist entries                                   : Ok
+  29: Lookup mmap thread                                    : Ok
+  30: Share thread mg                                       : Ok
+  31: Sort output of hist entries                           : Ok
+  32: Cumulate child hist entries                           : Ok
+  33: Track with sched_switch                               : Ok
+  34: Filter fds with revents mask in a fdarray             : Ok
+  35: Add fd to a fdarray, making it autogrow               : Ok
+  36: kmod_path__parse                                      : Ok
+  37: Thread map                                            : Ok
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : Ok
+  39: Session topology                                      : Ok
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+  41: Synthesize thread map                                 : Ok
+  42: Remove thread map                                     : Ok
+  43: Synthesize cpu map                                    : Ok
+  44: Synthesize stat config                                : Ok
+  45: Synthesize stat                                       : Ok
+  46: Synthesize stat round                                 : Ok
+  47: Synthesize attr update                                : Ok
+  48: Event times                                           : Ok
+  49: Read backward ring buffer                             : Ok
+  50: Print cpu map                                         : Ok
+  51: Probe SDT events                                      : Ok
+  52: is_printable_array                                    : Ok
+  53: Print bitmap                                          : Ok
+  54: perf hooks                                            : Ok
+  55: builtin clang support                                 : Skip (not compiled in)
+  56: unit_number__scnprintf                                : Ok
+  57: mem2node                                              : Ok
+  58: x86 rdpmc                                             : Ok
+  59: Convert perf time to TSC                              : Ok
+  60: DWARF unwind                                          : Ok
+  61: x86 instruction decoder - new instructions            : Ok
+  62: probe libc's inet_pton & backtrace it with ping       : Ok
+  63: Check open filename arg using perf trace + vfs_getname: Ok
+  64: Use vfs_getname probe to get syscall args filenames   : Ok
+  65: Add vfs_getname probe to get syscall args filenames   : Ok
+  # 
+  
+  $ make -C tools/perf build-test
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+  - tarpkg: ./tests/perf-targz-src-pkg .
+            make_no_libaudit_O: make NO_LIBAUDIT=1
+                   make_tags_O: make tags
+                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
+              make_no_libelf_O: make NO_LIBELF=1
+              make_no_libbpf_O: make NO_LIBBPF=1
+             make_util_map_o_O: make util/map.o
+                    make_doc_O: make doc
+   make_install_prefix_slash_O: make install prefix=/tmp/krava/
+  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
+            make_no_demangle_O: make NO_DEMANGLE=1
+                 make_static_O: make LDFLAGS=-static
+                make_install_O: make install
+         make_with_clangllvm_O: make LIBCLANGLLVM=1
+            make_install_bin_O: make install-bin
+           make_no_libunwind_O: make NO_LIBUNWIND=1
+                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
+               make_no_slang_O: make NO_SLANG=1
+           make_no_libpython_O: make NO_LIBPYTHON=1
+                make_no_gtk2_O: make NO_GTK2=1
+           make_no_libbionic_O: make NO_LIBBIONIC=1
+         make_install_prefix_O: make install prefix=/tmp/krava
+                  make_debug_O: make DEBUG=1
+             make_no_libperl_O: make NO_LIBPERL=1
+                   make_pure_O: make
+             make_no_libnuma_O: make NO_LIBNUMA=1
+       make_util_pmu_bison_o_O: make util/pmu-bison.o
+                   make_help_O: make help
+                make_no_newt_O: make NO_NEWT=1
+           make_no_backtrace_O: make NO_BACKTRACE=1
+              make_clean_all_O: make clean all
+            make_no_auxtrace_O: make NO_AUXTRACE=1
+             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
+                 make_perf_o_O: make perf.o
+        make_with_babeltrace_O: make LIBBABELTRACE=1
+  OK
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+  $ 
