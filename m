@@ -2,154 +2,128 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12502C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F65DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A5C208E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:05:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJZslMiX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A5C208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 397FE21528
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 19:06:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 397FE21528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeHOV6b (ORCPT
+        id S1727552AbeHOV7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 17:58:31 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39436 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeHOV6a (ORCPT
+        Wed, 15 Aug 2018 17:59:40 -0400
+Received: from mail.sembritzki.me ([5.45.101.249]:60472 "EHLO
+        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727055AbeHOV7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 17:58:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h10-v6so1982129wre.6;
-        Wed, 15 Aug 2018 12:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oEX5gOHx1pvpWmHV8PDVMKcDGJJZXRTMhlxb0kQd9KY=;
-        b=lJZslMiXAGLU/gYCC6waevoG4BqD8Px0MJaPg+Zu2eoVNSjoUruAzckH36NJqvp5Rk
-         RXqILH37jPUGk0zy8HcAtCNA8CLG7rVz5FqB84ZK91xlw7/V7V6AuGmHYdAQ2GO97bGY
-         Kvvyx9WZX2hBTf5l7iwA9ObbT4tOfx+5OdgYGOaQPHCEKbQbN9dyisYXEFMpbioQ03+M
-         jCFSn+qyaAAWzaGgRgy+Ak1FLXeCMcuUFS4fSjux6LL4k0xyx3jrMmt4D9lsaSvy9JMA
-         +/MeSeErsO0YgjeRSW7c8gC9QOlgxl/FjPc7FpaioQ7TxaMQYjAqCeM/aYXmUq1smI8i
-         o8cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oEX5gOHx1pvpWmHV8PDVMKcDGJJZXRTMhlxb0kQd9KY=;
-        b=MW2vkgzT4z7dIO1+G45qc2N3K385F4gKojFDihiM3+Fm+T87xaWzWkocFLMFfcqS0Y
-         +cRVS8uIfhuYeSZ9apgt3gOVUcrn6y6965JpWOqVqjJXZqNRB2Pnsl6XI9pVk+4HJDfy
-         7RQYl0OrPL6FIV0bnEskZnRWzv4BUdqAS4eCz88E8QyqC1LhHJKGO+B6YYiNMy4pfKHb
-         /tduTsS8gtazJt1n8UbVOero0VXJ9gAVL6TbLm7rXNAfTiuATMAa5DAiGZjGHN2zoqvs
-         /9zE98s8cAfjgrHOtlC4dhJRUMb410TA8x7WHRMrwHCC7yJ+mBkFmB3tik4TU5penXrL
-         vNFQ==
-X-Gm-Message-State: AOUpUlHx0k2fdQp1B3S+Sllx/l3YSugBhViwlRPUZsvxYR+LNSSQ/F6B
-        N/1ZO0t87c83De4KQGUVGsSJsh0m
-X-Google-Smtp-Source: AA+uWPz1avyre1AVmE/An5Vy0raEHZSFhWyJn9NhEPKVq4gFvjLrcsu7q4jP9DIn8eDjn8LCW1hSRQ==
-X-Received: by 2002:adf:8276:: with SMTP id 109-v6mr17622835wrb.127.1534359902085;
-        Wed, 15 Aug 2018 12:05:02 -0700 (PDT)
-Received: from kostamach.yok.int.mrv.com (194-90-138-234.bb.netvision.net.il. [194.90.138.234])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm31079610wrp.87.2018.08.15.12.04.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 12:05:00 -0700 (PDT)
-From:   Kosta Zertsekel <zertsekel@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kosta Zertsekel <zertsekel@gmail.com>,
-        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
-        Stefan Roese <sr@denx.de>, Ken Wilson <ken.wilson@opengear.com>
-Subject: [PATCH v4] spi: orion: cosmetics - alias long direct_access variables
-Date:   Wed, 15 Aug 2018 22:04:49 +0300
-Message-Id: <20180815190449.23738-1-zertsekel@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 15 Aug 2018 17:59:40 -0400
+Received: from [192.168.1.22] (x4dbb4132.dyn.telefonica.de [77.187.65.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.sembritzki.me (Postfix) with ESMTPSA id B86CFA7AAD;
+        Wed, 15 Aug 2018 21:06:13 +0200 (CEST)
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform
+ keys to boot
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Justin M. Forbes" <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Matthew Garrett <mjg59@google.com>
+References: <20180815100053.13609-1-yannik@sembritzki.me>
+ <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+ <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+ <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
+From:   Yannik Sembritzki <yannik@sembritzki.me>
+Openpgp: preference=signencrypt
+Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
+ 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
+ YfNfIPB+
+Message-ID: <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
+Date:   Wed, 15 Aug 2018 21:06:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180815185812.GC29541@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change increases the source code readability.
-Instead of using `spi->child[cs].direct_access.XXX` use `dir_acc->XXX`.
-Instead of using `orion_spi->child[cs].direct_access.vaddr` use `vaddr`.
 
-Signed-off-by: Kosta Zertsekel <zertsekel@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Stefan Roese <sr@denx.de>
----
- drivers/spi/spi-orion.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+> I am wondering why did we have to split this keyring to begin with. 
+> So there are use cases where we want to trust builtin keys but
+> not the ones which came from other places (UEFI secure boot db, or
+> user loaded one)?
+>
+"User loaded ones" should not be trusted in general to prevent rootkits
+and similar from modifying the kernel (even if they have root).
 
-diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
-index d01a6adc726e..184ba91abeee 100644
---- a/drivers/spi/spi-orion.c
-+++ b/drivers/spi/spi-orion.c
-@@ -430,6 +430,7 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
- 	int word_len;
- 	struct orion_spi *orion_spi;
- 	int cs = spi->chip_select;
-+	void __iomem *vaddr;
- 
- 	word_len = spi->bits_per_word;
- 	count = xfer->len;
-@@ -440,8 +441,9 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
- 	 * Use SPI direct write mode if base address is available. Otherwise
- 	 * fall back to PIO mode for this transfer.
- 	 */
--	if ((orion_spi->child[cs].direct_access.vaddr) && (xfer->tx_buf) &&
--	    (word_len == 8)) {
-+	vaddr = orion_spi->child[cs].direct_access.vaddr;
-+
-+	if (vaddr && xfer->tx_buf && word_len == 8) {
- 		unsigned int cnt = count / 4;
- 		unsigned int rem = count % 4;
- 
-@@ -449,13 +451,11 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
- 		 * Send the TX-data to the SPI device via the direct
- 		 * mapped address window
- 		 */
--		iowrite32_rep(orion_spi->child[cs].direct_access.vaddr,
--			      xfer->tx_buf, cnt);
-+		iowrite32_rep(vaddr, xfer->tx_buf, cnt);
- 		if (rem) {
- 			u32 *buf = (u32 *)xfer->tx_buf;
- 
--			iowrite8_rep(orion_spi->child[cs].direct_access.vaddr,
--				     &buf[cnt], rem);
-+			iowrite8_rep(vaddr, &buf[cnt], rem);
- 		}
- 
- 		return count;
-@@ -683,6 +683,7 @@ static int orion_spi_probe(struct platform_device *pdev)
- 
- 	/* Scan all SPI devices of this controller for direct mapped devices */
- 	for_each_available_child_of_node(pdev->dev.of_node, np) {
-+		struct orion_direct_acc *dir_acc;
- 		u32 cs;
- 
- 		/* Get chip-select number from the "reg" property */
-@@ -711,14 +712,13 @@ static int orion_spi_probe(struct platform_device *pdev)
- 		 * This needs to get extended for the direct SPI-NOR / SPI-NAND
- 		 * support, once this gets implemented.
- 		 */
--		spi->child[cs].direct_access.vaddr = devm_ioremap(&pdev->dev,
--							    r->start,
--							    PAGE_SIZE);
--		if (!spi->child[cs].direct_access.vaddr) {
-+		dir_acc = &spi->child[cs].direct_access;
-+		dir_acc->vaddr = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
-+		if (!dir_acc->vaddr) {
- 			status = -ENOMEM;
- 			goto out_rel_axi_clk;
- 		}
--		spi->child[cs].direct_access.size = PAGE_SIZE;
-+		dir_acc->size = PAGE_SIZE;
- 
- 		dev_info(&pdev->dev, "CS%d configured for direct access\n", cs);
- 	}
--- 
-2.17.1
+According to the patch which introduced the secondary keyring (the one
+you mentioned), the requirements for adding keys to the secondary
+keyring are as follows:
+"Add a secondary system keyring that can be added to by root whilst the
+system is running - provided the key being added is vouched for by a key
+built into the kernel or already added to the secondary keyring."
+
+I personally don't see a reason for this split, as the requirements for
+the secondary keyring are as strict as it can get. However, I'm new to
+this, so feel free to correct me.
+
+Yannik
 
