@@ -2,351 +2,319 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BD9C46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814F6C46464
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63E7E2170A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:51:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M/MVjW/A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E7E2170A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 28CEE21709
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 01:52:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CEE21709
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbeHOElf (ORCPT
+        id S1726749AbeHOEmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 00:41:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:60181 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeHOElf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 00:41:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41qsrh29Ysz9sCR;
-        Wed, 15 Aug 2018 11:51:31 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534297894;
-        bh=PDm98TnG4THewardWEPH0o6fqvTFw1I+tqwH4413PZE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=M/MVjW/AyIUdlOxYgMXLWZ5OpIDdfyGYsqZxLPidyD4Bqn0sE1SvSx7v20zYa9Nix
-         0Z7Dr+2h9+9aG1S9k8LVjnsRszj+JCsxTgwYPn7umYSeb6TESWntfwqlPphphLpkBy
-         d+K125bI443VaKt9149DKGr0oU5UednmVB4lgkiPgu9dLKuoHZuTTSg0PQC0rCYHPI
-         XzzWbBKydBpTPmhx6MSC7+VxzFs/1ACEsHDBKAos5tz2k51nEdFBnH2Mu1bQP/RSOu
-         DN545LrNcq9dGq4hNKJ8+XkspyItkoNIf/+Ox+RA9WVmLUD2scH0Ks4+u5MiCkRx4p
-         dHIAuGu5Qx6Qw==
-Date:   Wed, 15 Aug 2018 11:51:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: linux-next: manual merge of the tip tree with the rdma tree
-Message-ID: <20180815115130.03dbbbce@canb.auug.org.au>
-In-Reply-To: <20180806145331.68538a0b@canb.auug.org.au>
-References: <20180806145331.68538a0b@canb.auug.org.au>
+        Wed, 15 Aug 2018 00:42:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52102 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725831AbeHOEmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 00:42:47 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 71209979565C1;
+        Wed, 15 Aug 2018 09:52:47 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
+ 09:52:47 +0800
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
+ multi-thread sequential read
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+ <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
+ <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
+ <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
+ <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
+ <7194f3d2-b875-376a-4c46-37c598bf3e8e@huawei.com>
+ <20180814172837.GD56510@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <167ce8f1-ee4d-2ffc-3518-32850465cd0c@huawei.com>
+Date:   Wed, 15 Aug 2018 09:52:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zOcmKmKGd1wbzSdKd=XJ8pm"; protocol="application/pgp-signature"
+In-Reply-To: <20180814172837.GD56510@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/zOcmKmKGd1wbzSdKd=XJ8pm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2018/8/15 1:28, Jaegeuk Kim wrote:
+> On 08/14, Chao Yu wrote:
+>> On 2018/8/14 12:04, Jaegeuk Kim wrote:
+>>> On 08/14, Chao Yu wrote:
+>>>> On 2018/8/14 4:11, Jaegeuk Kim wrote:
+>>>>> On 08/13, Chao Yu wrote:
+>>>>>> Hi Jaegeuk,
+>>>>>>
+>>>>>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
+>>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+>>>>>>> to fix the drop in sequential read throughput.
+>>>>>>>
+>>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+>>>>>>> device: UFS
+>>>>>>>
+>>>>>>> Before -
+>>>>>>> read throughput: 185 MB/s
+>>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
+>>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+>>>>>>>
+>>>>>>> After -
+>>>>>>> read throughput: 758 MB/s
+>>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
+>>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
+>>>>>>
+>>>>>> IMO, it only impact sequential read performance in a large file which may be
+>>>>>> fragmented during multi-thread writing.
+>>>>>>
+>>>>>> In android environment, mostly, the large file should be cold type, such as apk,
+>>>>>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
+>>>>>> data area writer.
+>>>>>>
+>>>>>> So how about adding a mount option to serialize writepage() for different type
+>>>>>> of log, e.g. in android, using serialize=4; by default, using serialize=7
+>>>>>> HOT_DATA	1
+>>>>>> WARM_DATA	2
+>>>>>> COLD_DATA	4
+>>>>>
+>>>>> Well, I don't think we need to give too many mount options for this fragmented
+>>>>> case. How about doing this for the large files only like this?
+>>>>
+>>>> Thread A write 512 pages			Thread B write 8 pages
+>>>>
+>>>> - writepages()
+>>>>  - mutex_lock(&sbi->writepages);
+>>>>   - writepage();
+>>>> ...
+>>>> 						- writepages()
+>>>> 						 - writepage()
+>>>> 						  ....
+>>>>   - writepage();
+>>>> ...
+>>>>  - mutex_unlock(&sbi->writepages);
+>>>>
+>>>> Above case will also cause fragmentation since we didn't serialize all
+>>>> concurrent IO with the lock.
+>>>>
+>>>> Do we need to consider such case?
+>>>
+>>> We can simply allow 512 and 8 in the same segment, which would not a big deal,
+>>> when considering starvation of Thread B.
+>>
+>> Yeah, but in reality, there would be more threads competing in same log header,
+>> so I worry that the effect of defragmenting will not so good as we expect,
+>> anyway, for benchmark, it's enough.
+> 
+> Basically, I think this is not a benchmark issue. :) It just reveals the issue
+> much easily. Let me think about three cases:
+> 1) WB_SYNC_NONE & WB_SYNC_NONE
+>  -> can simply use mutex_lock
+> 
+> 2) WB_SYNC_ALL & WB_SYNC_NONE
+>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, while WB_SYNC_NONE
+>     will skip writing blocks
+> 
+> 3) WB_SYNC_ALL & WB_SYNC_ALL
+>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, in order to avoid
+>     starvation.
+> 
+> 
+> I've been testing the below.
+> 
+> if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
+>                 get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
+>         mutex_lock(&sbi->writepages);
+>         locked = true;
 
-Hi all,
+Just cover buffered IO? how about covering Direct IO and atomic write as well?
 
-On Mon, 6 Aug 2018 14:53:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the tip tree got a conflict in:
->=20
->   drivers/infiniband/core/rdma_core.c
->=20
-> between commit:
->=20
->   9867f5c6695f ("IB/uverbs: Convert 'bool exclusive' into an enum")
->=20
-> from the rdma tree and commit:
->=20
->   bfc18e389c7a ("atomics/treewide: Rename __atomic_add_unless() =3D> atom=
-ic_fetch_add_unless()")
->=20
-> from the tip tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/infiniband/core/rdma_core.c
-> index 4235b9ddc2ad,475910ffbcb6..000000000000
-> --- a/drivers/infiniband/core/rdma_core.c
-> +++ b/drivers/infiniband/core/rdma_core.c
-> @@@ -122,206 -120,19 +122,206 @@@ static int uverbs_try_lock_object(struc
->   	 * concurrently, setting the counter to zero is enough for releasing
->   	 * this lock.
->   	 */
->  -	if (!exclusive)
->  +	switch (mode) {
->  +	case UVERBS_LOOKUP_READ:
-> - 		return __atomic_add_unless(&uobj->usecnt, 1, -1) =3D=3D -1 ?
-> + 		return atomic_fetch_add_unless(&uobj->usecnt, 1, -1) =3D=3D -1 ?
->   			-EBUSY : 0;
->  +	case UVERBS_LOOKUP_WRITE:
->  +		/* lock is exclusive */
->  +		return atomic_cmpxchg(&uobj->usecnt, 0, -1) =3D=3D 0 ? 0 : -EBUSY;
->  +	case UVERBS_LOOKUP_DESTROY:
->  +		return 0;
->  +	}
->  +	return 0;
->  +}
->  +
->  +static void assert_uverbs_usecnt(struct ib_uobject *uobj,
->  +				 enum rdma_lookup_mode mode)
->  +{
->  +#ifdef CONFIG_LOCKDEP
->  +	switch (mode) {
->  +	case UVERBS_LOOKUP_READ:
->  +		WARN_ON(atomic_read(&uobj->usecnt) <=3D 0);
->  +		break;
->  +	case UVERBS_LOOKUP_WRITE:
->  +		WARN_ON(atomic_read(&uobj->usecnt) !=3D -1);
->  +		break;
->  +	case UVERBS_LOOKUP_DESTROY:
->  +		break;
->  +	}
->  +#endif
->  +}
->  +
->  +/*
->  + * This must be called with the hw_destroy_rwsem locked for read or wri=
-te,
->  + * also the uobject itself must be locked for write.
->  + *
->  + * Upon return the HW object is guaranteed to be destroyed.
->  + *
->  + * For RDMA_REMOVE_ABORT, the hw_destroy_rwsem is not required to be he=
-ld,
->  + * however the type's allocat_commit function cannot have been called a=
-nd the
->  + * uobject cannot be on the uobjects_lists
->  + *
->  + * For RDMA_REMOVE_DESTROY the caller shold be holding a kref (eg via
->  + * rdma_lookup_get_uobject) and the object is left in a state where the=
- caller
->  + * needs to call rdma_lookup_put_uobject.
->  + *
->  + * For all other destroy modes this function internally unlocks the uob=
-ject
->  + * and consumes the kref on the uobj.
->  + */
->  +static int uverbs_destroy_uobject(struct ib_uobject *uobj,
->  +				  enum rdma_remove_reason reason)
->  +{
->  +	struct ib_uverbs_file *ufile =3D uobj->ufile;
->  +	unsigned long flags;
->  +	int ret;
->  +
->  +	lockdep_assert_held(&ufile->hw_destroy_rwsem);
->  +	assert_uverbs_usecnt(uobj, UVERBS_LOOKUP_WRITE);
->  +
->  +	if (uobj->object) {
->  +		ret =3D uobj->type->type_class->destroy_hw(uobj, reason);
->  +		if (ret) {
->  +			if (ib_is_destroy_retryable(ret, reason, uobj))
->  +				return ret;
->  +
->  +			/* Nothing to be done, dangle the memory and move on */
->  +			WARN(true,
->  +			     "ib_uverbs: failed to remove uobject id %d, driver err=3D%d",
->  +			     uobj->id, ret);
->  +		}
->  +
->  +		uobj->object =3D NULL;
->  +	}
->  +
->  +	if (reason =3D=3D RDMA_REMOVE_ABORT) {
->  +		WARN_ON(!list_empty(&uobj->list));
->  +		WARN_ON(!uobj->context);
->  +		uobj->type->type_class->alloc_abort(uobj);
->  +	}
->  +
->  +	uobj->context =3D NULL;
->  +
->  +	/*
->  +	 * For DESTROY the usecnt is held write locked, the caller is expected
->  +	 * to put it unlock and put the object when done with it. Only DESTROY
->  +	 * can remove the IDR handle.
->  +	 */
->  +	if (reason !=3D RDMA_REMOVE_DESTROY)
->  +		atomic_set(&uobj->usecnt, 0);
->  +	else
->  +		uobj->type->type_class->remove_handle(uobj);
->  +
->  +	if (!list_empty(&uobj->list)) {
->  +		spin_lock_irqsave(&ufile->uobjects_lock, flags);
->  +		list_del_init(&uobj->list);
->  +		spin_unlock_irqrestore(&ufile->uobjects_lock, flags);
->  +
->  +		/*
->  +		 * Pairs with the get in rdma_alloc_commit_uobject(), could
->  +		 * destroy uobj.
->  +		 */
->  +		uverbs_uobject_put(uobj);
->  +	}
->  =20
->  -	/* lock is either WRITE or DESTROY - should be exclusive */
->  -	return atomic_cmpxchg(&uobj->usecnt, 0, -1) =3D=3D 0 ? 0 : -EBUSY;
->  +	/*
->  +	 * When aborting the stack kref remains owned by the core code, and is
->  +	 * not transferred into the type. Pairs with the get in alloc_uobj
->  +	 */
->  +	if (reason =3D=3D RDMA_REMOVE_ABORT)
->  +		uverbs_uobject_put(uobj);
->  +
->  +	return 0;
->   }
->  =20
->  -static struct ib_uobject *alloc_uobj(struct ib_ucontext *context,
->  +/*
->  + * This calls uverbs_destroy_uobject() using the RDMA_REMOVE_DESTROY
->  + * sequence. It should only be used from command callbacks. On success =
-the
->  + * caller must pair this with rdma_lookup_put_uobject(LOOKUP_WRITE). Th=
-is
->  + * version requires the caller to have already obtained an
->  + * LOOKUP_DESTROY uobject kref.
->  + */
->  +int uobj_destroy(struct ib_uobject *uobj)
->  +{
->  +	struct ib_uverbs_file *ufile =3D uobj->ufile;
->  +	int ret;
->  +
->  +	down_read(&ufile->hw_destroy_rwsem);
->  +
->  +	ret =3D uverbs_try_lock_object(uobj, UVERBS_LOOKUP_WRITE);
->  +	if (ret)
->  +		goto out_unlock;
->  +
->  +	ret =3D uverbs_destroy_uobject(uobj, RDMA_REMOVE_DESTROY);
->  +	if (ret) {
->  +		atomic_set(&uobj->usecnt, 0);
->  +		goto out_unlock;
->  +	}
->  +
->  +out_unlock:
->  +	up_read(&ufile->hw_destroy_rwsem);
->  +	return ret;
->  +}
->  +
->  +/*
->  + * uobj_get_destroy destroys the HW object and returns a handle to the =
-uobj
->  + * with a NULL object pointer. The caller must pair this with
->  + * uverbs_put_destroy.
->  + */
->  +struct ib_uobject *__uobj_get_destroy(const struct uverbs_obj_type *typ=
-e,
->  +				      u32 id, struct ib_uverbs_file *ufile)
->  +{
->  +	struct ib_uobject *uobj;
->  +	int ret;
->  +
->  +	uobj =3D rdma_lookup_get_uobject(type, ufile, id, UVERBS_LOOKUP_DESTRO=
-Y);
->  +	if (IS_ERR(uobj))
->  +		return uobj;
->  +
->  +	ret =3D uobj_destroy(uobj);
->  +	if (ret) {
->  +		rdma_lookup_put_uobject(uobj, UVERBS_LOOKUP_DESTROY);
->  +		return ERR_PTR(ret);
->  +	}
->  +
->  +	return uobj;
->  +}
->  +
->  +/*
->  + * Does both uobj_get_destroy() and uobj_put_destroy().  Returns succes=
-s_res
->  + * on success (negative errno on failure). For use by callers that do n=
-ot need
->  + * the uobj.
->  + */
->  +int __uobj_perform_destroy(const struct uverbs_obj_type *type, u32 id,
->  +			   struct ib_uverbs_file *ufile, int success_res)
->  +{
->  +	struct ib_uobject *uobj;
->  +
->  +	uobj =3D __uobj_get_destroy(type, id, ufile);
->  +	if (IS_ERR(uobj))
->  +		return PTR_ERR(uobj);
->  +
->  +	/*
->  +	 * FIXME: After destroy this is not safe. We no longer hold the rwsem
->  +	 * so disassociation could have completed and unloaded the module that
->  +	 * backs the uobj->type pointer.
->  +	 */
->  +	rdma_lookup_put_uobject(uobj, UVERBS_LOOKUP_WRITE);
->  +	return success_res;
->  +}
->  +
->  +/* alloc_uobj must be undone by uverbs_destroy_uobject() */
->  +static struct ib_uobject *alloc_uobj(struct ib_uverbs_file *ufile,
->   				     const struct uverbs_obj_type *type)
->   {
->  -	struct ib_uobject *uobj =3D kzalloc(type->obj_size, GFP_KERNEL);
->  +	struct ib_uobject *uobj;
->  +	struct ib_ucontext *ucontext;
->  +
->  +	ucontext =3D ib_uverbs_get_ucontext(ufile);
->  +	if (IS_ERR(ucontext))
->  +		return ERR_CAST(ucontext);
->  =20
->  +	uobj =3D kzalloc(type->obj_size, GFP_KERNEL);
->   	if (!uobj)
->   		return ERR_PTR(-ENOMEM);
->   	/*
+Thanks,
 
-This is now a conflict between Linus' tree and the rdma tree.
+> }
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> >From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
+>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> Date: Thu, 9 Aug 2018 17:53:34 -0700
+>>>>> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
+>>>>>  sequential read
+>>>>>
+>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+>>>>> to fix the drop in sequential read throughput.
+>>>>>
+>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+>>>>> device: UFS
+>>>>>
+>>>>> Before -
+>>>>> read throughput: 185 MB/s
+>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
+>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+>>>>>
+>>>>> After -
+>>>>> read throughput: 758 MB/s
+>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
+>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
+>>>>>
+>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+>>>>>  fs/f2fs/data.c                          | 10 ++++++++++
+>>>>>  fs/f2fs/f2fs.h                          |  2 ++
+>>>>>  fs/f2fs/segment.c                       |  1 +
+>>>>>  fs/f2fs/super.c                         |  1 +
+>>>>>  fs/f2fs/sysfs.c                         |  2 ++
+>>>>>  6 files changed, 24 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>>>> index 9b0123388f18..94a24aedcdb2 100644
+>>>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>>>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>>>> @@ -51,6 +51,14 @@ Description:
+>>>>>  		 Controls the dirty page count condition for the in-place-update
+>>>>>  		 policies.
+>>>>>  
+>>>>> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
+>>>>> +Date:		August 2018
+>>>>> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>>>>> +Description:
+>>>>> +		 Controls the dirty page count condition for batched sequential
+>>>>> +		 writes in ->writepages.
+>>>>> +
+>>>>> +
+>>>>>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
+>>>>>  Date:		March 2017
+>>>>>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>> index 45f043ee48bd..f09231b1cc74 100644
+>>>>> --- a/fs/f2fs/data.c
+>>>>> +++ b/fs/f2fs/data.c
+>>>>> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>>>  	struct blk_plug plug;
+>>>>>  	int ret;
+>>>>> +	bool locked = false;
+>>>>>  
+>>>>>  	/* deal with chardevs and other special file */
+>>>>>  	if (!mapping->a_ops->writepage)
+>>>>> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>>>>>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+>>>>>  		goto skip_write;
+>>>>>  
+>>>>> +	if (!S_ISDIR(inode->i_mode) &&
+>>>>> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
+>>>>> +		mutex_lock(&sbi->writepages);
+>>>>> +		locked = true;
+>>>>> +	}
+>>>>> +
+>>>>>  	blk_start_plug(&plug);
+>>>>>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+>>>>>  	blk_finish_plug(&plug);
+>>>>>  
+>>>>> +	if (locked)
+>>>>> +		mutex_unlock(&sbi->writepages);
+>>>>> +
+>>>>>  	if (wbc->sync_mode == WB_SYNC_ALL)
+>>>>>  		atomic_dec(&sbi->wb_sync_req[DATA]);
+>>>>>  	/*
+>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>> index 375aa9f30cfa..098bdedc28bf 100644
+>>>>> --- a/fs/f2fs/f2fs.h
+>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
+>>>>>  	unsigned int ipu_policy;	/* in-place-update policy */
+>>>>>  	unsigned int min_ipu_util;	/* in-place-update threshold */
+>>>>>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
+>>>>> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
+>>>>>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+>>>>>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
+>>>>>  
+>>>>> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
+>>>>>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
+>>>>>  	int valid_super_block;			/* valid super block no */
+>>>>>  	unsigned long s_flag;				/* flags for sbi */
+>>>>> +	struct mutex writepages;		/* mutex for writepages() */
+>>>>>  
+>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
+>>>>>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>> index 63fc647f9ac2..ffea2d1303bd 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+>>>>>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+>>>>>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+>>>>>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
+>>>>> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
+>>>>>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+>>>>>  	sm_info->min_ssr_sections = reserved_sections(sbi);
+>>>>>  
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index be41dbd7b261..53d70b64fea1 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>>>  	/* init f2fs-specific super block info */
+>>>>>  	sbi->valid_super_block = valid_super_block;
+>>>>>  	mutex_init(&sbi->gc_mutex);
+>>>>> +	mutex_init(&sbi->writepages);
+>>>>>  	mutex_init(&sbi->cp_mutex);
+>>>>>  	init_rwsem(&sbi->node_write);
+>>>>>  	init_rwsem(&sbi->node_change);
+>>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>>>> index cd2e030e47b8..81c0e5337443 100644
+>>>>> --- a/fs/f2fs/sysfs.c
+>>>>> +++ b/fs/f2fs/sysfs.c
+>>>>> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
+>>>>> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
+>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
+>>>>>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+>>>>> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
+>>>>>  	ATTR_LIST(ipu_policy),
+>>>>>  	ATTR_LIST(min_ipu_util),
+>>>>>  	ATTR_LIST(min_fsync_blocks),
+>>>>> +	ATTR_LIST(min_seq_blocks),
+>>>>>  	ATTR_LIST(min_hot_blocks),
+>>>>>  	ATTR_LIST(min_ssr_sections),
+>>>>>  	ATTR_LIST(max_victim_search),
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zOcmKmKGd1wbzSdKd=XJ8pm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzhyIACgkQAVBC80lX
-0Gyg+Af+Lv18Y1xa+/ba6R2Kw8jzz62Ym3xr0x45z0tt2pC3khexKtuQBxLosWGA
-Oo8KGdWvVil8vo0S6TSQ7Dh+zewYtSB3NEye7NQ9AFNAyBJwwSmiUwyvZo/mkNgj
-KU6KdBHx3ANADrATnIuJK56RHJkOvtbD4KuczffiP3VZGLpLYMwuFp3mONEYrU1w
-lu3IOkzjDxrzzJyBK3f8OInH6iUyoMAshu/Is7zE/pAfu/bH9LLBFn2Mu3UYsnqY
-5vD76/GYHnRgdAHwS34+UrXeCyRBWR2cpP052j4DdlnOtCCIOrJ3NFRpq0ykcrFR
-4ydAAPxjEjkgcEjRQlMdFloFNQqvJg==
-=ocjY
------END PGP SIGNATURE-----
-
---Sig_/zOcmKmKGd1wbzSdKd=XJ8pm--
