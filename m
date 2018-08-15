@@ -3,118 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA214C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA786C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8566C215E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:05:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8566C215E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 71353215E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:07:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71353215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbeHOP5q (ORCPT
+        id S1729307AbeHOP7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 11:57:46 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9047 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbeHOP5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 11:57:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 06:05:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,243,1531810800"; 
-   d="scan'208";a="81558092"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 15 Aug 2018 06:05:35 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Keith Packard <keithp@keithp.com>, linux-kernel@vger.kernel.org,
-        Dave Airlie <airlied@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Keith Packard <keithp@keithp.com>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Add drm.edid_quirk_param module parameter
-In-Reply-To: <20180809061123.1734-1-keithp@keithp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180809061123.1734-1-keithp@keithp.com>
-Date:   Wed, 15 Aug 2018 16:05:28 +0300
-Message-ID: <874lfv93vr.fsf@intel.com>
+        Wed, 15 Aug 2018 11:59:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11163 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728896AbeHOP7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 11:59:05 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5C53672985631;
+        Wed, 15 Aug 2018 21:06:55 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Wed, 15 Aug 2018
+ 21:06:52 +0800
+Message-ID: <5B742568.4000202@huawei.com>
+Date:   Wed, 15 Aug 2018 21:06:48 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain
+To:     <dsterba@suse.cz>, <clm@fb.com>, <jbacik@fb.com>,
+        <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv3 0/3] change some function to be void function
+References: <1533736075-8691-1-git-send-email-zhongjiang@huawei.com> <20180815125340.GN24025@twin.jikos.cz>
+In-Reply-To: <20180815125340.GN24025@twin.jikos.cz>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 08 Aug 2018, Keith Packard <keithp@keithp.com> wrote:
-> This parameter allows the set of EDID quirks to be changed at
-> runtime. The syntax is
+On 2018/8/15 20:53, David Sterba wrote:
+> On Wed, Aug 08, 2018 at 09:47:52PM +0800, zhong jiang wrote:
+>> v3->v2:
+>>  - Repost the patches with detailed changelog.
+>> v1->v2:
+>>  - Fix v1 issue that forget to return after remove the variable "ret".
+>>
+>> zhong jiang (3):
+>>   fs/btrfs/disk-io: change btrfs_destroy_delayed_refs to be void
+>>     function
+>>   fs/btrfs/extent-tree: change btrfs_free_reserved_bytes to be void
+>>     funtion
+>>   fs/btrfs/tree-log: change btrfs_pin_log_trans to be void function
+> The patches 2 and 3 can be applied, but please update che subject and
+> put just "btrfs: " there, not the full file path. That we can find in
+> the diff. The changelogs can be still improved to be clear about callers
+> vs callees. Please update and resend.
 >
-> 	vendor/product/quirks,vendor/product/quirks,...
+> .
 >
-> where vendor is the three-letter EDID vendor value, product is the
-> EDID product id which may be prefixed with 0x to for hex instead of
-> decimal values and quirks is the replacement quirks value from the
-> list in drm_edid.c.
+ Thank you for review and  suggestion.   I will repost v3.
 
-Why?
+Sincerely,
+zhong jiang
 
-I guess if we want to manage quirks from userspace, we should work to
-provide an interface udev can use.
-
-BR,
-Jani.
-
->
-> Signed-off-by: Keith Packard <keithp@keithp.com>
-> ---
->  drivers/gpu/drm/drm_edid.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 5dc742b27ca0..63b4587faddd 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -98,6 +98,12 @@ struct detailed_mode_closure {
->  #define LEVEL_GTF2	2
->  #define LEVEL_CVT	3
->  
-> +#define EDID_QUIRK_PARAM_LEN	256
-> +static char edid_quirk_param[EDID_QUIRK_PARAM_LEN];
-> +module_param_string(edid_quirk_param, edid_quirk_param, sizeof(edid_quirk_param), 0644);
-> +MODULE_PARM_DESC(edid_quirk_param, "Extra EDID quirks, "
-> +		 "format is 'vendor/product/quirks;...' ");
-> +
->  static const struct edid_quirk {
->  	char vendor[4];
->  	int product_id;
-> @@ -1774,8 +1780,24 @@ static bool edid_vendor(const struct edid *edid, const char *vendor)
->  static u32 edid_get_quirks(const struct edid *edid)
->  {
->  	const struct edid_quirk *quirk;
-> +	const char *q;
->  	int i;
->  
-> +	for (q = edid_quirk_param; q && *q; q = strchr(q, ',')) {
-> +		char 	vendor[4];
-> +		int	product_id;
-> +		int	quirks;
-> +
-> +		while (*q == ',')
-> +			q++;
-> +
-> +		if (sscanf(q, "%3s/%i/%i", vendor, &product_id, &quirks) == 3) {
-> +			if (edid_vendor(edid, vendor) &&
-> +			    (EDID_PRODUCT_ID(edid) == product_id))
-> +				return quirks;
-> +		}
-> +	}
-> +
->  	for (i = 0; i < ARRAY_SIZE(edid_quirk_list); i++) {
->  		quirk = &edid_quirk_list[i];
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
