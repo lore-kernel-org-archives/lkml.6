@@ -2,104 +2,220 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7236C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B99C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6E6215A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8E97215A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:17:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDJhGO1+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6E6215A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="gic2eMkR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E97215A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeHOQIY (ORCPT
+        id S1729325AbeHOQJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 12:08:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41417 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728885AbeHOQIY (ORCPT
+        Wed, 15 Aug 2018 12:09:46 -0400
+Received: from services.gouders.net ([141.101.32.176]:47101 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728885AbeHOQJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 12:08:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z8-v6so505365pgu.8;
-        Wed, 15 Aug 2018 06:16:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LXK5YK6Tk55EFmQJGRJWrUnMiLJzi0ttEiUtC764ChE=;
-        b=CDJhGO1+wcu0BFgp6379C11FGtXp9Nf1nyrwKvyc4fPiIqs3kuH1qK73yQeyY7bsx0
-         xbDZvUtvcu1wzDdvhIN+OMlRoe+mO+2yeocHubd+ptZoPP3C5RkMVyog89f/oB8CjV4q
-         83J07A4J+/ky6mwZBRIzazYzUnuhzOnfBD68wKRL34og3l5EW3v1vkgkJ35MBGvopsxm
-         n8Ut9WEQlMlLAOtVqxV1jwVLM+5W9AIZBLmgnsA1eIEWlqUKUSIpraHgqvC2TmGOYF3O
-         APdrouVRvJNisFHZohsCX78K8eViGSPP2vT8gExI5wmQZekTiFMNah0JjkpI0imPR5kg
-         34ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LXK5YK6Tk55EFmQJGRJWrUnMiLJzi0ttEiUtC764ChE=;
-        b=uW6gfdpEB4p8ezwdhbpld2bC5s+1g7RNstmccRPtYUjlKcBqmzhzbQ4vyz7D7VTFkw
-         i4zrHApmcMitSb/nrsde06iiAAu70BFh+popryd2ruvBYKB53YXDYovIu3FWZJdqDScp
-         Dge75T+PgTwzTbeKBdxoySCyCRR8BYu/3QgHLWgW7/bFgTA2EnUM8Mt2sPXrt99MoUEU
-         BVfPOyySs8sfXbuM3h+EHbpQIj4OIqOv5S9RWjiSpoNWB6bMyaxaFVv2zjRR+n8bWnyG
-         Yh+Iv7Wu7a+dzMCpEzrs2JaLxRLBj7G7euhx8BSdFagQj8KF269Ig1YIU8SAIeg0Pv/D
-         tSyQ==
-X-Gm-Message-State: AOUpUlF/NyFoc6I1dyjr72U+06DPQk+RECfVXLg189jxW7Jjnul3SCey
-        A+hS1KF9HZismJEPzqKI47mlrbaQdbI=
-X-Google-Smtp-Source: AA+uWPw6yiBcMYuBmFMqf/npiwsaM4BPH8T534amliusXsjOB1ey0mwKNAJqC3bs6XbXB9c+MJGaQg==
-X-Received: by 2002:a63:f80a:: with SMTP id n10-v6mr10016034pgh.82.1534338976199;
-        Wed, 15 Aug 2018 06:16:16 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r19-v6sm41618655pgo.68.2018.08.15.06.16.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 06:16:15 -0700 (PDT)
-Subject: Re: [PATCH 4.18 00/79] 4.18.1-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180814171336.799314117@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <43f1c290-ffbf-eed7-cabc-e860ebc30c2b@roeck-us.net>
-Date:   Wed, 15 Aug 2018 06:16:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 15 Aug 2018 12:09:46 -0400
+Received: from localhost ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w7FDAliB021479
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Aug 2018 15:10:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1534338648; bh=FHg4/y7xVD56OyVteRzwNlPakKdS1NgiTK8/xaG4iKk=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=gic2eMkRWPY9DCruxIKqBPpkxW3eKJY2KsufGG9S0UnUCwY4N3lgi0fkHtXuHPN/q
+         uXr65iEp4ik5l1eU3txjE6eskEEE/tJfunL7f/o4y20/FwLph0n8ZSkrcm/KJbWbU2
+         UwRdX33/eNxy5R+DpKcCKMlflBSzY/Ptr8N4jaV0=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] kconfig: report recursive dependency involving 'imply'
+In-Reply-To: <CAK7LNAQBu47aB56wpK29Aixnw9vEDVc2V8zwstVBrusBwuz6Gg@mail.gmail.com>
+        (Masahiro Yamada's message of "Wed, 15 Aug 2018 15:27:13 +0900")
+References: <1534229021-8056-1-git-send-email-yamada.masahiro@socionext.com>
+        <gh8t59utb2.fsf@lena.gouders.net>
+        <CAK7LNAQBu47aB56wpK29Aixnw9vEDVc2V8zwstVBrusBwuz6Gg@mail.gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Date:   Wed, 15 Aug 2018 15:10:47 +0200
+Message-ID: <ghh8jv22so.fsf@lena.gouders.net>
 MIME-Version: 1.0
-In-Reply-To: <20180814171336.799314117@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14/2018 10:16 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.1 release.
-> There are 79 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Aug 16 17:13:16 UTC 2018.
-> Anything received after that time might be too late.
-> 
+Masahiro Yamada <yamada.masahiro@socionext.com> writes:
 
-For v4.18-83-g8105f76:
+> 2018-08-14 19:38 GMT+09:00 Dirk Gouders <dirk@gouders.net>:
+>> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+>>
+>>> Currently, Kconfig does not report anything about the recursive
+>>> dependency where 'imply' keywords are involved.
+>>>
+>>> [Test Code]
+>>>
+>>>   config A
+>>>           bool "a"
+>>>
+>>>   config B
+>>>           bool "b"
+>>>           imply A
+>>>           depends on A
+>>
+>> Hello Masahiro,
+>>
+>> obviously, it is hard to find a reason why one wants to use dependencies
+>> like above but I also wonder how e.g. menuconfig handles this case:
+>>
+>> First, only "a" is visible, if I then select "a", "b" does not become
+>> visible but when I then reset "a" to "n", "b" becomes visible.  If I then
+>> try to select "b", it becomes invisible...
+>>
+>> Perhaps it would be better to just error out instead of giving users the
+>> impression, Kconfig thinks such questionable behavior is OK.
+>
+>
+> Taking closer look at the code, the intention is 'recursive dependency
+> is error',
+> but the behavior changed probably by an accident.
+>
+> I fixed this:
+> https://patchwork.kernel.org/patch/10566301/
+>
+>> Side note: perhaps, the documentation could be better when it comes to
+>>            recursive dependencies.  The documentation says "select" and
+>>            "imply" can be used to specify lower limits whereas direct
+>>            dependencies specify upper limits for symbol values and with
+>>            this in mind, one might wonder why it is a problem to work
+>>            with both limits in a recursive way.
+>>
+>>            Not very unlikely that it is just me who still has to
+>>            understand recursive dependencies or problems with reading
+>>            English text, though.
+>
+>
+> To avoid confusion, two things should be discussed separately:
+>
+> [1] Unmet dependency
+>    This is caused by a conflict between the upper limit from 'depends on'
+>    and the lower limit from 'select'.
+>
+>     This issue does not happen for 'imply' because the upper limit
+>     specified by 'imply' is weaker.
+>
+>
+> [2] Recursive depenency
+>
+>    This can happen for any combination of 'depends on',
+>    'select', 'imply', 'if', 'default', etc.
 
-Build results:
-	total: 134 pass: 134 fail: 0
-Qemu test results:
-	total: 302 pass: 302 fail: 0
+Yes, this is probably just a subject that I still have to get a deeper
+understanding for, hence I am easyly confused when faced with
+contradicting information.
 
-Details are available at http://kerneltests.org/builders/.
+>> What definitely seems to get void with your patches is item c) in
+>> "Practical solutions to kconfig recursive issue" in
+>> Documentation/kbuild/kconfig-language:
+>>
+>>         c) Consider the use of "imply" instead of "select"
+>
+>
+> I do not know why commit 237e3ad0f195d8 added this line.
+>
+>
+> Actually, I was also confused.
+>
+> I sent v2 based on your feedback.
 
-Guenter
+Thanks for your responses, making that all more understandable.
+
+Dirk
+
+>
+>
+>> Dirk
+>>
+>>> In the code above, Kconfig cannot calculate the symbol values correctly
+>>> due to the circular dependency.  For example, allyesconfig followed by
+>>> syncconfig results in an odd behavior because CONFIG_B becomes visible
+>>> in syncconfig.
+>>>
+>>>   $ make allyesconfig
+>>>   scripts/kconfig/conf  --allyesconfig Kconfig
+>>>   #
+>>>   # configuration written to .config
+>>>   #
+>>>   $ cat .config
+>>>   #
+>>>   # Automatically generated file; DO NOT EDIT.
+>>>   # Main menu
+>>>   #
+>>>   CONFIG_A=y
+>>>   $ make syncconfig
+>>>   scripts/kconfig/conf  --syncconfig Kconfig
+>>>   *
+>>>   * Restart config...
+>>>   *
+>>>   *
+>>>   * Main menu
+>>>   *
+>>>   a (A) [Y/n/?] y
+>>>     b (B) [N/y/?] (NEW)
+>>>
+>>> To report this correctly, sym_check_expr_deps() should recurse to
+>>> not only sym->rev_dep.expr but also sym->implied.expr .
+>>>
+>>> At this moment, sym_check_print_recursive() cannot distinguish
+>>> 'select' and 'imply' since it does not know the precise context
+>>> where the recursive dependency is hit.  This will be solved by
+>>> the next commit.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>>
+>>>  scripts/kconfig/symbol.c | 9 +++++++--
+>>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+>>> index 4ec8b1f..7de7463a 100644
+>>> --- a/scripts/kconfig/symbol.c
+>>> +++ b/scripts/kconfig/symbol.c
+>>> @@ -1098,7 +1098,7 @@ static void sym_check_print_recursive(struct symbol *last_sym)
+>>>                               sym->name ? sym->name : "<choice>",
+>>>                               next_sym->name ? next_sym->name : "<choice>");
+>>>               } else {
+>>> -                     fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
+>>> +                     fprintf(stderr, "%s:%d:\tsymbol %s is selected or implied by %s\n",
+>>>                               prop->file->name, prop->lineno,
+>>>                               sym->name ? sym->name : "<choice>",
+>>>                               next_sym->name ? next_sym->name : "<choice>");
+>>> @@ -1161,8 +1161,13 @@ static struct symbol *sym_check_sym_deps(struct symbol *sym)
+>>>       if (sym2)
+>>>               goto out;
+>>>
+>>> +     sym2 = sym_check_expr_deps(sym->implied.expr);
+>>> +     if (sym2)
+>>> +             goto out;
+>>> +
+>>>       for (prop = sym->prop; prop; prop = prop->next) {
+>>> -             if (prop->type == P_CHOICE || prop->type == P_SELECT)
+>>> +             if (prop->type == P_CHOICE || prop->type == P_SELECT ||
+>>> +                 prop->type == P_IMPLY)
+>>>                       continue;
+>>>               stack.prop = prop;
+>>>               sym2 = sym_check_expr_deps(prop->visible.expr);
