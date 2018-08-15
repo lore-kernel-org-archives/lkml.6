@@ -2,105 +2,127 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F5FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3783C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2215121502
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:36:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCBF3214FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:38:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="VUiwnseE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2215121502
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnCHgufR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCBF3214FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbeHOS2n (ORCPT
+        id S1729690AbeHOSbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:28:43 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:43888 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729311AbeHOS2n (ORCPT
+        Wed, 15 Aug 2018 14:31:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39555 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729311AbeHOSbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:28:43 -0400
-Received: by mail-yw1-f65.google.com with SMTP id l189-v6so1096389ywb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 08:36:05 -0700 (PDT)
+        Wed, 15 Aug 2018 14:31:21 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j8-v6so658614pff.6
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 08:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=bkkZFk0MFfR8CNABi+gvgDa78rBOQO1gmKKIzof0PsY=;
-        b=VUiwnseEVhuGvzr8oEd0KtNORJVShzsbBZsczpSMiP0340a37uyLXAX5DKAkg2uABM
-         pAMGSclHNzM7rE+10yBHTUtxE/eT6ca0U5kPk1NdE1nx8EC+ASDo8M1D3OoxCTqjLuK/
-         vNPonri4jhBOQ30AaicDckXmDp9HhHFtyYLTrJx1NDFn5i0L85qXAQzJFgsoWfVSUBdN
-         NBy1/BjJEZwvpD0XXRceShY2SYodQwIV8PEyTYmZFd58mUfx8n2jIfEqE16idD6tnuLX
-         8rybQS7abw1Sa3Kr8FqpliK/OWNSLn9s5rZlffm3zpKdUpfe3S3X+tHUWNlTiydysUld
-         TTPg==
+        bh=94YhK6GsKh1vtNNFk3bCeEJLqsgPPHkIQuhL2jwJly4=;
+        b=QnCHgufRxxpOTq7RWDn5OozQu+vfSS+R9XGRDrApSIqr8D1N4IVGA7sj0VWpQfTNaJ
+         LeayJ7/fQ4gzrEh7DhuvFi41cEYM2EhYJhD1BSwMPjcfgDYcIuTzE6V4ACFjIbP/ySyN
+         EkPzNMl/22ULN5uREitgXO/HbPGKLQx34SExZqjqAoKC3FZN5ndIEgf5/71QxODgJWoy
+         erIdjjlLmnFYK/OuOcuYFA1lmW8xfmmFBSbXHT7c4e1gWhTON6w2HMC1MQWTE2iYje7e
+         zxLzd19YhYuTD8dxyStzIwQ427knoy4E35Cyo711juionASeB1YcicxAcmKmImAJggEs
+         WhoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bkkZFk0MFfR8CNABi+gvgDa78rBOQO1gmKKIzof0PsY=;
-        b=eM8m2nVbkM7sF0fmsWPzwDNYy6v6SZq8cVhloClERr2wGwdP9Cu6IROPpJI1xr7Tfe
-         OYrfAJxN158/IITqoQ8Ndo+rd2pKmlCTucIKccSTnOvglMC7Rtp+c6HNK2GVvcV56Nub
-         J1FXtjQOn6xUKoKgP5KyUynQbXjzyTKTbexsnivcRNtm1a5CJtEYK1W/URilCy3i9kCE
-         9giS9D78N9LfxRz/bvr1oq1/ENGI12p3n0KJgfcj5skYO2tMUlGQX9mbON2p3wjTPKvE
-         fD+Iviuq0+Xmay7ELYuWFuhw1Fir2lTJWDyOSlkcfuOH8rAgZIqY12eKx8hnH/yg8w73
-         oJ0A==
-X-Gm-Message-State: AOUpUlEFYWRXkGrYcSVUxw9n93AfUOWIXBd83RgbSY1DADEOQImpu4JI
-        BaXqEYXWyvRFk9TZmL7Pp7hV5Q==
-X-Google-Smtp-Source: AA+uWPxoJrqBNyX+eTpQsewwxEIgPKUe0dD0kUbvwWnd5EJ+rE1xB6/y+QeXnU8Tb4jqbGKXZlu/1w==
-X-Received: by 2002:a25:424d:: with SMTP id p74-v6mr15361152yba.163.1534347365211;
-        Wed, 15 Aug 2018 08:36:05 -0700 (PDT)
-Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id l9-v6sm7639555ywl.32.2018.08.15.08.36.04
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=94YhK6GsKh1vtNNFk3bCeEJLqsgPPHkIQuhL2jwJly4=;
+        b=RS/pm3DO6jtYDLDhcZ9CeiBia+5+bxrVolXj8zVnPF9VaCof3A3mrAWzZi8/vZlSJP
+         k8uZgrJGcwgPjPf6O/rgqVUWYVYTjfDAsOU6rW/J/xFYYXyoyhL+Y3AqTQo5b58X0mOn
+         /TQrDjQyfG1W4qK5/a4tZyXf0q6R24ECRz7BRlDWC3WYKZYUsPncU4Y+/RG2N+cTWd8t
+         F5uWPffBdYOx2x71mio05m47oMQwpZ4MMIaVJfcOksmSYYlPw5l6w/mt94XoYuvoKuu7
+         oo+NJ0J0fa+8KVTm4LiTUYfjidVD2hUPsqOOHq3qIZlT9qJYZi8dlaXJPlHi7hkSq2vb
+         /yTQ==
+X-Gm-Message-State: AOUpUlH3LlElqRsr/kGccPLOdQkhVmR1kaC0iQcMTFqPzGbIMBPWQlLK
+        AGS7cBO3aWDi4x5FzBW0bRs=
+X-Google-Smtp-Source: AA+uWPxJO8ZRNDwxTOBqimmBZ4CThJ6WsAaIXl9qleNSULHnVev0jtqjfXqrinRXRqEXTfqKY87wgQ==
+X-Received: by 2002:a63:614d:: with SMTP id v74-v6mr25398462pgb.328.1534347522409;
+        Wed, 15 Aug 2018 08:38:42 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm40056716pfo.164.2018.08.15.08.38.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 08:36:04 -0700 (PDT)
-From:   Sean Paul <sean@poorly.run>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: drm-misc: Change seanpaul's email address
-Date:   Wed, 15 Aug 2018 11:35:29 -0400
-Message-Id: <20180815153604.90152-1-sean@poorly.run>
-X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
+        Wed, 15 Aug 2018 08:38:41 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Meelis Roos <mroos@linux.ee>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH RESEND] x86/l1tf: Fix build error seen if CONFIG_KVM_INTEL is disabled
+Date:   Wed, 15 Aug 2018 08:38:33 -0700
+Message-Id: <1534347513-10120-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since chromium.org is now enforcing DMARC, my mails are going to
-people's spam folders. While this development might be desirable
-for people I communicate with, it's undesirable for me :-)
+allmodconfig+CONFIG_INTEL_KVM=n results in the following build error.
 
-Cc: Dave Airlie <airlied@linux.ie>
-Cc: Gustavo Padovan <gustavo@padovan.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Sean Paul <sean@poorly.run>
+ERROR: "l1tf_vmx_mitigation" [arch/x86/kvm/kvm.ko] undefined!
+
+Fixes: 5b76a3cff011 ("KVM: VMX: Tell the nested hypervisor to skip L1D flush on vmentry")
+Reported-by: Meelis Roos <mroos@linux.ee>
+Cc: Meelis Roos <mroos@linux.ee>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry for the early resend; widening the audience.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93f189f0d60d..5eaa1c91d4a4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4662,7 +4662,7 @@ F:	include/linux/vga*
- DRM DRIVERS AND MISC GPU PATCHES
- M:	Gustavo Padovan <gustavo@padovan.org>
- M:	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
--M:	Sean Paul <seanpaul@chromium.org>
-+M:	Sean Paul <sean@poorly.run>
- W:	https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
- S:	Maintained
- T:	git git://anongit.freedesktop.org/drm/drm-misc
+This problem affects Chrome OS builds, and I'll need to apply either
+this or a similar patch.
+Since I would like to avoid applying a patch just to revert it later, any
+feedback if this is the correct patch or even the right approach would be
+most appreciated.
+
+Thanks,
+Guenter
+
+ arch/x86/kernel/cpu/bugs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 27830880e7a7..cb4a16292aa7 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -664,10 +664,9 @@ void x86_spec_ctrl_setup_ap(void)
+ enum l1tf_mitigations l1tf_mitigation __ro_after_init = L1TF_MITIGATION_FLUSH;
+ #if IS_ENABLED(CONFIG_KVM_INTEL)
+ EXPORT_SYMBOL_GPL(l1tf_mitigation);
+-
++#endif
+ enum vmx_l1d_flush_state l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
+ EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
+-#endif
+ 
+ static void __init l1tf_select_mitigation(void)
+ {
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.7.4
+
 
