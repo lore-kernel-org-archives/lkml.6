@@ -2,272 +2,96 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52ACC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BA5C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFBF22154F
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:34:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBF22154F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F4F921537
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 20:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4F921537
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbeHOX2G (ORCPT
+        id S1728194AbeHOX2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 19:28:06 -0400
-Received: from mga07.intel.com ([134.134.136.100]:7364 "EHLO mga07.intel.com"
+        Wed, 15 Aug 2018 19:28:46 -0400
+Received: from fieldses.org ([173.255.197.46]:60954 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbeHOX2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 19:28:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 13:34:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,244,1531810800"; 
-   d="scan'208";a="224930394"
-Received: from rpedgeco-hp-z240-tower-workstation.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.168])
-  by orsmga004.jf.intel.com with ESMTP; 15 Aug 2018 13:34:18 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        jannh@google.com, keescook@chromium.org
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v3 1/3] vmalloc: Add __vmalloc_node_try_addr function
-Date:   Wed, 15 Aug 2018 13:30:17 -0700
-Message-Id: <1534365020-18943-2-git-send-email-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534365020-18943-1-git-send-email-rick.p.edgecombe@intel.com>
-References: <1534365020-18943-1-git-send-email-rick.p.edgecombe@intel.com>
+        id S1726133AbeHOX2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 19:28:46 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id A8A4E1CE7; Wed, 15 Aug 2018 16:35:03 -0400 (EDT)
+Date:   Wed, 15 Aug 2018 16:35:03 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzbot <syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com>,
+        jlayton@kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: general protection fault in send_sigurg_to_task
+Message-ID: <20180815203503.GB30591@fieldses.org>
+References: <0000000000007f59610573509684@google.com>
+ <000000000000f4136d0573512103@google.com>
+ <20180814191129.GN7906@fieldses.org>
+ <CACT4Y+YujnbvrgRU6xc+=8rHLctrjQbRP+wq-08UmbH_oOfAKA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YujnbvrgRU6xc+=8rHLctrjQbRP+wq-08UmbH_oOfAKA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create __vmalloc_node_try_addr function that tries to allocate at a specific
-address and supports caller specified behavior for whether any lazy purging
-happens if there is a collision.
+On Tue, Aug 14, 2018 at 01:50:20PM -0700, Dmitry Vyukov wrote:
+> On Tue, Aug 14, 2018 at 12:11 PM, J. Bruce Fields <bfields@fieldses.org> wrote:
+> > On Mon, Aug 13, 2018 at 06:33:02AM -0700, syzbot wrote:
+> >> syzbot has found a reproducer for the following crash on:
+> >>
+> >> HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
+> >> git tree:       linux-next
+> >
+> > I fetched linux-next but don't have 5ed5da74de9e.
+> 
+> Hi Bruce,
+> 
+> +Stephen for the disappeared linux-next commit.
+> 
+> On the dashboard link you can see that it also happened on a more
+> recent commit 4e8b38549b50459a22573d756dd1f4e1963c2a8d that I do see
+> now in linux-next.
+> 
+> > I'm also not sure why I'm on the cc for this.
+> 
+> You've been pointed to by "./scripts/get_maintainer.pl -f fs/fcntl.c"
+> as maintainer of the file, which is the file where the crash happened.
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- include/linux/vmalloc.h |   3 +
- mm/vmalloc.c            | 177 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 180 insertions(+)
+We should probably fix that.  There's a tiny bit of lock-related code in
+that file but it's not at all interesting compared, say, to the code
+that this bug is hitting....
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 398e9c9..c7712c8 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -82,6 +82,9 @@ extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 			unsigned long start, unsigned long end, gfp_t gfp_mask,
- 			pgprot_t prot, unsigned long vm_flags, int node,
- 			const void *caller);
-+extern void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
-+			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
-+			int node, int try_purge, const void *caller);
- #ifndef CONFIG_MMU
- extern void *__vmalloc_node_flags(unsigned long size, int node, gfp_t flags);
- static inline void *__vmalloc_node_flags_caller(unsigned long size, int node,
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index cfea25b..fb85ec9 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -709,6 +709,7 @@ static void purge_vmap_area_lazy(void)
- 	__purge_vmap_area_lazy(ULONG_MAX, 0);
- 	mutex_unlock(&vmap_purge_lock);
- }
-+EXPORT_SYMBOL(purge_vmap_area_lazy);
+(Which I have no clue about.  send_sigurg_to_task() is getting a bad
+task?  Help.)
+
+--b.
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d5eeff51b5f..a5dca2be8513 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5541,9 +5541,6 @@ M:	Jeff Layton <jlayton@kernel.org>
+ M:	"J. Bruce Fields" <bfields@fieldses.org>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+-F:	include/linux/fcntl.h
+-F:	include/uapi/linux/fcntl.h
+-F:	fs/fcntl.c
+ F:	fs/locks.c
  
- /*
-  * Free a vmap area, caller ensuring that the area has been unmapped
-@@ -1709,6 +1710,182 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 	return NULL;
- }
- 
-+static bool pvm_find_next_prev(unsigned long end,
-+			       struct vmap_area **pnext,
-+			       struct vmap_area **pprev);
-+
-+/* Try to allocate a region of KVA of the specified address and size. */
-+static struct vmap_area *try_alloc_vmap_area(unsigned long addr,
-+				unsigned long size, int node, gfp_t gfp_mask,
-+				int try_purge)
-+{
-+	struct vmap_area *va;
-+	struct vmap_area *cur_va = NULL;
-+	struct vmap_area *first_before = NULL;
-+	int need_purge = 0;
-+	int blocked = 0;
-+	int purged = 0;
-+	unsigned long addr_end;
-+
-+	WARN_ON(!size);
-+	WARN_ON(offset_in_page(size));
-+
-+	addr_end = addr + size;
-+	if (addr > addr_end)
-+		return ERR_PTR(-EOVERFLOW);
-+
-+	might_sleep();
-+
-+	va = kmalloc_node(sizeof(struct vmap_area),
-+			gfp_mask & GFP_RECLAIM_MASK, node);
-+	if (unlikely(!va))
-+		return ERR_PTR(-ENOMEM);
-+
-+	/*
-+	 * Only scan the relevant parts containing pointers to other objects
-+	 * to avoid false negatives.
-+	 */
-+	kmemleak_scan_area(&va->rb_node, SIZE_MAX, gfp_mask & GFP_RECLAIM_MASK);
-+
-+retry:
-+	spin_lock(&vmap_area_lock);
-+
-+	pvm_find_next_prev(addr, &cur_va, &first_before);
-+
-+	if (!cur_va)
-+		goto found;
-+
-+	/*
-+	 * If there is no VA that starts before the target address, start the
-+	 * check from the closest VA to still check for the case allocation
-+	 * overlaps it at the end.
-+	 */
-+	if (first_before && addr < first_before->va_end)
-+		cur_va = first_before;
-+
-+	/* Linearly search through to make sure there is a hole */
-+	while (cur_va->va_start < addr_end) {
-+		if (cur_va->va_end > addr) {
-+			if (cur_va->flags & VM_LAZY_FREE) {
-+				need_purge = 1;
-+			} else {
-+				blocked = 1;
-+				break;
-+			}
-+		}
-+
-+		if (list_is_last(&cur_va->list, &vmap_area_list))
-+			break;
-+
-+		cur_va = list_next_entry(cur_va, list);
-+	}
-+
-+	/*
-+	 * If a non-lazy free va blocks the allocation, or
-+	 * we are not supposed to purge, but we need to the
-+	 * allocation fails.
-+	 */
-+	if (blocked || (need_purge && !try_purge))
-+		goto fail;
-+
-+	if (try_purge && need_purge) {
-+		/* if purged once before, give up */
-+		if (purged)
-+			goto fail;
-+
-+		/*
-+		 * If the va blocking the allocation is set to
-+		 * be purged then purge all vmap_areas that are
-+		 * set to purged since this will flush the TLBs
-+		 * anyway.
-+		 */
-+		spin_unlock(&vmap_area_lock);
-+		purge_vmap_area_lazy();
-+		need_purge = 0;
-+		purged = 1;
-+		goto retry;
-+	}
-+
-+found:
-+	va->va_start = addr;
-+	va->va_end = addr_end;
-+	va->flags = 0;
-+	__insert_vmap_area(va);
-+	spin_unlock(&vmap_area_lock);
-+
-+	return va;
-+fail:
-+	spin_unlock(&vmap_area_lock);
-+	kfree(va);
-+	if (need_purge && !blocked)
-+		return ERR_PTR(-EUCLEAN);
-+	return ERR_PTR(-EBUSY);
-+}
-+
-+/**
-+ *	__vmalloc_try_addr  -  try to alloc at a specific address
-+ *	@addr:		address to try
-+ *	@size:		size to try
-+ *	@gfp_mask:	flags for the page level allocator
-+ *	@prot:		protection mask for the allocated pages
-+ *	@vm_flags:	additional vm area flags (e.g. %VM_NO_GUARD)
-+ *	@node:		node to use for allocation or NUMA_NO_NODE
-+ *	@try_purge:	try to purge if needed to fulfill and allocation
-+ *	@caller:	caller's return address
-+ *
-+ *	Try to allocate at the specific address. If it succeeds the address is
-+ *	returned. If it fails an EBUSY ERR_PTR is returned. If try_purge is
-+ *	zero, it will return an EUCLEAN ERR_PTR if it could have allocated if it
-+ *	was allowed to purge. It may trigger TLB flushes if a purge is needed,
-+ *	and try_purge is set.
-+ */
-+void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
-+			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
-+			int node, int try_purge, const void *caller)
-+{
-+	struct vmap_area *va;
-+	struct vm_struct *area;
-+	void *alloc_addr;
-+	unsigned long real_size = size;
-+
-+	size = PAGE_ALIGN(size);
-+	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
-+		return NULL;
-+
-+	WARN_ON(in_interrupt());
-+
-+	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
-+	if (unlikely(!area)) {
-+		warn_alloc(gfp_mask, NULL, "kmalloc: allocation failure");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	if (!(vm_flags & VM_NO_GUARD))
-+		size += PAGE_SIZE;
-+
-+	va = try_alloc_vmap_area(addr, size, node, gfp_mask, try_purge);
-+	if (IS_ERR(va))
-+		goto fail;
-+
-+	setup_vmalloc_vm(area, va, vm_flags, caller);
-+
-+	alloc_addr = __vmalloc_area_node(area, gfp_mask, prot, node);
-+	if (!alloc_addr) {
-+		warn_alloc(gfp_mask, NULL,
-+			"vmalloc: allocation failure: %lu bytes", real_size);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	clear_vm_uninitialized_flag(area);
-+
-+	kmemleak_vmalloc(area, size, gfp_mask);
-+
-+	return alloc_addr;
-+fail:
-+	kfree(area);
-+	return va;
-+}
-+
- /**
-  *	__vmalloc_node_range  -  allocate virtually contiguous memory
-  *	@size:		allocation size
--- 
-2.7.4
-
+ FILESYSTEMS (VFS and infrastructure)
