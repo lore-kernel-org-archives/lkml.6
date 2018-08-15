@@ -2,153 +2,82 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A95AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6D5C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8192152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:16:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8192152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F35FD2152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:17:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35FD2152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbeHPBK7 (ORCPT
+        id S1728097AbeHPBLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:10:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38406 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeHPBK7 (ORCPT
+        Wed, 15 Aug 2018 21:11:12 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46823 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbeHPBLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:10:59 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C8E6D5A;
-        Wed, 15 Aug 2018 22:16:53 +0000 (UTC)
-Date:   Wed, 15 Aug 2018 15:16:52 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm, page_alloc: actually ignore mempolicies for high
- priority allocations
-Message-Id: <20180815151652.05d4c4684b7dff2282b5c046@linux-foundation.org>
-In-Reply-To: <20180612122624.8045-1-vbabka@suse.cz>
-References: <20180612122624.8045-1-vbabka@suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 21:11:12 -0400
+Received: by mail-io0-f194.google.com with SMTP id x5-v6so2262281iop.13;
+        Wed, 15 Aug 2018 15:17:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4bGd+0qkZ/+YkySLkJaR88W7urjDSDFNTIrr4/9GhRE=;
+        b=ab5VIcW6J0d1KA6l/Zp9kEA8ygNrrxnFRjrMLU7Yr80bcFUX7Yb+wLVxcnJkVZvXUG
+         A54mQUMJttevJllUY24EbCIj6rOxx9rgKA7tT7v51pmew96RGMkFg2M5iUsXbYWEGLxJ
+         wTO+99dQ7ayGTPc66Pgb9JSyXrdQ3IK4YH1jk3KtlzL03I/qQE4J6+I1IC0R6Hq3gi89
+         BdtR6BIUVF049wXkl08WXe3vDNKexAurpad4HWNMizB3d4mvZkjgvASuMP9htOd21l+a
+         04li+Ptrf4nLFJQV0IMESURyioiKER6wbAFyJQuEYDoG/vwV79X2uH8DasQM2984eqIg
+         JsDw==
+X-Gm-Message-State: AOUpUlHn9H/L8/ADenII7kW966lW6lFNMN9KbuO/ika3ny0K8icCQg8v
+        TP/slk6oPfJdQWuxzjPRjA==
+X-Google-Smtp-Source: AA+uWPwJqfCzQhiYI66iuzHL/uza7AsrcpuBON3mdZ2kkznlr7eTlLnXHKhWLAenNKXjE5U3S7G/wA==
+X-Received: by 2002:a6b:ef0b:: with SMTP id k11-v6mr17219458ioh.12.1534371426822;
+        Wed, 15 Aug 2018 15:17:06 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id v3-v6sm1644712ita.6.2018.08.15.15.17.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 15:17:06 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 16:17:05 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Roy Luo <cheng-hao.luo@mediatek.com>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: Re: [PATCH 5/5] dt-bindings: arm: mediatek: add support for bananapi
+ BPI-R64 board
+Message-ID: <20180815221705.GA7962@rob-hp-laptop>
+References: <68c4ca0158518d6bf50f2f7becfcb87ff3ce158a.1534130854.git.ryder.lee@mediatek.com>
+ <93e3763cee209d7610307565a3ac02a0792417ae.1534130854.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93e3763cee209d7610307565a3ac02a0792417ae.1534130854.git.ryder.lee@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 14:26:24 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-
-> The __alloc_pages_slowpath() function has for a long time contained code to
-> ignore node restrictions from memory policies for high priority allocations.
-> The current code that resets the zonelist iterator however does effectively
-> nothing after commit 7810e6781e0f ("mm, page_alloc: do not break __GFP_THISNODE
-> by zonelist reset") removed a buggy zonelist reset. Even before that commit,
-> mempolicy restrictions were still not ignored, as they are passed in
-> ac->nodemask which is untouched by the code.
+On Wed, 15 Aug 2018 13:18:17 +0800, Ryder Lee wrote:
+> Update binding document for bananapi BPI-R64 board being supported.
 > 
-> We can either remove the code, or make it work as intended. Since
-> ac->nodemask can be set from task's mempolicy via alloc_pages_current() and
-> thus also alloc_pages(), it may indeed affect kernel allocations, and it makes
-> sense to ignore it to allow progress for high priority allocations.
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/arm/mediatek.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Thus, this patch resets ac->nodemask to NULL in such cases. This assumes all
-> callers can handle it (i.e. there are no guarantees as in the case of
-> __GFP_THISNODE) which seems to be the case. The same assumption is already
-> present in check_retry_cpuset() for some time.
-> 
-> The expected effect is that high priority kernel allocations in the context of
-> userspace tasks (e.g. OOM victims) restricted by mempolicies will have higher
-> chance to succeed if they are restricted to nodes with depleted memory, while
-> there are other nodes with free memory left.
 
-We don't have any reviews or acks on ths one, perhaps because linux-mm
-wasn't cc'ed.  Could people please take a look?
-
-
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: mm, page_alloc: actually ignore mempolicies for high priority allocations
-
-The __alloc_pages_slowpath() function has for a long time contained code
-to ignore node restrictions from memory policies for high priority
-allocations.  The current code that resets the zonelist iterator however
-does effectively nothing after commit 7810e6781e0f ("mm, page_alloc: do
-not break __GFP_THISNODE by zonelist reset") removed a buggy zonelist
-reset.  Even before that commit, mempolicy restrictions were still not
-ignored, as they are passed in ac->nodemask which is untouched by the
-code.
-
-We can either remove the code, or make it work as intended.  Since
-ac->nodemask can be set from task's mempolicy via alloc_pages_current()
-and thus also alloc_pages(), it may indeed affect kernel allocations, and
-it makes sense to ignore it to allow progress for high priority
-allocations.
-
-Thus, this patch resets ac->nodemask to NULL in such cases.  This assumes
-all callers can handle it (i.e.  there are no guarantees as in the case of
-__GFP_THISNODE) which seems to be the case.  The same assumption is
-already present in check_retry_cpuset() for some time.
-
-The expected effect is that high priority kernel allocations in the
-context of userspace tasks (e.g.  OOM victims) restricted by mempolicies
-will have higher chance to succeed if they are restricted to nodes with
-depleted memory, while there are other nodes with free memory left.
-
-
-Ot's not a new intention, but for the first time the code will match the
-intention, AFAICS.  It was intended by commit 183f6371aac2 ("mm: ignore
-mempolicies when using ALLOC_NO_WATERMARK") in v3.6 but I think it never
-really worked, as mempolicy restriction was already encoded in nodemask,
-not zonelist, at that time.
-
-So originally that was for ALLOC_NO_WATERMARK only.  Then it was adjusted
-by e46e7b77c909 ("mm, page_alloc: recalculate the preferred zoneref if the
-context can ignore memory policies") and cd04ae1e2dc8 ("mm, oom: do not
-rely on TIF_MEMDIE for memory reserves access") to the current state.  So
-even GFP_ATOMIC would now ignore mempolicies after the initial attempts
-fail - if the code worked as people thought it does.
-
-Link: http://lkml.kernel.org/r/20180612122624.8045-1-vbabka@suse.cz
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- mm/page_alloc.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
---- a/mm/page_alloc.c~mm-page_alloc-actually-ignore-mempolicies-for-high-priority-allocations
-+++ a/mm/page_alloc.c
-@@ -4165,11 +4165,12 @@ retry:
- 		alloc_flags = reserve_flags;
- 
- 	/*
--	 * Reset the zonelist iterators if memory policies can be ignored.
--	 * These allocations are high priority and system rather than user
--	 * orientated.
-+	 * Reset the nodemask and zonelist iterators if memory policies can be
-+	 * ignored. These allocations are high priority and system rather than
-+	 * user oriented.
- 	 */
- 	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
-+		ac->nodemask = NULL;
- 		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
- 					ac->high_zoneidx, ac->nodemask);
- 	}
-_
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
