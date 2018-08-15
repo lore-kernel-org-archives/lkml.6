@@ -6,270 +6,125 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF62EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B894BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C272421530
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:50:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C272421530
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id E19B721530
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 21:50:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19B721530
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeHPAoY (ORCPT
+        id S1727794AbeHPAol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 20:44:24 -0400
-Received: from gate.crashing.org ([63.228.1.57]:60853 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727408AbeHPAoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 20:44:23 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7FLoDH0029656;
-        Wed, 15 Aug 2018 16:50:14 -0500
-Message-ID: <08bc40a6af3e614e97a78fbaab688bfcd14520ac.camel@kernel.crashing.org>
-Subject: [RFC PATCH] pci: Proof of concept at fixing
- pci_enable_device/bridge races
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Hari Vyas <hari.vyas@broadcom.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        ray.jui@broadcom.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 16 Aug 2018 07:50:13 +1000
-In-Reply-To: <58192cf94de3941f9141aa3203399ae2bcdf6b7a.camel@kernel.crashing.org>
-References: <1530608741-30664-1-git-send-email-hari.vyas@broadcom.com>
-         <20180731163727.GK45322@bhelgaas-glaptop.roam.corp.google.com>
-         <ecaed7664b46d73888d2494065905f8e108fc0f4.camel@kernel.crashing.org>
-         <5e42f7990673d11e3a020e7efcfd333215d48138.camel@kernel.crashing.org>
-         <58192cf94de3941f9141aa3203399ae2bcdf6b7a.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Wed, 15 Aug 2018 20:44:41 -0400
+Received: from mail.sembritzki.me ([5.45.101.249]:60798 "EHLO
+        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeHPAol (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 20:44:41 -0400
+Received: from [192.168.1.22] (x55b336e5.dyn.telefonica.de [85.179.54.229])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.sembritzki.me (Postfix) with ESMTPSA id 5A10BA7AB7;
+        Wed, 15 Aug 2018 23:50:39 +0200 (CEST)
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform
+ keys to boot
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+References: <20180815100053.13609-1-yannik@sembritzki.me>
+ <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+ <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+ <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
+ <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
+ <20180815194932.GD29541@redhat.com>
+ <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
+ <1ca6772b-46e0-9d93-0e15-7cf73a0b7b3f@sembritzki.me>
+ <1534367597.4049.21.camel@HansenPartnership.com>
+ <2872b945-60e7-b5d1-1f20-1ae6ecfd3967@sembritzki.me>
+ <1534369231.4049.23.camel@HansenPartnership.com>
+From:   Yannik Sembritzki <yannik@sembritzki.me>
+Openpgp: preference=signencrypt
+Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
+ 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
+ YfNfIPB+
+Message-ID: <6729d6c5-c4bb-debb-727d-45c01714ace2@sembritzki.me>
+Date:   Wed, 15 Aug 2018 23:50:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1534369231.4049.23.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Resent with lkml on copy)
+On 15.08.2018 23:40, James Bottomley wrote:
+> What about the key linking patches:
+>
+> https://lkml.org/lkml/2018/5/2/989
+>
+> ? They allow you to insert your own binary key into bzimage and then
+> resign the resulting blob for secure boot.  It's a fairly painless
+> process.  The patches have been languishing for an unstated reason but
+> it's suspected to have something to do with Red Hat not wanting to
+> support Enterprise users signing their own kernels.
 
-[Note: This isn't meant to be merged, it need splitting at the very
-least, see below]
+Thanks, that's exactly what I was thinking about.
 
-This is something I cooked up quickly today to test if that would fix
-my problems with large number of switch and NVME devices on POWER.
-
-So far it does...
-
-The issue (as discussed in the Re: PCIe enable device races thread) is
-that pci_enable_device and related functions along with pci_set_master
-and pci_enable_bridge are fundamentally racy.
-
-There is no lockign protecting the state of the device in pci_dev and
-if multiple devices under the same bridge try to enable it simultaneously
-one some of them will potentially start accessing it before it has actually
-been enabled.
-
-Now there are a LOT more fields in pci_dev that aren't covered by any
-form of locking.
-
-Additionally, some other parts such as ASPM or SR-IOV seem to be trying to do
-their own ad-hoc locking, but will manipulate bit fields in pci_dev that
-might be sharing words with other unrelated bit fields racily.
-
-So I think we need to introduce a pci_dev mutex aimed at synchronizing
-the main enable/master state of a given device, and possibly also the
-bazillion of state bits held inside pci_dev.
-
-I suggest a progressive approach:
-
- 1- First we add the mutex, and put a red line comment "/* ----- */" in
-    struct pci_dev, at the bottom
-
- 2- We move the basic enable/disable/set_master stuff under that lock and
-    move the corresponding fields in pci_dev below the line comment.
-
- 3- Progressively, as we untangle them and verify their locking, we move
-    individual fields below the line so that we have a good visibility of
-    what has been addressed/audited already and what not
-
-Note: I would very much like to keep most of the probing/resource allocation
-single threaded at least within a given domain, I know we have some attempts
-at locking in the hotplug code for that, I'm not ready to tackle that or
-change it at this stage.
-
-We might be able to also addrss the is_added issues (Hari Vyas stuff) using
-the same mutex, I haven't looked into the details.
-
-Not-signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 316496e99da9..9c4895c40f1d 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1348,9 +1348,13 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
-  */
- int pci_reenable_device(struct pci_dev *dev)
- {
-+	int rc = 0;
-+
-+	mutex_lock(&dev->lock);
- 	if (pci_is_enabled(dev))
--		return do_pci_enable_device(dev, (1 << PCI_NUM_RESOURCES) - 1);
--	return 0;
-+		rc = do_pci_enable_device(dev, (1 << PCI_NUM_RESOURCES) - 1);
-+	mutex_unlock(&dev->lock);
-+	return rc;
- }
- EXPORT_SYMBOL(pci_reenable_device);
- 
-@@ -1363,12 +1367,6 @@ static void pci_enable_bridge(struct pci_dev *dev)
- 	if (bridge)
- 		pci_enable_bridge(bridge);
- 
--	if (pci_is_enabled(dev)) {
--		if (!dev->is_busmaster)
--			pci_set_master(dev);
--		return;
--	}
--
- 	retval = pci_enable_device(dev);
- 	if (retval)
- 		pci_err(dev, "Error enabling bridge (%d), continuing\n",
-@@ -1379,9 +1377,16 @@ static void pci_enable_bridge(struct pci_dev *dev)
- static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
- {
- 	struct pci_dev *bridge;
--	int err;
-+	int err = 0;
- 	int i, bars = 0;
- 
-+	/* Handle upstream bridges first to avoid locking issues */
-+	bridge = pci_upstream_bridge(dev);
-+	if (bridge)
-+		pci_enable_bridge(bridge);
-+
-+	mutex_lock(&dev->lock);
-+
- 	/*
- 	 * Power state could be unknown at this point, either due to a fresh
- 	 * boot or a device removal call.  So get the current power state
-@@ -1394,12 +1399,9 @@ static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
- 		dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
- 	}
- 
-+	/* Already enabled ? */
- 	if (atomic_inc_return(&dev->enable_cnt) > 1)
--		return 0;		/* already enabled */
--
--	bridge = pci_upstream_bridge(dev);
--	if (bridge)
--		pci_enable_bridge(bridge);
-+		goto bail;
- 
- 	/* only skip sriov related */
- 	for (i = 0; i <= PCI_ROM_RESOURCE; i++)
-@@ -1412,6 +1414,8 @@ static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
- 	err = do_pci_enable_device(dev, bars);
- 	if (err < 0)
- 		atomic_dec(&dev->enable_cnt);
-+ bail:
-+	mutex_unlock(&dev->lock);
- 	return err;
- }
- 
-@@ -1618,6 +1622,7 @@ static void do_pci_disable_device(struct pci_dev *dev)
- 	if (pci_command & PCI_COMMAND_MASTER) {
- 		pci_command &= ~PCI_COMMAND_MASTER;
- 		pci_write_config_word(dev, PCI_COMMAND, pci_command);
-+		dev->is_busmaster = 0;
- 	}
- 
- 	pcibios_disable_device(dev);
-@@ -1632,8 +1637,10 @@ static void do_pci_disable_device(struct pci_dev *dev)
-  */
- void pci_disable_enabled_device(struct pci_dev *dev)
- {
-+	mutex_lock(&dev->lock);
- 	if (pci_is_enabled(dev))
- 		do_pci_disable_device(dev);
-+	mutex_unlock(&dev->lock);
- }
- 
- /**
-@@ -1657,12 +1664,13 @@ void pci_disable_device(struct pci_dev *dev)
- 	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
- 		      "disabling already-disabled device");
- 
-+	mutex_lock(&dev->lock);
- 	if (atomic_dec_return(&dev->enable_cnt) != 0)
--		return;
-+		goto bail;
- 
- 	do_pci_disable_device(dev);
--
--	dev->is_busmaster = 0;
-+ bail:
-+	mutex_unlock(&dev->lock);
- }
- EXPORT_SYMBOL(pci_disable_device);
- 
-@@ -3764,8 +3772,12 @@ void __weak pcibios_set_master(struct pci_dev *dev)
-  */
- void pci_set_master(struct pci_dev *dev)
- {
--	__pci_set_master(dev, true);
--	pcibios_set_master(dev);
-+	mutex_lock(&dev->lock);
-+	if (!dev->is_busmaster) {
-+		__pci_set_master(dev, true);
-+		pcibios_set_master(dev);
-+	}
-+	mutex_unlock(&dev->lock);
- }
- EXPORT_SYMBOL(pci_set_master);
- 
-@@ -3775,7 +3787,9 @@ EXPORT_SYMBOL(pci_set_master);
-  */
- void pci_clear_master(struct pci_dev *dev)
- {
-+	mutex_lock(&dev->lock);
- 	__pci_set_master(dev, false);
-+	mutex_unlock(&dev->lock);
- }
- EXPORT_SYMBOL(pci_clear_master);
- 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 611adcd9c169..77701bfe0d3d 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2102,6 +2102,7 @@ struct pci_dev *pci_alloc_dev(struct pci_bus *bus)
- 	INIT_LIST_HEAD(&dev->bus_list);
- 	dev->dev.type = &pci_dev_type;
- 	dev->bus = pci_bus_get(bus);
-+	mutex_init(&dev->lock);
- 
- 	return dev;
- }
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index c133ccfa002e..09e94ba6adf0 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -33,6 +33,7 @@
- #include <linux/io.h>
- #include <linux/resource_ext.h>
- #include <uapi/linux/pci.h>
-+#include <linux/mutex.h>
- 
- #include <linux/pci_ids.h>
- 
-@@ -289,6 +290,8 @@ struct pci_dev {
- 	struct proc_dir_entry *procent;	/* Device entry in /proc/bus/pci */
- 	struct pci_slot	*slot;		/* Physical slot this device is in */
- 
-+	struct mutex	lock;
-+
- 	unsigned int	devfn;		/* Encoded device & function index */
- 	unsigned short	vendor;
- 	unsigned short	device;
+Yannik
 
