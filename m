@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F429C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED28C43615
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82E58214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1260F214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:08:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdXwQVDb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E58214AB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdtWUzUF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1260F214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbeHOSA4 (ORCPT
+        id S1730650AbeHOSA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:00:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50770 "EHLO mail.kernel.org"
+        Wed, 15 Aug 2018 14:00:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730492AbeHOSAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:00:55 -0400
+        id S1730599AbeHOSA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:00:59 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 937ED208B1;
-        Wed, 15 Aug 2018 15:08:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82FE5214F0;
+        Wed, 15 Aug 2018 15:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534345703;
-        bh=8fngLSdOYWIqdRBHfxFfFhBmRxrcT0oKsMtbTUqGfVE=;
+        s=default; t=1534345706;
+        bh=56fEHwCh7wLt1n9JjGbZCQjb93VGGy4Bm2cqtR2vyF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PdXwQVDb18uiCbnnCHKJCLh29b1cJm7dLxbBOjlaGGGNDUi4Z+uceM9FEorHJV35k
-         Uv+Mcjf+IwtDneOJ6kka5QchmPmrs2mufW8r9w+0PiJYrDhZyYFXyerjx3fieR3tIN
-         Da07CRo1Y3s38sw0LoNpkO/gmy1kRzGmOLkfwY7k=
+        b=OdtWUzUFCE+XVW1xkSerIOxGrpu0tN/54J0oLAsm/Xi+ZXmjOK4TnHlthCnxdTfnS
+         EYjFYh8SqOgw0N31/u+5UfldGuPtu9vpKf7pqvr+Blp9nFuj/v7VVIUF2mGgtgcOAl
+         nR6nt25Lpl2qPLjqB6fk+Xb7uYFHIFId8fwFn8rc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Benno Evers <bevers@mesosphere.com>,
+        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Krister Johansen <kjlx@templeofstupid.com>,
+        David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 26/35] perf tools: Check for null when copying nsinfo.
-Date:   Wed, 15 Aug 2018 12:06:02 -0300
-Message-Id: <20180815150611.32080-27-acme@kernel.org>
+Subject: [PATCH 27/35] perf tools: Fix check-headers.sh AND list path of execution
+Date:   Wed, 15 Aug 2018 12:06:03 -0300
+Message-Id: <20180815150611.32080-28-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180815150611.32080-1-acme@kernel.org>
 References: <20180815150611.32080-1-acme@kernel.org>
@@ -57,44 +57,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benno Evers <bevers@mesosphere.com>
+From: Alexander Kapshuk <alexander.kapshuk@gmail.com>
 
-The argument to nsinfo__copy() was assumed to be valid, but some code paths
-exist that will lead to NULL being passed.
+The '||' path of execution in the 'test' block of the check_2() function
+may also be taken if file2 does not exist, in which case the warning
+message about the ABI headers being different would still be printed
+where it should not be.  See below.
 
-In particular, running 'perf script -D' on a perf.data file containing an
-PERF_RECORD_MMAP event associating the '[vdso]' dso with pid 0 earlier in
-the event stream will lead to a segfault.
+  % file1=file1; file2=file2
+  % cmd="echo diff $file1 $file2"
+  % test -f $file2 && \
+    eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file1'
+                       differs from latest version at '$file2'" >&2
+                       Warning: Kernel ABI header at 'tools/file1' differs from latest
+                       version at 'file2'
 
-Since all calling code is already checking for a non-null return value,
-just return NULL for this case as well.
+The proposed patch converts the code following the '&&' operator into a
+compound list to be executed in the current process environment only if file2
+does exist. Should the files being compared differ, a diff command to compare
+the files concerned is printed on standard output. E.g.
 
-Signed-off-by: Benno Evers <bevers@mesosphere.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+  $ diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
+
+Committer testing:
+
+Remove a line from that tools/arch/x86/lib/memcpy_64.S file to test
+this:
+
+  BUILD:   Doing 'make -j4' parallel build
+Warning: Kernel ABI header at 'tools/arch/x86/lib/memcpy_64.S' differs from latest version at 'arch/x86/lib/memcpy_64.S'
+diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
+  CC       /tmp/build/perf/bench/mem-memcpy-x86-64-asm.o
+
+Signed-off-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180810133614.9925-1-bevers@mesosphere.com
+Link: http://lkml.kernel.org/r/20180811083915.17471-1-alexander.kapshuk@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/namespaces.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/check-headers.sh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-index 5be021701f34..cf8bd123cf73 100644
---- a/tools/perf/util/namespaces.c
-+++ b/tools/perf/util/namespaces.c
-@@ -139,6 +139,9 @@ struct nsinfo *nsinfo__copy(struct nsinfo *nsi)
- {
- 	struct nsinfo *nnsi;
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index de28466c0186..ea48aa6f8d19 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -67,8 +67,12 @@ check_2 () {
  
-+	if (nsi == NULL)
-+		return NULL;
-+
- 	nnsi = calloc(1, sizeof(*nnsi));
- 	if (nnsi != NULL) {
- 		nnsi->pid = nsi->pid;
+   cmd="diff $* $file1 $file2 > /dev/null"
+ 
+-  test -f $file2 &&
+-  eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
++  test -f $file2 && {
++    eval $cmd || {
++      echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
++      echo diff -u tools/$file $file
++    }
++  }
+ }
+ 
+ check () {
 -- 
 2.14.4
 
