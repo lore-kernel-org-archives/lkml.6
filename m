@@ -3,69 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B26D8C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAAFC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A33A21569
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A33A21569
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7E65E20895
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:12:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E65E20895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729906AbeHOTFA (ORCPT
+        id S1729966AbeHOTFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:05:00 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33502 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729381AbeHOTFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:05:00 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id m2sC3VDg1zr5; Wed, 15 Aug 2018 18:11:57 +0200 (CEST)
-Received: from nazgul.tnic (95-42-132-194.ip.btc-net.bg [95.42.132.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A09531EC0104;
-        Wed, 15 Aug 2018 18:11:56 +0200 (CEST)
-Date:   Wed, 15 Aug 2018 18:12:05 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Tim Small <tim@buttersideup.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC: i82443bxgx: Fix invalid memory type assignment
-Message-ID: <20180815161205.GD28669@nazgul.tnic>
-References: <20180810141520.8993-1-tiwai@suse.de>
- <20180815155752.GC28669@nazgul.tnic>
- <s5hh8jv62lk.wl-tiwai@suse.de>
+        Wed, 15 Aug 2018 15:05:04 -0400
+Received: from gateway20.websitewelcome.com ([192.185.48.38]:20481 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729381AbeHOTFD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 15:05:03 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 868B740197F8C
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 10:51:10 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id py4JftlFFaSeypy4XfQRVP; Wed, 15 Aug 2018 10:51:09 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.37.72] (port=59182 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fpy4I-003YXX-K2; Wed, 15 Aug 2018 10:50:42 -0500
+Date:   Wed, 15 Aug 2018 10:50:41 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] misc: hmc6352: fix potential Spectre v1
+Message-ID: <20180815155041.GA344@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <s5hh8jv62lk.wl-tiwai@suse.de>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.37.72
+X-Source-L: No
+X-Exim-ID: 1fpy4I-003YXX-K2
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.37.72]:59182
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 06:01:27PM +0200, Takashi Iwai wrote:
-> I just followed the old percept: read the source, Luke.
+val is indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-You're a wise jedi :)
+This issue was detected with the help of Smatch:
 
-> OK, feel free to drop that.
+drivers/misc/hmc6352.c:54 compass_store() warn: potential spectre issue
+'map' [r]
 
-Nah, I can take it - I'll just drop the CC:stable thing.
+Fix this by sanitizing val before using it to index map
 
-Thx.
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/misc/hmc6352.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/misc/hmc6352.c b/drivers/misc/hmc6352.c
+index eeb7eef..38f90e1 100644
+--- a/drivers/misc/hmc6352.c
++++ b/drivers/misc/hmc6352.c
+@@ -27,6 +27,7 @@
+ #include <linux/err.h>
+ #include <linux/delay.h>
+ #include <linux/sysfs.h>
++#include <linux/nospec.h>
+ 
+ static DEFINE_MUTEX(compass_mutex);
+ 
+@@ -50,6 +51,7 @@ static int compass_store(struct device *dev, const char *buf, size_t count,
+ 		return ret;
+ 	if (val >= strlen(map))
+ 		return -EINVAL;
++	val = array_index_nospec(val, strlen(map));
+ 	mutex_lock(&compass_mutex);
+ 	ret = compass_command(c, map[val]);
+ 	mutex_unlock(&compass_mutex);
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-ECO tip #101: Trim your mails when you reply.
---
