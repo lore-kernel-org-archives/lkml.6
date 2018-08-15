@@ -2,152 +2,186 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E495CC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01A6C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953EA21534
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:27:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ghT0REkN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953EA21534
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 935B82168C
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 04:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 935B82168C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbeHOHSE (ORCPT
+        id S1727791AbeHOH0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 03:18:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:39547 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbeHOHSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 03:18:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41qxJj1W3Kz9s7Q;
-        Wed, 15 Aug 2018 14:27:33 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534307255;
-        bh=Vu4ZGaY/0dC9DuOmwScNTVaCN5lCLZVrlPTtHKjpVhU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ghT0REkN8j6E4QL3gb8nwPi4jbuiZGQ9oIYOUPoJquUm0kNvSFM+ojZ3BzT7yi2E/
-         7mTe6lg7PF1dBl5gT3v5GIHp3i3ixl0X+4fxAbq2/T5+NBfUxjlljvMjLSLDrB2GIT
-         JKGdhRE1BMqvzd9+klEDzONbdcY0GGqvVWhtI/xcEVBVkyxgZfi5ms6baNfPWuwGza
-         KUUquamcSp5OUSJtl39Kel69P7ga6XPWC/8kepHW2tWPSR2L67nzKi1VuNm2BybrGK
-         Yi0a62Uu2ae2gGQagu+1JVJaxHhV8+r79Gb9vAouNEZ+FTihFDLqmUmFbOEiZIoFcs
-         Vgb5Ok7BpUF1w==
-Date:   Wed, 15 Aug 2018 14:27:32 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-Message-ID: <20180815142732.6c9108a0@canb.auug.org.au>
-In-Reply-To: <20180808135445.1a85f9b5@canb.auug.org.au>
-References: <20180808135445.1a85f9b5@canb.auug.org.au>
+        Wed, 15 Aug 2018 03:26:46 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:42824 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbeHOH0p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 03:26:45 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fpnXc-00074b-F5; Tue, 14 Aug 2018 22:36:16 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fpnXb-0000Rx-Gw; Tue, 14 Aug 2018 22:36:16 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Ahern <dsahern@gmail.com>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        nikita.leshchenko@oracle.com,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        linux-wpan@vger.kernel.org,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+        <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+        <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
+        <20180718.125938.2271502580775162784.davem@davemloft.net>
+        <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
+        <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
+        <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
+        <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
+        <87muufze8w.fsf@xmission.com>
+        <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
+        <87zhyfw70m.fsf@xmission.com>
+        <dacc9322-fd5a-dfeb-e4f1-7a288fb79886@gmail.com>
+        <87o9evt9a6.fsf@xmission.com>
+        <a227d23c-40a1-97a9-d39c-70d16cd470b4@gmail.com>
+Date:   Tue, 14 Aug 2018 23:36:10 -0500
+In-Reply-To: <a227d23c-40a1-97a9-d39c-70d16cd470b4@gmail.com> (David Ahern's
+        message of "Mon, 13 Aug 2018 15:48:17 -0600")
+Message-ID: <877eksi6v9.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vogrmeqq0sIyF6..pcmK9xn"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-XM-SPF: eid=1fpnXb-0000Rx-Gw;;;mid=<877eksi6v9.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/bD1e4s0BlxO9z14CmSn2weQITnA2o1ko=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vogrmeqq0sIyF6..pcmK9xn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+David Ahern <dsahern@gmail.com> writes:
 
-Hi all,
-
-On Wed, 8 Aug 2018 13:54:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+> On 7/25/18 1:17 PM, Eric W. Biederman wrote:
+>> David Ahern <dsahern@gmail.com> writes:
+>> 
+>>> On 7/25/18 11:38 AM, Eric W. Biederman wrote:
+>>>>
+>>>> Absolutely NOT.  Global thresholds are exactly correct given the fact
+>>>> you are running on a single kernel.
+>>>>
+>>>> Memory is not free (Even though we are swimming in enough of it memory
+>>>> rarely matters).  One of the few remaining challenges is for containers
+>>>> is finding was to limit resources in such a way that one application
+>>>> does not mess things up for another container during ordinary usage.
+>>>>
+>>>> It looks like the neighbour tables absolutely are that kind of problem,
+>>>> because the artificial limits are too strict.   Completely giving up on
+>>>> limits does not seem right approach either.  We need to fix the limits
+>>>> we have (perhaps making them go away entirely), not just apply a
+>>>> band-aid.  Let's get to the bottom of this and make the system better.
+>>>
+>>> Eric: yes, they all share the global resource of memory and there should
+>>> be limits on how many entries a remote entity can create.
+>>>
+>>> Network namespaces can provide a separation such that one namespace does
+>>> not disrupt networking in another. It is absolutely appropriate to do
+>>> so. Your rigid stance is inconsistent given the basic meaning of a
+>>> network namespace and the parallels to this same problem -- bridges,
+>>> vxlans, and ip fragments. Only neighbor tables are not per-device or per
+>>> namespace; your insistence on global limits is missing the mark and wrong.
+>> 
+>> That is not what I said.  Let me rephrase and see if you understand.
+>> 
+>> The problem appears to be of lots of devices.  Fundamentally if you use
+>> lots of network devices today unless you adjust gc_thresh3 you will run
+>> out of neighbour table entries.
+>> 
+>> The problem has a bigger scope than what you are looking at.
+>> 
+>> If you fix the core problem you won't see the problem in the context
+>> of network namespaces either.
+>> 
+>> Default limits should be something that will never be hit unless
+>> something goes crazy.  We are hitting them.  Therefore by definition
+>> there is a bug in these limits.
 >
-> Paolo pointed out a semantic conflict between the kvm tree and the tip
-> tree in
->=20
->   arch/x86/kernel/kvm.c
->=20
-> between commit:
->=20
->   368a540e0232 ("x86/kvmclock: Remove memblock dependency")
->=20
-> from the tip tree and commit:
->=20
->   d63bae079b64 ("KVM: X86: Add kvm hypervisor init time platform setup ca=
-llback")
->=20
-> from the kvm tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> I applied the following (as suggested) after the automatic merge:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 8 Aug 2018 13:48:34 +1000
-> Subject: [PATCH] kvm: x86: fix semantic conflict in platform init
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/x86/kernel/kvm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 0906b8731393..e2499bad3209 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -714,13 +714,13 @@ static void __init kvm_apic_init(void)
->  static void __init kvm_init_platform(void)
->  {
->  	x86_platform.apic_post_init =3D kvm_apic_init;
-> +	kvmclock_init();
->  }
-> =20
->  const __initconst struct hypervisor_x86 x86_hyper_kvm =3D {
->  	.name			=3D "KVM",
->  	.detect			=3D kvm_detect,
->  	.type			=3D X86_HYPER_KVM,
-> -	.init.init_platform	=3D kvmclock_init,
->  	.init.guest_late_init	=3D kvm_guest_init,
->  	.init.x2apic_available	=3D kvm_para_available,
->  	.init.init_platform	=3D kvm_init_platform,
-> --=20
-> 2.18.0
+> I disagree that the problem is a global limit. It is trivial for users
+> to increase gc_thresh3. That does not solve the fundamental problem.
+>
+>> 
+>> 
+>> And yes there is absolutely a place for global limits on things like
+>> inodes, file descriptors etc, that does not care about which part of the
+>> kernel you are in.  However hitting those limits in normal operation is
+>> a bug.
+>> 
+>> We have ourselves a bug.
+>
+> I agree we have a bug; we disagree on what that bug is.
+>
+> I am just back from vacation and re-read your responses. No where do you
+> acknowledge the fundamental point of this patch set - that adding a new
+> neighbor entry in one namespace can evict an entry in another namespace
+> or worse networking in one namespace can fail due to table overflow
+> because of entries from another. That is a real problem.
+>
+> It is not a matter of increasing the default gc_thresh3 to some number
+> N; it is ensuring that regardless of the value of gc_thresh3 one
+> namespace is not affected by another.
 
-This is now a conflict between Linus' tree and the kvm tree.
---=20
-Cheers,
-Stephen Rothwell
+My suggestion is to look at the problem and it's requirements and figure
+out how to safely remove gc_thresh3 entirely.  We do have to ensure
+neighbour tables don't grow too large, I expect we can do it in a way
+that can scale from a small machine with few neighbours to a large
+machine with many neighbours.
 
---Sig_/vogrmeqq0sIyF6..pcmK9xn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Perhaps the code just needs to limit the number of neighbours who have
+never replied and the code is probing for an a per interface basis.
 
------BEGIN PGP SIGNATURE-----
+It still may make sense to have a global limit of perhaps a million
+entries just because that would be an indicator that something has truly
+gone weird.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzq7QACgkQAVBC80lX
-0Gw+XAgAo7NNTGWO2oKALvnbQ8tFT5Z10y4gi2XdjmCKX4G+6vsIb8qf9oioCz3L
-DgTeBPyu5K1gZC1CBPGaipMNM76HvXFBuLxCXf26yfClbw0v0yyIjnxtvrCxNYCx
-o0/OI2vv0nM8DviRP66dh4qxbH+U6nwECO92i1BYv/Y2gHDoNBErio0oMSJwsHRH
-7mgBi/mH7mB3I6KdYZVtCeoUNMi4ZPxp/J7lVnAcxWwpFdom7nZckZgiXHO5qSrf
-gfEKNWdjZ+7zgsd3+HJdxY2qvEO3RLdZIoj+ns/Eb4Shk0SvCSplIthXaotB7xyR
-g1xl8CMoBVYaFocM8n2frm14Juqtbg==
-=68dh
------END PGP SIGNATURE-----
+> You created network namespaces and it provides isolation -- separate
+> tables essentially -- for devices, FIB entries, sockets, etc, but you
+> argue against completing the task with separate neighbor tables which is
+> very strange given the impact (completely broken networking).
 
---Sig_/vogrmeqq0sIyF6..pcmK9xn--
+Namespaces provide isolation at the level of names.  The objects still
+share a kernel and compete for resources.  Not competing for resources
+would require each namespace have it's own dedicated pool of resources
+which over the whole machine would be much less efficient.
+
+That is the fundamental design difference between namespaces and VM's
+and it is why namespaces can be much cheaper and much more resource
+efficient.  Reserving your worst case resource usage ahead of time tends
+to result in a lot of inefficiencies.
+
+Eric
+
+
+
+
+
+
