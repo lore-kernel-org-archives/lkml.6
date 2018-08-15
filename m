@@ -2,102 +2,68 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED630C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 330B4C46460
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F05215F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:44:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="evzWJFGE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F05215F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DFD9A215B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 12:44:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD9A215B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729245AbeHOPgI (ORCPT
+        id S1729280AbeHOPgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 11:36:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727141AbeHOPgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 11:36:07 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21989215B2;
-        Wed, 15 Aug 2018 12:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534337045;
-        bh=In9k0jjQn1GEOTAp+UcaKc5LVHwQ4P0Aycl28oShiik=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=evzWJFGE8LT6HyG4wAhAFWsmdFzuGsnQOcY6BNFc5ieWeGqOLt+zwNSlijW6hQwpL
-         q9w/8lBcDBYG+ny79fE78X/KUjnEWDhvey7y6kpUFQpCLJgKz6ZyXjScsuNuU9rqXu
-         xnxFkb2xhmllzJQ+msQgLBqs9lxvpIYnIi6L3eFM=
-Message-ID: <1eccaca5ea2ae8e5d32ef44d92e893ad870e754d.camel@kernel.org>
-Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock
- request to block other requests."
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>, NeilBrown <neilb@suse.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Date:   Wed, 15 Aug 2018 08:44:03 -0400
-In-Reply-To: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
-References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 15 Aug 2018 11:36:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43392 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727141AbeHOPgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 11:36:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6059AACC3;
+        Wed, 15 Aug 2018 12:44:33 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 5EC9DDAC96; Wed, 15 Aug 2018 14:44:25 +0200 (CEST)
+Date:   Wed, 15 Aug 2018 14:44:25 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     clm@fb.com, jbacik@fb.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/3] fs/btrfs/disk-io: change
+ btrfs_destroy_delayed_refs to be void function
+Message-ID: <20180815124425.GM24025@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, zhong jiang <zhongjiang@huawei.com>,
+        clm@fb.com, jbacik@fb.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1533736075-8691-1-git-send-email-zhongjiang@huawei.com>
+ <1533736075-8691-2-git-send-email-zhongjiang@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533736075-8691-2-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
-> ("fs/locks: allow a lock request to block other requests.") to failure
-> boot of NFSv4 with root on several boards.
-> 
-> Log is here:
-> https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
-> 
-> With several errors:
-> kernel BUG at ../fs/locks.c:336!
-> Unable to handle kernel NULL pointer dereference at virtual address 00000004
-> 
-> Configuration:
-> 1. exynos_defconfig
-> 2. Arch ARM Linux
-> 3. Boards:
-> a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
-> b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
-> 4. Systemd: v236, 238
-> 5. All boards boot from TFTP with NFS root (NFSv4)
-> 
-> On Colibri VF50 I got slightly different errors:
-> [   11.663204] Internal error: Oops - undefined instruction: 0 [#1] ARM
-> [   12.455273] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000004
-> and only with some specific GCC (v6.3) or with other conditions which
-> I did not bisect yet. Maybe Colibri's failure is unrelated to that
-> commit.
-> 
-> Best regards,
-> Krzysztof
+On Wed, Aug 08, 2018 at 09:47:53PM +0800, zhong jiang wrote:
+> btrfs_destroy_delayed_refs defines the variable "ret" for return value, but
+> it is not modified after initialization. Further, I find that any of the
+> callees do not handle the return value.  So it is safe to drop the
+> unneeded value "ret".
 
-Thanks Krzysztof,
+The callers care about the return values, not the callees. My point in
+the previous patch iterations was to make sure that none of the callees,
+ie. the functions that are called by btrfs_destroy_delayed_refs, do not
+lack error handling.
 
-I or Neil will see if this is reproducible and see about coming up with
-a fix. For now, I'll take this out of -next.
-
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+And I found one that does, btrfs_pin_extent, near the end of the while
+loop. So, there's more work and I can't apply this patch until it's
+fixed, which may make this patch obsolete as the return value would be
+actually needed.
