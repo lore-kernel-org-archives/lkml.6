@@ -2,163 +2,97 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B63C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9419C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4199C214ED
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED39E214EE
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 23:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hmjQQNog"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4199C214ED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="rTq9pm5y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED39E214EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbeHPCuH (ORCPT
+        id S1729412AbeHPCut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 22:50:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:54451 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726072AbeHPCuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 22:50:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41rRDN345vz9s0R;
-        Thu, 16 Aug 2018 09:55:31 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534377334;
-        bh=wZNpPFiZyYdh5lctdQs5RoKAQhnwH+dRs/afHtXNbaQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hmjQQNoglDojzVb5wJPm5m7gqM18g9Cc78p7SD+Ffqf0qjVrxIe7FfVJWuE6zNKLP
-         XV5OLijorHlzPQwTCI5DjykXqRCwhbvIMiKXJMtMyiOe5SOX/MxLqWMWSFdQKH22M9
-         s2MLFBM6up6A8Z0Ns78+IhLqYrZ+vNVyEtRY1DXBScPuUd6fwU9aRR5/1+P+aiiaKd
-         kPs8Y+awVmH9LL9lASgOH+RVAKq8IXWD5oRk2t64Q3l8ucVzZIFOqWdfsKThAgE3kY
-         rXOVpRpaScU0WPMqcqEQvYryCb3R0YV8e9wm9yidRNxfcvZ7NtVwqUdJkZUdb4VHLY
-         l7gj5v2wMW4pw==
-Date:   Thu, 16 Aug 2018 09:55:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- kbuild tree
-Message-ID: <20180816095530.5b3c9ecb@canb.auug.org.au>
-In-Reply-To: <20180803183653.4d394bcf@canb.auug.org.au>
-References: <20180803183653.4d394bcf@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WhVJZ.73GqrZNRLQbxG=4.T"; protocol="application/pgp-signature"
+        Wed, 15 Aug 2018 22:50:49 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:25856 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbeHPCut (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 22:50:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1534377379; x=1565913379;
+  h=from:to:cc:subject:date:message-id;
+  bh=/ALim0HvIQixEG/GWULXYgvQPEPt76plpIPUiQHzn/g=;
+  b=rTq9pm5ybgZAHAVG0DDw9kF3N8kv1Pd+sRhPUPC5R/zRSh6D5ftr4mNB
+   F8u3FnmVT6zKiEy6BjP516mviaWilsufldmyHy8wPhE9d+P74zC6nmABA
+   l/ojwlpdFBGO0lD3HFkSxgdaCHYLUjaqu+D1j2lo+cx6nvFhRhDBFXu2w
+   s0mFJNz4yjNuosPNhwJxD86B4wKgEHAcCNmFWW43bTw7SgE2oNJdksX9j
+   vMdnnpL/orEgfoJs4VETMABL/4w0DwD3vS1k64LhHQ1IDAz7Mhv8Euiew
+   vOYH5qKnac9XL0pq8Hv4mMpInIK1YxHGHu9kvUxzfyyaSZwZcORoyzmCZ
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,245,1531756800"; 
+   d="scan'208";a="88557060"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Aug 2018 07:56:18 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 15 Aug 2018 16:44:16 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 15 Aug 2018 16:56:18 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        mark.rutland@arm.com, anup@brainfault.org, hch@infradead.org
+Cc:     atish.patra@wdc.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com
+Subject: [RFC PATCH 0/5] RISC-V: Improve smp functionality & support cpu hotplug 
+Date:   Wed, 15 Aug 2018 16:56:12 -0700
+Message-Id: <1534377377-70108-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WhVJZ.73GqrZNRLQbxG=4.T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series implements following smp related features.
+Some of the work has been inspired from ARM64.
 
-Hi all,
+1. Decouple linux logical cpu ids from hardware cpu id
+2. Introduce cpu_operations structure for better flexibility &
+  extesnability of future smp enablement methods. It also makes it
+  easier to implement different booting algorithms later.
+3. Support cpu hotplug.
 
-On Fri, 3 Aug 2018 18:36:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the akpm-current tree got a conflict in:
->=20
->   lib/Kconfig.debug
->=20
-> between commit:
->=20
->   06ec64b84c35 ("Kconfig: consolidate the "Kernel hacking" menu")
->=20
-> from the kbuild tree and commit:
->=20
->   bbd89226bb66 ("fs/buffer.c: add debug print for __getblk_gfp() stall pr=
-oblem")
->=20
-> from the akpm-current tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc lib/Kconfig.debug
-> index 46f755a60872,01ec99f1cf2e..000000000000
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@@ -1729,10 -1713,9 +1727,9 @@@ config KPROBES_SANITY_TES
->   	bool "Kprobes sanity tests"
->   	depends on DEBUG_KERNEL
->   	depends on KPROBES
-> - 	default n
->   	help
->   	  This option provides for testing basic kprobes functionality on
->  -	  boot. A sample kprobe, jprobe and kretprobe are inserted and
->  +	  boot. Samples of kprobe and kretprobe are inserted and
->   	  verified for functionality.
->  =20
->   	  Say N if you are unsure.
-> @@@ -1851,12 -1820,8 +1844,11 @@@ config TEST_HAS
->   	  This is intended to help people writing architecture-specific
->   	  optimized versions.  If unsure, say N.
->  =20
->  +config TEST_IDA
->  +	tristate "Perform selftest on IDA functions"
->  +
->   config TEST_PARMAN
->   	tristate "Perform selftest on priority array manager"
-> - 	default n
->   	depends on PARMAN
->   	help
->   	  Enable this option to test priority array manager on boot
-> @@@ -2062,6 -2018,8 +2045,12 @@@ config IO_STRICT_DEVME
->  =20
->   	  If in doubt, say Y.
->  =20
-> + config DEBUG_AID_FOR_SYZBOT
-> +        bool "Additional debug code for syzbot"
-> +        default n
-> +        help
-> +          This option is intended for testing by syzbot.
-> ++
->  +source "arch/$(SRCARCH)/Kconfig.debug"
->  +
->  +endmenu # Kernel hacking
+Tested on QEMU & HighFive Unleashed board with/without SMP enabled.
 
-This is now a conflict between Linus' tree and the akpm-current tree.
+Atish Patra (5):
+  RISC-V: Add logical CPU indexing for RISC-V
+  RISC-V: Use Linux logical cpu number instead of hartid
+  RISC-V: Add cpu_operatios structure
+  RISC-V: Move interrupt cause declarations to irq.h
+  RISC-V: Support cpu hotplug.
 
---=20
-Cheers,
-Stephen Rothwell
+ arch/riscv/Kconfig                |  12 ++-
+ arch/riscv/include/asm/irq.h      |   7 ++
+ arch/riscv/include/asm/smp.h      |  42 +++++++++-
+ arch/riscv/include/asm/tlbflush.h |  17 +++-
+ arch/riscv/kernel/cpu.c           |   4 +-
+ arch/riscv/kernel/head.S          |  13 +++
+ arch/riscv/kernel/irq.c           |   7 --
+ arch/riscv/kernel/process.c       |   7 ++
+ arch/riscv/kernel/setup.c         |  27 +++++++
+ arch/riscv/kernel/smp.c           |  51 +++++++++---
+ arch/riscv/kernel/smpboot.c       | 161 +++++++++++++++++++++++++++++++++-----
+ arch/riscv/kernel/traps.c         |   6 +-
+ drivers/clocksource/riscv_timer.c |  12 ++-
+ drivers/irqchip/irq-sifive-plic.c |  11 ++-
+ 14 files changed, 325 insertions(+), 52 deletions(-)
 
---Sig_/WhVJZ.73GqrZNRLQbxG=4.T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0vXIACgkQAVBC80lX
-0GxqSwgAmOSJNo/nYCfFHZbZr7ytCrplrCElefErP1QoQ3j+2Xc41Hs76EqbW+OL
-bTB4zIphHd1B297WS0qjUpE/ZaBHESJl8+d8qDUn9/BrVfQSwGUtV49ZU6MlyhBD
-8Lw2Ev597TwxDqw1w6Ay7BKDi9sfXfiIhO5POwr/a20cuTWXhnDLat3a4ZTYKmLg
-XS9VQ/jwtAnCXu3VEjejg7NrU7aBOaVAvkRn2yErZ4jpLiLzQ0h5ZpItBrj5AiRf
-l/ZVMt8G8ZlR1bC5V7ByMYV4j24NQzexX3EWniU9qSWVFzKwPHtmSMAm+Hfm7kkV
-5vJrEGyApqDCWglIsxQGITZ6JZnNIg==
-=qcvH
------END PGP SIGNATURE-----
-
---Sig_/WhVJZ.73GqrZNRLQbxG=4.T--
