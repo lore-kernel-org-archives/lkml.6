@@ -2,295 +2,222 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 074A7C46460
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D571DC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9CC21546
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 13:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6856B21546
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 14:05:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fPzztvOs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E9CC21546
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Fcb9XTMA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6856B21546
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbeHOQwC (ORCPT
+        id S1729340AbeHOQ57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 12:52:02 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51760 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729125AbeHOQwB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 12:52:01 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y2-v6so1488913wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 06:59:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=asyGrl7Gev65E09xvdHepRzOnDi8rUjr5y3LqeNJyOU=;
-        b=fPzztvOs1v3uN6B0ARbl1O0uwE/se6BQyDDgUBUIU3vhdrSSmcjaNVlzoXxGbX2/f5
-         8sVfh8+dY+/TCVimb5fxI2cs7n4LmxzxX/F8+d+EPaHlRjwsPAVJ51EAs6dHARLOJ+cx
-         75hgtKT7SiFEP15HRYxbvDq4juKq2BIsmVl28=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=asyGrl7Gev65E09xvdHepRzOnDi8rUjr5y3LqeNJyOU=;
-        b=UXlcmJWmRYZN59MGDt7ElDSJl6qkTN0GCJfVVMhRxnbtEf5yN2rPppHKmUTX2/BSD7
-         EylntQnXEcYYCUAMOVoBok0hYiJ8orl8R7m3H828a2y3Gu5YeF9FqnpTqGkIUtP9Uh69
-         WEpD2tbPDaEWfzllxyAS2EZ1z3T+LVY3afWYxbBNk4kcEmVqdjO50co5nTqCFzDqDWcB
-         6E42IGk3nS6wsKcNMpgY5r4kaOtfBaVvxjys1a8uDrJf1RW1SOTE1YDh5z7pRSFyt23o
-         DzA0ZzfGAhisU9Lui6sg1xWTfymmjhj3fsq0KGmJG9jPYP9PDzD1Syks3zHkVO9/XhOd
-         lYlA==
-X-Gm-Message-State: AOUpUlFXSp90XKoOlNYGA00RWXCBYAN9AJ8LtK/s1WanKpjq39ElTB9T
-        L4tcM3kqHgJa1K9F1kOt1AIrtQ==
-X-Google-Smtp-Source: AA+uWPwyuArkWOcq397B+PuZBNrENGUQAUpLL0n6eZ/Mfhaoj1Trw8IE52MuoHqZtChIUZnLikZ7ZA==
-X-Received: by 2002:a1c:8a0f:: with SMTP id m15-v6mr13793483wmd.33.1534341579318;
-        Wed, 15 Aug 2018 06:59:39 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm10934235wro.84.2018.08.15.06.59.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 06:59:37 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 14:59:35 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, kernel@collabora.com,
-        cl@rock-chips.com, linux-pwm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3] backlight: pwm_bl: switch to using "atomic" PWM API
-Message-ID: <20180815135935.7fpsuzbiproqoqyb@holly.lan>
-References: <20180814165059.13219-1-enric.balletbo@collabora.com>
+        Wed, 15 Aug 2018 12:57:59 -0400
+Received: from mail-by2nam03on0107.outbound.protection.outlook.com ([104.47.42.107]:30752
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729239AbeHOQ56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 12:57:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2fHPxNIK6KEytgv06qAWC/dbHp1o3cOqRPStA/D5t0Q=;
+ b=Fcb9XTMA2atrWI/jCZQ3sGOFqU/4ShKEIXsV7+JgNaWuL7f6P6M4hWhoNCWStghxU2VBBRq+l9k/A5mjKslI3G3brxIFKTUeD9a16MRN3ViGDeseba8ZSr+ryCNJA3n4i2L8fYELS+A+/Aw4ul7rRqObRf5O65g2oNidcd8q9pE=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0137.namprd21.prod.outlook.com (10.173.173.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.5; Wed, 15 Aug 2018 14:05:35 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1080.007; Wed, 15 Aug 2018
+ 14:05:35 +0000
+From:   Pavel Tatashin <Pavel.Tatashin@microsoft.com>
+To:     "osalvador@techadventures.net" <osalvador@techadventures.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "mhocko@suse.com" <mhocko@suse.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "jglisse@redhat.com" <jglisse@redhat.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: RE: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+Thread-Topic: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+Thread-Index: AQNQGbiWgUZuKSLz17fvDcH9ixlb+aHJDhgw
+Date:   Wed, 15 Aug 2018 14:05:35 +0000
+Message-ID: <DM5PR21MB0508CEC7F586EBC89D2CCFBB9D3F0@DM5PR21MB0508.namprd21.prod.outlook.com>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+In-Reply-To: <20180807133757.18352-1-osalvador@techadventures.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [209.119.211.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0137;6:5jRjcsmrBNvzRAsgLKgrCcARz6vXAsZ4OweBYLrmAH0MJmN6itwAfXySGnxu6KwzX3SnrkSs2s+hQr8SCYYIokz4QSkK5l4rWpFrHrDr5ekn64WSWAZcscUJgxQnfCWurQxCxskOGO+3xI5pphBPXNuA13+/bZIOX5N58dfGVpjilTC8plLazDd6zd+fm7zQlbn4OL15y5B5y9wUv2Hl5hHV0HKBWaUgprUekpyWNwam+cKdX2LYUlB4dl8FFFwA+uGmAh0pvllHaPPg8q74HEQELh5WnnBQyy6dKN53Q99Hf9YjEhZ2he+AOpLeuIQDK4Kh5sq2n7JGKXcJXuW/F6DkhA4wDaKIZdAgjDBCRxgf2fPoRiPVPdwTPx48iayE4lfPvze3akUb+nXBHcPqUuy/mZyLoXyMl9PWidGxS9vS4oplzci3bsCAgqSJVXcBHB7F8StJ//FqEgs2a5obdw==;5:g4l+oW5WozoqC5Odh8+ao7FhCGBqCNVtkvWoNIi68pvR1Y7CIyhvSVXUUqqGvBQ+whR4Zrt/T8hBrcH3sJWmMZrV2xbEIG3wF4BSRBLfGN1WV1flG5mJ8hYYvmzmQvRMBr9WoaoZSDVgtmIHXBKpISXjzQuNDeyRdgMHK0otz4U=;7:9OCcleWXbtnIHVG6smexkHdyyNGyULQJyq4fazZzBg5ONXYuqpZJiQYZrWw+SRaC1Rd/VBZrSbo12QI3aki5RYpaBNBARwcGCqMkkKu/k23b547SLnSGzYPY6iArLFobUhVq9mUbAbrVGbGxK7UgVNO0TRl9ilyOjplRc6X/kQMckFp9BJ7H3UB52KddyymgqfnIzf6EoALByhEpytbXd0tkFXWdagdXGQUC23Dix05SmUKEWYvChcNRFVQ2l6VV
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: aef8bfce-9f4b-4746-2610-08d602b82c2f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0137;
+x-ms-traffictypediagnostic: DM5PR21MB0137:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-prvs: <DM5PR21MB013796F10BA7BF24E9DE91BD9D3F0@DM5PR21MB0137.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(209352067349851);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231328)(8210008)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DM5PR21MB0137;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0137;
+x-forefront-prvs: 07658B8EA3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(376002)(346002)(366004)(189003)(199004)(2906002)(229853002)(5660300001)(478600001)(966005)(97736004)(72206003)(8936002)(316002)(22452003)(53936002)(9686003)(54906003)(7416002)(110136005)(10090500001)(6246003)(105586002)(14454004)(66066001)(106356001)(55016002)(6436002)(6306002)(33656002)(2501003)(5250100002)(8990500004)(3846002)(217873002)(6116002)(81166006)(186003)(81156014)(256004)(14444005)(8676002)(2900100001)(26005)(305945005)(68736007)(476003)(74316002)(10290500003)(39060400002)(4326008)(7736002)(25786009)(6506007)(76176011)(446003)(99286004)(11346002)(86362001)(86612001)(7696005)(102836004)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0137;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Ca3s7ARm4d3mGh0xiWHMpzDPK0xlIUlFWGOSF+sFvTPIuG78ordzmBm04b+xNnPpBiuWUIpBdUVDMiGUjW8NYfq8UVCrDN4BeRG4oc+vE+2tdlTr6Ux/LIbohxUj+foxcSyt6YdPfnOJ6GraNJI74srlUCCK/wjCYW7lxSGdRg2tKDFYiKi7coeFa7biJqHs28i2y/p3DG9dx8iVudPPOUYAYcpyvTFAsYRnjZ+c59nYIaY6Px9owXRYkEgmZvSUwFUl0Yom25SGS5ATl0aXQQZxzUuP8OSSiJehlZ0MeEQEDYmNN+6zj4ojnWQNRgweEq62JsEt+vULKZYsQh69OtyjlweuJDGkG88eyFDYYCE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814165059.13219-1-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aef8bfce-9f4b-4746-2610-08d602b82c2f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2018 14:05:35.6558
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 06:50:59PM +0200, Enric Balletbo i Serra wrote:
-> The "atomic" API allows us to configure PWM period and duty_cycle and
-> enable it in one call.
-> 
-> The patch also moves the pwm_init_state just before any use of the
-> pwm_state struct, this fixes a potential bug where pwm_get_state
-> can be called before pwm_init_state.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> This tries to fix [1], which was reported by David Hildenbrand, and also
+> does some cleanups/refactoring.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Hi Oscar,
 
-> ---
-> 
-> Changes in v3:
-> - Get rid of duty_cycle variable from pwm_backlight_update_status.
-> - Get rid of pb->enabled and use only the status.enabled variable.
-> - Make power_on match power_off.
-> - Do not share status between ...update_status and ...power_on
-> 
-> Changes in v2:
-> - Do not force the PWM be off in the first call to pwm_apply_state.
-> - Delayed applying the state until we know what the period is.
-> - Removed pb->period as after the conversion is not needed.
-> 
->  drivers/video/backlight/pwm_bl.c | 81 +++++++++++++++++---------------
->  1 file changed, 42 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> index bdfcc0a71db1..678b27063198 100644
-> --- a/drivers/video/backlight/pwm_bl.c
-> +++ b/drivers/video/backlight/pwm_bl.c
-> @@ -28,10 +28,8 @@
->  struct pwm_bl_data {
->  	struct pwm_device	*pwm;
->  	struct device		*dev;
-> -	unsigned int		period;
->  	unsigned int		lth_brightness;
->  	unsigned int		*levels;
-> -	bool			enabled;
->  	struct regulator	*power_supply;
->  	struct gpio_desc	*enable_gpio;
->  	unsigned int		scale;
-> @@ -46,31 +44,35 @@ struct pwm_bl_data {
->  	void			(*exit)(struct device *);
->  };
->  
-> -static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
-> +static void pwm_backlight_power_on(struct pwm_bl_data *pb)
->  {
-> +	struct pwm_state state;
->  	int err;
->  
-> -	if (pb->enabled)
-> +	pwm_get_state(pb->pwm, &state);
-> +	if (state.enabled)
->  		return;
->  
->  	err = regulator_enable(pb->power_supply);
->  	if (err < 0)
->  		dev_err(pb->dev, "failed to enable power supply\n");
->  
-> -	pwm_enable(pb->pwm);
-> +	state.enabled = true;
-> +	pwm_apply_state(pb->pwm, &state);
->  
->  	if (pb->post_pwm_on_delay)
->  		msleep(pb->post_pwm_on_delay);
->  
->  	if (pb->enable_gpio)
->  		gpiod_set_value_cansleep(pb->enable_gpio, 1);
-> -
-> -	pb->enabled = true;
->  }
->  
->  static void pwm_backlight_power_off(struct pwm_bl_data *pb)
->  {
-> -	if (!pb->enabled)
-> +	struct pwm_state state;
-> +
-> +	pwm_get_state(pb->pwm, &state);
-> +	if (!state.enabled)
->  		return;
->  
->  	if (pb->enable_gpio)
-> @@ -79,24 +81,27 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
->  	if (pb->pwm_off_delay)
->  		msleep(pb->pwm_off_delay);
->  
-> -	pwm_config(pb->pwm, 0, pb->period);
-> -	pwm_disable(pb->pwm);
-> +	state.enabled = false;
-> +	state.duty_cycle = 0;
-> +	pwm_apply_state(pb->pwm, &state);
->  
->  	regulator_disable(pb->power_supply);
-> -	pb->enabled = false;
->  }
->  
->  static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
->  {
->  	unsigned int lth = pb->lth_brightness;
-> +	struct pwm_state state;
->  	u64 duty_cycle;
->  
-> +	pwm_get_state(pb->pwm, &state);
-> +
->  	if (pb->levels)
->  		duty_cycle = pb->levels[brightness];
->  	else
->  		duty_cycle = brightness;
->  
-> -	duty_cycle *= pb->period - lth;
-> +	duty_cycle *= state.period - lth;
->  	do_div(duty_cycle, pb->scale);
->  
->  	return duty_cycle + lth;
-> @@ -106,7 +111,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
->  {
->  	struct pwm_bl_data *pb = bl_get_data(bl);
->  	int brightness = bl->props.brightness;
-> -	int duty_cycle;
-> +	struct pwm_state state;
->  
->  	if (bl->props.power != FB_BLANK_UNBLANK ||
->  	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
-> @@ -117,9 +122,10 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
->  		brightness = pb->notify(pb->dev, brightness);
->  
->  	if (brightness > 0) {
-> -		duty_cycle = compute_duty_cycle(pb, brightness);
-> -		pwm_config(pb->pwm, duty_cycle, pb->period);
-> -		pwm_backlight_power_on(pb, brightness);
-> +		pwm_get_state(pb->pwm, &state);
-> +		state.duty_cycle = compute_duty_cycle(pb, brightness);
-> +		pwm_apply_state(pb->pwm, &state);
-> +		pwm_backlight_power_on(pb);
->  	} else
->  		pwm_backlight_power_off(pb);
->  
-> @@ -447,7 +453,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  	struct device_node *node = pdev->dev.of_node;
->  	struct pwm_bl_data *pb;
->  	struct pwm_state state;
-> -	struct pwm_args pargs;
->  	unsigned int i;
->  	int ret;
->  
-> @@ -478,7 +483,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  	pb->check_fb = data->check_fb;
->  	pb->exit = data->exit;
->  	pb->dev = &pdev->dev;
-> -	pb->enabled = false;
->  	pb->post_pwm_on_delay = data->post_pwm_on_delay;
->  	pb->pwm_off_delay = data->pwm_off_delay;
->  
-> @@ -539,10 +543,26 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  
->  	dev_dbg(&pdev->dev, "got pwm for backlight\n");
->  
-> -	if (!data->levels) {
-> -		/* Get the PWM period (in nanoseconds) */
-> -		pwm_get_state(pb->pwm, &state);
-> +	/* Sync up PWM state. */
-> +	pwm_init_state(pb->pwm, &state);
->  
-> +	/*
-> +	 * The DT case will set the pwm_period_ns field to 0 and store the
-> +	 * period, parsed from the DT, in the PWM device. For the non-DT case,
-> +	 * set the period from platform data if it has not already been set
-> +	 * via the PWM lookup table.
-> +	 */
-> +	if (!state.period && (data->pwm_period_ns > 0))
-> +		state.period = data->pwm_period_ns;
-> +
-> +	ret = pwm_apply_state(pb->pwm, &state);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to apply initial PWM state: %d\n",
-> +			ret);
-> +		goto err_alloc;
-> +	}
-> +
-> +	if (!data->levels) {
->  		ret = pwm_backlight_brightness_default(&pdev->dev, data,
->  						       state.period);
->  		if (ret < 0) {
-> @@ -559,24 +579,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  		pb->levels = data->levels;
->  	}
->  
-> -	/*
-> -	 * FIXME: pwm_apply_args() should be removed when switching to
-> -	 * the atomic PWM API.
-> -	 */
-> -	pwm_apply_args(pb->pwm);
-> -
-> -	/*
-> -	 * The DT case will set the pwm_period_ns field to 0 and store the
-> -	 * period, parsed from the DT, in the PWM device. For the non-DT case,
-> -	 * set the period from platform data if it has not already been set
-> -	 * via the PWM lookup table.
-> -	 */
-> -	pwm_get_args(pb->pwm, &pargs);
-> -	pb->period = pargs.period;
-> -	if (!pb->period && (data->pwm_period_ns > 0))
-> -		pb->period = data->pwm_period_ns;
-> -
-> -	pb->lth_brightness = data->lth_brightness * (pb->period / pb->scale);
-> +	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
->  
->  	memset(&props, 0, sizeof(struct backlight_properties));
->  	props.type = BACKLIGHT_RAW;
-> -- 
-> 2.18.0
-> 
+I would like to review this work. Are you in process of sending a new versi=
+on? If so, I will wait for it.
+
+Thank you,
+Pavel
+
+>=20
+> I am sending this as RFC to see if the direction I am going is right befo=
+re
+> spending more time into it.
+> And also to gather feedback about hmm/zone_device stuff.
+> The code compiles and I tested it successfully with normal memory-hotplug
+> operations.
+>=20
+> Here we go:
+>=20
+> With the following scenario:
+>=20
+> 1) We add memory
+> 2) We do not online it
+> 3) We remove the memory
+>=20
+> an invalid access is being made to those pages.
+>=20
+> The reason is that the pages are initialized in online_pages() path:
+>=20
+>         /   online_pages
+>         |    move_pfn_range
+> ONLINE  |     move_pfn_range_to_zone
+> PAGES   |      ...
+>         |      memmap_init_zone
+>=20
+> But depending on our policy about onlining the pages by default, we might=
+ not
+> online them right after having added the memory, and so, those pages migh=
+t
+> be
+> left unitialized.
+>=20
+> This is a problem because we access those pages in arch_remove_memory:
+>=20
+> ...
+> if (altmap)
+>         page +=3D vmem_altmap_offset(altmap);
+>         zone =3D page_zone(page);
+> ...
+>=20
+> So we are accessing unitialized data basically.
+>=20
+>=20
+> Currently, we need to have the zone from arch_remove_memory to all the
+> way down
+> because
+>=20
+> 1) we call __remove_zone zo shrink spanned pages from pgdat/zone
+> 2) we get the pgdat from the zone
+>=20
+> Number 1 can be fixed by moving __remove_zone back to offline_pages(),
+> where it should be.
+> This, besides fixing the bug, will make the code more consistent because =
+all
+> the reveserse
+> operations from online_pages() will be made in offline_pages().
+>=20
+> Number 2 can be fixed by passing nid instead of zone.
+>=20
+> The tricky part of all this is the hmm code and the zone_device stuff.
+>=20
+> Fixing the calls to arch_remove_memory in the arch code is easy, but
+> arch_remove_memory
+> is being used in:
+>=20
+> kernel/memremap.c: devm_memremap_pages_release()
+> mm/hmm.c:          hmm_devmem_release()
+>=20
+> I did my best to get my head around this, but my knowledge in that area i=
+s 0,
+> so I am pretty sure
+> I did not get it right.
+>=20
+> The thing is:
+>=20
+> devm_memremap_pages(), which is the counterpart of
+> devm_memremap_pages_release(),
+> calls arch_add_memory(), and then calls move_pfn_range_to_zone() (to
+> ZONE_DEVICE).
+> So it does not go through online_pages().
+> So there I call shrink_pages() (it does pretty much as __remove_zone) bef=
+ore
+> calling
+> to arch_remove_memory.
+> But as I said, I do now if that is right.
+>=20
+> [1] https://patchwork.kernel.org/patch/10547445/
+>=20
+> Oscar Salvador (3):
+>   mm/memory_hotplug: Add nid parameter to arch_remove_memory
+>   mm/memory_hotplug: Create __shrink_pages and move it to offline_pages
+>   mm/memory_hotplug: Refactor shrink_zone/pgdat_span
+>=20
+>  arch/ia64/mm/init.c            |   6 +-
+>  arch/powerpc/mm/mem.c          |  13 +--
+>  arch/s390/mm/init.c            |   2 +-
+>  arch/sh/mm/init.c              |   6 +-
+>  arch/x86/mm/init_32.c          |   6 +-
+>  arch/x86/mm/init_64.c          |  10 +--
+>  include/linux/memory_hotplug.h |   8 +-
+>  kernel/memremap.c              |   9 +-
+>  mm/hmm.c                       |   6 +-
+>  mm/memory_hotplug.c            | 190 +++++++++++++++++++++--------------=
+------
+>  mm/sparse.c                    |   4 +-
+>  11 files changed, 127 insertions(+), 133 deletions(-)
+>=20
+> --
+> 2.13.6
+
