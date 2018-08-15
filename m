@@ -2,198 +2,198 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8571C43615
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD35C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4140C208B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:56:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4140C208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 11923208B8
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 17:58:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="MA5EZ5y9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11923208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730353AbeHOUtN (ORCPT
+        id S1730321AbeHOUvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 16:49:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34532 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729537AbeHOUtM (ORCPT
+        Wed, 15 Aug 2018 16:51:11 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:58347 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729424AbeHOUvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 16:49:12 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7FHsllk108293
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:56:03 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kvmadvkyb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 13:56:03 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 15 Aug 2018 11:56:02 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Aug 2018 11:55:58 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7FHttMu9699740
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 Aug 2018 10:55:55 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE06213605E;
-        Wed, 15 Aug 2018 11:55:55 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9029C136051;
-        Wed, 15 Aug 2018 11:55:52 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.175.5])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Aug 2018 11:55:52 -0600 (MDT)
-Subject: Re: [PATCH v9 14/22] KVM: s390: interfaces to clear CRYCB masks
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-15-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180815151039.63d83d5d.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 15 Aug 2018 13:55:51 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 15 Aug 2018 16:51:11 -0400
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w7FHvvt3020161;
+        Thu, 16 Aug 2018 02:57:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w7FHvvt3020161
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534355878;
+        bh=IWKF3o+R1CNaCp7rzIhNIc7OREDSEJv4y2V4318Jwd0=;
+        h=From:Date:Subject:To:Cc:From;
+        b=MA5EZ5y9cMF4nfa4yyKSgHdYtKwcyDMKZ60GKqfXewSAjO/kePnWUL1wvSskw+TfF
+         0TrIOa8aIYkI3mo2CCsAiz5ipbQfPRfwoSG9crKN5f3REP2kpNXIEzrtO13pK5dzH/
+         tuqz+XvUDrqFThscFdlyzJFcuNY6tV3mcEi94+6QiLG2WKN8b9tqt7V9l5+5iORa6C
+         go9ga+oSOepxKgs+pMB5ZITOTeHu9iROHdnxtV7KfNZWeqSbGcWhRSTn2hFsAx6qCH
+         k8tfP0feKApHSCoClpxwIlRk6Jvgn05t3Y8taixU3hQoBIpSy6qCk1sZ2yxQ69N8BB
+         Dw+zwkFjRqXVA==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id o11-v6so2092654uak.5;
+        Wed, 15 Aug 2018 10:57:57 -0700 (PDT)
+X-Gm-Message-State: AOUpUlETU1zTw8earLCwFff1+V1OlcDOVzyc8NSeCJ0VROhn74YjAdka
+        cHyj2dix9Qw0mqa7Pe5YtZpBExozgfOY2WfUM7g=
+X-Google-Smtp-Source: AA+uWPzXF4NcSiVrp49uS4GMqgWQGcnkQYQ0bfYomPGVBIOAjyAQKPLXq1+N6rKinZNuxJOf5g30A3eXN+d3drXdwRs=
+X-Received: by 2002:a9f:3d6e:: with SMTP id m46-v6mr17719215uai.17.1534355876503;
+ Wed, 15 Aug 2018 10:57:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180815151039.63d83d5d.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18081517-0016-0000-0000-0000091B02F5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009550; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01073966; UDB=6.00553412; IPR=6.00853924;
- MB=3.00022736; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-15 17:56:01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081517-0017-0000-0000-000040024BC6
-Message-Id: <4cbed75b-adb6-e97f-6719-c630266a16cd@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808150187
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 10:57:16
+ -0700 (PDT)
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 16 Aug 2018 02:57:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT9p+YPmvasWPG1qdriM+dkauf6h3bqJLnxTcZo8LG_SA@mail.gmail.com>
+Message-ID: <CAK7LNAT9p+YPmvasWPG1qdriM+dkauf6h3bqJLnxTcZo8LG_SA@mail.gmail.com>
+Subject: [GIT PULL 2/3] Kconfig updates for v4.19
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/15/2018 09:10 AM, Cornelia Huck wrote:
-> On Mon, 13 Aug 2018 17:48:11 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
->> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
->> not get out of sync.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Acked-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm_host.h |    3 +++
->>   arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
->>   2 files changed, 18 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->> index 4a739d4..07e58d8 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -258,6 +258,7 @@ struct kvm_s390_sie_block {
->>   	__u64	tecmc;			/* 0x00e8 */
->>   	__u8	reservedf0[12];		/* 0x00f0 */
->>   #define CRYCB_FORMAT_MASK 0x00000003
->> +#define CRYCB_FORMAT0 0x00000000
-> This should probably go into a different patch (define is not used
-> here)?
+Hi Linus,
 
-You are spot on. It needs to go in patch 15 where it is first used.
-
->
->>   #define CRYCB_FORMAT1 0x00000001
->>   #define CRYCB_FORMAT2 0x00000003
->>   	__u32	crycbd;			/* 0x00fc */
->> @@ -861,6 +862,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
->>   void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
->>   				 struct kvm_async_pf *work);
->>   
->> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
->> +
->>   extern int sie64a(struct kvm_s390_sie_block *, u64 *);
->>   extern char sie_exit;
->>   
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index f7de123..8d8a65a 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -1919,6 +1919,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
->>   		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->>   }
->>   
->> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
->> +{
->> +	mutex_lock(&kvm->lock);
->> +	kvm_s390_vcpu_block_all(kvm);
->> +
->> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
->> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
->> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
->> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
->> +
->> +	kvm_s390_vcpu_unblock_all(kvm);
->> +	mutex_unlock(&kvm->lock);
->> +}
->> +EXPORT_SYMBOL(kvm_arch_crypto_clear_masks);
-> A quick grep shows that kvm-related exports tend to be
-> EXPORT_SYMBOL_GPL. Should that also be done here?
-
-I did some internet searching to find out why the EXPORT_SYMBOL_GPL 
-macro is used
-rather than EXPORT_SYMBOL. I found the link below which explains why. 
-According to
-that article, if the EXPORT_SYMBOL_GPL macro is used, modules that do 
-not carry a
-GPL-compatible license can not use the function. Apparently Linus 
-Trovalds and the
-lawyers he consulted believe it codifies the intention in code itself 
-makes the code
-more flexible and a lot less likely to be misunderstood. It is further 
-pointed out
-that "circumventing the GPL-only export requires an explicit action, 
-making it clear
-that the copyright infringement was a  deliberate act.
-
-Since our modules are GPL-licensed, it would probably behoove us to use the
-EXPORT_SYMBOL_GPL macro to export this function.
-
-https://lwn.net/Articles/154602/
-
->
->> +
->>   static u64 kvm_s390_get_initial_cpuid(void)
->>   {
->>   	struct cpuid cpuid;
+Please pull Kconfig updates for v4.19
 
 
+You will see a conflict in the top-level Makefile.
+
+Please fix it like follows.  (it is also available in linux-next)
+
+---------------------------------------------------------------
+diff --cc Makefile
+index cc4875d,f17dd99..a0650bf
+--- a/Makefile
++++ b/Makefile
+@@@ -224,11 -224,14 +224,14 @@@ clean-targets := %clean mrproper cleand
+  no-dot-config-targets := $(clean-targets) \
+                         cscope gtags TAGS tags help% %docs check% coccicheck \
+                         $(version_h) headers_% archheaders archscripts \
+ -                       kernelversion %src-pkg
+ +                       %asm-generic kernelversion %src-pkg
++ no-sync-config-targets := $(no-dot-config-targets) install %install \
++                          kernelrelease
+
+- config-targets := 0
+- mixed-targets  := 0
+- dot-config     := 1
++ config-targets  := 0
++ mixed-targets   := 0
++ dot-config      := 1
++ may-sync-config := 1
+
+  ifneq ($(filter $(no-dot-config-targets), $(MAKECMDGOALS)),)
+        ifeq ($(filter-out $(no-dot-config-targets), $(MAKECMDGOALS)),)
+----------------------------------------------------------
+
+
+
+
+
+The following changes since commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe:
+
+  Linux 4.18-rc5 (2018-07-15 12:49:31 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kconfig-v4.19
+
+for you to fetch changes up to 1880861226c13ddd42c34ddd30c3b502b650fe29:
+
+  kconfig: remove P_ENV property type (2018-08-14 09:01:47 +0900)
+
+----------------------------------------------------------------
+Kconfig updates for v4.19
+
+- show clearer error messages where pkg-config is needed, but not
+  installed
+
+- rename SYMBOL_AUTO to SYMBOL_NO_WRITE to reflect its semantics
+
+- create all necessary directories by Kconfig tool itself instead
+  of Makefile
+
+- update the .config unconditionally when syncconfig is invoked
+
+- use 'include' directive instead of '-include' where
+  include/config/{auto,tristate}.conf is mandatory
+
+- do not try to update the .config when running install targets
+
+- add .DELETE_ON_ERROR to delete partially updated files
+
+- misc cleanups and fixes
+
+----------------------------------------------------------------
+Dirk Gouders (2):
+      kconfig: rename SYMBOL_AUTO to SYMBOL_NO_WRITE
+      Kbuild: Makefile.modbuiltin: include auto.conf and tristate.conf mandatory
+
+Masahiro Yamada (15):
+      kconfig: handle format string before calling conf_message_callback()
+      kconfig: rename file_write_dep and move it to confdata.c
+      kconfig: split out useful helpers in confdata.c
+      kconfig: remove unneeded directory generation from local*config
+      kconfig: create directories needed for syncconfig by itself
+      kconfig: make syncconfig update .config regardless of sym_change_count
+      kconfig: allow all config targets to write auto.conf if missing
+      kbuild: use 'include' directive to load auto.conf from top Makefile
+      kbuild: add .DELETE_ON_ERROR special target
+      kbuild: do not update config when running install targets
+      kbuild: do not update config for 'make kernelrelease'
+      kbuild: remove auto.conf from prerequisite of phony targets
+      kconfig: fix the rule of mainmenu_stmt symbol
+      kconfig: remove unused sym_get_env_prop() function
+      kconfig: remove P_ENV property type
+
+Randy Dunlap (2):
+      kconfig: check for pkg-config on make {menu,n,g,x}config
+      kconfig: fix typos in description of "choice" in kconfig-language.txt
+
+Rob Landley (1):
+      init/Kconfig: Use short unix-style option instead of --longname
+
+ Documentation/kbuild/kconfig-language.txt |   4 +-
+ Documentation/process/changes.rst         |   8 +++
+ Makefile                                  |  44 +++++++-----
+ init/Kconfig                              |   4 +-
+ scripts/Kbuild.include                    |   3 +
+ scripts/Makefile.modbuiltin               |   4 +-
+ scripts/kconfig/Makefile                  |  17 ++---
+ scripts/kconfig/check-pkgconfig.sh        |   8 +++
+ scripts/kconfig/conf.c                    |  39 +++++-----
+ scripts/kconfig/confdata.c                | 156
+++++++++++++++++++++++++++++++++--------
+ scripts/kconfig/expr.h                    |   3 +-
+ scripts/kconfig/gconf.c                   |   5 +-
+ scripts/kconfig/lkc.h                     |   2 -
+ scripts/kconfig/lkc_proto.h               |   4 +-
+ scripts/kconfig/mconf.c                   |  10 ++-
+ scripts/kconfig/menu.c                    |   2 +-
+ scripts/kconfig/nconf.c                   |   8 +--
+ scripts/kconfig/qconf.cc                  |   3 +-
+ scripts/kconfig/symbol.c                  |  13 +---
+ scripts/kconfig/util.c                    |  30 --------
+ scripts/kconfig/zconf.y                   |   6 +-
+ 21 files changed, 227 insertions(+), 146 deletions(-)
+ create mode 100644 scripts/kconfig/check-pkgconfig.sh
+
+
+-- 
+Best Regards
+Masahiro Yamada
