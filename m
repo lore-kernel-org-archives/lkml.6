@@ -2,82 +2,235 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6D5C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDA6C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F35FD2152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:17:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35FD2152A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 110F621566
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 22:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110F621566
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbeHPBLM (ORCPT
+        id S1727765AbeHPBPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 21:11:12 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46823 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeHPBLM (ORCPT
+        Wed, 15 Aug 2018 21:15:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38496 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeHPBPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 21:11:12 -0400
-Received: by mail-io0-f194.google.com with SMTP id x5-v6so2262281iop.13;
-        Wed, 15 Aug 2018 15:17:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4bGd+0qkZ/+YkySLkJaR88W7urjDSDFNTIrr4/9GhRE=;
-        b=ab5VIcW6J0d1KA6l/Zp9kEA8ygNrrxnFRjrMLU7Yr80bcFUX7Yb+wLVxcnJkVZvXUG
-         A54mQUMJttevJllUY24EbCIj6rOxx9rgKA7tT7v51pmew96RGMkFg2M5iUsXbYWEGLxJ
-         wTO+99dQ7ayGTPc66Pgb9JSyXrdQ3IK4YH1jk3KtlzL03I/qQE4J6+I1IC0R6Hq3gi89
-         BdtR6BIUVF049wXkl08WXe3vDNKexAurpad4HWNMizB3d4mvZkjgvASuMP9htOd21l+a
-         04li+Ptrf4nLFJQV0IMESURyioiKER6wbAFyJQuEYDoG/vwV79X2uH8DasQM2984eqIg
-         JsDw==
-X-Gm-Message-State: AOUpUlHn9H/L8/ADenII7kW966lW6lFNMN9KbuO/ika3ny0K8icCQg8v
-        TP/slk6oPfJdQWuxzjPRjA==
-X-Google-Smtp-Source: AA+uWPwJqfCzQhiYI66iuzHL/uza7AsrcpuBON3mdZ2kkznlr7eTlLnXHKhWLAenNKXjE5U3S7G/wA==
-X-Received: by 2002:a6b:ef0b:: with SMTP id k11-v6mr17219458ioh.12.1534371426822;
-        Wed, 15 Aug 2018 15:17:06 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm1644712ita.6.2018.08.15.15.17.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 15:17:06 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 16:17:05 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: Re: [PATCH 5/5] dt-bindings: arm: mediatek: add support for bananapi
- BPI-R64 board
-Message-ID: <20180815221705.GA7962@rob-hp-laptop>
-References: <68c4ca0158518d6bf50f2f7becfcb87ff3ce158a.1534130854.git.ryder.lee@mediatek.com>
- <93e3763cee209d7610307565a3ac02a0792417ae.1534130854.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93e3763cee209d7610307565a3ac02a0792417ae.1534130854.git.ryder.lee@mediatek.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 15 Aug 2018 21:15:44 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD5A1D5A;
+        Wed, 15 Aug 2018 22:21:36 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 15:21:35 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     osalvador@techadventures.net
+Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        Jonathan.Cameron@huawei.com, arbab@linux.vnet.ibm.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 3/4] mm/memory_hotplug: Make
+ register_mem_sect_under_node a cb of walk_memory_range
+Message-Id: <20180815152135.4f755e25c865af2054cfaf02@linux-foundation.org>
+In-Reply-To: <20180622111839.10071-4-osalvador@techadventures.net>
+References: <20180622111839.10071-1-osalvador@techadventures.net>
+        <20180622111839.10071-4-osalvador@techadventures.net>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Aug 2018 13:18:17 +0800, Ryder Lee wrote:
-> Update binding document for bananapi BPI-R64 board being supported.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+On Fri, 22 Jun 2018 13:18:38 +0200 osalvador@techadventures.net wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> From: Oscar Salvador <osalvador@suse.de>
+> 
+> link_mem_sections() and walk_memory_range() share most of the code,
+> so we can use convert link_mem_sections() into a dummy function that calls
+> walk_memory_range() with a callback to register_mem_sect_under_node().
+> 
+> This patch converts register_mem_sect_under_node() in order to
+> match a walk_memory_range's callback, getting rid of the
+> check_nid argument and checking instead if the system is still
+> boothing, since we only have to check for the nid if the system
+> is in such state.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Suggested-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+
+We have two tested-by's bu no reviewers or ackers?
+
+From: Oscar Salvador <osalvador@suse.de>
+Subject: mm/memory_hotplug.c: make register_mem_sect_under_node() a callback of walk_memory_range()
+
+link_mem_sections() and walk_memory_range() share most of the code, so we
+can use convert link_mem_sections() into a dummy function that calls
+walk_memory_range() with a callback to register_mem_sect_under_node().
+
+This patch converts register_mem_sect_under_node() in order to match a
+walk_memory_range's callback, getting rid of the check_nid argument and
+checking instead if the system is still boothing, since we only have to
+check for the nid if the system is in such state.
+
+Link: http://lkml.kernel.org/r/20180622111839.10071-4-osalvador@techadventures.net
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Suggested-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Tested-by: Reza Arbab <arbab@linux.vnet.ibm.com>
+Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ drivers/base/node.c  |   44 +++++------------------------------------
+ include/linux/node.h |   12 ++++++-----
+ mm/memory_hotplug.c  |    5 ----
+ 3 files changed, 14 insertions(+), 47 deletions(-)
+
+--- a/drivers/base/node.c~mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range
++++ a/drivers/base/node.c
+@@ -399,10 +399,9 @@ static int __ref get_nid_for_pfn(unsigne
+ }
+ 
+ /* register memory section under specified node if it spans that node */
+-int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
+-				 bool check_nid)
++int register_mem_sect_under_node(struct memory_block *mem_blk, void *arg)
+ {
+-	int ret;
++	int ret, nid = *(int *)arg;
+ 	unsigned long pfn, sect_start_pfn, sect_end_pfn;
+ 
+ 	if (!mem_blk)
+@@ -433,7 +432,7 @@ int register_mem_sect_under_node(struct
+ 		 * case, during hotplug we know that all pages in the memory
+ 		 * block belong to the same node.
+ 		 */
+-		if (check_nid) {
++		if (system_state == SYSTEM_BOOTING) {
+ 			page_nid = get_nid_for_pfn(pfn);
+ 			if (page_nid < 0)
+ 				continue;
+@@ -490,41 +489,10 @@ int unregister_mem_sect_under_nodes(stru
+ 	return 0;
+ }
+ 
+-int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages,
+-		      bool check_nid)
++int link_mem_sections(int nid, unsigned long start_pfn, unsigned long end_pfn)
+ {
+-	unsigned long end_pfn = start_pfn + nr_pages;
+-	unsigned long pfn;
+-	struct memory_block *mem_blk = NULL;
+-	int err = 0;
+-
+-	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		unsigned long section_nr = pfn_to_section_nr(pfn);
+-		struct mem_section *mem_sect;
+-		int ret;
+-
+-		if (!present_section_nr(section_nr))
+-			continue;
+-		mem_sect = __nr_to_section(section_nr);
+-
+-		/* same memblock ? */
+-		if (mem_blk)
+-			if ((section_nr >= mem_blk->start_section_nr) &&
+-			    (section_nr <= mem_blk->end_section_nr))
+-				continue;
+-
+-		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
+-
+-		ret = register_mem_sect_under_node(mem_blk, nid, check_nid);
+-		if (!err)
+-			err = ret;
+-
+-		/* discard ref obtained in find_memory_block() */
+-	}
+-
+-	if (mem_blk)
+-		kobject_put(&mem_blk->dev.kobj);
+-	return err;
++	return walk_memory_range(start_pfn, end_pfn, (void *)&nid,
++					register_mem_sect_under_node);
+ }
+ 
+ #ifdef CONFIG_HUGETLBFS
+--- a/include/linux/node.h~mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range
++++ a/include/linux/node.h
+@@ -33,10 +33,10 @@ typedef  void (*node_registration_func_t
+ 
+ #if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_NUMA)
+ extern int link_mem_sections(int nid, unsigned long start_pfn,
+-			     unsigned long nr_pages, bool check_nid);
++			     unsigned long end_pfn);
+ #else
+ static inline int link_mem_sections(int nid, unsigned long start_pfn,
+-				    unsigned long nr_pages, bool check_nid)
++				    unsigned long end_pfn)
+ {
+ 	return 0;
+ }
+@@ -54,12 +54,14 @@ static inline int register_one_node(int
+ 
+ 	if (node_online(nid)) {
+ 		struct pglist_data *pgdat = NODE_DATA(nid);
++		unsigned long start_pfn = pgdat->node_start_pfn;
++		unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
+ 
+ 		error = __register_one_node(nid);
+ 		if (error)
+ 			return error;
+ 		/* link memory sections under this node */
+-		error = link_mem_sections(nid, pgdat->node_start_pfn, pgdat->node_spanned_pages, true);
++		error = link_mem_sections(nid, start_pfn, end_pfn);
+ 	}
+ 
+ 	return error;
+@@ -69,7 +71,7 @@ extern void unregister_one_node(int nid)
+ extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
+ extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
+ extern int register_mem_sect_under_node(struct memory_block *mem_blk,
+-						int nid, bool check_nid);
++						void *arg);
+ extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+ 					   unsigned long phys_index);
+ 
+@@ -99,7 +101,7 @@ static inline int unregister_cpu_under_n
+ 	return 0;
+ }
+ static inline int register_mem_sect_under_node(struct memory_block *mem_blk,
+-							int nid, bool check_nid)
++							void *arg)
+ {
+ 	return 0;
+ }
+--- a/mm/memory_hotplug.c~mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range
++++ a/mm/memory_hotplug.c
+@@ -1123,7 +1123,6 @@ int __ref add_memory_resource(int nid, s
+ 	u64 start, size;
+ 	bool new_node = false;
+ 	int ret;
+-	unsigned long start_pfn, nr_pages;
+ 
+ 	start = res->start;
+ 	size = resource_size(res);
+@@ -1164,9 +1163,7 @@ int __ref add_memory_resource(int nid, s
+ 	}
+ 
+ 	/* link memory sections under this node.*/
+-	start_pfn = start >> PAGE_SHIFT;
+-	nr_pages = size >> PAGE_SHIFT;
+-	ret = link_mem_sections(nid, start_pfn, nr_pages, false);
++	ret = link_mem_sections(nid, PFN_DOWN(start), PFN_UP(start + size - 1));
+ 	BUG_ON(ret);
+ 
+ 	/* create new memmap entry */
+_
+
