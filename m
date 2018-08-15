@@ -2,114 +2,98 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDC7C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8D2C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2E021479
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:28:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e6XsM/wR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2E021479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 0901021479
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 15:28:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0901021479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbeHOSUk (ORCPT
+        id S1729819AbeHOSU7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 14:20:40 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37364 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729311AbeHOSUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 14:20:40 -0400
-Received: by mail-pl0-f68.google.com with SMTP id d5-v6so608946pll.4
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 08:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=rnTzvgA36ckKe0nn6tIRwKJTxndspYTB4aAIi0BI1q0=;
-        b=e6XsM/wRKt3DEA1MLk1YYG1CSYEcLkdWgXVJs/+boYVVYpbEjgkVBq809jlRgdyjr5
-         dnNDvGg0VrLfF1zD/rw3xlRwc1C3Wn9mFY061ctNWF9avAJgFJWYpOcA0gG1PuOM10il
-         InKGdS+1wH/r7Gpc/mbvBXW7KolWHGtdxaiB8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=rnTzvgA36ckKe0nn6tIRwKJTxndspYTB4aAIi0BI1q0=;
-        b=Q8OTFkCRfpt8Hc+x8RuNcxo50tM/LU8lz8XyF4GFmFzb8CX46R7YYjEk48357pUlMe
-         fNuh+rKCS3FnfgSriRmUcXTmtaLqFnd1u8sD+7UQSIlAr++JACEgX9SoUUXWYWcPQnSY
-         TRvQqeeIdHkpLoLSMGBlTZD5sa+5zql0zeivsXner3KLbp25aUw5yoUru4InY0wW2lEg
-         bSgLXXvK9Vp7p2bNOxBmXox5djhheUoz8gpZ8PPF6WWJ4I0iHL65KMe/LOn2S3mQapLB
-         HWT6RC0AcklWQrCYw1aVDnLDtf1e+RkGEuGZE0Mz8vWr5UMYPLk11N1bleEQmVeU8Z7o
-         GG5A==
-X-Gm-Message-State: AOUpUlFp/1QwxZpdAVbld7cF1Eo5cDnKMJCMpdR7cPvORKsyEtEbRSLE
-        +5IdU+NfylGx61Ph/SRJh/Qtrg==
-X-Google-Smtp-Source: AA+uWPzM4l6VLTsFb/+S3QxWyyyB4iIud3qrlqJBO6l+G0ahlsgpHxPpNaTQGfx4qayZpTJSaXafNw==
-X-Received: by 2002:a17:902:82c7:: with SMTP id u7-v6mr24706301plz.83.1534346884148;
-        Wed, 15 Aug 2018 08:28:04 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id x25-v6sm22145041pgv.63.2018.08.15.08.28.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Aug 2018 08:28:03 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
-        bjorn.andersson@linaro.org
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180814173058.26143-1-ilina@codeaurora.org>
-Cc:     marc.zyngier@arm.com, rplsssn@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org,
-        david.brown@linaro.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-References: <20180814173058.26143-1-ilina@codeaurora.org>
-Message-ID: <153434688280.37448.5200368407995060713@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] arm64: dts: msm: add PDC device bindings for sdm845
-Date:   Wed, 15 Aug 2018 08:28:02 -0700
+        Wed, 15 Aug 2018 14:20:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:56202 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729300AbeHOSU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Aug 2018 14:20:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8125780D;
+        Wed, 15 Aug 2018 08:28:22 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7504C3F5BC;
+        Wed, 15 Aug 2018 08:28:21 -0700 (PDT)
+Date:   Wed, 15 Aug 2018 10:28:20 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        <schwidefsky@de.ibm.com>, <heiko.carstens@de.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, <ast@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, <suzuki.poulosi@arm.com>,
+        <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+Message-Id: <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
+In-Reply-To: <20180815093912.GE2427@arm.com>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+        <20180813124642.3d49c082a95fc294d926016e@arm.com>
+        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
+        <20180815093912.GE2427@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-08-14 10:30:58)
-> Add PDC interrupt controller device bindings for SDM845.
-> =
+On Wed, 15 Aug 2018 10:39:13 +0100
+Will Deacon <will.deacon@arm.com> wrote:
 
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> =
+> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
+> > On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
+> > > The other thing that's going on here is that I'm becoming numb to the
+> > > loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+> > > returned no matter what the error is/was. E.g., an error that would
+> > > indicate a sense of non-implementation would be much better
+> > > appreciated than presumably what the above is doing, i.e., returning
+> > > -ENOMEM.  That, backed up with specific details in the form of human
+> > > readable text in dmesg would be *most* welcome.
+> > 
+> > As part of the refactoring of the code to support CPU-wide scenarios I
+> > intend to emit better diagnostic messages from the driver.  Modifying
+> > rb_alloc_aux() to propagate the error message generated by the
+> > architecture specific PMUs doesn't look hard either and I _may_ get to
+> > it as part of this work.
+> 
+> For the record, I will continue to oppose PMU drivers that dump diagnostics
+> about user-controlled input into dmesg, but the coresight drivers are yours
+> so it's up to you and I won't get in the way!
 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/q=
-com/sdm845.dtsi
-> index 24e254efb9d1..399bfbd52c5b 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1106,6 +1106,15 @@
->                         };
->                 };
->  =
+That sounds technically self-contradicting to me.  Why shouldn't
+coresight share the same policies as those used for PMU drivers?  Or
+why not allow the individual vendor PMU driver authors control the
+level of user-friendliness of their own drivers?
 
-> +               pdc: interrupt-controller@b220000 {
+That being said, Matheiu, would you accept patches that make coresight
+more verbose in dmesg?
 
-Please sort this by unit address within the SoC node.
-
-> +                       compatible =3D "qcom,sdm845-pdc";
-> +                       reg =3D <0xb220000 0x30000>;
-> +                       qcom,pdc-ranges =3D <0 512 94>, <94 641 15>, <115=
- 662 7>;
-> +                       #interrupt-cells =3D <2>;
-> +                       interrupt-parent =3D <&intc>;
-> +                       interrupt-controller;
-> +               };
-> +
->                 timer@17c90000 {
->                         #address-cells =3D <1>;
->                         #size-cells =3D <1>;
+Kim
