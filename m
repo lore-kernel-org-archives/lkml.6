@@ -2,160 +2,222 @@ Return-Path: <SRS0=5j8r=K6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A60DC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E94C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C872086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:51:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="REQGXvVS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C872086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 943782086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 15 Aug 2018 16:52:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943782086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729885AbeHOToe (ORCPT
+        id S1730138AbeHOTo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 15 Aug 2018 15:44:34 -0400
-Received: from mail-pf1-f176.google.com ([209.85.210.176]:33330 "EHLO
-        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729650AbeHOToe (ORCPT
+        Wed, 15 Aug 2018 15:44:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38212 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729527AbeHOTo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Aug 2018 15:44:34 -0400
-Received: by mail-pf1-f176.google.com with SMTP id d4-v6so752223pfn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 09:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=2w38piqzLfuMQZT6N2ceqvVw20xgZyYBNz1J15/zuzs=;
-        b=REQGXvVSzM4JIWp0ri3/lQWIMBNG/UCtwg5ji6Lp3OtzmdFCkLT//CxdIT7kSd3z4K
-         MoMb5r+ZRRja9nkm5SI2wDpC0kEbIIjtFdTSPjEAeKcDiBeFIgZ58kIgv0DwuktdOJGg
-         9jVXJxK4Ky3wxJwABRx0lGrzs9qKAm/M1hk3fLILiyCZm+RzYJ3RDh8FoFSdkzLXi7a0
-         72hIn/M59bO78Lg5twSvYGKqPNahHS8uJFfZE+zrZ/mBKUczVrLiaz3V5dTeYvONgarE
-         a0OruviJG/7GlLYgKAEZdOQEliCu397KYQXzM2aK/pgJRghtXNmQ0vH6McWxP5FXxiP0
-         3afg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=2w38piqzLfuMQZT6N2ceqvVw20xgZyYBNz1J15/zuzs=;
-        b=uGke1pnd4m8JyVrioB2eHYTbqydGd2Na0ghIpLXTvRMpre7dt5h/eQQDMciGPNPB5+
-         W7zS73iVOCpM8oJ3VSndc6VLMKuM0cHcUNRxMlwpQMfspJrNSXVNMjOKutqBOdFh3qWF
-         LBr+PuomghbXGvYwOgEkdSL5/Fvdsmv11dRyQAhTVxnXEyAjJrV2k+Ep1q5hHHADDhJe
-         1S7MjIpF6e+ouFNWSrq0QwLqxny5gmdBA/UhRiEARPMLpquwzorU0bQGI6Sgz2FU6aIG
-         ZQrkgg486SkYPLcBz3eBfYB7PLXo2BZ4fWHtZCdmOj3joe+RbnemjPeXMmf1DEbsZE/g
-         i4bQ==
-X-Gm-Message-State: AOUpUlFT8it+CNHY2s9sotyc0DIYO4Vj6ye8TRZCXfKtSIsAo09MvkQj
-        /31nBuC/0478QY+Khaf01pQhdw==
-X-Google-Smtp-Source: AA+uWPyVoAzgORLFf2AQjwvJBBDKWsAYmMHWKFVBHn/4IihAOnf/zMyVH+51qQQjPAJ8aXxpy4BVHg==
-X-Received: by 2002:a63:b213:: with SMTP id x19-v6mr25592505pge.393.1534351899223;
-        Wed, 15 Aug 2018 09:51:39 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b010:3fbd:7d76:67ee:fa0f:6b7f? ([2600:1010:b010:3fbd:7d76:67ee:fa0f:6b7f])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm61566635pgb.54.2018.08.15.09.51.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 09:51:37 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: Should we split the network filesystem setup into two phases?
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <17763.1534350685@warthog.procyon.org.uk>
-Date:   Wed, 15 Aug 2018 09:51:36 -0700
-Cc:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        sfrench@samba.org, steved@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org,
-        "Eric W. Biederman" <ebiederm@redhat.com>,
-        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DCE0E619-68F8-4906-8062-68D63DDED665@amacapital.net>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <17763.1534350685@warthog.procyon.org.uk>
-To:     David Howells <dhowells@redhat.com>
+        Wed, 15 Aug 2018 15:44:58 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7FGd4Q1066814
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:52:02 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kvqf11fj9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 12:52:01 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 15 Aug 2018 10:52:01 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 Aug 2018 10:51:58 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7FGptSp524762
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Aug 2018 09:51:55 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 117B4136053;
+        Wed, 15 Aug 2018 10:51:55 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76DCF13604F;
+        Wed, 15 Aug 2018 10:51:51 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.175.5])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Aug 2018 10:51:51 -0600 (MDT)
+Subject: Re: [PATCH v9 09/22] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180814131929.37d4b530.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 15 Aug 2018 12:51:50 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180814131929.37d4b530.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081516-0004-0000-0000-00001476FBA3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009549; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01073944; UDB=6.00553399; IPR=6.00853903;
+ MB=3.00022736; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-15 16:52:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081516-0005-0000-0000-00008877FC80
+Message-Id: <e4db069d-8abf-fcb9-77b2-511ecf877165@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808150177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/14/2018 07:19 AM, Cornelia Huck wrote:
+> On Mon, 13 Aug 2018 17:48:06 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Registers the matrix device created by the VFIO AP device
+>> driver with the VFIO mediated device framework.
+>> Registering the matrix device will create the sysfs
+>> structures needed to create mediated matrix devices
+>> each of which will be used to configure the AP matrix
+>> for a guest and connect it to the VFIO AP device driver.
+>>
+>> Registering the matrix device with the VFIO mediated device
+>> framework will create the following sysfs structures:
+>>
+>> /sys/devices/vfio_ap/matrix/
+>> ...... [mdev_supported_types]
+>> ......... [vfio_ap-passthrough]
+>> ............ create
+>>
+>> To create a mediated device for the AP matrix device, write a UUID
+>> to the create file:
+>>
+>> 	uuidgen > create
+>>
+>> A symbolic link to the mediated device's directory will be created in the
+>> devices subdirectory named after the generated $uuid:
+>>
+>> /sys/devices/vfio_ap/matrix/
+>> ...... [mdev_supported_types]
+>> ......... [vfio_ap-passthrough]
+>> ............ [devices]
+>> ............... [$uuid]
+>>
+>> A symbolic link to the mediated device will also be created
+>> in the vfio_ap matrix's directory:
+>>
+>> /sys/devices/vfio_ap/matrix/[$uuid]
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   MAINTAINERS                           |    1 +
+>>   drivers/s390/crypto/Makefile          |    2 +-
+>>   drivers/s390/crypto/vfio_ap_drv.c     |   23 ++++++
+>>   drivers/s390/crypto/vfio_ap_ops.c     |  124 +++++++++++++++++++++++++++++++++
+>>   drivers/s390/crypto/vfio_ap_private.h |   45 ++++++++++++
+>>   include/uapi/linux/vfio.h             |    1 +
+>>   6 files changed, 195 insertions(+), 1 deletions(-)
+>>   create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+>>
+>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>> new file mode 100644
+>> index 0000000..8018c2d
+>> --- /dev/null
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -0,0 +1,124 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Adjunct processor matrix VFIO device driver callbacks.
+>> + *
+>> + * Copyright IBM Corp. 2018
+>> + *
+>> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
+>> + *	      Halil Pasic <pasic@linux.ibm.com>
+>> + *	      Pierre Morel <pmorel@linux.ibm.com>
+>> + */
+>> +#include <linux/string.h>
+>> +#include <linux/vfio.h>
+>> +#include <linux/device.h>
+>> +#include <linux/list.h>
+>> +#include <linux/ctype.h>
+>> +
+>> +#include "vfio_ap_private.h"
+>> +
+>> +#define VFIO_AP_MDEV_TYPE_HWVIRT "passthrough"
+>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+>> +
+>> +static void vfio_ap_matrix_init(struct ap_config_info *info,
+>> +				struct ap_matrix *matrix)
+>> +{
+>> +	matrix->apm_max = info->apxa ? info->Na : 63;
+>> +	matrix->aqm_max = info->apxa ? info->Nd : 15;
+>> +	matrix->adm_max = info->apxa ? info->Nd : 15;
+>> +}
+>> +
+>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+>> +{
+>> +	struct ap_matrix_mdev *matrix_mdev;
+>> +
+>> +	matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
+>> +	if (!matrix_mdev)
+>> +		return -ENOMEM;
+>> +
+>> +	matrix_mdev->name = dev_name(mdev_dev(mdev));
+>> +	vfio_ap_matrix_init(&matrix_dev.info, &matrix_mdev->matrix);
+>> +	mdev_set_drvdata(mdev, matrix_mdev);
+>> +
+>> +	if (atomic_dec_if_positive(&matrix_dev.available_instances) < 0) {
+>> +		kfree(matrix_mdev);
+>> +		return -EPERM;
+>> +	}
+> Maybe move this check to the top of the function?
 
+I am going to remove this check. Since we have added a mutex to lock the
+matrix_dev, I see no need for the available_instances to be an atomic_t
+type because we can update it while holding the matrix_dev lock when the
+other updates are made to the matrix_dev.
 
-> On Aug 15, 2018, at 9:31 AM, David Howells <dhowells@redhat.com> wrote:
->=20
-> Having just re-ported NFS on top of the new mount API stuff, I find that I=
+>
+>> +
+>> +	mutex_lock(&matrix_dev.lock);
+>> +	list_add(&matrix_mdev->list, &matrix_dev.mdev_list);
+>> +	mutex_unlock(&matrix_dev.lock);
+>> +
+>> +	return 0;
+>> +}
 
-> don't really like the idea of superblocks being separated by communication=
-
-> parameters - especially when it might seem reasonable to be able to adjust=
-
-> those parameters.
->=20
-> Does it make sense to abstract out the remote peer and allow (a) that to b=
-e
-> configured separately from any superblocks using it and (b) that to be use=
-d to
-> create superblocks?
->=20
-> Note that what a 'remote peer' is would be different for different
-> filesystems:
-
-...
-
-I think this looks rather nice.  But maybe you should generalize the concept=
- of =E2=80=9Cpeer=E2=80=9D so that it works for btrfs too. In the case where=
- you mount two different subvolumes, you=E2=80=99re creating a *something*, a=
-nd you=E2=80=99re then creating a filesystem that references it. It=E2=80=99=
-s almost the same thing.
-
->=20
->=20
-
-
->=20
->    fs =3D fsopen("nfs", 0);
->    fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
-
-As you mention below, this seems like it might have namespacing issues.
-
->    =20
-
-> In terms of alternative interfaces, I'm not sure how easy it would be to m=
-ake
-> it like cgroups where you go and create a dir in a special filesystem, say=
-,
-> "/sys/peers/nfs", because the peers records and names would have to be net=
-work
-> namespaced.  Also, it might make it more difficult to use to create a root=
- fs.
->=20
-> On the other hand, being able to adjust the peer configuration by:
->=20
->    echo 71 >/sys/peers/nfs/server.home/timeo
->=20
-> does have a certain appeal.
->=20
-> Also, netlink might be the right option, but I'm not sure how you'd pin th=
-e
-> resultant object whilst you make use of it.
->=20
-
-My suggestion would be to avoid giving these things names at all. I think th=
-at referring to them by fd should be sufficient, especially if you allow the=
-m to be reopened based on a mount that uses them and allow them to get bind-=
-mounted somewhere a la namespaces to make them permanent if needed.
-
-> A further thought is that is it worth making this idea more general and
-> encompassing non-network devices also?  This would run into issues of some=
-
-> logical sources being visible across namespaces and but not others.
-
-Indeed :)
-
-It probably pays to rope a btrfs person into this discussion.
 
