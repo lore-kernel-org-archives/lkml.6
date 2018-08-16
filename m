@@ -2,120 +2,94 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E89C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA96C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D86F20C51
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B87020C0D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:01:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLOh+8vz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D86F20C51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="IP846aEY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B87020C0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbeHPU5t (ORCPT
+        id S1729509AbeHPVBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:57:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44832 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeHPU5s (ORCPT
+        Thu, 16 Aug 2018 17:01:24 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39414 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727662AbeHPVBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:57:48 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16-v6so4894273wrt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 10:57:52 -0700 (PDT)
+        Thu, 16 Aug 2018 17:01:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j8-v6so2357586pff.6
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 11:01:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=a68Dp5w64kmxCYTa8oRODqoDJpt7Y3sZMn2X4p6B6w8=;
-        b=dLOh+8vzWchQ+xd06sjgr7k2wDr1HC6Ro0mXfXRf7CLkxeAZ8+q6oAnNhwBIIVXQQ+
-         9n2YeP4enncLEZyB68rTVOkNtkGObs5DhERI9Al57Lsoe5oJ2Y6S7y5Lw3OscYysaqmi
-         rHCBJgPEcqUc11sWJy/r7j9MUhG6uDj/o8gpQ=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o6B1iukWEj8+R5qHvSHRhxLoIBnNoax4hFWQnMDL55Y=;
+        b=IP846aEYnq0W5MFq1uV9cYkNIEQYFXjXxgkXNcunUzAkkc4xfV6kSz2uVpDZeJZqbY
+         4imChSdhG7zKpwwh+HesnN90Cw9b6osowGh3apXXUOX7hfbZJw1cGIe/vnL9hcsq+v3Z
+         Bv5zbo45r0mJuEHKis3pSZIoIC8rXPccJ0aiqsDTs4WC3/CXVtus2QN53qsMpcXp3q8q
+         ZqKdsxoHJFx/Hjcso9gPwFlxPC4gVwhzyIG+ichWT43LTyxziXHVugA6egsL9He+w+sZ
+         EMw7vdyp9WVtoHjXOS5yFTA57FTtEzBerK7C6VMdw+3qGW4kS87Q0O9ct3Hf3Y5axRMv
+         4SoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=a68Dp5w64kmxCYTa8oRODqoDJpt7Y3sZMn2X4p6B6w8=;
-        b=MBRO59oLsc03WXJq7S/ajVu6ok+Si09mhtNtq4Po//bgIJo8gzHgh9A28sg24RAjFy
-         Mbj5hU/VXECnsWNpglcjIrTPsfd0Il2Ah8xCQrNr/unhjiZ8dxKrpJqY16L5hT/+w4+n
-         pm6o8xbCKoneUdSbVkmHiPlJ1yqb8Ifk76W5h675gipftCe7NtjvmHi6B5RaN4M0JmsE
-         Vj5u5aGpkyBNLDeHroy+SkWhx1aYoC5mu6QGLEXnp4HOp6d5Srj0mq19Dd1LOt8m05Bl
-         GIfQ2DBAmxrttm5TwnB5xYrdenhq2yvzDaIUVoN24x7ZE9286Yx5DrkkVAkCsts77Rkt
-         Wg0w==
-X-Gm-Message-State: AOUpUlFRfxV2y0PWs/7panCvx2OLs4Mc1DMDqQrRyVB9MUcZtO33n43l
-        5qzL6xjzjP8bQsvwY2VAR9paELAIRqGmK3JHTyDyEuvB
-X-Google-Smtp-Source: AA+uWPyh4bxgz4+KCZjNBzdt9NwBI2iocxVnFJOaR++u7B0NvZ4711A2Jz18pR0TH9WoNI6wjlB/jMPyfPCPvTXxchg=
-X-Received: by 2002:a5d:480d:: with SMTP id l13-v6mr19690463wrq.234.1534442272180;
- Thu, 16 Aug 2018 10:57:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o6B1iukWEj8+R5qHvSHRhxLoIBnNoax4hFWQnMDL55Y=;
+        b=DxBmBX30uUY5KClhtgoVXFZbdZMr04/6NTKhKXujLIq9KdWdFEuVy/kWa/Ctud28eA
+         9A3xBWyJBwFhpjyvlbMHJYqT0TWWfodpvSPqL0yHEsSy+vgStmsBqnx+ZVXz48z/lNHT
+         xrnX8YlcqFmgvjJvhvxHacUirleBv3JaI8sC9ArBKb5pdMW1vhAHMbw6fUUvXk4eTRov
+         EaQ1kMM855qBD63EnTjsjrxhW/R9EgpJTg25RXlKDgDApRB3VrxPb4+UJNZuB96PEhU+
+         B9kkfybQELveoj32CAEAzAjst1sc7PWrWpfZnQ0EcIl1LCvg1KS/GECuzNFtTpng37Wm
+         QW4Q==
+X-Gm-Message-State: AOUpUlEfzcJ4LW3fgNrcnMDSn9LSEs9duq6lrDDuRE+FBuj3nNTXqsHE
+        3Yy6oF1nYfyFF50FrakSHbm5IA==
+X-Google-Smtp-Source: AA+uWPzBY2TYymx/vhbc+glaRzd4V8dY7xchMamQXdPfmoALV/2W3xciooBsvmVkrbQLYqeKiNRnPw==
+X-Received: by 2002:a65:658d:: with SMTP id u13-v6mr30243707pgv.20.1534442487979;
+        Thu, 16 Aug 2018 11:01:27 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id g6-v6sm3363203pgg.7.2018.08.16.11.01.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Aug 2018 11:01:27 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fqMaM-0003CT-Nz; Thu, 16 Aug 2018 12:01:26 -0600
+Date:   Thu, 16 Aug 2018 12:01:26 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Howell, Seth" <seth.howell@intel.com>
+Cc:     "Walker, Benjamin" <benjamin.walker@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Moni Shoua <monis@mellanox.com>
+Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Message-ID: <20180816180126.GB10507@ziepe.ca>
+References: <20180814223303.83556-1-seth.howell@intel.com>
+ <20180815225021.GB31799@ziepe.ca>
+ <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 10:57:51
- -0700 (PDT)
-In-Reply-To: <20180816102219.GF31093@arm.com>
-References: <462f8ae6-9948-a8e5-7504-623d40344336@iki.fi> <20180816102219.GF31093@arm.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 16 Aug 2018 10:57:51 -0700
-Message-ID: <CALAqxLWJzpV2Mqkz_ed_5zYX3SFyMZTBgTzyRAden7ab3VNm-Q@mail.gmail.com>
-Subject: Re: AArch64 boot failure on Hikey960 on latest master after "arm64:
- insn: Don't fallback on nosync path for general insn patching"
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 3:22 AM, Will Deacon <will.deacon@arm.com> wrote:
-> Hi Tuomas, [+John]
->
-> On Thu, Aug 16, 2018 at 02:38:51AM +0300, Tuomas Tynkkynen wrote:
->> Booting Linus's master of today with the usual arm64 defconfig fails for
->> me on the Hikey960 board. I've bisected it down to:
->>
->> commit 693350a7998018391852c48f68956cf0f855b2b9 (HEAD, refs/bisect/bad)
->> Author: Will Deacon <will.deacon@arm.com>
->> Date:   Tue Jun 19 17:55:28 2018 +0100
->>
->>     arm64: insn: Don't fallback on nosync path for general insn patching
->>
->> Here's the boot log with earlycon enabled after which the boot hangs:
->
-> Thanks for the boot log, that's really helpful. Please can you try the diff
-> below?
->
-> Out of interest -- do you know if Hikey960 is used by any boot-testing
-> farms? The patch above has been in linux-next for ages, but we didn't see
-> any complaints until it hit mainline :(
+On Wed, Aug 15, 2018 at 11:27:36PM +0000, Howell, Seth wrote:
 
-Unfortunately not yet. HiKey960 upstreaming is ongoing, and the UFS
-support patches should land in the 4.19 merge window.
-After which, it will enable more mainline testing as folks won't have
-to carry patches just to get the system to boot.
+> Thank you for taking the time to review this issue. The patch you
+> submitted will definitely fix the problem I was facing.
 
-> diff --git a/arch/arm64/kernel/jump_label.c b/arch/arm64/kernel/jump_label.c
-> index c2dd1ad3e648..e0756416e567 100644
-> --- a/arch/arm64/kernel/jump_label.c
-> +++ b/arch/arm64/kernel/jump_label.c
-> @@ -36,7 +36,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
->                 insn = aarch64_insn_gen_nop();
->         }
->
-> -       aarch64_insn_patch_text(&addr, &insn, 1);
-> +       aarch64_insn_patch_text_nosync(addr, insn);
->  }
->
->  void arch_jump_label_transform_static(struct jump_entry *entry,
+Can you test it to be certain?
 
-Yes, this works for me as well.
-
-Tested-by: John Stultz <john.stultz@linaro.org>
-
-thanks so much!
--john
+Thanks,
+Jason
