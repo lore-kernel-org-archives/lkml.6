@@ -2,154 +2,133 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D1FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A7AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF6F2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF6F2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 0315B21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:59:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="M1W58xaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0315B21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403959AbeHPR5y (ORCPT
+        id S2403972AbeHPR6s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:57:54 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56232 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeHPR5y (ORCPT
+        Thu, 16 Aug 2018 13:58:48 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:43368 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726022AbeHPR6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:57:54 -0400
-Received: by mail-wm0-f67.google.com with SMTP id f21-v6so4768699wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 07:58:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fI41CY9gpxX1U74eBVvDEDeEuWg5DUse5b/sAhmVZ9A=;
-        b=Lsv0YKm6b3xLUXNK+dFIR8bEDXZF6rKiuSrYvmZMk5zVL4R3F1ZAYpohPQVIL/DfZj
-         UqCHfGbWjns+CPq/7JoeHNIghdLFd6c3YY3K84yMWnFZpuOYqB6CUaezH3TWZcNbw/Ss
-         BQDPPTbsFlbJ/DQLRt8AO3mgsCmNyWgo3T2kS0WjTSwH4UFNBSCYLAcvtedJe9Ik+KnR
-         V1gyoSE/bP+UET9+0UpOZIvEkEkqxREYEBHeSs2FeE1OVstFoF98htEgTrWISdvJaFkL
-         wbWSpLfcMALyZ+jH/2znfpx5/jhNsbgmLdw5qM9epwh8jh37NFb47pbeuLzuqthovi3K
-         6i6g==
-X-Gm-Message-State: AOUpUlFl38qZQN7gV63TNej9ljanKDWq/7VzwXuWELgtTVapDP/Wn/vk
-        MQdqIf+1aDTjhc7qkblUgPPNIokAAyE=
-X-Google-Smtp-Source: AA+uWPxgMFw65i3NRENhO36c864gwfPFKWBaoWG3dztzZyYMVoQs/P8gFgS2JnJKaFHbdX2IUbajaA==
-X-Received: by 2002:a1c:ea17:: with SMTP id i23-v6mr16762341wmh.29.1534431531227;
-        Thu, 16 Aug 2018 07:58:51 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id v14-v6sm770264wmh.41.2018.08.16.07.58.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 07:58:50 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 6FA2C1248F0; Thu, 16 Aug 2018 16:58:49 +0200 (CEST)
-Date:   Thu, 16 Aug 2018 16:58:49 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, Pavel.Tatashin@microsoft.com,
-        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180816145849.GA17638@techadventures.net>
-References: <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <20180807145900.GH10003@dhcp22.suse.cz>
- <20180807151810.GB3301@redhat.com>
- <20180808064758.GB27972@dhcp22.suse.cz>
- <20180808165814.GB3429@redhat.com>
- <20180809082415.GB24884@dhcp22.suse.cz>
- <20180809142709.GA3386@redhat.com>
- <20180809150950.GB15611@dhcp22.suse.cz>
- <20180809165821.GC3386@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180809165821.GC3386@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 16 Aug 2018 13:58:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 06D5E8EE171;
+        Thu, 16 Aug 2018 07:59:47 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id gHKZfNQlFF6u; Thu, 16 Aug 2018 07:59:46 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 41BC38EE092;
+        Thu, 16 Aug 2018 07:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1534431586;
+        bh=p5vmq23YstOfS1KfebH9fwWCi0fanc2JFLrWwpNsEF0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=M1W58xaUhJ2u0XRoFTJKOzU48wKV4xwuNA8b9UnDp81nvBN0WhOvNdNNsyvmutBmd
+         C1QsRqe7CmvBvYsni0QSZf31axqRBCORUEcJrD5JESagCnIZSQUdD1TVP3XJ6GiEJH
+         U7RnzBkYBiAyWbO7PTcMZdk8HiLKv1wTCWw2glDM=
+Message-ID: <1534431585.3166.4.camel@HansenPartnership.com>
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom
+ platform keys to boot
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Yannik Sembritzki <yannik@sembritzki.me>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Justin M. Forbes" <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Date:   Thu, 16 Aug 2018 07:59:45 -0700
+In-Reply-To: <25236.1534430630@warthog.procyon.org.uk>
+References: <1534429345.3166.1.camel@HansenPartnership.com>
+         <20180815185812.GC29541@redhat.com>
+         <20180815100053.13609-1-yannik@sembritzki.me>
+         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+         <20180815174247.GB29541@redhat.com>
+         <4911.1534421610@warthog.procyon.org.uk>
+         <25236.1534430630@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 12:58:21PM -0400, Jerome Glisse wrote:
-> I agree, i never thought about that before. Looking at existing resource
-> management i think the simplest solution would be to use a refcount on the
-> resources instead of the IORESOURCE_BUSY flags.
+On Thu, 2018-08-16 at 15:43 +0100, David Howells wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 > 
-> So when you release resource as part of hotremove you would only dec the
-> refcount and a resource is not busy only when refcount is zero.
+> > I've told you several times you can't use the secure boot keys for
+> > any form
+> > of trust beyond boot,
 > 
-> Just the idea i had in mind. Right now i am working on other thing, Oscar
-> is this something you would like to work on ? Feel free to come up with
-> something better than my first idea :)
+> Yes - and you've been told several times that you're wrong.
+> 
+> As far as I can tell, you seem to think that whilst keys from the
+> UEFI storage could be used to verify a hacked module, they couldn't
+> be used to verify a hacked boot-time component (shim, grub, kernel,
+> etc.).
 
-So, I thought a bit about this.
-First I talked a bit with Jerome about the refcount idea.
-The problem with reconverting this to refcount is that it is too intrusive,
-and I think it is not really needed.
+I'm actually not talking about UEFI storage, just the UEFI secure boot
+database.  I think we might come up with a viable model for adding keys
+from a UEFI variable that isn't part of the secure boot database.
 
-I then thought about defining a new flag, something like
+> However, if you can load a hacked module, you can very likely replace
+> the shim, say, with a hacked one.  In fact, replacing the shim may be
+> easier because modules are tied to their parent kernel in other ways
+> besides the signing key, whereas a shim must be standalone.
 
-#define IORESOURCE_NO_HOTREMOVE	xxx
+I think our misunderstanding is around the granularity of security. 
+You seem to be arguing that it's monolithic; that's true for compromise
+(usually one compromise to anything breaks everything) but it's not
+true for trust.  Trust goes in defined boundaries.  For the secure boot
+keys that boundary ends after boot which is why trusting them into the
+kernel runtime is wrong.
 
-but we ran out of bits for the flag field.
+The reason for keeping this boundary is to do with the politics of
+breaches.  If we get a breach to the secure boot boundary, Microsoft
+and all the ODMs will help us hunt it down and plug it (They have no
+option because Windows is threatened by any breach to that boundary). 
+If we use the keys beyond the secure boot boundary and get a breach
+that only affects our use case no-one will help us because no-one will
+care.
 
-I then thought about doing something like:
+> I will grant, however, that it I can understand a desire to reduce
+> the attack surface by not trusting the UEFI keys beyond booting - but
+> then you shouldn't use them for kexec *either*.
 
-struct resource {
-        resource_size_t start;
-        resource_size_t end;
-        const char *name;
-        unsigned long flags;
-        unsigned long desc;
-        struct resource *parent, *sibling, *child;
-#ifdef CONFIG_MEMORY_HOTREMOVE
-        bool device_managed;
-#endif
-};
+Depends whether you see kexec as a boot process or not, I think.
 
-but it is just too awful, not needed, and bytes consuming.
+> > Personally, I don't see any use for the UEFI keys in the kernel
+> > beyond kexec
+> 
+> Allowing you to load the NVidia module, say, into the kernel without
+> the distribution having to build it in with the kernel.
 
-The only idea I had left is:
+How about I address that one in your invitation to a flamewar?
 
-register_memory_resource(), which defines a new resource for the added memory-chunk
-is only called from add_memory().
-This function is only being hit when we add memory-chunks.
+James
 
-HMM/devm gets the resources their own way, calling devm_request_mem_region().
-
-So resources that are requested from HMM/devm, have the following flags:
-
- (IORESOURCE_MEM|IORESOURCE_BUSY)
-
-while resources that are requested via mem-hotplug have:
-
- (IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY)
-
-IORESOURCE_SYSTEM_RAM = (IORESOURCE_MEM|IORESOURCE_SYSRAM)
-
-
-release_mem_region_adjustable() is only being called from hot-remove path, so
-unless I am mistaken, all resources hitting that path should match IORESOURCE_SYSTEM_RAM.
-
-That leaves me with the idea that we could check for the resource->flags to contain IORESOURCE_SYSRAM,
-as I think it is only being set for memory-chunks that are added via memory-hot-add path.
-
-In case it is not, we know that that resource belongs to HMM/devm, so we can back off since
-they take care of releasing the resource via devm_release_mem_region.
-
-I am working on a RFC v2 containing this, but, Jerome, could you confirm above assumption, please?
-
-Of course, ideas/suggestions are also welcome.
-
-Thanks
--- 
-Oscar Salvador
-SUSE L3
