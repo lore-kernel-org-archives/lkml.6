@@ -2,211 +2,141 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92998C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A6DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33121214C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:18:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Xclg4pJQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33121214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 78884214C1
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:20:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78884214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388228AbeHPINt (ORCPT
+        id S2388237AbeHPIP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 04:13:49 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:41004 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeHPINt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 04:13:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1534396682; x=1565932682;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=+A3Tp9CZjFjVC1BMc+dlztRpvUnYD33l+lEXaluQXrA=;
-  b=Xclg4pJQkhp6+dWFnovBSyg8Ud+kF7DLLHuBEoRWCL99X5QjXmF5ev3l
-   b42CQnDdZmRYhBLJBcKni7FbFEcZdO4Sg8+1LFnlDyd9OED6iYqo3RFo7
-   6urJFg1StWGjnMktRC+qBTlZhiOdi0g4KjKSibT+uF68ZCr9BBbJfPBqI
-   DADJVMO+B9N+y4Ig22ATkUvKqGPK5uDB9/8HrVnzrvUqin1fN8HqKPkNQ
-   UnXU1Jdiw30BUODiV5LvafytW+8dQNDK+Ey6i8twrzQ1kZUvGLteUU5Gw
-   cOKpvwwe5q8PSNrN/73aySXeEq5zD3IxXT2Aj0b3RXEhDS+tuJXiIAhad
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.53,246,1531756800"; 
-   d="scan'208";a="89191687"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Aug 2018 13:18:02 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 15 Aug 2018 22:05:24 -0700
-Received: from 570dpc2.ad.shared (HELO [10.86.59.225]) ([10.86.59.225])
-  by uls-op-cesaip02.wdc.com with ESMTP; 15 Aug 2018 22:18:02 -0700
-Subject: Re: [RFC PATCH 1/5] RISC-V: Add logical CPU indexing for RISC-V
-To:     Anup Patel <anup@brainfault.org>
-Cc:     "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-References: <1534377377-70108-1-git-send-email-atish.patra@wdc.com>
- <1534377377-70108-2-git-send-email-atish.patra@wdc.com>
- <CAAhSdy1Legi9jzYnkN2am3QKLw7Y8tpbUfmJVA0gBRB4nPnXjA@mail.gmail.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <7bc075fc-7039-62d8-c708-1c36233b7126@wdc.com>
-Date:   Wed, 15 Aug 2018 22:17:58 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Thu, 16 Aug 2018 04:15:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726295AbeHPIP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 04:15:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A82B2AD06;
+        Thu, 16 Aug 2018 05:20:07 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 16 Aug 2018 15:19:59 +1000
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-samsung-soc\@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock request to block other requests."
+In-Reply-To: <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
+References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com> <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
+Message-ID: <87o9e2anwg.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <CAAhSdy1Legi9jzYnkN2am3QKLw7Y8tpbUfmJVA0gBRB4nPnXjA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/15/18 9:06 PM, Anup Patel wrote:
-> On Thu, Aug 16, 2018 at 5:26 AM, Atish Patra <atish.patra@wdc.com> wrote:
->> Currently, both linux cpu id and hardware cpu id are same.
->> This is not recommended as it will lead to discontinuous cpu
->> indexing in Linux. Moreover, kdump kernel will run from CPU0
->> which would be absent if we follow existing scheme.
->>
->> Implement a logical mapping between Linux cpu id and hardware
->> cpuid to decouple these two. Always mark the boot processor as
->> cpu0 and all other cpus get the logical cpu id based on their
->> booting order.
->>
->> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->> ---
->>   arch/riscv/include/asm/smp.h | 17 ++++++++++++++++-
->>   arch/riscv/kernel/setup.c    |  2 ++
->>   arch/riscv/kernel/smp.c      | 19 +++++++++++++++++++
->>   3 files changed, 37 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
->> index 36016845..0763337b 100644
->> --- a/arch/riscv/include/asm/smp.h
->> +++ b/arch/riscv/include/asm/smp.h
->> @@ -22,6 +22,12 @@
->>   #include <linux/cpumask.h>
->>   #include <linux/irqreturn.h>
->>
->> +/*
->> + * Mapping between linux logical cpu index and hartid.
->> + */
->> +extern u64 __cpu_logical_map[NR_CPUS];
->> +#define cpu_logical_map(cpu)    __cpu_logical_map[cpu]
->> +
->>   #ifdef CONFIG_SMP
->>
->>   /* SMP initialization hook for setup_arch */
->> @@ -33,6 +39,8 @@ void arch_send_call_function_ipi_mask(struct cpumask *mask);
->>   /* Hook for the generic smp_call_function_single() routine. */
->>   void arch_send_call_function_single_ipi(int cpu);
->>
->> +int riscv_hartid_to_cpuid(int hartid);
->> +void cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out);
->>   /*
->>    * This is particularly ugly: it appears we can't actually get the definition
->>    * of task_struct here, but we need access to the CPU this task is running on.
->> @@ -41,6 +49,13 @@ void arch_send_call_function_single_ipi(int cpu);
->>    */
->>   #define raw_smp_processor_id() (*((int*)((char*)get_current() + TASK_TI_CPU)))
->>
->> -#endif /* CONFIG_SMP */
->> +#else
->> +
->> +static inline int riscv_hartid_to_cpuid(int hartid) { return 0 ; }
->> +static inline void cpuid_to_hartid_mask(const struct cpumask *in,
->> +                                      struct cpumask *out) {
->> +       cpumask_set_cpu(cpu_logical_map(0), out);
->> +}
->>
->> +#endif /* CONFIG_SMP */
->>   #endif /* _ASM_RISCV_SMP_H */
->> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
->> index db20dc63..e21ed481 100644
->> --- a/arch/riscv/kernel/setup.c
->> +++ b/arch/riscv/kernel/setup.c
->> @@ -82,6 +82,8 @@ EXPORT_SYMBOL(empty_zero_page);
->>   /* The lucky hart to first increment this variable will boot the other cores */
->>   atomic_t hart_lottery;
->>
->> +u64 __cpu_logical_map[NR_CPUS];
-> 
-> If hardware IDs are always machine word size then its better to use
-> "unsigned long" in-place of u64.
-> 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Good point. Thanks.
+On Wed, Aug 15 2018, Jeff Layton wrote:
 
-> The __cpu_logical_map[] should be zero initially because zero is a
-> valid hardware ID. Better set all entries to -1 by assigning { -1 } to the
-> array.
-> 
+> On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
+>> Hi,
+>>=20
+>> Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
+>> ("fs/locks: allow a lock request to block other requests.") to failure
+>> boot of NFSv4 with root on several boards.
+>>=20
+>> Log is here:
+>> https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
+>>=20
+>> With several errors:
+>> kernel BUG at ../fs/locks.c:336!
+>> Unable to handle kernel NULL pointer dereference at virtual address 0000=
+0004
+>>=20
+>> Configuration:
+>> 1. exynos_defconfig
+>> 2. Arch ARM Linux
+>> 3. Boards:
+>> a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
+>> b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
+>> 4. Systemd: v236, 238
+>> 5. All boards boot from TFTP with NFS root (NFSv4)
+>>=20
+>> On Colibri VF50 I got slightly different errors:
+>> [   11.663204] Internal error: Oops - undefined instruction: 0 [#1] ARM
+>> [   12.455273] Unable to handle kernel NULL pointer dereference at
+>> virtual address 00000004
+>> and only with some specific GCC (v6.3) or with other conditions which
+>> I did not bisect yet. Maybe Colibri's failure is unrelated to that
+>> commit.
+>>=20
+>> Best regards,
+>> Krzysztof
 
-ok. I will introduce INVALID_HART_ID (=-1) and initialize with that.
+Thanks a lot for the report Krzysztof!!
 
-> Also, I feel  __cpu_logical_map[] should be part of smp.c instead of
-> setup.c. Any particular reason for having it in setup.c?
-> 
+>
+> The BUG is due to a lock being freed when the fl_blocked list wasn't
+> empty (implying that there were still blocked locks waiting on it).
+>
+> There are a number of calls to locks_delete_lock_ctx in posix_lock_inode
+> and I don't think the fl_blocked list is being handled properly with all
+> of them. It only transplants the blocked locks to a new lock when there
+> are surviving locks on the list, and that may not be the case when the
+> whole file is being unlocked.
 
-currently smp.c is only compiled in if CONFIG_SMP. That's why I kept it 
-in setup.c
+locks_delete_lock_ctx() calls locks_unlink_lock_ctx() which calls
+locks_wake_up_block() which doesn't only wake_up the blocks, but also
+detached them. When that function completes, ->fl_blocked must be empty.
 
+The trace shows the locks_free_lock() call at the end of fcntl_setlk64()
+as the problematic call.
+This suggests that do_lock_file_wait() exited with ->fl_blocked
+non-empty, which it shouldn't.
 
-Regards,
-Atish
->> +
->>   #ifdef CONFIG_BLK_DEV_INITRD
->>   static void __init setup_initrd(void)
->>   {
->> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
->> index 906fe21e..d55379ee 100644
->> --- a/arch/riscv/kernel/smp.c
->> +++ b/arch/riscv/kernel/smp.c
->> @@ -38,7 +38,26 @@ enum ipi_message_type {
->>          IPI_MAX
->>   };
->>
->> +int riscv_hartid_to_cpuid(int hartid)
->> +{
->> +       int i = -1;
->> +
->> +       for (i = 0; i < NR_CPUS; i++)
->> +               if (cpu_logical_map(i) == hartid)
->> +                       return i;
->> +
->> +       pr_err("Couldn't find cpu id for hartid [%d]\n", hartid);
->> +       BUG();
->> +       return i;
->> +}
->>
->> +void cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out)
-> 
-> May be rename cpuid_to_hartid_mask() to riscv_cpuid_to_hartid_mask()
-> for consistency.
-> 
->> +{
->> +       int cpu;
->> +
->> +       for_each_cpu(cpu, in)
->> +               cpumask_set_cpu(cpu_logical_map(cpu), out);
->> +}
->>   /* Unsupported */
->>   int setup_profiling_timer(unsigned int multiplier)
->>   {
->> --
->> 2.7.4
->>
-> 
+I think we need to insert a call to locks_wake_up_block() in
+do_lock_file_wait() before it returns.
+I cannot find a sequence that would make this necessary, but
+it isn't surprising that there might be one.
 
+I'll dig through the code a bit more later and make sure I understand
+what is happening.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt1CX8ACgkQOeye3VZi
+gbmzlRAAk2m+Da7jlPd3bZsAFMEg/mNhyNH3ZKpOLv4kLuHIHf51bX0DqFNsJaro
+XzAuTbgpj8o1EycMhV2uwMAhUVk5GvqUebcQUZa0XTcRTyrwGMlc+2WgtJrPBU9y
+/Jgnnro68Zo+rYdvy+YFQKjXFvhKwNWEeqeqMH3v62eO2gIyjatL+Vpgyim+U5zn
+S0uxVLl31wWXU9YSLJW/8SKXbfJJnxKIJ1YmwChFsr5HaKPnIk3Nct+hAU43Qv2C
+1PmBNZjQOIzN3qqZJM5Crj5IDsFnNoIgxhOromgX2tUQ34iksWyKbg63lRuG4x79
+UKXbZMxon8JPyMfQpXq+lwrBbpfawTVNnYT0T+c6/ZA3avwI97CgVybgXRcFu8sw
+S5GdSh1ZfXMH8F3yFp13JD6pb7gqlxWjNwBXF1jQNPdJOflTNN+OyfjEyW87v6vG
+Jqbt3g5utzLmo8BvipaIJkoQ8eoHXyNn/13TTHIABQeLRYJ0aQpena4kvA6eo7SA
+ZxDlxt2o66qB6DzmxI7ez+uCBtKNeIg16WBn2i9pF4QgxOujHU/dEkUH/vg0qJjA
+CBADZOSTtOKkzp7t/3vrS21tpSvwhJ4Jb6M1PL+yDMP2OelNr2LV6Y4p75a8XOeB
+D+fw90Ug5nvZUaWoKWzsQbr/NvhQsDdXWnBc1iXhzmecFsR9gsE=
+=qiMl
+-----END PGP SIGNATURE-----
+--=-=-=--
