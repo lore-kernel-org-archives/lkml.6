@@ -2,150 +2,253 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C31E2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5261C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E0D208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E4A3208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jHFVEWZN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E0D208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LHpax/X8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4A3208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbeHQBMr (ORCPT
+        id S1726047AbeHQBR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 21:12:47 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35239 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeHQBMr (ORCPT
+        Thu, 16 Aug 2018 21:17:28 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36621 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbeHQBR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 21:12:47 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o18-v6so5691881wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 15:11:54 -0700 (PDT)
+        Thu, 16 Aug 2018 21:17:28 -0400
+Received: by mail-it0-f68.google.com with SMTP id p81-v6so8936362itp.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 15:16:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=CeyocFqr5RvyDdFZRocO2aCL6J/4HkqxBM/pzCh2ttY=;
-        b=jHFVEWZN7aMHUU3DKsmMlojrXMDVySn0hkPhAF2TsoJZQz8jwDuECheWdTKYfTSs7y
-         LfZWOWopDfUY7kx/+YYMaL0L7+W9SEbVV1d/FfkAiAwRIoanQGOfXxSFuHwjK6v0AJXG
-         uv0E2UZLb7X2PLqpEDW2XdhMuf6kEI4UszkmY=
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=NzW2/MkenckITEon2Sc7c1PDvG6EUmEi4Mi8Ch5Y4V4=;
+        b=LHpax/X8lFAeH0pPdDNAsYG8ROSkOnoP9/d7bNDQ+qP8/NRicIFs9gz38l9fVS7oFF
+         Ct+X31L7kNwLE5ytbmNWNow/bszqRkiWZGEoBNmMRkn8YU49NWJ/EYfZpcSdDIqOKrqq
+         TOPwVcoKBxq9VGBn3Rc8HSijnCjDVMdi5oQpE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=CeyocFqr5RvyDdFZRocO2aCL6J/4HkqxBM/pzCh2ttY=;
-        b=SguMg/jE5k3AAqsUWnQC/Bsl9jhbMKRsZm6/0xVcQqh4xOk5HrLwi+Z1BkqDIehLjL
-         y9P4w88NbnNeeXJ0Mx4G8gxdB+S3Dpbxvcv5zb/w/3PXEoaVMYeoNLsNWcfl36Jau4kM
-         AYrup3QC/g802GOkXTvQpMa4jaggxoCBUaoWd22h13+4VyHvazhbbthhJhmS0pc/WAq1
-         LAYB+cAPuxdJtqrr5kzNpiGX3UkBkS4ScxPcM+uoayjfSPjtz449CKaEIfOs6p0NEGxy
-         4TMHpnAOrICnesjpe0o7YZ7VwgIx/wcVu3DwKi9erICBVpbp8eiDa0oBc2OLqF0pOu5F
-         9Gtw==
-X-Gm-Message-State: AOUpUlE5D4aDmyAzdUiiie3DJ/v+3WK/fiC0hRYxb8NJ3nEqelGpLJlV
-        1rflSpz6ooVR/WcKKxEgvSp3uS3qQvROYVNxtGwZ8g==
-X-Google-Smtp-Source: AA+uWPyja8Wws/impeUK9ZkGb7QAGN7OVdc7KxwlFpIfDYlr6qKanoL9TJwogUwPFeqmaT43kOZZsPzdsPHPSvIi8w8=
-X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr16499493wma.101.1534457514032;
- Thu, 16 Aug 2018 15:11:54 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=NzW2/MkenckITEon2Sc7c1PDvG6EUmEi4Mi8Ch5Y4V4=;
+        b=PKYA4QpsJ5psFMhkecSrmrme7qBMVOhjtAI2yqJzjSudQM95YiN6U2yrEhLThNHUWz
+         398eNVHjYY+tdY/YIdwna54K0/rJpKWBFszB4Pe620bNf3soPu4hGw9TK7K7xlcOW5jg
+         sRYhR9sMkeFnzHX1YWVuCdQkncsBnm23umimLSHBAD4kQ287yT1tORd1VrUyMBSywQPz
+         Ies+ZMda9R3Aer8MZS6POQoF7a4MfL8blnBQv3R96ApxiYSAEXAloekTjloGJtyEd6QM
+         v9z4g1u8Wg2Yct/UYlEtjtHL12+tWv2yDfxBqOjMg5jh/5hb+micBEWa93T9HgL8dZUj
+         XoTw==
+X-Gm-Message-State: AOUpUlGTWKEnsqiA2e7Aj+cYVRGHFTGA6ztOZ8bkERgrofk4wmLKd5LS
+        xptw8c9nYaJqISMxNNRF3huBR/Uo/2l0Mo6d9ZxgjQ==
+X-Google-Smtp-Source: AA+uWPxznWU9F+1y6eqbOduvdC2yX6yZV54yzPmP0lTcwoBi8NKoxKqREGpZv6LlARiIErSbuF6LVLsBgB/jrGTqBOY=
+X-Received: by 2002:a24:6e0f:: with SMTP id w15-v6mr23673454itc.77.1534457795091;
+ Thu, 16 Aug 2018 15:16:35 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 15:11:53
+Received: by 2002:a4f:e502:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 15:16:34
  -0700 (PDT)
-In-Reply-To: <CALAqxLWq-wgbc+aS0p45rvxmPj3KicsOV5ucCB-tcKWr74uqCQ@mail.gmail.com>
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <CALAqxLVrZXRT875-AxN=jt_kSD5=Nb9SuCW4PEsVL=pQkT_ugw@mail.gmail.com>
 References: <CAPM=9txqtcX42eSYjkyJLL8mmzomXRRHi7iWmW=BYgk=CAagZg@mail.gmail.com>
  <CALAqxLXt3MOc=W_gnsR=D=Um5RPsK+6sTKDbSiqro_53ZbXfQQ@mail.gmail.com>
- <CAKMK7uFb0jXVm4gGr_TR07mhT924sTORGXZVNzx4rdTe3Pj94Q@mail.gmail.com> <CALAqxLWq-wgbc+aS0p45rvxmPj3KicsOV5ucCB-tcKWr74uqCQ@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 16 Aug 2018 15:11:53 -0700
-Message-ID: <CALAqxLXX7zDRaYM0RTcXoF+hTzvUUbpEm44vQHABzNXGCn1H+w@mail.gmail.com>
+ <CAKMK7uFb0jXVm4gGr_TR07mhT924sTORGXZVNzx4rdTe3Pj94Q@mail.gmail.com>
+ <CALAqxLWq-wgbc+aS0p45rvxmPj3KicsOV5ucCB-tcKWr74uqCQ@mail.gmail.com>
+ <CAKMK7uEbfa24DaDbWjxgerzH69q-niHS5==z6NqJd3Yxi0q+7A@mail.gmail.com> <CALAqxLVrZXRT875-AxN=jt_kSD5=Nb9SuCW4PEsVL=pQkT_ugw@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 17 Aug 2018 00:16:34 +0200
+X-Google-Sender-Auth: uSLRm1AfVe1opZoiyw65ghboYRM
+Message-ID: <CAKMK7uHrCAQpUhd2D4PpiizascLwP1kYgMM6cZv3B8OGez66Sw@mail.gmail.com>
 Subject: Re: [git pull] drm for 4.19-rc1
-To:     Daniel Vetter <daniel@ffwll.ch>
+To:     John Stultz <john.stultz@linaro.org>
 Cc:     Dave Airlie <airlied@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 1:38 PM, John Stultz <john.stultz@linaro.org> wrote:
+On Thu, Aug 16, 2018 at 11:21 PM, John Stultz <john.stultz@linaro.org> wrot=
+e:
+> On Thu, Aug 16, 2018 at 1:46 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> On Thu, Aug 16, 2018 at 10:38 PM, John Stultz <john.stultz@linaro.org> w=
+rote:
+>>> On Thu, Aug 16, 2018 at 12:16 AM, Daniel Vetter <daniel@ffwll.ch> wrote=
+:
+>>>> On Thu, Aug 16, 2018 at 8:04 AM, John Stultz <john.stultz@linaro.org> =
+wrote:
+>>>>> On Tue, Aug 14, 2018 at 7:53 PM, Dave Airlie <airlied@gmail.com> wrot=
+e:
+>>>>>> This is the main drm pull request for 4.19.
+>>>>>>
+>>>>>> Rob has some new hardware support for new qualcomm hw that I'll send=
+ along
+>>>>>> separately. This has the display part of it, the remaining pull is f=
+or the
+>>>>>> acceleration engine.
+>>>>>>
+>>>>>> This also contains a wound-wait/wait-die mutex rework, Peter has ack=
+ed it
+>>>>>> for merging via my tree.
+>>>>>>
+>>>>>> Otherwise mostly the usual level of activity.
+>>>>>
+>>>>> Hey Folks,
+>>>>>   Since this branch landed, I've been seeing the following panic on
+>>>>> bootup w/ the HiKey board (which uses the hisilicon/kirin drm driver)=
+:
+>>>>>
+>>>>> [    8.088388] Unable to handle kernel read from unreadable memory at
+>>>>> virtual address 0000000000000030
+>>>>> [    8.088393] Mem abort info:
+>>>>> [    8.088397]   ESR =3D 0x96000005
+>>>>> [    8.088402]   Exception class =3D DABT (current EL), IL =3D 32 bit=
+s
+>>>>> [    8.088406]   SET =3D 0, FnV =3D 0
+>>>>> [    8.088410]   EA =3D 0, S1PTW =3D 0
+>>>>> [    8.088413] Data abort info:
+>>>>> [    8.088417]   ISV =3D 0, ISS =3D 0x00000005
+>>>>> [    8.088421]   CM =3D 0, WnR =3D 0
+>>>>> [    8.088427] user pgtable: 4k pages, 39-bit VAs, pgdp =3D (____ptrv=
+al____)
+>>>>> [    8.088432] [0000000000000030] pgd=3D0000000000000000, pud=3D00000=
+00000000000
+>>>>> [    8.088443] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+>>>>> [    8.088453] CPU: 5 PID: 1414 Comm: kworker/5:2 Tainted: G        W
+>>>>>        4.18.0-07439-gbf1fba4 #633
+>>>>> [    8.088457] Hardware name: HiKey Development Board (DT)
+>>>>> [    8.088474] Workqueue: events adv7511_hpd_work
+>>>>> [    8.088482] pstate: 40400005 (nZcv daif +PAN -UAO)
+>>>>> [    8.088493] pc : drm_sysfs_hotplug_event+0x40/0x78
+>>>>> [    8.088499] lr : drm_sysfs_hotplug_event+0x40/0x78
+>>>>> [    8.088502] sp : ffffff800ba73d20
+>>>>> [    8.088506] x29: ffffff800ba73d20 x28: 0000000000000000
+>>>>> [    8.088514] x27: ffffff8009293cd8 x26: ffffffc074e55938
+>>>>> [    8.088522] x25: 0000000000000000 x24: ffffffc07ff85000
+>>>>> [    8.088530] x23: ffffffc0742c4a78 x22: ffffffc07ff86c00
+>>>>> [    8.088537] x21: ffffffc0750d0e00 x20: 0000000000000000
+>>>>> [    8.088545] x19: ffffff8009009a48 x18: 0000000000000000
+>>>>> [    8.088552] x17: 0000000000000000 x16: ffffffc074fbde80
+>>>>> [    8.088560] x15: 0000000000000000 x14: ffffffc005f96c00
+>>>>> [    8.088568] x13: 00000040770c9000 x12: 0000000034d5d91d
+>>>>> [    8.088575] x11: 0000000000000000 x10: 0000000000000990
+>>>>> [    8.088582] x9 : ffffff800ba739b0 x8 : ffffff800913e000
+>>>>> [    8.088589] x7 : 0000000000000000 x6 : ffffff8009009a48
+>>>>> [    8.088596] x5 : ffffff80090588d0 x4 : 0000000000000000
+>>>>> [    8.088602] x3 : ffffff8009009a48 x2 : 0000000000000000
+>>>>> [    8.088608] x1 : 18701cfc97cf1200 x0 : 0000000000000000
+>>>>> [    8.120775] Process kworker/5:2 (pid: 1414, stack limit =3D 0x(___=
+_ptrval____))
+>>>>> [    8.120778] Call trace:
+>>>>> [    8.120787]  drm_sysfs_hotplug_event+0x40/0x78
+>>>>> [    8.120794]  drm_kms_helper_hotplug_event+0x14/0x40
+>>>>> [    8.120800]  adv7511_hpd_work+0x64/0xe0
+>>>>> [    8.120807]  process_one_work+0x12c/0x320
+>>>>> [    8.120814]  worker_thread+0x48/0x458
+>>>>> [    8.126654]  kthread+0xf8/0x128
+>>>>> [    8.126661]  ret_from_fork+0x10/0x18
+>>>>> [    8.126672] Code: aa0003f4 52800020 a902ffa2 94006637 (f9401a80)
+>>>>> [    8.135638] ---[ end trace cf7120942e6f40fa ]---
+>>>>>
+>>>>> And earlier in boot we see:
+>>>>>
+>>>>> [    4.620909] kirin-drm f4100000.ade: bound f4107800.dsi (ops dsi_op=
+s)
+>>>>> [    4.627304] [drm] Supports vblank timestamp caching Rev 2 (21.10.2=
+013).
+>>>>> [    4.633935] [drm] No driver support for vblank timestamp query.
+>>>>> [    4.732910] kirin-drm f4100000.ade: [drm:drm_fb_helper_fbdev_setup=
+]
+>>>>> *ERROR* Failed to set fbdev configuration
+>>>>> [    4.742948] [drm:kirin_drm_bind] *ERROR* failed to initialize fbde=
+v.
+>>>>> [    4.749585] kirin-drm f4100000.ade: master bind failed: -22
+>>>>> [    4.755218] dw-dsi: probe of f4107800.dsi failed with error -22
+>>>>>
+>>>>> I've also seen similar trouble w/ the HiKey960 which uses a similar
+>>>>> but still out of tree driver that also utilizes the cma fbhelper code=
+,
+>>>>> which makes me suspect it has to do with the drm/cma-helper changes
+>>>>> below:
+>>>>>
+>>>>>> Noralf Tr=C3=B8nnes (15):
+>>>>>>       drm/file: Don't set master on in-kernel clients
+>>>>>>       drm: Make ioctls available for in-kernel clients
+>>>>>>       drm: Begin an API for in-kernel clients
+>>>>>>       drm/fb-helper: Add generic fbdev emulation .fb_probe function
+>>>>>>       drm/pl111: Set .gem_prime_vmap and .gem_prime_mmap
+>>>>>>       drm/cma-helper: Use the generic fbdev emulation
+>>>>>>       drm/debugfs: Add internal client debugfs file
+>>>>>>       drm/fb-helper: Finish the generic fbdev emulation
+>>>>>>       drm/tinydrm: Use drm_fbdev_generic_setup()
+>>>>>>       drm/cma-helper: Remove drm_fb_cma_fbdev_init_with_funcs()
+>>>>>
+>>>>> Though I've not yet had time to bisect this down tonight.
+>>>>>
+>>>>> I'll spend some more time on this tomorrow, but wanted to give folks =
+a
+>>>>> heads up in the meantime.
+>>>>
+>>>> Hm, not immediately seeing what's going boom here. Bisect would indeed
+>>>> be good, but maybe we need to chase the callchain to figure out where
+>>>> exactly that -EINVAL is coming from in the reworked code (and why
+>>>> hikey is the first to hit that, there's lots of cma based drivers
+>>>> after all).
+>>>
+>>> So I can confirm reverting:
+>>> 85b5bafb86e6 ("drm/cma-helper: Remove drm_fb_cma_fbdev_init_with_funcs(=
+)")
+>>> and
+>>> 894a677f4b3e ("drm/cma-helper: Use the generic fbdev emulation")
+>>>
+>>> makes things work again.
+>>>
+>>> Though without the reverts, I was digging to understand what was
+>>> failing, and it seems when we call into
+>>> drm_client_framebuffer_create(), as Noralf suggested, we're eventually
+>>> failing at drm_internal_framebuffer_create() when checking
+>>> config->max_height.  The kirin driver is somewhat limited w/ max
+>>> width/height values at 2048 each.
+>>>
+>>> Though I'm on a 1920x1080 monitor (max resolution supported by the
+>>> board), it seems we're trying to allocate a 1920x2160 buffer? I know
+>>> Android tries to allocate 2x Y for page-flipping, but I'm not sure yet
+>>> why the old code didn't hit this problem.
+>>>
+>>> Unfortunately bumping the max width/height values to 4096 cause the
+>>> system to hard hang as userspace starts up (and setting it to
+>>> 2048/2160 does the same).
+>>>
+>>> So yea, I'm going to continue to dig at the hard-hang issue, and
+>>> hopefully we can just  bump the max width/height, but if there are
+>>> other suggestions, please let me know.
+>>
+>> You happen to have set drm_fb_overalloc respectively
+>> CONFIG_DRM_FBDEV_OVERALLOC? Was added so that mali blob can pageflip,
+>> would explain what's going on at least.
 >
-> Unfortunately bumping the max width/height values to 4096 cause the
-> system to hard hang as userspace starts up (and setting it to
-> 2048/2160 does the same).
->
-> So yea, I'm going to continue to dig at the hard-hang issue, and
-> hopefully we can just  bump the max width/height, but if there are
-> other suggestions, please let me know.
+> Yep. CONFIG_DRM_FBDEV_OVERALLOC is set to 200.
 
-So still digging on the hard hang after bumping the max_height value.
-It seems to trigger as the display is being initialized by userland,
-so if I boot with the HDMI cable unplugged the kernel boots fine (as
-userland error loops looking for a display). Then when I hotplug the
-HDMI cable it will hang. Booting with drm_debug=0xe,  (and doing the
-HDMI hotplug after bootup) I see:
+So ->max_height is indeed the limit (or should be, minus driver bugs)
+for framebuffers. That's enforced in drm_framebuffer_create_internal
+for everything (both ioctl and should also for all internal callers),
+except the cma helpers never made sure this is correct. So I'd call
+this a bugfix.
 
-[   63.172368] [drm:dsi_encoder_phy_mode_valid] OK!
-[   63.185522] [drm:drm_calc_timestamping_constants] crtc 29: hwmode:
-htotal 2200, vtotal 1125, vdisplay 1080
-[   63.195213] [drm:drm_calc_timestamping_constants] crtc 29: clock
-148500 kHz framedur 16666666 linedur 14814
-[   63.205114] [drm:ade_ldi_set_mode.isra.9] set mode: 1920x1080
-[   63.212529] [drm:ade_ldi_set_mode.isra.9] set mode: 1920x1080
-[   63.218333] [drm:ade_plane_atomic_update] channel1: src:(0,
-0)-1920x1080, crtc:(0, 0)-1920x1080
-[   63.218346] [drm:ade_plane_atomic_update] rdma1: (y=0,
-height=1080), stride=7680, paddr=0x77d00000
-[   63.236111] [drm:ade_plane_atomic_update] addr=0x77d00000,
-fb:1920x2160, pixel_format=2(XR24 little-endian (0x34325258))
-[   63.238695] Mali<2>:
-[   63.247032] [drm:ade_plane_atomic_update] clip1: clip_left=0, clip_right=0
-[   63.247053] [drm:drm_vblank_enable] enabling vblank on crtc 0, ret: 0
-[   63.249319] Session 0x74ACAE00 with pid 2249 was granted higher priority.
-[   63.256253] [drm:ade_dump_regs] [rdma1]: reload(0)
-[   63.273400] [drm:drm_handle_vblank] vblank event on 1, current 1
-[   63.274362] [drm:ade_dump_regs] [rdma1]: reg_ctrl(0x00020000)
-[   63.286201] [drm:ade_dump_regs] [rdma1]: reg_addr(0x77d00000)
-[   63.286208] [drm:ade_dump_regs] [rdma1]: reg_size(0x04381e00)
-[   63.286214] [drm:ade_dump_regs] [rdma1]: reg_stride(0x00001e00)
-[   63.286221] [drm:ade_dump_regs] [rdma1]: reg_space(0x007e9000)
-[   63.286227] [drm:ade_dump_regs] [rdma1]: reg_en(0x00000000)
-[   63.286234] [drm:ade_dump_regs] [clip1]: reload(0)
-[   63.286248] [drm:ade_dump_regs] [clip1]: reg_clip_disable(0x00000001)
-[   63.326460] [drm:ade_dump_regs] [clip1]: reg_clip_size0(0x077f0437)
-[   63.332786] [drm:ade_dump_regs] [clip1]: reg_clip_size1(0x00000000)
-[   63.339102] [drm:ade_dump_regs] [overlay ch0]: reg_ch_xy0(0x00000000)
-[   63.345596] [drm:ade_dump_regs] [overlay ch0]: reg_ch_xy1(0x077f0437)
-[   63.350809] init: Received control message 'start' for 'bootanim'
-from pid: 2249 (/system/bin/surfaceflinger)
-[   63.352091] [drm:ade_dump_regs] [overlay ch0]: reg_ch_ctl(0x107f806c)
-[   63.362726] init: starting service 'bootanim'...
-[   63.368494] [drm:ade_dump_regs] [overlay2]: reload(0)
-[   63.368506] [drm:ade_dump_regs] [overlay2]: reg_ctl(0x00000000)
-[   63.384170] [drm:ade_dump_regs] ovly_ctl(0x00000002)
-[   63.390826] [drm:dsi_encoder_enable] htot=2200, hfp=88, hbp=148, hsw=44
-[   63.397502] [drm:dsi_encoder_enable] vtol=1125, vfp=4, vbp=36, vsw=5
-[   63.403902] [drm:dsi_encoder_enable] hsa_time=33, hbp_time=111,
-hline_time=1650
-[   63.411250] [drm:dsi_encoder_enable] lanes=4, pixel_clk=144000 kHz,
-bytes_freq=108000 kHz
-[   63.428238] [drm:drm_mode_object_put] OBJ ID: 31 (5)
-<hang>
-
-Not always, but sometimes as it hangs I'll see:
- [drm:vblank_disable_fn] disabling vblank on crtc 0
-
-And sometimes I'll also see:
-Insufficient stack space to handle exception!
-
-So I'm not sure if there's a screaming interrupt or what (nor am I
-sure what from the problematic changes would cause that change
-either).
-
-thanks
--john
+Now the question is whether the fbdev page-flipping actually worked on
+older kernels for you or not ...
+-Daniel
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
