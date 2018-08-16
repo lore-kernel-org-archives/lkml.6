@@ -3,43 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B1DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CB1C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD8E2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD8E2147D
+	by mail.kernel.org (Postfix) with ESMTP id BF94621473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF94621473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbeHPVob (ORCPT
+        id S1729540AbeHPVoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:44:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56464 "EHLO
+        Thu, 16 Aug 2018 17:44:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729448AbeHPVo3 (ORCPT
+        with ESMTP id S1729448AbeHPVoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:44:29 -0400
+        Thu, 16 Aug 2018 17:44:32 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8797ECC4;
-        Thu, 16 Aug 2018 18:44:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 99319CB7;
+        Thu, 16 Aug 2018 18:44:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        security@kernel.org, kernel-team@android.com
-Subject: [PATCH 4.9 13/15] Bluetooth: hidp: buffer overflow in hidp_process_report
-Date:   Thu, 16 Aug 2018 20:42:06 +0200
-Message-Id: <20180816171627.237837164@linuxfoundation.org>
+        stable@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
+        akpm@linux-foundation.org, hpa@zytor.com, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH 4.9 14/15] ioremap: Update pgtable free interfaces with addr
+Date:   Thu, 16 Aug 2018 20:42:07 +0200
+Message-Id: <20180816171627.286156369@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171625.340082081@linuxfoundation.org>
 References: <20180816171625.340082081@linuxfoundation.org>
@@ -56,50 +55,177 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Salyzyn <salyzyn@android.com>
+From: Chintan Pandya <cpandya@codeaurora.org>
 
-commit 7992c18810e568b95c869b227137a2215702a805 upstream.
+commit 785a19f9d1dd8a4ab2d0633be4656653bd3de1fc upstream.
 
-CVE-2018-9363
+The following kernel panic was observed on ARM64 platform due to a stale
+TLB entry.
 
-The buffer length is unsigned at all layers, but gets cast to int and
-checked in hidp_process_report and can lead to a buffer overflow.
-Switch len parameter to unsigned int to resolve issue.
+ 1. ioremap with 4K size, a valid pte page table is set.
+ 2. iounmap it, its pte entry is set to 0.
+ 3. ioremap the same address with 2M size, update its pmd entry with
+    a new value.
+ 4. CPU may hit an exception because the old pmd entry is still in TLB,
+    which leads to a kernel panic.
 
-This affects 3.18 and newer kernels.
+Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
+table") has addressed this panic by falling to pte mappings in the above
+case on ARM64.
 
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: security@kernel.org
-Cc: kernel-team@android.com
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+To support pmd mappings in all cases, TLB purge needs to be performed
+in this case on ARM64.
+
+Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
+so that TLB purge can be added later in seprate patches.
+
+[toshi.kani@hpe.com: merge changes, rewrite patch description]
+Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: mhocko@suse.com
+Cc: akpm@linux-foundation.org
+Cc: hpa@zytor.com
+Cc: linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: stable@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20180627141348.21777-3-toshi.kani@hpe.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/hidp/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/mm/mmu.c           |    4 ++--
+ arch/x86/mm/pgtable.c         |   12 +++++++-----
+ include/asm-generic/pgtable.h |    8 ++++----
+ lib/ioremap.c                 |    4 ++--
+ 4 files changed, 15 insertions(+), 13 deletions(-)
 
---- a/net/bluetooth/hidp/core.c
-+++ b/net/bluetooth/hidp/core.c
-@@ -431,8 +431,8 @@ static void hidp_del_timer(struct hidp_s
- 		del_timer(&session->timer);
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -804,12 +804,12 @@ int pmd_clear_huge(pmd_t *pmd)
+ 	return 1;
  }
  
--static void hidp_process_report(struct hidp_session *session,
--				int type, const u8 *data, int len, int intr)
-+static void hidp_process_report(struct hidp_session *session, int type,
-+				const u8 *data, unsigned int len, int intr)
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
  {
- 	if (len > HID_MAX_BUFFER_SIZE)
- 		len = HID_MAX_BUFFER_SIZE;
+ 	return pud_none(*pud);
+ }
+ 
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return pmd_none(*pmd);
+ }
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -657,11 +657,12 @@ int pmd_clear_huge(pmd_t *pmd)
+ /**
+  * pud_free_pmd_page - Clear pud entry and free pmd page.
+  * @pud: Pointer to a PUD.
++ * @addr: Virtual address associated with pud.
+  *
+  * Context: The pud range has been unmaped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	pmd_t *pmd;
+ 	int i;
+@@ -672,7 +673,7 @@ int pud_free_pmd_page(pud_t *pud)
+ 	pmd = (pmd_t *)pud_page_vaddr(*pud);
+ 
+ 	for (i = 0; i < PTRS_PER_PMD; i++)
+-		if (!pmd_free_pte_page(&pmd[i]))
++		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
+ 			return 0;
+ 
+ 	pud_clear(pud);
+@@ -684,11 +685,12 @@ int pud_free_pmd_page(pud_t *pud)
+ /**
+  * pmd_free_pte_page - Clear pmd entry and free pte page.
+  * @pmd: Pointer to a PMD.
++ * @addr: Virtual address associated with pmd.
+  *
+  * Context: The pmd range has been unmaped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	pte_t *pte;
+ 
+@@ -704,7 +706,7 @@ int pmd_free_pte_page(pmd_t *pmd)
+ 
+ #else /* !CONFIG_X86_64 */
+ 
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return pud_none(*pud);
+ }
+@@ -713,7 +715,7 @@ int pud_free_pmd_page(pud_t *pud)
+  * Disable free page handling on x86-PAE. This assures that ioremap()
+  * does not update sync'd pmd entries. See vmalloc_sync_one().
+  */
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return pmd_none(*pmd);
+ }
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -779,8 +779,8 @@ int pud_set_huge(pud_t *pud, phys_addr_t
+ int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
+ int pud_clear_huge(pud_t *pud);
+ int pmd_clear_huge(pmd_t *pmd);
+-int pud_free_pmd_page(pud_t *pud);
+-int pmd_free_pte_page(pmd_t *pmd);
++int pud_free_pmd_page(pud_t *pud, unsigned long addr);
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
+ #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
+ static inline int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot)
+ {
+@@ -798,11 +798,11 @@ static inline int pmd_clear_huge(pmd_t *
+ {
+ 	return 0;
+ }
+-static inline int pud_free_pmd_page(pud_t *pud)
++static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return 0;
+ }
+-static inline int pmd_free_pte_page(pmd_t *pmd)
++static inline int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return 0;
+ }
+--- a/lib/ioremap.c
++++ b/lib/ioremap.c
+@@ -84,7 +84,7 @@ static inline int ioremap_pmd_range(pud_
+ 		if (ioremap_pmd_enabled() &&
+ 		    ((next - addr) == PMD_SIZE) &&
+ 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+-		    pmd_free_pte_page(pmd)) {
++		    pmd_free_pte_page(pmd, addr)) {
+ 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
+ 				continue;
+ 		}
+@@ -111,7 +111,7 @@ static inline int ioremap_pud_range(pgd_
+ 		if (ioremap_pud_enabled() &&
+ 		    ((next - addr) == PUD_SIZE) &&
+ 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
+-		    pud_free_pmd_page(pud)) {
++		    pud_free_pmd_page(pud, addr)) {
+ 			if (pud_set_huge(pud, phys_addr + addr, prot))
+ 				continue;
+ 		}
 
 
