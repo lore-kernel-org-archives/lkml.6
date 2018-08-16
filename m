@@ -2,121 +2,229 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9458C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBCAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C2021473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C2021473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 468AC2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468AC2148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbeHPVnW (ORCPT
+        id S1728973AbeHPVn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:43:22 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.250]:25721 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728862AbeHPVnV (ORCPT
+        Thu, 16 Aug 2018 17:43:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56284 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728177AbeHPVn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:43:21 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 9D8B7400D0B1C
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 13:43:12 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id qNEWfPxzbbXuJqNEffnWQR; Thu, 16 Aug 2018 13:43:11 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.72.226] (port=54124 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fqNEV-003emt-Jz; Thu, 16 Aug 2018 13:42:55 -0500
-Date:   Thu, 16 Aug 2018 13:42:54 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>
-Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: mptctl: fix potential Spectre v1
-Message-ID: <20180816184254.GA7923@embeddedor.com>
+        Thu, 16 Aug 2018 17:43:26 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6329CB7;
+        Thu, 16 Aug 2018 18:43:16 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
+        akpm@linux-foundation.org, hpa@zytor.com, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH 4.4 12/13] ioremap: Update pgtable free interfaces with addr
+Date:   Thu, 16 Aug 2018 20:41:59 +0200
+Message-Id: <20180816171629.160523719@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180816171628.554317013@linuxfoundation.org>
+References: <20180816171628.554317013@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.72.226
-X-Source-L: No
-X-Exim-ID: 1fqNEV-003emt-Jz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.72.226]:54124
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-karg->hdr.port is indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This issue was detected with the help of Smatch:
+------------------
 
-drivers/message/fusion/mptctl.c:1360 mptctl_getiocinfo() warn: potential
-spectre issue 'ioc->pfacts' [r]
+From: Chintan Pandya <cpandya@codeaurora.org>
 
-Fix this by sanitizing karg->hdr.port before indirectly using it to index
-ioc->pfacts
+commit 785a19f9d1dd8a4ab2d0633be4656653bd3de1fc upstream.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+The following kernel panic was observed on ARM64 platform due to a stale
+TLB entry.
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+ 1. ioremap with 4K size, a valid pte page table is set.
+ 2. iounmap it, its pte entry is set to 0.
+ 3. ioremap the same address with 2M size, update its pmd entry with
+    a new value.
+ 4. CPU may hit an exception because the old pmd entry is still in TLB,
+    which leads to a kernel panic.
 
+Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
+table") has addressed this panic by falling to pte mappings in the above
+case on ARM64.
+
+To support pmd mappings in all cases, TLB purge needs to be performed
+in this case on ARM64.
+
+Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
+so that TLB purge can be added later in seprate patches.
+
+[toshi.kani@hpe.com: merge changes, rewrite patch description]
+Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: mhocko@suse.com
+Cc: akpm@linux-foundation.org
+Cc: hpa@zytor.com
+Cc: linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20180627141348.21777-3-toshi.kani@hpe.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Notice that the '1 + 1' thing is intentional for clarity purposes.
+ arch/arm64/mm/mmu.c           |    4 ++--
+ arch/x86/mm/pgtable.c         |   12 +++++++-----
+ include/asm-generic/pgtable.h |    8 ++++----
+ lib/ioremap.c                 |    4 ++--
+ 4 files changed, 15 insertions(+), 13 deletions(-)
 
- drivers/message/fusion/mptctl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -699,12 +699,12 @@ void *__init fixmap_remap_fdt(phys_addr_
+ }
+ 
+ #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return pud_none(*pud);
+ }
+ 
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return pmd_none(*pmd);
+ }
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -680,11 +680,12 @@ int pmd_clear_huge(pmd_t *pmd)
+ /**
+  * pud_free_pmd_page - Clear pud entry and free pmd page.
+  * @pud: Pointer to a PUD.
++ * @addr: Virtual address associated with pud.
+  *
+  * Context: The pud range has been unmaped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	pmd_t *pmd;
+ 	int i;
+@@ -695,7 +696,7 @@ int pud_free_pmd_page(pud_t *pud)
+ 	pmd = (pmd_t *)pud_page_vaddr(*pud);
+ 
+ 	for (i = 0; i < PTRS_PER_PMD; i++)
+-		if (!pmd_free_pte_page(&pmd[i]))
++		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
+ 			return 0;
+ 
+ 	pud_clear(pud);
+@@ -707,11 +708,12 @@ int pud_free_pmd_page(pud_t *pud)
+ /**
+  * pmd_free_pte_page - Clear pmd entry and free pte page.
+  * @pmd: Pointer to a PMD.
++ * @addr: Virtual address associated with pmd.
+  *
+  * Context: The pmd range has been unmaped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	pte_t *pte;
+ 
+@@ -727,7 +729,7 @@ int pmd_free_pte_page(pmd_t *pmd)
+ 
+ #else /* !CONFIG_X86_64 */
+ 
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return pud_none(*pud);
+ }
+@@ -736,7 +738,7 @@ int pud_free_pmd_page(pud_t *pud)
+  * Disable free page handling on x86-PAE. This assures that ioremap()
+  * does not update sync'd pmd entries. See vmalloc_sync_one().
+  */
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return pmd_none(*pmd);
+ }
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -770,8 +770,8 @@ int pud_set_huge(pud_t *pud, phys_addr_t
+ int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
+ int pud_clear_huge(pud_t *pud);
+ int pmd_clear_huge(pmd_t *pmd);
+-int pud_free_pmd_page(pud_t *pud);
+-int pmd_free_pte_page(pmd_t *pmd);
++int pud_free_pmd_page(pud_t *pud, unsigned long addr);
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
+ #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
+ static inline int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot)
+ {
+@@ -789,11 +789,11 @@ static inline int pmd_clear_huge(pmd_t *
+ {
+ 	return 0;
+ }
+-static inline int pud_free_pmd_page(pud_t *pud)
++static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return 0;
+ }
+-static inline int pmd_free_pte_page(pmd_t *pmd)
++static inline int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return 0;
+ }
+--- a/lib/ioremap.c
++++ b/lib/ioremap.c
+@@ -84,7 +84,7 @@ static inline int ioremap_pmd_range(pud_
+ 		if (ioremap_pmd_enabled() &&
+ 		    ((next - addr) == PMD_SIZE) &&
+ 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+-		    pmd_free_pte_page(pmd)) {
++		    pmd_free_pte_page(pmd, addr)) {
+ 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
+ 				continue;
+ 		}
+@@ -111,7 +111,7 @@ static inline int ioremap_pud_range(pgd_
+ 		if (ioremap_pud_enabled() &&
+ 		    ((next - addr) == PUD_SIZE) &&
+ 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
+-		    pud_free_pmd_page(pud)) {
++		    pud_free_pmd_page(pud, addr)) {
+ 			if (pud_set_huge(pud, phys_addr + addr, prot))
+ 				continue;
+ 		}
 
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 8d22d61..afc6979 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -59,6 +59,7 @@
- 
- #include <asm/io.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
- 
- #include <scsi/scsi.h>
- #include <scsi/scsi_cmnd.h>
-@@ -1306,7 +1307,7 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
- 		kfree(karg);
- 		return -EINVAL;
- 	}
--	port = karg->hdr.port;
-+	port = array_index_nospec(karg->hdr.port, 1 + 1);
- 
- 	karg->port = port;
- 	pdev = (struct pci_dev *) ioc->pcidev;
--- 
-2.7.4
 
