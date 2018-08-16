@@ -2,65 +2,176 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B72C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAA5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E0620936
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E0620936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C796D2148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:05:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="gB+Ur9J+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C796D2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390712AbeHPNBr (ORCPT
+        id S2390730AbeHPNDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:01:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43272 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbeHPNBr (ORCPT
+        Thu, 16 Aug 2018 09:03:24 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54011 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390717AbeHPNDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:01:47 -0400
-Received: from localhost (unknown [37.170.164.166])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D49B340B;
-        Thu, 16 Aug 2018 10:04:18 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 12:04:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] uio: ensure class is registered before devices
-Message-ID: <20180816100413.GA9141@kroah.com>
-References: <20180816073941.13618-1-alexandre.belloni@bootlin.com>
- <20180816080112.GA3496@kroah.com>
- <20180816083438.GE21707@piout.net>
+        Thu, 16 Aug 2018 09:03:23 -0400
+Received: by mail-it0-f67.google.com with SMTP id 72-v6so5554225itw.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 03:05:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=B+SvdDqNcYif6HW3cOGSC1YiyeXgkYkrg7qn2EvFv0U=;
+        b=gB+Ur9J+TsWFBIs4S1yQL+9fSLC9fLcZ15LoWm817pP+ATevCScNLHgVkgDPUJ47G0
+         wi+MOnYnIfW0WmYddoJ+S98ojZ4SqgbD92wD3EhAwg0UNKJEVzvmUO2lKQxN1PjkI3Jw
+         8DvCLqMWavMfNaRYCKWsRJBHlW4wQHrb40FeVUl3X9UhP96eaVKrcqwQgaFkKgQggYql
+         QB/2MExDet2FLOdPdFeadNRD9qudZ++GtDertD466oUarcICsMMWv+BjSSwPr8p9GK21
+         kpuiG9LrkCseFc8EeTMET4Dbf0ENFtpyghWJ9cBbcyFmnCUriLiGwJJu4VSmBreKqNv8
+         jr6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=B+SvdDqNcYif6HW3cOGSC1YiyeXgkYkrg7qn2EvFv0U=;
+        b=KmNEGUBotIqyTpsZJERhnuvQu3cJwmq5zqgaKA1OokbfizMdPl3D9IYiBL80xKDgQb
+         r3hqJVuqVWsbjULH1mQKXB6lZh1uCv2BnpjeEKeFNbqqOAo1sJjVQsVYrxgGyfhbeuO+
+         n0veg0vnbyKF9ZJy9Ol7C3fMzbJXqSK5rtfW2TNofT8LcrcuYxM6+EMR0dA3Hk1kU0N4
+         GuEzkLqfsd7glmh3eJbb9RY/zkprFVs/lMtlNGX9LGrTklDTDQ4SkK3wmItcDMsxAAwy
+         5MCfDHBF7aRMWCMVi46R8n2ffI0nbuSH4O2ChgN99S2vuY2icH2xE8dXdGJ2zOUCtVlN
+         FA5w==
+X-Gm-Message-State: AOUpUlHFp5Pmg4/xyXQx4KAyRlTI0n3oG94nhFoebtzn3jupa88gjwVC
+        KeqFV41bCaeP1uGLJtk7P1ZOM5h0H+9hlIX4DrVtNQ==
+X-Google-Smtp-Source: AA+uWPytM4/2jY8Pb3EC4QFbv4ClRRzMoAaJ6F1/kLx+dNQHyhkzQ086N5ekjqChQ1Mnyp20ocvVNHO1uiwj2leIafc=
+X-Received: by 2002:a24:3b0e:: with SMTP id c14-v6mr22296599ita.42.1534413954279;
+ Thu, 16 Aug 2018 03:05:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180816083438.GE21707@piout.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ac0:8704:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 03:05:53
+ -0700 (PDT)
+In-Reply-To: <CAJZ5v0i6PXg1rTjBTZy3tGVihmb84qZpqzmHrwSdACWZ+SOgYg@mail.gmail.com>
+References: <CAB4CAwfms8_zJ=xB5wJ0Sgr6gu9-mFnqwEz2cUR-sOHdEV5zqQ@mail.gmail.com>
+ <CAJZ5v0gKfyB7=5ZGj9uXejoBjkuf2snsKwYJM2Ar1_Vg8A8SCg@mail.gmail.com>
+ <CAB4CAwfdwU6FQVEWWO2dLw-RJHTpqWeuk_BiH04ssE=iCOrJ+A@mail.gmail.com> <CAJZ5v0i6PXg1rTjBTZy3tGVihmb84qZpqzmHrwSdACWZ+SOgYg@mail.gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Thu, 16 Aug 2018 18:05:53 +0800
+Message-ID: <CAB4CAweumP0qZEJGsNNeEEH3-g13E1dGQD9+zsh1fKysA9MsuQ@mail.gmail.com>
+Subject: Re: Keyboard lost after exit s2idle on ASUS UX433FN
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 10:34:38AM +0200, Alexandre Belloni wrote:
-> On 16/08/2018 10:01:12+0200, Greg Kroah-Hartman wrote:
-> > On Thu, Aug 16, 2018 at 09:39:41AM +0200, Alexandre Belloni wrote:
-> > > When both uio and the uio drivers are built in the kernel, it is possible
-> > > for a driver to register devices before the uio class is registered.
-> > 
-> > How does this happen?  The link order should solve this issue, right?
-> > 
-> 
-> Sure, if we can ensure uio_init() is called before any driver calls
-> uio_register_device() then this would not happen. However, I'm not sure
-> how you would want to achieve that.
+On Thu, Aug 16, 2018 at 4:54 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Thu, Aug 16, 2018 at 10:18 AM Chris Chiu <chiu@endlessm.com> wrote:
+>>
+>> On Thu, Aug 16, 2018 at 3:26 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> > On Thu, Aug 16, 2018 at 4:45 AM Chris Chiu <chiu@endlessm.com> wrote:
+>> >>
+>> >> Hi,
+>> >>     We recently hit a weird problem on the ASUS laptop UX433FN with
+>> >> latest Intel Core i7-8565U CPU on kernel 4.18. The keyboard stops
+>> >> functioning after exit s2idle. It stops firing interrupts after resume
+>> >> on any keypress. We thought it should be something wrong with i8042
+>> >> driver or even atkbd driver, so we tried to skip the suspend/resume
+>> >> path of i8042 and input devices but no luck.
+>> >>
+>> >>     Then we tried to hack the s2idle code to fail right before it goes
+>> >> into the idle state to find out which code really cause the keyboard
+>> >> broken. It comes with an interesting finding that if it aborts s2idle
+>> >> before cpuidle_resume() in s2idle_enter(), the keyboard is fine. If it
+>> >> aborts after cpuidle_resume, then the keyboard down. At least it
+>> >> proves that even with dpm_noirq_begin() and
+>> >> dpm_noirq_suspend_devices() executed, the keyboard is still alive.
+>> >> There should be something wrong with the cpuidle.
+>> >>
+>> >>     Going deeper into intel_idle_s2idle() which is invoked by
+>> >> cpuidle_enter_s2idle(), we found that the keyboard interrupt will no
+>> >> longer function after mwait_idle_with_hints() which just simply
+>> >> executing intel monitor and mwait instructions. So I don't know what
+>> >> should be the next step I can take. Can anyone give some pieces of
+>> >> advice?
+>> >
+>> > It may indicate that the deepest C-states used by s2idle simply don't
+>> > work correctly on the affected system.
+>> >
+>> > To verify this, you can try to disable the deepest C-states via sysfs
+>> > using the "disable" attribute under
+>> > /sys/devices/system/cpu/cpuX/cpuidle/stateX/
+>> >
+>> Thanks for the great help. I can have the keyboard work after s2idle with
+>> the following command
+>>
+>> echo 1 > /sys/devices/system/cpu/cpuX/cpuidle/state8/disable
+>>
+>> cpuX, X can be 0 to 7 on this CPU.
+>> And only state8 disable would work, it fails on state 0~7 disabled.
+>
+> Well, if you disable one of states 0-7 alone, it will still attempt to
+> use state8. :-)
+>
+> It generally uses the deepest one enabled.
+>
+>> There're 9 (0-8) states on the cpuidle of this machine. However, I have another
+>> laptop with the same CPU Intel Core i7-8565U which only have 4(0-3) states
+>> under the same '/sys/devices/system/cpu/cpuX/cpuidle/' entry. Sorry that I
+>> don't have enough background knowledge about cpuidle. I thought the #C
+>> state should be depend on CPU, but why the same i7-8565 has different
+>> number of C-states?
+>
+> What is there in /sys/devices/system/cpu/cpuidle/current_driver on
+> each of these systems?
+>
+>>  And for this case, should I just disable C-8 state or there
+>> should be a generic fix with it?
+>
+> No, it just doesn't work specifically on your system, unfortunately,
+> so you need to disable state8 manually, at least for the time being.
+> If all UX433FNs turn out to be affected, we may consider adding a
+> quirk for them, but for now we just don't know.
+>
+> Do the "name" and "desc" sysfs files of state8 on the affected system
+> contain "C10" and "MWAIT 0x60", respectively?
+>
+> To make a more persistent record of this issue, you can file a bug at
+> bugzilla.kernel.org against cpuidle and put all of the relevant
+> information into it.  It is possible that some special magic is needed
+> to make the deepest idle state safe on this system and it may be hard
+> to find out, but at least it is good to know that this happens.
+>
 
-That is the job of the link order, does this not work properly today?
-How have you triggered this so that you could test your patch?
+Thanks. I've reported on https://bugzilla.kernel.org/show_bug.cgi?id=200829.
+Also, include information you request. Please let me know if anything missing.
 
-thanks,
+Chris
 
-greg k-h
+>> > Is s2idle the default suspend method on that system?  If so, have you
+>> > checked whether or not suspend-to-RAM works too?
+>> >
+>>
+>> Yes, it's default s2idle. If I do 'echo mem > /sys/power/state', the keyboard
+>> would still fail.
+>
+> OK
+>
+> What's there in /sys/power/mem_sleep ?
+>
+> Thanks,
+> Rafael
