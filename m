@@ -4,128 +4,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDCDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CCBC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6702E21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7EBF2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:27:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCkO9UM3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6702E21486
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epva8soZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7EBF2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404220AbeHPTYi (ORCPT
+        id S2404234AbeHPT1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 15:24:38 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39054 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389145AbeHPTYh (ORCPT
+        Thu, 16 Aug 2018 15:27:00 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46118 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeHPT07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:24:37 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j8-v6so2247138pff.6;
-        Thu, 16 Aug 2018 09:25:08 -0700 (PDT)
+        Thu, 16 Aug 2018 15:26:59 -0400
+Received: by mail-yw1-f68.google.com with SMTP id e23-v6so3315693ywe.13;
+        Thu, 16 Aug 2018 09:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=i9pFJBq24KRYK273d5wToUZtyPASu+oWEZ/t8Kj+OMM=;
-        b=YCkO9UM3uzgP23V7s5h8hky6Pv61hLg6cr0i13pvN7zCry6VHw6S5reGOGqSX37XoB
-         1dTkMedAaGvTY/tiUUOWP9airR3xaUAIn+hBrT7UxPlp4yLb0rgDKRNlGuPZp5P09bWS
-         VZT3H4IZSGOBZAdz1pYtvng1DInuB4zgSXrxgLf795uj6N8xfxib2K/Yc5xkQ1wd4Tmj
-         0g3Fuu3ET3KYz3FFKCUNqan+mFf7AL++QhZ4vBLLNuQyjgI7UVg/qVuRNwIbZHtL5n0g
-         Xub0PFx1a0mcyQxYKpnnMcYFOvcfuwYOGg+7n+kvv5ZV8zCRB4aKEUPeKzOfKZCW0cFb
-         EEyA==
+        bh=alIChM2asgfj7vyQrMYs0a4ocDl1OghK/2AfWTYX/y8=;
+        b=epva8soZFN3ufnqrABxj35tGdph6/TDY82a1FhlQSmAKcCD357iZRERESqUaB5TyPZ
+         Jh9dYbWs1LMW4Uq9BU6t/W1kzjeC6R/InJDsLGT0rn3RE+iWSlMwKiP77gi9epxqrW83
+         Cgge5ecShH8S7qK6uKyzybY71KvbHqqCi8dPfZnJRR1P6eYZkL0jSovYS4Al4iK2zzvB
+         +pD/gMemE0bUSbpmSc1v7A132Hl2DE6HiybiTCuoeX+lt/XFqvVoXJdRaf9kHIS3zrAi
+         SAOPWdoYYCXUsoPFqDF5umX7FjKKG5Isv+VICXuxkyzVAEgbbpn4MULcMl85WDgkfrCI
+         2joQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=i9pFJBq24KRYK273d5wToUZtyPASu+oWEZ/t8Kj+OMM=;
-        b=Wkv3zCs5q6ZgJDRx4S/QFW7MNGdWOlJ9Wm6obbl1Q/njzqvsNNNL56sqsX6DHgWeCt
-         4bUeWde/TMV2vA9zf83VHn5RjfB/OY73x9CLYnzfbnmyTUy1TzazyRzdhy+BM3oZfMUv
-         KO1BXz4fcTkjTTOWJG0pKNK0NFjyI1yM4sYOLpTcDBC3a1FgswJOi1mOMa95WY4fghLO
-         YD+e7/VuIwlqVQ/e0ZtVa6CqbtmS7h0swjaPcBNHfqCZuidq7Zl/7AbgqzDxIhdFxjbT
-         Lxzu2G7u6A4GQJDptACloLMZpl/L9aeS1FJhryXnwkkun/MIMjhUs3LyfF5KZm3nW4Pw
-         bkww==
-X-Gm-Message-State: AOUpUlFfKFJlhIQ1iCdNVdDXf8slLyCE5257ajniVGbJPAFewpoKvLBm
-        YHTb3Tvi8A9ZLG3Smeyy2i3m6wT0APT8Ff/QEWU=
-X-Google-Smtp-Source: AA+uWPxQyyotF5qMEfjRdnEPeiL8uBeh0YVHBVpRU9oLo7+GF1VhzJn0vGhkzMYTxufUrR5Bc1LftaTDnicDL1WbJi0=
-X-Received: by 2002:a63:6b86:: with SMTP id g128-v6mr30112713pgc.344.1534436708074;
- Thu, 16 Aug 2018 09:25:08 -0700 (PDT)
+        bh=alIChM2asgfj7vyQrMYs0a4ocDl1OghK/2AfWTYX/y8=;
+        b=tMgmZsZD5+96H65BeKy72DEvInxSMm9QUkWRBgW7ubaqXlloEqA2QHxbjYcgnQzPxE
+         9dxBEbaK5t80L+7q/blBHlf0bJVVPytXXsleE9onQIeIVa3B5bNywf1VZRo7cCulsG6S
+         GSJTH4sHXRin8BtPbLRW8XLYGZi4EdDYl2rqJ/fbA73K+nBM+f3808KvZmCVIUqiI3El
+         ZMevctI0CC3sohTAr9Pj4++c0rw3s6WbsZlQRdguQZ2Epwa9k7MC3znoDekulYX5Gk3n
+         Q9+JaFM9ssmkmkDPYb2PEjH2E5kfoJYYBrUzvKAdYoQeuzu1lgvCuf7F6CIkELzGm6kc
+         31WQ==
+X-Gm-Message-State: AOUpUlHN5tyXEA/RKksjqPnaD++8wdpqTUvFuN51+f663AuHHxDtpq3h
+        s0csl3gbSR8mPIQPHwGNRnPIG0Qm3sn+2Y7VeMI=
+X-Google-Smtp-Source: AA+uWPx0sL3Wr9TbEBMvTmFf6gCmt7LhBEXPiK1bNNy7P6nuETbrn0xkn6wevmlbskTfa7LM4b38ubP44eEq7O2417w=
+X-Received: by 2002:a0d:e501:: with SMTP id o1-v6mr16627964ywe.409.1534436848546;
+ Thu, 16 Aug 2018 09:27:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
- <17763.1534350685@warthog.procyon.org.uk> <87pnyiew8x.fsf@xmission.com>
-In-Reply-To: <87pnyiew8x.fsf@xmission.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 16 Aug 2018 11:24:56 -0500
-Message-ID: <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
-Subject: Re: Should we split the network filesystem setup into two phases?
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        trond.myklebust@hammerspace.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Steve Dickson <steved@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ebiederm@redhat.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+References: <20180729220317.GB30522@ZenIV.linux.org.uk> <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
+ <20180729220453.13431-3-viro@ZenIV.linux.org.uk> <CAOQ4uxgOLEpaZ=UwA_CG6CzYbsJBPV4unEV9D5mXrooLXO0+0w@mail.gmail.com>
+ <CAOssrKfmR0beT4dXjg1dn6DBsPbmGBpS5xHpG9QtAAEgMWo_Xg@mail.gmail.com>
+In-Reply-To: <CAOssrKfmR0beT4dXjg1dn6DBsPbmGBpS5xHpG9QtAAEgMWo_Xg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 16 Aug 2018 19:29:13 +0300
+Message-ID: <CAOQ4uxjHdtjc-aXHb-kxghAxU1oRbhEHmBVX5+=w8CgcnGBSGg@mail.gmail.com>
+Subject: Re: [PATCH 03/16] vfs: don't evict uninitialized inode
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 2:56 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+On Mon, Jul 30, 2018 at 10:41 AM Miklos Szeredi <mszeredi@redhat.com> wrote:
 >
-> David Howells <dhowells@redhat.com> writes:
->
-> > Having just re-ported NFS on top of the new mount API stuff, I find that I
-> > don't really like the idea of superblocks being separated by communication
-> > parameters - especially when it might seem reasonable to be able to adjust
-> > those parameters.
+> On Mon, Jul 30, 2018 at 7:09 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Mon, Jul 30, 2018 at 1:04 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >> From: Miklos Szeredi <mszeredi@redhat.com>
+> >>
+> >> iput() ends up calling ->evict() on new inode, which is not yet initialized
+> >> by owning fs.  So use destroy_inode() instead.
+> >>
+> >> Add to sb->s_inodes list only if inode is not in I_CREATING state (meaning
+> >> that it wasn't allocated with new_inode(), which already does the
+> >> insertion).
+> >>
+> >> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> >> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> >> Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
 > >
-> > Does it make sense to abstract out the remote peer and allow (a) that to be
-> > configured separately from any superblocks using it and (b) that to be used to
-> > create superblocks?
-<snip>
-> At least for devpts we always create a new filesystem instance every
-> time mount(2) is called.  NFS seems to have the option to create a new
-> filesystem instance every time mount(2) is called as well, (even if the
-> filesystem parameters are the same).  And depending on the case I can
-> see the attraction for other filesystems as well.
+> > Backport hint: this patch depends on the patch ("new primitive:
+> > discard_new_inode()") currently commit 22dc9a168272 in Al's for-next.
+> >
+> > Still trying to figure out the best format to channel this information to
+> > stable maintainers...
 >
-> So I don't think we can completely abandon the option for filesystems
-> to always create a new filesystem instance when mount(8) is called.
+> Why are we talking about stable?  This regression was introduced in
+> 4.18-rc1, spotted by Al *and* reported by testers.  It needs to be
+> fixed in one way or other in 4.18.
+>
 
-In cifs we attempt to match new mounts to existing tree connections
-(instances of connections to a \\server\share) from other mount(s)
-based first on whether security settings match (e.g. are both
-Kerberos) and then on whether encryption is on/off and whether this is
-a snapshot mount (smb3 previous versions feature).  If neither is
-mounted with a snaphsot and the encryption settings match then
-we will use the same tree id to talk with the server as the other
-mounts use.  Interesting idea to allow mount to force a new
-tree id.
+Miklos,
 
-What was the NFS mount option you were talking about?
-Looking at the nfs man page the only one that looked similar
-was "nosharecache"
+Seeing that it wasn't fixed in 4.18..
 
-> I most definitely support thinking this through and figuring out how it
-> best make sense for the new filesystem API to create new filesystem
-> instances or fail to create new filesystems instances.
+> I've nothing against applying "new primitive: discard_new_inode() now
+> + this patch, but if it is deemed too risky at this point, we could
+> just revert the buggy commit 80ea09a002bf ("vfs: factor out
+> inode_insert5()") and its dependencies.
+>
 
-Yes - it is an interesting question.
+Should we propose for stable the upstream commits:
+e950564b97fd vfs: don't evict uninitialized inode
+c2b6d621c4ff new primitive: discard_new_inode()
 
--- 
+Or should we go with the independent v1 patch:
+https://patchwork.kernel.org/patch/10511969/
+
 Thanks,
-
-Steve
+Amir.
