@@ -2,516 +2,132 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB726C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381BAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78C6920E20
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="laIA+Ylb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78C6920E20
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E7A1D208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A1D208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeHPUVB (ORCPT
+        id S1728535AbeHPUVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:21:01 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:58712 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeHPUVA (ORCPT
+        Thu, 16 Aug 2018 16:21:23 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:47274 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbeHPUVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:21:00 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7GHL9Xq042927;
-        Thu, 16 Aug 2018 12:21:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1534440069;
-        bh=iJiqfSnC6b+SrdESg+yFo+IVz+br3H4fWzNIhM34uyM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=laIA+YlbLxkfI9K24nIbMhLSt4VuuK/i3328XKS6PJsxZaDcANeIU/jDaLr68Vgvw
-         XdwPrR/kBnEZr2F0oOMyatW/cuqXoUihDkW4t/Gahckbjze858w92DOSjvcwKaEo6r
-         NvVvLlFT7JTDFmFBCSs1VYD5RVgZ+zrkUrxPh3gg=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7GHL9vS018062;
-        Thu, 16 Aug 2018 12:21:09 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 16
- Aug 2018 12:21:08 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 16 Aug 2018 12:21:08 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7GHL8Ap027861;
-        Thu, 16 Aug 2018 12:21:08 -0500
-Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.174.92])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7GHL8x00808;
-        Thu, 16 Aug 2018 12:21:08 -0500 (CDT)
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 2/2] leds: lm3697: Introduce the lm3697 driver
-Date:   Thu, 16 Aug 2018 12:20:58 -0500
-Message-ID: <20180816172058.31700-2-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <20180816172058.31700-1-dmurphy@ti.com>
-References: <20180816172058.31700-1-dmurphy@ti.com>
+        Thu, 16 Aug 2018 16:21:22 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqLxj-0004nO-0o; Thu, 16 Aug 2018 11:21:31 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqLxi-0004Ug-Aw; Thu, 16 Aug 2018 11:21:30 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Steve French <smfrench@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        trond.myklebust@hammerspace.com,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Steve Dickson <steved@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ebiederm@redhat.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <17763.1534350685@warthog.procyon.org.uk>
+        <87pnyiew8x.fsf@xmission.com>
+        <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
+Date:   Thu, 16 Aug 2018 12:21:23 -0500
+In-Reply-To: <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
+        (Steve French's message of "Thu, 16 Aug 2018 11:24:56 -0500")
+Message-ID: <87in4acjn0.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-XM-SPF: eid=1fqLxi-0004Ug-Aw;;;mid=<87in4acjn0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18gCLRR5hyEu8VeoAcvITnRRHb6CUf2MKU=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: Should we split the network filesystem setup into two phases?
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the lm3697 LED driver for
-backlighting and display.
+Steve French <smfrench@gmail.com> writes:
 
-Datasheet location:
-http://www.ti.com/lit/ds/symlink/lm3697.pdf
+> On Thu, Aug 16, 2018 at 2:56 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> David Howells <dhowells@redhat.com> writes:
+>>
+>> > Having just re-ported NFS on top of the new mount API stuff, I find that I
+>> > don't really like the idea of superblocks being separated by communication
+>> > parameters - especially when it might seem reasonable to be able to adjust
+>> > those parameters.
+>> >
+>> > Does it make sense to abstract out the remote peer and allow (a) that to be
+>> > configured separately from any superblocks using it and (b) that to be used to
+>> > create superblocks?
+> <snip>
+>> At least for devpts we always create a new filesystem instance every
+>> time mount(2) is called.  NFS seems to have the option to create a new
+>> filesystem instance every time mount(2) is called as well, (even if the
+>> filesystem parameters are the same).  And depending on the case I can
+>> see the attraction for other filesystems as well.
+>>
+>> So I don't think we can completely abandon the option for filesystems
+>> to always create a new filesystem instance when mount(8) is called.
+>
+> In cifs we attempt to match new mounts to existing tree connections
+> (instances of connections to a \\server\share) from other mount(s)
+> based first on whether security settings match (e.g. are both
+> Kerberos) and then on whether encryption is on/off and whether this is
+> a snapshot mount (smb3 previous versions feature).  If neither is
+> mounted with a snaphsot and the encryption settings match then
+> we will use the same tree id to talk with the server as the other
+> mounts use.  Interesting idea to allow mount to force a new
+> tree id.
+>
+> What was the NFS mount option you were talking about?
+> Looking at the nfs man page the only one that looked similar
+> was "nosharecache"
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+I was remembering this from reading the nfs mount code:
 
-v4 - Made modifications to the control bank routine to accomodate the DT changes
-https://lore.kernel.org/patchwork/patch/974811/
-v3 - Add code to support led-sources and control bank configuration also fix
-other miscellaneous issues reported- https://lore.kernel.org/patchwork/patch/972336/
-v2 - Removed unneed 'of' calls in dt_parse, fixed comment, fixed checkpatch
-error, and change led registration - https://lore.kernel.org/patchwork/patch/971327/
+static int nfs_compare_super(struct super_block *sb, void *data)
+{
+...
+	if (!nfs_compare_super_address(old, server))
+		return 0;
+	/* Note: NFS_MOUNT_UNSHARED == NFS4_MOUNT_UNSHARED */
+	if (old->flags & NFS_MOUNT_UNSHARED)
+		return 0;
+...
+}
 
- drivers/leds/Kconfig       |   9 +
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-lm3697.c | 381 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 391 insertions(+)
- create mode 100644 drivers/leds/leds-lm3697.c
+If a filesystem has NFS_MOUNT_UNSHARED set it does not serve as a
+candidate for new mount requests.  Skimming the code it looks like
+nosharecache is what sets NFS_MOUNT_UNSHARED.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 44097a3e0fcc..784cbe375724 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -151,6 +151,15 @@ config LEDS_LM3642
- 	  converter plus 1.5A constant current driver for a high-current
- 	  white LED.
- 
-+config LEDS_LM3697
-+	tristate "LED support for LM3697 Chip"
-+	depends on LEDS_CLASS && I2C
-+	select REGMAP_I2C
-+	help
-+	  This option enables support for LEDs connected to LM3697.
-+	  The LM3697 is an 11 bit high performance backlight driver for
-+	  keypad and display lighting.
-+
- config LEDS_LM3692X
- 	tristate "LED support for LM3692x Chips"
- 	depends on LEDS_CLASS && I2C && OF
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 420b5d2cfa62..2813f089f3db 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
- obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
- obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
-+obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
- obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
- obj-$(CONFIG_LEDS_NET48XX)		+= leds-net48xx.o
-diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-new file mode 100644
-index 000000000000..390c6a928899
---- /dev/null
-+++ b/drivers/leds/leds-lm3697.c
-@@ -0,0 +1,381 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// TI LM3697 LED chip family driver
-+// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+#include <uapi/linux/uleds.h>
-+
-+#define LM3697_REV			0x0
-+#define LM3697_RESET			0x1
-+#define LM3697_OUTPUT_CONFIG		0x10
-+#define LM3697_CTRL_A_RAMP		0x11
-+#define LM3697_CTRL_B_RAMP		0x12
-+#define LM3697_CTRL_A_B_RT_RAMP		0x13
-+#define LM3697_CTRL_A_B_RAMP_CFG	0x14
-+#define LM3697_CTRL_A_B_BRT_CFG		0x16
-+#define LM3697_CTRL_A_FS_CURR_CFG	0x17
-+#define LM3697_CTRL_B_FS_CURR_CFG	0x18
-+#define LM3697_PWM_CFG			0x1c
-+#define LM3697_CTRL_A_BRT_LSB		0x20
-+#define LM3697_CTRL_A_BRT_MSB		0x21
-+#define LM3697_CTRL_B_BRT_LSB		0x22
-+#define LM3697_CTRL_B_BRT_MSB		0x23
-+#define LM3697_CTRL_ENABLE		0x24
-+
-+#define LM3697_SW_RESET		BIT(0)
-+
-+#define LM3697_CTRL_A_EN	BIT(0)
-+#define LM3697_CTRL_B_EN	BIT(1)
-+#define LM3697_CTRL_A_B_EN	(LM3697_CTRL_A_EN | LM3697_CTRL_B_EN)
-+
-+#define LM3697_MAX_LED_STRINGS	3
-+
-+#define LM3697_CONTROL_A	0
-+#define LM3697_CONTROL_B	1
-+#define LM3697_HVLED		1
-+
-+/**
-+ * struct lm3697_led -
-+ * @hvled_strings - Array of LED strings associated with a control bank
-+ * @label - LED label
-+ * @led_dev - LED class device
-+ * @priv - Pointer to the device struct
-+ * @control_bank - Control bank the LED is associated to. 0 is control bank A
-+ *		   1 is control bank B.
-+ */
-+struct lm3697_led {
-+	u32 hvled_strings[LM3697_MAX_LED_STRINGS];
-+	char label[LED_MAX_NAME_SIZE];
-+	struct led_classdev led_dev;
-+	struct lm3697 *priv;
-+	int control_bank;
-+};
-+
-+/**
-+ * struct lm3697 -
-+ * @enable_gpio - Hardware enable gpio
-+ * @regulator - LED supply regulator pointer
-+ * @client - Pointer to the I2C client
-+ * @regmap - Devices register map
-+ * @dev - Pointer to the devices device struct
-+ * @lock - Lock for reading/writing the device
-+ * @leds - Array of LED strings.
-+ */
-+struct lm3697 {
-+	struct gpio_desc *enable_gpio;
-+	struct regulator *regulator;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct device *dev;
-+	struct mutex lock;
-+	struct lm3697_led leds[];
-+};
-+
-+static const struct reg_default lm3697_reg_defs[] = {
-+	{LM3697_OUTPUT_CONFIG, 0x6},
-+	{LM3697_CTRL_A_RAMP, 0x0},
-+	{LM3697_CTRL_B_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RT_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RAMP_CFG, 0x0},
-+	{LM3697_CTRL_A_B_BRT_CFG, 0x0},
-+	{LM3697_CTRL_A_FS_CURR_CFG, 0x13},
-+	{LM3697_CTRL_B_FS_CURR_CFG, 0x13},
-+	{LM3697_PWM_CFG, 0xc},
-+	{LM3697_CTRL_A_BRT_LSB, 0x0},
-+	{LM3697_CTRL_A_BRT_MSB, 0x0},
-+	{LM3697_CTRL_B_BRT_LSB, 0x0},
-+	{LM3697_CTRL_B_BRT_MSB, 0x0},
-+	{LM3697_CTRL_ENABLE, 0x0},
-+};
-+
-+static const struct regmap_config lm3697_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LM3697_CTRL_ENABLE,
-+	.reg_defaults = lm3697_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
-+	.cache_type = REGCACHE_FLAT,
-+};
-+
-+static int lm3697_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness brt_val)
-+{
-+	struct lm3697_led *led = container_of(led_cdev, struct lm3697_led,
-+					      led_dev);
-+	int brt_msb_reg, brt_lsb_reg, ctrl_en_val;
-+	int led_brightness_lsb = (brt_val >> 5);
-+	int ret;
-+
-+	mutex_lock(&led->priv->lock);
-+
-+	if (led->control_bank == LM3697_CONTROL_A) {
-+		brt_msb_reg = LM3697_CTRL_A_BRT_MSB;
-+		brt_lsb_reg = LM3697_CTRL_A_BRT_LSB;
-+		ctrl_en_val = LM3697_CTRL_A_EN;
-+	} else {
-+		brt_msb_reg = LM3697_CTRL_B_BRT_MSB;
-+		brt_lsb_reg = LM3697_CTRL_B_BRT_LSB;
-+		ctrl_en_val = LM3697_CTRL_B_EN;
-+	}
-+
-+	if (brt_val == LED_OFF)
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ~ctrl_en_val);
-+	else
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ctrl_en_val);
-+
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write CTRL enable\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->priv->regmap, brt_lsb_reg, led_brightness_lsb);
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write LSB\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
-+		goto out;
-+	}
-+out:
-+	mutex_unlock(&led->priv->lock);
-+	return ret;
-+}
-+
-+static int lm3697_set_control_bank(struct lm3697 *priv)
-+{
-+	u8 control_bank_config = 0;
-+	struct lm3697_led *led;
-+	int ret, i;
-+
-+	led = &priv->leds[0];
-+	if (led->control_bank == LM3697_CONTROL_A)
-+		led = &priv->leds[1];
-+
-+	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
-+		if (led->hvled_strings[i] == LM3697_HVLED)
-+			control_bank_config |= 1 << i;
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG,
-+			   control_bank_config);
-+	if (ret)
-+		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
-+
-+	return ret;
-+}
-+
-+static int lm3697_init(struct lm3697 *priv)
-+{
-+	int ret;
-+
-+	if (priv->enable_gpio) {
-+		gpiod_direction_output(priv->enable_gpio, 1);
-+	} else {
-+		ret = regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "Cannot reset the device\n");
-+			goto out;
-+		}
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
-+		goto out;
-+	}
-+
-+	ret = lm3697_set_control_bank(priv);
-+	if (ret)
-+		dev_err(&priv->client->dev, "Setting the CRTL bank failed\n");
-+
-+out:
-+	return ret;
-+}
-+
-+static int lm3697_probe_dt(struct lm3697 *priv)
-+{
-+	struct fwnode_handle *child = NULL;
-+	struct lm3697_led *led;
-+	const char *name;
-+	int control_bank;
-+	size_t i = 0;
-+	int ret;
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
-+						   "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio)) {
-+		ret = PTR_ERR(priv->enable_gpio);
-+		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
-+	if (IS_ERR(priv->regulator))
-+		priv->regulator = NULL;
-+
-+	device_for_each_child_node(priv->dev, child) {
-+		ret = fwnode_property_read_u32(child, "reg", &control_bank);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "reg property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		if (control_bank > LM3697_CONTROL_B) {
-+			dev_err(&priv->client->dev, "reg property is invalid\n");
-+			ret = -EINVAL;
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		led = &priv->leds[i];
-+		led->control_bank = control_bank;
-+		ret = fwnode_property_read_u32_array(child, "led-sources",
-+						    led->hvled_strings,
-+						    LM3697_MAX_LED_STRINGS);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led-sources property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		fwnode_property_read_string(child, "linux,default-trigger",
-+					    &led->led_dev.default_trigger);
-+
-+		ret = fwnode_property_read_string(child, "label", &name);
-+		if (ret)
-+			snprintf(led->label, sizeof(led->label),
-+				"%s::", priv->client->name);
-+		else
-+			snprintf(led->label, sizeof(led->label),
-+				 "%s:%s", priv->client->name, name);
-+
-+		led->priv = priv;
-+		led->led_dev.name = led->label;
-+		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
-+
-+		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led register err: %d\n",
-+				ret);
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		i++;
-+	}
-+
-+child_out:
-+	return ret;
-+}
-+
-+static int lm3697_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct lm3697 *led;
-+	int count;
-+	int ret;
-+
-+	count = device_get_child_node_count(&client->dev);
-+	if (!count) {
-+		dev_err(&client->dev, "LEDs are not defined in device tree!");
-+		return -ENODEV;
-+	}
-+
-+	led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
-+			   GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	mutex_init(&led->lock);
-+	i2c_set_clientdata(client, led);
-+
-+	led->client = client;
-+	led->dev = &client->dev;
-+	led->regmap = devm_regmap_init_i2c(client, &lm3697_regmap_config);
-+	if (IS_ERR(led->regmap)) {
-+		ret = PTR_ERR(led->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = lm3697_probe_dt(led);
-+	if (ret)
-+		return ret;
-+
-+	ret = lm3697_init(led);
-+
-+	return ret;
-+}
-+
-+static int lm3697_remove(struct i2c_client *client)
-+{
-+	struct lm3697 *led = i2c_get_clientdata(client);
-+	int ret;
-+
-+	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
-+				 LM3697_CTRL_A_B_EN, 0);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed to disable the device\n");
-+		return ret;
-+	}
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lm3697_id[] = {
-+	{ "lm3697", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lm3697_id);
-+
-+static const struct of_device_id of_lm3697_leds_match[] = {
-+	{ .compatible = "ti,lm3697", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
-+
-+static struct i2c_driver lm3697_driver = {
-+	.driver = {
-+		.name	= "lm3697",
-+		.of_match_table = of_lm3697_leds_match,
-+	},
-+	.probe		= lm3697_probe,
-+	.remove		= lm3697_remove,
-+	.id_table	= lm3697_id,
-+};
-+module_i2c_driver(lm3697_driver);
-+
-+MODULE_DESCRIPTION("Texas Instruments LM3697 LED driver");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.0.582.gccdcbd54c
 
+Another interesting and common case is tmpfs which always creates a new
+filesystem instance whenever it is mounted.
+
+Eric
