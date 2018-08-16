@@ -1,191 +1,204 @@
 Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188ECC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A632CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74062148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:41:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74062148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 41DEA2148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:48:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=waldekranz-com.20150623.gappssmtp.com header.i=@waldekranz-com.20150623.gappssmtp.com header.b="rkWfcDn7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41DEA2148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=waldekranz.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390581AbeHPMif (ORCPT
+        id S2390598AbeHPMp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:38:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35818 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731397AbeHPMif (ORCPT
+        Thu, 16 Aug 2018 08:45:27 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44502 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390567AbeHPMp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:38:35 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7G9Zwed042447
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 05:41:15 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kw6ffrurc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 05:41:14 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Thu, 16 Aug 2018 10:41:12 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 16 Aug 2018 10:41:08 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7G9f7gp18743454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 16 Aug 2018 09:41:08 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E329A4040;
-        Thu, 16 Aug 2018 12:41:11 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8DC10A405D;
-        Thu, 16 Aug 2018 12:41:10 +0100 (BST)
-Received: from [9.145.158.193] (unknown [9.145.158.193])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 16 Aug 2018 12:41:10 +0100 (BST)
-Subject: Re: [PATCH 3/3] powerpc/pseries/mm: call H_BLOCK_REMOVE
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     aneesh.kumar@linux.ibm.com, benh@kernel.crashing.org,
-        paulus@samba.org, npiggin@gmail.com
-References: <1532699493-10883-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1532699493-10883-4-git-send-email-ldufour@linux.vnet.ibm.com>
- <877elcj0oa.fsf@concordia.ellerman.id.au>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Thu, 16 Aug 2018 11:41:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 08:45:26 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q127-v6so3148180ljq.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=waldekranz-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QrIreBWahnaGYpLIhPt+QkS9c/2WucQokh1MB6y83ts=;
+        b=rkWfcDn7J5yJCksVrXeKMVa8rJB2qRcdkVo5Tyhhhr0IVzvrHnVJhIjo8cCxB9YnJK
+         fMiH201YON2uU+KBn1mwLfeG6egQm5Ujf2nVKPCuaPNPqI1isWRbhAxiJs/SpOZvtklr
+         Yk4heDUyKMmeTlCnefDDc2jrZZWS5lFHSG1fHDCSI1jz3wsQfQu0I82TflSiYZPJA7nj
+         Ru3T7xnjS+TGU6fRBod4PkFSnPKVjlgBCUlu4cweg/WCz1xsOA8FTNGUfDflve/lmzkC
+         9J8WgyKk2d3QLNn28bQhlSHYU5P+N/0lJ0YpbsM73+0sJO5oYmPJKOgP2Mzp24PNeTY9
+         BbeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QrIreBWahnaGYpLIhPt+QkS9c/2WucQokh1MB6y83ts=;
+        b=KXKwtYSRsv9+8d0nMW3gQ/YX1VVO0hyXk/0b7yQvicbYCF31EG3+t2IagLJ50sdNL+
+         zw4hUgJizbPd2A4HuONmnYDAqW63H+PJ3T7OjsQm3h7+FVJTLO/m0oZAJ1IIEiK1F5M3
+         6u6NcaC/e7P1hi3Z91kyur+K39Yt2fj3ZiVaCqU+JHo47YsBhiugoQATZFIL6Tx+fpVv
+         R3ZDhz9ZxvL5V5BTtvUykrWlHz0R5cDBuricKOnIJrpUKtmKz6rnvZDLkS0QGimMVRc9
+         ByIUTj1VsGN2GitB/0n3noQu2VJd02BsIC3WGgHtGGBUT8qdSRm7YYJVZBQ6zbdGBYTh
+         eLhA==
+X-Gm-Message-State: AOUpUlE5eMYGVfsydElGvx0CvstWNZjq7Kbzi2WZsLyRtLps51kk+5Tg
+        Ybxrq/EQ2V4a1ma44pRG6P/JKg==
+X-Google-Smtp-Source: AA+uWPyG6g5VL6Toq72214bsxjhI6hM+CGfPo4296xilJr6Tt7/WTpzDv5OzpdnjBQHRG9yItaENuQ==
+X-Received: by 2002:a2e:44c6:: with SMTP id b67-v6mr20225815ljf.102.1534412882568;
+        Thu, 16 Aug 2018 02:48:02 -0700 (PDT)
+Received: from gmail.com (static-193-12-47-89.cust.tele2.se. [193.12.47.89])
+        by smtp.gmail.com with ESMTPSA id n6-v6sm4933424lfi.24.2018.08.16.02.48.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Aug 2018 02:48:01 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 11:48:00 +0200
+From:   Tobias Waldekranz <tobias@waldekranz.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:ETHERNET PHY LIBRARY" <netdev@vger.kernel.org>
+Subject: Re: [PATCH] net: phy: add tracepoints
+Message-ID: <20180816094800.GA3136@gmail.com>
+References: <20180816093418.2621-1-tobias@waldekranz.com>
 MIME-Version: 1.0
-In-Reply-To: <877elcj0oa.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18081609-0028-0000-0000-000002EB9AF2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081609-0029-0000-0000-000023A4C482
-Message-Id: <fb69ba85-eaee-d582-3254-26bb5da4828d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-16_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808160102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180816093418.2621-1-tobias@waldekranz.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2018 15:47, Michael Ellerman wrote:
-> Hi Laurent,
+On Thu, Aug 16, 2018 at 11:34:15AM +0200, Tobias Waldekranz wrote:
+> Two tracepoints for now:
 > 
-> Just one comment below.
+>    * `phy_interrupt` Pretty self-explanatory.
 > 
-> Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
->> diff --git a/arch/powerpc/platforms/pseries/lpar.c b/arch/powerpc/platforms/pseries/lpar.c
->> index 96b8cd8a802d..41ed03245eb4 100644
->> --- a/arch/powerpc/platforms/pseries/lpar.c
->> +++ b/arch/powerpc/platforms/pseries/lpar.c
->> @@ -418,6 +418,73 @@ static void pSeries_lpar_hpte_invalidate(unsigned long slot, unsigned long vpn,
->>  	BUG_ON(lpar_rc != H_SUCCESS);
->>  }
->>  
->> +
->> +/*
->> + * As defined in the PAPR's section 14.5.4.1.8
->> + * The control mask doesn't include the returned reference and change bit from
->> + * the processed PTE.
->> + */
->> +#define HBLKR_AVPN		0x0100000000000000UL
->> +#define HBLKR_CTRL_MASK		0xf800000000000000UL
->> +#define HBLKR_CTRL_SUCCESS	0x8000000000000000UL
->> +#define HBLKR_CTRL_ERRNOTFOUND	0x8800000000000000UL
->> +#define HBLKR_CTRL_ERRBUSY	0xa000000000000000UL
->> +
->> +/**
->> + * H_BLOCK_REMOVE caller.
->> + * @idx should point to the latest @param entry set with a PTEX.
->> + * If PTE cannot be processed because another CPUs has already locked that
->> + * group, those entries are put back in @param starting at index 1.
->> + * If entries has to be retried and @retry_busy is set to true, these entries
->> + * are retried until success. If @retry_busy is set to false, the returned
->> + * is the number of entries yet to process.
->> + */
->> +static unsigned long call_block_remove(unsigned long idx, unsigned long *param,
->> +				       bool retry_busy)
->> +{
->> +	unsigned long i, rc, new_idx;
->> +	unsigned long retbuf[PLPAR_HCALL9_BUFSIZE];
->> +
->> +again:
->> +	new_idx = 0;
->> +	BUG_ON((idx < 2) || (idx > PLPAR_HCALL9_BUFSIZE));
+>    * `phy_state_change` Whenever the PHY's state machine is run, trace
+>      the old and the new state.
 > 
-> I count 1 ..
+> Signed-off-by: Tobias Waldekranz <tobias@waldekranz.com>
+> ---
+>  drivers/net/phy/phy.c      |  4 +++
+>  include/trace/events/phy.h | 68 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 72 insertions(+)
+>  create mode 100644 include/trace/events/phy.h
 > 
->> +	if (idx < PLPAR_HCALL9_BUFSIZE)
->> +		param[idx] = HBR_END;
->> +
->> +	rc = plpar_hcall9(H_BLOCK_REMOVE, retbuf,
->> +			  param[0], /* AVA */
->> +			  param[1],  param[2],  param[3],  param[4], /* TS0-7 */
->> +			  param[5],  param[6],  param[7],  param[8]);
->> +	if (rc == H_SUCCESS)
->> +		return 0;
->> +
->> +	BUG_ON(rc != H_PARTIAL);
+> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+> index 9aabfa1a455a..8d22926f3962 100644
+> --- a/drivers/net/phy/phy.c
+> +++ b/drivers/net/phy/phy.c
+> @@ -38,6 +38,9 @@
+>  
+>  #include <asm/irq.h>
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/phy.h>
+> +
+>  #define PHY_STATE_STR(_state)			\
+>  	case PHY_##_state:			\
+>  		return __stringify(_state);	\
+> @@ -1039,6 +1042,7 @@ void phy_state_machine(struct work_struct *work)
+>  	if (err < 0)
+>  		phy_error(phydev);
+>  
+> +        trace_phy_state_change(phydev, old_state);
+>  	if (old_state != phydev->state)
+>  		phydev_dbg(phydev, "PHY state change %s -> %s\n",
+>  			   phy_state_to_str(old_state),
+> diff --git a/include/trace/events/phy.h b/include/trace/events/phy.h
+> new file mode 100644
+> index 000000000000..7ba6c0dda47e
+> --- /dev/null
+> +++ b/include/trace/events/phy.h
+> @@ -0,0 +1,68 @@
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM phy
+> +
+> +#if !defined(_TRACE_PHY_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_PHY_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +TRACE_EVENT(phy_interrupt,
+> +	    TP_PROTO(int irq, struct phy_device *phydev),
+> +	    TP_ARGS(irq, phydev),
+> +	    TP_STRUCT__entry(
+> +		    __field(int, irq)
+> +		    __field(int, addr)
+> +		    __field(int, state)
+> +		    __array(char, ifname, IFNAMSIZ)
+> +		    ),
+> +	    TP_fast_assign(
+> +		    __entry->irq = irq;
+> +		    __entry->addr = phydev->mdio.addr;
+> +		    __entry->state = phydev->state;
+> +		    if (phydev->attached_dev)
+> +			    memcpy(__entry->ifname,
+> +				   netdev_name(phydev->attached_dev),
+> +				   IFNAMSIZ);
+> +		    else
+> +			    memset(__entry->ifname, 0, IFNAMSIZ);
+> +		    ),
+> +	    TP_printk("phy-%d-irq irq=%d ifname=%16s state=%d",
+> +		      __entry->addr,
+> +		      __entry->irq,
+> +		      __entry->ifname,
+> +		      __entry->state
+> +		    )
+> +	);
+> +
+> +TRACE_EVENT(phy_state_change,
+> +	    TP_PROTO(struct phy_device *phydev, enum phy_state old_state),
+> +	    TP_ARGS(phydev, old_state),
+> +	    TP_STRUCT__entry(
+> +		    __field(int, addr)
+> +		    __field(int, state)
+> +		    __field(int, old_state)
+> +		    __array(char, ifname, IFNAMSIZ)
+> +		    ),
+> +	    TP_fast_assign(
+> +		    __entry->addr = phydev->mdio.addr;
+> +		    __entry->state = phydev->state;
+> +		    __entry->old_state = old_state;
+> +		    if (phydev->attached_dev)
+> +			    memcpy(__entry->ifname,
+> +				   netdev_name(phydev->attached_dev),
+> +				   IFNAMSIZ);
+> +		    else
+> +			    memset(__entry->ifname, 0, IFNAMSIZ);
+> +		    ),
+> +	    TP_printk("phy-%d-change ifname=%16s old_state=%d state=%d",
+> +		      __entry->addr,
+> +		      __entry->ifname,
+> +		      __entry->old_state,
+> +		      __entry->state
+> +		    )
+> +	);
+> +
+> +#endif /* _TRACE_PHY_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
+> -- 
+> 2.17.1
 > 
-> 2 ...
-> 
->> +	/* Check that the unprocessed entries were 'not found' or 'busy' */
->> +	for (i = 0; i < idx-1; i++) {
->> +		unsigned long ctrl = retbuf[i] & HBLKR_CTRL_MASK;
->> +
->> +		if (ctrl == HBLKR_CTRL_ERRBUSY) {
->> +			param[++new_idx] = param[i+1];
->> +			continue;
->> +		}
->> +
->> +		BUG_ON(ctrl != HBLKR_CTRL_SUCCESS
->> +		       && ctrl != HBLKR_CTRL_ERRNOTFOUND);
-> 
-> 3 ...
-> 
-> BUG_ON()s.
-> 
-> I know the code in this file is already pretty liberal with the use of
-> BUG_ON() but I'd prefer if we don't make it any worse.
 
-The first one is clearly not required. But I would keep the following twos
-because this call is not expected to fail except if there is a discrepancy
-between the linux kernel HASH views and the hypervisor's one, which could be
-dramatic in the consequences.
+This was sent in error. A v2 will follow. I had not used
+get_maintainers.pl before, sorry about the noise!
 
-> 
-> Given this is an optimisation it seems like we should be able to fall
-> back to the existing implementation in the case of error (which will
-> probably then BUG_ON() 😂)
-
-I don't think falling back to the H_BULK call will be helpfull since it is
-doing the same so the same errors are expected. Furthermore, this hcall can do
-a partial work which means complex code to fallback on H_BULK as we should
-identify to already processed entries.
-
-> If there's some reason we can't then I guess I can live with it.
-
-I'm proposing to send a new series with _only_ 2 calls to BUG_ON().
-
-Furthermore this patch is not correct on the way the huge pages are managed. I
-was too hurry to push it last time.
-
-Cheers,
-Laurent.
-
+-- 
+Thanks
+ - wkz
