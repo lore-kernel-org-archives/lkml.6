@@ -6,36 +6,49 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E044C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18678C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2831521480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2831521480
+	by mail.kernel.org (Postfix) with ESMTP id AD50121480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD50121480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbeHPVmq (ORCPT
+        id S1728625AbeHPVms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56118 "EHLO
+        Thu, 16 Aug 2018 17:42:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728520AbeHPVmo (ORCPT
+        with ESMTP id S1728520AbeHPVmr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:44 -0400
+        Thu, 16 Aug 2018 17:42:47 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54849CEB;
-        Thu, 16 Aug 2018 18:42:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2CF0AD02;
+        Thu, 16 Aug 2018 18:42:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 3.18 05/15] ARM: dts: imx6sx: fix irq for pcie bridge
-Date:   Thu, 16 Aug 2018 20:41:42 +0200
-Message-Id: <20180816171633.750706009@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jon Medhurst <tixy@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Will Deacon <will.deacon@arm.com>, acme@kernel.org,
+        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
+        linux-arch@vger.kernel.org, rostedt@goodmis.org,
+        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 3.18 06/15] kprobes/x86: Fix %p uses in error messages
+Date:   Thu, 16 Aug 2018 20:41:43 +0200
+Message-Id: <20180816171633.784233812@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -52,36 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 1bcfe0564044be578841744faea1c2f46adc8178 upstream.
+commit 0ea063306eecf300fcf06d2f5917474b580f666f upstream.
 
-Use the correct IRQ line for the MSI controller in the PCIe host
-controller. Apparently a different IRQ line is used compared to other
-i.MX6 variants. Without this change MSI IRQs aren't properly propagated
-to the upstream interrupt controller.
+Remove all %p uses in error messages in kprobes/x86.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Fixes: b1d17f68e5c5 ("ARM: dts: imx: add initial imx6sx device tree source")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jon Medhurst <tixy@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Tobin C . Harding <me@tobin.cc>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: acme@kernel.org
+Cc: akpm@linux-foundation.org
+Cc: brueckner@linux.vnet.ibm.com
+Cc: linux-arch@vger.kernel.org
+Cc: rostedt@goodmis.org
+Cc: schwidefsky@de.ibm.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/lkml/152491902310.9916.13355297638917767319.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx6sx.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/kprobes/core.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -1202,7 +1202,7 @@
- 				  /* non-prefetchable memory */
- 				  0x82000000 0 0x08000000 0x08000000 0 0x00f00000>;
- 			num-lanes = <1>;
--			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clks IMX6SX_CLK_PCIE_REF_125M>,
- 				 <&clks IMX6SX_CLK_PCIE_AXI>,
- 				 <&clks IMX6SX_CLK_LVDS1_OUT>,
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -365,7 +365,6 @@ int __copy_instruction(u8 *dest, u8 *src
+ 		newdisp = (u8 *) src + (s64) insn.displacement.value - (u8 *) dest;
+ 		if ((s64) (s32) newdisp != newdisp) {
+ 			pr_err("Kprobes error: new displacement does not fit into s32 (%llx)\n", newdisp);
+-			pr_err("\tSrc: %p, Dest: %p, old disp: %x\n", src, dest, insn.displacement.value);
+ 			return 0;
+ 		}
+ 		disp = (u8 *) dest + insn_offset_displacement(&insn);
+@@ -568,8 +567,7 @@ static int reenter_kprobe(struct kprobe
+ 		 * Raise a BUG or we'll continue in an endless reentering loop
+ 		 * and eventually a stack overflow.
+ 		 */
+-		printk(KERN_WARNING "Unrecoverable kprobe detected at %p.\n",
+-		       p->addr);
++		pr_err("Unrecoverable kprobe detected.\n");
+ 		dump_kprobe(p);
+ 		BUG();
+ 	default:
 
 
