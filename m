@@ -2,63 +2,73 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877DAC04AB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B92C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EB7214C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70E1821480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:50:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wuC53nu0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EB7214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbZbvzsZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E1821480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388195AbeHPHfM (ORCPT
+        id S1731176AbeHPHqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 03:35:12 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:47344 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387933AbeHPHfL (ORCPT
+        Thu, 16 Aug 2018 03:46:14 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40276 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbeHPHqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 03:35:11 -0400
-Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com [209.85.213.47]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w7G4dR7f028294;
-        Thu, 16 Aug 2018 13:39:28 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7G4dR7f028294
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534394368;
-        bh=lyrDa94olQTmuq24n9p0X2WJLbjDhCnQgLTh3zMh26g=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=wuC53nu060ClIj2M7nMd0pUKhb2IjQxSzp82znUo1IMqS+bJyC61kGSsmr+AsFBtF
-         Yua/nr9jeXUgKLmN5rB5qdR85F7NwZfp4qmR6Y28DppI2qOsveW+6gqHrB7bS9O9yl
-         GlYSgmqoFMTTD/J/cPkFw0aBEBbdTsMPkHUX54GQUBi2MLItOHVvxI+W2GJ61XG7zU
-         ajUtF66a8cajz9h98LrNnH3vmuEkeSx7/PwCltPfifwNzdFFLjIiajmkYtr62NhCo2
-         pw3jFrO9sTRx27v4J7xc3l7zNSigZ0XjnsQPeSipX6N2rRP8hcCkX304JBuBsrDwIo
-         7QWNYYJ2t/UhA==
-X-Nifty-SrcIP: [209.85.213.47]
-Received: by mail-vk0-f47.google.com with SMTP id s17-v6so773318vke.10;
-        Wed, 15 Aug 2018 21:39:28 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHTSp6T8wBB4yYTKeReHmTj+HyPdcZk0f/rkqSnOGhf8xxnKPn/
-        fDtbuON+7nAUOiIAol9RO1Nmf6FQAbavXKmwcXE=
-X-Google-Smtp-Source: AA+uWPxBTjh6AxIyYdHc0O6OZmhBMPMvCm9drx5U9lgGvI4kmOGU5bqP2PbRWPDwGgSDFLnu7L5JPfm0sm2qTeHwOOA=
-X-Received: by 2002:a1f:4049:: with SMTP id n70-v6mr18539524vka.140.1534394367285;
- Wed, 15 Aug 2018 21:39:27 -0700 (PDT)
+        Thu, 16 Aug 2018 03:46:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h15-v6so2894821wrs.7;
+        Wed, 15 Aug 2018 21:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=pQ/Z/MuwrkKCNz9q93ZamWHUPOLAStzv64ttRQOV0IU=;
+        b=GbZbvzsZLK+yPvwhTE2n6wkvtnI6+SqRYSyY8uC0W4ukixwmMyx3bKKb6NM/oKr5dZ
+         CbDO+QUBZefA7P/DQAj4ttxOPtOxgREtwFWYuUnzmWowLjZkXWs4/F1f4R3w5w7+y86T
+         f+19rEIzjywZQM7sEgHb5am1prpGsEPh6X6s0SvXofrm/NXJeXtFXGGBPHlMQfj47gxp
+         HrEY34WB7/P0G0S8GP+p6GFjBJUZHsw6/jdLqKH9FEpb2CGS93k0UjvkHf5dGOvVadO0
+         zBdxv4AmbphQ6uLpVV4wm0yIYDBPQa1gtPmkNvRUtcUdNyjj6se8ZKkOV8cfL/WWj+KW
+         cwcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=pQ/Z/MuwrkKCNz9q93ZamWHUPOLAStzv64ttRQOV0IU=;
+        b=r9V+ejQHHw5+dtll9uRdmANBtTy/NA20svBiJgT/E2Ny1Lk2QiOiWH93HbpNbODzcr
+         X5/5LbV4amGRaew9/GPUP97eY52YdkZ2EzQyBxmDI+kdtlHYapHslZ273G9OmGz8b52l
+         OPtMwTVHPNiS4NWqbSWbwUhd15J6OVsLnTyEa+08i1ExdAdTW6kqN91RofIAUH2GQH9K
+         zbo5fTUjRnpVvJX9A0zBh83IKpaXjjQNVDEltmbV+4K7+AmRSkYwUXyKYTNZpJE9buvf
+         7i/cPp5ptJgd8QICRgrUMPwtTWPP818NJ65EN0NyNp+1a410GvBVKenaTvRriDoCbL0f
+         V//A==
+X-Gm-Message-State: AOUpUlFb06QerAtroXX2PrhAbbN6p8na7JQ5QBAKsh3v8e+GL2LzqiEr
+        1cA8R6zz400Qw59ac1PsM1dqTysbNZIGl0clkUmDpxil
+X-Google-Smtp-Source: AA+uWPySl6DJ2fbEhkbrGtQWIdBPZrMlx0LRfil7DP2c7aArqmdyB05a0IPTV+KJKP76IevDEsMUJBcyG9b7AtKzrOM=
+X-Received: by 2002:adf:e841:: with SMTP id d1-v6mr12328177wrn.269.1534395031995;
+ Wed, 15 Aug 2018 21:50:31 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 21:38:46
+Received: by 2002:a1c:32c1:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 21:50:31
  -0700 (PDT)
-In-Reply-To: <20180616111004.GB28657@zn.tnic>
-References: <20180616111004.GB28657@zn.tnic>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 16 Aug 2018 13:38:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATpMkwS523LMDSU2sQfMzTfQ8kv_+MWjz5jdbZHS65G8Q@mail.gmail.com>
-Message-ID: <CAK7LNATpMkwS523LMDSU2sQfMzTfQ8kv_+MWjz5jdbZHS65G8Q@mail.gmail.com>
-Subject: Re: /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+In-Reply-To: <1534317915-5041-3-git-send-email-jianchao.w.wang@oracle.com>
+References: <1534317915-5041-1-git-send-email-jianchao.w.wang@oracle.com> <1534317915-5041-3-git-send-email-jianchao.w.wang@oracle.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Thu, 16 Aug 2018 12:50:31 +0800
+Message-ID: <CACVXFVO+g2ACx9XYx4XtwRkpSC9bCYeSFEj07Z==6r7nT-HxkQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] blk-mq: sync the update nr_hw_queues with part_in_flight
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Keith Busch <keith.busch@linux.intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,72 +76,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav,
+On Wed, Aug 15, 2018 at 3:25 PM, Jianchao Wang
+<jianchao.w.wang@oracle.com> wrote:
+> For blk-mq, part_in_flight/rw will invoke blk_mq_in_flight/rw to
+> account the inflight requests. It will access the queue_hw_ctx and
+> nr_hw_queues w/o any protection. When updating nr_hw_queues and
+> blk_mq_in_flight/rw occur concurrently, panic comes up.
 
-2018-06-16 20:10 GMT+09:00 Borislav Petkov <bp@alien8.de>:
-> Hi,
->
-> I'm seeing this when I do
->
-> # make menuconfig
->
-> after a fresh repo clean: git clean -dqfx
->
-> Might wanna silence it...
->
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/lxdialog/checklist.o
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/lxdialog/inputbox.o
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/lxdialog/menubox.o
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/lxdialog/textbox.o
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/lxdialog/util.o
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
-> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/lxdialog/yesno.o
->   UPD     scripts/kconfig/.mconf-cfg
->   HOSTCC  scripts/kconfig/mconf.o
->   HOSTLD  scripts/kconfig/mconf
-> scripts/kconfig/mconf  Kconfig
->
-> Thx.
+When updating nr_hw_queues, all queues are frozen, and there shouldn't
+be any inflight requests, so there shouldn't be such issue.
 
 
-Sorry for delay.
-
-Now I addressed this problem.
-https://patchwork.kernel.org/patch/10566951/
-
-
-Thanks.
-
-
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Ming Lei
